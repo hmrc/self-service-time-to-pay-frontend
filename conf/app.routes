@@ -1,0 +1,4 @@
+# microservice specific routes
+
+GET        /                        controllers.SSTTPController.home
+GET        /liability_result        controllers.SSTTPController.fetchTotalLiability
