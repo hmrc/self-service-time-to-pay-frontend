@@ -7,6 +7,7 @@ object FrontendBuild extends Build with MicroService {
 
   override val appName = "self-service-time-to-pay-frontend"
 
+
   override lazy val plugins: Seq[Plugins] = Seq(
     SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin
   )
@@ -15,36 +16,57 @@ object FrontendBuild extends Build with MicroService {
 }
 
 private object AppDependencies {
+
+  import play.PlayImport._
   import play.core.PlayVersion
 
-  val compile = Seq(
-    "uk.gov.hmrc" %% "frontend-bootstrap" % "5.0.0",
-    "uk.gov.hmrc" %% "play-auditing" % "1.0.0",
-    "uk.gov.hmrc" %% "play-authorised-frontend" % "4.0.0",
-    "uk.gov.hmrc" %% "play-config" % "1.2.0",
-    "uk.gov.hmrc" %% "play-json-logger" % "2.1.1",
-    "uk.gov.hmrc" %% "play-health" % "1.1.0",
-    "uk.gov.hmrc" %% "govuk-template" % "4.0.0",
-    "uk.gov.hmrc" %% "play-ui" % "4.4.0"
-  )
+  private val playHealthVersion = "1.1.0"
+  private val playJsonLoggerVersion = "2.1.1"
+  private val frontendBootstrapVersion = "6.7.0"
+  private val govukTemplateVersion = "4.0.0"
+  private val playUiVersion = "4.16.0"
+  private val playPartialsVersion = "4.6.0"
+  private val playAuthorisedFrontendVersion = "5.7.0"
+  private val playConfigVersion = "2.1.0"
+  private val hmrcTestVersion = "1.8.0"
+  private val cachingClientVersion = "5.6.0"
+  private val mongoCachingVersion = "3.2.0"
+  private val playConditionalMappingVersion = "0.2.0"
 
-  abstract class TestDependencies(scope: String) {
-    lazy val test : Seq[ModuleID] = Seq(
-      "org.scalatest" %% "scalatest" % "2.2.4" % scope,
-      "org.pegdown" % "pegdown" % "1.4.2" % scope,
-      "org.jsoup" % "jsoup" % "1.7.3" % scope,
-      "uk.gov.hmrc" %% "hmrctest" % "1.4.0" % scope,
-      "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
-    )
+  val compile = Seq(
+    ws,
+    "uk.gov.hmrc" %% "frontend-bootstrap" % frontendBootstrapVersion,
+    "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
+    "uk.gov.hmrc" %% "play-authorised-frontend" % playAuthorisedFrontendVersion,
+    "uk.gov.hmrc" %% "play-config" % playConfigVersion,
+    "uk.gov.hmrc" %% "play-json-logger" % playJsonLoggerVersion,
+    "uk.gov.hmrc" %% "govuk-template" % govukTemplateVersion,
+    "uk.gov.hmrc" %% "play-health" % playHealthVersion,
+    "uk.gov.hmrc" %% "play-ui" % playUiVersion,
+    "uk.gov.hmrc" %% "http-caching-client" % cachingClientVersion,
+    "uk.gov.hmrc" %% "mongo-caching" % mongoCachingVersion,
+    "uk.gov.hmrc" %% "play-conditional-form-mapping" % playConditionalMappingVersion)
+
+  trait TestDependencies {
+    lazy val scope: String = "test"
+    lazy val test: Seq[ModuleID] = ???
   }
 
-  object Test extends TestDependencies("test")
-  object IntegrationTest extends TestDependencies("it")
+  object Test {
+    def apply() = new TestDependencies {
+      override lazy val test = Seq(
+        "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
+        "org.scalatest" %% "scalatest" % "2.2.6" % scope,
+        "org.scalatestplus" %% "play" % "1.2.0" % scope,
+        "org.pegdown" % "pegdown" % "1.6.0" % scope,
+        "org.jsoup" % "jsoup" % "1.8.3" % scope,
+        "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
+      )
+    }.test
+  }
 
-  def apply() = compile ++ Test.test ++ IntegrationTest.test
+  def apply() = compile ++ Test()
+
 }
-
-
-
 
 
