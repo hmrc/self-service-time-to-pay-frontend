@@ -2,10 +2,15 @@
 sudo: false
 language: scala
 scala:
-- 2.11.6
+- 2.11.8
 jdk:
 - oraclejdk8
 cache:
   directories:
-    - '$HOME/.ivy2/cache'
-    
+    - $HOME/.sbt/0.13/dependency
+    - $HOME/.sbt/boot/scala*
+    - $HOME/.sbt/launchers
+    - $HOME/.ivy2/cache
+before_cache:
+  - find $HOME/.sbt -name "*.lock" -delete
+  - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
