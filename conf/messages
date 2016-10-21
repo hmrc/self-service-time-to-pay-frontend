@@ -1,0 +1,161 @@
+#common
+ssttp.common.title=Pay what you owe in instalments
+ssttp.common.currency.symbol=£
+
+#landing
+ssttp.landing.title=Pay what you owe in instalments
+
+ssttp.landing.intro=To find out if you’re eligible for this service, we need to ask some questions about yourself and the amount you owe.
+ssttp.landing.before-you-start=Before you start you’ll need to know:
+ssttp.landing.before-you-start.list.1=the amounts owed
+ssttp.landing.before-you-start.list.2=when it''s due
+ssttp.landing.before-you-start.list.3=how much you can afford to pay now
+ssttp.landing.start-button.label=Start
+
+#eligibility
+ssttp.eligibility.form.debt_type.title=Type of tax
+ssttp.eligibility.form.debt_type.question.prompt=Is the amount you owe for:
+ssttp.eligibility.form.debt_type.question.hint=Choose one or both
+ssttp.eligibility.form.debt_type.question.self-assessment=Self Assessment
+ssttp.eligibility.form.debt_type.question.other=Other types of tax
+
+ssttp.eligibility.form.existing_ttp.title=Existing instalment plans
+ssttp.eligibility.form.existing_ttp.question.prompt=Are you already paying an HMRC debt in instalments?
+ssttp.eligibility.form.existing_ttp.question.yes=Yes
+ssttp.eligibility.form.existing_ttp.question.no=No
+
+ssttp.eligibility.form.continue=Continue
+ssttp.eligibility.form.back=Back
+
+ssttp.eligibility.form.debt_type.error.summary.title=You haven''t selected a tax type
+ssttp.eligibility.form.debt_type.required=Please choose at least one option
+
+ssttp.eligibility.form.existing_ttp.error.summary.title=You haven''t selected an option
+ssttp.eligibility.form.existing_ttp.required=Please answer this question
+
+#calculator
+ssttp.calculator.form.amounts_due.title=About what you owe
+ssttp.calculator.form.amounts_due.intro=Enter the amounts you need to pay.
+ssttp.calculator.form.amounts_due.how_much.question=An amount of:
+ssttp.calculator.form.amounts_due.when_due.question=Due by:
+ssttp.calculator.form.amounts_due.when_due.question.hint=Example: 31 January 2017
+ssttp.calculator.form.amounts_due.when_due.question.day=Day
+ssttp.calculator.form.amounts_due.when_due.question.month=Month
+ssttp.calculator.form.amounts_due.when_due.question.year=Year
+
+ssttp.calculator.form.amounts_due.error.summary.title=Something you''ve entered isn''t valid
+
+ssttp.calculator.form.amounts_due.amount.required=You need to enter an amount
+ssttp.calculator.form.amounts_due.amount.positive=The amount must be more than £0.00
+ssttp.calculator.form.amounts_due.due_by.required=You need to enter a date
+ssttp.calculator.form.amounts_due.due_by.required-year=You need to enter a year
+ssttp.calculator.form.amounts_due.due_by.not-valid-year=You need to enter a valid year
+ssttp.calculator.form.amounts_due.due_by.required-month=You need to enter a month
+ssttp.calculator.form.amounts_due.due_by.not-valid-month=You need to enter a valid month
+ssttp.calculator.form.amounts_due.due_by.required-day=You need to enter a day
+ssttp.calculator.form.amounts_due.due_by.not-valid-day=You need to enter a valid day
+ssttp.calculator.form.amounts_due.due_by.not-valid-date=You need to enter a valid date
+#ssttp.calculator.form.amounts_due.due_by.not-within-range=
+
+ssttp.calculator.form.payment_today.title=Making a payment today
+ssttp.calculator.form.payment_today.amount.question=How much can you afford to pay now?
+
+ssttp.calculator.form.payment_today.error.summary.title=You haven''t entered an amount
+ssttp.calculator.form.payment_today.amount.required=Please enter an amount of £0.00 or more
+ssttp.calculator.form.payment_today.amount.nonnegitive=Please enter an amount of £0.00 or more
+
+ssttp.calculator.form.continue=Continue
+ssttp.calculator.form.back=Back
+
+ssttp.calculator.results.title=Calculate your instalments
+
+ssttp.calculator.results.heading.what-you-owe=What you owe
+ssttp.calculator.results.you-owe=You owe a total of:
+ssttp.calculator.results.you-can-afford=You can afford to pay:
+ssttp.calculator.results.you-can-afford-now=now
+ssttp.calculator.results.your-instalment-balance=Your balance for instalments:
+
+ssttp.calculator.results.heading.choose-your-instalments=Select how many months you need
+
+ssttp.calculator.results.heading.your-instalments=Your instalment calculation
+ssttp.calculator.results.recalculate-button.label=Update monthly payment amount
+
+ssttp.calculator.results.instalments-over=Instalments over
+ssttp.calculator.results.instalments-over.month.singular=month
+ssttp.calculator.results.instalments-over.month.plural=months
+ssttp.calculator.results.monthly-payments=Monthly payments of:
+ssttp.calculator.results.monthly-payments.per-month=per month
+ssttp.calculator.results.monthly-payments.hint=inlcuding any interest at 2.75%
+ssttp.calculator.results.total-interest=Total Interest:
+ssttp.calculator.results.total-replayment=Your total repayment:
+
+ssttp.calculator.results.interest-info.title=How we calculate interest
+ssttp.calculator.results.interest-info.list.1=the interest rate is based on the base rate established by the Bank of England plus 2.5% per annum, and calculated as simple interest
+ssttp.calculator.results.interest-info.list.2=interest is only charged once amounts become overdue
+ssttp.calculator.results.interest-info.list.3=if the interest rate changes during the course of your instalment plan it will not affect your monthly payments. Any differences to the amount of interest owed will be settled after the instalment plan has ended
+
+ssttp.calculator.results.interest-info.warning=These calculations are based on the information you’ve provided. They may change depending on the current balance of your tax account.
+
+ssttp.calculator.results.call-us.into=Alternatively you call us about this arrangement on:
+ssttp.calculator.results.call-us.number=0330 321 321
+
+ssttp.ttp-call-us.title=Please call us
+ssttp.ttp-call-us.intro=We''d like to be able to help you clear your tax debt in instalments, but we need some more detailed information from you first.
+ssttp.ttp-call-us.we-need-to-know.list=We''ll need to know:
+ssttp.ttp-call-us.we-need-to-know.list.1=your reference number
+ssttp.ttp-call-us.we-need-to-know.list.2=what you’ve done to try to pay the bill
+ssttp.ttp-call-us.we-need-to-know.list.3=your income and outgoings
+ssttp.ttp-call-us.we-need-to-know.list.4=savings and investments
+ssttp.ttp-call-us.we-need-to-know.list.5=if you can pay some of the bill now
+ssttp.ttp-call-us.we-need-to-know.list.6=how long you’ll need to pay
+ssttp.ttp-call-us.we-need-to-know.list.7=your bank details
+ssttp.ttp-call-us.contact-instructions=When you have all of this, please call us on {0}.
+ssttp.ttp-call-us.contact-number=0330 321 321
+
+ssttp.ssttp-call-us.title=Please call us
+ssttp.ssttp-call-us.intro=We can help you clear your tax debt in instalments, please get in touch.
+ssttp.ssttp-call-us.we-need-to-know.list=We''ll need to know:
+ssttp.ssttp-call-us.we-need-to-know.list.1=your reference number
+ssttp.ssttp-call-us.we-need-to-know.list.2=your bank details
+ssttp.ssttp-call-us.contact-instructions=When you have all of this, please call us on {0}.
+ssttp.ssttp-call-us.contact-number=0330 321 322
+
+
+ssttp.arrangement.instalment-summary.title=Your instalment plan summary
+ssttp.arrangement.instalment-summary.print=print
+ssttp.arrangement.instalment-summary.initial-payment-of=An initial payment of:
+ssttp.arrangement.instalment-summary.initial-payment.hint=taken up to {0} days from today
+ssttp.arrangement.instalment-summary.monthly-instalments=monthly instalments of:
+ssttp.arrangement.instalment-summary.total-repayment=Total repayment:
+
+ssttp.arrangement.instalment-summary.payment-day.taken-on=Instalments are taken on the
+ssttp.arrangement.instalment-summary.payment-day.day-of-month={0} of the month
+ssttp.arrangement.instalment-summary.payment-day.next-working-day=or the next working day.
+
+ssttp.arrangement.instalment-summary.payment-day.change=Change payment day
+ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on=Take payment on day
+ssttp.arrangement.instalment-summary.payment-day.change.of-the-month=of the month
+ssttp.arrangement.instalment-summary.payment-day.submit=Submit
+
+
+ssttp.arrangement.instalment-summary.terms.warning=By continuing you are agreeing to these terms
+ssttp.arrangement.instalment-summary.terms.cancelled-if=This agreement may be cancelled if:
+ssttp.arrangement.instalment-summary.terms.cancelled-if.1=you pay late
+ssttp.arrangement.instalment-summary.terms.cancelled-if.2=you miss a payment
+ssttp.arrangement.instalment-summary.terms.cancelled-if.3=you don''t tell us about a change that may affect your ability to pay
+ssttp.arrangement.instalment-summary.terms.made-payable-immidiately=If you don’t meet these conditions, the entire outstanding amount may be made payable immediately.
+ssttp.arrangement.instalment-summary.terms.future-debts=This plan doesn’t cover any future debts, and you shouldn’t expect to use instalment plans to pay HMRC in the future.
+
+ssttp.arrangement.instalment-summary.submit=Agree and continue
+
+
+#global errors
+global.error.400.title=Bad request - 400
+global.error.400.heading=Bad request
+global.error.400.message=Please check that you have entered the correct web address.
+global.error.404.title=Page not found - 404
+global.error.404.heading=This page can’t be found
+global.error.404.message=Please check that you have entered the correct web address.
+global.error.500.title=Sorry, we are experiencing technical difficulties - 500
+global.error.500.heading=Sorry, we’re experiencing technical difficulties
+global.error.500.message=Please try again in a few minutes.

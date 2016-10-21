@@ -18,21 +18,32 @@ package controllers
 
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import views.html.{liability_result, ssttp_home}
-
+import views.html.ssttp._
 import scala.concurrent.Future
 
+object SelfServiceTimeToPayController extends FrontendController{
 
-object SSTTPController extends FrontendController{
-
-  def fetchTotalLiability() = Action.async { implicit request =>
+/*  def fetchTotalLiability() = Action.async { implicit request =>
     val isEligible = request.getQueryString("isEligible").equals(Some(s"selected"))
     connectors.SSTTPConnector.totalLiability(isEligible).map{ p =>
     Ok(liability_result(p.value))
     }
   }
-
-  def home = Action.async { implicit request =>
-    Future.successful(Ok(ssttp_home()))
+*/
+  def present = Action.async { implicit request =>
+    Future.successful(Ok(service_start.render(request)))
   }
+
+  def submit = Action.async { implicit request =>
+    Future.successful(Redirect(routes.SelfServiceTimeToPayController.present()))
+  }
+
+  def ttpCallUs =  Action.async { implicit request =>
+    Future.successful(Ok(ttp_call_us.render(request)))
+  }
+
+  def ssttpCallUs = Action.async { implicit request =>
+    Future.successful(Ok(ssttp_call_us.render(request)))
+  }
+
 }

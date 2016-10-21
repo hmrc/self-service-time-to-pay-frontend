@@ -27,12 +27,12 @@ trait AppConfig {
   val reportAProblemNonJSUrl: String
 }
 
-object FrontendAppConfig extends AppConfig with ServicesConfig {
+object SsttpFrontendConfig extends AppConfig with ServicesConfig {
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   private val contactHost = configuration.getString("contact-frontend.host").getOrElse("")
-  private val contactFormServiceIdentifier = "MyService"
+  private val contactFormServiceIdentifier = "self-service-time-to-pay"
 
   override lazy val assetsPrefix = loadConfig("assets.url") + loadConfig("assets.version")
   override lazy val analyticsToken = loadConfig("google-analytics.token")

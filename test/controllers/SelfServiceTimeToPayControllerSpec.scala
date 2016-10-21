@@ -18,21 +18,28 @@ package controllers
 
 import org.scalatest.mock.MockitoSugar
 import play.api.mvc.Result
-import play.api.test.FakeRequest
+import play.api.test.{FakeApplication, FakeRequest, Helpers}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 import scala.concurrent.Future
 
-class SSTTPControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
+class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
 
-  "SSTTPController" should {
+  private val gaToken = "GA-TOKEN"
+  override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
-    "return 200 Ok showing the welcome page" in {
-      val result: Future[Result] = SSTTPController.home.apply(FakeRequest())
+  "SelfServiceTimeToPayController" should {
 
+    "return 200 Ok showing the service start page" in {
+      val result: Future[Result] = SelfServiceTimeToPayController.present.apply(FakeRequest())
       val r: Result = await(result)
-
       status(r) shouldBe 200
+    }
+
+    "display the service start page title" in {
+      val result: Future[Result] = SelfServiceTimeToPayController.present.apply(FakeRequest())
+      val r: Result = await(result)
+      bodyOf(r) should include ("Pay what you owe in instalments")
     }
   }
 

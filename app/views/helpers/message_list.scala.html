@@ -1,0 +1,29 @@
+@*
+    Helper template to format a list of messages in an unordered list element <ul>
+
+    @param modifierClass:String -> Class to apply to the ul element
+    @param messagePrefix:String -> Prefix for messages in the messages template.
+        Any messages starting with this prefix will be rendered as list items in <li>
+
+    e.g
+    conf/messages:
+        mesasges.list.1=Item 1
+        mesasges.list.2=Item 2
+        mesasges.list.3=Item 3
+
+    @message_list(Some("bullets"), "messages.list.") will return:
+        <ul class="bullets">
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+        </ul>
+*@
+@(modifierClass: Option[String], messagePrefix: String)
+@import play.api.Play.current
+@if(Messages.messages.get("default").isDefined) {
+    <ul@if(modifierClass.isDefined){ class="@modifierClass.get"}>
+    @for(message <- Messages.messages.get("default").get.filterKeys(_.startsWith(messagePrefix)).keys.toSeq.sorted) {
+        <li>@Messages(message)</li>
+    }
+    </ul>
+}

@@ -1,0 +1,20 @@
+@()(implicit request: Request[_])
+@import views.html.helpers.message_list
+@import views.html.ssttp.sidebar
+@views.html.main(
+    title = Messages("ssttp.common.title"),
+    bodyClasses = None,
+    sidebarLinks = Some(sidebar())
+){
+  <header class="page-header text">
+    <h1 class="h1-heading">@Messages("ssttp.ssttp-call-us.title")</h1>
+  </header>
+  <div class="subsection">
+    <p class="subsection">    @Messages("ssttp.ssttp-call-us.intro")</p>
+    <p class="subsection">
+      @Messages("ssttp.ssttp-call-us.we-need-to-know.list")
+      @message_list(Some("bullets"), "ssttp.ssttp-call-us.we-need-to-know.list.")
+    </p>
+    <p><strong>@Messages("ssttp.ssttp-call-us.contact-instructions", Messages("ssttp.ssttp-call-us.contact-number"))</strong></p>
+  </div>
+}

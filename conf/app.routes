@@ -1,4 +1,32 @@
-# microservice specific routes
+# Routes
+# This file defines all application app.routes (Higher priority app.routes first)
+# ~~~~
 
-GET        /                        controllers.SSTTPController.home
-GET        /liability_result        controllers.SSTTPController.fetchTotalLiability
+# Home page
+GET    /                                 controllers.SelfServiceTimeToPayController.present()
+POST   /                                 controllers.SelfServiceTimeToPayController.submit()
+#GET    /eligibility                     controllers.EligibilityController.present()
+#GET    /eligibility/debt-type           controllers.EligibilityController.debtTypePresent()
+#POST   /eligibility/debt-type           controllers.EligibilityController.debtTypeSubmit()
+#GET    /eligibility/existing-ttp        controllers.EligibilityController.existingTtpPresent()
+#POST   /eligibility/existing-ttp        controllers.EligibilityController.existingTtpSubmit()
+#GET    /calculator                      controllers.CalculatorController.present()
+#GET    /calculator/amounts-due          controllers.CalculatorController.amountsDuePresent()
+#POST   /calculator/amounts-due          controllers.CalculatorController.amountsDueSubmit()
+#GET    /calculator/payment-today        controllers.CalculatorController.paymentTodayPresent()
+#POST   /calculator/payment-today        controllers.CalculatorController.paymentTodaySubmit()
+#GET    /calculator-results              controllers.CalculatorController.resultsSubmit()
+#POST   /calculator-results              controllers.CalculatorController.resultsSubmit()
+#GET    /arrangement                     controllers.ArrangementController.present()
+#GET    /arrangement/summary             controllers.ArrangementController.instalmentSummaryPresent()
+#GET    /arrangement/summary/print       controllers.ArrangementController.instalmentSummaryPrintPresent()
+#POST   /arrangement/summary             controllers.ArrangementController.instalmentSummarySubmit()
+#POST   /arrangement/day-of-month        controllers.ArrangementController.instalmentSummaryDayOfMonthSubmit()
+#GET    /arrangement/direct-debit        controllers.ArrangementController.directDebitPresent()
+#POST   /arrangement/direct-debit        controllers.ArrangementController.directDebitSubmit()
+#GET    /arrangement/complete            controllers.ArrangementController.applicationCompletePresent()
+#GET    /ttp-call-us                     controllers.SelfServiceTimeToPayController.ttpCallUs()
+#GET    /ssttp-call-us                   controllers.SelfServiceTimeToPayController.ssttpCallUs()
+
+# Map static resources from the /public folder to the /assets URL path
+#GET     /assets/*file               controllers.Assets.at(path="/public", file)
