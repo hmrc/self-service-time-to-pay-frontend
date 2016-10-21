@@ -20,18 +20,19 @@ private object AppDependencies {
   import play.PlayImport._
   import play.core.PlayVersion
 
-  private val playHealthVersion = "2.0.0"
+  private val playHealthVersion = "1.1.0"
   private val playJsonLoggerVersion = "2.1.1"
   private val frontendBootstrapVersion = "6.7.0"
-  private val govukTemplateVersion = "5.0.0"
-  private val playUiVersion = "5.0.0"
-  private val playPartialsVersion = "5.1.0"
-  private val playAuthorisedFrontendVersion = "5.8.0"
-  private val playConfigVersion = "3.0.0"
-  private val hmrcTestVersion = "2.0.0"
+  private val govukTemplateVersion = "4.0.0"
+  private val playUiVersion = "4.16.0"
+  private val playPartialsVersion = "4.6.0"
+  private val playAuthorisedFrontendVersion = "5.7.0"
+  private val playConfigVersion = "2.1.0"
+  private val hmrcTestVersion = "1.8.0"
   private val cachingClientVersion = "5.6.0"
   private val mongoCachingVersion = "3.2.0"
   private val playConditionalMappingVersion = "0.2.0"
+
 
   val compile = Seq(
     ws,
