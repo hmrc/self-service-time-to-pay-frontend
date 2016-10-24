@@ -37,14 +37,14 @@ object EligibilityController extends FrontendController{
 
   def createDebtTypeForm: Form[EligibilityDebtType] = {
     Form(mapping(
-      "hasSATaxDebt" -> boolean,
+      "hasSelfAssessmentDebt" -> boolean,
       "hasOtherTaxDebt" -> boolean
     )(EligibilityDebtType.apply)(EligibilityDebtType.unapply))
   }
 
   def createExistingTtpForm: Form[EligibilityExistingTTP] = {
     Form(mapping(
-      "hasExistingTTP" -> optional(boolean)
+      "hasExistingTTP" -> optional(boolean).verifying(has => has.nonEmpty)
     )(EligibilityExistingTTP.apply)(EligibilityExistingTTP.unapply))
   }
 
@@ -55,7 +55,11 @@ object EligibilityController extends FrontendController{
 
   def debtTypeSubmit = Action.async { implicit request =>
     val form = createDebtTypeForm.bindFromRequest()
-    Future.successful(Ok(debt_type.render(form, request)))
+    if (form.hasErrors) {
+      Future.successful(Ok(debt_type.render(form, request)))
+    } else {
+      Future.successful(Redirect(routes.EligibilityController.existingTtpPresent()))
+    }
   }
 
   def existingTtpPresent =  Action.async { implicit request =>

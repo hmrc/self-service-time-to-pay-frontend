@@ -13,9 +13,9 @@
         <h1 class="h1-heading">@Messages("ssttp.eligibility.form.existing_ttp.title")</h1>
     </header>
     @form(routes.EligibilityController.existingTtpSubmit(), 'class -> "group") {
-        @*
         @formErrorSummary(Messages("ssttp.eligibility.form.existing_ttp.error.summary.title"), dataForm, Seq.empty)
-        @ radiobuttons(dataForm("existingTTP"), Seq(
+        @*
+        @radiobuttons(dataForm("existingTTP"), Seq(
             "true" -> Messages("ssttp.eligibility.form.existing_ttp.question.yes"),
             "false" -> Messages("ssttp.eligibility.form.existing_ttp.question.no")
         ),

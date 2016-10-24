@@ -2,7 +2,6 @@
 @(dataForm: Form[EligibilityDebtType])(implicit request: Request[_])
 @import controllers.routes
 @import views.html.ssttp.sidebar
-@import views.html.helpers._
 @import views.html.helpers.forms._
 @views.html.main(
     title = Messages("ssttp.common.title"),
@@ -13,9 +12,8 @@
     <h1 class="h1-heading">@Messages("ssttp.eligibility.form.debt_type.title")</h1>
   </header>
   @form(routes.EligibilityController.debtTypeSubmit(), 'class -> "group") {
-    @*
     @formErrorSummary(Messages("ssttp.eligibility.form.debt_type.error.summary.title"), dataForm, Seq.empty)
-    @fieldset(dataForm, "debt_type", '_modifierClass -> "form-field-group") {
+  @*  @fieldset(dataForm, "debt_type", '_modifierClass -> "form-field-group") {
       <h3 class="h3-heading">@Messages("ssttp.eligibility.form.debt_type.question.prompt")</h3>
       <p class="form-field--hint">@Messages("ssttp.eligibility.form.debt_type.question.hint")</p>
       @formErrors(dataForm, '_field ->"debt_type")

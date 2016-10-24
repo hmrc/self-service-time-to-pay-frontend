@@ -18,7 +18,11 @@ package models
 
 import play.api.libs.json.Json
 
-case class EligibilityDebtType(hasSelfAssessmentDebt: Boolean, hasOtherDebt: Boolean)
+case class EligibilityDebtType(hasSelfAssessmentDebt: Boolean, hasOtherDebt: Boolean) {
+  def this() {
+    this(false, false)
+  }
+}
 
 object EligibilityDebtType {
   implicit val format = Json.format[EligibilityDebtType]

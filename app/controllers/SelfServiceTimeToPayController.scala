@@ -22,7 +22,7 @@ import views.html.ssttp._
 import scala.concurrent.Future
 
 object SelfServiceTimeToPayController extends FrontendController{
-  
+
   def present = Action.async { implicit request =>
     Future.successful(Ok(service_start.render(request)))
   }
