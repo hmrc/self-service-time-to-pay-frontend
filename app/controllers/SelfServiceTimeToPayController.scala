@@ -22,20 +22,13 @@ import views.html.ssttp._
 import scala.concurrent.Future
 
 object SelfServiceTimeToPayController extends FrontendController{
-
-/*  def fetchTotalLiability() = Action.async { implicit request =>
-    val isEligible = request.getQueryString("isEligible").equals(Some(s"selected"))
-    connectors.SSTTPConnector.totalLiability(isEligible).map{ p =>
-    Ok(liability_result(p.value))
-    }
-  }
-*/
+  
   def present = Action.async { implicit request =>
     Future.successful(Ok(service_start.render(request)))
   }
 
   def submit = Action.async { implicit request =>
-    Future.successful(Redirect(routes.SelfServiceTimeToPayController.present()))
+    Future.successful(Redirect(routes.EligibilityController.present()))
   }
 
   def ttpCallUs =  Action.async { implicit request =>

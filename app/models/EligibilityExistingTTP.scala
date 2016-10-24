@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-package connectors
+package models
 
-import config.WSHttp
-import play.api.Logger
-import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http._
+import play.api.libs.json.Json
 
-import scala.concurrent.Future
+case class EligibilityExistingTTP(hasExistingTTP: Option[Boolean])
 
-object SSTTPConnector extends ServicesConfig {
-
-  val http: HttpGet with HttpPost = WSHttp
-
- /* def totalLiability(isEligible : Boolean) (implicit hc : HeaderCarrier) : Future[LiabilityResult] = {
-    Logger.info("Calling the GET Liability - :)")
-    http.GET[LiabilityResult](url(s"/ssttp/total-liability?eligible=" + isEligible))
-  }
-*/
-  private def url(path: String) = baseUrl("self-service-time-to-pay") + path
+object EligibilityExistingTTP {
+  implicit val format = Json.format[EligibilityExistingTTP]
 }
 

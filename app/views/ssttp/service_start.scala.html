@@ -1,5 +1,6 @@
 @()(implicit request: Request[_])
 @import views.html.helpers.message_list
+@import views.html.helpers.forms.{form, submit}
 @import views.html.ssttp.sidebar
 @views.html.main(
     title = Messages("ssttp.common.title"),
@@ -15,8 +16,8 @@
         @Messages("ssttp.landing.before-you-start")
         @message_list(Some("bullets"), "ssttp.landing.before-you-start.list.")
     </p>
-    @* @form(routes.SelfServiceTimeToPayController.submit(), 'class -> "group") {
+    @form(routes.SelfServiceTimeToPayController.submit(), 'class -> "group") {
        @submit(Messages("ssttp.landing.start-button.label"), '_buttonClass -> "button--get-started")
-    }*@
+    }
   </div>
 }

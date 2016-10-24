@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package model
+package models
 
 import play.api.libs.json.Json
 
-/**
-  * Created by byronprentice on 22/02/2016.
-  */
-case class LiabilityResult(value: String)
+case class EligibilityDebtType(hasSelfAssessmentDebt: Boolean, hasOtherDebt: Boolean)
 
-  object LiabilityResult {
-    implicit val formats = Json.format[LiabilityResult]
-  }
+object EligibilityDebtType {
+  implicit val format = Json.format[EligibilityDebtType]
+}

@@ -1,0 +1,39 @@
+@import models.EligibilityDebtType
+@(dataForm: Form[EligibilityDebtType])(implicit request: Request[_])
+@import controllers.routes
+@import views.html.ssttp.sidebar
+@import views.html.helpers._
+@import views.html.helpers.forms._
+@views.html.main(
+    title = Messages("ssttp.common.title"),
+    bodyClasses = None,
+    sidebarLinks = Some(sidebar())
+){
+  <header class="page-header text">
+    <h1 class="h1-heading">@Messages("ssttp.eligibility.form.debt_type.title")</h1>
+  </header>
+  @form(routes.EligibilityController.debtTypeSubmit(), 'class -> "group") {
+    @*
+    @formErrorSummary(Messages("ssttp.eligibility.form.debt_type.error.summary.title"), dataForm, Seq.empty)
+    @fieldset(dataForm, "debt_type", '_modifierClass -> "form-field-group") {
+      <h3 class="h3-heading">@Messages("ssttp.eligibility.form.debt_type.question.prompt")</h3>
+      <p class="form-field--hint">@Messages("ssttp.eligibility.form.debt_type.question.hint")</p>
+      @formErrors(dataForm, '_field ->"debt_type")
+      @checkbox(field = dataForm("selfAssessmentDebt"),
+          label = Option(Html(Messages("ssttp.eligibility.form.debt_type.question.self-assessment"))),
+          '_modifierClass -> "--single",
+          '_labelClass -> "block-label"
+      )
+      @checkbox(field = dataForm("otherTaxDebt"),
+          label = Option(Html(Messages("ssttp.eligibility.form.debt_type.question.other"))),
+          '_modifierClass -> "--single",
+          '_labelClass -> "block-label"
+    )
+    }*@
+    @submit(Messages("ssttp.eligibility.form.continue"))
+  }
+  <div class="subsection">
+    <a class="back-link" href="@routes.SelfServiceTimeToPayController.present()">@Messages("ssttp.eligibility.form.back")</a>
+  </div>
+}
+
