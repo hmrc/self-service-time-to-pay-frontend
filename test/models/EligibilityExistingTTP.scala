@@ -26,18 +26,19 @@ class EligibilityExistingTTPSpec extends UnitSpec with MockitoSugar {
     "create with true option parameter" in {
       val ettp = new EligibilityExistingTTP(Option(true))
       ettp should not be (null)
-      ettp.hasExistingTTP.get should be (true)
+      ettp.hasExistingTTP.get should be(true)
     }
 
     "create with false option parameter" in {
       val ettp = new EligibilityExistingTTP(Option(false))
       ettp should not be (null)
-      ettp.hasExistingTTP.get should be (false)
+      ettp.hasExistingTTP.get should be(false)
     }
 
     "create with false no option parameter" in {
       val ettp = new EligibilityExistingTTP(None)
       ettp should not be (null)
-      ettp.hasExistingTTP.isEmpty should be (true)
+      ettp.hasExistingTTP.isEmpty should be(true)
     }
+  }
 }
