@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package model
+package models
 
 import play.api.libs.json.Json
 
-/**
-  * Created by byronprentice on 22/02/2016.
-  */
-case class LiabilityResult(value: String)
+case class EligibilityExistingTTP(hasExistingTTP: Option[Boolean])
 
-  object LiabilityResult {
-    implicit val formats = Json.format[LiabilityResult]
-  }
+object EligibilityExistingTTP {
+  implicit val format = Json.format[EligibilityExistingTTP]
+}
+
