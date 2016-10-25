@@ -26,29 +26,29 @@ class AmountDueSpec extends UnitSpec with MockitoSugar {
   "AmountDue" should {
 
     "create with year month date parameters" in {
-      val amountDue = new AmountDue(BigDecimal("1000.00"), 2016, 10, 26)
-      amountDue should not be (null)
-      amountDue.amount should be (BigDecimal(1000.00))
+      val amountDue = new CalculatorAmountDue(new BigDecimal("1000.00"), 2016, 10, 26)
+      amountDue shouldNot be (null)
+      amountDue.amount.compare(new BigDecimal(1000.00)) should be (0)
       amountDue.dueByYear should be (2016)
-      amountDue.dueByDay should be (10)
+      amountDue.dueByMonth should be (10)
       amountDue.dueByDay should be (26)
     }
 
     "create with LocalDate parameter" in {
       val date = LocalDate.of(2016, 10, 26)
-      val amountDue = new AmountDue(BigDecimal("1000.00"), date)
-      amountDue should not be (null)
-      amountDue.amount should be (BigDecimal(1000.00))
+      val amountDue = new CalculatorAmountDue(new BigDecimal("1000.00"), date)
+      amountDue shouldNot be (null)
+      amountDue.amount.compare(new BigDecimal(1000.00)) should be (0)
       amountDue.dueByYear should be (2016)
-      amountDue.dueByDay should be (10)
+      amountDue.dueByMonth should be (10)
       amountDue.dueByDay should be (26)
     }
 
     "return correct DueByDate in getDueBy" in {
       val date = LocalDate.of(2016, 10, 26)
-      val amountDue = new AmountDue(BigDecimal("1000.00"), date)
-      amountDue should not be (null)
-      var dateReturned  = amountDue.getDueBy
+      val amountDue = new CalculatorAmountDue(new BigDecimal("1000.00"), date)
+      amountDue shouldNot be (null)
+      val dateReturned  = amountDue.getDueBy
       dateReturned should be(date)
     }
   }
