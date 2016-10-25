@@ -16,4 +16,13 @@
 
 package models
 
-case class EligibilityExistingTTP(hasExistingTTP: Option[Boolean])
+import java.time.LocalDate
+case class AmountDue(amount: BigDecimal, dueByYear: Integer, dueByMonth: Integer, dueByDay: Integer) {
+  def this(amount:BigDecimal, dueBy:LocalDate) {
+    this(amount, dueBy.getYear, dueBy.getMonthValue, dueBy.getDayOfMonth)
+  }
+
+  def getDueBy(): LocalDate = {
+    LocalDate.of(dueByYear, dueByMonth, dueByDay)
+  }
+}
