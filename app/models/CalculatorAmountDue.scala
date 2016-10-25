@@ -16,4 +16,13 @@
 
 package models
 
-case class CalculatorAmountsDue(amounts: List[CalculatorAmountDue])
+import java.time.LocalDate
+case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Integer, dueByMonth: Integer, dueByDay: Integer) {
+  def this(amount:BigDecimal, dueBy:LocalDate) {
+    this(amount, dueBy.getYear, dueBy.getMonthValue, dueBy.getDayOfMonth)
+  }
+
+  def getDueBy(): LocalDate = {
+    LocalDate.of(dueByYear, dueByMonth, dueByDay)
+  }
+}

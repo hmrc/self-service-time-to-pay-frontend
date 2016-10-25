@@ -16,29 +16,24 @@
 
 package models
 
+import java.math.BigDecimal
+import java.time.LocalDate
+
 import org.scalatest.mock.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
 
-class EligibilityExistingTTPSpec extends UnitSpec with MockitoSugar {
+class CalculatorInputSpec extends UnitSpec with MockitoSugar {
 
-  "EligibilityExistingTTP" should {
+  "CalculatorInput" should {
 
-    "create with true option parameter" in {
-      val ettp = new EligibilityExistingTTP(Option(true))
-      ettp shouldNot be (null)
-      ettp.hasExistingTTP.get should be(true)
+    "create paymentFrequency defaulted to MONTHLY" in {
+      val liability1 = mock[CalculatorLiability]
+      val liability2 = mock[CalculatorLiability]
+      val liabilities = Seq(liability1, liability2)
+      val calculatorInput = CalculatorInput(liabilities, new BigDecimal("200.00"), LocalDate.of(2000, 1, 29), LocalDate.of(2010, 12, 29))
+      calculatorInput shouldNot be (null)
+      calculatorInput.paymentFrequency should be ("MONTHLY")
     }
 
-    "create with false option parameter" in {
-      val ettp = new EligibilityExistingTTP(Option(false))
-      ettp shouldNot be (null)
-      ettp.hasExistingTTP.get should be(false)
-    }
-
-    "create with false no option parameter" in {
-      val ettp = new EligibilityExistingTTP(None)
-      ettp shouldNot be (null)
-      ettp.hasExistingTTP.isEmpty should be(true)
-    }
   }
 }

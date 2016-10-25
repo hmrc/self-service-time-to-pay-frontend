@@ -16,4 +16,6 @@
 
 package models
 
-case class CalculatorAmountsDue(amounts: List[CalculatorAmountDue])
+import java.time.LocalDate
+
+case class CalculatorLiability(liabilityType:String, amount:BigDecimal, interestAccrued:BigDecimal, interestCalculationDate:LocalDate, dueDate:LocalDate)

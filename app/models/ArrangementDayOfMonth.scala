@@ -16,4 +16,4 @@
 
 package models
 
-case class CalculatorAmountsDue(amounts: List[CalculatorAmountDue])
+case class ArrangementDayOfMonth(dayOfMonth: Integer)

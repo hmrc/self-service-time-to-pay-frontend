@@ -16,4 +16,5 @@
 
 package models
 
-case class CalculatorAmountsDue(amounts: List[CalculatorAmountDue])
+case class ArrangementPaymentSchedule(initialPayment: BigDecimal, amountToPay:BigDecimal, instalmentBalance:BigDecimal,
+                                      totalInterestCharged:BigDecimal, totalPayable:BigDecimal, instalments:Seq[ArrangementInstalment])
