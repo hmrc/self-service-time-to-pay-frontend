@@ -16,4 +16,6 @@
 
 package models
 
-case class CalculatorAmountsDue(amounts: List[CalculatorAmountDue])
+import java.math.BigInteger
+
+case class ArrangementDirectDebit(accountHolderName:String, sortCode1:Integer, sortCode2:Integer, sortCode3:Integer, accountNumber:BigInteger, confirmed: Option[Boolean])

@@ -25,14 +25,14 @@ class EligibilityDebtTypeSpec extends UnitSpec with MockitoSugar {
 
     "create with parameters" in {
       val edt = new EligibilityDebtType(true, true)
-      edt should not be (null)
+      edt shouldNot be (null)
       edt.hasOtherDebt should be (true)
       edt.hasSelfAssessmentDebt should be (true)
     }
 
     "create with no parameters" in {
       val edt = new EligibilityDebtType()
-      edt should not be (null)
+      edt shouldNot be (null)
       edt.hasOtherDebt should be(false)
       edt.hasSelfAssessmentDebt should be(false)
     }
