@@ -16,8 +16,4 @@
 
 package models
 
-case class EligibilityDebtType(hasSelfAssessmentDebt: Boolean, hasOtherDebt: Boolean) {
-  def this() {
-    this(false, false)
-  }
-}
+case class CalculatorAmountsDue(amounts: List[AmountDue])

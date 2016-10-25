@@ -1,0 +1,5 @@
+@*
+    Inline error message conforming to HMRC Component Library
+*@
+@(fieldName: String, errorKey: String, errorMessage: String, classes: Seq[String] = Seq.empty)
+<span id="@{fieldName}-@{errorKey}-error-message" class="@{(Seq("error-notification") ++ classes).mkString(" ")}" role="alert" data-input-name="@{fieldName}">@errorMessage</span>

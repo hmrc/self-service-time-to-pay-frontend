@@ -16,11 +16,4 @@
 
 package models
 
-import play.api.libs.json.Json
-
 case class EligibilityExistingTTP(hasExistingTTP: Option[Boolean])
-
-object EligibilityExistingTTP {
-  implicit val format = Json.format[EligibilityExistingTTP]
-}
-
