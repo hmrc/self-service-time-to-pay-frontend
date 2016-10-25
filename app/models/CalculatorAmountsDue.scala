@@ -16,4 +16,4 @@
 
 package models
 
-case class EligibilityExistingTTP(hasExistingTTP: Option[Boolean])
+case class CalculatorAmountsDue(amounts: List[AmountDue])
