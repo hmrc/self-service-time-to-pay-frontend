@@ -1,4 +1,4 @@
-@****************************************
+@*
  Html Button as per HRMC Component Library
     http://hmrc.github.io/assets-frontend/section-buttons.html
 
@@ -9,7 +9,6 @@
             button--link, button--spaced, button--padded, button--full-width, button--link-style, button--notification
         Any additional args with names NOT starting with underscore (_) will be applied as button element arguments
 *@
-
 @(label: String, args: (Symbol, String)*)
 @argsMap = @{ args.toMap }
 @buttonClass = @{("button " + argsMap.getOrElse('_modifierClass, "").trim)}
