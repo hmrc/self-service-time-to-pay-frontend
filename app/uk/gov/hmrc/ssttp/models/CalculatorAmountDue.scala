@@ -16,13 +16,19 @@
 
 package uk.gov.hmrc.ssttp.models
 
+import java.text.SimpleDateFormat
 import java.time.LocalDate
-case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Integer, dueByMonth: Integer, dueByDay: Integer) {
-  def this(amount:BigDecimal, dueBy:LocalDate) {
-    this(amount, dueBy.getYear, dueBy.getMonthValue, dueBy.getDayOfMonth)
+import java.util.Calendar
+import java.time.format.DateTimeFormatter
+import java.time.temporal.{ChronoField, TemporalField}
+
+case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Int, dueByMonth: String, dueByDay: Int) {
+
+  def this(amount: BigDecimal, dueBy: LocalDate) {
+    this(amount, dueBy.getYear, dueBy.format(DateTimeFormatter.ofPattern("MMMM")), dueBy.getDayOfMonth)
   }
 
   def getDueBy(): LocalDate = {
-    LocalDate.of(dueByYear, dueByMonth, dueByDay)
+    LocalDate.of(dueByYear, DateTimeFormatter.ofPattern("MMMM").parse(dueByMonth).get(ChronoField.MONTH_OF_YEAR), dueByDay)
   }
 }

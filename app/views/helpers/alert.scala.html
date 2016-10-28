@@ -1,0 +1,14 @@
+@*
+    Alert Notification as per HMRC Component Library
+        http://hmrc.github.io/assets-frontend/section-notification.html#kssref-notification-alert
+    Note that unlike Notification, alert content is wrapped in a paragraph element
+
+    args: (Symbol, String) Optional arguments as per documentation
+    '_modifierClass  ->  alert--success, alert--failure, alert--important, alert--info, alert--borderless, alert--slim
+                            alert--info
+*@
+@(args:(Symbol, String)*)(content:Html)
+@argsMap = @{ args.toMap }
+<div class="alert@if(argsMap.get('_modifierClass).isDefined){ @argsMap.get('_modifierClass)}" role="alert">
+    <p class="alert__message">@content</p>
+</div>

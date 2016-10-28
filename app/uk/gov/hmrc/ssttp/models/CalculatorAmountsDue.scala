@@ -16,4 +16,5 @@
 
 package uk.gov.hmrc.ssttp.models
 
-case class CalculatorAmountsDue(amounts: List[CalculatorAmountDue])
+case class CalculatorAmountsDue(amountsDue: Seq[CalculatorAmountDue])
+

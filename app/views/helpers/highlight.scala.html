@@ -1,0 +1,13 @@
+@*
+    Highlight Notification as per HMRC Component Library
+    http://hmrc.github.io/assets-frontend/section-notification.html#kssref-notification-highlight
+
+    args: (Symbol, String) Optional arguments as per documentation
+    '_modifierClass  ->  highlight-message--content-body, highlight-message--full-width, highlight-message--indent
+                            highlight-message--icon-top, highlight-message--light, highlight-message--dark
+*@
+@(args:(Symbol, String)*)(content:Html)
+@argsMap = @{ args.toMap }
+<div class="highlight-message@if(argsMap.get('_modifierClass).isDefined){ @argsMap.get('_modifierClass)}">
+    @content
+</div>

@@ -13,21 +13,21 @@
   </header>
   @form(routes.EligibilityController.debtTypeSubmit(), 'class -> "group") {
     @formErrorSummary(Messages("ssttp.eligibility.form.debt_type.error.summary.title"), dataForm, Seq.empty)
-  @*  @fieldset(dataForm, "debt_type", '_modifierClass -> "form-field-group") {
+    @fieldset(dataForm, "debt_type", '_modifierClass -> "form-field-group"){
       <h3 class="h3-heading">@Messages("ssttp.eligibility.form.debt_type.question.prompt")</h3>
       <p class="form-field--hint">@Messages("ssttp.eligibility.form.debt_type.question.hint")</p>
       @formErrors(dataForm, '_field ->"debt_type")
-      @checkbox(field = dataForm("selfAssessmentDebt"),
+      @checkbox(field = dataForm("hasSelfAssessmentDebt"),
           label = Option(Html(Messages("ssttp.eligibility.form.debt_type.question.self-assessment"))),
           '_modifierClass -> "--single",
           '_labelClass -> "block-label"
       )
-      @checkbox(field = dataForm("otherTaxDebt"),
+      @checkbox(field = dataForm("hasOtherTaxDebt"),
           label = Option(Html(Messages("ssttp.eligibility.form.debt_type.question.other"))),
           '_modifierClass -> "--single",
           '_labelClass -> "block-label"
-    )
-    }*@
+      )
+    }
     @submit(Messages("ssttp.eligibility.form.continue"))
   }
   <div class="subsection">

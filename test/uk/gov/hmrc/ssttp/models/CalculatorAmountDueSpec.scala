@@ -21,16 +21,16 @@ import uk.gov.hmrc.play.test.UnitSpec
 import java.time.LocalDate
 import java.math.BigDecimal
 
-class AmountDueSpec extends UnitSpec with MockitoSugar {
+class CalculatorAmountDueSpec extends UnitSpec with MockitoSugar {
 
-  "AmountDue" should {
+  "CalculatorAmountDue" should {
 
     "create with year month date parameters" in {
-      val amountDue = new CalculatorAmountDue(new BigDecimal("1000.00"), 2016, 10, 26)
+      val amountDue = new CalculatorAmountDue(new BigDecimal("1000.00"), 2016, "October", 26)
       amountDue shouldNot be (null)
       amountDue.amount.compare(new BigDecimal(1000.00)) should be (0)
       amountDue.dueByYear should be (2016)
-      amountDue.dueByMonth should be (10)
+      amountDue.dueByMonth should be ("October")
       amountDue.dueByDay should be (26)
     }
 
@@ -40,11 +40,11 @@ class AmountDueSpec extends UnitSpec with MockitoSugar {
       amountDue shouldNot be (null)
       amountDue.amount.compare(new BigDecimal(1000.00)) should be (0)
       amountDue.dueByYear should be (2016)
-      amountDue.dueByMonth should be (10)
+      amountDue.dueByMonth should be ("October")
       amountDue.dueByDay should be (26)
     }
 
-    "return correct DueByDate in getDueBy" in {
+    "return correct LocalDate in getDueBy" in {
       val date = LocalDate.of(2016, 10, 26)
       val amountDue = new CalculatorAmountDue(new BigDecimal("1000.00"), date)
       amountDue shouldNot be (null)

@@ -1,0 +1,29 @@
+@*
+ Create a fieldset element enclosing the given content
+
+    @param _modifierClass CSS class to add to the fieldset element including:
+        connected, dynamically-displayed and form-field-group
+    @param args All oter argumemts passed with a label are converted to HTML attributes for the fieldset element
+        EXCEPT those starting with _ (underscore). e.g. 'id -> "fieldGroup" but not '_id -> "fieldGroup".
+
+*@
+@(dataForm:Form[_], fieldName: String, args:(Symbol, Any)*)(content: Html)(implicit lang: Lang = Lang("en"))
+@import play.api.i18n._
+@import views.html.helper._
+@import scala.collection.mutable.ListBuffer
+@argsMap = @{args.toMap}
+@clss = @{
+  var c:Seq[String] = Seq("form-field-group")
+  if(argsMap.contains('_modifierClass)) {
+      c = c ++ Seq(argsMap.getOrElse('_modifierClass, "").asInstanceOf[String])
+  }
+  if(dataForm.errors.contains(fieldName) &&  dataForm.errors(fieldName).nonEmpty){
+      c = c ++ Seq("form-field-group--error")
+  }
+  Html(c.mkString(" class=\"", " ", "\""))
+}
+<a name="@fieldName"></a>
+<fieldset@clss @toHtmlArgs(argsMap.filterNot(entry => entry._1.name.startsWith("_")))>
+    @content
+</fieldset>
+

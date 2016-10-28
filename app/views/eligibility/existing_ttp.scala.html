@@ -2,7 +2,6 @@
 @(dataForm: Form[EligibilityExistingTTP])(implicit request: Request[_])
 @import uk.gov.hmrc.ssttp.controllers.routes
 @import views.html.helpers.forms._
-@import views.html.helpers._
 @import views.html.ssttp.sidebar
 @views.html.main(
     title = Messages("ssttp.common.title"),
@@ -14,7 +13,7 @@
     </header>
     @form(routes.EligibilityController.existingTtpSubmit(), 'class -> "group") {
         @formErrorSummary(Messages("ssttp.eligibility.form.existing_ttp.error.summary.title"), dataForm, Seq.empty)
-        @radiobuttons(dataForm("existingTTP"), Seq(
+        @radiobuttons(dataForm("hasExistingTTP"), Seq(
             "true" -> Messages("ssttp.eligibility.form.existing_ttp.question.yes"),
             "false" -> Messages("ssttp.eligibility.form.existing_ttp.question.no")
         ),

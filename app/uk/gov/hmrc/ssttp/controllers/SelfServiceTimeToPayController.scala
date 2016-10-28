@@ -23,19 +23,19 @@ import scala.concurrent.Future
 
 object SelfServiceTimeToPayController extends FrontendController{
 
-  def present: Action[AnyContent] = Action.async { implicit request =>
+  def present:Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(service_start.render(request)))
   }
 
-  def submit: Action[AnyContent] = Action.async { implicit request =>
+  def submit:Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Redirect(routes.EligibilityController.present()))
   }
 
-  def ttpCallUs: Action[AnyContent] =  Action.async { implicit request =>
+  def ttpCallUs:Action[AnyContent] =  Action.async { implicit request =>
     Future.successful(Ok(ttp_call_us.render(request)))
   }
 
-  def ssttpCallUs: Action[AnyContent] = Action.async { implicit request =>
+  def ssttpCallUs:Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(ssttp_call_us.render(request)))
   }
 
