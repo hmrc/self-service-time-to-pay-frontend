@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ssttp.connectors
+package uk.gov.hmrc.ssttp.models
 
-import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.ssttp.config.WSHttp
+import play.api.libs.json.Json
 
-object SSTTPConnector extends ServicesConfig {
+case class DirectDebitInstructionPaymentPlan(processingDate: String, acknowledgementId: String, directDebitInstruction: List[DirectDebitInstruction],
+                                             paymentPlan: List[DirectDebitPaymentPlan])
 
-  val http: HttpGet with HttpPost = WSHttp
+case class DirectDebitPaymentPlan(ppReferenceNo: String)
 
-  /* def totalLiability(isEligible : Boolean) (implicit hc : HeaderCarrier) : Future[LiabilityResult] = {
-     Logger.info("Calling the GET Liability - :)")
-     http.GET[LiabilityResult](url(s"/ssttp/total-liability?eligible=" + isEligible))
-   }
- */
-  private def url(path: String) = baseUrl("self-service-time-to-pay") + path
+object DirectDebitInstructionPaymentPlan {
+  implicit val directDebitPaymentPlanFormat = Json.format[DirectDebitPaymentPlan]
+  implicit val directDebitInstructionPaymentPlanFormat = Json.format[DirectDebitInstructionPaymentPlan]
 }
-
