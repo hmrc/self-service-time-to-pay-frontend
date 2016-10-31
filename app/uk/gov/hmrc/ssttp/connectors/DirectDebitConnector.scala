@@ -17,10 +17,11 @@
 package uk.gov.hmrc.ssttp.connectors
 
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import uk.gov.hmrc.ssttp.config.WSHttp
-import uk.gov.hmrc.ssttp.models.{DirectDebitBanks, DirectDebitInstructionPaymentPlan}
+import uk.gov.hmrc.ssttp.models.{DirectDebitBank, DirectDebitInstructionPaymentPlan}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
@@ -35,13 +36,17 @@ trait DirectDebitConnector {
   val serviceURL: String
   val http: HttpGet
 
-  def getBanksList()(implicit hc: HeaderCarrier): Future[DirectDebitBanks] = {
-    http.GET[DirectDebitBanks](s"$directDebitURL/$serviceURL/banks")
+  def getBanksList()(implicit hc: HeaderCarrier): Future[DirectDebitBank] = {
+    http.GET[HttpResponse](s"$directDebitURL/$serviceURL/banks").map { response =>
+      response.json.as[DirectDebitBank]
+    }
   }
 
   //URL will need to be changed once Direct-Debit routes has been updated
   def getInstructionPaymentPlan()(implicit hc: HeaderCarrier): Future[DirectDebitInstructionPaymentPlan] = {
-    http.GET[DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/payment-plan")
+    http.GET[HttpResponse](s"$directDebitURL/$serviceURL/payment-plan").map { response =>
+      response.json.as[DirectDebitInstructionPaymentPlan]
+    }
   }
 
 }
