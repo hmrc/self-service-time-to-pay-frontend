@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.ssttp.controllers
 
-import play.api.mvc._
+import play.api.mvc.{AnyContent, _}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.eligibility._
 import play.api.data.Form
@@ -27,11 +27,11 @@ import uk.gov.hmrc.ssttp.models.{EligibilityDebtType, EligibilityExistingTTP}
 
 object EligibilityController extends FrontendController{
 
-  def present = Action.async { implicit request =>
+  def present: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Redirect(routes.EligibilityController.debtTypePresent()))
   }
 
-  def submit = Action.async { implicit request =>
+  def submit: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Redirect(routes.SelfServiceTimeToPayController.present()))
   }
 
@@ -48,12 +48,12 @@ object EligibilityController extends FrontendController{
     )(EligibilityExistingTTP.apply)(EligibilityExistingTTP.unapply))
   }
 
-  def debtTypePresent =  Action.async { implicit request =>
+  def debtTypePresent: Action[AnyContent]=  Action.async { implicit request =>
     val form = createDebtTypeForm
     Future.successful(Ok(debt_type.render(form, request)))
   }
 
-  def debtTypeSubmit = Action.async { implicit request =>
+  def debtTypeSubmit: Action[AnyContent] = Action.async { implicit request =>
     val form = createDebtTypeForm.bindFromRequest()
     if (form.hasErrors) {
       Future.successful(Ok(debt_type.render(form, request)))
@@ -62,12 +62,12 @@ object EligibilityController extends FrontendController{
     }
   }
 
-  def existingTtpPresent =  Action.async { implicit request =>
+  def existingTtpPresent: Action[AnyContent] =  Action.async { implicit request =>
     val form = createExistingTtpForm
     Future.successful(Ok(existing_ttp.render(form, request)))
   }
 
-  def existingTtpSubmit = Action.async { implicit request =>
+  def existingTtpSubmit: Action[AnyContent] = Action.async { implicit request =>
     val form = createExistingTtpForm.bindFromRequest()
     Future.successful(Ok(existing_ttp.render(form, request)))
   }
