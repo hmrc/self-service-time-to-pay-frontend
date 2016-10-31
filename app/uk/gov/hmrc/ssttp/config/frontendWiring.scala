@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package config
+package uk.gov.hmrc.ssttp.config
 
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig

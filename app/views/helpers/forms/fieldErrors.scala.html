@@ -1,0 +1,12 @@
+
+@*
+Dispay the errors for given field
+
+    @param theForm: Form[_] The form to display errors from 
+    @param theField: String If specified show only the errors for this field/group name
+    @param args options arguments for the template
+*@
+@(field:Field, args:(Symbol, String)*)
+@import views.html.helpers.forms.errorList
+@errorList(field.errors.map { m => (m.key,  Messages(m.message)) }, '_fieldId -> field.id)
+

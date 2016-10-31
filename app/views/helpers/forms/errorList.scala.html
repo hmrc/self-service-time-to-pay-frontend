@@ -1,0 +1,18 @@
+@*
+Format a list of error messages for the given list
+
+    @param errors Seq[String] of error messages
+    @param args options arguments for the template
+      '_modifierClass -> String additional classes to be added to each error message
+      '_fieldId       -> If specified adds a data-input-name and id prefix to the error itmes
+                          If more than one errors are given then they will also have an index number appended to the prefix
+*@
+@(errors:Seq[(String, String)], args:(Symbol, Any)*)
+@import views.html.helpers.forms.errorInline
+@argsMap = @{args.toMap}
+@Html(errors.map { e => {
+  val id = argsMap.get('_fieldId).getOrElse("").asInstanceOf[String]
+  val key = e._1 + (if(errors.length>1) ("-" + errors.indexOf(e)) else "")
+  var classes:Seq[String] = if(argsMap.contains('_modifierClass)) argsMap.get('_modifierClass).getOrElse("").toString.split(" ") else Seq.empty
+  errorInline(id, key, e._2, classes)
+}}.mkString(""))

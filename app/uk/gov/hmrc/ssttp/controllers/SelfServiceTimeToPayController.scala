@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package uk.gov.hmrc.ssttp.controllers
 
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -23,26 +23,19 @@ import scala.concurrent.Future
 
 object SelfServiceTimeToPayController extends FrontendController{
 
-/*  def fetchTotalLiability() = Action.async { implicit request =>
-    val isEligible = request.getQueryString("isEligible").equals(Some(s"selected"))
-    connectors.SSTTPConnector.totalLiability(isEligible).map{ p =>
-    Ok(liability_result(p.value))
-    }
-  }
-*/
-  def present = Action.async { implicit request =>
+  def present: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(service_start.render(request)))
   }
 
-  def submit = Action.async { implicit request =>
-    Future.successful(Redirect(routes.SelfServiceTimeToPayController.present()))
+  def submit: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Redirect(routes.EligibilityController.present()))
   }
 
-  def ttpCallUs =  Action.async { implicit request =>
+  def ttpCallUs: Action[AnyContent] =  Action.async { implicit request =>
     Future.successful(Ok(ttp_call_us.render(request)))
   }
 
-  def ssttpCallUs = Action.async { implicit request =>
+  def ssttpCallUs: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(ssttp_call_us.render(request)))
   }
 

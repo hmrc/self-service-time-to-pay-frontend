@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package uk.gov.hmrc.ssttp.controllers
 
 import org.scalatest.mock.MockitoSugar
 import play.api.mvc.Result
-import play.api.test.{FakeApplication, FakeRequest, Helpers}
+import play.api.test.{FakeApplication, FakeRequest}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 import scala.concurrent.Future

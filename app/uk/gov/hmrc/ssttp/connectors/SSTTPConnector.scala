@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package connectors
+package uk.gov.hmrc.ssttp.connectors
 
-import config.WSHttp
-import model.{LiabilityResult}
+import uk.gov.hmrc.ssttp.config.WSHttp
 import play.api.Logger
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http._
@@ -28,11 +27,11 @@ object SSTTPConnector extends ServicesConfig {
 
   val http: HttpGet with HttpPost = WSHttp
 
-  def totalLiability(isEligible : Boolean) (implicit hc : HeaderCarrier) : Future[LiabilityResult] = {
+ /* def totalLiability(isEligible : Boolean) (implicit hc : HeaderCarrier) : Future[LiabilityResult] = {
     Logger.info("Calling the GET Liability - :)")
     http.GET[LiabilityResult](url(s"/ssttp/total-liability?eligible=" + isEligible))
   }
-
+*/
   private def url(path: String) = baseUrl("self-service-time-to-pay") + path
 }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package config
+package uk.gov.hmrc.ssttp.config
 
 import play.api.Play.{configuration, current}
 import uk.gov.hmrc.play.config.ServicesConfig

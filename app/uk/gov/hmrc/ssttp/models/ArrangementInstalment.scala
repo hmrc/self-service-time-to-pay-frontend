@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-package model
+package uk.gov.hmrc.ssttp.models
 
-import play.api.libs.json.Json
+import java.time.LocalDate
 
-/**
-  * Created by byronprentice on 22/02/2016.
-  */
-case class LiabilityResult(value: String)
-
-  object LiabilityResult {
-    implicit val formats = Json.format[LiabilityResult]
-  }
+case class ArrangementInstalment(paymentDate:LocalDate, amount:BigDecimal)
