@@ -16,14 +16,9 @@
 
 package uk.gov.hmrc.ssttp.models
 
-import play.api.libs.json.Json
-
 case class DirectDebitInstructionPaymentPlan(processingDate: String, acknowledgementId: String, directDebitInstruction: List[DirectDebitInstruction],
                                              paymentPlan: List[DirectDebitPaymentPlan])
 
 case class DirectDebitPaymentPlan(ppReferenceNo: String)
 
-object DirectDebitInstructionPaymentPlan {
-  implicit val directDebitPaymentPlanFormat = Json.format[DirectDebitPaymentPlan]
-  implicit val directDebitInstructionPaymentPlanFormat = Json.format[DirectDebitInstructionPaymentPlan]
-}
+object DirectDebitInstructionPaymentPlan

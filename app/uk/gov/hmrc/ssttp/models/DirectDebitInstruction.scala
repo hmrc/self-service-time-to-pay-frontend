@@ -16,12 +16,9 @@
 
 package uk.gov.hmrc.ssttp.models
 
-import org.joda.time.LocalDate
-import play.api.libs.json.Json
+import java.time.LocalDate
 
 case class DirectDebitInstruction(sortCode: Option[String], accountNumber: Option[String],
                                   referenceNumber: Option[String], creationDate: Option[LocalDate], ddiReferenceNo: Option[String])
 
-object DirectDebitInstruction {
-  implicit val directDebitInstructionFormat = Json.format[DirectDebitInstruction]
-}
+object DirectDebitInstruction

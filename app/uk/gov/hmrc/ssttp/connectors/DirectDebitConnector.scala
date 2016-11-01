@@ -21,9 +21,11 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import uk.gov.hmrc.ssttp.config.WSHttp
 import uk.gov.hmrc.ssttp.models.{DirectDebitBank, DirectDebitInstructionPaymentPlan}
+import uk.gov.hmrc.ssttp.modelsFormat._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+
 
 object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
   val directDebitURL = baseUrl("direct-debit")
