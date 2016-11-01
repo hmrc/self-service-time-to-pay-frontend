@@ -21,18 +21,16 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
-import play.api.libs.json.Json
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.ssttp.config.WSHttp
 import uk.gov.hmrc.ssttp.models.{DirectDebitBank, DirectDebitInstructionPaymentPlan}
+import uk.gov.hmrc.ssttp.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.io.Source
-
 
 class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication {
 
@@ -58,12 +56,9 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
   }
 
   "Calling getBanksList" should {
-    val jsonFile = Source.fromFile(s"test/uk/gov/hmrc/ssttp/resources/GetBanksResponse.json").mkString
-    val responseJSON = Json.parse(jsonFile)
+    "return DirectDebitBank" in {
 
-    "Return DirectDebitBank" in {
-
-      val response = HttpResponse(Status.OK, Some(responseJSON))
+      val response = HttpResponse(Status.OK, Some(getBanksResponseJSON))
 
       when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
 
@@ -75,18 +70,16 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
         r match {
           case directDebitBanks: DirectDebitBank =>
             directDebitBanks.processingDate shouldBe "2001-12-17T09:30:47Z"
-            directDebitBanks.directDebitInstruction.head.sortCode.get shouldBe "123456"
+            directDebitBanks.directDebitInstruction.head.sortCode shouldBe Some("123456")
+            directDebitBanks.directDebitInstruction.head.ddiReferenceNo shouldBe None
         }
       }
     }
   }
 
   "Calling getInstructionPaymentPlan" should {
-    val jsonFile = Source.fromFile(s"test/uk/gov/hmrc/ssttp/resources/GetDirectDebitInstructionPaymentPlanResponse.json").mkString
-    val responseJSON = Json.parse(jsonFile)
-
-    "Return DirectDebitInstructionPaymentPlan" in {
-      val response = HttpResponse(Status.OK, Some(responseJSON))
+    "return DirectDebitInstructionPaymentPlan" in {
+      val response = HttpResponse(Status.OK, Some(getInstructionPaymentResponseJSON))
 
       when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
 
@@ -98,7 +91,7 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
         r match {
           case directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan =>
             directDebitInstructionPaymentPlan.processingDate shouldBe "2001-12-17T09:30:47Z"
-            directDebitInstructionPaymentPlan.directDebitInstruction.head.ddiReferenceNo.get shouldBe "ABCDabcd1234"
+            directDebitInstructionPaymentPlan.directDebitInstruction.head.ddiReferenceNo shouldBe Some("ABCDabcd1234")
             directDebitInstructionPaymentPlan.paymentPlan.head.ppReferenceNo shouldBe "abcdefghij1234567890"
         }
       }
