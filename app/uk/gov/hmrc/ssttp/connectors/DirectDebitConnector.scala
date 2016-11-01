@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ssttp.connectors
 
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import uk.gov.hmrc.ssttp.config.WSHttp
@@ -36,8 +37,8 @@ trait DirectDebitConnector {
   val serviceURL: String
   val http: HttpGet
 
-  def getBanksList()(implicit hc: HeaderCarrier): Future[DirectDebitBank] = {
-    http.GET[HttpResponse](s"$directDebitURL/$serviceURL/banks").map { response =>
+  def getBanksList(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitBank] = {
+    http.GET[HttpResponse](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response =>
       response.json.as[DirectDebitBank]
     }
   }

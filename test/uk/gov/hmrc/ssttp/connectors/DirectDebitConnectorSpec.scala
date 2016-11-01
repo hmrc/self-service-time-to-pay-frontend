@@ -21,6 +21,7 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
@@ -62,8 +63,9 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
 
       when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
 
+      val saUtr = new SaUtr("test")
       val hc = new HeaderCarrier()
-      val result = testConnector.getBanksList()(hc)
+      val result = testConnector.getBanksList(saUtr)(hc)
 
       ScalaFutures.whenReady(result) { r =>
         r shouldBe a[DirectDebitBank]
