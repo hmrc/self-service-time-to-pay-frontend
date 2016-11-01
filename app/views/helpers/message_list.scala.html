@@ -18,12 +18,13 @@
             <li>Item 3</li>
         </ul>
 *@
-@(modifierClass: Option[String], messagePrefix: String)
+@(modifierClass: Option[String], messagePrefix: String, args: (Symbol, String)*)
 @import play.api.Play.current
+@argsMap = @{ args.toMap }
 @if(Messages.messages.get("default").isDefined) {
     <ul@if(modifierClass.isDefined){ class="@modifierClass.get"}>
     @for(message <- Messages.messages.get("default").get.filterKeys(_.startsWith(messagePrefix)).keys.toSeq.sorted) {
-        <li>@Messages(message)</li>
+        <li@if(argsMap.get('_itemClass).isDefined){ class="@argsMap.get('_itemClass)"}>@Messages(message)</li>
     }
     </ul>
 }

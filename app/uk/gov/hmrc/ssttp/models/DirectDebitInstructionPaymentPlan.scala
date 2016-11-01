@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.ssttp.models
 
-import java.time.LocalDate
+case class DirectDebitInstructionPaymentPlan(processingDate: String, acknowledgementId: String, directDebitInstruction: List[DirectDebitInstruction],
+                                             paymentPlan: List[DirectDebitPaymentPlan])
 
-case class ArrangementInstalment(paymentDate:LocalDate, amount:BigDecimal)
+case class DirectDebitPaymentPlan(ppReferenceNo: String)
+
+object DirectDebitInstructionPaymentPlan

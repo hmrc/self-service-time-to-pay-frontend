@@ -16,4 +16,23 @@
 
 package uk.gov.hmrc.ssttp.models
 
-case class ArrangementDirectDebit(accountHolderName:String, sortCode1:Int, sortCode2:Int, sortCode3:Int, accountNumber:Long, confirmed: Option[Boolean])
+import org.scalatest.mock.MockitoSugar
+import uk.gov.hmrc.play.test.UnitSpec
+
+class CalculatorAmountsDueSpec extends UnitSpec with MockitoSugar {
+
+  "AmountsDue" should {
+    "create with one mock amount in a seq" in {
+      val cad = CalculatorAmountsDue(Seq(mock[CalculatorAmountDue]))
+      cad shouldNot be (null)
+      cad.amountsDue.length should be(1)
+    }
+
+    "create with two mock amounts in a seq" in {
+      val cad = CalculatorAmountsDue(Seq(mock[CalculatorAmountDue], mock[CalculatorAmountDue]))
+      cad shouldNot be (null)
+      cad.amountsDue.length should be(2)
+    }
+
+  }
+}

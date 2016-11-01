@@ -1,0 +1,59 @@
+@*
+Time To Pay Instalment Summary Display Page
+
+@param schedule PaymentSchedule The results data to display
+
+*@
+@import uk.gov.hmrc.ssttp.models.CalculatorPaymentSchedule
+@(schedule:CalculatorPaymentSchedule)(implicit request: Request[_])
+@import helpers.highlight
+@import helpers.alert
+@import helpers.message_list
+@views.html.main(
+  title = Messages("ssttp.common.title"),
+  bodyClasses = None
+){
+    <h1 style="heading-h1">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
+    <section class="section">
+        <div class="subsection grid-layout">
+            <div class="grid-layout__column grid-layout__column--1-2">
+                @Messages("ssttp.arrangement.instalment-summary.initial-payment-of")
+                <div class="form-hint form-hint--small">@Messages("ssttp.arrangement.instalment-summary.initial-payment.hint", 5)</div>
+            </div>
+            <div class="grid-layout__column grid-layout__column--1-2">
+                <strong>@Messages("ssttp.common.currency.symbol")@schedule.initialPayment</strong>
+            </div>
+        </div>
+        <div class="subsection grid-layout divider--bottom">
+            <div class="grid-layout__column grid-layout__column--1-2">
+                <strong>@schedule.instalments.length</strong> @Messages("ssttp.arrangement.instalment-summary.monthly-instalments")
+            </div>
+            <div class="grid-layout__column grid-layout__column--1-2">
+                <strong>@Messages("ssttp.common.currency.symbol")@schedule.instalments.head.amount</strong>
+            </div>
+        </div>
+        <div class="subsection grid-layout">
+            <div class="grid-layout__column grid-layout__column--1-2">
+                @Messages("ssttp.arrangement.instalment-summary.total-repayment")
+            </div>
+            <div class="grid-layout__column grid-layout__column--1-2">
+                <strong>@Messages("ssttp.common.currency.symbol")@schedule.totalPayable</strong>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on") <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth)</strong> @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
+    </section>
+    <section class="section">
+        @highlight('_modifierClass -> "highlight-message--light") {
+            <p>@Messages("ssttp.arrangement.instalment-summary.terms.warning")</p>
+        }
+        @alert('_modifierClass -> "alert--info alert--info__light") {
+            @Messages("ssttp.arrangement.instalment-summary.terms.cancelled-if")
+            @message_list(Some("bullets"), "ssttp.arrangement.instalment-summary.terms.cancelled-if.")
+            <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.made-payable-immidiately")</div>
+            <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
+        }
+    </section>
+}
+

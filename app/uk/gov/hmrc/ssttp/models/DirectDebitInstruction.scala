@@ -16,4 +16,9 @@
 
 package uk.gov.hmrc.ssttp.models
 
-case class ArrangementDirectDebit(accountHolderName:String, sortCode1:Int, sortCode2:Int, sortCode3:Int, accountNumber:Long, confirmed: Option[Boolean])
+import java.time.LocalDate
+
+case class DirectDebitInstruction(sortCode: Option[String], accountNumber: Option[String],
+                                  referenceNumber: Option[String], creationDate: Option[LocalDate], ddiReferenceNo: Option[String])
+
+object DirectDebitInstruction

@@ -16,4 +16,6 @@
 
 package uk.gov.hmrc.ssttp.models
 
-case class ArrangementDirectDebit(accountHolderName:String, sortCode1:Int, sortCode2:Int, sortCode3:Int, accountNumber:Long, confirmed: Option[Boolean])
+case class DirectDebitBank(processingDate: String, directDebitInstruction: List[DirectDebitInstruction])
+
+object DirectDebitBank

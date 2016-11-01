@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ssttp.models
+package uk.gov.hmrc.ssttp
 
-case class ArrangementPaymentSchedule(initialPayment: BigDecimal, amountToPay:BigDecimal, instalmentBalance:BigDecimal,
-                                      totalInterestCharged:BigDecimal, totalPayable:BigDecimal, instalments:Seq[ArrangementInstalment])
+import play.api.libs.json.Json
+
+import scala.io.Source
+
+package object resources {
+  val getBanksResponseJSON = Json.parse(Source.fromFile(s"test/uk/gov/hmrc/ssttp/resources/GetBanksResponse.json").mkString)
+  val getInstructionPaymentResponseJSON = Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/ssttp/resources/GetDirectDebitInstructionPaymentPlanResponse.json")
+      .mkString)
+}

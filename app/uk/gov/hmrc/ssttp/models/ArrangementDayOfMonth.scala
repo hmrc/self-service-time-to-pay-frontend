@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.ssttp.models
 
-case class ArrangementDayOfMonth(dayOfMonth: Integer)
+case class ArrangementDayOfMonth(dayOfMonth: Int)

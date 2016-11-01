@@ -1,0 +1,16 @@
+@*
+Time To Pay Application Complete
+
+@param schedule PaymentSchedule The results data to display
+
+*@
+@()(implicit request: Request[_])
+16
+@views.html.main(
+  title = Messages("ssttp.common.title"),
+  bodyClasses = None,
+  sidebarLinks = Some(ssttp.sidebar())
+){
+  <h1 style="heading-h1">@Messages("ssttp.arrangement.application-complete.title")</h1>
+}
+

@@ -149,6 +149,29 @@ ssttp.arrangement.instalment-summary.terms.future-debts=This plan doesn’t cove
 ssttp.arrangement.instalment-summary.submit=Agree and continue
 
 
+ssttp.arrangement.direct-debit.form.title=Set up a direct debit
+ssttp.arrangement.direct-debit.form.bank-details=Please enter your banking details
+
+ssttp.arrangement.direct-debit.form.accountName=Name of account holder
+ssttp.arrangement.direct-debit.form.sortCode=Sort code
+ssttp.arrangement.direct-debit.form.accountNumber=Account number
+
+ssttp.arrangement.direct-debit.form.confirmation.header=I confirm that:
+ssttp.arrangement.direct-debit.form.confirmation.list.1=I have the authority to set up a Direct Debit against this account
+ssttp.arrangement.direct-debit.form.confirmation.list.2=I am the only person to have this authority
+ssttp.arrangement.direct-debit.form.confirmation.list.3=This account does not require dual signatories
+
+ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
+ssttp.arrangement.direct-debit.form.submit=Continue
+
+ssttp.arrangement.direct-debit.form.guarantee.title=Direct Debit Guarantee
+ssttp.arrangement.direct-debit.form.guarantee.list.1=This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
+ssttp.arrangement.direct-debit.form.guarantee.list.2=I there are any changes to the amount, date or frequency of your Direct Debit HM Revenue & Customs (HMRC) will notify you 10 working days in advance of your account being debited or as otherwise agreed. If you request HMRC to collect a payment, confirmation of the amount and date will be given to you at the time of the request.
+ssttp.arrangement.direct-debit.form.guarantee.list.3=If an error is made in the payment of your Direct Debit, by HMRC or your bank or building society, you are entitled to a full immediate refund of the amount paid from your bank or building society.
+ssttp.arrangement.direct-debit.form.guarantee.list.4=If you receive a refund you are not entitled to, you must pay it back when HMRC asks you to.
+ssttp.arrangement.direct-debit.form.guarantee.list.5=You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please notify us.
+
+
 #global errors
 global.error.400.title=Bad request - 400
 global.error.400.heading=Bad request

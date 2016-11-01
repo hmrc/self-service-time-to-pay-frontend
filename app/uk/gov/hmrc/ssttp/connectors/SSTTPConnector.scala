@@ -16,22 +16,19 @@
 
 package uk.gov.hmrc.ssttp.connectors
 
-import uk.gov.hmrc.ssttp.config.WSHttp
-import play.api.Logger
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http._
-
-import scala.concurrent.Future
+import uk.gov.hmrc.ssttp.config.WSHttp
 
 object SSTTPConnector extends ServicesConfig {
 
   val http: HttpGet with HttpPost = WSHttp
 
- /* def totalLiability(isEligible : Boolean) (implicit hc : HeaderCarrier) : Future[LiabilityResult] = {
-    Logger.info("Calling the GET Liability - :)")
-    http.GET[LiabilityResult](url(s"/ssttp/total-liability?eligible=" + isEligible))
-  }
-*/
+  /* def totalLiability(isEligible : Boolean) (implicit hc : HeaderCarrier) : Future[LiabilityResult] = {
+     Logger.info("Calling the GET Liability - :)")
+     http.GET[LiabilityResult](url(s"/ssttp/total-liability?eligible=" + isEligible))
+   }
+ */
   private def url(path: String) = baseUrl("self-service-time-to-pay") + path
 }
 
