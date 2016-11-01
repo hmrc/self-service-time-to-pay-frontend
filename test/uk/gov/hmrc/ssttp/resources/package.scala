@@ -16,7 +16,12 @@
 
 package uk.gov.hmrc.ssttp
 
+import java.math.BigDecimal
+import java.time.LocalDate
+
 import play.api.libs.json.Json
+import uk.gov.hmrc.ssttp.models._
+import uk.gov.hmrc.ssttp.modelsFormat._
 
 import scala.io.Source
 
@@ -25,4 +30,7 @@ package object resources {
   val getInstructionPaymentResponseJSON = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/ssttp/resources/GetDirectDebitInstructionPaymentPlanResponse.json")
       .mkString)
+  val getArrangementResponseJson = Json.parse(Source.fromFile(s"test/uk/gov/hmrc/ssttp/resources/GetArrangementResponse.json").mkString)
+  val submitArrangementResponse = Json.fromJson[TTPArrangement](Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/ssttp/resources/GetArrangementResponse.json").mkString)).get
 }

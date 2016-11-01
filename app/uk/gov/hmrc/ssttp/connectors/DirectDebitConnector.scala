@@ -34,7 +34,6 @@ object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
 }
 
 trait DirectDebitConnector {
-
   val directDebitURL: String
   val serviceURL: String
   val http: HttpGet
@@ -51,5 +50,4 @@ trait DirectDebitConnector {
       response.json.as[DirectDebitInstructionPaymentPlan]
     }
   }
-
 }

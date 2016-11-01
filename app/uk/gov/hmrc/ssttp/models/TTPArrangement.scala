@@ -18,5 +18,9 @@ package uk.gov.hmrc.ssttp.models
 
 import java.time.LocalDate
 
-case class CalculatorPaymentSchedule(startDate: LocalDate, endDate: LocalDate, initialPayment: BigDecimal, amountToPay:BigDecimal, instalmentBalance:BigDecimal,
-                                     totalInterestCharged:BigDecimal, totalPayable:BigDecimal, instalments:Seq[CalculatorPaymentScheduleInstalment])
+case class TTPArrangement(identifier: Option[String],
+                          createdOn: Option[LocalDate],
+                          paymentPlanReference: String,
+                          directDebitReference: String,
+                          taxpayer: TTPTaxPayer,
+                          schedule: CalculatorPaymentSchedule)
