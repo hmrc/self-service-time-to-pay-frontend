@@ -30,7 +30,6 @@ package object resources {
   val getInstructionPaymentResponseJSON = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/ssttp/resources/GetDirectDebitInstructionPaymentPlanResponse.json")
       .mkString)
-  val getArrangementResponseJson = Json.parse(Source.fromFile(s"test/uk/gov/hmrc/ssttp/resources/GetArrangementResponse.json").mkString)
   val submitArrangementResponse = Json.fromJson[TTPArrangement](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/ssttp/resources/GetArrangementResponse.json").mkString)).get
 }
