@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import play.api.http.Status
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpPost, HttpResponse}
@@ -42,7 +42,7 @@ trait ArrangementConnector {
     val requestJson = Json.toJson(ttpArrangement)
     http.POST[JsValue, HttpResponse](s"$arrangementURL/$serviceURL", requestJson).map { response =>
       response.status match {
-        case Status.CREATED => response
+        case CREATED => response
         case _ => response
       }
     }

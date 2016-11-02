@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import play.api.http.Status._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
@@ -39,7 +40,9 @@ trait DirectDebitConnector {
 
   def getBanksList(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitBank] = {
     http.GET[HttpResponse](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response =>
-      response.json.as[DirectDebitBank]
+      response.status match {
+        case OK => response.json.as[DirectDebitBank]
+      }
     }
   }
 

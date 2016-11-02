@@ -20,7 +20,7 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import play.api.http.Status
+import play.api.http.Status._
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSHttp
@@ -56,25 +56,14 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
 
   "Calling submitArrangements" should {
     "return 201 created response" in {
-      val response = HttpResponse(Status.CREATED)
+      val response = HttpResponse(CREATED)
       when(testConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
 
       val result = testConnector.submitArrangements(submitArrangementResponse)
 
       ScalaFutures.whenReady(result) { r =>
         r shouldBe a[HttpResponse]
-        r.status shouldBe Status.CREATED
-      }
-    }
-    "return 401 unauthorized" in {
-      val response = HttpResponse(Status.UNAUTHORIZED)
-      when(testConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
-
-      val result = testConnector.submitArrangements(submitArrangementResponse)
-
-      ScalaFutures.whenReady(result) { r =>
-        r shouldBe a[HttpResponse]
-        r.status shouldBe Status.UNAUTHORIZED
+        r.status shouldBe CREATED
       }
     }
   }
