@@ -16,59 +16,17 @@
 
 package uk.gov.hmrc.ssttp.controllers
 
-import java.math.BigDecimal
-import java.time.LocalDate
-
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.ssttp.controllerVariables._
 import uk.gov.hmrc.ssttp.models._
 import views.html.arrangement._
 
 import scala.concurrent.Future
 
 object ArrangementController extends FrontendController {
-  //temp data for development
-  private val formAmountsDue = CalculatorAmountsDue(Seq(
-    CalculatorAmountDue(new BigDecimal("200.00"), 2010, "January", 20),
-    CalculatorAmountDue(new BigDecimal("100.00"), 2014, "December", 1)
-  ))
-
-  private val paymentSchedules = Seq(
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
-      new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("300.00"))
-      )
-    ),
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
-      new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("300.00"))
-      )
-    ),
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
-      new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 4, 1), new BigDecimal("300.00"))
-      )
-    ),
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
-      new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 4, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 5, 1), new BigDecimal("300.00"))
-      )
-    )
-  )
-  // end
-
 
   private def createDirectDebitForm:Form[ArrangementDirectDebit] = {
     Form(mapping(

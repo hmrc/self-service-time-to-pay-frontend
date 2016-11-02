@@ -46,7 +46,7 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
 
   "DirectDebitConnector" should {
     "use the correct direct-debit URL" in {
-      DirectDebitConnector.directDebitURL shouldBe "http://localhost:9876"
+      DirectDebitConnector.directDebitURL shouldBe "http://localhost:9854"
     }
     "use the correct service URL" in {
       DirectDebitConnector.serviceURL shouldBe "direct-debits"
@@ -64,8 +64,7 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
 
       val saUtr = new SaUtr("test")
-      val hc = new HeaderCarrier()
-      val result = testConnector.getBanksList(saUtr)(hc)
+      val result = testConnector.getBanksList(saUtr)
 
       ScalaFutures.whenReady(result) { r =>
         r shouldBe a[DirectDebitBank]
@@ -82,11 +81,9 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
   "Calling getInstructionPaymentPlan" should {
     "return DirectDebitInstructionPaymentPlan" in {
       val response = HttpResponse(Status.OK, Some(getInstructionPaymentResponseJSON))
-
       when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
 
-      val hc = new HeaderCarrier()
-      val result = testConnector.getInstructionPaymentPlan()(hc)
+      val result = testConnector.getInstructionPaymentPlan()
 
       ScalaFutures.whenReady(result) { r =>
         r shouldBe a[DirectDebitInstructionPaymentPlan]
