@@ -1,0 +1,409 @@
+[
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 22.91,
+    "totalPayable": 5022.91,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 2486.45
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 2486.45
+      }
+    ]
+  },
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 34.18,
+    "totalPayable": 5034.18,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 1661.39
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 1661.39
+      },
+      {
+        "paymentDate": "2016-12-01",
+        "amount": 1661.39
+      }
+    ]
+  },
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 45.83,
+    "totalPayable": 5045.83,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 1248.95
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 1248.95
+      },
+      {
+        "paymentDate": "2016-12-01",
+        "amount": 1248.95
+      },
+      {
+        "paymentDate": "2017-01-01",
+        "amount": 1248.95
+      }
+    ]
+  },
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 57.5,
+    "totalPayable": 5057.5,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 1001.5
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 1001.5
+      },
+      {
+        "paymentDate": "2016-12-01",
+        "amount": 1001.5
+      },
+      {
+        "paymentDate": "2017-01-01",
+        "amount": 1001.5
+      },
+      {
+        "paymentDate": "2017-02-01",
+        "amount": 1001.5
+      }
+    ]
+  },
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 68.05,
+    "totalPayable": 5068.05,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 836.34
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 836.34
+      },
+      {
+        "paymentDate": "2016-12-01",
+        "amount": 836.34
+      },
+      {
+        "paymentDate": "2017-01-01",
+        "amount": 836.34
+      },
+      {
+        "paymentDate": "2017-02-01",
+        "amount": 836.34
+      },
+      {
+        "paymentDate": "2017-03-01",
+        "amount": 836.34
+      }
+    ]
+  },
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 79.73,
+    "totalPayable": 5079.73,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 718.53
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 718.53
+      },
+      {
+        "paymentDate": "2016-12-01",
+        "amount": 718.53
+      },
+      {
+        "paymentDate": "2017-01-01",
+        "amount": 718.53
+      },
+      {
+        "paymentDate": "2017-02-01",
+        "amount": 718.53
+      },
+      {
+        "paymentDate": "2017-03-01",
+        "amount": 718.53
+      },
+      {
+        "paymentDate": "2017-04-01",
+        "amount": 718.53
+      }
+    ]
+  },
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 91.03,
+    "totalPayable": 5091.03,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 630.12
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 630.12
+      },
+      {
+        "paymentDate": "2016-12-01",
+        "amount": 630.12
+      },
+      {
+        "paymentDate": "2017-01-01",
+        "amount": 630.12
+      },
+      {
+        "paymentDate": "2017-02-01",
+        "amount": 630.12
+      },
+      {
+        "paymentDate": "2017-03-01",
+        "amount": 630.12
+      },
+      {
+        "paymentDate": "2017-04-01",
+        "amount": 630.12
+      },
+      {
+        "paymentDate": "2017-05-01",
+        "amount": 630.12
+      }
+    ]
+  },
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 102.71,
+    "totalPayable": 5102.71,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 561.41
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 561.41
+      },
+      {
+        "paymentDate": "2016-12-01",
+        "amount": 561.41
+      },
+      {
+        "paymentDate": "2017-01-01",
+        "amount": 561.41
+      },
+      {
+        "paymentDate": "2017-02-01",
+        "amount": 561.41
+      },
+      {
+        "paymentDate": "2017-03-01",
+        "amount": 561.41
+      },
+      {
+        "paymentDate": "2017-04-01",
+        "amount": 561.41
+      },
+      {
+        "paymentDate": "2017-05-01",
+        "amount": 561.41
+      },
+      {
+        "paymentDate": "2017-06-01",
+        "amount": 561.41
+      }
+    ]
+  },
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 114.01,
+    "totalPayable": 5114.01,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 506.4
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 506.4
+      },
+      {
+        "paymentDate": "2016-12-01",
+        "amount": 506.4
+      },
+      {
+        "paymentDate": "2017-01-01",
+        "amount": 506.4
+      },
+      {
+        "paymentDate": "2017-02-01",
+        "amount": 506.4
+      },
+      {
+        "paymentDate": "2017-03-01",
+        "amount": 506.4
+      },
+      {
+        "paymentDate": "2017-04-01",
+        "amount": 506.4
+      },
+      {
+        "paymentDate": "2017-05-01",
+        "amount": 506.4
+      },
+      {
+        "paymentDate": "2017-06-01",
+        "amount": 506.4
+      },
+      {
+        "paymentDate": "2017-07-01",
+        "amount": 506.4
+      }
+    ]
+  },
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 125.69,
+    "totalPayable": 5125.69,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 461.42
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 461.42
+      },
+      {
+        "paymentDate": "2016-12-01",
+        "amount": 461.42
+      },
+      {
+        "paymentDate": "2017-01-01",
+        "amount": 461.42
+      },
+      {
+        "paymentDate": "2017-02-01",
+        "amount": 461.42
+      },
+      {
+        "paymentDate": "2017-03-01",
+        "amount": 461.42
+      },
+      {
+        "paymentDate": "2017-04-01",
+        "amount": 461.42
+      },
+      {
+        "paymentDate": "2017-05-01",
+        "amount": 461.42
+      },
+      {
+        "paymentDate": "2017-06-01",
+        "amount": 461.42
+      },
+      {
+        "paymentDate": "2017-07-01",
+        "amount": 461.42
+      },
+      {
+        "paymentDate": "2017-08-01",
+        "amount": 461.42
+      }
+    ]
+  },
+  {
+    "initialPayment": 50,
+    "amountToPay": 5000,
+    "instalmentBalance": 4950,
+    "totalInterestCharged": 137.37,
+    "totalPayable": 5137.37,
+    "instalments": [
+      {
+        "paymentDate": "2016-10-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2016-11-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2016-12-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2017-01-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2017-02-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2017-03-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2017-04-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2017-05-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2017-06-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2017-07-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2017-08-01",
+        "amount": 423.94
+      },
+      {
+        "paymentDate": "2017-09-01",
+        "amount": 423.94
+      }
+    ]
+  }
+]
