@@ -38,20 +38,12 @@ trait ArrangementConnector {
   val serviceURL: String
   val http: HttpGet with HttpPost
 
-  def getArrangements(arrangementIdentifier: String)(implicit hc: HeaderCarrier): Future[TTPArrangement] = {
-    http.GET[HttpResponse](s"$arrangementURL/$serviceURL/$arrangementIdentifier").map { response =>
-      response.status match {
-        case Status.OK => response.json.as[TTPArrangement]
-      }
-    }
-  }
-
   def submitArrangements(ttpArrangement: TTPArrangement)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val requestJson = Json.toJson(ttpArrangement)
     http.POST[JsValue, HttpResponse](s"$arrangementURL/$serviceURL", requestJson).map { response =>
       response.status match {
         case Status.CREATED => response
-        case Status.UNAUTHORIZED => response
+        case _ => response
       }
     }
   }

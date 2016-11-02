@@ -57,27 +57,6 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
     }
   }
 
-  "Calling getArrangements" should {
-    "return TTPArrangement" in {
-      val response = HttpResponse(Status.OK, Some(getArrangementResponseJson))
-      when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
-
-      val arrangementIdentifier = "test"
-      val result = testConnector.getArrangements(arrangementIdentifier)
-
-      ScalaFutures.whenReady(result) { r =>
-        r shouldBe a[TTPArrangement]
-        r match {
-          case ttpArrangement: TTPArrangement =>
-            ttpArrangement.createdOn shouldBe Some(LocalDate.parse("2016-08-09"))
-            ttpArrangement.schedule.amountToPay shouldBe BigDecimal("5000")
-            ttpArrangement.taxpayer.selfAssessment.debits.size shouldBe 1
-            ttpArrangement.taxpayer.selfAssessment.communicationPreferences.welshLanguageIndicator shouldBe false
-        }
-      }
-    }
-  }
-
   "Calling submitArrangements" should {
     "return 201 created response" in {
       val response = HttpResponse(Status.CREATED)

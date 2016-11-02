@@ -26,7 +26,6 @@ import uk.gov.hmrc.ssttp.modelsFormat._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-
 object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
   val directDebitURL = baseUrl("direct-debit")
   val serviceURL = "direct-debits"
