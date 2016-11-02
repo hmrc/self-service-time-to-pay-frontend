@@ -1,0 +1,55 @@
+@*
+Text input field using Component Library Styles as  documented:
+    Label: http://hmrc.github.io/assets-frontend/section-label.html
+    Input http://hmrc.github.io/assets-frontend/section-text-input.html
+
+    @param field Field The form field the input value represents
+    @param args options arguments for the template
+            '_label -> Text for the field label before the input
+            '_labelSuffix -> Text for the field label after the input
+            '_labelClass -> Label Modifier class
+            '_inputClass -> Modifier class for the input class, includes:
+                input--xxsmall, input--xsmall, input--small,  input--normal,
+                input--fullwidth, input--no-spinner, input--cleared,
+                input--link
+*@
+@(field: Field, args: (Symbol, Any)*)(implicit lang: Lang = Lang("en"))
+@import selfservicetimetopay.helpers.forms.fieldErrors
+@import selfservicetimetopay.helpers.labelWrap
+@import views.html.helper.FieldElements
+@argsMap = @{ args.toMap }
+@elements = @{ new FieldElements(field.id, field, null, argsMap, lang) }
+@value = @{ field.value match { case Some(x) => x case None => "" case x => x }}
+@wrapperClass = @{
+    var w = Seq.empty ++ argsMap.getOrElse('_labelClass, "").asInstanceOf[String].split(" ")
+    w = if (field.hasErrors) w :+ "form-field--error" else w
+    w.mkString(" ")
+}
+@inputClass = @{
+    var c:String = argsMap.getOrElse('_inputClass, "").asInstanceOf[String]
+    c = if(field.hasErrors) c + " error-field" else c
+    c.trim
+}
+@labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_modifierClass -> wrapperClass){
+    <input type="text"@if(inputClass.nonEmpty){ class="@inputClass" } name="@elements.field.name" id="@elements.field.name" value="@value"
+        @if( elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
+        @if( elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
+        @if(elements.args.get('_error_id).isDefined) { aria-labeledby="@elements.args.get('_error_id)" }
+        @if(elements.args.get('_hintId).isDefined) { aria-describedby="@elements.args.get('_hintId)" }
+        @if(elements.args.get('_maxlength).isDefined) { maxlength="@elements.args.get('_maxlength)" }
+        @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }
+        @if(elements.args.get('_pattern).isDefined) { pattern="@elements.args.get('_pattern)" }
+        @if(elements.args.get('_title).isDefined) { title="@elements.args.get('_title)" }
+        @if(elements.args.get('_required).isDefined) { required }
+        @if(elements.args.get('datalist).isDefined) { list="@{elements.field.name}_datalist" }
+    />
+    @argsMap.getOrElse('labelSuffix, "")
+    @if(elements.args.get('datalist).isDefined) {
+        <datalist id="@{elements.field.name}_datalist">
+            @elements.args.get('datalist).get.asInstanceOf[Seq[String]].map { v:String => <option value="@v"/>
+            }
+        </datalist>
+    }
+    @fieldErrors(field)
+}
+

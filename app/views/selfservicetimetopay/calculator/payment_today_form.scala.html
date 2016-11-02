@@ -1,0 +1,26 @@
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
+@(dataForm: Form[CalculatorPaymentToday])(implicit request: Request[_])
+@import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, submit}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@selfservicetimetopay.main(
+    title = Messages("ssttp.common.title"),
+    bodyClasses = None,
+    sidebarLinks = Some(selfservicetimetopay.ssttp.sidebar())
+){
+  <header class="page-header text">
+    <h1 class="h1-heading">@Messages("ssttp.calculator.form.payment_today.title")</h1>
+  </header>
+  @form(routes.CalculatorController.paymentTodaySubmit(), 'class -> "group") {
+    @formErrorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm, Seq.empty)
+    <p>
+      @currencyinput(dataForm("amount"),
+        'label -> Messages("ssttp.calculator.form.payment_today.amount.question"),
+        '_currencyClass -> "input-cleared",
+        '_inputClass -> "input--small input--no-spinner")
+    </p>
+    <p>
+      @submit(Messages("ssttp.calculator.form.continue"))
+    </p>
+  }
+  <p><a class="back-link" href="@routes.CalculatorController.amountsDuePresent()">@Messages("ssttp.calculator.form.back")</a></p>
+}
