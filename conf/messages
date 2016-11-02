@@ -96,6 +96,9 @@ ssttp.calculator.results.interest-info.list.3=if the interest rate changes durin
 
 ssttp.calculator.results.interest-info.warning=These calculations are based on the information you’ve provided. They may change depending on the current balance of your tax account.
 
+ssttp.calculator.results.sign-in=Sign in to your tax account to confirm this arrangement and set up a Direct Debit.
+ssttp.calculator.results.sign-in.link=Sign in
+
 ssttp.calculator.results.call-us.into=Alternatively you call us about this arrangement on:
 ssttp.calculator.results.call-us.number=0330 321 321
 
