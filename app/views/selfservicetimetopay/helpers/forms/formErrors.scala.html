@@ -1,0 +1,26 @@
+@*
+Dispay the errors for a whole form, or a specified field/group
+
+    @param theForm: Form[_] The form to display errors from 
+    @param theField: String If specified show only the errors for this field/group name
+    @param args options arguments for the template
+        '_id  -> Id indentifier for use with the errors
+*@
+@(theForm: Form[_], args:(Symbol, String)*)(implicit lang: Lang = Lang("en"))
+@import selfservicetimetopay.helpers.forms.errorList
+@{
+  val argsMap = args.toMap
+  val theField = argsMap.getOrElse('_field, "")
+  var errors:Seq[(String, String)] = Seq.empty
+  var id = if(theField.isEmpty) argsMap.getOrElse('_id, theForm.toString) else theField
+  if (theField.isEmpty && theForm.hasGlobalErrors) {
+    errors = errors ++ theForm.globalErrors.map { e:FormError => (id, e.message)}
+  }
+  else if (theForm.errors.contains(theField) && theForm.errors(theField).nonEmpty) {
+    errors = errors ++ theForm.errors(theField).map { e:FormError => (e.key, e.message)}
+  }
+  if (errors.nonEmpty) {
+    errorList(errors.map { case (k,m) => (k, Messages(m) )}, '_formId -> id)
+  }
+}
+
