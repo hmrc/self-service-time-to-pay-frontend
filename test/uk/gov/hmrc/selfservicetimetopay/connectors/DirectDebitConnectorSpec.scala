@@ -21,6 +21,7 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSHttp
@@ -40,7 +41,7 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
 
   object testConnector extends DirectDebitConnector {
     val directDebitURL = ""
-    val http = mock[HttpGet]
+    val http = mock[WSHttp]
     val serviceURL = "direct-debits"
   }
 
@@ -49,7 +50,7 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       DirectDebitConnector.directDebitURL shouldBe "http://localhost:9854"
     }
     "use the correct service URL" in {
-      DirectDebitConnector.serviceURL shouldBe "direct-debits"
+      DirectDebitConnector.serviceURL shouldBe "direct-debit"
     }
     "use the correct HTTP" in {
       DirectDebitConnector.http shouldBe WSHttp
@@ -78,12 +79,29 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
     }
   }
 
-  "Calling getInstructionPaymentPlan" should {
-    "return DirectDebitInstructionPaymentPlan" in {
-      val response = HttpResponse(Status.OK, Some(getInstructionPaymentResponseJSON))
+  "Calling validateBank" should {
+    "return a Boolean" in {
+      val jsonResponse = Json.toJson(true)
+      val response = HttpResponse(Status.OK, Some(jsonResponse))
+
       when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
 
-      val result = testConnector.getInstructionPaymentPlan()
+      val saUtr = new SaUtr("test")
+      val result = testConnector.validateBank(saUtr)
+
+      ScalaFutures.whenReady(result) { r =>
+        r shouldBe true
+      }
+    }
+  }
+
+  "Calling createPaymentPlan" should {
+    "return DirectDebitInstructionPaymentPlan" in {
+      val response = HttpResponse(Status.OK, Some(getInstructionPaymentResponseJSON))
+      when(testConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
+
+      val saUtr = SaUtr("test")
+      val result = testConnector.createPaymentPlan(saUtr)
 
       ScalaFutures.whenReady(result) { r =>
         r shouldBe a[DirectDebitInstructionPaymentPlan]

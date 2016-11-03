@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import java.time.LocalDate
-
-case class CalculatorPaymentSchedule(startDate: LocalDate, endDate: LocalDate, initialPayment: BigDecimal, amountToPay:BigDecimal, instalmentBalance:BigDecimal,
-                                     totalInterestCharged:BigDecimal, totalPayable:BigDecimal, instalments:Seq[CalculatorPaymentScheduleInstalment])
+case class CalculatorPaymentSchedule(initialPayment: BigDecimal,
+                                     amountToPay:BigDecimal,
+                                     instalmentBalance:BigDecimal,
+                                     totalInterestCharged:BigDecimal,
+                                     totalPayable:BigDecimal,
+                                     instalments:Seq[CalculatorPaymentScheduleInstalment])

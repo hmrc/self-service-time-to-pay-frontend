@@ -20,49 +20,57 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import play.api.http.Status._
+import play.api.http.Status
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication {
+class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication {
 
   implicit val headerCarrier = HeaderCarrier()
 
-  object testConnector extends ArrangementConnector {
-    val arrangementURL = ""
+  object testConnector extends CalculatorConnector {
+    val calculatorURL = ""
     val http = mock[WSHttp]
-    val serviceURL = "ttparrangements"
+    val serviceURL = "paymentSchedule"
   }
 
-  "ArrangementConnector" should {
-    "use the correct arrangements URL" in {
-      ArrangementConnector.arrangementURL shouldBe "http://localhost:8889"
+  "CalculatorConnector" should {
+    "use the correct calculator URL" in {
+      CalculatorConnector.calculatorURL shouldBe "http://localhost:8888"
     }
     "use the correct service URL" in {
-      ArrangementConnector.serviceURL shouldBe "ttparrangements"
+      CalculatorConnector.serviceURL shouldBe "paymentschedule"
     }
     "use the correct HTTP" in {
-      ArrangementConnector.http shouldBe WSHttp
+      CalculatorConnector.http shouldBe WSHttp
     }
   }
 
-  "Calling submitArrangements" should {
-    "return true" in {
-      val response = HttpResponse(CREATED)
+  "Calling submitLiabilities" should {
+    "return CalculatorPaymentSchedule" in {
+      val response = HttpResponse(Status.OK, Some(submitLiabilitiesResponse))
       when(testConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
 
-      val result = testConnector.submitArrangements(submitArrangementResponse)
+      val result = testConnector.submitLiabilities(submitLiabilitiesRequest)
 
       ScalaFutures.whenReady(result) { r =>
-        r shouldBe true
+        r shouldBe a[Some[List[CalculatorPaymentSchedule]]]
+        r match {
+          case paymentSchedule: Some[List[CalculatorPaymentSchedule]] =>
+            paymentSchedule.get.size shouldBe 11
+            paymentSchedule.get.head.initialPayment shouldBe BigDecimal("50")
+            paymentSchedule.get.head.amountToPay shouldBe BigDecimal("5000")
+            paymentSchedule.get.last.instalments.size shouldBe 12
+        }
       }
     }
   }

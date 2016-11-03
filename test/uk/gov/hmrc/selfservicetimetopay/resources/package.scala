@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.io.Source
@@ -29,4 +29,8 @@ package object resources {
       .mkString)
   val submitArrangementResponse = Json.fromJson[TTPArrangement](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetArrangementResponse.json").mkString)).get
+  val submitLiabilitiesRequest = Json.fromJson[CalculatorInput](Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesRequest.json").mkString)).get
+  val submitLiabilitiesResponse = Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesResponse.json").mkString)
 }
