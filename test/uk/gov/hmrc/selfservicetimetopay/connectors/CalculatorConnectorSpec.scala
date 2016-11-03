@@ -63,13 +63,13 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
       val result = testConnector.submitLiabilities(submitLiabilitiesRequest)
 
       ScalaFutures.whenReady(result) { r =>
-        r shouldBe a[List[CalculatorPaymentSchedule]]
+        r shouldBe a[Some[List[CalculatorPaymentSchedule]]]
         r match {
-          case paymentSchedule: List[CalculatorPaymentSchedule] =>
-            paymentSchedule.size shouldBe 11
-            paymentSchedule.head.initialPayment shouldBe BigDecimal("50")
-            paymentSchedule.head.amountToPay shouldBe BigDecimal("5000")
-            paymentSchedule.last.instalments.size shouldBe 12
+          case paymentSchedule: Some[List[CalculatorPaymentSchedule]] =>
+            paymentSchedule.get.size shouldBe 11
+            paymentSchedule.get.head.initialPayment shouldBe BigDecimal("50")
+            paymentSchedule.get.head.amountToPay shouldBe BigDecimal("5000")
+            paymentSchedule.get.last.instalments.size shouldBe 12
         }
       }
     }

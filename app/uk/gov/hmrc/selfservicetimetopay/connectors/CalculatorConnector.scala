@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -38,11 +39,14 @@ trait CalculatorConnector {
   val serviceURL: String
   val http: HttpPost
 
-  def submitLiabilities(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[List[CalculatorPaymentSchedule]] = {
+  def submitLiabilities(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[Option[List[CalculatorPaymentSchedule]]] = {
     val requestJson = Json.toJson(liabilities)
     http.POST[JsValue, HttpResponse](s"$calculatorURL/$serviceURL", requestJson).map { response =>
       response.status match {
-        case OK => response.json.as[List[CalculatorPaymentSchedule]]
+        case OK => Some(response.json.as[List[CalculatorPaymentSchedule]])
+        case _ =>
+          Logger.error("No payment schedule retrieved")
+          None
       }
     }
   }
