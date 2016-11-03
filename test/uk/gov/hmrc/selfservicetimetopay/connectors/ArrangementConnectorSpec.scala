@@ -55,15 +55,14 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
   }
 
   "Calling submitArrangements" should {
-    "return 201 created response" in {
+    "return true" in {
       val response = HttpResponse(CREATED)
       when(testConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
 
       val result = testConnector.submitArrangements(submitArrangementResponse)
 
       ScalaFutures.whenReady(result) { r =>
-        r shouldBe a[HttpResponse]
-        r.status shouldBe CREATED
+        r shouldBe true
       }
     }
   }
