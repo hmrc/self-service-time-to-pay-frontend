@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.arrangement._
-
+import uk.gov.hmrc.selfservicetimetopay.controllerVariables
 import scala.concurrent.Future
 
 object ArrangementController extends FrontendController {
@@ -45,14 +45,8 @@ object ArrangementController extends FrontendController {
     )(ArrangementDayOfMonth.apply)(ArrangementDayOfMonth.unapply))
   }
 
-  private def createDurationForm(min:Integer, max:Integer):Form[CalculatorDuration] = {
-    Form(mapping(
-      "months" -> number(min=min, max=max)
-    )(CalculatorDuration.apply)(CalculatorDuration.unapply))
-  }
-
   def present:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.ArrangementController.directDebitPresent()))
+    Future.successful(Redirect(routes.ArrangementController.scheduleSummaryPresent()))
   }
 
   def scheduleSummaryPresent:Action[AnyContent] = Action.async { implicit request =>
@@ -79,6 +73,14 @@ object ArrangementController extends FrontendController {
 
   def directDebitSubmit:Action[AnyContent] = Action.async {implicit request =>
     val form = createDirectDebitForm.bindFromRequest()
-    Future.successful(Ok(direct_debit_form.render(form, request) ) )
+    if(form.hasErrors) {
+      Future.successful(Ok(direct_debit_form.render(form, request)))
+    } else {
+      Future.successful(Redirect(routes.ArrangementController.applicationCompletePresent()))
+    }
+  }
+
+  def applicationCompletePresent:Action[AnyContent] = Action.async {implicit request =>
+    Future.successful(Ok(application_complete.render(paymentSchedules.last, request) ) )
   }
 }

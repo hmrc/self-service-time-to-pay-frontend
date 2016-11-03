@@ -63,6 +63,8 @@ object CalculatorController extends FrontendController {
     val form = createAmountDueForm.bindFromRequest()
     if (form.hasErrors) {
       Future.successful(Ok(amounts_due_form.render(formAmountsDue, form, request)))
+    } else if (form.get.amount.compare(BigDecimal("32.00")) < 0) {
+      Future.successful(Redirect(routes.SelfServiceTimeToPayController.youNeedToFilePresent()))
     } else {
       Future.successful(Redirect(routes.CalculatorController.paymentTodayPresent()))
     }

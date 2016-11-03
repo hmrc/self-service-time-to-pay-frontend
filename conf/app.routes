@@ -6,8 +6,6 @@
 GET    /                                uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.present()
 POST   /                                uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.submit()
 GET    /eligibility                     uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.present()
-GET    /eligibility/debt-type           uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.debtTypePresent()
-POST   /eligibility/debt-type           uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.debtTypeSubmit()
 GET    /eligibility/existing-ttp        uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.existingTtpPresent()
 POST   /eligibility/existing-ttp        uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.existingTtpSubmit()
 GET    /calculator                      uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.present()
@@ -24,9 +22,9 @@ POST   /arrangement/summary             uk.gov.hmrc.selfservicetimetopay.control
 POST   /arrangement/day-of-month        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.scheduleSummaryDayOfMonthSubmit()
 GET    /arrangement/direct-debit        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.directDebitPresent()
 POST   /arrangement/direct-debit        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.directDebitSubmit()
-#GET    /arrangement/complete            uk.gov.hmrc.ssttp.controllers.ArrangementController.applicationCompletePresent()
-GET    /ttp-call-us                     uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.ttpCallUs()
-GET    /ssttp-call-us                   uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.ssttpCallUs()
+GET    /arrangement/complete            uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationCompletePresent()
+GET    /you-need-to-file                uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.youNeedToFilePresent()
+GET    /ttp-call-us                     uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.ttpCallUsPresent()
 
 # Map static resources from the /public folder to the /assets URL path
 #GET     /assets/*file               uk.gov.hmrc.selfservicetimetopay.controllers.Assets.at(path="/public", file)

@@ -4,11 +4,12 @@ Time To Pay Application Complete
 @param schedule PaymentSchedule The results data to display
 
 *@
-@()(implicit request: Request[_])
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
+@(schedule:CalculatorPaymentSchedule)(implicit request: Request[_])
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
   bodyClasses = None,
-  sidebarLinks = Some(selfservicetimetopay.ssttp.sidebar())
+  sidebarLinks = Some(selfservicetimetopay.partials.sidebar())
 ){
   <h1 style="heading-h1">@Messages("ssttp.arrangement.application-complete.title")</h1>
 }
