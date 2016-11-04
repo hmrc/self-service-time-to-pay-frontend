@@ -1,0 +1,14 @@
+@()(implicit request: Request[_])
+@import selfservicetimetopay.partials.sidebar
+@selfservicetimetopay.main(
+    title = Messages("ssttp.common.title"),
+    bodyClasses = None,
+    sidebarLinks = Some(sidebar())
+){
+  <header class="page-header text">
+    <h1 class="h1-heading">@Messages("ssttp.you-need-to-file.title")</h1>
+  </header>
+  <div class="section">
+    <p class="subsection">@Messages("ssttp.you-need-to-file.intro")</p>
+  </div>
+}

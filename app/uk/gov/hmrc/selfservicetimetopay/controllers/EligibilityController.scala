@@ -27,13 +27,6 @@ import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityDebtType, Eligibility
 
 object EligibilityController extends FrontendController{
 
-  private def createDebtTypeForm: Form[EligibilityDebtType] = {
-    Form(mapping(
-      "hasSelfAssessmentDebt" -> boolean,
-      "hasOtherTaxDebt" -> boolean
-    )(EligibilityDebtType.apply)(EligibilityDebtType.unapply))
-  }
-
   private def createExistingTtpForm:Form[EligibilityExistingTTP] = {
     Form(mapping(
       "hasExistingTTP" -> optional(boolean).verifying(has => has.nonEmpty)
@@ -41,25 +34,7 @@ object EligibilityController extends FrontendController{
   }
 
   def present:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.EligibilityController.debtTypePresent()))
-  }
-
-  def debtTypePresent:Action[AnyContent] = Action.async { implicit request =>
-    val form = createDebtTypeForm
-    Future.successful(Ok(debt_type.render(form, request)))
-  }
-
-  def debtTypeSubmit:Action[AnyContent] = Action.async { implicit request =>
-    val form = createDebtTypeForm.bindFromRequest()
-    if (form.hasErrors) {
-      Future.successful(Ok(debt_type.render(form, request)))
-    } else {
-      if (form.get.hasOtherDebt) {
-        Future.successful(Redirect(routes.SelfServiceTimeToPayController.ttpCallUs()))
-      } else {
-        Future.successful(Redirect(routes.EligibilityController.existingTtpPresent()))
-      }
-    }
+    Future.successful(Redirect(routes.EligibilityController.existingTtpPresent()))
   }
 
   def existingTtpPresent:Action[AnyContent] =  Action.async { implicit request =>
@@ -73,9 +48,9 @@ object EligibilityController extends FrontendController{
       Future.successful(Ok(existing_ttp.render(form, request)))
     } else {
       if (form.get.hasExistingTTP.get) {
-        Future.successful(Redirect(routes.SelfServiceTimeToPayController.ttpCallUs()))
+        Future.successful(Redirect(routes.SelfServiceTimeToPayController.ttpCallUsPresent()))
       } else {
-        Future.successful(Redirect(routes.CalculatorController.present()))
+        Future.successful(Redirect(routes.ArrangementController.present()))
       }
     }
   }

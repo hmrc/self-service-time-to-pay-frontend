@@ -14,7 +14,7 @@ Time To Pay Instalment Summary Display Page
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
   bodyClasses = None,
-  sidebarLinks = Some(selfservicetimetopay.ssttp.sidebar())
+  sidebarLinks = Some(selfservicetimetopay.partials.sidebar())
 ){
     <a href="javascript:window.print()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
     <h1 style="heading-h1">@Messages("ssttp.arrangement.instalment-summary.title")</h1>

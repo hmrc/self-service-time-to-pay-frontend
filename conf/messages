@@ -115,14 +115,8 @@ ssttp.ttp-call-us.we-need-to-know.list.7=your bank details
 ssttp.ttp-call-us.contact-instructions=When you have all of this, please call us on {0}.
 ssttp.ttp-call-us.contact-number=0330 321 321
 
-ssttp.ssttp-call-us.title=Please call us
-ssttp.ssttp-call-us.intro=We can help you clear your tax debt in instalments, please get in touch.
-ssttp.ssttp-call-us.we-need-to-know.list=We''ll need to know:
-ssttp.ssttp-call-us.we-need-to-know.list.1=your reference number
-ssttp.ssttp-call-us.we-need-to-know.list.2=your bank details
-ssttp.ssttp-call-us.contact-instructions=When you have all of this, please call us on {0}.
-ssttp.ssttp-call-us.contact-number=0330 321 322
-
+ssttp.you-need-to-file.title=You need to file
+ssttp.you-need-to-file.intro=More text here
 
 ssttp.arrangement.instalment-summary.title=Your instalment plan summary
 ssttp.arrangement.instalment-summary.print=print
