@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.selfservicetimetopay.controllerVariables
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.calculator._
@@ -51,7 +52,9 @@ object CalculatorController extends FrontendController {
 
 
   def present: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.CalculatorController.amountsDuePresent()))
+    Future.successful(Redirect(routes.CalculatorController.amountsDuePresent()).withSession(
+      "CalculatorDuration" -> paymentSchedules.map(_.instalments.length).min.toString
+    ))
   }
 
   def amountsDuePresent: Action[AnyContent] = Action.async { implicit request =>
@@ -80,21 +83,29 @@ object CalculatorController extends FrontendController {
     if (form.hasErrors) {
       Future.successful(Ok(payment_today_form.render(form, request)))
     } else {
-      Future.successful(Redirect(routes.CalculatorController.durationPresent()))
+      Future.successful(Redirect(routes.CalculatorController.calculateInstalmentsPresent()))
     }
   }
 
-  def durationPresent: Action[AnyContent] = Action.async { implicit request =>
-    val form = createDurationForm(paymentSchedules.minBy(_.instalments.length).instalments.length, paymentSchedules.maxBy(_.instalments.length).instalments.length)
-    Future.successful(Ok(duration_form.render(paymentSchedules.last, form, paymentSchedules.map(_.instalments.length).sorted, request)))
+  def calculateInstalmentsPresent: Action[AnyContent] = Action.async { implicit request =>
+    //@TODO replace with keysotre
+    val calculatorDuration:CalculatorDuration = CalculatorDuration(request.session.get("CalculatorDuration").map(_.toInt)
+      .getOrElse(paymentSchedules.minBy(_.instalments.length).instalments.length))
+    val form = createDurationForm(paymentSchedules.minBy(_.instalments.length).instalments.length,
+      paymentSchedules.maxBy(_.instalments.length).instalments.length).fill(calculatorDuration)
+
+    Future.successful(Ok(calculate_instalments_form.render(paymentSchedules.filter(_.instalments.length == calculatorDuration.months).head, form,
+      paymentSchedules.map(_.instalments.length).sorted, request)))
   }
 
-  def durationSubmit: Action[AnyContent] = Action.async { implicit request =>
-    val form = createPaymentTodayForm.bindFromRequest()
+  def calculateInstalmentsSubmit: Action[AnyContent] = Action.async { implicit request =>
+    val form = createDurationForm(paymentSchedules.minBy(_.instalments.length).instalments.length, paymentSchedules.maxBy(_.instalments.length).instalments.length).bindFromRequest()
     if (form.hasErrors) {
-      Future.successful(Ok(payment_today_form.render(form, request)))
+      Future.successful(Ok(calculate_instalments_form.render(paymentSchedules.last, form, paymentSchedules.map(_.instalments.length).sorted, request)))
     } else {
-      Future.successful(Redirect(routes.CalculatorController.durationPresent()))
+      Future.successful(Redirect(routes.CalculatorController.calculateInstalmentsPresent()).withSession(
+        "CalculatorDuration" -> form.get.months.toString) //@TODO replace session with keystore
+      )
     }
   }
 }

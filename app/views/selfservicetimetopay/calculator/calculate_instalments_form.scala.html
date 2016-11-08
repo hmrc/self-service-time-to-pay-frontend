@@ -7,8 +7,8 @@ Time To Pay Payment Schedule Display Page
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], monthOptions:Seq[Int])(implicit request: Request[_])
-@import selfservicetimetopay.helpers.{message_list, labelWrap}
-@import selfservicetimetopay.helpers.forms.{form, button}
+@import selfservicetimetopay.helpers.{message_list, pluralize}
+@import selfservicetimetopay.helpers.forms.{form, button, inlinenumberinput, fieldErrors, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
@@ -32,20 +32,31 @@ Time To Pay Payment Schedule Display Page
             <div class="grid-layout__column grid-layout__column--1-3"><strong>@Messages("ssttp.common.currency.symbol")@schedule.instalmentBalance</strong></div>
         </div>
     </section>
-    <section class="section">
-        <h2 style="heading-h2">@Messages("ssttp.calculator.results.heading.choose-your-instalments")</h2>
-        <div class="subsection">
-            @form(routes.CalculatorController.durationSubmit()) {
-                @labelWrap('labelText -> Messages("ssttp.calculator.results.instalments-over"), 'for -> "months", '_modifierClass -> "form-field form-field--inline"){
-                    <input type="number" name="months" id="months_to_show" class="js-toggle-on-value input--xsmall input--left-padding" value="@schedule.instalments.length"
-                    min="@monthOptions.min" max="@monthOptions.max" /> @Messages("ssttp.calculator.results.instalments-over.month.plural")
-                }
-                @button(Messages("ssttp.calculator.results.recalculate-button.label"), '_modifierClass -> "button--spaced button--secondary", 'type -> "submit")
-            }
-        </div>
-    </section>
     <div class="section">
         <h2 style="heading-h2">@Messages("ssttp.calculator.results.heading.your-instalments")</h2>
+        <div class="subsection grid-layout divider--bottom">
+            <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.monthly-payments")
+            </div>
+            <div class="grid-layout__column grid-layout__column--1-3 text--center">
+                    @form(routes.CalculatorController.calculateInstalmentsSubmit()) {
+                        <input type="hidden" name="months" id="months-decrease" value="@monthOptions(Seq(0, monthOptions.indexOf(schedule.instalments.length)-1, 0).max)">
+                        @if(schedule.instalments.length != monthOptions.min) {
+                            @button("<", '_modifierClass -> "button--secondary float--left", 'type -> "submit")
+                        } else {
+                            @button("<", '_modifierClass -> "button--secondary float--left", 'type -> "submit", 'disabled -> "true")
+                        }
+                    }
+                    @form(routes.CalculatorController.calculateInstalmentsSubmit()) {
+                        <input type="hidden" name="months" id="months-increase" value="@monthOptions(Seq(monthOptions.length-1, monthOptions.indexOf(schedule.instalments.length)+1).min)">
+                        @if(schedule.instalments.length != monthOptions.max) {
+                            @button(">", '_modifierClass -> "button--secondary float--right", 'type -> "submit")
+                        } else {
+                            @button(">", '_modifierClass -> "button--secondary float--right", 'type -> "submit", 'disabled -> "true")
+                        }
+                }
+                @schedule.instalments.length @pluralize(schedule.instalments.length, "ssttp.calculator.results.instalments-over.month")
+            </div>
+        </div>
         @defining(schedule.instalmentBalance) { payment =>
             <div class="subsection grid-layout divider--bottom">
                 <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.monthly-payments")
