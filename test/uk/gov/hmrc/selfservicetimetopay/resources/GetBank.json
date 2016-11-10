@@ -1,0 +1,13 @@
+{
+  "sortCode": "123456",
+  "accountNumber": "12345678",
+  "bankName": "Bank",
+  "bankAddress": {
+    "addressLine1": "",
+    "addressLine2": "",
+    "addressLine3": "",
+    "addressLine4": "",
+    "addressLine5": "",
+    "postCode": ""
+  }
+}

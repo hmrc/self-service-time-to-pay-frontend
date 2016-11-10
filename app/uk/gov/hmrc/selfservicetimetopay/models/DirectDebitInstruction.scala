@@ -18,7 +18,11 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
 
-case class DirectDebitInstruction(sortCode: Option[String], accountNumber: Option[String],
-                                  referenceNumber: Option[String], creationDate: Option[LocalDate], ddiReferenceNo: Option[String])
+case class DirectDebitInstruction(sortCode: Option[String],
+                                  accountNumber: Option[String],
+                                  referenceNumber: Option[String],
+                                  creationDate: Option[LocalDate],
+                                  paperAuddisFlag: Option[String],
+                                  ddiRefNo: Option[String])
 
 object DirectDebitInstruction

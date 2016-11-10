@@ -33,4 +33,6 @@ package object resources {
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesRequest.json").mkString)).get
   val submitLiabilitiesResponse = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesResponse.json").mkString)
+  val getBankResponse = Json.fromJson[BankDetails](Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetBank.json").mkString)).get
 }

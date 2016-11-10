@@ -25,10 +25,10 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSHttp
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitBank, DirectDebitInstructionPaymentPlan}
+import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, DirectDebitInstructionPaymentPlan}
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -73,24 +73,25 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
           case directDebitBanks: DirectDebitBank =>
             directDebitBanks.processingDate shouldBe "2001-12-17T09:30:47Z"
             directDebitBanks.directDebitInstruction.head.sortCode shouldBe Some("123456")
-            directDebitBanks.directDebitInstruction.head.ddiReferenceNo shouldBe None
+            directDebitBanks.directDebitInstruction.head.ddiRefNo shouldBe None
         }
       }
     }
   }
 
+  //Need to change response to be getBankResponse
   "Calling validateBank" should {
     "return a Boolean" in {
+      //getBankResponse
       val jsonResponse = Json.toJson(true)
       val response = HttpResponse(Status.OK, Some(jsonResponse))
 
       when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
 
-      val saUtr = new SaUtr("test")
-      val result = testConnector.validateBank(saUtr)
+      val result = testConnector.getBank("123456", "123435678")
 
       ScalaFutures.whenReady(result) { r =>
-        r shouldBe true
+        r shouldBe a[BankDetails]
       }
     }
   }
@@ -108,7 +109,7 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
         r match {
           case directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan =>
             directDebitInstructionPaymentPlan.processingDate shouldBe "2001-12-17T09:30:47Z"
-            directDebitInstructionPaymentPlan.directDebitInstruction.head.ddiReferenceNo shouldBe Some("ABCDabcd1234")
+            directDebitInstructionPaymentPlan.directDebitInstruction.head.ddiRefNo shouldBe Some("ABCDabcd1234")
             directDebitInstructionPaymentPlan.paymentPlan.head.ppReferenceNo shouldBe "abcdefghij1234567890"
         }
       }

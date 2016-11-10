@@ -19,43 +19,48 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.math.BigDecimal
 import java.time.LocalDate
 
-import play.api.libs.json.{Format, JsResult, JsValue, Json}
+import play.api.libs.json._
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 package object modelsFormat {
-  implicit val localDateFormat = new Format[LocalDate] {
+  implicit val localDateFormatter = new Format[LocalDate] {
     override def reads(json: JsValue): JsResult[LocalDate] =
       json.validate[String].map(LocalDate.parse)
 
     override def writes(o: LocalDate): JsValue = Json.toJson(o.toString)
   }
 
-  implicit val directDebitInstructionFormat = Json.format[DirectDebitInstruction]
-  implicit val directDebitBanksFormat = Json.format[DirectDebitBank]
-  implicit val directDebitPaymentPlanFormat = Json.format[DirectDebitPaymentPlan]
-  implicit val directDebitInstructionPaymentPlanFormat = Json.format[DirectDebitInstructionPaymentPlan]
+  implicit val directDebitInstructionFormatter = Json.format[DirectDebitInstruction]
+  implicit val directDebitBanksFormatter = Json.format[DirectDebitBank]
+  implicit val directDebitPaymentPlanFormatter = Json.format[DirectDebitPaymentPlan]
+  implicit val directDebitInstructionPaymentPlanFormatter = Json.format[DirectDebitInstructionPaymentPlan]
 
-  implicit val calculatorLiabilityFormat = Json.format[CalculatorLiability]
-  implicit val calculatorAmountDueFormat = Json.format[CalculatorAmountDue]
-  implicit val calculatorAmountsDueFormat = Json.format[CalculatorAmountsDue]
-  implicit val calculatorDurationFormat = Json.format[CalculatorDuration]
-  implicit val calculatorPaymentScheduleInstalmentFormat = Json.format[CalculatorPaymentScheduleInstalment]
-  implicit val calculatorPaymentScheduleFormat = Json.format[CalculatorPaymentSchedule]
-  implicit val calculatorPaymentTodayFormat = Json.format[CalculatorPaymentToday]
-  implicit val calculatorInputFormat = Json.format[CalculatorInput]
+  implicit val calculatorLiabilityFormatter = Json.format[CalculatorLiability]
+  implicit val calculatorAmountDueFormatter = Json.format[CalculatorAmountDue]
+  implicit val calculatorAmountsDueFormatter = Json.format[CalculatorAmountsDue]
+  implicit val calculatorDurationFormatter = Json.format[CalculatorDuration]
+  implicit val calculatorPaymentScheduleInstalmentFormatter = Json.format[CalculatorPaymentScheduleInstalment]
+  implicit val calculatorPaymentScheduleFormatter = Json.format[CalculatorPaymentSchedule]
+  implicit val calculatorPaymentTodayFormatter = Json.format[CalculatorPaymentToday]
+  implicit val calculatorInputFormatter = Json.format[CalculatorInput]
 
-  implicit val arrangementDayOfMonthFormat = Json.format[ArrangementDayOfMonth]
-  implicit val arrangementDirectDebitFormat = Json.format[ArrangementDirectDebit]
+  implicit val arrangementDayOfMonthFormatter = Json.format[ArrangementDayOfMonth]
+  implicit val arrangementDirectDebitFormatter = Json.format[ArrangementDirectDebit]
 
-  implicit val eligibilityDebtTypeFormat = Json.format[EligibilityDebtType]
-  implicit val eligibilityExistingTTPFormat = Json.format[EligibilityExistingTTP]
+  implicit val eligibilityDebtTypeFormatter = Json.format[EligibilityDebtType]
+  implicit val eligibilityExistingTTPFormatter = Json.format[EligibilityExistingTTP]
 
-  implicit val tTPDebitFormat = Json.format[Debit]
-  implicit val tTPAddressFormat = Json.format[Address]
-  implicit val tTPCommunicationPreferencesFormat = Json.format[CommunicationPreferences]
-  implicit val tTPSelfAssessmentFormat = Json.format[SelfAssessment]
-  implicit val tTPTaxPayerFormat = Json.format[TTPTaxPayer]
-  implicit val tTPArrangementFormat = Json.format[TTPArrangement]
+  implicit val interestFormatter = Json.format[Interest]
+
+  implicit val tTPDebitFormatter = Json.format[Debit]
+  implicit val addressFormatter = Json.format[Address]
+
+  implicit val tTPCommunicationPreferencesFormatter = Json.format[CommunicationPreferences]
+  implicit val tTPSelfAssessmentFormatter = Json.format[SelfAssessment]
+  implicit val taxPayerFormatter = Json.format[TaxPayer]
+  implicit val tTPArrangementFormatter = Json.format[TTPArrangement]
+
+  implicit val bankDetailsFormatterter = Json.format[BankDetails]
 }
 
 package object controllerVariables {

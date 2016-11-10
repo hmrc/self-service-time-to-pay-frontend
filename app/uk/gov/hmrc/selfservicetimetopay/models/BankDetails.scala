@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class DirectDebitBank(processingDate: String, directDebitInstruction: List[DirectDebitInstruction])
+case class BankDetails(sortCode: String, accountNumber: String, bankName: String, bankAddress: Address)
