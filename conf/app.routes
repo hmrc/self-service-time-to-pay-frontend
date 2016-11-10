@@ -13,8 +13,8 @@ GET    /calculator/amounts-due          uk.gov.hmrc.selfservicetimetopay.control
 POST   /calculator/amounts-due          uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.amountsDueSubmit()
 GET    /calculator/payment-today        uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.paymentTodayPresent()
 POST   /calculator/payment-today        uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.paymentTodaySubmit()
-GET    /calculator/duration             uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.durationPresent()
-POST   /calculator/duration             uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.durationSubmit()
+GET    /calculator/instalments          uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsPresent()
+POST   /calculator/instalments          uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsSubmit()
 GET    /arrangement                     uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.present()
 GET    /arrangement/summary             uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.scheduleSummaryPresent()
 GET    /arrangement/summary/print       uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.scheduleSummaryPrintPresent

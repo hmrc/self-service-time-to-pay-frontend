@@ -68,26 +68,26 @@ package object controllerVariables {
     ),
     CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
       new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("300.00"))
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("250.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("250.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("250.00"))
       )
     ),
     CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
       new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 4, 1), new BigDecimal("300.00"))
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("100.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("100.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("100.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 4, 1), new BigDecimal("100.00"))
       )
     ),
     CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
       new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 4, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 5, 1), new BigDecimal("300.00"))
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("50.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("50.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("50.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 4, 1), new BigDecimal("50.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 5, 1), new BigDecimal("50.00"))
       )
     )
   )

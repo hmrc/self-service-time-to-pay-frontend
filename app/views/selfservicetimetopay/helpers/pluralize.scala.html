@@ -1,0 +1,13 @@
+@*
+  Pluralisation helpler
+    Shorthand method to return singular or plural terms based on the supplied count
+      The given message prefix will be applied to Messages with the suffix .singluar or .plural accordingly
+
+    e.g. pluralise(1, "my.item") -> Messages("my.item.singluar")
+        pluralise(10, "my.item") -> Messages("my.item.plural")
+
+    @param count Number count The number of items
+    @param messagePrefix Prefix for message to return
+*@
+@(count:Number, messagePrefix:String, args:(String, String)*)
+  @if(count==1) {@Messages(messagePrefix + ".singular")} else {@Messages(messagePrefix + ".plural")}

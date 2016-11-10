@@ -11,7 +11,7 @@ The form includes the Cross Site Request Filter (CSRF) to be added to yout appli
 @import play.twirl.api.Html
 @(action: play.api.mvc.Call, args: (Symbol,String)*)(body:Html)(implicit requestHeader:RequestHeader)
 @import views.html.helper.CSRF
-<form action="@action.url" method="@action.method" @toHtmlArgs(args.toMap)>
+<form action="@action.url" method="@action.method" @toHtmlArgs(args.toMap) autocomplete="off" novalidate="novalidate">
     @{play.filters.csrf.CSRF.getToken(requestHeader).map {token => CSRF.formField(token)}}
     @body
 </form>
