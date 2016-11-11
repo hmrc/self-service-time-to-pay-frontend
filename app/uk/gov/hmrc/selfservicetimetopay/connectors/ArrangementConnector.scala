@@ -39,8 +39,7 @@ trait ArrangementConnector {
   val http: HttpGet with HttpPost
 
   def submitArrangements(ttpArrangement: TTPArrangement)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val requestJson = Json.toJson(ttpArrangement)
-    http.POST[JsValue, HttpResponse](s"$arrangementURL/$serviceURL", requestJson).map {
+    http.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map {
       _.status == CREATED
     }
   }

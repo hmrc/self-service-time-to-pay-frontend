@@ -20,14 +20,14 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import play.api.http.Status
-import play.api.libs.json.JsValue
+import play.api.libs.json.Json
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, CalculatorPaymentSchedule}
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication {
 
-  implicit val headerCarrier = HeaderCarrier()
+  implicit val hc = HeaderCarrier()
 
   object testConnector extends CalculatorConnector {
     val calculatorURL = ""
@@ -56,21 +56,30 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
   }
 
   "Calling submitLiabilities" should {
-    "return CalculatorPaymentSchedule" in {
-      val response = HttpResponse(Status.OK, Some(submitLiabilitiesResponse))
-      when(testConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
+    "return a payment schedule" in {
+      val jsonResponse = Json.fromJson[Option[List[CalculatorPaymentSchedule]]](submitLiabilitiesResponseJSON).get
+      when(testConnector.http.POST[CalculatorInput, Option[List[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(jsonResponse))
+
+      val result = testConnector.submitLiabilities(submitLiabilitiesRequest)
+
+      ScalaFutures.whenReady(result) {
+        case paymentSchedule: Some[List[CalculatorPaymentSchedule]] =>
+          paymentSchedule.get.size shouldBe 11
+          paymentSchedule.get.head.initialPayment shouldBe BigDecimal("50")
+          paymentSchedule.get.head.amountToPay shouldBe BigDecimal("5000")
+          paymentSchedule.get.last.instalments.size shouldBe 12
+        case _ => fail()
+      }
+    }
+    "return no payment schedule" in {
+      when(testConnector.http.POST[CalculatorInput, Option[List[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(None))
 
       val result = testConnector.submitLiabilities(submitLiabilitiesRequest)
 
       ScalaFutures.whenReady(result) { r =>
-        r shouldBe a[Some[List[CalculatorPaymentSchedule]]]
-        r match {
-          case paymentSchedule: Some[List[CalculatorPaymentSchedule]] =>
-            paymentSchedule.get.size shouldBe 11
-            paymentSchedule.get.head.initialPayment shouldBe BigDecimal("50")
-            paymentSchedule.get.head.amountToPay shouldBe BigDecimal("5000")
-            paymentSchedule.get.last.instalments.size shouldBe 12
-        }
+        r shouldBe None
       }
     }
   }

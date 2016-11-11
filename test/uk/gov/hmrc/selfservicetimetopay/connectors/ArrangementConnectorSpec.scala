@@ -21,12 +21,12 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status._
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -57,7 +57,7 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
   "Calling submitArrangements" should {
     "return true" in {
       val response = HttpResponse(CREATED)
-      when(testConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
+      when(testConnector.http.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
 
       val result = testConnector.submitArrangements(submitArrangementResponse)
 

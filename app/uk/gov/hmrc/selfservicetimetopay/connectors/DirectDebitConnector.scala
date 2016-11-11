@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpPost}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, DirectDebitInstructionPaymentPlan}
+import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, DirectDebitInstructionPaymentPlan, PaymentPlanRequest}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
@@ -45,8 +44,7 @@ trait DirectDebitConnector {
     http.GET[BankDetails](s"$directDebitURL/$serviceURL/bank?sortCode=:$sortCode&accountNumber=:$accountNumber")
   }
 
-  def createPaymentPlan(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitInstructionPaymentPlan] = {
-    val requestJson = Json.toJson(saUtr)
-    http.POST[JsValue, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", requestJson)
+  def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitInstructionPaymentPlan] = {
+    http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", paymentPlan)
   }
 }

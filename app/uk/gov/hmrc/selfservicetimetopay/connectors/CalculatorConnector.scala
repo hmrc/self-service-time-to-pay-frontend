@@ -40,14 +40,11 @@ trait CalculatorConnector {
   val http: HttpPost
 
   def submitLiabilities(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[Option[List[CalculatorPaymentSchedule]]] = {
-    val requestJson = Json.toJson(liabilities)
-    http.POST[JsValue, HttpResponse](s"$calculatorURL/$serviceURL", requestJson).map { response =>
-      response.status match {
-        case OK => Some(response.json.as[List[CalculatorPaymentSchedule]])
-        case _ =>
-          Logger.error("No payment schedule retrieved")
-          None
-      }
+    http.POST[CalculatorInput, Option[List[CalculatorPaymentSchedule]]](s"$calculatorURL/$serviceURL", liabilities).map {
+      case Some(response) => Some(response)
+      case _ =>
+        Logger.error("No payment schedule retrieved")
+        None
     }
   }
 }

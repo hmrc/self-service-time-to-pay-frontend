@@ -20,15 +20,15 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import play.api.http.Status
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, DirectDebitInstructionPaymentPlan}
+import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, DirectDebitInstructionPaymentPlan, PaymentPlanRequest}
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -60,9 +60,9 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
   "Calling getBanksList" should {
     "return DirectDebitBank" in {
 
-      val response = HttpResponse(Status.OK, Some(getBanksResponseJSON))
+      val jsonResponse = Json.fromJson[DirectDebitBank](getBanksResponseJSON).get
 
-      when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
+      when(testConnector.http.GET[DirectDebitBank](any())(any(), any())).thenReturn(Future(jsonResponse))
 
       val saUtr = new SaUtr("test")
       val result = testConnector.getBanksList(saUtr)
@@ -79,14 +79,11 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
     }
   }
 
-  //Need to change response to be getBankResponse
   "Calling validateBank" should {
-    "return a Boolean" in {
-      //getBankResponse
-      val jsonResponse = Json.toJson(true)
-      val response = HttpResponse(Status.OK, Some(jsonResponse))
+    "return valid bank details" in {
+      val jsonResponse = Json.fromJson[BankDetails](getBankResponseJSON).get
 
-      when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
+      when(testConnector.http.GET[BankDetails](any())(any(), any())).thenReturn(Future(jsonResponse))
 
       val result = testConnector.getBank("123456", "123435678")
 
@@ -98,11 +95,14 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
 
   "Calling createPaymentPlan" should {
     "return DirectDebitInstructionPaymentPlan" in {
-      val response = HttpResponse(Status.OK, Some(getInstructionPaymentResponseJSON))
-      when(testConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
+      val jsonResponse = Json.fromJson[DirectDebitInstructionPaymentPlan](createPaymentPlanResponseJSON).get
+
+      when(testConnector.http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(jsonResponse))
 
       val saUtr = SaUtr("test")
-      val result = testConnector.createPaymentPlan(saUtr)
+      val paymentPlanRequest = Json.fromJson[PaymentPlanRequest](createPaymentRequestJSON).get
+      val result = testConnector.createPaymentPlan(paymentPlanRequest, saUtr)
 
       ScalaFutures.whenReady(result) { r =>
         r shouldBe a[DirectDebitInstructionPaymentPlan]
