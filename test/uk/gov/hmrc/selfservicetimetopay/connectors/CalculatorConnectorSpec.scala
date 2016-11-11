@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -61,26 +60,21 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
       when(testConnector.http.POST[CalculatorInput, Option[List[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = testConnector.submitLiabilities(submitLiabilitiesRequest)
+      val result = await(testConnector.submitLiabilities(submitLiabilitiesRequest))
 
-      ScalaFutures.whenReady(result) {
-        case paymentSchedule: Some[List[CalculatorPaymentSchedule]] =>
-          paymentSchedule.get.size shouldBe 11
-          paymentSchedule.get.head.initialPayment shouldBe BigDecimal("50")
-          paymentSchedule.get.head.amountToPay shouldBe BigDecimal("5000")
-          paymentSchedule.get.last.instalments.size shouldBe 12
-        case _ => fail()
-      }
+      result shouldBe defined
+      result.get.size shouldBe 11
+      result.get.head.initialPayment shouldBe BigDecimal("50")
+      result.get.head.amountToPay shouldBe BigDecimal("5000")
+      result.get.last.instalments.size shouldBe 12
     }
     "return no payment schedule" in {
       when(testConnector.http.POST[CalculatorInput, Option[List[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(None))
 
-      val result = testConnector.submitLiabilities(submitLiabilitiesRequest)
+      val result = await(testConnector.submitLiabilities(submitLiabilitiesRequest))
 
-      ScalaFutures.whenReady(result) { r =>
-        r shouldBe None
-      }
+      result shouldBe None
     }
   }
 }

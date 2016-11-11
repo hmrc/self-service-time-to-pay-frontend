@@ -59,11 +59,18 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       val response = HttpResponse(CREATED)
       when(testConnector.http.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
 
-      val result = testConnector.submitArrangements(submitArrangementResponse)
+      val result = await(testConnector.submitArrangements(submitArrangementResponse))
 
-      ScalaFutures.whenReady(result) { r =>
-        r shouldBe true
-      }
+      result shouldBe true
     }
+  }
+
+  "return false" in {
+    val response = HttpResponse(UNAUTHORIZED)
+    when(testConnector.http.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
+
+    val result = await(testConnector.submitArrangements(submitArrangementResponse))
+
+    result shouldBe false
   }
 }

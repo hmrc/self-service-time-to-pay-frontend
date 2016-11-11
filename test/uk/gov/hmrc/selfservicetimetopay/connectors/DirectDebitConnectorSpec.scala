@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.SaUtr
@@ -27,7 +26,7 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, DirectDebitInstructionPaymentPlan, PaymentPlanRequest}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
@@ -65,17 +64,12 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       when(testConnector.http.GET[DirectDebitBank](any())(any(), any())).thenReturn(Future(jsonResponse))
 
       val saUtr = new SaUtr("test")
-      val result = testConnector.getBanksList(saUtr)
+      val result = await(testConnector.getBanksList(saUtr))
 
-      ScalaFutures.whenReady(result) { r =>
-        r shouldBe a[DirectDebitBank]
-        r match {
-          case directDebitBanks: DirectDebitBank =>
-            directDebitBanks.processingDate shouldBe "2001-12-17T09:30:47Z"
-            directDebitBanks.directDebitInstruction.head.sortCode shouldBe Some("123456")
-            directDebitBanks.directDebitInstruction.head.ddiRefNo shouldBe None
-        }
-      }
+      result shouldBe a[DirectDebitBank]
+      result.processingDate shouldBe "2001-12-17T09:30:47Z"
+      result.directDebitInstruction.head.sortCode shouldBe Some("123456")
+      result.directDebitInstruction.head.ddiRefNo shouldBe None
     }
   }
 
@@ -85,11 +79,12 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
 
       when(testConnector.http.GET[BankDetails](any())(any(), any())).thenReturn(Future(jsonResponse))
 
-      val result = testConnector.getBank("123456", "123435678")
+      val result = await(testConnector.getBank("123456", "123435678"))
 
-      ScalaFutures.whenReady(result) { r =>
-        r shouldBe a[BankDetails]
-      }
+      result shouldBe a[BankDetails]
+      result.sortCode shouldBe "123456"
+      result.accountNumber shouldBe "12345678"
+      result.bankAddress shouldBe Some(Address("", "", "", "", "", ""))
     }
   }
 
@@ -102,17 +97,12 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
 
       val saUtr = SaUtr("test")
       val paymentPlanRequest = Json.fromJson[PaymentPlanRequest](createPaymentRequestJSON).get
-      val result = testConnector.createPaymentPlan(paymentPlanRequest, saUtr)
+      val result = await(testConnector.createPaymentPlan(paymentPlanRequest, saUtr))
 
-      ScalaFutures.whenReady(result) { r =>
-        r shouldBe a[DirectDebitInstructionPaymentPlan]
-        r match {
-          case directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan =>
-            directDebitInstructionPaymentPlan.processingDate shouldBe "2001-12-17T09:30:47Z"
-            directDebitInstructionPaymentPlan.directDebitInstruction.head.ddiRefNo shouldBe Some("ABCDabcd1234")
-            directDebitInstructionPaymentPlan.paymentPlan.head.ppReferenceNo shouldBe "abcdefghij1234567890"
-        }
-      }
+      result shouldBe a[DirectDebitInstructionPaymentPlan]
+      result.processingDate shouldBe "2001-12-17T09:30:47Z"
+      result.directDebitInstruction.head.ddiRefNo shouldBe Some("ABCDabcd1234")
+      result.paymentPlan.head.ppReferenceNo shouldBe "abcdefghij1234567890"
     }
   }
 }
