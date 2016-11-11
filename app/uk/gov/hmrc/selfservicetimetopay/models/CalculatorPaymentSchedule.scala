@@ -27,3 +27,5 @@ case class CalculatorPaymentSchedule(startDate: Option[LocalDate],
                                      totalInterestCharged: BigDecimal,
                                      totalPayable: BigDecimal,
                                      instalments: Seq[CalculatorPaymentScheduleInstalment])
+
+case class CalculatorPaymentScheduleInstalment(paymentDate:LocalDate, amount:BigDecimal)

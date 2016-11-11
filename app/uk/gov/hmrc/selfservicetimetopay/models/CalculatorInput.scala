@@ -23,3 +23,9 @@ case class CalculatorInput(liabilities:Seq[CalculatorLiability],
                            startDate:LocalDate,
                            endDate:LocalDate,
                            paymentFrequency:String = "MONTHLY")
+
+case class CalculatorLiability(`type`:String,
+                               amount:BigDecimal,
+                               interestAccrued:BigDecimal,
+                               interestCalculationDate:LocalDate,
+                               dueDate:Option[LocalDate])
