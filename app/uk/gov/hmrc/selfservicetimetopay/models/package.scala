@@ -20,7 +20,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
-import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentScheduleInstalment, _}
 
 package object modelsFormat {
   implicit val localDateFormat = new Format[LocalDate] {
@@ -87,7 +87,9 @@ package object controllerVariables {
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("50.00")),
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("50.00")),
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 4, 1), new BigDecimal("50.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 5, 1), new BigDecimal("50.00"))
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 5, 1), new BigDecimal("50.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 5, 1), new BigDecimal("50.00")),
+        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 6, 1), new BigDecimal("50.00"))
       )
     )
   )

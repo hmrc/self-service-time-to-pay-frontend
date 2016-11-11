@@ -85,9 +85,14 @@ ssttp.calculator.results.instalments-over.month.singular=month
 ssttp.calculator.results.instalments-over.month.plural=months
 ssttp.calculator.results.monthly-payments=Monthly payments of:
 ssttp.calculator.results.monthly-payments.per-month=per month
+ssttp.calculator.results.monthly-payments.increase=Increase value
+ssttp.calculator.results.monthly-payments.decrease=Decrease value
+
 ssttp.calculator.results.monthly-payments.hint=inlcuding any interest at 2.75%
 ssttp.calculator.results.total-interest=Total Interest:
 ssttp.calculator.results.total-replayment=Your total repayment:
+
+
 
 ssttp.calculator.results.interest-info.title=How we calculate interest
 ssttp.calculator.results.interest-info.list.1=the interest rate is based on the base rate established by the Bank of England plus 2.5% per annum, and calculated as simple interest

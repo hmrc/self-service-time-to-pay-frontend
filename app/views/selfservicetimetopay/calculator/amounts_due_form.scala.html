@@ -31,7 +31,7 @@
                    '_inputGroupClass -> "gutter-left"
               )
         </div>
-        <p>@submit(Messages("ssttp.calculator.form.continue"))</p>
+        <p>@submit(){@Messages("ssttp.calculator.form.continue")}</p>
     }
-    <p><a class="back-link" href="@routes.SelfServiceTimeToPayController.present()">@Messages("ssttp.calculator.form.back")</a></p>
+    <p><a class="back-link" href="@routes.SelfServiceTimeToPayController.present()">@Messages("ssttp.calculator.form.amounts_due.back")</a></p>
 }
