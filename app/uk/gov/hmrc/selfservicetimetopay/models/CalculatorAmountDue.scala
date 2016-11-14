@@ -16,11 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.util.Calendar
 import java.time.format.DateTimeFormatter
-import java.time.temporal.{ChronoField, TemporalField}
+import java.time.temporal.ChronoField
 
 case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Int, dueByMonth: String, dueByDay: Int) {
 
