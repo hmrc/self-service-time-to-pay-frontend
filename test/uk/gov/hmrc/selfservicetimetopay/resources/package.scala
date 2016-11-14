@@ -32,7 +32,7 @@ package object resources {
   val submitArrangementResponse = Json.fromJson[TTPArrangement](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetArrangementResponse.json")
       .mkString)).get
-  val submitLiabilitiesRequest = Json.fromJson[CalculatorInput](Json.parse(
+  val submitDebitsRequest = Json.fromJson[CalculatorInput](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesRequest.json")
       .mkString)).get
   val submitLiabilitiesResponseJSON = Json.parse(

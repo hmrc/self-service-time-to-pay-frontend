@@ -60,7 +60,7 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
       when(testConnector.http.POST[CalculatorInput, Option[List[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = await(testConnector.submitLiabilities(submitLiabilitiesRequest))
+      val result = await(testConnector.submitLiabilities(submitDebitsRequest))
 
       result shouldBe defined
       result.get.size shouldBe 11
@@ -72,7 +72,7 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
       when(testConnector.http.POST[CalculatorInput, Option[List[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(None))
 
-      val result = await(testConnector.submitLiabilities(submitLiabilitiesRequest))
+      val result = await(testConnector.submitLiabilities(submitDebitsRequest))
 
       result shouldBe None
     }

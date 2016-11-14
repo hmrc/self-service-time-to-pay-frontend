@@ -27,8 +27,8 @@ class CalculatorInputSpec extends UnitSpec with MockitoSugar {
   "CalculatorInput" should {
 
     "create paymentFrequency defaulted to MONTHLY" in {
-      val liability1 = mock[CalculatorLiability]
-      val liability2 = mock[CalculatorLiability]
+      val liability1 = mock[CalculatorDebit]
+      val liability2 = mock[CalculatorDebit]
       val liabilities = Seq(liability1, liability2)
       val calculatorInput = CalculatorInput(liabilities, new BigDecimal("200.00"), LocalDate.of(2000, 1, 29), LocalDate.of(2010, 12, 29))
       calculatorInput shouldNot be (null)
