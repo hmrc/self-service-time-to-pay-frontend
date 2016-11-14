@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.math.BigDecimal
 import java.time.LocalDate
 
-import play.api.libs.json._
+import play.api.libs.json.{Format, JsResult, JsValue, Json}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 package object modelsFormat {
