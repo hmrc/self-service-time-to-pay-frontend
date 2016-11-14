@@ -32,7 +32,7 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication {
+class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutures with ServicesConfig with WithFakeApplication {
 
   implicit val headerCarrier = HeaderCarrier()
 
