@@ -16,31 +16,26 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpPost, HttpResponse}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
+import uk.gov.hmrc.selfservicetimetopay.models.TaxPayer
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object ArrangementConnector extends ArrangementConnector with ServicesConfig {
-  val arrangementURL = baseUrl("time-to-pay-arrangement")
-  val serviceURL = "ttparrangements"
+object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
+  val taxPayerURL = baseUrl("time-to-pay-eligibility")
+  val serviceURL = "time-to-pay-eligibility"
   val http = WSHttp
 }
 
-trait ArrangementConnector {
-  val arrangementURL: String
+trait TaxPayerConnector {
+  val taxPayerURL: String
   val serviceURL: String
-  val http: HttpGet with HttpPost
+  val http: HttpGet
 
-  def submitArrangements(ttpArrangement: TTPArrangement)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    http.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map {
-      _.status == CREATED
-    }
+  def getTaxPayer(utr: String)(implicit hc: HeaderCarrier): Future[TaxPayer] = {
+    http.GET[TaxPayer](s"$taxPayerURL/$serviceURL/tax-payer/$utr")
   }
 }

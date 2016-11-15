@@ -1,14 +1,14 @@
 {
-  "liabilities": [
+  "debits": [
     {
-      "type": "POA2",
+      "originCode": "POA2",
       "amount": 250.52,
       "interestAccrued": 42.32,
       "interestCalculationDate": "2016-06-01",
       "dueDate": "2016-01-31"
     },
     {
-      "type": "POA1",
+      "originCode": "POA1",
       "amount": 134.07,
       "interestAccrued": 10.50,
       "interestCalculationDate": "2016-02-01"

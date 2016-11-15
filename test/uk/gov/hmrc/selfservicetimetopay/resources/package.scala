@@ -23,14 +23,25 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import scala.io.Source
 
 package object resources {
-  val getBanksResponseJSON = Json.parse(Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetBanksResponse.json").mkString)
-  val getInstructionPaymentResponseJSON = Json.parse(
+  val getBanksResponseJSON = Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetBanksResponse.json")
+      .mkString)
+  val createPaymentPlanResponseJSON = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetDirectDebitInstructionPaymentPlanResponse.json")
       .mkString)
   val submitArrangementResponse = Json.fromJson[TTPArrangement](Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetArrangementResponse.json").mkString)).get
-  val submitLiabilitiesRequest = Json.fromJson[CalculatorInput](Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesRequest.json").mkString)).get
-  val submitLiabilitiesResponse = Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesResponse.json").mkString)
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetArrangementResponse.json")
+      .mkString)).get
+  val submitDebitsRequest = Json.fromJson[CalculatorInput](Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesRequest.json")
+      .mkString)).get
+  val submitLiabilitiesResponseJSON = Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesResponse.json")
+      .mkString)
+  val getBankResponseJSON = Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetBank.json")
+      .mkString)
+  val createPaymentRequestJSON = Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CreatePaymentPlanRequest.json")
+    .mkString)
 }

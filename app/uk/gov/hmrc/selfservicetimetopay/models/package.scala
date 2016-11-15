@@ -23,57 +23,66 @@ import play.api.libs.json.{Format, JsResult, JsValue, Json}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 package object modelsFormat {
-  implicit val localDateFormat = new Format[LocalDate] {
+  implicit val localDateFormatter = new Format[LocalDate] {
     override def reads(json: JsValue): JsResult[LocalDate] =
       json.validate[String].map(LocalDate.parse)
 
     override def writes(o: LocalDate): JsValue = Json.toJson(o.toString)
   }
 
-  implicit val directDebitInstructionFormat = Json.format[DirectDebitInstruction]
-  implicit val directDebitBanksFormat = Json.format[DirectDebitBank]
-  implicit val directDebitPaymentPlanFormat = Json.format[DirectDebitPaymentPlan]
-  implicit val directDebitInstructionPaymentPlanFormat = Json.format[DirectDebitInstructionPaymentPlan]
+  implicit val directDebitInstructionFormatter = Json.format[DirectDebitInstruction]
+  implicit val directDebitBanksFormatter = Json.format[DirectDebitBank]
+  implicit val directDebitPaymentPlanFormatter = Json.format[DirectDebitPaymentPlan]
+  implicit val directDebitInstructionPaymentPlanFormatter = Json.format[DirectDebitInstructionPaymentPlan]
 
-  implicit val calculatorLiabilityFormat = Json.format[CalculatorLiability]
-  implicit val calculatorAmountDueFormat = Json.format[CalculatorAmountDue]
-  implicit val calculatorAmountsDueFormat = Json.format[CalculatorAmountsDue]
-  implicit val calculatorDurationFormat = Json.format[CalculatorDuration]
-  implicit val calculatorPaymentScheduleInstalmentFormat = Json.format[CalculatorPaymentScheduleInstalment]
-  implicit val calculatorPaymentScheduleFormat = Json.format[CalculatorPaymentSchedule]
-  implicit val calculatorPaymentTodayFormat = Json.format[CalculatorPaymentToday]
-  implicit val calculatorInputFormat = Json.format[CalculatorInput]
+  implicit val calculatorLiabilityFormatter = Json.format[CalculatorDebit]
+  implicit val calculatorAmountDueFormatter = Json.format[CalculatorAmountDue]
+  implicit val calculatorAmountsDueFormatter = Json.format[CalculatorAmountsDue]
+  implicit val calculatorDurationFormatter = Json.format[CalculatorDuration]
+  implicit val calculatorPaymentScheduleInstalmentFormatter = Json.format[CalculatorPaymentScheduleInstalment]
+  implicit val calculatorPaymentScheduleFormatter = Json.format[CalculatorPaymentSchedule]
+  implicit val calculatorPaymentTodayFormatter = Json.format[CalculatorPaymentToday]
+  implicit val calculatorInputFormatter = Json.format[CalculatorInput]
 
-  implicit val arrangementDayOfMonthFormat = Json.format[ArrangementDayOfMonth]
-  implicit val arrangementDirectDebitFormat = Json.format[ArrangementDirectDebit]
+  implicit val arrangementDayOfMonthFormatter = Json.format[ArrangementDayOfMonth]
+  implicit val arrangementDirectDebitFormatter = Json.format[ArrangementDirectDebit]
 
-  implicit val eligibilityDebtTypeFormat = Json.format[EligibilityDebtType]
-  implicit val eligibilityExistingTTPFormat = Json.format[EligibilityExistingTTP]
+  implicit val eligibilityDebtTypeFormatter = Json.format[EligibilityDebtType]
+  implicit val eligibilityExistingTTPFormatter = Json.format[EligibilityExistingTTP]
 
-  implicit val tTPDebitFormat = Json.format[Debit]
-  implicit val tTPAddressFormat = Json.format[Address]
-  implicit val tTPCommunicationPreferencesFormat = Json.format[CommunicationPreferences]
-  implicit val tTPSelfAssessmentFormat = Json.format[SelfAssessment]
-  implicit val tTPTaxPayerFormat = Json.format[TTPTaxPayer]
-  implicit val tTPArrangementFormat = Json.format[TTPArrangement]
+  implicit val interestFormatter = Json.format[Interest]
+
+  implicit val tTPDebitFormatter = Json.format[Debit]
+  implicit val addressFormatter = Json.format[Address]
+
+  implicit val tTPCommunicationPreferencesFormatter = Json.format[CommunicationPreferences]
+  implicit val tTPSelfAssessmentFormatter = Json.format[SelfAssessment]
+  implicit val taxPayerFormatter = Json.format[TaxPayer]
+  implicit val tTPArrangementFormatter = Json.format[TTPArrangement]
+
+  implicit val knownFactFormatter = Json.format[KnownFact]
+  implicit val paymentPlanFormatter = Json.format[PaymentPlan]
+  implicit val paymentPlanRequestFormatter = Json.format[PaymentPlanRequest]
+
+  implicit val bankDetailsFormatter = Json.format[BankDetails]
 }
 
 package object controllerVariables {
   implicit val paymentSchedules = Seq(
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
+    CalculatorPaymentSchedule(None,None,new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
       new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("300.00")),
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("300.00"))
       )
     ),
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
+    CalculatorPaymentSchedule(None,None,new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
       new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("250.00")),
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("250.00")),
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("250.00"))
       )
     ),
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
+    CalculatorPaymentSchedule(None,None,new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
       new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("100.00")),
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("100.00")),
@@ -81,7 +90,7 @@ package object controllerVariables {
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 4, 1), new BigDecimal("100.00"))
       )
     ),
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
+    CalculatorPaymentSchedule(None,None,new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
       new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("50.00")),
         CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("50.00")),

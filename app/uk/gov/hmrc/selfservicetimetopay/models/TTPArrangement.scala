@@ -22,5 +22,5 @@ case class TTPArrangement(identifier: Option[String],
                           createdOn: Option[LocalDate],
                           paymentPlanReference: String,
                           directDebitReference: String,
-                          taxpayer: TTPTaxPayer,
+                          taxpayer: TaxPayer,
                           schedule: CalculatorPaymentSchedule)

@@ -16,16 +16,13 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpPost, HttpResponse}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpPost}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitBank, DirectDebitInstructionPaymentPlan}
+import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, DirectDebitInstructionPaymentPlan, PaymentPlanRequest}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
@@ -40,24 +37,14 @@ trait DirectDebitConnector {
   val http: HttpGet with HttpPost
 
   def getBanksList(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitBank] = {
-    http.GET[HttpResponse](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response =>
-      response.json.as[DirectDebitBank]
-    }
+    http.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks")
   }
 
-  def validateBank(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    http.GET[HttpResponse](s"$directDebitURL/$serviceURL/bank").map {
-      _.status match {
-        case OK => true
-        case _ => false
-      }
-    }
+  def getBank(sortCode: String, accountNumber: String)(implicit hc: HeaderCarrier): Future[BankDetails] = {
+    http.GET[BankDetails](s"$directDebitURL/$serviceURL/bank?sortCode=:$sortCode&accountNumber=:$accountNumber")
   }
 
-  def createPaymentPlan(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitInstructionPaymentPlan] = {
-    val requestJson = Json.toJson(saUtr)
-    http.POST[JsValue, HttpResponse](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", requestJson).map { response =>
-      response.json.as[DirectDebitInstructionPaymentPlan]
-    }
+  def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitInstructionPaymentPlan] = {
+    http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", paymentPlan)
   }
 }

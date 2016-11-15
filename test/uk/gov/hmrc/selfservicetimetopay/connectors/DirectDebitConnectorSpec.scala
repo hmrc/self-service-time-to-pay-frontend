@@ -18,17 +18,16 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import play.api.http.Status
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitBank, DirectDebitInstructionPaymentPlan}
+import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -60,58 +59,50 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
   "Calling getBanksList" should {
     "return DirectDebitBank" in {
 
-      val response = HttpResponse(Status.OK, Some(getBanksResponseJSON))
+      val jsonResponse = Json.fromJson[DirectDebitBank](getBanksResponseJSON).get
 
-      when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
+      when(testConnector.http.GET[DirectDebitBank](any())(any(), any())).thenReturn(Future(jsonResponse))
 
       val saUtr = new SaUtr("test")
-      val result = testConnector.getBanksList(saUtr)
+      val result = await(testConnector.getBanksList(saUtr))
 
-      ScalaFutures.whenReady(result) { r =>
-        r shouldBe a[DirectDebitBank]
-        r match {
-          case directDebitBanks: DirectDebitBank =>
-            directDebitBanks.processingDate shouldBe "2001-12-17T09:30:47Z"
-            directDebitBanks.directDebitInstruction.head.sortCode shouldBe Some("123456")
-            directDebitBanks.directDebitInstruction.head.ddiReferenceNo shouldBe None
-        }
-      }
+      result shouldBe a[DirectDebitBank]
+      result.processingDate shouldBe "2001-12-17T09:30:47Z"
+      result.directDebitInstruction.head.sortCode shouldBe Some("123456")
+      result.directDebitInstruction.head.ddiRefNo shouldBe None
     }
   }
 
   "Calling validateBank" should {
-    "return a Boolean" in {
-      val jsonResponse = Json.toJson(true)
-      val response = HttpResponse(Status.OK, Some(jsonResponse))
+    "return valid bank details" in {
+      val jsonResponse = Json.fromJson[BankDetails](getBankResponseJSON).get
 
-      when(testConnector.http.GET[HttpResponse](any())(any(), any())).thenReturn(Future(response))
+      when(testConnector.http.GET[BankDetails](any())(any(), any())).thenReturn(Future(jsonResponse))
 
-      val saUtr = new SaUtr("test")
-      val result = testConnector.validateBank(saUtr)
+      val result = await(testConnector.getBank("123456", "123435678"))
 
-      ScalaFutures.whenReady(result) { r =>
-        r shouldBe true
-      }
+      result shouldBe a[BankDetails]
+      result.sortCode shouldBe "123456"
+      result.accountNumber shouldBe "12345678"
+      result.bankAddress shouldBe Some(Address("", "", "", "", "", ""))
     }
   }
 
   "Calling createPaymentPlan" should {
     "return DirectDebitInstructionPaymentPlan" in {
-      val response = HttpResponse(Status.OK, Some(getInstructionPaymentResponseJSON))
-      when(testConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
+      val jsonResponse = Json.fromJson[DirectDebitInstructionPaymentPlan](createPaymentPlanResponseJSON).get
+
+      when(testConnector.http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(jsonResponse))
 
       val saUtr = SaUtr("test")
-      val result = testConnector.createPaymentPlan(saUtr)
+      val paymentPlanRequest = Json.fromJson[PaymentPlanRequest](createPaymentRequestJSON).get
+      val result = await(testConnector.createPaymentPlan(paymentPlanRequest, saUtr))
 
-      ScalaFutures.whenReady(result) { r =>
-        r shouldBe a[DirectDebitInstructionPaymentPlan]
-        r match {
-          case directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan =>
-            directDebitInstructionPaymentPlan.processingDate shouldBe "2001-12-17T09:30:47Z"
-            directDebitInstructionPaymentPlan.directDebitInstruction.head.ddiReferenceNo shouldBe Some("ABCDabcd1234")
-            directDebitInstructionPaymentPlan.paymentPlan.head.ppReferenceNo shouldBe "abcdefghij1234567890"
-        }
-      }
+      result shouldBe a[DirectDebitInstructionPaymentPlan]
+      result.processingDate shouldBe "2001-12-17T09:30:47Z"
+      result.directDebitInstruction.head.ddiRefNo shouldBe Some("ABCDabcd1234")
+      result.paymentPlan.head.ppReferenceNo shouldBe "abcdefghij1234567890"
     }
   }
 }

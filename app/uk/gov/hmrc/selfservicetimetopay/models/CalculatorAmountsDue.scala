@@ -16,5 +16,20 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoField
+
 case class CalculatorAmountsDue(amountsDue: Seq[CalculatorAmountDue])
+
+case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Int, dueByMonth: String, dueByDay: Int) {
+
+  def this(amount: BigDecimal, dueBy: LocalDate) {
+    this(amount, dueBy.getYear, dueBy.format(DateTimeFormatter.ofPattern("MMMM")), dueBy.getDayOfMonth)
+  }
+
+  def getDueBy(): LocalDate = {
+    LocalDate.of(dueByYear, DateTimeFormatter.ofPattern("MMMM").parse(dueByMonth).get(ChronoField.MONTH_OF_YEAR), dueByDay)
+  }
+}
 

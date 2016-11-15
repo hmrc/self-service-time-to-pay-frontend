@@ -14,8 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfservicetimetopay.models
+package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import java.time.LocalDate
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.http.HttpGet
+import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 
-case class CalculatorPaymentScheduleInstalment(paymentDate:LocalDate, amount:BigDecimal)
+object EligibilityConnector extends EligibilityConnector with ServicesConfig {
+  val eligibilityURL = baseUrl("time-to-pay-eligibility")
+  val serviceURL = ""
+  val http = WSHttp
+}
+
+trait EligibilityConnector {
+
+  val eligibilityURL: String
+  val serviceURL: String
+  val http: HttpGet
+}
