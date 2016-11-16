@@ -15,6 +15,7 @@ GET    /calculator/payment-today        uk.gov.hmrc.selfservicetimetopay.control
 POST   /calculator/payment-today        uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.paymentTodaySubmit()
 GET    /calculator/instalments          uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsPresent()
 POST   /calculator/instalments          uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsSubmit()
+POST   /calculator/instalments/payment-today   uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsPaymentTodaySubmit()
 GET    /arrangement                     uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.present()
 GET    /arrangement/summary             uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.scheduleSummaryPresent()
 GET    /arrangement/summary/print       uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.scheduleSummaryPrintPresent

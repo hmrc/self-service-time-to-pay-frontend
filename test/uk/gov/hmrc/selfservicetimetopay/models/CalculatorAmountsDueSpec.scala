@@ -40,11 +40,11 @@ class CalculatorAmountsDueSpec extends UnitSpec with MockitoSugar {
 
     "correctly sum two amounts in a seq" in {
       val amounts = Seq(
-          new CalculatorAmountDue(amount = BigDecimal("100.11"), dueBy = LocalDate.now()),
-          new CalculatorAmountDue(BigDecimal("199.89"), LocalDate.now)
+          new CalculatorAmountDue(amount = new BigDecimal("100.11"), dueBy = LocalDate.now()),
+          new CalculatorAmountDue(new BigDecimal("199.89"), LocalDate.now)
       )
-      val cad = CalculatorAmountsDue(Seq(mock[CalculatorAmountDue], mock[CalculatorAmountDue]))
-      cad.total.compare(BigDecimal("300.00")) should be (0)
+      val cad = CalculatorAmountsDue(amounts)
+      cad.total.compare(new BigDecimal("300.00")) should be (0)
       cad.amountsDue.length should be(2)
     }
 
