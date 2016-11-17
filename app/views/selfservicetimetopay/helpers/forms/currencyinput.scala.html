@@ -13,6 +13,7 @@ Text input field using Component Library Styles as  documented:
                 input--xxsmall, input--xsmall, input--small,  input--normal,
                 input--fullwidth, input--no-spinner, input--cleared,
                 input--link
+            '_hideErrors -> set as true to hide errors other than the field highlight
 *@
 @(field: Field, args: (Symbol, String)*)(implicit lang: Lang = Lang("en"))
 @import views.html.helper.FieldElements
@@ -33,7 +34,7 @@ Text input field using Component Library Styles as  documented:
   c.trim
 }
 @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_after -> "true", '_modifierClass -> wrapperClass){
-    @fieldErrors(field)
+    @if(argsMap.getOrElse('_hideErrors, "false").toBoolean ) {@fieldErrors(field)}
     <span class="input-currency@if(argsMap.get('_currencyClass)){ @argsMap.get('_currencyClass)}"><input type="number" class="input--left-padding@if(inputClass.nonEmpty){ @inputClass}"
         name="@elements.field.name" id="@elements.field.name" value="@value"
         @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}

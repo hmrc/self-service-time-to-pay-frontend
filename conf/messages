@@ -61,8 +61,11 @@ ssttp.calculator.form.payment_today.title=Making a payment today
 ssttp.calculator.form.payment_today.amount.question=How much can you afford to pay now?
 
 ssttp.calculator.form.payment_today.error.summary.title=You haven''t entered an amount
+ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required=Please enter an amount of £0.00 or more
 ssttp.calculator.form.payment_today.amount.nonnegitive=Please enter an amount of £0.00 or more
+
+ssttp.calculator.form.payment_today.update=Update
 
 ssttp.calculator.form.continue=Continue
 ssttp.calculator.form.back=Back

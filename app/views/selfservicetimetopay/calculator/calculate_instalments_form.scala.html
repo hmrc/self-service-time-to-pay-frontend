@@ -8,8 +8,8 @@ Time To Pay Payment Schedule Display Page
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
 @(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[CalculatorPaymentToday], monthOptions:Seq[Int])(implicit request: Request[_])
-@import selfservicetimetopay.helpers.{message_list, pluralize}
-@import selfservicetimetopay.helpers.forms.{form, button, inlinenumberinput, numberinput, currencyinput, submit}
+@import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
+@import selfservicetimetopay.helpers.forms.{form, formErrors, button, fieldErrors, inlinenumberinput, numberinput, currencyinput, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
@@ -17,18 +17,34 @@ Time To Pay Payment Schedule Display Page
     sidebarLinks = Some(selfservicetimetopay.partials.sidebar())
 ){
     <h1 style="heading-h1">@Messages("ssttp.calculator.results.title")</h1>
+    @formErrors(durationForm)
+    @formErrors(paymentTodayAmountForm)
     <section class="section">
         <h2 style="heading-h2">@Messages("ssttp.calculator.results.heading.what-you-owe")</h2>
         <div class="subsection grid-layout divider--bottom">
             <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.you-owe")</div>
             <div class="grid-layout__column grid-layout__column--1-3">@Messages("ssttp.common.currency.symbol")@schedule.amountToPay</div>
         </div>
-        <div class="subsection grid-layout divider--bottom">
-            <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.you-can-afford")</div>
-            <div class="grid-layout__column grid-layout__column--1-3">@form(routes.CalculatorController.calculateInstalmentsPaymentTodaySubmit()) {
-                <span class="input-currency"><input type="number" class="input--small input--no-spinner input--left-padding" value="@schedule.initialPayment" readonly /></span> @Messages("ssttp.calculator.results.you-can-afford-now")
-            }</div>
-        </div>
+        @form(routes.CalculatorController.calculateInstalmentsPaymentTodaySubmit()) {
+            <div class="subsection grid-layout divider--bottom">
+                <div class="grid-layout__column grid-layout__column--2-3">@labelWrap(
+                    'for -> 'amount,
+                    'labelText -> Messages("ssttp.calculator.results.you-can-afford"),
+                    '_modifierClass -> (if (paymentTodayAmountForm("amount").errors.nonEmpty) "form-field--error" else "")
+                ) {
+                   <div class="">@fieldErrors(paymentTodayAmountForm("amount"))</div>
+                }
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-3">
+                    <div class="float--left">
+                        @currencyinput(paymentTodayAmountForm("amount"), '_inputClass -> "input--xsmall input--no-spinner")
+                    </div>
+                    @button('type->"submit", '_modifierClass -> "button--table float--right") {
+                        @Messages("ssttp.calculator.form.payment_today.update")
+                    }
+                </div>
+            </div>
+        }
         <div class="subsection grid-layout divider--bottom">
             <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.your-instalment-balance")</div>
             <div class="grid-layout__column grid-layout__column--1-3"><strong>@Messages("ssttp.common.currency.symbol")@schedule.instalmentBalance</strong></div>

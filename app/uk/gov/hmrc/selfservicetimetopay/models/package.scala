@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.selfservicetimetopay
 
-import java.math.BigDecimal
+import scala.math.BigDecimal
+import scala.math.BigDecimal.RoundingMode
 import java.time.LocalDate
 
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
@@ -59,43 +60,25 @@ package object modelsFormat {
 }
 
 package object controllerVariables {
-  implicit val paymentSchedules = Seq(
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
-      new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("300.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("300.00"))
-      )
-    ),
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
-      new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("250.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("250.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("250.00"))
-      )
-    ),
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
-      new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("100.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("100.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("100.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 4, 1), new BigDecimal("100.00"))
-      )
-    ),
-    CalculatorPaymentSchedule(new BigDecimal("200.00"), new BigDecimal("2000.00"), new BigDecimal("1800.00"),
-      new BigDecimal("20.00"), new BigDecimal("2020.00"), Seq(
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 1, 1), new BigDecimal("50.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 2, 1), new BigDecimal("50.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 3, 1), new BigDecimal("50.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 4, 1), new BigDecimal("50.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 5, 1), new BigDecimal("50.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 5, 1), new BigDecimal("50.00")),
-        CalculatorPaymentScheduleInstalment(LocalDate.of(2016, 6, 1), new BigDecimal("50.00"))
-      )
-    )
-  )
+  def generatePaymentSchedules(amountDue:BigDecimal, payment:Option[BigDecimal]):Seq[CalculatorPaymentSchedule] = {
+    var schedules = Seq[CalculatorPaymentSchedule]()
+    for(i  <- 2 to 11) {
+      val interest = BigDecimal("10") * BigDecimal(i)
+      var payments = Seq[CalculatorPaymentScheduleInstalment]()
+      for (p <- 1 to i) {
+        payments = payments :+ CalculatorPaymentScheduleInstalment(LocalDate.now.plusMonths(p),
+          ((amountDue - payment.getOrElse(BigDecimal("0")) + interest)/BigDecimal(i)).setScale(2, RoundingMode.HALF_UP))
+      }
+      schedules = schedules :+ CalculatorPaymentSchedule(payment.getOrElse(BigDecimal("0")),
+        amountDue, amountDue - payment.getOrElse(BigDecimal("0")),
+        interest, amountDue + interest, payments)
+    }
+    schedules
+  }
+
 
   implicit val formAmountsDue = CalculatorAmountsDue(Seq(
-    CalculatorAmountDue(new BigDecimal("200.00"), 2010, "January", 20),
-    CalculatorAmountDue(new BigDecimal("100.00"), 2014, "December", 1)
+    CalculatorAmountDue(BigDecimal("200.00"), 2010, "January", 20),
+    CalculatorAmountDue(BigDecimal("100.00"), 2014, "December", 1)
   ))
 }
