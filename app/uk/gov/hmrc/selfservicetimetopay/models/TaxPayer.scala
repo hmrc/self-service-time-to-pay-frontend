@@ -21,8 +21,9 @@ import java.time.LocalDate
 case class TaxPayer(customerName: String, addresses: List[Address], selfAssessment: SelfAssessment)
 
 case class SelfAssessment(utr: String,
-                          communicationPreferences: CommunicationPreferences,
-                          debits: List[Debit])
+                          communicationPreferences: Option[CommunicationPreferences],
+                          debits: List[Debit],
+                          returns: Option[List[Return]])
 
 case class Address(addressLine1: String,
                    addressLine2: String,
@@ -37,5 +38,7 @@ case class CommunicationPreferences(welshLanguageIndicator: Boolean,
                                      brailleIndicator: Boolean)
 
 case class Debit(originCode: String, amount: Option[BigDecimal], dueDate: LocalDate, interest: Option[Interest])
+
+case class Return(taxYearEnd: LocalDate, issuedDate: Option[LocalDate], dueDate: Option[LocalDate], receivedDate: Option[LocalDate])
 
 case class Interest(calculationDate: LocalDate, amountAccrued: BigDecimal)
