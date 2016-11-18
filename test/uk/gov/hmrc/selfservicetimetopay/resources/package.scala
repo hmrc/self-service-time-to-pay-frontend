@@ -43,5 +43,17 @@ package object resources {
       .mkString)
   val createPaymentRequestJSON = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CreatePaymentPlanRequest.json")
-    .mkString)
+      .mkString)
+  val checkEligibilityTrueRequest = Json.fromJson[SelfAssessment](Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueRequest.json")
+      .mkString)).get
+  val checkEligibilityTrueResponse = Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueResponse.json")
+      .mkString)
+  val checkEligibilityFalseRequest = Json.fromJson[SelfAssessment](Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseRequest.json")
+      .mkString)).get
+  val checkEligibilityFalseResponse = Json.parse(
+    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
+      .mkString)
 }

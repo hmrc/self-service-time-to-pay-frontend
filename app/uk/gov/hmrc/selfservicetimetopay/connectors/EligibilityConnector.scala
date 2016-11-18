@@ -19,10 +19,11 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpPost}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, TaxPayer}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, SelfAssessment, TaxPayer}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
+
 
 object EligibilityConnector extends EligibilityConnector with ServicesConfig {
   val eligibilityURL = baseUrl("time-to-pay-eligibility")
@@ -36,7 +37,7 @@ trait EligibilityConnector {
   val serviceURL: String
   val http: HttpPost
 
-  def checkEligibility(taxPayer: TaxPayer)(implicit hc: HeaderCarrier): Future[EligibilityStatus] = {
-    http.POST[TaxPayer, EligibilityStatus](s"$eligibilityURL/$serviceURL/", taxPayer)
+  def checkEligibility(selfAssessmentDetails: SelfAssessment)(implicit hc: HeaderCarrier): Future[EligibilityStatus] = {
+    http.POST[SelfAssessment, EligibilityStatus](s"$eligibilityURL/$serviceURL/", selfAssessmentDetails)
   }
 }

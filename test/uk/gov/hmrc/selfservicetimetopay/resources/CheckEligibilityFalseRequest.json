@@ -1,0 +1,28 @@
+{
+  "utr": "1234567890",
+  "debits": [
+  ],
+  "returns": [
+    {
+      "taxYearEnd": "2014-04-05",
+      "receivedDate": "2014-11-28"
+    },
+    {
+      "taxYearEnd": "2014-04-05",
+      "issuedDate": "2015-04-06",
+      "dueDate": "2016-01-31"
+    },
+    {
+      "taxYearEnd": "2014-04-05",
+      "issuedDate": "2016-04-06",
+      "dueDate": "2017-01-31",
+      "receivedDate": "2016-04-11"
+    },
+    {
+      "taxYearEnd": "2014-04-05",
+      "issuedDate": "2016-04-06",
+      "dueDate": "2017-01-31",
+      "receivedDate": "2016-04-11"
+    }
+  ]
+}
