@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
@@ -50,9 +51,18 @@ object CalculatorController extends FrontendController {
     )(CalculatorPaymentToday.apply)(CalculatorPaymentToday.unapply))
   }
 
-  private def createDurationForm(min: Integer, max: Integer): Form[CalculatorDuration] = {
+  private def createDurationForm(min: Int, max: Int): Form[CalculatorDuration] = {
+    def required: Constraint[Int] = Constraint[Int]("constraint.required") { o =>
+      if (o == null) Invalid(ValidationError("ssttp.calculator.form.duration.months.required")) else Valid
+    }
+    def greaterThan: Constraint[Int] = Constraint[Int]("constraint.duration-more-than") { o =>
+      if (o != null && o < min) Invalid(ValidationError("ssttp.calculator.form.duration.months.greater-than", min)) else Valid
+    }
+    def lessThan: Constraint[Int] = Constraint[Int]("constraint.duration-more-than") { o =>
+      if (o != null && o > max) Invalid(ValidationError("ssttp.calculator.form.duration.months.less-than", max)) else Valid
+    }
     Form(mapping(
-      "months" -> number(min = min, max = max)
+      "months" -> number.verifying(required, greaterThan, lessThan)
     )(CalculatorDuration.apply)(CalculatorDuration.unapply))
   }
 
@@ -94,9 +104,9 @@ object CalculatorController extends FrontendController {
         Redirect(routes.CalculatorController.paymentTodayPresent())
       }
       case (true, a:Some[CalculatorAmountsDue], p:Some[CalculatorPaymentToday], _, _) => {
-        Redirect(routes.CalculatorController.calculateInstalmentsPresent())
+        Redirect(routes.CalculatorController.calculateInstalmentsPresent(None))
       }
-      case theRest => Redirect(routes.CalculatorController.paymentTodayPresent())
+      case theRest => Redirect(routes.CalculatorController.amountsDuePresent())
     }
   }
 
@@ -168,7 +178,7 @@ object CalculatorController extends FrontendController {
         if (form.hasErrors) {
           Ok(payment_today_form.render(form, request))
         } else {
-          Redirect(routes.CalculatorController.calculateInstalmentsPresent()).addingToSession(
+          Redirect(routes.CalculatorController.calculateInstalmentsPresent(None)).addingToSession(
             "CalculatorPaymentToday" -> JacksonMapper.writeValueAsString(form.get)
           )
         }
@@ -178,48 +188,77 @@ object CalculatorController extends FrontendController {
     })
   }
 
-  def calculateInstalmentsPresent: Action[AnyContent] = Action.async { implicit request =>
+  def calculateInstalmentsPresent(monthsOption:Option[String]): Action[AnyContent] = Action.async { implicit request =>
 
     Future.successful(getKeystoreData match {
 
-      case (_, Some(amountsDue:CalculatorAmountsDue), Some(paymentToday:CalculatorPaymentToday),
-                      durationOption:Option[CalculatorDuration], schedulesOption:Option[List[CalculatorPaymentSchedule]]) => {
+      case (_, Some(amountsDue: CalculatorAmountsDue), Some(paymentToday: CalculatorPaymentToday),
+      durationOption: Option[CalculatorDuration], schedulesOption: Option[List[CalculatorPaymentSchedule]]) => {
         schedulesOption match {
-          case Some(schedules:Seq[CalculatorPaymentSchedule]) => {
-            val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
-            val duration = durationOption match {
-              case Some(d:CalculatorDuration) => d
-              case None => CalculatorDuration(instalmentOptionsAscending.head)
-            }
 
-            Ok(calculate_instalments_form.render(
-              schedules.filter(_.instalments.length == duration.months).head,
-              createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).fill(duration),
-              createPaymentTodayForm(amountsDue.total).fill(paymentToday),
-              instalmentOptionsAscending, request)
-            )
+          case Some(schedules: Seq[CalculatorPaymentSchedule]) => {
+            val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
+            monthsOption match {
+
+              case Some(monthsString: String) => {
+                try {
+                  val duration = CalculatorDuration(monthsString.toInt)
+                  val durationForm = createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).bindFromRequest()
+                  if (durationForm.hasErrors) {
+                    val months = durationOption match {
+
+                      case Some(d: CalculatorDuration) => d.months
+                      case None => durationOption match {
+
+                        case Some(duration: CalculatorDuration) => duration.months
+                        case None => schedules.head.instalments.length
+                      }
+                    }
+                    Ok(calculate_instalments_form(schedules.filter(_.instalments.length == months).head, durationForm,
+                      createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending)
+                    )
+                  } else {
+                    Redirect(routes.CalculatorController.calculateInstalmentsPresent(None))
+                      .addingToSession("CalculatorDuration" -> JacksonMapper.writeValueAsString(duration))
+                  }
+                } catch {
+                  case ex:Exception => BadRequest(ex.getLocalizedMessage)
+                }
+              }
+
+              case None => {
+                val duration = durationOption match {
+
+                  case Some(duration: CalculatorDuration) => duration
+                  case None => CalculatorDuration(schedules.head.instalments.length)
+                }
+                Ok(calculate_instalments_form(schedules.filter(_.instalments.length == duration.months).head,
+                  createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).fillAndValidate(duration),
+                  createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending)
+                ).addingToSession("CalculatorDuration" -> JacksonMapper.writeValueAsString(duration))
+              }
+            }
           }
           case None => {
-           /* for {
-               Some(schedulesList) <- CalculatorConnector.submitLiabilities(CalculatorInput(
-                liabilities = amountsDue.get.amountsDue.map(amountDue =>
-                  CalculatorLiability("", amountDue.amount, BigDecimal("0"), amountDue.getDueBy(), Some(amountDue.getDueBy()))),
-                initialPayment = paymentToday.get.amount.getOrElse(BigDecimal("0")),
-                startDate = LocalDate.now,
-                endDate = LocalDate.now.plusMonths(11),
-                paymentFrequency = "MONTHLY"))
+            /* for {
+                   Some(schedulesList) <- CalculatorConnector.submitLiabilities(CalculatorInput(
+                    liabilities = amountsDue.get.amountsDue.map(amountDue =>
+                      CalculatorLiability("", amountDue.amount, BigDecimal("0"), amountDue.getDueBy(), Some(amountDue.getDueBy()))),
+                    initialPayment = paymentToday.get.amount.getOrElse(BigDecimal("0")),
+                    startDate = LocalDate.now,
+                    endDate = LocalDate.now.plusMonths(11),
+                    paymentFrequency = "MONTHLY"))
 
-              result <- Future.successful(Redirect(routes.CalculatorController.calculateInstalmentsPresent()).addingToSession(
-                "CalculatorPaymentSchedules" -> JacksonMapper.writeValueAsString(schedulesList)
-              ))
-            } yield result*/
-            Redirect(routes.CalculatorController.calculateInstalmentsPresent()).addingToSession(
-                "CalculatorPaymentSchedules" -> "*"
+                  result <- Future.successful(Redirect(routes.CalculatorController.calculateInstalmentsPresent()).addingToSession(
+                    "CalculatorPaymentSchedules" -> JacksonMapper.writeValueAsString(schedulesList)
+                  ))
+                } yield result*/
+            Redirect(routes.CalculatorController.calculateInstalmentsPresent(None)).addingToSession(
+              "CalculatorPaymentSchedules" -> "*"
             )
           }
         }
       }
-
       case other => getRedirectionDestination(other)
     })
   }
@@ -242,7 +281,7 @@ object CalculatorController extends FrontendController {
             calculatorDurationForm, createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending, request))
         }
         else {
-          Redirect(routes.CalculatorController.calculateInstalmentsPresent()).addingToSession(
+          Redirect(routes.CalculatorController.calculateInstalmentsPresent(None)).addingToSession(
             "CalculatorDuration" -> JacksonMapper.writeValueAsString(calculatorDurationForm.get)
           )
         }
@@ -268,7 +307,7 @@ object CalculatorController extends FrontendController {
             createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).fill(duration),
               calculatorPaymentTodayForm, instalmentOptionsAscending, request))
         } else {
-          Redirect(routes.CalculatorController.calculateInstalmentsPresent()).addingToSession(
+          Redirect(routes.CalculatorController.calculateInstalmentsPresent(None)).addingToSession(
             "CalculatorPaymentToday" -> JacksonMapper.writeValueAsString(calculatorPaymentTodayForm.get)
           ).removingFromSession("CalculatorPaymentSchedules")
         }

@@ -65,6 +65,11 @@ ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an a
 ssttp.calculator.form.payment_today.amount.required=Please enter an amount of £0.00 or more
 ssttp.calculator.form.payment_today.amount.nonnegitive=Please enter an amount of £0.00 or more
 
+ssttp.calculator.form.duration.months.required=Please enter an number of months
+ssttp.calculator.form.duration.months.greater-than=Please enter a greater number of months
+ssttp.calculator.form.duration.months.less-than=Please enter a lower number of months
+
+
 ssttp.calculator.form.payment_today.update=Update
 
 ssttp.calculator.form.continue=Continue
