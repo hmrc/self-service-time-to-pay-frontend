@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import java.math.BigDecimal
+import java.time.LocalDate
+
 import org.scalatest.mock.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -33,6 +36,18 @@ class CalculatorAmountsDueSpec extends UnitSpec with MockitoSugar {
       cad shouldNot be (null)
       cad.amountsDue.length should be(2)
     }
+
+
+    "correctly sum two amounts in a seq" in {
+      val amounts = Seq(
+          new CalculatorAmountDue(amount = new BigDecimal("100.11"), dueBy = LocalDate.now()),
+          new CalculatorAmountDue(new BigDecimal("199.89"), LocalDate.now)
+      )
+      val cad = CalculatorAmountsDue(amounts)
+      cad.total.compare(new BigDecimal("300.00")) should be (0)
+      cad.amountsDue.length should be(2)
+    }
+
 
   }
 }

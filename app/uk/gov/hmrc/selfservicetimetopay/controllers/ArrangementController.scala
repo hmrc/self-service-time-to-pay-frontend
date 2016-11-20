@@ -51,11 +51,11 @@ object ArrangementController extends FrontendController {
 
   def scheduleSummaryPresent:Action[AnyContent] = Action.async { implicit request =>
   val form = createDayOfMonthForm
-    Future.successful(Ok(schedule_summary.render(paymentSchedules.last, form, request)))
+    Future.successful(Ok(schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request)))
   }
 
   def scheduleSummaryPrintPresent:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(print_schedule_summary.render(paymentSchedules.last, request)))
+    Future.successful(Ok(print_schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request)))
   }
 
   def scheduleSummaryDayOfMonthSubmit:Action[AnyContent] = Action.async { implicit request =>
@@ -81,6 +81,6 @@ object ArrangementController extends FrontendController {
   }
 
   def applicationCompletePresent:Action[AnyContent] = Action.async {implicit request =>
-    Future.successful(Ok(application_complete.render(paymentSchedules.last, request) ) )
+    Future.successful(Ok(application_complete.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request) ) )
   }
 }

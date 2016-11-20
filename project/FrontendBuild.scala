@@ -32,7 +32,7 @@ private object AppDependencies {
   private val cachingClientVersion = "5.6.0"
   private val mongoCachingVersion = "3.2.0"
   private val playConditionalMappingVersion = "0.2.0"
-
+  private val jacksonVersion = "2.7.4"
 
   val compile = Seq(
     ws,
@@ -46,7 +46,12 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "play-ui" % playUiVersion,
     "uk.gov.hmrc" %% "http-caching-client" % cachingClientVersion,
     "uk.gov.hmrc" %% "mongo-caching" % mongoCachingVersion,
-    "uk.gov.hmrc" %% "play-conditional-form-mapping" % playConditionalMappingVersion)
+    "uk.gov.hmrc" %% "play-conditional-form-mapping" % playConditionalMappingVersion,
+    "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
+    "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
+    "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonVersion,
+    "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
+  )
 
   trait TestDependencies {
     lazy val scope: String = "test"
