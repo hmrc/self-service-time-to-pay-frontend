@@ -5,7 +5,9 @@ ssttp.common.currency.symbol=£
 #landing
 ssttp.landing.title=Pay what you owe in instalments
 
-ssttp.landing.intro=To find out if you’re eligible for this service, we need to ask some questions about yourself and the amount you owe.
+ssttp.landing.intro=This arrangement allows you to pay the tax you owe in instalments. It only covers the amounts you need to pay now and is not an ongoing payment plan for new tax bills.
+ssttp.landing.alert=This is intended as a one-off service to offer additional support. You shouldn’t expect to be able to make your future HMRC payments using an instalment plan.
+ssttp.landing.keep-up-to-date=You must keep up to date with your payments. If you don’t, HMRC can make the entire outstanding amount payable immediately.
 ssttp.landing.before-you-start=Before you start you’ll need to know:
 ssttp.landing.before-you-start.list.1=the amounts owed
 ssttp.landing.before-you-start.list.2=when it''s due
