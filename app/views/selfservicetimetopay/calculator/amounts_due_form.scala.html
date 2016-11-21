@@ -11,6 +11,7 @@
     <header class="page-header text">
         <h1 class="h1-heading">@Messages("ssttp.calculator.form.amounts_due.title")</h1>
     </header>
+    @amountsDue.amountsDue.toString()
     @form(routes.CalculatorController.amountsDueSubmit(), 'class -> "group") {
         @formErrorSummary(Messages("ssttp.calculator.form.amounts_due.error.summary.title"), dataForm, Seq.empty)
         @dataForm.errors
@@ -31,7 +32,7 @@
                    '_inputGroupClass -> "gutter-left"
               )
         </div>
-        <p>@submit(Messages("ssttp.calculator.form.continue"))</p>
+        <p>@submit(){@Messages("ssttp.calculator.form.continue")}</p>
     }
     <p><a class="back-link" href="@routes.SelfServiceTimeToPayController.present()">@Messages("ssttp.calculator.form.back")</a></p>
 }

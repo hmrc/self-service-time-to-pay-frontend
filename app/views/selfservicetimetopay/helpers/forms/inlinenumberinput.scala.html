@@ -7,7 +7,7 @@ Number input field using Component Library Styles as  documented:
     @param args options arguments for the template
             '_label -> Text for the field label before the input
             '_labelSuffix -> Text for the field label after the input
-            '_labelClass -> Label Modifier class
+            '_modifierClass -> Modifier class
             '_inputClass -> Modifier class for the input class, includes:
                 input--xxsmall, input--xsmall, input--small,  input--normal,
                 input--fullwidth, input--no-spinner, input--cleared,
@@ -21,7 +21,7 @@ Number input field using Component Library Styles as  documented:
 @elements = @{ new FieldElements(field.id, field, null, argsMap, lang) }
 @value = @{ field.value match { case Some(x) => x case None => "" case x => x }}
 @wrapperClass = @{
-    var w = Seq.empty ++ argsMap.getOrElse('_labelClass, "").asInstanceOf[String].split(" ")
+    var w = Seq.empty ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")
     w = if (field.hasErrors) w :+ "form-field--error" else w
     w.mkString(" ")
 }

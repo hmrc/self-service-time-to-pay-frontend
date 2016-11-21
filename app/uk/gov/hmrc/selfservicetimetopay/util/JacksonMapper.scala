@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfservicetimetopay.models
+package uk.gov.hmrc.selfservicetimetopay.util
 
-case class CalculatorAmountsDue(amountsDue: Seq[CalculatorAmountDue]) {
-  def total:BigDecimal = {
-    amountsDue.map(_.amount).sum
-  }
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+
+object JacksonMapper extends ObjectMapper {
+  configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+  registerModule(DefaultScalaModule)
+  setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
 }
-

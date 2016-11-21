@@ -51,7 +51,7 @@ Time To Pay Direct Debit Form Page
       @checkbox(ddForm("confirmed"), Option(Html(Messages("ssttp.arrangement.direct-debit.form.confirmed"))),
         '_labelClass -> "block-label"
       )
-      @submit(Messages("ssttp.arrangement.direct-debit.form.submit"))
+      @submit(){@Messages("ssttp.arrangement.direct-debit.form.submit")}
       <p>&nbsp;</p>
     }
   </section>

@@ -16,9 +16,20 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class CalculatorAmountsDue(amountsDue: Seq[CalculatorAmountDue]) {
-  def total:BigDecimal = {
-    amountsDue.map(_.amount).sum
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoField
+
+import com.fasterxml.jackson.annotation.JsonIgnore
+
+case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Int, dueByMonth: String, dueByDay: Int) {
+
+  def this(amount: BigDecimal, dueBy: LocalDate) {
+    this(amount, dueBy.getYear, dueBy.format(DateTimeFormatter.ofPattern("MMMM")), dueBy.getDayOfMonth)
+  }
+
+  @JsonIgnore
+  def getDueBy(): LocalDate = {
+    LocalDate.of(dueByYear, DateTimeFormatter.ofPattern("MMMM").parse(dueByMonth).get(ChronoField.MONTH_OF_YEAR), dueByDay)
   }
 }
-
