@@ -81,8 +81,11 @@ object CalculatorController extends FrontendController {
       case None => None
     }
     val schedules:Option[Seq[CalculatorPaymentSchedule]] = request.session.get("CalculatorPaymentSchedules") match {
-      case Some(json) => Some(generatePaymentSchedules(amountsDue.get.total, paymentToday.get.amount))
-      /*Option(JacksonMapper.readValue(json, classOf[Seq[CalculatorPaymentSchedule]]))*/
+      case Some(json) => if(amountsDue.isDefined && paymentToday.isDefined) {
+        Some(generatePaymentSchedules(amountsDue.get.total, paymentToday.get.amount))
+      } else {
+        None
+      }
       case None => None
     }
     (ssttpStart, amountsDue, paymentToday, duration, schedules)
@@ -208,11 +211,7 @@ object CalculatorController extends FrontendController {
                     val months = durationOption match {
 
                       case Some(d: CalculatorDuration) => d.months
-                      case None => durationOption match {
-
-                        case Some(duration: CalculatorDuration) => duration.months
-                        case None => schedules.head.instalments.length
-                      }
+                      case None => schedules.head.instalments.length
                     }
                     Ok(calculate_instalments_form(schedules.filter(_.instalments.length == months).head, durationForm,
                       createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending)
@@ -227,11 +226,7 @@ object CalculatorController extends FrontendController {
               }
 
               case None => {
-                val duration = durationOption match {
-
-                  case Some(duration: CalculatorDuration) => duration
-                  case None => CalculatorDuration(schedules.head.instalments.length)
-                }
+                val duration = durationOption.getOrElse(CalculatorDuration(schedules.head.instalments.length))
                 Ok(calculate_instalments_form(schedules.filter(_.instalments.length == duration.months).head,
                   createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).fillAndValidate(duration),
                   createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending)
