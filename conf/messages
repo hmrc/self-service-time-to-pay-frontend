@@ -186,13 +186,39 @@ ssttp.arrangement.direct-debit.form.confirmation.list.3=This account does not re
 ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
 ssttp.arrangement.direct-debit.form.submit=Continue
 
-ssttp.arrangement.direct-debit.form.guarantee.title=Direct Debit Guarantee
-ssttp.arrangement.direct-debit.form.guarantee.list.1=This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
-ssttp.arrangement.direct-debit.form.guarantee.list.2=I there are any changes to the amount, date or frequency of your Direct Debit HM Revenue & Customs (HMRC) will notify you 10 working days in advance of your account being debited or as otherwise agreed. If you request HMRC to collect a payment, confirmation of the amount and date will be given to you at the time of the request.
-ssttp.arrangement.direct-debit.form.guarantee.list.3=If an error is made in the payment of your Direct Debit, by HMRC or your bank or building society, you are entitled to a full immediate refund of the amount paid from your bank or building society.
-ssttp.arrangement.direct-debit.form.guarantee.list.4=If you receive a refund you are not entitled to, you must pay it back when HMRC asks you to.
-ssttp.arrangement.direct-debit.form.guarantee.list.5=You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please notify us.
+ssttp.arrangement.direct-debit.guarantee.title=Direct Debit Guarantee
+ssttp.arrangement.direct-debit.guarantee.list.1=This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
+ssttp.arrangement.direct-debit.guarantee.list.2=I there are any changes to the amount, date or frequency of your Direct Debit HM Revenue & Customs (HMRC) will notify you 10 working days in advance of your account being debited or as otherwise agreed. If you request HMRC to collect a payment, confirmation of the amount and date will be given to you at the time of the request.
+ssttp.arrangement.direct-debit.guarantee.list.3=If an error is made in the payment of your Direct Debit, by HMRC or your bank or building society, you are entitled to a full immediate refund of the amount paid from your bank or building society.
+ssttp.arrangement.direct-debit.guarantee.list.4=If you receive a refund you are not entitled to, you must pay it back when HMRC asks you to.
+ssttp.arrangement.direct-debit.guarantee.list.5=You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please notify us.
 
+ssttp.arrangement.direct-debit.confirmation.title=Direct Debit Confirmation
+ssttp.arrangement.direct-debit.confirmation.subtitle=Direct Debit payment schedule
+ssttp.arrangement.direct-debit.confirmation.account-name=Account name
+ssttp.arrangement.direct-debit.confirmation.account-number=Account number
+ssttp.arrangement.direct-debit.confirmation.sort-code=Sort code
+ssttp.arrangement.direct-debit.confirmation.payment-frequency=Payment frequency
+ssttp.arrangement.direct-debit.confirmation.monthly=Monthly
+ssttp.arrangement.direct-debit.confirmation.initial-payment=(initial payment)
+ssttp.arrangement.direct-debit.confirmation.final-payment=(final payment)
+ssttp.arrangement.direct-debit.confirmation.total-payment=Total payment will be:
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary=Instruction to your bank
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.title=Instruction to your Bank or Building Society to pay by Direct Debit
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.1=HM Revenue and Customs (HMRC)
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.2=Direct Debit Section
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.3=HMRC Accounts Office
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.4=Cumbernauld
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.5=Glasgow G67 1YZ
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.phone.1=Telephone: 0300 200 3310
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.phone.2=Textphone: 0300 200 3319
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.phone.3=Outside UK: +44 161 931 9070
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.label=Service user number:
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.number=919342
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.text=Please pay HMRC Direct Debits from the account detailed in this instruction subject to the safeguards assured by the Direct Debit Guarantee. I understand that this instruction may remain with HMRC and, if so, details will be passed electronically to my Bank/Building Society.
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.do-not-send-to-bank=Please do not send this form to your bank.
+
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.please-check=Please check this information carefully before confirming payment
 
 #global errors
 global.error.400.title=Bad request - 400

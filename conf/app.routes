@@ -25,6 +25,7 @@ POST   /arrangement/summary             uk.gov.hmrc.selfservicetimetopay.control
 POST   /arrangement/day-of-month        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.scheduleSummaryDayOfMonthSubmit()
 GET    /arrangement/direct-debit        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.directDebitPresent()
 POST   /arrangement/direct-debit        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.directDebitSubmit()
+GET    /arrangement/direct-debit-confirmation        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.directDebitConfirmationPresent()
 GET    /arrangement/complete            uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationCompletePresent()
 GET    /you-need-to-file                uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.youNeedToFilePresent()
 GET    /ttp-call-us                     uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.ttpCallUsPresent()

@@ -1,0 +1,109 @@
+@*
+Time To Pay Instalment Summary Display Page
+
+@param schedule CalculatorPaymentSchedule The results data to display
+@param dayForm Form[ArrangementDayOfMonth] For for day of month selection for direct debit
+
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, ArrangementDirectDebit}
+@(schedule:CalculatorPaymentSchedule, directDebit:ArrangementDirectDebit, form:Form[Boolean])(implicit request: Request[_])
+@import selfservicetimetopay.helpers.{alert, message_list}
+@import selfservicetimetopay.helpers.forms.{form, submit}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@selfservicetimetopay.main(
+  title = Messages("ssttp.common.title"),
+  bodyClasses = None,
+  sidebarLinks = Some(selfservicetimetopay.partials.sidebar())
+){
+    <h1>@Messages("ssttp.arrangement.instalment-summary.title")</h1>
+    <div class="grid-layout push">
+        <div class="grid-layout__column grid-layout__column--3-4">
+            <h3>@Messages("ssttp.arrangement.direct-debit.confirmation.subtitle")</h3>
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-4">
+            <img src="./public/images/dd-logo.png">
+        </div>
+    </div>
+    <section class="section">
+        <div class="subsection grid-layout divider--bottom font-xsmall">
+            <div class="grid-layout__column grid-layout__column--1-4">
+
+                        <strong>@Messages("ssttp.arrangement.direct-debit.confirmation.account-name")</strong>
+                    </div>
+                    <div class="grid-layout__column grid-layout__column--1-4">
+                        @directDebit.accountName
+                    </div>
+
+
+            <div class="grid-layout__column grid-layout__column--1-4">
+                <strong>@Messages("ssttp.arrangement.direct-debit.confirmation.account-number")</strong>
+            </div>
+            <div class="grid-layout__column grid-layout__column--1-4">
+                @("%09d".format(directDebit.accountNumber))
+            </div>
+        </div>
+        <div class="subsection grid-layout divider--bottom font-xsmall">
+            <div class="grid-layout__column grid-layout__column--1-2">
+                <div class="grid-layout push">
+                    <div class="grid-layout__column grid-layout__column--2-3">
+                    <strong>@Messages("ssttp.arrangement.direct-debit.confirmation.payment-frequency")</strong>
+                    </div>
+                    <div class="grid-layout__column grid-layout__column--1-3">
+                        @Messages("ssttp.arrangement.direct-debit.confirmation.monthly")
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-layout__column grid-layout__column--1-4">
+                <strong>@Messages("ssttp.arrangement.direct-debit.confirmation.sort-code")</strong>
+            </div>
+            <div class="grid-layout__column grid-layout__column--1-4">
+                @("%02d - %02d - %02d".format(directDebit.sortCode1, directDebit.sortCode2, directDebit.sortCode3))
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        @schedule.instalments.map { instalment =>
+            <div class="subsection grid-layout divider--bottom font-xsmall">
+                <div class="grid-layout__column grid-layout__column--3-4"><strong>@instalment.paymentDate</strong>
+                    @if(instalment == schedule.instalments.head) {
+                        @Messages("ssttp.arrangement.direct-debit.confirmation.initial-payment")
+                    } else {
+                        @if(instalment == schedule.instalments.last) {
+                            @Messages("ssttp.arrangement.direct-debit.confirmation.final-payment")
+                        }
+                    }
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-4">@Messages("ssttp.common.currency.symbol")@instalment.amount</div>
+            </div>
+        }
+        <div class="subsection text--right">
+        @Messages("ssttp.arrangement.direct-debit.confirmation.total-payment")
+            <strong>@Messages("ssttp.common.currency.symbol")@schedule.totalPayable</strong>
+        </div>
+    </section>
+
+    <section class="section">
+    <details>
+        <summary>@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary")</summary>
+        <div class="panel-indent">
+            <h3>@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.title")</h3>
+            @message_list(Some("font-small"), "ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.")
+            @message_list(Some("font-small"), "ssttp.arrangement.direct-debit.confirmation.bank-instruction.phone.")
+            <p><strong>@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.label")</strong>
+                @Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.number")</p>
+            <p class="font-xsmall">@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.text")</p>
+            <p><strong>@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.do-not-send-to-bank")</strong></p>
+        </div>
+    </details>
+        @alert(){@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.please-check")}
+        @form(routes.ArrangementController.directDebitConfirmationSubmit()){
+            @submit(){@Messages("ssttp.arrangement.direct-debit.form.submit")}
+        }
+    </section>
+    <section class="divider--top">
+        <h3 class="heading-h3">@Messages("ssttp.arrangement.direct-debit.guarantee.title")</h3>
+        @message_list(Some("bullets"), "ssttp.arrangement.direct-debit.guarantee.list.", '_itemClass -> "font-xsmall")
+    </section>
+}
+

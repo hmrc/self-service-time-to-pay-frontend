@@ -80,6 +80,21 @@ object ArrangementController extends FrontendController {
     }
   }
 
+  def directDebitConfirmationPresent:Action[AnyContent] = Action.async {implicit request =>
+    val form:Form[Boolean] = Form(single("confirm" -> boolean))
+    Future.successful(Ok(direct_debit_confirmation.render(
+      generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last,
+      arrangementDirectDebit, request))
+    )
+  }
+
+  def directDebitConfirmationSubmit:Action[AnyContent] = Action.async {implicit request =>
+    Future.successful(Ok(direct_debit_confirmation.render(
+      generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last,
+      arrangementDirectDebit, request))
+    )
+  }
+
   def applicationCompletePresent:Action[AnyContent] = Action.async {implicit request =>
     Future.successful(Ok(application_complete.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request) ) )
   }
