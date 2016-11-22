@@ -21,8 +21,6 @@ import play.api.mvc.Result
 import play.api.test.{FakeApplication, FakeRequest}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-import scala.concurrent.Future
-
 class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
 
   private val gaToken = "GA-TOKEN"
@@ -31,15 +29,15 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
   "SelfServiceTimeToPayController" should {
 
     "return 200 Ok showing the service start page" in {
-      val result: Future[Result] = SelfServiceTimeToPayController.present.apply(FakeRequest())
-      val r: Result = await(result)
-      status(r) shouldBe 200
+      val result = SelfServiceTimeToPayController.present.apply(FakeRequest())
+
+      status(result) shouldBe 200
     }
 
     "display the service start page title" in {
-      val result: Future[Result] = SelfServiceTimeToPayController.present.apply(FakeRequest())
-      val r: Result = await(result)
-      bodyOf(r) should include ("Pay what you owe in instalments")
+      val result:Result = SelfServiceTimeToPayController.present.apply(FakeRequest())
+
+      bodyOf(result) should include ("Pay what you owe in instalments")
     }
   }
 

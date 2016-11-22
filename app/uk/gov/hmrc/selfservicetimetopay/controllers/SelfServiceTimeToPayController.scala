@@ -19,26 +19,25 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.selfservicetimetopay.core._
-import scala.concurrent.Future
 
 object SelfServiceTimeToPayController extends FrontendController{
 
-  def present:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(service_start.render(request)))
+  def present:Action[AnyContent] = Action { implicit request =>
+    Ok(service_start.render(request))
   }
 
-  def submit:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.CalculatorController.present()).withSession(
+  def submit:Action[AnyContent] = Action { implicit request =>
+    Redirect(routes.CalculatorController.present()).withSession(
       "SelfServiceTimeToPayStart" -> "1"
-    ))
+    )
   }
 
-  def ttpCallUsPresent:Action[AnyContent] =  Action.async { implicit request =>
-    Future.successful(Ok(ttp_call_us.render(request)))
+  def ttpCallUsPresent:Action[AnyContent] =  Action { implicit request =>
+    Ok(ttp_call_us.render(request))
   }
 
-  def youNeedToFilePresent:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(you_need_to_file.render(request)))
+  def youNeedToFilePresent:Action[AnyContent] = Action { implicit request =>
+    Ok(you_need_to_file.render(request))
   }
 
 }
