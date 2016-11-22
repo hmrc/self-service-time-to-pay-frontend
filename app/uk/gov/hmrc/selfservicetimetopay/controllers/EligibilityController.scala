@@ -47,7 +47,7 @@ object EligibilityController extends FrontendController{
 
   private def createExistingTtpForm:Form[EligibilityExistingTTP] = {
     Form(mapping(
-      "hasExistingTTP" -> optional(boolean).verifying(has => has.nonEmpty)
+      "hasExistingTTP" -> optional(boolean).verifying("ssttp.eligibility.form.existing_ttp.required", _.nonEmpty)
     )(EligibilityExistingTTP.apply)(EligibilityExistingTTP.unapply))
   }
 
@@ -87,7 +87,7 @@ object EligibilityController extends FrontendController{
       if (form.get.hasExistingTTP.get) {
         Future.successful(Redirect(routes.SelfServiceTimeToPayController.ttpCallUsPresent()))
       } else {
-        Future.successful(Redirect(routes.ArrangementController.present()))
+        Future.successful(Redirect(routes.CalculatorController.present()))
       }
     }
   }

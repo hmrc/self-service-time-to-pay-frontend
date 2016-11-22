@@ -29,12 +29,11 @@ ssttp.eligibility.form.existing_ttp.question.prompt=Are you already paying an HM
 ssttp.eligibility.form.existing_ttp.question.yes=Yes
 ssttp.eligibility.form.existing_ttp.question.no=No
 
-ssttp.eligibility.form.continue=Continue
-ssttp.eligibility.form.back=Back
-
-
 ssttp.eligibility.form.existing_ttp.error.summary.title=You haven''t selected an option
 ssttp.eligibility.form.existing_ttp.required=Please answer this question
+
+ssttp.eligibility.form.continue=Continue
+ssttp.eligibility.form.back=Back
 
 #calculator
 ssttp.calculator.form.amounts_due.title=About what you owe
