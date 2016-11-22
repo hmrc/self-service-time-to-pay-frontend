@@ -68,6 +68,7 @@ package object modelsFormat {
   implicit val paymentPlanFormatter = Json.format[PaymentPlan]
   implicit val paymentPlanRequestFormatter = Json.format[PaymentPlanRequest]
   implicit val bankDetailsFormatter = Json.format[BankDetails]
+  implicit val bankAccountFormatter = Json.format[BankAccount]
 
   //Eligibility formatters
   implicit val eligibilityStatusFormatter = Json.format[EligibilityStatus]
