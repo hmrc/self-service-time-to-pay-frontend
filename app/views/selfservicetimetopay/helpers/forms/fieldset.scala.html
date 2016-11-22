@@ -17,7 +17,7 @@
   if(argsMap.contains('_modifierClass)) {
       c = c ++ Seq(argsMap.getOrElse('_modifierClass, "").asInstanceOf[String])
   }
-  if(dataForm.errors.contains(fieldName) &&  dataForm.errors(fieldName).nonEmpty){
+  if(dataForm.error(fieldName).nonEmpty){
       c = c ++ Seq("form-field-group--error")
   }
   Html(c.mkString(" class=\"", " ", "\""))

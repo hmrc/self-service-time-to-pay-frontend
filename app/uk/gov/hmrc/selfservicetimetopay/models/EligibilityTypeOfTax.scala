@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class EligibilityDebtType(hasSelfAssessmentDebt: Boolean = false, hasOtherDebt: Boolean = false)
+case class EligibilityTypeOfTax(hasSelfAssessmentDebt: Boolean = false, hasOtherDebt: Boolean = false)

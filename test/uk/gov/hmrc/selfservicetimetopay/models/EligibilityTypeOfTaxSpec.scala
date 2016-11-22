@@ -19,19 +19,19 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import org.scalatest.mock.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
 
-class EligibilityDebtTypeSpec extends UnitSpec with MockitoSugar {
+class EligibilityTypeOfTaxSpec extends UnitSpec with MockitoSugar {
 
-  "EligibilityDebtType" should {
+  "EligibilityTypeOfTax" should {
 
     "create with parameters" in {
-      val edt = new EligibilityDebtType(true, true)
+      val edt = new EligibilityTypeOfTax(true, true)
       edt shouldNot be (null)
       edt.hasOtherDebt should be (true)
       edt.hasSelfAssessmentDebt should be (true)
     }
 
     "create with no parameters" in {
-      val edt = new EligibilityDebtType()
+      val edt = new EligibilityTypeOfTax()
       edt shouldNot be (null)
       edt.hasOtherDebt should be(false)
       edt.hasSelfAssessmentDebt should be(false)

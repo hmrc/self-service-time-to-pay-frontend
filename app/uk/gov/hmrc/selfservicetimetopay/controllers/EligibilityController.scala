@@ -20,12 +20,30 @@ import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.selfservicetimetopay.eligibility._
 import play.api.data.Form
-import play.api.data.Forms.{boolean, mapping, optional}
+import play.api.data.Forms.{tuple, boolean, optional, mapping}
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
 import scala.concurrent.Future
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityDebtType, EligibilityExistingTTP}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax}
 
 object EligibilityController extends FrontendController{
+
+  def atLeastOneRequired: Constraint[(Boolean, Boolean)] = Constraint[(Boolean, Boolean)]("constraint.required") { data  =>
+    if (!data._1 && !data._2) Invalid(ValidationError("ssttp.eligibility.form.type_of_tax.required")) else Valid
+  }
+
+  private def createTypeOfTaxForm:Form[EligibilityTypeOfTax] = {
+    Form(mapping(
+      "type_of_tax" -> tuple(
+        "hasSelfAssessmentDebt" -> boolean,
+        "hasOtherDebt" -> boolean
+      ).verifying(atLeastOneRequired)
+    )((type_of_tax) => {
+      EligibilityTypeOfTax(type_of_tax._1, type_of_tax._2)
+    })
+      ((type_of_tax:EligibilityTypeOfTax) => Some(type_of_tax.hasSelfAssessmentDebt, type_of_tax.hasOtherDebt))
+    )
+  }
 
   private def createExistingTtpForm:Form[EligibilityExistingTTP] = {
     Form(mapping(
@@ -34,8 +52,27 @@ object EligibilityController extends FrontendController{
   }
 
   def present:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.EligibilityController.existingTtpPresent()))
+    Future.successful(Redirect(routes.EligibilityController.typeOfTaxPresent()))
   }
+
+  def typeOfTaxPresent:Action[AnyContent] = Action.async { implicit request =>
+    val form = createTypeOfTaxForm
+    Future.successful(Ok(type_of_tax_form.render(form, request)))
+  }
+
+  def typeOfTaxSubmit:Action[AnyContent] = Action.async { implicit request =>
+    val form = createTypeOfTaxForm.bindFromRequest()
+    if(form.hasErrors) {
+      Future.successful(Ok(type_of_tax_form.render(form, request)))
+    } else {
+      if (form.get.hasOtherDebt) {
+        Future.successful(Redirect(routes.SelfServiceTimeToPayController.ttpCallUsPresent()))
+      } else {
+        Future.successful(Redirect(routes.EligibilityController.existingTtpPresent()))
+      }
+    }
+  }
+
 
   def existingTtpPresent:Action[AnyContent] =  Action.async { implicit request =>
     val form = createExistingTtpForm
