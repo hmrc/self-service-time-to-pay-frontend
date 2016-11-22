@@ -17,27 +17,27 @@
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpPost}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, SelfAssessment}
+import uk.gov.hmrc.selfservicetimetopay.models.BankAccount
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.html.helper
 
 import scala.concurrent.Future
 
-
-object EligibilityConnector extends EligibilityConnector with ServicesConfig {
-  val eligibilityURL = baseUrl("time-to-pay-eligibility")
-  val serviceURL = "eligibility"
+object SelfServiceOrchestrationConnector extends SelfServiceOrchestrationConnector with ServicesConfig {
+  val serviceURL = baseUrl("self-service-time-to-pay")
   val http = WSHttp
 }
 
-trait EligibilityConnector {
+trait SelfServiceOrchestrationConnector {
 
-  val eligibilityURL: String
   val serviceURL: String
-  val http: HttpPost
+  val http: HttpGet
 
-  def checkEligibility(selfAssessmentDetails: SelfAssessment)(implicit hc: HeaderCarrier): Future[EligibilityStatus] = {
-    http.POST[SelfAssessment, EligibilityStatus](s"$eligibilityURL/$serviceURL/", selfAssessmentDetails)
+  def validateAccount(sortCode: String, accountNumber: String, accountName: Option[String])(implicit hc: HeaderCarrier): Future[Seq[BankAccount]] = {
+    val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber&accountName=${helper.urlEncode(accountName.getOrElse(""))}"
+    http.GET[Seq[BankAccount]](s"$serviceURL/validateAccount?$queryString")
   }
+
 }
