@@ -128,8 +128,15 @@ ssttp.ttp-call-us.we-need-to-know.list.7=your bank details
 ssttp.ttp-call-us.contact-instructions=When you have all of this, please call us on {0}.
 ssttp.ttp-call-us.contact-number=0330 321 321
 
-ssttp.you-need-to-file.title=You need to file
-ssttp.you-need-to-file.intro=More text here
+ssttp.you-need-to-file.title=Your tax account may not be up to date
+ssttp.you-need-to-file.intro=There are insufficient Self Assessment amounts owing in your tax account to set up an instalment plan
+ssttp.you-need-to-file.because=This may be because:
+ssttp.you-need-to-file.because.list.1=you haven't submitted your Self Assessment return
+ssttp.you-need-to-file.because.list.2=you submitted your Self Assessment return within the last 48 hours and your tax account has yet to update
+ssttp.you-need-to-file.check-account=You can check your tax status and file a return via your tax account.
+ssttp.you-need-to-file.check-account.link=Go to your tax account
+ssttp.you-need-to-file.other-tax=If you're trying to set up an instalment plan for other types of tax please call us on:
+ssttp.you-need-to-file.other-tax.number=0330 321 321
 
 ssttp.arrangement.instalment-summary.title=Your instalment plan summary
 ssttp.arrangement.instalment-summary.print=print

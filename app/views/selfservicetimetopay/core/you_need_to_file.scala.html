@@ -1,14 +1,25 @@
 @()(implicit request: Request[_])
 @import selfservicetimetopay.partials.sidebar
+@import selfservicetimetopay.helpers.{highlight, message_list}
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
     bodyClasses = None,
     sidebarLinks = Some(sidebar())
 ){
-  <header class="page-header text">
-    <h1 class="h1-heading">@Messages("ssttp.you-need-to-file.title")</h1>
-  </header>
-  <div class="section">
-    <p class="subsection">@Messages("ssttp.you-need-to-file.intro")</p>
-  </div>
+    <header class="page-header text" xmlns="http://www.w3.org/1999/html">
+        <h1 class="h1-heading">@Messages("ssttp.you-need-to-file.title")</h1>
+    </header>
+    <section class="section  divider--bottom">
+        @highlight('_modifierClass -> "highlight-message--light") {
+            <p>@Messages("ssttp.you-need-to-file.intro")</p>
+        }
+        <p class="subsection">@Messages("ssttp.you-need-to-file.because")</p>
+        @message_list(Some("bullets"), "ssttp.you-need-to-file.because.list.")
+        <p class="subsection">@Messages("ssttp.you-need-to-file.check-account")</p>
+        <p class="subsection"><a href="https://online.hmrc.gov.uk/">@Messages("ssttp.you-need-to-file.check-account.link")</a></p>
+    </section>
+    <section class="section">
+        <p>@Messages("ssttp.you-need-to-file.other-tax")</p>
+        <p><strong>@Messages("ssttp.you-need-to-file.other-tax.number")</strong></p>
+    </section>
 }
