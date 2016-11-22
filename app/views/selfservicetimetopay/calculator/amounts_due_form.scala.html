@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountsDue
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue
 @(amountsDue:CalculatorAmountsDue, dataForm: Form[CalculatorAmountDue])(implicit request: Request[_])
-@import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, dateinput, submit}
+@import selfservicetimetopay.helpers.forms.{form, formErrorSummary, inlinecurrencyinput, dateinput, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
@@ -18,7 +18,7 @@
         <p>@Messages("ssttp.calculator.form.amounts_due.intro")</p>
           <div class="form-field--group bordered-box">
               <p>
-                @currencyinput(dataForm("amount"),
+                @inlinecurrencyinput(dataForm("amount"),
                   'label -> Messages("ssttp.calculator.form.amounts_due.how_much.question"),
                   '_labelClass -> "label--inline",
                   '_inputClass -> "input--small input--no-spinner")

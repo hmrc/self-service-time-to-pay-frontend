@@ -12,12 +12,9 @@
   </header>
   @form(routes.CalculatorController.paymentTodaySubmit(), 'class -> "group") {
     @formErrorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm, Seq.empty)
-    <p>
       @currencyinput(dataForm("amount"),
         'label -> Messages("ssttp.calculator.form.payment_today.amount.question"),
-        '_currencyClass -> "input-cleared",
         '_inputClass -> "input--small input--no-spinner")
-    </p>
     <p>
       @submit(){@Messages("ssttp.calculator.form.continue")}
     </p>
