@@ -20,7 +20,9 @@ import scala.math.BigDecimal
 import scala.math.BigDecimal.RoundingMode
 import java.time.LocalDate
 
+import play.api.http.Status._
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
+import uk.gov.hmrc.play.http.{HttpErrorFunctions, HttpReads, HttpResponse}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 package object modelsFormat {
