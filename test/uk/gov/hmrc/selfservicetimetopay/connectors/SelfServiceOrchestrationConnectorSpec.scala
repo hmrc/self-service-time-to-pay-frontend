@@ -22,6 +22,7 @@ import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.play.test.WithFakeApplication
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import uk.gov.hmrc.selfservicetimetopay.models.BankAccount
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class SelfServiceOrchestrationConnectorSpec extends ConnectorSpec with WithFakeApplication with ServicesConfig {
 
@@ -56,9 +57,10 @@ class SelfServiceOrchestrationConnectorSpec extends ConnectorSpec with WithFakeA
 
       verify(1, getRequestedFor(validationURL))
 
-      response shouldBe a [Seq[BankAccount]]
+      response shouldBe a [Seq[_]]
       response.size shouldBe 2
     }
+
     "pass a GET request without accountName to the SSTTP service and return a success response" in {
 
       val getRequest = get(validationURL)
@@ -77,8 +79,52 @@ class SelfServiceOrchestrationConnectorSpec extends ConnectorSpec with WithFakeA
 
       verify(1, getRequestedFor(validationURL))
 
-      response shouldBe a [Seq[BankAccount]]
+      response shouldBe a [Seq[_]]
       response.size shouldBe 1
+    }
+
+    "pass a GET request without accountName to the SSTTP service and return a not found (emtpy) response" in {
+
+      val getRequest = get(validationURL)
+
+      stubFor(getRequest.willReturn(
+        aResponse().withStatus(404).withBody(
+          """[]""".stripMargin
+        )
+      ))
+
+      val response = await(orchConnector.validateAccount("123456", "12345678", None))
+
+      verify(1, getRequestedFor(validationURL))
+
+      response shouldBe a [Seq[_]]
+      response.size shouldBe 0
+    }
+
+    "pass a GET request without accountName to the SSTTP service and return a not found (alternatives) response" in {
+
+      val getRequest = get(validationURL)
+
+      stubFor(getRequest.willReturn(
+        aResponse().withStatus(404).withBody(
+          """[{
+            |    "sortCode": "123456",
+            |    "accountNumber": "12345678",
+            |    "accountName": "Joe Bloggs"
+            |}, {
+            |    "sortCode": "654321",
+            |    "accountNumber": "87654321",
+            |    "accountName": "Joe Bloggs"
+            |}]""".stripMargin
+        )
+      ))
+
+      val response = await(orchConnector.validateAccount("123456", "12345678", None))
+
+      verify(1, getRequestedFor(validationURL))
+
+      response shouldBe a [Seq[_]]
+      response.size shouldBe 2
     }
   }
 }
