@@ -16,4 +16,8 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class DirectDebitBank(processingDate: String, directDebitInstruction: List[DirectDebitInstruction])
+object DirectDebitBank {
+  val none = DirectDebitBank("", Seq.empty)
+}
+
+case class DirectDebitBank(processingDate: String, directDebitInstruction: Seq[DirectDebitInstruction])

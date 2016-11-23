@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.selfservicetimetopay
 
-import scala.math.BigDecimal
-import scala.math.BigDecimal.RoundingMode
 import java.time.LocalDate
 
-import play.api.http.Status._
-import play.api.libs.json.{Format, JsResult, JsValue, Json}
-import uk.gov.hmrc.play.http.{HttpErrorFunctions, HttpReads, HttpResponse}
+import play.api.libs.json._
 import uk.gov.hmrc.selfservicetimetopay.models._
+
+import scala.math.BigDecimal
+import scala.math.BigDecimal.RoundingMode
 
 package object modelsFormat {
   implicit val localDateFormatter = new Format[LocalDate] {
@@ -32,6 +31,23 @@ package object modelsFormat {
 
     override def writes(o: LocalDate): JsValue = Json.toJson(o.toString)
   }
+
+  implicit def eitherReads[A, B](implicit A: Reads[A], B: Reads[B]): Reads[Either[A, B]] =
+    Reads[Either[A, B]] { json =>
+      A.reads(json) match {
+        case JsSuccess(value, path) => JsSuccess(Left(value), path)
+        case JsError(e1) => B.reads(json) match {
+          case JsSuccess(value, path) => JsSuccess(Right(value), path)
+          case JsError(e2) => JsError(JsError.merge(e1, e2))
+        }
+      }
+    }
+
+  implicit def eitherWrites[A, B](implicit A: Writes[A], B: Writes[B]): Writes[Either[A, B]] =
+    Writes[Either[A, B]] {
+      case Left(obj) => A.writes(obj)
+      case Right(obj) => B.writes(obj)
+    }
 
   //Front end formatters
   implicit val calculatorPaymentTodayFormatter = Json.format[CalculatorPaymentToday]
@@ -70,7 +86,7 @@ package object modelsFormat {
   implicit val paymentPlanFormatter = Json.format[PaymentPlan]
   implicit val paymentPlanRequestFormatter = Json.format[PaymentPlanRequest]
   implicit val bankDetailsFormatter = Json.format[BankDetails]
-  implicit val bankAccountFormatter = Json.format[BankAccount]
+  implicit val bankAccountResponseFormatter = Format(eitherReads[BankDetails, DirectDebitBank], eitherWrites[BankDetails, DirectDebitBank])
 
   //Eligibility formatters
   implicit val eligibilityStatusFormatter = Json.format[EligibilityStatus]
