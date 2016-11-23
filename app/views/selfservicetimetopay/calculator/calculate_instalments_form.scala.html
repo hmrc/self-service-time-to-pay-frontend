@@ -127,12 +127,18 @@ Time To Pay Payment Schedule Display Page
     </div>
     <div class="panel-indent">@Messages("ssttp.calculator.results.interest-info.warning")</div>
     <section class="section">
-        <p>@Messages("ssttp.calculator.results.sign-in")</p>
-        <p><a href="@routes.EligibilityController.present()" class="button">@Messages("ssttp.calculator.results.sign-in.link")</a>
+        <h2 class="heading-h2">@Messages("ssttp.calculator.results.next-steps")</h2>
+        <div class="table-cell--light">
+            <div class="subsection divider--bottom grid-layout">
+                <div class="grid-layout__column grid-layout__column--2-3"><p>@Messages("ssttp.calculator.results.sign-in")</p></div>
+                <div class="grid-layout__column grid-layout__column--1-3 text--center align--middle"><p><a href="@routes.EligibilityController.present()" class="button">@Messages("ssttp.calculator.results.sign-in.link")</a></p></div>
+            </div>
+        </div>
+
+        <div class="subsection divider--bottom grid-layout">
+            <div class="grid-layout__column grid-layout__column--2-3"><p>@Messages("ssttp.calculator.results.call-us.into")</p></div>
+            <div class="grid-layout__column grid-layout__column--1-3 text--center align--middle"><p><strong>@Messages("ssttp.calculator.results.call-us.number")</p></strong></div>
+        </div>
     </section>
-    <section class="section divider--top">
-        <p>@Messages("ssttp.calculator.results.call-us.into")</p>
-        <p><strong>@Messages("ssttp.calculator.results.call-us.number")</strong></p>
-    </section>
-    <p><a class="back-link" href="@routes.SelfServiceTimeToPayController.present()">@Messages("ssttp.calculator.form.back")</a></p>
+    <p><a class="back-link" href="@routes.CalculatorController.paymentTodayPresent()">@Messages("ssttp.calculator.form.back")</a></p>
 }
