@@ -9,7 +9,7 @@ Time To Pay Payment Schedule Display Page
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
 @(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[CalculatorPaymentToday], monthOptions:Seq[Int])(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
-@import selfservicetimetopay.helpers.forms.{form, formErrors, button, fieldErrors, inlinenumberinput, numberinput, currencyinput, submit}
+@import selfservicetimetopay.helpers.forms.{form, formErrors, button, fieldErrors, inlinenumberinput, numberinput, inlinecurrencyinput, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
@@ -38,7 +38,7 @@ Time To Pay Payment Schedule Display Page
                         </ul>
                     </div>
                     <div class="grid-layout__column grid-layout__column--1-4">
-                        <span class="gutter-left">@currencyinput(paymentTodayAmountForm("amount"), '_hideErrors -> true, '_noLabel -> true, '_inputClass -> "input--small input--no-spinner")</span>
+                        <span class="gutter-left">@inlinecurrencyinput(paymentTodayAmountForm("amount"), '_hideErrors -> true, '_noLabel -> true, '_inputClass -> "input--small input--no-spinner")</span>
                     </div>
                     <div class="grid-layout__column grid-layout__column--1-4">@button('type -> "submit", '_modifierClass -> "button--secondary") {
                         @Messages("ssttp.calculator.form.payment_today.update")
