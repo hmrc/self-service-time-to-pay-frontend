@@ -15,25 +15,27 @@ ssttp.landing.before-you-start.list.3=how much you can afford to pay now
 ssttp.landing.start-button.label=Start
 
 #eligibility
-ssttp.eligibility.form.debt_type.title=Type of tax
-ssttp.eligibility.form.debt_type.question.prompt=Is the amount you owe for:
-ssttp.eligibility.form.debt_type.question.hint=Choose one or both
-ssttp.eligibility.form.debt_type.question.self-assessment=Self Assessment
-ssttp.eligibility.form.debt_type.question.other=Other types of tax
+ssttp.eligibility.form.type_of_tax.title=Type of tax
+ssttp.eligibility.form.type_of_tax.question.prompt=Is the amount you owe for:
+ssttp.eligibility.form.type_of_tax.question.hint=Choose one or both
+ssttp.eligibility.form.type_of_tax.question.self-assessment=Self Assessment
+ssttp.eligibility.form.type_of_tax.question.other=Other types of tax
+
+ssttp.eligibility.form.type_of_tax.error.summary.title=You haven''t selected a tax type
+ssttp.eligibility.form.type_of_tax.required=Please choose at least one option
+
+
 
 ssttp.eligibility.form.existing_ttp.title=Existing instalment plans
 ssttp.eligibility.form.existing_ttp.question.prompt=Are you already paying an HMRC debt in instalments?
 ssttp.eligibility.form.existing_ttp.question.yes=Yes
 ssttp.eligibility.form.existing_ttp.question.no=No
 
-ssttp.eligibility.form.continue=Continue
-ssttp.eligibility.form.back=Back
-
-ssttp.eligibility.form.debt_type.error.summary.title=You haven''t selected a tax type
-ssttp.eligibility.form.debt_type.required=Please choose at least one option
-
 ssttp.eligibility.form.existing_ttp.error.summary.title=You haven''t selected an option
 ssttp.eligibility.form.existing_ttp.required=Please answer this question
+
+ssttp.eligibility.form.continue=Continue
+ssttp.eligibility.form.back=Back
 
 #calculator
 ssttp.calculator.form.amounts_due.title=About what you owe
