@@ -27,7 +27,7 @@ object SelfServiceTimeToPayController extends FrontendController{
   }
 
   def submit:Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.CalculatorController.present()).withSession(
+    Redirect(routes.EligibilityController.present()).withSession(
       "SelfServiceTimeToPayStart" -> "1"
     )
   }
