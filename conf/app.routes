@@ -26,9 +26,10 @@ POST   /arrangement/day-of-month        uk.gov.hmrc.selfservicetimetopay.control
 GET    /arrangement/direct-debit        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.directDebitPresent()
 POST   /arrangement/direct-debit        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.directDebitSubmit()
 GET    /arrangement/direct-debit-confirmation        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.directDebitConfirmationPresent()
+POST   /arrangement/direct-debit-confirmation        uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.directDebitConfirmationSubmit()
 GET    /arrangement/complete            uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationCompletePresent()
 GET    /you-need-to-file                uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.youNeedToFilePresent()
 GET    /ttp-call-us                     uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.ttpCallUsPresent()
 
 # Map static resources from the /public folder to the /assets URL path
-#GET     /assets/*file               uk.gov.hmrc.selfservicetimetopay.controllers.Assets.at(path="/public", file)
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -6,7 +6,7 @@ Time To Pay Instalment Summary Display Page
 
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, ArrangementDirectDebit}
-@(schedule:CalculatorPaymentSchedule, directDebit:ArrangementDirectDebit, form:Form[Boolean])(implicit request: Request[_])
+@(schedule:CalculatorPaymentSchedule, directDebit:ArrangementDirectDebit)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
@@ -21,7 +21,7 @@ Time To Pay Instalment Summary Display Page
             <h3>@Messages("ssttp.arrangement.direct-debit.confirmation.subtitle")</h3>
         </div>
         <div class="grid-layout__column grid-layout__column--1-4">
-            <img src="./public/images/dd-logo.png">
+            <img src="/public/images/direct_debit@@2x.png">
         </div>
     </div>
     <section class="section">
