@@ -76,7 +76,7 @@ object ArrangementController extends FrontendController {
     if(form.hasErrors) {
       Future.successful(Ok(direct_debit_form.render(form, request)))
     } else {
-      Future.successful(Redirect(routes.ArrangementController.applicationCompletePresent()))
+      Future.successful(Redirect(routes.ArrangementController.directDebitConfirmationPresent()))
     }
   }
 
@@ -89,10 +89,7 @@ object ArrangementController extends FrontendController {
   }
 
   def directDebitConfirmationSubmit:Action[AnyContent] = Action.async {implicit request =>
-    Future.successful(Ok(direct_debit_confirmation.render(
-      generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last,
-      arrangementDirectDebit, request))
-    )
+    Future.successful(Redirect(routes.ArrangementController.applicationCompletePresent()))
   }
 
   def applicationCompletePresent:Action[AnyContent] = Action.async {implicit request =>
