@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.selfservicetimetopay.forms.{EligibilityTypeOfTaxForm, EligibilityExistingTtpForm}
+import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import views.html.selfservicetimetopay.eligibility._
 
 import scala.concurrent.Future
@@ -30,11 +30,11 @@ object EligibilityController extends FrontendController{
   }
 
   def typeOfTaxPresent:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(type_of_tax_form.render(EligibilityTypeOfTaxForm.typeOfTaxForm, request)))
+    Future.successful(Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request)))
   }
 
   def typeOfTaxSubmit:Action[AnyContent] = Action.async { implicit request =>
-    val response = EligibilityTypeOfTaxForm.typeOfTaxForm.bindFromRequest().fold(
+    val response = EligibilityForm.typeOfTaxForm.bindFromRequest().fold(
       formWithErrors => {
         BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))
       },
@@ -48,11 +48,11 @@ object EligibilityController extends FrontendController{
 
   def existingTtpPresent:Action[AnyContent] =  Action.async { implicit request =>
     // get form data from keystore or fill then display page
-    Future.successful(Ok(existing_ttp.render(EligibilityExistingTtpForm.existingTtpForm, request)))
+    Future.successful(Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request)))
   }
 
   def existingTtpSubmit:Action[AnyContent] = Action.async { implicit request =>
-    val response = EligibilityExistingTtpForm.existingTtpForm.bindFromRequest().fold(
+    val response = EligibilityForm.existingTtpForm.bindFromRequest().fold(
       formWithErrors => {
         BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))
       },

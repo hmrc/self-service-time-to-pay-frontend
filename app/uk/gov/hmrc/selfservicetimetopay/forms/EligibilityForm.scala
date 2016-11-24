@@ -19,9 +19,9 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
-import uk.gov.hmrc.selfservicetimetopay.models.EligibilityTypeOfTax
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax}
 
-object EligibilityTypeOfTaxForm {
+object EligibilityForm {
 
   def atLeastOneRequired: Constraint[(Boolean, Boolean)] = Constraint[(Boolean, Boolean)]("constraint.required") { data  =>
     if (!data._1 && !data._2) Invalid(ValidationError("ssttp.eligibility.form.type_of_tax.required")) else Valid
@@ -36,4 +36,8 @@ object EligibilityTypeOfTaxForm {
     "type_of_tax" -> typeOfTaxTuple.verifying(atLeastOneRequired)
   )(type_of_tax => EligibilityTypeOfTax(type_of_tax._1, type_of_tax._2))
   (type_of_tax => Some((type_of_tax.hasSelfAssessmentDebt, type_of_tax.hasOtherDebt))))
+
+  val existingTtpForm = Form(mapping(
+    "hasExistingTTP" -> optional(boolean).verifying("ssttp.eligibility.form.existing_ttp.required", _.nonEmpty)
+  )(EligibilityExistingTTP.apply)(EligibilityExistingTTP.unapply))
 }
