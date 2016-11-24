@@ -33,6 +33,7 @@ private object AppDependencies {
   private val mongoCachingVersion = "3.2.0"
   private val playConditionalMappingVersion = "0.2.0"
   private val jacksonVersion = "2.7.4"
+  private val domainVersion = "3.7.0"
 
   val compile = Seq(
     ws,
@@ -44,6 +45,7 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "govuk-template" % govukTemplateVersion,
     "uk.gov.hmrc" %% "play-health" % playHealthVersion,
     "uk.gov.hmrc" %% "play-ui" % playUiVersion,
+    "uk.gov.hmrc" %% "domain" % domainVersion,
     "uk.gov.hmrc" %% "http-caching-client" % cachingClientVersion,
     "uk.gov.hmrc" %% "mongo-caching" % mongoCachingVersion,
     "uk.gov.hmrc" %% "play-conditional-form-mapping" % playConditionalMappingVersion,

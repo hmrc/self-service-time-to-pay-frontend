@@ -16,19 +16,21 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import play.api.http.Status._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpPost}
+import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, DirectDebitInstructionPaymentPlan, PaymentPlanRequest}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.html.helper
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
-  val directDebitURL = baseUrl("direct-debit")
+  lazy val directDebitURL = baseUrl("direct-debit")
   lazy val serviceURL = "direct-debit"
-  val http = WSHttp
+  lazy val http = WSHttp
 }
 
 trait DirectDebitConnector {
@@ -36,15 +38,25 @@ trait DirectDebitConnector {
   val serviceURL: String
   val http: HttpGet with HttpPost
 
-  def getBanksList(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitBank] = {
-    http.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks")
-  }
-
-  def getBank(sortCode: String, accountNumber: String)(implicit hc: HeaderCarrier): Future[BankDetails] = {
-    http.GET[BankDetails](s"$directDebitURL/$serviceURL/bank?sortCode=:$sortCode&accountNumber=:$accountNumber")
-  }
-
   def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitInstructionPaymentPlan] = {
     http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", paymentPlan)
+  }
+
+  trait BankAccountHttpReads extends HttpReads[Either[BankDetails, DirectDebitBank]] with HttpErrorFunctions
+
+  implicit val readValidateOrRetrieveAccounts = new BankAccountHttpReads {
+    override def read(method: String, url: String, response: HttpResponse) = response.status match {
+      case OK => Left(response.json.as[BankDetails])
+      case NOT_FOUND => Right(response.json.as[DirectDebitBank])
+      case _ => handleResponse(method, url)(response) match {
+        case _ => Right(DirectDebitBank.none)
+      }
+    }
+  }
+
+  def validateOrRetrieveAccounts(sortCode: String, accountNumber: String, saUtr: SaUtr)
+                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[BankDetails, DirectDebitBank]] = {
+    val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
+    http.GET[Either[BankDetails, DirectDebitBank]](s"$directDebitURL/$serviceURL/$saUtr/bank?$queryString")
   }
 }

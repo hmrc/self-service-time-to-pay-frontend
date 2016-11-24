@@ -27,16 +27,17 @@ trait ConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach w
 
   //override implicit val defaultTimeout = FiniteDuration(100, TimeUnit.SECONDS)
 
-  private val WIREMOCK_PORT = 8888
-  private val stubHost = "localhost"
+  lazy val wiremockPort: Int = ???
 
-  protected val wiremockBaseUrl: String = s"http://localhost:$WIREMOCK_PORT"
-  private val wireMockServer = new WireMockServer(wireMockConfig().port(WIREMOCK_PORT))
+  val wiremockBaseUrl: String = s"http://localhost:$wiremockPort"
+
+  private val stubHost = "localhost"
+  private val wireMockServer = new WireMockServer(wireMockConfig().port(wiremockPort))
 
   override def beforeAll() = {
     wireMockServer.stop()
     wireMockServer.start()
-    WireMock.configureFor(stubHost, WIREMOCK_PORT)
+    WireMock.configureFor(stubHost, wiremockPort)
   }
 
   override def afterAll() = {

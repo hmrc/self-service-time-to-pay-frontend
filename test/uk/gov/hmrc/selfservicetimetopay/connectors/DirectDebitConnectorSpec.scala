@@ -16,15 +16,16 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import com.github.tomakehurst.wiremock.client.WireMock.{verify => wmVerify, _}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
+import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import uk.gov.hmrc.play.test.WithFakeApplication
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -33,7 +34,9 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication {
+class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with WithFakeApplication {
+
+  override lazy val wiremockPort = 9854
 
   val mockHttp: WSHttp = mock[WSHttp]
   implicit val headerCarrier = HeaderCarrier()
@@ -41,7 +44,7 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
   object testConnector extends DirectDebitConnector {
     val directDebitURL = ""
     val http = mock[WSHttp]
-    val serviceURL = "direct-debits"
+    val serviceURL = "direct-debit"
   }
 
   "DirectDebitConnector" should {
@@ -61,15 +64,17 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
 
       val jsonResponse = Json.fromJson[DirectDebitBank](getBanksResponseJSON).get
 
-      when(testConnector.http.GET[DirectDebitBank](any())(any(), any())).thenReturn(Future(jsonResponse))
+      when(testConnector.http.GET[Either[BankDetails, DirectDebitBank]](any())(any(), any())).thenReturn(Future(Right(jsonResponse)))
 
-      val saUtr = new SaUtr("test")
-      val result = await(testConnector.getBanksList(saUtr))
+      val saUtr = SaUtr("test")
+      val result = await(testConnector.validateOrRetrieveAccounts("123456", "22334455", saUtr))
 
-      result shouldBe a[DirectDebitBank]
-      result.processingDate shouldBe "2001-12-17T09:30:47Z"
-      result.directDebitInstruction.head.sortCode shouldBe Some("123456")
-      result.directDebitInstruction.head.ddiRefNo shouldBe None
+      result.isRight shouldBe true
+      val ddResult = result.right.get
+
+      ddResult.processingDate shouldBe "2001-12-17T09:30:47Z"
+      ddResult.directDebitInstruction.head.sortCode shouldBe Some("123456")
+      ddResult.directDebitInstruction.head.ddiRefNo shouldBe None
     }
   }
 
@@ -77,14 +82,16 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
     "return valid bank details" in {
       val jsonResponse = Json.fromJson[BankDetails](getBankResponseJSON).get
 
-      when(testConnector.http.GET[BankDetails](any())(any(), any())).thenReturn(Future(jsonResponse))
+      when(testConnector.http.GET[Either[BankDetails, DirectDebitBank]](any())(any(), any())).thenReturn(Future(Left(jsonResponse)))
 
-      val result = await(testConnector.getBank("123456", "123435678"))
+      val result = await(testConnector.validateOrRetrieveAccounts("123456", "123435678", SaUtr("test")))
 
-      result shouldBe a[BankDetails]
-      result.sortCode shouldBe "123456"
-      result.accountNumber shouldBe "12345678"
-      result.bankAddress shouldBe Some(Address("", "", "", "", "", ""))
+      result.isLeft shouldBe true
+      val account = result.left.get
+
+      account.sortCode shouldBe "123456"
+      account.accountNumber shouldBe "12345678"
+      account.bankAddress shouldBe Some(Address("", "", "", "", "", ""))
     }
   }
 
@@ -105,4 +112,104 @@ class DirectDebitConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       result.paymentPlan.head.ppReferenceNo shouldBe "abcdefghij1234567890"
     }
   }
+
+  "Calling validateOrRetrieveAccounts method" should {
+    val validationURL = urlPathMatching("/direct-debit/.*/bank")
+
+    "pass a GET request with accountName to the SSTTP service and return a success response" in {
+      val getRequest = get(validationURL)
+
+      stubFor(getRequest.willReturn(
+        aResponse().withStatus(Status.OK).withBody(
+          """{
+            |  "sortCode": "123456",
+            |  "accountNumber": "12345678",
+            |  "bankName": "Bank"
+            |}""".stripMargin
+        )
+      ))
+
+      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+
+      wmVerify(1, getRequestedFor(validationURL))
+
+      response.isLeft shouldBe true
+    }
+
+    "pass a GET request without accountName to the SSTTP service and return a success response" in {
+
+      val getRequest = get(validationURL)
+
+      stubFor(getRequest.willReturn(
+        aResponse().withStatus(Status.OK).withBody(
+          """{
+            |  "sortCode": "123456",
+            |  "accountNumber": "12345678"
+            |}""".stripMargin
+        )
+      ))
+
+      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+
+      wmVerify(1, getRequestedFor(validationURL))
+
+      response.isLeft shouldBe true
+    }
+
+    "pass a GET request without accountName to the SSTTP service and return a not found (emtpy) response" in {
+
+      val getRequest = get(validationURL)
+
+      stubFor(getRequest.willReturn(
+        aResponse().withStatus(Status.NOT_FOUND).withBody(
+          """{
+            |  "processingDate": "2001-12-17T09:30:47Z",
+            |  "directDebitInstruction": []
+            |}""".stripMargin
+        )
+      ))
+
+      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+
+      wmVerify(1, getRequestedFor(validationURL))
+
+      response.isRight shouldBe true
+      response.right.get.directDebitInstruction.size shouldBe 0
+    }
+
+    "pass a GET request without accountName to the SSTTP service and return a not found (alternatives) response" in {
+
+      val getRequest = get(validationURL)
+
+      stubFor(getRequest.willReturn(
+        aResponse().withStatus(Status.NOT_FOUND).withBody(
+          """{
+            |  "processingDate": "2001-12-17T09:30:47Z",
+            |  "directDebitInstruction": [
+            |    {
+            |      "sortCode": "123456",
+            |      "accountNumber": "12345678",
+            |      "referenceNumber": "111222333",
+            |      "creationDate": "2001-01-01"
+            |    },
+            |    {
+            |      "sortCode": "654321",
+            |      "accountNumber": "87654321",
+            |      "referenceNumber": "444555666",
+            |      "creationDate": "2001-01-01"
+            |    }
+            |  ]
+            |}""".stripMargin
+        )
+      ))
+
+      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+
+      wmVerify(1, getRequestedFor(validationURL))
+
+      response.isRight shouldBe true
+      response.right.get.directDebitInstruction.size shouldBe 2
+    }
+  }
+
 }
