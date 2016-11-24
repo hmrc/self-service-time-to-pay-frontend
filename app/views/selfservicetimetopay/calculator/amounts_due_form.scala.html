@@ -16,7 +16,8 @@
         @formErrorSummary(Messages("ssttp.calculator.form.amounts_due.error.summary.title"), dataForm, Seq.empty)
         @dataForm.errors
         <p>@Messages("ssttp.calculator.form.amounts_due.intro")</p>
-          <div class="form-field--group bordered-box">
+        <div class="bordered-box">
+            <div class="form-field--group">
               <p>
                 @inlinecurrencyinput(dataForm("amount"),
                   'label -> Messages("ssttp.calculator.form.amounts_due.how_much.question"),
@@ -31,8 +32,12 @@
                   'yearLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.year"),
                    '_inputGroupClass -> "gutter-left"
               )
+            </div>
+            @submit('_buttonClass -> "button--secondary"){@Messages("ssttp.calculator.form.amounts_due.add")}
         </div>
-        <p>@submit(){@Messages("ssttp.calculator.form.continue")}</p>
     }
-    <p><a class="back-link" href="@routes.SelfServiceTimeToPayController.present()">@Messages("ssttp.calculator.form.back")</a></p>
+    @form(routes.CalculatorController.paymentTodayPresent(), 'class -> "group") {
+        @submit(){@Messages("ssttp.calculator.form.continue")}
+    }
+    <p><a class="back-link" href="@routes.EligibilityController.existingTtpPresent()">@Messages("ssttp.calculator.form.back")</a></p>
 }

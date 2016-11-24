@@ -47,6 +47,8 @@ ssttp.calculator.form.amounts_due.when_due.question.day=Day
 ssttp.calculator.form.amounts_due.when_due.question.month=Month
 ssttp.calculator.form.amounts_due.when_due.question.year=Year
 
+ssttp.calculator.form.amounts_due.add=Add
+
 ssttp.calculator.form.amounts_due.error.summary.title=Something you''ve entered isn''t valid
 
 ssttp.calculator.form.amounts_due.amount.required=You need to enter an amount
