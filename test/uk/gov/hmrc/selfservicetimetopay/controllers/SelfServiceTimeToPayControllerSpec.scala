@@ -18,8 +18,11 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import org.scalatest.mock.MockitoSugar
 import play.api.mvc.Result
+import play.api.test.Helpers._
+import play.api.i18n.Messages
 import play.api.test.{FakeApplication, FakeRequest}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import uk.gov.hmrc.selfservicetimetopay._
 
 class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
 
@@ -28,16 +31,36 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
 
   "SelfServiceTimeToPayController" should {
 
-    "return 200 Ok showing the service start page" in {
-      val result = SelfServiceTimeToPayController.present.apply(FakeRequest())
-
-      status(result) shouldBe 200
-    }
-
-    "display the service start page title" in {
+    "return 200 and display the service start page" in {
       val result:Result = SelfServiceTimeToPayController.present.apply(FakeRequest())
 
-      bodyOf(result) should include ("Pay what you owe in instalments")
+      status(result) shouldBe OK
+
+      bodyOf(result) should include(Messages("ssttp.common.title"))
+    }
+
+    "redirect to the eligibility section if user selects start" in {
+      val result:Result = SelfServiceTimeToPayController.submit.apply(FakeRequest())
+
+      status(result) shouldBe SEE_OTHER
+
+      redirectLocation(result).get shouldBe controllers.routes.EligibilityController.present().url
+    }
+
+    "return 200 and display call us page successfully" in {
+      val result:Result = SelfServiceTimeToPayController.ttpCallUsPresent.apply(FakeRequest())
+
+      status(result) shouldBe OK
+
+      bodyOf(result) should include(Messages("ssttp.ttp-call-us.title"))
+    }
+
+    "return 200 and display you need to file page successfully" in {
+      val result: Result = SelfServiceTimeToPayController.youNeedToFilePresent.apply(FakeRequest())
+
+      status(result) shouldBe OK
+
+      bodyOf(result) should include(Messages("ssttp.you-need-to-file.title"))
     }
   }
 

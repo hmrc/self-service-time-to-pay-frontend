@@ -32,8 +32,7 @@ object EligibilityController extends FrontendController{
     if (!data._1 && !data._2) Invalid(ValidationError("ssttp.eligibility.form.type_of_tax.required")) else Valid
   }
 
-  private def createTypeOfTaxForm:Form[EligibilityTypeOfTax] = {
-    Form(mapping(
+  val typeOfTaxForm = Form(mapping(
       "type_of_tax" -> tuple(
         "hasSelfAssessmentDebt" -> boolean,
         "hasOtherDebt" -> boolean
@@ -43,52 +42,48 @@ object EligibilityController extends FrontendController{
     })
       ((type_of_tax:EligibilityTypeOfTax) => Some(type_of_tax.hasSelfAssessmentDebt, type_of_tax.hasOtherDebt))
     )
-  }
 
-  private def createExistingTtpForm:Form[EligibilityExistingTTP] = {
-    Form(mapping(
+  val existingTtpForm = Form(mapping(
       "hasExistingTTP" -> optional(boolean).verifying("ssttp.eligibility.form.existing_ttp.required", _.nonEmpty)
     )(EligibilityExistingTTP.apply)(EligibilityExistingTTP.unapply))
-  }
 
-  def present:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.EligibilityController.typeOfTaxPresent()))
+
+  def present:Action[AnyContent] = Action { implicit request =>
+    Redirect(routes.EligibilityController.typeOfTaxPresent())
   }
 
   def typeOfTaxPresent:Action[AnyContent] = Action.async { implicit request =>
-    val form = createTypeOfTaxForm
-    Future.successful(Ok(type_of_tax_form.render(form, request)))
+    Future.successful(Ok(type_of_tax_form.render(typeOfTaxForm, request)))
   }
 
   def typeOfTaxSubmit:Action[AnyContent] = Action.async { implicit request =>
-    val form = createTypeOfTaxForm.bindFromRequest()
-    if(form.hasErrors) {
-      Future.successful(Ok(type_of_tax_form.render(form, request)))
-    } else {
-      if (form.get.hasOtherDebt) {
-        Future.successful(Redirect(routes.SelfServiceTimeToPayController.ttpCallUsPresent()))
-      } else {
-        Future.successful(Redirect(routes.EligibilityController.existingTtpPresent()))
+    val response = typeOfTaxForm.bindFromRequest().fold(
+      formWithErrors => {
+        BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))
+      },
+      validFormData => {
+        //keyStoreConnector.saveFormData(KeystoreKeys.typeOfTaxDetails, validFormData)
+        Redirect(routes.EligibilityController.existingTtpPresent())
       }
-    }
+    )
+    Future.successful(response)
   }
 
-
   def existingTtpPresent:Action[AnyContent] =  Action.async { implicit request =>
-    val form = createExistingTtpForm
-    Future.successful(Ok(existing_ttp.render(form, request)))
+    // get form data from keystore or fill then display page
+    Future.successful(Ok(existing_ttp.render(existingTtpForm, request)))
   }
 
   def existingTtpSubmit:Action[AnyContent] = Action.async { implicit request =>
-    val form = createExistingTtpForm.bindFromRequest()
-    if(form.hasErrors) {
-      Future.successful(Ok(existing_ttp.render(form, request)))
-    } else {
-      if (form.get.hasExistingTTP.get) {
-        Future.successful(Redirect(routes.SelfServiceTimeToPayController.ttpCallUsPresent()))
-      } else {
-        Future.successful(Redirect(routes.CalculatorController.present()))
+    val response = existingTtpForm.bindFromRequest().fold(
+      formWithErrors => {
+        BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))
+      },
+      validFormData => {
+        //keyStoreConnector.saveFormData(KeystoreKeys.existingTtpDetails, validFormData)
+        Redirect(routes.CalculatorController.present())
       }
-    }
+    )
+    Future.successful(response)
   }
 }

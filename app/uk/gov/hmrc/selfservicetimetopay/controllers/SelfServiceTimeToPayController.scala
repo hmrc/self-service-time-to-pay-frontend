@@ -27,9 +27,7 @@ object SelfServiceTimeToPayController extends FrontendController{
   }
 
   def submit:Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.EligibilityController.present()).withSession(
-      "SelfServiceTimeToPayStart" -> "1"
-    )
+    Redirect(routes.EligibilityController.present())
   }
 
   def ttpCallUsPresent:Action[AnyContent] =  Action { implicit request =>
