@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import play.api.Logger
+import play.api.http.Status
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet}
+import uk.gov.hmrc.play.http.{HttpResponse, HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import uk.gov.hmrc.selfservicetimetopay.models.TaxPayer
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -35,7 +37,14 @@ trait TaxPayerConnector {
   val serviceURL: String
   val http: HttpGet
 
-  def getTaxPayer(utr: String)(implicit hc: HeaderCarrier): Future[TaxPayer] = {
-    http.GET[TaxPayer](s"$taxPayerURL/$serviceURL/tax-payer/$utr")
+  def getTaxPayer(utr: String)(implicit hc: HeaderCarrier): Future[Option[TaxPayer]] = {
+    http.GET[HttpResponse](s"$taxPayerURL/$serviceURL/tax-payer/$utr").map {
+       response => response.status match {
+         case Status.OK => Some(response.json.as[TaxPayer])
+         case _ =>
+           Logger.error(s"Failed to get taxpayer, HTTP Code: ${response.status}, HTTP Body ${response.body}")
+           None
+       }
+    }
   }
 }

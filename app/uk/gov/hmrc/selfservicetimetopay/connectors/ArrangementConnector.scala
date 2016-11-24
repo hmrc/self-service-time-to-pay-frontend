@@ -17,15 +17,18 @@
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpPost, HttpResponse}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+
+case class SubmissionSuccess()
+
+case class SubmissionError(code: Int, message: String)
 
 object ArrangementConnector extends ArrangementConnector with ServicesConfig {
   val arrangementURL = baseUrl("time-to-pay-arrangement")
@@ -34,13 +37,18 @@ object ArrangementConnector extends ArrangementConnector with ServicesConfig {
 }
 
 trait ArrangementConnector {
+  type SubmissionResult = Either[SubmissionError, SubmissionSuccess]
+
   val arrangementURL: String
   val serviceURL: String
   val http: HttpGet with HttpPost
 
-  def submitArrangements(ttpArrangement: TTPArrangement)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    http.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map {
-      _.status == CREATED
+  def submitArrangements(ttpArrangement: TTPArrangement)(implicit hc: HeaderCarrier): Future[SubmissionResult] = {
+    http.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map { response =>
+      response.status match {
+        case CREATED => Right(SubmissionSuccess())
+        case _ => Left(SubmissionError(response.status, response.body))
+      }
     }
   }
 }

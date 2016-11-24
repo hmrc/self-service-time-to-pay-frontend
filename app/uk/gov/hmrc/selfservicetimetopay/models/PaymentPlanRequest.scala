@@ -24,7 +24,7 @@ case class PaymentPlanRequest(requestingService: String,
                               knownFact: List[KnownFact],
                               directDebitInstruction: DirectDebitInstruction,
                               paymentPlan: PaymentPlan,
-                              printFlag: Boolean)
+                              printFlag: Boolean = true)
 
 case class KnownFact(service: String, value: String)
 
