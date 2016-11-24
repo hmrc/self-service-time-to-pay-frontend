@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfservicetimetopay.models
+package uk.gov.hmrc.selfservicetimetopay.forms
 
-import uk.gov.hmrc.play.test.UnitSpec
+import play.api.data.Form
+import play.api.data.Forms._
+import uk.gov.hmrc.selfservicetimetopay.models.EligibilityExistingTTP
 
-class EligibilityTypeOfTaxSpec extends UnitSpec {
+object EligibilityExistingTtpForm {
 
-  "EligibilityTypeOfTax" should {
-
-    "create with parameters" in {
-      val edt = EligibilityTypeOfTax(hasSelfAssessmentDebt = true, hasOtherDebt = true)
-      edt.hasOtherDebt should be (true)
-      edt.hasSelfAssessmentDebt should be (true)
-    }
-
-    "create with no parameters" in {
-      val edt = EligibilityTypeOfTax()
-      edt.hasOtherDebt should be(false)
-      edt.hasSelfAssessmentDebt should be(false)
-    }
-  }
+  val existingTtpForm = Form(mapping(
+    "hasExistingTTP" -> optional(boolean).verifying("ssttp.eligibility.form.existing_ttp.required", _.nonEmpty)
+  )(EligibilityExistingTTP.apply)(EligibilityExistingTTP.unapply))
 }
