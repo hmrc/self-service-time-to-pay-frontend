@@ -67,7 +67,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
       when(testConnector.http.GET[Either[BankDetails, DirectDebitBank]](any())(any(), any())).thenReturn(Future(Right(jsonResponse)))
 
       val saUtr = SaUtr("test")
-      val result = await(testConnector.validateOrRetrieveAccounts("123456", "22334455", saUtr, "xxx"))
+      val result = await(testConnector.validateOrRetrieveAccounts("123456", "22334455", saUtr))
 
       result.isRight shouldBe true
       val ddResult = result.right.get
@@ -84,7 +84,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
 
       when(testConnector.http.GET[Either[BankDetails, DirectDebitBank]](any())(any(), any())).thenReturn(Future(Left(jsonResponse)))
 
-      val result = await(testConnector.validateOrRetrieveAccounts("123456", "123435678", SaUtr("test"), "name"))
+      val result = await(testConnector.validateOrRetrieveAccounts("123456", "123435678", SaUtr("test")))
 
       result.isLeft shouldBe true
       val account = result.left.get
@@ -129,7 +129,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR"), "Joe Bloggs"))
+      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -149,7 +149,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR"), ""))
+      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -169,7 +169,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR"), ""))
+      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -203,7 +203,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR"), ""))
+      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
