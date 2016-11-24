@@ -17,9 +17,9 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import org.scalatest.mock.MockitoSugar
-import play.api.http.Status._
+import play.api.i18n.Messages
 import play.api.mvc.Result
-import play.api.test.Helpers.{SEE_OTHER => _, _}
+import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.models.EligibilityTypeOfTax
@@ -36,7 +36,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
   "EligibilityController" should {
 
-    "redirect and display the type of tax page" in {
+    "redirect successfully to the type of tax page" in {
       val response:Result = EligibilityController.present.apply(FakeRequest())
 
       status(response) shouldBe SEE_OTHER
@@ -44,6 +44,21 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       redirectLocation(response).get shouldBe controllers.routes.EligibilityController.typeOfTaxPresent().url
     }
 
+    "successfully display the type of tax page" in {
+      val response:Result = EligibilityController.typeOfTaxPresent.apply(FakeRequest())
+
+      status(response) shouldBe OK
+
+      bodyOf(response) should include(Messages("ssttp.eligibility.form.type_of_tax.title"))
+    }
+
+    "successfully display the existing ttp page" in {
+      val response = await(EligibilityController.existingTtpPresent.apply(FakeRequest()))
+
+      status(response) shouldBe OK
+
+      bodyOf(response) should include(Messages("ssttp.eligibility.form.existing_ttp.title"))
+    }
   }
 
 }
