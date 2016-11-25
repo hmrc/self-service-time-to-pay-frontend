@@ -18,20 +18,11 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import play.api.http.Status._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import views.html.helper
 
 import scala.concurrent.{ExecutionContext, Future}
-
-object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
-  lazy val directDebitURL = baseUrl("direct-debit")
-  lazy val serviceURL = "direct-debit"
-  lazy val http = WSHttp
-}
 
 trait DirectDebitConnector {
   val directDebitURL: String

@@ -30,7 +30,7 @@ import views.html.selfservicetimetopay.calculator._
 import scala.concurrent.Future
 
 //@TODO replace session with keysotre
-object CalculatorController extends FrontendController {
+class CalculatorController extends FrontendController {
 
   private def createAmountDueForm: Form[CalculatorAmountDue] = {
     Form(mapping(

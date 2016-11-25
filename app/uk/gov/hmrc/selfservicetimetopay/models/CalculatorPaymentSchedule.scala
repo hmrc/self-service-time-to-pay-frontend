@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
 
-//Calculator service - Output from submitCalculation, part of input for arrangement
 case class CalculatorPaymentSchedule(startDate: Option[LocalDate],
                                      endDate: Option[LocalDate],
                                      initialPayment: BigDecimal,

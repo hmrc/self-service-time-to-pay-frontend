@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{ArrangementConnector => realConnector, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
@@ -44,13 +44,13 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
   "ArrangementConnector" should {
     "use the correct arrangements URL" in {
-      ArrangementConnector.arrangementURL shouldBe "http://localhost:8889"
+      realConnector.arrangementURL shouldBe "http://localhost:8889"
     }
     "use the correct service URL" in {
-      ArrangementConnector.serviceURL shouldBe "ttparrangements"
+      realConnector.serviceURL shouldBe "ttparrangements"
     }
     "use the correct HTTP" in {
-      ArrangementConnector.http shouldBe WSHttp
+      realConnector.http shouldBe WSHttp
     }
   }
 
