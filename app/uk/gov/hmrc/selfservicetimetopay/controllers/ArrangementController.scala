@@ -23,65 +23,39 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.arrangement._
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables
+
 import scala.concurrent.Future
 
 object ArrangementController extends FrontendController {
 
-  private def createDirectDebitForm:Form[ArrangementDirectDebit] = {
+  private def createDayOfMonthForm: Form[ArrangementDayOfMonth] = {
     Form(mapping(
-      "accountHolderName" -> nonEmptyText,
-      "sortCode1" -> number(min = 0, max = 99),
-      "sortCode2" -> number(min = 0, max = 99),
-      "sortCode3" -> number(min = 0, max = 99),
-      "accountNumber" -> longNumber(min = 0, max = 999999999),
-      "confirmed" -> optional(boolean),
-      "ddiReferenceNumber" -> optional(text)
-    )(ArrangementDirectDebit.apply)(ArrangementDirectDebit.unapply))
-  }
-
-  private def createDayOfMonthForm:Form[ArrangementDayOfMonth] = {
-    Form(mapping(
-      "dayOfMonth" -> number(min=0, max=28)
+      "dayOfMonth" -> number(min = 0, max = 28)
     )(ArrangementDayOfMonth.apply)(ArrangementDayOfMonth.unapply))
   }
 
-  def present:Action[AnyContent] = Action.async { implicit request =>
+  def present: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Redirect(routes.ArrangementController.scheduleSummaryPresent()))
   }
 
-  def scheduleSummaryPresent:Action[AnyContent] = Action.async { implicit request =>
-  val form = createDayOfMonthForm
+  def scheduleSummaryPresent: Action[AnyContent] = Action.async { implicit request =>
+    val form = createDayOfMonthForm
     Future.successful(Ok(schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request)))
   }
 
-  def scheduleSummaryPrintPresent:Action[AnyContent] = Action.async { implicit request =>
+  def scheduleSummaryPrintPresent: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(print_schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request)))
   }
 
-  def scheduleSummaryDayOfMonthSubmit:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.ArrangementController.directDebitPresent()))
+  def scheduleSummaryDayOfMonthSubmit: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Redirect(routes.DirectDebitController.directDebitPresent()))
   }
 
-  def scheduleSummarySubmit:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.ArrangementController.directDebitPresent()))
+  def scheduleSummarySubmit: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Redirect(routes.DirectDebitController.directDebitPresent()))
   }
 
-  def directDebitPresent:Action[AnyContent] = Action.async {implicit request =>
-    val form = createDirectDebitForm
-    Future.successful(Ok(direct_debit_form.render(form, request) ) )
-  }
-
-  def directDebitSubmit:Action[AnyContent] = Action.async {implicit request =>
-    val form = createDirectDebitForm.bindFromRequest()
-    if(form.hasErrors) {
-      Future.successful(Ok(direct_debit_form.render(form, request)))
-    } else {
-      Future.successful(Redirect(routes.ArrangementController.applicationCompletePresent()))
-    }
-  }
-
-  def applicationCompletePresent:Action[AnyContent] = Action.async {implicit request =>
-    Future.successful(Ok(application_complete.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request) ) )
+  def applicationCompletePresent: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(application_complete.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request)))
   }
 }

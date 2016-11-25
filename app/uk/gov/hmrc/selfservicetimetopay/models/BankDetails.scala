@@ -17,4 +17,8 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 //Direct-debit - getBank response
-case class BankDetails(sortCode: String, accountNumber: String, bankName: Option[String], bankAddress: Option[Address])
+case class BankDetails(sortCode: String,
+                       accountNumber: String,
+                       bankName: Option[String],
+                       bankAddress: Option[Address],
+                       ddiRefNumber: Option[String])

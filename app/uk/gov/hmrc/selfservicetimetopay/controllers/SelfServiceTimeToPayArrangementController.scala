@@ -2,8 +2,6 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
 
-import play.api.data.Form
-import play.api.data.Forms._
 import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.cache.client.SessionCache
@@ -13,7 +11,6 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.FrontendGlobal
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.models._
-import views.html.selfservicetimetopay.arrangement.direct_debit_form
 
 import scala.concurrent.Future
 
@@ -23,43 +20,31 @@ class SelfServiceTimeToPayArrangementController(ddConnector: DirectDebitConnecto
                                                 authConnector: AuthConnector,
                                                 sessionCache: SessionCache) extends FrontendController {
 
-  private def createDirectDebitForm: Form[ArrangementDirectDebit] = {
-    Form(mapping(
-      "accountHolderName" -> nonEmptyText,
-      "sortCode1" -> number(min = 0, max = 99),
-      "sortCode2" -> number(min = 0, max = 99),
-      "sortCode3" -> number(min = 0, max = 99),
-      "accountNumber" -> longNumber(min = 0, max = 999999999),
-      "confirmed" -> optional(boolean),
-      "ddiReferenceNumber" -> optional(text)
-    )(ArrangementDirectDebit.apply)(ArrangementDirectDebit.unapply))
-  }
-
   def submit = Action.async { implicit request =>
-    createDirectDebitForm.bindFromRequest()
-      .fold(error => Future.successful(BadRequest(direct_debit_form.render(error, request))),
-      directDebitDetails => {
-        for {
-          taxpayer <- fetchTaxpayer()
-          calculationSchedule <- sessionCache.fetchAndGetEntry[CalculatorPaymentSchedule](FrontendGlobal.sessionCacheKey)
-          result <- arrangementSetUp(taxpayer, calculationSchedule, directDebitDetails)
-        } yield result
-      })
+    for {
+      keystoreData <- sessionCache.fetchAndGetEntry[TTPSubmission](FrontendGlobal.sessionCacheKey)
+      submission: TTPSubmission = keystoreData.get
+      bankDetails: BankDetails = submission.bankDetails
+      taxpayer <- fetchTaxpayer()
+      calculationSchedule <- submission.schedule
+      result <- arrangementSetUp(taxpayer, calculationSchedule, bankDetails.ddiRefNumber.get, bankDetails)
+    } yield result
   }
 
   private def arrangementSetUp(taxPayer: Option[TaxPayer],
                                paymentSchedule: Option[CalculatorPaymentSchedule],
-                               directDebit: ArrangementDirectDebit): Future[Result] = {
-    (taxPayer, paymentSchedule, directDebit) match {
-      case (Some(tp), Some(ps), dd) =>
+                               ddiRefNumber: String,
+                               bankDetails: BankDetails): Future[Result] = {
+    (taxPayer, paymentSchedule, ddiRefNumber, bankDetails) match {
+      case (Some(tp), Some(ps), ddiRefNo, bd) =>
         val utr = tp.selfAssessment.utr
         (for {
-          ddInstruction <- ddConnector.createPaymentPlan(createPaymentPlan(dd, ps, utr), SaUtr(utr))
+          ddInstruction <- ddConnector.createPaymentPlan(createPaymentPlan(bd, ddiRefNo, ps, utr), SaUtr(utr))
           ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, tp, ps))
         } yield ttp).flatMap {
           _.fold(error => Future.successful(Redirect("Error")), success => Future.successful(Redirect("Error")))
         }
-      case (_, _, _) => Future.successful(Redirect("Error"))
+      case (_, _, _, _, _) => Future.successful(Redirect("Error"))
     }
   }
 
@@ -70,30 +55,30 @@ class SelfServiceTimeToPayArrangementController(ddConnector: DirectDebitConnecto
     } yield taxpayer
   }
 
-  private def createPaymentPlan(directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, utr: String): PaymentPlanRequest = {
+  private def createPaymentPlan(bankDetails: BankDetails, ddiRefNumber: String, schedule: CalculatorPaymentSchedule, utr: String): PaymentPlanRequest = {
 
     val knownFact: List[KnownFact] = List(KnownFact("CESA", utr))
 
-    val instruction = DirectDebitInstruction(sortCode = Some(directDebit.sortCode),
-      accountNumber = Some(directDebit.accountNumber.toString),
+    val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
+      accountNumber = Some(bankDetails.accountNumber.toString),
       creationDate = schedule.startDate,
-      ddiRefNo =directDebit.ddiReferenceNumber)
+      ddiRefNo = Some(ddiRefNumber))
 
     val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
     val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
     val pp = PaymentPlan("Time to Pay",
-        utr,
-        "CESA",
-        "GBP",
-        schedule.initialPayment,
-        schedule.startDate.get,
-        firstInstalment.amount,
-        firstInstalment.paymentDate,
-        lastInstalment.paymentDate,
-        "Monthly",
-        lastInstalment.amount,
-        lastInstalment.paymentDate,
-        schedule.amountToPay)
+      utr,
+      "CESA",
+      "GBP",
+      schedule.initialPayment,
+      schedule.startDate.get,
+      firstInstalment.amount,
+      firstInstalment.paymentDate,
+      lastInstalment.paymentDate,
+      "Monthly",
+      lastInstalment.amount,
+      lastInstalment.paymentDate,
+      schedule.amountToPay)
 
     PaymentPlanRequest("Requesting Service", LocalDate.now().toString, knownFact, instruction, pp)
   }

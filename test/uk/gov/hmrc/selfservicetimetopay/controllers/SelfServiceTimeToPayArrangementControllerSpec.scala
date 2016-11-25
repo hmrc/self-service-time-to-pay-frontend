@@ -1,14 +1,11 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import org.joda.time.DateTime
-import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Weak
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{ArrangementConnector, DirectDebitConnector, TaxPayerConnector}

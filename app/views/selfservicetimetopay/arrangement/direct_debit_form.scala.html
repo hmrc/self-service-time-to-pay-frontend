@@ -16,7 +16,7 @@ Time To Pay Direct Debit Form Page
 ){
   <section>
     <h1 style="heading-h1">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
-    @form(routes.ArrangementController.directDebitSubmit()) {
+    @form(routes.DirectDebitController.directDebitSubmit()) {
       @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
       <h2 class="heading-h2">@Messages("ssttp.arrangement.direct-debit.form.bank-details")</h2>
       @textinput(ddForm("accountHolderName"),
@@ -56,8 +56,8 @@ Time To Pay Direct Debit Form Page
     }
   </section>
   <section class="divider--top">
-    <h3 class="heading-h3">@Messages("ssttp.arrangement.direct-debit.form.guarantee.title")</h3>
-    @message_list(Some("bullets"), "ssttp.arrangement.direct-debit.form.guarantee.list.", '_itemClass -> "font-xsmall")
+    <h3 class="heading-h3">@Messages("ssttp.arrangement.direct-debit.guarantee.title")</h3>
+    @message_list(Some("bullets"), "ssttp.arrangement.direct-debit.guarantee.list.", '_itemClass -> "font-xsmall")
   </section>
 }
 

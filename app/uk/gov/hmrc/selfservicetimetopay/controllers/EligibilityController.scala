@@ -18,46 +18,23 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import views.html.selfservicetimetopay.eligibility._
-import play.api.data.Form
-import play.api.data.Forms.{tuple, boolean, optional, mapping}
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
 import scala.concurrent.Future
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax}
 
-object EligibilityController extends FrontendController{
-
-  def atLeastOneRequired: Constraint[(Boolean, Boolean)] = Constraint[(Boolean, Boolean)]("constraint.required") { data  =>
-    if (!data._1 && !data._2) Invalid(ValidationError("ssttp.eligibility.form.type_of_tax.required")) else Valid
-  }
-
-  val typeOfTaxForm = Form(mapping(
-      "type_of_tax" -> tuple(
-        "hasSelfAssessmentDebt" -> boolean,
-        "hasOtherDebt" -> boolean
-      ).verifying(atLeastOneRequired)
-    )((type_of_tax) => {
-      EligibilityTypeOfTax(type_of_tax._1, type_of_tax._2)
-    })
-      ((type_of_tax:EligibilityTypeOfTax) => Some(type_of_tax.hasSelfAssessmentDebt, type_of_tax.hasOtherDebt))
-    )
-
-  val existingTtpForm = Form(mapping(
-      "hasExistingTTP" -> optional(boolean).verifying("ssttp.eligibility.form.existing_ttp.required", _.nonEmpty)
-    )(EligibilityExistingTTP.apply)(EligibilityExistingTTP.unapply))
-
+object EligibilityController extends FrontendController {
 
   def present:Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.typeOfTaxPresent())
   }
 
   def typeOfTaxPresent:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(type_of_tax_form.render(typeOfTaxForm, request)))
+    Future.successful(Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request)))
   }
 
   def typeOfTaxSubmit:Action[AnyContent] = Action.async { implicit request =>
-    val response = typeOfTaxForm.bindFromRequest().fold(
+    val response = EligibilityForm.typeOfTaxForm.bindFromRequest().fold(
       formWithErrors => {
         BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))
       },
@@ -71,11 +48,11 @@ object EligibilityController extends FrontendController{
 
   def existingTtpPresent:Action[AnyContent] =  Action.async { implicit request =>
     // get form data from keystore or fill then display page
-    Future.successful(Ok(existing_ttp.render(existingTtpForm, request)))
+    Future.successful(Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request)))
   }
 
   def existingTtpSubmit:Action[AnyContent] = Action.async { implicit request =>
-    val response = existingTtpForm.bindFromRequest().fold(
+    val response = EligibilityForm.existingTtpForm.bindFromRequest().fold(
       formWithErrors => {
         BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))
       },

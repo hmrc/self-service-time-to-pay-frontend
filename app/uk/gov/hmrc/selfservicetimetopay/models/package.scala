@@ -90,6 +90,9 @@ package object modelsFormat {
 
   //Eligibility formatters
   implicit val eligibilityStatusFormatter = Json.format[EligibilityStatus]
+
+  //Submission formatter
+  implicit val submissionFormatter = Json.format[TTPSubmission]
 }
 
 package object controllerVariables {
@@ -110,6 +113,7 @@ package object controllerVariables {
     schedules
   }
 
+  implicit val arrangementDirectDebit = ArrangementDirectDebit("My Account", 1, 2, 33, 123456789, Some(true))
 
   implicit val formAmountsDue = CalculatorAmountsDue(Seq(
     CalculatorAmountDue(BigDecimal("200.00"), 2010, "January", 20),
