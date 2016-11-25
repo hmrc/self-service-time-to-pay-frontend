@@ -55,7 +55,7 @@ object DirectDebitController extends FrontendController {
       },
       validFormData => {
         //utr = keystoreConnector.fetch[saUtr](KeystoreKeys.UTR)
-        directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode, validFormData.accountNumber, SaUtr("")).map {
+        directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode, validFormData.accountNumber.toString, SaUtr("")).map {
           case Left(singleBankDetails) => Redirect(routes.DirectDebitController.directDebitConfirmationPresent())
           case Right(existingDDBanks) => Redirect(routes.DirectDebitController.directDebitPresent())
         }
