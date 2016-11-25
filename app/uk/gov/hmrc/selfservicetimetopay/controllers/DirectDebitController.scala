@@ -24,8 +24,7 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
-import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
-import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.arrangement._
 
 import scala.concurrent.Future
