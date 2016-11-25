@@ -18,20 +18,30 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.arrangement._
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables
+
 import scala.concurrent.Future
+import scala.util.control.Exception._
 
 object ArrangementController extends FrontendController {
 
+
   private def createDayOfMonthForm:Form[ArrangementDayOfMonth] = {
+    def isInt(input:String) = { { catching(classOf[NumberFormatException]) opt input.toInt}.nonEmpty }
     Form(mapping(
-      "dayOfMonth" -> number(min=0, max=28)
-    )(ArrangementDayOfMonth.apply)(ArrangementDayOfMonth.unapply))
+      "dayOfMonth" -> text
+        .verifying("ssttp.arrangement.instalment-summary.payment-day.required", _!= null)
+        .verifying("ssttp.arrangement.instalment-summary.payment-day.number", { i => isInt(i) })
+        .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => isInt(i) && (i.toInt >= 1) })
+        .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => isInt(i) && (i.toInt <= 28) })
+      )(dayOfMonth => ArrangementDayOfMonth(dayOfMonth.toInt))(data => Some(data.dayOfMonth.toString))
+    )
   }
 
   def present:Action[AnyContent] = Action.async { implicit request =>
@@ -39,8 +49,8 @@ object ArrangementController extends FrontendController {
   }
 
   def scheduleSummaryPresent:Action[AnyContent] = Action.async { implicit request =>
-  val form = createDayOfMonthForm
-    Future.successful(Ok(schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request)))
+  val form = createDayOfMonthForm.bind(Map("dayOfMonth" -> ""))
+    Future.successful(Ok(instalment_plan_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request)))
   }
 
   def scheduleSummaryPrintPresent:Action[AnyContent] = Action.async { implicit request =>
@@ -48,7 +58,7 @@ object ArrangementController extends FrontendController {
   }
 
   def scheduleSummaryDayOfMonthSubmit:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.DirectDebitController.directDebitPresent()))
+    Future.successful(Redirect(routes.ArrangementController.scheduleSummaryPresent()))
   }
 
   def scheduleSummarySubmit:Action[AnyContent] = Action.async { implicit request =>
