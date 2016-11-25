@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class ArrangementDirectDebit(accountHolderName:String, sortCode1:Int, sortCode2:Int, sortCode3:Int, accountNumber:Long, confirmed: Option[Boolean])
+case class ArrangementDirectDebit(accountName:String, sortCode1:Int, sortCode2:Int, sortCode3:Int, accountNumber:Long, confirmed: Option[Boolean])
