@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class TTPSubmission(calculatorPaymentSchedule: CalculatorPaymentSchedule,
+case class TTPSubmission(schedule: CalculatorPaymentSchedule,
                          bankAccount: BankAccount,
                          paymentPlan: DirectDebitInstructionPaymentPlan,
                          taxPayer: TaxPayer)
