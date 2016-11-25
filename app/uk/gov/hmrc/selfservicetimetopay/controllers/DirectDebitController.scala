@@ -19,7 +19,9 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.arrangement._
@@ -27,6 +29,8 @@ import views.html.selfservicetimetopay.arrangement._
 import scala.concurrent.Future
 
 object DirectDebitController extends FrontendController {
+
+  val directDebitConnector = DirectDebitConnector
 
   private def createDirectDebitForm:Form[ArrangementDirectDebit] = {
     Form(mapping(
@@ -45,12 +49,18 @@ object DirectDebitController extends FrontendController {
   }
 
   def directDebitSubmit:Action[AnyContent] = Action.async {implicit request =>
-    val form = createDirectDebitForm.bindFromRequest()
-    if(form.hasErrors) {
-      Future.successful(Ok(direct_debit_form.render(form, request)))
-    } else {
-      Future.successful(Redirect(routes.ArrangementController.applicationCompletePresent()))
-    }
+    createDirectDebitForm.bindFromRequest().fold(
+      formWithErrors => {
+        Future.successful(BadRequest(direct_debit_form.render(formWithErrors, request)))
+      },
+      validFormData => {
+        //utr = keystoreConnector.fetch[saUtr](KeystoreKeys.UTR)
+        directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode, validFormData.accountNumber, SaUtr("")).map {
+          case Left(singleBankDetails) => Redirect(routes.DirectDebitController.directDebitConfirmationPresent())
+          case Right(existingDDBanks) => Redirect(routes.DirectDebitController.directDebitPresent())
+        }
+      }
+    )
   }
 
   def directDebitConfirmationPresent:Action[AnyContent] = Action.async {implicit request =>
