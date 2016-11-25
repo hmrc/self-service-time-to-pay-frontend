@@ -90,6 +90,9 @@ package object modelsFormat {
 
   //Eligibility formatters
   implicit val eligibilityStatusFormatter = Json.format[EligibilityStatus]
+
+  //Submission formatter
+  implicit val submissionFormatter = Json.format[TTPSubmission]
 }
 
 package object controllerVariables {
