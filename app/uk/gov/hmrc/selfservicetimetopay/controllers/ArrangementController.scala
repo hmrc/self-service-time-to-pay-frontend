@@ -28,17 +28,6 @@ import scala.concurrent.Future
 
 object ArrangementController extends FrontendController {
 
-  private def createDirectDebitForm:Form[ArrangementDirectDebit] = {
-    Form(mapping(
-      "accountHolderName" -> nonEmptyText,
-      "sortCode1" -> number(min = 0, max = 99),
-      "sortCode2" -> number(min = 0, max = 99),
-      "sortCode3" -> number(min = 0, max = 99),
-      "accountNumber" -> longNumber(min = 0, max = 999999999),
-      "confirmed" -> optional(boolean)
-    )(ArrangementDirectDebit.apply)(ArrangementDirectDebit.unapply))
-  }
-
   private def createDayOfMonthForm:Form[ArrangementDayOfMonth] = {
     Form(mapping(
       "dayOfMonth" -> number(min=0, max=28)
@@ -59,37 +48,11 @@ object ArrangementController extends FrontendController {
   }
 
   def scheduleSummaryDayOfMonthSubmit:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.ArrangementController.directDebitPresent()))
+    Future.successful(Redirect(routes.DirectDebitController.directDebitPresent()))
   }
 
   def scheduleSummarySubmit:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.ArrangementController.directDebitPresent()))
-  }
-
-  def directDebitPresent:Action[AnyContent] = Action.async {implicit request =>
-    val form = createDirectDebitForm
-    Future.successful(Ok(direct_debit_form.render(form, request) ) )
-  }
-
-  def directDebitSubmit:Action[AnyContent] = Action.async {implicit request =>
-    val form = createDirectDebitForm.bindFromRequest()
-    if(form.hasErrors) {
-      Future.successful(Ok(direct_debit_form.render(form, request)))
-    } else {
-      Future.successful(Redirect(routes.ArrangementController.directDebitConfirmationPresent()))
-    }
-  }
-
-  def directDebitConfirmationPresent:Action[AnyContent] = Action.async {implicit request =>
-    val form:Form[Boolean] = Form(single("confirm" -> boolean))
-    Future.successful(Ok(direct_debit_confirmation.render(
-      generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last,
-      arrangementDirectDebit, request))
-    )
-  }
-
-  def directDebitConfirmationSubmit:Action[AnyContent] = Action.async {implicit request =>
-    Future.successful(Redirect(routes.ArrangementController.applicationCompletePresent()))
+    Future.successful(Redirect(routes.DirectDebitController.directDebitPresent()))
   }
 
   def applicationCompletePresent:Action[AnyContent] = Action.async {implicit request =>
