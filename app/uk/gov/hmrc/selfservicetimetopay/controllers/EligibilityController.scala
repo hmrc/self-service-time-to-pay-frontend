@@ -25,33 +25,34 @@ import scala.concurrent.Future
 
 object EligibilityController extends FrontendController {
 
-  def present:Action[AnyContent] = Action { implicit request =>
+  def present: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.typeOfTaxPresent())
   }
 
-  def typeOfTaxPresent:Action[AnyContent] = Action.async { implicit request =>
+  def typeOfTaxPresent: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request)))
   }
 
-  def typeOfTaxSubmit:Action[AnyContent] = Action.async { implicit request =>
+  def typeOfTaxSubmit: Action[AnyContent] = Action.async { implicit request =>
     val response = EligibilityForm.typeOfTaxForm.bindFromRequest().fold(
       formWithErrors => {
         BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))
       },
       validFormData => {
         //keyStoreConnector.saveFormData(KeystoreKeys.typeOfTaxDetails, validFormData)
+        //call taxpayer service
         Redirect(routes.EligibilityController.existingTtpPresent())
       }
     )
     Future.successful(response)
   }
 
-  def existingTtpPresent:Action[AnyContent] =  Action.async { implicit request =>
+  def existingTtpPresent: Action[AnyContent] =  Action.async { implicit request =>
     // get form data from keystore or fill then display page
     Future.successful(Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request)))
   }
 
-  def existingTtpSubmit:Action[AnyContent] = Action.async { implicit request =>
+  def existingTtpSubmit: Action[AnyContent] = Action.async { implicit request =>
     val response = EligibilityForm.existingTtpForm.bindFromRequest().fold(
       formWithErrors => {
         BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))
