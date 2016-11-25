@@ -35,7 +35,8 @@ object ArrangementController extends FrontendController {
       "sortCode2" -> number(min = 0, max = 99),
       "sortCode3" -> number(min = 0, max = 99),
       "accountNumber" -> longNumber(min = 0, max = 999999999),
-      "confirmed" -> optional(boolean)
+      "confirmed" -> optional(boolean),
+      "ddiReferenceNumber" -> optional(text)
     )(ArrangementDirectDebit.apply)(ArrangementDirectDebit.unapply))
   }
 

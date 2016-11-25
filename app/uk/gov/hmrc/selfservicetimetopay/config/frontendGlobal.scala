@@ -31,6 +31,7 @@ import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
 object FrontendGlobal
   extends DefaultFrontendGlobal {
 
+
   override val auditConnector = FrontendAuditConnector
   override val loggingFilter = LoggingFilter
   override val frontendAuditFilter = AuditFilter
@@ -44,6 +45,8 @@ object FrontendGlobal
     views.html.selfservicetimetopay.error_template(pageTitle, heading, message)
 
   override def microserviceMetricsConfig(implicit app: Application): Option[Configuration] = app.configuration.getConfig("microservice.metrics")
+
+  val sessionCacheKey = "ttpSubmission"
 }
 
 object ControllerConfiguration extends ControllerConfig {

@@ -6,20 +6,22 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.selfservicetimetopay.config.FrontendGlobal
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.models._
-import views.html.selfservicetimetopay.arrangement.{application_complete, direct_debit_form}
+import views.html.selfservicetimetopay.arrangement.direct_debit_form
 
 import scala.concurrent.Future
 
 class SelfServiceTimeToPayArrangementController(ddConnector: DirectDebitConnector,
                                                 arrangementConnector: ArrangementConnector,
-                                                authConnector: AuthConnector,
                                                 taxPayerConnector: TaxPayerConnector,
-                                                keystoreConnector: KeystoreConnector) extends FrontendController {
+                                                authConnector: AuthConnector,
+                                                sessionCache: SessionCache) extends FrontendController {
 
   private def createDirectDebitForm: Form[ArrangementDirectDebit] = {
     Form(mapping(
@@ -39,7 +41,7 @@ class SelfServiceTimeToPayArrangementController(ddConnector: DirectDebitConnecto
       directDebitDetails => {
         for {
           taxpayer <- fetchTaxpayer()
-          calculationSchedule <- keystoreConnector.fetch[CalculatorPaymentSchedule](KeystoreKeys.paymentSchedule)
+          calculationSchedule <- sessionCache.fetchAndGetEntry[CalculatorPaymentSchedule](FrontendGlobal.sessionCacheKey)
           result <- arrangementSetUp(taxpayer, calculationSchedule, directDebitDetails)
         } yield result
       })
@@ -55,7 +57,7 @@ class SelfServiceTimeToPayArrangementController(ddConnector: DirectDebitConnecto
           ddInstruction <- ddConnector.createPaymentPlan(createPaymentPlan(dd, ps, utr), SaUtr(utr))
           ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, tp, ps))
         } yield ttp).flatMap {
-          _.fold(error => Future.successful(Redirect("Error")), success => Future.successful(Redirect("Error"))
+          _.fold(error => Future.successful(Redirect("Error")), success => Future.successful(Redirect("Error")))
         }
       case (_, _, _) => Future.successful(Redirect("Error"))
     }
@@ -72,12 +74,10 @@ class SelfServiceTimeToPayArrangementController(ddConnector: DirectDebitConnecto
 
     val knownFact: List[KnownFact] = List(KnownFact("CESA", utr))
 
-    val instruction = DirectDebitInstruction(Some(directDebit.sortCode),
-      Some(directDebit.accountNumber.toString),
-      None,
-      schedule.startDate,
-      Some(false),
-      directDebit.ddiReferenceNumber)
+    val instruction = DirectDebitInstruction(sortCode = Some(directDebit.sortCode),
+      accountNumber = Some(directDebit.accountNumber.toString),
+      creationDate = schedule.startDate,
+      ddiRefNo =directDebit.ddiReferenceNumber)
 
     val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
     val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
