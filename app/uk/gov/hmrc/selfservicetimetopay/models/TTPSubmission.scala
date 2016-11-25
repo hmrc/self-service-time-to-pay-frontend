@@ -16,5 +16,6 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-
-case class BankAccount(accountNumber: String, sortCode: String, accountName: Option[String])
+case class TTPSubmission(schedule: CalculatorPaymentSchedule,
+                         bankDetails: BankDetails,
+                         taxPayer: TaxPayer)
