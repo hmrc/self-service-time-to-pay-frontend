@@ -16,28 +16,24 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import org.scalatest.mock.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
 
-class EligibilityExistingTTPSpec extends UnitSpec with MockitoSugar {
+class EligibilityExistingTTPSpec extends UnitSpec {
 
   "EligibilityExistingTTP" should {
 
     "create with true option parameter" in {
-      val ettp = new EligibilityExistingTTP(Option(true))
-      ettp shouldNot be (null)
+      val ettp = EligibilityExistingTTP(Option(true))
       ettp.hasExistingTTP.get should be(true)
     }
 
     "create with false option parameter" in {
-      val ettp = new EligibilityExistingTTP(Option(false))
-      ettp shouldNot be (null)
+      val ettp = EligibilityExistingTTP(Option(false))
       ettp.hasExistingTTP.get should be(false)
     }
 
     "create with false no option parameter" in {
-      val ettp = new EligibilityExistingTTP(None)
-      ettp shouldNot be (null)
+      val ettp = EligibilityExistingTTP(None)
       ettp.hasExistingTTP.isEmpty should be(true)
     }
   }
