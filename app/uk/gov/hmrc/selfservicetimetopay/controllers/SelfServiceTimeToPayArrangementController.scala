@@ -31,7 +31,7 @@ class SelfServiceTimeToPayArrangementController(ddConnector: DirectDebitConnecto
     sessionCache.fetchAndGetEntry[TTPSubmission](FrontendGlobal.sessionCacheKey).flatMap {
       _.fold(redirectToStart)(submission => {
         sessionCache.remove().flatMap {
-          x => Future.successful(Ok(application_complete.render(submission.schedule, request)))
+         _ => Future.successful(Ok(application_complete.render(submission.schedule, request)))
         }
       })
     }
