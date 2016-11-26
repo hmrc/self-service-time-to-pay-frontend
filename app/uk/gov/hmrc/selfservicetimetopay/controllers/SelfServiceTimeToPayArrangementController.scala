@@ -8,7 +8,11 @@ import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.selfservicetimetopay.config.FrontendGlobal
 import uk.gov.hmrc.selfservicetimetopay.connectors._
+import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
+import uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController._
 import uk.gov.hmrc.selfservicetimetopay.models._
+import views.html.selfservicetimetopay.arrangement.application_complete
+import views.html.selfservicetimetopay.core.service_start
 
 import scala.concurrent.Future
 
@@ -16,27 +20,43 @@ class SelfServiceTimeToPayArrangementController(ddConnector: DirectDebitConnecto
                                                 arrangementConnector: ArrangementConnector,
                                                 sessionCache: SessionCache) extends FrontendController {
 
-  def submit = Action.async { implicit request =>
-    for {
-      keystoreData <- sessionCache.fetchAndGetEntry[TTPSubmission](FrontendGlobal.sessionCacheKey)
-      submission = keystoreData.get
-      result <- arrangementSetUp(submission.taxPayer, submission.schedule, submission.bankDetails)
-    } yield result
-  }
 
-  private def arrangementSetUp(taxPayer: TaxPayer,
-                               paymentSchedule: CalculatorPaymentSchedule,
-                               bankDetails: BankDetails): Future[Result] = {
-    val utr = taxPayer.selfAssessment.utr
-    (for {
-      ddInstruction <- ddConnector.createPaymentPlan(createPaymentPlan(bankDetails, paymentSchedule, utr), SaUtr(utr))
-      ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, taxPayer, paymentSchedule))
-    } yield ttp).flatMap {
-      _.fold(error => Future.successful(Redirect("Error")), success => Future.successful(Redirect("Error")))
+  def submit = Action.async { implicit request =>
+    sessionCache.fetchAndGetEntry[TTPSubmission](FrontendGlobal.sessionCacheKey).flatMap {
+      _.fold(redirectToStart)(arrangementSetUp)
     }
   }
 
-  private def createPaymentPlan(bankDetails: BankDetails, schedule: CalculatorPaymentSchedule, utr: String): PaymentPlanRequest = {
+  def applicationComplete() = Action.async { implicit request =>
+    sessionCache.fetchAndGetEntry[TTPSubmission](FrontendGlobal.sessionCacheKey).flatMap {
+      _.fold(redirectToStart)(submission => {
+        sessionCache.remove().flatMap {
+          x => Future.successful(Ok(application_complete.render(submission.schedule, request)))
+        }
+      })
+    }
+  }
+
+
+  private def redirectToStart = Future.successful(Redirect(routes.SelfServiceTimeToPayController.present()))
+
+  private def arrangementSetUp(submission: TTPSubmission): Future[Result] = {
+
+    def applicationSuccessful = Future.successful(Redirect(routes.SelfServiceTimeToPayArrangementController.applicationComplete()))
+
+    val utr = submission.taxPayer.selfAssessment.utr
+    (for {
+      ddInstruction <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
+      ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
+    } yield ttp).flatMap {
+      _.fold(error => Future.successful(Redirect("")), success => applicationSuccessful)
+    }
+  }
+
+  private def paymentPlan(submission: TTPSubmission): PaymentPlanRequest = {
+    val bankDetails = submission.bankDetails
+    val schedule = submission.schedule
+    val utr = submission.taxPayer.selfAssessment.utr
     val knownFact: List[KnownFact] = List(KnownFact("CESA", utr))
 
     val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
@@ -64,10 +84,9 @@ class SelfServiceTimeToPayArrangementController(ddConnector: DirectDebitConnecto
   }
 
   private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
-                                taxPayer: TaxPayer,
-                                schedule: CalculatorPaymentSchedule): TTPArrangement = {
+                                submission: TTPSubmission): TTPArrangement = {
     val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
     val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
-    TTPArrangement(ppReference, ddReference, taxPayer, schedule)
+    TTPArrangement(ppReference, ddReference, submission.taxPayer, submission.schedule)
   }
 }
