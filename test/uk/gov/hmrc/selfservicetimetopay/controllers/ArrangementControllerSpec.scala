@@ -58,7 +58,7 @@ class ArrangementControllerSpec extends UnitSpec
 
       implicit val hc = new HeaderCarrier
 
-      when(sessionCache.fetchAndGetEntry[TTPSubmission](Matchers.eq(sessionCacheKey))(Matchers.any(), Matchers.any()))
+      when(sessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
       when(ddConnector.createPaymentPlan(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(directDebitInstructionPaymentPlan))
@@ -71,7 +71,7 @@ class ArrangementControllerSpec extends UnitSpec
     }
 
     "redirect to start if no data in session cache" in {
-      when(sessionCache.fetchAndGetEntry[TTPSubmission](Matchers.eq(sessionCacheKey))(Matchers.any(), Matchers.any()))
+      when(sessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(None))
 
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit"))
