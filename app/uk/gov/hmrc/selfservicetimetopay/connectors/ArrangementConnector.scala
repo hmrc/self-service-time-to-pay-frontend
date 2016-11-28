@@ -17,10 +17,8 @@
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import play.api.http.Status._
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpPost, HttpResponse}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -29,12 +27,6 @@ import scala.concurrent.Future
 case class SubmissionSuccess()
 
 case class SubmissionError(code: Int, message: String)
-
-object ArrangementConnector extends ArrangementConnector with ServicesConfig {
-  val arrangementURL = baseUrl("time-to-pay-arrangement")
-  val serviceURL = "ttparrangements"
-  val http = WSHttp
-}
 
 trait ArrangementConnector {
   type SubmissionResult = Either[SubmissionError, SubmissionSuccess]

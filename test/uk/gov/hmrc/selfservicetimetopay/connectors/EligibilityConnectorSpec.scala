@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{EligibilityConnector => realConnector, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, SelfAssessment}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -44,13 +44,13 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
 
   "EligibilityConnector" should {
     "use the correct eligibility URL" in {
-      EligibilityConnector.eligibilityURL shouldBe "http://localhost:9856"
+      realConnector.eligibilityURL shouldBe "http://localhost:9856"
     }
     "use the correct service URL" in {
-      EligibilityConnector.serviceURL shouldBe "eligibility"
+      realConnector.serviceURL shouldBe "eligibility"
     }
     "use the correct HTTP" in {
-      EligibilityConnector.http shouldBe WSHttp
+      realConnector.http shouldBe WSHttp
     }
   }
 

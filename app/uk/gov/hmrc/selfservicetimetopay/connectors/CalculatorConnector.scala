@@ -28,19 +28,13 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object CalculatorConnector extends CalculatorConnector with ServicesConfig {
-  val calculatorURL = baseUrl("self-service-time-to-pay")
-  val serviceURL = "paymentschedule"
-  val http = WSHttp
-}
-
 trait CalculatorConnector {
   val calculatorURL: String
   val serviceURL: String
   val http: HttpPost
 
-  def submitLiabilities(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[Option[List[CalculatorPaymentSchedule]]] = {
-    http.POST[CalculatorInput, Option[List[CalculatorPaymentSchedule]]](s"$calculatorURL/$serviceURL", liabilities).map {
+  def submitLiabilities(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[Option[Seq[CalculatorPaymentSchedule]]] = {
+    http.POST[CalculatorInput, Option[Seq[CalculatorPaymentSchedule]]](s"$calculatorURL/$serviceURL", liabilities).map {
       case Some(response) => Some(response)
       case _ =>
         Logger.error("No payment schedule retrieved")

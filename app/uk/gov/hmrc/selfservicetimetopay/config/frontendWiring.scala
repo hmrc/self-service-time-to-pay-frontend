@@ -16,18 +16,18 @@
 
 package uk.gov.hmrc.selfservicetimetopay.config
 
+import play.api.mvc.Controller
 import uk.gov.hmrc.http.cache.client.{SessionCache => Keystore}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
 import uk.gov.hmrc.play.config.{AppName, RunMode, ServicesConfig}
+import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.{HttpDelete, HttpGet, HttpPut}
 import uk.gov.hmrc.play.http.hooks.HttpHook
 import uk.gov.hmrc.play.http.ws._
-
-object FrontendAuditConnector extends Auditing with AppName with RunMode {
-  override lazy val auditingConfig = LoadAuditingConfig("auditing")
-}
+import uk.gov.hmrc.selfservicetimetopay.connectors._
+import uk.gov.hmrc.selfservicetimetopay.controllers._
 
 object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName with RunMode with HttpAuditing {
   val auditConnector = FrontendAuditConnector
@@ -39,4 +39,61 @@ object SessionCache extends Keystore with AppName with ServicesConfig {
   override def baseUri: String = baseUrl("keystore")
   override def domain: String = getConfString("keystore.domain", throw new RuntimeException("Could not find config keystore.domain"))
   override def http: HttpGet with HttpPut with HttpDelete = WSHttp
+}
+
+object FrontendAuditConnector extends Auditing with AppName with RunMode {
+  override lazy val auditingConfig = LoadAuditingConfig("auditing")
+}
+
+object FrontendAuthConnector extends AuthConnector with ServicesConfig {
+  override val serviceUrl: String = baseUrl("auth")
+  override def http: HttpGet = WSHttp
+}
+
+object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
+  lazy val directDebitURL = baseUrl("direct-debit")
+  lazy val serviceURL = "direct-debit"
+  lazy val http = WSHttp
+}
+
+object CalculatorConnector extends CalculatorConnector with ServicesConfig {
+  val calculatorURL = baseUrl("self-service-time-to-pay")
+  val serviceURL = "paymentschedule"
+  val http = WSHttp
+}
+
+object ArrangementConnector extends ArrangementConnector with ServicesConfig {
+  val arrangementURL = baseUrl("time-to-pay-arrangement")
+  val serviceURL = "ttparrangements"
+  val http = WSHttp
+}
+
+object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
+  val taxPayerURL = baseUrl("time-to-pay-eligibility")
+  val serviceURL = "time-to-pay-eligibility"
+  val http = WSHttp
+}
+object EligibilityConnector extends EligibilityConnector with ServicesConfig {
+  val eligibilityURL = baseUrl("time-to-pay-eligibility")
+  val serviceURL = "eligibility"
+  val http = WSHttp
+}
+
+trait ServiceRegistry extends ServicesConfig {
+  lazy val auditConnector: Auditing = FrontendAuditConnector
+  lazy val directDebitConnector: DirectDebitConnector = DirectDebitConnector
+  lazy val sessionCache: Keystore = SessionCache
+  lazy val authConnector: AuthConnector = FrontendAuthConnector
+}
+
+trait ControllerRegistry { registry: ServiceRegistry =>
+  private lazy val controllers = Map[Class[_], Controller](
+    classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector, sessionCache, authConnector),
+    classOf[ArrangementController] -> new ArrangementController(),
+    classOf[CalculatorController] -> new CalculatorController(),
+    classOf[EligibilityController] -> new EligibilityController(),
+    classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
+  )
+
+  def getController[A](controllerClass: Class[A]) : A = controllers(controllerClass).asInstanceOf[A]
 }
