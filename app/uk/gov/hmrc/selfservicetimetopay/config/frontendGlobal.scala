@@ -42,6 +42,8 @@ object FrontendGlobal extends DefaultFrontendGlobal with ServiceRegistry with Co
 
   override def microserviceMetricsConfig(implicit app: Application): Option[Configuration] = app.configuration.getConfig("microservice.metrics")
 
+  val sessionCacheKey = "ttpSubmission"
+
   override def getControllerInstance[A](controllerClass: Class[A]): A = {
     getController(controllerClass)
   }

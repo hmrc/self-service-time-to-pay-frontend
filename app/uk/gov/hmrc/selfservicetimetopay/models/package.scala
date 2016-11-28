@@ -51,7 +51,7 @@ package object modelsFormat {
 
   //Front end formatters
   implicit val calculatorPaymentTodayFormatter = Json.format[CalculatorPaymentToday]
-  implicit val eligibilityDebtTypeFormatter = Json.format[EligibilityTypeOfTax]
+  implicit val eligibilityTypeOfTaxFormatter = Json.format[EligibilityTypeOfTax]
   implicit val eligibilityExistingTTPFormatter = Json.format[EligibilityExistingTTP]
 
   //Calculator formatters

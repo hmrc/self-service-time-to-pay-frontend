@@ -16,20 +16,30 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import play.api.data.Form
+import play.api.libs.json.Reads
 import play.api.mvc._
+import uk.gov.hmrc.http.cache.client.SessionCache
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.selfservicetimetopay.config.FrontendGlobal.sessionCacheKey
+import uk.gov.hmrc.selfservicetimetopay.config.SsttpSessionCache
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax}
 import views.html.selfservicetimetopay.eligibility._
 
 import scala.concurrent.Future
 
-class EligibilityController extends FrontendController {
+object EligibilityController extends EligibilityController(SsttpSessionCache)
+
+class EligibilityController(sessionCache: SessionCache) extends FrontendController {
 
   def present: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.typeOfTaxPresent())
   }
 
   def typeOfTaxPresent: Action[AnyContent] = Action.async { implicit request =>
+    fetchAndFill[EligibilityTypeOfTax](sessionCacheKey, EligibilityForm.typeOfTaxForm)
     Future.successful(Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request)))
   }
 
@@ -39,7 +49,7 @@ class EligibilityController extends FrontendController {
         BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))
       },
       validFormData => {
-        //keyStoreConnector.saveFormData(KeystoreKeys.typeOfTaxDetails, validFormData)
+        sessionCache.cache[EligibilityTypeOfTax](sessionCacheKey, validFormData)
         //call taxpayer service
         Redirect(routes.EligibilityController.existingTtpPresent())
       }
@@ -48,7 +58,7 @@ class EligibilityController extends FrontendController {
   }
 
   def existingTtpPresent: Action[AnyContent] =  Action.async { implicit request =>
-    // get form data from keystore or fill then display page
+    fetchAndFill[EligibilityExistingTTP](sessionCacheKey, EligibilityForm.existingTtpForm)
     Future.successful(Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request)))
   }
 
@@ -58,10 +68,16 @@ class EligibilityController extends FrontendController {
         BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))
       },
       validFormData => {
-        //keyStoreConnector.saveFormData(KeystoreKeys.existingTtpDetails, validFormData)
+        sessionCache.cache[EligibilityExistingTTP](sessionCacheKey, validFormData)
         Redirect(routes.CalculatorController.present())
       }
     )
     Future.successful(response)
+  }
+
+  def fetchAndFill[T](key: String, form: Form[T])(implicit hc: HeaderCarrier, rds: Reads[T]): Future[Form[T]] = {
+    sessionCache.fetchAndGetEntry[T](key).map {
+      cached => if (cached.isEmpty) form else form.fill(cached.get)
+    }
   }
 }
