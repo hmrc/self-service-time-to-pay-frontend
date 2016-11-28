@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfservicetimetopay.connectors
+package uk.gov.hmrc.selfservicetimetopay.forms
 
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet}
-import uk.gov.hmrc.selfservicetimetopay.models.TaxPayer
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import play.api.data.Form
+import play.api.data.Forms._
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 
-import scala.concurrent.Future
-
-trait TaxPayerConnector {
-  val taxPayerURL: String
-  val serviceURL: String
-  val http: HttpGet
-
-  def getTaxPayer(utr: String)(implicit hc: HeaderCarrier): Future[TaxPayer] = {
-    http.GET[TaxPayer](s"$taxPayerURL/$serviceURL/tax-payer/$utr")
-  }
+object DirectDebitForm {
+  val createDirectDebitForm = Form(mapping(
+      "accountHolderName" -> nonEmptyText,
+      "sortCode1" -> number(min = 0, max = 99),
+      "sortCode2" -> number(min = 0, max = 99),
+      "sortCode3" -> number(min = 0, max = 99),
+      "accountNumber" -> longNumber(min = 0, max = 999999999),
+      "confirmed" -> optional(boolean)
+    )(ArrangementDirectDebit.apply)(ArrangementDirectDebit.unapply))
 }
