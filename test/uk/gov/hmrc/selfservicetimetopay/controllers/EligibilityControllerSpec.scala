@@ -16,22 +16,29 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import org.scalatest.Matchers
 import org.scalatest.mock.MockitoSugar
 import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.models.EligibilityTypeOfTax
 import uk.gov.hmrc.selfservicetimetopay._
 
-class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
+import scala.concurrent.Future
+
+class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar with WithFakeApplication {
 
   private val gaToken = "GA-TOKEN"
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
-  val typeOfTaxForm = EligibilityTypeOfTax(
-    hasSelfAssessmentDebt = true
+  val typeOfTaxForm = Seq(
+    "type_of_tax.hasSelfAssessmentDebt" -> "true",
+    "type_of_tax.hasOtherDebt" -> "false"
+  )
+
+  val existingTtpForm = Seq(
+    "hasExistingTTP" -> "false"
   )
 
   "EligibilityController" should {
@@ -44,7 +51,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       redirectLocation(response).get shouldBe controllers.routes.EligibilityController.typeOfTaxPresent().url
     }
 
-    "successfully display the type of tax page" in {
+    "successfully present the type of tax page" in {
       val response:Result = EligibilityController.typeOfTaxPresent.apply(FakeRequest())
 
       status(response) shouldBe OK
@@ -52,12 +59,48 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       bodyOf(response) should include(Messages("ssttp.eligibility.form.type_of_tax.title"))
     }
 
-    "successfully display the existing ttp page" in {
+    "successfully present the existing ttp page" in {
       val response = await(EligibilityController.existingTtpPresent.apply(FakeRequest()))
 
       status(response) shouldBe OK
 
       bodyOf(response) should include(Messages("ssttp.eligibility.form.existing_ttp.title"))
+    }
+
+    "submit type of tax given valid data and redirect to existing ttp page" in {
+      val request = FakeRequest().withFormUrlEncodedBody(typeOfTaxForm:_*)
+
+      val response:Future[Result] = await(EligibilityController.typeOfTaxSubmit.apply(request))
+
+      status(response) shouldBe SEE_OTHER
+
+      redirectLocation(response).get shouldBe controllers.routes.EligibilityController.existingTtpPresent().url
+    }
+
+    "submit existing ttp given valid data and redirect to amount you owe page" in {
+      val request = FakeRequest().withFormUrlEncodedBody(existingTtpForm:_*)
+
+      val response:Future[Result] = await(EligibilityController.existingTtpSubmit.apply(request))
+
+      status(response) shouldBe SEE_OTHER
+
+      redirectLocation(response).get shouldBe controllers.routes.CalculatorController.present().url
+    }
+
+    "redirect to self on type of tax page and display errors when invalid data is submitted" in {
+      val request = FakeRequest()
+
+      val response:Future[Result] = await(EligibilityController.typeOfTaxSubmit.apply(request))
+
+      status(response) shouldBe BAD_REQUEST
+    }
+
+    "redirect to self on existing ttp page and display errors when invalid data is submitted" in {
+      val request = FakeRequest()
+
+      val response:Future[Result] = await(EligibilityController.existingTtpSubmit.apply(request))
+
+      status(response) shouldBe BAD_REQUEST
     }
   }
 
