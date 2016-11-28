@@ -159,6 +159,8 @@ ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on=Take pay
 ssttp.arrangement.instalment-summary.payment-day.change.of-the-month=of the month
 ssttp.arrangement.instalment-summary.payment-day.submit=Update
 ssttp.arrangement.instalment-summary.payment-day.out-of-range=Payment day must be between 1 and 28
+ssttp.arrangement.instalment-summary.payment-day.required=Please enter a number 
+ssttp.arrangement.instalment-summary.payment-day.number=Please enter a number only
 
 ssttp.arrangement.instalment-summary.schedule.title=Direct Debit payment schedule
 ssttp.arrangement.instalment-summary.schedule.initial-payment=(initial payment)

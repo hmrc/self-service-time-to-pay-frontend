@@ -47,7 +47,7 @@ Time To Pay Instalment Summary Display Page
             </div>
         </div>
         <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on") <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth)</strong> @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
-        <div@if(dayForm.hasErrors){ open}>
+        <details@if(dayForm.hasErrors){ open}>
             <summary class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
             <div class="panel--indent">
                 @form(routes.ArrangementController.scheduleSummaryDayOfMonthSubmit()){

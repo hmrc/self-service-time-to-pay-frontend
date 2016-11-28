@@ -33,14 +33,15 @@ object ArrangementController extends FrontendController {
 
 
   private def createDayOfMonthForm:Form[ArrangementDayOfMonth] = {
-    def isInt(input:String) = { { catching(classOf[NumberFormatException]) opt input.toInt}.nonEmpty }
+    def tryToInt(input:String) = { catching(classOf[NumberFormatException]) opt input.toInt}
+    def isInt(input:String) = { tryToInt(input).nonEmpty }
     Form(mapping(
       "dayOfMonth" -> text
-        .verifying("ssttp.arrangement.instalment-summary.payment-day.required", _!= null)
-        .verifying("ssttp.arrangement.instalment-summary.payment-day.number", { i => isInt(i) })
-        .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => isInt(i) && (i.toInt >= 1) })
-        .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => isInt(i) && (i.toInt <= 28) })
-      )(dayOfMonth => ArrangementDayOfMonth(dayOfMonth.toInt))(data => Some(data.dayOfMonth.toString))
+        .verifying("ssttp.arrangement.instalment-summary.payment-day.required", {i:String => (i != null) && i.nonEmpty })
+        .verifying("ssttp.arrangement.instalment-summary.payment-day.number", { i => (i.isEmpty || (i.nonEmpty && isInt(i))) })
+        .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => (!isInt(i) || (isInt(i) && (i.toInt >= 1)) )})
+        .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => (!isInt(i) || (isInt(i) && (i.toInt <= 28)) )})
+      )(dayOfMonth => ArrangementDayOfMonth(tryToInt(dayOfMonth).get))(data => Some(data.dayOfMonth.toString))
     )
   }
 
@@ -49,7 +50,7 @@ object ArrangementController extends FrontendController {
   }
 
   def scheduleSummaryPresent:Action[AnyContent] = Action.async { implicit request =>
-  val form = createDayOfMonthForm.bind(Map("dayOfMonth" -> ""))
+  val form = createDayOfMonthForm.bind(Map("dayOfMonth" -> "31"))
     Future.successful(Ok(instalment_plan_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request)))
   }
 
