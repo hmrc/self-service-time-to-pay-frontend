@@ -19,6 +19,10 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.time.LocalDate
 
 import play.api.libs.json.Json
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, SaAccount}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
@@ -58,7 +62,6 @@ package object resources {
   val checkEligibilityFalseResponse = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
       .mkString)
-
 
   val ttpSubmission: TTPSubmission = TTPSubmission(
     CalculatorPaymentSchedule(
@@ -147,4 +150,38 @@ package object resources {
       )
     )
   )
+
+  val validDirectDebitForm = Seq(
+    "accountHolderName" -> "John Smith",
+    "sortCode1" -> "12",
+    "sortCode2" -> "34",
+    "sortCode3" -> "56",
+    "accountNumber" -> "12345678",
+    "confirmed" -> "true"
+  )
+
+  val invalidBankDetailsForm = Seq(
+    "accountHolderName" -> "John Smith",
+    "sortCode1" -> "65",
+    "sortCode2" -> "43",
+    "sortCode3" -> "21",
+    "accountNumber" -> "87654321",
+    "confirmed" -> "true"
+  )
+
+  val inValidDirectDebitForm = Seq(
+    "accountHolderName" -> "John Smith",
+    "sortCode1" -> "100",
+    "sortCode2" -> "100",
+    "sortCode3" -> "100",
+    "accountNumber" -> "12345678",
+    "confirmed" -> "true"
+  )
+
+  val bankDetails = BankDetails("123456", "12345678", None, None, None)
+
+  val directDebitBank = DirectDebitBank("", Seq.empty)
+
+  val authorisedUser = Authority("", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None)
+  val authorisedUserNoSA = Authority("", Accounts(), None, None, Strong, L200, None, None, None)
 }

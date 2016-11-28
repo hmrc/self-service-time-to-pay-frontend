@@ -31,32 +31,33 @@ import views.html.selfservicetimetopay.arrangement._
 import scala.concurrent.Future
 
 class DirectDebitController(directDebitConnector: DirectDebitConnector,
-                            sessionCache: SessionCacheConnector,
+                            sessionCacheConnector: SessionCacheConnector,
                             authConnector: AuthConnector) extends FrontendController {
 
-  def directDebitPresent:Action[AnyContent] = Action { implicit request =>
-    Ok(direct_debit_form.render(createDirectDebitForm, request) )
+  def directDebitPresent: Action[AnyContent] = Action { implicit request =>
+    Ok(direct_debit_form.render(createDirectDebitForm, request))
   }
 
-  def directDebitConfirmationPresent:Action[AnyContent] = Action {implicit request =>
-    val form:Form[Boolean] = Form(single("confirm" -> boolean))
+  def directDebitConfirmationPresent: Action[AnyContent] = Action { implicit request =>
+    val form: Form[Boolean] = Form(single("confirm" -> boolean))
     Ok(direct_debit_confirmation.render(
       generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last,
       arrangementDirectDebit, request))
   }
 
-   def directDebitConfirmationSubmit:Action[AnyContent] = Action {implicit request =>
+  def directDebitConfirmationSubmit: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.ArrangementController.submit())
   }
 
-  def directDebitSubmit:Action[AnyContent] = Action.async {implicit request =>
+  def directDebitSubmit: Action[AnyContent] = Action.async { implicit request =>
     createDirectDebitForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(direct_debit_form.render(formWithErrors, request))),
       validFormData =>
         authConnector.currentAuthority.flatMap {
           case Some(authority) if authority.accounts.sa.exists(_ => true) =>
             directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode, validFormData.accountNumber.toString, authority.accounts.sa.get.utr)
-          case _ => throw new RuntimeException("Current user does not have SA enrolment")
+          case Some(authority) => throw new RuntimeException("Current user does not have SA enrolment")
+          case _ => throw new RuntimeException("Current user is unauthorised")
         }.map(directDebitSubmitRouting)
     )
   }
