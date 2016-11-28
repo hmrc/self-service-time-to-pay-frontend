@@ -64,4 +64,8 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
       arrangementDirectDebit, request))
   }
 
+  def scheduleSummaryDayOfMonthSubmit: Action[AnyContent] = Action { implicit request =>
+    Redirect(routes.DirectDebitController.directDebitPresent())
+  }
+
 }

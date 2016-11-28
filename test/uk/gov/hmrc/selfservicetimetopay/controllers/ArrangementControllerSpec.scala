@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import java.time.LocalDate
+
 
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -76,7 +76,7 @@ class ArrangementControllerSpec extends UnitSpec
 
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit"))
 
-      redirectLocation(response).get shouldBe controllers.routes.ArrangementController.present().url
+      redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.present().url
 
     }
 

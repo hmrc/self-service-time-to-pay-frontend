@@ -58,12 +58,11 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     }
   }
 
-  private def redirectToStart = successful[Result](Redirect(routes.ArrangementController.present()))
+  private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.present()))
 
   private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier) : Future[Result] = {
 
     def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
-
 
     val utr = submission.taxPayer.selfAssessment.utr
     (for {
@@ -112,7 +111,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     TTPArrangement(ppReference, ddReference, submission.taxPayer, submission.schedule)
   }
 
-  //TODO: These need to be updated/possibly removed based on page flow.
+  //TODO: Need clarification about what these methods do. At the moment removing these cause page compilation errors
   private def createDayOfMonthForm: Form[ArrangementDayOfMonth] = {
     Form(mapping(
       "dayOfMonth" -> number(min = 0, max = 28)
@@ -120,24 +119,9 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   }
 
   def present: Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.ArrangementController.scheduleSummaryPresent())
-  }
-
-  def scheduleSummaryPresent: Action[AnyContent] = Action { implicit request =>
     val form = createDayOfMonthForm
     Ok(schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request))
-  }
 
-  def scheduleSummaryPrintPresent: Action[AnyContent] = Action { implicit request =>
-    Ok(print_schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request))
-  }
-
-  def scheduleSummaryDayOfMonthSubmit: Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.DirectDebitController.directDebitPresent())
-  }
-
-  def scheduleSummarySubmit: Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.DirectDebitController.directDebitPresent())
   }
 
 }

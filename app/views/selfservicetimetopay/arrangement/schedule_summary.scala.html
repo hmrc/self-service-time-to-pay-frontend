@@ -49,7 +49,7 @@ Time To Pay Instalment Summary Display Page
         <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on") <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth)</strong> @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
         <details@if(dayForm.hasErrors){ open}>
             <summary class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
-            @form(routes.ArrangementController.scheduleSummaryDayOfMonthSubmit()){
+            @form(routes.DirectDebitController.scheduleSummaryDayOfMonthSubmit()){
                 @inlinetextinput(dayForm("dayOfMonth"), 'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
                     '_labelClass -> "label--inline", '_modifierClass -> "input--xsmall",
                     'labelSuffix -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.of-the-month"))
@@ -68,7 +68,7 @@ Time To Pay Instalment Summary Display Page
             <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
         }
     </section>
-    @form(routes.ArrangementController.scheduleSummarySubmit()){
+    @form(routes.ArrangementController.submit()){
         @submit(){@Messages("ssttp.arrangement.instalment-summary.submit")}
     }
 }
