@@ -34,7 +34,7 @@ object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName wi
   override val hooks: Seq[HttpHook] = Seq(AuditingHook)
 }
 
-object SessionCache extends Keystore with AppName with ServicesConfig {
+object SsttpSessionCache extends Keystore with AppName with ServicesConfig {
   override def defaultSource: String = appName
   override def baseUri: String = baseUrl("keystore")
   override def domain: String = getConfString("keystore.domain", throw new RuntimeException("Could not find config keystore.domain"))
@@ -82,7 +82,7 @@ object EligibilityConnector extends EligibilityConnector with ServicesConfig {
 trait ServiceRegistry extends ServicesConfig {
   lazy val auditConnector: Auditing = FrontendAuditConnector
   lazy val directDebitConnector: DirectDebitConnector = DirectDebitConnector
-  lazy val sessionCache: Keystore = SessionCache
+  lazy val sessionCache: Keystore = SsttpSessionCache
   lazy val authConnector: AuthConnector = FrontendAuthConnector
 }
 
@@ -91,7 +91,7 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector, sessionCache, authConnector),
     classOf[ArrangementController] -> new ArrangementController(),
     classOf[CalculatorController] -> new CalculatorController(),
-    classOf[EligibilityController] -> new EligibilityController(),
+    classOf[EligibilityController] -> new EligibilityController(sessionCache),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
   )
 
