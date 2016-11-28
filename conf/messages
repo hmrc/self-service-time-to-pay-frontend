@@ -157,8 +157,14 @@ ssttp.arrangement.instalment-summary.payment-day.next-working-day=or the next wo
 ssttp.arrangement.instalment-summary.payment-day.change=Change payment day
 ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on=Take payment on day
 ssttp.arrangement.instalment-summary.payment-day.change.of-the-month=of the month
-ssttp.arrangement.instalment-summary.payment-day.submit=Submit
+ssttp.arrangement.instalment-summary.payment-day.submit=Update
+ssttp.arrangement.instalment-summary.payment-day.out-of-range=Payment day must be between 1 and 28
+ssttp.arrangement.instalment-summary.payment-day.required=Please enter a number 
+ssttp.arrangement.instalment-summary.payment-day.number=Please enter a number only
 
+ssttp.arrangement.instalment-summary.schedule.title=Direct Debit payment schedule
+ssttp.arrangement.instalment-summary.schedule.initial-payment=(initial payment)
+ssttp.arrangement.instalment-summary.schedule.final-payment=(final payment)
 
 ssttp.arrangement.instalment-summary.terms.warning=By continuing you are agreeing to these terms
 ssttp.arrangement.instalment-summary.terms.cancelled-if=This agreement may be cancelled if:

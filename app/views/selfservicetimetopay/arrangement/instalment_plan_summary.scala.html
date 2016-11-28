@@ -11,6 +11,8 @@ Time To Pay Instalment Summary Display Page
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import java.time.format.DateTimeFormatter
+@formatter = @{DateTimeFormatter.ofPattern("dd MMMM YYYY")}
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
   bodyClasses = None,
@@ -44,20 +46,36 @@ Time To Pay Instalment Summary Display Page
                 <strong>@Messages("ssttp.common.currency.symbol")@schedule.totalPayable</strong>
             </div>
         </div>
-    </section>
-    <section class="section">
         <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on") <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth)</strong> @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
         <details@if(dayForm.hasErrors){ open}>
             <summary class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
-            @form(routes.ArrangementController.scheduleSummaryDayOfMonthSubmit()){
-                @inlinetextinput(dayForm("dayOfMonth"), 'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
-                    '_labelClass -> "label--inline", '_modifierClass -> "input--xsmall",
-                    'labelSuffix -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.of-the-month"))
-                @submit(){@Messages("ssttp.arrangement.instalment-summary.payment-day.submit")}
-            }
+            <div class="panel--indent">
+                @form(routes.ArrangementController.scheduleSummaryDayOfMonthSubmit()){
+                    @inlinetextinput(dayForm("dayOfMonth"), 'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
+                        '_labelClass -> "label--inline", '_inputClass -> "input--xsmall",
+                        'labelSuffix -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.of-the-month"))
+                    @submit('_buttonClass -> "button--secondary"){@Messages("ssttp.arrangement.instalment-summary.payment-day.submit")}
+                }
+            </div>
         </details>
     </section>
-    <section class="section">
+    <section>
+        <h2>@Messages("ssttp.arrangement.instalment-summary.schedule.title")</h2>
+        @schedule.instalments.map { instalment =>
+            <div class="subsection grid-layout divider--bottom font-xsmall">
+                <div class="grid-layout__column grid-layout__column--3-4"><strong>@instalment.paymentDate.format(formatter)</strong>
+                    @if(instalment == schedule.instalments.head) {
+                        @Messages("ssttp.arrangement.instalment-summary.schedule.initial-payment")
+                    } else {
+                        @if(instalment == schedule.instalments.last) {
+                            @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment")
+                        }
+                    }
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-4">@Messages("ssttp.common.currency.symbol")@instalment.amount</div>
+            </div>
+        }
+
         @highlight('_modifierClass -> "highlight-message--light") {
             <p>@Messages("ssttp.arrangement.instalment-summary.terms.warning")</p>
         }
@@ -67,9 +85,12 @@ Time To Pay Instalment Summary Display Page
             <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.made-payable-immidiately")</div>
             <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
         }
+        @form(routes.ArrangementController.scheduleSummarySubmit()){
+            @submit(){@Messages("ssttp.arrangement.instalment-summary.submit")}
+        }
     </section>
-    @form(routes.ArrangementController.scheduleSummarySubmit()){
-        @submit(){@Messages("ssttp.arrangement.instalment-summary.submit")}
-    }
+    <div>&nbsp;</div>
+    <div><a class="back-link" href="@routes.CalculatorController.calculateInstalmentsPresent(None)">@Messages("ssttp.calculator.form.back")</a></div>
+
 }
 
