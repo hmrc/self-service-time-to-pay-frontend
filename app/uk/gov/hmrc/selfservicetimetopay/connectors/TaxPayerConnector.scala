@@ -22,14 +22,14 @@ import uk.gov.hmrc.play.http.{HttpResponse, HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfservicetimetopay.models.TaxPayer
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait TaxPayerConnector {
   val taxPayerURL: String
   val serviceURL: String
   val http: HttpGet
 
-  def getTaxPayer(utr: String)(implicit hc: HeaderCarrier): Future[Option[TaxPayer]] = {
+  def getTaxPayer(utr: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxPayer]] = {
     http.GET[HttpResponse](s"$taxPayerURL/$serviceURL/tax-payer/$utr").map {
        response => response.status match {
          case Status.OK => Some(response.json.as[TaxPayer])

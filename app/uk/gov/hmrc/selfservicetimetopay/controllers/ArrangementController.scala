@@ -16,46 +16,128 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import java.time.LocalDate
+
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.mvc._
+import play.api.mvc.{AnyContent, Action, Result}
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.selfservicetimetopay.config.FrontendGlobal.sessionCacheKey
+import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.models._
-import views.html.selfservicetimetopay.arrangement._
-
+import views.html.selfservicetimetopay.arrangement.{print_schedule_summary, schedule_summary, application_complete}
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
-class ArrangementController extends FrontendController {
 
+class ArrangementController(ddConnector: DirectDebitConnector,
+                            arrangementConnector: ArrangementConnector,
+                            sessionCache: SessionCache) extends FrontendController {
+
+  val cesa: String = "CESA"
+  val paymentFrequency = "Monthly"
+  val paymentCurrency = "GBP"
+
+  def submit() = Action.async { implicit request =>
+    sessionCache.fetchAndGetEntry[TTPSubmission](sessionCacheKey).flatMap {
+      _.fold(redirectToStart)(arrangementSetUp)
+    }
+  }
+
+  def applicationComplete() = Action.async { implicit request =>
+    sessionCache.fetchAndGetEntry[TTPSubmission](sessionCacheKey).flatMap {
+      _.fold(redirectToStart)(submission => {
+        sessionCache.remove()
+        successful(Ok(application_complete.render(submission, request)))
+      })
+    }
+  }
+
+  private def redirectToStart = successful[Result](Redirect(routes.ArrangementController.present()))
+
+  private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier) : Future[Result] = {
+
+    def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
+
+
+    val utr = submission.taxPayer.selfAssessment.utr
+    (for {
+      ddInstruction <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
+      ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
+    } yield ttp).flatMap {
+      //TODO: Waiting for failed application page
+      _.fold(error => successful(Redirect("")), success => applicationSuccessful)
+    }
+  }
+
+  private def paymentPlan(submission: TTPSubmission): PaymentPlanRequest = {
+    val bankDetails = submission.bankDetails
+    val schedule = submission.schedule
+    val utr = submission.taxPayer.selfAssessment.utr
+    val knownFact = List(KnownFact(cesa, utr))
+
+    val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
+      accountNumber = Some(bankDetails.accountNumber.toString),
+      creationDate = schedule.startDate,
+      ddiRefNo = bankDetails.ddiRefNumber)
+
+    val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
+    val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
+    val pp = PaymentPlan("Time to Pay",
+      utr,
+      cesa,
+      paymentCurrency,
+      schedule.initialPayment,
+      schedule.startDate.get,
+      firstInstalment.amount,
+      firstInstalment.paymentDate,
+      lastInstalment.paymentDate,
+      paymentFrequency,
+      lastInstalment.amount,
+      lastInstalment.paymentDate,
+      schedule.amountToPay)
+
+    PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, true)
+  }
+
+  private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
+                                submission: TTPSubmission): TTPArrangement = {
+    val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
+    val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
+    TTPArrangement(ppReference, ddReference, submission.taxPayer, submission.schedule)
+  }
+
+  //TODO: These need to be updated/possibly removed based on page flow.
   private def createDayOfMonthForm: Form[ArrangementDayOfMonth] = {
     Form(mapping(
       "dayOfMonth" -> number(min = 0, max = 28)
     )(ArrangementDayOfMonth.apply)(ArrangementDayOfMonth.unapply))
   }
 
-  def present: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.ArrangementController.scheduleSummaryPresent()))
+  def present: Action[AnyContent] = Action { implicit request =>
+    Redirect(routes.ArrangementController.scheduleSummaryPresent())
   }
 
-  def scheduleSummaryPresent: Action[AnyContent] = Action.async { implicit request =>
+  def scheduleSummaryPresent: Action[AnyContent] = Action { implicit request =>
     val form = createDayOfMonthForm
-    Future.successful(Ok(schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request)))
+    Ok(schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request))
   }
 
-  def scheduleSummaryPrintPresent: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(print_schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request)))
+  def scheduleSummaryPrintPresent: Action[AnyContent] = Action { implicit request =>
+    Ok(print_schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request))
   }
 
-  def scheduleSummaryDayOfMonthSubmit: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.DirectDebitController.directDebitPresent()))
+  def scheduleSummaryDayOfMonthSubmit: Action[AnyContent] = Action { implicit request =>
+    Redirect(routes.DirectDebitController.directDebitPresent())
   }
 
-  def scheduleSummarySubmit: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.DirectDebitController.directDebitPresent()))
+  def scheduleSummarySubmit: Action[AnyContent] = Action { implicit request =>
+    Redirect(routes.DirectDebitController.directDebitPresent())
   }
 
-  def applicationCompletePresent: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(application_complete.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request)))
-  }
 }

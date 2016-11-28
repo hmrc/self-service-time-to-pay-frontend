@@ -24,5 +24,5 @@ case class DirectDebitInstruction(sortCode: Option[String],
                                   accountNumber: Option[String],
                                   referenceNumber: Option[String] = None,
                                   creationDate: Option[LocalDate],
-                                  paperAuddisFlag: Boolean = false,
+                                  paperAuddisFlag: Option[Boolean] = None,
                                   ddiRefNo: Option[String])

@@ -29,7 +29,6 @@ import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
 
 object FrontendGlobal extends DefaultFrontendGlobal with ServiceRegistry with ControllerRegistry {
 
-  override val auditConnector = FrontendAuditConnector
   override val loggingFilter = LoggingFilter
   override val frontendAuditFilter = AuditFilter
 

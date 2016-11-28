@@ -26,9 +26,8 @@ POST   /arrangement/day-of-month                @uk.gov.hmrc.selfservicetimetopa
 GET    /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.directDebitPresent()
 POST   /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.directDebitSubmit()
 GET    /arrangement/direct-debit-confirmation   @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.directDebitConfirmationPresent()
-POST   /arrangement/direct-debit-confirmation   @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.directDebitConfirmationSubmit()
-POST   /arrangement/submit                      @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayArrangementController.submit()
-GET    /arrangement/complete                    @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayArrangementController.applicationComplete()
+POST   /arrangement/submit                      @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
+GET    /arrangement/complete                    @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
 GET    /you-need-to-file                        @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.youNeedToFilePresent()
 GET    /ttp-call-us                             @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.ttpCallUsPresent()
 

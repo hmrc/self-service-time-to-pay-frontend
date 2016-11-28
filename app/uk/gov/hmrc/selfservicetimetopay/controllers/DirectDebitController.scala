@@ -64,7 +64,4 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
       arrangementDirectDebit, request))
   }
 
-  def directDebitConfirmationSubmit:Action[AnyContent] = Action.apply {implicit request =>
-    Redirect(routes.ArrangementController.applicationCompletePresent())
-  }
 }
