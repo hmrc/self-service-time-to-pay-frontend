@@ -3,6 +3,7 @@
 @(amountsDue:CalculatorAmountsDue, dataForm: Form[CalculatorAmountDue])(implicit request: Request[_])
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, inlinecurrencyinput, dateinput, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
     bodyClasses = None,
@@ -11,8 +12,8 @@
     <header class="page-header text">
         <h1 class="h1-heading">@Messages("ssttp.calculator.form.amounts_due.title")</h1>
     </header>
-    @amountsDue.amountsDue.toString()
-    @form(routes.CalculatorController.amountsDueSubmit(), 'class -> "group") {
+
+    @form(uk.gov.hmrc.selfservicetimetopay.controllers.calculator.routes.AmountsDueController.submitAmountsDue(), 'class -> "group") {
         @formErrorSummary(Messages("ssttp.calculator.form.amounts_due.error.summary.title"), dataForm, Seq.empty)
         @dataForm.errors
         <p>@Messages("ssttp.calculator.form.amounts_due.intro")</p>
@@ -36,8 +37,8 @@
             @submit('_buttonClass -> "button--secondary"){@Messages("ssttp.calculator.form.amounts_due.add")}
         </div>
     }
-    @form(routes.CalculatorController.paymentTodayPresent(), 'class -> "group") {
+    @form(routes.CalculatorController.getPaymentToday(), 'class -> "group") {
         @submit(){@Messages("ssttp.calculator.form.continue")}
     }
-    <p><a class="back-link" href="@routes.EligibilityController.existingTtpPresent()">@Messages("ssttp.calculator.form.back")</a></p>
+    <p><a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.calculator.form.back")</a></p>
 }

@@ -14,28 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfservicetimetopay.controllers
+package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 
-import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import views.html.selfservicetimetopay.core._
+import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 
-class SelfServiceTimeToPayController extends FrontendController {
+class CalculateInstallmentsController(sessionCache: SessionCacheConnector) extends FrontendController {
 
-  def start: Action[AnyContent] = Action { implicit request =>
-    Ok(service_start.render(request))
-  }
-
-  def submit: Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.EligibilityController.start())
-  }
-
-  def getTtpCallUs: Action[AnyContent] =  Action { implicit request =>
-    Ok(ttp_call_us.render(request))
-  }
-
-  def getYouNeedToFile: Action[AnyContent] = Action { implicit request =>
-    Ok(you_need_to_file.render(request))
-  }
+//  def getCalculateInstalments(monthsOption:Option[String]): Action[AnyContent] = Action.async { implicit request =>
+//
+//  }
+//
+//  def submitCalculateInstalments: Action[AnyContent] = Action.async { implicit request =>
+//
+//  }
 
 }

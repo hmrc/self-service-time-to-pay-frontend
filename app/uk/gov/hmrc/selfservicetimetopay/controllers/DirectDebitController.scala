@@ -33,22 +33,22 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
                             sessionCacheConnector: SessionCacheConnector,
                             authConnector: AuthConnector) extends FrontendController {
 
-  def directDebitPresent: Action[AnyContent] = Action { implicit request =>
+  def getDirectDebit: Action[AnyContent] = Action { implicit request =>
     Ok(direct_debit_form.render(createDirectDebitForm, request))
   }
 
-  def directDebitConfirmationPresent: Action[AnyContent] = Action { implicit request =>
+  def getDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
     val form: Form[Boolean] = Form(single("confirm" -> boolean))
     Ok(direct_debit_confirmation.render(
       generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last,
       arrangementDirectDebit, request))
   }
 
-  def directDebitConfirmationSubmit: Action[AnyContent] = Action { implicit request =>
+  def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.ArrangementController.submit())
   }
 
-  def directDebitSubmit: Action[AnyContent] = Action.async { implicit request =>
+  def submitDirectDebit: Action[AnyContent] = Action.async { implicit request =>
     createDirectDebitForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(direct_debit_form.render(formWithErrors, request))),
       validFormData =>
@@ -62,7 +62,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
   }
 
   private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Result] = {
-    case Left(singleBankDetails) => Redirect(routes.DirectDebitController.directDebitConfirmationPresent())
-    case Right(existingDDBanks) => Redirect(routes.DirectDebitController.directDebitPresent())
+    case Left(singleBankDetails) => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
+    case Right(existingDDBanks) => Redirect(routes.DirectDebitController.getDirectDebit())
   }
 }
