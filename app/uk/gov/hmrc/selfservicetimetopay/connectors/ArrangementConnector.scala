@@ -24,14 +24,23 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+case class SubmissionSuccess()
+
+case class SubmissionError(code: Int, message: String)
+
 trait ArrangementConnector {
+  type SubmissionResult = Either[SubmissionError, SubmissionSuccess]
+
   val arrangementURL: String
   val serviceURL: String
   val http: HttpGet with HttpPost
 
-  def submitArrangements(ttpArrangement: TTPArrangement)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    http.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map {
-      _.status == CREATED
+  def submitArrangements(ttpArrangement: TTPArrangement)(implicit hc: HeaderCarrier): Future[SubmissionResult] = {
+    http.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map { response =>
+      response.status match {
+        case CREATED => Right(SubmissionSuccess())
+        case _ => Left(SubmissionError(response.status, response.body))
+      }
     }
   }
 }

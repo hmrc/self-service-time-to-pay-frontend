@@ -47,17 +47,8 @@ Time To Pay Instalment Summary Display Page
             </div>
         </div>
         <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on") <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth)</strong> @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
-        <details@if(dayForm.hasErrors){ open}>
-            <summary class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
-            <div class="panel--indent">
-                @form(routes.ArrangementController.scheduleSummaryDayOfMonthSubmit()){
-                    @inlinetextinput(dayForm("dayOfMonth"), 'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
-                        '_labelClass -> "label--inline", '_inputClass -> "input--xsmall",
-                        'labelSuffix -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.of-the-month"))
-                    @submit('_buttonClass -> "button--secondary"){@Messages("ssttp.arrangement.instalment-summary.payment-day.submit")}
-                }
-            </div>
-        </details>
+            <!-- Removed temporarily check git history to restore -->
+            <!-- --->
     </section>
     <section>
         <h2>@Messages("ssttp.arrangement.instalment-summary.schedule.title")</h2>
@@ -85,7 +76,7 @@ Time To Pay Instalment Summary Display Page
             <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.made-payable-immidiately")</div>
             <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
         }
-        @form(routes.ArrangementController.scheduleSummarySubmit()){
+        @form(routes.ArrangementController.submit()){
             @submit(){@Messages("ssttp.arrangement.instalment-summary.submit")}
         }
     </section>

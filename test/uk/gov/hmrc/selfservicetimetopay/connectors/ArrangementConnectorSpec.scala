@@ -42,18 +42,6 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutu
     val serviceURL = "ttparrangements"
   }
 
-  "ArrangementConnector" should {
-    "use the correct arrangements URL" in {
-      realConnector.arrangementURL shouldBe "http://localhost:8889"
-    }
-    "use the correct service URL" in {
-      realConnector.serviceURL shouldBe "ttparrangements"
-    }
-    "use the correct HTTP" in {
-      realConnector.http shouldBe WSHttp
-    }
-  }
-
   "Calling submitArrangements" should {
     "return true" in {
       val response = HttpResponse(CREATED)
@@ -61,16 +49,16 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
       val result = await(testConnector.submitArrangements(submitArrangementResponse))
 
-      result shouldBe true
+      result shouldBe Right(SubmissionSuccess())
     }
   }
 
   "return false" in {
-    val response = HttpResponse(UNAUTHORIZED)
+    val response = HttpResponse(responseStatus = UNAUTHORIZED, responseString = Some("Unauthorized"))
     when(testConnector.http.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
 
     val result = await(testConnector.submitArrangements(submitArrangementResponse))
 
-    result shouldBe false
+    result shouldBe Left(SubmissionError(401, "Unauthorized"))
   }
 }
