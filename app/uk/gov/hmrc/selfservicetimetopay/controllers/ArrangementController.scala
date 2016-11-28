@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
 
-import play.api.mvc.{Action, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -38,13 +38,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   val paymentFrequency = "Monthly"
   val paymentCurrency = "GBP"
 
-  def submit() = Action.async { implicit request =>
+  def submit(): Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap {
       _.fold(redirectToStart)(arrangementSetUp)
     }
   }
 
-  def applicationComplete() = Action.async { implicit request =>
+  def applicationComplete(): Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap {
       _.fold(redirectToStart)(submission => {
         sessionCache.remove()
@@ -53,7 +53,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     }
   }
 
-  private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.present()))
+  private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.start()))
 
   private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
 
@@ -96,7 +96,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       lastInstalment.paymentDate,
       schedule.amountToPay)
 
-    PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, true)
+    PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, printFlag=true)
   }
 
   private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,

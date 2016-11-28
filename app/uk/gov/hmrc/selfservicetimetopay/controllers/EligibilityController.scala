@@ -16,68 +16,56 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import play.api.data.Form
-import play.api.libs.json.Reads
 import play.api.mvc._
-import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.selfservicetimetopay.config.FrontendGlobal.sessionCacheKey
-import uk.gov.hmrc.selfservicetimetopay.config.SsttpSessionCache
+import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax}
 import views.html.selfservicetimetopay.eligibility._
 
 import scala.concurrent.Future
 
-object EligibilityController extends EligibilityController(SsttpSessionCache)
+class EligibilityController(sessionCache: SessionCacheConnector) extends FrontendController {
 
-class EligibilityController(sessionCache: SessionCache) extends FrontendController {
-
-  def present: Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.EligibilityController.typeOfTaxPresent())
+  def start: Action[AnyContent] = Action { implicit request =>
+    Redirect(routes.EligibilityController.getTypeOfTax())
   }
 
-  def typeOfTaxPresent: Action[AnyContent] = Action.async { implicit request =>
-    fetchAndFill[EligibilityTypeOfTax](sessionCacheKey, EligibilityForm.typeOfTaxForm)
+  def getTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
+    //fetchAndFill[EligibilityTypeOfTax](sessionCacheKey, EligibilityForm.typeOfTaxForm)
+
     Future.successful(Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request)))
   }
 
-  def typeOfTaxSubmit: Action[AnyContent] = Action.async { implicit request =>
+  def submitTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
     val response = EligibilityForm.typeOfTaxForm.bindFromRequest().fold(
       formWithErrors => {
         BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))
       },
       validFormData => {
-        sessionCache.cache[EligibilityTypeOfTax](sessionCacheKey, validFormData)
+        //sessionCache.cache[EligibilityTypeOfTax](sessionCacheKey, validFormData)
+
         //call taxpayer service
-        Redirect(routes.EligibilityController.existingTtpPresent())
+        Redirect(routes.EligibilityController.getExistingTtp())
       }
     )
     Future.successful(response)
   }
 
-  def existingTtpPresent: Action[AnyContent] =  Action.async { implicit request =>
-    fetchAndFill[EligibilityExistingTTP](sessionCacheKey, EligibilityForm.existingTtpForm)
+  def getExistingTtp: Action[AnyContent] =  Action.async { implicit request =>
+    //fetchAndFill[EligibilityExistingTTP](sessionCacheKey, EligibilityForm.existingTtpForm)
     Future.successful(Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request)))
   }
 
-  def existingTtpSubmit: Action[AnyContent] = Action.async { implicit request =>
+  def submitExistingTtp: Action[AnyContent] = Action.async { implicit request =>
     val response = EligibilityForm.existingTtpForm.bindFromRequest().fold(
       formWithErrors => {
         BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))
       },
       validFormData => {
-        sessionCache.cache[EligibilityExistingTTP](sessionCacheKey, validFormData)
-        Redirect(routes.CalculatorController.present())
+        //sessionCache.cache[EligibilityExistingTTP](sessionCacheKey, validFormData)
+        Redirect(calculator.routes.AmountsDueController.start())
       }
     )
     Future.successful(response)
-  }
-
-  def fetchAndFill[T](key: String, form: Form[T])(implicit hc: HeaderCarrier, rds: Reads[T]): Future[Form[T]] = {
-    sessionCache.fetchAndGetEntry[T](key).map {
-      cached => if (cached.isEmpty) form else form.fill(cached.get)
-    }
   }
 }

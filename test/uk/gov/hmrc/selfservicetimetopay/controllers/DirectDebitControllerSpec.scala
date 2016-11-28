@@ -39,15 +39,15 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
   private val gaToken = "GA-TOKEN"
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
-  val ddConnector = mock[DirectDebitConnector]
-  val sessionCacheConnector = mock[SessionCacheConnector]
-  val authConnector = mock[AuthConnector]
+  val ddConnector: DirectDebitConnector = mock[DirectDebitConnector]
+  val sessionCacheConnector: SessionCacheConnector = mock[SessionCacheConnector]
+  val authConnector: AuthConnector = mock[AuthConnector]
 
   "DirectDebitController" should {
     val controller = new DirectDebitController(ddConnector, sessionCacheConnector, authConnector)
 
     "successfully display the direct debit form page" in {
-      val response: Result = controller.directDebitPresent.apply(FakeRequest())
+      val response: Result = controller.getDirectDebit.apply(FakeRequest())
 
       status(response) shouldBe OK
 
@@ -62,11 +62,11 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      val response: Future[Result] = await(controller.directDebitSubmit.apply(request))
+      val response: Future[Result] = await(controller.submitDirectDebit.apply(request))
 
       status(response) shouldBe SEE_OTHER
 
-      redirectLocation(response).get shouldBe controllers.routes.DirectDebitController.directDebitConfirmationPresent().url
+      redirectLocation(response).get shouldBe controllers.routes.DirectDebitController.getDirectDebitConfirmation().url
     }
 
     "submit direct debit form with valid form data and invalid bank details and redirect to invalid bank details page" in {
@@ -77,17 +77,17 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(invalidBankDetailsForm: _*)
 
-      val response: Future[Result] = await(controller.directDebitSubmit.apply(request))
+      val response: Future[Result] = await(controller.submitDirectDebit.apply(request))
 
       status(response) shouldBe SEE_OTHER
 
-      redirectLocation(response).get shouldBe controllers.routes.DirectDebitController.directDebitPresent().url
+      redirectLocation(response).get shouldBe controllers.routes.DirectDebitController.getDirectDebit().url
     }
 
     "submit direct debit form with invalid form data and return a bad request" in {
       val request = FakeRequest().withFormUrlEncodedBody(inValidDirectDebitForm: _*)
 
-      val response: Future[Result] = await(controller.directDebitSubmit.apply(request))
+      val response: Future[Result] = await(controller.submitDirectDebit.apply(request))
 
       status(response) shouldBe BAD_REQUEST
     }
@@ -97,8 +97,8 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      Try(await(controller.directDebitSubmit.apply(request))).map {
-        case _ => fail()
+      Try(await(controller.submitDirectDebit.apply(request))).map {
+        fail()
       }.recover {
         case e: RuntimeException =>
         case _ => fail()
@@ -110,8 +110,8 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      Try(await(controller.directDebitSubmit.apply(request))).map {
-        case _ => fail()
+      Try(await(controller.submitDirectDebit.apply(request))).map {
+        fail()
       }.recover {
         case e: RuntimeException =>
         case _ => fail()
@@ -119,7 +119,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "successfully display the direct debit confirmation page" in {
-      val response: Result = controller.directDebitConfirmationPresent.apply(FakeRequest())
+      val response: Result = controller.getDirectDebitConfirmation.apply(FakeRequest())
 
       status(response) shouldBe OK
 
