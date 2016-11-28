@@ -35,9 +35,10 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
   )
 
   "EligibilityController" should {
+    val controller = new EligibilityController()
 
     "redirect successfully to the type of tax page" in {
-      val response:Result = EligibilityController.present.apply(FakeRequest())
+      val response:Result = controller.present.apply(FakeRequest())
 
       status(response) shouldBe SEE_OTHER
 
@@ -45,7 +46,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "successfully display the type of tax page" in {
-      val response:Result = EligibilityController.typeOfTaxPresent.apply(FakeRequest())
+      val response:Result = controller.typeOfTaxPresent.apply(FakeRequest())
 
       status(response) shouldBe OK
 
@@ -53,7 +54,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "successfully display the existing ttp page" in {
-      val response = await(EligibilityController.existingTtpPresent.apply(FakeRequest()))
+      val response = await(controller.existingTtpPresent.apply(FakeRequest()))
 
       status(response) shouldBe OK
 

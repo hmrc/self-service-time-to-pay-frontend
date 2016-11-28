@@ -20,7 +20,7 @@ import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.selfservicetimetopay.core._
 
-object SelfServiceTimeToPayController extends FrontendController {
+class SelfServiceTimeToPayController extends FrontendController {
 
   def present:Action[AnyContent] = Action { implicit request =>
     Ok(service_start.render(request))

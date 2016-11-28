@@ -23,7 +23,7 @@ import views.html.selfservicetimetopay.eligibility._
 
 import scala.concurrent.Future
 
-object EligibilityController extends FrontendController {
+class EligibilityController extends FrontendController {
 
   def present:Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.typeOfTaxPresent())

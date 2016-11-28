@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{WSHttp, CalculatorConnector => realConnector}
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, CalculatorPaymentSchedule}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -44,20 +44,23 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
 
   "CalculatorConnector" should {
     "use the correct calculator URL" in {
-      CalculatorConnector.calculatorURL shouldBe "http://localhost:8888"
+      realConnector.calculatorURL shouldBe "http://localhost:8888"
     }
+
     "use the correct service URL" in {
-      CalculatorConnector.serviceURL shouldBe "paymentschedule"
+      realConnector.serviceURL shouldBe "paymentschedule"
     }
+
     "use the correct HTTP" in {
-      CalculatorConnector.http shouldBe WSHttp
+      realConnector.http shouldBe WSHttp
     }
   }
 
   "Calling submitLiabilities" should {
     "return a payment schedule" in {
-      val jsonResponse = Json.fromJson[Option[List[CalculatorPaymentSchedule]]](submitLiabilitiesResponseJSON).get
-      when(testConnector.http.POST[CalculatorInput, Option[List[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
+      val jsonResponse = Json.fromJson[Option[Seq[CalculatorPaymentSchedule]]](submitLiabilitiesResponseJSON).get
+
+      when(testConnector.http.POST[CalculatorInput, Option[Seq[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
       val result = await(testConnector.submitLiabilities(submitDebitsRequest))
@@ -68,8 +71,9 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
       result.get.head.amountToPay shouldBe BigDecimal("5000")
       result.get.last.instalments.size shouldBe 12
     }
+
     "return no payment schedule" in {
-      when(testConnector.http.POST[CalculatorInput, Option[List[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
+      when(testConnector.http.POST[CalculatorInput, Option[Seq[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(None))
 
       val result = await(testConnector.submitLiabilities(submitDebitsRequest))

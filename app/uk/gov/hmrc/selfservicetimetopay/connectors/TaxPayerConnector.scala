@@ -16,19 +16,11 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import uk.gov.hmrc.selfservicetimetopay.models.TaxPayer
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
-
-object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
-  val taxPayerURL = baseUrl("time-to-pay-eligibility")
-  val serviceURL = "time-to-pay-eligibility"
-  val http = WSHttp
-}
 
 trait TaxPayerConnector {
   val taxPayerURL: String

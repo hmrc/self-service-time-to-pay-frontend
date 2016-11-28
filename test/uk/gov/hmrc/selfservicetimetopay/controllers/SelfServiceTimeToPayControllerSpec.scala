@@ -30,9 +30,10 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
   "SelfServiceTimeToPayController" should {
+    val controller = new SelfServiceTimeToPayController()
 
     "return 200 and display the service start page" in {
-      val result:Result = SelfServiceTimeToPayController.present.apply(FakeRequest())
+      val result:Result = controller.present.apply(FakeRequest())
 
       status(result) shouldBe OK
 
@@ -40,7 +41,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "redirect to the eligibility section if user selects start" in {
-      val result:Result = SelfServiceTimeToPayController.submit.apply(FakeRequest())
+      val result:Result = controller.submit.apply(FakeRequest())
 
       status(result) shouldBe SEE_OTHER
 
@@ -48,7 +49,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "return 200 and display call us page successfully" in {
-      val result:Result = SelfServiceTimeToPayController.ttpCallUsPresent.apply(FakeRequest())
+      val result:Result = controller.ttpCallUsPresent.apply(FakeRequest())
 
       status(result) shouldBe OK
 
@@ -56,7 +57,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "return 200 and display you need to file page successfully" in {
-      val result: Result = SelfServiceTimeToPayController.youNeedToFilePresent.apply(FakeRequest())
+      val result: Result = controller.youNeedToFilePresent.apply(FakeRequest())
 
       status(result) shouldBe OK
 

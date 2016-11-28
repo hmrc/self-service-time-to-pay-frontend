@@ -27,11 +27,7 @@ import uk.gov.hmrc.play.config.{AppName, ControllerConfig, ControllerParams, Run
 import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
 import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
 
-
-object FrontendGlobal
-  extends DefaultFrontendGlobal {
-
-  override val auditConnector = FrontendAuditConnector
+object FrontendGlobal extends DefaultFrontendGlobal with ServiceRegistry with ControllerRegistry {
   override val loggingFilter = LoggingFilter
   override val frontendAuditFilter = AuditFilter
 
@@ -44,6 +40,10 @@ object FrontendGlobal
     views.html.selfservicetimetopay.error_template(pageTitle, heading, message)
 
   override def microserviceMetricsConfig(implicit app: Application): Option[Configuration] = app.configuration.getConfig("microservice.metrics")
+
+  override def getControllerInstance[A](controllerClass: Class[A]): A = {
+    getController(controllerClass)
+  }
 }
 
 object ControllerConfiguration extends ControllerConfig {

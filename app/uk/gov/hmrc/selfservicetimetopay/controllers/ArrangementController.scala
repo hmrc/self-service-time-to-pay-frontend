@@ -26,7 +26,7 @@ import views.html.selfservicetimetopay.arrangement._
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables
 import scala.concurrent.Future
 
-object ArrangementController extends FrontendController {
+class ArrangementController extends FrontendController {
 
   private def createDayOfMonthForm:Form[ArrangementDayOfMonth] = {
     Form(mapping(
