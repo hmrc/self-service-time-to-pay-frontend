@@ -25,8 +25,9 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
-import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank}
+import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails, DirectDebitBank}
 import views.html.selfservicetimetopay.arrangement._
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
 
@@ -38,11 +39,12 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
     Ok(direct_debit_form.render(createDirectDebitForm, request))
   }
 
-  def directDebitConfirmationPresent: Action[AnyContent] = Action { implicit request =>
-    val form: Form[Boolean] = Form(single("confirm" -> boolean))
-    Ok(direct_debit_confirmation.render(
-      generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last,
-      arrangementDirectDebit, request))
+  def directDebitConfirmationPresent:Action[AnyContent] = Action.async {implicit request =>
+    val form:Form[Boolean] = Form(single("confirm" -> boolean))
+    sessionCache.get.map {
+      case Some(ttpSubmission) => Ok(showDDConfirmation(ttpSubmission.schedule, ttpSubmission.arrangementDirectDebit, request))
+      case None => throw new RuntimeException("No data found")
+    }
   }
 
   def directDebitConfirmationSubmit: Action[AnyContent] = Action { implicit request =>
@@ -51,7 +53,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
 
   def directDebitSubmit: Action[AnyContent] = Action.async { implicit request =>
     createDirectDebitForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(direct_debit_form.render(formWithErrors, request))),
+      formWithErrors => Future.successful(BadRequest(bankDetailsFormErrorPage(formWithErrors, request))),
       validFormData =>
         authConnector.currentAuthority.flatMap {
           case Some(authority) if authority.accounts.sa.exists(_ => true) =>
@@ -63,7 +65,12 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
   }
 
   private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Result] = {
-    case Left(singleBankDetails) => Redirect(routes.DirectDebitController.directDebitConfirmationPresent())
-    case Right(existingDDBanks) => Redirect(routes.DirectDebitController.directDebitPresent())
+    case Left(singleBankDetails) => Redirect(toDDCreationPage)
+    case Right(existingDDBanks) => Redirect(toBankSelectionPage)
   }
+
+  private val showDDConfirmation = direct_debit_confirmation.render _
+  private val bankDetailsFormErrorPage = direct_debit_form.render _
+  private val toDDCreationPage = routes.DirectDebitController.directDebitConfirmationPresent()
+  private val toBankSelectionPage = routes.DirectDebitController.directDebitPresent()
 }
