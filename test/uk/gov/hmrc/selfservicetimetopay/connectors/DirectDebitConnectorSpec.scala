@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.WithFakeApplication
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DirectDebitConnector => realConnector, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -49,13 +49,13 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
 
   "DirectDebitConnector" should {
     "use the correct direct-debit URL" in {
-      DirectDebitConnector.directDebitURL shouldBe "http://localhost:9854"
+      realConnector.directDebitURL shouldBe "http://localhost:9854"
     }
     "use the correct service URL" in {
-      DirectDebitConnector.serviceURL shouldBe "direct-debit"
+      realConnector.serviceURL shouldBe "direct-debit"
     }
     "use the correct HTTP" in {
-      DirectDebitConnector.http shouldBe WSHttp
+      realConnector.http shouldBe WSHttp
     }
   }
 
@@ -129,7 +129,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+      val response = await(realConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -149,7 +149,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+      val response = await(realConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -169,7 +169,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+      val response = await(realConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -203,7 +203,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(DirectDebitConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+      val response = await(realConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
