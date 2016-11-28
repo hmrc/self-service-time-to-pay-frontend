@@ -44,7 +44,7 @@ class ArrangementControllerSpec extends UnitSpec
   val ddConnector = mock[DirectDebitConnector]
   val arrangementConnector = mock[ArrangementConnector]
   val taxPayerConnector = mock[TaxPayerConnector]
-  val sessionCache = mock[SessionCache]
+  val sessionCache = mock[SessionCacheConnector]
 
   val controller = new ArrangementController(
     ddConnector,

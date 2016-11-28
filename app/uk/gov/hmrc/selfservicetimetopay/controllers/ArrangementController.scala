@@ -18,20 +18,17 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
 
-import play.api.data.Form
-import play.api.data.Forms._
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors._
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.arrangement.application_complete
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
-
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 class ArrangementController(ddConnector: DirectDebitConnector,
                             arrangementConnector: ArrangementConnector,
@@ -107,19 +104,6 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
     val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
     TTPArrangement(ppReference, ddReference, submission.taxPayer, submission.schedule)
-  }
-
-  //TODO: Need clarification about what these methods do. At the moment removing these cause page compilation errors
-  private def createDayOfMonthForm: Form[ArrangementDayOfMonth] = {
-    Form(mapping(
-      "dayOfMonth" -> number(min = 0, max = 28)
-    )(ArrangementDayOfMonth.apply)(ArrangementDayOfMonth.unapply))
-  }
-
-  def present: Action[AnyContent] = Action { implicit request =>
-    val form = createDayOfMonthForm
-    Ok(schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request))
-
   }
 
 }

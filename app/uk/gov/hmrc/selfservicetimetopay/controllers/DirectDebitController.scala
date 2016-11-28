@@ -45,7 +45,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
       arrangementDirectDebit, request))
   }
 
-  def directDebitConfirmationSubmit:Action[AnyContent] = Action {implicit request =>
+   def directDebitConfirmationSubmit:Action[AnyContent] = Action {implicit request =>
     Redirect(routes.ArrangementController.submit())
   }
 
@@ -64,9 +64,5 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
   private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Result] = {
     case Left(singleBankDetails) => Redirect(routes.DirectDebitController.directDebitConfirmationPresent())
     case Right(existingDDBanks) => Redirect(routes.DirectDebitController.directDebitPresent())
-  }
-
-  def scheduleSummaryDayOfMonthSubmit: Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.DirectDebitController.directDebitPresent())
   }
 }

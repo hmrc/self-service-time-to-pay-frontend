@@ -18,8 +18,6 @@ POST   /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopa
 GET    /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsPresent(months:Option[String])
 POST   /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsSubmit()
 POST   /calculator/instalments/payment-today    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsPaymentTodaySubmit()
-GET    /arrangement                             @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.present()
-POST   /arrangement/day-of-month                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.scheduleSummaryDayOfMonthSubmit()
 GET    /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.directDebitPresent()
 POST   /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.directDebitSubmit()
 GET    /arrangement/direct-debit-confirmation   @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.directDebitConfirmationPresent()
