@@ -20,37 +20,35 @@ import java.time.LocalDate
 
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.mvc.{AnyContent, Action, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.config.FrontendGlobal.sessionCacheKey
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.models._
-import views.html.selfservicetimetopay.arrangement.{print_schedule_summary, schedule_summary, application_complete}
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.html.selfservicetimetopay.arrangement.application_complete
+
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 
 class ArrangementController(ddConnector: DirectDebitConnector,
                             arrangementConnector: ArrangementConnector,
-                            sessionCache: SessionCache) extends FrontendController {
+                            sessionCache: SessionCacheConnector) extends FrontendController {
 
   val cesa: String = "CESA"
   val paymentFrequency = "Monthly"
   val paymentCurrency = "GBP"
 
   def submit() = Action.async { implicit request =>
-    sessionCache.fetchAndGetEntry[TTPSubmission](sessionCacheKey).flatMap {
+    sessionCache.get.flatMap {
       _.fold(redirectToStart)(arrangementSetUp)
     }
   }
 
   def applicationComplete() = Action.async { implicit request =>
-    sessionCache.fetchAndGetEntry[TTPSubmission](sessionCacheKey).flatMap {
+    sessionCache.get.flatMap {
       _.fold(redirectToStart)(submission => {
         sessionCache.remove()
         successful(Ok(application_complete.render(submission, request)))
@@ -60,7 +58,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.present()))
 
-  private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier) : Future[Result] = {
+  private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
 
     def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
 

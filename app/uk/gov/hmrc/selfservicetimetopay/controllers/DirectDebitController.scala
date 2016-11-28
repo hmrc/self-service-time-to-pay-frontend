@@ -19,11 +19,10 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
-import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
+import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank}
@@ -32,17 +31,22 @@ import views.html.selfservicetimetopay.arrangement._
 import scala.concurrent.Future
 
 class DirectDebitController(directDebitConnector: DirectDebitConnector,
-                            sessionCache: SessionCache,
+                            sessionCache: SessionCacheConnector,
                             authConnector: AuthConnector) extends FrontendController {
 
-  def directDebitPresent:Action[AnyContent] = Action.apply { implicit request =>
+  def directDebitPresent:Action[AnyContent] = Action { implicit request =>
     Ok(direct_debit_form.render(createDirectDebitForm, request) )
   }
 
+  def directDebitConfirmationPresent:Action[AnyContent] = Action {implicit request =>
+    val form:Form[Boolean] = Form(single("confirm" -> boolean))
+    Ok(direct_debit_confirmation.render(
+      generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last,
+      arrangementDirectDebit, request))
+  }
 
-  private def directDebitSubmitRouting: PartialFunction[Either[BankDetails, DirectDebitBank], Result] = {
-    case Left(singleBankDetails) => Redirect(routes.DirectDebitController.directDebitConfirmationPresent())
-    case Right(existingDDBanks) => Redirect(routes.DirectDebitController.directDebitPresent())
+  def directDebitConfirmationSubmit:Action[AnyContent] = Action {implicit request =>
+    Redirect(routes.ArrangementController.submit())
   }
 
   def directDebitSubmit:Action[AnyContent] = Action.async {implicit request =>
@@ -57,15 +61,12 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
     )
   }
 
-  def directDebitConfirmationPresent:Action[AnyContent] = Action.apply {implicit request =>
-    val form:Form[Boolean] = Form(single("confirm" -> boolean))
-    Ok(direct_debit_confirmation.render(
-      generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last,
-      arrangementDirectDebit, request))
+  private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Result] = {
+    case Left(singleBankDetails) => Redirect(routes.DirectDebitController.directDebitConfirmationPresent())
+    case Right(existingDDBanks) => Redirect(routes.DirectDebitController.directDebitPresent())
   }
 
   def scheduleSummaryDayOfMonthSubmit: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.DirectDebitController.directDebitPresent())
   }
-
 }
