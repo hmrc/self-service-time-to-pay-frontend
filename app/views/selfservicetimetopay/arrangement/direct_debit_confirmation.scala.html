@@ -99,7 +99,7 @@ Time To Pay Instalment Summary Display Page
             </div>
         </details>
         @alert(){@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.please-check")}
-        @form(ssttpRoutes.DirectDebitController.directDebitConfirmationSubmit(), 'class -> "group"){
+        @form(ssttpRoutes.ArrangementController.submit(), 'class -> "group"){
             @submit(){@Messages("ssttp.arrangement.direct-debit.confirmation.confirm-payment")}
         }
         <div>&nbsp;</div>

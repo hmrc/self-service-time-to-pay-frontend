@@ -16,11 +16,8 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import java.time.LocalDate
 
-case class TTPArrangement(identifier: Option[String],
-                          createdOn: Option[LocalDate],
-                          paymentPlanReference: String,
+case class TTPArrangement(paymentPlanReference: String,
                           directDebitReference: String,
                           taxpayer: TaxPayer,
                           schedule: CalculatorPaymentSchedule)

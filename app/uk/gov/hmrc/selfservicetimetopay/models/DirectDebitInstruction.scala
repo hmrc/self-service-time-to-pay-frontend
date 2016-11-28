@@ -22,7 +22,7 @@ import java.time.LocalDate
 //Direct-debit - part of input to createPaymentPlan
 case class DirectDebitInstruction(sortCode: Option[String],
                                   accountNumber: Option[String],
-                                  referenceNumber: Option[String],
+                                  referenceNumber: Option[String] = None,
                                   creationDate: Option[LocalDate],
-                                  paperAuddisFlag: Option[Boolean],
+                                  paperAuddisFlag: Option[Boolean] = None,
                                   ddiRefNo: Option[String])

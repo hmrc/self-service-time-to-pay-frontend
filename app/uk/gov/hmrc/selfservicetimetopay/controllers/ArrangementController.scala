@@ -16,57 +16,94 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import play.api.data.Form
-import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
-import play.api.mvc._
+import java.time.LocalDate
+
+import play.api.mvc.{Action, Result}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
+import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.models._
-import views.html.selfservicetimetopay.arrangement._
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables
+import views.html.selfservicetimetopay.arrangement.application_complete
 
 import scala.concurrent.Future
-import scala.util.control.Exception._
+import scala.concurrent.Future.successful
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-class ArrangementController extends FrontendController {
+class ArrangementController(ddConnector: DirectDebitConnector,
+                            arrangementConnector: ArrangementConnector,
+                            sessionCache: SessionCacheConnector) extends FrontendController {
 
+  val cesa: String = "CESA"
+  val paymentFrequency = "Monthly"
+  val paymentCurrency = "GBP"
 
-  private def createDayOfMonthForm:Form[ArrangementDayOfMonth] = {
-    def tryToInt(input:String) = { catching(classOf[NumberFormatException]) opt input.toInt}
-    def isInt(input:String) = { tryToInt(input).nonEmpty }
-    Form(mapping(
-      "dayOfMonth" -> text
-        .verifying("ssttp.arrangement.instalment-summary.payment-day.required", {i:String => (i != null) && i.nonEmpty })
-        .verifying("ssttp.arrangement.instalment-summary.payment-day.number", { i => (i.isEmpty || (i.nonEmpty && isInt(i))) })
-        .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => (!isInt(i) || (isInt(i) && (i.toInt >= 1)) )})
-        .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => (!isInt(i) || (isInt(i) && (i.toInt <= 28)) )})
-      )(dayOfMonth => ArrangementDayOfMonth(tryToInt(dayOfMonth).get))(data => Some(data.dayOfMonth.toString))
-    )
+  def submit() = Action.async { implicit request =>
+    sessionCache.get.flatMap {
+      _.fold(redirectToStart)(arrangementSetUp)
+    }
   }
 
-  def present:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.ArrangementController.scheduleSummaryPresent()))
+  def applicationComplete() = Action.async { implicit request =>
+    sessionCache.get.flatMap {
+      _.fold(redirectToStart)(submission => {
+        sessionCache.remove()
+        successful(Ok(application_complete.render(submission, request)))
+      })
+    }
   }
 
-  def scheduleSummaryPresent:Action[AnyContent] = Action.async { implicit request =>
-  val form = createDayOfMonthForm.bind(Map("dayOfMonth" -> "31"))
-    Future.successful(Ok(instalment_plan_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request)))
+  private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.present()))
+
+  private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
+
+    def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
+
+    val utr = submission.taxPayer.selfAssessment.utr
+    (for {
+      ddInstruction <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
+      ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
+    } yield ttp).flatMap {
+      //TODO: Waiting for failed application page
+      _.fold(error => successful(Redirect("")), success => applicationSuccessful)
+    }
   }
 
-  def scheduleSummaryPrintPresent:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(print_schedule_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request)))
+  private def paymentPlan(submission: TTPSubmission): PaymentPlanRequest = {
+    val bankDetails = submission.bankDetails
+    val schedule = submission.schedule
+    val utr = submission.taxPayer.selfAssessment.utr
+    val knownFact = List(KnownFact(cesa, utr))
+
+    val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
+      accountNumber = Some(bankDetails.accountNumber.toString),
+      creationDate = schedule.startDate,
+      ddiRefNo = bankDetails.ddiRefNumber)
+
+    val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
+    val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
+    val pp = PaymentPlan("Time to Pay",
+      utr,
+      cesa,
+      paymentCurrency,
+      schedule.initialPayment,
+      schedule.startDate.get,
+      firstInstalment.amount,
+      firstInstalment.paymentDate,
+      lastInstalment.paymentDate,
+      paymentFrequency,
+      lastInstalment.amount,
+      lastInstalment.paymentDate,
+      schedule.amountToPay)
+
+    PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, true)
   }
 
-  def scheduleSummaryDayOfMonthSubmit:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.ArrangementController.scheduleSummaryPresent()))
+  private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
+                                submission: TTPSubmission): TTPArrangement = {
+    val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
+    val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
+    TTPArrangement(ppReference, ddReference, submission.taxPayer, submission.schedule)
   }
 
-  def scheduleSummarySubmit:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.DirectDebitController.directDebitPresent()))
-  }
-
-  def applicationCompletePresent:Action[AnyContent] = Action.async {implicit request =>
-    Future.successful(Ok(application_complete.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request) ) )
-  }
 }

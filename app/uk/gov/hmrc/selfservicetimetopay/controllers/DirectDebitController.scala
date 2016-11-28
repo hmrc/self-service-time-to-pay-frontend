@@ -45,8 +45,8 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
       arrangementDirectDebit, request))
   }
 
-  def directDebitConfirmationSubmit:Action[AnyContent] = Action {implicit request =>
-    Redirect(routes.ArrangementController.applicationCompletePresent())
+   def directDebitConfirmationSubmit:Action[AnyContent] = Action {implicit request =>
+    Redirect(routes.ArrangementController.submit())
   }
 
   def directDebitSubmit:Action[AnyContent] = Action.async {implicit request =>
