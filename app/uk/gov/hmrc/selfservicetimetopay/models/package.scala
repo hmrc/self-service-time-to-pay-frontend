@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.time.LocalDate
 
 import play.api.libs.json._
+
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.math.BigDecimal
@@ -50,49 +51,49 @@ package object modelsFormat {
     }
 
   //Front end formatters
-  implicit val calculatorPaymentTodayFormatter = Json.format[CalculatorPaymentToday]
-  implicit val eligibilityDebtTypeFormatter = Json.format[EligibilityTypeOfTax]
-  implicit val eligibilityExistingTTPFormatter = Json.format[EligibilityExistingTTP]
+  implicit val calculatorPaymentTodayFormatter: Format[CalculatorPaymentToday] = Json.format[CalculatorPaymentToday]
+  implicit val eligibilityTypeOfTaxFormatter: Format[EligibilityTypeOfTax] = Json.format[EligibilityTypeOfTax]
+  implicit val eligibilityExistingTTPFormatter: Format[EligibilityExistingTTP] = Json.format[EligibilityExistingTTP]
 
   //Calculator formatters
-  implicit val calculatorLiabilityFormatter = Json.format[CalculatorDebit]
-  implicit val calculatorAmountDueFormatter = Json.format[CalculatorAmountDue]
-  implicit val calculatorAmountsDueFormatter = Json.format[CalculatorAmountsDue]
-  implicit val calculatorDurationFormatter = Json.format[CalculatorDuration]
-  implicit val calculatorPaymentScheduleInstalmentFormatter = Json.format[CalculatorPaymentScheduleInstalment]
-  implicit val calculatorPaymentScheduleFormatter = Json.format[CalculatorPaymentSchedule]
-  implicit val calculatorInputFormatter = Json.format[CalculatorInput]
+  implicit val calculatorLiabilityFormatter: Format[CalculatorDebit] = Json.format[CalculatorDebit]
+  implicit val calculatorAmountDueFormatter: Format[CalculatorAmountDue] = Json.format[CalculatorAmountDue]
+  implicit val calculatorAmountsDueFormatter: Format[CalculatorAmountsDue] = Json.format[CalculatorAmountsDue]
+  implicit val calculatorDurationFormatter: Format[CalculatorDuration] = Json.format[CalculatorDuration]
+  implicit val calculatorPaymentScheduleInstalmentFormatter: Format[CalculatorPaymentScheduleInstalment] = Json.format[CalculatorPaymentScheduleInstalment]
+  implicit val calculatorPaymentScheduleFormatter: Format[CalculatorPaymentSchedule] = Json.format[CalculatorPaymentSchedule]
+  implicit val calculatorInputFormatter: Format[CalculatorInput] = Json.format[CalculatorInput]
 
   //Tax payer formatters
-  implicit val addressFormatter = Json.format[Address]
-  implicit val interestFormatter = Json.format[Interest]
-  implicit val communicationPreferencesFormatter = Json.format[CommunicationPreferences]
-  implicit val debitFormatter = Json.format[Debit]
-  implicit val returnsFormatter = Json.format[Return]
-  implicit val selfAssessmentFormatter = Json.format[SelfAssessment]
-  implicit val taxPayerFormatter = Json.format[TaxPayer]
+  implicit val addressFormatter: Format[Address] = Json.format[Address]
+  implicit val interestFormatter: Format[Interest] = Json.format[Interest]
+  implicit val communicationPreferencesFormatter: Format[CommunicationPreferences] = Json.format[CommunicationPreferences]
+  implicit val debitFormatter: Format[Debit] = Json.format[Debit]
+  implicit val returnsFormatter: Format[Return] = Json.format[Return]
+  implicit val selfAssessmentFormatter: Format[SelfAssessment] = Json.format[SelfAssessment]
+  implicit val taxPayerFormatter: Format[TaxPayer] = Json.format[TaxPayer]
 
   //Arrangement formatters
-  implicit val arrangementDayOfMonthFormatter = Json.format[ArrangementDayOfMonth]
-  implicit val arrangementDirectDebitFormatter = Json.format[ArrangementDirectDebit]
-  implicit val arrangementFormatter = Json.format[TTPArrangement]
+  implicit val arrangementDayOfMonthFormatter: Format[ArrangementDayOfMonth] = Json.format[ArrangementDayOfMonth]
+  implicit val arrangementDirectDebitFormatter: Format[ArrangementDirectDebit] = Json.format[ArrangementDirectDebit]
+  implicit val arrangementFormatter: Format[TTPArrangement] = Json.format[TTPArrangement]
 
   //Direct debit formatters
-  implicit val directDebitInstructionFormatter = Json.format[DirectDebitInstruction]
-  implicit val directDebitBanksFormatter = Json.format[DirectDebitBank]
-  implicit val directDebitPaymentPlanFormatter = Json.format[DirectDebitPaymentPlan]
-  implicit val directDebitInstructionPaymentPlanFormatter = Json.format[DirectDebitInstructionPaymentPlan]
-  implicit val knownFactFormatter = Json.format[KnownFact]
-  implicit val paymentPlanFormatter = Json.format[PaymentPlan]
-  implicit val paymentPlanRequestFormatter = Json.format[PaymentPlanRequest]
-  implicit val bankDetailsFormatter = Json.format[BankDetails]
+  implicit val directDebitInstructionFormatter: Format[DirectDebitInstruction] = Json.format[DirectDebitInstruction]
+  implicit val directDebitBanksFormatter: Format[DirectDebitBank] = Json.format[DirectDebitBank]
+  implicit val directDebitPaymentPlanFormatter: Format[DirectDebitPaymentPlan] = Json.format[DirectDebitPaymentPlan]
+  implicit val directDebitInstructionPaymentPlanFormatter: Format[DirectDebitInstructionPaymentPlan] = Json.format[DirectDebitInstructionPaymentPlan]
+  implicit val knownFactFormatter: Format[KnownFact] = Json.format[KnownFact]
+  implicit val paymentPlanFormatter: Format[PaymentPlan] = Json.format[PaymentPlan]
+  implicit val paymentPlanRequestFormatter: Format[PaymentPlanRequest] = Json.format[PaymentPlanRequest]
+  implicit val bankDetailsFormatter: Format[BankDetails] = Json.format[BankDetails]
   implicit val bankAccountResponseFormatter = Format(eitherReads[BankDetails, DirectDebitBank], eitherWrites[BankDetails, DirectDebitBank])
 
   //Eligibility formatters
-  implicit val eligibilityStatusFormatter = Json.format[EligibilityStatus]
+  implicit val eligibilityStatusFormatter: Format[EligibilityStatus] = Json.format[EligibilityStatus]
 
   //Submission formatter
-  implicit val submissionFormatter = Json.format[TTPSubmission]
+  implicit val submissionFormatter: Format[TTPSubmission] = Json.format[TTPSubmission]
 }
 
 package object controllerVariables {
@@ -115,8 +116,4 @@ package object controllerVariables {
 
   implicit val arrangementDirectDebit = ArrangementDirectDebit("My Account", 1, 2, 33, 123456789, Some(true))
 
-  implicit val formAmountsDue = CalculatorAmountsDue(Seq(
-    CalculatorAmountDue(BigDecimal("200.00"), 2010, "January", 20),
-    CalculatorAmountDue(BigDecimal("100.00"), 2014, "December", 1)
-  ))
 }

@@ -34,10 +34,10 @@ object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName wi
 }
 
 object SessionCacheConnector extends KeystoreConnector with AppName with ServicesConfig {
-  override val sessionKey: String = getConfString("keystore.sessionKey", throw new RuntimeException("Could not find session key"))
-  override def defaultSource: String = appName
-  override def baseUri: String = baseUrl("keystore")
-  override def domain: String = getConfString("keystore.domain", throw new RuntimeException("Could not find config keystore.domain"))
+  override val sessionKey = getConfString("keystore.sessionKey", throw new RuntimeException("Could not find session key"))
+  override def defaultSource = appName
+  override def baseUri = baseUrl("keystore")
+  override def domain = getConfString("keystore.domain", throw new RuntimeException("Could not find config keystore.domain"))
   override def http: HttpGet with HttpPut with HttpDelete = WSHttp
 }
 
@@ -46,7 +46,7 @@ object FrontendAuditConnector extends Auditing with AppName with RunMode {
 }
 
 object FrontendAuthConnector extends AuthConnector with ServicesConfig {
-  override val serviceUrl: String = baseUrl("auth")
+  override val serviceUrl = baseUrl("auth")
   override def http: HttpGet = WSHttp
 }
 
@@ -92,7 +92,7 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector, sessionCacheConnector, authConnector),
     classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, sessionCacheConnector),
     classOf[CalculatorController] -> new CalculatorController(),
-    classOf[EligibilityController] -> new EligibilityController(),
+    classOf[EligibilityController] -> new EligibilityController(sessionCacheConnector),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
   )
 

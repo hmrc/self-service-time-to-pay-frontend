@@ -25,3 +25,14 @@ case class ArrangementDirectDebit(accountName:String,
 
   def sortCode: String = Seq(sortCode1, sortCode2, sortCode3).mkString
 }
+
+object ArrangementDirectDebit {
+  def from(bankDetails: BankDetails): ArrangementDirectDebit = {
+    ArrangementDirectDebit(bankDetails.accountName.getOrElse(""),
+      bankDetails.sortCode.substring(0, 2).toInt,
+      bankDetails.sortCode.substring(2, 4).toInt,
+      bankDetails.sortCode.substring(4, 6).toInt,
+      bankDetails.accountNumber.toLong,
+      None)
+  }
+}

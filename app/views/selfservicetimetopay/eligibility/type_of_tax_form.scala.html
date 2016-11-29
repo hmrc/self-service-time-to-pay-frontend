@@ -11,7 +11,7 @@
   <header class="page-header text">
     <h1 class="h1-heading">@Messages("ssttp.eligibility.form.type_of_tax.title")</h1>
   </header>
-  @form(routes.EligibilityController.typeOfTaxSubmit(), 'class -> "group") {
+  @form(routes.EligibilityController.submitTypeOfTax(), 'class -> "group") {
     @formErrorSummary(Messages("ssttp.eligibility.form.type_of_tax.error.summary.title"), dataForm, Seq.empty)
     @fieldset(dataForm, "type_of_tax", '_modifierClass -> "form-field-group") {
       <h3 class="h3-heading">@Messages("ssttp.eligibility.form.type_of_tax.question.prompt")</h3>
@@ -31,7 +31,7 @@
     @submit(){@Messages("ssttp.eligibility.form.continue")}
   }
   <div class="subsection">
-    <a class="back-link" href="@routes.SelfServiceTimeToPayController.present()">@Messages("ssttp.eligibility.form.back")</a>
+    <a class="back-link" href="@routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.eligibility.form.back")</a>
   </div>
 }
 

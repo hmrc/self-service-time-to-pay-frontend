@@ -27,5 +27,6 @@ trait SessionCacheConnector extends SessionCache with ServicesConfig {
   val sessionKey: String
 
   def put(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], hc: HeaderCarrier) = cache[TTPSubmission](sessionKey, body)
+
   def get(implicit hc: HeaderCarrier, reads: Reads[TTPSubmission]) = fetchAndGetEntry[TTPSubmission](sessionKey)
 }

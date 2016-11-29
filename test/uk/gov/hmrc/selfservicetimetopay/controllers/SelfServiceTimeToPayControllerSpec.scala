@@ -33,7 +33,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     val controller = new SelfServiceTimeToPayController()
 
     "return 200 and display the service start page" in {
-      val result:Result = controller.present.apply(FakeRequest())
+      val result:Result = controller.start.apply(FakeRequest())
 
       status(result) shouldBe OK
 
@@ -45,11 +45,11 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
 
       status(result) shouldBe SEE_OTHER
 
-      redirectLocation(result).get shouldBe controllers.routes.EligibilityController.present().url
+      redirectLocation(result).get shouldBe controllers.routes.EligibilityController.start().url
     }
 
     "return 200 and display call us page successfully" in {
-      val result:Result = controller.ttpCallUsPresent.apply(FakeRequest())
+      val result:Result = controller.getTtpCallUs.apply(FakeRequest())
 
       status(result) shouldBe OK
 
@@ -57,7 +57,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "return 200 and display you need to file page successfully" in {
-      val result: Result = controller.youNeedToFilePresent.apply(FakeRequest())
+      val result: Result = controller.getYouNeedToFile.apply(FakeRequest())
 
       status(result) shouldBe OK
 

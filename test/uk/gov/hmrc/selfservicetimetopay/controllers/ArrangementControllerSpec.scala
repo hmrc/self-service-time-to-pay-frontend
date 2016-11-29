@@ -40,11 +40,11 @@ class ArrangementControllerSpec extends UnitSpec
   with MockitoSugar with WithFakeApplication with ScalaFutures {
   type SubmissionResult = Either[SubmissionError, SubmissionSuccess]
 
-  val authConnector = mock[AuthConnector]
-  val ddConnector = mock[DirectDebitConnector]
-  val arrangementConnector = mock[ArrangementConnector]
-  val taxPayerConnector = mock[TaxPayerConnector]
-  val sessionCache = mock[SessionCacheConnector]
+  val authConnector: AuthConnector = mock[AuthConnector]
+  val ddConnector: DirectDebitConnector = mock[DirectDebitConnector]
+  val arrangementConnector: ArrangementConnector = mock[ArrangementConnector]
+  val taxPayerConnector: TaxPayerConnector = mock[TaxPayerConnector]
+  val sessionCache: SessionCacheConnector = mock[SessionCacheConnector]
 
   val controller = new ArrangementController(
     ddConnector,
@@ -76,7 +76,7 @@ class ArrangementControllerSpec extends UnitSpec
 
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit"))
 
-      redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.present().url
+      redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.start().url
 
     }
 
