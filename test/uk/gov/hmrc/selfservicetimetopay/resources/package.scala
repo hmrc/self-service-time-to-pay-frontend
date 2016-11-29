@@ -64,7 +64,7 @@ package object resources {
       .mkString)
 
   val ttpSubmission: TTPSubmission = TTPSubmission(
-    CalculatorPaymentSchedule(
+    Some(CalculatorPaymentSchedule(
       Some(LocalDate.parse("2001-01-01")),
       Some(LocalDate.parse("2001-01-01")),
       BigDecimal(1024.12),
@@ -79,9 +79,10 @@ package object resources {
           LocalDate.now(),
           BigDecimal(1234.22))
       )
-    ),
-    BankDetails("012131", "1234567890", None, None, Some("0987654321")),
-    TaxPayer("Bob", List(), SelfAssessment("utr", None, List(), None))
+    )),
+    Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))),
+    None,
+    Some(TaxPayer("Bob", List(), SelfAssessment("utr", None, List(), None)))
   )
 
   val directDebitInstructionPaymentPlan : DirectDebitInstructionPaymentPlan = {
@@ -178,7 +179,7 @@ package object resources {
     "confirmed" -> "true"
   )
 
-  val bankDetails = BankDetails("123456", "12345678", None, None, None)
+  val bankDetails = BankDetails("123456", "12345678", None, None, None, None)
 
   val directDebitBank = DirectDebitBank("", Seq.empty)
 

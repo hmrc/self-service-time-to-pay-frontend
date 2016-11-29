@@ -59,51 +59,61 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
     def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
 
-    val utr = submission.taxPayer.selfAssessment.utr
-    (for {
-      ddInstruction <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
+    // TODO - graceful handling!
+    val utr = submission.taxPayer.get.selfAssessment.utr
+
+    val result = for {
+      ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
       ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
-    } yield ttp).flatMap {
+    } yield ttp
+
+    result.flatMap {
       //TODO: Waiting for failed application page
       _.fold(error => successful(Redirect("")), success => applicationSuccessful)
     }
   }
 
   private def paymentPlan(submission: TTPSubmission): PaymentPlanRequest = {
-    val bankDetails = submission.bankDetails
-    val schedule = submission.schedule
-    val utr = submission.taxPayer.selfAssessment.utr
-    val knownFact = List(KnownFact(cesa, utr))
+    val maybePaymentPlanRequest = for {
+      bankDetails <- submission.bankDetails
+      schedule <- submission.schedule
+      taxPayer <- submission.taxPayer
+    } yield {
+      val utr = taxPayer.selfAssessment.utr
+      val knownFact = List(KnownFact(cesa, utr))
+      val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
+        accountNumber = Some(bankDetails.accountNumber.toString),
+        creationDate = schedule.startDate,
+        ddiRefNo = bankDetails.ddiRefNumber)
 
-    val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
-      accountNumber = Some(bankDetails.accountNumber.toString),
-      creationDate = schedule.startDate,
-      ddiRefNo = bankDetails.ddiRefNumber)
+      val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
+      val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
+      val pp = PaymentPlan("Time to Pay",
+        utr,
+        cesa,
+        paymentCurrency,
+        schedule.initialPayment,
+        schedule.startDate.get,
+        firstInstalment.amount,
+        firstInstalment.paymentDate,
+        lastInstalment.paymentDate,
+        paymentFrequency,
+        lastInstalment.amount,
+        lastInstalment.paymentDate,
+        schedule.amountToPay)
 
-    val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
-    val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
-    val pp = PaymentPlan("Time to Pay",
-      utr,
-      cesa,
-      paymentCurrency,
-      schedule.initialPayment,
-      schedule.startDate.get,
-      firstInstalment.amount,
-      firstInstalment.paymentDate,
-      lastInstalment.paymentDate,
-      paymentFrequency,
-      lastInstalment.amount,
-      lastInstalment.paymentDate,
-      schedule.amountToPay)
+      PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, printFlag = true)
+    }
 
-    PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, true)
+    maybePaymentPlanRequest.getOrElse(throw new RuntimeException("Error handling needs to be implemented"))
   }
 
   private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
                                 submission: TTPSubmission): TTPArrangement = {
     val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
     val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
-    TTPArrangement(ppReference, ddReference, submission.taxPayer, submission.schedule)
+    // TODO: Correctly handle the gets!
+    TTPArrangement(ppReference, ddReference, submission.taxPayer.get, submission.schedule.get)
   }
 
 }

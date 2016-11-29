@@ -24,6 +24,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
@@ -47,7 +48,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     val controller = new DirectDebitController(ddConnector, sessionCacheConnector, authConnector)
 
     "successfully display the direct debit form page" in {
-      val response: Result = controller.directDebitPresent.apply(FakeRequest())
+      val response = await(controller.directDebitPresent(FakeRequest()))
 
       status(response) shouldBe OK
 
@@ -60,9 +61,12 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       when(authConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
+      when(sessionCacheConnector.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(sessionCacheConnector.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      val response: Future[Result] = await(controller.directDebitSubmit.apply(request))
+      val response = await(controller.directDebitSubmit(request))
 
       status(response) shouldBe SEE_OTHER
 
@@ -75,9 +79,12 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       when(authConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
+      when(sessionCacheConnector.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(sessionCacheConnector.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+
       val request = FakeRequest().withFormUrlEncodedBody(invalidBankDetailsForm: _*)
 
-      val response: Future[Result] = await(controller.directDebitSubmit.apply(request))
+      val response = await(controller.directDebitSubmit(request))
 
       status(response) shouldBe SEE_OTHER
 
@@ -87,7 +94,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     "submit direct debit form with invalid form data and return a bad request" in {
       val request = FakeRequest().withFormUrlEncodedBody(inValidDirectDebitForm: _*)
 
-      val response: Future[Result] = await(controller.directDebitSubmit.apply(request))
+      val response = await(controller.directDebitSubmit(request))
 
       status(response) shouldBe BAD_REQUEST
     }
@@ -97,9 +104,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      Try(await(controller.directDebitSubmit.apply(request))).map {
-        case _ => fail()
-      }.recover {
+      Try(await(controller.directDebitSubmit(request))).map(_ => fail()).recover {
         case e: RuntimeException =>
         case _ => fail()
       }
@@ -110,16 +115,14 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      Try(await(controller.directDebitSubmit.apply(request))).map {
-        case _ => fail()
-      }.recover {
+      Try(await(controller.directDebitSubmit(request))).map(_ => fail()).recover {
         case e: RuntimeException =>
         case _ => fail()
       }
     }
 
     "successfully display the direct debit confirmation page" in {
-      val response: Result = controller.directDebitConfirmationPresent.apply(FakeRequest())
+      val response: Result = controller.directDebitConfirmationPresent(FakeRequest())
 
       status(response) shouldBe OK
 

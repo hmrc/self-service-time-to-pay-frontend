@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class TTPSubmission(schedule: CalculatorPaymentSchedule,
-                         bankDetails: BankDetails,
-                         taxPayer: TaxPayer) {
-  def arrangementDirectDebit = ArrangementDirectDebit.from(bankDetails)
+case class TTPSubmission(schedule: Option[CalculatorPaymentSchedule],
+                         bankDetails: Option[BankDetails],
+                         existingDDBanks: Option[DirectDebitBank],
+                         taxPayer: Option[TaxPayer]) {
+  def arrangementDirectDebit: Option[ArrangementDirectDebit] = bankDetails.map(f => ArrangementDirectDebit.from(f))
 }
