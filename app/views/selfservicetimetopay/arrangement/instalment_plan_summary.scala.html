@@ -8,11 +8,10 @@ Time To Pay Instalment Summary Display Page
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 @(schedule:CalculatorPaymentSchedule, dayForm:Form[ArrangementDayOfMonth])(implicit request: Request[_])
+@import selfservicetimetopay.partials.payment_schedule
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import java.time.format.DateTimeFormatter
-@formatter = @{DateTimeFormatter.ofPattern("dd MMMM YYYY")}
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
   bodyClasses = None,
@@ -61,21 +60,7 @@ Time To Pay Instalment Summary Display Page
     </section>
     <section>
         <h2>@Messages("ssttp.arrangement.instalment-summary.schedule.title")</h2>
-        @schedule.instalments.map { instalment =>
-            <div class="subsection grid-layout divider--bottom font-xsmall">
-                <div class="grid-layout__column grid-layout__column--3-4"><strong>@instalment.paymentDate.format(formatter)</strong>
-                    @if(instalment == schedule.instalments.head) {
-                        @Messages("ssttp.arrangement.instalment-summary.schedule.initial-payment")
-                    } else {
-                        @if(instalment == schedule.instalments.last) {
-                            @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment")
-                        }
-                    }
-                </div>
-                <div class="grid-layout__column grid-layout__column--1-4">@Messages("ssttp.common.currency.symbol")@instalment.amount</div>
-            </div>
-        }
-
+        @payment_schedule(schedule)
         @highlight('_modifierClass -> "highlight-message--light") {
             <p>@Messages("ssttp.arrangement.instalment-summary.terms.warning")</p>
         }

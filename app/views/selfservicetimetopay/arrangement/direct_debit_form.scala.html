@@ -6,6 +6,7 @@ Time To Pay Direct Debit Form Page
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @(ddForm:Form[ArrangementDirectDebit])(implicit request: Request[_])
+@import selfservicetimetopay.partials.direct_debit_guarantee
 @import selfservicetimetopay.helpers.{alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, inlinetextinput, textinput, fieldset, checkbox, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
@@ -55,9 +56,6 @@ Time To Pay Direct Debit Form Page
       <p>&nbsp;</p>
     }
   </section>
-  <section class="divider--top">
-    <h3 class="heading-h3">@Messages("ssttp.arrangement.direct-debit.guarantee.title")</h3>
-    @message_list(Some("bullets"), "ssttp.arrangement.direct-debit.guarantee.list.", '_itemClass -> "font-xsmall")
-  </section>
+  @direct_debit_guarantee()
 }
 

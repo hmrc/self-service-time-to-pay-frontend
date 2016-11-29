@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import java.time.LocalDate
+import java.time.temporal.TemporalField
+
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
@@ -50,7 +53,7 @@ object ArrangementController extends FrontendController {
   }
 
   def scheduleSummaryPresent:Action[AnyContent] = Action.async { implicit request =>
-  val form = createDayOfMonthForm.bind(Map("dayOfMonth" -> "31"))
+  val form = createDayOfMonthForm
     Future.successful(Ok(instalment_plan_summary.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, form, request)))
   }
 
@@ -67,6 +70,16 @@ object ArrangementController extends FrontendController {
   }
 
   def applicationCompletePresent:Action[AnyContent] = Action.async {implicit request =>
-    Future.successful(Ok(application_complete.render(generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last, request) ) )
+
+    // These will be populated by the results of the TTP Arrangement in the meamtime this is just dummy data
+    val tempDirectDebitData = ArrangementDirectDebit("My Account Name", 1, 2, 3, 1234567890, Option(true))
+    val tempPaymentSchedule = generatePaymentSchedules(BigDecimal("2000.00"), Some(BigDecimal("100.00"))).last
+    val tempDebits:Seq[Debit] = Seq(
+      Debit("BCD", Some(BigDecimal("6000.00")), LocalDate.of(2015, 1, 31), None),
+      Debit("IN1", Some(BigDecimal("1500.00")), LocalDate.of(2015, 6, 30), None),
+      Debit("IN2", Some(BigDecimal("1500.00")), LocalDate.of(2015, 1, 31), None)
+    ).sortBy(_.dueDate.toEpochDay())
+    // end
+    Future.successful(Ok(application_complete.render(tempDebits, tempDirectDebitData, tempPaymentSchedule, request)))
   }
 }
