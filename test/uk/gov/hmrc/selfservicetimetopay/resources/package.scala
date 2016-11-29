@@ -63,26 +63,26 @@ package object resources {
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
       .mkString)
 
-  val ttpSubmission: TTPSubmission = TTPSubmission(
-    CalculatorPaymentSchedule(
-      Some(LocalDate.parse("2001-01-01")),
-      Some(LocalDate.parse("2001-01-01")),
-      BigDecimal(1024.12),
-      BigDecimal(20123.76),
-      BigDecimal(1024.12),
-      BigDecimal(102.67),
-      BigDecimal(20123.76),
-      Seq(CalculatorPaymentScheduleInstalment(
-        LocalDate.now(),
-        BigDecimal(1234.22)),
-        CalculatorPaymentScheduleInstalment(
+  val ttpSubmission: TTPSubmission = TTPSubmission(Some(CalculatorPaymentSchedule(
+        Some(LocalDate.parse("2001-01-01")),
+        Some(LocalDate.parse("2001-01-01")),
+        BigDecimal(1024.12),
+        BigDecimal(20123.76),
+        BigDecimal(1024.12),
+        BigDecimal(102.67),
+        BigDecimal(20123.76),
+        Seq(CalculatorPaymentScheduleInstalment(
           LocalDate.now(),
-          BigDecimal(1234.22))
-      )
-    ),
-    BankDetails("012131", "1234567890", None, None, Some("0987654321")),
-    TaxPayer("Bob", List(), SelfAssessment("utr", None, List(), None))
-  )
+          BigDecimal(1234.22)),
+          CalculatorPaymentScheduleInstalment(
+            LocalDate.now(),
+            BigDecimal(1234.22))
+        )
+      )),
+    Some(BankDetails("012131", "1234567890", None, None, Some("0987654321"))),
+    Some(TaxPayer("Bob", List(), SelfAssessment("utr", None, List(), None))),
+    Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
+    Some(EligibilityExistingTTP(Some(false))))
 
   val directDebitInstructionPaymentPlan : DirectDebitInstructionPaymentPlan = {
     DirectDebitInstructionPaymentPlan(LocalDate.now().toString, "1234567890", List(
