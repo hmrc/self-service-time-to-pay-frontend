@@ -59,7 +59,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
     def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
 
-    val utr = submission.taxPayer.selfAssessment.utr
+    // TODO: replace get with appropriate logic getOrElse
+    val utr = submission.taxPayer.get.selfAssessment.utr
     (for {
       ddInstruction <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
       ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
@@ -70,9 +71,11 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   }
 
   private def paymentPlan(submission: TTPSubmission): PaymentPlanRequest = {
-    val bankDetails = submission.bankDetails
-    val schedule = submission.schedule
-    val utr = submission.taxPayer.selfAssessment.utr
+    // TODO: replace get with appropriate logic getOrElse
+    val bankDetails = submission.bankDetails.get
+    val schedule = submission.schedule.get
+    // TODO: replace get with appropriate logic getOrElse
+    val utr = submission.taxPayer.get.selfAssessment.utr
     val knownFact = List(KnownFact(cesa, utr))
 
     val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
@@ -103,7 +106,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                                 submission: TTPSubmission): TTPArrangement = {
     val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
     val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
-    TTPArrangement(ppReference, ddReference, submission.taxPayer, submission.schedule)
+    // TODO: replace get with appropriate logic getOrElse
+    TTPArrangement(ppReference, ddReference, submission.taxPayer.get, submission.schedule.get)
   }
 
 }

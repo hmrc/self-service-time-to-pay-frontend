@@ -21,6 +21,7 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import views.html.selfservicetimetopay.eligibility._
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
 
@@ -31,8 +32,11 @@ class EligibilityController(sessionCache: SessionCacheConnector) extends Fronten
   }
 
   def getTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
-    //fetchAndFill[EligibilityTypeOfTax](sessionCacheKey, EligibilityForm.typeOfTaxForm)
 
+//    sessionCache.get.map {
+//      cached => if (cached.isEmpty || cached.get.eligibilityTypeOfTax.isEmpty) EligibilityForm.typeOfTaxForm
+//                else EligibilityForm.typeOfTaxForm.fill(cached.get.eligibilityTypeOfTax.get)
+//    }
     Future.successful(Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request)))
   }
 
