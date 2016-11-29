@@ -40,15 +40,18 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
   private val gaToken = "GA-TOKEN"
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
-  val ddConnector = mock[DirectDebitConnector]
-  val sessionCacheConnector = mock[SessionCacheConnector]
-  val authConnector = mock[AuthConnector]
+  val mockDDConnector = mock[DirectDebitConnector]
+  val mockSessionCache = mock[SessionCacheConnector]
+  val mockAuthConnector = mock[AuthConnector]
 
   "DirectDebitController" should {
-    val controller = new DirectDebitController(ddConnector, sessionCacheConnector, authConnector)
+    val controller = new DirectDebitController(mockDDConnector) {
+      override lazy val sessionCache: SessionCacheConnector = mockSessionCache
+      override lazy val authConnector: AuthConnector = mockAuthConnector
+    }
 
     "successfully display the direct debit form page" in {
-      val response = await(controller.getDirectDebit(FakeRequest()))
+      val response = await(controller.getDirectDebit(FakeRequest().withSession(sessionProvider.createSessionId())))
 
       status(response) shouldBe OK
 
@@ -56,15 +59,15 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "submit direct debit form with valid form data and valid bank details and redirect to direct debit confirmation page" in {
-      when(ddConnector.validateOrRetrieveAccounts(Matchers.any(), Matchers.any(),
+      when(mockDDConnector.validateOrRetrieveAccounts(Matchers.any(), Matchers.any(),
         Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Left(bankDetails)))
 
-      when(authConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+      when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
-      when(sessionCacheConnector.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(sessionCacheConnector.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
+      val request = FakeRequest().withSession(sessionProvider.createSessionId()).withFormUrlEncodedBody(validDirectDebitForm: _*)
 
       val response = await(controller.submitDirectDebit(request))
 
@@ -74,15 +77,15 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "submit direct debit form with valid form data and invalid bank details and redirect to invalid bank details page" in {
-      when(ddConnector.validateOrRetrieveAccounts(Matchers.any(), Matchers.any(),
+      when(mockDDConnector.validateOrRetrieveAccounts(Matchers.any(), Matchers.any(),
         Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Right(directDebitBank)))
 
-      when(authConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+      when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
-      when(sessionCacheConnector.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(sessionCacheConnector.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val request = FakeRequest().withFormUrlEncodedBody(invalidBankDetailsForm: _*)
+      val request = FakeRequest().withSession(sessionProvider.createSessionId()).withFormUrlEncodedBody(invalidBankDetailsForm: _*)
 
       val response = await(controller.submitDirectDebit(request))
 
@@ -92,7 +95,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "submit direct debit form with invalid form data and return a bad request" in {
-      val request = FakeRequest().withFormUrlEncodedBody(inValidDirectDebitForm: _*)
+      val request = FakeRequest().withSession(sessionProvider.createSessionId()).withFormUrlEncodedBody(inValidDirectDebitForm: _*)
 
       val response = await(controller.submitDirectDebit(request))
 
@@ -100,7 +103,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "submit direct debit form with an authorised user without sa enrolment and throw an exception" in {
-      when(authConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUserNoSA)))
+      when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUserNoSA)))
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
@@ -108,7 +111,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "submit direct debit form with an unauthorised user and throw an exception" in {
-      when(authConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(None))
+      when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(None))
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
@@ -116,7 +119,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "successfully display the direct debit confirmation page" in {
-      val response = await(controller.getDirectDebitConfirmation(FakeRequest()))
+      val response = await(controller.getDirectDebitConfirmation(FakeRequest().withSession(sessionProvider.createSessionId())))
 
       status(response) shouldBe OK
 

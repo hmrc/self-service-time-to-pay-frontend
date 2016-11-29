@@ -20,10 +20,9 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
-import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
+import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
+import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -31,9 +30,7 @@ import views.html.selfservicetimetopay.arrangement._
 
 import scala.concurrent.Future
 
-class DirectDebitController(directDebitConnector: DirectDebitConnector,
-                            sessionCacheConnector: SessionCacheConnector,
-                            authConnector: AuthConnector) extends FrontendController {
+class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
 
   def getDirectDebit: Action[AnyContent] = Action { implicit request =>
     Ok(direct_debit_form.render(createDirectDebitForm, request))
@@ -41,7 +38,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
 
   def getDirectDebitConfirmation: Action[AnyContent] = Action.async { implicit request =>
     val form: Form[Boolean] = Form(single("confirm" -> boolean))
-    sessionCacheConnector.get.map {
+    sessionCache.get.map {
       case Some(ttpSubmission) => Ok(showDDConfirmation(ttpSubmission.schedule.get, ttpSubmission.arrangementDirectDebit.get, request))
       case None => throw new RuntimeException("No data found")
     }
@@ -86,13 +83,13 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
   }
 
   private def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier) = {
-    sessionCacheConnector.get.flatMap {
+    sessionCache.get.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")
-        sessionCacheConnector.put(found(ttpSubmission))
+        sessionCache.put(found(ttpSubmission))
       case None =>
         Logger.info("No TTP Submission data found in cache")
-        sessionCacheConnector.put(notFound())
+        sessionCache.put(notFound())
     }
   }
 

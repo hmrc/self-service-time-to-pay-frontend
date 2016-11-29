@@ -22,6 +22,7 @@ import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.arrangement.application_complete
@@ -31,8 +32,7 @@ import scala.concurrent.Future.successful
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 class ArrangementController(ddConnector: DirectDebitConnector,
-                            arrangementConnector: ArrangementConnector,
-                            sessionCache: SessionCacheConnector) extends FrontendController {
+                            arrangementConnector: ArrangementConnector) extends TimeToPayController {
 
   val cesa: String = "CESA"
   val paymentFrequency = "Monthly"

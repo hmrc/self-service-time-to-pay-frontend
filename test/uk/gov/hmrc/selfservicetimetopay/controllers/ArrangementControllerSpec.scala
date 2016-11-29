@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.config.FrontendGlobal._
+import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.controllers
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -40,41 +41,39 @@ class ArrangementControllerSpec extends UnitSpec
   with MockitoSugar with WithFakeApplication with ScalaFutures {
   type SubmissionResult = Either[SubmissionError, SubmissionSuccess]
 
-  val authConnector: AuthConnector = mock[AuthConnector]
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val ddConnector: DirectDebitConnector = mock[DirectDebitConnector]
   val arrangementConnector: ArrangementConnector = mock[ArrangementConnector]
   val taxPayerConnector: TaxPayerConnector = mock[TaxPayerConnector]
-  val sessionCache: SessionCacheConnector = mock[SessionCacheConnector]
+  val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
 
-  val controller = new ArrangementController(
-    ddConnector,
-    arrangementConnector,
-    sessionCache
-  )
-
+  val controller = new ArrangementController(ddConnector, arrangementConnector) {
+    override lazy val sessionCache: SessionCacheConnector = mockSessionCache
+    override lazy val authConnector: AuthConnector = mockAuthConnector
+  }
 
   "Self Service Time To Pay Arrangement Controller" should {
     "return success and display the application complete page" in {
 
       implicit val hc = new HeaderCarrier
 
-      when(sessionCache.get(Matchers.any(), Matchers.any()))
+      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
       when(ddConnector.createPaymentPlan(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(directDebitInstructionPaymentPlan))
 
       when(arrangementConnector.submitArrangements(Matchers.any())(Matchers.any())).thenReturn(Future.successful(Right(SubmissionSuccess())))
 
-      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit"))
+      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(sessionProvider.createSessionId()))
 
       redirectLocation(response).get shouldBe controllers.routes.ArrangementController.applicationComplete().url
     }
 
     "redirect to start if no data in session cache" in {
-      when(sessionCache.get(Matchers.any(), Matchers.any()))
+      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(None))
 
-      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit"))
+      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(sessionProvider.createSessionId()))
 
       redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.start().url
 

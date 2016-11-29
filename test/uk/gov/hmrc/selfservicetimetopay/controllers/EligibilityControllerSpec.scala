@@ -22,9 +22,11 @@ import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
+import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
+import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
 
@@ -33,7 +35,8 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
   private val gaToken = "GA-TOKEN"
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
-  val sessionCacheConnector: SessionCacheConnector = mock[SessionCacheConnector]
+  val mockSessionCacheConnector: SessionCacheConnector = mock[SessionCacheConnector]
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   val typeOfTaxForm = Seq(
     "type_of_tax.hasSelfAssessmentDebt" -> "true",
@@ -45,10 +48,13 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
   )
 
   "EligibilityController" should {
-    val controller = new EligibilityController(sessionCacheConnector)
+    val controller = new EligibilityController() {
+      override lazy val sessionCache: SessionCacheConnector = mockSessionCacheConnector
+      override lazy val authConnector: AuthConnector = mockAuthConnector
+    }
 
     "redirect successfully to the type of tax page" in {
-      val response:Result = controller.start.apply(FakeRequest())
+      val response:Result = controller.start.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
 
       status(response) shouldBe SEE_OTHER
 
@@ -56,7 +62,7 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
     }
 
     "successfully display the type of tax page" in {
-      val response:Result = controller.getTypeOfTax.apply(FakeRequest())
+      val response:Result = controller.getTypeOfTax.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
 
       status(response) shouldBe OK
 
@@ -64,7 +70,7 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
     }
 
     "successfully display the existing ttp page" in {
-      val response = await(controller.getExistingTtp.apply(FakeRequest()))
+      val response = await(controller.getExistingTtp.apply(FakeRequest().withSession(sessionProvider.createSessionId())))
 
       status(response) shouldBe OK
 
@@ -72,7 +78,7 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
     }
 
     "submit type of tax given valid data and redirect to existing ttp page" in {
-      val request = FakeRequest().withFormUrlEncodedBody(typeOfTaxForm:_*)
+      val request = FakeRequest().withSession(sessionProvider.createSessionId()).withFormUrlEncodedBody(typeOfTaxForm:_*)
 
       val response:Future[Result] = await(controller.submitTypeOfTax.apply(request))
 
@@ -82,7 +88,7 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
     }
 
     "submit existing ttp given valid data and redirect to amount you owe page" in {
-      val request = FakeRequest().withFormUrlEncodedBody(existingTtpForm:_*)
+      val request = FakeRequest().withFormUrlEncodedBody(existingTtpForm:_*).withSession(sessionProvider.createSessionId())
 
       val response:Future[Result] = await(controller.submitExistingTtp.apply(request))
 
@@ -93,7 +99,7 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
     }
 
     "redirect to self on type of tax page and display errors when invalid data is submitted" in {
-      val request = FakeRequest()
+      val request = FakeRequest().withSession(sessionProvider.createSessionId())
 
       val response:Future[Result] = await(controller.submitTypeOfTax.apply(request))
 
@@ -101,7 +107,7 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
     }
 
     "redirect to self on existing ttp page and display errors when invalid data is submitted" in {
-      val request = FakeRequest()
+      val request = FakeRequest().withSession(sessionProvider.createSessionId())
 
       val response:Future[Result] = await(controller.submitExistingTtp.apply(request))
 

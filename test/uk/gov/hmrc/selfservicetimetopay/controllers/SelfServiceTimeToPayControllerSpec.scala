@@ -23,6 +23,7 @@ import play.api.i18n.Messages
 import play.api.test.{FakeApplication, FakeRequest}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
+import uk.gov.hmrc.selfservicetimetopay.resources._
 
 class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
 
@@ -33,7 +34,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     val controller = new SelfServiceTimeToPayController()
 
     "return 200 and display the service start page" in {
-      val result:Result = controller.start.apply(FakeRequest())
+      val result:Result = controller.start.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
 
       status(result) shouldBe OK
 
@@ -41,7 +42,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "redirect to the eligibility section if user selects start" in {
-      val result:Result = controller.submit.apply(FakeRequest())
+      val result:Result = controller.submit.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
 
       status(result) shouldBe SEE_OTHER
 
@@ -49,7 +50,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "return 200 and display call us page successfully" in {
-      val result:Result = controller.getTtpCallUs.apply(FakeRequest())
+      val result:Result = controller.getTtpCallUs.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
 
       status(result) shouldBe OK
 
@@ -57,7 +58,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "return 200 and display you need to file page successfully" in {
-      val result: Result = controller.getYouNeedToFile.apply(FakeRequest())
+      val result: Result = controller.getYouNeedToFile.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
 
       status(result) shouldBe OK
 
