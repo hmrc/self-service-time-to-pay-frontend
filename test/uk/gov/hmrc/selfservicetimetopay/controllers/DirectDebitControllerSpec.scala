@@ -98,7 +98,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
       Try(await(controller.submitDirectDebit.apply(request))).map {
-        fail()
+        case _ => fail()
       }.recover {
         case e: RuntimeException =>
         case _ => fail()
@@ -111,7 +111,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
       Try(await(controller.submitDirectDebit.apply(request))).map {
-        fail()
+        case _ => fail()
       }.recover {
         case e: RuntimeException =>
         case _ => fail()
