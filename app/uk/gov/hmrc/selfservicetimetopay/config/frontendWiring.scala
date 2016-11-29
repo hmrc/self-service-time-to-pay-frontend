@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.http.ws._
 import uk.gov.hmrc.play.http.{HttpDelete, HttpGet, HttpPut}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
+import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstallmentsController, PaymentTodayController}
 
 object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName with RunMode with HttpAuditing {
   val auditConnector = FrontendAuditConnector
@@ -93,7 +94,10 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, sessionCacheConnector),
     classOf[CalculatorController] -> new CalculatorController(),
     classOf[EligibilityController] -> new EligibilityController(sessionCacheConnector),
-    classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
+    classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
+    classOf[AmountsDueController] -> new AmountsDueController(sessionCacheConnector),
+    classOf[CalculateInstallmentsController] -> new CalculateInstallmentsController(sessionCacheConnector),
+    classOf[PaymentTodayController] -> new PaymentTodayController(sessionCacheConnector)
   )
 
   def getController[A](controllerClass: Class[A]) : A = controllers(controllerClass).asInstanceOf[A]
