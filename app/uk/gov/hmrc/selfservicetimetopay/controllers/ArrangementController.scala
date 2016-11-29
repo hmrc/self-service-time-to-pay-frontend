@@ -53,7 +53,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     }
   }
 
-  private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.present()))
+  private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.start()))
 
   private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
 

@@ -22,19 +22,19 @@ import views.html.selfservicetimetopay.core._
 
 class SelfServiceTimeToPayController extends FrontendController {
 
-  def present: Action[AnyContent] = Action { implicit request =>
+  def start: Action[AnyContent] = Action { implicit request =>
     Ok(service_start.render(request))
   }
 
   def submit: Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.EligibilityController.present())
+    Redirect(routes.EligibilityController.start())
   }
 
-  def ttpCallUsPresent: Action[AnyContent] =  Action { implicit request =>
+  def getTtpCallUs: Action[AnyContent] =  Action { implicit request =>
     Ok(ttp_call_us.render(request))
   }
 
-  def youNeedToFilePresent: Action[AnyContent] = Action { implicit request =>
+  def getYouNeedToFile: Action[AnyContent] = Action { implicit request =>
     Ok(you_need_to_file.render(request))
   }
 

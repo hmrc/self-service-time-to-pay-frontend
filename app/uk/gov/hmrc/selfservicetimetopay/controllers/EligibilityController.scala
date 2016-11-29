@@ -18,48 +18,56 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import views.html.selfservicetimetopay.eligibility._
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
 
-class EligibilityController extends FrontendController {
+class EligibilityController(sessionCache: SessionCacheConnector) extends FrontendController {
 
-  def present: Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.EligibilityController.typeOfTaxPresent())
+  def start: Action[AnyContent] = Action { implicit request =>
+    Redirect(routes.EligibilityController.getTypeOfTax())
   }
 
-  def typeOfTaxPresent: Action[AnyContent] = Action.async { implicit request =>
+  def getTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
+
+//    sessionCache.get.map {
+//      cached => if (cached.isEmpty || cached.get.eligibilityTypeOfTax.isEmpty) EligibilityForm.typeOfTaxForm
+//                else EligibilityForm.typeOfTaxForm.fill(cached.get.eligibilityTypeOfTax.get)
+//    }
     Future.successful(Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request)))
   }
 
-  def typeOfTaxSubmit: Action[AnyContent] = Action.async { implicit request =>
+  def submitTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
     val response = EligibilityForm.typeOfTaxForm.bindFromRequest().fold(
       formWithErrors => {
         BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))
       },
       validFormData => {
-        //keyStoreConnector.saveFormData(KeystoreKeys.typeOfTaxDetails, validFormData)
+        //sessionCache.cache[EligibilityTypeOfTax](sessionCacheKey, validFormData)
+
         //call taxpayer service
-        Redirect(routes.EligibilityController.existingTtpPresent())
+        Redirect(routes.EligibilityController.getExistingTtp())
       }
     )
     Future.successful(response)
   }
 
-  def existingTtpPresent: Action[AnyContent] =  Action.async { implicit request =>
-    // get form data from keystore or fill then display page
+  def getExistingTtp: Action[AnyContent] =  Action.async { implicit request =>
+    //fetchAndFill[EligibilityExistingTTP](sessionCacheKey, EligibilityForm.existingTtpForm)
     Future.successful(Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request)))
   }
 
-  def existingTtpSubmit: Action[AnyContent] = Action.async { implicit request =>
+  def submitExistingTtp: Action[AnyContent] = Action.async { implicit request =>
     val response = EligibilityForm.existingTtpForm.bindFromRequest().fold(
       formWithErrors => {
         BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))
       },
       validFormData => {
-        //keyStoreConnector.saveFormData(KeystoreKeys.existingTtpDetails, validFormData)
-        Redirect(routes.CalculatorController.present())
+        //sessionCache.cache[EligibilityExistingTTP](sessionCacheKey, validFormData)
+        Redirect(calculator.routes.AmountsDueController.start())
       }
     )
     Future.successful(response)

@@ -3,28 +3,35 @@
 # ~~~~
 
 # Home page
-GET    /                                        @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.present()
+GET    /                                        @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.start()
 POST   /                                        @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.submit()
-GET    /eligibility                             @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.present()
-GET    /eligibility/type-of-tax                 @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.typeOfTaxPresent()
-POST   /eligibility/type-of-tax                 @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.typeOfTaxSubmit()
-GET    /eligibility/existing-ttp                @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.existingTtpPresent()
-POST   /eligibility/existing-ttp                @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.existingTtpSubmit()
-GET    /calculator                              @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.present()
-GET    /calculator/amounts-due                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.amountsDuePresent()
-POST   /calculator/amounts-due                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.amountsDueSubmit()
-GET    /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.paymentTodayPresent()
-POST   /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.paymentTodaySubmit()
-GET    /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsPresent(months:Option[String])
-POST   /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsSubmit()
-POST   /calculator/instalments/payment-today    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.calculateInstalmentsPaymentTodaySubmit()
-GET    /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.directDebitPresent()
-POST   /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.directDebitSubmit()
-GET    /arrangement/direct-debit-confirmation   @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.directDebitConfirmationPresent()
+# Eligibility
+GET    /eligibility                             @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.start()
+GET    /eligibility/type-of-tax                 @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.getTypeOfTax()
+POST   /eligibility/type-of-tax                 @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.submitTypeOfTax()
+GET    /eligibility/existing-ttp                @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.getExistingTtp()
+POST   /eligibility/existing-ttp                @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.submitExistingTtp()
+
+# Calculator
+GET    /calculator                              @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.AmountsDueController.start()
+GET    /calculator/amounts-due                  @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.AmountsDueController.getAmountsDue()
+POST   /calculator/amounts-due                  @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.AmountsDueController.submitAmountsDue()
+GET    /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentToday()
+POST   /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPaymentToday()
+GET    /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalments(months:Option[String])
+POST   /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
+POST   /calculator/instalments/payment-today    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsPaymentToday()
+
+# Arrangement
+GET    /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
+POST   /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
+GET    /arrangement/direct-debit-confirmation   @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()
 POST   /arrangement/submit                      @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
 GET    /arrangement/summary                     @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
-GET    /you-need-to-file                        @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.youNeedToFilePresent()
-GET    /ttp-call-us                             @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.ttpCallUsPresent()
+
+# Alternative pages
+GET    /you-need-to-file                        @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
+GET    /ttp-call-us                             @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file                           controllers.Assets.at(path="/public", file)

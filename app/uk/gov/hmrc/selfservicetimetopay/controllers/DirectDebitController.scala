@@ -35,12 +35,12 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
                             sessionCacheConnector: SessionCacheConnector,
                             authConnector: AuthConnector) extends FrontendController {
 
-  def directDebitPresent: Action[AnyContent] = Action { implicit request =>
+  def getDirectDebit: Action[AnyContent] = Action { implicit request =>
     Ok(direct_debit_form.render(createDirectDebitForm, request))
   }
 
-  def directDebitConfirmationPresent:Action[AnyContent] = Action.async {implicit request =>
-    val form:Form[Boolean] = Form(single("confirm" -> boolean))
+  def getDirectDebitConfirmation: Action[AnyContent] = Action.async { implicit request =>
+    val form: Form[Boolean] = Form(single("confirm" -> boolean))
     sessionCacheConnector.get.map {
       // TODO - the gets, the gets!
       case Some(ttpSubmission) => Ok(showDDConfirmation(ttpSubmission.schedule.get, ttpSubmission.arrangementDirectDebit.get, request))
@@ -48,11 +48,11 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
     }
   }
 
-  def directDebitConfirmationSubmit: Action[AnyContent] = Action { implicit request =>
+  def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.ArrangementController.submit())
   }
 
-  def directDebitSubmit: Action[AnyContent] = Action.async { implicit request =>
+  def submitDirectDebit: Action[AnyContent] = Action.async { implicit request =>
     createDirectDebitForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(bankDetailsFormErrorPage(formWithErrors, request))),
       validFormData =>
@@ -66,17 +66,27 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
 
   private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Future[Result]] = {
     case Left(singleBankDetails) =>
-      cacheOp(s => TTPSubmission(s.schedule, Some(singleBankDetails), s.existingDDBanks, s.taxPayer),
-        () => TTPSubmission(None, Some(singleBankDetails), None, None))
+      updateOrCreateInCache(found => TTPSubmission(schedule = found.schedule,
+                                      bankDetails = Some(singleBankDetails),
+                                      existingDDBanks = found.existingDDBanks,
+                                      taxPayer = found.taxPayer,
+                                      eligibilityTypeOfTax = found.eligibilityTypeOfTax,
+                                      eligibilityExistingTtp = found.eligibilityExistingTtp),
+        () => TTPSubmission(bankDetails = Some(singleBankDetails)))
         .map(_ => Redirect(toDDCreationPage))
 
     case Right(existingDDBanks) =>
-      cacheOp(s => TTPSubmission(s.schedule, s.bankDetails, Some(existingDDBanks), s.taxPayer),
+      updateOrCreateInCache(found => TTPSubmission(schedule = found.schedule,
+                                      bankDetails = found.bankDetails,
+                                      existingDDBanks = Some(existingDDBanks),
+                                      taxPayer = found.taxPayer,
+                                      eligibilityTypeOfTax = found.eligibilityTypeOfTax,
+                                      eligibilityExistingTtp = found.eligibilityExistingTtp),
         () => TTPSubmission(None, None, Some(existingDDBanks), None))
         .map(_ => Redirect(toBankSelectionPage))
   }
 
-  private def cacheOp(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier) = {
+  private def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier) = {
     sessionCacheConnector.get.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")
@@ -89,6 +99,6 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
 
   private val showDDConfirmation = direct_debit_confirmation.render _
   private val bankDetailsFormErrorPage = direct_debit_form.render _
-  private val toDDCreationPage = routes.DirectDebitController.directDebitConfirmationPresent()
-  private val toBankSelectionPage = routes.DirectDebitController.directDebitPresent()
+  private val toDDCreationPage = routes.DirectDebitController.getDirectDebitConfirmation()
+  private val toBankSelectionPage = routes.DirectDebitController.getDirectDebit()
 }

@@ -21,12 +21,16 @@ import play.api.data.Forms._
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 
 object DirectDebitForm {
+  val min = 0
+  val max = 99
+  val maxAccountNumber = 999999999
+
   val createDirectDebitForm = Form(mapping(
       "accountHolderName" -> nonEmptyText,
-      "sortCode1" -> number(min = 0, max = 99),
-      "sortCode2" -> number(min = 0, max = 99),
-      "sortCode3" -> number(min = 0, max = 99),
-      "accountNumber" -> longNumber(min = 0, max = 999999999),
+      "sortCode1" -> number(min = min, max = max),
+      "sortCode2" -> number(min = min, max = max),
+      "sortCode3" -> number(min = min, max = max),
+      "accountNumber" -> longNumber(min = min, max = maxAccountNumber),
       "confirmed" -> optional(boolean)
     )(ArrangementDirectDebit.apply)(ArrangementDirectDebit.unapply))
 }

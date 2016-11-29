@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfservicetimetopay.models
+package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 
-import play.api.libs.json.Json
+import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 
-case class EligibilityExistingTTP(hasExistingTTP: Option[Boolean])
+class CalculateInstallmentsController(sessionCache: SessionCacheConnector) extends FrontendController {
 
-object EligibilityExistingTTP {
-  implicit val formats = Json.format[EligibilityExistingTTP]
+//  def getCalculateInstalments(monthsOption:Option[String]): Action[AnyContent] = Action.async { implicit request =>
+//
+//  }
+//
+//  def submitCalculateInstalments: Action[AnyContent] = Action.async { implicit request =>
+//
+//  }
+
 }

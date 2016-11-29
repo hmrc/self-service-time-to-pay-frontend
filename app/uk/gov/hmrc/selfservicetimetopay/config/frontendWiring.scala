@@ -51,30 +51,30 @@ object FrontendAuthConnector extends AuthConnector with ServicesConfig {
 }
 
 object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
-  lazy val directDebitURL = baseUrl("direct-debit")
+  lazy val directDebitURL: String = baseUrl("direct-debit")
   lazy val serviceURL = "direct-debit"
   lazy val http = WSHttp
 }
 
 object CalculatorConnector extends CalculatorConnector with ServicesConfig {
-  val calculatorURL = baseUrl("self-service-time-to-pay")
+  val calculatorURL: String = baseUrl("self-service-time-to-pay")
   val serviceURL = "paymentschedule"
   val http = WSHttp
 }
 
 object ArrangementConnector extends ArrangementConnector with ServicesConfig {
-  val arrangementURL = baseUrl("time-to-pay-arrangement")
+  val arrangementURL: String = baseUrl("time-to-pay-arrangement")
   val serviceURL = "ttparrangements"
   val http = WSHttp
 }
 
 object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
-  val taxPayerURL = baseUrl("time-to-pay-eligibility")
+  val taxPayerURL: String = baseUrl("time-to-pay-eligibility")
   val serviceURL = "time-to-pay-eligibility"
   val http = WSHttp
 }
 object EligibilityConnector extends EligibilityConnector with ServicesConfig {
-  val eligibilityURL = baseUrl("time-to-pay-eligibility")
+  val eligibilityURL: String = baseUrl("time-to-pay-eligibility")
   val serviceURL = "eligibility"
   val http = WSHttp
 }
@@ -92,7 +92,7 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector, sessionCacheConnector, authConnector),
     classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, sessionCacheConnector),
     classOf[CalculatorController] -> new CalculatorController(),
-    classOf[EligibilityController] -> new EligibilityController(),
+    classOf[EligibilityController] -> new EligibilityController(sessionCacheConnector),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
   )
 

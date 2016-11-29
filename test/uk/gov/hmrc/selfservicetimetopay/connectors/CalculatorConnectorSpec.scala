@@ -38,7 +38,7 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
 
   object testConnector extends CalculatorConnector {
     val calculatorURL = ""
-    val http = mock[WSHttp]
+    val http: WSHttp = mock[WSHttp]
     val serviceURL = "paymentSchedule"
   }
 

@@ -48,7 +48,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     val controller = new DirectDebitController(ddConnector, sessionCacheConnector, authConnector)
 
     "successfully display the direct debit form page" in {
-      val response = await(controller.directDebitPresent(FakeRequest()))
+      val response = await(controller.getDirectDebit(FakeRequest()))
 
       status(response) shouldBe OK
 
@@ -66,11 +66,11 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      val response = await(controller.directDebitSubmit(request))
+      val response = await(controller.submitDirectDebit(request))
 
       status(response) shouldBe SEE_OTHER
 
-      redirectLocation(response).get shouldBe controllers.routes.DirectDebitController.directDebitConfirmationPresent().url
+      redirectLocation(response).get shouldBe controllers.routes.DirectDebitController.getDirectDebitConfirmation().url
     }
 
     "submit direct debit form with valid form data and invalid bank details and redirect to invalid bank details page" in {
@@ -84,17 +84,17 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(invalidBankDetailsForm: _*)
 
-      val response = await(controller.directDebitSubmit(request))
+      val response = await(controller.submitDirectDebit(request))
 
       status(response) shouldBe SEE_OTHER
 
-      redirectLocation(response).get shouldBe controllers.routes.DirectDebitController.directDebitPresent().url
+      redirectLocation(response).get shouldBe controllers.routes.DirectDebitController.getDirectDebit().url
     }
 
     "submit direct debit form with invalid form data and return a bad request" in {
       val request = FakeRequest().withFormUrlEncodedBody(inValidDirectDebitForm: _*)
 
-      val response = await(controller.directDebitSubmit(request))
+      val response = await(controller.submitDirectDebit(request))
 
       status(response) shouldBe BAD_REQUEST
     }
@@ -104,7 +104,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      Try(await(controller.directDebitSubmit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
+      Try(await(controller.submitDirectDebit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
     }
 
     "submit direct debit form with an unauthorised user and throw an exception" in {
@@ -112,11 +112,11 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      Try(await(controller.directDebitSubmit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
+      Try(await(controller.submitDirectDebit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
     }
 
     "successfully display the direct debit confirmation page" in {
-      val response = await(controller.directDebitConfirmationPresent(FakeRequest()))
+      val response = await(controller.getDirectDebitConfirmation(FakeRequest()))
 
       status(response) shouldBe OK
 
