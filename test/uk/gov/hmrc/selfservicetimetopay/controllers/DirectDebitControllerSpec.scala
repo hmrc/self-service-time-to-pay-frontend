@@ -104,10 +104,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      Try(await(controller.directDebitSubmit(request))).map(_ => fail()).recover {
-        case e: RuntimeException =>
-        case _ => fail()
-      }
+      Try(await(controller.directDebitSubmit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
     }
 
     "submit direct debit form with an unauthorised user and throw an exception" in {
@@ -115,18 +112,24 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      Try(await(controller.directDebitSubmit(request))).map(_ => fail()).recover {
-        case e: RuntimeException =>
-        case _ => fail()
-      }
+      Try(await(controller.directDebitSubmit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
     }
 
     "successfully display the direct debit confirmation page" in {
-      val response: Result = controller.directDebitConfirmationPresent(FakeRequest())
+      val response = await(controller.directDebitConfirmationPresent(FakeRequest()))
 
       status(response) shouldBe OK
 
       bodyOf(response) should include(Messages("ssttp.arrangement.direct-debit.confirmation.title"))
     }
+  }
+
+  private def shouldNotSucceed: PartialFunction[Result, Unit] = {
+    case _ => fail("Method call should not have succeeded"); Unit
+  }
+
+  private def expectingRuntimeException: PartialFunction[Throwable, Unit] = {
+    case e: RuntimeException => Unit
+    case e => fail(s"Wrong exception type was thrown: ${e.getClass.getSimpleName}"); Unit
   }
 }
