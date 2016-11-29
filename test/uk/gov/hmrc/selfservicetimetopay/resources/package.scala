@@ -79,7 +79,8 @@ package object resources {
             BigDecimal(1234.22))
         )
       )),
-    Some(BankDetails("012131", "1234567890", None, None, Some("0987654321"))),
+    Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))),
+    None,
     Some(TaxPayer("Bob", List(), SelfAssessment("utr", None, List(), None))),
     Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
     Some(EligibilityExistingTTP(Some(false))))
@@ -178,7 +179,7 @@ package object resources {
     "confirmed" -> "true"
   )
 
-  val bankDetails = BankDetails("123456", "12345678", None, None, None)
+  val bankDetails = BankDetails("123456", "12345678", None, None, None, None)
 
   val directDebitBank = DirectDebitBank("", Seq.empty)
 

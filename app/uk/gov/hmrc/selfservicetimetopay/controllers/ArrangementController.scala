@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
 
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -38,13 +38,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   val paymentFrequency = "Monthly"
   val paymentCurrency = "GBP"
 
-  def submit(): Action[AnyContent] = Action.async { implicit request =>
+  def submit() = Action.async { implicit request =>
     sessionCache.get.flatMap {
       _.fold(redirectToStart)(arrangementSetUp)
     }
   }
 
-  def applicationComplete(): Action[AnyContent] = Action.async { implicit request =>
+  def applicationComplete() = Action.async { implicit request =>
     sessionCache.get.flatMap {
       _.fold(redirectToStart)(submission => {
         sessionCache.remove()
@@ -59,55 +59,61 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
     def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
 
-    // TODO: replace get with appropriate logic getOrElse
-    val utr = submission.taxPayer.get.selfAssessment.utr
-    (for {
-      ddInstruction <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
+    val utr = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present")).selfAssessment.utr
+
+    val result = for {
+      ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
       ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
-    } yield ttp).flatMap {
+    } yield ttp
+
+    result.flatMap {
       //TODO: Waiting for failed application page
-      _.fold(error => successful(Redirect("")), success => applicationSuccessful)
+      _.fold(error => successful(Redirect("TODO - waiting for failed application page")), success => applicationSuccessful)
     }
   }
 
   private def paymentPlan(submission: TTPSubmission): PaymentPlanRequest = {
-    // TODO: replace get with appropriate logic getOrElse
-    val bankDetails = submission.bankDetails.get
-    val schedule = submission.schedule.get
-    // TODO: replace get with appropriate logic getOrElse
-    val utr = submission.taxPayer.get.selfAssessment.utr
-    val knownFact = List(KnownFact(cesa, utr))
+    val maybePaymentPlanRequest = for {
+      bankDetails <- submission.bankDetails
+      schedule <- submission.schedule
+      taxPayer <- submission.taxPayer
+    } yield {
+      val utr = taxPayer.selfAssessment.utr
+      val knownFact = List(KnownFact(cesa, utr))
+      val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
+        accountNumber = Some(bankDetails.accountNumber.toString),
+        creationDate = schedule.startDate,
+        ddiRefNo = bankDetails.ddiRefNumber)
 
-    val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
-      accountNumber = Some(bankDetails.accountNumber.toString),
-      creationDate = schedule.startDate,
-      ddiRefNo = bankDetails.ddiRefNumber)
+      val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
+      val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
+      val pp = PaymentPlan("Time to Pay",
+        utr,
+        cesa,
+        paymentCurrency,
+        schedule.initialPayment,
+        schedule.startDate.get,
+        firstInstalment.amount,
+        firstInstalment.paymentDate,
+        lastInstalment.paymentDate,
+        paymentFrequency,
+        lastInstalment.amount,
+        lastInstalment.paymentDate,
+        schedule.amountToPay)
 
-    val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
-    val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
-    val pp = PaymentPlan("Time to Pay",
-      utr,
-      cesa,
-      paymentCurrency,
-      schedule.initialPayment,
-      schedule.startDate.get,
-      firstInstalment.amount,
-      firstInstalment.paymentDate,
-      lastInstalment.paymentDate,
-      paymentFrequency,
-      lastInstalment.amount,
-      lastInstalment.paymentDate,
-      schedule.amountToPay)
+      PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, printFlag = true)
+    }
 
-    PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, printFlag=true)
+    maybePaymentPlanRequest.getOrElse(throw new RuntimeException(s"PaymentPlanRequest creation failed - TTPSubmission: $submission"))
   }
 
   private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
                                 submission: TTPSubmission): TTPArrangement = {
     val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
     val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
-    // TODO: replace get with appropriate logic getOrElse
-    TTPArrangement(ppReference, ddReference, submission.taxPayer.get, submission.schedule.get)
-  }
+    val taxpayer = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
+    val schedule = submission.schedule.getOrElse(throw new RuntimeException("Schedule data not present"))
 
+    TTPArrangement(ppReference, ddReference, taxpayer, schedule)
+  }
 }
