@@ -42,7 +42,6 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector,
   def getDirectDebitConfirmation: Action[AnyContent] = Action.async { implicit request =>
     val form: Form[Boolean] = Form(single("confirm" -> boolean))
     sessionCacheConnector.get.map {
-      // TODO - the gets, the gets!
       case Some(ttpSubmission) => Ok(showDDConfirmation(ttpSubmission.schedule.get, ttpSubmission.arrangementDirectDebit.get, request))
       case None => throw new RuntimeException("No data found")
     }
