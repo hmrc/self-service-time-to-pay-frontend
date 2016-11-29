@@ -17,17 +17,34 @@ Time To Pay Application Complete
     <h1 class="transaction-banner__heading">@Messages("ssttp.arrangement.complete.title")</h1>
     <p>@Messages("ssttp.arrangement.complete.subtitle")</p>
   </div>
-  <span class="print-link float--right"><a href target="_blank">@Messages("ssttp.common.print")</a></span>
-  <h2>@Messages("ssttp.arrangement.complete.next")</h2>
-  <p>@message_list(Some("bullets"), "ssttp.arrangement.complete.next.list.")</p>
-  <p>@Messages("ssttp.arrangement.complete.one-off-service")</p>
-  <h3>@Messages("ssttp.arrangement.complete.what-you-owe")</h3>
-  @what_you_owe(debits)
-  @direct_debit_details(directDebit)
-  @payment_schedule(schedule)
+  <span class="print-link float--right"><a href="javascript:window.print()">@Messages("ssttp.common.print")</a></span>
+  <section class="section divider--bottom">
+    <h2>@Messages("ssttp.arrangement.complete.next")</h2>
+    <p>@message_list(Some("bullets"), "ssttp.arrangement.complete.next.list.")</p>
+    <p>@Messages("ssttp.arrangement.complete.one-off-service")</p>
+  </section>
+  <section class="section">
+    <h3>@Messages("ssttp.arrangement.complete.what-you-owe")</h3>
+    @what_you_owe(debits)
+    <div class="subsection grid-layout divider--bottom font-xsmall">
+      <div class="grid-layout__column grid-layout__column--3-4">
+        <p>@Messages("ssttp.arrangement.complete.payment-plan", schedule.instalments.length)</p>
+        <p><span class="font-xsmall">@Messages("ssttp.arrangement.complete.interest-rate", 2.75)</span></p>
+      </div>
+      <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p>@Messages("ssttp.common.currency.symbol")@schedule.totalInterestCharged</p></div>
+    </div>
+    <div class="subsection grid-layout divider--bottom font-xsmall">
+      <div class="grid-layout__column grid-layout__column--3-4"><p><strong>@Messages("ssttp.arrangement.complete.total")</strong></p></div>
+      <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@Messages("ssttp.common.currency.symbol")@schedule.totalPayable</strong></p></div>
+    </div>
+
+    @direct_debit_details(directDebit)
+    @payment_schedule(schedule)
+  </section>
+
   <p>&nbsp;</p>
   <p class="divider--top">
-    <span class="print-link float--right"><a href target="_blank">@Messages("ssttp.common.print")</a></span>
+    <span class="print-link float--right"><a href="javascript:window.print()">@Messages("ssttp.common.print")</a></span>
   </p>
 
 }

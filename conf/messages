@@ -285,6 +285,9 @@ ssttp.arrangement.complete.next.list.2=we’ll send you the instalment plan and 
 ssttp.arrangement.complete.next.list.3=payments will be taken according to the schedule below
 ssttp.arrangement.complete.one-off-service=This is intended as a one-off service to offer additional support. You shouldn’t expect to be able to make your future HMRC payments using an instalment plan.
 ssttp.arrangement.complete.what-you-owe=What you owe
+ssttp.arrangement.complete.payment-plan={0} month instalment plan
+ssttp.arrangement.complete.interest-rate=Interest at {0}%
+ssttp.arrangement.complete.total=TOTAL:
 #global errors
 global.error.400.title=Bad request=400
 global.error.400.heading=Bad request
