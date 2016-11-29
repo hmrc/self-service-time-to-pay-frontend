@@ -4,13 +4,31 @@ Time To Pay Application Complete
 @param schedule PaymentSchedule The results data to display
 
 *@
-@import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
-@(ttpSubmission:TTPSubmission)(implicit request: Request[_])
+@import uk.gov.hmrc.selfservicetimetopay.models.{Debit, CalculatorPaymentSchedule, ArrangementDirectDebit}
+@(debits:Seq[Debit], directDebit:ArrangementDirectDebit, schedule:CalculatorPaymentSchedule)(implicit request: Request[_])
+@import selfservicetimetopay.helpers.message_list
+@import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule}
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
   bodyClasses = None,
-  sidebarLinks = Some(selfservicetimetopay.partials.sidebar())
+  sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar())
 ){
-  <h1 style="heading-h1">@Messages("ssttp.arrangement.application-complete.title")</h1>
+  <div class="transaction-banner--complete">
+    <h1 class="transaction-banner__heading">@Messages("ssttp.arrangement.complete.title")</h1>
+    <p>@Messages("ssttp.arrangement.complete.subtitle")</p>
+  </div>
+  <span class="print-link float--right"><a href target="_blank">@Messages("ssttp.common.print")</a></span>
+  <h2>@Messages("ssttp.arrangement.complete.next")</h2>
+  <p>@message_list(Some("bullets"), "ssttp.arrangement.complete.next.list.")</p>
+  <p>@Messages("ssttp.arrangement.complete.one-off-service")</p>
+  <h3>@Messages("ssttp.arrangement.complete.what-you-owe")</h3>
+  @what_you_owe(debits)
+  @direct_debit_details(directDebit)
+  @payment_schedule(schedule)
+  <p>&nbsp;</p>
+  <p class="divider--top">
+    <span class="print-link float--right"><a href target="_blank">@Messages("ssttp.common.print")</a></span>
+  </p>
+
 }
 

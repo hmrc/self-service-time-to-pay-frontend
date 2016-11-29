@@ -1,0 +1,49 @@
+@*
+   Partial view to display the direct debit details in a 2 column type layout
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
+@(directDebit:ArrangementDirectDebit)
+@import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
+<div class="section">
+    <div class="grid-layout grid-layout--no-gutter">
+        <div class="grid-layout__column grid-layout__column--3-4">
+            <h3>@Messages("ssttp.direct-debit.title")</h3>
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-4">
+            <h3><img src="@SsttpFrontendConfig.assetsPrefix/images/direct-debit-logo-2x.png"></h3>
+        </div>
+    </div>
+    <div class="subsection grid-layout divider--bottom font-xsmall">
+        <div class="grid-layout__column grid-layout__column--1-4">
+            <strong>@Messages("ssttp.direct-debit.account-name")</strong>
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-4">
+        @directDebit.accountName
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-4">
+            <strong>@Messages("ssttp.direct-debit.account-number")</strong>
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-4">
+        @("%09d".format(directDebit.accountNumber))
+        </div>
+    </div>
+    <div class="subsection grid-layout divider--bottom font-xsmall">
+        <div class="grid-layout__column grid-layout__column--1-2">
+            <div class="grid-layout push">
+                <div class="grid-layout__column grid-layout__column--2-3">
+                    <strong>@Messages("ssttp.direct-debit.payment-frequency")</strong>
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-3">
+                @Messages("ssttp.direct-debit.monthly")
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-layout__column grid-layout__column--1-4">
+            <strong>@Messages("ssttp.direct-debit.sort-code")</strong>
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-4">
+        @("%02d - %02d - %02d".format(directDebit.sortCode1, directDebit.sortCode2, directDebit.sortCode3))
+        </div>
+    </div>
+</div>

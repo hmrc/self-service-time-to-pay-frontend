@@ -48,7 +48,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     sessionCache.get.flatMap {
       _.fold(redirectToStart)(submission => {
         sessionCache.remove()
-        successful(Ok(application_complete.render(submission, request)))
+        successful(Ok(application_complete.render(submission.taxPayer.get.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
+          submission.arrangementDirectDebit.get, submission.schedule.get, request)))
       })
     }
   }

@@ -1,6 +1,50 @@
 #common
 ssttp.common.title=Pay what you owe in instalments
 ssttp.common.currency.symbol=£
+ssttp.common.print=Print
+
+ssttp.common.charge-code.ASST=Assessment
+ssttp.common.charge-code.BCD=Balancing Charge Debit
+ssttp.common.charge-code.DET=Determination
+ssttp.common.charge-code.DPI=Daily Penalty for Individual
+ssttp.common.charge-code.DPP=Daily Penalty related to a Partnership
+ssttp.common.charge-code.ETA=Taxpayer Amendment following enquiry Sundry Charge Types*
+ssttp.common.charge-code.IN1=First Interim
+ssttp.common.charge-code.IN2=Second Interim
+ssttp.common.charge-code.JEP=Jeopardy Amendment (increase)*
+ssttp.common.charge-code.LFI1=6 Month Late Filing Penalty (Tax Geared) for Individual
+ssttp.common.charge-code.LFI2=12 Month Late Filing (Tax Geared) for Individual
+ssttp.common.charge-code.LFP1=6 Month Late Filing (Tax Geared) related to Partnership
+ssttp.common.charge-code.LFP2=12 Month Late Filing (Tax Geared) related to Partnership
+ssttp.common.charge-code.LPI=Late Payment Interest
+ssttp.common.charge-code.LPP1=30 Days Late Payment Penalties
+ssttp.common.charge-code.LPP2=6 Month Late Payment Penalties
+ssttp.common.charge-code.LPP3=12 Months Late Payment Penalties
+ssttp.common.charge-code.MRMP=Manually Raised Miscellaneous Penalty
+ssttp.common.charge-code.NUP=Net Underpayment
+ssttp.common.charge-code.OREP=Over repayment
+ssttp.common.charge-code.PF1=First Fixed Penalty (individuals)
+ssttp.common.charge-code.PF2=First Fixed Penalty (individuals)
+ssttp.common.charge-code.PP1=First Fixed Penalty (partnerships)
+ssttp.common.charge-code.PP2=Second Fixed Penalty (partnerships)
+ssttp.common.charge-code.RAM=Return Amendment
+ssttp.common.charge-code.REP=Repayment
+ssttp.common.charge-code.REV=Revenue Amendment (increase)
+ssttp.common.charge-code.SUP=Stranded Underpayment
+ssttp.common.charge-code.SUR1=First surcharge
+ssttp.common.charge-code.SUR2=Second surcharge
+ssttp.common.charge-code.TTO=Transfer to OAS
+
+#what you owe partial
+ssttp.amounts_due.due=Due:
+ssttp.amounts_due.amount=Amount:
+
+#help and advice sidebar
+ssttp.sidebar.help-and-advice.title=Help and advice
+ssttp.sidebar.help-and-advice.intro=We recommend that you read the following information to make sure you can pay all future bills in full and on time.
+ssttp.sidebar.help-and-advice.ways-to-pay=different ways to pay HMRC
+ssttp.sidebar.help-and-advice.payments-on-account=learn about payments on account
+ssttp.sidebar.help-and-advice.dont-pay=what happens if you don''t pay your bill
 
 #landing
 ssttp.landing.title=Pay what you owe in instalments
@@ -192,22 +236,26 @@ ssttp.arrangement.direct-debit.form.confirmation.list.3=This account does not re
 ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
 ssttp.arrangement.direct-debit.form.submit=Continue
 
-ssttp.arrangement.direct-debit.guarantee.title=Direct Debit Guarantee
-ssttp.arrangement.direct-debit.guarantee.list.1=This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
-ssttp.arrangement.direct-debit.guarantee.list.2=I there are any changes to the amount, date or frequency of your Direct Debit HM Revenue & Customs (HMRC) will notify you 10 working days in advance of your account being debited or as otherwise agreed. If you request HMRC to collect a payment, confirmation of the amount and date will be given to you at the time of the request.
-ssttp.arrangement.direct-debit.guarantee.list.3=If an error is made in the payment of your Direct Debit, by HMRC or your bank or building society, you are entitled to a full immediate refund of the amount paid from your bank or building society.
-ssttp.arrangement.direct-debit.guarantee.list.4=If you receive a refund you are not entitled to, you must pay it back when HMRC asks you to.
-ssttp.arrangement.direct-debit.guarantee.list.5=You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please notify us.
+ssttp.direct-debit.guarantee.title=Direct Debit Guarantee
+ssttp.direct-debit.guarantee.list.1=This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
+ssttp.direct-debit.guarantee.list.2=I there are any changes to the amount, date or frequency of your Direct Debit HM Revenue & Customs (HMRC) will notify you 10 working days in advance of your account being debited or as otherwise agreed. If you request HMRC to collect a payment, confirmation of the amount and date will be given to you at the time of the request.
+ssttp.direct-debit.guarantee.list.3=If an error is made in the payment of your Direct Debit, by HMRC or your bank or building society, you are entitled to a full immediate refund of the amount paid from your bank or building society.
+ssttp.direct-debit.guarantee.list.4=If you receive a refund you are not entitled to, you must pay it back when HMRC asks you to.
+ssttp.direct-debit.guarantee.list.5=You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please notify us.
+
+ssttp.direct-debit.title=Direct Debit payment schedule
+ssttp.direct-debit.account-name=Account name
+ssttp.direct-debit.account-number=Account number
+ssttp.direct-debit.sort-code=Sort code
+ssttp.direct-debit.payment-frequency=Payment frequency
+ssttp.direct-debit.monthly=Monthly
+ssttp.direct-debit.initial-payment=(initial payment)
+ssttp.direct-debit.final-payment=(final payment)
+
+
+
 
 ssttp.arrangement.direct-debit.confirmation.title=Direct Debit Confirmation
-ssttp.arrangement.direct-debit.confirmation.subtitle=Direct Debit payment schedule
-ssttp.arrangement.direct-debit.confirmation.account-name=Account name
-ssttp.arrangement.direct-debit.confirmation.account-number=Account number
-ssttp.arrangement.direct-debit.confirmation.sort-code=Sort code
-ssttp.arrangement.direct-debit.confirmation.payment-frequency=Payment frequency
-ssttp.arrangement.direct-debit.confirmation.monthly=Monthly
-ssttp.arrangement.direct-debit.confirmation.initial-payment=(initial payment)
-ssttp.arrangement.direct-debit.confirmation.final-payment=(final payment)
 ssttp.arrangement.direct-debit.confirmation.total-payment=Total payment will be:
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary=Instruction to your bank
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.title=Instruction to your Bank or Building Society to pay by Direct Debit
@@ -228,13 +276,22 @@ ssttp.arrangement.direct-debit.confirmation.confirm-payment=Confirm payment
 
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.please-check=Please check this information carefully before confirming payment
 
+
+ssttp.arrangement.complete.title=Application complete
+ssttp.arrangement.complete.subtitle=We’ve received your application to pay in instalments.
+ssttp.arrangement.complete.next=What happens next?
+ssttp.arrangement.complete.next.list.1=you don’t need to do anything else
+ssttp.arrangement.complete.next.list.2=we’ll send you the instalment plan and the Direct Debit details when your agreement has been set up, which should take about five days
+ssttp.arrangement.complete.next.list.3=payments will be taken according to the schedule below
+ssttp.arrangement.complete.one-off-service=This is intended as a one-off service to offer additional support. You shouldn’t expect to be able to make your future HMRC payments using an instalment plan.
+ssttp.arrangement.complete.what-you-owe=What you owe
 #global errors
-global.error.400.title=Bad request - 400
+global.error.400.title=Bad request=400
 global.error.400.heading=Bad request
 global.error.400.message=Please check that you have entered the correct web address.
-global.error.404.title=Page not found - 404
+global.error.404.title=Page not found=404
 global.error.404.heading=This page can’t be found
 global.error.404.message=Please check that you have entered the correct web address.
-global.error.500.title=Sorry, we are experiencing technical difficulties - 500
+global.error.500.title=Sorry, we are experiencing technical difficulties=500
 global.error.500.heading=Sorry, we’re experiencing technical difficulties
 global.error.500.message=Please try again in a few minutes.
