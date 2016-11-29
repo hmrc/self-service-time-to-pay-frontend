@@ -34,10 +34,10 @@ object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName wi
 }
 
 object SessionCacheConnector extends KeystoreConnector with AppName with ServicesConfig {
-  override val sessionKey: String = getConfString("keystore.sessionKey", throw new RuntimeException("Could not find session key"))
-  override def defaultSource: String = appName
-  override def baseUri: String = baseUrl("keystore")
-  override def domain: String = getConfString("keystore.domain", throw new RuntimeException("Could not find config keystore.domain"))
+  override val sessionKey = getConfString("keystore.sessionKey", throw new RuntimeException("Could not find session key"))
+  override def defaultSource = appName
+  override def baseUri = baseUrl("keystore")
+  override def domain = getConfString("keystore.domain", throw new RuntimeException("Could not find config keystore.domain"))
   override def http: HttpGet with HttpPut with HttpDelete = WSHttp
 }
 
@@ -46,35 +46,35 @@ object FrontendAuditConnector extends Auditing with AppName with RunMode {
 }
 
 object FrontendAuthConnector extends AuthConnector with ServicesConfig {
-  override val serviceUrl: String = baseUrl("auth")
+  override val serviceUrl = baseUrl("auth")
   override def http: HttpGet = WSHttp
 }
 
 object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
-  lazy val directDebitURL: String = baseUrl("direct-debit")
+  lazy val directDebitURL = baseUrl("direct-debit")
   lazy val serviceURL = "direct-debit"
   lazy val http = WSHttp
 }
 
 object CalculatorConnector extends CalculatorConnector with ServicesConfig {
-  val calculatorURL: String = baseUrl("self-service-time-to-pay")
+  val calculatorURL = baseUrl("self-service-time-to-pay")
   val serviceURL = "paymentschedule"
   val http = WSHttp
 }
 
 object ArrangementConnector extends ArrangementConnector with ServicesConfig {
-  val arrangementURL: String = baseUrl("time-to-pay-arrangement")
+  val arrangementURL = baseUrl("time-to-pay-arrangement")
   val serviceURL = "ttparrangements"
   val http = WSHttp
 }
 
 object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
-  val taxPayerURL: String = baseUrl("time-to-pay-eligibility")
+  val taxPayerURL = baseUrl("time-to-pay-eligibility")
   val serviceURL = "time-to-pay-eligibility"
   val http = WSHttp
 }
 object EligibilityConnector extends EligibilityConnector with ServicesConfig {
-  val eligibilityURL: String = baseUrl("time-to-pay-eligibility")
+  val eligibilityURL = baseUrl("time-to-pay-eligibility")
   val serviceURL = "eligibility"
   val http = WSHttp
 }
