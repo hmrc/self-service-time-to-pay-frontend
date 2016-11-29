@@ -55,7 +55,7 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
       redirectLocation(response).get shouldBe controllers.routes.EligibilityController.getTypeOfTax().url
     }
 
-    "successfully present the type of tax page" in {
+    "successfully display the type of tax page" in {
       val response:Result = controller.getTypeOfTax.apply(FakeRequest())
 
       status(response) shouldBe OK
@@ -63,7 +63,7 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
       bodyOf(response) should include(Messages("ssttp.eligibility.form.type_of_tax.title"))
     }
 
-    "successfully present the existing ttp page" in {
+    "successfully display the existing ttp page" in {
       val response = await(controller.getExistingTtp.apply(FakeRequest()))
 
       status(response) shouldBe OK
