@@ -91,6 +91,7 @@ package object modelsFormat {
 
   //Eligibility formatters
   implicit val eligibilityStatusFormatter: Format[EligibilityStatus] = Json.format[EligibilityStatus]
+  implicit val eligibilityRequestFormatter: Format[EligibilityRequest] = Json.format[EligibilityRequest]
 
   //Submission formatter
   implicit val submissionFormatter: Format[TTPSubmission] = Json.format[TTPSubmission]

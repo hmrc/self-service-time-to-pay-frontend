@@ -51,42 +51,49 @@ package object resources {
   val createPaymentRequestJSON = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CreatePaymentPlanRequest.json")
       .mkString)
-  val checkEligibilityTrueRequest = Json.fromJson[SelfAssessment](Json.parse(
+  val checkEligibilityTrueRequest = Json.fromJson[EligibilityRequest](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueRequest.json")
       .mkString)).get
   val checkEligibilityTrueResponse = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueResponse.json")
       .mkString)
-  val checkEligibilityFalseRequest = Json.fromJson[SelfAssessment](Json.parse(
+  val checkEligibilityFalseRequest = Json.fromJson[EligibilityRequest](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseRequest.json")
       .mkString)).get
   val checkEligibilityFalseResponse = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
       .mkString)
 
-  val ttpSubmission: TTPSubmission = TTPSubmission(Some(CalculatorPaymentSchedule(
-        Some(LocalDate.parse("2001-01-01")),
-        Some(LocalDate.parse("2001-01-01")),
-        BigDecimal(1024.12),
-        BigDecimal(20123.76),
-        BigDecimal(1024.12),
-        BigDecimal(102.67),
-        BigDecimal(20123.76),
-        Seq(CalculatorPaymentScheduleInstalment(
-          LocalDate.now(),
-          BigDecimal(1234.22)),
-          CalculatorPaymentScheduleInstalment(
-            LocalDate.now(),
-            BigDecimal(1234.22))
-        )
-      )),
+  val debit: Debit = Debit("originCode", Some(BigDecimal(121.2)), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now()))
+  val selfAssessment: SelfAssessment = SelfAssessment("utr", None, List(debit), None)
+  val taxPayer: TaxPayer = TaxPayer("Bob", List(), selfAssessment)
+  val calculatorPaymentScheduleInstalment = CalculatorPaymentScheduleInstalment(LocalDate.now(), BigDecimal(1234.22))
+
+  val calculatorPaymentSchedule: CalculatorPaymentSchedule = CalculatorPaymentSchedule(
+    Some(LocalDate.parse("2001-01-01")),
+    Some(LocalDate.parse("2001-01-01")),
+    BigDecimal(1024.12),
+    BigDecimal(20123.76),
+    BigDecimal(1024.12),
+    BigDecimal(102.67),
+    BigDecimal(20123.76),
+    Seq(calculatorPaymentScheduleInstalment,
+      calculatorPaymentScheduleInstalment)
+  )
+  val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule),
     Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))),
-    None,
-    Some(TaxPayer("Bob", List(), SelfAssessment("utr", None, List(), None))),
+    None,//DirectDebitBank
+    Some(taxPayer),
     Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
     Some(EligibilityExistingTTP(Some(false))))
 
-  val directDebitInstructionPaymentPlan : DirectDebitInstructionPaymentPlan = {
+  val calculatorAmountDue: CalculatorAmountDue = new CalculatorAmountDue(BigDecimal(123.45), LocalDate.now())
+  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(manualDebits = Seq(calculatorAmountDue))
+
+  val calculatorAmountDueOver10k: CalculatorAmountDue = new CalculatorAmountDue(BigDecimal(11293.22), LocalDate.now())
+  val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(manualDebits = Seq(calculatorAmountDueOver10k))
+
+  val directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan = {
     DirectDebitInstructionPaymentPlan(LocalDate.now().toString, "1234567890", List(
       DirectDebitInstruction(
         None,

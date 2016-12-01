@@ -33,6 +33,7 @@ import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => Key
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstallmentsController, PaymentTodayController}
 import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstalmentsController, PaymentTodayController}
 import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
@@ -111,6 +112,7 @@ trait ServiceRegistry extends ServicesConfig {
   lazy val sessionCacheConnector: KeystoreConnector = SessionCacheConnector
   lazy val authConnector: AuthConnector = FrontendAuthConnector
   lazy val arrangementConnector: ArrangementConnector = ArrangementConnector
+  lazy val eligibilityConnector: EligibilityConnector = EligibilityConnector
 }
 
 trait ControllerRegistry { registry: ServiceRegistry =>
@@ -121,7 +123,7 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[EligibilityController] -> new EligibilityController(),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
     classOf[AmountsDueController] -> new AmountsDueController(),
-    classOf[CalculateInstallmentsController] -> new CalculateInstallmentsController(),
+    classOf[CalculateInstalmentsController] -> new CalculateInstalmentsController(eligibilityConnector),
     classOf[PaymentTodayController] -> new PaymentTodayController()
   )
 

@@ -1,3 +1,6 @@
 {
-  "eligible": false
+  "eligible": false,
+  "reasons": [
+    "TotalDebtIsTooHigh"
+  ]
 }
