@@ -20,7 +20,7 @@ import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
-import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.eligibility._
 
@@ -47,24 +47,20 @@ class EligibilityController extends TimeToPayController {
   }
 
   def submitTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
-    val response = EligibilityForm.typeOfTaxForm.bindFromRequest().fold(
+    EligibilityForm.typeOfTaxForm.bindFromRequest().fold(
       formWithErrors => {
-        BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))
+        Future.successful(BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors)))
       },
       validFormData => {
-        updateOrCreateInCache(found => {
-          found.eligibilityExistingTtp match {
-              case Some(e) =>
-                TTPSubmission(eligibilityTypeOfTax = Some(validFormData), eligibilityExistingTtp = found.eligibilityExistingTtp)
-              case None => TTPSubmission(eligibilityTypeOfTax = Some(validFormData))
-            }
-          },
-          () => TTPSubmission(eligibilityTypeOfTax = Some(validFormData)))
-        //call taxpayer service
-        Redirect(routes.EligibilityController.getExistingTtp())
+        updateOrCreateInCache(found => found.copy(eligibilityTypeOfTax = Some(validFormData)),
+          () => TTPSubmission(eligibilityTypeOfTax = Some(validFormData))).map(_ => {
+          validFormData match {
+            case EligibilityTypeOfTax(true, false) => Redirect(routes.EligibilityController.getExistingTtp())
+            case _ => Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())
+          }
+        })
       }
     )
-    Future.successful(response)
   }
 
   def getExistingTtp: Action[AnyContent] =  Action.async { implicit request =>
