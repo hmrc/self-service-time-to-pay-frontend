@@ -1,0 +1,56 @@
+@*
+Select field using Component Library Styles as  documented:
+Label: http://hmrc.github.io/assets-frontend/section-label.html
+Input http://hmrc.github.io/assets-frontend/section-text-input.html
+
+    @param field Field The form field the input value represents
+    @param optionsList A list of values and labels for the select options
+    @param args options arguments for the template
+        '_label -> Text for the field label
+        '_modifierClass -> Modifier class for whole field
+        '_inputClass -> Modifier class for the input class, includes:
+                input--xxsmall, input--xsmall, input--small,  input--normal,
+                input--fullwidth, input--no-spinner, input--cleared,
+                input--link
+        '_hideErrors -> set as true to hide errors other than the field highlight
+        '_noLabel -> set to true to not wrap element in a label
+
+*@
+@(field:Field, optionsList:Seq[(String, String)], args: (Symbol, Any)*)(implicit lang: Lang = Lang("en"))
+@import selfservicetimetopay.helpers.forms.fieldErrors
+@import selfservicetimetopay.helpers.labelWrap
+@import views.html.helper.FieldElements
+@argsMap = @{ args.toMap }
+@elements = @{ new FieldElements(field.id, field, null, argsMap, lang) }
+@fieldValue = @{ field.value match { case Some(x) => x case None => "" case x => x }}
+@wrapperClass = @{
+    var w = Seq("form-field") ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")
+    w = if (field.hasErrors) w :+ "form-field--error" else w
+    w.mkString(" ")
+}
+@inputClass = @{
+    var c:String = argsMap.getOrElse('_inputClass, "").asInstanceOf[String]
+    c = if(field.hasErrors) c + " error-field" else c
+    c.trim
+}
+@inputContent = {
+    @if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false) {@fieldErrors(field)}
+    <select class="select@if(inputClass.nonEmpty){ @inputClass}" name="@elements.field.name" id="@elements.field.name"
+        @if(elements.args.contains('_dataAttributes)){ @elements.args.get('_dataAttributes)}
+        @if(elements.args.get('_error_id).isDefined){ aria-labeledby="@elements.args.get('_error_id)" }
+        @if(elements.args.get('_hintId).isDefined){ aria-describedby="@elements.args.get('_hintId)" }
+        @if(elements.args.get('_title).isDefined){ title="@elements.args.get('_title)" }
+        @if(elements.args.get('_required).isDefined){ required }>
+        @optionsList.map { case (value, label) =>
+            <option value="@value" @if(fieldValue==value){ selected}>@label</option>
+        }
+    </select>
+}
+<div class="@wrapperClass">
+    @if(argsMap.getOrElse('_noLabel, false).asInstanceOf[Boolean] == true) {
+        if(argsMap.get('_label).nonEmpty){<span class="@argsMap.get('_labelClass)">argsMap.get('_label)</span>}
+        @inputContent
+    } else {
+        @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_modifierClass -> argsMap.get('_labelClass)){@inputContent}
+    }
+</div>

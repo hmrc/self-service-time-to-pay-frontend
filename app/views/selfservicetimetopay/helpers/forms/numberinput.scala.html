@@ -56,7 +56,9 @@ Number input field using Component Library Styles as  documented:
     }
 }
 @if(argsMap.getOrElse('_noLabel, false).asInstanceOf[Boolean]) {
+    @if(argsMap.get('label).nonEmpty){<div class="@argsMap.get('_labelClass)">@argsMap.get('label)}
     @inputContent
+    @if(argsMap.get('label).nonEmpty){</div>}
 } else {
 <div@if(wrapperClass.nonEmpty){ class="@wrapperClass"}>
     @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_modifierClass -> argsMap.get('_labelClass))(inputContent)

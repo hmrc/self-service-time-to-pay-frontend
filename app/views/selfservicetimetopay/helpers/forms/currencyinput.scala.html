@@ -7,9 +7,10 @@ Currency input field using Component Library Styles as  documented:
     @param args options arguments for the template
             '_labelText -> Text for the field label
             '_labelClass -> Label Modifier class
-            '_inputClass -> CSS Class to add to input element
+            '_modifierClass -> CSS Class to add the wrapping element (p)
+            '_wrapperClass -> set this parameter to wrap the currency
             '_currencyClass -> CSS Class to add to the currency element of the input
-            '_modifierClass -> Modifier class for the input class, includes:
+            '_inputClass -> Modifier class for the input class, includes:
                 input--xxsmall, input--xsmall, input--small,  input--normal,
                 input--fullwidth, input--no-spinner, input--cleared,
                 input--link
@@ -24,8 +25,7 @@ Currency input field using Component Library Styles as  documented:
 @elements = @{ new FieldElements(field.id, field, null, argsMap, lang) }
 @value = @{ field.value match { case Some(x) => x case None => "" case x => x }}
 @wrapperClass = @{
-  var w = Seq.empty ++ argsMap.getOrElse('_labelClass, "").asInstanceOf[String].split(" ")
-  w = if(argsMap.get('_modifierClass)) w ++ argsMap.get('_modifierClass).get.asInstanceOf[String].split(" ") else w
+  var w = Seq.empty ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")
   w = if (field.hasErrors) w :+ "form-field--error" else w
   w.mkString(" ")
 }
@@ -35,8 +35,8 @@ Currency input field using Component Library Styles as  documented:
   c.trim
 }
 @inputContent = {
-@if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false) {@fieldErrors(field)}
-    <p><span class="input-currency@if(argsMap.get('_currencyClass)){ @argsMap.get('_currencyClass)}"><input type="number" class="input--left-padding@if(inputClass.nonEmpty){ @inputClass}"
+    @if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false) {@fieldErrors(field)}
+    <p @if(wrapperClass.nonEmpty){ class="@wrapperClass"}><span class="input-currency@if(argsMap.get('_currencyClass)){ @argsMap.get('_currencyClass)}"><input type="number" class="input--left-padding@if(inputClass.nonEmpty){ @inputClass}"
     name="@elements.field.name" id="@elements.field.name" value="@value"
         @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
         @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
@@ -52,6 +52,6 @@ Currency input field using Component Library Styles as  documented:
 @if(argsMap.getOrElse('_noLabel, false).asInstanceOf[Boolean]) {
     @inputContent
 } else {
-    @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_after -> "true", '_modifierClass -> wrapperClass)(inputContent)
+    @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_after -> "true", '_modifierClass -> argsMap.getOrElse('_labelClass, ""))(inputContent)
 }
 

@@ -2,6 +2,12 @@
 ssttp.common.title=Pay what you owe in instalments
 ssttp.common.currency.symbol=£
 
+
+#sign in sidebar
+ssttp.sidebar.sign-in.title=Sign in
+ssttp.sidebar.sign-in.intro=If you’ve filed your Self Assessment tax return and your tax account is up to date, you can skip this step by signing in.
+ssttp.sidebar.sign-in.link=Sign in with Government Gateway
+
 #landing
 ssttp.landing.title=Pay what you owe in instalments
 
@@ -40,14 +46,16 @@ ssttp.eligibility.form.back=Back
 #calculator
 ssttp.calculator.form.amounts_due.title=About what you owe
 ssttp.calculator.form.amounts_due.intro=Enter the amounts you need to pay.
-ssttp.calculator.form.amounts_due.how_much.question=An amount of:
-ssttp.calculator.form.amounts_due.when_due.question=Due by:
+ssttp.calculator.form.amounts_due.amount=Amount
+ssttp.calculator.form.amounts_due.due_date=Due date
 ssttp.calculator.form.amounts_due.when_due.question.hint=Example: 31 January 2017
 ssttp.calculator.form.amounts_due.when_due.question.day=Day
 ssttp.calculator.form.amounts_due.when_due.question.month=Month
 ssttp.calculator.form.amounts_due.when_due.question.year=Year
 
 ssttp.calculator.form.amounts_due.add=Add
+ssttp.calculator.form.amounts_due.remove=Remove
+ssttp.calculator.form.amounts_due.total=Total
 
 ssttp.calculator.form.amounts_due.error.summary.title=Something you''ve entered isn''t valid
 
