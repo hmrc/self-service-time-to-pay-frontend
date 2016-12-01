@@ -68,8 +68,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     } yield ttp
 
     result.flatMap {
-      //TODO: Waiting for failed application page
-      _.fold(error => successful(Redirect("")), success => applicationSuccessful)
+      _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), success => applicationSuccessful)
     }
   }
 

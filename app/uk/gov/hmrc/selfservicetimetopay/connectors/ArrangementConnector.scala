@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import play.api.Logger
+import play.api.http.Status
 import play.api.http.Status._
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpPost, HttpResponse}
+import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
@@ -36,11 +38,24 @@ trait ArrangementConnector {
   val http: HttpGet with HttpPost
 
   def submitArrangements(ttpArrangement: TTPArrangement)(implicit hc: HeaderCarrier): Future[SubmissionResult] = {
-    http.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map { response =>
-      response.status match {
-        case CREATED => Right(SubmissionSuccess())
-        case _ => Left(SubmissionError(response.status, response.body))
-      }
+    http.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map { _ =>
+      Right(SubmissionSuccess())
+    }.recover {
+      case e: Throwable => onError(e)
     }
+  }
+
+  private def onError(ex: Throwable) = {
+    val (code, message) = ex match {
+      case e: HttpException => (e.responseCode, e.getMessage)
+
+      case e: Upstream4xxResponse => (e.reportAs, e.getMessage)
+      case e: Upstream5xxResponse => (e.reportAs, e.getMessage)
+
+      case e: Throwable => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
+    }
+
+    Logger.error(s"Failure from DES, code $code and body $message")
+    Left(SubmissionError(code, message))
   }
 }
