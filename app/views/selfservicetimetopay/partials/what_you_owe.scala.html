@@ -1,0 +1,23 @@
+@*
+    Partial view to show list of what a user owes having validated against their account
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@(debits:Seq[Debit])
+@import java.time.format.DateTimeFormatter
+@defining(DateTimeFormatter.ofPattern("dd MMMM YYYY")) { formatter =>
+    <div class="subsection grid-layout divider--bottom font-xsmall">
+        <div class="grid-layout__column grid-layout__column--3-4"><strong>@Messages("ssttp.amounts_due.due")</strong></div>
+        <div class="grid-layout__column grid-layout__column--1-4"><strong>@Messages("ssttp.amounts_due.amount")</strong></div>
+    </div>
+    @debits.map { debit =>
+        <div class="subsection grid-layout divider--bottom font-xsmall">
+            <div class="grid-layout__column grid-layout__column--3-4">
+                <span class="font-small">@debit.dueDate.format(formatter)</span>
+                <p><span class="font-xsmall">@Messages("ssttp.common.charge-code.%s".format(debit.originCode))</span></p>
+            </div>
+            <div class="grid-layout__column grid-layout__column--1-4 align--middle">
+                <p class="font-small">@Messages("ssttp.common.currency.symbol") @debit.amount.get.toString()</p>
+            </div>
+        </div>
+    }
+}

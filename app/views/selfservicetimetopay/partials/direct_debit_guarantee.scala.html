@@ -1,0 +1,15 @@
+@*
+   Partial view to display the direct debit guarantee
+*@
+@()
+@import selfservicetimetopay.helpers.message_list
+@import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
+<section class="divider--top">
+    <div class="grid-layout__column grid-layout__column--3-4">
+        <h3>@Messages("ssttp.direct-debit.guarantee.title")</h3>
+    </div>
+    <div class="grid-layout__column grid-layout__column--1-4">
+        <h3><img src="@SsttpFrontendConfig.assetsPrefix/images/direct-debit-logo-2x.png"></h3>
+    </div>
+    @message_list(Some("bullets"), "ssttp.direct-debit.guarantee.list.", '_itemClass -> "font-xsmall")
+</section>
