@@ -23,9 +23,9 @@ import org.scalatest.mock.MockitoSugar
 import play.api.http.Status._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSHttp
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse, Upstream4xxResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.config.{ArrangementConnector => realConnector, WSHttp}
+import uk.gov.hmrc.selfservicetimetopay.config.{ArrangementConnector => realConnector}
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
@@ -43,7 +43,7 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutu
   }
 
   "Calling submitArrangements" should {
-    "return true" in {
+    "return Right(SubmissionSuccess())" in {
       val response = HttpResponse(CREATED)
       when(testConnector.http.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
 
@@ -53,9 +53,8 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutu
     }
   }
 
-  "return false" in {
-    val response = HttpResponse(responseStatus = UNAUTHORIZED, responseString = Some("Unauthorized"))
-    when(testConnector.http.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future(response))
+  "return Left(SubmissionError(401, \"Unauthorized\"))" in {
+    when(testConnector.http.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.failed(Upstream4xxResponse("Unauthorized", 401, 401, Map())))
 
     val result = await(testConnector.submitArrangements(submitArrangementResponse))
 
