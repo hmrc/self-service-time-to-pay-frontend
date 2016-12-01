@@ -38,6 +38,24 @@ class AmountsDueController extends TimeToPayController {
     }.map(data => Ok(amounts_due_form.render(CalculatorAmountsDue(data), CalculatorForm.amountDueForm, request)))
   }
 
+  // add liability to list and display amounts page
+  def submitAmountDue: Action[AnyContent] = Action.async { implicit request =>
+    CalculatorForm.amountDueForm.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(amounts_due_form(CalculatorAmountsDue(Seq.empty), formWithErrors))),
+      validFormData => {
+        sessionCache.get.map {
+          case Some(ttpSubmission) => ttpSubmission.copy(manualDebits = ttpSubmission.manualDebits :+ validFormData)
+          case None => TTPSubmission(manualDebits = Seq(validFormData))
+        }.map { ttpData =>
+          sessionCache.put(ttpData)
+        }.map { _ =>
+          Redirect(routes.AmountsDueController.getAmountsDue())
+        }
+      }
+    )
+  }
+
+  // submit to next step
   def submitAmountsDue: Action[AnyContent] = Action.async { implicit request =>
     CalculatorForm.amountDueForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(amounts_due_form(CalculatorAmountsDue(Seq.empty), formWithErrors))),
