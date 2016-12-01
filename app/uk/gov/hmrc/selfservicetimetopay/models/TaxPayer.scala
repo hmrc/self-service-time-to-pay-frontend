@@ -20,8 +20,8 @@ import java.time.LocalDate
 
 case class TaxPayer(customerName: String, addresses: List[Address], selfAssessment: SelfAssessment)
 
-case class SelfAssessment(utr: String,
-                          communicationPreferences: Option[CommunicationPreferences],
+case class SelfAssessment(utr: Option[String] = None,
+                          communicationPreferences: Option[CommunicationPreferences] = None,
                           debits: List[Debit],
                           returns: Option[List[Return]])
 

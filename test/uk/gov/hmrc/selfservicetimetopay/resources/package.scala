@@ -65,7 +65,7 @@ package object resources {
       .mkString)
 
   val debit: Debit = Debit("originCode", Some(BigDecimal(121.2)), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now()))
-  val selfAssessment: SelfAssessment = SelfAssessment("utr", None, List(debit), None)
+  val selfAssessment: SelfAssessment = SelfAssessment(Some("utr"), None, List(debit), None)
   val taxPayer: TaxPayer = TaxPayer("Bob", List(), selfAssessment)
   val calculatorPaymentScheduleInstalment = CalculatorPaymentScheduleInstalment(LocalDate.now(), BigDecimal(1234.22))
 
@@ -141,7 +141,7 @@ package object resources {
       "Bob",
       List(),
       SelfAssessment(
-        "utr",
+        Some("utr"),
         None,
         List(),
         None)),

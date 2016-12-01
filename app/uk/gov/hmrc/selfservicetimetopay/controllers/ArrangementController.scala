@@ -59,7 +59,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
     def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
 
-    val utr = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present")).selfAssessment.utr
+    val utr = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
+      .selfAssessment.utr.getOrElse(throw new RuntimeException("Utr is not present"))
 
     val result = for {
       ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
@@ -78,7 +79,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       taxPayer <- submission.taxPayer
     } yield {
       val utr = taxPayer.selfAssessment.utr
-      val knownFact = List(KnownFact(cesa, utr))
+      val knownFact = List(KnownFact(cesa, utr.get))
       val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
         accountNumber = Some(bankDetails.accountNumber.toString),
         creationDate = schedule.startDate,
@@ -87,7 +88,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
       val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
       val pp = PaymentPlan("Time to Pay",
-        utr,
+        utr.get,
         cesa,
         paymentCurrency,
         schedule.initialPayment,
