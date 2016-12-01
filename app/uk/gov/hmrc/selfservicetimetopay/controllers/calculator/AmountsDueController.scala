@@ -17,34 +17,40 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 
 import play.api.mvc._
-import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
+import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
-import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountsDue
-import views.html.selfservicetimetopay.calculator.amounts_due_form
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.html.selfservicetimetopay.calculator._
 
 import scala.concurrent.Future
 
-class AmountsDueController(sessionCache: SessionCacheConnector) extends FrontendController {
+class AmountsDueController extends TimeToPayController {
 
-  def start: Action[AnyContent] = Action.async { request =>
-    Future.successful(Redirect(routes.AmountsDueController.getAmountsDue()))
+  def start: Action[AnyContent] = Action { request =>
+    Redirect(routes.AmountsDueController.getAmountsDue())
   }
 
   def getAmountsDue: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(
-      Ok(amounts_due_form.render(CalculatorAmountsDue(Seq.empty), CalculatorForm.amountDueForm, request)))
+    sessionCache.get.map {
+      case Some(ttpSubmission) => ttpSubmission.manualDebits
+      case None => Seq.empty
+    }.map(data => Ok(amounts_due_form.render(CalculatorAmountsDue(data), CalculatorForm.amountDueForm, request)))
   }
 
   def submitAmountsDue: Action[AnyContent] = Action.async { implicit request =>
-    val response = CalculatorForm.amountDueForm.bindFromRequest().fold(
-      formWithErrors => {
-        BadRequest(views.html.selfservicetimetopay.calculator.amounts_due_form(CalculatorAmountsDue(Seq.empty), formWithErrors))
-      },
+    CalculatorForm.amountDueForm.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(amounts_due_form(CalculatorAmountsDue(Seq.empty), formWithErrors))),
       validFormData => {
-        Redirect(uk.gov.hmrc.selfservicetimetopay.controllers.routes.CalculatorController.getPaymentToday())
+        sessionCache.get.map {
+          case Some(ttpSubmission) => ttpSubmission.copy(manualDebits = ttpSubmission.manualDebits :+ validFormData)
+          case None => TTPSubmission(manualDebits = Seq(validFormData))
+        }.map { ttpData =>
+          sessionCache.put(ttpData)
+        }.map { _ =>
+          Redirect(routes.AmountsDueController.getAmountsDue())
+        }
       }
     )
-    Future.successful(response)
   }
 }

@@ -16,10 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 
-import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
+import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 
-class CalculateInstallmentsController(sessionCache: SessionCacheConnector) extends FrontendController {
+class CalculateInstallmentsController extends TimeToPayController {
 
 //  def getCalculateInstalments(monthsOption:Option[String]): Action[AnyContent] = Action.async { implicit request =>
 //
