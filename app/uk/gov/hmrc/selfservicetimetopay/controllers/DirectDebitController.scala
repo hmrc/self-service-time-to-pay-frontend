@@ -36,11 +36,20 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     Ok(direct_debit_form.render(createDirectDebitForm, request))
   }
 
+  def getDirectDebitError: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, banks @ Some(_), _, _, _, _)) =>
+        Ok(direct_debit_error.render(createDirectDebitForm, banks, request))
+      case _ => Ok(direct_debit_error.render(createDirectDebitForm, None, request))
+    }
+  }
+
   def getDirectDebitConfirmation: Action[AnyContent] = Action.async { implicit request =>
     val form: Form[Boolean] = Form(single("confirm" -> boolean))
     sessionCache.get.map {
-      case Some(ttpSubmission) => Ok(showDDConfirmation(ttpSubmission.schedule.get, ttpSubmission.arrangementDirectDebit.get, request))
-      case None => throw new RuntimeException("No data found")
+      case Some(submission @ TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _)) =>
+        Ok(showDDConfirmation(schedule, submission.arrangementDirectDebit.get, request))
+      case _ => throw new RuntimeException("No data found")
     }
   }
 
@@ -96,5 +105,5 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   private val showDDConfirmation = direct_debit_confirmation.render _
   private val bankDetailsFormErrorPage = direct_debit_form.render _
   private val toDDCreationPage = routes.DirectDebitController.getDirectDebitConfirmation()
-  private val toBankSelectionPage = routes.DirectDebitController.getDirectDebit()
+  private val toBankSelectionPage = routes.DirectDebitController.getDirectDebitError()
 }

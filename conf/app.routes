@@ -25,6 +25,7 @@ POST   /calculator/instalments/payment-today    @uk.gov.hmrc.selfservicetimetopa
 # Arrangement
 GET    /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
 POST   /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
+GET    /arrangement/direct-debit-error          @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitError()
 GET    /arrangement/direct-debit-confirmation   @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()
 POST   /arrangement/submit                      @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
 GET    /arrangement/summary                     @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
