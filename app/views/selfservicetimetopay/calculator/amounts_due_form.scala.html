@@ -3,6 +3,8 @@
 @(amountsDue:CalculatorAmountsDue, dataForm: Form[CalculatorAmountDue])(implicit request: Request[_])
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, dateinput, button, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calculatorRoutes}
+@import java.time.format.DateTimeFormatter
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
     bodyClasses = None,
@@ -11,61 +13,71 @@
     <header class="page-header text">
         <h1 class="h1-heading">@Messages("ssttp.calculator.form.amounts_due.title")</h1>
     </header>
-
+    @formErrorSummary(Messages("ssttp.calculator.form.amounts_due.error.summary.title"), dataForm, Seq.empty)
     <p>@Messages("ssttp.calculator.form.amounts_due.intro")</p>
-    <table>
-        <thead>
-            <th>@Messages("ssttp.calculator.form.amounts_due.due_date")</th>
-            <th>@Messages("ssttp.calculator.form.amounts_due.amount")</th>
-        </thead>
-
-    @amountsDue.amountsDue.zipWithIndex.map { case (amountDue, index) =>
-        @form(uk.gov.hmrc.selfservicetimetopay.controllers.calculator.routes.AmountsDueController.submitRemoveAmountDue()) {
-            <tr>
-                <td>@amountDue.getDueBy()</td>
-                <input type="hidden" name="dueByYear" value="@amountDue.dueByYear" />
-                <input type="hidden" name="dueByMonth" value="@amountDue.dueByMonth" />
-                <input type="hidden" name="dueByDay" value="@amountDue.dueByDay" />
-                <td class="align--bottom table--col-one-third">@amountDue.amount
-                    <input type="hidden" name="amount" value="@amountDue.amount" />
-                    <span class="gutter-left">@button('type -> "submit", '_modifierClass -> "flush--top button--table button--small") {
-                        @Messages("ssttp.calculator.form.amounts_due.remove")
-                    }</span>
-                </td>
-            </tr>
+    <div class="grid-layout grid-layout--no-gutter divider--bottom">
+        <div class="grid-layout__column grid-layout__column--1-2"><span class="font-xsmall"><strong>@Messages("ssttp.calculator.form.amounts_due.due_date")</strong></span></div>
+        <div class="grid-layout__column grid-layout__column--1-2 text--middle"><span class="font-xsmall"><strong>@Messages("ssttp.calculator.form.amounts_due.amount")</strong></span></div>
+    </div>
+    @defining(DateTimeFormatter.ofPattern("dd MMMM YYYY")) { formatter =>
+        @amountsDue.amountsDue.zipWithIndex.map { case (amountDue, index) =>
+            @form(calculatorRoutes.AmountsDueController.removeAmountDue()) {
+                <div class="grid-layout grid-layout--no-gutter divider--bottom">
+                    <div class="grid-layout__column grid-layout__column--1-3"><p>@amountDue.getDueBy.format(formatter)</p></div>
+                    <div class="grid-layout__column grid-layout__column--2-3 text--right">
+                        <input type="hidden" name="dueByYear" value="@amountDue.dueByYear" />
+                        <input type="hidden" name="dueByMonth" value="@amountDue.dueByMonth" />
+                        <input type="hidden" name="dueByDay" value="@amountDue.dueByDay" />
+                        <input type="hidden" name="amount" value="@amountDue.amount" />
+                        <p>@Messages("ssttp.common.currency.symbol")@amountDue.amount
+                            <span class="gutter-left">@button('type -> "submit", '_modifierClass -> "flush--top button--link") {
+                                @Messages("ssttp.calculator.form.amounts_due.remove")
+                            }</span>
+                        </p>
+                    </div>
+                </div>
+            }
         }
     }
-    </table>
-    @form(uk.gov.hmrc.selfservicetimetopay.controllers.calculator.routes.AmountsDueController.submitAddAmountDue(), 'class -> "group") {
-        @formErrorSummary(Messages("ssttp.calculator.form.amounts_due.error.summary.title"), dataForm, Seq.empty)
+    @form(calculatorRoutes.AmountsDueController.addAmountDue(), 'class -> "group") {
         <div class="form-field--group divider--bottom">
             <div class="grid-layout grid-layout--no-gutter">
                 <div class="grid-layout__column grid-layout__column--1-2">
-                @dateinput("dueBy", dataForm, dataForm("dueByYear"), dataForm("dueByMonth"), dataForm("dueByDay"),
-                    'hint -> Messages("ssttp.calculator.form.amounts_due.when_due.question.hint"),
-                    'dayLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.day"),
-                    'monthLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.month"),
-                    'yearLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.year"),
-                    '_inputGroupClass -> "gutter-left"
-                )
+                  @dateinput("dueBy", dataForm, dataForm("dueByYear"), dataForm("dueByMonth"), dataForm("dueByDay"),
+                      'hint -> Messages("ssttp.calculator.form.amounts_due.when_due.question.hint"),
+                      'dayLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.day"),
+                      'monthLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.month"),
+                      'yearLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.year"),
+                       '_inputGroupClass -> "gutter-left"
+                  )
                 </div>
                 <div class="grid-layout__column grid-layout__column--1-3">
-                    <ul><li>
-                        @currencyinput(dataForm("amount"),
+                    <ul><li class="no-wrap">
+                    @currencyinput(dataForm("amount"),
                             'label -> Messages("ssttp.calculator.form.amounts_due.amount"),
                             '_modifierClass -> "flush",
                             '_labelClass -> "label--inline-tight",
                             '_inputClass -> "input--small input--no-spinner")
-                        @button('type -> "submit", '_modifierClass -> "button--secondary align--middle") {
-                            @Messages("ssttp.calculator.form.amounts_due.add")
-                        }
+                    @button('type -> "submit", '_modifierClass -> "button--secondary align--middle") {
+                        @Messages("ssttp.calculator.form.amounts_due.add")
+                    }
                     </li></ul>
                 </div>
             </div>
         </div>
         <p>&nbsp;</p>
     }
-    @form(uk.gov.hmrc.selfservicetimetopay.controllers.calculator.routes.AmountsDueController.submitAmountsDue(), 'class -> "group") {
+    <div class="form-field--group divider--bottom">
+        <div class="grid-layout grid-layout--no-gutter">
+            <div class="grid-layout__column grid-layout__column--1-2">
+                <strong>@Messages("ssttp.calculator.form.amounts_due.total")</strong>
+            </div>
+            <div class="grid-layout__column grid-layout__column--1-3">
+                <strong>@Messages("ssttp.common.currency.symbol")@amountsDue.total</strong>
+            </div>
+        </div>
+    </div>
+    @form(calculatorRoutes.AmountsDueController.submitAmountsDue(), 'class -> "group") {
         @submit(){@Messages("ssttp.calculator.form.continue")}
     }
     <p><a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.calculator.form.back")</a></p>
