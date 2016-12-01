@@ -16,10 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import play.api.libs.json.Json
-
 case class EligibilityExistingTTP(hasExistingTTP: Option[Boolean])
-
-object EligibilityExistingTTP {
-  implicit val formats = Json.format[EligibilityExistingTTP]
-}

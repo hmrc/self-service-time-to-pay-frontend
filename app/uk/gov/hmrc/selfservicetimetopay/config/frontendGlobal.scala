@@ -18,12 +18,13 @@ package uk.gov.hmrc.selfservicetimetopay.config
 
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
-import play.api.mvc.Request
+import play.api.mvc.{EssentialFilter, Request}
 import play.api.{Application, Configuration, Play}
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.filters.FrontendAuditFilter
 import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode}
+import uk.gov.hmrc.play.filters.NoCacheFilter
 import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
 import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
 
@@ -31,6 +32,11 @@ object FrontendGlobal extends DefaultFrontendGlobal with ServiceRegistry with Co
 
   override val loggingFilter = LoggingFilter
   override val frontendAuditFilter = AuditFilter
+
+
+  override def frontendFilters: Seq[EssentialFilter] = {
+    defaultFrontendFilters ++ Seq(NoCacheFilter)
+  }
 
   override def onStart(app: Application) {
     super.onStart(app)
