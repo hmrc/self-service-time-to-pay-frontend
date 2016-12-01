@@ -25,6 +25,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Stron
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, SaAccount}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.util.SessionProvider
 
 import scala.io.Source
 
@@ -185,4 +186,6 @@ package object resources {
 
   val authorisedUser = Authority("", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None)
   val authorisedUserNoSA = Authority("", Accounts(), None, None, Strong, L200, None, None, None)
+
+  val sessionProvider = new SessionProvider() {}
 }

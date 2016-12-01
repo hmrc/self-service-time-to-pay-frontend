@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -26,7 +26,7 @@ import views.html.selfservicetimetopay.calculator._
 
 import scala.concurrent.Future
 
-class CalculatorController extends FrontendController {
+class CalculatorController extends TimeToPayController {
 
   private def getKeystoreData(implicit request:Request[AnyContent]) : (Boolean, Option[CalculatorAmountsDue], Option[CalculatorPaymentToday], Option[CalculatorDuration], Option[Seq[CalculatorPaymentSchedule]]) = {
     val ssttpStart = request.session.get("SelfServiceTimeToPayStart").isDefined

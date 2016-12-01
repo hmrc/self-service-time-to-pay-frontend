@@ -16,18 +16,22 @@
 
 package uk.gov.hmrc.selfservicetimetopay.config
 
+import play.api.mvc.{Action => PlayAction}
 import play.api.mvc.Controller
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
 import uk.gov.hmrc.play.config.{AppName, RunMode, ServicesConfig}
+import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.hooks.HttpHook
 import uk.gov.hmrc.play.http.ws._
 import uk.gov.hmrc.play.http.{HttpDelete, HttpGet, HttpPut}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstallmentsController, PaymentTodayController}
+import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 
 object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName with RunMode with HttpAuditing {
   val auditConnector = FrontendAuditConnector
@@ -80,6 +84,13 @@ object EligibilityConnector extends EligibilityConnector with ServicesConfig {
   val http = WSHttp
 }
 
+trait TimeToPayController extends FrontendController with Actions {
+  override lazy val authConnector: AuthConnector = FrontendAuthConnector
+  lazy val sessionCache: KeystoreConnector = SessionCacheConnector
+
+  protected lazy val Action = CheckSessionAction andThen PlayAction
+}
+
 trait ServiceRegistry extends ServicesConfig {
   lazy val auditConnector: Auditing = FrontendAuditConnector
   lazy val directDebitConnector: DirectDebitConnector = DirectDebitConnector
@@ -90,14 +101,14 @@ trait ServiceRegistry extends ServicesConfig {
 
 trait ControllerRegistry { registry: ServiceRegistry =>
   private lazy val controllers = Map[Class[_], Controller](
-    classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector, sessionCacheConnector, authConnector),
-    classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, sessionCacheConnector),
+    classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector),
+    classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector),
     classOf[CalculatorController] -> new CalculatorController(),
-    classOf[EligibilityController] -> new EligibilityController(sessionCacheConnector),
+    classOf[EligibilityController] -> new EligibilityController(),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
-    classOf[AmountsDueController] -> new AmountsDueController(sessionCacheConnector),
-    classOf[CalculateInstallmentsController] -> new CalculateInstallmentsController(sessionCacheConnector),
-    classOf[PaymentTodayController] -> new PaymentTodayController(sessionCacheConnector)
+    classOf[AmountsDueController] -> new AmountsDueController(),
+    classOf[CalculateInstallmentsController] -> new CalculateInstallmentsController(),
+    classOf[PaymentTodayController] -> new PaymentTodayController()
   )
 
   def getController[A](controllerClass: Class[A]) : A = controllers(controllerClass).asInstanceOf[A]

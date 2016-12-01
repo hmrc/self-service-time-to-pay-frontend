@@ -17,14 +17,10 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 
 
-import play.api.mvc._
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
-import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 
-import scala.concurrent.Future
-
-class PaymentTodayController(sessionCache: SessionCacheConnector) extends FrontendController {
+class PaymentTodayController extends TimeToPayController {
 
 //  def getPaymentToday: Action[AnyContent] = Action.async { implicit request =>
 //    Future.successful(Ok(views.html.selfservicetimetopay.calculator.payment_today_form.render(CalculatorForm.paymentTodayForm, request)))

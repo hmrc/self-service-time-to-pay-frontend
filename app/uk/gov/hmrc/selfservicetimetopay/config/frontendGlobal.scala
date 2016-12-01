@@ -23,7 +23,7 @@ import play.api.{Application, Configuration, Play}
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.filters.FrontendAuditFilter
-import uk.gov.hmrc.play.config.{AppName, ControllerConfig, ControllerParams, RunMode}
+import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode}
 import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
 import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
 

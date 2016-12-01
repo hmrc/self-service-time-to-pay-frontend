@@ -17,15 +17,14 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
-import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
+import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import views.html.selfservicetimetopay.eligibility._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
 
-class EligibilityController(sessionCache: SessionCacheConnector) extends FrontendController {
+class EligibilityController extends TimeToPayController {
 
   def start: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.getTypeOfTax())
