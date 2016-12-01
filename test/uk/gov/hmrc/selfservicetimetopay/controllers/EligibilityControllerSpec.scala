@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import org.scalatest.Matchers
+import org.mockito.Matchers
+import org.mockito.Mockito.when
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
-import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
@@ -30,12 +32,12 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
 
-class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar with WithFakeApplication {
+class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication with ScalaFutures {
 
   private val gaToken = "GA-TOKEN"
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
-
+  val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
 
   val typeOfTaxForm = Seq(
     "type_of_tax.hasSelfAssessmentDebt" -> "true",
@@ -47,9 +49,14 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
   )
 
   "EligibilityController" should {
-    val controller = new EligibilityController()
+    val controller = new EligibilityController(){
+      override lazy val sessionCache: SessionCacheConnector = mockSessionCache
+    }
 
     "redirect successfully to the type of tax page" in {
+      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+
       val response:Result = controller.start.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
 
       status(response) shouldBe SEE_OTHER
