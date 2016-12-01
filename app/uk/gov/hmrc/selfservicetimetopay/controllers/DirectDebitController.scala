@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -80,17 +79,6 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
                                       eligibilityExistingTtp = found.eligibilityExistingTtp),
         () => TTPSubmission(None, None, Some(existingDDBanks), None))
         .map(_ => Redirect(toBankSelectionPage))
-  }
-
-  private def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier) = {
-    sessionCache.get.flatMap {
-      case Some(ttpSubmission) =>
-        Logger.info("TTP data found - merging record")
-        sessionCache.put(found(ttpSubmission))
-      case None =>
-        Logger.info("No TTP Submission data found in cache")
-        sessionCache.put(notFound())
-    }
   }
 
   private val showDDConfirmation = direct_debit_confirmation.render _

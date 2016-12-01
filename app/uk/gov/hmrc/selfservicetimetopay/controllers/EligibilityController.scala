@@ -16,27 +16,34 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
-import views.html.selfservicetimetopay.eligibility._
+import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.html.selfservicetimetopay.eligibility._
 
 import scala.concurrent.Future
 
 class EligibilityController extends TimeToPayController {
 
   def start: Action[AnyContent] = Action { implicit request =>
+    sessionCache.remove()
     Redirect(routes.EligibilityController.getTypeOfTax())
   }
 
   def getTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
-
-//    sessionCache.get.map {
-//      cached => if (cached.isEmpty || cached.get.eligibilityTypeOfTax.isEmpty) EligibilityForm.typeOfTaxForm
-//                else EligibilityForm.typeOfTaxForm.fill(cached.get.eligibilityTypeOfTax.get)
-//    }
-    Future.successful(Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request)))
+    sessionCache.get.map {
+      case Some(ttpSubmission) =>
+        ttpSubmission.eligibilityTypeOfTax match {
+          case Some(e) =>
+            Logger.debug("type of tax in cache")
+            Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm.fill(e), request))
+          case None => Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request))
+        }
+      case None => Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request))
+    }
   }
 
   def submitTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
@@ -45,8 +52,14 @@ class EligibilityController extends TimeToPayController {
         BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))
       },
       validFormData => {
-        //sessionCache.cache[EligibilityTypeOfTax](sessionCacheKey, validFormData)
-
+        updateOrCreateInCache(found => {
+          found.eligibilityExistingTtp match {
+              case Some(e) =>
+                TTPSubmission(eligibilityTypeOfTax = Some(validFormData), eligibilityExistingTtp = found.eligibilityExistingTtp)
+              case None => TTPSubmission(eligibilityTypeOfTax = Some(validFormData))
+            }
+          },
+          () => TTPSubmission(eligibilityTypeOfTax = Some(validFormData)))
         //call taxpayer service
         Redirect(routes.EligibilityController.getExistingTtp())
       }
@@ -55,8 +68,14 @@ class EligibilityController extends TimeToPayController {
   }
 
   def getExistingTtp: Action[AnyContent] =  Action.async { implicit request =>
-    //fetchAndFill[EligibilityExistingTTP](sessionCacheKey, EligibilityForm.existingTtpForm)
-    Future.successful(Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request)))
+    sessionCache.get.map {
+      case Some(ttpSubmission) =>
+        ttpSubmission.eligibilityExistingTtp match {
+          case Some(e) => Ok(existing_ttp.render(EligibilityForm.existingTtpForm.fill(e), request))
+          case None => Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request))
+        }
+      case None => Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request))
+    }
   }
 
   def submitExistingTtp: Action[AnyContent] = Action.async { implicit request =>
@@ -65,7 +84,16 @@ class EligibilityController extends TimeToPayController {
         BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))
       },
       validFormData => {
-        //sessionCache.cache[EligibilityExistingTTP](sessionCacheKey, validFormData)
+        updateOrCreateInCache(found => {
+            found.eligibilityTypeOfTax match {
+              case Some(e) =>
+                Logger.debug("type of tax in cache - submit existing ttp")
+                TTPSubmission(eligibilityTypeOfTax = found.eligibilityTypeOfTax, eligibilityExistingTtp = Some(validFormData))
+              case None => TTPSubmission(eligibilityExistingTtp = Some(validFormData))
+            }
+          },
+          () => TTPSubmission(eligibilityExistingTtp = Some(validFormData)))
+
         Redirect(calculator.routes.AmountsDueController.start())
       }
     )

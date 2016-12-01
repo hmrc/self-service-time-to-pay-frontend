@@ -35,8 +35,7 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
   private val gaToken = "GA-TOKEN"
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
-  val mockSessionCacheConnector: SessionCacheConnector = mock[SessionCacheConnector]
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+
 
   val typeOfTaxForm = Seq(
     "type_of_tax.hasSelfAssessmentDebt" -> "true",
@@ -48,10 +47,7 @@ class EligibilityControllerSpec extends UnitSpec with Matchers with MockitoSugar
   )
 
   "EligibilityController" should {
-    val controller = new EligibilityController() {
-      override lazy val sessionCache: SessionCacheConnector = mockSessionCacheConnector
-      override lazy val authConnector: AuthConnector = mockAuthConnector
-    }
+    val controller = new EligibilityController()
 
     "redirect successfully to the type of tax page" in {
       val response:Result = controller.start.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
