@@ -22,14 +22,14 @@ import java.time.temporal.ChronoField
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 
-case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Int, dueByMonth: String, dueByDay: Int) {
+case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Int, dueByMonth: Int, dueByDay: Int) {
 
   def this(amount: BigDecimal, dueBy: LocalDate) {
-    this(amount, dueBy.getYear, dueBy.format(DateTimeFormatter.ofPattern("MMMM")), dueBy.getDayOfMonth)
+    this(amount, dueBy.getYear, dueBy.getMonthValue, dueBy.getDayOfMonth)
   }
 
   @JsonIgnore
   def getDueBy(): LocalDate = {
-    LocalDate.of(dueByYear, DateTimeFormatter.ofPattern("MMMM").parse(dueByMonth).get(ChronoField.MONTH_OF_YEAR), dueByDay)
+    LocalDate.of(dueByYear, dueByMonth, dueByDay)
   }
 }

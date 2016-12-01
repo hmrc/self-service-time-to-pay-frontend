@@ -24,15 +24,19 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 object CalculatorForm {
   val dueByYearMax = 2100
   val dueByYearMin = 2000
+  val dueByMonthMin = 1
+  val dueByMonthMax = 12
   val dueByDayMin = 1
   val dueByDayMax = 31
 
   val amountDueForm = Form(mapping(
     "amount" -> bigDecimal,
     "dueByYear" -> number(min = dueByYearMin, max = dueByYearMax),
-    "dueByMonth" -> nonEmptyText,
+    "dueByMonth" -> number(min = dueByDayMin, max = dueByMonthMax),
     "dueByDay" -> number(min = dueByDayMin, max = dueByDayMax)
   )(CalculatorAmountDue.apply)(CalculatorAmountDue.unapply))
+
+  val deleteAmountDueForm = Form(single("index" -> number))
 
   val paymentTodayForm = Form(mapping(
     "amount" -> optional(bigDecimal
