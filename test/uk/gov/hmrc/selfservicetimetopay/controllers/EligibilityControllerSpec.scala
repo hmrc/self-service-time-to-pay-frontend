@@ -54,12 +54,16 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     "type_of_tax.hasOtherDebt" -> "true"
   )
 
-  val existingTtpForm = Seq(
+  val falseExistingTtpForm = Seq(
     "hasExistingTTP" -> "false"
   )
 
+  val trueExistingTtpForm = Seq(
+    "hasExistingTTP" -> "true"
+  )
+
   "EligibilityController" should {
-    val controller = new EligibilityController(){
+    val controller = new EligibilityController() {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     }
 
@@ -67,7 +71,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val response:Result = controller.start.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
+      val response: Result = controller.start.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
 
       status(response) shouldBe SEE_OTHER
 
@@ -75,7 +79,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "successfully display the type of tax page" in {
-      val response:Result = controller.getTypeOfTax.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
+      val response: Result = controller.getTypeOfTax.apply(FakeRequest().withSession(sessionProvider.createSessionId()))
 
       status(response) shouldBe OK
 
@@ -91,9 +95,9 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "submit type of tax given valid data and redirect to existing ttp page" in {
-      val request = FakeRequest().withSession(sessionProvider.createSessionId()).withFormUrlEncodedBody(typeOfTaxForm:_*)
+      val request = FakeRequest().withSession(sessionProvider.createSessionId()).withFormUrlEncodedBody(typeOfTaxForm: _*)
 
-      val response:Future[Result] = await(controller.submitTypeOfTax.apply(request))
+      val response: Future[Result] = await(controller.submitTypeOfTax.apply(request))
 
       status(response) shouldBe SEE_OTHER
 
@@ -101,9 +105,9 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "submit type of tax given both types of tax and redirect to call us page" in {
-      val request = FakeRequest().withSession(sessionProvider.createSessionId()).withFormUrlEncodedBody(bothTypeOfTaxForm:_*)
+      val request = FakeRequest().withSession(sessionProvider.createSessionId()).withFormUrlEncodedBody(bothTypeOfTaxForm: _*)
 
-      val response:Future[Result] = await(controller.submitTypeOfTax.apply(request))
+      val response: Future[Result] = await(controller.submitTypeOfTax.apply(request))
 
       status(response) shouldBe SEE_OTHER
 
@@ -111,19 +115,19 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "submit type of tax given other types of tax and redirect to call us page" in {
-      val request = FakeRequest().withSession(sessionProvider.createSessionId()).withFormUrlEncodedBody(otherTaxForm:_*)
+      val request = FakeRequest().withSession(sessionProvider.createSessionId()).withFormUrlEncodedBody(otherTaxForm: _*)
 
-      val response:Future[Result] = await(controller.submitTypeOfTax.apply(request))
+      val response: Future[Result] = await(controller.submitTypeOfTax.apply(request))
 
       status(response) shouldBe SEE_OTHER
 
       redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url
     }
 
-    "submit existing ttp given valid data and redirect to amount you owe page" in {
-      val request = FakeRequest().withFormUrlEncodedBody(existingTtpForm:_*).withSession(sessionProvider.createSessionId())
+    "submit existing ttp given no existing ttp data and redirect to amount you owe page" in {
+      val request = FakeRequest().withFormUrlEncodedBody(falseExistingTtpForm: _*).withSession(sessionProvider.createSessionId())
 
-      val response:Future[Result] = await(controller.submitExistingTtp.apply(request))
+      val response: Future[Result] = await(controller.submitExistingTtp.apply(request))
 
       status(response) shouldBe SEE_OTHER
 
@@ -131,10 +135,20 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
         uk.gov.hmrc.selfservicetimetopay.controllers.calculator.routes.AmountsDueController.start().url
     }
 
+    "submit existing ttp given existing ttp data and redirect to call us page" in {
+      val request = FakeRequest().withFormUrlEncodedBody(trueExistingTtpForm: _*).withSession(sessionProvider.createSessionId())
+
+      val response: Future[Result] = await(controller.submitExistingTtp.apply(request))
+
+      status(response) shouldBe SEE_OTHER
+
+      redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url
+    }
+
     "redirect to self on type of tax page and display errors when invalid data is submitted" in {
       val request = FakeRequest().withSession(sessionProvider.createSessionId())
 
-      val response:Future[Result] = await(controller.submitTypeOfTax.apply(request))
+      val response: Future[Result] = await(controller.submitTypeOfTax.apply(request))
 
       status(response) shouldBe BAD_REQUEST
     }
@@ -142,7 +156,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     "redirect to self on existing ttp page and display errors when invalid data is submitted" in {
       val request = FakeRequest().withSession(sessionProvider.createSessionId())
 
-      val response:Future[Result] = await(controller.submitExistingTtp.apply(request))
+      val response: Future[Result] = await(controller.submitExistingTtp.apply(request))
 
       status(response) shouldBe BAD_REQUEST
     }

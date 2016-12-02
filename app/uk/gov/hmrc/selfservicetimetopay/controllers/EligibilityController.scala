@@ -19,8 +19,9 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
+import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calcRoutes}
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityTypeOfTax, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.eligibility._
 
@@ -48,9 +49,7 @@ class EligibilityController extends TimeToPayController {
 
   def submitTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
     EligibilityForm.typeOfTaxForm.bindFromRequest().fold(
-      formWithErrors => {
-        Future.successful(BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors)))
-      },
+      formWithErrors => Future.successful(BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))),
       validFormData => {
         updateOrCreateInCache(found => found.copy(eligibilityTypeOfTax = Some(validFormData)),
           () => TTPSubmission(eligibilityTypeOfTax = Some(validFormData))).map(_ => {
@@ -63,7 +62,7 @@ class EligibilityController extends TimeToPayController {
     )
   }
 
-  def getExistingTtp: Action[AnyContent] =  Action.async { implicit request =>
+  def getExistingTtp: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(ttpSubmission) =>
         ttpSubmission.eligibilityExistingTtp match {
@@ -75,24 +74,16 @@ class EligibilityController extends TimeToPayController {
   }
 
   def submitExistingTtp: Action[AnyContent] = Action.async { implicit request =>
-    val response = EligibilityForm.existingTtpForm.bindFromRequest().fold(
-      formWithErrors => {
-        BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))
-      },
+    EligibilityForm.existingTtpForm.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))),
       validFormData => {
-        updateOrCreateInCache(found => {
-            found.eligibilityTypeOfTax match {
-              case Some(e) =>
-                Logger.debug("type of tax in cache - submit existing ttp")
-                TTPSubmission(eligibilityTypeOfTax = found.eligibilityTypeOfTax, eligibilityExistingTtp = Some(validFormData))
-              case None => TTPSubmission(eligibilityExistingTtp = Some(validFormData))
-            }
-          },
-          () => TTPSubmission(eligibilityExistingTtp = Some(validFormData)))
-
-        Redirect(calculator.routes.AmountsDueController.start())
-      }
-    )
-    Future.successful(response)
+        updateOrCreateInCache(found => found.copy(eligibilityExistingTtp = Some(validFormData)),
+          () => TTPSubmission(eligibilityExistingTtp = Some(validFormData))).map(_ => {
+          validFormData match {
+            case EligibilityExistingTTP(Some(false)) => Redirect(calcRoutes.AmountsDueController.start())
+            case _ => Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())
+          }
+        })
+      })
   }
 }
