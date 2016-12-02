@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class CalculatorAmountsDue(amountsDue: Seq[CalculatorAmountDue]) {
+case class CalculatorAmountsDue(amountsDue: Seq[Debit]) {
   def total:BigDecimal = {
-    amountsDue.map(_.amount.getOrElse(BigDecimal(0))).sum
+    amountsDue.map(_.amount).sum
   }
 }
 

@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import java.time.LocalDate
 
 case class CalculatorInput(debits:Seq[Debit],
-                           initialPayment:BigDecimal,
-                           startDate:LocalDate,
-                           endDate:LocalDate,
+                           initialPayment:BigDecimal = BigDecimal(0),
+                           startDate:LocalDate = LocalDate.now(),
+                           endDate:Option[LocalDate] = None,
                            paymentFrequency:String = "MONTHLY")

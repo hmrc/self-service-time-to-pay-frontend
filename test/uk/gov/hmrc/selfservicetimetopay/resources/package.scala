@@ -64,7 +64,7 @@ package object resources {
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
       .mkString)
 
-  val debit: Debit = Debit(Some("originCode"), Some(BigDecimal(121.2)), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now()))
+  val debit: Debit = Debit(Some("originCode"), BigDecimal(121.2), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now()))
   val selfAssessment: SelfAssessment = SelfAssessment(Some("utr"), None, List(debit), None)
   val taxPayer: TaxPayer = TaxPayer("Bob", List(), selfAssessment)
   val calculatorPaymentScheduleInstalment = CalculatorPaymentScheduleInstalment(LocalDate.now(), BigDecimal(1234.22))
@@ -87,10 +87,10 @@ package object resources {
     Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
     Some(EligibilityExistingTTP(Some(false))))
 
-  val calculatorAmountDue: CalculatorAmountDue = new CalculatorAmountDue(BigDecimal(123.45), LocalDate.now())
+  val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
   val ttpSubmissionNLI: TTPSubmission = TTPSubmission(manualDebits = Seq(calculatorAmountDue))
 
-  val calculatorAmountDueOver10k: CalculatorAmountDue = new CalculatorAmountDue(BigDecimal(11293.22), LocalDate.now())
+  val calculatorAmountDueOver10k: Debit = Debit(amount = BigDecimal(11293.22), dueDate = LocalDate.now())
   val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(manualDebits = Seq(calculatorAmountDueOver10k))
 
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)

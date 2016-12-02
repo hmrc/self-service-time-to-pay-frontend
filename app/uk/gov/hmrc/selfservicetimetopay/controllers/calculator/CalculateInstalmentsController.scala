@@ -20,34 +20,23 @@ import java.time.LocalDate
 
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector}
-import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, EligibilityRequest}
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, EligibilityRequest, EligibilityStatus}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
                                      calculatorConnector: CalculatorConnector) extends TimeToPayController {
 
   def submit() = Action.async { implicit request =>
-    sessionCache.get.flatMap { result =>
-      eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), result.get.taxPayer)).map {
-        response => if (response.eligible) {
-          //val dueDate = result.get.manualDebits.map(_.getDueBy())
-          //val amount = result.get.manualDebits.map(_.amount)
-          //calculatorConnector.calculatePaymentSchedule(CalculatorInput()))
-          Ok
-        } else {
-          //TODO - add redirect
-          Redirect("Route to ineligible page")
+    sessionCache.get.flatMap {
+      case Some(ttpData) =>
+        eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), ttpData.taxPayer)).map {
+          case EligibilityStatus(true, _) =>
+            // TODO - wire up the future, don't return until the calculation is complete
+            calculatorConnector.calculatePaymentSchedule(CalculatorInput(ttpData.manualDebits))
+            Ok
+          case _ => Redirect("Route to ineligible page")
         }
-      }
+      case _ => throw new RuntimeException("No TTP Data in sesson")
     }
   }
-
-  //  def getCalculateInstalments(monthsOption:Option[String]): Action[AnyContent] = Action.async { implicit request =>
-  //
-  //  }
-  //
-  //  def submitCalculateInstalments: Action[AnyContent] = Action.async { implicit request =>
-  //
-  //  }
-
 }
