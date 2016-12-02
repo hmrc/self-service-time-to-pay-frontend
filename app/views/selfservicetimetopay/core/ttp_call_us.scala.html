@@ -1,10 +1,8 @@
 @()(implicit request: Request[_])
 @import selfservicetimetopay.helpers.message_list
-@import selfservicetimetopay.partials.sidebar
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
-    bodyClasses = None,
-    sidebarLinks = Some(sidebar())
+    bodyClasses = None
 ){
     <header class="page-header text">
         <h1 class="h1-heading">@Messages("ssttp.ttp-call-us.title")</h1>
