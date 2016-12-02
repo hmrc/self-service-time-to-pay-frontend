@@ -23,8 +23,6 @@ import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, TTPSubmiss
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator._
 
-import scala.concurrent.Future
-
 class AmountsDueController extends TimeToPayController {
 
   def start: Action[AnyContent] = Action { request =>
@@ -40,7 +38,12 @@ class AmountsDueController extends TimeToPayController {
 
   def submitAddAmountDue: Action[AnyContent] = Action.async { implicit request =>
     CalculatorForm.amountDueForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors))),
+      formWithErrors =>
+        sessionCache.get.map {
+          case Some(ttpSubmission) => ttpSubmission.manualDebits
+          case None => IndexedSeq.empty
+        }.map(data =>  BadRequest(amounts_due_form.render(CalculatorAmountsDue(data), formWithErrors, request))),
+
       validFormData => {
         sessionCache.get.map {
           case Some(ttpSubmission) =>
