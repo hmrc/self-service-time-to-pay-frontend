@@ -18,33 +18,46 @@ A data input field using Component Library Styles as  documented:
             '_inputGroupClass -> Modifier class to apply to the group of all three date fields
 *@
 @(name: String, frm:Form[_], yearField: Field, monthField: Field, dayField: Field, args: (Symbol, String)*)(implicit lang: Lang = Lang("en"))
+@import java.time.Month
+@import java.time.format.TextStyle
 @import views.html.helper.FieldElements
-@import selfservicetimetopay.helpers.forms.{formErrors, fieldset, textinput}
+@import selfservicetimetopay.helpers.forms.{formErrors, fieldset, textinput, select, numberinput}
 @argsMap = @{ args.toMap }
 @dayElements = @{ new FieldElements(dayField.id, dayField, null, argsMap, lang) }
 @monthElements = @{ new FieldElements(monthField.id, monthField, null, argsMap, lang) }
 @yearElements = @{ new FieldElements(yearField.id, yearField, null, argsMap, lang) }
-@fieldset(frm, name){
+@monthOptions = @{for(m <- 1 to 12) yield (m.toString, Month.of(m).getDisplayName(TextStyle.FULL, lang.toLocale))}
+@fieldErrorsClass = @{
+    if(yearField.errors.nonEmpty || monthField.errors.nonEmpty || dayField.errors.nonEmpty) {
+        "form-field-group--error error-field"
+    } else {
+        ""
+    }
+}
+@fieldset(frm, name, '_modifierClass -> fieldErrorsClass){
     @if(argsMap.get('label).isDefined){<legend>@argsMap.get('label)</legend>}
     @formErrors(frm, '_field -> name)
     <ul class="list--inline group">
-        <li>@textinput(dayField, 'label -> argsMap.getOrElse('dayLabel, ""),
-            '_labelClass -> "label--inline-tight",
+        <li>@numberinput(dayField, 'label -> argsMap.getOrElse('dayLabel, ""),
             '_modifierClass -> "form-field--inline",
-            '_inputClass -> "input--cleared input--xsmall")
+            '_labelClass -> "label--inline-tight",
+            '_inputClass -> "input--cleared input--xxsmall input--no-spinner",
+            '_hideErrors -> true,
+            '_noLabel -> true)
         </li>
-        <li>@textinput(monthField,
-            'datalist -> Seq("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
+        <li>@select(monthField, monthOptions,
             'label -> argsMap.getOrElse('monthLabel, ""),
+            '_modifierClass -> "gutter-left form-field--inline",
             '_labelClass -> "label--inline-tight",
-            '_modifierClass -> "form-field--inline",
-            '_inputClass -> "input--cleared input--small input--no-spinner")
+            '_inputClass -> "flush input--cleared",
+            '_hideErrors -> true)
         </li>
-        <li>@textinput(yearField,
+        <li>@numberinput(yearField,
             'label -> argsMap.getOrElse('yearLabel, ""),
-            '_labelClass -> "label--inline-tight",
+            '_labelClass -> "gutter-left label--inline-tight",
             '_modifierClass -> "form-field--inline",
-            '_inputClass -> "input--cleared input--xsmall")
+            '_inputClass -> "input--cleared input--xsmall input--no-spinner",
+            '_hideErrors -> true)
         </li>
     </ul>
     @if(argsMap.get('hint).isDefined) {
