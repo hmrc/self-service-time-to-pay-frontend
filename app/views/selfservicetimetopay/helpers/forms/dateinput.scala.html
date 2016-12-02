@@ -21,7 +21,7 @@ A data input field using Component Library Styles as  documented:
 @import java.time.Month
 @import java.time.format.TextStyle
 @import views.html.helper.FieldElements
-@import selfservicetimetopay.helpers.forms.{formErrors, fieldset, textinput, select, numberinput}
+@import selfservicetimetopay.helpers.forms.{formErrors, fieldset, fieldErrors, select, numberinput}
 @argsMap = @{ args.toMap }
 @dayElements = @{ new FieldElements(dayField.id, dayField, null, argsMap, lang) }
 @monthElements = @{ new FieldElements(monthField.id, monthField, null, argsMap, lang) }
@@ -37,6 +37,9 @@ A data input field using Component Library Styles as  documented:
 @fieldset(frm, name, '_modifierClass -> fieldErrorsClass){
     @if(argsMap.get('label).isDefined){<legend>@argsMap.get('label)</legend>}
     @formErrors(frm, '_field -> name)
+    @fieldErrors(yearField)
+    @fieldErrors(monthField)
+    @fieldErrors(dayField)
     <ul class="list--inline group">
         <li>@numberinput(dayField, 'label -> argsMap.getOrElse('dayLabel, ""),
             '_modifierClass -> "form-field--inline",
