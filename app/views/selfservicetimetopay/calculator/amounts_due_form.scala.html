@@ -77,8 +77,16 @@
             </div>
         </div>
     </div>
+
     @form(calculatorRoutes.AmountsDueController.submitAmountsDue(), 'class -> "group") {
-        @submit(){@Messages("ssttp.calculator.form.continue")}
+    @{
+      if(amountsDue.amountsDue.isEmpty) {
+        submit('disabled -> "disabled"){Html({Messages("ssttp.calculator.form.continue")})}
+      } else {
+        submit(){Html({Messages("ssttp.calculator.form.continue")})}
     }
+    }
+  }
+
     <p><a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.calculator.form.back")</a></p>
 }
