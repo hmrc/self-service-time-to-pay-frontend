@@ -29,7 +29,7 @@ A data input field using Component Library Styles as  documented:
 @monthOptions = @{for(m <- 1 to 12) yield (m.toString, Month.of(m).getDisplayName(TextStyle.FULL, lang.toLocale))}
 @fieldErrorsClass = @{
     if(yearField.errors.nonEmpty || monthField.errors.nonEmpty || dayField.errors.nonEmpty) {
-        "form-field-group--error error-field"
+        "form-field-group--error form-field--error"
     } else {
         ""
     }
@@ -42,8 +42,7 @@ A data input field using Component Library Styles as  documented:
             '_modifierClass -> "form-field--inline",
             '_labelClass -> "label--inline-tight",
             '_inputClass -> "input--cleared input--xxsmall input--no-spinner",
-            '_hideErrors -> true,
-            '_noLabel -> true)
+            '_hideErrors -> true)
         </li>
         <li>@select(monthField, monthOptions,
             'label -> argsMap.getOrElse('monthLabel, ""),
@@ -63,5 +62,4 @@ A data input field using Component Library Styles as  documented:
     @if(argsMap.get('hint).isDefined) {
         <div class="form-hint form-hint--small float--left">@argsMap.get('hint)</div>
     }
-
 }
