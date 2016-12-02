@@ -21,7 +21,7 @@
     </div>
     @defining(DateTimeFormatter.ofPattern("dd MMMM YYYY")) { formatter =>
         @amountsDue.amountsDue.zipWithIndex.map { case (amountDue, index) =>
-            @form(calculatorRoutes.AmountsDueController.removeAmountDue()) {
+            @form(calculatorRoutes.AmountsDueController.submitRemoveAmountDue()) {
                 <div class="grid-layout grid-layout--no-gutter divider--bottom">
                     <div class="grid-layout__column grid-layout__column--1-3"><p>@amountDue.getDueBy.format(formatter)</p></div>
                     <div class="grid-layout__column grid-layout__column--2-3 text--right">
@@ -39,7 +39,7 @@
             }
         }
     }
-    @form(calculatorRoutes.AmountsDueController.addAmountDue(), 'class -> "group") {
+    @form(calculatorRoutes.AmountsDueController.submitAddAmountDue(), 'class -> "group") {
         <div class="form-field--group divider--bottom">
             <div class="grid-layout grid-layout--no-gutter">
                 <div class="grid-layout__column grid-layout__column--1-2">
