@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import org.mockito.Matchers
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
@@ -25,21 +26,26 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.connectors.{EligibilityConnector, SessionCacheConnector}
+import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.CalculateInstalmentsController
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
 
-class CalculateInstalmentsControllerSpec extends UnitSpec with MockitoSugar with ScalaFutures with WithFakeApplication {
+class CalculateInstalmentsControllerSpec extends UnitSpec with MockitoSugar with ScalaFutures with WithFakeApplication with BeforeAndAfterEach {
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
+  val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
 
-  val controller = new CalculateInstalmentsController(mockEligibilityConnector) {
+  val controller = new CalculateInstalmentsController(mockEligibilityConnector, mockCalculatorConnector) {
     override lazy val sessionCache = mockSessionCache
     override lazy val authConnector = mockAuthConnector
+  }
+
+  override def beforeEach() {
+    reset(mockEligibilityConnector, mockAuthConnector, mockSessionCache, mockCalculatorConnector)
   }
 
   "CalculateInstalmentsControllerSpec" should {
@@ -49,9 +55,14 @@ class CalculateInstalmentsControllerSpec extends UnitSpec with MockitoSugar with
       when(mockSessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
+      when(mockEligibilityConnector.checkEligibility(Matchers.any())(Matchers.any()))
+        .thenReturn(Future.successful(eligibilityStatusOk))
+
       val result = await(controller.submit().apply(FakeRequest().withSession(sessionProvider.createSessionId())))
 
       status(result) shouldBe Status.OK
+      verify(mockEligibilityConnector, times(1)).checkEligibility(Matchers.any())(Matchers.any())
+      verify(mockCalculatorConnector, times(1)).calculatePaymentSchedule(Matchers.any())(Matchers.any())
     }
 
     "Return Ineligible Response for non-logged-in when amounts > £10,000" in {
@@ -60,9 +71,14 @@ class CalculateInstalmentsControllerSpec extends UnitSpec with MockitoSugar with
       when(mockSessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
 
+      when(mockEligibilityConnector.checkEligibility(Matchers.any())(Matchers.any()))
+        .thenReturn(Future.successful(eligibilityStatusDebtTooHigh))
+
       val result = await(controller.submit().apply(FakeRequest().withSession(sessionProvider.createSessionId())))
 
       status(result) shouldBe Status.SEE_OTHER
+      verify(mockEligibilityConnector, times(1)).checkEligibility(Matchers.any())(Matchers.any())
+      verify(mockCalculatorConnector, times(0)).calculatePaymentSchedule(Matchers.any())(Matchers.any())
     }
   }
 }

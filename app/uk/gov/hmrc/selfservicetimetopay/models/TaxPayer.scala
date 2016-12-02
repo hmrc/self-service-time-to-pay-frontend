@@ -37,7 +37,7 @@ case class CommunicationPreferences(welshLanguageIndicator: Boolean,
                                      largePrintIndicator: Boolean,
                                      brailleIndicator: Boolean)
 
-case class Debit(originCode: String, amount: Option[BigDecimal], dueDate: LocalDate, interest: Option[Interest], taxYearEnd: Option[LocalDate])
+case class Debit(originCode: Option[String], amount: Option[BigDecimal], dueDate: LocalDate, interest: Option[Interest], taxYearEnd: Option[LocalDate])
 
 case class Return(taxYearEnd: LocalDate, issuedDate: Option[LocalDate], dueDate: Option[LocalDate], receivedDate: Option[LocalDate])
 

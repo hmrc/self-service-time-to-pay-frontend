@@ -112,6 +112,7 @@ trait ServiceRegistry extends ServicesConfig {
   lazy val authConnector: AuthConnector = FrontendAuthConnector
   lazy val arrangementConnector: ArrangementConnector = ArrangementConnector
   lazy val eligibilityConnector: EligibilityConnector = EligibilityConnector
+  lazy val calculatorConnector: CalculatorConnector = CalculatorConnector
 }
 
 trait ControllerRegistry { registry: ServiceRegistry =>
@@ -122,7 +123,7 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[EligibilityController] -> new EligibilityController(),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
     classOf[AmountsDueController] -> new AmountsDueController(),
-    classOf[CalculateInstalmentsController] -> new CalculateInstalmentsController(eligibilityConnector),
+    classOf[CalculateInstalmentsController] -> new CalculateInstalmentsController(eligibilityConnector, calculatorConnector),
     classOf[PaymentTodayController] -> new PaymentTodayController()
   )
 

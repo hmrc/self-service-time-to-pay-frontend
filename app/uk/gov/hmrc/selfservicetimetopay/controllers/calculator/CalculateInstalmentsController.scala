@@ -16,27 +16,38 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 
+import java.time.LocalDate
+
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
-import uk.gov.hmrc.selfservicetimetopay.connectors.EligibilityConnector
+import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector}
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, EligibilityRequest}
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-import scala.concurrent.Future
-
-class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector) extends TimeToPayController {
+class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
+                                     calculatorConnector: CalculatorConnector) extends TimeToPayController {
 
   def submit() = Action.async { implicit request =>
-
-//    sessionCache.get.map { result =>
-//      eligibilityConnector.checkEligibility(result.get.taxPayer.get.selfAssessment)
-//    }
-    Future.successful(Ok)
+    sessionCache.get.flatMap { result =>
+      eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), result.get.taxPayer)).map {
+        response => if (response.eligible) {
+          //val dueDate = result.get.manualDebits.map(_.getDueBy())
+          //val amount = result.get.manualDebits.map(_.amount)
+          //calculatorConnector.calculatePaymentSchedule(CalculatorInput()))
+          Ok
+        } else {
+          //TODO - add redirect
+          Redirect("Route to ineligible page")
+        }
+      }
+    }
   }
 
-//  def getCalculateInstalments(monthsOption:Option[String]): Action[AnyContent] = Action.async { implicit request =>
-//
-//  }
-//
-//  def submitCalculateInstalments: Action[AnyContent] = Action.async { implicit request =>
-//
-//  }
+  //  def getCalculateInstalments(monthsOption:Option[String]): Action[AnyContent] = Action.async { implicit request =>
+  //
+  //  }
+  //
+  //  def submitCalculateInstalments: Action[AnyContent] = Action.async { implicit request =>
+  //
+  //  }
 
 }

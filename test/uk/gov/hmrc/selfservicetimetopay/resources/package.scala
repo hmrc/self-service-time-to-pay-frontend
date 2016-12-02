@@ -64,7 +64,7 @@ package object resources {
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
       .mkString)
 
-  val debit: Debit = Debit("originCode", Some(BigDecimal(121.2)), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now()))
+  val debit: Debit = Debit(Some("originCode"), Some(BigDecimal(121.2)), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now()))
   val selfAssessment: SelfAssessment = SelfAssessment(Some("utr"), None, List(debit), None)
   val taxPayer: TaxPayer = TaxPayer("Bob", List(), selfAssessment)
   val calculatorPaymentScheduleInstalment = CalculatorPaymentScheduleInstalment(LocalDate.now(), BigDecimal(1234.22))
@@ -92,6 +92,9 @@ package object resources {
 
   val calculatorAmountDueOver10k: CalculatorAmountDue = new CalculatorAmountDue(BigDecimal(11293.22), LocalDate.now())
   val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(manualDebits = Seq(calculatorAmountDueOver10k))
+
+  val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
+  val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq("TotalDebtIsTooHigh"))
 
   val directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan = {
     DirectDebitInstructionPaymentPlan(LocalDate.now().toString, "1234567890", List(

@@ -50,14 +50,17 @@ package object modelsFormat {
       case Right(obj) => B.writes(obj)
     }
 
+//  implicit def CalculatorAmountDueReads: Reads[CalculatorAmountDue] = {
+//
+//  }
+
   //Front end formatters
   implicit val calculatorPaymentTodayFormatter: Format[CalculatorPaymentToday] = Json.format[CalculatorPaymentToday]
   implicit val eligibilityTypeOfTaxFormatter: Format[EligibilityTypeOfTax] = Json.format[EligibilityTypeOfTax]
   implicit val eligibilityExistingTTPFormatter: Format[EligibilityExistingTTP] = Json.format[EligibilityExistingTTP]
 
   //Calculator formatters
-  implicit val calculatorLiabilityFormatter: Format[CalculatorDebit] = Json.format[CalculatorDebit]
-  implicit val calculatorAmountDueFormatter: Format[CalculatorAmountDue] = Json.format[CalculatorAmountDue]
+  //implicit val calculatorAmountDueFormatter: Format[CalculatorAmountDue] = Json.format[CalculatorAmountDue]
   implicit val calculatorAmountsDueFormatter: Format[CalculatorAmountsDue] = Json.format[CalculatorAmountsDue]
   implicit val calculatorDurationFormatter: Format[CalculatorDuration] = Json.format[CalculatorDuration]
   implicit val calculatorPaymentScheduleInstalmentFormatter: Format[CalculatorPaymentScheduleInstalment] = Json.format[CalculatorPaymentScheduleInstalment]

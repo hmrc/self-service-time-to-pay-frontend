@@ -21,15 +21,30 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoField
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import play.api.libs.json.Json
 
-case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Int, dueByMonth: Int, dueByDay: Int) {
+object CalculatorAmountDue {
+  implicit val format = Json.format[CalculatorAmountDue]
+  def apply(amt: BigDecimal,
+            dueByYear: Int,
+            dueByMonth: String,
+            dueByDay: Int): CalculatorAmountDue = new CalculatorAmountDue(amt, dueByYear, dueByMonth, dueByDay)
 
+  def unapply(arg: CalculatorAmountDue): Option[(BigDecimal, Int, String, Int)] = Some((arg.amt, arg.dueByYear, arg.dueByMonth, arg.dueByDay))
+}
+
+class CalculatorAmountDue(val amt: BigDecimal,
+                               val dueByYear: Int,
+                               val dueByMonth: String,
+                               val dueByDay: Int) extends Debit(originCode = None,
+                                                            amount = Some(amt),
+                                                            dueDate = LocalDate.of(dueByYear, DateTimeFormatter.ofPattern("MMMM").parse(dueByMonth).get(ChronoField.MONTH_OF_YEAR), dueByDay),
+                                                            interest = None,
+                                                            taxYearEnd = None) {
   def this(amount: BigDecimal, dueBy: LocalDate) {
     this(amount, dueBy.getYear, dueBy.getMonthValue, dueBy.getDayOfMonth)
   }
 
   @JsonIgnore
-  def getDueBy(): LocalDate = {
-    LocalDate.of(dueByYear, dueByMonth, dueByDay)
-  }
+  def getDueBy = dueDate
 }
