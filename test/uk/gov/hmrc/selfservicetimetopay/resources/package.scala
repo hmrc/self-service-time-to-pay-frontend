@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay
 
 import java.time.LocalDate
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
@@ -30,61 +30,58 @@ import uk.gov.hmrc.selfservicetimetopay.util.SessionProvider
 import scala.io.Source
 
 package object resources {
-  val getBanksResponseJSON = Json.parse(
+  val getBanksResponseJSON: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetBanksResponse.json")
       .mkString)
-  val createPaymentPlanResponseJSON = Json.parse(
+  val createPaymentPlanResponseJSON: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetDirectDebitInstructionPaymentPlanResponse.json")
       .mkString)
-  val submitArrangementResponse = Json.fromJson[TTPArrangement](Json.parse(
+  val submitArrangementResponse: TTPArrangement = Json.fromJson[TTPArrangement](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetArrangementResponse.json")
       .mkString)).get
-  val submitDebitsRequest = Json.fromJson[CalculatorInput](Json.parse(
+  val submitDebitsRequest: CalculatorInput = Json.fromJson[CalculatorInput](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesRequest.json")
       .mkString)).get
-  val submitLiabilitiesResponseJSON = Json.parse(
+  val submitLiabilitiesResponseJSON: JsValue= Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesResponse.json")
       .mkString)
-  val getBankResponseJSON = Json.parse(
+  val getBankResponseJSON: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetBank.json")
       .mkString)
-  val createPaymentRequestJSON = Json.parse(
+  val createPaymentRequestJSON: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CreatePaymentPlanRequest.json")
       .mkString)
-  val checkEligibilityTrueRequest = Json.fromJson[SelfAssessment](Json.parse(
+  val checkEligibilityTrueRequest: SelfAssessment = Json.fromJson[SelfAssessment](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueRequest.json")
       .mkString)).get
-  val checkEligibilityTrueResponse = Json.parse(
+  val checkEligibilityTrueResponse: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueResponse.json")
       .mkString)
-  val checkEligibilityFalseRequest = Json.fromJson[SelfAssessment](Json.parse(
+  val checkEligibilityFalseRequest: SelfAssessment = Json.fromJson[SelfAssessment](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseRequest.json")
       .mkString)).get
-  val checkEligibilityFalseResponse = Json.parse(
+  val checkEligibilityFalseResponse: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
       .mkString)
 
   val ttpSubmission: TTPSubmission = TTPSubmission(Some(CalculatorPaymentSchedule(
-        Some(LocalDate.parse("2001-01-01")),
-        Some(LocalDate.parse("2001-01-01")),
-        BigDecimal(1024.12),
-        BigDecimal(20123.76),
-        BigDecimal(1024.12),
-        BigDecimal(102.67),
-        BigDecimal(20123.76),
-        Seq(CalculatorPaymentScheduleInstalment(
-          LocalDate.now(),
-          BigDecimal(1234.22)),
-          CalculatorPaymentScheduleInstalment(
+          Some(LocalDate.parse("2001-01-01")),
+          Some(LocalDate.parse("2001-01-01")),
+          BigDecimal(1024.12),
+          BigDecimal(20123.76),
+          BigDecimal(1024.12),
+          BigDecimal(102.67),
+          BigDecimal(20123.76),
+          Seq(CalculatorPaymentScheduleInstalment(
             LocalDate.now(),
-            BigDecimal(1234.22))
-        )
-      )),
-    Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))),
-    None,
-    Some(TaxPayer("Bob", List(), SelfAssessment("utr", None, List(), None))),
+            BigDecimal(1234.22)),
+            CalculatorPaymentScheduleInstalment(
+              LocalDate.now(),
+              BigDecimal(1234.22))
+          )
+        )), Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))), None, Some(TaxPayer("Bob", List(), SelfAssessment("utr", None, List(), None))),
     Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
-    Some(EligibilityExistingTTP(Some(false))))
+    Some(EligibilityExistingTTP(Some(false))), paymentToday = Some(CalculatorPaymentToday(Some(BigDecimal.valueOf(300)))))
 
   val directDebitInstructionPaymentPlan : DirectDebitInstructionPaymentPlan = {
     DirectDebitInstructionPaymentPlan(LocalDate.now().toString, "1234567890", List(
@@ -125,7 +122,7 @@ package object resources {
       BigDecimal(162.11),
       LocalDate.now(),
       BigDecimal(282.11)),
-    true)
+    printFlag = true)
 
   val ttpArrangement: TTPArrangement = TTPArrangement(
     "paymentPlanReference",

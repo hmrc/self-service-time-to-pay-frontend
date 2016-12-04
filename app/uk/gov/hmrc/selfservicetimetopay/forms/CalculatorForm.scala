@@ -36,6 +36,10 @@ object CalculatorForm {
     "dueByDay" -> number(min = dueByDayMin, max = dueByDayMax)
   )(CalculatorAmountDue.apply)(CalculatorAmountDue.unapply))
 
+  case class RemoveItem(index: Int)
+
+  val removeAmountDueForm = Form(single("index" -> number))
+
   val paymentTodayForm = Form(mapping(
     "amount" -> optional(bigDecimal
       .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", _.compare(BigDecimal.valueOf(0)) >= 0))

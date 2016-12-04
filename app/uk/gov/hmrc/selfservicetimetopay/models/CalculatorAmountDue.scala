@@ -28,8 +28,7 @@ case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Int, dueByMonth: I
     this(amount, dueBy.getYear, dueBy.getMonthValue, dueBy.getDayOfMonth)
   }
 
-  @JsonIgnore
-  def getDueBy(): LocalDate = {
+  def getDueBy: LocalDate = {
     LocalDate.of(dueByYear, dueByMonth, dueByDay)
   }
 }

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 
+import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
@@ -31,25 +32,30 @@ class AmountsDueController extends TimeToPayController {
 
   def getAmountsDue: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpSubmission) => ttpSubmission.manualDebits
-      case None => IndexedSeq.empty
-    }.map(data => Ok(amounts_due_form.render(CalculatorAmountsDue(data), CalculatorForm.amountDueForm, request)))
+      case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _)) =>
+        Ok(amounts_due_form.render(CalculatorAmountsDue(debits.get), CalculatorForm.amountDueForm, request))
+      case _ => Ok(amounts_due_form.render(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm, request))
+    }
   }
 
   def submitAddAmountDue: Action[AnyContent] = Action.async { implicit request =>
     CalculatorForm.amountDueForm.bindFromRequest().fold(
       formWithErrors =>
         sessionCache.get.map {
-          case Some(ttpSubmission) => ttpSubmission.manualDebits
-          case None => IndexedSeq.empty
-        }.map(data =>  BadRequest(amounts_due_form.render(CalculatorAmountsDue(data), formWithErrors, request))),
+          case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _))=>
+            BadRequest(amounts_due_form.render(CalculatorAmountsDue(debits.get), formWithErrors, request))
+          case _ => BadRequest(amounts_due_form.render(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors, request))
+        },
 
       validFormData => {
         sessionCache.get.map {
-          case Some(ttpSubmission) =>
-            ttpSubmission.copy(manualDebits = ttpSubmission.manualDebits :+ validFormData)
-          case None => TTPSubmission(manualDebits = IndexedSeq(validFormData))
+          case Some(ttpSubmission @ TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _)) =>
+            ttpSubmission.copy(manualDebits = Some(debits.get :+ validFormData))
+          case Some(ttpSubmission @ TTPSubmission(_, _, _, _, Some(_),Some(_), _, _)) =>
+            ttpSubmission.copy(manualDebits = Some(IndexedSeq(validFormData)))
+          case _ => TTPSubmission(manualDebits = Some(IndexedSeq(validFormData)))
         }.map { ttpData =>
+          Logger.info(ttpData.toString)
           sessionCache.put(ttpData)
         }.map { _ =>
           Redirect(routes.AmountsDueController.getAmountsDue())
@@ -59,22 +65,23 @@ class AmountsDueController extends TimeToPayController {
   }
 
   def submitRemoveAmountDue: Action[AnyContent] = Action.async { implicit request =>
-    val itemToRemove = CalculatorForm.amountDueForm.bindFromRequest()
+    val index = CalculatorForm.removeAmountDueForm.bindFromRequest()
     sessionCache.get.map {
-      case Some(ttpSubmission) => ttpSubmission.copy(manualDebits = ttpSubmission.manualDebits.filter(_!=itemToRemove.value.get))
-      case None => TTPSubmission(manualDebits = IndexedSeq.empty)
-    }.map { ttpData =>sessionCache.put(ttpData)
-    }.map { _ => Redirect(routes.AmountsDueController.getAmountsDue())}
+      case Some(ttpSubmission @ TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _)) =>
+        ttpSubmission.copy(manualDebits = Some(debits.get.patch(index.value.get, Nil, 1)))
+      case _ => TTPSubmission(manualDebits = Some(IndexedSeq.empty))
+    }.map { ttpData => sessionCache.put(ttpData)}
+      .map { _ => Redirect(routes.AmountsDueController.getAmountsDue())}
   }
 
   def submitAmountsDue: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpSubmission) => ttpSubmission.manualDebits
-      case None => IndexedSeq.empty
+      case Some(ttpSubmission) => Some(ttpSubmission.manualDebits)
+      case _ => Some(IndexedSeq.empty)
     }.map { ttpData =>
       if(ttpData.isEmpty) BadRequest(amounts_due_form.render(CalculatorAmountsDue(IndexedSeq.empty),
         CalculatorForm.amountDueForm.withGlobalError("You need to add at least one amount due"), request))
-      else Redirect(uk.gov.hmrc.selfservicetimetopay.controllers.routes.CalculatorController.getPaymentToday())
+      else Redirect(routes.PaymentTodayController.getPaymentToday())
     }
   }
 }

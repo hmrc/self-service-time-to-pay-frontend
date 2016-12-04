@@ -7,6 +7,7 @@ Time To Pay Payment Schedule Display Page
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
+@import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calcRoutes}
 @(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[CalculatorPaymentToday], monthOptions:Seq[Int])(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
 @import selfservicetimetopay.helpers.forms.{form, formErrors, button, fieldErrors, inlinenumberinput, numberinput, inlinecurrencyinput, submit}
@@ -140,5 +141,5 @@ Time To Pay Payment Schedule Display Page
             <div class="grid-layout__column grid-layout__column--1-3 text--center align--middle"><p><strong>@Messages("ssttp.calculator.results.call-us.number")</strong></p></div>
         </div>
     </section>
-    <p><a class="back-link" href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a></p>
+    <p><a class="back-link" href="@calcRoutes.PaymentTodayController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a></p>
 }

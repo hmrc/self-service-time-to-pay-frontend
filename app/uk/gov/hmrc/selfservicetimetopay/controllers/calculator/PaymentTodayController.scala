@@ -16,27 +16,38 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 
-
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
-import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
+import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
+import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.html.selfservicetimetopay.calculator._
+
+import scala.concurrent.Future
 
 class PaymentTodayController extends TimeToPayController {
 
-//  def getPaymentToday: Action[AnyContent] = Action.async { implicit request =>
-//    Future.successful(Ok(views.html.selfservicetimetopay.calculator.payment_today_form.render(CalculatorForm.paymentTodayForm, request)))
-//  }
-//
-//  def submitPaymentToday: Action[AnyContent] = Action.async { implicit request =>
-//    val response = CalculatorForm.paymentTodayForm.bindFromRequest().fold(
-//      formWithErrors => {
-//        BadRequest(views.html.selfservicetimetopay.calculator.payment_today_form(formWithErrors))
-//      },
-//      validFormData => {
-//
-//        //call taxpayer service
-//        Redirect(routes.CalculateInstallmentsController.getCalculateInstalments())
-//      }
-//    )
-//    Future.successful(response)
-//  }
+  def getPaymentToday: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_), Some(paymentToday))) =>
+        val form = CalculatorForm.createPaymentTodayForm(debits.get.map(_.amount).sum)
+        Ok(payment_today_form.render(form.fill(paymentToday), request))
+      case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_),_)) =>
+        val form = CalculatorForm.createPaymentTodayForm(debits.get.map(_.amount).sum)
+        Ok(payment_today_form.render(form, request))
+      case _ => Ok(payment_today_form.render(CalculatorForm.paymentTodayForm, request))
+    }
+  }
+
+  def submitPaymentToday: Action[AnyContent] = Action.async { implicit request =>
+    // TODO: the form validation needs to be fixed!!!!
+    CalculatorForm.paymentTodayForm.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(payment_today_form(formWithErrors))),
+      validFormData => updateOrCreateInCache(
+        found => found.copy(paymentToday = Some(validFormData)),
+        () => TTPSubmission(paymentToday = Some(validFormData))).map(_ =>
+        Redirect(routes.CalculateInstalmentsController.getCalculateInstalments(Some("6")))
+    ))
+
+  }
 }

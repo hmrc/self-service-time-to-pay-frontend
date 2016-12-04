@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
 @(dataForm: Form[CalculatorPaymentToday])(implicit request: Request[_])
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, submit}
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calcRoutes}
 
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
@@ -11,7 +11,7 @@
   <header class="page-header text">
     <h1 class="h1-heading">@Messages("ssttp.calculator.form.payment_today.title")</h1>
   </header>
-  @form(routes.CalculatorController.submitPaymentToday(), 'class -> "group") {
+  @form(calcRoutes.PaymentTodayController.submitPaymentToday(), 'class -> "group") {
     @formErrorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm, Seq.empty)
       @currencyinput(dataForm("amount"),
         'label -> Messages("ssttp.calculator.form.payment_today.amount.question"),
@@ -20,5 +20,5 @@
       @submit(){@Messages("ssttp.calculator.form.continue")}
     </p>
   }
-  <p><a class="back-link" href="@uk.gov.hmrc.selfservicetimetopay.controllers.calculator.routes.AmountsDueController.getAmountsDue()">@Messages("ssttp.calculator.form.back")</a></p>
+  <p><a class="back-link" href="@calcRoutes.AmountsDueController.getAmountsDue()">@Messages("ssttp.calculator.form.back")</a></p>
 }
