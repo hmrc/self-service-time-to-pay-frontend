@@ -42,20 +42,6 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
     val serviceURL = "paymentSchedule"
   }
 
-  "CalculatorConnector" should {
-    "use the correct calculator URL" in {
-      realConnector.calculatorURL shouldBe "http://localhost:8888"
-    }
-
-    "use the correct service URL" in {
-      realConnector.serviceURL shouldBe "paymentschedule"
-    }
-
-    "use the correct HTTP" in {
-      realConnector.http shouldBe WSHttp
-    }
-  }
-
   "Calling submitLiabilities" should {
     "return a payment schedule" in {
       val jsonResponse = Json.fromJson[Option[Seq[CalculatorPaymentSchedule]]](submitLiabilitiesResponseJSON).get
@@ -63,7 +49,7 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
       when(testConnector.http.POST[CalculatorInput, Option[Seq[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = await(testConnector.submitLiabilities(submitDebitsRequest))
+      val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))
 
       result shouldBe defined
       result.get.size shouldBe 11
@@ -76,7 +62,7 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
       when(testConnector.http.POST[CalculatorInput, Option[Seq[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(None))
 
-      val result = await(testConnector.submitLiabilities(submitDebitsRequest))
+      val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))
 
       result shouldBe None
     }

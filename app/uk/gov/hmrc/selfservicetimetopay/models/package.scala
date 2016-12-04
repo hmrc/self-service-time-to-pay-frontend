@@ -55,15 +55,6 @@ package object modelsFormat {
   implicit val eligibilityTypeOfTaxFormatter: Format[EligibilityTypeOfTax] = Json.format[EligibilityTypeOfTax]
   implicit val eligibilityExistingTTPFormatter: Format[EligibilityExistingTTP] = Json.format[EligibilityExistingTTP]
 
-  //Calculator formatters
-  implicit val calculatorLiabilityFormatter: Format[CalculatorDebit] = Json.format[CalculatorDebit]
-  implicit val calculatorAmountDueFormatter: Format[CalculatorAmountDue] = Json.format[CalculatorAmountDue]
-  implicit val calculatorAmountsDueFormatter: Format[CalculatorAmountsDue] = Json.format[CalculatorAmountsDue]
-  implicit val calculatorDurationFormatter: Format[CalculatorDuration] = Json.format[CalculatorDuration]
-  implicit val calculatorPaymentScheduleInstalmentFormatter: Format[CalculatorPaymentScheduleInstalment] = Json.format[CalculatorPaymentScheduleInstalment]
-  implicit val calculatorPaymentScheduleFormatter: Format[CalculatorPaymentSchedule] = Json.format[CalculatorPaymentSchedule]
-  implicit val calculatorInputFormatter: Format[CalculatorInput] = Json.format[CalculatorInput]
-
   //Tax payer formatters
   implicit val addressFormatter: Format[Address] = Json.format[Address]
   implicit val interestFormatter: Format[Interest] = Json.format[Interest]
@@ -72,6 +63,13 @@ package object modelsFormat {
   implicit val returnsFormatter: Format[Return] = Json.format[Return]
   implicit val selfAssessmentFormatter: Format[SelfAssessment] = Json.format[SelfAssessment]
   implicit val taxPayerFormatter: Format[TaxPayer] = Json.format[TaxPayer]
+
+  //Calculator formatters
+  implicit val calculatorAmountsDueFormatter: Format[CalculatorAmountsDue] = Json.format[CalculatorAmountsDue]
+  implicit val calculatorDurationFormatter: Format[CalculatorDuration] = Json.format[CalculatorDuration]
+  implicit val calculatorPaymentScheduleInstalmentFormatter: Format[CalculatorPaymentScheduleInstalment] = Json.format[CalculatorPaymentScheduleInstalment]
+  implicit val calculatorPaymentScheduleFormatter: Format[CalculatorPaymentSchedule] = Json.format[CalculatorPaymentSchedule]
+  implicit val calculatorInputFormatter: Format[CalculatorInput] = Json.format[CalculatorInput]
 
   //Arrangement formatters
   implicit val arrangementDayOfMonthFormatter: Format[ArrangementDayOfMonth] = Json.format[ArrangementDayOfMonth]
@@ -91,6 +89,7 @@ package object modelsFormat {
 
   //Eligibility formatters
   implicit val eligibilityStatusFormatter: Format[EligibilityStatus] = Json.format[EligibilityStatus]
+  implicit val eligibilityRequestFormatter: Format[EligibilityRequest] = Json.format[EligibilityRequest]
 
   //Submission formatter
   implicit val submissionFormatter: Format[TTPSubmission] = Json.format[TTPSubmission]

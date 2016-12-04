@@ -42,18 +42,6 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
     val serviceURL = "eligibility"
   }
 
-  "EligibilityConnector" should {
-    "use the correct eligibility URL" in {
-      realConnector.eligibilityURL shouldBe "http://localhost:9856"
-    }
-    "use the correct service URL" in {
-      realConnector.serviceURL shouldBe "eligibility"
-    }
-    "use the correct HTTP" in {
-      realConnector.http shouldBe WSHttp
-    }
-  }
-
   "Calling checkEligibility" should {
     "return an eligible response" in {
       val jsonResponse = Json.fromJson[EligibilityStatus](checkEligibilityTrueResponse).get
@@ -74,6 +62,7 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       val result = await(testConnector.checkEligibility(checkEligibilityFalseRequest))
 
       result.eligible shouldBe false
+      result.reasons.contains("TotalDebtIsTooHigh") shouldBe true
     }
   }
 

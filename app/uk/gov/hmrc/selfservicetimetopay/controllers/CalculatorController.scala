@@ -23,6 +23,7 @@ import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.util.JacksonMapper
 import views.html.selfservicetimetopay.calculator._
+import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calcRoutes}
 
 import scala.concurrent.Future
 
@@ -64,10 +65,10 @@ class CalculatorController extends TimeToPayController {
 
       case (true, None, _, _, _) => Redirect(calculator.routes.AmountsDueController.getAmountsDue())
 
-      case (true, a:Some[CalculatorAmountsDue], None, _, _) => Redirect(routes.CalculatorController.getPaymentToday())
+      case (true, a:Some[CalculatorAmountsDue], None, _, _) => Redirect(calcRoutes.PaymentTodayController.getPaymentToday())
 
       case (true, a:Some[CalculatorAmountsDue], p:Some[CalculatorPaymentToday], _, _) =>
-        Redirect(routes.CalculatorController.getCalculateInstalments(None))
+        Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None))
 
       case theRest => Redirect(calculator.routes.AmountsDueController.getAmountsDue())
     }
@@ -99,7 +100,7 @@ class CalculatorController extends TimeToPayController {
         if (form.hasErrors) {
           Ok(payment_today_form.render(form, request))
         } else {
-          Redirect(routes.CalculatorController.getCalculateInstalments(None)).addingToSession(
+          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
             "CalculatorPaymentToday" -> JacksonMapper.writeValueAsString(form.get)
           )
         }
@@ -134,7 +135,7 @@ class CalculatorController extends TimeToPayController {
                       CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending)
                     )
                   } else {
-                    Redirect(routes.CalculatorController.getCalculateInstalments(None))
+                    Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None))
                       .addingToSession("CalculatorDuration" -> JacksonMapper.writeValueAsString(duration))
                   }
                 } catch {
@@ -163,7 +164,7 @@ class CalculatorController extends TimeToPayController {
                     "CalculatorPaymentSchedules" -> JacksonMapper.writeValueAsString(schedulesList)
                   ))
                 } yield result*/
-            Redirect(routes.CalculatorController.getCalculateInstalments(None)).addingToSession(
+            Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
               "CalculatorPaymentSchedules" -> "*"
             )
         }
@@ -190,7 +191,7 @@ class CalculatorController extends TimeToPayController {
             calculatorDurationForm, CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending, request))
         }
         else {
-          Redirect(routes.CalculatorController.getCalculateInstalments(None)).addingToSession(
+          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
             "CalculatorDuration" -> JacksonMapper.writeValueAsString(calculatorDurationForm.get)
           )
         }
@@ -215,7 +216,7 @@ class CalculatorController extends TimeToPayController {
             CalculatorForm.createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).fill(duration),
               calculatorPaymentTodayForm, instalmentOptionsAscending, request))
         } else {
-          Redirect(routes.CalculatorController.getCalculateInstalments(None)).addingToSession(
+          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
             "CalculatorPaymentToday" -> JacksonMapper.writeValueAsString(calculatorPaymentTodayForm.get)
           ).removingFromSession("CalculatorPaymentSchedules")
         }

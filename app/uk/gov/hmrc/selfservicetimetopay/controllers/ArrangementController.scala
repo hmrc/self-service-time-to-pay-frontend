@@ -18,14 +18,16 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
 
-import play.api.mvc.Result
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors._
+import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import views.html.selfservicetimetopay.arrangement.application_complete
+import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
+import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -37,13 +39,38 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   val paymentFrequency = "Monthly"
   val paymentCurrency = "GBP"
 
+  def getInstalmentSummary = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(submission@TTPSubmission(Some(schedule), _, _, _, _, _, _, _)) =>
+        Ok(showInstalmentSummary(schedule, ArrangementForm.dayOfMonthForm, request))
+      case _ => throw new RuntimeException("No data found")
+    }
+  }
+
+  private val showInstalmentSummary = instalment_plan_summary.render _
+
+//  def submitDayOfMonth = Action.async { implicit request =>
+//    Future(
+//      ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
+//        formWithErrors => BadRequest(routes.ArrangementController.getInstalmentSummary()),
+//        _ => Redirect(routes.ArrangementController.getInstalmentSummary()))
+//    )
+//  }
+
+  def submitInstalmentSchedule = Action.async { implicit request =>
+    Future(ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
+      formWithErrors => BadRequest(showInstalmentSummary(generatePaymentSchedules(BigDecimal.exact("5000"), None).head, formWithErrors, request)),
+      _ => Redirect(routes.DirectDebitController.getDirectDebit()))
+    )
+  }
+
   def submit() = Action.async { implicit request =>
     sessionCache.get.flatMap {
       _.fold(redirectToStart)(arrangementSetUp)
     }
   }
 
-  def applicationComplete() = Action.async { implicit request =>
+  def applicationComplete(): Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap {
       _.fold(redirectToStart)(submission => {
         sessionCache.remove()
@@ -62,7 +89,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     val utr = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present")).selfAssessment.utr
 
     val result = for {
-      ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
+      ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr.get))
       ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
     } yield ttp
 
@@ -78,7 +105,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       taxPayer <- submission.taxPayer
     } yield {
       val utr = taxPayer.selfAssessment.utr
-      val knownFact = List(KnownFact(cesa, utr))
+      val knownFact = List(KnownFact(cesa, utr.get))
       val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
         accountNumber = Some(bankDetails.accountNumber.toString),
         creationDate = schedule.startDate,
@@ -87,7 +114,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
       val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
       val pp = PaymentPlan("Time to Pay",
-        utr,
+        utr.get,
         cesa,
         paymentCurrency,
         schedule.initialPayment,

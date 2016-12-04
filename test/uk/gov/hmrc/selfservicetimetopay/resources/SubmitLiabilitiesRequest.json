@@ -3,15 +3,20 @@
     {
       "originCode": "POA2",
       "amount": 250.52,
-      "interestAccrued": 42.32,
-      "interestCalculationDate": "2016-06-01",
+      "interest": {
+        "amountAccrued": 42.32,
+        "calculationDate": "2016-06-01"
+      },
       "dueDate": "2016-01-31"
     },
     {
       "originCode": "POA1",
       "amount": 134.07,
-      "interestAccrued": 10.50,
-      "interestCalculationDate": "2016-02-01"
+      "interest": {
+        "amountAccrued": 10.50,
+        "calculationDate": "2016-02-01"
+      },
+      "dueDate": "2016-01-31"
     }
   ],
   "initialPayment": 50,

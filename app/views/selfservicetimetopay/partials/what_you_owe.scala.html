@@ -16,7 +16,7 @@
                 <p><span class="font-xsmall">@Messages("ssttp.common.charge-code.%s".format(debit.originCode))</span></p>
             </div>
             <div class="grid-layout__column grid-layout__column--1-4 align--middle">
-                <p class="font-small">@Messages("ssttp.common.currency.symbol") @debit.amount.get.toString()</p>
+                <p class="font-small">@Messages("ssttp.common.currency.symbol") @debit.amount.toString()</p>
             </div>
         </div>
     }

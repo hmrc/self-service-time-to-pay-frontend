@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
+package uk.gov.hmrc.selfservicetimetopay.models
 
-import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
+import java.time.LocalDate
 
-class CalculateInstallmentsController extends TimeToPayController {
-
-//  def getCalculateInstalments(monthsOption:Option[String]): Action[AnyContent] = Action.async { implicit request =>
-//
-//  }
-//
-//  def submitCalculateInstalments: Action[AnyContent] = Action.async { implicit request =>
-//
-//  }
-
-}
+case class EligibilityRequest(dateOfEligibilityCheck: LocalDate, taxPayer: Option[TaxPayer])

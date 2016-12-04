@@ -23,6 +23,7 @@
       },
       "debits": [
         {
+          "amount": 100.0,
           "originCode": "IN2",
           "dueDate": "2004-07-31"
         }
