@@ -37,7 +37,12 @@ case class CommunicationPreferences(welshLanguageIndicator: Boolean,
                                      largePrintIndicator: Boolean,
                                      brailleIndicator: Boolean)
 
-case class Debit(originCode: Option[String] = None, amount: BigDecimal, dueDate: LocalDate, interest: Option[Interest] = None, taxYearEnd: Option[LocalDate] = None) {
+case class Debit(originCode: Option[String] = None,
+                 amount: BigDecimal,
+                 dueDate: LocalDate,
+                 interest: Option[Interest] = None,
+                 taxYearEnd: Option[LocalDate] = None) {
+
   def dueByYear = dueDate.getYear
   def dueByMonth = dueDate.getMonthValue
   def dueByDay = dueDate.getDayOfMonth

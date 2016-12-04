@@ -96,7 +96,7 @@ trait TimeToPayController extends FrontendController with Actions {
   protected lazy val Action: ActionBuilder[Request] = CheckSessionAction andThen PlayAction
 
   protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)
-                                     (implicit hc: HeaderCarrier): Future[CacheMap] = {
+                                     (implicit hc: HeaderCarrier) = {
     sessionCache.get.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")

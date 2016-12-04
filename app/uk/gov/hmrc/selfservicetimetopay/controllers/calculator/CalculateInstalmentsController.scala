@@ -41,7 +41,7 @@ class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
         eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), ttpData.taxPayer)).map {
           case EligibilityStatus(true, _) =>
             // TODO - wire up the future, don't return until the calculation is complete
-            calculatorConnector.calculatePaymentSchedule(CalculatorInput(ttpData.manualDebits))
+            calculatorConnector.calculatePaymentSchedule(CalculatorInput(ttpData.manualDebits.get))
             Ok
           case _ => Redirect("Route to ineligible page")
         }
@@ -49,29 +49,29 @@ class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
     }
   }
 
-  def getCalculateInstalments(monthsOption:Option[String]): Action[AnyContent] = Action.async { implicit request =>
+  def getCalculateInstalments(monthsOption: Option[String]): Action[AnyContent] = Action.async { implicit request =>
     // create fake schedule
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_), paymentToday @ Some(_))) =>
+      case Some(TTPSubmission(_, _, _, _, _, _, debits@Some(_), paymentToday@Some(_))) =>
         // TODO replace the below with a call to the orchestration layer (self-service-time-pay service)
         val total = debits.get.map(_.amount).sum
         val form = CalculatorForm.createPaymentTodayForm(total)
         val instalments = Seq(
-          CalculatorPaymentScheduleInstalment(LocalDate.of(2017,3,1), 350),
-          CalculatorPaymentScheduleInstalment(LocalDate.of(2017,4,1), 350),
-          CalculatorPaymentScheduleInstalment(LocalDate.of(2017,5,1), 350),
-          CalculatorPaymentScheduleInstalment(LocalDate.of(2017,6,1), 350),
-          CalculatorPaymentScheduleInstalment(LocalDate.of(2017,7,1), 350),
-          CalculatorPaymentScheduleInstalment(LocalDate.of(2017,8,1), 350))
-        val schedule = CalculatorPaymentSchedule(startDate = Some(LocalDate.of(2017,2,1)), endDate = Some(LocalDate.of(2017,12,1)),
+          CalculatorPaymentScheduleInstalment(LocalDate.of(2017, 3, 1), 350),
+          CalculatorPaymentScheduleInstalment(LocalDate.of(2017, 4, 1), 350),
+          CalculatorPaymentScheduleInstalment(LocalDate.of(2017, 5, 1), 350),
+          CalculatorPaymentScheduleInstalment(LocalDate.of(2017, 6, 1), 350),
+          CalculatorPaymentScheduleInstalment(LocalDate.of(2017, 7, 1), 350),
+          CalculatorPaymentScheduleInstalment(LocalDate.of(2017, 8, 1), 350))
+        val schedule = CalculatorPaymentSchedule(startDate = Some(LocalDate.of(2017, 2, 1)), endDate = Some(LocalDate.of(2017, 12, 1)),
           initialPayment = paymentToday.get.amount.get,
           amountToPay = total,
           instalmentBalance = total - paymentToday.get.amount.get,
-          totalInterestCharged = total*0.0275,
-          totalPayable = total+total*0.0275,
+          totalInterestCharged = total * 0.0275,
+          totalPayable = total + total * 0.0275,
           instalments = instalments)
 
-        val instalmentOptionsAscending = Seq(2,3,4,5,6,7,8,9,10,11)
+        val instalmentOptionsAscending = Seq(2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
 
         Ok(calculate_instalments_form(schedule, CalculatorForm.durationForm, form.fill(paymentToday.get), instalmentOptionsAscending))
       // TODO Redirect to approrpiate page - i.e. start of service
@@ -79,3 +79,4 @@ class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
     }
 
   }
+}
