@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay
 
 import java.time.LocalDate
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
@@ -30,37 +30,37 @@ import uk.gov.hmrc.selfservicetimetopay.util.SessionProvider
 import scala.io.Source
 
 package object resources {
-  val getBanksResponseJSON = Json.parse(
+  val getBanksResponseJSON: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetBanksResponse.json")
       .mkString)
-  val createPaymentPlanResponseJSON = Json.parse(
+  val createPaymentPlanResponseJSON: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetDirectDebitInstructionPaymentPlanResponse.json")
       .mkString)
-  val submitArrangementResponse = Json.fromJson[TTPArrangement](Json.parse(
+  val submitArrangementResponse: TTPArrangement = Json.fromJson[TTPArrangement](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetArrangementResponse.json")
       .mkString)).get
-  val submitDebitsRequest = Json.fromJson[CalculatorInput](Json.parse(
+  val submitDebitsRequest: CalculatorInput = Json.fromJson[CalculatorInput](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesRequest.json")
       .mkString)).get
-  val submitLiabilitiesResponseJSON = Json.parse(
+  val submitLiabilitiesResponseJSON: JsValue= Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesResponse.json")
       .mkString)
-  val getBankResponseJSON = Json.parse(
+  val getBankResponseJSON: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetBank.json")
       .mkString)
-  val createPaymentRequestJSON = Json.parse(
+  val createPaymentRequestJSON: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CreatePaymentPlanRequest.json")
       .mkString)
   val checkEligibilityTrueRequest = Json.fromJson[EligibilityRequest](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueRequest.json")
       .mkString)).get
-  val checkEligibilityTrueResponse = Json.parse(
+  val checkEligibilityTrueResponse: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueResponse.json")
       .mkString)
   val checkEligibilityFalseRequest = Json.fromJson[EligibilityRequest](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseRequest.json")
       .mkString)).get
-  val checkEligibilityFalseResponse = Json.parse(
+  val checkEligibilityFalseResponse: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
       .mkString)
 
@@ -85,7 +85,7 @@ package object resources {
     None,//DirectDebitBank
     Some(taxPayer),
     Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
-    Some(EligibilityExistingTTP(Some(false))))
+    Some(EligibilityExistingTTP(Some(false))), paymentToday = Some(CalculatorPaymentToday(Some(BigDecimal.valueOf(300)))))
 
   val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
   val ttpSubmissionNLI: TTPSubmission = TTPSubmission(manualDebits = Seq(calculatorAmountDue))
@@ -135,7 +135,7 @@ package object resources {
       BigDecimal(162.11),
       LocalDate.now(),
       BigDecimal(282.11)),
-    true)
+    printFlag = true)
 
   val ttpArrangement: TTPArrangement = TTPArrangement(
     "paymentPlanReference",

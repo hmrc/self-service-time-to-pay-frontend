@@ -17,8 +17,8 @@
 package uk.gov.hmrc.selfservicetimetopay.config
 
 import play.api.Logger
-import play.api.mvc.{Action => PlayAction}
-import play.api.mvc.Controller
+import play.api.mvc.{ActionBuilder, Controller, Request, Action => PlayAction}
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
@@ -35,6 +35,8 @@ import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
 import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstalmentsController, PaymentTodayController}
 import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+
+import scala.concurrent.Future
 
 object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName with RunMode with HttpAuditing {
   val auditConnector = FrontendAuditConnector
@@ -91,9 +93,10 @@ trait TimeToPayController extends FrontendController with Actions {
   override lazy val authConnector: AuthConnector = FrontendAuthConnector
   lazy val sessionCache: KeystoreConnector = SessionCacheConnector
 
-  protected lazy val Action = CheckSessionAction andThen PlayAction
+  protected lazy val Action: ActionBuilder[Request] = CheckSessionAction andThen PlayAction
 
-  protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier) = {
+  protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)
+                                     (implicit hc: HeaderCarrier): Future[CacheMap] = {
     sessionCache.get.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")

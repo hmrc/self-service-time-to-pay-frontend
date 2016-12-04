@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calcRoutes}
@@ -36,14 +35,9 @@ class EligibilityController extends TimeToPayController {
 
   def getTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpSubmission) =>
-        ttpSubmission.eligibilityTypeOfTax match {
-          case Some(e) =>
-            Logger.debug("type of tax in cache")
-            Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm.fill(e), request))
-          case None => Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request))
-        }
-      case None => Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request))
+      case Some(TTPSubmission(_, _, _, _, typeOfTax @ Some(_), _, _, _))=>
+            Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), request))
+      case _ => Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request))
     }
   }
 
@@ -64,13 +58,11 @@ class EligibilityController extends TimeToPayController {
 
   def getExistingTtp: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpSubmission) =>
-        ttpSubmission.eligibilityExistingTtp match {
-          case Some(e) => Ok(existing_ttp.render(EligibilityForm.existingTtpForm.fill(e), request))
-          case None => Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request))
-        }
-      case None => Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request))
+      case Some(TTPSubmission(_, _, _, _, _, existingTtp @ Some(_), _, _))=>
+        Ok(existing_ttp.render(EligibilityForm.existingTtpForm.fill(existingTtp.get), request))
+      case _ => Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request))
     }
+
   }
 
   def submitExistingTtp: Action[AnyContent] = Action.async { implicit request =>

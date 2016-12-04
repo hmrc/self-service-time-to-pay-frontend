@@ -25,10 +25,7 @@
                 <div class="grid-layout grid-layout--no-gutter divider--bottom">
                     <div class="grid-layout__column grid-layout__column--1-3"><p>@amountDue.dueDate.format(formatter)</p></div>
                     <div class="grid-layout__column grid-layout__column--2-3 text--right">
-                        <input type="hidden" name="dueByYear" value="@amountDue.dueByYear" />
-                        <input type="hidden" name="dueByMonth" value="@amountDue.dueByMonth" />
-                        <input type="hidden" name="dueByDay" value="@amountDue.dueByDay" />
-                        <input type="hidden" name="amount" value="@amountDue.amount" />
+                        <input type="hidden" name="index" value="@index" />
                         <p>@Messages("ssttp.common.currency.symbol")@amountDue.amount
                             <span class="gutter-left">@button('type -> "submit", '_modifierClass -> "flush--top button--link") {
                                 @Messages("ssttp.calculator.form.amounts_due.remove")
