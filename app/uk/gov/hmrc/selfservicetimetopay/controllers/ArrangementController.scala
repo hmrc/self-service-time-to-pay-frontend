@@ -41,7 +41,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def getInstalmentSummary = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(submission@TTPSubmission(Some(schedule), _, _, _, _, _, _)) =>
+      case Some(submission@TTPSubmission(Some(schedule), _, _, _, _, _, _, _)) =>
         Ok(showInstalmentSummary(schedule, ArrangementForm.dayOfMonthForm, request))
       case _ => throw new RuntimeException("No data found")
     }
@@ -89,7 +89,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     val utr = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present")).selfAssessment.utr
 
     val result = for {
-      ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
+      ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr.get))
       ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
     } yield ttp
 
