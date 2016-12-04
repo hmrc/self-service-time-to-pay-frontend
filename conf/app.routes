@@ -28,6 +28,8 @@ POST   /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopa
 POST   /calculator/instalments/payment-today    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsPaymentToday()
 
 # Arrangement
+GET    /arrangement/instalment-summary          @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummary()
+POST   /arrangement/instalment-summary          @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submitInstalmentSchedule()
 GET    /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
 POST   /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
 GET    /arrangement/direct-debit-error          @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitError()
