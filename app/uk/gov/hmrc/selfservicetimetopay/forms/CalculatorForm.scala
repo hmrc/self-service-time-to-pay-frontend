@@ -64,7 +64,7 @@ object CalculatorForm {
   )
   ((amount:Option[BigDecimal], date:(Option[Int], Option[Int], Option[Int])) =>
     CalculatorAmountDue(amount.get, date._1.get, date._2.get, date._3.get))
-  ((amountDue:CalculatorAmountDue) => Option((Option(amountDue.amount),
+  ((amountDue:Debit) => Option((Option(amountDue.amount),
     (Option(amountDue.dueByYear), Option(amountDue.dueByMonth), Option(amountDue.dueByDay)))))
   )
 
