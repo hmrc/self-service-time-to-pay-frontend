@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class EligibilityStatus(eligible: Boolean)
+case class EligibilityStatus(eligible: Boolean, reasons: Seq[String])

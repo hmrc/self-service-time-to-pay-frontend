@@ -51,39 +51,52 @@ package object resources {
   val createPaymentRequestJSON: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CreatePaymentPlanRequest.json")
       .mkString)
-  val checkEligibilityTrueRequest: SelfAssessment = Json.fromJson[SelfAssessment](Json.parse(
+  val checkEligibilityTrueRequest = Json.fromJson[EligibilityRequest](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueRequest.json")
       .mkString)).get
   val checkEligibilityTrueResponse: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueResponse.json")
       .mkString)
-  val checkEligibilityFalseRequest: SelfAssessment = Json.fromJson[SelfAssessment](Json.parse(
+  val checkEligibilityFalseRequest = Json.fromJson[EligibilityRequest](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseRequest.json")
       .mkString)).get
   val checkEligibilityFalseResponse: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
       .mkString)
 
-  val ttpSubmission: TTPSubmission = TTPSubmission(Some(CalculatorPaymentSchedule(
-          Some(LocalDate.parse("2001-01-01")),
-          Some(LocalDate.parse("2001-01-01")),
-          BigDecimal(1024.12),
-          BigDecimal(20123.76),
-          BigDecimal(1024.12),
-          BigDecimal(102.67),
-          BigDecimal(20123.76),
-          Seq(CalculatorPaymentScheduleInstalment(
-            LocalDate.now(),
-            BigDecimal(1234.22)),
-            CalculatorPaymentScheduleInstalment(
-              LocalDate.now(),
-              BigDecimal(1234.22))
-          )
-        )), Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))), None, Some(TaxPayer("Bob", List(), SelfAssessment("utr", None, List(), None))),
+  val debit: Debit = Debit(Some("originCode"), BigDecimal(121.2), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now()))
+  val selfAssessment: SelfAssessment = SelfAssessment(Some("utr"), None, List(debit), None)
+  val taxPayer: TaxPayer = TaxPayer("Bob", List(), selfAssessment)
+  val calculatorPaymentScheduleInstalment = CalculatorPaymentScheduleInstalment(LocalDate.now(), BigDecimal(1234.22))
+
+  val calculatorPaymentSchedule: CalculatorPaymentSchedule = CalculatorPaymentSchedule(
+    Some(LocalDate.parse("2001-01-01")),
+    Some(LocalDate.parse("2001-01-01")),
+    BigDecimal(1024.12),
+    BigDecimal(20123.76),
+    BigDecimal(1024.12),
+    BigDecimal(102.67),
+    BigDecimal(20123.76),
+    Seq(calculatorPaymentScheduleInstalment,
+      calculatorPaymentScheduleInstalment)
+  )
+  val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule),
+    Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))),
+    None,//DirectDebitBank
+    Some(taxPayer),
     Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
     Some(EligibilityExistingTTP(Some(false))), paymentToday = Some(CalculatorPaymentToday(Some(BigDecimal.valueOf(300)))))
 
-  val directDebitInstructionPaymentPlan : DirectDebitInstructionPaymentPlan = {
+  val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
+  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(manualDebits = Some(Seq(calculatorAmountDue)))
+
+  val calculatorAmountDueOver10k: Debit = Debit(amount = BigDecimal(11293.22), dueDate = LocalDate.now())
+  val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(manualDebits = Some(Seq(calculatorAmountDueOver10k)))
+
+  val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
+  val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq("TotalDebtIsTooHigh"))
+
+  val directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan = {
     DirectDebitInstructionPaymentPlan(LocalDate.now().toString, "1234567890", List(
       DirectDebitInstruction(
         None,
@@ -131,7 +144,7 @@ package object resources {
       "Bob",
       List(),
       SelfAssessment(
-        "utr",
+        Some("utr"),
         None,
         List(),
         None)),

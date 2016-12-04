@@ -47,18 +47,6 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
     val serviceURL = "direct-debit"
   }
 
-  "DirectDebitConnector" should {
-    "use the correct direct-debit URL" in {
-      realConnector.directDebitURL shouldBe "http://localhost:9854"
-    }
-    "use the correct service URL" in {
-      realConnector.serviceURL shouldBe "direct-debit"
-    }
-    "use the correct HTTP" in {
-      realConnector.http shouldBe WSHttp
-    }
-  }
-
   "Calling getBanksList" should {
     "return DirectDebitBank" in {
 

@@ -17,18 +17,5 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoField
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-
-case class CalculatorAmountDue(amount: BigDecimal, dueByYear: Int, dueByMonth: Int, dueByDay: Int) {
-
-  def this(amount: BigDecimal, dueBy: LocalDate) {
-    this(amount, dueBy.getYear, dueBy.getMonthValue, dueBy.getDayOfMonth)
-  }
-
-  def getDueBy: LocalDate = {
-    LocalDate.of(dueByYear, dueByMonth, dueByDay)
-  }
-}
+case class EligibilityRequest(dateOfEligibilityCheck: LocalDate, taxPayer: Option[TaxPayer])

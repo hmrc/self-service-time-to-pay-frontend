@@ -1,6 +1,6 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountsDue
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue
-@(amountsDue:CalculatorAmountsDue, dataForm: Form[CalculatorAmountDue])(implicit request: Request[_])
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@(amountsDue:CalculatorAmountsDue, dataForm: Form[Debit])(implicit request: Request[_])
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, dateinput, button, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calculatorRoutes}
@@ -23,7 +23,7 @@
         @amountsDue.amountsDue.zipWithIndex.map { case (amountDue, index) =>
             @form(calculatorRoutes.AmountsDueController.submitRemoveAmountDue()) {
                 <div class="grid-layout grid-layout--no-gutter divider--bottom">
-                    <div class="grid-layout__column grid-layout__column--1-3"><p>@amountDue.getDueBy.format(formatter)</p></div>
+                    <div class="grid-layout__column grid-layout__column--1-3"><p>@amountDue.dueDate.format(formatter)</p></div>
                     <div class="grid-layout__column grid-layout__column--2-3 text--right">
                         <input type="hidden" name="index" value="@index" />
                         <p>@Messages("ssttp.common.currency.symbol")@amountDue.amount

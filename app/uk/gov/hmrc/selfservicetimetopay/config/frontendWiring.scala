@@ -31,8 +31,8 @@ import uk.gov.hmrc.play.http.ws._
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpDelete, HttpGet, HttpPut}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
-import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstalmentsController, PaymentTodayController}
 import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstalmentsController, PaymentTodayController}
 import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
@@ -96,7 +96,7 @@ trait TimeToPayController extends FrontendController with Actions {
   protected lazy val Action: ActionBuilder[Request] = CheckSessionAction andThen PlayAction
 
   protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)
-                                     (implicit hc: HeaderCarrier): Future[CacheMap] = {
+                                     (implicit hc: HeaderCarrier) = {
     sessionCache.get.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")
@@ -114,6 +114,8 @@ trait ServiceRegistry extends ServicesConfig {
   lazy val sessionCacheConnector: KeystoreConnector = SessionCacheConnector
   lazy val authConnector: AuthConnector = FrontendAuthConnector
   lazy val arrangementConnector: ArrangementConnector = ArrangementConnector
+  lazy val eligibilityConnector: EligibilityConnector = EligibilityConnector
+  lazy val calculatorConnector: CalculatorConnector = CalculatorConnector
 }
 
 trait ControllerRegistry { registry: ServiceRegistry =>
@@ -124,9 +126,8 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[EligibilityController] -> new EligibilityController(),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
     classOf[AmountsDueController] -> new AmountsDueController(),
-    classOf[CalculateInstalmentsController] -> new CalculateInstalmentsController(),
-    classOf[PaymentTodayController] -> new PaymentTodayController(),
-    classOf[CalculateInstalmentsController] -> new CalculateInstalmentsController()
+    classOf[CalculateInstalmentsController] -> new CalculateInstalmentsController(eligibilityConnector, calculatorConnector),
+    classOf[PaymentTodayController] -> new PaymentTodayController()
   )
 
   def getController[A](controllerClass: Class[A]) : A = controllers(controllerClass).asInstanceOf[A]
