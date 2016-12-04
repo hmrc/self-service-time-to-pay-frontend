@@ -25,7 +25,7 @@ Input http://hmrc.github.io/assets-frontend/section-text-input.html
 @fieldValue = @{ field.value match { case Some(x) => x case None => "" case x => x }}
 @wrapperClass = @{
     var w = Seq("form-field") ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")
-    w = if (field.hasErrors) w :+ "form-field--error" else w
+    w = if (field.hasErrors && argsMap.get('_noLabel)) w :+ "form-field--error" else w
     w.mkString(" ")
 }
 @inputClass = @{
