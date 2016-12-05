@@ -88,10 +88,10 @@ package object resources {
     Some(EligibilityExistingTTP(Some(false))), paymentToday = Some(CalculatorPaymentToday(Some(BigDecimal.valueOf(300)))))
 
   val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
-  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(manualDebits = Some(Seq(calculatorAmountDue)))
+  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(manualDebits = Some(Seq(calculatorAmountDue)), paymentToday = Some(CalculatorPaymentToday(None)))
 
   val calculatorAmountDueOver10k: Debit = Debit(amount = BigDecimal(11293.22), dueDate = LocalDate.now())
-  val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(manualDebits = Some(Seq(calculatorAmountDueOver10k)))
+  val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(manualDebits = Some(Seq(calculatorAmountDueOver10k)), paymentToday = Some(CalculatorPaymentToday(None)))
 
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
   val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq("TotalDebtIsTooHigh"))

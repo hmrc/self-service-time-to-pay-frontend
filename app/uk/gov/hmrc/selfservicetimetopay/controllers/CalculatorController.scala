@@ -68,7 +68,7 @@ class CalculatorController extends TimeToPayController {
       case (true, a:Some[CalculatorAmountsDue], None, _, _) => Redirect(calcRoutes.PaymentTodayController.getPaymentToday())
 
       case (true, a:Some[CalculatorAmountsDue], p:Some[CalculatorPaymentToday], _, _) =>
-        Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None))
+        Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments())
 
       case theRest => Redirect(calculator.routes.AmountsDueController.getAmountsDue())
     }
@@ -100,7 +100,7 @@ class CalculatorController extends TimeToPayController {
         if (form.hasErrors) {
           Ok(payment_today_form.render(form, request))
         } else {
-          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
+          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments()).addingToSession(
             "CalculatorPaymentToday" -> JacksonMapper.writeValueAsString(form.get)
           )
         }
@@ -135,7 +135,7 @@ class CalculatorController extends TimeToPayController {
                       CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending)
                     )
                   } else {
-                    Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None))
+                    Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments())
                       .addingToSession("CalculatorDuration" -> JacksonMapper.writeValueAsString(duration))
                   }
                 } catch {
@@ -164,7 +164,7 @@ class CalculatorController extends TimeToPayController {
                     "CalculatorPaymentSchedules" -> JacksonMapper.writeValueAsString(schedulesList)
                   ))
                 } yield result*/
-            Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
+            Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments()).addingToSession(
               "CalculatorPaymentSchedules" -> "*"
             )
         }
@@ -191,7 +191,7 @@ class CalculatorController extends TimeToPayController {
             calculatorDurationForm, CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending, request))
         }
         else {
-          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
+          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments()).addingToSession(
             "CalculatorDuration" -> JacksonMapper.writeValueAsString(calculatorDurationForm.get)
           )
         }
@@ -216,7 +216,7 @@ class CalculatorController extends TimeToPayController {
             CalculatorForm.createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).fill(duration),
               calculatorPaymentTodayForm, instalmentOptionsAscending, request))
         } else {
-          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
+          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments()).addingToSession(
             "CalculatorPaymentToday" -> JacksonMapper.writeValueAsString(calculatorPaymentTodayForm.get)
           ).removingFromSession("CalculatorPaymentSchedules")
         }

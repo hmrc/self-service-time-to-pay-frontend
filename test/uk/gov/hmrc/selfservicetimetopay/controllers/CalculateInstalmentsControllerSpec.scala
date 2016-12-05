@@ -58,7 +58,10 @@ class CalculateInstalmentsControllerSpec extends UnitSpec with MockitoSugar with
       when(mockEligibilityConnector.checkEligibility(Matchers.any())(Matchers.any()))
         .thenReturn(Future.successful(eligibilityStatusOk))
 
-      val result = await(controller.submit().apply(FakeRequest().withSession(sessionProvider.createSessionId())))
+      when(mockCalculatorConnector.calculatePaymentSchedule(Matchers.any())(Matchers.any()))
+        .thenReturn(Future.successful(Some(Seq(calculatorPaymentSchedule))))
+
+      val result = await(controller.getCalculateInstalments().apply(FakeRequest().withSession(sessionProvider.createSessionId())))
 
       status(result) shouldBe Status.OK
       verify(mockEligibilityConnector, times(1)).checkEligibility(Matchers.any())(Matchers.any())
@@ -74,7 +77,7 @@ class CalculateInstalmentsControllerSpec extends UnitSpec with MockitoSugar with
       when(mockEligibilityConnector.checkEligibility(Matchers.any())(Matchers.any()))
         .thenReturn(Future.successful(eligibilityStatusDebtTooHigh))
 
-      val result = await(controller.submit().apply(FakeRequest().withSession(sessionProvider.createSessionId())))
+      val result = await(controller.getCalculateInstalments().apply(FakeRequest().withSession(sessionProvider.createSessionId())))
 
       status(result) shouldBe Status.SEE_OTHER
       verify(mockEligibilityConnector, times(1)).checkEligibility(Matchers.any())(Matchers.any())

@@ -46,7 +46,7 @@ class PaymentTodayController extends TimeToPayController {
       validFormData => updateOrCreateInCache(
         found => found.copy(paymentToday = Some(validFormData)),
         () => TTPSubmission(paymentToday = Some(validFormData))).map(_ =>
-        Redirect(routes.CalculateInstalmentsController.getCalculateInstalments(Some("6")))
+        Redirect(routes.CalculateInstalmentsController.getCalculateInstalments())
     ))
 
   }

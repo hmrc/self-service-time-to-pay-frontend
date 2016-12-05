@@ -79,13 +79,13 @@ object ArrangementConnector extends ArrangementConnector with ServicesConfig {
 }
 
 object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
-  val taxPayerURL: String = baseUrl("time-to-pay-eligibility")
-  val serviceURL = "time-to-pay-eligibility"
+  val taxPayerURL: String = baseUrl("taxpayer")
+  val serviceURL = "tax-payer"
   val http = WSHttp
 }
 object EligibilityConnector extends EligibilityConnector with ServicesConfig {
   val eligibilityURL: String = baseUrl("time-to-pay-eligibility")
-  val serviceURL = "eligibility"
+  val serviceURL = "time-to-pay-eligibility/eligibility"
   val http = WSHttp
 }
 
