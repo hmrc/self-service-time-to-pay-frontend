@@ -12,11 +12,14 @@
     @debits.map { debit =>
         <div class="subsection grid-layout divider--bottom font-xsmall">
             <div class="grid-layout__column grid-layout__column--3-4">
-                <span class="font-small">@debit.dueDate.format(formatter)</span>
-                <p><span class="font-xsmall">@Messages("ssttp.common.charge-code.%s".format(debit.originCode))</span></p>
+                <div><span class="font-small">@debit.dueDate.format(formatter)</span></div>
+                <small>@{debit.originCode match {
+                    case Some(code:String) => <span class="font-xsmall">{Messages("ssttp.common.charge-code.%s".format(code))}</span>
+                    case _ => {}
+                }}</small>
             </div>
             <div class="grid-layout__column grid-layout__column--1-4 align--middle">
-                <p class="font-small">@Messages("ssttp.common.currency.symbol") @debit.amount.toString()</p>
+                <p class="font-small">@Messages("ssttp.common.currency.symbol")@debit.amount.toString()</p>
             </div>
         </div>
     }

@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.http.{HeaderCarrier, HttpDelete, HttpGet, HttpPut}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
-import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstalmentsController, PaymentTodayController}
+import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstalmentsController, MisalignmentController, PaymentTodayController}
 import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
@@ -127,7 +127,8 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
     classOf[AmountsDueController] -> new AmountsDueController(),
     classOf[CalculateInstalmentsController] -> new CalculateInstalmentsController(eligibilityConnector, calculatorConnector),
-    classOf[PaymentTodayController] -> new PaymentTodayController()
+    classOf[PaymentTodayController] -> new PaymentTodayController(),
+    classOf[MisalignmentController] -> new MisalignmentController()
   )
 
   def getController[A](controllerClass: Class[A]) : A = controllers(controllerClass).asInstanceOf[A]
