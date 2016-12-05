@@ -51,7 +51,6 @@ package object modelsFormat {
     }
 
   //Front end formatters
-  implicit val calculatorPaymentTodayFormatter: Format[CalculatorPaymentToday] = Json.format[CalculatorPaymentToday]
   implicit val eligibilityTypeOfTaxFormatter: Format[EligibilityTypeOfTax] = Json.format[EligibilityTypeOfTax]
   implicit val eligibilityExistingTTPFormatter: Format[EligibilityExistingTTP] = Json.format[EligibilityExistingTTP]
 
@@ -62,7 +61,7 @@ package object modelsFormat {
   implicit val debitFormatter: Format[Debit] = Json.format[Debit]
   implicit val returnsFormatter: Format[Return] = Json.format[Return]
   implicit val selfAssessmentFormatter: Format[SelfAssessment] = Json.format[SelfAssessment]
-  implicit val taxPayerFormatter: Format[TaxPayer] = Json.format[TaxPayer]
+  implicit val taxPayerFormatter: Format[Taxpayer] = Json.format[Taxpayer]
 
   //Calculator formatters
   implicit val calculatorAmountsDueFormatter: Format[CalculatorAmountsDue] = Json.format[CalculatorAmountsDue]

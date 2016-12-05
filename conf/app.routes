@@ -23,7 +23,7 @@ POST   /calculator/amounts-due/remove           @uk.gov.hmrc.selfservicetimetopa
 POST   /calculator/amounts-due                  @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.AmountsDueController.submitAmountsDue()
 GET    /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.PaymentTodayController.getPaymentToday()
 POST   /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.PaymentTodayController.submitPaymentToday()
-GET    /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.CalculateInstalmentsController.getCalculateInstalments()
+GET    /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.CalculateInstalmentsController.getCalculateInstalments(months:Option[Int])
 POST   /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
 POST   /calculator/instalments/payment-today    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsPaymentToday()
 

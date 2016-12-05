@@ -79,7 +79,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
 
       account.sortCode shouldBe "123456"
       account.accountNumber shouldBe "12345678"
-      account.bankAddress shouldBe Some(Address("", "", "", "", "", ""))
+      account.bankAddress shouldBe Some(Address(addressLine1 = "", postCode = ""))
     }
   }
 

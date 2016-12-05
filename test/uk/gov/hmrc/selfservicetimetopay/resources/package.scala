@@ -65,8 +65,8 @@ package object resources {
       .mkString)
 
   val debit: Debit = Debit(Some("originCode"), BigDecimal(121.2), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now()))
-  val selfAssessment: SelfAssessment = SelfAssessment(Some("utr"), None, List(debit), None)
-  val taxPayer: TaxPayer = TaxPayer("Bob", List(), selfAssessment)
+  val selfAssessment: Option[SelfAssessment] = Some(SelfAssessment(Some("utr"), None, List(debit), None))
+  val taxPayer: Taxpayer = Taxpayer(Some("Bob"), List(), selfAssessment)
   val calculatorPaymentScheduleInstalment = CalculatorPaymentScheduleInstalment(LocalDate.now(), BigDecimal(1234.22))
 
   val calculatorPaymentSchedule: CalculatorPaymentSchedule = CalculatorPaymentSchedule(
@@ -85,13 +85,14 @@ package object resources {
     None,//DirectDebitBank
     Some(taxPayer),
     Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
-    Some(EligibilityExistingTTP(Some(false))), paymentToday = Some(CalculatorPaymentToday(Some(BigDecimal.valueOf(300)))))
+    Some(EligibilityExistingTTP(Some(false))),
+    CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)))
 
   val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
-  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(manualDebits = Some(Seq(calculatorAmountDue)), paymentToday = Some(CalculatorPaymentToday(None)))
+  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
 
   val calculatorAmountDueOver10k: Debit = Debit(amount = BigDecimal(11293.22), dueDate = LocalDate.now())
-  val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(manualDebits = Some(Seq(calculatorAmountDueOver10k)), paymentToday = Some(CalculatorPaymentToday(None)))
+  val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDueOver10k)))
 
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
   val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq("TotalDebtIsTooHigh"))
@@ -140,14 +141,14 @@ package object resources {
   val ttpArrangement: TTPArrangement = TTPArrangement(
     "paymentPlanReference",
     "directDebitReference",
-    TaxPayer(
-      "Bob",
+    Taxpayer(
+      Some("Bob"),
       List(),
-      SelfAssessment(
+      Some(SelfAssessment(
         Some("utr"),
         None,
         List(),
-        None)),
+        None))),
     CalculatorPaymentSchedule(
       Some(LocalDate.parse("2001-01-01")),
       Some(LocalDate.parse("2001-01-01")),

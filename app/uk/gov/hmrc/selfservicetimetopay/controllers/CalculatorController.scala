@@ -29,14 +29,14 @@ import scala.concurrent.Future
 
 class CalculatorController extends TimeToPayController {
 
-  private def getKeystoreData(implicit request:Request[AnyContent]) : (Boolean, Option[CalculatorAmountsDue], Option[CalculatorPaymentToday], Option[CalculatorDuration], Option[Seq[CalculatorPaymentSchedule]]) = {
+  private def getKeystoreData(implicit request:Request[AnyContent]) : (Boolean, Option[CalculatorAmountsDue], Option[BigDecimal], Option[CalculatorDuration], Option[Seq[CalculatorPaymentSchedule]]) = {
     val ssttpStart = request.session.get("SelfServiceTimeToPayStart").isDefined
     val amountsDue:Option[CalculatorAmountsDue] = request.session.get("CalculatorAmountsDue") match {
       case Some(json) => Option(JacksonMapper.readValue(json, classOf[CalculatorAmountsDue]))
       case None => None
     }
-    val paymentToday:Option[CalculatorPaymentToday] = request.session.get("CalculatorPaymentToday") match {
-      case Some(json) => Option(JacksonMapper.readValue(json, classOf[CalculatorPaymentToday]))
+    val paymentToday:Option[BigDecimal] = request.session.get("CalculatorPaymentToday") match {
+      case Some(json) => Option(JacksonMapper.readValue(json, classOf[BigDecimal]))
       case None => None
     }
     val duration:Option[CalculatorDuration] = request.session.get("CalculatorDuration") match {
@@ -45,7 +45,7 @@ class CalculatorController extends TimeToPayController {
     }
     val schedules:Option[Seq[CalculatorPaymentSchedule]] = request.session.get("CalculatorPaymentSchedules") match {
       case Some(json) => if(amountsDue.isDefined && paymentToday.isDefined) {
-        Some(generatePaymentSchedules(amountsDue.get.total, paymentToday.get.amount))
+        Some(generatePaymentSchedules(amountsDue.get.total, paymentToday))
       } else {
         None
       }
@@ -54,12 +54,12 @@ class CalculatorController extends TimeToPayController {
     (ssttpStart, amountsDue, paymentToday, duration, schedules)
   }
 
-  private def paymentScheduleMatches(paymentSchedule: CalculatorPaymentSchedule, amountsDue:CalculatorAmountsDue, paymentToday:CalculatorPaymentToday):Boolean = {
-    (paymentSchedule.amountToPay.compare(amountsDue.total) == 0) && (paymentSchedule.initialPayment.compare(paymentToday.amount.get) == 0)
+  private def paymentScheduleMatches(paymentSchedule: CalculatorPaymentSchedule, amountsDue:CalculatorAmountsDue, paymentToday:BigDecimal):Boolean = {
+    (paymentSchedule.amountToPay.compare(amountsDue.total) == 0) && (paymentSchedule.initialPayment.compare(paymentToday) == 0)
   }
 
   private def getRedirectionDestination(keystoreData:(Boolean, Option[CalculatorAmountsDue],
-    Option[CalculatorPaymentToday], Option[CalculatorDuration], Option[Seq[CalculatorPaymentSchedule]])): Result = {
+    Option[BigDecimal], Option[CalculatorDuration], Option[Seq[CalculatorPaymentSchedule]])): Result = {
     keystoreData match {
       case (false, _, _, _, _) => Redirect(routes.SelfServiceTimeToPayController.start())
 
@@ -67,8 +67,8 @@ class CalculatorController extends TimeToPayController {
 
       case (true, a:Some[CalculatorAmountsDue], None, _, _) => Redirect(calcRoutes.PaymentTodayController.getPaymentToday())
 
-      case (true, a:Some[CalculatorAmountsDue], p:Some[CalculatorPaymentToday], _, _) =>
-        Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments())
+      case (true, a:Some[CalculatorAmountsDue], p:Some[BigDecimal], _, _) =>
+        Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None))
 
       case theRest => Redirect(calculator.routes.AmountsDueController.getAmountsDue())
     }
@@ -78,9 +78,9 @@ class CalculatorController extends TimeToPayController {
 
     Future.successful(getKeystoreData match {
 
-      case (_, Some(amountsDue:CalculatorAmountsDue), paymentTodayOption: Option[CalculatorPaymentToday], _, _) =>
+      case (_, Some(amountsDue:CalculatorAmountsDue), paymentTodayOption: Option[BigDecimal], _, _) =>
         val form = paymentTodayOption match {
-          case Some(paymentToday:CalculatorPaymentToday) => CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday)
+          case Some(paymentToday:BigDecimal) => CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday)
           case None => CalculatorForm.createPaymentTodayForm(amountsDue.total)
         }
         Ok(payment_today_form.render(form, request))
@@ -100,7 +100,7 @@ class CalculatorController extends TimeToPayController {
         if (form.hasErrors) {
           Ok(payment_today_form.render(form, request))
         } else {
-          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments()).addingToSession(
+          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
             "CalculatorPaymentToday" -> JacksonMapper.writeValueAsString(form.get)
           )
         }
@@ -113,7 +113,7 @@ class CalculatorController extends TimeToPayController {
 
     Future.successful(getKeystoreData match {
 
-      case (_, Some(amountsDue: CalculatorAmountsDue), Some(paymentToday: CalculatorPaymentToday),
+      case (_, Some(amountsDue: CalculatorAmountsDue), Some(paymentToday: BigDecimal),
       durationOption: Option[CalculatorDuration], schedulesOption: Option[List[CalculatorPaymentSchedule]]) =>
         schedulesOption match {
 
@@ -135,7 +135,7 @@ class CalculatorController extends TimeToPayController {
                       CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending)
                     )
                   } else {
-                    Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments())
+                    Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None))
                       .addingToSession("CalculatorDuration" -> JacksonMapper.writeValueAsString(duration))
                   }
                 } catch {
@@ -164,7 +164,7 @@ class CalculatorController extends TimeToPayController {
                     "CalculatorPaymentSchedules" -> JacksonMapper.writeValueAsString(schedulesList)
                   ))
                 } yield result*/
-            Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments()).addingToSession(
+            Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
               "CalculatorPaymentSchedules" -> "*"
             )
         }
@@ -175,7 +175,7 @@ class CalculatorController extends TimeToPayController {
   def submitCalculateInstalments: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(getKeystoreData match {
 
-      case (_, Some(amountsDue:CalculatorAmountsDue), Some(paymentToday:CalculatorPaymentToday),
+      case (_, Some(amountsDue:CalculatorAmountsDue), Some(paymentToday:BigDecimal),
       durationOption:Option[CalculatorDuration], Some(schedules:List[CalculatorPaymentSchedule])) =>
         val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
         val calculatorDurationForm = CalculatorForm.createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).bindFromRequest()
@@ -191,7 +191,7 @@ class CalculatorController extends TimeToPayController {
             calculatorDurationForm, CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending, request))
         }
         else {
-          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments()).addingToSession(
+          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
             "CalculatorDuration" -> JacksonMapper.writeValueAsString(calculatorDurationForm.get)
           )
         }
@@ -216,7 +216,7 @@ class CalculatorController extends TimeToPayController {
             CalculatorForm.createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).fill(duration),
               calculatorPaymentTodayForm, instalmentOptionsAscending, request))
         } else {
-          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments()).addingToSession(
+          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
             "CalculatorPaymentToday" -> JacksonMapper.writeValueAsString(calculatorPaymentTodayForm.get)
           ).removingFromSession("CalculatorPaymentSchedules")
         }
