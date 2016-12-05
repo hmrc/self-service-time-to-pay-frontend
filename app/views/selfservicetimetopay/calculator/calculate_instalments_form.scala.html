@@ -14,8 +14,7 @@ Time To Pay Payment Schedule Display Page
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
-    bodyClasses = None,
-    sidebarLinks = Some(selfservicetimetopay.partials.sidebar())
+    bodyClasses = None
 ){
     <h1 style="heading-h1">@Messages("ssttp.calculator.results.title")</h1>
     @formErrors(durationForm)
