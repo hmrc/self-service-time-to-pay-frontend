@@ -1,0 +1,60 @@
+@*
+Amounts Due Misalignment page - designed to be shown when the debts a user enters does not match the debts in their personal tax account
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountsDue
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@(amountsDue:CalculatorAmountsDue, debits:Seq[Debit])(implicit request: Request[_])
+@import selfservicetimetopay.helpers.{highlight, message_list}
+@import selfservicetimetopay.helpers.forms.{form, submit}
+@import selfservicetimetopay.partials.what_you_owe
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calculatorRoutes}
+@selfservicetimetopay.main(
+    title = Messages("ssttp.common.title"),
+    bodyClasses = None,
+    sidebarLinks = None
+){
+    <header class="page-header text">
+        <h1 class="h1-heading">@Messages("ssttp.calculator.misalignment-page.title")</h1>
+    </header>
+    @highlight('_modifierClass  -> "highlight-message--light"){
+        <p>@Messages("ssttp.calculator.misalignment-page.subtitle")</p>
+    }
+    <section class="section">
+        <div class="bordered-box">
+            <h3>@Messages("ssttp.calculator.misalignment-page.total-entered")</h3>
+            <p>@Messages("ssttp.common.currency.symbol")@amountsDue.total</p>
+        </div>
+        @defining(debits.map(_.amount).sum) { debitsTotal =>
+            <div class="bordered-box bordered-box--shaded">
+                <h3>@Messages("ssttp.calculator.misalignment-page.total-in-account")</h3>
+                <p>@Messages("ssttp.common.currency.symbol")@debitsTotal</p>
+                <details>
+                    <summary>@Messages("ssttp.calculator.misalignment-page.account-breakdown.title")</summary>
+                    @what_you_owe(debits)
+                    <div class="subsection grid-layout divider--bottom font-xsmall">
+                        <div class="grid-layout__column grid-layout__column--3-4"><p><strong>@Messages("ssttp.calculator.misalignment-page.account-breakdown.total")</strong></p></div>
+                        <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@Messages("ssttp.common.currency.symbol")@debitsTotal</strong></p></div>
+                    </div>
+                </details>
+            </div>
+        }
+    </section>
+    <section class="section">
+        <p>@Messages("ssttp.calculator.misalignment-page.possible-reasons.title")</p>
+        @message_list(Some("bullets"), "ssttp.calculator.misalignment-page.possible-reasons.list.")
+    </section>
+    <section>
+        <h3 class="divider--bottom">@Messages("ssttp.calculator.misalignment-page.your-options")</h3>
+        @form(calculatorRoutes.MisalignmentController.submitRecalculate(), 'class -> "group") {
+            <div class="grid-layout grid-layout--no-gutter divider--bottom">
+                <div class="grid-layout__column grid-layout__column--2-3"><p>@Messages("ssttp.calculator.misalignment-page.recalculate.label")</p></div>
+                <div class="grid-layout__column grid-layout__column--1-3 align--middle">@submit(){@Messages("ssttp.calculator.misalignment-page.recalculate.button")}</div>
+            </div>
+            <div class="grid-layout grid-layout--no-gutter">
+                <div class="grid-layout__column grid-layout__column--2-3"><p>@Messages("ssttp.calculator.misalignment-page.query.label")</p></div>
+                <div class="grid-layout__column grid-layout__column--1-3"><p><strong>@Messages("ssttp.calculator.misalignment-page.query.number")</p></strong></div>
+            </div>
+        }
+    </section>
+}

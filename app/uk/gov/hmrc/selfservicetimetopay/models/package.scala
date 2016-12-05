@@ -113,6 +113,18 @@ package object controllerVariables {
     schedules
   }
 
+  implicit val fakeAmountsDue = CalculatorAmountsDue(Seq(
+    Debit(None, BigDecimal("4000.00"), LocalDate.of(2015, 1, 30), None, None),
+    Debit(None, BigDecimal("2000.00"), LocalDate.of(2015, 1, 30), None, None)
+  ))
+
+  implicit val fakeDebits = Seq(
+    Debit(Some("ASST"), BigDecimal("4000.00"), LocalDate.of(2015, 1, 30), None, None),
+    Debit(Some("IN1"), BigDecimal("2000.00"), LocalDate.of(2015, 1, 30), None, None),
+    Debit(Some("IN2"), BigDecimal("2000.00"), LocalDate.of(2015, 6, 30), None, None),
+    Debit(None, BigDecimal("20.00"), LocalDate.of(2015, 2, 14), None, None)
+  )
+
   implicit val arrangementDirectDebit = ArrangementDirectDebit("My Account", 1, 2, 33, 123456789, Some(true))
 
 }
