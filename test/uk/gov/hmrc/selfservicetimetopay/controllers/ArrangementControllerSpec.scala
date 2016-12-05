@@ -39,9 +39,10 @@ class ArrangementControllerSpec extends UnitSpec
   val ddConnector: DirectDebitConnector = mock[DirectDebitConnector]
   val arrangementConnector: ArrangementConnector = mock[ArrangementConnector]
   val taxPayerConnector: TaxPayerConnector = mock[TaxPayerConnector]
+  val calculatorConnector: CalculatorConnector = mock[CalculatorConnector]
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
 
-  val controller = new ArrangementController(ddConnector, arrangementConnector) {
+  val controller = new ArrangementController(ddConnector, arrangementConnector, calculatorConnector) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
   }
@@ -71,6 +72,11 @@ class ArrangementControllerSpec extends UnitSpec
 
       redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.start().url
 
+    }
+    "update payment schedule date" in {
+
+      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(Some(ttpSubmission)))
     }
 
   }

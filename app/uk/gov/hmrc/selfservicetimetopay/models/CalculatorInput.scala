@@ -22,4 +22,5 @@ case class CalculatorInput(debits:Seq[Debit],
                            initialPayment:BigDecimal = BigDecimal(0),
                            startDate:LocalDate = LocalDate.now(),
                            endDate:Option[LocalDate] = None,
+                           firstPaymentDate: Option[LocalDate] = None,
                            paymentFrequency:String = "MONTHLY")

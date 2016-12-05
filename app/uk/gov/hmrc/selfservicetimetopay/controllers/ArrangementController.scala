@@ -23,11 +23,11 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors._
+import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -53,115 +53,124 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def changeSchedulePaymentDay = Action.async { implicit request =>
 
-    sessionCache.get.map {
-      case Some(ttp) => {
-        val schedule = ttp.schedule.get
-        val taxPayer = ttp.taxPayer.get
-        val calculatorInput =
-
-          (for {
-             schedule <- ttp.schedule
-             taxPayer <- ttp.taxPayer
-             calculatorInput = createInput(schedule, taxPayer)
-             newSchedule <- calculatorConnector.calculatePaymentSchedule(calculatorInput)
-          } yield newSchedule )
-
-      }
-      case _ => throw new RuntimeException("No data found")
-    }
-
-//   play.api.mvc.Call Future(
-//      ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
-//        formWithErrors => BadRequest(routes.ArrangementController.getInstalmentSummary()),
-//        _ =>
-//          calculatorConnector.calculatePaymentSchedule()
-//          Redirect(routes.ArrangementController.getInstalmentSummary()))
-//    )
-  }
-
-  def submitInstalmentSchedule = Action.async { implicit request =>
-    Future(ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
-      formWithErrors => BadRequest(showInstalmentSummary(generatePaymentSchedules(BigDecimal.exact("5000"), None).head, formWithErrors, request)),
-      _ => Redirect(routes.DirectDebitController.getDirectDebit()))
-    )
-  }
-
-  def submit(): Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.flatMap {
-      _.fold(redirectToStart)(arrangementSetUp)
-    }
-  }
-
-  def applicationComplete(): Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.flatMap {
-      _.fold(redirectToStart)(submission => {
-        sessionCache.remove()
-        successful(Ok(application_complete.render(submission.taxPayer.get.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
-          submission.arrangementDirectDebit.get, submission.schedule.get, request)))
+    ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(routes.ArrangementController.getInstalmentSummary())),
+      validFormData => {
+        sessionCache.get.map[Result] {
+          case Some(ttp) =>
+            val url: Result = for {
+              taxPayer <- ttp.taxPayer
+              schedule <- ttp.schedule
+              calculatorInput = createCalculatorInput(taxPayer, schedule, validFormData)
+              result <- calculatorConnector.calculatePaymentSchedule(calculatorInput)
+              newSchedule <- result
+              cache <- sessionCache.put(ttp.copy(schedule = Some(newSchedule.head)))
+            } yield Redirect(routes.ArrangementController.getInstalmentSummary())
+            url
+          case _ => throw new scala.RuntimeException("no data")
+        }
       })
-    }
+
   }
 
-  private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.start()))
-
-  private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
-
-    def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
-
-    val utr = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present")).selfAssessment.utr
-
-    val result = for {
-      ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr.get))
-      ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
-    } yield ttp
-
-    result.flatMap {
-      _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), success => applicationSuccessful)
-    }
-  }
-
-  private def paymentPlan(submission: TTPSubmission): PaymentPlanRequest = {
-    val maybePaymentPlanRequest = for {
-      bankDetails <- submission.bankDetails
-      schedule <- submission.schedule
-      taxPayer <- submission.taxPayer
-    } yield {
-      val utr = taxPayer.selfAssessment.utr
-      val knownFact = List(KnownFact(cesa, utr.get))
-      val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
-        accountNumber = Some(bankDetails.accountNumber.toString),
-        creationDate = schedule.startDate,
-        ddiRefNo = bankDetails.ddiRefNumber)
-
-      val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
-      val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
-      val pp = PaymentPlan("Time to Pay",
-        utr.get,
-        cesa,
-        paymentCurrency,
-        schedule.initialPayment,
-        schedule.startDate.get,
-        firstInstalment.amount,
-        firstInstalment.paymentDate,
-        lastInstalment.paymentDate,
-        paymentFrequency,
-        lastInstalment.amount,
-        lastInstalment.paymentDate,
-        schedule.amountToPay)
-
-      PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, printFlag = true)
+    private def createCalculatorInput(taxPayer: TaxPayer, schedule: CalculatorPaymentSchedule, formData: ArrangementDayOfMonth): CalculatorInput =
+    {
+      for {
+        debits <- taxPayer.selfAssessment.debits
+        initialPayment <- schedule.initialPayment
+        startDate <- schedule.startDate
+        endDate <- schedule.startDate
+        firstPaymentDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
+      } yield CalculatorInput(Seq(debits), initialPayment, startDate, Some(endDate), Some(firstPaymentDate))
     }
 
-    maybePaymentPlanRequest.getOrElse(throw new RuntimeException(s"PaymentPlanRequest creation failed - TTPSubmission: $submission"))
-  }
 
-  private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
-                                submission: TTPSubmission): TTPArrangement = {
-    val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
-    val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
-    val taxpayer = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
-    val schedule = submission.schedule.getOrElse(throw new RuntimeException("Schedule data not present"))
+    def submitInstalmentSchedule = Action.async { implicit request =>
+      Future(ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
+        formWithErrors => BadRequest(showInstalmentSummary(generatePaymentSchedules(BigDecimal.exact("5000"), None).head, formWithErrors, request)),
+        _ => Redirect(routes.DirectDebitController.getDirectDebit()))
+      )
+    }
 
-    TTPArrangement(ppReference, ddReference, taxpayer, schedule)
+    def submit(): Action[AnyContent] = Action.async { implicit request =>
+      sessionCache.get.flatMap {
+        _.fold(redirectToStart)(arrangementSetUp)
+      }
+    }
+
+    def applicationComplete(): Action[AnyContent] = Action.async { implicit request =>
+      sessionCache.get.flatMap {
+        _.fold(redirectToStart)(submission => {
+          sessionCache.remove()
+          successful(Ok(application_complete.render(submission.taxPayer.get.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
+            submission.arrangementDirectDebit.get, submission.schedule.get, request)))
+        })
+      }
+    }
+
+    private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.start()))
+
+    private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] =
+    {
+
+      def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
+
+      val utr = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present")).selfAssessment.utr
+
+      val result = for {
+        ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr.get))
+        ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
+      } yield ttp
+
+      result.flatMap {
+        _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), success => applicationSuccessful)
+      }
+    }
+
+    private def paymentPlan(submission: TTPSubmission): PaymentPlanRequest =
+    {
+      val maybePaymentPlanRequest = for {
+        bankDetails <- submission.bankDetails
+        schedule <- submission.schedule
+        taxPayer <- submission.taxPayer
+      } yield {
+        val utr = taxPayer.selfAssessment.utr
+        val knownFact = List(KnownFact(cesa, utr.get))
+        val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
+          accountNumber = Some(bankDetails.accountNumber.toString),
+          creationDate = schedule.startDate,
+          ddiRefNo = bankDetails.ddiRefNumber)
+
+        val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
+        val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
+        val pp = PaymentPlan("Time to Pay",
+          utr.get,
+          cesa,
+          paymentCurrency,
+          schedule.initialPayment,
+          schedule.startDate.get,
+          firstInstalment.amount,
+          firstInstalment.paymentDate,
+          lastInstalment.paymentDate,
+          paymentFrequency,
+          lastInstalment.amount,
+          lastInstalment.paymentDate,
+          schedule.amountToPay)
+
+        PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, printFlag = true)
+      }
+
+      maybePaymentPlanRequest.getOrElse(throw new RuntimeException(s"PaymentPlanRequest creation failed - TTPSubmission: $submission"))
+    }
+
+    private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
+                                  submission: TTPSubmission): TTPArrangement =
+    {
+      val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
+      val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
+      val taxpayer = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
+      val schedule = submission.schedule.getOrElse(throw new RuntimeException("Schedule data not present"))
+
+      TTPArrangement(ppReference, ddReference, taxpayer, schedule)
+    }
   }
-}
