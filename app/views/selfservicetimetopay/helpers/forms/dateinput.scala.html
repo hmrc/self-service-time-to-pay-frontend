@@ -27,14 +27,14 @@ A data input field using Component Library Styles as  documented:
 @monthElements = @{ new FieldElements(monthField.id, monthField, null, argsMap, lang) }
 @yearElements = @{ new FieldElements(yearField.id, yearField, null, argsMap, lang) }
 @monthOptions = @{for(m <- 1 to 12) yield (m.toString, Month.of(m).getDisplayName(TextStyle.FULL, lang.toLocale))}
-@fieldErrorsClass = @{
+@fieldsetErrorsClass = @{
+    var errorsClass = if(frm.error(name).nonEmpty){"soft--right "}else{""}
     if(yearField.errors.nonEmpty || monthField.errors.nonEmpty || dayField.errors.nonEmpty) {
-        "form-field-group--error form-field--error"
-    } else {
-        ""
+        errorsClass += "form-field-group--error form-field--error"
     }
+    errorsClass.trim
 }
-@fieldset(frm, name, '_modifierClass -> fieldErrorsClass){
+@fieldset(frm, name, '_modifierClass -> fieldsetErrorsClass){
     @if(argsMap.get('label).isDefined){<legend>@argsMap.get('label)</legend>}
     @formErrors(frm, '_field -> name)
     @fieldErrors(yearField)
