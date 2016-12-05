@@ -51,6 +51,11 @@ ssttp.sidebar.help-and-advice.dont-pay=what happens if you don''t pay your bill
 ssttp.sidebar.sign-in.title=Sign in
 ssttp.sidebar.sign-in.intro=If you’ve filed your Self Assessment tax return and your tax account is up to date, you can skip this step by signing in.
 ssttp.sidebar.sign-in.link=Sign in with Government Gateway
+ssttp.sidebar.call_for_assistance.link=Call for assistance
+
+#having problems sidebar
+ssttp.sidebar.having_problems.title=Having problems?
+ssttp.sidebar.having_problems.intro=If you’re having problems or need extra help, please call us for assistance.
 
 #landing
 ssttp.landing.title=Pay what you owe in instalments
