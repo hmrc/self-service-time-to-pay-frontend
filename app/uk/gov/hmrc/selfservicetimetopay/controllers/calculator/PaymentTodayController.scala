@@ -28,25 +28,23 @@ class PaymentTodayController extends TimeToPayController {
 
   def getPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, _, _,CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+      case Some(TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
-        Ok(payment_today_form.render(form.fill(paymentToday), request))
-      case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_),_)) =>
-        val form = CalculatorForm.createPaymentTodayForm(debits.get.map(_.amount).sum)
-        Ok(payment_today_form.render(form, request))
+        if(paymentToday.eq(BigDecimal(0))) Ok(payment_today_form.render(form, request))
+        else Ok(payment_today_form.render(form.fill(paymentToday), request))
       case _ => Redirect(ssttpRoutes.SelfServiceTimeToPayController.start())
     }
   }
 
   def submitPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpSumbission @ TTPSubmission(_, _, _, _, _, _, debits@Some(_), _)) =>
-        CalculatorForm.createPaymentTodayForm(debits.get.map(_.amount).sum).bindFromRequest().fold(
+      case Some(ttpSumbission @ TTPSubmission(_, _, _, _, _, _, calculatorData @ CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+        CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => BadRequest(payment_today_form(formWithErrors)),
           validFormData => {
-            sessionCache.put(ttpSumbission.copy(paymentToday = Some(validFormData)))
+            sessionCache.put(ttpSumbission.copy(calculatorData = calculatorData.copy(initialPayment = validFormData)))
             // externalise the default months number to the conf file
-            Redirect(routes.CalculateInstalmentsController.getCalculateInstalments(Some("3")))}
+            Redirect(routes.CalculateInstalmentsController.getCalculateInstalments(Some(3)))}
           )
       case _ => Redirect(ssttpRoutes.SelfServiceTimeToPayController.start())
     }

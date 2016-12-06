@@ -22,6 +22,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import uk.gov.hmrc.selfservicetimetopay.models._
+
 import scala.util.control.Exception.catching
 
 object CalculatorForm {
@@ -72,7 +73,7 @@ object CalculatorForm {
 
   val removeAmountDueForm = Form(single("index" -> number))
 
-  def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentToday] = {
+  def createPaymentTodayForm(totalDue: BigDecimal) = {
     Form(mapping(
       "amount" -> bigDecimal
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", _ < totalDue)
