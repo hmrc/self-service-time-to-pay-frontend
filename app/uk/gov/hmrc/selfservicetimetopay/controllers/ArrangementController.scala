@@ -67,14 +67,16 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       })
   }
 
-  def changeScheduleDay(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth)(implicit hc:HeaderCarrier) : Future[Result] = {
+  def changeScheduleDay(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth)(implicit hc: HeaderCarrier): Future[Result] = {
 
     createCalculatorInput(ttpSubmission, formData).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
-      for {
-        newSchedule <- calculatorConnector.calculatePaymentSchedule(cal)
-        cache <- sessionCache.put(ttpSubmission.copy(schedule = Some(newSchedule.head)))
-        url = Redirect(routes.ArrangementController.getInstalmentSummary())
-      } yield url
+      calculatorConnector.calculatePaymentSchedule(cal).flatMap {
+        response => {
+          sessionCache.put(ttpSubmission.copy(schedule = Some(response.head))).map {
+            _ => Redirect(routes.ArrangementController.getInstalmentSummary())
+          }
+        }
+      }
     })
   }
 
@@ -86,7 +88,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       startDate <- schedule.startDate
       endDate <- schedule.startDate
       firstPaymentDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
-      input = CalculatorInput(taxPayer.selfAssessment.debits.toSeq,  schedule.initialPayment, startDate, Some(endDate), Some(firstPaymentDate))
+      input = CalculatorInput(taxPayer.selfAssessment.debits.toSeq, schedule.initialPayment, startDate, Some(endDate), Some(firstPaymentDate))
     } yield input
   }
 
