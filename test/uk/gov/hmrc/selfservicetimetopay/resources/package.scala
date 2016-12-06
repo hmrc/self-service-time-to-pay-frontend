@@ -18,7 +18,8 @@ package uk.gov.hmrc.selfservicetimetopay
 
 import java.time.LocalDate
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.Logger
+import play.api.libs.json.{JsValue, Json, Reads}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
@@ -30,39 +31,24 @@ import uk.gov.hmrc.selfservicetimetopay.util.SessionProvider
 import scala.io.Source
 
 package object resources {
-  val getBanksResponseJSON: JsValue = Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetBanksResponse.json")
-      .mkString)
-  val createPaymentPlanResponseJSON: JsValue = Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetDirectDebitInstructionPaymentPlanResponse.json")
-      .mkString)
-  val submitArrangementResponse: TTPArrangement = Json.fromJson[TTPArrangement](Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetArrangementResponse.json")
-      .mkString)).get
-  val submitDebitsRequest: CalculatorInput = Json.fromJson[CalculatorInput](Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesRequest.json")
-      .mkString)).get
-  val submitLiabilitiesResponseJSON: JsValue= Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesResponse.json")
-      .mkString)
-  val getBankResponseJSON: JsValue = Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/GetBank.json")
-      .mkString)
-  val createPaymentRequestJSON: JsValue = Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CreatePaymentPlanRequest.json")
-      .mkString)
-  val checkEligibilityTrueRequest = Json.fromJson[EligibilityRequest](Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueRequest.json")
-      .mkString)).get
-  val checkEligibilityTrueResponse: JsValue = Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueResponse.json")
-      .mkString)
-  val checkEligibilityFalseRequest = Json.fromJson[EligibilityRequest](Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseRequest.json")
-      .mkString)).get
-  val checkEligibilityFalseResponse: JsValue = Json.parse(
-    Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
-      .mkString)
+  val getBanksResponseJSON = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/GetBanksResponse.json")
+  val createPaymentPlanResponseJSON = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/GetDirectDebitInstructionPaymentPlanResponse.json")
+  val submitArrangementResponse: TTPArrangement = validateAndReturn[TTPArrangement]("test/uk/gov/hmrc/selfservicetimetopay/resources/GetArrangementResponse.json")
+  val submitDebitsRequest = validateAndReturn[CalculatorInput]("test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesRequest.json")
+  val submitLiabilitiesResponseJSON = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/SubmitLiabilitiesResponse.json")
+  val getBankResponseJSON = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/GetBank.json")
+  val createPaymentRequestJSON = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/CreatePaymentPlanRequest.json")
+  val checkEligibilityTrueRequest = validateAndReturn[EligibilityRequest]("test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueRequest.json")
+  val checkEligibilityTrueResponse = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueResponse.json")
+  val checkEligibilityFalseRequest = validateAndReturn[EligibilityRequest]("test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseRequest.json")
+  val checkEligibilityFalseResponse = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
+
+  def validateAndReturn[T](filename: String)(implicit rds: Reads[T]): T = {
+    Json.parse(Source.fromFile(filename).mkString).validate[T].fold(
+      error => throw new RuntimeException(s"$error"),
+      success => success
+    )
+  }
 
   val debit: Debit = Debit(Some("originCode"), BigDecimal(121.2), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now()))
   val selfAssessment: Option[SelfAssessment] = Some(SelfAssessment(Some("utr"), None, List(debit), None))

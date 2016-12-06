@@ -26,8 +26,10 @@ case class CalculatorInput(debits:Seq[Debit] = Seq.empty,
                            paymentFrequency:String = "MONTHLY")
 
 object CalculatorInput {
+  val initial = CalculatorDef(3)
+}
+
+object CalculatorDef {
   def apply(relativeEndDate: Int): CalculatorInput = CalculatorInput(startDate = LocalDate.now(), endDate = LocalDate.now().plusMonths(relativeEndDate).minusDays(1))
   def apply(startDate: LocalDate, relativeEndDate: Int): CalculatorInput = CalculatorInput(startDate = startDate, endDate = startDate.plusMonths(relativeEndDate).minusDays(1))
-
-  val initial = CalculatorInput(3)
 }

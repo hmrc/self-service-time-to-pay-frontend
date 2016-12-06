@@ -40,7 +40,7 @@ class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
             val form = CalculatorForm.createPaymentTodayForm(total).fill(paymentToday)
             val relativeEndDate = months.getOrElse(3)
 
-            calculatorConnector.calculatePaymentSchedule(CalculatorInput(relativeEndDate).copy(debits = debits)).map {
+            calculatorConnector.calculatePaymentSchedule(CalculatorDef(relativeEndDate).copy(debits = debits)).map {
               case Some(Seq(schedule)) =>
                 Ok(calculate_instalments_form(schedule, CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11))
               case _ => throw new RuntimeException("Failed to get schedule")
