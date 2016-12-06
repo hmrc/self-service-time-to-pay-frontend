@@ -43,7 +43,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   def getInstalmentSummary = Action.async { implicit request =>
     sessionCache.get.flatMap {
       _.fold(redirectToStart)(ttp => {
-        Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule date")),
+        Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
           createDayOfForm(ttp), request)))
       })
     }
@@ -91,9 +91,9 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       taxPayer <- ttpSubmission.taxPayer
       schedule <- ttpSubmission.schedule
       startDate <- schedule.startDate
-      endDate <- schedule.startDate
+      endDate <- schedule.endDate
       firstPaymentDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
-      input = CalculatorInput(taxPayer.selfAssessment.debits.toSeq, schedule.initialPayment, startDate, Some(endDate), Some(firstPaymentDate))
+      input = CalculatorInput(taxPayer.selfAssessment.debits, schedule.initialPayment, startDate, Some(endDate), Some(firstPaymentDate))
     } yield input
   }
 
