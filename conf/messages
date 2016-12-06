@@ -200,10 +200,9 @@ ssttp.ttp-call-us.intro=We''d like to be able to help you clear your tax debt in
 ssttp.ttp-call-us.we-need-to-know.list=We''ll need to know:
 ssttp.ttp-call-us.we-need-to-know.list.1=your reference number
 ssttp.ttp-call-us.we-need-to-know.list.2=what you’ve done to try to pay the bill
-ssttp.ttp-call-us.we-need-to-know.list.3=your income and outgoings
-ssttp.ttp-call-us.we-need-to-know.list.4=savings and investments
-ssttp.ttp-call-us.we-need-to-know.list.5=if you can pay some of the bill now
-ssttp.ttp-call-us.we-need-to-know.list.6=your bank details
+ssttp.ttp-call-us.we-need-to-know.list.3=savings and investments
+ssttp.ttp-call-us.we-need-to-know.list.4=if you can pay some of the bill now
+ssttp.ttp-call-us.we-need-to-know.list.5=your bank details
 ssttp.ttp-call-us.contact-instructions=When you have all of this, please call us on {0}.
 ssttp.ttp-call-us.contact-number=0330 321 321
 
