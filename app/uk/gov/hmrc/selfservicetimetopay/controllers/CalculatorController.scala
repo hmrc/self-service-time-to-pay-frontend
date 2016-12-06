@@ -45,7 +45,7 @@ class CalculatorController extends TimeToPayController {
     }
     val schedules:Option[Seq[CalculatorPaymentSchedule]] = request.session.get("CalculatorPaymentSchedules") match {
       case Some(json) => if(amountsDue.isDefined && paymentToday.isDefined) {
-        Some(generatePaymentSchedules(amountsDue.get.total, paymentToday.get.amount))
+        Some(generatePaymentSchedules(amountsDue.get.total, Some(paymentToday.get.amount)))
       } else {
         None
       }
@@ -55,7 +55,7 @@ class CalculatorController extends TimeToPayController {
   }
 
   private def paymentScheduleMatches(paymentSchedule: CalculatorPaymentSchedule, amountsDue:CalculatorAmountsDue, paymentToday:CalculatorPaymentToday):Boolean = {
-    (paymentSchedule.amountToPay.compare(amountsDue.total) == 0) && (paymentSchedule.initialPayment.compare(paymentToday.amount.get) == 0)
+    (paymentSchedule.amountToPay.compare(amountsDue.total) == 0) && (paymentSchedule.initialPayment.compare(paymentToday.amount) == 0)
   }
 
   private def getRedirectionDestination(keystoreData:(Boolean, Option[CalculatorAmountsDue],
@@ -124,7 +124,7 @@ class CalculatorController extends TimeToPayController {
               case Some(monthsString: String) =>
                 try {
                   val duration = CalculatorDuration(monthsString.toInt)
-                  val durationForm = CalculatorForm.createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).bindFromRequest()
+                  val durationForm = CalculatorForm.durationForm.bindFromRequest()
                   if (durationForm.hasErrors) {
                     val months = durationOption match {
 
@@ -145,7 +145,7 @@ class CalculatorController extends TimeToPayController {
               case None =>
                 val duration = durationOption.getOrElse(CalculatorDuration(schedules.head.instalments.length))
                 Ok(calculate_instalments_form(schedules.filter(_.instalments.length == duration.months).head,
-                  CalculatorForm.createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).fillAndValidate(duration),
+                  CalculatorForm.durationForm.fillAndValidate(duration),
                   CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending)
                 ).addingToSession("CalculatorDuration" -> JacksonMapper.writeValueAsString(duration))
             }
@@ -178,7 +178,7 @@ class CalculatorController extends TimeToPayController {
       case (_, Some(amountsDue:CalculatorAmountsDue), Some(paymentToday:CalculatorPaymentToday),
       durationOption:Option[CalculatorDuration], Some(schedules:List[CalculatorPaymentSchedule])) =>
         val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
-        val calculatorDurationForm = CalculatorForm.createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).bindFromRequest()
+        val calculatorDurationForm = CalculatorForm.durationForm.bindFromRequest()
 
         if (calculatorDurationForm.hasErrors) {
          val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
@@ -213,7 +213,7 @@ class CalculatorController extends TimeToPayController {
           val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
 
           Ok(calculate_instalments_form.render(schedules.filter(_.instalments.length == duration.months).head,
-            CalculatorForm.createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).fill(duration),
+            CalculatorForm.durationForm.fill(duration),
               calculatorPaymentTodayForm, instalmentOptionsAscending, request))
         } else {
           Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(

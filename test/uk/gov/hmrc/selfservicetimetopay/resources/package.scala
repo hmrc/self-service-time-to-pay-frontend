@@ -51,13 +51,13 @@ package object resources {
   val createPaymentRequestJSON: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CreatePaymentPlanRequest.json")
       .mkString)
-  val checkEligibilityTrueRequest = Json.fromJson[EligibilityRequest](Json.parse(
+  val checkEligibilityTrueRequest: EligibilityRequest = Json.fromJson[EligibilityRequest](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueRequest.json")
       .mkString)).get
   val checkEligibilityTrueResponse: JsValue = Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueResponse.json")
       .mkString)
-  val checkEligibilityFalseRequest = Json.fromJson[EligibilityRequest](Json.parse(
+  val checkEligibilityFalseRequest: EligibilityRequest = Json.fromJson[EligibilityRequest](Json.parse(
     Source.fromFile(s"test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseRequest.json")
       .mkString)).get
   val checkEligibilityFalseResponse: JsValue = Json.parse(
@@ -85,7 +85,7 @@ package object resources {
     None,//DirectDebitBank
     Some(taxPayer),
     Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
-    Some(EligibilityExistingTTP(Some(false))), paymentToday = Some(CalculatorPaymentToday(Some(BigDecimal.valueOf(300)))))
+    Some(EligibilityExistingTTP(Some(false))), paymentToday = Some(CalculatorPaymentToday(BigDecimal.valueOf(300))))
 
   val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
   val ttpSubmissionNLI: TTPSubmission = TTPSubmission(manualDebits = Some(Seq(calculatorAmountDue)))
@@ -93,8 +93,8 @@ package object resources {
   val calculatorAmountDueOver10k: Debit = Debit(amount = BigDecimal(11293.22), dueDate = LocalDate.now())
   val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(manualDebits = Some(Seq(calculatorAmountDueOver10k)))
 
-  val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
-  val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq("TotalDebtIsTooHigh"))
+  val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(eligible = true, Seq.empty)
+  val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(eligible = false, Seq("TotalDebtIsTooHigh"))
 
   val directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan = {
     DirectDebitInstructionPaymentPlan(LocalDate.now().toString, "1234567890", List(

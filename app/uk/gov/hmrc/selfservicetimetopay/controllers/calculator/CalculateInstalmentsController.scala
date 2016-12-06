@@ -64,9 +64,9 @@ class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
           CalculatorPaymentScheduleInstalment(LocalDate.of(2017, 7, 1), 350),
           CalculatorPaymentScheduleInstalment(LocalDate.of(2017, 8, 1), 350))
         val schedule = CalculatorPaymentSchedule(startDate = Some(LocalDate.of(2017, 2, 1)), endDate = Some(LocalDate.of(2017, 12, 1)),
-          initialPayment = paymentToday.get.amount.get,
+          initialPayment = paymentToday.get.amount,
           amountToPay = total,
-          instalmentBalance = total - paymentToday.get.amount.get,
+          instalmentBalance = total - paymentToday.get.amount,
           totalInterestCharged = total * 0.0275,
           totalPayable = total + total * 0.0275,
           instalments = instalments)

@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class CalculatorPaymentToday(amount: Option[BigDecimal])
+case class CalculatorPaymentToday(amount: BigDecimal)
