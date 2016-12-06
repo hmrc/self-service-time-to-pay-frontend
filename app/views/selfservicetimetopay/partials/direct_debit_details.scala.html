@@ -43,7 +43,7 @@
             <strong>@Messages("ssttp.direct-debit.sort-code")</strong>
         </div>
         <div class="grid-layout__column grid-layout__column--1-4">
-        @("%02d - %02d - %02d".format(directDebit.sortCode1, directDebit.sortCode2, directDebit.sortCode3))
+        @("%s - %s - %s".format(directDebit.sortCode.substring(0, 2), directDebit.sortCode.substring(2, 4), directDebit.sortCode.substring(4, 6)))
         </div>
     </div>
 </div>

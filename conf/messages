@@ -254,14 +254,23 @@ ssttp.arrangement.instalment-summary.submit=Agree and continue
 ssttp.arrangement.direct-debit.form.title=Set up a direct debit
 ssttp.arrangement.direct-debit.form.bank-details=Please enter your banking details
 
-ssttp.arrangement.direct-debit.form.accountName=Name of account holder
-ssttp.arrangement.direct-debit.form.sortCode=Sort code
-ssttp.arrangement.direct-debit.form.accountNumber=Account number
 
-ssttp.arrangement.direct-debit.form.confirmation.header=I confirm that:
-ssttp.arrangement.direct-debit.form.confirmation.list.1=I have the authority to set up a Direct Debit against this account
-ssttp.arrangement.direct-debit.form.confirmation.list.2=I am the only person to have this authority
-ssttp.arrangement.direct-debit.form.confirmation.list.3=This account does not require dual signatories
+ssttp.arrangement.misalignment.title=Bank account not found
+ssttp.arrangement.misalignment.subtitle=There was a problem with the bank details you entered
+ssttp.arrangement.misalignment.existing.title=Choose an existing account
+ssttp.arrangement.misalignment.direct-debit.or=Or
+ssttp.arrangement.misalignment.direct-debit.reenter=Re-enter your bank details
+ssttp.arrangement.misalignment.submit=Agree and continue
+ssttp.arrangement.misalignment.back=Back
+
+ssttp.direct-debit.form.accountName=Name of account holder
+ssttp.direct-debit.form.sortCode=Sort code
+ssttp.direct-debit.form.accountNumber=Account number
+
+
+ssttp.direct-debit.form.confirmation.header=By continuing, you’re confirming that:
+ssttp.direct-debit.form.confirmation.list.1=you have the authority to set up a Direct Debit against this account
+ssttp.direct-debit.form.confirmation.list.2=this account does not require dual signatories
 
 ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
 ssttp.arrangement.direct-debit.form.submit=Continue
@@ -283,7 +292,7 @@ ssttp.direct-debit.initial-payment=(initial payment)
 ssttp.direct-debit.final-payment=(final payment)
 
 
-
+ssttp.arrangement.direct-debit.form.error.summary.title=There was a problem with the bank details you entered
 
 ssttp.arrangement.direct-debit.confirmation.title=Direct Debit Confirmation
 ssttp.arrangement.direct-debit.confirmation.total-payment=Total payment will be:

@@ -17,22 +17,14 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 case class ArrangementDirectDebit(accountName:String,
-                                  sortCode1:Int,
-                                  sortCode2:Int,
-                                  sortCode3:Int,
-                                  accountNumber:Long,
-                                  confirmed: Option[Boolean]) {
-
-  def sortCode: String = Seq(sortCode1, sortCode2, sortCode3).mkString
+                                  sortCode: String,
+                                  accountNumber:String) {
 }
 
 object ArrangementDirectDebit {
   def from(bankDetails: BankDetails): ArrangementDirectDebit = {
     ArrangementDirectDebit(bankDetails.accountName.getOrElse(""),
-      bankDetails.sortCode.substring(0, 2).toInt,
-      bankDetails.sortCode.substring(2, 4).toInt,
-      bankDetails.sortCode.substring(4, 6).toInt,
-      bankDetails.accountNumber.toLong,
-      None)
+      bankDetails.sortCode,
+      bankDetails.accountNumber)
   }
 }
