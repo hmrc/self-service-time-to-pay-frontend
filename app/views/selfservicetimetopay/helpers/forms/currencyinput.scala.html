@@ -26,13 +26,18 @@ Currency input field using Component Library Styles as  documented:
 @value = @{ field.value match { case Some(x) => x case None => "" case x => x }}
 @wrapperClass = @{
   var w = Seq.empty ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")
-  w = if (field.hasErrors) w :+ "form-field--error" else w
+  w = if (field.hasErrors && argsMap.get('_noLabel)) w :+ "form-field--error" else w
   w.mkString(" ")
 }
 @inputClass = @{
   var c = argsMap.getOrElse('_inputClass, "").asInstanceOf[String]
   c = if(field.hasErrors) c + " error-field" else c
   c.trim
+}
+@labelClass = @{
+    var l = argsMap.getOrElse('_labelClass, "").asInstanceOf[String]
+    l = if (field.hasErrors && !argsMap.get('_noLabel)) l + " form-field--error" else l
+    l.trim
 }
 @inputContent = {
     @if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false) {@fieldErrors(field)}
@@ -52,6 +57,6 @@ Currency input field using Component Library Styles as  documented:
 @if(argsMap.getOrElse('_noLabel, false).asInstanceOf[Boolean]) {
     @inputContent
 } else {
-    @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_after -> "true", '_modifierClass -> argsMap.getOrElse('_labelClass, ""))(inputContent)
+    @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_after -> "true", '_modifierClass -> labelClass)(inputContent)
 }
 

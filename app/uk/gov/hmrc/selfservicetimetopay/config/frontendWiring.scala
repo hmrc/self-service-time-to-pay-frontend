@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.http.{HeaderCarrier, HttpDelete, HttpGet, HttpPut}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
-import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstalmentsController, PaymentTodayController}
+import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstalmentsController, MisalignmentController, PaymentTodayController}
 import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
@@ -67,8 +67,8 @@ object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
 }
 
 object CalculatorConnector extends CalculatorConnector with ServicesConfig {
-  val calculatorURL: String = baseUrl("self-service-time-to-pay")
-  val serviceURL = "paymentschedule"
+  val calculatorURL: String = baseUrl("time-to-pay-calculator")
+  val serviceURL = "time-to-pay-calculator/paymentschedule"
   val http = WSHttp
 }
 
@@ -79,13 +79,13 @@ object ArrangementConnector extends ArrangementConnector with ServicesConfig {
 }
 
 object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
-  val taxPayerURL: String = baseUrl("time-to-pay-eligibility")
-  val serviceURL = "time-to-pay-eligibility"
+  val taxPayerURL: String = baseUrl("taxpayer")
+  val serviceURL = "tax-payer"
   val http = WSHttp
 }
 object EligibilityConnector extends EligibilityConnector with ServicesConfig {
   val eligibilityURL: String = baseUrl("time-to-pay-eligibility")
-  val serviceURL = "eligibility"
+  val serviceURL = "time-to-pay-eligibility/eligibility"
   val http = WSHttp
 }
 
@@ -127,7 +127,8 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
     classOf[AmountsDueController] -> new AmountsDueController(),
     classOf[CalculateInstalmentsController] -> new CalculateInstalmentsController(eligibilityConnector, calculatorConnector),
-    classOf[PaymentTodayController] -> new PaymentTodayController()
+    classOf[PaymentTodayController] -> new PaymentTodayController(),
+    classOf[MisalignmentController] -> new MisalignmentController()
   )
 
   def getController[A](controllerClass: Class[A]) : A = controllers(controllerClass).asInstanceOf[A]

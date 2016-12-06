@@ -16,10 +16,13 @@
 
 package uk.gov.hmrc.selfservicetimetopay.forms
 
+import java.time.{DateTimeException, LocalDate}
+
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import uk.gov.hmrc.selfservicetimetopay.models._
+import scala.util.control.Exception.catching
 
 object CalculatorForm {
   val dueByYearMax = 2100
@@ -29,52 +32,73 @@ object CalculatorForm {
   val dueByDayMin = 1
   val dueByDayMax = 31
 
+  val dueByDateTuple = tuple(
+    "dueByYear" -> optional(number)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.required-year", _.nonEmpty)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year", x => x.isEmpty || ( x.get <= dueByYearMax)|| (x.get >= dueByYearMin)),
+    "dueByMonth" -> optional(number)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.required-month", _.nonEmpty)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-month", x => x.isEmpty || ( x.get <= dueByMonthMax)|| (x.get >= dueByMonthMin)),
+    "dueByDay" -> optional(number)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.required-day", _.nonEmpty)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day", x => x.isEmpty || ( x.get <= dueByDayMax)|| (x.get >= dueByDayMin))
+  )
+
+  def validDate: Constraint[(Option[Int], Option[Int], Option[Int])] =
+    Constraint[(Option[Int], Option[Int], Option[Int])]("ssttp.calculator.form.amounts_due.due_by.not-valid-date") { data =>
+    if ((data._1.isEmpty) || (data._2.isEmpty) || (data._3.isEmpty)) {
+      Valid
+    } else {
+      catching(classOf[DateTimeException]).opt(LocalDate.of(data._1.get, data._2.get, data._3.get)) match {
+        case d:Some[LocalDate] => Valid
+        case _ => Invalid(ValidationError("ssttp.calculator.form.amounts_due.due_by.not-valid-date"))
+      }
+    }
+  }
+
   val amountDueForm = Form(mapping(
-    "amount" -> bigDecimal,
-    "dueByYear" -> number(min = dueByYearMin, max = dueByYearMax),
-    "dueByMonth" -> number(min = dueByDayMin, max = dueByMonthMax),
-    "dueByDay" -> number(min = dueByDayMin, max = dueByDayMax)
-  )(CalculatorAmountDue.apply)(CalculatorAmountDue.unapply))
+    "amount" -> optional(bigDecimal)
+      .verifying("ssttp.calculator.form.amounts_due.amount.required", _.nonEmpty)
+      .verifying("ssttp.calculator.form.amounts_due.amount.positive", x => x.isEmpty || (x.get.compare(BigDecimal("0")) >= 0)),
+    "dueBy" -> dueByDateTuple.verifying(validDate)
+  )
+  ((amount:Option[BigDecimal], date:(Option[Int], Option[Int], Option[Int])) =>
+    CalculatorAmountDue(amount.get, date._1.get, date._2.get, date._3.get))
+  ((amountDue:Debit) => Option((Option(amountDue.amount),
+    (Option(amountDue.dueByYear), Option(amountDue.dueByMonth), Option(amountDue.dueByDay)))))
+  )
 
   case class RemoveItem(index: Int)
 
   val removeAmountDueForm = Form(single("index" -> number))
 
   val paymentTodayForm = Form(mapping(
-    "amount" -> optional(bigDecimal
-      .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", _.compare(BigDecimal.valueOf(0)) >= 0))
-    )(CalculatorPaymentToday.apply)(CalculatorPaymentToday.unapply))
+    "amount" -> bigDecimal
+      .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", _.compare(BigDecimal.valueOf(0)) >= 0)
+  )(CalculatorPaymentToday.apply)(CalculatorPaymentToday.unapply))
 
-  def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentToday] = {
+  def createPaymentTodayForm(totalDue: BigDecimal): Form[BigDecimal] = {
     Form(mapping(
-      "amount" -> optional(bigDecimal
+      "amount" -> bigDecimal
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", _ < totalDue)
         .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", _.compare(BigDecimal("0")) >= 0)
-      )
     )(CalculatorPaymentToday.apply)(CalculatorPaymentToday.unapply))
   }
 
   val minMonths = 2
   val maxMonths = 11
 
-  val durationForm = Form(mapping(
-    "months" -> number(min = minMonths, max = maxMonths)
-  )(CalculatorDuration.apply)(CalculatorDuration.unapply))
+  val durationForm = Form(mapping("months" -> number(min = minMonths, max = maxMonths))(CalculatorDuration.apply)(CalculatorDuration.unapply))
 
   // TODO: remove this once CalculatorController code is fully refactored
   def createDurationForm(min: Int, max: Int): Form[CalculatorDuration] = {
-    def required: Constraint[Int] = Constraint[Int]("constraint.required") { o =>
-      if (o == null) Invalid(ValidationError("ssttp.calculator.form.duration.months.required")) else Valid
-    }
     def greaterThan: Constraint[Int] = Constraint[Int]("constraint.duration-more-than") { o =>
-      if (o != null && o < min) Invalid(ValidationError("ssttp.calculator.form.duration.months.greater-than", min)) else Valid
+      if (o < min) Invalid(ValidationError("ssttp.calculator.form.duration.months.greater-than", min)) else Valid
     }
     def lessThan: Constraint[Int] = Constraint[Int]("constraint.duration-more-than") { o =>
-      if (o != null && o > max) Invalid(ValidationError("ssttp.calculator.form.duration.months.less-than", max)) else Valid
+      if (o > max) Invalid(ValidationError("ssttp.calculator.form.duration.months.less-than", max)) else Valid
     }
-    Form(mapping(
-      "months" -> number.verifying(required, greaterThan, lessThan)
-    )(CalculatorDuration.apply)(CalculatorDuration.unapply))
-  }
 
+    Form(mapping("months" -> number.verifying(greaterThan, lessThan))(CalculatorDuration.apply)(CalculatorDuration.unapply))
+  }
 }

@@ -51,6 +51,11 @@ ssttp.sidebar.help-and-advice.dont-pay=what happens if you don''t pay your bill
 ssttp.sidebar.sign-in.title=Sign in
 ssttp.sidebar.sign-in.intro=If you’ve filed your Self Assessment tax return and your tax account is up to date, you can skip this step by signing in.
 ssttp.sidebar.sign-in.link=Sign in with Government Gateway
+ssttp.sidebar.call_for_assistance.link=Call for assistance
+
+#having problems sidebar
+ssttp.sidebar.having_problems.title=Having problems?
+ssttp.sidebar.having_problems.intro=If you’re having problems or need extra help, please call us for assistance.
 
 #landing
 ssttp.landing.title=Pay what you owe in instalments
@@ -114,6 +119,23 @@ ssttp.calculator.form.amounts_due.due_by.required-day=You need to enter a day
 ssttp.calculator.form.amounts_due.due_by.not-valid-day=You need to enter a valid day
 ssttp.calculator.form.amounts_due.due_by.not-valid-date=You need to enter a valid date
 #ssttp.calculator.form.amounts_due.due_by.not-within-range=
+
+ssttp.calculator.misalignment-page.title=These amounts don’t match
+ssttp.calculator.misalignment-page.subtitle=Please check the following differences:
+ssttp.calculator.misalignment-page.total-entered=The total amount you entered:
+ssttp.calculator.misalignment-page.total-in-account=The total amount owing in your tax account:
+ssttp.calculator.misalignment-page.account-breakdown.title=View a breakdown of the amounts
+ssttp.calculator.misalignment-page.account-breakdown.total=TOTAL:
+ssttp.calculator.misalignment-page.possible-reasons.title=The figures you entered don’t match the figures in your tax account. This could be because:
+ssttp.calculator.misalignment-page.possible-reasons.list.1=you haven’t filed your Self Assessment tax return
+ssttp.calculator.misalignment-page.possible-reasons.list.2=you filed less than 3 days ago and your account hasn’t updated yet
+ssttp.calculator.misalignment-page.possible-reasons.list.3=you didn’t include all outstanding amounts in your calculation
+ssttp.calculator.misalignment-page.possible-reasons.list.4=you included an amount that isn't related to your Self Assessment
+ssttp.calculator.misalignment-page.your-options=Your options
+ssttp.calculator.misalignment-page.recalculate.label=Continue and recalculate instalments using the total in your tax account
+ssttp.calculator.misalignment-page.recalculate.button=Recalculate
+ssttp.calculator.misalignment-page.query.label=Query an amount in your tax account
+ssttp.calculator.misalignment-page.query.number=0300 322 7015
 
 ssttp.calculator.form.payment_today.title=Making a payment today
 ssttp.calculator.form.payment_today.amount.question=How much can you afford to pay now?

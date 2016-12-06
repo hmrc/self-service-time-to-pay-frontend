@@ -18,24 +18,24 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
 
-case class TaxPayer(customerName: String, addresses: List[Address], selfAssessment: SelfAssessment)
+case class Taxpayer(customerName: Option[String] = None, addresses: Seq[Address] = Seq.empty, selfAssessment: Option[SelfAssessment] = None)
 
 case class SelfAssessment(utr: Option[String] = None,
                           communicationPreferences: Option[CommunicationPreferences] = None,
-                          debits: List[Debit],
-                          returns: Option[List[Return]])
+                          debits: Seq[Debit] = Seq.empty,
+                          returns: Option[List[Return]] = None)
 
 case class Address(addressLine1: String,
-                   addressLine2: String,
-                   addressLine3: String,
-                   addressLine4: String,
-                   addressLine5: String,
-                   postCode: String)
+                   addressLine2: Option[String] = None,
+                   addressLine3: Option[String] = None,
+                   addressLine4: Option[String] = None,
+                   addressLine5: Option[String] = None,
+                   postcode: String)
 
-case class CommunicationPreferences(welshLanguageIndicator: Boolean,
-                                     audioIndicator: Boolean,
-                                     largePrintIndicator: Boolean,
-                                     brailleIndicator: Boolean)
+case class CommunicationPreferences(welshLanguageIndicator: Boolean = false,
+                                     audioIndicator: Boolean = false,
+                                     largePrintIndicator: Boolean = false,
+                                     brailleIndicator: Boolean = false)
 
 case class Debit(originCode: Option[String] = None,
                  amount: BigDecimal,

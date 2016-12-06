@@ -19,5 +19,5 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 case class TTPArrangement(paymentPlanReference: String,
                           directDebitReference: String,
-                          taxpayer: TaxPayer,
+                          taxpayer: Taxpayer,
                           schedule: CalculatorPaymentSchedule)
