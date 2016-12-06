@@ -32,18 +32,19 @@ GET   /calculator/amounts-dont-match            @uk.gov.hmrc.selfservicetimetopa
 POST  /calculator/recalculate                   @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.MisalignmentController.submitRecalculate()
 
 # Arrangement
-GET    /arrangement/instalment-summary          @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummary()
-POST   /arrangement/instalment-summary          @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submitInstalmentSchedule()
-GET    /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
-POST   /arrangement/direct-debit                @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
-GET    /arrangement/direct-debit-error          @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitError()
-GET    /arrangement/direct-debit-confirmation   @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()
-POST   /arrangement/submit                      @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
-GET    /arrangement/summary                     @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
+GET    /arrangement/instalment-summary              @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummary()
+POST   /arrangement/instalment-summary/change-day   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.changeSchedulePaymentDay()
+POST   /arrangement/instalment-summary              @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submitInstalmentSchedule()
+GET    /arrangement/direct-debit                    @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
+POST   /arrangement/direct-debit                    @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
+GET    /arrangement/direct-debit-error              @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitError()
+GET    /arrangement/direct-debit-confirmation       @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()
+POST   /arrangement/submit                          @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
+GET    /arrangement/summary                         @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
 
 # Alternative pages
-GET    /you-need-to-file                        @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
-GET    /ttp-call-us                             @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
+GET    /you-need-to-file                            @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
+GET    /ttp-call-us                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                           controllers.Assets.at(path="/public", file)
+GET     /assets/*file                               controllers.Assets.at(path="/public", file)

@@ -26,36 +26,73 @@ import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
+import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 class ArrangementController(ddConnector: DirectDebitConnector,
-                            arrangementConnector: ArrangementConnector) extends TimeToPayController {
+                            arrangementConnector: ArrangementConnector,
+                            calculatorConnector: CalculatorConnector) extends TimeToPayController {
 
   val cesa: String = "CESA"
   val paymentFrequency = "Monthly"
   val paymentCurrency = "GBP"
 
   def getInstalmentSummary = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(submission@TTPSubmission(Some(schedule), _, _, _, _, _, _)) =>
-        Ok(showInstalmentSummary(schedule, ArrangementForm.dayOfMonthForm, request))
-      case _ => throw new RuntimeException("No data found")
+    sessionCache.get.flatMap {
+      _.fold(redirectToStart)(ttp => {
+        Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
+          createDayOfForm(ttp), request)))
+      })
     }
+  }
+
+  private def createDayOfForm(ttpSubmission: TTPSubmission) = {
+    ttpSubmission.calculatorData.firstPaymentDate.fold(ArrangementForm.dayOfMonthForm)(p => {
+      ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getDayOfMonth))
+    })
   }
 
   private val showInstalmentSummary = instalment_plan_summary.render _
 
-//  def submitDayOfMonth = Action.async { implicit request =>
-//    Future(
-//      ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
-//        formWithErrors => BadRequest(routes.ArrangementController.getInstalmentSummary()),
-//        _ => Redirect(routes.ArrangementController.getInstalmentSummary()))
-//    )
-//  }
+  def changeSchedulePaymentDay(): Action[AnyContent] = Action.async { implicit request =>
+
+    ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
+      formWithErrors => {
+        sessionCache.get.map {
+          submission => BadRequest(showInstalmentSummary(submission.get.schedule.get, formWithErrors, request))
+        }
+      },
+      validFormData => {
+        sessionCache.get.flatMap {
+          _.fold(redirectToStart)(ttp => changeScheduleDay(ttp, validFormData))
+        }
+      })
+  }
+
+  def changeScheduleDay(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth)(implicit hc: HeaderCarrier): Future[Result] = {
+
+    createCalculatorInput(ttpSubmission, formData).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
+      calculatorConnector.calculatePaymentSchedule(cal).flatMap {
+        response => {
+          sessionCache.put(ttpSubmission.copy(schedule = Some(response.head), calculatorData = cal)).map {
+            _ => Redirect(routes.ArrangementController.getInstalmentSummary())
+          }
+        }
+      }
+    })
+  }
+
+  def createCalculatorInput(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth): Option[CalculatorInput] = {
+    for {
+      schedule <- ttpSubmission.schedule
+      startDate <- schedule.startDate
+      firstPaymentDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
+      input = ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate))
+    } yield input
+  }
 
   def submitInstalmentSchedule = Action.async { implicit request =>
     Future(ArrangementForm.dayOfMonthForm.bindFromRequest().fold(

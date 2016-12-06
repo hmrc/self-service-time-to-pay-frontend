@@ -35,7 +35,7 @@ class EligibilityController extends TimeToPayController {
 
   def getTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, typeOfTax @ Some(_), _, _))=>
+      case Some(TTPSubmission(_, _, _, _, typeOfTax @ Some(_), _,_))=>
             Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), request))
       case _ => Ok(type_of_tax_form.render(EligibilityForm.typeOfTaxForm, request))
     }

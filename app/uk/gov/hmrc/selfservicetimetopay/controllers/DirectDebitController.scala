@@ -37,7 +37,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   def getDirectDebitError: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, banks @ Some(_), _, _, _, _)) =>
+      case Some(TTPSubmission(_, _, banks @ Some(_), _, _, _,_)) =>
         Ok(direct_debit_error.render(createDirectDebitForm, banks, request))
       case _ => Ok(direct_debit_error.render(createDirectDebitForm, None, request))
     }
@@ -46,7 +46,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getDirectDebitConfirmation: Action[AnyContent] = Action.async { implicit request =>
     val form: Form[Boolean] = Form(single("confirm" -> boolean))
     sessionCache.get.map {
-      case Some(submission @ TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _)) =>
+      case Some(submission @ TTPSubmission(Some(schedule), Some(bankDetails), _, _, _,_, _)) =>
         Ok(showDDConfirmation(schedule, submission.arrangementDirectDebit.get, request))
       case _ => throw new RuntimeException("No data found")
     }
