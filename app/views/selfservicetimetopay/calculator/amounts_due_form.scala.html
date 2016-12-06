@@ -16,15 +16,15 @@
     @formErrorSummary(Messages("ssttp.calculator.form.amounts_due.error.summary.title"), dataForm, Seq.empty)
     <p>@Messages("ssttp.calculator.form.amounts_due.intro")</p>
     <div class="grid-layout grid-layout--no-gutter divider--bottom">
-        <div class="grid-layout__column grid-layout__column--1-2"><span class="font-xsmall"><strong>@Messages("ssttp.calculator.form.amounts_due.due_date")</strong></span></div>
-        <div class="grid-layout__column grid-layout__column--1-2 text--middle"><span class="font-xsmall"><strong>@Messages("ssttp.calculator.form.amounts_due.amount")</strong></span></div>
+        <div class="grid-layout__column grid-layout__column--2-3"><span class="font-xsmall"><strong>@Messages("ssttp.calculator.form.amounts_due.due_date")</strong></span></div>
+        <div class="grid-layout__column grid-layout__column--1-3 text--middle"><span class="font-xsmall"><strong>@Messages("ssttp.calculator.form.amounts_due.amount")</strong></span></div>
     </div>
     @defining(DateTimeFormatter.ofPattern("dd MMMM YYYY")) { formatter =>
         @amountsDue.amountsDue.zipWithIndex.map { case (amountDue, index) =>
             @form(calculatorRoutes.AmountsDueController.submitRemoveAmountDue()) {
                 <div class="grid-layout grid-layout--no-gutter divider--bottom">
-                    <div class="grid-layout__column grid-layout__column--1-3"><p>@amountDue.dueDate.format(formatter)</p></div>
-                    <div class="grid-layout__column grid-layout__column--2-3 text--right">
+                    <div class="grid-layout__column grid-layout__column--2-3"><p>@amountDue.dueDate.format(formatter)</p></div>
+                    <div class="grid-layout__column grid-layout__column--1-3 text--right">
                         <input type="hidden" name="index" value="@index" />
                         <p>@Messages("ssttp.common.currency.symbol")@amountDue.amount
                             <span class="gutter-left">@button('type -> "submit", '_modifierClass -> "flush--top button--link") {
@@ -36,19 +36,20 @@
             }
         }
     }
+
     @form(calculatorRoutes.AmountsDueController.submitAddAmountDue(), 'class -> "group") {
         <div class="form-field--group divider--bottom">
             <div class="grid-layout grid-layout--no-gutter">
-                <div class="grid-layout__column grid-layout__column--1-2">
+                <div class="grid-layout__column grid-layout__column--2-3  grid-layout--stacked">
                   @dateinput("dueBy", dataForm, dataForm("dueBy.dueByYear"), dataForm("dueBy.dueByMonth"), dataForm("dueBy.dueByDay"),
                       'hint -> Messages("ssttp.calculator.form.amounts_due.when_due.question.hint"),
                       'dayLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.day"),
                       'monthLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.month"),
                       'yearLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.year"),
-                       '_inputGroupClass -> "gutter-left"
+                      '_inputGroupClass -> "gutter-left"
                   )
                 </div>
-                <div class="grid-layout__column grid-layout__column--1-3">
+                <div class="grid-layout__column grid-layout__column--1-3 grid-layout--stacked">
                     <ul><li class="no-wrap">
                     @currencyinput(dataForm("amount"),
                         'label -> Messages("ssttp.calculator.form.amounts_due.amount"),
