@@ -24,7 +24,7 @@
             <strong>@Messages("ssttp.direct-debit.account-number")</strong>
         </div>
         <div class="grid-layout__column grid-layout__column--1-4">
-        @("%09d".format(directDebit.accountNumber))
+        @directDebit.accountNumber
         </div>
     </div>
     <div class="subsection grid-layout divider--bottom font-xsmall">
@@ -39,11 +39,11 @@
             </div>
         </div>
 
-        <div class="grid-layout__column grid-layout__column--1-4">
-            <strong>@Messages("ssttp.direct-debit.sort-code")</strong>
+        <div>
+            <strong>Meh</strong>
         </div>
-        <div class="grid-layout__column grid-layout__column--1-4">
-        @("%s - %s - %s".format(directDebit.sortCode.substring(0, 2), directDebit.sortCode.substring(2, 4), directDebit.sortCode.substring(4, 6)))
+        <div>
+        @directDebit.sortCode
         </div>
     </div>
 </div>

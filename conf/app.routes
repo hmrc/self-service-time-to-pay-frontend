@@ -37,12 +37,11 @@ POST   /arrangement/instalment-summary/change-day   @uk.gov.hmrc.selfservicetime
 POST   /arrangement/instalment-summary              @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submitInstalmentSchedule()
 GET    /arrangement/direct-debit                    @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
 POST   /arrangement/direct-debit                    @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
-GET    /arrangement/direct-debit-error              @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitError()
 GET    /arrangement/direct-debit-confirmation       @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()
 POST   /arrangement/submit                          @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
 GET    /arrangement/summary                         @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
 GET    /arrangement/account-not-found               @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getBankAccountNotFound()
-POST   /arrangement/account-not-found               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
+POST   /arrangement/account-not-found               @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitBankAccountNotFound()
 # Alternative pages
 GET    /you-need-to-file                            @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
 GET    /ttp-call-us                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()

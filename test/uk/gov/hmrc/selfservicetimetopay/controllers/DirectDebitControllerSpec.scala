@@ -91,7 +91,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       status(response) shouldBe SEE_OTHER
 
-      redirectLocation(response).get shouldBe controllers.routes.DirectDebitController.getDirectDebitError().url
+      redirectLocation(response).get shouldBe controllers.routes.DirectDebitController.getBankAccountNotFound().url
     }
 
     "submit direct debit form with invalid form data and return a bad request" in {

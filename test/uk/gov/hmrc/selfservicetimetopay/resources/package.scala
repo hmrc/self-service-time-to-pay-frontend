@@ -151,30 +151,21 @@ package object resources {
   )
 
   val validDirectDebitForm = Seq(
-    "accountHolderName" -> "John Smith",
-    "sortCode1" -> "12",
-    "sortCode2" -> "34",
-    "sortCode3" -> "56",
-    "accountNumber" -> "12345678",
-    "confirmed" -> "true"
+    "accountName" -> "John Smith",
+    "sortCode" -> "121212",
+    "accountNumber" -> "12345678"
   )
 
   val invalidBankDetailsForm = Seq(
-    "accountHolderName" -> "John Smith",
-    "sortCode1" -> "65",
-    "sortCode2" -> "43",
-    "sortCode3" -> "21",
-    "accountNumber" -> "87654321",
-    "confirmed" -> "true"
+    "accountName" -> "Jane Doe",
+    "sortCode" -> "123123",
+    "accountNumber" -> "12345678"
   )
 
   val inValidDirectDebitForm = Seq(
-    "accountHolderName" -> "John Smith",
-    "sortCode1" -> "100",
-    "sortCode2" -> "100",
-    "sortCode3" -> "100",
-    "accountNumber" -> "12345678",
-    "confirmed" -> "true"
+    "accountName" -> "John Smith",
+    "sortCode" -> "100",
+    "accountNumber" -> ""
   )
 
   val bankDetails = BankDetails("123456", "12345678", None, None, None, None)

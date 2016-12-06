@@ -33,19 +33,18 @@ import scala.concurrent.Future
 class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
 
   def getDirectDebit: Action[AnyContent] = Action { implicit request =>
-    Ok(direct_debit_form.render(createDirectDebitForm, request))
+    Ok(direct_debit_form.render(directDebitForm, request))
   }
 
   def getDirectDebitError: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, banks @ Some(_), _, _, _,_)) =>
-        Ok(direct_debit_error.render(createDirectDebitForm, banks, request))
-      case _ => Ok(direct_debit_error.render(createDirectDebitForm, None, request))
+        Ok(direct_debit_error.render(directDebitForm, banks, request))
+      case _ => Ok(direct_debit_error.render(directDebitForm, None, request))
     }
   }
 
   def getDirectDebitConfirmation: Action[AnyContent] = Action.async { implicit request =>
-    val form: Form[Boolean] = Form(single("confirm" -> boolean))
     sessionCache.get.map {
       case Some(submission @ TTPSubmission(Some(schedule), Some(bankDetails), _, _, _,_, _)) =>
         Ok(showDDConfirmation(schedule, submission.arrangementDirectDebit.get, request))
@@ -61,14 +60,12 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     Ok(account_not_found(existingBankAccountForm, fakeBankDetails))
   }
 
-
-
   def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.ArrangementController.submit())
   }
 
   def submitDirectDebit: Action[AnyContent] = Action.async { implicit request =>
-    createDirectDebitForm.bindFromRequest().fold(
+    directDebitForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(bankDetailsFormErrorPage(formWithErrors, request))),
       validFormData =>
         authConnector.currentAuthority.flatMap {
@@ -94,5 +91,5 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   private val showDDConfirmation = direct_debit_confirmation.render _
   private val bankDetailsFormErrorPage = direct_debit_form.render _
   private val toDDCreationPage = routes.DirectDebitController.getDirectDebitConfirmation()
-  private val toBankSelectionPage = routes.DirectDebitController.getDirectDebitError()
+  private val toBankSelectionPage = routes.DirectDebitController.getBankAccountNotFound()
 }

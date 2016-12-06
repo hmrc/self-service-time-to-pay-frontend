@@ -33,7 +33,4 @@ class MisalignmentController extends TimeToPayController {
       case _ => Ok(misalignment.render(fakeAmountsDue, fakeDebits, request))
     }
   }
-
-
-
 }
