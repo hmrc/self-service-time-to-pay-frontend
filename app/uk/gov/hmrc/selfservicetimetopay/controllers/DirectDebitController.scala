@@ -25,6 +25,7 @@ import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.controllerVariables.fakeBankDetails
 import views.html.selfservicetimetopay.arrangement._
 
 import scala.concurrent.Future
@@ -32,14 +33,14 @@ import scala.concurrent.Future
 class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
 
   def getDirectDebit: Action[AnyContent] = Action { implicit request =>
-    Ok(direct_debit_form.render(createDirectDebitForm, request))
+    Ok(direct_debit_form.render(directDebitForm, request))
   }
 
   def getDirectDebitError: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, banks @ Some(_), _, _, _, _, _)) =>
-        Ok(direct_debit_error.render(createDirectDebitForm, banks, request))
-      case _ => Ok(direct_debit_error.render(createDirectDebitForm, None, request))
+        Ok(direct_debit_error.render(directDebitForm, banks, request))
+      case _ => Ok(direct_debit_error.render(directDebitForm, None, request))
     }
   }
 
@@ -52,12 +53,22 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     }
   }
 
+  def getBankAccountNotFound: Action[AnyContent] = Action { implicit request =>
+    Ok(account_not_found(existingBankAccountForm, fakeBankDetails))
+  }
+
+  def submitBankAccountNotFound: Action[AnyContent] = Action { implicit request =>
+    Ok(account_not_found(existingBankAccountForm, fakeBankDetails))
+  }
+
+
+
   def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.ArrangementController.submit())
   }
 
   def submitDirectDebit: Action[AnyContent] = Action.async { implicit request =>
-    createDirectDebitForm.bindFromRequest().fold(
+    directDebitForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(bankDetailsFormErrorPage(formWithErrors, request))),
       validFormData =>
         authConnector.currentAuthority.flatMap {

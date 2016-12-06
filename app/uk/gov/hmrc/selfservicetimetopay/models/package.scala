@@ -125,6 +125,13 @@ package object controllerVariables {
     Debit(None, BigDecimal("20.00"), LocalDate.of(2015, 2, 14), None, None)
   )
 
-  implicit val arrangementDirectDebit = ArrangementDirectDebit("My Account", 1, 2, 33, 123456789, Some(true))
+
+  implicit val fakeBankDetails = Seq(
+    BankDetails("123456", "987654321", Some("My Account"), None, None, Some("1")),
+    BankDetails("907856", "123456789", Some("Business Account"), None, None, Some("2")),
+    BankDetails("974853", "157674589", None, None, None, None)
+  )
+
+  implicit val arrangementDirectDebit = ArrangementDirectDebit("My Account", "010233", "123456789")
 
 }

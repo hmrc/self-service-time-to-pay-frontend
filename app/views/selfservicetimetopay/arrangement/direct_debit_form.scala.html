@@ -6,52 +6,21 @@ Time To Pay Direct Debit Form Page
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @(ddForm:Form[ArrangementDirectDebit])(implicit request: Request[_])
-@import selfservicetimetopay.partials.direct_debit_guarantee
+@import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_guarantee, direct_debit_fields}
 @import selfservicetimetopay.helpers.{alert, message_list}
-@import selfservicetimetopay.helpers.forms.{form, formErrorSummary, inlinetextinput, textinput, fieldset, checkbox, submit}
+@import selfservicetimetopay.helpers.forms.{form, formErrorSummary, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
   bodyClasses = None,
-  sidebarLinks = Some(selfservicetimetopay.partials.having_problems_sidebar())
+  sidebarLinks = Some(having_problems_sidebar())
 ){
   <section>
     <h1 style="heading-h1">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
     @form(routes.DirectDebitController.submitDirectDebit()) {
       @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
       <h2 class="heading-h2">@Messages("ssttp.arrangement.direct-debit.form.bank-details")</h2>
-      @textinput(ddForm("accountHolderName"),
-        'label -> Messages("ssttp.arrangement.direct-debit.form.accountName"),
-        '_inputClass -> "input--cleared")
-
-      @fieldset(ddForm, "sortCode") {
-        <legend>@Messages("ssttp.arrangement.direct-debit.form.sortCode")</legend>
-        <ul class="list--inline group">
-          <li>@inlinetextinput(ddForm("sortCode1"),
-            'label -> "",
-            '_labelClass -> "label--inline-tight",
-            '_inputClass -> "input--xxsmall input--no-spinner")</li>
-          <li>@inlinetextinput(ddForm("sortCode2"),
-            'label -> "-",
-            '_labelClass -> "label--inline-tight",
-            '_inputClass -> "input--xxsmall input--no-spinner")</li>
-          <li>@inlinetextinput(ddForm("sortCode3"),
-            'label -> "-",
-            '_labelClass -> "label--inline-tight",
-            '_inputClass -> "input--xxsmall input--no-spinner")</li>
-        </ul>
-      }
-      @textinput(ddForm("accountNumber"),
-        'label -> Messages("ssttp.arrangement.direct-debit.form.accountNumber"),
-        '_inputClass -> "input--cleared"
-      )
-      @alert(){
-        @Messages("ssttp.arrangement.direct-debit.form.confirmation.header")
-        @message_list(Some("bullets"), "ssttp.arrangement.direct-debit.form.confirmation.list.")
-      }
-      @checkbox(ddForm("confirmed"), Option(Html(Messages("ssttp.arrangement.direct-debit.form.confirmed"))),
-        '_labelClass -> "block-label"
-      )
+      @direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode"), ddForm("accountNumber"))
       @submit(){@Messages("ssttp.arrangement.direct-debit.form.submit")}
       <p>&nbsp;</p>
     }
