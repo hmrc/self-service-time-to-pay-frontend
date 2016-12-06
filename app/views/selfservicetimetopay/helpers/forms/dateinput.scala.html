@@ -37,9 +37,7 @@ A data input field using Component Library Styles as  documented:
 @fieldset(frm, name, '_modifierClass -> fieldsetErrorsClass){
     @if(argsMap.get('label).isDefined){<legend>@argsMap.get('label)</legend>}
     @formErrors(frm, '_field -> name)
-    @fieldErrors(yearField)
-    @fieldErrors(monthField)
-    @fieldErrors(dayField)
+
     <ul class="list--inline group">
         <li>@numberinput(dayField, 'label -> argsMap.getOrElse('dayLabel, ""),
             '_modifierClass -> "form-field--inline",
@@ -54,12 +52,15 @@ A data input field using Component Library Styles as  documented:
             '_inputClass -> "flush input--cleared",
             '_hideErrors -> true)
         </li>
-        <li>@numberinput(yearField,
+        <li>
+        @numberinput(yearField,
             'label -> argsMap.getOrElse('yearLabel, ""),
             '_labelClass -> "gutter-left label--inline-tight",
             '_modifierClass -> "form-field--inline",
             '_inputClass -> "input--cleared input--xsmall input--no-spinner",
-            '_hideErrors -> true)
+            '_hideErrors -> true,
+            '_required -> true,
+            '_maxlength -> "4")
         </li>
     </ul>
     @if(argsMap.get('hint).isDefined) {

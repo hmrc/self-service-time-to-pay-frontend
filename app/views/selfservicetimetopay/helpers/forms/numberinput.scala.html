@@ -38,13 +38,13 @@ Number input field using Component Library Styles as  documented:
     <input type="number"@if(inputClass.nonEmpty){ class="@inputClass" } name="@elements.field.name" id="@elements.field.name" value="@value"
         @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
         @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
+        @if(elements.args.get('_required).isDefined) { required }
         @if(elements.args.get('_error_id).isDefined) { aria-labeledby="@elements.args.get('_error_id)" }
         @if(elements.args.get('_hintId).isDefined) { aria-describedby="@elements.args.get('_hintId)" }
         @if(elements.args.get('_maxlength).isDefined) { maxlength="@elements.args.get('_maxlength)" }
         @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }
-        @if(elements.args.get('_pattern).isDefined) { pattern="@elements.args.get('_pattern)" }
+        @*@if(elements.args.get('_pattern).isDefined) { pattern="@elements.args.get('_pattern)" }*@
         @if(elements.args.get('_title).isDefined) { title="@elements.args.get('_title)" }
-        @if(elements.args.get('_required).isDefined) { required }
         @if(elements.args.get('datalist).isDefined) { list="@{elements.field.name}_datalist" }
     />
     @if(elements.args.get('datalist).isDefined) {
