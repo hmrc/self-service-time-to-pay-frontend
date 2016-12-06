@@ -41,16 +41,21 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   val paymentCurrency = "GBP"
 
   def getInstalmentSummary = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(submission@TTPSubmission(Some(schedule), _, _, _, _, _, _, _)) =>
-        Ok(showInstalmentSummary(schedule, ArrangementForm.dayOfMonthForm, request))
-      case _ => Ok(showInstalmentSummary(generatePaymentSchedules(BigDecimal.exact("5000"), None).head, ArrangementForm.dayOfMonthForm, request))
-      case _ => throw new RuntimeException("No data found")
+    sessionCache.get.flatMap {
+      _.fold(redirectToStart)(ttp => {
+        Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule date")),
+          createDayOfForm(ttp), request)))
+      })
     }
   }
 
-  private val showInstalmentSummary = instalment_plan_summary.render _
+  private def createDayOfForm(ttpSubmission: TTPSubmission)  = {
+     ttpSubmission.paymentScheduleDayOfMonth.fold(ArrangementForm.dayOfMonthForm)(
+       dayOfMonth => ArrangementForm.dayOfMonthForm.fill(dayOfMonth)
+     )
+  }
 
+  private val showInstalmentSummary = instalment_plan_summary.render _
 
   def changeSchedulePaymentDay(): Action[AnyContent] = Action.async { implicit request =>
 
@@ -72,7 +77,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     createCalculatorInput(ttpSubmission, formData).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
       calculatorConnector.calculatePaymentSchedule(cal).flatMap {
         response => {
-          sessionCache.put(ttpSubmission.copy(schedule = Some(response.head))).map {
+          sessionCache.put(ttpSubmission.copy(schedule = Some(response.head), paymentScheduleDayOfMonth = Some(formData))).map {
             _ => Redirect(routes.ArrangementController.getInstalmentSummary())
           }
         }

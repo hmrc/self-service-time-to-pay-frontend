@@ -52,7 +52,7 @@ class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
   def getCalculateInstalments(monthsOption: Option[String]): Action[AnyContent] = Action.async { implicit request =>
     // create fake schedule
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, _, _, debits@Some(_), paymentToday@Some(_))) =>
+      case Some(TTPSubmission(_, _, _, _, _, _, debits@Some(_), paymentToday@Some(_),_)) =>
         // TODO replace the below with a call to the orchestration layer (self-service-time-pay service)
         val total = debits.get.map(_.amount).sum
         val form = CalculatorForm.createPaymentTodayForm(total)

@@ -32,7 +32,7 @@ class AmountsDueController extends TimeToPayController {
 
   def getAmountsDue: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _)) =>
+      case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _,_)) =>
         Ok(amounts_due_form.render(CalculatorAmountsDue(debits.get), CalculatorForm.amountDueForm, request))
       case _ => Ok(amounts_due_form.render(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm, request))
     }
@@ -42,16 +42,16 @@ class AmountsDueController extends TimeToPayController {
     CalculatorForm.amountDueForm.bindFromRequest().fold(
       formWithErrors =>
         sessionCache.get.map {
-          case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _))=>
+          case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _,_))=>
             BadRequest(amounts_due_form.render(CalculatorAmountsDue(debits.get), formWithErrors, request))
           case _ => BadRequest(amounts_due_form.render(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors, request))
         },
 
       validFormData => {
         sessionCache.get.map {
-          case Some(ttpSubmission @ TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _)) =>
+          case Some(ttpSubmission @ TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _,_)) =>
             ttpSubmission.copy(manualDebits = Some(debits.get :+ validFormData))
-          case Some(ttpSubmission @ TTPSubmission(_, _, _, _, Some(_),Some(_), _, _)) =>
+          case Some(ttpSubmission @ TTPSubmission(_, _, _, _, Some(_),Some(_), _, _,_)) =>
             ttpSubmission.copy(manualDebits = Some(IndexedSeq(validFormData)))
           case _ => TTPSubmission(manualDebits = Some(IndexedSeq(validFormData)))
         }.map { ttpData =>
@@ -67,7 +67,7 @@ class AmountsDueController extends TimeToPayController {
   def submitRemoveAmountDue: Action[AnyContent] = Action.async { implicit request =>
     val index = CalculatorForm.removeAmountDueForm.bindFromRequest()
     sessionCache.get.map {
-      case Some(ttpSubmission @ TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _)) =>
+      case Some(ttpSubmission @ TTPSubmission(_, _, _, _, _, _, debits @ Some(_), _,_)) =>
         ttpSubmission.copy(manualDebits = Some(debits.get.patch(index.value.get, Nil, 1)))
       case _ => TTPSubmission(manualDebits = Some(IndexedSeq.empty))
     }.map { ttpData => sessionCache.put(ttpData)}
