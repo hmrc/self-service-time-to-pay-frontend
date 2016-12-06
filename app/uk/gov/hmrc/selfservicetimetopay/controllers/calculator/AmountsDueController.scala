@@ -32,7 +32,7 @@ class AmountsDueController extends TimeToPayController {
 
   def getAmountsDue: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, _, _,_,CalculatorInput(debits, _, _, _, _, _))) =>
+      case Some(TTPSubmission(_, _, _, _, _, _,CalculatorInput(debits, _, _, _, _, _))) =>
         Ok(amounts_due_form.render(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm, request))
       case _ => Ok(amounts_due_form.render(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm, request))
     }
@@ -42,16 +42,16 @@ class AmountsDueController extends TimeToPayController {
     CalculatorForm.amountDueForm.bindFromRequest().fold(
       formWithErrors =>
         sessionCache.get.map {
-          case Some(TTPSubmission(_, _, _, _, _, _,_, CalculatorInput(debits, _, _, _, _, _)))=>
+          case Some(TTPSubmission(_, _, _, _, _, _,CalculatorInput(debits, _, _, _, _, _)))=>
             BadRequest(amounts_due_form.render(CalculatorAmountsDue(debits), formWithErrors, request))
           case _ => BadRequest(amounts_due_form.render(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors, request))
         },
 
       validFormData => {
         sessionCache.get.map {
-          case Some(ttpSubmission @ TTPSubmission(_, _, _, _, _, _,_,cd @ CalculatorInput(debits, _, _, _, _, _))) =>
+          case Some(ttpSubmission @ TTPSubmission(_, _, _, _, _, _,cd @ CalculatorInput(debits, _, _, _, _, _))) =>
             ttpSubmission.copy(calculatorData = cd.copy(debits = debits :+ validFormData))
-          case Some(ttpSubmission @ TTPSubmission(_, _, _, _, Some(_),Some(_), _,cd)) =>
+          case Some(ttpSubmission @ TTPSubmission(_, _, _, _, Some(_),Some(_), cd)) =>
             ttpSubmission.copy(calculatorData = cd.copy(debits = IndexedSeq(validFormData)))
           case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq(validFormData)))
         }.map { ttpData =>
@@ -67,7 +67,7 @@ class AmountsDueController extends TimeToPayController {
   def submitRemoveAmountDue: Action[AnyContent] = Action.async { implicit request =>
     val index = CalculatorForm.removeAmountDueForm.bindFromRequest()
     sessionCache.get.map {
-      case Some(ttpSubmission @ TTPSubmission(_, _, _, _, _, _,_,cd @ CalculatorInput(debits, _, _, _, _, _))) =>
+      case Some(ttpSubmission @ TTPSubmission(_, _, _, _, _, _,cd @ CalculatorInput(debits, _, _, _, _, _))) =>
         ttpSubmission.copy(calculatorData = cd.copy(debits = debits.patch(index.value.get, Nil, 1)))
       case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty))
     }.map { ttpData => sessionCache.put(ttpData)}
@@ -76,7 +76,7 @@ class AmountsDueController extends TimeToPayController {
 
   def submitAmountsDue: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, _, _,_, CalculatorInput(debits, _, _, _, _, _))) => Some(debits)
+      case Some(TTPSubmission(_, _, _, _, _, _,CalculatorInput(debits, _, _, _, _, _))) => Some(debits)
       case _ => Some(IndexedSeq.empty)
     }.map { ttpData =>
       if(ttpData.isEmpty) BadRequest(amounts_due_form.render(CalculatorAmountsDue(IndexedSeq.empty),

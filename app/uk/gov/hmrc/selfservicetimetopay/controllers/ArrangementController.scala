@@ -49,10 +49,10 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     }
   }
 
-  private def createDayOfForm(ttpSubmission: TTPSubmission)  = {
-     ttpSubmission.paymentScheduleDayOfMonth.fold(ArrangementForm.dayOfMonthForm)(
-       dayOfMonth => ArrangementForm.dayOfMonthForm.fill(dayOfMonth)
-     )
+  private def createDayOfForm(ttpSubmission: TTPSubmission) = {
+    ttpSubmission.calculatorData.firstPaymentDate.fold(ArrangementForm.dayOfMonthForm)(p => {
+      ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getDayOfMonth))
+    })
   }
 
   private val showInstalmentSummary = instalment_plan_summary.render _
@@ -77,7 +77,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     createCalculatorInput(ttpSubmission, formData).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
       calculatorConnector.calculatePaymentSchedule(cal).flatMap {
         response => {
-          sessionCache.put(ttpSubmission.copy(schedule = Some(response.head), paymentScheduleDayOfMonth = Some(formData))).map {
+          sessionCache.put(ttpSubmission.copy(schedule = Some(response.head), calculatorData = cal)).map {
             _ => Redirect(routes.ArrangementController.getInstalmentSummary())
           }
         }
@@ -85,16 +85,12 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     })
   }
 
-
   def createCalculatorInput(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth): Option[CalculatorInput] = {
-    val taxpayer = ttpSubmission.taxpayer.getOrElse(throw new RuntimeException("No taxpayer found"))
     for {
       schedule <- ttpSubmission.schedule
       startDate <- schedule.startDate
-      endDate <- schedule.endDate
       firstPaymentDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
-      selfAssessment <- taxpayer.selfAssessment
-      input = CalculatorInput(selfAssessment.debits, schedule.initialPayment, startDate, endDate, Some(firstPaymentDate))
+      input = ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate))
     } yield input
   }
 

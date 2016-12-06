@@ -72,7 +72,6 @@ package object resources {
     Some(taxPayer),
     Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
     Some(EligibilityExistingTTP(Some(false))),
-    Some(ArrangementDayOfMonth(1)),
     CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)))
 
   val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())

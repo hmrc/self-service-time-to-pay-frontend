@@ -33,7 +33,7 @@ class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
                                      calculatorConnector: CalculatorConnector) extends TimeToPayController {
   def getCalculateInstalments(months: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap {
-      case Some(ttpData @ TTPSubmission(_, _, _, None, _, _,_,CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+      case Some(ttpData @ TTPSubmission(_, _, _, None, _, _,CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), Taxpayer(selfAssessment = Some(SelfAssessment(debits = debits))))).flatMap {
           case EligibilityStatus(true, _) =>
             val total = debits.map(_.amount).sum
