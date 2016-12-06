@@ -1,0 +1,11 @@
+@*
+   Partial view to display the direct debit confirmation text
+*@
+@()
+@import selfservicetimetopay.helpers.{alert, message_list}
+@alert(){
+    @Messages("ssttp.direct-debit.form.confirmation.header")
+}
+@alert('_modifierClass -> "alert alert--info alert--info__light") {
+    @message_list(Some("bullets"), "ssttp.direct-debit.form.confirmation.list.")
+}

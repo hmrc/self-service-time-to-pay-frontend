@@ -25,6 +25,7 @@ import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.controllerVariables.fakeBankDetails
 import views.html.selfservicetimetopay.arrangement._
 
 import scala.concurrent.Future
@@ -51,6 +52,16 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       case _ => throw new RuntimeException("No data found")
     }
   }
+
+  def getBankAccountNotFound: Action[AnyContent] = Action { implicit request =>
+    Ok(account_not_found(existingBankAccountForm, fakeBankDetails))
+  }
+
+  def submitBankAccountNotFound: Action[AnyContent] = Action { implicit request =>
+    Ok(account_not_found(existingBankAccountForm, fakeBankDetails))
+  }
+
+
 
   def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.ArrangementController.submit())

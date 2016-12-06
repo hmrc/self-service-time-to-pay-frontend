@@ -1,0 +1,48 @@
+@*
+Time To Pay Bank account not found - select existing direct debit or create new Direct Debit Form
+    @param Form[ArrangementExistingDirectDebit]  The form for this page
+    @param Seq[BankDetails] Existing bank details to re-use
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementExistingDirectDebit
+@import uk.gov.hmrc.selfservicetimetopay.models.BankDetails
+@(ddForm:Form[ArrangementExistingDirectDebit], bankAccounts:Seq[BankDetails])(implicit request: Request[_])
+@import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields}
+@import selfservicetimetopay.helpers.highlight
+@import selfservicetimetopay.helpers.forms.{form, select, formErrorSummary, submit}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@selectOptions = @{
+    Seq(("", "")) ++
+    bankAccounts.filter(_.ddiRefNumber.nonEmpty)
+            .map{ b => (b.ddiRefNumber.get, b.accountNumber + " | " + b.formattedSortCode) }
+}
+@selfservicetimetopay.main(
+    title = Messages("ssttp.common.title"),
+    bodyClasses = None,
+    sidebarLinks = Some(having_problems_sidebar())
+){
+    <section>
+        <h1 style="heading-h1">@Messages("ssttp.arrangement.misalignment.title")</h1>
+        @highlight('_modifierClass -> "highlight-message--light"){<p>@Messages("ssttp.arrangement.misalignment.subtitle")</p>}
+        @form(routes.DirectDebitController.submitBankAccountNotFound()) {
+            @formErrorSummary(Messages("ssttp.arrangement.misalignment.form.error.summary.title"), ddForm, Seq.empty)
+            <div class="panel-indent">
+                <h2>@Messages("ssttp.arrangement.misalignment.existing.title")</h2>
+                @select(ddForm("existingDdi"), selectOptions)
+            </div>
+            <h3>@Messages("ssttp.arrangement.misalignment.direct-debit.or")</h3>
+            <div class="panel-indent">
+                <h2>@Messages("ssttp.arrangement.misalignment.direct-debit.reenter")</h2>
+                @direct_debit_fields(ddForm, ddForm("directDebit.accountName"), ddForm("directDebit.sortCode"), ddForm("directDebit.accountNumber"))
+            </div>
+            <p>
+                @direct_debit_confirmation()
+            </p>
+            @submit() {
+                @Messages("ssttp.arrangement.misalignment.submit")
+            }
+        }
+    </section>
+    <div><a class="back-link" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.arrangement.misalignment.back")</a></div>
+
+}
+

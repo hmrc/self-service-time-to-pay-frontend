@@ -41,7 +41,8 @@ GET    /arrangement/direct-debit-error              @uk.gov.hmrc.selfservicetime
 GET    /arrangement/direct-debit-confirmation       @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()
 POST   /arrangement/submit                          @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
 GET    /arrangement/summary                         @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
-
+GET    /arrangement/account-not-found               @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getBankAccountNotFound()
+POST   /arrangement/account-not-found               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
 # Alternative pages
 GET    /you-need-to-file                            @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
 GET    /ttp-call-us                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
