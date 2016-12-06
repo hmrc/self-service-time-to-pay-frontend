@@ -26,6 +26,7 @@ import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
 
 import scala.concurrent.Future
@@ -86,13 +87,14 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
 
   def createCalculatorInput(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth): Option[CalculatorInput] = {
+    val taxpayer = ttpSubmission.taxpayer.getOrElse(throw new RuntimeException("No taxpayer found"))
     for {
-      taxPayer <- ttpSubmission.taxPayer
       schedule <- ttpSubmission.schedule
       startDate <- schedule.startDate
       endDate <- schedule.endDate
       firstPaymentDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
-      input = CalculatorInput(taxPayer.selfAssessment.debits, schedule.initialPayment, startDate, Some(endDate), Some(firstPaymentDate))
+      selfAssessment <- taxpayer.selfAssessment
+      input = CalculatorInput(selfAssessment.debits, schedule.initialPayment, startDate, endDate, Some(firstPaymentDate))
     } yield input
   }
 

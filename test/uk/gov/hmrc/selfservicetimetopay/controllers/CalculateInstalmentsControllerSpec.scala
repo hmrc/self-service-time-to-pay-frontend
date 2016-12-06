@@ -59,7 +59,7 @@ class CalculateInstalmentsControllerSpec extends UnitSpec with MockitoSugar with
         .thenReturn(Future.successful(eligibilityStatusOk))
 
       when(mockCalculatorConnector.calculatePaymentSchedule(Matchers.any())(Matchers.any()))
-        .thenReturn(Future.successful(Some(Seq(calculatorPaymentSchedule))))
+        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
       val result = await(controller.getCalculateInstalments(None).apply(FakeRequest().withSession(sessionProvider.createSessionId())))
 

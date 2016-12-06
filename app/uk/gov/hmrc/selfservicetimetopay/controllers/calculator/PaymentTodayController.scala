@@ -29,7 +29,7 @@ class PaymentTodayController extends TimeToPayController {
 
   def getPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+      case Some(TTPSubmission(_, _, _, _, _, _,_,CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
         Ok(payment_today_form.render(form.fill(paymentToday), request))
       case _ => Ok(payment_today_form.render(CalculatorForm.paymentTodayForm, request))
