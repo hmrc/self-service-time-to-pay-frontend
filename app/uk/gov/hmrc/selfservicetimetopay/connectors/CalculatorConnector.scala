@@ -16,12 +16,10 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import play.api.Logger
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpPost}
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, CalculatorPaymentSchedule}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait CalculatorConnector {
@@ -29,12 +27,7 @@ trait CalculatorConnector {
   val serviceURL: String
   val http: HttpPost
 
-  def calculatePaymentSchedule(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[Option[Seq[CalculatorPaymentSchedule]]] = {
-    http.POST[CalculatorInput, Option[Seq[CalculatorPaymentSchedule]]](s"$calculatorURL/$serviceURL", liabilities).map {
-      case Some(response) => Some(response)
-      case _ =>
-        Logger.error("No payment schedule retrieved")
-        None
-    }
+  def calculatePaymentSchedule(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[Seq[CalculatorPaymentSchedule]] = {
+    http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](s"$calculatorURL/$serviceURL", liabilities)
   }
 }

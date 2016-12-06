@@ -44,27 +44,26 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
 
   "Calling submitLiabilities" should {
     "return a payment schedule" in {
-      val jsonResponse = Json.fromJson[Option[Seq[CalculatorPaymentSchedule]]](submitLiabilitiesResponseJSON).get
+      val jsonResponse = Json.fromJson[Seq[CalculatorPaymentSchedule]](submitLiabilitiesResponseJSON).get
 
-      when(testConnector.http.POST[CalculatorInput, Option[Seq[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
+      when(testConnector.http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
       val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))
 
-      result shouldBe defined
-      result.get.size shouldBe 11
-      result.get.head.initialPayment shouldBe BigDecimal("50")
-      result.get.head.amountToPay shouldBe BigDecimal("5000")
-      result.get.last.instalments.size shouldBe 12
+      result.size shouldBe 11
+      result.head.initialPayment shouldBe BigDecimal("50")
+      result.head.amountToPay shouldBe BigDecimal("5000")
+      result.last.instalments.size shouldBe 12
     }
 
     "return no payment schedule" in {
-      when(testConnector.http.POST[CalculatorInput, Option[Seq[CalculatorPaymentSchedule]]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future(None))
+      when(testConnector.http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(Seq()))
 
       val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))
 
-      result shouldBe None
+      result shouldBe Seq()
     }
   }
 }

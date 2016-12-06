@@ -22,6 +22,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
@@ -46,6 +47,10 @@ class ArrangementControllerSpec extends UnitSpec
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
   }
+
+  val validDayForm = Seq(
+    "dayOfMonth" -> "10"
+  )
 
   "Self Service Time To Pay Arrangement Controller" should {
     "return success and display the application complete page" in {
@@ -75,8 +80,18 @@ class ArrangementControllerSpec extends UnitSpec
     }
     "update payment schedule date" in {
 
+      implicit val hc = new HeaderCarrier
+
       when(mockSessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+
+      when(calculatorConnector.calculatePaymentSchedule(Matchers.any())(Matchers.any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
+
+      val response = controller.changeSchedulePaymentDay().apply(FakeRequest("POST", "/arrangement/instalment-summary/change-day").withSession(sessionProvider.createSessionId())
+        .withFormUrlEncodedBody(validDayForm: _*))
+
+      redirectLocation(response).get shouldBe controllers.routes.ArrangementController.getInstalmentSummary().url
     }
 
   }
