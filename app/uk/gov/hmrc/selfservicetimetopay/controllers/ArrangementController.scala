@@ -41,7 +41,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def getInstalmentSummary = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(submission@TTPSubmission(Some(schedule), _, _, _, _, _, _, _)) =>
+      case Some(submission@TTPSubmission(Some(schedule), _, _, _, _, _, _)) =>
         Ok(showInstalmentSummary(schedule, ArrangementForm.dayOfMonthForm, request))
       case _ => throw new RuntimeException("No data found")
     }
@@ -74,7 +74,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     sessionCache.get.flatMap {
       _.fold(redirectToStart)(submission => {
         sessionCache.remove()
-        successful(Ok(application_complete.render(submission.taxPayer.get.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
+        successful(Ok(application_complete.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
           submission.arrangementDirectDebit.get, submission.schedule.get, request)))
       })
     }
@@ -82,19 +82,20 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.start()))
 
+  private def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
+
   private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
+    submission.taxpayer match {
+      case Some(Taxpayer(_, _, Some(SelfAssessment(Some(utr), _, _, _)))) =>
+        val result = for {
+          ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
+          ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
+        } yield ttp
 
-    def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
-
-    val utr = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present")).selfAssessment.utr
-
-    val result = for {
-      ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr.get))
-      ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
-    } yield ttp
-
-    result.flatMap {
-      _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), success => applicationSuccessful)
+        result.flatMap {
+          _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), success => applicationSuccessful)
+        }
+      case _ => throw new RuntimeException("Taxpayer or related data not present")
     }
   }
 
@@ -102,10 +103,11 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     val maybePaymentPlanRequest = for {
       bankDetails <- submission.bankDetails
       schedule <- submission.schedule
-      taxPayer <- submission.taxPayer
+      taxPayer <- submission.taxpayer
+      sa <- taxPayer.selfAssessment
+      utr <- sa.utr
     } yield {
-      val utr = taxPayer.selfAssessment.utr
-      val knownFact = List(KnownFact(cesa, utr.get))
+      val knownFact = List(KnownFact(cesa, utr))
       val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
         accountNumber = Some(bankDetails.accountNumber.toString),
         creationDate = schedule.startDate,
@@ -114,7 +116,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
       val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
       val pp = PaymentPlan("Time to Pay",
-        utr.get,
+        utr,
         cesa,
         paymentCurrency,
         schedule.initialPayment,
@@ -137,7 +139,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                                 submission: TTPSubmission): TTPArrangement = {
     val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
     val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
-    val taxpayer = submission.taxPayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
+    val taxpayer = submission.taxpayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
     val schedule = submission.schedule.getOrElse(throw new RuntimeException("Schedule data not present"))
 
     TTPArrangement(ppReference, ddReference, taxpayer, schedule)

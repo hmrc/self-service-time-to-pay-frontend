@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
-import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator._
 
@@ -29,12 +29,9 @@ class PaymentTodayController extends TimeToPayController {
 
   def getPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_), Some(paymentToday))) =>
-        val form = CalculatorForm.createPaymentTodayForm(debits.get.map(_.amount).sum)
+      case Some(TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+        val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
         Ok(payment_today_form.render(form.fill(paymentToday), request))
-      case Some(TTPSubmission(_, _, _, _, _, _, debits @ Some(_),_)) =>
-        val form = CalculatorForm.createPaymentTodayForm(debits.get.map(_.amount).sum)
-        Ok(payment_today_form.render(form, request))
       case _ => Ok(payment_today_form.render(CalculatorForm.paymentTodayForm, request))
     }
   }
@@ -44,10 +41,9 @@ class PaymentTodayController extends TimeToPayController {
     CalculatorForm.paymentTodayForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(payment_today_form(formWithErrors))),
       validFormData => updateOrCreateInCache(
-        found => found.copy(paymentToday = Some(validFormData)),
-        () => TTPSubmission(paymentToday = Some(validFormData))).map(_ =>
-        Redirect(routes.CalculateInstalmentsController.getCalculateInstalments(Some("6")))
-    ))
-
+        found => found.copy(calculatorData = found.calculatorData.copy(initialPayment = validFormData)),
+        () => TTPSubmission())
+        .map(_ => Redirect(routes.CalculateInstalmentsController.getCalculateInstalments(None)))
+    )
   }
 }

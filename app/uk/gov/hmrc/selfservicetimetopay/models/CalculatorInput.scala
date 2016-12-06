@@ -18,8 +18,18 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
 
-case class CalculatorInput(debits:Seq[Debit],
+case class CalculatorInput(debits:Seq[Debit] = Seq.empty,
                            initialPayment:BigDecimal = BigDecimal(0),
-                           startDate:LocalDate = LocalDate.now(),
-                           endDate:Option[LocalDate] = None,
+                           startDate:LocalDate,
+                           endDate:LocalDate,
+                           firstPaymentDate:Option[LocalDate] = None,
                            paymentFrequency:String = "MONTHLY")
+
+object CalculatorInput {
+  val initial = CalculatorDef(3)
+}
+
+object CalculatorDef {
+  def apply(relativeEndDate: Int): CalculatorInput = CalculatorInput(startDate = LocalDate.now(), endDate = LocalDate.now().plusMonths(relativeEndDate).minusDays(1))
+  def apply(startDate: LocalDate, relativeEndDate: Int): CalculatorInput = CalculatorInput(startDate = startDate, endDate = startDate.plusMonths(relativeEndDate).minusDays(1))
+}

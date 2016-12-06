@@ -67,8 +67,8 @@ object DirectDebitConnector extends DirectDebitConnector with ServicesConfig {
 }
 
 object CalculatorConnector extends CalculatorConnector with ServicesConfig {
-  val calculatorURL: String = baseUrl("self-service-time-to-pay")
-  val serviceURL = "paymentschedule"
+  val calculatorURL: String = baseUrl("time-to-pay-calculator")
+  val serviceURL = "time-to-pay-calculator/paymentschedule"
   val http = WSHttp
 }
 
@@ -79,13 +79,13 @@ object ArrangementConnector extends ArrangementConnector with ServicesConfig {
 }
 
 object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
-  val taxPayerURL: String = baseUrl("time-to-pay-eligibility")
-  val serviceURL = "time-to-pay-eligibility"
+  val taxPayerURL: String = baseUrl("taxpayer")
+  val serviceURL = "tax-payer"
   val http = WSHttp
 }
 object EligibilityConnector extends EligibilityConnector with ServicesConfig {
   val eligibilityURL: String = baseUrl("time-to-pay-eligibility")
-  val serviceURL = "eligibility"
+  val serviceURL = "time-to-pay-eligibility/eligibility"
   val http = WSHttp
 }
 

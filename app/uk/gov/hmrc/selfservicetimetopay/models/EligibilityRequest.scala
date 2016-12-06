@@ -18,4 +18,4 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
 
-case class EligibilityRequest(dateOfEligibilityCheck: LocalDate, taxPayer: Option[TaxPayer])
+case class EligibilityRequest(dateOfEligibilityCheck: LocalDate, taxpayer: Taxpayer)

@@ -37,7 +37,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   def getDirectDebitError: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, banks @ Some(_), _, _, _, _, _)) =>
+      case Some(TTPSubmission(_, _, banks @ Some(_), _, _, _, _)) =>
         Ok(direct_debit_error.render(createDirectDebitForm, banks, request))
       case _ => Ok(direct_debit_error.render(createDirectDebitForm, None, request))
     }
@@ -46,7 +46,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getDirectDebitConfirmation: Action[AnyContent] = Action.async { implicit request =>
     val form: Form[Boolean] = Form(single("confirm" -> boolean))
     sessionCache.get.map {
-      case Some(submission @ TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _, _)) =>
+      case Some(submission @ TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _)) =>
         Ok(showDDConfirmation(schedule, submission.arrangementDirectDebit.get, request))
       case _ => throw new RuntimeException("No data found")
     }
@@ -70,15 +70,12 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Future[Result]] = {
     case Left(singleBankDetails) =>
-      updateOrCreateInCache(found => TTPSubmission(schedule = found.schedule, bankDetails = Some(singleBankDetails), existingDDBanks = found.existingDDBanks,
-        taxPayer = found.taxPayer,eligibilityTypeOfTax = found.eligibilityTypeOfTax, eligibilityExistingTtp = found.eligibilityExistingTtp, paymentToday = found.paymentToday),
+      updateOrCreateInCache(found => found.copy(bankDetails = Some(singleBankDetails)),
         () => TTPSubmission(bankDetails = Some(singleBankDetails)))
         .map(_ => Redirect(toDDCreationPage))
 
     case Right(existingDDBanks) =>
-      updateOrCreateInCache(found => TTPSubmission(schedule = found.schedule, bankDetails = found.bankDetails,
-        existingDDBanks = Some(existingDDBanks), taxPayer = found.taxPayer, eligibilityTypeOfTax = found.eligibilityTypeOfTax,
-        eligibilityExistingTtp = found.eligibilityExistingTtp,paymentToday = found.paymentToday),
+      updateOrCreateInCache(found => found.copy(existingDDBanks = Some(existingDDBanks)),
         () => TTPSubmission(None, None, Some(existingDDBanks), None))
         .map(_ => Redirect(toBankSelectionPage))
   }

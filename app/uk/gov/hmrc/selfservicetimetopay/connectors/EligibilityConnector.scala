@@ -29,6 +29,6 @@ trait EligibilityConnector {
   val http: HttpPost
 
   def checkEligibility(eligibilityRequest: EligibilityRequest)(implicit hc: HeaderCarrier): Future[EligibilityStatus] = {
-    http.POST[EligibilityRequest, EligibilityStatus](s"$eligibilityURL/$serviceURL/", eligibilityRequest)
+    http.POST[EligibilityRequest, EligibilityStatus](s"$eligibilityURL/$serviceURL", eligibilityRequest)
   }
 }

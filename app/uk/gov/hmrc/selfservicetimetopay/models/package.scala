@@ -51,7 +51,6 @@ package object modelsFormat {
     }
 
   //Front end formatters
-  implicit val calculatorPaymentTodayFormatter: Format[CalculatorPaymentToday] = Json.format[CalculatorPaymentToday]
   implicit val eligibilityTypeOfTaxFormatter: Format[EligibilityTypeOfTax] = Json.format[EligibilityTypeOfTax]
   implicit val eligibilityExistingTTPFormatter: Format[EligibilityExistingTTP] = Json.format[EligibilityExistingTTP]
 
@@ -62,7 +61,7 @@ package object modelsFormat {
   implicit val debitFormatter: Format[Debit] = Json.format[Debit]
   implicit val returnsFormatter: Format[Return] = Json.format[Return]
   implicit val selfAssessmentFormatter: Format[SelfAssessment] = Json.format[SelfAssessment]
-  implicit val taxPayerFormatter: Format[TaxPayer] = Json.format[TaxPayer]
+  implicit val taxPayerFormatter: Format[Taxpayer] = Json.format[Taxpayer]
 
   //Calculator formatters
   implicit val calculatorAmountsDueFormatter: Format[CalculatorAmountsDue] = Json.format[CalculatorAmountsDue]
@@ -96,14 +95,14 @@ package object modelsFormat {
 }
 
 package object controllerVariables {
-  def generatePaymentSchedules(amountDue:BigDecimal, payment:Option[BigDecimal]):Seq[CalculatorPaymentSchedule] = {
+  def generatePaymentSchedules(amountDue: BigDecimal, payment: Option[BigDecimal]): Seq[CalculatorPaymentSchedule] = {
     var schedules = Seq[CalculatorPaymentSchedule]()
-    for(i  <- 2 to 11) {
+    for (i <- 2 to 11) {
       val interest = BigDecimal("10") * BigDecimal(i)
       var payments = Seq[CalculatorPaymentScheduleInstalment]()
       for (p <- 1 to i) {
         payments = payments :+ CalculatorPaymentScheduleInstalment(LocalDate.now.plusMonths(p),
-          ((amountDue - payment.getOrElse(BigDecimal("0")) + interest)/BigDecimal(i)).setScale(2, RoundingMode.HALF_UP))
+          ((amountDue - payment.getOrElse(BigDecimal("0")) + interest) / BigDecimal(i)).setScale(2, RoundingMode.HALF_UP))
       }
       schedules = schedules :+ CalculatorPaymentSchedule(Some(LocalDate.now), Some(LocalDate.now.plusMonths(i)),
         payment.getOrElse(BigDecimal("0")),
