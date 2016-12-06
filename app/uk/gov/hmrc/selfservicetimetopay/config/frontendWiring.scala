@@ -121,8 +121,8 @@ trait ServiceRegistry extends ServicesConfig {
 trait ControllerRegistry { registry: ServiceRegistry =>
   private lazy val controllers = Map[Class[_], Controller](
     classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector),
-    classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, calculatorConnector),
-    classOf[CalculatorController] -> new CalculatorController(),
+    classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector),
+    classOf[CalculatorController] -> new CalculatorController(eligibilityConnector, calculatorConnector),
     classOf[EligibilityController] -> new EligibilityController(),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
     classOf[AmountsDueController] -> new AmountsDueController(),

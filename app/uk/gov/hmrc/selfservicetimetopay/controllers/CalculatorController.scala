@@ -16,35 +16,41 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import java.time.LocalDate
+
+import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
+import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.JacksonMapper
 import views.html.selfservicetimetopay.calculator._
 import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calcRoutes}
 
 import scala.concurrent.Future
 
-class CalculatorController extends TimeToPayController {
+class CalculatorController(eligibilityConnector: EligibilityConnector,
+                           calculatorConnector: CalculatorConnector) extends TimeToPayController {
 
-  private def getKeystoreData(implicit request:Request[AnyContent]) : (Boolean, Option[CalculatorAmountsDue], Option[BigDecimal], Option[CalculatorDuration], Option[Seq[CalculatorPaymentSchedule]]) = {
+  private def getKeystoreData(implicit request: Request[AnyContent]): (Boolean, Option[CalculatorAmountsDue], Option[BigDecimal], Option[CalculatorDuration], Option[Seq[CalculatorPaymentSchedule]]) = {
     val ssttpStart = request.session.get("SelfServiceTimeToPayStart").isDefined
-    val amountsDue:Option[CalculatorAmountsDue] = request.session.get("CalculatorAmountsDue") match {
+    val amountsDue: Option[CalculatorAmountsDue] = request.session.get("CalculatorAmountsDue") match {
       case Some(json) => Option(JacksonMapper.readValue(json, classOf[CalculatorAmountsDue]))
       case None => None
     }
-    val paymentToday:Option[BigDecimal] = request.session.get("CalculatorPaymentToday") match {
+    val paymentToday: Option[BigDecimal] = request.session.get("CalculatorPaymentToday") match {
       case Some(json) => Option(JacksonMapper.readValue(json, classOf[BigDecimal]))
       case None => None
     }
-    val duration:Option[CalculatorDuration] = request.session.get("CalculatorDuration") match {
+    val duration: Option[CalculatorDuration] = request.session.get("CalculatorDuration") match {
       case Some(json) => Option(JacksonMapper.readValue(json, classOf[CalculatorDuration]))
       case None => None
     }
-    val schedules:Option[Seq[CalculatorPaymentSchedule]] = request.session.get("CalculatorPaymentSchedules") match {
-      case Some(json) => if(amountsDue.isDefined && paymentToday.isDefined) {
+    val schedules: Option[Seq[CalculatorPaymentSchedule]] = request.session.get("CalculatorPaymentSchedules") match {
+      case Some(json) => if (amountsDue.isDefined && paymentToday.isDefined) {
         Some(generatePaymentSchedules(amountsDue.get.total, paymentToday))
       } else {
         None
@@ -54,20 +60,20 @@ class CalculatorController extends TimeToPayController {
     (ssttpStart, amountsDue, paymentToday, duration, schedules)
   }
 
-  private def paymentScheduleMatches(paymentSchedule: CalculatorPaymentSchedule, amountsDue:CalculatorAmountsDue, paymentToday:BigDecimal):Boolean = {
+  private def paymentScheduleMatches(paymentSchedule: CalculatorPaymentSchedule, amountsDue: CalculatorAmountsDue, paymentToday: BigDecimal): Boolean = {
     (paymentSchedule.amountToPay.compare(amountsDue.total) == 0) && (paymentSchedule.initialPayment.compare(paymentToday) == 0)
   }
 
-  private def getRedirectionDestination(keystoreData:(Boolean, Option[CalculatorAmountsDue],
+  private def getRedirectionDestination(keystoreData: (Boolean, Option[CalculatorAmountsDue],
     Option[BigDecimal], Option[CalculatorDuration], Option[Seq[CalculatorPaymentSchedule]])): Result = {
     keystoreData match {
       case (false, _, _, _, _) => Redirect(routes.SelfServiceTimeToPayController.start())
 
       case (true, None, _, _, _) => Redirect(calculator.routes.AmountsDueController.getAmountsDue())
 
-      case (true, a:Some[CalculatorAmountsDue], None, _, _) => Redirect(calcRoutes.PaymentTodayController.getPaymentToday())
+      case (true, a: Some[CalculatorAmountsDue], None, _, _) => Redirect(calcRoutes.PaymentTodayController.getPaymentToday())
 
-      case (true, a:Some[CalculatorAmountsDue], p:Some[BigDecimal], _, _) =>
+      case (true, a: Some[CalculatorAmountsDue], p: Some[BigDecimal], _, _) =>
         Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None))
 
       case theRest => Redirect(calculator.routes.AmountsDueController.getAmountsDue())
@@ -78,9 +84,9 @@ class CalculatorController extends TimeToPayController {
 
     Future.successful(getKeystoreData match {
 
-      case (_, Some(amountsDue:CalculatorAmountsDue), paymentTodayOption: Option[BigDecimal], _, _) =>
+      case (_, Some(amountsDue: CalculatorAmountsDue), paymentTodayOption: Option[BigDecimal], _, _) =>
         val form = paymentTodayOption match {
-          case Some(paymentToday:BigDecimal) => CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday)
+          case Some(paymentToday: BigDecimal) => CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday)
           case None => CalculatorForm.createPaymentTodayForm(amountsDue.total)
         }
         Ok(payment_today_form.render(form, request))
@@ -95,7 +101,7 @@ class CalculatorController extends TimeToPayController {
 
     Future.successful(getKeystoreData match {
 
-      case (_, amountsDue:Some[CalculatorAmountsDue], _, _, _) =>
+      case (_, amountsDue: Some[CalculatorAmountsDue], _, _, _) =>
         val form = CalculatorForm.createPaymentTodayForm(amountsDue.get.total).bindFromRequest()
         if (form.hasErrors) {
           Ok(payment_today_form.render(form, request))
@@ -109,7 +115,7 @@ class CalculatorController extends TimeToPayController {
     })
   }
 
-  def getCalculateInstalments(monthsOption:Option[String]): Action[AnyContent] = Action.async { implicit request =>
+  def getCalculateInstalments(monthsOption: Option[String]): Action[AnyContent] = Action.async { implicit request =>
 
     Future.successful(getKeystoreData match {
 
@@ -139,7 +145,7 @@ class CalculatorController extends TimeToPayController {
                       .addingToSession("CalculatorDuration" -> JacksonMapper.writeValueAsString(duration))
                   }
                 } catch {
-                  case ex:Exception => BadRequest(ex.getLocalizedMessage)
+                  case ex: Exception => BadRequest(ex.getLocalizedMessage)
                 }
 
               case None =>
@@ -172,22 +178,23 @@ class CalculatorController extends TimeToPayController {
     })
   }
 
+  //ARROWS
   def submitCalculateInstalments: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(getKeystoreData match {
 
-      case (_, Some(amountsDue:CalculatorAmountsDue), Some(paymentToday:BigDecimal),
-      durationOption:Option[CalculatorDuration], Some(schedules:List[CalculatorPaymentSchedule])) =>
+      case (_, Some(amountsDue: CalculatorAmountsDue), Some(paymentToday: BigDecimal),
+      durationOption: Option[CalculatorDuration], Some(schedules: List[CalculatorPaymentSchedule])) =>
         val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
         val calculatorDurationForm = CalculatorForm.createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).bindFromRequest()
 
         if (calculatorDurationForm.hasErrors) {
-         val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
-         val duration = durationOption match {
-           case Some(d:CalculatorDuration) => d
-           case None => CalculatorDuration(instalmentOptionsAscending.head)
-         }
+          val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
+          val duration = durationOption match {
+            case Some(d: CalculatorDuration) => d
+            case None => CalculatorDuration(instalmentOptionsAscending.head)
+          }
 
-         Ok(calculate_instalments_form.render(schedules.filter(_.instalments.length == duration.months).head,
+          Ok(calculate_instalments_form.render(schedules.filter(_.instalments.length == duration.months).head,
             calculatorDurationForm, CalculatorForm.createPaymentTodayForm(amountsDue.total).fill(paymentToday), instalmentOptionsAscending, request))
         }
         else {
@@ -200,28 +207,33 @@ class CalculatorController extends TimeToPayController {
     })
   }
 
+  //UPDATE BUTTON
   def submitCalculateInstalmentsPaymentToday: Action[AnyContent] = Action.async { implicit request =>
-
-    Future.successful(getKeystoreData match {
-
-      case (_, Some(amountDue:CalculatorAmountsDue), _, Some(duration:CalculatorDuration), Some(schedules:List[CalculatorPaymentSchedule])) =>
-
-        val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
-        val calculatorPaymentTodayForm = CalculatorForm.createPaymentTodayForm(amountDue.total).bindFromRequest()
+    sessionCache.get.flatMap[Result] {
+      case Some(ttpData@TTPSubmission(_, _, _, None, _, _, cd)) =>
+        val calculatorPaymentTodayForm = CalculatorForm.createPaymentTodayForm(cd.debits.map(_.amount).sum).bindFromRequest()
 
         if (calculatorPaymentTodayForm.hasErrors) {
-          val instalmentOptionsAscending = schedules.map(_.instalments.length).sorted
-
-          Ok(calculate_instalments_form.render(schedules.filter(_.instalments.length == duration.months).head,
-            CalculatorForm.createDurationForm(instalmentOptionsAscending.head, instalmentOptionsAscending.last).fill(duration),
-              calculatorPaymentTodayForm, instalmentOptionsAscending, request))
+          //Errors may be passed to flash scope ?
+          Future.successful(Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)))
         } else {
-          Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)).addingToSession(
-            "CalculatorPaymentToday" -> JacksonMapper.writeValueAsString(calculatorPaymentTodayForm.get)
-          ).removingFromSession("CalculatorPaymentSchedules")
+          eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), Taxpayer(selfAssessment = Some(SelfAssessment(debits = cd.debits))))).flatMap {
+            case EligibilityStatus(true, _) =>
+              val updatedCalculatorData = cd.copy(initialPayment = calculatorPaymentTodayForm.value.getOrElse(BigDecimal(0)))
+              calculatorConnector.calculatePaymentSchedule(updatedCalculatorData).flatMap {
+                case Some(Seq(schedule)) =>
+                  sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = updatedCalculatorData)).map[Result] { result =>
+                    Redirect(calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None))
+                  }
+                case _ => throw new RuntimeException("Failed to get schedule")
+              }
+            case EligibilityStatus(_, reasons) =>
+              Logger.info(s"Failed eligibility check because: $reasons")
+              Future.successful(Redirect("Route to ineligible page"))
+          }
         }
-
-      case other => getRedirectionDestination(other)
-    })
+      case Some(ttpData@TTPSubmission(_, _, _, None, _, _, _)) =>
+        throw new RuntimeException("failed to get calculatorData")
+    }
   }
 }

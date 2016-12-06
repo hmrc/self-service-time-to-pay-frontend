@@ -16,57 +16,22 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 
-import java.time.LocalDate
-
-import play.api.Logger
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector}
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
-import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, EligibilityRequest, EligibilityStatus, _}
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, _}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator._
-
-import scala.concurrent.Future
 
 class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
                                      calculatorConnector: CalculatorConnector) extends TimeToPayController {
   def getCalculateInstalments(months: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.flatMap {
-      case Some(ttpData @ TTPSubmission(_, _, _, None, _, _,CalculatorInput(debits, paymentToday, _, _, _, _))) =>
-        eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), Taxpayer(selfAssessment = Some(SelfAssessment(debits = debits))))).flatMap {
-          case EligibilityStatus(true, _) =>
-            val total = debits.map(_.amount).sum
-            val form = CalculatorForm.createPaymentTodayForm(total).fill(paymentToday)
-            val relativeEndDate = months.getOrElse(3)
-
-            calculatorConnector.calculatePaymentSchedule(CalculatorDef(relativeEndDate).copy(debits = debits)).map {
-              case schedule::Nil =>
-                Ok(calculate_instalments_form(schedule, CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11))
-              case _ => throw new RuntimeException("Failed to get schedule")
-            }
-          case EligibilityStatus(_, reasons) =>
-            Logger.info(s"Failed eligibility check because: $reasons")
-            Future.successful(Redirect("Route to ineligible page"))
-        }
-
-
-/*
-      case Some(ttpData @ TTPSubmission(_, _, _, Some(taxpayer), _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
-        eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).flatMap {
-          case EligibilityStatus(true, _) =>
-            val total = debits.map(_.amount).sum
-            val form = CalculatorForm.createPaymentTodayForm(total).fill(paymentToday)
-
-            calculatorConnector.calculatePaymentSchedule(CalculatorInput(debits)).map {
-              case Some(Seq(schedule)) =>
-                Ok(calculate_instalments_form(schedule, CalculatorForm.durationForm, form, 2 to 11))
-              case _ => throw new RuntimeException("Failed to get schedule")
-            }
-          case _ => Future.successful(Redirect("Route to ineligible page"))
-        }
-      case _ => throw new RuntimeException("No TTP Data in session")
-*/
+    sessionCache.get.map {
+      case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+        val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
+        Ok(calculate_instalments_form(schedule, CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11))
+      case _ => throw new RuntimeException("Failed to get schedule")
     }
   }
 }
