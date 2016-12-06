@@ -57,7 +57,6 @@ class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
           case EligibilityStatus(true, _) =>
             val total = debits.map(_.amount).sum
             val form = CalculatorForm.createPaymentTodayForm(total).fill(paymentToday)
-
             calculatorConnector.calculatePaymentSchedule(CalculatorInput(debits)).map {
               case Some(Seq(schedule)) =>
                 Ok(calculate_instalments_form(schedule, CalculatorForm.durationForm, form, 2 to 11))
@@ -67,6 +66,5 @@ class CalculateInstalmentsController(eligibilityConnector: EligibilityConnector,
         }
       case _ => throw new RuntimeException("No TTP Data in session")
 */
-    }
   }
 }
