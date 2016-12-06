@@ -30,7 +30,7 @@ case class Address(addressLine1: String,
                    addressLine3: Option[String] = None,
                    addressLine4: Option[String] = None,
                    addressLine5: Option[String] = None,
-                   postCode: String)
+                   postcode: String)
 
 case class CommunicationPreferences(welshLanguageIndicator: Boolean = false,
                                      audioIndicator: Boolean = false,
