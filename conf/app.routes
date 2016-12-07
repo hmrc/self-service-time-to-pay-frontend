@@ -23,7 +23,7 @@ POST        /calculator/amounts-due/remove                    @uk.gov.hmrc.selfs
 POST        /calculator/amounts-due                           @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.AmountsDueController.submitAmountsDue()
 GET         /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.PaymentTodayController.getPaymentToday()
 POST        /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.PaymentTodayController.submitPaymentToday()
-GET    /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.CalculateInstalmentsController.getCalculateInstalments(months:Option[String])
+GET         /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.CalculateInstalmentsController.getCalculateInstalments(months:Option[String])
 POST        /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
 POST        /calculator/instalments/payment-today             @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsPaymentToday()
 
@@ -32,7 +32,7 @@ GET         /arrangement/instalment-summary                   @uk.gov.hmrc.selfs
 POST        /arrangement/instalment-summary                   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submitInstalmentSchedule()
 GET         /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
 POST        /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
-GET    /arrangement/direct-debit-error          @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitError()
+GET         /arrangement/direct-debit-error          @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitError()
 GET         /arrangement/direct-debit-confirmation            @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()
 GET         /arrangement/direct-debit-assistance              @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitAssistance()
 POST        /arrangement/submit                               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
