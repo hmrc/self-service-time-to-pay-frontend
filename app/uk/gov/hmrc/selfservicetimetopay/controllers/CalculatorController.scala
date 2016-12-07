@@ -154,6 +154,7 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
           case _ => throw new RuntimeException("Failed to get schedule")
         }
       case EligibilityStatus(_, reasons) =>
+        // TODO only if user is authenticated
         Logger.info(s"Failed eligibility check because: $reasons")
         Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
     }
