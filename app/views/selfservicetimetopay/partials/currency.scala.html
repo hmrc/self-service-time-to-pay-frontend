@@ -1,0 +1,6 @@
+@* Helper to display a value a currency using a symbol prefix and format with 2 decimal places
+    @param Number value of the currency to display
+*@
+@(value:Number)
+@import play.api.i18n
+@Messages("ssttp.common.currency.symbol")@value.formatted("%1.2f")

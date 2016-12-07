@@ -16,6 +16,7 @@ A data input field using Component Library Styles as  documented:
                 input--fullwidth, input--no-spinner, input--cleared,
                 input--link
             '_inputGroupClass -> Modifier class to apply to the group of all three date fields
+            '_hideErrors -> set to "true" to stop error messages being displayed
 *@
 @(name: String, frm:Form[_], yearField: Field, monthField: Field, dayField: Field, args: (Symbol, String)*)(implicit lang: Lang = Lang("en"))
 @import java.time.Month
@@ -36,8 +37,7 @@ A data input field using Component Library Styles as  documented:
 }
 @fieldset(frm, name, '_modifierClass -> fieldsetErrorsClass){
     @if(argsMap.get('label).isDefined){<legend>@argsMap.get('label)</legend>}
-    @formErrors(frm, '_field -> name)
-
+    @if(argsMap.getOrElse('_hideErrors, "false").contentEquals("false")){@formErrors(frm, '_field -> name)}
     <ul class="list--inline group">
         <li>@numberinput(dayField, 'label -> argsMap.getOrElse('dayLabel, ""),
             '_modifierClass -> "form-field--inline",

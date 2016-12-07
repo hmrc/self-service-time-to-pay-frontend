@@ -9,5 +9,5 @@
     @param count Number count The number of items
     @param messagePrefix Prefix for message to return
 *@
-@(count:Number, messagePrefix:String, args:(String, String)*)
+@(count:Number, messagePrefix:String, args:(String, String)*)(implicit lang:play.api.i18n.Lang)
   @if(count==1) {@Messages(messagePrefix + ".singular")} else {@Messages(messagePrefix + ".plural")}
