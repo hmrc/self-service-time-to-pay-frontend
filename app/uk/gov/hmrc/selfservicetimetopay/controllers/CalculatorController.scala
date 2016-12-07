@@ -155,7 +155,7 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
         }
       case EligibilityStatus(_, reasons) =>
         Logger.info(s"Failed eligibility check because: $reasons")
-        Future.successful(Redirect("Route to ineligible page"))
+        Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
     }
   }
 
