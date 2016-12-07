@@ -19,10 +19,12 @@ package uk.gov.hmrc.selfservicetimetopay.controllers.calculator
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
+import uk.gov.hmrc.selfservicetimetopay.controllers.{routes => ssttpRoutes}
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, CalculatorInput, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator._
+
 
 class AmountsDueController extends TimeToPayController {
 
@@ -34,7 +36,9 @@ class AmountsDueController extends TimeToPayController {
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, _, _, _,CalculatorInput(debits, _, _, _, _, _))) =>
         Ok(amounts_due_form.render(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm, request))
-      case _ => Ok(amounts_due_form.render(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm, request))
+      case Some(TTPSubmission(_, _, _, _, Some(_), Some(_),_)) =>
+        Ok(amounts_due_form.render(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm, request))
+      case _ => Redirect(ssttpRoutes.SelfServiceTimeToPayController.start())
     }
   }
 
