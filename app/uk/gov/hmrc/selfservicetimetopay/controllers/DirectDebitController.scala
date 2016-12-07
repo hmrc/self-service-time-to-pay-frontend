@@ -28,11 +28,21 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement._
 
 import scala.concurrent.Future
+import scala.concurrent.Future._
 
 class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
 
   def getDirectDebit: Action[AnyContent] = Action { implicit request =>
     Ok(direct_debit_form.render(createDirectDebitForm, request))
+  }
+
+  def getDirectDebitAssistance: Action[AnyContent] = Action.async { implicit request =>
+//    val form: Form[Boolean] = Form(single("confirm" -> boolean))
+    sessionCache.get.map {
+      case Some(submission @ TTPSubmission(Some(schedule), _, _, _, _, _, _, _)) =>
+        Ok(direct_debit_assistance.render(submission.taxPayer.get.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()), request))
+      case _ => throw new RuntimeException("No data found")
+    }
   }
 
   def getDirectDebitError: Action[AnyContent] = Action.async { implicit request =>
