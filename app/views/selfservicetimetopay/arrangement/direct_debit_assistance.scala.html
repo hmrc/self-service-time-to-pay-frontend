@@ -1,0 +1,34 @@
+@*
+Time To Pay Direct Debit Conformation Display Page
+
+@param schedule CalculatorPaymentSchedule The results data to display
+@param directDebit CalcualtorDirectDebit The direct debit details
+
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, ArrangementDirectDebit, Debit}
+@* @(schedule:CalculatorPaymentSchedule, directDebit:ArrangementDirectDebit)(implicit request: Request[_]) *@
+@(debits:Seq[Debit])(implicit request: Request[_])
+@import selfservicetimetopay.helpers.{alert, message_list}
+@import selfservicetimetopay.helpers.forms.{form, submit}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.{routes => ssttpRoutes}
+@import selfservicetimetopay.partials.{direct_debit_details, payment_schedule}
+
+@import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule}
+
+@selfservicetimetopay.main(
+  title = Messages("ssttp.common.title"),
+  bodyClasses = None
+){
+  <h1>@Messages("ssttp.arrangement.direct-debit.assistance.title")</h1>
+  <section>
+    <div>
+        <!-- <p>In order proceed with your instalment plan application you will need to call us to set up your Direct Debit payment.</p> -->
+      <p>You’ll need this information to set up your Direct Debit instruction.</p>
+      <p>Please call <strong>0300 322 7015</strong> to complete your application.</p>
+      <br>
+
+      <h2>What you owe</h2>
+      @what_you_owe(debits)
+    </div>
+  </section>
+}
