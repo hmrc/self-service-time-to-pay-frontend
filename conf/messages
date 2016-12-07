@@ -326,6 +326,14 @@ ssttp.arrangement.complete.what-you-owe=What you owe
 ssttp.arrangement.complete.payment-plan={0} month instalment plan
 ssttp.arrangement.complete.interest-rate=Interest at {0}%
 ssttp.arrangement.complete.total=TOTAL:
+
+#Service unavailable (shutter) page
+ssttp.unavailable.title=Please call us
+ssttp.unavailable.intro=We’re working on making this service available online.
+ssttp.unavailable.instructions=To continue setting up your instalment plan in the meantime, call us on:
+ssttp.unavailable.number=0300 200 3822
+
+
 #global errors
 global.error.400.title=Bad request=400
 global.error.400.heading=Bad request
