@@ -76,7 +76,7 @@ ssttp.eligibility.form.type_of_tax.question.hint=Choose one or both
 ssttp.eligibility.form.type_of_tax.question.self-assessment=Self Assessment
 ssttp.eligibility.form.type_of_tax.question.other=Other types of tax
 
-ssttp.eligibility.form.type_of_tax.error.summary.title=You haven''t selected a tax type
+ssttp.eligibility.form.type_of_tax.error.summary.title=You haven''t selected an option
 ssttp.eligibility.form.type_of_tax.required=Please choose at least one option
 
 
@@ -87,7 +87,7 @@ ssttp.eligibility.form.existing_ttp.question.yes=Yes
 ssttp.eligibility.form.existing_ttp.question.no=No
 
 ssttp.eligibility.form.existing_ttp.error.summary.title=You haven''t selected an option
-ssttp.eligibility.form.existing_ttp.required=Please answer this question
+ssttp.eligibility.form.existing_ttp.required=Choose one option
 
 ssttp.eligibility.form.continue=Continue
 ssttp.eligibility.form.back=Back
@@ -313,6 +313,7 @@ ssttp.arrangement.direct-debit.confirmation.bank-instruction.do-not-send-to-bank
 ssttp.arrangement.direct-debit.confirmation.confirm-payment=Confirm payment
 
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.please-check=Please check this information carefully before confirming payment
+ssttp.arrangement.direct-debit.assistance.title=Call for Direct Debit Assistance
 
 
 ssttp.arrangement.complete.title=Application complete
@@ -326,6 +327,14 @@ ssttp.arrangement.complete.what-you-owe=What you owe
 ssttp.arrangement.complete.payment-plan={0} month instalment plan
 ssttp.arrangement.complete.interest-rate=Interest at {0}%
 ssttp.arrangement.complete.total=TOTAL:
+
+#Service unavailable (shutter) page
+ssttp.unavailable.title=Please call us
+ssttp.unavailable.intro=We’re working on making this service available online.
+ssttp.unavailable.instructions=To continue setting up your instalment plan in the meantime, call us on:
+ssttp.unavailable.number=0300 200 3822
+
+
 #global errors
 global.error.400.title=Bad request=400
 global.error.400.heading=Bad request

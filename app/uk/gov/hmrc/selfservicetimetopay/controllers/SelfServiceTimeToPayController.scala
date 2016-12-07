@@ -38,4 +38,8 @@ class SelfServiceTimeToPayController extends TimeToPayController {
     Ok(you_need_to_file.render(request))
   }
 
+  def getUnavailable: Action[AnyContent] = Action { implicit request =>
+    Ok(unavailable.render(request))
+  }
+
 }

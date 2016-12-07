@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfservicetimetopay.config
 
 import play.api.Logger
 import play.api.mvc.{ActionBuilder, AnyContent, Controller, Request, Result, Action => PlayAction}
-import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
@@ -33,9 +32,8 @@ import uk.gov.hmrc.selfservicetimetopay.auth.SaRegime
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
-import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstalmentsController, MisalignmentController, PaymentTodayController}
-import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 
 import scala.concurrent.Future
 
@@ -46,13 +44,9 @@ object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName wi
 
 object SessionCacheConnector extends KeystoreConnector with AppName with ServicesConfig {
   override val sessionKey: String = getConfString("keystore.sessionKey", throw new RuntimeException("Could not find session key"))
-
   override def defaultSource: String = appName
-
   override def baseUri: String = baseUrl("keystore")
-
   override def domain: String = getConfString("keystore.domain", throw new RuntimeException("Could not find config keystore.domain"))
-
   override def http: HttpGet with HttpPut with HttpDelete = WSHttp
 }
 
@@ -62,7 +56,6 @@ object FrontendAuditConnector extends Auditing with AppName with RunMode {
 
 object FrontendAuthConnector extends AuthConnector with ServicesConfig {
   override val serviceUrl: String = baseUrl("auth")
-
   override def http: HttpGet = WSHttp
 }
 
@@ -89,7 +82,6 @@ object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
   val serviceURL = "tax-payer"
   val http = WSHttp
 }
-
 object EligibilityConnector extends EligibilityConnector with ServicesConfig {
   val eligibilityURL: String = baseUrl("time-to-pay-eligibility")
   val serviceURL = "time-to-pay-eligibility/eligibility"
@@ -134,19 +126,14 @@ trait ServiceRegistry extends ServicesConfig {
   lazy val taxPayerConnector: TaxPayerConnector = TaxPayerConnector
 }
 
-trait ControllerRegistry {
-  registry: ServiceRegistry =>
+trait ControllerRegistry { registry: ServiceRegistry =>
   private lazy val controllers = Map[Class[_], Controller](
     classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector),
+    classOf[CalculatorController] -> new CalculatorController(eligibilityConnector, calculatorConnector),
     classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, calculatorConnector, taxPayerConnector),
-    classOf[CalculatorController] -> new CalculatorController(),
     classOf[EligibilityController] -> new EligibilityController(),
-    classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
-    classOf[AmountsDueController] -> new AmountsDueController(),
-    classOf[CalculateInstalmentsController] -> new CalculateInstalmentsController(eligibilityConnector, calculatorConnector),
-    classOf[PaymentTodayController] -> new PaymentTodayController(),
-    classOf[MisalignmentController] -> new MisalignmentController()
+    classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
   )
 
-  def getController[A](controllerClass: Class[A]): A = controllers(controllerClass).asInstanceOf[A]
+  def getController[A](controllerClass: Class[A]) : A = controllers(controllerClass).asInstanceOf[A]
 }

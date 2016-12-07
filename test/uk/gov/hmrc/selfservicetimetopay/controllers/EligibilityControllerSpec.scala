@@ -132,7 +132,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       status(response) shouldBe SEE_OTHER
 
       redirectLocation(response).get shouldBe
-        uk.gov.hmrc.selfservicetimetopay.controllers.calculator.routes.AmountsDueController.start().url
+        uk.gov.hmrc.selfservicetimetopay.controllers.routes.CalculatorController.start().url
     }
 
     "submit existing ttp given existing ttp data and redirect to call us page" in {

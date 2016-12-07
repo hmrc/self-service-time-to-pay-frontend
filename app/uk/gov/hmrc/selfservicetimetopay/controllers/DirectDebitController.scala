@@ -16,13 +16,16 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import java.time.LocalDate
+import play.api.data.Form
+import play.api.data.Forms._
 import play.api.mvc._
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables.fakeBankDetails
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
-import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models.{Debit, BankDetails, DirectDebitBank, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement._
 
@@ -33,6 +36,21 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getDirectDebit: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
       Future.successful(Ok(direct_debit_form.render(directDebitForm, request)))
+  }
+
+  def getDirectDebitAssistance: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(submission @ TTPSubmission(Some(schedule), _, _, _, _, _, _)) =>
+        Ok(direct_debit_assistance.render(List(
+          Debit(Some("ASST"), 99, LocalDate.now()),
+          Debit(Some("DPI"), 2323, LocalDate.now())), request))
+//        Ok(direct_debit_assistance.render(submission.taxPayer.get.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()), request))
+      //      case _ => throw new RuntimeException("No data found")
+      case _ =>
+        Ok(direct_debit_assistance.render(List(
+          Debit(Some("ASST"), 99, LocalDate.now()),
+          Debit(Some("DPI"), 2323, LocalDate.now())), request))
+    }
   }
 
   def getDirectDebitError: Action[AnyContent] = AuthorisedSaUser {

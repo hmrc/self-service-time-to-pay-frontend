@@ -6,10 +6,9 @@
     title = Messages("ssttp.common.title"),
     bodyClasses = None
 ){
-  <header class="page-header text">
-    <h1 class="h1-heading">@Messages("ssttp.landing.title")</h1>
-  </header>
-  <div class="subsection">
+    <header class="page-header text">
+        <h1 class="h1-heading">@Messages("ssttp.landing.title")</h1>
+    </header>
     <p class="subsection">@Messages("ssttp.landing.intro")</p>
     @alert('_modifierClass -> "alert--slim"){@Messages("ssttp.landing.alert")}
     <p class="subsection">@Messages("ssttp.landing.keep-up-to-date")</p>
@@ -20,5 +19,4 @@
     @form(routes.SelfServiceTimeToPayController.submit(), 'class -> "group") {
        @submit('_buttonClass -> "button--get-started"){@Messages("ssttp.landing.start-button.label")}
     }
-  </div>
 }

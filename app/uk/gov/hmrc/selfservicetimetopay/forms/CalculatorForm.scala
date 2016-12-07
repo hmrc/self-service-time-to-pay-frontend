@@ -84,15 +84,14 @@ object CalculatorForm {
   val minMonths = 2
   val maxMonths = 11
 
-  val durationForm = Form(mapping("months" -> number(min = minMonths, max = maxMonths))(CalculatorDuration.apply)(CalculatorDuration.unapply))
+  val durationForm = createDurationForm()
 
-  // TODO: remove this once CalculatorController code is fully refactored
-  def createDurationForm(min: Int, max: Int): Form[CalculatorDuration] = {
+  def createDurationForm(): Form[CalculatorDuration] = {
     def greaterThan: Constraint[Int] = Constraint[Int]("constraint.duration-more-than") { o =>
-      if (o < min) Invalid(ValidationError("ssttp.calculator.form.duration.months.greater-than", min)) else Valid
+      if (o < minMonths) Invalid(ValidationError("ssttp.calculator.form.duration.months.greater-than", minMonths)) else Valid
     }
     def lessThan: Constraint[Int] = Constraint[Int]("constraint.duration-more-than") { o =>
-      if (o > max) Invalid(ValidationError("ssttp.calculator.form.duration.months.less-than", max)) else Valid
+      if (o > maxMonths) Invalid(ValidationError("ssttp.calculator.form.duration.months.less-than", maxMonths)) else Valid
     }
 
     Form(mapping("months" -> number.verifying(greaterThan, lessThan))(CalculatorDuration.apply)(CalculatorDuration.unapply))
