@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import java.time.LocalDate
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -23,41 +24,46 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
-import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models.{Debit, BankDetails, DirectDebitBank, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables.fakeBankDetails
 import views.html.selfservicetimetopay.arrangement._
 
 import scala.concurrent.Future
+import scala.concurrent.Future._
 
 class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
 
   def getDirectDebit: Action[AnyContent] = Action { implicit request =>
-    Ok(direct_debit_form.render(directDebitForm, request))
+    Ok(direct_debit_form.render(createDirectDebitForm, request))
+  }
+
+  def getDirectDebitAssistance: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(submission @ TTPSubmission(Some(schedule), _, _, _, _, _, _, _)) =>
+        Ok(direct_debit_assistance.render(submission.taxPayer.get.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()), request))
+      //      case _ => throw new RuntimeException("No data found")
+      case _ =>
+        Ok(direct_debit_assistance.render(List(
+          Debit(Some("ASST"), 99, LocalDate.now()),
+          Debit(Some("DPI"), 2323, LocalDate.now())), request))
+    }
   }
 
   def getDirectDebitError: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, banks @ Some(_), _, _, _,_)) =>
-        Ok(direct_debit_error.render(directDebitForm, banks, request))
-      case _ => Ok(direct_debit_error.render(directDebitForm, None, request))
+      case Some(TTPSubmission(_, _, banks @ Some(_), _, _, _, _, _)) =>
+        Ok(direct_debit_error.render(createDirectDebitForm, banks, request))
+      case _ => Ok(direct_debit_error.render(createDirectDebitForm, None, request))
     }
   }
 
   def getDirectDebitConfirmation: Action[AnyContent] = Action.async { implicit request =>
+    val form: Form[Boolean] = Form(single("confirm" -> boolean))
     sessionCache.get.map {
-      case Some(submission @ TTPSubmission(Some(schedule), Some(bankDetails), _, _, _,_, _)) =>
+      case Some(submission @ TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _, _)) =>
         Ok(showDDConfirmation(schedule, submission.arrangementDirectDebit.get, request))
       case _ => throw new RuntimeException("No data found")
     }
-  }
-
-  def getBankAccountNotFound: Action[AnyContent] = Action { implicit request =>
-    Ok(account_not_found(existingBankAccountForm, fakeBankDetails))
-  }
-
-  def submitBankAccountNotFound: Action[AnyContent] = Action { implicit request =>
-    Ok(account_not_found(existingBankAccountForm, fakeBankDetails))
   }
 
   def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
@@ -65,7 +71,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   }
 
   def submitDirectDebit: Action[AnyContent] = Action.async { implicit request =>
-    directDebitForm.bindFromRequest().fold(
+    createDirectDebitForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(bankDetailsFormErrorPage(formWithErrors, request))),
       validFormData =>
         authConnector.currentAuthority.flatMap {
@@ -78,12 +84,15 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Future[Result]] = {
     case Left(singleBankDetails) =>
-      updateOrCreateInCache(found => found.copy(bankDetails = Some(singleBankDetails)),
+      updateOrCreateInCache(found => TTPSubmission(schedule = found.schedule, bankDetails = Some(singleBankDetails), existingDDBanks = found.existingDDBanks,
+        taxPayer = found.taxPayer,eligibilityTypeOfTax = found.eligibilityTypeOfTax, eligibilityExistingTtp = found.eligibilityExistingTtp, paymentToday = found.paymentToday),
         () => TTPSubmission(bankDetails = Some(singleBankDetails)))
         .map(_ => Redirect(toDDCreationPage))
 
     case Right(existingDDBanks) =>
-      updateOrCreateInCache(found => found.copy(existingDDBanks = Some(existingDDBanks)),
+      updateOrCreateInCache(found => TTPSubmission(schedule = found.schedule, bankDetails = found.bankDetails,
+        existingDDBanks = Some(existingDDBanks), taxPayer = found.taxPayer, eligibilityTypeOfTax = found.eligibilityTypeOfTax,
+        eligibilityExistingTtp = found.eligibilityExistingTtp,paymentToday = found.paymentToday),
         () => TTPSubmission(None, None, Some(existingDDBanks), None))
         .map(_ => Redirect(toBankSelectionPage))
   }
@@ -91,5 +100,5 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   private val showDDConfirmation = direct_debit_confirmation.render _
   private val bankDetailsFormErrorPage = direct_debit_form.render _
   private val toDDCreationPage = routes.DirectDebitController.getDirectDebitConfirmation()
-  private val toBankSelectionPage = routes.DirectDebitController.getBankAccountNotFound()
+  private val toBankSelectionPage = routes.DirectDebitController.getDirectDebitError()
 }
