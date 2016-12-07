@@ -27,6 +27,8 @@ object SaGovernmentGateway extends GovernmentGateway {
   override def continueURL: String = s"${SsttpFrontendConfig.loginCallbackBaseUrl}/pay-what-you-owe-in-instalments/arrangement/determine-misalignment"
 
   override def loginURL: String = SsttpFrontendConfig.loginUrl
+
+  override def sessionKeysToKeep = Seq("ttpSessionId")
 }
 
 object SaRegime extends TaxRegime {
