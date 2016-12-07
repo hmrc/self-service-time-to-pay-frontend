@@ -7,13 +7,13 @@
     bodyClasses = None
 ){
   <header class="page-header text">
-    <h1 class="h1-heading">@Messages("ssttp.eligibility.form.type_of_tax.title")</h1>
+    <h1>@Messages("ssttp.eligibility.form.type_of_tax.title")</h1>
   </header>
   @form(routes.EligibilityController.submitTypeOfTax(), 'class -> "group") {
     @formErrorSummary(Messages("ssttp.eligibility.form.type_of_tax.error.summary.title"), dataForm, Seq.empty)
     @fieldset(dataForm, "type_of_tax", '_modifierClass -> "form-field-group") {
-      <h3 class="h3-heading">@Messages("ssttp.eligibility.form.type_of_tax.question.prompt")</h3>
-      <p class="form-field--hint">@Messages("ssttp.eligibility.form.type_of_tax.question.hint")</p>
+      <legend class="flush--ends">@Messages("ssttp.eligibility.form.type_of_tax.question.prompt")</legend>
+      <p class="flush--ends form-field--hint">@Messages("ssttp.eligibility.form.type_of_tax.question.hint")</p>
       @formErrors(dataForm, '_field ->"type_of_tax")
       @checkbox(field = dataForm("type_of_tax.hasSelfAssessmentDebt"),
           label = Option(Html(Messages("ssttp.eligibility.form.type_of_tax.question.self-assessment"))),
@@ -28,8 +28,6 @@
     }
     @submit(){@Messages("ssttp.eligibility.form.continue")}
   }
-  <div class="subsection">
-    <a class="back-link" href="@routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.eligibility.form.back")</a>
-  </div>
+  <p><a class="back-link" href="@routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.eligibility.form.back")</a></p>
 }
 

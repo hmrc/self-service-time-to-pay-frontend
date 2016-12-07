@@ -76,7 +76,7 @@ ssttp.eligibility.form.type_of_tax.question.hint=Choose one or both
 ssttp.eligibility.form.type_of_tax.question.self-assessment=Self Assessment
 ssttp.eligibility.form.type_of_tax.question.other=Other types of tax
 
-ssttp.eligibility.form.type_of_tax.error.summary.title=You haven''t selected a tax type
+ssttp.eligibility.form.type_of_tax.error.summary.title=You haven''t selected an option
 ssttp.eligibility.form.type_of_tax.required=Please choose at least one option
 
 
