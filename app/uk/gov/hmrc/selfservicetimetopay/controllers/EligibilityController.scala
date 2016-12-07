@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
-import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calcRoutes}
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -58,11 +57,9 @@ class EligibilityController extends TimeToPayController {
 
   def getExistingTtp: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, Some(_), existingTtp @ Some(_), _))=>
+      case Some(TTPSubmission(_, _, _, _, _, existingTtp @ Some(_), _))=>
         Ok(existing_ttp.render(EligibilityForm.existingTtpForm.fill(existingTtp.get), request))
-      case Some(TTPSubmission(_, _, _, _, Some(_), _, _))=>
-        Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request))
-      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
+      case _ => Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request))
     }
 
   }
@@ -74,7 +71,7 @@ class EligibilityController extends TimeToPayController {
         updateOrCreateInCache(found => found.copy(eligibilityExistingTtp = Some(validFormData)),
           () => TTPSubmission(eligibilityExistingTtp = Some(validFormData))).map(_ => {
           validFormData match {
-            case EligibilityExistingTTP(Some(false)) => Redirect(calcRoutes.AmountsDueController.start())
+            case EligibilityExistingTTP(Some(false)) => Redirect(routes.CalculatorController.start())
             case _ => Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())
           }
         })

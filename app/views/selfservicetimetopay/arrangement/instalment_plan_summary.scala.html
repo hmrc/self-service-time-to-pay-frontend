@@ -12,7 +12,6 @@ Time To Pay Instalment Summary Display Page
     @import selfservicetimetopay.helpers.{highlight, alert, message_list}
     @import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
     @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-    @import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calcRoutes}
 
     @selfservicetimetopay.main(
         title = Messages("ssttp.common.title"),
@@ -83,7 +82,7 @@ Time To Pay Instalment Summary Display Page
             }
         </section>
         <div>&nbsp;</div>
-        <div><a class="back-link" href="@calcRoutes.CalculateInstalmentsController.getCalculateInstalments(None)">@Messages("ssttp.calculator.form.back")</a></div>
+        <div><a class="back-link" href="@routes.CalculatorController.getCalculateInstalments(None)">@Messages("ssttp.calculator.form.back")</a></div>
 
     }
 

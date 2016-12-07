@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfservicetimetopay.config
 
 import play.api.Logger
 import play.api.mvc.{ActionBuilder, Controller, Request, Action => PlayAction}
-import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
@@ -32,11 +31,8 @@ import uk.gov.hmrc.play.http.{HeaderCarrier, HttpDelete, HttpGet, HttpPut}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
-import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{AmountsDueController, CalculateInstalmentsController, MisalignmentController, PaymentTodayController}
-import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-
-import scala.concurrent.Future
+import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 
 object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName with RunMode with HttpAuditing {
   val auditConnector = FrontendAuditConnector
@@ -121,14 +117,10 @@ trait ServiceRegistry extends ServicesConfig {
 trait ControllerRegistry { registry: ServiceRegistry =>
   private lazy val controllers = Map[Class[_], Controller](
     classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector),
+    classOf[CalculatorController] -> new CalculatorController(eligibilityConnector, calculatorConnector),
     classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, calculatorConnector),
-    classOf[CalculatorController] -> new CalculatorController(),
     classOf[EligibilityController] -> new EligibilityController(),
-    classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
-    classOf[AmountsDueController] -> new AmountsDueController(),
-    classOf[CalculateInstalmentsController] -> new CalculateInstalmentsController(eligibilityConnector, calculatorConnector),
-    classOf[PaymentTodayController] -> new PaymentTodayController(),
-    classOf[MisalignmentController] -> new MisalignmentController()
+    classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
   )
 
   def getController[A](controllerClass: Class[A]) : A = controllers(controllerClass).asInstanceOf[A]

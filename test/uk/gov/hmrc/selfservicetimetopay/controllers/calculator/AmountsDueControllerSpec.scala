@@ -26,8 +26,9 @@ import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
-import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calculatorRoutes}
+import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector, SessionCacheConnector}
+import uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController
+import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
@@ -38,6 +39,8 @@ class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
+  val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
+  val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
 
   val amountsDueForm = Seq(
       "amount" -> BigDecimal.valueOf(3000),
@@ -47,7 +50,7 @@ class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
   )
 
   "AmountsDueControllerSpec" should {
-    val controller = new AmountsDueController() {
+    val controller = new CalculatorController(mockEligibilityConnector, mockCalculatorConnector) {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     }
 
@@ -59,7 +62,7 @@ class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
 
       status(response) shouldBe SEE_OTHER
 
-      redirectLocation(response).get shouldBe calculatorRoutes.AmountsDueController.getAmountsDue().url
+      redirectLocation(response).get shouldBe routes.CalculatorController.getAmountsDue().url
     }
 
     "successfully display the amounts you owe page" in {

@@ -1,7 +1,7 @@
 
 @(dataForm: Form[BigDecimal])(implicit request: Request[_])
 @import selfservicetimetopay.helpers.forms.{currencyinput, form, formErrorSummary, submit}
-@import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calcRoutes}
+@import uk.gov.hmrc.selfservicetimetopay.controllers._
 
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
@@ -10,7 +10,7 @@
   <header class="page-header text">
     <h1 class="h1-heading">@Messages("ssttp.calculator.form.payment_today.title")</h1>
   </header>
-  @form(calcRoutes.PaymentTodayController.submitPaymentToday(), 'class -> "group") {
+  @form(routes.CalculatorController.submitPaymentToday(), 'class -> "group") {
     @formErrorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm, Seq.empty)
       @currencyinput(dataForm("amount"),
         'label -> Messages("ssttp.calculator.form.payment_today.amount.question"),
@@ -19,5 +19,5 @@
       @submit(){@Messages("ssttp.calculator.form.continue")}
     </p>
   }
-  <p><a class="back-link" href="@calcRoutes.AmountsDueController.getAmountsDue()">@Messages("ssttp.calculator.form.back")</a></p>
+  <p><a class="back-link" href="@routes.CalculatorController.getAmountsDue()">@Messages("ssttp.calculator.form.back")</a></p>
 }
