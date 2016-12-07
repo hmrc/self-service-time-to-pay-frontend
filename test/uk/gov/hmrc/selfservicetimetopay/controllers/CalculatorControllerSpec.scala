@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector, SessionCacheConnector}
+import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
@@ -93,6 +94,22 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
 
       val result = await(controller.submitCalculateInstalmentsPaymentToday().apply(FakeRequest()
+        .withSession(sessionProvider.createSessionId())))
+
+      status(result) shouldBe Status.SEE_OTHER
+    }
+
+    "Return 303 for non-logged-in when debts is > £10,000" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
+
+      when(mockEligibilityConnector.checkEligibility(Matchers.any())(Matchers.any()))
+        .thenReturn(Future.successful(eligibilityStatusDebtTooHigh))
+
+      val result = await(controller.submitCalculateInstalmentsPaymentToday().apply(FakeRequest()
+        .withFormUrlEncodedBody("amount" -> "200")
         .withSession(sessionProvider.createSessionId())))
 
       status(result) shouldBe Status.SEE_OTHER
