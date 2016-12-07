@@ -34,17 +34,15 @@ object CalculatorForm {
   val dueByDayMax = 31
 
   val dueByDateTuple = tuple(
-    "dueByDay" -> optional(number)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.required-day", _.nonEmpty)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day", x => x.isEmpty || ( x.get <= dueByDayMax)|| (x.get >= dueByDayMin)),
+    "dueByYear" -> optional(number)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.required-year", _.nonEmpty)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year", x => x.isEmpty || ( x.get <= dueByYearMax)|| (x.get >= dueByYearMin)),
     "dueByMonth" -> optional(number)
       .verifying("ssttp.calculator.form.amounts_due.due_by.required-month", _.nonEmpty)
       .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-month", x => x.isEmpty || ( x.get <= dueByMonthMax)|| (x.get >= dueByMonthMin)),
-    "dueByYear" -> optional(number)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.required-year", _.nonEmpty)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year", x => x.isEmpty || ( x.get <= dueByYearMax)|| (x.get >= dueByYearMin))
-
-
+    "dueByDay" -> optional(number)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.required-day", _.nonEmpty)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day", x => x.isEmpty || ( x.get <= dueByDayMax)|| (x.get >= dueByDayMin))
   )
 
   def validDate: Constraint[(Option[Int], Option[Int], Option[Int])] =
