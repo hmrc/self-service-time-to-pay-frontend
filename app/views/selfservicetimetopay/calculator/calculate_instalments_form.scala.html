@@ -7,7 +7,7 @@ Time To Pay Payment Schedule Display Page
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
-@import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.{routes => calcRoutes}
+@import uk.gov.hmrc.selfservicetimetopay.controllers._
 @(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[BigDecimal], monthOptions:Seq[Int])(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
 @import selfservicetimetopay.helpers.forms.{form, formErrors, button, fieldErrors, inlinenumberinput, numberinput, inlinecurrencyinput, submit}
@@ -40,9 +40,10 @@ Time To Pay Payment Schedule Display Page
                     <div class="grid-layout__column grid-layout__column--1-4">
                         <span class="gutter-left">@inlinecurrencyinput(paymentTodayAmountForm("amount"), '_hideErrors -> true, '_noLabel -> true, '_inputClass -> "input--small input--no-spinner")</span>
                     </div>
-                    <div class="grid-layout__column grid-layout__column--1-4">@button('type -> "submit", '_modifierClass -> "button--secondary") {
-                        @Messages("ssttp.calculator.form.payment_today.update")
-                    }
+                    <div class="grid-layout__column grid-layout__column--1-4">
+                        @button('type -> "submit", '_modifierClass -> "button--secondary") {
+                            @Messages("ssttp.calculator.form.payment_today.update")
+                        }
                     </div>
                 }
             }
@@ -55,7 +56,6 @@ Time To Pay Payment Schedule Display Page
     <div class="section">
         <h2 style="heading-h2">@Messages("ssttp.calculator.results.heading.your-instalments")</h2>
         <div class="subsection grid-layout divider--bottom">
-            @form(routes.CalculatorController.submitCalculateInstalments()) {
                 @labelWrap('for -> "months", '_modifierClass -> (if(durationForm("months").errors.nonEmpty) "form-field--error" else "")) {
                     <div class="grid-layout__column grid-layout__column--1-2"><ul class="list--inline">
                         <li>
@@ -65,42 +65,45 @@ Time To Pay Payment Schedule Display Page
                     </ul></div>
                     <div class="grid-layout__column grid-layout__column--1-2">
                         <ul class="list--inline gutter-left">
-                            <li>@defining({
-                                    <i class="arrow arrow--down"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.decrease")</span>
-                            }) { label =>
-                                @if(schedule.instalments.length != monthOptions.min) {
-                                    <a class="button button--secondary button--spaced"
-                                    aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")"
-                                    role="button"
-                                    href="?months=@monthOptions(Seq(monthOptions.length - 1, monthOptions.indexOf(schedule.instalments.length) - 1).min)">@label</a>
-                                } else {
-                                    <a class="button button--secondary button--spaced disabled" aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")"
-                                    role="button" href="">@label</a>
+                            <li>
+                                @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline") {
+                                    <input type="hidden" name="@durationForm("months").name" value="@{schedule.instalments.length - 1}" />
+                                    @defining({
+                                            <i class="arrow arrow--down"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.decrease")</span>
+                                    }) { label =>
+                                        @if(schedule.instalments.length != monthOptions.min) {
+                                            @button('type -> "submit", '_modifierClass -> "button button--secondary button--spaced") { @label }
+                                        } else {
+                                            <span class="button button--secondary button--spaced disabled" aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")" role="button">@label</span>
+                                        }
+                                    }
                                 }
-                            }
                             </li>
-                            <li>@numberinput(durationForm("months"), '_hideErrors -> true, '_noLabel -> true,
-                                '_inputClass -> "input--xxsmall input--no-spinner")
-                            </li>
-                            <li>@defining({
-                                    <i class="arrow arrow--up"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.increase")</span>
-                            }) { label =>
-                                @if(schedule.instalments.length != monthOptions.max) {
-                                    <a class="button button--secondary button--spaced"
-                                    aria-label="@Messages("ssttp.calculator.results.monthly-payments.increase")"
-                                    role="button"
-                                    href="?months=@monthOptions(Seq(monthOptions.length - 1, monthOptions.indexOf(schedule.instalments.length) + 1).min)">@label</a>
-                                } else {
-                                    <a class="button button--secondary button--spaced disabled" aria-label="@Messages("ssttp.calculator.results.monthly-payments.increase")"
-                                    role="button" href="">@label</a>
+
+                            <li>
+                                @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline") {
+                                    @numberinput(durationForm("months"), '_hideErrors -> true, '_noLabel -> true, '_inputClass -> "input--xxsmall input--no-spinner")
                                 }
-                            }
+                            </li>
+
+                            <li>
+                                @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline") {
+                                    <input type="hidden" name="@durationForm("months").name" value="@{schedule.instalments.length + 1}" />
+                                    @defining({
+                                            <i class="arrow arrow--up"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.increase")</span>
+                                    }) { label =>
+                                        @if(schedule.instalments.length != monthOptions.max) {
+                                            @button('type -> "submit", '_modifierClass -> "button button--secondary button--spaced") { @label }
+                                        } else {
+                                            <span class="button button--secondary button--spaced disabled" aria-label="@Messages("ssttp.calculator.results.monthly-payments.increase")" role="button">@label</span>
+                                        }
+                                    }
+                                }
                             </li>
                             <li>@pluralize(schedule.instalments.length, "ssttp.calculator.results.instalments-over.month")</li>
                         </ul>
                     </div>
                 }
-            }
         </div>
         @defining(schedule.instalmentBalance) { payment =>
             <div class="subsection grid-layout divider--bottom">
@@ -140,5 +143,5 @@ Time To Pay Payment Schedule Display Page
             <div class="grid-layout__column grid-layout__column--1-3 text--center align--middle"><p><strong>@Messages("ssttp.calculator.results.call-us.number")</strong></p></div>
         </div>
     </section>
-    <p><a class="back-link" href="@calcRoutes.PaymentTodayController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a></p>
+    <p><a class="back-link" href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a></p>
 }

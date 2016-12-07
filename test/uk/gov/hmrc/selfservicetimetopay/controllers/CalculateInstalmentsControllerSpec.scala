@@ -27,19 +27,18 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector, SessionCacheConnector}
-import uk.gov.hmrc.selfservicetimetopay.controllers.calculator.CalculateInstalmentsController
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
 
-class CalculateInstalmentsControllerSpec extends UnitSpec with MockitoSugar with ScalaFutures with WithFakeApplication with BeforeAndAfterEach {
+class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutures with WithFakeApplication with BeforeAndAfterEach {
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
   val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
 
-  val controller = new CalculateInstalmentsController(mockEligibilityConnector, mockCalculatorConnector) {
+  val controller = new CalculatorController(mockEligibilityConnector, mockCalculatorConnector) {
     override lazy val sessionCache = mockSessionCache
     override lazy val authConnector = mockAuthConnector
   }
@@ -48,40 +47,55 @@ class CalculateInstalmentsControllerSpec extends UnitSpec with MockitoSugar with
     reset(mockEligibilityConnector, mockAuthConnector, mockSessionCache, mockCalculatorConnector)
   }
 
-  "CalculateInstalmentsControllerSpec" should {
+  "CalculatorControllerSpec" should {
     "Return OK for non-logged-in calculation submission" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
-      when(mockEligibilityConnector.checkEligibility(Matchers.any())(Matchers.any()))
-        .thenReturn(Future.successful(eligibilityStatusOk))
-
-      when(mockCalculatorConnector.calculatePaymentSchedule(Matchers.any())(Matchers.any()))
-        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
-
-      val result = await(controller.getCalculateInstalments(None).apply(FakeRequest().withSession(sessionProvider.createSessionId())))
+      val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
+        .withSession(sessionProvider.createSessionId())))
 
       status(result) shouldBe Status.OK
-      verify(mockEligibilityConnector, times(1)).checkEligibility(Matchers.any())(Matchers.any())
-      verify(mockCalculatorConnector, times(1)).calculatePaymentSchedule(Matchers.any())(Matchers.any())
+      verify(mockSessionCache, times(1)).get(Matchers.any(), Matchers.any())
     }
 
-    "Return Ineligible Response for non-logged-in when amounts > £10,000" in {
+    "Return 303 for non-logged-in when schedule is missing" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLINoSchedule)))
+
+      val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
+        .withSession(sessionProvider.createSessionId())))
+
+      status(result) shouldBe Status.NOT_FOUND
+    }
+
+    "Return 303 for non-logged-in when TTPSubmission is missing for submitPaymentToday" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+
+      val result = await(controller.submitPaymentToday().apply(FakeRequest()
+        .withSession(sessionProvider.createSessionId())))
+
+      status(result) shouldBe Status.SEE_OTHER
+    }
+
+
+    "Return 303 for non-logged-in when form data is invalid" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
 
-      when(mockEligibilityConnector.checkEligibility(Matchers.any())(Matchers.any()))
-        .thenReturn(Future.successful(eligibilityStatusDebtTooHigh))
-
-      val result = await(controller.getCalculateInstalments(None).apply(FakeRequest().withSession(sessionProvider.createSessionId())))
+      val result = await(controller.submitCalculateInstalmentsPaymentToday().apply(FakeRequest()
+        .withSession(sessionProvider.createSessionId())))
 
       status(result) shouldBe Status.SEE_OTHER
-      verify(mockEligibilityConnector, times(1)).checkEligibility(Matchers.any())(Matchers.any())
-      verify(mockCalculatorConnector, times(0)).calculatePaymentSchedule(Matchers.any())(Matchers.any())
     }
   }
 }

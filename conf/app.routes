@@ -13,23 +13,23 @@ GET    /eligibility/existing-ttp                @uk.gov.hmrc.selfservicetimetopa
 POST   /eligibility/existing-ttp                @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.submitExistingTtp()
 
 # Calculator
-GET    /calculator                              @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.AmountsDueController.start()
-GET    /calculator/amounts-due                  @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.AmountsDueController.getAmountsDue()
+GET    /calculator                              @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.start()
+GET    /calculator/amounts-due                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getAmountsDue()
 # add a single amount
-POST   /calculator/amounts-due/add              @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.AmountsDueController.submitAddAmountDue()
+POST   /calculator/amounts-due/add              @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitAddAmountDue()
 # remove a single amount
-POST   /calculator/amounts-due/remove           @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.AmountsDueController.submitRemoveAmountDue()
+POST   /calculator/amounts-due/remove           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitRemoveAmountDue()
 # submit page with amount(s) due
-POST   /calculator/amounts-due                  @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.AmountsDueController.submitAmountsDue()
-GET    /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.PaymentTodayController.getPaymentToday()
-POST   /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.PaymentTodayController.submitPaymentToday()
-GET    /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.CalculateInstalmentsController.getCalculateInstalments(months:Option[Int])
+POST   /calculator/amounts-due                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitAmountsDue()
+GET    /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentToday()
+POST   /calculator/payment-today                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPaymentToday()
+GET    /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalments(months:Option[Int])
 POST   /calculator/instalments                  @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
 POST   /calculator/instalments/payment-today    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsPaymentToday()
 
 #Misalignment Page
-GET   /calculator/amounts-dont-match            @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.MisalignmentController.getMisalignmentPage()
-POST  /calculator/recalculate                   @uk.gov.hmrc.selfservicetimetopay.controllers.calculator.MisalignmentController.submitRecalculate()
+GET   /calculator/amounts-dont-match            @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getMisalignmentPage()
+POST  /calculator/recalculate                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitRecalculate()
 
 # Arrangement
 GET    /arrangement/instalment-summary              @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummary()
