@@ -19,26 +19,25 @@ package uk.gov.hmrc.selfservicetimetopay.util
 import java.util.UUID
 
 import play.api.mvc._
-import uk.gov.hmrc.play.http.SessionKeys
+import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
+import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
 import scala.concurrent.Future
 
 trait SessionProvider {
-  def createSessionId() = SessionKeys.sessionId -> s"session-${UUID.randomUUID}"
+  def createTtpSessionId() = ttpSessionId -> s"ttp-session-${UUID.randomUUID}"
 }
 
-trait CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Request] with SessionProvider {
-  sessionProvider: SessionProvider =>
+trait CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Request] {
+  val sessionProvider: SessionProvider
 
-  protected lazy val redirectTo = Results.Redirect(routes.SelfServiceTimeToPayController.start())
+  protected lazy val redirectToStartPage = Results.Redirect(routes.SelfServiceTimeToPayController.start())
 
   def filter[A](request: Request[A]): Future[Option[Result]] = {
-    Future.successful(request.session.get(SessionKeys.sessionId).fold[Option[Result]]
-      (Some(redirectTo.withNewSession.withSession(sessionProvider.createSessionId())))
+    Future.successful(request.session.get(ttpSessionId).fold[Option[Result]]
+      (Some(redirectToStartPage.withNewSession.withSession(sessionProvider.createTtpSessionId())))
       { _ => None }
     )
   }
 }
-
-object CheckSessionAction extends CheckSessionAction

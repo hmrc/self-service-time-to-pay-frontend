@@ -22,18 +22,19 @@ import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
 import uk.gov.hmrc.play.config.{AppName, RunMode, ServicesConfig}
-import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.hooks.HttpHook
 import uk.gov.hmrc.play.http.ws._
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpDelete, HttpGet, HttpPut}
 import uk.gov.hmrc.selfservicetimetopay.auth.SaRegime
+import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
+import uk.gov.hmrc.selfservicetimetopay.util.{CheckSessionAction, SessionProvider}
 
 import scala.concurrent.Future
 
@@ -88,11 +89,22 @@ object EligibilityConnector extends EligibilityConnector with ServicesConfig {
   val http = WSHttp
 }
 
-trait TimeToPayController extends FrontendController with Actions {
-  override lazy val authConnector: AuthConnector = FrontendAuthConnector
-  lazy val sessionCache: KeystoreConnector = SessionCacheConnector
+trait TimeToPayController extends FrontendController with Actions with CheckSessionAction {
+  checkSessionAction: CheckSessionAction =>
 
-  protected lazy val Action: ActionBuilder[Request] = CheckSessionAction andThen PlayAction
+  override val sessionProvider: SessionProvider = new SessionProvider() {}
+  override lazy val authConnector: AuthConnector = FrontendAuthConnector
+  protected lazy val sessionCache: KeystoreConnector = SessionCacheConnector
+  protected lazy val Action: ActionBuilder[Request] = checkSessionAction andThen PlayAction
+  protected type AsyncPlayUserRequest = AuthContext => Request[AnyContent] => Future[Result]
+
+  def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(SaRegime, GGConfidence).async(body)
+
+  override implicit def hc(implicit request: Request[_]): HeaderCarrier = {
+    request.session.get(ttpSessionId).fold(super.hc(request)) { id =>
+      super.hc(request).withExtraHeaders(ttpSessionId -> id)
+    }
+  }
 
   protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)
                                      (implicit hc: HeaderCarrier) = {
@@ -103,14 +115,6 @@ trait TimeToPayController extends FrontendController with Actions {
       case None =>
         Logger.info("No TTP Submission data found in cache")
         sessionCache.put(notFound())
-    }
-  }
-
-  protected type AsyncPlayUserRequest = AuthContext => Request[AnyContent] => Future[Result]
-
-  def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = {
-    AuthorisedFor(SaRegime, pageVisibility = GGConfidence).async {
-      body
     }
   }
 }
