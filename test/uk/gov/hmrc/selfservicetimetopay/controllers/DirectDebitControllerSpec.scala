@@ -24,8 +24,11 @@ import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.cache.client.CacheMap
+import uk.gov.hmrc.play.frontend.auth.{AuthContext, LoggedInUser, Principal}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLevel, CredentialStrength, SaAccount}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllers
@@ -48,6 +51,16 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     val controller = new DirectDebitController(mockDDConnector) {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
       override lazy val authConnector: AuthConnector = mockAuthConnector
+
+      val loggedInUser = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L100)
+      val saAccount = SaAccount(link = "link", utr = SaUtr("1233"))
+      val authContext = AuthContext(user = loggedInUser, principal = Principal(name = Some("usere"),
+        accounts = Accounts(sa = Some(saAccount))), attorney = None, userDetailsUri = None, enrolmentsUri = None)
+
+      override def AuthorisedSaUser(body: AsyncPlayUserRequest) = Action.async {
+        body(authContext)
+      }
+
     }
 
     "successfully display the direct debit form page" in {

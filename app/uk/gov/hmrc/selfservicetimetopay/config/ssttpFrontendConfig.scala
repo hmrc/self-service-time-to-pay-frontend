@@ -39,4 +39,9 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
   override lazy val analyticsHost = loadConfig("google-analytics.host")
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+
+  private lazy val companyAuthFrontend = baseUrl("company-auth")
+  private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
+  lazy val loginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
+  lazy val loginCallbackBaseUrl = getConfString("auth.login-callback.base-url", "")
 }

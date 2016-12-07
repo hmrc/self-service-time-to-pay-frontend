@@ -30,7 +30,7 @@ trait TaxPayerConnector {
   val http: HttpGet
 
   def getTaxPayer(utr: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Taxpayer]] = {
-    http.GET[HttpResponse](s"$taxPayerURL/$serviceURL/tax-payer/$utr").map {
+    http.GET[HttpResponse](s"$taxPayerURL/$serviceURL/$utr").map {
        response => response.status match {
          case Status.OK => Some(response.json.as[Taxpayer])
          case _ =>

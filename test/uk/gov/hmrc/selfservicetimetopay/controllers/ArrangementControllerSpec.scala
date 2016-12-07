@@ -22,8 +22,11 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLevel, CredentialStrength, SaAccount}
+import uk.gov.hmrc.play.frontend.auth.{AuthContext, LoggedInUser, Principal}
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors._
@@ -43,10 +46,26 @@ class ArrangementControllerSpec extends UnitSpec
   val calculatorConnector: CalculatorConnector = mock[CalculatorConnector]
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
 
-  val controller = new ArrangementController(ddConnector, arrangementConnector, calculatorConnector) {
+  val controller = new ArrangementController(ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
+
+    val loggedInUser = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L100)
+    val saAccount = SaAccount(link = "link", utr = SaUtr("1233"))
+    val authContext = AuthContext(user = loggedInUser, principal = Principal(name = Some("usere"),
+      accounts = Accounts(sa = Some(saAccount))), attorney = None, userDetailsUri = None, enrolmentsUri = None)
+
+    override def AuthorisedSaUser(body: AsyncPlayUserRequest) = Action.async {
+      body(authContext)
+    }
   }
+
+  val unauthorisedController = new ArrangementController(ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector) {
+    override lazy val sessionCache: SessionCacheConnector = mockSessionCache
+    override lazy val authConnector: AuthConnector = mockAuthConnector
+
+  }
+
 
   val validDayForm = Seq(
     "dayOfMonth" -> "10"
@@ -92,6 +111,13 @@ class ArrangementControllerSpec extends UnitSpec
         .withFormUrlEncodedBody(validDayForm: _*))
 
       redirectLocation(response).get shouldBe controllers.routes.ArrangementController.getInstalmentSummary().url
+    }
+    "redirect to login if user not logged in" in {
+
+      val response = unauthorisedController.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(sessionProvider.createSessionId()))
+
+      redirectLocation(response).get contains "/gg/sign-in"
+
     }
 
   }
