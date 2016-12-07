@@ -17,18 +17,19 @@
 package uk.gov.hmrc.selfservicetimetopay.config
 
 import play.api.Logger
-import play.api.mvc.{ActionBuilder, Controller, Request, Action => PlayAction}
+import play.api.mvc.{ActionBuilder, AnyContent, Controller, Request, Result, Action => PlayAction}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
 import uk.gov.hmrc.play.config.{AppName, RunMode, ServicesConfig}
-import uk.gov.hmrc.play.frontend.auth.Actions
+import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.hooks.HttpHook
 import uk.gov.hmrc.play.http.ws._
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpDelete, HttpGet, HttpPut}
+import uk.gov.hmrc.selfservicetimetopay.auth.SaRegime
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
@@ -45,9 +46,13 @@ object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName wi
 
 object SessionCacheConnector extends KeystoreConnector with AppName with ServicesConfig {
   override val sessionKey: String = getConfString("keystore.sessionKey", throw new RuntimeException("Could not find session key"))
+
   override def defaultSource: String = appName
+
   override def baseUri: String = baseUrl("keystore")
+
   override def domain: String = getConfString("keystore.domain", throw new RuntimeException("Could not find config keystore.domain"))
+
   override def http: HttpGet with HttpPut with HttpDelete = WSHttp
 }
 
@@ -57,6 +62,7 @@ object FrontendAuditConnector extends Auditing with AppName with RunMode {
 
 object FrontendAuthConnector extends AuthConnector with ServicesConfig {
   override val serviceUrl: String = baseUrl("auth")
+
   override def http: HttpGet = WSHttp
 }
 
@@ -83,6 +89,7 @@ object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
   val serviceURL = "tax-payer"
   val http = WSHttp
 }
+
 object EligibilityConnector extends EligibilityConnector with ServicesConfig {
   val eligibilityURL: String = baseUrl("time-to-pay-eligibility")
   val serviceURL = "time-to-pay-eligibility/eligibility"
@@ -106,6 +113,14 @@ trait TimeToPayController extends FrontendController with Actions {
         sessionCache.put(notFound())
     }
   }
+
+  protected type AsyncPlayUserRequest = AuthContext => Request[AnyContent] => Future[Result]
+
+  def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = {
+    AuthorisedFor(SaRegime, pageVisibility = GGConfidence).async {
+      body
+    }
+  }
 }
 
 trait ServiceRegistry extends ServicesConfig {
@@ -116,12 +131,14 @@ trait ServiceRegistry extends ServicesConfig {
   lazy val arrangementConnector: ArrangementConnector = ArrangementConnector
   lazy val eligibilityConnector: EligibilityConnector = EligibilityConnector
   lazy val calculatorConnector: CalculatorConnector = CalculatorConnector
+  lazy val taxPayerConnector: TaxPayerConnector = TaxPayerConnector
 }
 
-trait ControllerRegistry { registry: ServiceRegistry =>
+trait ControllerRegistry {
+  registry: ServiceRegistry =>
   private lazy val controllers = Map[Class[_], Controller](
     classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector),
-    classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, calculatorConnector),
+    classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, calculatorConnector, taxPayerConnector),
     classOf[CalculatorController] -> new CalculatorController(),
     classOf[EligibilityController] -> new EligibilityController(),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(),
@@ -131,5 +148,5 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[MisalignmentController] -> new MisalignmentController()
   )
 
-  def getController[A](controllerClass: Class[A]) : A = controllers(controllerClass).asInstanceOf[A]
+  def getController[A](controllerClass: Class[A]): A = controllers(controllerClass).asInstanceOf[A]
 }

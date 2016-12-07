@@ -20,13 +20,14 @@ import java.time.LocalDate
 
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors._
+import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
 
 import scala.concurrent.Future
@@ -34,19 +35,50 @@ import scala.concurrent.Future.successful
 
 class ArrangementController(ddConnector: DirectDebitConnector,
                             arrangementConnector: ArrangementConnector,
-                            calculatorConnector: CalculatorConnector) extends TimeToPayController {
+                            calculatorConnector: CalculatorConnector,
+                            taxPayerConnector: TaxPayerConnector) extends TimeToPayController {
 
   val cesa: String = "CESA"
   val paymentFrequency = "Monthly"
   val paymentCurrency = "GBP"
 
-  def getInstalmentSummary = Action.async { implicit request =>
-    sessionCache.get.flatMap {
-      _.fold(redirectToStart)(ttp => {
-        Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
-          createDayOfForm(ttp), request)))
-      })
-    }
+  //TODO - Take out once calculator has been completed
+  val calculatorPaymentScheduleInstalment = CalculatorPaymentScheduleInstalment(LocalDate.now(), BigDecimal(1234.22))
+  val calculatorPaymentSchedule: CalculatorPaymentSchedule = CalculatorPaymentSchedule(
+    Some(LocalDate.parse("2001-01-01")),
+    Some(LocalDate.parse("2001-01-01")),
+    BigDecimal(1024.12),
+    BigDecimal(20123.76),
+    BigDecimal(1024.12),
+    BigDecimal(102.67),
+    BigDecimal(20123.76),
+    Seq(calculatorPaymentScheduleInstalment,
+      calculatorPaymentScheduleInstalment)
+  )
+
+  def determineMisalignment: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      val sa = authContext.principal.accounts.sa.get
+
+      taxPayerConnector.getTaxPayer(sa.utr.utr).flatMap {
+        _.fold(throw new RuntimeException("No taxpayer found"))(t => {
+          updateOrCreateInCache(found => found.copy(taxpayer = Some(t), schedule = Some(calculatorPaymentSchedule)),
+            () => TTPSubmission(taxpayer = Some(t), schedule = Some(calculatorPaymentSchedule)))
+            .map {
+              _ => Redirect(routes.ArrangementController.getInstalmentSummary())
+            }
+        })
+      }
+  }
+
+  def getInstalmentSummary: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      sessionCache.get.flatMap {
+        _.fold(redirectToStart)(ttp => {
+          Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
+            createDayOfForm(ttp), request)))
+        })
+      }
   }
 
   private def createDayOfForm(ttpSubmission: TTPSubmission) = {
@@ -57,23 +89,22 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   private val showInstalmentSummary = instalment_plan_summary.render _
 
-  def changeSchedulePaymentDay(): Action[AnyContent] = Action.async { implicit request =>
-
-    ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
-      formWithErrors => {
-        sessionCache.get.map {
-          submission => BadRequest(showInstalmentSummary(submission.get.schedule.get, formWithErrors, request))
-        }
-      },
-      validFormData => {
-        sessionCache.get.flatMap {
-          _.fold(redirectToStart)(ttp => changeScheduleDay(ttp, validFormData))
-        }
-      })
+  def changeSchedulePaymentDay(): Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
+        formWithErrors => {
+          sessionCache.get.map {
+            submission => BadRequest(showInstalmentSummary(submission.get.schedule.get, formWithErrors, request))
+          }
+        },
+        validFormData => {
+          sessionCache.get.flatMap {
+            _.fold(redirectToStart)(ttp => changeScheduleDay(ttp, validFormData))
+          }
+        })
   }
 
   def changeScheduleDay(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth)(implicit hc: HeaderCarrier): Future[Result] = {
-
     createCalculatorInput(ttpSubmission, formData).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
       calculatorConnector.calculatePaymentSchedule(cal).flatMap {
         response => {
@@ -94,27 +125,30 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     } yield input
   }
 
-  def submitInstalmentSchedule = Action.async { implicit request =>
-    Future(ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
-      formWithErrors => BadRequest(showInstalmentSummary(generatePaymentSchedules(BigDecimal.exact("5000"), None).head, formWithErrors, request)),
-      _ => Redirect(routes.DirectDebitController.getDirectDebit()))
-    )
+  def submitInstalmentSchedule = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      Future(ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
+        formWithErrors => BadRequest(showInstalmentSummary(generatePaymentSchedules(BigDecimal.exact("5000"), None).head, formWithErrors, request)),
+        _ => Redirect(routes.DirectDebitController.getDirectDebit()))
+      )
   }
 
-  def submit(): Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.flatMap {
-      _.fold(redirectToStart)(arrangementSetUp)
-    }
+  def submit(): Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      sessionCache.get.flatMap {
+        _.fold(redirectToStart)(arrangementSetUp)
+      }
   }
 
-  def applicationComplete(): Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.flatMap {
-      _.fold(redirectToStart)(submission => {
-        sessionCache.remove()
-        successful(Ok(application_complete.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
-          submission.arrangementDirectDebit.get, submission.schedule.get, request)))
-      })
-    }
+  def applicationComplete(): Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      sessionCache.get.flatMap {
+        _.fold(redirectToStart)(submission => {
+          sessionCache.remove()
+          successful(Ok(application_complete.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
+            submission.arrangementDirectDebit.get, submission.schedule.get, request)))
+        })
+      }
   }
 
   private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.start()))

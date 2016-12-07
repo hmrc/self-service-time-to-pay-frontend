@@ -16,40 +16,41 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import play.api.data.Form
-import play.api.data.Forms._
 import play.api.mvc._
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
+import uk.gov.hmrc.selfservicetimetopay.controllerVariables.fakeBankDetails
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables.fakeBankDetails
 import views.html.selfservicetimetopay.arrangement._
 
 import scala.concurrent.Future
 
 class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
 
-  def getDirectDebit: Action[AnyContent] = Action { implicit request =>
-    Ok(direct_debit_form.render(directDebitForm, request))
+  def getDirectDebit: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      Future.successful(Ok(direct_debit_form.render(directDebitForm, request)))
   }
 
-  def getDirectDebitError: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(TTPSubmission(_, _, banks @ Some(_), _, _, _,_)) =>
-        Ok(direct_debit_error.render(directDebitForm, banks, request))
-      case _ => Ok(direct_debit_error.render(directDebitForm, None, request))
-    }
+  def getDirectDebitError: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      sessionCache.get.map {
+        case Some(TTPSubmission(_, _, banks@Some(_), _, _, _, _)) =>
+          Ok(direct_debit_error.render(directDebitForm, banks, request))
+        case _ => Ok(direct_debit_error.render(directDebitForm, None, request))
+      }
   }
 
-  def getDirectDebitConfirmation: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(submission @ TTPSubmission(Some(schedule), Some(bankDetails), _, _, _,_, _)) =>
-        Ok(showDDConfirmation(schedule, submission.arrangementDirectDebit.get, request))
-      case _ => throw new RuntimeException("No data found")
-    }
+  def getDirectDebitConfirmation: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      sessionCache.get.map {
+        case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _)) =>
+          Ok(showDDConfirmation(schedule, submission.arrangementDirectDebit.get, request))
+        case _ => throw new RuntimeException("No data found")
+      }
   }
 
   def getBankAccountNotFound: Action[AnyContent] = Action { implicit request =>
@@ -64,16 +65,14 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     Redirect(routes.ArrangementController.submit())
   }
 
-  def submitDirectDebit: Action[AnyContent] = Action.async { implicit request =>
-    directDebitForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(bankDetailsFormErrorPage(formWithErrors, request))),
-      validFormData =>
-        authConnector.currentAuthority.flatMap {
-          case Some(authority) if authority.accounts.sa.exists(_ => true) =>
-            directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode, validFormData.accountNumber.toString, authority.accounts.sa.get.utr)
-          case Some(authority) => throw new RuntimeException("Current user does not have SA enrolment")
-          case _ => throw new RuntimeException("Current user is unauthorised")
-        }.flatMap(directDebitSubmitRouting))
+  def submitDirectDebit: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      directDebitForm.bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(bankDetailsFormErrorPage(formWithErrors, request))),
+        validFormData =>
+          directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode,
+            validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
+            .flatMap(directDebitSubmitRouting))
   }
 
   private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Future[Result]] = {
