@@ -30,7 +30,7 @@ class PaymentTodayController extends TimeToPayController {
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
-        if(paymentToday.eq(BigDecimal(0))) Ok(payment_today_form.render(form, request))
+        if(paymentToday.equals(BigDecimal(0))) Ok(payment_today_form.render(form, request))
         else Ok(payment_today_form.render(form.fill(paymentToday), request))
       case _ => Redirect(ssttpRoutes.SelfServiceTimeToPayController.start())
     }

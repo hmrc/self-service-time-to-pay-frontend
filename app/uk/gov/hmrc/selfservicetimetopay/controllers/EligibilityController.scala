@@ -58,9 +58,11 @@ class EligibilityController extends TimeToPayController {
 
   def getExistingTtp: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, _, existingTtp @ Some(_), _))=>
+      case Some(TTPSubmission(_, _, _, _, Some(_), existingTtp @ Some(_), _))=>
         Ok(existing_ttp.render(EligibilityForm.existingTtpForm.fill(existingTtp.get), request))
-      case _ => Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request))
+      case Some(TTPSubmission(_, _, _, _, Some(_), _, _))=>
+        Ok(existing_ttp.render(EligibilityForm.existingTtpForm, request))
+      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
     }
 
   }
