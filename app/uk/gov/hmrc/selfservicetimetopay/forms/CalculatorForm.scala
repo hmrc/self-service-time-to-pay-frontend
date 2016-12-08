@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.forms
 
 import java.time.{DateTimeException, LocalDate}
+import java.util.Calendar
 
 import play.api.data.Form
 import play.api.data.Forms._
@@ -26,8 +27,8 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 import scala.util.control.Exception.catching
 
 object CalculatorForm {
-  val dueByYearMax = 2100
-  val dueByYearMin = 2000
+  val dueByYearMax = Calendar.getInstance().get(Calendar.YEAR) + 1
+  val dueByYearMin = 1997
   val dueByMonthMin = 1
   val dueByMonthMax = 12
   val dueByDayMin = 1
@@ -36,13 +37,13 @@ object CalculatorForm {
   val dueByDateTuple = tuple(
     "dueByYear" -> optional(number)
       .verifying("ssttp.calculator.form.amounts_due.due_by.required-year", _.nonEmpty)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year", x => x.isEmpty || ( x.get <= dueByYearMax)|| (x.get >= dueByYearMin)),
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year", x => x.isEmpty || ( x.get <= dueByYearMax) && (x.get >= dueByYearMin)),
     "dueByMonth" -> optional(number)
       .verifying("ssttp.calculator.form.amounts_due.due_by.required-month", _.nonEmpty)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-month", x => x.isEmpty || ( x.get <= dueByMonthMax)|| (x.get >= dueByMonthMin)),
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-month", x => x.isEmpty || ( x.get <= dueByMonthMax) && (x.get >= dueByMonthMin)),
     "dueByDay" -> optional(number)
       .verifying("ssttp.calculator.form.amounts_due.due_by.required-day", _.nonEmpty)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day", x => x.isEmpty || ( x.get <= dueByDayMax)|| (x.get >= dueByDayMin))
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day", x => x.isEmpty || ( x.get <= dueByDayMax) && (x.get >= dueByDayMin))
   )
 
   def validDate: Constraint[(Option[Int], Option[Int], Option[Int])] =
