@@ -186,7 +186,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
       val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
       val pp = PaymentPlan("Time to Pay",
-        utr,
+        s"${utr}K",
         cesa,
         paymentCurrency,
         schedule.initialPayment,
