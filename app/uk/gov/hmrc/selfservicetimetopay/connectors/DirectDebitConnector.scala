@@ -48,6 +48,10 @@ trait DirectDebitConnector {
     }
   }
 
+  def getBanks(saUtr: SaUtr)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DirectDebitBank] = {
+    http.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks")
+  }
+
   def validateOrRetrieveAccounts(sortCode: String, accountNumber: String, saUtr: SaUtr)
                                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[BankDetails, DirectDebitBank]] = {
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"

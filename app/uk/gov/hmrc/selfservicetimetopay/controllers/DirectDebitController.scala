@@ -17,18 +17,21 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
+
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables.fakeBankDetails
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
-import uk.gov.hmrc.selfservicetimetopay.models.{Debit, BankDetails, DirectDebitBank, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement._
 
+import scala.collection.immutable.::
 import scala.concurrent.Future
 
 class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
@@ -40,11 +43,11 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   def getDirectDebitAssistance: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(submission @ TTPSubmission(Some(schedule), _, _, _, _, _, _)) =>
+      case Some(submission@TTPSubmission(Some(schedule), _, _, _, _, _, _)) =>
         Ok(direct_debit_assistance.render(List(
           Debit(Some("ASST"), 99, LocalDate.now()),
           Debit(Some("DPI"), 2323, LocalDate.now())), request))
-//        Ok(direct_debit_assistance.render(submission.taxPayer.get.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()), request))
+      //        Ok(direct_debit_assistance.render(submission.taxPayer.get.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()), request))
       //      case _ => throw new RuntimeException("No data found")
       case _ =>
         Ok(direct_debit_assistance.render(List(
@@ -95,10 +98,32 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Future[Result]] = {
     case Left(singleBankDetails) =>
-      updateOrCreateInCache(found => found.copy(bankDetails = Some(singleBankDetails)),
-        () => TTPSubmission(bankDetails = Some(singleBankDetails)))
-        .map(_ => Redirect(toDDCreationPage))
+      sessionCache.get.flatMap {
+          _.fold(Future.successful(redirectToStartPage))(ttp => {
 
+            val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
+            val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assesement"))
+
+            directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
+              directDebitBank => {
+                val instructions:Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter( p => {
+                  p.accountNumber.get.equalsIgnoreCase(singleBankDetails.accountNumber) && p.sortCode.get.equals(singleBankDetails.sortCode)
+                })
+
+                val bankDetailsToSave = instructions match {
+                  case instruction::Nil =>
+                    BankDetails(singleBankDetails.sortCode, singleBankDetails.accountNumber, None, None, None,
+                      Some(instructions.head.ddiRefNo.get))
+                  case Nil =>   singleBankDetails
+                }
+
+                sessionCache.put(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
+                  _ => Redirect(toDDCreationPage)
+                }
+              }
+            }
+          })
+      }
     case Right(existingDDBanks) =>
       updateOrCreateInCache(found => found.copy(existingDDBanks = Some(existingDDBanks)),
         () => TTPSubmission(None, None, Some(existingDDBanks), None))
