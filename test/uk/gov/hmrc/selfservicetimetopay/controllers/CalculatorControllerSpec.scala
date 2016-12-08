@@ -22,11 +22,16 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector, SessionCacheConnector}
+import uk.gov.hmrc.selfservicetimetopay.controllers
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
@@ -99,20 +104,27 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       status(result) shouldBe Status.SEE_OTHER
     }
 
-    "Return 303 for non-logged-in when debts is > £10,000" in {
+    "Return Redirect for non-logged-in when debts is > £10,000" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
 
-      when(mockEligibilityConnector.checkEligibility(Matchers.any())(Matchers.any()))
-        .thenReturn(Future.successful(eligibilityStatusDebtTooHigh))
+      when(mockCalculatorConnector.calculatePaymentSchedule(Matchers.any())(Matchers.any()))
+        .thenReturn(Future.successful(Seq(ttpArrangement.schedule)))
+
+      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(CacheMap("", Map.empty)))
 
       val result = await(controller.submitCalculateInstalmentsPaymentToday().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "200")
         .withSession(sessionProvider.createTtpSessionId())))
 
       status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.CalculatorController.getCalculateInstalments(None).url
+      verify(mockSessionCache, times(1)).get(Matchers.any(), Matchers.any())
+      verify(mockSessionCache, times(1)).put(Matchers.any())(Matchers.any(), Matchers.any())
+      verify(mockCalculatorConnector, times(1)).calculatePaymentSchedule(Matchers.any())(Matchers.any())
     }
   }
 }
