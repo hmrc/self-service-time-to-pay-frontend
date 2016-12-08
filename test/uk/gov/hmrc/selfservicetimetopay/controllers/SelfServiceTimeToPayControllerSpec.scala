@@ -34,7 +34,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     val controller = new SelfServiceTimeToPayController()
 
     "return 200 and display the service start page" in {
-      val result:Result = controller.start.apply(FakeRequest().withSession(sessionProvider.createTtpSessionId()))
+      val result:Result = controller.start.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
       status(result) shouldBe OK
 
@@ -42,7 +42,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "redirect to the eligibility section if user selects start" in {
-      val result:Result = controller.submit.apply(FakeRequest().withSession(sessionProvider.createTtpSessionId()))
+      val result:Result = controller.submit.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
       status(result) shouldBe SEE_OTHER
 
@@ -50,7 +50,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "return 200 and display call us page successfully" in {
-      val result:Result = controller.getTtpCallUs.apply(FakeRequest().withSession(sessionProvider.createTtpSessionId()))
+      val result:Result = controller.getTtpCallUs.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
       status(result) shouldBe OK
 
@@ -58,7 +58,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "return 200 and display you need to file page successfully" in {
-      val result: Result = controller.getYouNeedToFile.apply(FakeRequest().withSession(sessionProvider.createTtpSessionId()))
+      val result: Result = controller.getYouNeedToFile.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
       status(result) shouldBe OK
 

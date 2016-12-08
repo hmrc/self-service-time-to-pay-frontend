@@ -27,8 +27,6 @@ object SaGovernmentGateway extends GovernmentGateway {
   override def continueURL: String = s"${SsttpFrontendConfig.loginCallBackFullPath}"
 
   override def loginURL: String = SsttpFrontendConfig.loginUrl
-
-  override def sessionKeysToKeep = Seq(SsttpFrontendConfig.ttpSessionId)
 }
 
 object SaRegime extends TaxRegime {

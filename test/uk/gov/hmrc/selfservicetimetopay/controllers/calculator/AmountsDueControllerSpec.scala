@@ -58,7 +58,7 @@ class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val response: Result = controller.start.apply(FakeRequest().withSession(sessionProvider.createTtpSessionId()))
+      val response: Result = controller.start.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
       status(response) shouldBe SEE_OTHER
 
@@ -66,7 +66,7 @@ class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
     }
 
     "successfully display the amounts you owe page" in {
-      val response: Result = controller.getAmountsDue().apply(FakeRequest().withSession(sessionProvider.createTtpSessionId()))
+      val response: Result = controller.getAmountsDue().apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
       status(response) shouldBe OK
 
