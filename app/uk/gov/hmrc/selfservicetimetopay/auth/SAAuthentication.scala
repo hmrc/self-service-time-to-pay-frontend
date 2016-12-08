@@ -24,7 +24,7 @@ import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
 
 object SaGovernmentGateway extends GovernmentGateway {
-  override def continueURL: String = s"${SsttpFrontendConfig.loginCallbackBaseUrl}/pay-what-you-owe-in-instalments/arrangement/determine-misalignment"
+  override def continueURL: String = SsttpFrontendConfig.loginCallbackUrl
 
   override def loginURL: String = SsttpFrontendConfig.loginUrl
 

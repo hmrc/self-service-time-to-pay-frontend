@@ -44,5 +44,6 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
   private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
   lazy val loginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
   lazy val loginCallbackBaseUrl = getConfString("auth.login-callback.base-url", "")
+  lazy val loginCallbackUrl = getConfString("auth.login-callback.url", "")
   lazy val ttpSessionId = "ttpSessionId"
 }
