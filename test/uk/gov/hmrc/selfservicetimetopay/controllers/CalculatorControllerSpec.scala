@@ -56,7 +56,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
       val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withSession(sessionProvider.createSessionId())))
+        .withSession(sessionProvider.createTtpSessionId())))
 
       status(result) shouldBe Status.OK
       verify(mockSessionCache, times(1)).get(Matchers.any(), Matchers.any())
@@ -69,7 +69,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .thenReturn(Future.successful(Some(ttpSubmissionNLINoSchedule)))
 
       val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withSession(sessionProvider.createSessionId())))
+        .withSession(sessionProvider.createTtpSessionId())))
 
       status(result) shouldBe Status.NOT_FOUND
     }
@@ -81,7 +81,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
       val result = await(controller.submitPaymentToday().apply(FakeRequest()
-        .withSession(sessionProvider.createSessionId())))
+        .withSession(sessionProvider.createTtpSessionId())))
 
       status(result) shouldBe Status.SEE_OTHER
     }
@@ -94,7 +94,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
 
       val result = await(controller.submitCalculateInstalmentsPaymentToday().apply(FakeRequest()
-        .withSession(sessionProvider.createSessionId())))
+        .withSession(sessionProvider.createTtpSessionId())))
 
       status(result) shouldBe Status.SEE_OTHER
     }
@@ -110,7 +110,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
       val result = await(controller.submitCalculateInstalmentsPaymentToday().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "200")
-        .withSession(sessionProvider.createSessionId())))
+        .withSession(sessionProvider.createTtpSessionId())))
 
       status(result) shouldBe Status.SEE_OTHER
     }
