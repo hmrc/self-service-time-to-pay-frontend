@@ -259,7 +259,9 @@ ssttp.arrangement.instalment-summary.submit=Agree and continue
 
 ssttp.arrangement.direct-debit.form.title=Set up a direct debit
 ssttp.arrangement.direct-debit.form.bank-details=Please enter your banking details
-
+ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
+ssttp.arrangement.direct-debit.form.submit=Agree and continue
+ssttp.arrangement.direct-debit.form.back=Back
 
 ssttp.arrangement.misalignment.title=Bank account not found
 ssttp.arrangement.misalignment.subtitle=There was a problem with the bank details you entered
@@ -273,13 +275,10 @@ ssttp.direct-debit.form.accountName=Name of account holder
 ssttp.direct-debit.form.sortCode=Sort code
 ssttp.direct-debit.form.accountNumber=Account number
 
-
 ssttp.direct-debit.form.confirmation.header=By continuing, you’re confirming that:
 ssttp.direct-debit.form.confirmation.list.1=you have the authority to set up a Direct Debit against this account
 ssttp.direct-debit.form.confirmation.list.2=this account does not require dual signatories
 
-ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
-ssttp.arrangement.direct-debit.form.submit=Continue
 
 ssttp.direct-debit.guarantee.title=Direct Debit Guarantee
 ssttp.direct-debit.guarantee.list.1=This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
