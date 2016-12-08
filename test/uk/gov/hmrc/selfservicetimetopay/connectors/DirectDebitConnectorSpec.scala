@@ -62,7 +62,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
 
       ddResult.processingDate shouldBe "2001-12-17T09:30:47Z"
       ddResult.directDebitInstruction.head.sortCode shouldBe Some("123456")
-      ddResult.directDebitInstruction.head.ddiRefNo shouldBe None
+      ddResult.directDebitInstruction.head.ddiRefNumber shouldBe None
     }
   }
 
@@ -96,7 +96,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
 
       result shouldBe a[DirectDebitInstructionPaymentPlan]
       result.processingDate shouldBe "2001-12-17T09:30:47Z"
-      result.directDebitInstruction.head.ddiRefNo shouldBe Some("ABCDabcd1234")
+      result.directDebitInstruction.head.ddiReferenceNo shouldBe Some("ABCDabcd1234")
       result.paymentPlan.head.ppReferenceNo shouldBe "abcdefghij1234567890"
     }
   }

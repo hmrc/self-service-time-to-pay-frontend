@@ -181,23 +181,23 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
         accountNumber = Some(bankDetails.accountNumber.toString),
         creationDate = schedule.startDate,
-        ddiRefNo = bankDetails.ddiRefNumber)
+        ddiRefNumber = bankDetails.ddiRefNumber)
 
       val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
       val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
-      val pp = PaymentPlan("Time to Pay",
-        utr,
-        cesa,
-        paymentCurrency,
-        schedule.initialPayment,
-        schedule.startDate.get,
-        firstInstalment.amount,
-        firstInstalment.paymentDate,
-        lastInstalment.paymentDate,
-        paymentFrequency,
-        lastInstalment.amount,
-        lastInstalment.paymentDate,
-        schedule.amountToPay)
+      val pp = PaymentPlan( ppType = "Time to Pay",
+        paymentReference = utr,
+        hodService = cesa,
+        paymentCurrency = paymentCurrency,
+        initialPaymentAmount = schedule.initialPayment.toString(),
+        initialPaymentStartDate = schedule.startDate.get,
+        scheduledPaymentAmount = firstInstalment.amount.toString(),
+        scheduledPaymentStartDate = firstInstalment.paymentDate,
+        scheduledPaymentEndDate = lastInstalment.paymentDate,
+        scheduledPaymentFrequency = paymentFrequency,
+        balancingPaymentAmount = lastInstalment.amount.toString(),
+        balancingPaymentDate = lastInstalment.paymentDate,
+        totalLiability = schedule.amountToPay.toString())
 
       PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, printFlag = true)
     }
@@ -208,7 +208,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
                                 submission: TTPSubmission): TTPArrangement = {
     val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
-    val ddReference: String = ddInstruction.directDebitInstruction.head.ddiRefNo.get
+    val ddReference: String = ddInstruction.directDebitInstruction.head.ddiReferenceNo.get
     val taxpayer = submission.taxpayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
     val schedule = submission.schedule.getOrElse(throw new RuntimeException("Schedule data not present"))
 

@@ -16,13 +16,16 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import play.api.Logger
 import play.api.http.Status._
+import play.api.libs.json.Json
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait DirectDebitConnector {
   val directDebitURL: String

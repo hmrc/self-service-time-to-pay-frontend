@@ -101,9 +101,10 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
   def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(SaRegime, GGConfidence).async(body)
 
   override implicit def hc(implicit request: Request[_]): HeaderCarrier = {
-    request.session.get(ttpSessionId).fold(super.hc(request)) { id =>
-      super.hc(request).withExtraHeaders(ttpSessionId -> id)
-    }
+    super.hc(request).withExtraHeaders(ttpSessionId -> "123")
+//    request.session.get(ttpSessionId).fold(super.hc(request)) { id =>
+//      super.hc(request).withExtraHeaders(ttpSessionId -> id)
+//    }
   }
 
   protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)

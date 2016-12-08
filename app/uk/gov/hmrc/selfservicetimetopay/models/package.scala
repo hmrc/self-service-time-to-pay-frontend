@@ -118,12 +118,11 @@ package object controllerVariables {
   ))
 
   implicit val fakeDebits = Seq(
-    Debit(Some("ASST"), BigDecimal("4000.00"), LocalDate.of(2015, 1, 30), None, None),
-    Debit(Some("IN1"), BigDecimal("2000.00"), LocalDate.of(2015, 1, 30), None, None),
-    Debit(Some("IN2"), BigDecimal("2000.00"), LocalDate.of(2015, 6, 30), None, None),
+    Debit(Some("ASST"), BigDecimal(4000.00), LocalDate.of(2015, 1, 30), None, None),
+    Debit(Some("IN1"), BigDecimal(2000.00), LocalDate.of(2015, 1, 30), None, None),
+    Debit(Some("IN2"), BigDecimal(2000.00), LocalDate.of(2015, 6, 30), None, None),
     Debit(None, BigDecimal("20.00"), LocalDate.of(2015, 2, 14), None, None)
   )
-
 
   implicit val fakeBankDetails = Seq(
     BankDetails("123456", "987654321", Some("My Account"), None, None, Some("1")),

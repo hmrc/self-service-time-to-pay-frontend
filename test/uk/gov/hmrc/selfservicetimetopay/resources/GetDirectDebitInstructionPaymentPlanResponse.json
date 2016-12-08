@@ -3,10 +3,10 @@
   "acknowledgementId": "123456789012345678901234567890123456789012345678901234567890",
   "directDebitInstruction": [
     {
-      "ddiRefNo": "ABCDabcd1234"
+      "ddiReferenceNo": "ABCDabcd1234"
     },
     {
-      "ddiRefNo": "WXYZwxyz5678"
+      "ddiReferenceNo": "WXYZwxyz5678"
     }
   ],
   "paymentPlan": [

@@ -47,8 +47,6 @@ Time To Pay Instalment Summary Display Page
                 </div>
             </div>
             <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on") <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth)</strong> @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
-                    <!-- Removed temporarily check git history to restore -->
-                    <!-- --->
                 <details @if(dayForm.hasErrors) { open}>
                 <summary class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
         <div class="panel--indent">
@@ -75,7 +73,7 @@ Time To Pay Instalment Summary Display Page
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.made-payable-immidiately")</div>
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
             }
-            @form(routes.ArrangementController.submit()) {
+            @form(routes.DirectDebitController.getDirectDebit()) {
                 @submit() {
                     @Messages("ssttp.arrangement.instalment-summary.submit")
                 }

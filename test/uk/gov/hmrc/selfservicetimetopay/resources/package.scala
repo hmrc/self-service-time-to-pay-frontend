@@ -97,6 +97,7 @@ package object resources {
         Some("XXXX"),
         None,
         Some(true),
+        None,
         Some("XXXX"))
     ), List(
       DirectDebitPaymentPlan("XXX")
@@ -119,15 +120,15 @@ package object resources {
       "paymentRef",
       "hodService",
       "GBP",
-      BigDecimal(192.22),
+      "192.22",
       LocalDate.now(),
-      BigDecimal(722.22),
+      "722.22",
       LocalDate.now(),
       LocalDate.now(),
       "scheduledPaymentFrequency",
-      BigDecimal(162.11),
+      "162.11",
       LocalDate.now(),
-      BigDecimal(282.11)),
+      "282.11"),
     printFlag = true)
 
   val ttpArrangement: TTPArrangement = TTPArrangement(
