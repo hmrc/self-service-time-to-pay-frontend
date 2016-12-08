@@ -195,16 +195,16 @@ ssttp.calculator.results.sign-in.link=Sign in
 ssttp.calculator.results.call-us.into=If you can’t proceed with this for any reason call us to discuss your options
 ssttp.calculator.results.call-us.number=0330 321 321
 
-ssttp.ttp-call-us.title=Please call us
-ssttp.ttp-call-us.intro=We''d like to be able to help you clear your tax debt in instalments, but we need some more detailed information from you first.
-ssttp.ttp-call-us.we-need-to-know.list=We''ll need to know:
-ssttp.ttp-call-us.we-need-to-know.list.1=your reference number
-ssttp.ttp-call-us.we-need-to-know.list.2=what you’ve done to try to pay the bill
-ssttp.ttp-call-us.we-need-to-know.list.3=savings and investments
-ssttp.ttp-call-us.we-need-to-know.list.4=if you can pay some of the bill now
-ssttp.ttp-call-us.we-need-to-know.list.5=your bank details
-ssttp.ttp-call-us.contact-instructions=When you have all of this, please call us on {0}.
-ssttp.ttp-call-us.contact-number=0330 321 321
+ssttp.call-us.title=Please call us
+ssttp.call-us.intro=We’d like to help you clear your tax debt in instalments but we need some more detailed information from you first.
+ssttp.call-us.we-need-to-know.list=We’ll need to know:
+ssttp.call-us.we-need-to-know.list.1=your reference number
+ssttp.call-us.we-need-to-know.list.2=what you’ve done to try to pay the bill
+ssttp.call-us.we-need-to-know.list.3=savings and investments
+ssttp.call-us.we-need-to-know.list.4=if you can pay some of the bill now
+ssttp.call-us.we-need-to-know.list.5=your bank details
+ssttp.call-us.contact-instructions=When you have all of this, call us on {0}.
+ssttp.call-us.contact-number=0300 200 3822
 
 ssttp.you-need-to-file.title=Your tax account may not be up to date
 ssttp.you-need-to-file.intro=There are insufficient Self Assessment amounts owing in your tax account to set up an instalment plan

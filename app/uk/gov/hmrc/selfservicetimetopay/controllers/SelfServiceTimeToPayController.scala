@@ -31,7 +31,7 @@ class SelfServiceTimeToPayController extends TimeToPayController {
   }
 
   def getTtpCallUs: Action[AnyContent] =  Action { implicit request =>
-    Ok(ttp_call_us.render(request))
+    Ok(call_us.render(request))
   }
 
   def getYouNeedToFile: Action[AnyContent] = Action { implicit request =>

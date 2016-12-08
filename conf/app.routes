@@ -47,7 +47,7 @@ GET         /arrangement/account-not-found                    @uk.gov.hmrc.selfs
 POST        /arrangement/account-not-found                    @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitBankAccountNotFound()
 # Alternative pages
 GET         /you-need-to-file                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
-GET         /ttp-call-us                                      @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
+GET         /call-us                                      @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
 GET         /unavailable                                      @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getUnavailable()
 
 # Map static resources from the /public folder to the /assets URL path

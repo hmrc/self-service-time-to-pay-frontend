@@ -1,0 +1,19 @@
+@*
+    Self Service Time to Pay Call Us Page for when a user can't set up time to pay online
+*@
+@()(implicit request: Request[_])
+@import selfservicetimetopay.helpers.message_list
+@selfservicetimetopay.main(
+    title = Messages("ssttp.common.title"),
+    bodyClasses = None
+){
+    <header class="page-header text">
+        <h1>@Messages("ssttp.call-us.title")</h1>
+    </header>
+    <p class="subsection">@Messages("ssttp.call-us.intro")</p>
+    <p class="subsection">
+        @Messages("ssttp.call-us.we-need-to-know.list")
+        @message_list(Some("bullets"), "ssttp.call-us.we-need-to-know.list.")
+    </p>
+    <p><strong>@Messages("ssttp.call-us.contact-instructions", Messages("ssttp.call-us.contact-number"))</strong></p>
+}
