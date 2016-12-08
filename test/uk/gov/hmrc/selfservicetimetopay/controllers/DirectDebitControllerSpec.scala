@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLev
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllers
+import uk.gov.hmrc.selfservicetimetopay.models.DirectDebitBank
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
@@ -74,8 +75,10 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     "submit direct debit form with valid form data and valid bank details and redirect to direct debit confirmation page" in {
       when(mockDDConnector.validateOrRetrieveAccounts(Matchers.any(), Matchers.any(),
         Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Left(bankDetails)))
+      when(mockDDConnector.getBanks(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(DirectDebitBank("", Seq.empty)))
 
       when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+
 
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
