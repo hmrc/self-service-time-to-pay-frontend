@@ -26,6 +26,7 @@ POST        /calculator/payment-today                         @uk.gov.hmrc.selfs
 GET         /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalments(months:Option[Int])
 POST        /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
 POST        /calculator/instalments/payment-today             @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsPaymentToday()
+GET         /calculator/instalments/print                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalmentsPrint()
 
 GET         /arrangement/determine-misalignment               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.determineMisalignment()
 
