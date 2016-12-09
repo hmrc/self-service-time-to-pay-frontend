@@ -22,7 +22,6 @@ import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector}
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -100,13 +99,18 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
     }
   }
 
-  def getMisalignmentPage: Action[AnyContent] = Action { implicit request =>
-    Ok(misalignment.render(fakeAmountsDue, fakeDebits, request))
+  def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _))) =>
+        Ok(misalignment.render(CalculatorAmountsDue(debits), sa.debits, request))
+    }
   }
 
   def submitRecalculate: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      _ => Ok(misalignment.render(fakeAmountsDue, fakeDebits, request))
+    sessionCache.get.flatMap {
+      case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, cd @ CalculatorInput(debits, _, _, _, _, _))) =>
+        updateSchedule(ttpData.copy(calculatorData = cd.copy(debits = Nil))).apply(request)
+      case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
     }
   }
 
@@ -142,23 +146,20 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
     }
   }
 
-  def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async { implicit request =>
-    val cd = ttpData.calculatorData
-
+  private def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async { implicit request =>
     ttpData match {
-      case TTPSubmission(_, _, _, None, _, _, CalculatorInput(_, _, _, _, _, _)) =>
-        calculatorConnector.calculatePaymentSchedule(cd).flatMap {
+      case TTPSubmission(_, _, _, None, _, _, calculatorInput) =>
+        calculatorConnector.calculatePaymentSchedule(calculatorInput).flatMap {
           case Seq(schedule) =>
             sessionCache.put(ttpData.copy(schedule = Some(schedule))).map[Result] { result =>
               Redirect(routes.CalculatorController.getCalculateInstalments(None))
             }
           case _ => throw new RuntimeException("Failed to get schedule")
         }
-      case TTPSubmission(_, _, _, Some(_), _, _, CalculatorInput(_, _, _, _, _, _)) =>
-        //TODO - LI journey
-        eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), Taxpayer(selfAssessment = Some(SelfAssessment(debits = cd.debits))))).flatMap {
+      case TTPSubmission(_, _, _, Some(taxpayer @ Taxpayer(_, _, Some(sa))), _, _, calculatorInput) =>
+        eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).flatMap {
           case EligibilityStatus(true, _) =>
-            calculatorConnector.calculatePaymentSchedule(cd).flatMap {
+            calculatorConnector.calculatePaymentSchedule(calculatorInput.copy(debits = sa.debits)).flatMap {
               case Seq(schedule) =>
                 sessionCache.put(ttpData.copy(schedule = Some(schedule))).map[Result] { result =>
                   Redirect(routes.CalculatorController.getCalculateInstalments(None))

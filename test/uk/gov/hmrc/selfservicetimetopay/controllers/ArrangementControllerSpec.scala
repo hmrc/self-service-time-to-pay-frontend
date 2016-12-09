@@ -17,11 +17,13 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import org.mockito.Matchers
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.Logger
+import play.api.libs.json.Format
 import play.api.mvc.Cookie
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,9 +38,12 @@ import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.config.{SsttpFrontendConfig, TimeToPayController}
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.controllers
+import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
 import uk.gov.hmrc.selfservicetimetopay.resources._
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.SessionProvider
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ArrangementControllerSpec extends UnitSpec
@@ -52,6 +57,7 @@ class ArrangementControllerSpec extends UnitSpec
   val calculatorConnector: CalculatorConnector = mock[CalculatorConnector]
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockSessionProvider = mock[SessionProvider]
+  val mockCacheMap = mock[CacheMap]
 
   val controller = new ArrangementController(ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
@@ -86,12 +92,12 @@ class ArrangementControllerSpec extends UnitSpec
 
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
+      when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
-      when(ddConnector.createPaymentPlan(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(directDebitInstructionPaymentPlan))
+      when(ddConnector.createPaymentPlan(any(), any())(any())).thenReturn(Future.successful(directDebitInstructionPaymentPlan))
 
-      when(arrangementConnector.submitArrangements(Matchers.any())(Matchers.any())).thenReturn(Future.successful(Right(SubmissionSuccess())))
+      when(arrangementConnector.submitArrangements(any())(any())).thenReturn(Future.successful(Right(SubmissionSuccess())))
 
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()))
 
@@ -99,7 +105,7 @@ class ArrangementControllerSpec extends UnitSpec
     }
 
     "redirect to start if no data in session cache" in {
-      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
+      when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(None))
 
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()))
@@ -111,11 +117,11 @@ class ArrangementControllerSpec extends UnitSpec
 
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
+      when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      when(calculatorConnector.calculatePaymentSchedule(Matchers.any())(Matchers.any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
+      when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
       val response = controller.changeSchedulePaymentDay().apply(FakeRequest("POST", "/arrangement/instalment-summary/change-day").withCookies(sessionProvider.createTtpCookie())
         .withFormUrlEncodedBody(validDayForm: _*))
@@ -127,18 +133,41 @@ class ArrangementControllerSpec extends UnitSpec
       val response = unauthorisedController.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()))
 
       redirectLocation(response).get contains "/gg/sign-in"
-
     }
 
+    "redirect to misalignment page if logged in and not logged in debits do not sum() to the same value" in {
+      implicit val hc = new HeaderCarrier
+
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer))) //121.20 debits
+      when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
+      when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(ttpSubmission))
+
+      val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment").withCookies(sessionProvider.createTtpCookie()))
+
+      redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getMisalignmentPage().url
+    }
+
+    "redirect to instalment page if logged in and not logged in debits do sum() to the same value" in {
+      implicit val hc = new HeaderCarrier
+
+      val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
+
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer))) //121.20 debits
+      when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
+      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
+      when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
+
+      val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment").withCookies(sessionProvider.createTtpCookie()))
+
+      redirectLocation(response).get shouldBe controllers.routes.ArrangementController.getInstalmentSummary().url
+    }
   }
 
   "ttpSessionId" should {
     val controller = new TimeToPayController() {
       override val sessionProvider = mockSessionProvider
-
-      def go() = Action {
-        Ok("")
-      }
+      def go() = Action { Ok("") }
     }
     
     "be set within the session cookie when the user first hits a page" in {
