@@ -17,10 +17,10 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
-import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
+import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.selfservicetimetopay.core._
 
-class SelfServiceTimeToPayController extends TimeToPayController {
+class SelfServiceTimeToPayController extends FrontendController {
 
   def start: Action[AnyContent] = Action { implicit request =>
     Ok(service_start.render(request))

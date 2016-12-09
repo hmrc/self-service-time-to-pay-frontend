@@ -41,19 +41,6 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   val paymentFrequency = "Monthly"
   val paymentCurrency = "GBP"
 
-  //TODO - Take out once calculator has been completed
-  val calculatorPaymentScheduleInstalment = CalculatorPaymentScheduleInstalment(LocalDate.now(), BigDecimal(1234.22))
-  val calculatorPaymentSchedule: CalculatorPaymentSchedule = CalculatorPaymentSchedule(
-    Some(LocalDate.parse("2001-01-01")),
-    Some(LocalDate.parse("2001-01-01")),
-    BigDecimal(1024.12),
-    BigDecimal(20123.76),
-    BigDecimal(1024.12),
-    BigDecimal(102.67),
-    BigDecimal(20123.76),
-    Seq(calculatorPaymentScheduleInstalment,
-      calculatorPaymentScheduleInstalment)
-  )
 
   def determineMisalignment: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
@@ -61,8 +48,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
       taxPayerConnector.getTaxPayer(sa.utr.utr).flatMap {
         _.fold(throw new RuntimeException("No taxpayer found"))(t => {
-          updateOrCreateInCache(found => found.copy(taxpayer = Some(t), schedule = Some(calculatorPaymentSchedule)),
-            () => TTPSubmission(taxpayer = Some(t), schedule = Some(calculatorPaymentSchedule)))
+          updateOrCreateInCache(found => found.copy(taxpayer = Some(t)),
+            () => TTPSubmission(taxpayer = Some(t)))
             .map {
               _ => Redirect(routes.ArrangementController.getInstalmentSummary())
             }
