@@ -54,7 +54,7 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
 
       status(result) shouldBe OK
 
-      bodyOf(result) should include(Messages("ssttp.ttp-call-us.title"))
+      bodyOf(result) should include(Messages("ssttp.call-us.title"))
     }
 
     "return 200 and display you need to file page successfully" in {
