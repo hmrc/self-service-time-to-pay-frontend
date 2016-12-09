@@ -18,6 +18,9 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
 
+import play.api.data.Form
+import play.api.data.Forms._
+
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -76,7 +79,11 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit authContext => implicit request =>
       sessionCache.get.map {
         case Some(submission@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _)) =>
-          Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction))
+          Ok(account_not_found(existingBankAccountForm,
+            Seq(
+              DirectDebitInstruction(sortCode = Some("test"), accountNumber = Some("account"), None, None, None, Some("Other reference"), Some("Reference"))
+                )
+          ))
         case _ => throw new RuntimeException("No data found")
       }
   }
@@ -100,8 +107,9 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       sessionCache.get.flatMap {
         case Some(ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _)) =>
           existingBankAccountForm.bindFromRequest().fold(
-            formWithErrors => Future.successful(Ok(account_not_found(formWithErrors, existingDDBanks.directDebitInstruction))),
+            formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, existingDDBanks.directDebitInstruction))),
             validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit) match {
+              case (Some(_), Some(_)) => Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction)))
               case (Some(ddi), None) => {
                 val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction.filter(_.ddiReferenceNo.get == ddi), validFormData)
                 sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {

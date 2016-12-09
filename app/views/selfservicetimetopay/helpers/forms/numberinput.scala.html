@@ -5,7 +5,8 @@ Number input field using Component Library Styles as  documented:
 
     @param field Field The form field the input value represents
     @param args options arguments for the template
-            '_label -> Text for the field label
+            'label -> Text for the field label
+            'hint -> Hint text for the field
             '_labelClass -> Label Modifier class
             '_modifierClass -> Modifier class for whole field
             '_inputClass -> Modifier class for the input class, includes:
@@ -24,7 +25,7 @@ Number input field using Component Library Styles as  documented:
 @value = @{ field.value match { case Some(x) => x case None => "" case x => x }}
 @wrapperClass = @{
     var w = Seq("form-field") ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")
-    w = if (field.hasErrors && argsMap.get('_noLabel)) w :+ "form-field--error" else w
+    w = if (field.hasErrors && (argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false)) w :+ "form-field--error" else w
     w.mkString(" ")
 }
 @inputClass = @{
@@ -32,9 +33,9 @@ Number input field using Component Library Styles as  documented:
     c = if(field.hasErrors) c + " error-field" else c
     c.trim
 }
-
 @inputContent = {
-    @if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false) {@fieldErrors(field)}
+@if(argsMap.get('hint).isDefined) {<div class="form-hint form-hint--small">@argsMap.get('hint)</div>}
+@if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false){@fieldErrors(field)}
     <input type="number"@if(inputClass.nonEmpty){ class="@inputClass" } name="@elements.field.name" id="@elements.field.name" value="@value"
         @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
         @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }

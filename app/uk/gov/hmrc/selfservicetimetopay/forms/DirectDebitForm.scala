@@ -20,14 +20,20 @@ import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, ArrangementExistingDirectDebit}
 
+import scala.util.Try
+
 object DirectDebitForm {
   val minAccountNumber = 0
   val maxAccountNumber = 999999999
 
+  def parseIntOption(str:String) =  Try(str.toInt).toOption
+
   val directDebitMapping = mapping(
-    "accountName" -> nonEmptyText,
-    "sortCode" -> nonEmptyText,
-    "accountNumber" -> nonEmptyText
+    "accountName" -> text.verifying("ssttp.direct-debit.form.error.accountName.required", _.trim!=""),
+    "sortCode" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim!="")
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-number", x => (x.trim=="") || (x.replaceAll("[^0-9]", "")!="") || parseIntOption(x).nonEmpty)
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.replaceAll("[^0-9]", "")=="") || (x.trim.length==6)),
+    "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim!="")
   )(ArrangementDirectDebit.apply)(ArrangementDirectDebit.unapply)
 
   val directDebitForm = Form(directDebitMapping)
