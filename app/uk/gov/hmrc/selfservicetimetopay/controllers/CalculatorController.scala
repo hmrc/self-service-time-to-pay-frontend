@@ -60,11 +60,11 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
           case Some(ttpSubmission@TTPSubmission(_, _, _, _, Some(_), Some(_), cd)) =>
             ttpSubmission.copy(calculatorData = cd.copy(debits = IndexedSeq(validFormData)))
           case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq(validFormData)))
-        }.map { ttpData =>
+        }.flatMap { ttpData =>
           Logger.info(ttpData.toString)
-          sessionCache.put(ttpData)
-        }.map { _ =>
-          Redirect(routes.CalculatorController.getAmountsDue())
+          sessionCache.put(ttpData).map {
+            _ => Redirect(routes.CalculatorController.getAmountsDue())
+          }
         }
       }
     )
@@ -76,8 +76,11 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
       case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _))) =>
         ttpSubmission.copy(calculatorData = cd.copy(debits = debits.patch(index.value.get, Nil, 1)))
       case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty))
-    }.map { ttpData => sessionCache.put(ttpData) }
-      .map { _ => Redirect(routes.CalculatorController.getAmountsDue()) }
+    }.flatMap { ttpData =>
+      sessionCache.put(ttpData).map {
+        _ => Redirect(routes.CalculatorController.getAmountsDue())
+      }
+    }
   }
 
   def submitAmountsDue: Action[AnyContent] = Action.async { implicit request =>
