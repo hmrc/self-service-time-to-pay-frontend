@@ -19,7 +19,7 @@
         <div class="grid-layout__column grid-layout__column--2-3"><span class="font-xsmall"><strong>@Messages("ssttp.calculator.form.amounts_due.due_date")</strong></span></div>
         <div class="grid-layout__column grid-layout__column--1-3 text--middle"><span class="font-xsmall"><strong>@Messages("ssttp.calculator.form.amounts_due.amount")</strong></span></div>
     </div>
-    @defining(DateTimeFormatter.ofPattern("dd MMMM YYYY")) { formatter =>
+    @defining(DateTimeFormatter.ofPattern("d MMMM YYYY")) { formatter =>
         @amountsDue.amountsDue.zipWithIndex.map { case (amountDue, index) =>
             @form(routes.CalculatorController.submitRemoveAmountDue()) {
                 <div class="grid-layout grid-layout--no-gutter divider--bottom">

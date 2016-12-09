@@ -23,7 +23,7 @@ Currency input field using Component Library Styles as  documented:
 @import selfservicetimetopay.helpers.forms.fieldErrors
 @argsMap = @{ args.toMap }
 @elements = @{ new FieldElements(field.id, field, null, argsMap, lang) }
-@value = @{ field.value match { case Some(x) => x case None => "" case x => x }}
+@value = @{(field.value match { case Some(x) => try { Some(BigDecimal(x).formatted("%1.2f")) } catch { case ex: Exception => Some(x) } case None => None}).getOrElse("")}
 @wrapperClass = @{
   var w = Seq.empty ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")
   w = if (field.hasErrors && argsMap.get('_noLabel)) w :+ "form-field--error" else w
@@ -59,4 +59,3 @@ Currency input field using Component Library Styles as  documented:
 } else {
     @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_after -> "true", '_modifierClass -> labelClass)(inputContent)
 }
-

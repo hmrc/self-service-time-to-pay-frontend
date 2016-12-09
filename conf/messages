@@ -168,7 +168,7 @@ ssttp.calculator.results.heading.choose-your-instalments=Select how many months 
 ssttp.calculator.results.heading.your-instalments=Your instalment calculation
 ssttp.calculator.results.recalculate-button.label=Update monthly payment amount
 
-ssttp.calculator.results.instalments-over=Instalments over
+ssttp.calculator.results.instalments-over=Instalments over:
 ssttp.calculator.results.instalments-over.month.singular=month
 ssttp.calculator.results.instalments-over.month.plural=months
 ssttp.calculator.results.monthly-payments=Monthly payments of:
@@ -176,8 +176,10 @@ ssttp.calculator.results.monthly-payments.per-month=per month
 ssttp.calculator.results.monthly-payments.increase=Increase value
 ssttp.calculator.results.monthly-payments.decrease=Decrease value
 
-ssttp.calculator.results.monthly-payments.hint=inlcuding any interest at 2.75%
+ssttp.calculator.results.monthly-payments.hint=calculated at 2.75%
 ssttp.calculator.results.total-interest=Total Interest:
+ssttp.calculator.results.interest-added-to-final=added to the final payment
+
 ssttp.calculator.results.total-replayment=Your total repayment:
 
 ssttp.calculator.results.interest-info.title=How we calculate interest
@@ -188,12 +190,17 @@ ssttp.calculator.results.interest-info.list.3=if the interest rate changes durin
 ssttp.calculator.results.interest-info.warning=These calculations are based on the information you’ve provided. They may change depending on the current balance of your tax account.
 
 ssttp.calculator.results.next-steps=Next steps
-
 ssttp.calculator.results.sign-in=Sign in to your tax account to confirm this arrangement and set up a Direct Debit
 ssttp.calculator.results.sign-in.link=Sign in
 
+ssttp.calculator.results.auth.continue=View a summary of this arrangement and set up a Direct Debit payment.
+ssttp.calculator.results.auth.continue.link=Continue
+
+ssttp.calculator.results.call-us.auth-non-whitelist.intro=To proceed with this arrangement call us to discuss your options.
+
 ssttp.calculator.results.call-us.into=If you can’t proceed with this for any reason call us to discuss your options
-ssttp.calculator.results.call-us.number=0330 321 321
+ssttp.calculator.results.call-us.no-auth.number=0300 200 3822
+ssttp.calculator.results.call-us.auth.number=0300 322 7015
 
 ssttp.call-us.title=Please call us
 ssttp.call-us.intro=We’d like to help you clear your tax debt in instalments but we need some more detailed information from you first.

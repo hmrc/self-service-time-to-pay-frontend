@@ -1,29 +1,34 @@
 @*
-Time To Pay Payment Schedule Display Page
+    Time To Pay Payment Schedule Calculator Page
 
-@param schedule The PaymentSchedule to show
-@param monthOptions List of number of months available to pay over
+    @param schedule The PaymentSchedule to show
+    @param monthOptions List of number of months available to pay over
+    @param auth Boolean set to true if the user is authenticated, default false
+    @param whitelist Boolean set to true if the user is whitelisted to access this service, default false
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
 @import uk.gov.hmrc.selfservicetimetopay.controllers._
-@(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[BigDecimal], monthOptions:Seq[Int])(implicit request: Request[_])
+@(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[BigDecimal], monthOptions:Seq[Int], auth:Boolean = false, whitelist:Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
-@import selfservicetimetopay.helpers.forms.{form, formErrors, button, fieldErrors, inlinenumberinput, numberinput, inlinecurrencyinput, submit}
+@import selfservicetimetopay.helpers.forms.{form, formErrors, button, fieldErrors, numberinput, inlinecurrencyinput}
+@import selfservicetimetopay.partials.currency
+@import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer, calculate_instalments_auth_not_whitelisted_footer}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
     bodyClasses = None
 ){
+    <a href="javascript:window.print()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
     <h1 style="heading-h1">@Messages("ssttp.calculator.results.title")</h1>
     @formErrors(durationForm)
     @formErrors(paymentTodayAmountForm)
-    <section class="section">
-        <h2 style="heading-h2">@Messages("ssttp.calculator.results.heading.what-you-owe")</h2>
+    <section>
+        <h2>@Messages("ssttp.calculator.results.heading.what-you-owe")</h2>
         <div class="subsection grid-layout divider--bottom">
             <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.you-owe")</div>
-            <div class="grid-layout__column grid-layout__column--1-3">@Messages("ssttp.common.currency.symbol")@schedule.amountToPay</div>
+            <div class="grid-layout__column grid-layout__column--1-3">@currency(schedule.amountToPay)</div>
         </div>
         <div class="subsection divider--bottom grid-layout">
             @form(routes.CalculatorController.submitCalculateInstalmentsPaymentToday()) {
@@ -37,11 +42,10 @@ Time To Pay Payment Schedule Display Page
                             </li>
                         </ul>
                     </div>
-                    <div class="grid-layout__column grid-layout__column--1-4">
+                    <div class="grid-layout__column grid-layout__column--1-3 no-wrap">
                         <span class="gutter-left">@inlinecurrencyinput(paymentTodayAmountForm("amount"), '_hideErrors -> true, '_noLabel -> true, '_inputClass -> "input--small input--no-spinner")</span>
-                    </div>
-                    <div class="grid-layout__column grid-layout__column--1-4">
-                        @button('type -> "submit", '_modifierClass -> "button--secondary") {
+                        &nbsp;
+                        @button('type -> "submit", '_modifierClass -> "button--secondary flush--sides") {
                             @Messages("ssttp.calculator.form.payment_today.update")
                         }
                     </div>
@@ -50,75 +54,75 @@ Time To Pay Payment Schedule Display Page
         </div>
         <div class="subsection grid-layout divider--bottom">
             <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.your-instalment-balance")</div>
-            <div class="grid-layout__column grid-layout__column--1-3"><strong>@Messages("ssttp.common.currency.symbol")@schedule.instalmentBalance</strong></div>
+            <div class="grid-layout__column grid-layout__column--1-3"><strong>@currency(schedule.instalmentBalance)</strong></div>
         </div>
     </section>
-    <div class="section">
-        <h2 style="heading-h2">@Messages("ssttp.calculator.results.heading.your-instalments")</h2>
-        <div class="subsection grid-layout divider--bottom">
-                @labelWrap('for -> "months", '_modifierClass -> (if(durationForm("months").errors.nonEmpty) "form-field--error" else "")) {
-                    <div class="grid-layout__column grid-layout__column--1-2"><ul class="list--inline">
+    <section>
+        <h2>@Messages("ssttp.calculator.results.heading.your-instalments")</h2>
+        @labelWrap('for -> "months", '_modifierClass -> {"label--full-length " + (if(durationForm("months").errors.nonEmpty) "form-field--error" else "")}) {
+            <div class="subsection grid-layout divider--bottom flush--bottom">
+                <div class="grid-layout__column grid-layout__column--2-3"><ul class="list--inline">
+                    <li>
+                        @Messages("ssttp.calculator.results.instalments-over")
+                        @fieldErrors(durationForm("months"))
+                    </li>
+                </ul></div>
+                <div class="grid-layout__column grid-layout__column--1-3">
+                    <ul class="list--inline">
                         <li>
-                            @Messages("ssttp.calculator.results.monthly-payments")
-                            @fieldErrors(durationForm("months"))
+                            @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline") {
+                                <input type="hidden" name="@durationForm("months").name" value="@{schedule.instalments.length - 1}" />
+                                @defining({
+                                        <i class="arrow arrow--down"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.decrease")</span>
+                                }) { label =>
+                                    @if(schedule.instalments.length != monthOptions.min) {
+                                        @button('type -> "submit", '_modifierClass -> "button button--secondary button--spaced flush") { @label }
+                                    } else {
+                                        <span class="button button--secondary button--spaced disabled flush" aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")" role="button">@label</span>
+                                    }
+                                }
+                            }
                         </li>
-                    </ul></div>
-                    <div class="grid-layout__column grid-layout__column--1-2">
-                        <ul class="list--inline gutter-left">
-                            <li>
-                                @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline") {
-                                    <input type="hidden" name="@durationForm("months").name" value="@{schedule.instalments.length - 1}" />
-                                    @defining({
-                                            <i class="arrow arrow--down"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.decrease")</span>
-                                    }) { label =>
-                                        @if(schedule.instalments.length != monthOptions.min) {
-                                            @button('type -> "submit", '_modifierClass -> "button button--secondary button--spaced") { @label }
-                                        } else {
-                                            <span class="button button--secondary button--spaced disabled" aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")" role="button">@label</span>
-                                        }
+                        <li>
+                            @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline") {
+                                @numberinput(durationForm("months"), '_hideErrors -> true, '_noLabel -> true, '_inputClass -> "input--xxsmall input--no-spinner")
+                            }
+                        </li>
+                        <li>
+                            @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline") {
+                                <input type="hidden" name="@durationForm("months").name" value="@{schedule.instalments.length + 1}" />
+                                @defining({
+                                        <i class="arrow arrow--up"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.increase")</span>
+                                }) { label =>
+                                    @if(schedule.instalments.length != monthOptions.max) {
+                                        @button('type -> "submit", '_modifierClass -> "button button--secondary button--spaced flush-ends flush--left") { @label }
+                                    } else {
+                                        <span class="button button--secondary button--spaced disabled flush-ends flush--left" aria-label="@Messages("ssttp.calculator.results.monthly-payments.increase")" role="button">@label</span>
                                     }
                                 }
-                            </li>
-
-                            <li>
-                                @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline") {
-                                    @numberinput(durationForm("months"), '_hideErrors -> true, '_noLabel -> true, '_inputClass -> "input--xxsmall input--no-spinner")
-                                }
-                            </li>
-
-                            <li>
-                                @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline") {
-                                    <input type="hidden" name="@durationForm("months").name" value="@{schedule.instalments.length + 1}" />
-                                    @defining({
-                                            <i class="arrow arrow--up"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.increase")</span>
-                                    }) { label =>
-                                        @if(schedule.instalments.length != monthOptions.max) {
-                                            @button('type -> "submit", '_modifierClass -> "button button--secondary button--spaced") { @label }
-                                        } else {
-                                            <span class="button button--secondary button--spaced disabled" aria-label="@Messages("ssttp.calculator.results.monthly-payments.increase")" role="button">@label</span>
-                                        }
-                                    }
-                                }
-                            </li>
-                            <li>@pluralize(schedule.instalments.length, "ssttp.calculator.results.instalments-over.month")</li>
-                        </ul>
-                    </div>
-                }
-        </div>
+                            }
+                        </li>
+                        <li>@pluralize(schedule.instalments.length, "ssttp.calculator.results.instalments-over.month")</li>
+                    </ul>
+                </div>
+            </div>
+        }
         @defining(schedule.instalmentBalance) { payment =>
             <div class="subsection grid-layout divider--bottom">
-                <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.monthly-payments")
-                    <div class="font-xsmall">@Messages("ssttp.calculator.results.monthly-payments.hint")</div>
-                </div>
-                <div class="grid-layout__column grid-layout__column--1-3"><strong>@Messages("ssttp.common.currency.symbol") @schedule.instalments.head.amount @Messages("ssttp.calculator.results.monthly-payments.per-month")</strong></div>
+                <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.monthly-payments")</div>
+                <div class="grid-layout__column grid-layout__column--1-3"><strong>@currency(schedule.instalments.head.amount) @Messages("ssttp.calculator.results.monthly-payments.per-month")</strong></div>
             </div>
             <div class="subsection grid-layout divider--bottom">
-                <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.total-interest")</div>
-                <div class="grid-layout__column grid-layout__column--1-3">@Messages("ssttp.common.currency.symbol")@schedule.totalInterestCharged</div>
+                <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.total-interest")
+                    <div class="font-xsmall">@Messages("ssttp.calculator.results.monthly-payments.hint")</div>
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-3 align--middle">@currency(schedule.totalInterestCharged)
+                    <div class="font-xsmall">@Messages("ssttp.calculator.results.interest-added-to-final")</div>
+                </div>
             </div>
             <div class="subsection grid-layout divider--bottom">
                 <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.total-replayment")</div>
-                <div class="grid-layout__column grid-layout__column--1-3"><strong>@Messages("ssttp.common.currency.symbol")@schedule.totalPayable</strong></div>
+                <div class="grid-layout__column grid-layout__column--1-3"><strong>@currency(schedule.totalPayable)</strong></div>
             </div>
         }
         <details>
@@ -127,21 +131,19 @@ Time To Pay Payment Schedule Display Page
             @message_list(Some("bullets"), "ssttp.calculator.results.interest-info.list.")
             </div>
         </details>
-    </div>
+    </section>
     <div class="panel-indent">@Messages("ssttp.calculator.results.interest-info.warning")</div>
     <section class="section">
-        <h2 class="heading-h2">@Messages("ssttp.calculator.results.next-steps")</h2>
-        <div class="table-cell--light">
-            <div class="subsection divider--bottom grid-layout">
-                <div class="grid-layout__column grid-layout__column--2-3"><p>@Messages("ssttp.calculator.results.sign-in")</p></div>
-                <div class="grid-layout__column grid-layout__column--1-3 text--center align--middle"><p><a href="@routes.ArrangementController.determineMisalignment()" class="button">@Messages("ssttp.calculator.results.sign-in.link")</a></p></div>
-            </div>
-        </div>
-
-        <div class="subsection divider--bottom grid-layout">
-            <div class="grid-layout__column grid-layout__column--2-3"><p>@Messages("ssttp.calculator.results.call-us.into")</p></div>
-            <div class="grid-layout__column grid-layout__column--1-3 text--center align--middle"><p><strong>@Messages("ssttp.calculator.results.call-us.number")</strong></p></div>
-        </div>
+        <h2>@Messages("ssttp.calculator.results.next-steps")</h2>
+        @{if(auth) {
+            if (whitelist){
+                calculate_instalments_auth_footer()
+            }else{
+                calculate_instalments_auth_not_whitelisted_footer()
+            }
+        } else {
+            calculate_instalments_no_auth_footer()
+        }}
     </section>
     <p><a class="back-link" href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a></p>
 }
