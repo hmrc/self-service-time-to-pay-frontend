@@ -5,7 +5,8 @@ Text input field using Component Library Styles as  documented:
 
     @param field Field The form field the input value represents
     @param args options arguments for the template
-            '_label -> Text for the field label
+            'label -> Text for the field label
+            'hint -> Hint text to use with the field
             '_labelClass -> Label Modifier class
             '_modifierClass -> Modifier class for whole field
             '_inputClass -> Modifier class for the input class, includes:
@@ -32,6 +33,7 @@ Text input field using Component Library Styles as  documented:
 }
 <div@if(wrapperClass.nonEmpty){ class="@wrapperClass"}>
     @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_modifierClass -> argsMap.get('_labelClass)){
+        @if(argsMap.get('hint).isDefined) {<div class="form-hint form-hint--small">@argsMap.get('hint)</div>}
         @fieldErrors(field)
         <input type="text"@if(inputClass.nonEmpty){ class="@inputClass" } name="@elements.field.name" id="@elements.field.name" value="@value"
             @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
