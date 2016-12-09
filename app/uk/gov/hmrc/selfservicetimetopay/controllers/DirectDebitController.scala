@@ -102,7 +102,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
           _.fold(Future.successful(redirectToStartPage))(ttp => {
 
             val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
-            val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assesement"))
+            val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
 
             directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
               directDebitBank => {
@@ -113,8 +113,8 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
                 val bankDetailsToSave = instructions match {
                   case instruction::Nil =>
                     BankDetails(singleBankDetails.sortCode, singleBankDetails.accountNumber, None, None, None,
-                      Some(instructions.head.ddiRefNo.get))
-                  case Nil =>   singleBankDetails
+                      Some(instructions.head.ddiReferenceNo.get))
+                  case Nil =>  singleBankDetails
                 }
 
                 sessionCache.put(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
