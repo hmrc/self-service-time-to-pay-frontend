@@ -102,6 +102,14 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
     }
   }
 
+  def getCalculateInstalmentsPrint: Action[AnyContent] = Action.async { implicit request =>
+      sessionCache.get.map {
+        case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+          Ok(calculate_instalments_print(schedule, ttpData.taxpayer.isDefined))
+        case _ => NotFound("Failed to get schedule")
+      }
+  }
+
   def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _))) =>
