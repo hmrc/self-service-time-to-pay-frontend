@@ -20,7 +20,7 @@ To view the UI **during development**,
     ```
     
 3. View in the browser
- http://localhost:9063/
+ http://localhost:9063/pay-what-you-owe-in-instalments
 
 ### License
 
