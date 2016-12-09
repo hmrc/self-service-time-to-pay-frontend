@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
+
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -25,7 +26,7 @@ import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables.fakeBankDetails
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
-import uk.gov.hmrc.selfservicetimetopay.models.{Debit, BankDetails, DirectDebitBank, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement._
 
@@ -71,12 +72,28 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       }
   }
 
-  def getBankAccountNotFound: Action[AnyContent] = Action { implicit request =>
-    Ok(account_not_found(existingBankAccountForm, fakeBankDetails))
+  def getBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      val accounts = fakeBankDetails /* @TODO GET BANK DETAILS FROM USER ACCOUNT */
+      Future.successful(Ok(account_not_found(existingBankAccountForm, accounts)))
   }
 
-  def submitBankAccountNotFound: Action[AnyContent] = Action { implicit request =>
-    Ok(account_not_found(existingBankAccountForm, fakeBankDetails))
+  def submitBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      existingBankAccountForm.bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, fakeBankDetails))),
+        validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit)  match {
+          case (Some(ddi:String), None) => {
+            directDebitConnector
+              .validateOrRetrieveAccounts("SORT CODE FROM EXISTING DDI", "ACCOUNT NUMBER FROM EXISTING DDI",
+                authContext.principal.accounts.sa.get.utr).flatMap(directDebitSubmitRouting)
+          }
+          case (None, Some(arrangementDirectDebit:ArrangementDirectDebit)) => {
+            directDebitConnector.validateOrRetrieveAccounts(arrangementDirectDebit.sortCode,
+            arrangementDirectDebit.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
+            .flatMap(directDebitSubmitRouting)
+          }
+        })
   }
 
   def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>

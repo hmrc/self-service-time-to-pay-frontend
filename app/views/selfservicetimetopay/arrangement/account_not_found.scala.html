@@ -24,7 +24,7 @@ Time To Pay Bank account not found - select existing direct debit or create new 
     @highlight('_modifierClass -> "highlight-message--light"){<p>@Messages("ssttp.arrangement.misalignment.subtitle")</p>}
     @form(routes.DirectDebitController.submitBankAccountNotFound()) {
         @formErrorSummary(Messages("ssttp.arrangement.misalignment.form.error.summary.title"), ddForm, Seq.empty)
-        @if(bankAccounts.nonEmpty) {
+        @if(!bankAccounts.isEmpty) {
             <div class="panel-indent">
                 <h2>@Messages("ssttp.arrangement.misalignment.existing.title")</h2>
                 @select(ddForm("existingDdi"), selectOptions)
@@ -32,7 +32,7 @@ Time To Pay Bank account not found - select existing direct debit or create new 
             <h3>@Messages("ssttp.arrangement.misalignment.direct-debit.or")</h3>
         <div class="panel-indent">
         } else {
-        <div class="panel-indent">
+        <div>
         }
             <h2>@Messages("ssttp.arrangement.misalignment.direct-debit.reenter")</h2>
             @direct_debit_fields(ddForm, ddForm("directDebit.accountName"), ddForm("directDebit.sortCode"), ddForm("directDebit.accountNumber"))
