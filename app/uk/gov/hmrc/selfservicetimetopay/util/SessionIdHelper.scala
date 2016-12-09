@@ -19,14 +19,13 @@ package uk.gov.hmrc.selfservicetimetopay.util
 import java.util.UUID
 
 import play.api.mvc._
-import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
 import scala.concurrent.Future
 
 trait SessionProvider {
-  def createTtpSessionId() = ttpSessionId -> s"ttp-session-${UUID.randomUUID}"
+  def createTtpCookie() = Cookie(name = ttpSessionId, value = s"ttp-session-${UUID.randomUUID}")
 }
 
 trait CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Request] {
@@ -35,9 +34,12 @@ trait CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Reques
   protected lazy val redirectToStartPage = Results.Redirect(routes.SelfServiceTimeToPayController.start())
 
   def filter[A](request: Request[A]): Future[Option[Result]] = {
-    Future.successful(request.session.get(ttpSessionId).fold[Option[Result]]
-      (Some(redirectToStartPage.withNewSession.withSession(sessionProvider.createTtpSessionId())))
-      { _ => None }
+    Future.successful(
+      request.cookies.find(_.name == ttpSessionId).fold[Option[Result]](
+        Some(redirectToStartPage.withCookies(sessionProvider.createTtpCookie()))
+      ) {
+        _ => None
+      }
     )
   }
 }

@@ -22,6 +22,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.Logger
+import play.api.mvc.Cookie
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.SaUtr
@@ -92,7 +93,7 @@ class ArrangementControllerSpec extends UnitSpec
 
       when(arrangementConnector.submitArrangements(Matchers.any())(Matchers.any())).thenReturn(Future.successful(Right(SubmissionSuccess())))
 
-      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(sessionProvider.createTtpSessionId()))
+      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()))
 
       redirectLocation(response).get shouldBe controllers.routes.ArrangementController.applicationComplete().url
     }
@@ -101,7 +102,7 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.get(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(None))
 
-      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(sessionProvider.createTtpSessionId()))
+      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()))
 
       redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.start().url
 
@@ -116,14 +117,14 @@ class ArrangementControllerSpec extends UnitSpec
 
       when(calculatorConnector.calculatePaymentSchedule(Matchers.any())(Matchers.any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
-      val response = controller.changeSchedulePaymentDay().apply(FakeRequest("POST", "/arrangement/instalment-summary/change-day").withSession(sessionProvider.createTtpSessionId())
+      val response = controller.changeSchedulePaymentDay().apply(FakeRequest("POST", "/arrangement/instalment-summary/change-day").withCookies(sessionProvider.createTtpCookie())
         .withFormUrlEncodedBody(validDayForm: _*))
 
       redirectLocation(response).get shouldBe controllers.routes.ArrangementController.getInstalmentSummary().url
     }
     "redirect to login if user not logged in" in {
 
-      val response = unauthorisedController.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(sessionProvider.createTtpSessionId()))
+      val response = unauthorisedController.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()))
 
       redirectLocation(response).get contains "/gg/sign-in"
 
@@ -141,30 +142,30 @@ class ArrangementControllerSpec extends UnitSpec
     }
     
     "be set within the session cookie when the user first hits a page" in {
-      when(mockSessionProvider.createTtpSessionId()).thenReturn(ttpSessionId -> "12345")
+      when(mockSessionProvider.createTtpCookie()).thenReturn(Cookie(name = ttpSessionId, value = "12345"))
       status(await(controller.go()(FakeRequest()))) shouldBe 303
-      verify(mockSessionProvider, times(1)).createTtpSessionId()
+      verify(mockSessionProvider, times(1)).createTtpCookie()
     }
 
     "be set within the session cookie every time a user hits a page without it being sent in the session" in {
-      when(mockSessionProvider.createTtpSessionId()).thenReturn(ttpSessionId -> "12345")
+      when(mockSessionProvider.createTtpCookie()).thenReturn(Cookie(name = ttpSessionId, value = "12345"))
       status(await(controller.go()(FakeRequest()))) shouldBe 303
       status(await(controller.go()(FakeRequest()))) shouldBe 303
       status(await(controller.go()(FakeRequest().withSession("sessionId" -> "22222")))) shouldBe 303
       status(await(controller.go()(FakeRequest().withSession()))) shouldBe 303
-      verify(mockSessionProvider, times(4)).createTtpSessionId()
+      verify(mockSessionProvider, times(4)).createTtpCookie()
     }
 
     "be maintained across multiple not logged in requests" in {
-      when(mockSessionProvider.createTtpSessionId()).thenReturn(ttpSessionId -> "12345")
+      when(mockSessionProvider.createTtpCookie()).thenReturn(Cookie(name = ttpSessionId, value = "12345"))
       status(await(controller.go()(FakeRequest()))) shouldBe 303
-      status(await(controller.go()(FakeRequest().withSession(ttpSessionId -> "12345")))) shouldBe 200
-      status(await(controller.go()(FakeRequest().withSession(ttpSessionId -> "12345")))) shouldBe 200
-      status(await(controller.go()(FakeRequest().withSession(ttpSessionId -> "12345")))) shouldBe 200
-      status(await(controller.go()(FakeRequest().withSession(ttpSessionId -> "12345")))) shouldBe 200
+      status(await(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345"))))) shouldBe 200
+      status(await(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345"))))) shouldBe 200
+      status(await(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345"))))) shouldBe 200
+      status(await(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345"))))) shouldBe 200
 
-      status(await(controller.go()(FakeRequest().withSession(ttpSessionId -> "123456")))) shouldBe 200
-      verify(mockSessionProvider, times(1)).createTtpSessionId()
+      status(await(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "123456"))))) shouldBe 200
+      verify(mockSessionProvider, times(1)).createTtpCookie()
     }
   }
 }
