@@ -24,7 +24,9 @@ Time To Pay Instalment Summary Display Page
         sidebarLinks = None
     ) {
         <a href="javascript:window.print()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
-        <h2 style="heading-h1">@Messages("ssttp.arrangement.instalment-summary.title")</h2>
+        <header class="page-header text">
+            <h2>@Messages("ssttp.arrangement.instalment-summary.title")</h2>
+        </header>
         <section class="section">
             <div class="subsection grid-layout">
                 <div class="grid-layout__column grid-layout__column--1-2">
@@ -48,7 +50,7 @@ Time To Pay Instalment Summary Display Page
                     @Messages("ssttp.arrangement.instalment-summary.total-interest")
                 </div>
                 <div class="grid-layout__column grid-layout__column--1-2">
-                    <strong>@schedule.totalInterestCharged</strong>
+                    <strong>@currency(schedule.totalInterestCharged)</strong>
                     <div class="form-hint form-hint--small">@Messages("ssttp.calculator.results.interest-added-to-final")</div>
                 </div>
             </div>

@@ -5,6 +5,7 @@
 @import selfservicetimetopay.helpers.forms.{textinput, numberinput}
 @textinput(accountNameField,
     'label -> Messages("ssttp.direct-debit.form.accountName"),
+    'hint -> Messages("ssttp.direct-debit.form.sortCode.hint"),
     '_inputClass -> "input--cleared"
 )
 @textinput(sortCodeField,
