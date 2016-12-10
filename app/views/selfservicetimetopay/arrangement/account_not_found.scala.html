@@ -21,7 +21,7 @@ Time To Pay Bank account not found - select existing direct debit or create new 
     sidebarLinks = Some(having_problems_sidebar())
 ){
     <section>
-        <h1 style="heading-h1">@Messages("ssttp.arrangement.misalignment.title")</h1>
+        <h2 style="heading-h1">@Messages("ssttp.arrangement.misalignment.title")</h2>
         @highlight('_modifierClass -> "highlight-message--light"){<p>@Messages("ssttp.arrangement.misalignment.subtitle")</p>}
         @form(routes.DirectDebitController.submitBankAccountNotFound()) {
             @formErrorSummary(Messages("ssttp.arrangement.misalignment.form.error.summary.title"), ddForm, Seq.empty)
