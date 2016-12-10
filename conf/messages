@@ -97,7 +97,7 @@ ssttp.calculator.form.amounts_due.title=About what you owe
 ssttp.calculator.form.amounts_due.intro=Enter the amounts you need to pay.
 ssttp.calculator.form.amounts_due.amount=Amount
 ssttp.calculator.form.amounts_due.due_date=Due date
-ssttp.calculator.form.amounts_due.when_due.question.hint=Example: 31 January 2017
+ssttp.calculator.form.amounts_due.when_due.question.hint=Example: 31 January {0}
 ssttp.calculator.form.amounts_due.when_due.question.day=Day
 ssttp.calculator.form.amounts_due.when_due.question.month=Month
 ssttp.calculator.form.amounts_due.when_due.question.year=Year
@@ -239,7 +239,7 @@ ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on=Take pay
 ssttp.arrangement.instalment-summary.payment-day.change.of-the-month=of the month
 ssttp.arrangement.instalment-summary.payment-day.submit=Update
 ssttp.arrangement.instalment-summary.payment-day.out-of-range=Payment day must be between 1 and 28
-ssttp.arrangement.instalment-summary.payment-day.required=Enter a number 
+ssttp.arrangement.instalment-summary.payment-day.required=Enter a number
 ssttp.arrangement.instalment-summary.payment-day.number=Enter a number only
 
 ssttp.arrangement.instalment-summary.schedule.title=Direct Debit payment schedule
