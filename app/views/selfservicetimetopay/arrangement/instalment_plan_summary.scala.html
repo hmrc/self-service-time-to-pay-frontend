@@ -5,8 +5,13 @@ Time To Pay Instalment Summary Display Page
 @param dayForm Form[ArrangementDayOfMonth] For for day of month selection for direct debit
 
 *@
+
+
+
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
+
+
 @(schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth])(implicit request: Request[_])
     @import selfservicetimetopay.partials.payment_schedule
     @import selfservicetimetopay.helpers.{highlight, alert, message_list}
@@ -46,7 +51,16 @@ Time To Pay Instalment Summary Display Page
                     <strong>@Messages("ssttp.common.currency.symbol")@schedule.totalPayable</strong>
                 </div>
             </div>
-            <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on") <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth)</strong> @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
+            <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on")
+
+                @schedule.instalments.head.paymentDate.getDayOfMonth match {
+                    case 1 | 21 => { <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth.toString+"st")</strong>}
+                    case 2 | 22 => { <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth.toString+"nd")</strong> }
+                    case 3 | 23=> { <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth.toString+"rd")</strong> }
+                    case _ => { <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth.toString+"th")</strong> }
+                }
+
+                @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
                 <details @if(dayForm.hasErrors) { open}>
                 <summary class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
         <div class="panel--indent">
