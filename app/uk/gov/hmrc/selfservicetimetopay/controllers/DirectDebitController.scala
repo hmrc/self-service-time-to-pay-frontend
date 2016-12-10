@@ -19,15 +19,17 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import java.time.LocalDate
 
 import play.api.mvc._
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.controllerVariables.fakeBankDetails
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
-import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, Debit, DirectDebitBank, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement._
 
+import scala.collection.immutable.::
 import scala.concurrent.Future
 
 class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
@@ -94,10 +96,32 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Future[Result]] = {
     case Left(singleBankDetails) =>
-      updateOrCreateInCache(found => found.copy(bankDetails = Some(singleBankDetails)),
-        () => TTPSubmission(bankDetails = Some(singleBankDetails)))
-        .map(_ => Redirect(toDDCreationPage))
+      sessionCache.get.flatMap {
+          _.fold(Future.successful(redirectToStartPage))(ttp => {
 
+            val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
+            val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
+
+            directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
+              directDebitBank => {
+                val instructions:Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter( p => {
+                  p.accountNumber.get.equalsIgnoreCase(singleBankDetails.accountNumber) && p.sortCode.get.equals(singleBankDetails.sortCode)
+                })
+
+                val bankDetailsToSave = instructions match {
+                  case instruction::Nil =>
+                    BankDetails(singleBankDetails.sortCode, singleBankDetails.accountNumber, None, None, None,
+                      Some(instructions.head.ddiReferenceNo.get))
+                  case Nil =>  singleBankDetails
+                }
+
+                sessionCache.put(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
+                  _ => Redirect(toDDCreationPage)
+                }
+              }
+            }
+          })
+      }
     case Right(existingDDBanks) =>
       updateOrCreateInCache(found => found.copy(existingDDBanks = Some(existingDDBanks)),
         () => TTPSubmission(None, None, Some(existingDDBanks), None))

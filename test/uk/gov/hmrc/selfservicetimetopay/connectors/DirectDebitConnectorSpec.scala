@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{verify => wmVerify, _}
+import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import play.api.http.Status
@@ -26,7 +27,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.WithFakeApplication
-import uk.gov.hmrc.selfservicetimetopay.config.{DirectDebitConnector => realConnector, WSHttp}
+import uk.gov.hmrc.selfservicetimetopay.config.{WSHttp, DirectDebitConnector => realConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -48,21 +49,18 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
   }
 
   "Calling getBanksList" should {
-    "return DirectDebitBank" in {
+    "return populate list of DirectDebitBank" in {
 
       val jsonResponse = Json.fromJson[DirectDebitBank](getBanksResponseJSON).get
 
-      when(testConnector.http.GET[Either[BankDetails, DirectDebitBank]](any())(any(), any())).thenReturn(Future(Right(jsonResponse)))
+      when(testConnector.getBanks(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(jsonResponse))
 
       val saUtr = SaUtr("test")
-      val result = await(testConnector.validateOrRetrieveAccounts("123456", "22334455", saUtr))
+      val result = await(testConnector.getBanks(saUtr))
 
-      result.isRight shouldBe true
-      val ddResult = result.right.get
-
-      ddResult.processingDate shouldBe "2001-12-17T09:30:47Z"
-      ddResult.directDebitInstruction.head.sortCode shouldBe Some("123456")
-      ddResult.directDebitInstruction.head.ddiRefNumber shouldBe None
+      result.processingDate shouldBe "2001-12-17T09:30:47Z"
+      result.directDebitInstruction.head.sortCode shouldBe Some("123456")
+      result.directDebitInstruction.head.ddiReferenceNo shouldBe None
     }
   }
 
