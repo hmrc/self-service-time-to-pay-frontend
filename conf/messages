@@ -320,7 +320,7 @@ ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.label=
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.number=919342
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.text=Please pay HMRC Direct Debits from the account detailed in this instruction subject to the safeguards assured by the Direct Debit Guarantee. I understand that this instruction may remain with HMRC and, if so, details will be passed electronically to my Bank/Building Society.
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.do-not-send-to-bank=Please do not send this form to your bank.
-
+ssttp.arrangement.instalment-summary.total-interest=Total interest of:
 ssttp.arrangement.direct-debit.confirmation.confirm-payment=Confirm payment
 
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.please-check=Please check this information carefully before confirming payment
