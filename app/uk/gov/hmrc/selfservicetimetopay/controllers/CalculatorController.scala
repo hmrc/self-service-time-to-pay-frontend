@@ -122,7 +122,8 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
       case Some(ttpSubmission@TTPSubmission(Some(schedule), _, _, _, Some(_), Some(_), cd@CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         CalculatorForm.durationForm.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, CalculatorForm.durationForm, form, 2 to 11))),
+          //TODO change 2 to 11 to a dynamically calculated permitted range
+          formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, formWithErrors, form, 2 to 11))),
           validFormData => {
             val newEndDate = cd.startDate.plusMonths(validFormData.months).minusDays(1)
             updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(endDate = newEndDate))).apply(request)
@@ -134,16 +135,15 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
 
   def submitCalculateInstalmentsPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
-      case Some(ttpData@TTPSubmission(_, _, _, None, _, _, cd)) =>
-        val calculatorPaymentTodayForm = CalculatorForm.createPaymentTodayForm(cd.debits.map(_.amount).sum).bindFromRequest()
-
-        if (calculatorPaymentTodayForm.hasErrors) {
-          //Errors may be passed to flash scope ?
-          Future.successful(Redirect(routes.CalculatorController.getCalculateInstalments(None)))
-        } else {
-          val ttpSubmission = ttpData.copy(calculatorData = cd.copy(initialPayment = calculatorPaymentTodayForm.value.getOrElse(BigDecimal(0))))
-          updateSchedule(ttpSubmission).apply(request)
-        }
+      case Some(ttpData@TTPSubmission(Some(schedule), _, _, None, _, _, cd)) =>
+        val durationForm = CalculatorForm.durationForm.fill(CalculatorDuration(3))
+        CalculatorForm.createPaymentTodayForm(cd.debits.map(_.amount).sum).bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, durationForm, formWithErrors, 2 to 11))),
+          validFormData => {
+              val ttpSubmission = ttpData.copy(calculatorData = cd.copy(initialPayment = validFormData))
+              updateSchedule(ttpSubmission).apply(request)
+          }
+        )
       case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _))) if debits.isEmpty =>
         Future.successful(NotFound("failed to get calculatorData"))
     }
