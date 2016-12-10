@@ -11,7 +11,7 @@
 @(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[BigDecimal], monthOptions:Seq[Int], auth:Boolean = false, whitelist:Boolean = false)(implicit request: Request[_])
 
 @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
-@import selfservicetimetopay.helpers.forms.{form, formErrors, formErrorSummary, button, fieldErrors, numberinput, inlinecurrencyinput}
+@import selfservicetimetopay.helpers.forms.{form, formErrorSummary, button, fieldErrors, numberinput, inlinecurrencyinput}
 @import selfservicetimetopay.partials.currency
 @import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer, calculate_instalments_auth_not_whitelisted_footer}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes

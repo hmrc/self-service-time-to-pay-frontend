@@ -4,6 +4,8 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @(schedule:CalculatorPaymentSchedule)
 @import java.time.format.DateTimeFormatter
+@import selfservicetimetopay.partials.currency
+
 @defining(DateTimeFormatter.ofPattern("dd MMMM YYYY")) { formatter =>
     @schedule.instalments.map { instalment =>
         <div class="subsection grid-layout divider--bottom font-xsmall">
@@ -16,7 +18,7 @@
                     }
                 }
             </div>
-            <div class="grid-layout__column grid-layout__column--1-4">@Messages("ssttp.common.currency.symbol")@instalment.amount</div>
+            <div class="grid-layout__column grid-layout__column--1-4">@currency(instalment.amount)</div>
         </div>
     }
 }

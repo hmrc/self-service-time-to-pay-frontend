@@ -11,7 +11,6 @@ Time To Pay Instalment Summary Display Page
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
-
 @(schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth])(implicit request: Request[_])
     @import selfservicetimetopay.partials.{payment_schedule, currency}
     @import selfservicetimetopay.helpers.{highlight, alert, message_list}
