@@ -161,7 +161,7 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
         }
       case TTPSubmission(_, _, _, Some(taxpayer @ Taxpayer(_, _, Some(sa))), _, _, calculatorInput) =>
         eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).flatMap {
-          case EligibilityStatus(true, _) =>
+          case EligibilityStatus(_, _) =>
             calculatorConnector.calculatePaymentSchedule(calculatorInput.copy(debits = sa.debits)).flatMap {
               case Seq(schedule) =>
                 sessionCache.put(ttpData.copy(schedule = Some(schedule))).map[Result] { result =>

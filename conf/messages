@@ -147,9 +147,9 @@ ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an a
 ssttp.calculator.form.payment_today.amount.required=Enter an amount of £0.00 or more
 ssttp.calculator.form.payment_today.amount.nonnegitive=Enter an amount of £0.00 or more
 
-ssttp.calculator.form.duration.months.required=Enter an number of months
-ssttp.calculator.form.duration.months.greater-than=Enter a greater number of months
-ssttp.calculator.form.duration.months.less-than=Enter a lower number of months
+ssttp.calculator.form.duration.months.required=Enter a valid number of months
+ssttp.calculator.form.duration.months.greater-than=Number of months must be 2 or more
+ssttp.calculator.form.duration.months.less-than=Number of months must be fewer than 12
 
 
 ssttp.calculator.form.payment_today.update=Update
@@ -240,8 +240,8 @@ ssttp.arrangement.instalment-summary.payment-day.change=Change payment day
 ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on=Take payment on day
 ssttp.arrangement.instalment-summary.payment-day.change.of-the-month=of the month
 ssttp.arrangement.instalment-summary.payment-day.submit=Update
-ssttp.arrangement.instalment-summary.payment-day.out-of-range=Payment day must be between 1 and 28
-ssttp.arrangement.instalment-summary.payment-day.required=Enter a number
+ssttp.arrangement.instalment-summary.payment-day.out-of-range=Date must be between 1 and 28
+ssttp.arrangement.instalment-summary.payment-day.required=Enter a valid date
 ssttp.arrangement.instalment-summary.payment-day.number=Enter a number only
 
 ssttp.arrangement.instalment-summary.schedule.title=Direct Debit payment schedule
@@ -249,12 +249,14 @@ ssttp.arrangement.instalment-summary.schedule.initial-payment=(initial payment)
 ssttp.arrangement.instalment-summary.schedule.final-payment=(final payment)
 
 ssttp.arrangement.instalment-summary.terms.warning=By continuing you are agreeing to these terms
-ssttp.arrangement.instalment-summary.terms.cancelled-if=This agreement may be cancelled if:
-ssttp.arrangement.instalment-summary.terms.cancelled-if.1=you pay late
-ssttp.arrangement.instalment-summary.terms.cancelled-if.2=you miss a payment
-ssttp.arrangement.instalment-summary.terms.cancelled-if.3=you don''t tell us about a change that may affect your ability to pay
+ssttp.arrangement.instalment-summary.terms.cancelled-if=This agreement may be cancelled if you:
+ssttp.arrangement.instalment-summary.terms.cancelled-if.1=pay late or miss a payment
+ssttp.arrangement.instalment-summary.terms.cancelled-if.2=are late to pay a future bill
+ssttp.arrangement.instalment-summary.terms.cancelled-if.3=don’t submit a future tax return on time
+ssttp.arrangement.instalment-summary.terms.cancelled-if.4=don’t tell us about a change that will affect your ability to make a payment, pay more, or pay in full
 ssttp.arrangement.instalment-summary.terms.made-payable-immidiately=If you don’t meet these conditions, the entire outstanding amount may be made payable immediately.
-ssttp.arrangement.instalment-summary.terms.future-debts=This plan doesn’t cover any future debts, and you shouldn’t expect to use instalment plans to pay HMRC in the future.
+ssttp.arrangement.instalment-summary.terms.future-payments=Any future repayments you become entitled to can be set off against this debt.
+ssttp.arrangement.instalment-summary.terms.future-debts=This only covers the amounts you need to pay now and is not an ongoing payment plan for new tax bills.
 
 ssttp.arrangement.instalment-summary.submit=Agree and continue
 

@@ -22,9 +22,8 @@
 ){
     <a href="javascript:window.print()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
     <h2 style="heading-h1">@Messages("ssttp.calculator.results.title")</h2>
-    @formErrors(durationForm)
-    @formErrors(paymentTodayAmountForm)
     @formErrorSummary(Messages("ssttp.error.summary.title"), paymentTodayAmountForm, Seq.empty)
+    @formErrorSummary(Messages("ssttp.error.summary.title"), durationForm, Seq.empty)
     <section>
         <h2>@Messages("ssttp.calculator.results.heading.what-you-owe")</h2>
         <div class="subsection grid-layout divider--bottom">

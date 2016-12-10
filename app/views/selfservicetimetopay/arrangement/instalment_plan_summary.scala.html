@@ -85,6 +85,7 @@ Time To Pay Instalment Summary Display Page
                 @Messages("ssttp.arrangement.instalment-summary.terms.cancelled-if")
                 @message_list(Some("bullets"), "ssttp.arrangement.instalment-summary.terms.cancelled-if.")
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.made-payable-immidiately")</div>
+                <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-payments")</div>
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
             }
             @form(routes.DirectDebitController.getDirectDebit()) {
