@@ -1,0 +1,79 @@
+@*
+    Time To Pay Payment Schedule Calculator Page Print version
+
+    @param schedule The PaymentSchedule to show
+    @param monthOptions List of number of months available to pay over
+    @param auth Boolean set to true if the user is authenticated, default false
+    @param whitelist Boolean set to true if the user is whitelisted to access this service, default false
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
+@(schedule:CalculatorPaymentSchedule, auth:Boolean = false)(implicit request: Request[_])
+@import selfservicetimetopay.helpers.{message_list, pluralize}
+@import selfservicetimetopay.partials.currency
+@import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer}
+@script = {
+    <script type="text/javascript">$(function(){window.print()})</script>
+}
+@selfservicetimetopay.main(
+    title = Messages("ssttp.common.title"),
+    bodyClasses = None,
+    scriptElem = Some(script),
+    noGetHelp = true
+){
+    <h1>@Messages("ssttp.calculator.results.title")</h1>
+    <section>
+        <h2>@Messages("ssttp.calculator.results.heading.what-you-owe")</h2>
+        <div class="subsection grid-layout divider--bottom">
+            <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.you-owe")</div>
+            <div class="grid-layout__column grid-layout__column--1-3 no-wrap">@currency(schedule.amountToPay)</div>
+        </div>
+        <div class="subsection divider--bottom grid-layout">
+            <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.you-can-afford")</div>
+            <div class="grid-layout__column grid-layout__column--1-3 no-wrap">@currency(schedule.initialPayment)</div>
+        </div>
+        <div class="subsection grid-layout divider--bottom">
+            <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.your-instalment-balance")</div>
+            <div class="grid-layout__column grid-layout__column--1-3 no-wrap"><strong>@currency(schedule.instalmentBalance)</strong></div>
+        </div>
+    </section>
+    <section>
+        <h2>@Messages("ssttp.calculator.results.heading.your-instalments")</h2>
+        <div class="subsection grid-layout divider--bottom flush--bottom">
+            <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.instalments-over")</div>
+            <div class="grid-layout__column grid-layout__column--1-3 no-wrap">@schedule.instalments.length @pluralize(schedule.instalments.length, "ssttp.calculator.results.instalments-over.month")</div>
+        </div>
+        @defining(schedule.instalmentBalance) { payment =>
+            <div class="subsection grid-layout divider--bottom">
+                <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.monthly-payments")</div>
+                <div class="grid-layout__column grid-layout__column--1-3 no-wrap"><strong>@currency(schedule.instalments.head.amount) @Messages("ssttp.calculator.results.monthly-payments.per-month")</strong></div>
+            </div>
+            <div class="subsection grid-layout divider--bottom">
+                <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.total-interest")
+                    <div class="font-xsmall">@Messages("ssttp.calculator.results.monthly-payments.hint")</div>
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-3 text--right no-wrap">@currency(schedule.totalInterestCharged)
+                    <div class="font-xsmall">@Messages("ssttp.calculator.results.interest-added-to-final")</div>
+                </div>
+            </div>
+            <div class="subsection grid-layout divider--bottom">
+                <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.total-replayment")</div>
+                <div class="grid-layout__column grid-layout__column--1-3 no-wrap"><strong>@currency(schedule.totalPayable)</strong></div>
+            </div>
+        }
+        <details open>
+            <summary>@Messages("ssttp.calculator.results.interest-info.title")</summary>
+            <div>
+            @message_list(Some("bullets"), "ssttp.calculator.results.interest-info.list.")
+            </div>
+        </details>
+    </section>
+    <div class="panel-indent">@Messages("ssttp.calculator.results.interest-info.warning")</div>
+    <section class="section">
+        <h2>@Messages("ssttp.calculator.results.next-steps")</h2>
+        @{if(auth) {
+            calculate_instalments_auth_footer()
+        } else {
+            calculate_instalments_no_auth_footer(true)
+        }}
+    </section>
+}
