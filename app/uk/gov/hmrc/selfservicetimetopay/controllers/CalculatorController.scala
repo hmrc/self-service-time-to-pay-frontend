@@ -112,7 +112,7 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
   def submitRecalculate: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, cd @ CalculatorInput(debits, _, _, _, _, _))) =>
-        updateSchedule(ttpData.copy(calculatorData = cd.copy(debits = Nil))).apply(request)
+        updateSchedule(ttpData).apply(request)
       case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
     }
   }
@@ -164,7 +164,7 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
           case EligibilityStatus(true, _) =>
             calculatorConnector.calculatePaymentSchedule(calculatorInput.copy(debits = sa.debits)).flatMap {
               case Seq(schedule) =>
-                sessionCache.put(ttpData.copy(schedule = Some(schedule))).map[Result] { result =>
+                sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = calculatorInput.copy(debits = sa.debits))).map[Result] { result =>
                   Redirect(routes.CalculatorController.getCalculateInstalments(None))
                 }
               case _ => throw new RuntimeException("Failed to get schedule")
