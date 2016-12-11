@@ -1,0 +1,31 @@
+@*
+   Partial view to display the direct debit details in a 2 column type layout
+*@
+@(ddForm:Form[_], accountNameField:Field, sortCodeFieldName:String,
+        sortCodeField1:Field, sortCodeField2:Field, sortCodeField3:Field, accountNumberField:Field)
+@import selfservicetimetopay.helpers.forms.{textinput, fieldset, inlinenumberinput, numberinput}
+@textinput(accountNameField,
+    'label -> Messages("ssttp.direct-debit.form.accountName"),
+    '_inputClass -> "input--cleared"
+)
+@fieldset(ddForm, sortCodeFieldName) {
+    <legend>@Messages("ssttp.arrangement.direct-debit.form.sortCode")</legend>
+    <ul class="list--inline group">
+        <li>@inlinenumberinput(sortCodeField1,
+            'label -> "",
+            '_labelClass -> "label--inline-tight",
+            '_inputClass -> "input--xxsmall input--no-spinner")</li>
+        <li>@inlinenumberinput(sortCodeField2,
+            'label -> "-",
+            '_labelClass -> "label--inline-tight",
+            '_inputClass -> "input--xxsmall input--no-spinner")</li>
+        <li>@inlinenumberinput(sortCodeField3,
+            'label -> "-",
+            '_labelClass -> "label--inline-tight",
+            '_inputClass -> "input--xxsmall input--no-spinner")</li>
+    </ul>
+}
+@numberinput(accountNumberField,
+    'label -> Messages("ssttp.direct-debit.form.accountNumber"),
+    '_inputClass -> "input--cleared input--no-spinner"
+)

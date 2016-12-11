@@ -263,6 +263,10 @@ ssttp.arrangement.instalment-summary.submit=Agree and continue
 
 ssttp.arrangement.direct-debit.form.title=Set up a direct debit
 ssttp.arrangement.direct-debit.form.bank-details=Enter your banking details
+ssttp.arrangement.direct-debit.form.bank-details=Please enter your banking details
+ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
+ssttp.arrangement.direct-debit.form.submit=Agree and continue
+ssttp.arrangement.direct-debit.form.back=Back
 
 
 ssttp.arrangement.misalignment.title=Bank account not found
@@ -278,6 +282,13 @@ ssttp.direct-debit.form.sortCode=Sort code
 ssttp.direct-debit.form.accountNumber=Account number
 ssttp.direct-debit.form.sortCode.hint=Example: 000000
 ssttp.direct-debit.form.error.account=Name.required=Enter an account name
+ssttp.direct-debit.form.error.accountNumber.required=Enter an account number
+ssttp.direct-debit.form.error.sortCode.required=Enter a sort code
+ssttp.direct-debit.form.error.sortCode.not-number=Sort code must be a number
+ssttp.direct-debit.form.error.sortCode.not-valid=Sort code must be a six digit number
+ssttp.direct-debit.form.error.accountNumber.not-number=Bank account number must not include letters or symbols
+ssttp.direct-debit.form.error.accountNumber.not-account=Enter a valid bank account number
+ssttp.direct-debit.form.error.accountName.required=Enter an account name
 ssttp.direct-debit.form.error.accountNumber.required=Enter an account number
 ssttp.direct-debit.form.error.sortCode.required=Enter a sort code
 ssttp.direct-debit.form.error.sortCode.not-number=Sort code must be a number
@@ -307,6 +318,7 @@ ssttp.direct-debit.payment-frequency=Payment frequency
 ssttp.direct-debit.monthly=Monthly
 ssttp.direct-debit.initial-payment=(initial payment)
 ssttp.direct-debit.final-payment=(final payment)
+
 
 ssttp.arrangement.direct-debit.form.error.summary.title=Something you’ve entered isn’t valid
 

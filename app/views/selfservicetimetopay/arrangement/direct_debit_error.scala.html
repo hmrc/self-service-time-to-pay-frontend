@@ -7,7 +7,7 @@ Time To Pay Direct Debit Form Page
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import uk.gov.hmrc.selfservicetimetopay.models.DirectDebitBank
 @(ddForm:Form[ArrangementDirectDebit], banks:Option[DirectDebitBank])(implicit request: Request[_])
-@import selfservicetimetopay.partials.direct_debit_guarantee
+@import selfservicetimetopay.partials.{direct_debit_guarantee, direct_debit_confirmation}
 @import selfservicetimetopay.helpers.{alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, inlinetextinput, textinput, fieldset, checkbox, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
@@ -25,31 +25,12 @@ Time To Pay Direct Debit Form Page
         'label -> Messages("ssttp.arrangement.direct-debit.form.accountName"),
         '_inputClass -> "input--cleared")
 
-      @fieldset(ddForm, "sortCode") {
-        <legend>@Messages("ssttp.arrangement.direct-debit.form.sortCode")</legend>
-        <ul class="list--inline group">
-          <li>@inlinetextinput(ddForm("sortCode1"),
-            'label -> "",
-            '_labelClass -> "label--inline-tight",
-            '_inputClass -> "input--xxsmall input--no-spinner")</li>
-          <li>@inlinetextinput(ddForm("sortCode2"),
-            'label -> "-",
-            '_labelClass -> "label--inline-tight",
-            '_inputClass -> "input--xxsmall input--no-spinner")</li>
-          <li>@inlinetextinput(ddForm("sortCode3"),
-            'label -> "-",
-            '_labelClass -> "label--inline-tight",
-            '_inputClass -> "input--xxsmall input--no-spinner")</li>
-        </ul>
-      }
+
       @textinput(ddForm("accountNumber"),
         'label -> Messages("ssttp.arrangement.direct-debit.form.accountNumber"),
         '_inputClass -> "input--cleared"
       )
-      @alert(){
-        @Messages("ssttp.arrangement.direct-debit.form.confirmation.header")
-        @message_list(Some("bullets"), "ssttp.arrangement.direct-debit.form.confirmation.list.")
-      }
+      @direct_debit_confirmation()
       @checkbox(ddForm("confirmed"), Option(Html(Messages("ssttp.arrangement.direct-debit.form.confirmed"))),
         '_labelClass -> "block-label"
       )

@@ -25,7 +25,7 @@ Number input field using Component Library Styles as  documented:
 @value = @{ field.value match { case Some(x) => x case None => "" case x => x }}
 @wrapperClass = @{
     var w = Seq("form-field") ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")
-    w = if (field.hasErrors && argsMap.get('_noLabel)) w :+ "form-field--error" else w
+    w = if (field.hasErrors && (argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false)) w :+ "form-field--error" else w
     w.mkString(" ")
 }
 @inputClass = @{

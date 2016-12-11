@@ -7,7 +7,7 @@ Time To Pay Direct Debit Form Page
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @(ddForm:Form[ArrangementDirectDebit])(implicit request: Request[_])
 
-@import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_fields}
+@import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields}
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
@@ -21,7 +21,6 @@ Time To Pay Direct Debit Form Page
     <header class="page-header text">
       <h2>@Messages("ssttp.arrangement.direct-debit.form.title")</h2>
     </header>
-
     @form(routes.DirectDebitController.submitDirectDebit()) {
       @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
       <br>
