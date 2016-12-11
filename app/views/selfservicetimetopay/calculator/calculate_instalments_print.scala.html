@@ -16,6 +16,7 @@
 }
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
+    mainClass = Some("hard--bottom"),
     bodyClasses = None,
     scriptElem = Some(script),
     noGetHelp = true
@@ -25,27 +26,27 @@
         <h2>@Messages("ssttp.calculator.results.heading.what-you-owe")</h2>
         <div class="subsection grid-layout divider--bottom">
             <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.you-owe")</div>
-            <div class="grid-layout__column grid-layout__column--1-3 no-wrap">@currency(schedule.amountToPay)</div>
+            <div class="grid-layout__column grid-layout__column--1-3 text--right no-wrap">@currency(schedule.amountToPay)</div>
         </div>
         <div class="subsection divider--bottom grid-layout">
             <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.you-can-afford")</div>
-            <div class="grid-layout__column grid-layout__column--1-3 no-wrap">@currency(schedule.initialPayment)</div>
+            <div class="grid-layout__column grid-layout__column--1-3 text--right no-wrap">@currency(schedule.initialPayment)</div>
         </div>
         <div class="subsection grid-layout divider--bottom">
             <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.your-instalment-balance")</div>
-            <div class="grid-layout__column grid-layout__column--1-3 no-wrap"><strong>@currency(schedule.instalmentBalance)</strong></div>
+            <div class="grid-layout__column grid-layout__column--1-3 text--right no-wrap"><strong>@currency(schedule.instalmentBalance)</strong></div>
         </div>
     </section>
     <section>
         <h2>@Messages("ssttp.calculator.results.heading.your-instalments")</h2>
         <div class="subsection grid-layout divider--bottom flush--bottom">
             <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.instalments-over")</div>
-            <div class="grid-layout__column grid-layout__column--1-3 no-wrap">@schedule.instalments.length @pluralize(schedule.instalments.length, "ssttp.calculator.results.instalments-over.month")</div>
+            <div class="grid-layout__column grid-layout__column--1-3 text--right no-wrap">@schedule.instalments.length @pluralize(schedule.instalments.length, "ssttp.calculator.results.instalments-over.month")</div>
         </div>
         @defining(schedule.instalmentBalance) { payment =>
             <div class="subsection grid-layout divider--bottom">
                 <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.monthly-payments")</div>
-                <div class="grid-layout__column grid-layout__column--1-3 no-wrap"><strong>@currency(schedule.instalments.head.amount) @Messages("ssttp.calculator.results.monthly-payments.per-month")</strong></div>
+                <div class="grid-layout__column grid-layout__column--1-3 text--right no-wrap"><strong>@currency(schedule.instalments.head.amount) @Messages("ssttp.calculator.results.monthly-payments.per-month")</strong></div>
             </div>
             <div class="subsection grid-layout divider--bottom">
                 <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.total-interest")
@@ -57,7 +58,7 @@
             </div>
             <div class="subsection grid-layout divider--bottom">
                 <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.total-replayment")</div>
-                <div class="grid-layout__column grid-layout__column--1-3 no-wrap"><strong>@currency(schedule.totalPayable)</strong></div>
+                <div class="grid-layout__column grid-layout__column--1-3 no-wrap text--right no-wrap"><strong>@currency(schedule.totalPayable)</strong></div>
             </div>
         }
         <details open>
@@ -71,7 +72,7 @@
     <section class="section">
         <h2>@Messages("ssttp.calculator.results.next-steps")</h2>
         @{if(auth) {
-            calculate_instalments_auth_footer()
+            calculate_instalments_auth_footer(true)
         } else {
             calculate_instalments_no_auth_footer(true)
         }}

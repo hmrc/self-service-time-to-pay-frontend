@@ -166,8 +166,9 @@ ssttp.calculator.results.heading.choose-your-instalments=Select how many months 
 ssttp.calculator.results.heading.your-instalments=Your instalment calculation
 ssttp.calculator.results.recalculate-button.label=Update monthly payment amount
 ssttp.calculator.results.instalments-over=Instalments over:
-ssttp.calculator.results.instalments-over.month.singular=month
 ssttp.calculator.results.instalments-over.month.plural=months
+ssttp.calculator.results.instalments-over.month.singular=month
+
 ssttp.calculator.results.monthly-payments=Monthly payments of:
 ssttp.calculator.results.monthly-payments.per-month=per month
 ssttp.calculator.results.monthly-payments.increase=Increase value

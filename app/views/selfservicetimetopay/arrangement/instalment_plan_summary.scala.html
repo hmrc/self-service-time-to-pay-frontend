@@ -5,24 +5,19 @@ Time To Pay Instalment Summary Display Page
 @param dayForm Form[ArrangementDayOfMonth] For for day of month selection for direct debit
 
 *@
-
-
-
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
-
 @(schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth])(implicit request: Request[_])
-    @import selfservicetimetopay.partials.{payment_schedule, currency}
+    @import selfservicetimetopay.partials.{payment_schedule, currency, day_ordinal}
     @import selfservicetimetopay.helpers.{highlight, alert, message_list}
     @import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
     @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-
     @selfservicetimetopay.main(
         title = Messages("ssttp.common.title"),
         bodyClasses = None,
         sidebarLinks = None
     ) {
-        <a href="javascript:window.print()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
+        <a target="_blank" href="@routes.ArrangementController.getInstalmentSummaryPrint()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
         <header class="page-header text">
             <h2>@Messages("ssttp.arrangement.instalment-summary.title")</h2>
         </header>
@@ -62,27 +57,20 @@ Time To Pay Instalment Summary Display Page
                 </div>
             </div>
             <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on")
-
-                @schedule.instalments.head.paymentDate.getDayOfMonth match {
-                    case 1 | 21 => { <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth.toString+"st")</strong>}
-                    case 2 | 22 => { <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth.toString+"nd")</strong> }
-                    case 3 | 23=> { <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth.toString+"rd")</strong> }
-                    case _ => { <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth.toString+"th")</strong> }
-                }
-
-                @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
-                <details @if(dayForm.hasErrors) { open}>
+                <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", day_ordinal(schedule.instalments.head.paymentDate.getDayOfMonth))</strong>
+                @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")</p>
+            <details @if(dayForm.hasErrors) { open}>
                 <summary class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
-        <div class="panel--indent">
-            @form(routes.ArrangementController.changeSchedulePaymentDay()) {
-                @inlinetextinput(dayForm("dayOfMonth"), 'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
-                    '_labelClass -> "label--inline", '_inputClass -> "input--xsmall",
-                    'labelSuffix -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.of-the-month"))
-                @submit('_buttonClass -> "button--secondary") {
-                    @Messages("ssttp.arrangement.instalment-summary.payment-day.submit")
-                }
-            }
-        </div>
+                <div class="panel--indent">
+                    @form(routes.ArrangementController.changeSchedulePaymentDay()) {
+                        @inlinetextinput(dayForm("dayOfMonth"), 'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
+                            '_labelClass -> "label--inline", '_inputClass -> "input--xsmall",
+                            'labelSuffix -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.of-the-month"))
+                        @submit('_buttonClass -> "button--secondary") {
+                            @Messages("ssttp.arrangement.instalment-summary.payment-day.submit")
+                        }
+                    }
+                </div>
             </details>
         </section>
         <section>

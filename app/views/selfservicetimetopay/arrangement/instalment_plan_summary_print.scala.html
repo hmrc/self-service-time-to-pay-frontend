@@ -1,0 +1,80 @@
+@*
+Time To Pay Instalment Summary Pretty Print Page
+
+@param schedule CalculatorPaymentSchedule The results data to display
+
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
+@(schedule: CalculatorPaymentSchedule)(implicit request: Request[_])
+    @import selfservicetimetopay.partials.{payment_schedule, currency, day_ordinal}
+    @import selfservicetimetopay.helpers.{highlight, alert, message_list}
+    @script = {
+        <script type="text/javascript">$(function(){window.print()})</script>
+    }
+    @selfservicetimetopay.main(
+        title = Messages("ssttp.common.title"),
+        bodyClasses = None,
+        mainClass = Some("hard--bottom"),
+        sidebarLinks = None,
+        scriptElem = Some(script),
+        noGetHelp = true
+    ) {
+        <header class="page-header text">
+            <h2>@Messages("ssttp.arrangement.instalment-summary.title")</h2>
+        </header>
+        <section class="section">
+            <div class="grid-layout grid-layout--no-gutter">
+                <div class="grid-layout__column grid-layout__column--1-2">
+                @Messages("ssttp.arrangement.instalment-summary.initial-payment-of")
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-2 no-wrap text--right">
+                    <strong> @currency(schedule.initialPayment)</strong>
+                    <div class="form-hint form-hint--small">@Messages("ssttp.arrangement.instalment-summary.initial-payment.hint", 5)</div>
+                </div>
+            </div>
+            <div class="grid-layout grid-layout--no-gutter">
+                <div class="grid-layout__column grid-layout__column--1-2">
+                    <p><strong>@schedule.instalments.length</strong> @Messages("ssttp.arrangement.instalment-summary.monthly-instalments")</p>
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-2 no-wrap text--right">
+                    <p><strong>@currency(schedule.instalments.head.amount)</strong></p>
+                </div>
+            </div>
+            <div class="grid-layout grid-layout--no-gutter divider--bottom">
+                <div class="grid-layout__column grid-layout__column--1-2">
+                    @Messages("ssttp.arrangement.instalment-summary.total-interest")
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-2 no-wrap text--right">
+                    <strong>@currency(schedule.totalInterestCharged)</strong>
+                    <div class="form-hint form-hint--small">@Messages("ssttp.calculator.results.interest-added-to-final")</div>
+                </div>
+            </div>
+            <div class="grid-layout grid-layout--no-gutter">
+                <div class="grid-layout__column grid-layout__column--1-2">
+                    <p>@Messages("ssttp.arrangement.instalment-summary.total-repayment")</p>
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-2 text--right no-wrap">
+                    <p><strong>@currency(schedule.totalPayable)</strong></p>
+                </div>
+            </div>
+            <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on")
+                <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", day_ordinal(schedule.instalments.head.paymentDate.getDayOfMonth))</strong>
+                @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
+            </p>
+        </section>
+        <section>
+            <h2>@Messages("ssttp.arrangement.instalment-summary.schedule.title")</h2>
+            @payment_schedule(schedule)
+            @highlight('_modifierClass -> "highlight-message--light") {
+                <p>@Messages("ssttp.arrangement.instalment-summary.terms.warning")</p>
+            }
+            @alert('_modifierClass -> "alert--info alert--info__light") {
+                @Messages("ssttp.arrangement.instalment-summary.terms.cancelled-if")
+                @message_list(Some("bullets"), "ssttp.arrangement.instalment-summary.terms.cancelled-if.")
+                <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.made-payable-immidiately")</div>
+                <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-payments")</div>
+                <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
+            }
+        </section>
+      }
+
