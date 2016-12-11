@@ -72,27 +72,27 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       }
   }
 
+  // TODO clean this up - code ported from Mark's branch
   def getBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      val accounts = fakeBankDetails /* @TODO GET BANK DETAILS FROM USER ACCOUNT */
+      val accounts = Seq.empty /* @TODO GET BANK DETAILS FROM USER ACCOUNT */
       Future.successful(Ok(account_not_found(existingBankAccountForm, accounts)))
   }
 
+  // TODO clean this up - code ported from Mark's branch
   def submitBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
       existingBankAccountForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, fakeBankDetails))),
         validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit)  match {
-          case (Some(ddi:String), None) => {
+          case (Some(ddi:String), None) =>
             directDebitConnector
               .validateOrRetrieveAccounts("SORT CODE FROM EXISTING DDI", "ACCOUNT NUMBER FROM EXISTING DDI",
                 authContext.principal.accounts.sa.get.utr).flatMap(directDebitSubmitRouting)
-          }
-          case (None, Some(arrangementDirectDebit:ArrangementDirectDebit)) => {
+          case (None, Some(arrangementDirectDebit:ArrangementDirectDebit)) =>
             directDebitConnector.validateOrRetrieveAccounts(arrangementDirectDebit.sortCode,
             arrangementDirectDebit.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
             .flatMap(directDebitSubmitRouting)
-          }
         })
   }
 

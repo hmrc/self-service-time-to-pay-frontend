@@ -151,7 +151,6 @@ ssttp.calculator.form.duration.months.required=Enter a valid number of months
 ssttp.calculator.form.duration.months.greater-than=Number of months must be 2 or more
 ssttp.calculator.form.duration.months.less-than=Number of months must be fewer than 12
 
-
 ssttp.calculator.form.payment_today.update=Update
 
 ssttp.calculator.form.continue=Continue
@@ -162,23 +161,18 @@ ssttp.calculator.results.title=Calculate your instalments
 ssttp.calculator.results.heading.what-you-owe=What you owe
 ssttp.calculator.results.you-owe=You owe a total of:
 ssttp.calculator.results.you-can-afford=You can afford to pay:
-ssttp.calculator.results.you-can-afford-now=now
 ssttp.calculator.results.your-instalment-balance=Your balance for instalments:
-
 ssttp.calculator.results.heading.choose-your-instalments=Select how many months you need
-
 ssttp.calculator.results.heading.your-instalments=Your instalment calculation
 ssttp.calculator.results.recalculate-button.label=Update monthly payment amount
-
 ssttp.calculator.results.instalments-over=Instalments over:
-ssttp.calculator.results.instalments-over.month.singular=month
-ssttp.calculator.results.instalments-over.month.plural=months
+
 ssttp.calculator.results.monthly-payments=Monthly payments of:
 ssttp.calculator.results.monthly-payments.per-month=per month
 ssttp.calculator.results.monthly-payments.increase=Increase value
 ssttp.calculator.results.monthly-payments.decrease=Decrease value
-
 ssttp.calculator.results.monthly-payments.hint=calculated at 2.75%
+
 ssttp.calculator.results.total-interest=Total Interest:
 ssttp.calculator.results.interest-added-to-final=added to the final payment
 
@@ -231,11 +225,9 @@ ssttp.arrangement.instalment-summary.initial-payment-of=An initial payment of:
 ssttp.arrangement.instalment-summary.initial-payment.hint=taken up to {0} days from today
 ssttp.arrangement.instalment-summary.monthly-instalments=monthly instalments of:
 ssttp.arrangement.instalment-summary.total-repayment=Total repayment:
-
 ssttp.arrangement.instalment-summary.payment-day.taken-on=Instalments are taken on the
 ssttp.arrangement.instalment-summary.payment-day.day-of-month={0} of the month
 ssttp.arrangement.instalment-summary.payment-day.next-working-day=or the next working day.
-
 ssttp.arrangement.instalment-summary.payment-day.change=Change payment day
 ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on=Take payment on day
 ssttp.arrangement.instalment-summary.payment-day.change.of-the-month=of the month
@@ -243,11 +235,9 @@ ssttp.arrangement.instalment-summary.payment-day.submit=Update
 ssttp.arrangement.instalment-summary.payment-day.out-of-range=Date must be between 1 and 28
 ssttp.arrangement.instalment-summary.payment-day.required=Enter a valid date
 ssttp.arrangement.instalment-summary.payment-day.number=Enter a number only
-
 ssttp.arrangement.instalment-summary.schedule.title=Direct Debit payment schedule
 ssttp.arrangement.instalment-summary.schedule.initial-payment=(initial payment)
 ssttp.arrangement.instalment-summary.schedule.final-payment=(final payment)
-
 ssttp.arrangement.instalment-summary.terms.warning=By continuing you are agreeing to these terms
 ssttp.arrangement.instalment-summary.terms.cancelled-if=This agreement may be cancelled if you:
 ssttp.arrangement.instalment-summary.terms.cancelled-if.1=pay late or miss a payment
@@ -257,17 +247,7 @@ ssttp.arrangement.instalment-summary.terms.cancelled-if.4=don’t tell us about 
 ssttp.arrangement.instalment-summary.terms.made-payable-immidiately=If you don’t meet these conditions, the entire outstanding amount may be made payable immediately.
 ssttp.arrangement.instalment-summary.terms.future-payments=Any future repayments you become entitled to can be set off against this debt.
 ssttp.arrangement.instalment-summary.terms.future-debts=This only covers the amounts you need to pay now and is not an ongoing payment plan for new tax bills.
-
 ssttp.arrangement.instalment-summary.submit=Agree and continue
-
-
-ssttp.arrangement.direct-debit.form.title=Set up a direct debit
-ssttp.arrangement.direct-debit.form.bank-details=Enter your banking details
-ssttp.arrangement.direct-debit.form.bank-details=Please enter your banking details
-ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
-ssttp.arrangement.direct-debit.form.submit=Agree and continue
-ssttp.arrangement.direct-debit.form.back=Back
-
 
 ssttp.arrangement.misalignment.title=Bank account not found
 ssttp.arrangement.misalignment.subtitle=There was a problem with the bank details you entered
@@ -277,17 +257,16 @@ ssttp.arrangement.misalignment.direct-debit.reenter=Re-enter your bank details
 ssttp.arrangement.misalignment.submit=Agree and continue
 ssttp.arrangement.misalignment.back=Back
 
+ssttp.arrangement.direct-debit.form.title=Set up a direct debit
+ssttp.arrangement.direct-debit.form.bank-details=Enter your banking details
+ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
+ssttp.arrangement.direct-debit.form.submit=Agree and continue
+ssttp.arrangement.direct-debit.form.back=Back
 ssttp.direct-debit.form.accountName=Name of account holder
 ssttp.direct-debit.form.sortCode=Sort code
 ssttp.direct-debit.form.accountNumber=Account number
 ssttp.direct-debit.form.sortCode.hint=Example: 000000
 ssttp.direct-debit.form.error.account=Name.required=Enter an account name
-ssttp.direct-debit.form.error.accountNumber.required=Enter an account number
-ssttp.direct-debit.form.error.sortCode.required=Enter a sort code
-ssttp.direct-debit.form.error.sortCode.not-number=Sort code must be a number
-ssttp.direct-debit.form.error.sortCode.not-valid=Sort code must be a six digit number
-ssttp.direct-debit.form.error.accountNumber.not-number=Bank account number must not include letters or symbols
-ssttp.direct-debit.form.error.accountNumber.not-account=Enter a valid bank account number
 ssttp.direct-debit.form.error.accountName.required=Enter an account name
 ssttp.direct-debit.form.error.accountNumber.required=Enter an account number
 ssttp.direct-debit.form.error.sortCode.required=Enter a sort code
@@ -295,13 +274,9 @@ ssttp.direct-debit.form.error.sortCode.not-number=Sort code must be a number
 ssttp.direct-debit.form.error.sortCode.not-valid=Sort code must be a six digit number
 ssttp.direct-debit.form.error.accountNumber.not-number=Bank account number must not include letters or symbols
 ssttp.direct-debit.form.error.accountNumber.not-account=Enter a valid bank account number
-
 ssttp.direct-debit.form.confirmation.header=By continuing, you’re confirming that:
 ssttp.direct-debit.form.confirmation.list.1=you have the authority to set up a Direct Debit against this account
 ssttp.direct-debit.form.confirmation.list.2=this account does not require dual signatories
-
-ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
-ssttp.arrangement.direct-debit.form.submit=Continue
 
 ssttp.direct-debit.guarantee.title=Direct Debit Guarantee
 ssttp.direct-debit.guarantee.list.1=This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
@@ -319,9 +294,7 @@ ssttp.direct-debit.monthly=Monthly
 ssttp.direct-debit.initial-payment=(initial payment)
 ssttp.direct-debit.final-payment=(final payment)
 
-
 ssttp.arrangement.direct-debit.form.error.summary.title=Something you’ve entered isn’t valid
-
 ssttp.arrangement.direct-debit.confirmation.title=Direct Debit Confirmation
 ssttp.arrangement.direct-debit.confirmation.total-payment=Total payment will be:
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary=Instruction to your bank

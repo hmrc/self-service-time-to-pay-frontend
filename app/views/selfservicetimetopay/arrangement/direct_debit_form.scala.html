@@ -17,25 +17,17 @@ Time To Pay Direct Debit Form Page
   bodyClasses = None,
   sidebarLinks = Some(having_problems_sidebar())
 ){
-  <section>
     <header class="page-header text">
-      <h2>@Messages("ssttp.arrangement.direct-debit.form.title")</h2>
+        <h2>@Messages("ssttp.arrangement.direct-debit.form.title")</h2>
     </header>
-    @form(routes.DirectDebitController.submitDirectDebit()) {
+      @form(routes.DirectDebitController.submitDirectDebit()) {
       @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
-      <br>
-      <h2 class="heading-h2">@Messages("ssttp.arrangement.direct-debit.form.bank-details")</h2>
+      <h2>@Messages("ssttp.arrangement.direct-debit.form.bank-details")</h2>
       @direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode"), ddForm("accountNumber"))
+      @direct_debit_confirmation()
       @submit(){@Messages("ssttp.arrangement.direct-debit.form.submit")}
       <p>&nbsp;</p>
     }
-  </section>
-
-  @highlight('_modifierClass -> "highlight-message--light") {
-    <p>@Messages("ssttp.direct-debit.form.confirmation.header")</p>
-  }
-  @alert('_modifierClass -> "alert--info alert--info__light") {
-    @message_list(Some("bullets"), "ssttp.direct-debit.form.confirmation.list.")
-  }
+  <p><a class="back-link" href="@routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.direct-debit.form.back")</a></p>
 }
 
