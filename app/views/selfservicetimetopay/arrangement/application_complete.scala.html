@@ -6,6 +6,7 @@ Time To Pay Application Complete
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{Debit, CalculatorPaymentSchedule, ArrangementDirectDebit}
 @(debits:Seq[Debit], directDebit:ArrangementDirectDebit, schedule:CalculatorPaymentSchedule)(implicit request: Request[_])
+
 @import selfservicetimetopay.helpers.message_list
 @import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule}
 @import selfservicetimetopay.partials.currency

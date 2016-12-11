@@ -319,6 +319,9 @@ ssttp.arrangement.direct-debit.confirmation.confirm-payment=Confirm payment
 
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.please-check=Please check this information carefully before confirming payment
 ssttp.arrangement.direct-debit.assistance.title=Call for Direct Debit Assistance
+ssttp.arrangement.direct-debit.assistance.total.hint=including interest
+ssttp.arrangement.direct-debit.assistance.alert=Direct Debit submission failed.
+ssttp.arrangement.direct-debit.assistance.alert.1=We’re having problems submitting your Direct Debit instruction. Please call us to complete your application.
 
 ssttp.arrangement.complete.title=Application complete
 ssttp.arrangement.complete.subtitle=We’ve received your application to pay in instalments.

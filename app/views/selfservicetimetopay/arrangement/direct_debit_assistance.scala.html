@@ -5,30 +5,75 @@ Time To Pay Direct Debit Conformation Display Page
 @param directDebit CalcualtorDirectDebit The direct debit details
 
 *@
-@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, ArrangementDirectDebit, Debit}
-@* @(schedule:CalculatorPaymentSchedule, directDebit:ArrangementDirectDebit)(implicit request: Request[_]) *@
-@(debits:Seq[Debit])(implicit request: Request[_])
-@import selfservicetimetopay.helpers.{alert, message_list}
-@import selfservicetimetopay.helpers.forms.{form, submit}
-@import uk.gov.hmrc.selfservicetimetopay.controllers.{routes => ssttpRoutes}
-@import selfservicetimetopay.partials.{direct_debit_details, payment_schedule}
+@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, Debit}
+@(debits:Seq[Debit], schedule:CalculatorPaymentSchedule)(implicit request: Request[_])
 
-@import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule}
+@import selfservicetimetopay.helpers.{highlight, alert, message_list}
+
+@import selfservicetimetopay.partials.{what_you_owe, currency}
 
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
   bodyClasses = None
 ){
-  <h2>@Messages("ssttp.arrangement.direct-debit.assistance.title")</h2>
+  <br>
+  @highlight('_modifierClass -> "highlight-message--yellow") {
+    <p><strong>@Messages("ssttp.arrangement.direct-debit.assistance.alert")</strong></p>
+    <p>@Messages("ssttp.arrangement.direct-debit.assistance.alert.1")</p>
+  }
+  <header class="page-header text">
+    <h2>@Messages("ssttp.arrangement.direct-debit.assistance.title")</h2>
+  </header>
+
   <section>
     <div>
-        <!-- <p>In order proceed with your instalment plan application you will need to call us to set up your Direct Debit payment.</p> -->
       <p>You’ll need this information to set up your Direct Debit instruction.</p>
       <p>Please call <strong>0300 322 7015</strong> to complete your application.</p>
       <br>
 
       <h2>What you owe</h2>
       @what_you_owe(debits)
+      <div class="subsection grid-layout divider--bottom font-xsmall">
+        <div class="grid-layout__column grid-layout__column--3-4"><p><strong>@Messages("ssttp.arrangement.complete.total")</strong></p></div>
+        <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@currency(schedule.totalPayable)</strong></p></div>
+      </div>
+
+      <h2>The instalments you chose</h2>
+      <div class="subsection grid-layout">
+        <div class="grid-layout__column grid-layout__column--1-2">
+        @Messages("ssttp.arrangement.instalment-summary.initial-payment-of")
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-2">
+          <strong> @currency(schedule.initialPayment)</strong>
+          <div class="form-hint form-hint--small">@Messages("ssttp.arrangement.instalment-summary.initial-payment.hint", 5)</div>
+        </div>
+      </div>
+      <div class="subsection grid-layout">
+        <div class="grid-layout__column grid-layout__column--1-2">
+          <strong>@schedule.instalments.length</strong> @Messages("ssttp.arrangement.instalment-summary.monthly-instalments")
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-2">
+          <strong>@currency(schedule.instalments.head.amount)</strong>
+        </div>
+      </div>
+      <div class="subsection grid-layout divider--bottom">
+        <div class="grid-layout__column grid-layout__column--1-2">
+        @Messages("ssttp.arrangement.instalment-summary.total-interest")
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-2">
+          <strong>@currency(schedule.totalInterestCharged)</strong>
+          <div class="form-hint form-hint--small">@Messages("ssttp.calculator.results.interest-added-to-final")</div>
+        </div>
+      </div>
+      <div class="subsection grid-layout">
+        <div class="grid-layout__column grid-layout__column--1-2">
+        @Messages("ssttp.arrangement.instalment-summary.total-repayment")
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-2">
+          <strong>@currency(schedule.totalPayable)</strong>
+          <div class="form-hint form-hint--small">@Messages("ssttp.arrangement.direct-debit.assistance.total.hint")</div>
+        </div>
+      </div>
     </div>
   </section>
 }
