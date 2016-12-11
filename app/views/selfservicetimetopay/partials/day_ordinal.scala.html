@@ -1,0 +1,10 @@
+@* Helper to display the ordinal prefix for a day of the month, e.g. 2nd, 3rd, 4th
+    @param day Int value of the day ordinal to display (up to 31)
+*@
+@(day:Int)
+@day@day match {
+    case 1 | 21 | 31 => {st}
+    case 2 | 22 =>  {nd}
+    case 3 | 23=> {rd}
+    case _ => {th}
+}

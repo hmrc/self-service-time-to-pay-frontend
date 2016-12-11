@@ -26,7 +26,7 @@ import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
+import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary, instalment_plan_summary_print}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -73,6 +73,16 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         _.fold(redirectToStart)(ttp => {
           Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
             createDayOfForm(ttp), request)))
+        })
+      }
+  }
+
+
+  def getInstalmentSummaryPrint: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      sessionCache.get.flatMap {
+        _.fold(redirectToStart)(ttp => {
+          Future.successful(Ok(instalment_plan_summary_print.render(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")), request)))
         })
       }
   }
