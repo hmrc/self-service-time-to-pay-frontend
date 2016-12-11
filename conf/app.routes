@@ -36,6 +36,7 @@ POST        /calculator/recalculate                           @uk.gov.hmrc.selfs
 
 # Arrangement
 GET         /arrangement/instalment-summary                   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummary()
+GET         /arrangement/instalment-summary/print                   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummaryPrint()
 POST        /arrangement/instalment-summary/change-day        @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.changeSchedulePaymentDay()
 GET         /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
 POST        /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
