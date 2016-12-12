@@ -79,11 +79,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit authContext => implicit request =>
       sessionCache.get.map {
         case Some(submission@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _)) =>
-          Ok(account_not_found(existingBankAccountForm,
-            Seq(
-              DirectDebitInstruction(sortCode = Some("test"), accountNumber = Some("account"), None, None, None, Some("Other reference"), Some("Reference"))
-                )
-          ))
+          Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction))
         case _ => throw new RuntimeException("No data found")
       }
   }
