@@ -5,15 +5,15 @@ Time To Pay Bank account not found - select existing direct debit or create new 
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementExistingDirectDebit
 @import uk.gov.hmrc.selfservicetimetopay.models.BankDetails
-@(ddForm:Form[ArrangementExistingDirectDebit], bankAccounts:Seq[BankDetails])(implicit request: Request[_])
+@import uk.gov.hmrc.selfservicetimetopay.models.DirectDebitInstruction
+@(ddForm:Form[ArrangementExistingDirectDebit], bankAccounts:Seq[DirectDebitInstruction])(implicit request: Request[_])
 @import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields}
 @import selfservicetimetopay.helpers.highlight
 @import selfservicetimetopay.helpers.forms.{form, select, formErrorSummary, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selectOptions = @{
     Seq(("", "")) ++
-    bankAccounts.filter(_.ddiRefNumber.nonEmpty)
-            .map{ b => (b.ddiRefNumber.get, b.accountNumber + " | " + b.formattedSortCode) }
+            bankAccounts.map{ b => (b.referenceNumber.get, b.accountNumber.get + " | " + b.sortCode.get) }
 }
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),

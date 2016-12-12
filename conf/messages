@@ -256,6 +256,7 @@ ssttp.arrangement.instalment-summary.submit=Agree and continue
 
 ssttp.arrangement.misalignment.title=Bank account not found
 ssttp.arrangement.misalignment.subtitle=There was a problem with the bank details you entered
+ssttp.arrangement.misalignment.form.error.summary.title=Something you’ve entered isn’t valid
 ssttp.arrangement.misalignment.existing.title=Choose an existing account
 ssttp.arrangement.misalignment.direct-debit.or=Or
 ssttp.arrangement.misalignment.direct-debit.reenter=Re-enter your bank details
@@ -279,6 +280,7 @@ ssttp.direct-debit.form.error.sortCode.not-number=Sort code must be a number
 ssttp.direct-debit.form.error.sortCode.not-valid=Sort code must be a six digit number
 ssttp.direct-debit.form.error.accountNumber.not-number=Bank account number must not include letters or symbols
 ssttp.direct-debit.form.error.accountNumber.not-account=Enter a valid bank account number
+ssttp.direct-debit.form.error.accountNumber.not-valid=Account number must be an eight digit number
 ssttp.direct-debit.form.confirmation.header=By continuing, you’re confirming that:
 ssttp.direct-debit.form.confirmation.list.1=you have the authority to set up a Direct Debit against this account
 ssttp.direct-debit.form.confirmation.list.2=this account does not require dual signatories
