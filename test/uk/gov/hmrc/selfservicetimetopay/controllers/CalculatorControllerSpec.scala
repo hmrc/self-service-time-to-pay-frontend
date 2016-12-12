@@ -41,16 +41,15 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
-  val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
   val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
 
-  val controller = new CalculatorController(mockEligibilityConnector, mockCalculatorConnector) {
+  val controller = new CalculatorController(mockCalculatorConnector) {
     override lazy val sessionCache = mockSessionCache
     override lazy val authConnector = mockAuthConnector
   }
 
   override def beforeEach() {
-    reset(mockEligibilityConnector, mockAuthConnector, mockSessionCache, mockCalculatorConnector)
+    reset(mockAuthConnector, mockSessionCache, mockCalculatorConnector)
   }
 
   "CalculatorControllerSpec" should {
