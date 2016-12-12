@@ -26,6 +26,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -63,6 +64,26 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.OK
+      verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
+    "if no schedule is present, generate a schedule and populate it in the session" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLI.copy(schedule = None))))
+
+      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
+        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
+
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
+
+      val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.CalculatorController.getCalculateInstalments(None).url
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
@@ -138,10 +159,17 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLINoSchedule)))
 
+      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
+        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
+
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
+
       val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
-      status(result) shouldBe Status.NOT_FOUND
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.CalculatorController.getCalculateInstalments(None).url
     }
 
     "Return 303 for non-logged-in when TTPSubmission is missing for submitPaymentToday" in {

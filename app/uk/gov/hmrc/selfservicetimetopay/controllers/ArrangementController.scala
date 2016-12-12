@@ -51,7 +51,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
             () => TTPSubmission(taxpayer = Some(t)))
             .map(cm => cm.getEntry("ttpSubmission")(submissionFormatter).get).map {
               case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty @ Seq(), _, _, _, _, _)) =>
-                Redirect(routes.ArrangementController.getInstalmentSummary())
+                Redirect(routes.CalculatorController.getCalculateInstalments(None))
               case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
                 if (areEqual(tpSA.debits, meDebits)) {
                   Redirect(routes.ArrangementController.getInstalmentSummary())

@@ -94,18 +94,19 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
   }
 
   def getCalculateInstalments(months: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
+    sessionCache.get.flatMap {
       case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
-        Ok(calculate_instalments_form(schedule,
-          CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, auth = true))
-
+        Future.successful(Ok(calculate_instalments_form(schedule,
+          CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, auth = true)))
       case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
-        Ok(calculate_instalments_form(schedule,
-          CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11))
-
-      case _ => NotFound("Failed to get schedule")
+        Future.successful(Ok(calculate_instalments_form(schedule,
+          CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11)))
+      case Some(ttpData@TTPSubmission(None, _, _, _, _, _, _)) =>
+        updateSchedule(ttpData).apply(request)
+      case _ =>
+        Future.successful(NotFound("Insufficient data to proceed"))
     }
   }
 
