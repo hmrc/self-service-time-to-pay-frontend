@@ -29,11 +29,11 @@ object SaGovernmentGateway extends GovernmentGateway {
   override def loginURL: String = SsttpFrontendConfig.loginUrl
 }
 
-object SaRegime extends TaxRegime {
+case class SaRegime(authenticationProvider: AuthenticationProvider) extends TaxRegime {
 
   override def isAuthorised(accounts: Accounts): Boolean = accounts.sa.isDefined
 
-  override def authenticationType: AuthenticationProvider = SaGovernmentGateway
+  override def authenticationType: AuthenticationProvider = authenticationProvider
 
   override def unauthorisedLandingPage = {
     Logger.info("No SA enrolment for current user")

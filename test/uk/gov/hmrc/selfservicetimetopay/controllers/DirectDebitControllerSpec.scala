@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.{AuthContext, LoggedInUser, Principal}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLevel, CredentialStrength, SaAccount}
+import uk.gov.hmrc.play.http.SessionKeys
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllers
@@ -52,19 +53,13 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     val controller = new DirectDebitController(mockDDConnector) {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
       override lazy val authConnector: AuthConnector = mockAuthConnector
-
-      val loggedInUser = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L100)
-      val saAccount = SaAccount(link = "link", utr = SaUtr("1233"))
-      val authContext = AuthContext(user = loggedInUser, principal = Principal(name = Some("usere"),
-        accounts = Accounts(sa = Some(saAccount))), attorney = None, userDetailsUri = None, enrolmentsUri = None)
-
-      override def AuthorisedSaUser(body: AsyncPlayUserRequest) = Action.async {
-        body(authContext)
-      }
+      override lazy val authenticationProvider = mockAuthenticationProvider
     }
 
     "successfully display the direct debit form page" in {
-      val response = await(controller.getDirectDebit(FakeRequest().withCookies(sessionProvider.createTtpCookie())))
+      val response = await(controller.getDirectDebit(FakeRequest()
+        .withSession(SessionKeys.userId -> "someUserId")
+        .withCookies(sessionProvider.createTtpCookie())))
 
       status(response) shouldBe OK
 
@@ -75,14 +70,14 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockDDConnector.validateOrRetrieveAccounts(Matchers.any(), Matchers.any(),
         Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Left(bankDetails)))
       when(mockDDConnector.getBanks(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(DirectDebitBank("", Seq.empty)))
-
       when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-
-
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val request = FakeRequest().withCookies(sessionProvider.createTtpCookie()).withFormUrlEncodedBody(validDirectDebitForm: _*)
+      val request = FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())
+        .withSession(SessionKeys.userId -> "someUserId")
+        .withFormUrlEncodedBody(validDirectDebitForm: _*)
 
       val response = await(controller.submitDirectDebit(request))
 
@@ -100,7 +95,10 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val request = FakeRequest().withCookies(sessionProvider.createTtpCookie()).withFormUrlEncodedBody(invalidBankDetailsForm: _*)
+      val request = FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())
+        .withSession(SessionKeys.userId -> "someUserId")
+        .withFormUrlEncodedBody(invalidBankDetailsForm: _*)
 
       val response = await(controller.submitDirectDebit(request))
 
@@ -110,7 +108,10 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "submit direct debit form with invalid form data and return a bad request" in {
-      val request = FakeRequest().withCookies(sessionProvider.createTtpCookie()).withFormUrlEncodedBody(inValidDirectDebitForm: _*)
+      val request = FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())
+        .withSession(SessionKeys.userId -> "someUserId")
+        .withFormUrlEncodedBody(inValidDirectDebitForm: _*)
 
       val response = await(controller.submitDirectDebit(request))
 
@@ -120,7 +121,9 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     "submit direct debit form with an authorised user without sa enrolment and throw an exception" in {
       when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUserNoSA)))
 
-      val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
+      val request = FakeRequest()
+        .withSession(SessionKeys.userId -> "someUserId")
+        .withFormUrlEncodedBody(validDirectDebitForm: _*)
 
       Try(await(controller.submitDirectDebit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
     }
@@ -134,7 +137,9 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "successfully display the direct debit confirmation page" in {
-      val response = await(controller.getDirectDebitConfirmation(FakeRequest().withCookies(sessionProvider.createTtpCookie())))
+      val response = await(controller.getDirectDebitConfirmation(FakeRequest()
+        .withSession(SessionKeys.userId -> "someUserId")
+        .withCookies(sessionProvider.createTtpCookie())))
 
       status(response) shouldBe OK
 

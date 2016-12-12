@@ -23,12 +23,13 @@ import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
 import uk.gov.hmrc.play.config.{AppName, RunMode, ServicesConfig}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext}
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel
+import uk.gov.hmrc.play.frontend.auth._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.hooks.HttpHook
 import uk.gov.hmrc.play.http.ws._
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpDelete, HttpGet, HttpPut}
-import uk.gov.hmrc.selfservicetimetopay.auth.SaRegime
+import uk.gov.hmrc.selfservicetimetopay.auth.{SaGovernmentGateway, SaRegime}
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
@@ -97,8 +98,11 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
   protected lazy val sessionCache: KeystoreConnector = SessionCacheConnector
   protected lazy val Action: ActionBuilder[Request] = checkSessionAction andThen PlayAction
   protected type AsyncPlayUserRequest = AuthContext => Request[AnyContent] => Future[Result]
+  protected lazy val authenticationProvider:GovernmentGateway = SaGovernmentGateway
+  protected lazy val saRegime = SaRegime(authenticationProvider)
+  private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())))
 
-  def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(SaRegime, GGConfidence).async(body)
+  def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
 
   override implicit def hc(implicit request: Request[_]): HeaderCarrier = {
     request.cookies.find(_.name == ttpSessionId).fold(super.hc(request)) { id =>

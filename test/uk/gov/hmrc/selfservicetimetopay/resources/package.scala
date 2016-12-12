@@ -20,14 +20,19 @@ import java.time.LocalDate
 
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json, Reads}
+import play.api.mvc.Request
+import play.api.mvc.Results._
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.play.frontend.auth._
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, SaAccount}
+import uk.gov.hmrc.play.frontend.auth.connectors.domain._
+import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.SessionProvider
 
+import scala.concurrent.Future
 import scala.io.Source
 
 package object resources {
@@ -183,4 +188,22 @@ package object resources {
   val authorisedUserNoSA = Authority("", Accounts(), None, None, Strong, L200, None, None, None)
 
   val sessionProvider = new SessionProvider() {}
+
+  val loggedInUser = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L300)
+  val loggedInUserUnderConfidenceThreshold = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L50)
+  val saAccount = SaAccount(link = "link", utr = SaUtr("1233"))
+  val authContext = AuthContext(user = loggedInUser, principal = Principal(name = Some("usere"),
+    accounts = Accounts(sa = Some(saAccount))), attorney = None, userDetailsUri = None, enrolmentsUri = None)
+
+  val mockAuthenticationProvider = new GovernmentGateway {
+    override def continueURL: String = s"${SsttpFrontendConfig.loginCallBackFullPath}"
+    override def loginURL: String = SsttpFrontendConfig.loginUrl
+
+    override def handleNotAuthenticated(implicit request: Request[_]): PartialFunction[UserCredentials, Future[Either[AuthContext, FailureResult]]] = {
+      case UserCredentials(Some("underThreshold"), _) => Future.successful(Left(authContext.copy(user = loggedInUserUnderConfidenceThreshold)))
+      case UserCredentials(None, _) => Future.successful(Right(Redirect(loginURL)))
+      case _ => Future.successful(Left(authContext))
+    }
+  }
+
 }
