@@ -29,8 +29,7 @@ import views.html.selfservicetimetopay.calculator._
 
 import scala.concurrent.Future
 
-class CalculatorController(eligibilityConnector: EligibilityConnector,
-                           calculatorConnector: CalculatorConnector) extends TimeToPayController {
+class CalculatorController(calculatorConnector: CalculatorConnector) extends TimeToPayController {
   def start: Action[AnyContent] = Action { request =>
     Redirect(routes.CalculatorController.getAmountsDue())
   }
@@ -110,11 +109,11 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
   }
 
   def getCalculateInstalmentsPrint: Action[AnyContent] = Action.async { implicit request =>
-      sessionCache.get.map {
-        case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
-          Ok(calculate_instalments_print(schedule, ttpData.taxpayer.isDefined))
-        case _ => NotFound("Failed to get schedule")
-      }
+    sessionCache.get.map {
+      case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+        Ok(calculate_instalments_print(schedule, ttpData.taxpayer.isDefined))
+      case _ => NotFound("Failed to get schedule")
+    }
   }
 
   def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
@@ -126,7 +125,7 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
 
   def submitRecalculate: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap {
-      case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, cd @ CalculatorInput(debits, _, _, _, _, _))) =>
+      case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, cd@CalculatorInput(debits, _, _, _, _, _))) =>
         updateSchedule(ttpData).apply(request)
       case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
     }
@@ -155,8 +154,8 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
         CalculatorForm.createPaymentTodayForm(cd.debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, durationForm, formWithErrors, 2 to 11))),
           validFormData => {
-              val ttpSubmission = ttpData.copy(calculatorData = cd.copy(initialPayment = validFormData))
-              updateSchedule(ttpSubmission).apply(request)
+            val ttpSubmission = ttpData.copy(calculatorData = cd.copy(initialPayment = validFormData))
+            updateSchedule(ttpSubmission).apply(request)
           }
         )
       case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _))) if debits.isEmpty =>
@@ -174,20 +173,15 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
             }
           case _ => throw new RuntimeException("Failed to get schedule")
         }
-      case TTPSubmission(_, _, _, Some(taxpayer @ Taxpayer(_, _, Some(sa))), _, _, calculatorInput) =>
-        eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).flatMap {
-          case EligibilityStatus(true, _) =>
-            calculatorConnector.calculatePaymentSchedule(calculatorInput.copy(debits = sa.debits)).flatMap {
-              case Seq(schedule) =>
-                sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = calculatorInput.copy(debits = sa.debits))).map[Result] { result =>
-                  Redirect(routes.CalculatorController.getCalculateInstalments(None))
-                }
-              case _ => throw new RuntimeException("Failed to get schedule")
+      case TTPSubmission(_, _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, calculatorInput) =>
+        calculatorConnector.calculatePaymentSchedule(calculatorInput.copy(debits = sa.debits)).flatMap {
+          case Seq(schedule) =>
+            sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = calculatorInput.copy(debits = sa.debits))).map[Result] { result =>
+              Redirect(routes.CalculatorController.getCalculateInstalments(None))
             }
-          case EligibilityStatus(_, reasons) =>
-            Logger.info(s"Failed eligibility check because: $reasons")
-            Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
+          case _ => throw new RuntimeException("Failed to get schedule")
         }
+
     }
   }
 

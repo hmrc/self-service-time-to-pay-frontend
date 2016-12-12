@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
 
+import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -34,12 +35,22 @@ import scala.concurrent.Future.successful
 class ArrangementController(ddConnector: DirectDebitConnector,
                             arrangementConnector: ArrangementConnector,
                             calculatorConnector: CalculatorConnector,
-                            taxPayerConnector: TaxPayerConnector) extends TimeToPayController {
+                            taxPayerConnector: TaxPayerConnector,
+                            eligibilityConnector: EligibilityConnector) extends TimeToPayController {
 
   val cesa: String = "CESA"
   val paymentFrequency = "Monthly"
   val paymentCurrency = "GBP"
 
+
+  def eligibilityCheck(taxpayer: Taxpayer)(implicit hc:HeaderCarrier): Future[Result] = {
+    eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).flatMap[Result] {
+      case EligibilityStatus(true, _) => Future.successful(Redirect(routes.ArrangementController.getInstalmentSummary()))
+      case EligibilityStatus(_, reasons) =>
+        Logger.info(s"Failed eligibility check because: $reasons")
+        Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
+    }
+  }
 
   def determineMisalignment: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
@@ -49,19 +60,19 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         _.fold(throw new RuntimeException("No taxpayer found"))(t => {
           updateOrCreateInCache(found => found.copy(taxpayer = Some(t)),
             () => TTPSubmission(taxpayer = Some(t)))
-            .map(cm => cm.getEntry("ttpSubmission")(submissionFormatter).get).map {
-              case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty @ Seq(), _, _, _, _, _)) =>
-                Redirect(routes.ArrangementController.getInstalmentSummary())
-              case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
+            .map(cm => cm.getEntry("ttpSubmission")(submissionFormatter).get).flatMap[Result] {
+              case TTPSubmission(_, _, _, Some(tp @ Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty @ Seq(), _, _, _, _, _)) =>
+                eligibilityCheck(tp)
+              case TTPSubmission(_, _, _, Some(tp @ Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
                 if (areEqual(tpSA.debits, meDebits)) {
-                  Redirect(routes.ArrangementController.getInstalmentSummary())
+                  eligibilityCheck(tp)
                 } else {
-                  Redirect(routes.CalculatorController.getMisalignmentPage())
+                  Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
                 }
               case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, _) =>
-                Redirect(routes.ArrangementController.getInstalmentSummary())
+                Future.successful(Redirect(routes.ArrangementController.getInstalmentSummary()))
               case _ =>
-                Redirect(routes.SelfServiceTimeToPayController.start())
+                Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
             }
         })
       }
