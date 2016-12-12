@@ -69,8 +69,6 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                 } else {
                   Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
                 }
-              case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, _) =>
-                Future.successful(Redirect(routes.ArrangementController.getInstalmentSummary()))
               case _ =>
                 Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
             }
