@@ -77,9 +77,9 @@ object CalculatorForm {
 
   def createPaymentTodayForm(totalDue: BigDecimal) = {
     Form(mapping(
-      "amount" -> bigDecimal
-        .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", _ < totalDue)
-        .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", _ >= 0)
+      "amount" -> optional(bigDecimal)
+        .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", a => a.isEmpty || a.get < totalDue)
+        .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", a => a.isEmpty || a.get >= 0)
     )(CalculatorPaymentToday.apply)(CalculatorPaymentToday.unapply))
   }
 

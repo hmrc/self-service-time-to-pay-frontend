@@ -17,6 +17,6 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 object CalculatorPaymentToday {
-  def apply(amount: BigDecimal) = amount
-  def unapply(arg: BigDecimal) = Option(arg)
+  def apply(amount: Option[BigDecimal]): BigDecimal = amount.getOrElse(BigDecimal(0))
+  def unapply(arg: BigDecimal) = Option(Option(arg))
 }
