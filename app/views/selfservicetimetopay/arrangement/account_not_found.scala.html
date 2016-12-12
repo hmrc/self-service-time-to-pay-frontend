@@ -20,10 +20,12 @@ Time To Pay Bank account not found - select existing direct debit or create new 
     bodyClasses = None,
     sidebarLinks = Some(having_problems_sidebar())
 ){
-        <h1>@Messages("ssttp.arrangement.misalignment.title")</h1>
+    <header class="page-header text">
+        <h2>@Messages("ssttp.arrangement.misalignment.title")</h2>
+    </header>
         @highlight('_modifierClass -> "highlight-message--light"){<p>@Messages("ssttp.arrangement.misalignment.subtitle")</p>}
         @form(routes.DirectDebitController.submitBankAccountNotFound()) {
-            @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
+            @formErrorSummary(Messages("ssttp.arrangement.misalignment.form.error.summary.title"), ddForm, Seq.empty)
             @if(bankAccounts.nonEmpty) {
                 <div class="panel-indent">
                     <h2>@Messages("ssttp.arrangement.misalignment.existing.title")</h2>
@@ -34,13 +36,14 @@ Time To Pay Bank account not found - select existing direct debit or create new 
             } else {
                 <div>
             }
-                <h2>@Messages("ssttp.arrangement.misalignment.direct-debit.reenter")</h2>
-                @direct_debit_fields(ddForm, ddForm("directDebit.accountName"), ddForm("directDebit.sortCode"), ddForm("directDebit.accountNumber"))
+            <h2>@Messages("ssttp.arrangement.misalignment.direct-debit.reenter")</h2>
+            @direct_debit_fields(ddForm, ddForm("directDebit.accountName"), ddForm("directDebit.sortCode"), ddForm("directDebit.accountNumber"))
             </div>
-            <p> @direct_debit_confirmation() </p>
+            <p>@direct_debit_confirmation()</p>
             @submit() {
                 @Messages("ssttp.arrangement.misalignment.submit")
             }
         }
     <div><a class="back-link" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.arrangement.misalignment.back")</a></div>
 }
+

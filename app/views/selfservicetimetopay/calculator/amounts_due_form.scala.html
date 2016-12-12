@@ -42,7 +42,7 @@
             <div class="grid-layout grid-layout--no-gutter">
                 <div class="grid-layout__column grid-layout__column--2-3  grid-layout--stacked">
                 @dateinput("dueBy", dataForm, dataForm("dueBy.dueByYear"), dataForm("dueBy.dueByMonth"), dataForm("dueBy.dueByDay"),
-                    'hint -> Messages("ssttp.calculator.form.amounts_due.when_due.question.hint", LocalDate.now().plusYears(1).getYear.toString),
+                    'hint -> Messages("ssttp.calculator.form.amounts_due.when_due.question.hint"),
                     'dayLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.day"),
                     'monthLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.month"),
                     'yearLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.year"),
