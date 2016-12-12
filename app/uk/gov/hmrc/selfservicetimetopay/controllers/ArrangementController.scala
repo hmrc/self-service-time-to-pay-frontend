@@ -26,7 +26,7 @@ import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary, instalment_plan_summary_print}
+import views.html.selfservicetimetopay.arrangement.{application_complete, application_complete_print, instalment_plan_summary, instalment_plan_summary_print}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -146,6 +146,17 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         _.fold(redirectToStart)(submission => {
           sessionCache.remove()
           successful(Ok(application_complete.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
+            submission.arrangementDirectDebit.get, submission.schedule.get, request)))
+        })
+      }
+  }
+
+  def applicationCompletePrint(): Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      sessionCache.get.flatMap {
+        _.fold(redirectToStart)(submission => {
+          sessionCache.remove()
+          successful(Ok(application_complete_print.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
             submission.arrangementDirectDebit.get, submission.schedule.get, request)))
         })
       }
