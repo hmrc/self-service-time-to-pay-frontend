@@ -16,23 +16,23 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import java.time.LocalDate
+
 import org.mockito.Matchers
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
-import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector, SessionCacheConnector}
-import uk.gov.hmrc.selfservicetimetopay.controllers
-import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
+import uk.gov.hmrc.selfservicetimetopay.models.{Debit, EligibilityExistingTTP, EligibilityTypeOfTax}
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
@@ -41,48 +41,140 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
-  val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
   val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
 
-  val controller = new CalculatorController(mockEligibilityConnector, mockCalculatorConnector) {
+  val controller = new CalculatorController(mockCalculatorConnector) {
     override lazy val sessionCache = mockSessionCache
     override lazy val authConnector = mockAuthConnector
   }
 
   override def beforeEach() {
-    reset(mockEligibilityConnector, mockAuthConnector, mockSessionCache, mockCalculatorConnector)
+    reset(mockAuthConnector, mockSessionCache, mockCalculatorConnector)
   }
 
   "CalculatorControllerSpec" should {
     "Return OK for non-logged-in calculation submission" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
+      when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
       val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.OK
-      verify(mockSessionCache, times(1)).get(Matchers.any(), Matchers.any())
+      verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
+    "if no schedule is present, generate a schedule and populate it in the session" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLI.copy(schedule = None))))
+
+      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
+        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
+
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
+
+      val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.CalculatorController.getCalculateInstalments(None).url
+      verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
+    "Return BadRequest if the form value = total amount due" in {
+      implicit val hc = new HeaderCarrier
+
+      val submission = ttpSubmissionNLI.copy(
+        eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
+        eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)),
+        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now())))
+      )
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(submission)))
+
+      val result = await(controller.submitPaymentToday().apply(FakeRequest()
+        .withFormUrlEncodedBody("amount" -> "300.00")
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.BAD_REQUEST
+      verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
+    "Return BadRequest if the form value = total amount due (via rounding)" in {
+      implicit val hc = new HeaderCarrier
+
+      val submission = ttpSubmissionNLI.copy(
+        eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
+        eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)),
+        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now())))
+      )
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(submission)))
+
+      val result = await(controller.submitPaymentToday().apply(FakeRequest()
+        .withFormUrlEncodedBody("amount" -> "299.999")
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.BAD_REQUEST
+      verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
+    "Return 303 if the form value < total amount due (via rounding)" in {
+      implicit val hc = new HeaderCarrier
+
+      val submission = ttpSubmissionNLI.copy(
+        eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
+        eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)),
+        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now())))
+      )
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(submission)))
+
+      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
+        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
+
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
+
+      val result = await(controller.submitPaymentToday().apply(FakeRequest()
+        .withFormUrlEncodedBody("amount" -> "299.994")
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+      verify(mockSessionCache, times(1)).get(any(), any())
     }
 
     "Return 303 for non-logged-in when schedule is missing" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
+      when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLINoSchedule)))
+
+      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
+        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
+
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
 
       val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
-      status(result) shouldBe Status.NOT_FOUND
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.CalculatorController.getCalculateInstalments(None).url
     }
 
     "Return 303 for non-logged-in when TTPSubmission is missing for submitPaymentToday" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(Matchers.any(), Matchers.any()))
+      when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
       val result = await(controller.submitPaymentToday().apply(FakeRequest()
