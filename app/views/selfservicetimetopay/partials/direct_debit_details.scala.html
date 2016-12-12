@@ -1,54 +1,48 @@
 @*
    Partial view to display the direct debit details in a 2 column type layout
+
+    @param directDebit ArrangementDirectDebit Direct debit details to show
+    @param print Boolean set to true to make a print friendly version with all the details in a single column layout
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-@(directDebit:ArrangementDirectDebit)
-@import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
-
+@(directDebit:ArrangementDirectDebit, print:Boolean = false)
+@import uk.gov.hmrc.play.config.AssetsConfig
 <div class="section">
     <div class="grid-layout grid-layout--no-gutter">
         <div class="grid-layout__column grid-layout__column--3-4">
             <h3>@Messages("ssttp.direct-debit.title")</h3>
         </div>
         <div class="grid-layout__column grid-layout__column--1-4">
-            <h3><img src="@SsttpFrontendConfig.assetsPrefix/images/direct-debit-logo-2x.png"></h3>
+            <h3><img src="@{AssetsConfig.assetsPrefix}/images/direct-debit-logo-2x.png")></h3>
         </div>
     </div>
-    <div class="subsection grid-layout divider--bottom font-xsmall">
-        <div class="grid-layout__column grid-layout__column--1-4">
-            <strong>@Messages("ssttp.direct-debit.account-name")</strong>
-        </div>
-        <div class="grid-layout__column grid-layout__column--1-4">
-        @directDebit.accountName
-        </div>
-        <div class="grid-layout__column grid-layout__column--1-4">
-            <strong>@Messages("ssttp.direct-debit.account-number")</strong>
-        </div>
-        <div class="grid-layout__column grid-layout__column--1-4">
-        @directDebit.accountNumber
-        </div>
-    </div>
-    <div class="subsection grid-layout divider--bottom font-xsmall">
-        <div class="grid-layout__column grid-layout__column--1-4">
-            <div class="grid-layout push">
-                <div class="grid-layout__column grid-layout__column--1-4">
-                    <strong>@Messages("ssttp.direct-debit.payment-frequency")</strong>
-                </div>
-                <div class="grid-layout__column grid-layout__column--1-4">
-                @Messages("ssttp.direct-debit.monthly")
-                </div>
-            </div>
-        </div>
 
-        <div class="grid-layout__column grid-layout__column--1-4">
-            <div class="grid-layout push">
-                <div class="grid-layout__column grid-layout__column--1-4">
-                    <strong>@Messages("ssttp.direct-debit.sort-code")</strong>
+    @row(data:(String, String)) = {
+        <div class="grid-layout__column grid-layout__column--1-4 no-wrap"><strong>@{data._1}</strong></div>
+        <div class="grid-layout__column grid-layout__column--1-4">@{data._2}</div>
+    }
+    @defining((() => {
+        val dataPairs = new Array[(String, String)](4)
+        dataPairs(0) = (Messages("ssttp.direct-debit.account-name"), directDebit.accountName)
+        dataPairs(1) = (Messages("ssttp.direct-debit.account-number"), directDebit.accountNumber)
+        dataPairs(if(print){3}else{2}) = (Messages("ssttp.direct-debit.payment-frequency"), Messages("ssttp.direct-debit.monthly"))
+        dataPairs(if(print){2}else{3}) = (Messages("ssttp.direct-debit.sort-code"), directDebit.sortCode)
+        dataPairs
+    })()){ dataPairs:Array[(String, String)] =>
+        @if(print) {
+            @dataPairs.map{ d =>
+                <div class="grid-layout grid-layout--no-gutter subsection divider--bottom font-xsmall">
+                @row(d)
                 </div>
-                <div class="grid-layout__column grid-layout__column--1-4">
-                    @directDebit.sortCode
-                </div>
+            }
+        } else {
+            <div class="grid-layout grid-layout--no-gutter subsection divider--bottom font-xsmall">
+                @dataPairs.take(2).map(x=> row(x))
             </div>
-        </div>
-    </div>
+            <div class="grid-layout grid-layout--no-gutter subsection divider--bottom font-xsmall">
+                @dataPairs.slice(2, 4).map(x=> row(x))
+            </div>
+        }
+    }
 </div>
+
