@@ -18,7 +18,7 @@
   sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar())
 ){
   <div class="transaction-banner--complete">
-    <div class="transaction-banner__heading header-h1" role="banner">@Messages("ssttp.arrangement.complete.title")</div>
+    <div class="transaction-banner__heading" role="banner">@Messages("ssttp.arrangement.complete.title")</div>
     <p class="heading-large" id="ssttpOutcome">@Messages("ssttp.arrangement.complete.subtitle")</p>
   </div>
   <a target="_blank" href="@routes.ArrangementController.applicationCompletePrint()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
