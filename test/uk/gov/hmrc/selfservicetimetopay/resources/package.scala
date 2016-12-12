@@ -74,22 +74,6 @@ package object resources {
     Some(EligibilityExistingTTP(Some(false))),
     CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)))
 
-  val ttpSubmissionWithDD: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule),
-    Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))),
-    Some(DirectDebitBank("", Seq(
-      DirectDebitInstruction(
-        Some("123456"),
-        Some("123458"),
-        Some("XXXX"),
-        None,
-        Some(true),
-        None,
-        Some("XXXX"))
-    ))),//DirectDebitBank
-    Some(taxPayer),
-    Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
-    Some(EligibilityExistingTTP(Some(false))),
-    CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)))
 
   val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
   val ttpSubmissionNLI: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)),
@@ -191,8 +175,6 @@ package object resources {
     "sortCode" -> "100",
     "accountNumber" -> ""
   )
-
-  val validBankAccountNotFoundForm = Seq("existingDdi" -> "123456789123456")
 
   val bankDetails = BankDetails("123456", "12345678", None, None, None, None)
 
