@@ -74,7 +74,6 @@ package object resources {
     Some(EligibilityExistingTTP(Some(false))),
     CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)))
 
-
   val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
   val ttpSubmissionNLI: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)),
     schedule = Some(calculatorPaymentSchedule))
