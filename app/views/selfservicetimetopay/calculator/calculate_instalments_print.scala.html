@@ -49,7 +49,9 @@
                 <div class="grid-layout__column grid-layout__column--1-3 text--right no-wrap"><strong>@currency(schedule.instalments.head.amount) @Messages("ssttp.calculator.results.monthly-payments.per-month")</strong></div>
             </div>
             <div class="subsection grid-layout divider--bottom">
-                <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.total-interest")</div>
+                <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.total-interest")
+                    <div class="font-xsmall">@Messages("ssttp.calculator.results.monthly-payments.hint")</div>
+                </div>
                 <div class="grid-layout__column grid-layout__column--1-3 text--right no-wrap">@currency(schedule.totalInterestCharged)
                     <div class="font-xsmall">@Messages("ssttp.calculator.results.interest-added-to-final")</div>
                 </div>

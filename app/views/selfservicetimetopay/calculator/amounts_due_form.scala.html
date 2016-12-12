@@ -2,10 +2,13 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import java.time.LocalDate
 @(amountsDue:CalculatorAmountsDue, dataForm: Form[Debit])(implicit request: Request[_])
+
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, dateinput, button, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import java.time.format.DateTimeFormatter
+@import java.util.Locale
 @import selfservicetimetopay.partials.currency
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
     bodyClasses = None,
@@ -20,11 +23,12 @@
         <div class="grid-layout__column grid-layout__column--2-3"><span class="font-xsmall"><strong>@Messages("ssttp.calculator.form.amounts_due.due_date")</strong></span></div>
         <div class="grid-layout__column grid-layout__column--1-3 text--middle"><span class="font-xsmall"><strong>@Messages("ssttp.calculator.form.amounts_due.amount")</strong></span></div>
     </div>
-    @defining(DateTimeFormatter.ofPattern("d MMMM YYYY")) { formatter =>
+
         @amountsDue.amountsDue.zipWithIndex.map { case (amountDue, index) =>
             @form(routes.CalculatorController.submitRemoveAmountDue()) {
                 <div class="grid-layout grid-layout--no-gutter divider--bottom">
-                    <div class="grid-layout__column grid-layout__column--1-2"><p>@amountDue.dueDate.format(formatter)</p></div>
+                    <div class="grid-layout__column grid-layout__column--1-2">
+                        <p>@amountDue.dueDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH))</p></div>
                     <div class="grid-layout__column grid-layout__column--1-2 text--right">
                         <input type="hidden" name="index" value="@index" />
                         <p>@currency(amountDue.amount)
@@ -36,7 +40,7 @@
                 </div>
             }
         }
-    }
+
     @form(routes.CalculatorController.submitAddAmountDue(), 'class -> "group") {
         <div class="form-field--group divider--bottom">
             <div class="grid-layout grid-layout--no-gutter">
