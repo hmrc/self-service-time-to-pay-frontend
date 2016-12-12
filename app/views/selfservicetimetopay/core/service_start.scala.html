@@ -1,10 +1,10 @@
-@()(implicit request: Request[_])
+@(loggedIn: Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
-    bodyClasses = None
+    loggedIn = loggedIn
 ){
     <header class="page-header text">
         <h1 class="h1-heading">@Messages("ssttp.landing.title")</h1>

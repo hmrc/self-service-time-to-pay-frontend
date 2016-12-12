@@ -82,8 +82,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     implicit authContext => implicit request =>
       sessionCache.get.flatMap {
         _.fold(redirectToStart)(ttp => {
-          Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
-            createDayOfForm(ttp), request)))
+          Future.successful(Ok(instalment_plan_summary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
+            createDayOfForm(ttp), ttp.taxpayer.isDefined)))
         })
       }
   }
@@ -93,7 +93,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     implicit authContext => implicit request =>
       sessionCache.get.flatMap {
         _.fold(redirectToStart)(ttp => {
-          Future.successful(Ok(instalment_plan_summary_print.render(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")), request)))
+          Future.successful(Ok(instalment_plan_summary_print(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")))))
         })
       }
   }
@@ -104,14 +104,12 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     })
   }
 
-  private val showInstalmentSummary = instalment_plan_summary.render _
-
   def changeSchedulePaymentDay(): Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
       ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
         formWithErrors => {
           sessionCache.get.map {
-            submission => BadRequest(showInstalmentSummary(submission.get.schedule.get, formWithErrors, request))
+            submission => BadRequest(instalment_plan_summary(submission.get.schedule.get, formWithErrors, authContext.userDetailsUri.isDefined))
           }
         },
         validFormData => {
@@ -154,8 +152,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       sessionCache.get.flatMap {
         _.fold(redirectToStart)(submission => {
           sessionCache.remove()
-          successful(Ok(application_complete.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
-            submission.arrangementDirectDebit.get, submission.schedule.get, request)))
+          successful(Ok(application_complete(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
+            submission.arrangementDirectDebit.get, submission.schedule.get, submission.taxpayer.isDefined)))
         })
       }
   }
@@ -165,8 +163,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       sessionCache.get.flatMap {
         _.fold(redirectToStart)(submission => {
           sessionCache.remove()
-          successful(Ok(application_complete_print.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
-            submission.arrangementDirectDebit.get, submission.schedule.get, request)))
+          successful(Ok(application_complete_print(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
+            submission.arrangementDirectDebit.get, submission.schedule.get)))
         })
       }
   }

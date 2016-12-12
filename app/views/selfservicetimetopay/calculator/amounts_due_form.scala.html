@@ -1,15 +1,15 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountsDue
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import java.time.LocalDate
-@(amountsDue:CalculatorAmountsDue, dataForm: Form[Debit])(implicit request: Request[_])
+@(amountsDue:CalculatorAmountsDue, dataForm: Form[Debit], loggedIn: Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, dateinput, button, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import java.time.format.DateTimeFormatter
 @import selfservicetimetopay.partials.currency
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
-    bodyClasses = None,
-    sidebarLinks = Some(selfservicetimetopay.partials.sign_in_sidebar())
+    sidebarLinks = Some(selfservicetimetopay.partials.sign_in_sidebar()),
+    loggedIn = loggedIn
 ){
     <header class="page-header text">
         <h2>@Messages("ssttp.calculator.form.amounts_due.title")</h2>

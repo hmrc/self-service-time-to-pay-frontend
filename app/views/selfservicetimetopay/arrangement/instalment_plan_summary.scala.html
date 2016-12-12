@@ -7,15 +7,14 @@ Time To Pay Instalment Summary Display Page
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
-@(schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth])(implicit request: Request[_])
+@(schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth], loggedIn: Boolean = false)(implicit request: Request[_])
     @import selfservicetimetopay.partials.{payment_schedule, currency, day_ordinal}
     @import selfservicetimetopay.helpers.{highlight, alert, message_list}
     @import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
     @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
     @selfservicetimetopay.main(
         title = Messages("ssttp.common.title"),
-        bodyClasses = None,
-        sidebarLinks = None
+        loggedIn = loggedIn
     ) {
         <a target="_blank" href="@routes.ArrangementController.getInstalmentSummaryPrint()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
         <header class="page-header text">

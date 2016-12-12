@@ -17,29 +17,49 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.selfservicetimetopay.config.{SsttpFrontendConfig, TimeToPayController}
+import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
 import views.html.selfservicetimetopay.core._
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-class SelfServiceTimeToPayController extends FrontendController {
+import scala.concurrent.Future
 
-  def start: Action[AnyContent] = Action { implicit request =>
-    Ok(service_start.render(request))
+class SelfServiceTimeToPayController extends TimeToPayController {
+
+  def start: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(ttpData:TTPSubmission) => Ok(service_start(ttpData.taxpayer.isDefined))
+      case _ => Ok(service_start(false))
+    }
   }
 
   def submit: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.start())
   }
 
-  def getTtpCallUs: Action[AnyContent] =  Action { implicit request =>
-    Ok(call_us.render(request))
+  def getTtpCallUs: Action[AnyContent] =  Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(ttpData:TTPSubmission) => Ok(call_us(ttpData.taxpayer.isDefined))
+      case _ => Ok(call_us(true))
+    }
   }
 
-  def getYouNeedToFile: Action[AnyContent] = Action { implicit request =>
-    Ok(you_need_to_file.render(request))
+  def getYouNeedToFile: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(ttpData:TTPSubmission) => Ok(you_need_to_file(ttpData.taxpayer.isDefined))
+      case _ => Ok(you_need_to_file(false))
+    }
   }
 
-  def getUnavailable: Action[AnyContent] = Action { implicit request =>
-    Ok(unavailable.render(request))
+  def getUnavailable: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(ttpData:TTPSubmission) => Ok(unavailable(ttpData.taxpayer.isDefined))
+      case _ => Ok(unavailable(false))
+    }
   }
 
+  def signout(continueUrl: Option[String]) = Action.async { implicit request => {
+      Future.successful(Redirect(SsttpFrontendConfig.logoutUrl).withNewSession)
+    }
+  }
 }

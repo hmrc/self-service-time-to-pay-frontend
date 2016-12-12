@@ -1,10 +1,10 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.EligibilityExistingTTP
-@(dataForm: Form[EligibilityExistingTTP])(implicit request: Request[_])
+@(dataForm: Form[EligibilityExistingTTP], loggedIn: Boolean = false)(implicit request: Request[_])
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.helpers.forms._
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
-    bodyClasses = None
+    loggedIn = loggedIn
 ) {
     <header class="page-header text">
         <h2>@Messages("ssttp.eligibility.form.existing_ttp.title")</h2>

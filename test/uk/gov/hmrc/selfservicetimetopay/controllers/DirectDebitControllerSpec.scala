@@ -57,6 +57,8 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "successfully display the direct debit form page" in {
+      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+
       val response = await(controller.getDirectDebit(FakeRequest()
         .withSession(SessionKeys.userId -> "someUserId")
         .withCookies(sessionProvider.createTtpCookie())))

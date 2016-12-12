@@ -5,7 +5,7 @@ Time To Pay Direct Debit Form Page
 
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-@(ddForm:Form[ArrangementDirectDebit])(implicit request: Request[_])
+@(ddForm:Form[ArrangementDirectDebit], loggedIn: Boolean = false)(implicit request: Request[_])
 
 @import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields}
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
@@ -14,7 +14,7 @@ Time To Pay Direct Debit Form Page
 
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
-  bodyClasses = None,
+  loggedIn = loggedIn,
   sidebarLinks = Some(having_problems_sidebar())
 ){
     <header class="page-header text">
