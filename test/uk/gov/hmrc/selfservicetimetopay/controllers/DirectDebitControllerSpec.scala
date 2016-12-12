@@ -61,7 +61,6 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
       override def AuthorisedSaUser(body: AsyncPlayUserRequest) = Action.async {
         body(authContext)
       }
-
     }
 
     "successfully display the direct debit form page" in {

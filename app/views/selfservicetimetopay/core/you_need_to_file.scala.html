@@ -3,11 +3,10 @@
 @import selfservicetimetopay.helpers.{highlight, message_list}
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
-    bodyClasses = None,
-    sidebarLinks = Some(sidebar())
+    bodyClasses = None
 ){
-    <header class="page-header text" xmlns="http://www.w3.org/1999/html">
-        <h1 class="h1-heading">@Messages("ssttp.you-need-to-file.title")</h1>
+    <header class="page-header text">
+        <h2 class="h1-heading">@Messages("ssttp.you-need-to-file.title")</h2>
     </header>
     <section class="section  divider--bottom">
         @highlight('_modifierClass -> "highlight-message--light") {
@@ -15,8 +14,9 @@
         }
         <p class="subsection">@Messages("ssttp.you-need-to-file.because")</p>
         @message_list(Some("bullets"), "ssttp.you-need-to-file.because.list.")
-        <p class="subsection">@Messages("ssttp.you-need-to-file.check-account")</p>
-        <p class="subsection"><a href="https://online.hmrc.gov.uk/">@Messages("ssttp.you-need-to-file.check-account.link")</a></p>
+        <p class="subsection"><a href="https://online.hmrc.gov.uk/">@Messages("ssttp.you-need-to-file.check-account.link")</a>
+         to check your balance or file your Self Assessment tax return.
+        </p>
     </section>
     <section class="section">
         <p>@Messages("ssttp.you-need-to-file.other-tax")</p>

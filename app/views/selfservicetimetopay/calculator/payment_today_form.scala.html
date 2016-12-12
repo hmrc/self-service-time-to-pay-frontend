@@ -8,7 +8,7 @@
     bodyClasses = None
 ){
   <header class="page-header text">
-    <h1 class="h1-heading">@Messages("ssttp.calculator.form.payment_today.title")</h1>
+    <h2 class="h1-heading">@Messages("ssttp.calculator.form.payment_today.title")</h2>
   </header>
   @form(routes.CalculatorController.submitPaymentToday(), 'class -> "group") {
     @formErrorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm, Seq.empty)

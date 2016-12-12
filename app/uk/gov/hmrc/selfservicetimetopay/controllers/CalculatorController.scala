@@ -22,7 +22,6 @@ import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector}
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -60,11 +59,11 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
           case Some(ttpSubmission@TTPSubmission(_, _, _, _, Some(_), Some(_), cd)) =>
             ttpSubmission.copy(calculatorData = cd.copy(debits = IndexedSeq(validFormData)))
           case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq(validFormData)))
-        }.map { ttpData =>
+        }.flatMap { ttpData =>
           Logger.info(ttpData.toString)
-          sessionCache.put(ttpData)
-        }.map { _ =>
-          Redirect(routes.CalculatorController.getAmountsDue())
+          sessionCache.put(ttpData).map {
+            _ => Redirect(routes.CalculatorController.getAmountsDue())
+          }
         }
       }
     )
@@ -76,8 +75,11 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
       case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _))) =>
         ttpSubmission.copy(calculatorData = cd.copy(debits = debits.patch(index.value.get, Nil, 1)))
       case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty))
-    }.map { ttpData => sessionCache.put(ttpData) }
-      .map { _ => Redirect(routes.CalculatorController.getAmountsDue()) }
+    }.flatMap { ttpData =>
+      sessionCache.put(ttpData).map {
+        _ => Redirect(routes.CalculatorController.getAmountsDue())
+      }
+    }
   }
 
   def submitAmountsDue: Action[AnyContent] = Action.async { implicit request =>
@@ -100,13 +102,26 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
     }
   }
 
-  def getMisalignmentPage: Action[AnyContent] = Action { implicit request =>
-    Ok(misalignment.render(fakeAmountsDue, fakeDebits, request))
+  def getCalculateInstalmentsPrint: Action[AnyContent] = Action.async { implicit request =>
+      sessionCache.get.map {
+        case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+          Ok(calculate_instalments_print(schedule, ttpData.taxpayer.isDefined))
+        case _ => NotFound("Failed to get schedule")
+      }
+  }
+
+  def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _))) =>
+        Ok(misalignment.render(CalculatorAmountsDue(debits), sa.debits, request))
+    }
   }
 
   def submitRecalculate: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      _ => Ok(misalignment.render(fakeAmountsDue, fakeDebits, request))
+    sessionCache.get.flatMap {
+      case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, cd @ CalculatorInput(debits, _, _, _, _, _))) =>
+        updateSchedule(ttpData).apply(request)
+      case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
     }
   }
 
@@ -115,7 +130,8 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
       case Some(ttpSubmission@TTPSubmission(Some(schedule), _, _, _, Some(_), Some(_), cd@CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         CalculatorForm.durationForm.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, CalculatorForm.durationForm, form, 2 to 11))),
+          //TODO change 2 to 11 to a dynamically calculated permitted range
+          formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, formWithErrors, form, 2 to 11))),
           validFormData => {
             val newEndDate = cd.startDate.plusMonths(validFormData.months).minusDays(1)
             updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(endDate = newEndDate))).apply(request)
@@ -127,40 +143,36 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
 
   def submitCalculateInstalmentsPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
-      case Some(ttpData@TTPSubmission(_, _, _, None, _, _, cd)) =>
-        val calculatorPaymentTodayForm = CalculatorForm.createPaymentTodayForm(cd.debits.map(_.amount).sum).bindFromRequest()
-
-        if (calculatorPaymentTodayForm.hasErrors) {
-          //Errors may be passed to flash scope ?
-          Future.successful(Redirect(routes.CalculatorController.getCalculateInstalments(None)))
-        } else {
-          val ttpSubmission = ttpData.copy(calculatorData = cd.copy(initialPayment = calculatorPaymentTodayForm.value.getOrElse(BigDecimal(0))))
-          updateSchedule(ttpSubmission).apply(request)
-        }
+      case Some(ttpData@TTPSubmission(Some(schedule), _, _, None, _, _, cd)) =>
+        val durationForm = CalculatorForm.durationForm.fill(CalculatorDuration(3))
+        CalculatorForm.createPaymentTodayForm(cd.debits.map(_.amount).sum).bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, durationForm, formWithErrors, 2 to 11))),
+          validFormData => {
+              val ttpSubmission = ttpData.copy(calculatorData = cd.copy(initialPayment = validFormData))
+              updateSchedule(ttpSubmission).apply(request)
+          }
+        )
       case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _))) if debits.isEmpty =>
         Future.successful(NotFound("failed to get calculatorData"))
     }
   }
 
-  def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async { implicit request =>
-    val cd = ttpData.calculatorData
-
+  private def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async { implicit request =>
     ttpData match {
-      case TTPSubmission(_, _, _, None, _, _, CalculatorInput(_, _, _, _, _, _)) =>
-        calculatorConnector.calculatePaymentSchedule(cd).flatMap {
+      case TTPSubmission(_, _, _, None, _, _, calculatorInput) =>
+        calculatorConnector.calculatePaymentSchedule(calculatorInput).flatMap {
           case Seq(schedule) =>
             sessionCache.put(ttpData.copy(schedule = Some(schedule))).map[Result] { result =>
               Redirect(routes.CalculatorController.getCalculateInstalments(None))
             }
           case _ => throw new RuntimeException("Failed to get schedule")
         }
-      case TTPSubmission(_, _, _, Some(_), _, _, CalculatorInput(_, _, _, _, _, _)) =>
-        //TODO - LI journey
-        eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), Taxpayer(selfAssessment = Some(SelfAssessment(debits = cd.debits))))).flatMap {
+      case TTPSubmission(_, _, _, Some(taxpayer @ Taxpayer(_, _, Some(sa))), _, _, calculatorInput) =>
+        eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).flatMap {
           case EligibilityStatus(true, _) =>
-            calculatorConnector.calculatePaymentSchedule(cd).flatMap {
+            calculatorConnector.calculatePaymentSchedule(calculatorInput.copy(debits = sa.debits)).flatMap {
               case Seq(schedule) =>
-                sessionCache.put(ttpData.copy(schedule = Some(schedule))).map[Result] { result =>
+                sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = calculatorInput.copy(debits = sa.debits))).map[Result] { result =>
                   Redirect(routes.CalculatorController.getCalculateInstalments(None))
                 }
               case _ => throw new RuntimeException("Failed to get schedule")

@@ -8,34 +8,44 @@ Time To Pay Instalment Summary Display Page
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 @(schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth])(implicit request: Request[_])
-    @import selfservicetimetopay.partials.payment_schedule
+    @import selfservicetimetopay.partials.{payment_schedule, currency, day_ordinal}
     @import selfservicetimetopay.helpers.{highlight, alert, message_list}
     @import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
     @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-
     @selfservicetimetopay.main(
         title = Messages("ssttp.common.title"),
         bodyClasses = None,
-        sidebarLinks = Some(selfservicetimetopay.partials.sidebar())
+        sidebarLinks = None
     ) {
-        <a href="javascript:window.print()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
-        <h1 style="heading-h1">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
+        <a target="_blank" href="@routes.ArrangementController.getInstalmentSummaryPrint()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
+        <header class="page-header text">
+            <h2>@Messages("ssttp.arrangement.instalment-summary.title")</h2>
+        </header>
         <section class="section">
             <div class="subsection grid-layout">
                 <div class="grid-layout__column grid-layout__column--1-2">
                 @Messages("ssttp.arrangement.instalment-summary.initial-payment-of")
                 </div>
                 <div class="grid-layout__column grid-layout__column--1-2">
-                    <strong>@Messages("ssttp.common.currency.symbol")@schedule.initialPayment</strong>
+                    <strong> @currency(schedule.initialPayment)</strong>
                     <div class="form-hint form-hint--small">@Messages("ssttp.arrangement.instalment-summary.initial-payment.hint", 5)</div>
                 </div>
             </div>
-            <div class="subsection grid-layout divider--bottom">
+            <div class="subsection grid-layout">
                 <div class="grid-layout__column grid-layout__column--1-2">
                     <strong>@schedule.instalments.length</strong> @Messages("ssttp.arrangement.instalment-summary.monthly-instalments")
                 </div>
                 <div class="grid-layout__column grid-layout__column--1-2">
-                    <strong>@Messages("ssttp.common.currency.symbol")@schedule.instalments.head.amount</strong>
+                    <strong>@currency(schedule.instalments.head.amount)</strong>
+                </div>
+            </div>
+            <div class="subsection grid-layout divider--bottom">
+                <div class="grid-layout__column grid-layout__column--1-2">
+                    @Messages("ssttp.arrangement.instalment-summary.total-interest")
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-2">
+                    <strong>@currency(schedule.totalInterestCharged)</strong>
+                    <div class="form-hint form-hint--small">@Messages("ssttp.calculator.results.interest-added-to-final")</div>
                 </div>
             </div>
             <div class="subsection grid-layout">
@@ -43,22 +53,24 @@ Time To Pay Instalment Summary Display Page
                 @Messages("ssttp.arrangement.instalment-summary.total-repayment")
                 </div>
                 <div class="grid-layout__column grid-layout__column--1-2">
-                    <strong>@Messages("ssttp.common.currency.symbol")@schedule.totalPayable</strong>
+                    <strong>@currency(schedule.totalPayable)</strong>
                 </div>
             </div>
-            <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on") <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", schedule.instalments.head.paymentDate.getDayOfMonth)</strong> @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")
-                <details @if(dayForm.hasErrors) { open}>
+            <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on")
+                <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", day_ordinal(schedule.instalments.head.paymentDate.getDayOfMonth))</strong>
+                @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")</p>
+            <details @if(dayForm.hasErrors) { open}>
                 <summary class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
-        <div class="panel--indent">
-            @form(routes.ArrangementController.changeSchedulePaymentDay()) {
-                @inlinetextinput(dayForm("dayOfMonth"), 'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
-                    '_labelClass -> "label--inline", '_inputClass -> "input--xsmall",
-                    'labelSuffix -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.of-the-month"))
-                @submit('_buttonClass -> "button--secondary") {
-                    @Messages("ssttp.arrangement.instalment-summary.payment-day.submit")
-                }
-            }
-        </div>
+                <div class="panel--indent">
+                    @form(routes.ArrangementController.changeSchedulePaymentDay()) {
+                        @inlinetextinput(dayForm("dayOfMonth"), 'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
+                            '_labelClass -> "label--inline", '_inputClass -> "input--xsmall",
+                            'labelSuffix -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.of-the-month"))
+                        @submit('_buttonClass -> "button--secondary") {
+                            @Messages("ssttp.arrangement.instalment-summary.payment-day.submit")
+                        }
+                    }
+                </div>
             </details>
         </section>
         <section>
@@ -71,6 +83,7 @@ Time To Pay Instalment Summary Display Page
                 @Messages("ssttp.arrangement.instalment-summary.terms.cancelled-if")
                 @message_list(Some("bullets"), "ssttp.arrangement.instalment-summary.terms.cancelled-if.")
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.made-payable-immidiately")</div>
+                <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-payments")</div>
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
             }
             @form(routes.DirectDebitController.getDirectDebit()) {

@@ -93,37 +93,3 @@ package object modelsFormat {
   //Submission formatter
   implicit val submissionFormatter: Format[TTPSubmission] = Json.format[TTPSubmission]
 }
-
-package object controllerVariables {
-  def generatePaymentSchedules(amountDue: BigDecimal, payment: Option[BigDecimal]): Seq[CalculatorPaymentSchedule] = {
-    var schedules = Seq[CalculatorPaymentSchedule]()
-    for (i <- 2 to 11) {
-      val interest = BigDecimal("10") * BigDecimal(i)
-      var payments = Seq[CalculatorPaymentScheduleInstalment]()
-      for (p <- 1 to i) {
-        payments = payments :+ CalculatorPaymentScheduleInstalment(LocalDate.now.plusMonths(p),
-          ((amountDue - payment.getOrElse(BigDecimal("0")) + interest) / BigDecimal(i)).setScale(2, RoundingMode.HALF_UP))
-      }
-      schedules = schedules :+ CalculatorPaymentSchedule(Some(LocalDate.now), Some(LocalDate.now.plusMonths(i)),
-        payment.getOrElse(BigDecimal("0")),
-        amountDue, amountDue - payment.getOrElse(BigDecimal("0")),
-        interest, amountDue + interest, payments)
-    }
-    schedules
-  }
-
-  implicit val fakeAmountsDue = CalculatorAmountsDue(Seq(
-    Debit(None, BigDecimal("4000.00"), LocalDate.of(2015, 1, 30), None, None),
-    Debit(None, BigDecimal("2000.00"), LocalDate.of(2015, 1, 30), None, None)
-  ))
-
-  implicit val fakeDebits = Seq(
-    Debit(Some("ASST"), BigDecimal(4000.00), LocalDate.of(2015, 1, 30), None, None),
-    Debit(Some("IN1"), BigDecimal(2000.00), LocalDate.of(2015, 1, 30), None, None),
-    Debit(Some("IN2"), BigDecimal(2000.00), LocalDate.of(2015, 6, 30), None, None),
-    Debit(None, BigDecimal("20.00"), LocalDate.of(2015, 2, 14), None, None)
-  )
-
-  implicit val arrangementDirectDebit = ArrangementDirectDebit("My Account", "010233", "123456789")
-
-}

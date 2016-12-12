@@ -23,11 +23,10 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors._
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
+import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary, instalment_plan_summary_print}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -50,12 +49,23 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         _.fold(throw new RuntimeException("No taxpayer found"))(t => {
           updateOrCreateInCache(found => found.copy(taxpayer = Some(t)),
             () => TTPSubmission(taxpayer = Some(t)))
-            .map {
-              _ => Redirect(routes.ArrangementController.getInstalmentSummary())
+            .map(cm => cm.getEntry("ttpSubmission")(submissionFormatter).get).map {
+              case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
+                if (areEqual(tpSA.debits, meDebits)) {
+                  Redirect(routes.ArrangementController.getInstalmentSummary())
+                } else {
+                  Redirect(routes.CalculatorController.getMisalignmentPage())
+                }
+              case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, _) =>
+                Redirect(routes.ArrangementController.getInstalmentSummary())
+              case _ =>
+                Redirect(routes.SelfServiceTimeToPayController.start())
             }
         })
       }
   }
+
+  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 
   def getInstalmentSummary: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
@@ -63,6 +73,16 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         _.fold(redirectToStart)(ttp => {
           Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
             createDayOfForm(ttp), request)))
+        })
+      }
+  }
+
+
+  def getInstalmentSummaryPrint: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      sessionCache.get.flatMap {
+        _.fold(redirectToStart)(ttp => {
+          Future.successful(Ok(instalment_plan_summary_print.render(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")), request)))
         })
       }
   }
@@ -109,14 +129,6 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       firstPaymentDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
       input = ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate))
     } yield input
-  }
-
-  def submitInstalmentSchedule = AuthorisedSaUser {
-    implicit authContext => implicit request =>
-      Future(ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
-        formWithErrors => BadRequest(showInstalmentSummary(generatePaymentSchedules(BigDecimal.exact("5000"), None).head, formWithErrors, request)),
-        _ => Redirect(routes.DirectDebitController.getDirectDebit()))
-      )
   }
 
   def submit(): Action[AnyContent] = AuthorisedSaUser {

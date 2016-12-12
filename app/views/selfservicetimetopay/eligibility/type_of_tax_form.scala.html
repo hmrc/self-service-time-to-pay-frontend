@@ -7,12 +7,13 @@
     bodyClasses = None
 ){
   <header class="page-header text">
-    <h1>@Messages("ssttp.eligibility.form.type_of_tax.title")</h1>
+    <h2>@Messages("ssttp.eligibility.form.type_of_tax.title")</h2>
   </header>
   @form(routes.EligibilityController.submitTypeOfTax(), 'class -> "group") {
     @formErrorSummary(Messages("ssttp.eligibility.form.type_of_tax.error.summary.title"), dataForm, Seq.empty)
     @fieldset(dataForm, "type_of_tax", '_modifierClass -> "form-field-group") {
       <legend class="flush--ends">@Messages("ssttp.eligibility.form.type_of_tax.question.prompt")</legend>
+        <p/>
       <p class="flush--ends form-field--hint">@Messages("ssttp.eligibility.form.type_of_tax.question.hint")</p>
       @formErrors(dataForm, '_field ->"type_of_tax")
       @checkbox(field = dataForm("type_of_tax.hasSelfAssessmentDebt"),

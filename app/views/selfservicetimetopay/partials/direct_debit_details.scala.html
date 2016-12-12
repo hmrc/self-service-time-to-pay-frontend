@@ -4,6 +4,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @(directDebit:ArrangementDirectDebit)
 @import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
+
 <div class="section">
     <div class="grid-layout grid-layout--no-gutter">
         <div class="grid-layout__column grid-layout__column--3-4">
@@ -28,22 +29,26 @@
         </div>
     </div>
     <div class="subsection grid-layout divider--bottom font-xsmall">
-        <div class="grid-layout__column grid-layout__column--1-2">
+        <div class="grid-layout__column grid-layout__column--1-4">
             <div class="grid-layout push">
-                <div class="grid-layout__column grid-layout__column--2-3">
+                <div class="grid-layout__column grid-layout__column--1-4">
                     <strong>@Messages("ssttp.direct-debit.payment-frequency")</strong>
                 </div>
-                <div class="grid-layout__column grid-layout__column--1-3">
+                <div class="grid-layout__column grid-layout__column--1-4">
                 @Messages("ssttp.direct-debit.monthly")
                 </div>
             </div>
         </div>
 
-        <div>
-            <strong>Meh</strong>
-        </div>
-        <div>
-        @directDebit.sortCode
+        <div class="grid-layout__column grid-layout__column--1-4">
+            <div class="grid-layout push">
+                <div class="grid-layout__column grid-layout__column--1-4">
+                    <strong>@Messages("ssttp.direct-debit.sort-code")</strong>
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-4">
+                    @directDebit.sortCode
+                </div>
+            </div>
         </div>
     </div>
 </div>

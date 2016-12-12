@@ -61,7 +61,7 @@ object CalculatorForm {
   val amountDueForm = Form(mapping(
     "amount" -> optional(bigDecimal)
       .verifying("ssttp.calculator.form.amounts_due.amount.required", _.nonEmpty)
-      .verifying("ssttp.calculator.form.amounts_due.amount.positive", x => x.isEmpty || (x.get.compare(BigDecimal("0")) >= 0)),
+      .verifying("ssttp.calculator.form.amounts_due.amount.positive", x => x.isEmpty || (x.get.compare(BigDecimal("0")) > 0)),
     "dueBy" -> dueByDateTuple.verifying(validDate)
   )
   ((amount:Option[BigDecimal], date:(Option[Int], Option[Int], Option[Int])) =>

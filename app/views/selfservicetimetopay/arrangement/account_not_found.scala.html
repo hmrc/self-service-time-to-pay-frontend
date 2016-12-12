@@ -13,7 +13,7 @@ Time To Pay Bank account not found - select existing direct debit or create new 
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selectOptions = @{
     Seq(("", "")) ++
-            bankAccounts.map{ b => (b.ddiReferenceNo.get, b.accountNumber.get + " | " + b.sortCode.get) }
+            bankAccounts.map{ b => (b.referenceNumber.get, b.accountNumber.get + " | " + b.sortCode.get) }
 }
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
@@ -23,7 +23,7 @@ Time To Pay Bank account not found - select existing direct debit or create new 
         <h1>@Messages("ssttp.arrangement.misalignment.title")</h1>
         @highlight('_modifierClass -> "highlight-message--light"){<p>@Messages("ssttp.arrangement.misalignment.subtitle")</p>}
         @form(routes.DirectDebitController.submitBankAccountNotFound()) {
-            @formErrorSummary(Messages("ssttp.arrangement.misalignment.form.error.summary.title"), ddForm, Seq.empty)
+            @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
             @if(bankAccounts.nonEmpty) {
                 <div class="panel-indent">
                     <h2>@Messages("ssttp.arrangement.misalignment.existing.title")</h2>

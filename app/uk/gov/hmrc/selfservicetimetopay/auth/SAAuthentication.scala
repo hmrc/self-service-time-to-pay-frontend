@@ -30,6 +30,7 @@ object SaGovernmentGateway extends GovernmentGateway {
 }
 
 object SaRegime extends TaxRegime {
+
   override def isAuthorised(accounts: Accounts): Boolean = accounts.sa.isDefined
 
   override def authenticationType: AuthenticationProvider = SaGovernmentGateway

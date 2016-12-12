@@ -26,8 +26,9 @@ POST        /calculator/payment-today                         @uk.gov.hmrc.selfs
 GET         /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalments(months:Option[Int])
 POST        /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
 POST        /calculator/instalments/payment-today             @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsPaymentToday()
+GET         /calculator/instalments/print                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalmentsPrint()
 
-GET   /arrangement/determine-misalignment      @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.determineMisalignment()
+GET         /arrangement/determine-misalignment               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.determineMisalignment()
 
 #Misalignment Page
 GET         /calculator/amounts-dont-match                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getMisalignmentPage()
@@ -35,8 +36,8 @@ POST        /calculator/recalculate                           @uk.gov.hmrc.selfs
 
 # Arrangement
 GET         /arrangement/instalment-summary                   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummary()
+GET         /arrangement/instalment-summary/print             @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummaryPrint()
 POST        /arrangement/instalment-summary/change-day        @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.changeSchedulePaymentDay()
-POST        /arrangement/instalment-summary                   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submitInstalmentSchedule()
 GET         /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
 POST        /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
 GET         /arrangement/direct-debit-confirmation            @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()
@@ -47,7 +48,7 @@ GET         /arrangement/account-not-found                    @uk.gov.hmrc.selfs
 POST        /arrangement/account-not-found                    @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitBankAccountNotFound()
 # Alternative pages
 GET         /you-need-to-file                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
-GET         /call-us                                      @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
+GET         /call-us                                          @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
 GET         /unavailable                                      @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getUnavailable()
 
 # Map static resources from the /public folder to the /assets URL path

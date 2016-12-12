@@ -34,6 +34,7 @@ object DirectDebitForm {
       .verifying("ssttp.direct-debit.form.error.sortCode.not-number", x => (x.trim=="") || (x.replaceAll("[^0-9]", "")!="") || parseIntOption(x).nonEmpty)
       .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.replaceAll("[^0-9]", "")=="") || (x.trim.length==6)),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim!="")
+      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.replaceAll("[^0-9]", "")=="") || (x.trim.length==8))
   )(ArrangementDirectDebit.apply)(ArrangementDirectDebit.unapply)
 
   val directDebitForm = Form(directDebitMapping)

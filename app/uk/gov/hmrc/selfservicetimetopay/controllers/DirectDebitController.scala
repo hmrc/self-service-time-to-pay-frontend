@@ -16,17 +16,11 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import java.time.LocalDate
-
-import play.api.data.Form
-import play.api.data.Forms._
-
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
-import uk.gov.hmrc.selfservicetimetopay.controllerVariables._
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -44,16 +38,9 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   def getDirectDebitAssistance: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(submission@TTPSubmission(Some(schedule), _, _, _, _, _, _)) =>
-        Ok(direct_debit_assistance.render(List(
-          Debit(Some("ASST"), 99, LocalDate.now()),
-          Debit(Some("DPI"), 2323, LocalDate.now())), request))
-      //        Ok(direct_debit_assistance.render(submission.taxPayer.get.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()), request))
-      //      case _ => throw new RuntimeException("No data found")
-      case _ =>
-        Ok(direct_debit_assistance.render(List(
-          Debit(Some("ASST"), 99, LocalDate.now()),
-          Debit(Some("DPI"), 2323, LocalDate.now())), request))
+      case Some(submission @ TTPSubmission(Some(schedule), _, _, Some(taxpayer @ Taxpayer(_, _, Some(sa))), _, _, _)) =>
+        Ok(direct_debit_assistance.render(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, request))
+      case _ => throw new RuntimeException("No data found")
     }
   }
 
@@ -90,7 +77,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
         val selectedBankDetails = bankDetails.head
         BankDetails(sortCode = selectedBankDetails.sortCode.get,
           accountNumber = selectedBankDetails.accountNumber.get,
-          ddiRefNumber = selectedBankDetails.ddiReferenceNo)
+          ddiRefNumber = selectedBankDetails.referenceNumber)
       case Nil =>
         BankDetails(sortCode = formData.arrangementDirectDebit.get.sortCode,
           accountNumber = formData.arrangementDirectDebit.get.accountNumber,
@@ -107,7 +94,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
             validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit) match {
               case (Some(_), Some(_)) => Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction)))
               case (Some(ddi), None) => {
-                val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction.filter(_.ddiReferenceNo.get == ddi), validFormData)
+                val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction.filter(_.referenceNumber.get == ddi), validFormData)
                 sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
                   _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
                 }
@@ -129,9 +116,8 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       }
   }
 
-  def submitDirectDebitConfirmation: Action[AnyContent] = Action {
-    implicit request =>
-      Redirect(routes.ArrangementController.submit())
+  def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
+    Redirect(routes.ArrangementController.submit())
   }
 
   def submitDirectDebit: Action[AnyContent] = AuthorisedSaUser {
@@ -161,7 +147,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
               val bankDetailsToSave = instructions match {
                 case instruction :: Nil =>
                   BankDetails(singleBankDetails.sortCode, singleBankDetails.accountNumber, None, None, None,
-                    Some(instructions.head.ddiReferenceNo.get))
+                    Some(instructions.head.referenceNumber.get))
                 case Nil => singleBankDetails
               }
 
@@ -173,7 +159,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
         })
       }
     case Right(existingDDBanks) =>
-      updateOrCreateInCache(found => found.copy(existingDDBanks = Some(DirectDebitBank("", existingDDBanks.directDebitInstruction))),
+      updateOrCreateInCache(found => found.copy(existingDDBanks = Some(existingDDBanks)),
         () => TTPSubmission(None, None, Some(existingDDBanks), None))
         .map(_ => Redirect(toBankSelectionPage))
   }

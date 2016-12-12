@@ -33,9 +33,10 @@ Number input field using Component Library Styles as  documented:
     c = if(field.hasErrors) c + " error-field" else c
     c.trim
 }
+
 @inputContent = {
-@if(argsMap.get('hint).isDefined) {<div class="form-hint form-hint--small">@argsMap.get('hint)</div>}
-@if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false){@fieldErrors(field)}
+    @if(argsMap.get('hint).isDefined) {<div class="form-hint form-hint--small">@argsMap.get('hint)</div>}
+    @if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false){@fieldErrors(field)}
     <input type="number"@if(inputClass.nonEmpty){ class="@inputClass" } name="@elements.field.name" id="@elements.field.name" value="@value"
         @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
         @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }

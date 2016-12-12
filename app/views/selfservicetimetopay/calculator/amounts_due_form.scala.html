@@ -1,5 +1,6 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountsDue
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import java.time.LocalDate
 @(amountsDue:CalculatorAmountsDue, dataForm: Form[Debit])(implicit request: Request[_])
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, dateinput, button, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
@@ -11,7 +12,7 @@
     sidebarLinks = Some(selfservicetimetopay.partials.sign_in_sidebar())
 ){
     <header class="page-header text">
-        <h1>@Messages("ssttp.calculator.form.amounts_due.title")</h1>
+        <h2>@Messages("ssttp.calculator.form.amounts_due.title")</h2>
     </header>
     @formErrorSummary(Messages("ssttp.calculator.form.amounts_due.error.summary.title"), dataForm, Seq.empty)
     <p>@Messages("ssttp.calculator.form.amounts_due.intro")</p>
@@ -41,7 +42,7 @@
             <div class="grid-layout grid-layout--no-gutter">
                 <div class="grid-layout__column grid-layout__column--2-3  grid-layout--stacked">
                 @dateinput("dueBy", dataForm, dataForm("dueBy.dueByYear"), dataForm("dueBy.dueByMonth"), dataForm("dueBy.dueByDay"),
-                    'hint -> Messages("ssttp.calculator.form.amounts_due.when_due.question.hint"),
+                    'hint -> Messages("ssttp.calculator.form.amounts_due.when_due.question.hint", LocalDate.now().plusYears(1).getYear.toString),
                     'dayLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.day"),
                     'monthLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.month"),
                     'yearLabel -> Messages("ssttp.calculator.form.amounts_due.when_due.question.year"),
