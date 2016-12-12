@@ -28,7 +28,7 @@ import scala.util.control.Exception.catching
 
 object CalculatorForm {
   val dueByYearMax = Calendar.getInstance().get(Calendar.YEAR) + 1
-  val dueByYearMin = 1997
+  val dueByYearMin = 1996
   val dueByMonthMin = 1
   val dueByMonthMax = 12
   val dueByDayMin = 1
@@ -37,7 +37,8 @@ object CalculatorForm {
   val dueByDateTuple = tuple(
     "dueByYear" -> optional(number)
       .verifying("ssttp.calculator.form.amounts_due.due_by.required-year", _.nonEmpty)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year", x => x.isEmpty || ( x.get <= dueByYearMax) && (x.get >= dueByYearMin)),
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-high", x => x.isEmpty || x.get <= dueByYearMax)
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-low",x => x.isEmpty || x.get >= dueByYearMin),
     "dueByMonth" -> optional(number)
       .verifying("ssttp.calculator.form.amounts_due.due_by.required-month", _.nonEmpty)
       .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-month", x => x.isEmpty || ( x.get <= dueByMonthMax) && (x.get >= dueByMonthMin)),
