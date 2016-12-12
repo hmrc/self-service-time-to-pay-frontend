@@ -150,7 +150,7 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
 
   def submitCalculateInstalmentsPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
-      case Some(ttpData@TTPSubmission(Some(schedule), _, _, None, _, _, cd)) =>
+      case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, cd)) =>
         val durationForm = CalculatorForm.durationForm.fill(CalculatorDuration(3))
         CalculatorForm.createPaymentTodayForm(cd.debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, durationForm, formWithErrors, 2 to 11))),
