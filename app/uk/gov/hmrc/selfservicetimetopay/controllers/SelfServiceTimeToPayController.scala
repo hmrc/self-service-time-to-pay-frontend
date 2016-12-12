@@ -39,7 +39,7 @@ class SelfServiceTimeToPayController extends TimeToPayController {
 
   def getTtpCallUs: Action[AnyContent] =  Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData:TTPSubmission) => Ok(call_us(true))
+      case Some(ttpData:TTPSubmission) => Ok(call_us(ttpData.taxpayer.isDefined))
       case _ => Ok(call_us(true))
     }
   }

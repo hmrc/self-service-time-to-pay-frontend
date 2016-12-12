@@ -29,8 +29,7 @@ import views.html.selfservicetimetopay.calculator._
 
 import scala.concurrent.Future
 
-class CalculatorController(eligibilityConnector: EligibilityConnector,
-                           calculatorConnector: CalculatorConnector) extends TimeToPayController {
+class CalculatorController(calculatorConnector: CalculatorConnector) extends TimeToPayController {
   def start: Action[AnyContent] = Action { request =>
     Redirect(routes.CalculatorController.getAmountsDue())
   }
@@ -106,7 +105,7 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
       case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         Future.successful(Ok(calculate_instalments_form(schedule,
-          CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11)))
+          CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, ttpData.taxpayer.isDefined)))
       case Some(ttpData@TTPSubmission(None, _, _, _, _, _, _)) =>
         updateSchedule(ttpData).apply(request)
       case _ =>
@@ -126,8 +125,8 @@ class CalculatorController(eligibilityConnector: EligibilityConnector,
 
   def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _))) =>
-        Ok(misalignment.render(CalculatorAmountsDue(debits), sa.debits, request))
+      case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _))) =>
+        Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, ttpData.taxpayer.isDefined))
     }
   }
 
