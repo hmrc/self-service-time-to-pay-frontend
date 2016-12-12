@@ -6,7 +6,7 @@ Time To Pay Direct Debit Conformation Display Page
 
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, ArrangementDirectDebit}
-@(schedule:CalculatorPaymentSchedule, directDebit:ArrangementDirectDebit)(implicit request: Request[_])
+@(schedule:CalculatorPaymentSchedule, directDebit:ArrangementDirectDebit, loggedIn: Boolean = false)(implicit request: Request[_])
 
 @import selfservicetimetopay.helpers.{alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, submit}
@@ -16,8 +16,7 @@ Time To Pay Direct Debit Conformation Display Page
 
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
-  bodyClasses = None,
-  sidebarLinks = None
+    loggedIn = loggedIn
 ){
     <h1>@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
     <section>

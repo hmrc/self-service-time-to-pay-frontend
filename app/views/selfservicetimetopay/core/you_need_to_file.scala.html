@@ -1,9 +1,8 @@
-@()(implicit request: Request[_])
-@import selfservicetimetopay.partials.sidebar
+@(loggedIn: Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{highlight, message_list}
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
-    bodyClasses = None
+    loggedIn = loggedIn
 ){
     <header class="page-header text">
         <h2 class="h1-heading">@Messages("ssttp.you-need-to-file.title")</h2>

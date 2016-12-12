@@ -3,6 +3,7 @@
         mainClass: Option[String] = None,
         mainDataAttributes: Option[Html] = None,
         bodyClasses: Option[String] = None,
+        navLinks: Option[Html] = None,
         sidebar: Html = HtmlFormat.empty,
         contentHeader: Option[Html] = None,
         mainContent: Html = HtmlFormat.empty,
@@ -26,7 +27,7 @@
         navTitle = Some(Messages("ssttp.common.title")),
         navTitleLink = None,
         showBetaLink = false,
-        navLinks = None
+        navLinks = navLinks
     )
 }
 

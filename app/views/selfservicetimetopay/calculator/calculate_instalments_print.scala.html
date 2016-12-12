@@ -7,7 +7,7 @@
     @param whitelist Boolean set to true if the user is whitelisted to access this service, default false
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(schedule:CalculatorPaymentSchedule, auth:Boolean = false)(implicit request: Request[_])
+@(schedule:CalculatorPaymentSchedule, loggedIn:Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{message_list, pluralize}
 @import selfservicetimetopay.partials.currency
 @import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer}
@@ -19,7 +19,8 @@
     mainClass = Some("hard--bottom"),
     bodyClasses = None,
     scriptElem = Some(script),
-    noGetHelp = true
+    noGetHelp = true,
+    loggedIn = loggedIn
 ){
     <h1>@Messages("ssttp.calculator.results.title")</h1>
     <section>
@@ -69,7 +70,7 @@
     <div class="panel-indent">@Messages("ssttp.calculator.results.interest-info.warning")</div>
     <section class="section">
         <h2>@Messages("ssttp.calculator.results.next-steps")</h2>
-        @{if(auth) {
+        @{if(loggedIn) {
             calculate_instalments_auth_footer(true)
         } else {
             calculate_instalments_no_auth_footer(true)
