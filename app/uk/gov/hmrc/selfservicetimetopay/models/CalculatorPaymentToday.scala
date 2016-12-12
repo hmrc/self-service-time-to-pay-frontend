@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import scala.math.BigDecimal.RoundingMode.HALF_UP
+
 object CalculatorPaymentToday {
-  def apply(amount: Option[BigDecimal]): BigDecimal = amount.getOrElse(BigDecimal(0))
-  def unapply(arg: BigDecimal) = Option(Option(arg))
+  def apply(amount: Option[BigDecimal]): BigDecimal = amount.getOrElse(BigDecimal(0)).setScale(2, HALF_UP)
+  def unapply(arg: BigDecimal) = Option(Option(arg.setScale(2, HALF_UP)))
 }

@@ -39,7 +39,6 @@ class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
-  val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
   val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
 
   val amountsDueForm = Seq(
@@ -50,7 +49,7 @@ class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
   )
 
   "AmountsDueControllerSpec" should {
-    val controller = new CalculatorController(mockEligibilityConnector, mockCalculatorConnector) {
+    val controller = new CalculatorController(mockCalculatorConnector) {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     }
 
