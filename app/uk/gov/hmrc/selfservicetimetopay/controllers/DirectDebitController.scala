@@ -38,12 +38,15 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       }
   }
 
-  def getDirectDebitAssistance: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(submission @ TTPSubmission(Some(schedule), _, _, Some(taxpayer @ Taxpayer(_, _, Some(sa))), _, _, _)) =>
-        Ok(direct_debit_assistance.render(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, request))
-      case _ => throw new RuntimeException("No data found")
-    }
+  def getDirectDebitAssistance: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      authorizedForSsttp {
+        sessionCache.get.map {
+          case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _)) =>
+            Ok(direct_debit_assistance.render(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, request))
+          case _ => throw new RuntimeException("No data found")
+        }
+      }
   }
 
   def getDirectDebitError: Action[AnyContent] = AuthorisedSaUser {
