@@ -8,6 +8,7 @@
         mainContent: Html = HtmlFormat.empty,
         serviceInfoContent: Html = HtmlFormat.empty,
         scriptElem: Option[Html] = None,
+        linksElem: Option[Html] = None,
         noGetHelp:Boolean = false)(implicit request: Request[_])
 
 @import layouts.{govuk_template => hmrcGovUkTemplate}
@@ -15,7 +16,7 @@
 
 @head = {
     @uiLayouts.head(
-        linkElem = None,
+        linkElem = linksElem,
         headScripts = None
     )
     <meta name="format-detection" content="telephone=no" />

@@ -11,17 +11,19 @@
 @import selfservicetimetopay.helpers.message_list
 @import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule}
 @import selfservicetimetopay.partials.currency
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@printCssLink = {
+  <link rel='stylesheet' href='@routes.Assets.at("css/self-service-time-to-pay.css")' />
+}
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
-  bodyClasses = None,
+  linksElem = Some(printCssLink),
   sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar())
 ){
   <div class="transaction-banner--complete">
     <div class="transaction-banner__heading" role="banner">@Messages("ssttp.arrangement.complete.title")</div>
     <p class="heading-large" id="ssttpOutcome">@Messages("ssttp.arrangement.complete.subtitle")</p>
   </div>
-  <a target="_blank" href="@routes.ArrangementController.applicationCompletePrint()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
+  <a href="javascript:window.print()" class="js-visible no-print float--right gutter-left print-link js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
   <section class="section divider--bottom">
     <h2>@Messages("ssttp.arrangement.complete.next")</h2>
     <p>@message_list(Some("bullets"), "ssttp.arrangement.complete.next.list.")</p>
@@ -41,13 +43,14 @@
       <div class="grid-layout__column grid-layout__column--3-4"><p><strong>@Messages("ssttp.arrangement.complete.total")</strong></p></div>
       <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@currency(schedule.totalPayable)</strong></p></div>
     </div>
-    @direct_debit_details(directDebit)
+    <span class="no-print">@direct_debit_details(directDebit)</span>
+    <span class="print-only">@direct_debit_details(directDebit, true)</span>
     @payment_schedule(schedule)
   </section>
 
   <p>&nbsp;</p>
   <p class="divider--top">
-    <a target="_blank" href="@routes.ArrangementController.applicationCompletePrint()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
+    <a href="javascript:window.print()" class="js-visible no-print float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
   </p>
 
 }
