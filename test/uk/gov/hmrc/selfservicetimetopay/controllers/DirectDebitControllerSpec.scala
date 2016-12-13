@@ -24,39 +24,46 @@ import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.cache.client.CacheMap
-import uk.gov.hmrc.play.frontend.auth.{AuthContext, LoggedInUser, Principal}
+import uk.gov.hmrc.play.frontend.auth.{AuthContext, GovernmentGateway, Principal}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLevel, CredentialStrength, SaAccount}
-import uk.gov.hmrc.play.http.SessionKeys
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
+import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
+import uk.gov.hmrc.selfservicetimetopay.connectors.{CampaignManagerConnector, DirectDebitConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllers
 import uk.gov.hmrc.selfservicetimetopay.models.DirectDebitBank
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
 import scala.util.Try
-
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication with ScalaFutures {
+
+  implicit val headerCarrier = HeaderCarrier()
+  implicit val authContext = AuthContext(user = loggedInUser, principal = Principal(name = Some("usere"),
+    accounts = Accounts(sa = Some(saAccount))), attorney = None, userDetailsUri = None, enrolmentsUri = None)
 
   private val gaToken = "GA-TOKEN"
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
-  val mockDDConnector = mock[DirectDebitConnector]
-  val mockSessionCache = mock[SessionCacheConnector]
-  val mockAuthConnector = mock[AuthConnector]
+  val mockDDConnector: DirectDebitConnector = mock[DirectDebitConnector]
+  val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockCampaignManagerConnector: CampaignManagerConnector = mock[CampaignManagerConnector]
+
 
   "DirectDebitController" should {
     val controller = new DirectDebitController(mockDDConnector) {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
       override lazy val authConnector: AuthConnector = mockAuthConnector
-      override lazy val authenticationProvider = mockAuthenticationProvider
+      override lazy val authenticationProvider: GovernmentGateway = mockAuthenticationProvider
+      override lazy val campaignManagerConnector: CampaignManagerConnector = mockCampaignManagerConnector
     }
 
     "successfully display the direct debit form page" in {
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist("1234567890")).thenReturn(Future.successful(true))
       val response = await(controller.getDirectDebit(FakeRequest()
         .withSession(SessionKeys.userId -> "someUserId")
         .withCookies(sessionProvider.createTtpCookie())))
@@ -71,6 +78,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
         Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Left(bankDetails)))
       when(mockDDConnector.getBanks(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(DirectDebitBank("", Seq.empty)))
       when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist("1234567890")).thenReturn(Future.successful(true))
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 

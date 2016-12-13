@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.WithFakeApplication
-import uk.gov.hmrc.selfservicetimetopay.config.{WSHttp, DirectDebitConnector => realConnector}
+import uk.gov.hmrc.selfservicetimetopay.config.{DirectDebitConnector => realConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -44,7 +44,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
 
   object testConnector extends DirectDebitConnector {
     val directDebitURL = ""
-    val http = mock[WSHttp]
+    val http: WSHttp = mock[WSHttp]
     val serviceURL = "direct-debit"
   }
 

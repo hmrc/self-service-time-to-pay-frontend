@@ -16,12 +16,10 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import java.time.LocalDate
-
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
-import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector}
+import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -119,10 +117,12 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     }
   }
 
-  def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
-    sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _))) =>
-        Ok(misalignment.render(CalculatorAmountsDue(debits), sa.debits, request))
+  def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>implicit request =>
+    authorizedForSsttp {
+      sessionCache.get.map {
+        case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _))) =>
+          Ok(misalignment.render(CalculatorAmountsDue(debits), sa.debits, request))
+      }
     }
   }
 
@@ -139,7 +139,6 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       case Some(ttpSubmission@TTPSubmission(Some(schedule), _, _, _, Some(_), Some(_), cd@CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         CalculatorForm.durationForm.bindFromRequest().fold(
-          //TODO change 2 to 11 to a dynamically calculated permitted range
           formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, formWithErrors, form, 2 to 11))),
           validFormData => {
             val newEndDate = cd.startDate.plusMonths(validFormData.months).minusDays(1)

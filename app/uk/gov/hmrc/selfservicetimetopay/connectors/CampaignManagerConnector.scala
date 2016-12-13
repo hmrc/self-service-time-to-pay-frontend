@@ -23,12 +23,12 @@ import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import scala.concurrent.{ExecutionContext, Future}
 
 trait CampaignManagerConnector {
+  val campaignURL: String
   val serviceURL: String
   val http: HttpGet
 
-
   def isAuthorisedWhitelist(utr: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    http.GET[HttpResponse](s"$serviceURL/campaign-manager/ssttp/$utr").map {
+    http.GET[HttpResponse](s"$campaignURL/$serviceURL/$utr").map {
       response => response.status match {
         case Status.OK => true
         case _ =>
