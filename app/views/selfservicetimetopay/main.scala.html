@@ -4,9 +4,9 @@
         bodyClasses: Option[String] = None,
         mainClass: Option[String] = None,
         scriptElem: Option[Html] = None,
+        linksElem:  Option[Html] = None,
         noGetHelp:Boolean = false)(mainContent: Html)(implicit request: Request[_])
 @import uk.gov.hmrc.play.views.html.layouts
-@import uk.gov.hmrc.selfservicetimetopay.controllers
 @sidebar = {
     @if(sidebarLinks.isDefined) {
         @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
@@ -24,5 +24,6 @@
     contentHeader = contentHeader,
     mainContent = layouts.article(mainContent),
     scriptElem = Some(scriptElems),
+    linksElem = linksElem,
     noGetHelp = noGetHelp
 )
