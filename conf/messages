@@ -219,10 +219,10 @@ ssttp.you-need-to-file.intro=The amount outstanding in your tax account isn’t 
 ssttp.you-need-to-file.because=This may be because:
 ssttp.you-need-to-file.because.list.1=you haven’t filed your Self Assessment tax return
 ssttp.you-need-to-file.because.list.2=you filed less than 3 days ago and your account hasn’t updated yet
-ssttp.you-need-to-file.check-account=You can check your tax status and file a return via your tax account.
 ssttp.you-need-to-file.check-account.link=Go to your tax account
+ssttp.you-need-to-file.check-account=to check your balance or file your Self Assessment tax return.
 ssttp.you-need-to-file.other-tax=If you’re unsure how to proceed for any reason, call us on
-ssttp.you-need-to-file.other-tax.number=0330 321 321
+ssttp.you-need-to-file.other-tax.number=0300 200 3822
 
 ssttp.arrangement.instalment-summary.title=Your instalment plan summary
 ssttp.arrangement.instalment-summary.print=print

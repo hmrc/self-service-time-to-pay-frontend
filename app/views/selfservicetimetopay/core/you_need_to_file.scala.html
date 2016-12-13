@@ -1,9 +1,7 @@
 @()(implicit request: Request[_])
-@import selfservicetimetopay.partials.sidebar
 @import selfservicetimetopay.helpers.{highlight, message_list}
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
-    bodyClasses = None
+    title = Messages("ssttp.common.title")
 ){
     <header class="page-header text">
         <h2 class="h1-heading">@Messages("ssttp.you-need-to-file.title")</h2>
@@ -14,8 +12,8 @@
         }
         <p class="subsection">@Messages("ssttp.you-need-to-file.because")</p>
         @message_list(Some("bullets"), "ssttp.you-need-to-file.because.list.")
-        <p class="subsection"><a href="https://online.hmrc.gov.uk/">@Messages("ssttp.you-need-to-file.check-account.link")</a>
-         to check your balance or file your Self Assessment tax return.
+        <p class="subsection"><a href="https://online.hmrc.gov.uk/">
+            @Messages("ssttp.you-need-to-file.check-account.link")</a> @Messages("ssttp.you-need-to-file.check-account")
         </p>
     </section>
     <section class="section">
