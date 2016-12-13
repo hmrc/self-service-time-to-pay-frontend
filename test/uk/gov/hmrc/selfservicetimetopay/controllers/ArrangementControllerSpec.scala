@@ -65,7 +65,15 @@ class ArrangementControllerSpec extends UnitSpec
   }
 
   override protected def beforeEach(): Unit = {
-    reset(mockAuthConnector, mockSessionCache, ddConnector, arrangementConnector, taxPayerConnector, calculatorConnector, mockSessionProvider, mockEligibilityConnector)
+    reset(mockAuthConnector,
+      mockSessionCache,
+      ddConnector,
+      arrangementConnector,
+      taxPayerConnector,
+      calculatorConnector,
+      mockSessionProvider,
+      mockEligibilityConnector,
+      mockCampaignManagerConnector)
   }
 
   val validDayForm = Seq(
@@ -84,12 +92,17 @@ class ArrangementControllerSpec extends UnitSpec
 
       when(arrangementConnector.submitArrangements(any())(any())).thenReturn(Future.successful(Right(SubmissionSuccess())))
 
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
+
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()).withSession(SessionKeys.userId -> "someUserId"))
 
       redirectLocation(response).get shouldBe controllers.routes.ArrangementController.applicationComplete().url
     }
 
     "redirect to start if no data in session cache" in {
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
+        .thenReturn(Future.successful(true))
+
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(None))
 
@@ -122,6 +135,9 @@ class ArrangementControllerSpec extends UnitSpec
 
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
+        .thenReturn(Future.successful(true))
+
       val response = controller.changeSchedulePaymentDay().apply(FakeRequest("POST", "/arrangement/instalment-summary/change-day").withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId")
         .withFormUrlEncodedBody(validDayForm: _*))
@@ -143,6 +159,7 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
         .withCookies(sessionProvider.createTtpCookie())
@@ -161,6 +178,7 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
       when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
         .withCookies(sessionProvider.createTtpCookie())
@@ -178,6 +196,7 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
         .withCookies(sessionProvider.createTtpCookie())

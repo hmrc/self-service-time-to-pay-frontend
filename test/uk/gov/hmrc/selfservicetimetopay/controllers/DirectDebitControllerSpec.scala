@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import org.mockito.Matchers
+import org.mockito.Matchers._
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
@@ -63,8 +64,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
     "successfully display the direct debit form page" in {
       when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist("1233")).thenReturn(Future.successful(true))
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
 
       val response = await(controller.getDirectDebit(FakeRequest()
         .withSession(SessionKeys.userId -> "someUserId")
@@ -80,7 +80,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
         Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Left(bankDetails)))
       when(mockDDConnector.getBanks(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(DirectDebitBank("", Seq.empty)))
       when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist("1233")).thenReturn(Future.successful(true))
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
@@ -104,6 +104,7 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
 
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
@@ -118,6 +119,8 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "submit direct debit form with invalid form data and return a bad request" in {
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
+
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId")
@@ -147,6 +150,8 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
     }
 
     "successfully display the direct debit confirmation page" in {
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
+
       val response = await(controller.getDirectDebitConfirmation(FakeRequest()
         .withSession(SessionKeys.userId -> "someUserId")
         .withCookies(sessionProvider.createTtpCookie())))
