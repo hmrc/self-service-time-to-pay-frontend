@@ -20,7 +20,7 @@ import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
-import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
+import uk.gov.hmrc.selfservicetimetopay.connectors.{CampaignManagerConnector, DirectDebitConnector}
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -33,45 +33,52 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   def getDirectDebit: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      sessionCache.get.map {
-        case Some(ttpSubmission:TTPSubmission) =>
-          Ok(direct_debit_form(directDebitForm, ttpSubmission.taxpayer.isDefined))
-        case _ => Ok(direct_debit_form(directDebitForm, false))
+      authorizedForSsttp {
+        Future.successful(Ok(direct_debit_form.render(directDebitForm, true)))
       }
   }
 
-  def getDirectDebitAssistance: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(submission @ TTPSubmission(Some(schedule), _, _, Some(taxpayer @ Taxpayer(_, _, Some(sa))), _, _, _)) =>
-        Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, submission.taxpayer.isDefined))
-      case _ => throw new RuntimeException("No data found")
-    }
+  def getDirectDebitAssistance: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      authorizedForSsttp {
+        sessionCache.get.map {
+          case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _)) =>
+            Ok(direct_debit_assistance.render(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true))
+          case _ => throw new RuntimeException("No data found")
+        }
+      }
   }
 
   def getDirectDebitError: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      sessionCache.get.map {
-        case Some(ttpData@TTPSubmission(_, _, banks@Some(_), _, _, _, _)) =>
-          Ok(direct_debit_error(directDebitForm, banks, ttpData.taxpayer.isDefined))
-        case _ => Ok(direct_debit_error(directDebitForm, None, false))
+      authorizedForSsttp {
+        sessionCache.get.map {
+          case Some(TTPSubmission(_, _, banks@Some(_), _, _, _, _)) =>
+            Ok(direct_debit_error.render(directDebitForm, banks, true))
+          case _ => Ok(direct_debit_error.render(directDebitForm, None, true))
+        }
       }
   }
 
   def getDirectDebitConfirmation: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      sessionCache.get.map {
-        case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _)) =>
-          Ok(direct_debit_confirmation(schedule, submission.arrangementDirectDebit.get, submission.taxpayer.isDefined))
-        case _ => throw new RuntimeException("No data found")
+      authorizedForSsttp {
+        sessionCache.get.map {
+          case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _)) =>
+            Ok(showDDConfirmation(schedule, submission.arrangementDirectDebit.get, true))
+          case _ => throw new RuntimeException("No data found")
+        }
       }
   }
 
   def getBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      sessionCache.get.map {
-        case Some(submission@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _)) =>
-          Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, submission.taxpayer.isDefined))
-        case _ => throw new RuntimeException("No data found")
+      authorizedForSsttp {
+        sessionCache.get.map {
+          case Some(submission@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _)) =>
+            Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true))
+          case _ => throw new RuntimeException("No data found")
+        }
       }
   }
 
@@ -91,32 +98,31 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   def submitBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      sessionCache.get.flatMap {
-        case Some(ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _)) =>
-          existingBankAccountForm.bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, existingDDBanks.directDebitInstruction))),
-            validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit) match {
-              case (Some(_), Some(_)) => Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, ttpData.taxpayer.isDefined)))
-              case (Some(ddi), None) => {
-                val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction.filter(_.referenceNumber.get == ddi), validFormData)
-                sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
-                  _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
-                }
-              }
-              case (None, Some(arrangementDirectDebit: ArrangementDirectDebit)) => {
-                directDebitConnector.getBank(arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber).flatMap[Result] {
-                  case Some(bankDetails) => {
-                    val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction
-                      .filter(_.accountNumber.get == arrangementDirectDebit.accountNumber), validFormData)
-                    sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
-                      _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
-                    }
+      authorizedForSsttp {
+        sessionCache.get.flatMap {
+          case Some(ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _)) =>
+            existingBankAccountForm.bindFromRequest().fold(
+              formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, existingDDBanks.directDebitInstruction))),
+              validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit) match {
+                case (Some(_), Some(_)) => Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true)))
+                case (Some(ddi), None) =>
+                  val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction.filter(_.referenceNumber.get == ddi), validFormData)
+                  sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
+                    _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
                   }
-                  case None => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
-                }
-              }
-              case _ => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
-            })
+                case (None, Some(arrangementDirectDebit: ArrangementDirectDebit)) =>
+                  directDebitConnector.getBank(arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber).flatMap[Result] {
+                    case Some(bankDetails) =>
+                      val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction
+                        .filter(_.accountNumber.get == arrangementDirectDebit.accountNumber), validFormData)
+                      sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
+                        _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
+                      }
+                    case None => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
+                  }
+                case _ => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
+              })
+        }
       }
   }
 
@@ -126,15 +132,13 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   def submitDirectDebit: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      sessionCache.get.flatMap {
-        _.fold(Future.successful(redirectToStartPage))(ttp => {
-          directDebitForm.bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(direct_debit_form(formWithErrors, ttp.taxpayer.isDefined))),
-            validFormData =>
-              directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode,
-                validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
-                .flatMap(directDebitSubmitRouting))
-        })
+      authorizedForSsttp {
+        directDebitForm.bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(bankDetailsFormErrorPage(formWithErrors, true))),
+          validFormData =>
+            directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode,
+              validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
+              .flatMap(directDebitSubmitRouting))
       }
   }
 
@@ -172,6 +176,8 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
         .map(_ => Redirect(toBankSelectionPage))
   }
 
+  private val showDDConfirmation = direct_debit_confirmation.render _
+  private val bankDetailsFormErrorPage = direct_debit_form.render _
   private val toDDCreationPage = routes.DirectDebitController.getDirectDebitConfirmation()
   private val toBankSelectionPage = routes.DirectDebitController.getBankAccountNotFound()
 }
