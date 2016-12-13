@@ -17,49 +17,35 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
-import uk.gov.hmrc.selfservicetimetopay.config.{SsttpFrontendConfig, TimeToPayController}
-import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.selfservicetimetopay.core._
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
 
-class SelfServiceTimeToPayController extends TimeToPayController {
+class SelfServiceTimeToPayController extends FrontendController {
 
-  def start: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(ttpData:TTPSubmission) => Ok(service_start(ttpData.taxpayer.isDefined))
-      case _ => Ok(service_start(false))
-    }
+  def start: Action[AnyContent] = Action { implicit request =>
+    Ok(service_start())
   }
 
   def submit: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.start())
   }
 
-  def getTtpCallUs: Action[AnyContent] =  Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(ttpData:TTPSubmission) => Ok(call_us(ttpData.taxpayer.isDefined))
-      case _ => Ok(call_us(true))
-    }
+  def getTtpCallUs: Action[AnyContent] =  Action { implicit request =>
+    Ok(call_us())
   }
 
-  def getYouNeedToFile: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(ttpData:TTPSubmission) => Ok(you_need_to_file(ttpData.taxpayer.isDefined))
-      case _ => Ok(you_need_to_file(false))
-    }
+  def getYouNeedToFile: Action[AnyContent] = Action { implicit request =>
+    Ok(you_need_to_file())
   }
 
-  def getUnavailable: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(ttpData:TTPSubmission) => Ok(unavailable(ttpData.taxpayer.isDefined))
-      case _ => Ok(unavailable(false))
-    }
+  def getUnavailable: Action[AnyContent] = Action { implicit request =>
+    Ok(unavailable())
   }
 
-  def signout(continueUrl: Option[String]) = Action.async { implicit request => {
-      Future.successful(Redirect(SsttpFrontendConfig.logoutUrl).withNewSession)
-    }
+  def signout(continueUrl: Option[String]) = Action.async { implicit request =>
+    Future.successful(Ok("MEH"))
+    // TODO: fix this line //Redirect(SsttpFrontendConfig.logoutUrl).withNewSession)
   }
 }
