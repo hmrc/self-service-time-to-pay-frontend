@@ -1,10 +1,10 @@
 @*
 Self-service Time To Pay service unavailable page to redirect users to the call-in service when SSTTP is unavailable
 *@
-@()(implicit request: Request[_])
+@(loggedIn: Boolean = false)(implicit request: Request[_])
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
-    bodyClasses = None
+    loggedIn = loggedIn
 ) {
     <header class="page-header text">
         <h2>@Messages("ssttp.unavailable.title")</h2>

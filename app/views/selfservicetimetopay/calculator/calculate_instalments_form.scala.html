@@ -8,16 +8,15 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController
-@(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[BigDecimal], monthOptions:Seq[Int], auth:Boolean = false)(implicit request: Request[_])
+@(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[BigDecimal], monthOptions:Seq[Int], loggedIn: Boolean)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, button, fieldErrors, numberinput, inlinecurrencyinput}
 @import selfservicetimetopay.partials.currency
 @import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
-    bodyClasses = None
+    loggedIn = loggedIn
 ){
     <a target="_blank" href="@routes.CalculatorController.getCalculateInstalmentsPrint()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
     <header class="page-header text">
@@ -136,7 +135,7 @@
     <div class="panel-indent">@Messages("ssttp.calculator.results.interest-info.warning")</div>
     <section class="section">
         <h2>@Messages("ssttp.calculator.results.next-steps")</h2>
-        @{if(auth) {
+        @{if(loggedIn) {
             calculate_instalments_auth_footer()
         } else {
             calculate_instalments_no_auth_footer()

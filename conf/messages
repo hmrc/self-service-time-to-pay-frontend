@@ -2,6 +2,7 @@
 ssttp.common.title=Pay what you owe in instalments
 ssttp.common.currency.symbol=£
 ssttp.common.print=Print
+ssttp.common.sign-out=Sign-out
 
 ssttp.common.charge-code.ASST=Assessment
 ssttp.common.charge-code.BCD=Balancing Charge Debit

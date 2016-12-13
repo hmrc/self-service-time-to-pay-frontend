@@ -36,7 +36,6 @@ POST        /calculator/recalculate                           @uk.gov.hmrc.selfs
 
 # Arrangement
 GET         /arrangement/instalment-summary                   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummary()
-GET         /arrangement/instalment-summary/print             @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummaryPrint()
 POST        /arrangement/instalment-summary/change-day        @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.changeSchedulePaymentDay()
 GET         /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
 POST        /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
@@ -44,13 +43,15 @@ GET         /arrangement/direct-debit-confirmation            @uk.gov.hmrc.selfs
 GET         /arrangement/direct-debit-assistance              @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitAssistance()
 POST        /arrangement/submit                               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
 GET         /arrangement/summary                              @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
-GET         /arrangement/summary/print                        @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationCompletePrint()
 GET         /arrangement/account-not-found                    @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getBankAccountNotFound()
 POST        /arrangement/account-not-found                    @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitBankAccountNotFound()
 # Alternative pages
 GET         /you-need-to-file                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
 GET         /call-us                                          @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
 GET         /unavailable                                      @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getUnavailable()
+GET         /sign-out                                         @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.signout(continueUrl: Option[String])
+
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                     controllers.Assets.at(path="/public", file)
