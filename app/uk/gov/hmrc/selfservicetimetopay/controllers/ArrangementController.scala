@@ -54,16 +54,17 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def determineMisalignment: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      val sa = authContext.principal.accounts.sa.get
+      authorizedForSsttp {
+        val sa = authContext.principal.accounts.sa.get
 
-      taxPayerConnector.getTaxPayer(sa.utr.utr).flatMap {
-        _.fold(throw new RuntimeException("No taxpayer found"))(t => {
-          updateOrCreateInCache(found => found.copy(taxpayer = Some(t)),
-            () => TTPSubmission(taxpayer = Some(t)))
-            .map(cm => cm.getEntry("ttpSubmission")(submissionFormatter).get).flatMap[Result] {
-              case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty @ Seq(), _, _, _, _, _)) =>
+        taxPayerConnector.getTaxPayer(sa.utr.utr).flatMap {
+          _.fold(throw new RuntimeException("No taxpayer found"))(t => {
+            updateOrCreateInCache(found => found.copy(taxpayer = Some(t)),
+              () => TTPSubmission(taxpayer = Some(t)))
+              .map(cm => cm.getEntry("ttpSubmission")(submissionFormatter).get).flatMap[Result] {
+              case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _)) =>
                 Future.successful(Redirect(routes.CalculatorController.getCalculateInstalments(None)))
-              case TTPSubmission(_, _, _, Some(tp @ Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
+              case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
                 if (areEqual(tpSA.debits, meDebits)) {
                   eligibilityCheck(tp)
                 } else {
@@ -72,7 +73,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
               case _ =>
                 Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
             }
-        })
+          })
+        }
       }
   }
 
@@ -80,21 +82,25 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def getInstalmentSummary: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      sessionCache.get.flatMap {
-        _.fold(redirectToStart)(ttp => {
-          Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
-            createDayOfForm(ttp), request)))
-        })
+      authorizedForSsttp {
+        sessionCache.get.flatMap {
+          _.fold(redirectToStart)(ttp => {
+            Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
+              createDayOfForm(ttp), request)))
+          })
+        }
       }
   }
 
 
   def getInstalmentSummaryPrint: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      sessionCache.get.flatMap {
-        _.fold(redirectToStart)(ttp => {
-          Future.successful(Ok(instalment_plan_summary_print.render(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")), request)))
-        })
+      authorizedForSsttp {
+        sessionCache.get.flatMap {
+          _.fold(redirectToStart)(ttp => {
+            Future.successful(Ok(instalment_plan_summary_print.render(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")), request)))
+          })
+        }
       }
   }
 
@@ -108,17 +114,19 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def changeSchedulePaymentDay(): Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
-        formWithErrors => {
-          sessionCache.get.map {
-            submission => BadRequest(showInstalmentSummary(submission.get.schedule.get, formWithErrors, request))
-          }
-        },
-        validFormData => {
-          sessionCache.get.flatMap {
-            _.fold(redirectToStart)(ttp => changeScheduleDay(ttp, validFormData))
-          }
-        })
+      authorizedForSsttp {
+        ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
+          formWithErrors => {
+            sessionCache.get.map {
+              submission => BadRequest(showInstalmentSummary(submission.get.schedule.get, formWithErrors, request))
+            }
+          },
+          validFormData => {
+            sessionCache.get.flatMap {
+              _.fold(redirectToStart)(ttp => changeScheduleDay(ttp, validFormData))
+            }
+          })
+      }
   }
 
   def changeScheduleDay(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth)(implicit hc: HeaderCarrier): Future[Result] = {
@@ -144,19 +152,23 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def submit(): Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      sessionCache.get.flatMap {
-        _.fold(redirectToStart)(arrangementSetUp)
+      authorizedForSsttp {
+        sessionCache.get.flatMap {
+          _.fold(redirectToStart)(arrangementSetUp)
+        }
       }
   }
 
   def applicationComplete(): Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
-      sessionCache.get.flatMap {
-        _.fold(redirectToStart)(submission => {
-          sessionCache.remove()
-          successful(Ok(application_complete.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
-            submission.arrangementDirectDebit.get, submission.schedule.get, request)))
-        })
+      authorizedForSsttp {
+        sessionCache.get.flatMap {
+          _.fold(redirectToStart)(submission => {
+            sessionCache.remove()
+            successful(Ok(application_complete.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
+              submission.arrangementDirectDebit.get, submission.schedule.get, request)))
+          })
+        }
       }
   }
 
