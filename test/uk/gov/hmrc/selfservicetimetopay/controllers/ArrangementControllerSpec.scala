@@ -202,7 +202,7 @@ class ArrangementControllerSpec extends UnitSpec
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId"))
 
-      redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getCalculateInstalments(None).url
+      redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getPaymentToday().url
     }
   }
 

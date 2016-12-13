@@ -57,13 +57,15 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       authorizedForSsttp {
         val sa = authContext.principal.accounts.sa.get
 
-        taxPayerConnector.getTaxPayer(sa.utr.utr).flatMap {
-          _.fold(throw new RuntimeException("No taxpayer found"))(t => {
+        taxPayerConnector.getTaxPayer(sa.utr.utr).flatMap[Result] {
+          _.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())))(t => {
             updateOrCreateInCache(found => found.copy(taxpayer = Some(t)),
               () => TTPSubmission(taxpayer = Some(t)))
               .map(cm => cm.getEntry("ttpSubmission")(submissionFormatter).get).flatMap[Result] {
-              case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _)) =>
-                Future.successful(Redirect(routes.CalculatorController.getCalculateInstalments(None)))
+              case ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _)) =>
+                sessionCache.put(ttpData.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
+                  endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits)))
+                Future.successful(Redirect(routes.CalculatorController.getPaymentToday()))
               case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
                 if (areEqual(tpSA.debits, meDebits)) {
                   eligibilityCheck(tp)
