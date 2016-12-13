@@ -125,7 +125,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     authorizedForSsttp {
       sessionCache.get.map {
         case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _))) =>
-          Ok(misalignment.render(CalculatorAmountsDue(debits), sa.debits, true))
+          Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, true))
       }
     }
   }

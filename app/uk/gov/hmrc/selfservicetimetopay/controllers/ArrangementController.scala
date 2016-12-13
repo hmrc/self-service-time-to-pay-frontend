@@ -27,7 +27,7 @@ import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import views.html.selfservicetimetopay.arrangement.{application_complete, application_complete_print, instalment_plan_summary, instalment_plan_summary_print}
+import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -85,20 +85,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       authorizedForSsttp {
         sessionCache.get.flatMap {
           _.fold(redirectToStart)(ttp => {
-            Future.successful(Ok(showInstalmentSummary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
+            Future.successful(Ok(instalment_plan_summary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
               createDayOfForm(ttp), true)))
-          })
-        }
-      }
-  }
-
-
-  def getInstalmentSummaryPrint: Action[AnyContent] = AuthorisedSaUser {
-    implicit authContext => implicit request =>
-      authorizedForSsttp {
-        sessionCache.get.flatMap {
-          _.fold(redirectToStart)(ttp => {
-            Future.successful(Ok(instalment_plan_summary_print.render(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")), true)))
           })
         }
       }
@@ -110,15 +98,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     })
   }
 
-  private val showInstalmentSummary = instalment_plan_summary.render _
-
   def changeSchedulePaymentDay(): Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
       authorizedForSsttp {
         ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
           formWithErrors => {
             sessionCache.get.map {
-              submission => BadRequest(showInstalmentSummary(submission.get.schedule.get, formWithErrors, true))
+              submission => BadRequest(instalment_plan_summary(submission.get.schedule.get, formWithErrors, true))
             }
           },
           validFormData => {
@@ -165,20 +151,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         sessionCache.get.flatMap {
           _.fold(redirectToStart)(submission => {
             sessionCache.remove()
-            successful(Ok(application_complete.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
-              submission.arrangementDirectDebit.get, submission.schedule.get, true)))
-          })
-        }
-      }
-  }
-
-  def applicationCompletePrint(): Action[AnyContent] = AuthorisedSaUser {
-    implicit authContext => implicit request =>
-      authorizedForSsttp {
-        sessionCache.get.flatMap {
-          _.fold(redirectToStart)(submission => {
-            sessionCache.remove()
-            successful(Ok(application_complete_print.render(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
+            successful(Ok(application_complete(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
               submission.arrangementDirectDebit.get, submission.schedule.get, true)))
           })
         }

@@ -34,7 +34,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getDirectDebit: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
       authorizedForSsttp {
-        Future.successful(Ok(direct_debit_form.render(directDebitForm, true)))
+        Future.successful(Ok(direct_debit_form(directDebitForm, true)))
       }
   }
 
@@ -43,7 +43,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       authorizedForSsttp {
         sessionCache.get.map {
           case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _)) =>
-            Ok(direct_debit_assistance.render(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true))
+            Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true))
           case _ => throw new RuntimeException("No data found")
         }
       }
@@ -54,8 +54,8 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       authorizedForSsttp {
         sessionCache.get.map {
           case Some(TTPSubmission(_, _, banks@Some(_), _, _, _, _)) =>
-            Ok(direct_debit_error.render(directDebitForm, banks, true))
-          case _ => Ok(direct_debit_error.render(directDebitForm, None, true))
+            Ok(direct_debit_error(directDebitForm, banks, true))
+          case _ => Ok(direct_debit_error(directDebitForm, None, true))
         }
       }
   }
@@ -65,7 +65,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       authorizedForSsttp {
         sessionCache.get.map {
           case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _)) =>
-            Ok(showDDConfirmation(schedule, submission.arrangementDirectDebit.get, true))
+            Ok(direct_debit_confirmation(schedule, submission.arrangementDirectDebit.get, true))
           case _ => throw new RuntimeException("No data found")
         }
       }
@@ -134,7 +134,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit authContext => implicit request =>
       authorizedForSsttp {
         directDebitForm.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(bankDetailsFormErrorPage(formWithErrors, true))),
+          formWithErrors => Future.successful(BadRequest(direct_debit_form(formWithErrors, true))),
           validFormData =>
             directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode,
               validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
@@ -176,8 +176,6 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
         .map(_ => Redirect(toBankSelectionPage))
   }
 
-  private val showDDConfirmation = direct_debit_confirmation.render _
-  private val bankDetailsFormErrorPage = direct_debit_form.render _
   private val toDDCreationPage = routes.DirectDebitController.getDirectDebitConfirmation()
   private val toBankSelectionPage = routes.DirectDebitController.getBankAccountNotFound()
 }
