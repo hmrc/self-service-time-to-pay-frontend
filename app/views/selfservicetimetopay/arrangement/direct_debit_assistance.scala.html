@@ -1,25 +1,28 @@
 @*
-Time To Pay Direct Debit Conformation Display Page
+  Time To Pay Direct Debit Assistance and Error Page
 
-@param schedule CalculatorPaymentSchedule The results data to display
-@param directDebit CalcualtorDirectDebit The direct debit details
-
+  @param schedule CalculatorPaymentSchedule The results data to display
+  @param directDebit CalcualtorDirectDebit The direct debit details
+  @param showErrornotification Boolean, default false  If true display an error notification on the page
+  @param loggedIn Boolean default false, If true display the sign out link in the page header
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, Debit}
-@(debits:Seq[Debit], schedule:CalculatorPaymentSchedule, loggedIn: Boolean = false)(implicit request: Request[_])
+@(debits:Seq[Debit], schedule:CalculatorPaymentSchedule, showErrornotification:Boolean = false,loggedIn:Boolean = false)(implicit request: Request[_])
 
-@import selfservicetimetopay.helpers.{highlight, alert, message_list}
-
+@import selfservicetimetopay.helpers.highlight
 @import selfservicetimetopay.partials.{what_you_owe, currency}
 
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
-  bodyClasses = None
+  loggedIn = loggedIn
 ){
-  <br>
-  @highlight('_modifierClass -> "highlight-message--yellow") {
-    <p><strong>@Messages("ssttp.arrangement.direct-debit.assistance.alert")</strong></p>
-    <p>@Messages("ssttp.arrangement.direct-debit.assistance.alert.1")</p>
+  @if(showErrornotification) {
+    <div>
+      @highlight('_modifierClass -> "highlight-message--yellow") {
+        <p><strong>@Messages("ssttp.arrangement.direct-debit.assistance.alert")</strong></p>
+        <p>@Messages("ssttp.arrangement.direct-debit.assistance.alert.1")</p>
+      }
+    </div>
   }
   <header class="page-header text">
     <h2>@Messages("ssttp.arrangement.direct-debit.assistance.title")</h2>
