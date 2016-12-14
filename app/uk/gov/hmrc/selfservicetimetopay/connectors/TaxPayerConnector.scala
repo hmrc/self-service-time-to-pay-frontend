@@ -36,7 +36,7 @@ trait TaxPayerConnector {
       case e: uk.gov.hmrc.play.http.NotFoundException => Logger.error("Taxpayer not found")
         None
       case e: Exception => Logger.error(e.getMessage)
-        throw new RuntimeException("Taxpayer returned unexpected response")
+        throw new RuntimeException(e.getMessage)
     }
   }
 }
