@@ -31,12 +31,13 @@ trait TaxPayerConnector {
 
   def getTaxPayer(utr: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Taxpayer]] = {
     http.GET[HttpResponse](s"$taxPayerURL/$serviceURL/$utr").map {
-       response => response.status match {
-         case Status.OK => Some(response.json.as[Taxpayer])
-         case _ =>
-           Logger.error(s"Failed to get taxpayer, HTTP Code: ${response.status}, HTTP Body ${response.body}")
-           None
-       }
+      response => Some(response.json.as[Taxpayer])
+    }.recover {
+      case e: uk.gov.hmrc.play.http.NotFoundException => Logger.error("Taxpayer not found")
+        None
+      case e: Exception => Logger.error(e.getMessage)
+        throw new RuntimeException(e.getMessage)
     }
   }
 }
+
