@@ -28,7 +28,6 @@ import scala.concurrent.Future
 class EligibilityController extends TimeToPayController {
 
   def start: Action[AnyContent] = Action { implicit request =>
-    sessionCache.remove()
     Redirect(routes.EligibilityController.getTypeOfTax())
   }
 
@@ -36,7 +35,7 @@ class EligibilityController extends TimeToPayController {
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, typeOfTax @ Some(_), _,_))=>
             Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), ttpData.taxpayer.isDefined))
-      case _ => Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm, false))
+      case _ => Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm))
     }
   }
 
@@ -59,7 +58,7 @@ class EligibilityController extends TimeToPayController {
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, _, existingTtp @ Some(_), _))=>
         Ok(existing_ttp(EligibilityForm.existingTtpForm.fill(existingTtp.get), ttpData.taxpayer.isDefined))
-      case _ => Ok(existing_ttp(EligibilityForm.existingTtpForm, false))
+      case _ => Ok(existing_ttp(EligibilityForm.existingTtpForm))
     }
 
   }

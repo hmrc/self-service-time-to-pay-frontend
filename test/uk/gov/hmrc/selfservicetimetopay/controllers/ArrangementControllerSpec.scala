@@ -114,15 +114,16 @@ class ArrangementControllerSpec extends UnitSpec
 
     }
 
-    "redirect to unauthorised page (call us) if user is below the confidence level threshold" in {
+    "redirect to unauthorised page (unavailable) if user is below the confidence level threshold" in {
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(None))
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(false))
 
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit")
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "underThreshold"))
 
-      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
+      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.getUnavailable().url
     }
 
     "update payment schedule date" in {
