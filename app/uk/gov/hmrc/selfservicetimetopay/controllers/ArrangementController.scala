@@ -98,9 +98,16 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         sessionCache.get.flatMap {
           _.fold(redirectToStart)(ttp => {
             Future.successful(Ok(instalment_plan_summary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
-              createDayOfForm(ttp), true)))
+              createDayOfForm(ttp), signedIn = true)))
           })
         }
+      }
+  }
+
+  def submitInstalmentSummary: Action[AnyContent] = AuthorisedSaUser {
+    implicit authContext => implicit request =>
+      authorizedForSsttp {
+        Future.successful(Redirect(routes.DirectDebitController.getDirectDebit()))
       }
   }
 
@@ -116,7 +123,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
           formWithErrors => {
             sessionCache.get.map {
-              submission => BadRequest(instalment_plan_summary(submission.get.schedule.get, formWithErrors, true))
+              submission => BadRequest(instalment_plan_summary(submission.get.schedule.get, formWithErrors, signedIn = true))
             }
           },
           validFormData => {
@@ -164,7 +171,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
           _.fold(redirectToStart)(submission => {
             sessionCache.remove()
             successful(Ok(application_complete(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
-              submission.arrangementDirectDebit.get, submission.schedule.get, true)))
+              submission.arrangementDirectDebit.get, submission.schedule.get, loggedIn = true)))
           })
         }
       }
