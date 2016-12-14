@@ -29,6 +29,7 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement.{application_complete, application_complete_print, instalment_plan_summary, instalment_plan_summary_print}
 
+import scala.collection.generic.SeqFactory
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -43,7 +44,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   val paymentCurrency = "GBP"
 
 
-  def eligibilityCheck(taxpayer: Taxpayer)(implicit hc:HeaderCarrier): Future[Result] = {
+  def eligibilityCheck(taxpayer: Taxpayer)(implicit hc: HeaderCarrier): Future[Result] = {
     eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).flatMap[Result] {
       case EligibilityStatus(true, _) => Future.successful(Redirect(routes.ArrangementController.getInstalmentSummary()))
       case EligibilityStatus(_, reasons) =>
@@ -59,21 +60,30 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
         taxPayerConnector.getTaxPayer(sa.utr.utr).flatMap[Result] {
           _.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())))(t => {
-            updateOrCreateInCache(found => found.copy(taxpayer = Some(t)),
-              () => TTPSubmission(taxpayer = Some(t)))
-              .map(cm => cm.getEntry("ttpSubmission")(submissionFormatter).get).flatMap[Result] {
-              case ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _)) =>
-                sessionCache.put(ttpData.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
-                  endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits)))
-                Future.successful(Redirect(routes.CalculatorController.getPaymentToday()))
-              case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
-                if (areEqual(tpSA.debits, meDebits)) {
-                  eligibilityCheck(tp)
-                } else {
-                  Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
+
+            sessionCache.get.flatMap[Result] {
+              _.fold(redirectToStart)(ttp => {
+                val newSubmission = ttp.copy(taxpayer = Some(t))
+                newSubmission match {
+                  case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _)) =>
+                    sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
+                      endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map[Result] {
+                      _ => Redirect(routes.CalculatorController.getPaymentToday())
+                    }
+                  case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
+                    if (areEqual(tpSA.debits, meDebits)) {
+                      sessionCache.put(newSubmission).flatMap[Result] {
+                        _ => eligibilityCheck(tp)
+                      }
+                    } else {
+                      sessionCache.put(newSubmission).flatMap[Result] {
+                        _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
+                      }
+                    }
+                  case _ =>
+                    Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
                 }
-              case _ =>
-                Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+              })
             }
           })
         }
@@ -222,7 +232,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
       val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
       val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
-      val pp = PaymentPlan( ppType = "Time to Pay",
+      val pp = PaymentPlan(ppType = "Time to Pay",
         paymentReference = utr,
         hodService = cesa,
         paymentCurrency = paymentCurrency,

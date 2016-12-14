@@ -156,7 +156,7 @@ class ArrangementControllerSpec extends UnitSpec
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = Seq(Debit(amount = 212.01, dueDate = LocalDate.now()))))
 
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer))) //121.20 debits
-      when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
       when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
