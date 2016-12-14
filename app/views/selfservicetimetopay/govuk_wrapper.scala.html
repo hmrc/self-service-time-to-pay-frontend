@@ -49,8 +49,7 @@
 
 @serviceInfo = {
 @uiLayouts.serviceInfo(
-    betaBanner = HtmlFormat.empty,
-    //betaBanner = uiLayouts.betaBanner(false, "contact/beta-feedback?service=SSTTP", "contact/beta-feedback-unauthenticated?service=SSTTP", true),
+    betaBanner = uiLayouts.betaBanner(false, appConfig.betaFeedbackUrlAuth, appConfig.betaFeedbackUrlNoAuth, true),
     includeGridWrapper = false,
     serviceInfoContent = Some(serviceInfoContent)
 )

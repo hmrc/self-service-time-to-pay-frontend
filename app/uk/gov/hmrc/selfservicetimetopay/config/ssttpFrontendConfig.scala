@@ -25,6 +25,9 @@ trait AppConfig {
   val analyticsHost: String
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
+  val betaFeedbackUrlNoAuth :String
+  val betaFeedbackUrlAuth :String
+
 }
 
 object SsttpFrontendConfig extends AppConfig with ServicesConfig {
@@ -39,6 +42,8 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
   override lazy val analyticsHost = loadConfig("google-analytics.host")
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  override lazy val betaFeedbackUrlNoAuth = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+  override lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
 
   private lazy val companyAuthFrontend = getConfString("company-auth.url", throw new RuntimeException("Company auth url required"))
   private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
