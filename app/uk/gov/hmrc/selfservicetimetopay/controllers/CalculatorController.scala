@@ -181,7 +181,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         }
       case TTPSubmission(_, _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, calculatorInput) =>
 
-        val newInput = if (sa.debits.map(_.amount).sum.-(calculatorInput.initialPayment) <= BigDecimal.exact("32.00")) {
+        val newInput = if (sa.debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
           calculatorInput.copy(debits = sa.debits, initialPayment = BigDecimal(0))
         } else {
           calculatorInput.copy(debits = sa.debits)
