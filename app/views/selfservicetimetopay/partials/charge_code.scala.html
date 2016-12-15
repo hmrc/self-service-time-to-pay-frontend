@@ -1,0 +1,17 @@
+@* Helper to display tax account charge code as understandable text
+    @param code String the HMRC charge code
+    @param yearEnding Option[LocalDate] specify tax year ending to potentiallt include in the message
+*@
+@import java.time.LocalDate
+@(code:String, yearEnding:Option[LocalDate])
+@import java.time.format.DateTimeFormatter
+@import java.util.Locale
+@defining("ssttp.common.charge-code.%s".format(code)) { message =>
+  @if(Messages(message) != message) {
+      @{yearEnding match {
+          case Some(date:LocalDate) => Messages(message, yearEnding.get.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)))
+          case _ => Messages(message)
+      }}
+    }
+}
+
