@@ -120,7 +120,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     }
   }
 
-  def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>implicit request =>
+  def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
     authorizedForSsttp {
       sessionCache.get.map {
         case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _))) =>
@@ -180,9 +180,16 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
           case _ => throw new RuntimeException("Failed to get schedule")
         }
       case TTPSubmission(_, _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, calculatorInput) =>
-        calculatorConnector.calculatePaymentSchedule(calculatorInput.copy(debits = sa.debits)).flatMap {
+
+        val newInput = if (sa.debits.map(_.amount).sum.-(calculatorInput.initialPayment) <= BigDecimal.exact("32.00")) {
+          calculatorInput.copy(debits = sa.debits, initialPayment = BigDecimal(0))
+        } else {
+          calculatorInput.copy(debits = sa.debits)
+        }
+
+        calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
           case Seq(schedule) =>
-            sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = calculatorInput.copy(debits = sa.debits))).map[Result] { result =>
+            sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = newInput)).map[Result] { result =>
               Redirect(routes.CalculatorController.getCalculateInstalments(None))
             }
           case _ => throw new RuntimeException("Failed to get schedule")
