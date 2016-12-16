@@ -1,10 +1,11 @@
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @()
 <div class="section--blue-top sidebar--hidden-sm">
     <h3 class="heading-small">@Messages("ssttp.sidebar.having_problems.title")</h3>
     <p class="font-xsmall">@Messages("ssttp.sidebar.having_problems.intro")</p>
     <nav class="service_info__navigation" role="navigation" aria-labelledby="parent-subsection">
         <ul>
-            <li class="font-xsmall"><a href="/">@Messages("ssttp.sidebar.call_for_assistance.link")</a></li>
+            <li class="font-xsmall"><a href="@routes.DirectDebitController.getDirectDebitAssistance()">@Messages("ssttp.sidebar.call_for_assistance.link")</a></li>
         </ul>
     </nav>
 </div>
