@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import play.api.Logger
+import play.api.http.Status
 import play.api.http.Status._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http._
@@ -27,12 +28,18 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 trait DirectDebitConnector {
+  type DDSubmissionResult = Either[SubmissionError, DirectDebitInstructionPaymentPlan]
+
   val directDebitURL: String
   val serviceURL: String
   val http: HttpGet with HttpPost
 
-  def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitInstructionPaymentPlan] = {
-    http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", paymentPlan)
+  def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DDSubmissionResult] = {
+    http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", paymentPlan).map { Result =>
+      Right(Result)
+    }.recover {
+      case e: Throwable => onError(e)
+    }
   }
 
   trait BankAccountHttpReads extends HttpReads[Either[BankDetails, DirectDebitBank]] with HttpErrorFunctions
@@ -66,5 +73,19 @@ trait DirectDebitConnector {
                                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[BankDetails, DirectDebitBank]] = {
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
     http.GET[Either[BankDetails, DirectDebitBank]](s"$directDebitURL/$serviceURL/$saUtr/bank?$queryString")
+  }
+
+  private def onError(ex: Throwable) = {
+    val (code, message) = ex match {
+      case e: HttpException => (e.responseCode, e.getMessage)
+
+      case e: Upstream4xxResponse => (e.reportAs, e.getMessage)
+      case e: Upstream5xxResponse => (e.reportAs, e.getMessage)
+
+      case e: Throwable => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
+    }
+
+    Logger.error(s"Failure from DES, code $code and body $message")
+    Left(SubmissionError(code, message))
   }
 }
