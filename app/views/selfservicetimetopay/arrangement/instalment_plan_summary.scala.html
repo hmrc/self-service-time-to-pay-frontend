@@ -89,7 +89,7 @@ Time To Pay Instalment Summary Pretty Print Page
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-payments")</div>
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
             }
-            @form(routes.DirectDebitController.getDirectDebit()) {
+            @form(routes.ArrangementController.submitInstalmentSummary()) {
                 @submit() {
                     @Messages("ssttp.arrangement.instalment-summary.submit")
                 }

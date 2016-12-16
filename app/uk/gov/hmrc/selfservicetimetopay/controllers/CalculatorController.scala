@@ -36,7 +36,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _))) =>
         Ok(amounts_due_form(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm, ttpData.taxpayer.isDefined))
-      case _ => Ok(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm, false))
+      case _ => Ok(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm))
     }
   }
 
@@ -46,7 +46,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         sessionCache.get.map {
           case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _))) =>
             BadRequest(amounts_due_form(CalculatorAmountsDue(debits), formWithErrors, ttpData.taxpayer.isDefined))
-          case _ => BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors, false))
+          case _ => BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors))
         },
 
       validFormData => {
@@ -82,10 +82,9 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
   def submitAmountsDue: Action[AnyContent] = Action.async { implicit request =>
     var loggedIn = false
     sessionCache.get.map {
-      case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _))) => {
+      case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _))) =>
         loggedIn = ttpSubmission.taxpayer.isDefined
         Some(debits)
-      }
       case _ => Some(IndexedSeq.empty)
     }.map { ttpData =>
       if (ttpData.isEmpty) BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty),
@@ -107,7 +106,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       case Some(ttpData@TTPSubmission(None, _, _, _, _, _, _)) =>
         updateSchedule(ttpData).apply(request)
       case _ =>
-        Future.successful(NotFound("Insufficient data to proceed"))
+        Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
     }
   }
 
@@ -117,15 +116,15 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         Ok(calculate_instalments_print(schedule, ttpData.taxpayer.isDefined))
       case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         Ok(calculate_instalments_print(schedule, ttpData.taxpayer.isDefined))
-      case _ => NotFound("Failed to get schedule")
+      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
     }
   }
 
-  def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>implicit request =>
+  def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
     authorizedForSsttp {
       sessionCache.get.map {
         case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _))) =>
-          Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, true))
+          Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, loggedIn = true))
       }
     }
   }
@@ -165,7 +164,8 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
           }
         )
       case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _))) if debits.isEmpty =>
-        Future.successful(NotFound("failed to get calculatorData"))
+        Logger.error("failed to get calculatorData")
+        throw new RuntimeException("failed to get calculatorData")
     }
   }
 
@@ -180,9 +180,16 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
           case _ => throw new RuntimeException("Failed to get schedule")
         }
       case TTPSubmission(_, _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, calculatorInput) =>
-        calculatorConnector.calculatePaymentSchedule(calculatorInput.copy(debits = sa.debits)).flatMap {
+
+        val newInput = if (sa.debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
+          calculatorInput.copy(debits = sa.debits, initialPayment = BigDecimal(0))
+        } else {
+          calculatorInput.copy(debits = sa.debits)
+        }
+
+        calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
           case Seq(schedule) =>
-            sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = calculatorInput.copy(debits = sa.debits))).map[Result] { result =>
+            sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = newInput)).map[Result] { result =>
               Redirect(routes.CalculatorController.getCalculateInstalments(None))
             }
           case _ => throw new RuntimeException("Failed to get schedule")

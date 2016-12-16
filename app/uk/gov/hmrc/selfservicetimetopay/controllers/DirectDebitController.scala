@@ -42,8 +42,10 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit authContext => implicit request =>
       authorizedForSsttp {
         sessionCache.get.map {
-          case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _)) =>
-            Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, false, true))
+          case Some(submission@TTPSubmission(Some(schedule), None, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _)) =>
+            Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true))
+          case Some(submission@TTPSubmission(Some(schedule), Some(_), _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _)) =>
+            Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, true))
           case _ => throw new RuntimeException("No data found")
         }
       }
