@@ -50,7 +50,7 @@
 
 @serviceInfo = {
 @uiLayouts.serviceInfo(
-    betaBanner = uiLayouts.betaBanner(loggedIn, appConfig.betaFeedbackUrlAuth, appConfig.betaFeedbackUrlNoAuth, true),
+    betaBanner = if(loggedIn){uiLayouts.betaBanner(loggedIn, appConfig.betaFeedbackUrlAuth, appConfig.betaFeedbackUrlNoAuth, true)}else{HtmlFormat.empty},
     includeGridWrapper = false,
     serviceInfoContent = Some(serviceInfoContent)
 )
@@ -78,8 +78,7 @@
     mainContentHeader = mainContentHeader,
     serviceInfo = serviceInfo,
     getHelpForm = getHelpForm,
-    sidebar = sidebar
-)
+    sidebar = sidebar)
 }
 
 @hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), nav = true)(content)
