@@ -4,9 +4,9 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @(debits:Seq[Debit])
 @import java.time.format.DateTimeFormatter
-@import selfservicetimetopay.partials.currency
-
-@defining(DateTimeFormatter.ofPattern("dd MMMM YYYY")) { formatter =>
+@import selfservicetimetopay.partials.{currency, charge_code}
+@import java.util.Locale
+@defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
     <div class="subsection grid-layout divider--bottom font-xsmall">
         <div class="grid-layout__column grid-layout__column--3-4"><strong>@Messages("ssttp.amounts_due.due")</strong></div>
         <div class="grid-layout__column grid-layout__column--1-4"><strong>@Messages("ssttp.amounts_due.amount")</strong></div>
@@ -16,7 +16,7 @@
             <div class="grid-layout__column grid-layout__column--3-4">
                 <div><span class="font-small">@debit.dueDate.format(formatter)</span></div>
                 <small>@{debit.originCode match {
-                    case Some(code:String) => <span class="font-xsmall">{Messages("ssttp.common.charge-code.%s".format(code))}</span>
+                    case Some(code:String) => <span class="font-xsmall">{charge_code(code, debit.taxYearEnd)}</span>
                     case _ =>
                 }}</small>
             </div>
