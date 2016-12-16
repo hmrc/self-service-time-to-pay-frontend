@@ -88,7 +88,7 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
-      when(ddConnector.createPaymentPlan(any(), any())(any())).thenReturn(Future.successful(directDebitInstructionPaymentPlan))
+      when(ddConnector.createPaymentPlan(any(), any())(any())).thenReturn(Future.successful(Right(directDebitInstructionPaymentPlan)))
 
       when(arrangementConnector.submitArrangements(any())(any())).thenReturn(Future.successful(Right(SubmissionSuccess())))
 
