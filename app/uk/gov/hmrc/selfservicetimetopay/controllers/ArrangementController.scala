@@ -184,13 +184,17 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
     submission.taxpayer match {
       case Some(Taxpayer(_, _, Some(SelfAssessment(Some(utr), _, _, _)))) =>
-        val result = for {
-          ddInstruction: DirectDebitInstructionPaymentPlan <- ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr))
-          ttp <- arrangementConnector.submitArrangements(createArrangement(ddInstruction, submission))
-        } yield ttp
+        ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr)).flatMap[Result] {
+          _.fold(error => Future.successful(Redirect(routes.DirectDebitController.getDirectDebitAssistance())),
+            success => {
+              val result = for {
+                ttp <- arrangementConnector.submitArrangements(createArrangement(success, submission))
+              } yield ttp
 
-        result.flatMap {
-          _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), success => applicationSuccessful)
+              result.flatMap {
+                _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), success => applicationSuccessful)
+              }
+            })
         }
       case _ => throw new RuntimeException("Taxpayer or related data not present")
     }
