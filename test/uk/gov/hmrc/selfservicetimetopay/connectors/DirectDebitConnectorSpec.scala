@@ -92,10 +92,9 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
       val paymentPlanRequest = Json.fromJson[PaymentPlanRequest](createPaymentRequestJSON).get
       val result = await(testConnector.createPaymentPlan(paymentPlanRequest, saUtr))
 
-      result shouldBe a[DirectDebitInstructionPaymentPlan]
-      result.processingDate shouldBe "2001-12-17T09:30:47Z"
-      result.directDebitInstruction.head.ddiReferenceNo shouldBe Some("ABCDabcd1234")
-      result.paymentPlan.head.ppReferenceNo shouldBe "abcdefghij1234567890"
+      result.right.get.processingDate shouldBe "2001-12-17T09:30:47Z"
+      result.right.get.directDebitInstruction.head.ddiReferenceNo shouldBe Some("ABCDabcd1234")
+      result.right.get.paymentPlan.head.ppReferenceNo shouldBe "abcdefghij1234567890"
     }
   }
 

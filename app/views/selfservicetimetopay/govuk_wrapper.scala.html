@@ -50,7 +50,7 @@
 
 @serviceInfo = {
 @uiLayouts.serviceInfo(
-    betaBanner = if(loggedIn){uiLayouts.betaBanner(loggedIn, appConfig.betaFeedbackUrlAuth, appConfig.betaFeedbackUrlNoAuth, true)}else{HtmlFormat.empty},
+    betaBanner = uiLayouts.betaBanner(loggedIn, appConfig.betaFeedbackUrlAuth, appConfig.betaFeedbackUrlNoAuth, true),
     includeGridWrapper = false,
     serviceInfoContent = Some(serviceInfoContent)
 )
