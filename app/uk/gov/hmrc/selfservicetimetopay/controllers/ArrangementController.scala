@@ -29,7 +29,6 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
 
-import scala.collection.generic.SeqFactory
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -151,7 +150,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       schedule <- ttpSubmission.schedule
       startDate <- schedule.startDate
       firstPaymentDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
-      input = ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate))
+      endDate = LocalDate.of(schedule.endDate.get.getYear, schedule.endDate.get.getMonth, formData.dayOfMonth).minusDays(1)
+      input = ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate), endDate = endDate)
     } yield input
   }
 
