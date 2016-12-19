@@ -71,25 +71,16 @@ package object resources {
     Seq(calculatorPaymentScheduleInstalment,
       calculatorPaymentScheduleInstalment)
   )
-  val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule),
-    Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))),
-    None,//DirectDebitBank
-    Some(taxPayer),
-    Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
-    Some(EligibilityExistingTTP(Some(false))),
-    CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)))
+  val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule), Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))), None, Some(taxPayer), Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)), Some(EligibilityExistingTTP(Some(false))), CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)))
 
   val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
-  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)),
-    schedule = Some(calculatorPaymentSchedule))
+  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(schedule = Some(calculatorPaymentSchedule), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
 
   val ttpSubmissionNLINoSchedule: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
   val ttpSubmissionNLIEmpty: TTPSubmission = TTPSubmission()
 
   val calculatorAmountDueOver10k: Debit = Debit(amount = BigDecimal(11293.22), dueDate = LocalDate.now())
-  val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)),
-    eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
-    calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDueOver10k)))
+  val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)), eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDueOver10k)))
 
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
   val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq("TotalDebtIsTooHigh"))

@@ -22,7 +22,8 @@ case class TTPSubmission(schedule: Option[CalculatorPaymentSchedule] = None,
                          taxpayer: Option[Taxpayer] = None,
                          eligibilityTypeOfTax: Option[EligibilityTypeOfTax] = None,
                          eligibilityExistingTtp: Option[EligibilityExistingTTP] = None,
-                         calculatorData: CalculatorInput = CalculatorInput.initial) {
+                         calculatorData: CalculatorInput = CalculatorInput.initial,
+                         durationMonths: Option[Int] = Some(3)) {
 
   def arrangementDirectDebit: Option[ArrangementDirectDebit] = bankDetails.map(f => ArrangementDirectDebit.from(f))
 }

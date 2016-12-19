@@ -42,9 +42,9 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit authContext => implicit request =>
       authorizedForSsttp {
         sessionCache.get.map {
-          case Some(submission@TTPSubmission(Some(schedule), None, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _)) =>
+          case Some(submission@TTPSubmission(Some(schedule), None, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
             Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true))
-          case Some(submission@TTPSubmission(Some(schedule), Some(_), _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _)) =>
+          case Some(submission@TTPSubmission(Some(schedule), Some(_), _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _,_)) =>
             Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, true))
           case _ => throw new RuntimeException("No data found")
         }
@@ -55,7 +55,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit authContext => implicit request =>
       authorizedForSsttp {
         sessionCache.get.map {
-          case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _)) =>
+          case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
             Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, true))
           case _ => throw new RuntimeException("No data found")
         }
@@ -66,7 +66,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit authContext => implicit request =>
       authorizedForSsttp {
         sessionCache.get.map {
-          case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _)) =>
+          case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _,_)) =>
             Ok(direct_debit_confirmation(schedule, submission.arrangementDirectDebit.get, true))
           case _ => throw new RuntimeException("No data found")
         }
@@ -77,7 +77,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit authContext => implicit request =>
       authorizedForSsttp {
         sessionCache.get.map {
-          case Some(submission@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _)) =>
+          case Some(submission@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _)) =>
             Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true))
           case _ => throw new RuntimeException("No data found")
         }
@@ -102,13 +102,15 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit authContext => implicit request =>
       authorizedForSsttp {
         sessionCache.get.flatMap {
-          case Some(ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _)) =>
+          case Some(ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _)) =>
             existingBankAccountForm.bindFromRequest().fold(
               formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, existingDDBanks.directDebitInstruction))),
               validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit) match {
-                case (Some(_), Some(_)) => Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true)))
+                case (Some(_), Some(_)) =>
+                  Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true)))
                 case (Some(ddi), None) =>
-                  val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction.filter(_.referenceNumber.get == ddi), validFormData)
+                  val newBankDetails =
+                    banksListValidation(existingDDBanks.directDebitInstruction.filter(_.referenceNumber.get == ddi), validFormData)
                   sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
                     _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
                   }
@@ -174,7 +176,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       }
     case Right(existingDDBanks) =>
       updateOrCreateInCache(found => found.copy(existingDDBanks = Some(existingDDBanks)),
-        () => TTPSubmission(None, None, Some(existingDDBanks), None))
+        () => TTPSubmission(None, None, Some(existingDDBanks), None, None))
         .map(_ => Redirect(toBankSelectionPage))
   }
 
