@@ -7,6 +7,7 @@ Number input field using Component Library Styles as  documented:
     @param args options arguments for the template
             'label -> Text for the field label
             'hint -> Hint text for the field
+            'step -> Step value to limit input increments
             '_labelClass -> Label Modifier class
             '_modifierClass -> Modifier class for whole field
             '_inputClass -> Modifier class for the input class, includes:
@@ -43,11 +44,10 @@ Number input field using Component Library Styles as  documented:
         @if(elements.args.get('_required).isDefined) { required }
         @if(elements.args.get('_error_id).isDefined) { aria-labeledby="@elements.args.get('_error_id)" }
         @if(elements.args.get('_hintId).isDefined) { aria-describedby="@elements.args.get('_hintId)" }
-        @if(elements.args.get('_maxlength).isDefined) { maxlength="@elements.args.get('_maxlength)" }
         @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }
-        @*@if(elements.args.get('_pattern).isDefined) { pattern="@elements.args.get('_pattern)" }*@
         @if(elements.args.get('_title).isDefined) { title="@elements.args.get('_title)" }
         @if(elements.args.get('datalist).isDefined) { list="@{elements.field.name}_datalist" }
+        @if(elements.args.get('step).isDefined) { step="@elements.args.get('step)" }
     />
     @if(elements.args.get('datalist).isDefined) {
         <datalist id="@{elements.field.name}_datalist">

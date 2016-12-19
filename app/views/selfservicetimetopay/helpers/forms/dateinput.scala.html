@@ -40,6 +40,7 @@ A data input field using Component Library Styles as  documented:
     @if(argsMap.getOrElse('_hideErrors, "false").contentEquals("false")){@formErrors(frm, '_field -> name)}
     <ul class="list--inline group">
         <li>@numberinput(dayField, 'label -> argsMap.getOrElse('dayLabel, ""),
+            'step -> 1,
             '_modifierClass -> "form-field--inline",
             '_labelClass -> "label--inline-tight",
             '_inputClass -> "input--cleared input--xxsmall input--no-spinner",
@@ -55,12 +56,12 @@ A data input field using Component Library Styles as  documented:
         <li>
         @numberinput(yearField,
             'label -> argsMap.getOrElse('yearLabel, ""),
+            'step -> 1,
             '_labelClass -> "gutter-left label--inline-tight",
             '_modifierClass -> "form-field--inline",
             '_inputClass -> "input--cleared input--xsmall input--no-spinner",
             '_hideErrors -> true,
-            '_required -> true,
-            '_maxlength -> "4")
+            '_required -> true)
         </li>
     </ul>
     @if(argsMap.get('hint).isDefined) {
