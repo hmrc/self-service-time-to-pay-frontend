@@ -5,8 +5,9 @@
 @(schedule:CalculatorPaymentSchedule)
 @import java.time.format.DateTimeFormatter
 @import selfservicetimetopay.partials.currency
+@import java.util.Locale
 
-@defining(DateTimeFormatter.ofPattern("dd MMMM YYYY")) { formatter =>
+@defining(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)) { formatter =>
     @schedule.instalments.map { instalment =>
         <div class="subsection grid-layout divider--bottom font-xsmall">
             <div class="grid-layout__column grid-layout__column--3-4"><strong>@instalment.paymentDate.format(formatter)</strong>
