@@ -199,7 +199,14 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def getPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+      case Some(ttpData@TTPSubmission(_, _, _, Some(tp), _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
+
+        if(tp.selfAssessment.get.debits.map(_.amount).sum >= BigDecimal(32)) {
+          val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
+          if (paymentToday.equals(BigDecimal(0))) Ok(payment_today_form(form, ttpData.taxpayer.isDefined))
+          else Ok(payment_today_form(form.fill(paymentToday), ttpData.taxpayer.isDefined))
+        } else Redirect(routes.SelfServiceTimeToPayController.getYouNeedToFile())
+      case Some(ttpData@TTPSubmission(_, _, _, None, _, _, CalculatorInput(debits, paymentToday, _, _, _, _))) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
         if (paymentToday.equals(BigDecimal(0))) Ok(payment_today_form(form, ttpData.taxpayer.isDefined))
         else Ok(payment_today_form(form.fill(paymentToday), ttpData.taxpayer.isDefined))
