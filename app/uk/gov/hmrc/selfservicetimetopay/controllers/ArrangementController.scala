@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
+import java.time.{LocalDate, LocalDateTime}
 
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
@@ -38,11 +38,9 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                             calculatorConnector: CalculatorConnector,
                             taxPayerConnector: TaxPayerConnector,
                             eligibilityConnector: EligibilityConnector) extends TimeToPayController {
-
   val cesa: String = "CESA"
-  val paymentFrequency = "Monthly"
+  val paymentFrequency = "Calendar Monthly"
   val paymentCurrency = "GBP"
-
 
   def eligibilityCheck(taxpayer: Taxpayer)(implicit hc: HeaderCarrier): Future[Result] = {
     eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).flatMap[Result] {
@@ -217,7 +215,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
     submission.taxpayer match {
       case Some(Taxpayer(_, _, Some(SelfAssessment(Some(utr), _, _, _)))) =>
-        ddConnector.createPaymentPlan(paymentPlan(submission), SaUtr(utr)).flatMap[Result] {
+        ddConnector.createPaymentPlan(checkExistingBankDetails(submission), SaUtr(utr)).flatMap[Result] {
           _.fold(error => Future.successful(Redirect(routes.DirectDebitController.getDirectDebitAssistance())),
             success => {
               val result = for {
@@ -233,24 +231,32 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     }
   }
 
-  private def paymentPlan(submission: TTPSubmission): PaymentPlanRequest = {
+  private def checkExistingBankDetails(submission: TTPSubmission): PaymentPlanRequest = {
+    val startDate: Option[LocalDate] = submission.schedule.get.startDate
+    submission.bankDetails.get.ddiRefNumber match {
+      case Some(refNo) =>
+        paymentPlan(submission, DirectDebitInstruction(creationDate = startDate, ddiRefNumber = Some(refNo)))
+      case None =>
+        paymentPlan(submission, DirectDebitInstruction(creationDate = startDate,
+          sortCode = submission.bankDetails.get.sortCode,
+          accountNumber = submission.bankDetails.get.accountNumber,
+          accountName = submission.bankDetails.get.accountName))
+    }
+  }
+
+  private def paymentPlan(submission: TTPSubmission, ddInstruction: DirectDebitInstruction): PaymentPlanRequest = {
     val maybePaymentPlanRequest = for {
-      bankDetails <- submission.bankDetails
       schedule <- submission.schedule
       taxPayer <- submission.taxpayer
       sa <- taxPayer.selfAssessment
       utr <- sa.utr
     } yield {
       val knownFact = List(KnownFact(cesa, utr))
-      val instruction = DirectDebitInstruction(sortCode = Some(bankDetails.sortCode),
-        accountNumber = Some(bankDetails.accountNumber.toString),
-        creationDate = schedule.startDate,
-        ddiRefNumber = bankDetails.ddiRefNumber)
 
       val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
       val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
       val pp = PaymentPlan(ppType = "Time to Pay",
-        paymentReference = utr,
+        paymentReference = s"${utr}K",
         hodService = cesa,
         paymentCurrency = paymentCurrency,
         initialPaymentAmount = schedule.initialPayment.toString(),
@@ -263,7 +269,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         balancingPaymentDate = lastInstalment.paymentDate,
         totalLiability = schedule.amountToPay.toString())
 
-      PaymentPlanRequest("SSTTP", LocalDate.now().toString, knownFact, instruction, pp, printFlag = true)
+      PaymentPlanRequest("SSTTP", LocalDateTime.now().toString, knownFact, ddInstruction, pp, printFlag = true)
     }
 
     maybePaymentPlanRequest.getOrElse(throw new RuntimeException(s"PaymentPlanRequest creation failed - TTPSubmission: $submission"))
