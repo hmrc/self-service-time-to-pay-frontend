@@ -6,11 +6,11 @@ $("a.trackedSignInSidebar").on("mouseup", function() {
     ga("send", "event", "click-sidebar-signin", $("h1, h2").first().text() );
 });
 
-$(".print-link").on("mouseup", function() {
+$(".trackedPrintLink").on("mouseup", function() {
     ga("send", "event", "click-print", $("h1, h2").first().text());
 });
 
-$(".back-link").on("mouseup", function() {
+$(".trackedBackLink").on("mouseup", function() {
     ga("send", "event", "clicked-back", $("h1, h2").first().text());
 });
 

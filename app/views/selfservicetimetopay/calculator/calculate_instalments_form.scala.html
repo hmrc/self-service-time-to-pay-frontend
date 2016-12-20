@@ -18,7 +18,7 @@
     title = Messages("ssttp.common.title"),
     loggedIn = loggedIn
 ){
-    <a target="_blank" href="@routes.CalculatorController.getCalculateInstalmentsPrint()" class="float--right gutter-left print-link print-hidden js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
+    <a target="_blank" href="@routes.CalculatorController.getCalculateInstalmentsPrint()" class="float--right gutter-left print-link print-hidden js-visible trackedPrintLink">@Messages("ssttp.arrangement.instalment-summary.print")</a>
     <header class="page-header text">
         <h2>@Messages("ssttp.calculator.results.title")</h2>
     </header>
@@ -141,5 +141,5 @@
             calculate_instalments_no_auth_footer()
         }}
     </section>
-    <p><a class="back-link" href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a></p>
+    <p><a class="back-link trackedBackLink" href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a></p>
 }
