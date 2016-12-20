@@ -95,8 +95,6 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       }
   }
 
-  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
-
   def getInstalmentSummary: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
       authorizedForSsttp {
@@ -118,12 +116,6 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       authorizedForSsttp {
         Future.successful(Redirect(routes.DirectDebitController.getDirectDebit()))
       }
-  }
-
-  private def createDayOfForm(ttpSubmission: TTPSubmission) = {
-    ttpSubmission.calculatorData.firstPaymentDate.fold(ArrangementForm.dayOfMonthForm)(p => {
-      ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getDayOfMonth))
-    })
   }
 
   def changeSchedulePaymentDay(): Action[AnyContent] = AuthorisedSaUser {
@@ -216,6 +208,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       }
   }
 
+  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
+
   private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.start()))
 
   private def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
@@ -283,5 +277,11 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     val schedule = submission.schedule.getOrElse(throw new RuntimeException("Schedule data not present"))
 
     TTPArrangement(ppReference, ddReference, taxpayer, schedule)
+  }
+
+  private def createDayOfForm(ttpSubmission: TTPSubmission) = {
+    ttpSubmission.calculatorData.firstPaymentDate.fold(ArrangementForm.dayOfMonthForm)(p => {
+      ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getDayOfMonth))
+    })
   }
 }

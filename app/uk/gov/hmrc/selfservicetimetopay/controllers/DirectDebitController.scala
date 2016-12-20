@@ -20,7 +20,7 @@ import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
-import uk.gov.hmrc.selfservicetimetopay.connectors.{CampaignManagerConnector, DirectDebitConnector}
+import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -43,8 +43,6 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
         }
       }
   }
-
-  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 
   def getDirectDebitAssistance: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
@@ -92,20 +90,6 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       }
   }
 
-  private def banksListValidation(bankDetails: Seq[DirectDebitInstruction], formData: ArrangementExistingDirectDebit): BankDetails = {
-    bankDetails match {
-      case bd :: Nil =>
-        val selectedBankDetails = bankDetails.head
-        BankDetails(sortCode = selectedBankDetails.sortCode.get,
-          accountNumber = selectedBankDetails.accountNumber.get,
-          ddiRefNumber = selectedBankDetails.referenceNumber)
-      case Nil =>
-        BankDetails(sortCode = formData.arrangementDirectDebit.get.sortCode,
-          accountNumber = formData.arrangementDirectDebit.get.accountNumber,
-          ddiRefNumber = None)
-    }
-  }
-
   def submitBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
       authorizedForSsttp {
@@ -134,6 +118,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
                   }
                 case _ => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
               })
+          case _ => throw new RuntimeException("Unhandled case in submitBankAccountNotFound")
         }
       }
   }
@@ -152,6 +137,20 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
               validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
               .flatMap(directDebitSubmitRouting))
       }
+  }
+
+  private def banksListValidation(bankDetails: Seq[DirectDebitInstruction], formData: ArrangementExistingDirectDebit): BankDetails = {
+    bankDetails match {
+      case bd :: Nil =>
+        val selectedBankDetails = bankDetails.head
+        BankDetails(sortCode = selectedBankDetails.sortCode.get,
+          accountNumber = selectedBankDetails.accountNumber.get,
+          ddiRefNumber = selectedBankDetails.referenceNumber)
+      case Nil =>
+        BankDetails(sortCode = formData.arrangementDirectDebit.get.sortCode,
+          accountNumber = formData.arrangementDirectDebit.get.accountNumber,
+          ddiRefNumber = None)
+    }
   }
 
   private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Future[Result]] = {
@@ -187,6 +186,8 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
         () => TTPSubmission(None, None, Some(existingDDBanks), None, None))
         .map(_ => Redirect(toBankSelectionPage))
   }
+
+  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 
   private val toDDCreationPage = routes.DirectDebitController.getDirectDebitConfirmation()
   private val toBankSelectionPage = routes.DirectDebitController.getBankAccountNotFound()

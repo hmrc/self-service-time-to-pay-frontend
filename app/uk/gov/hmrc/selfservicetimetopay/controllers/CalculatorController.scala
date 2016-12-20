@@ -125,6 +125,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       sessionCache.get.map {
         case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _), _)) =>
           Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, loggedIn = true))
+        case _ => throw new RuntimeException("Unhandled case in getMisalignmentPage")
       }
     }
   }
@@ -169,34 +170,32 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     }
   }
 
-  private def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async { implicit request =>
-    ttpData match {
-      case TTPSubmission(_, _, _, None, _, _, calculatorInput, durationMonths) =>
-        var newInput = calculatorInput
-        // if there is an initial payment then move startDate and endDate by a month
-        if(calculatorInput.initialPayment > (BigDecimal(0))) {
-          newInput = calculatorInput.copy(firstPaymentDate = Some(calculatorInput.startDate.plusMonths(1)),
-            endDate = calculatorInput.startDate.plusMonths(durationMonths.get)) // firstPaymentDate + durationMonths
-        }
+  def getPaymentToday: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(ttpData@TTPSubmission(_, _, _, Some(tp), _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _)) =>
+        if(tp.selfAssessment.get.debits.map(_.amount).sum >= BigDecimal(32)) {
+          val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
+          if (paymentToday.equals(BigDecimal(0))) Ok(payment_today_form(form, true))
+          else Ok(payment_today_form(form.fill(paymentToday), true))
+        } else Redirect(routes.SelfServiceTimeToPayController.getYouNeedToFile())
+      case Some(ttpData@TTPSubmission(_, _, _, None, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _)) =>
+        val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
+        if (paymentToday.equals(BigDecimal(0))) Ok(payment_today_form(form))
+        else Ok(payment_today_form(form.fill(paymentToday)))
+      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
+    }
+  }
 
-        calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
-          case Seq(schedule) =>
-            sessionCache.put(ttpData.copy(schedule = Some(schedule))).map[Result] { result =>
-              Redirect(routes.CalculatorController.getCalculateInstalments(None))
-            }
-          case _ => throw new RuntimeException("Failed to get schedule")
-        }
-      case TTPSubmission(_, _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, calculatorInput, durationMonths) =>
-
-        val newInput = setCalculatorInputDates(calculatorInput, sa, durationMonths.get)
-
-        calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
-          case Seq(schedule) =>
-            sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = newInput)).map[Result] { result =>
-              Redirect(routes.CalculatorController.getCalculateInstalments(None))
-            }
-          case _ => throw new RuntimeException("Failed to get schedule")
-        }
+  def submitPaymentToday: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.flatMap[Result] {
+      case Some(ttpSubmission@TTPSubmission(_, _, _, _, Some(_), Some(_), cd@CalculatorInput(debits, paymentToday, _, _, _, _), _)) =>
+        CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(payment_today_form(formWithErrors, ttpSubmission.taxpayer.isDefined))),
+          validFormData => {
+            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).apply(request)
+          }
+        )
+      case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
     }
   }
 
@@ -227,32 +226,34 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     newInput
   }
 
-  def getPaymentToday: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(_, _, _, Some(tp), _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _)) =>
-        if(tp.selfAssessment.get.debits.map(_.amount).sum >= BigDecimal(32)) {
-          val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
-          if (paymentToday.equals(BigDecimal(0))) Ok(payment_today_form(form, true))
-          else Ok(payment_today_form(form.fill(paymentToday), true))
-        } else Redirect(routes.SelfServiceTimeToPayController.getYouNeedToFile())
-      case Some(ttpData@TTPSubmission(_, _, _, None, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _)) =>
-        val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
-        if (paymentToday.equals(BigDecimal(0))) Ok(payment_today_form(form))
-        else Ok(payment_today_form(form.fill(paymentToday)))
-      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
-    }
-  }
+  private def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async { implicit request =>
+    ttpData match {
+      case TTPSubmission(_, _, _, None, _, _, calculatorInput, durationMonths) =>
+        var newInput = calculatorInput
+        // if there is an initial payment then move startDate and endDate by a month
+        if(calculatorInput.initialPayment > BigDecimal(0)) {
+          newInput = calculatorInput.copy(firstPaymentDate = Some(calculatorInput.startDate.plusMonths(1)),
+            endDate = calculatorInput.startDate.plusMonths(durationMonths.get)) // firstPaymentDate + durationMonths
+        }
 
-  def submitPaymentToday: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.flatMap[Result] {
-      case Some(ttpSubmission@TTPSubmission(_, _, _, _, Some(_), Some(_), cd@CalculatorInput(debits, paymentToday, _, _, _, _), _)) =>
-        CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(payment_today_form(formWithErrors, ttpSubmission.taxpayer.isDefined))),
-          validFormData => {
-            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).apply(request)
-          }
-        )
-      case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+        calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
+          case Seq(schedule) =>
+            sessionCache.put(ttpData.copy(schedule = Some(schedule))).map[Result] { result =>
+              Redirect(routes.CalculatorController.getCalculateInstalments(None))
+            }
+          case _ => throw new RuntimeException("Failed to get schedule")
+        }
+      case TTPSubmission(_, _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, calculatorInput, durationMonths) =>
+
+        val newInput = setCalculatorInputDates(calculatorInput, sa, durationMonths.get)
+
+        calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
+          case Seq(schedule) =>
+            sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = newInput)).map[Result] { result =>
+              Redirect(routes.CalculatorController.getCalculateInstalments(None))
+            }
+          case _ => throw new RuntimeException("Failed to get schedule")
+        }
     }
   }
 }
