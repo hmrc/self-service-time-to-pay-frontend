@@ -107,7 +107,7 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
   protected type AsyncPlayUserRequest = AuthContext => Request[AnyContent] => Future[Result]
   protected lazy val authenticationProvider:GovernmentGateway = SaGovernmentGateway
   protected lazy val saRegime = SaRegime(authenticationProvider)
-  private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L0, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
+  private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
   protected lazy val campaignManagerConnector: CampaignManagerConnector = CampaignManagerConnector
 
   def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
