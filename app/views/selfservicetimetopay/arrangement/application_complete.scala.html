@@ -21,6 +21,7 @@
 @selfservicetimetopay.main(
   title = Messages("ssttp.common.title"),
   linksElem = Some(printCssLink),
+  loggedIn = loggedIn,
   sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar())
 ){
   <div class="transaction-banner--complete">
