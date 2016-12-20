@@ -17,7 +17,7 @@ Time To Pay Bank account not found - select existing direct debit or create new 
 }
 @selfservicetimetopay.main(
     title = Messages("ssttp.common.title"),
-    bodyClasses = None,
+    loggedIn = loggedIn,
     sidebarLinks = Some(having_problems_sidebar())
 ){
     <header class="page-header text">

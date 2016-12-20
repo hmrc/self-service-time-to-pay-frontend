@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit.DAYS
 
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
@@ -64,17 +65,17 @@ class ArrangementController(ddConnector: DirectDebitConnector,
               _.fold(redirectToStart)(ttp => {
                 val newSubmission = ttp.copy(taxpayer = Some(t))
                 newSubmission match {
-                  case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _)) =>
+                  case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _), _) =>
+                    sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
+                                          endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map[Result] {
+                      _ => Redirect(routes.CalculatorController.getPaymentToday())
+                    }
+                  case TTPSubmission(None, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _) =>
                     sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
                       endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map[Result] {
                       _ => Redirect(routes.CalculatorController.getPaymentToday())
                     }
-                  case TTPSubmission(None, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
-                    sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
-                      endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map[Result] {
-                      _ => Redirect(routes.CalculatorController.getPaymentToday())
-                    }
-                  case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _)) =>
+                  case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _) =>
                     if (areEqual(tpSA.debits, meDebits)) {
                       sessionCache.put(newSubmission).flatMap[Result] {
                         _ => eligibilityCheck(tp)
@@ -154,14 +155,43 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     })
   }
 
+  // TODO Refactor post MVP
   def createCalculatorInput(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth): Option[CalculatorInput] = {
-    for {
-      schedule <- ttpSubmission.schedule
-      startDate <- schedule.startDate
-      firstPaymentDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
-      endDate = LocalDate.of(schedule.endDate.get.getYear, schedule.endDate.get.getMonth, formData.dayOfMonth).minusDays(1)
-      input = ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate), endDate = endDate)
-    } yield input
+    val schedule = ttpSubmission.schedule.get
+    val startDate = schedule.startDate.get
+
+    var firstPmnttDate = startDate.withDayOfMonth(formData.dayOfMonth)
+    // set end date base on number of months the user selected
+    var endDate = LocalDate.of(schedule.endDate.get.getYear, schedule.endDate.get.getMonth, formData.dayOfMonth).minusDays(1)
+
+    // if there is no initial payment then first payment becomes initial payment but its startdate can be changed by user
+    if(ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
+      // if the day entered by the user is older than today, then set the firstPaymentDate to next month
+      if (formData.dayOfMonth.compareTo(LocalDate.now.getDayOfMonth) < 0) {
+        firstPmnttDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
+        endDate = firstPmnttDate.plusMonths(ttpSubmission.durationMonths.get).withDayOfMonth(formData.dayOfMonth).minusDays(1)
+      } else {
+        firstPmnttDate = startDate.withDayOfMonth(formData.dayOfMonth)
+        endDate = firstPmnttDate.plusMonths(ttpSubmission.durationMonths.get).withDayOfMonth(formData.dayOfMonth).minusDays(1)
+      }
+    } else {
+      // if there is an initial payment and if first payment is less than 14 days from now+5 days move by a month
+      if(firstPmnttDate.isBefore(startDate))  {
+        firstPmnttDate = firstPmnttDate.plusMonths(1)
+        if(DAYS.between(startDate, firstPmnttDate) <= 14) {
+          firstPmnttDate = firstPmnttDate.plusMonths(1)
+        }
+        endDate = firstPmnttDate.plusMonths(ttpSubmission.durationMonths.get).minusDays(1)
+      } else {
+        if(DAYS.between(startDate, firstPmnttDate) <= 14) {
+          firstPmnttDate = firstPmnttDate.plusMonths(1)
+        }
+      }
+    }
+
+    val input = ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPmnttDate), endDate = endDate)
+
+    Some(input)
   }
 
   def submit(): Action[AnyContent] = AuthorisedSaUser {

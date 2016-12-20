@@ -89,11 +89,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
     "Return BadRequest if the form value = total amount due" in {
       implicit val hc = new HeaderCarrier
 
-      val submission = ttpSubmissionNLI.copy(
-        eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
-        eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)),
-        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now())))
-      )
+      val submission = ttpSubmissionNLI.copy(eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)), eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))), calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now()))))
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(submission)))
@@ -109,11 +105,10 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
     "Return BadRequest if the form value = total amount due (via rounding)" in {
       implicit val hc = new HeaderCarrier
 
-      val submission = ttpSubmissionNLI.copy(
+      val submission = ttpSubmissionNLI.copy(eligibilityTypeOfTax =
+        Some(EligibilityTypeOfTax(true, false)),
         eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
-        eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)),
-        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now())))
-      )
+        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now()))))
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(submission)))
@@ -129,11 +124,10 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
     "Return 303 if the form value < total amount due (via rounding)" in {
       implicit val hc = new HeaderCarrier
 
-      val submission = ttpSubmissionNLI.copy(
+      val submission = ttpSubmissionNLI.copy(eligibilityTypeOfTax =
+        Some(EligibilityTypeOfTax(true, false)),
         eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
-        eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)),
-        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now())))
-      )
+        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now()))))
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(submission)))

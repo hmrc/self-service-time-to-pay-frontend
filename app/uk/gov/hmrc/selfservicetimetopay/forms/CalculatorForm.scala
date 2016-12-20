@@ -35,25 +35,34 @@ object CalculatorForm {
   val dueByDayMin = 1
   val dueByDayMax = 31
 
+  def tryToInt(input: String) = {
+    catching(classOf[NumberFormatException]) opt input.toInt
+  }
+  def isInt(input: String) = {
+    tryToInt(input).nonEmpty
+  }
+
   val dueByDateTuple = tuple(
-    "dueByYear" -> optional(number)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.required-year", _.nonEmpty)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-high", x => x.isEmpty || x.get <= dueByYearMax)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-low",x => x.isEmpty || x.get >= dueByYearMin),
+    "dueByYear" -> text
+      .verifying("ssttp.calculator.form.amounts_due.due_by.required-year", { i: String => (i != null) && i.nonEmpty })
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year-number", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-high", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByYearMax)) })
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-low", { i => !isInt(i) || (isInt(i) && (i.toInt >= dueByYearMin)) }),
     "dueByMonth" -> optional(number)
       .verifying("ssttp.calculator.form.amounts_due.due_by.required-month", _.nonEmpty)
       .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-month", x => x.isEmpty || ( x.get <= dueByMonthMax) && (x.get >= dueByMonthMin)),
-    "dueByDay" -> optional(number)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.required-day", _.nonEmpty)
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day", x => x.isEmpty || ( x.get <= dueByDayMax) && (x.get >= dueByDayMin))
+    "dueByDay" -> text
+      .verifying("ssttp.calculator.form.amounts_due.due_by.required-day", { i: String => (i != null) && i.nonEmpty })
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day-number", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day", { i => !isInt(i) || (isInt(i) && ( i.toInt <= dueByDayMax) && (i.toInt >= dueByDayMin))})
   )
 
-  def validDate: Constraint[(Option[Int], Option[Int], Option[Int])] =
-    Constraint[(Option[Int], Option[Int], Option[Int])]("ssttp.calculator.form.amounts_due.due_by.not-valid-date") { data =>
+  def validDate: Constraint[(String, Option[Int], String)] =
+    Constraint[(String, Option[Int], String)]("ssttp.calculator.form.amounts_due.due_by.not-valid-date") { data =>
     if (data._1.isEmpty || data._2.isEmpty || data._3.isEmpty) {
       Valid
     } else {
-      catching(classOf[DateTimeException]).opt(LocalDate.of(data._1.get, data._2.get, data._3.get)) match {
+      catching(classOf[DateTimeException]).opt(LocalDate.of(tryToInt(data._1).get, data._2.get, tryToInt(data._3).get)) match {
         case d:Some[LocalDate] => Valid
         case _ => Invalid(ValidationError("ssttp.calculator.form.amounts_due.due_by.not-valid-date"))
       }
@@ -66,10 +75,10 @@ object CalculatorForm {
       .verifying("ssttp.calculator.form.amounts_due.amount.positive", x => x.isEmpty || (x.get.compare(BigDecimal("0")) > 0)),
     "dueBy" -> dueByDateTuple.verifying(validDate)
   )
-  ((amount:Option[BigDecimal], date:(Option[Int], Option[Int], Option[Int])) =>
-    CalculatorAmountDue(amount.get, date._1.get, date._2.get, date._3.get))
+  ((amount:Option[BigDecimal], date:(String, Option[Int], String)) =>
+    CalculatorAmountDue(amount.get, tryToInt(date._1).get, date._2.get, tryToInt(date._3).get))
   ((amountDue:Debit) => Option((Option(amountDue.amount),
-    (Option(amountDue.dueByYear), Option(amountDue.dueByMonth), Option(amountDue.dueByDay)))))
+    (amountDue.dueByYear.toString, Option(amountDue.dueByMonth), amountDue.dueByDay.toString))))
   )
 
   case class RemoveItem(index: Int)
