@@ -171,12 +171,12 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         if(DAYS.between(startDate, firstPmnttDate) <= 14) {
           firstPmnttDate = firstPmnttDate.plusMonths(1)
         }
-        endDate = firstPmnttDate.plusMonths(ttpSubmission.durationMonths.get).minusDays(1)
       } else {
         if(DAYS.between(startDate, firstPmnttDate) <= 14) {
           firstPmnttDate = firstPmnttDate.plusMonths(1)
         }
       }
+      endDate = firstPmnttDate.plusMonths(ttpSubmission.durationMonths.get).minusDays(1)
     }
 
     val input = ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPmnttDate), endDate = endDate)
