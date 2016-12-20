@@ -66,7 +66,8 @@ class DirectDebitControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
 
-      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
+        ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
       val response = await(controller.getDirectDebit(FakeRequest()
         .withSession(SessionKeys.userId -> "someUserId")

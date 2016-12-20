@@ -34,9 +34,17 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getDirectDebit: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
       authorizedForSsttp {
-        Future.successful(Ok(direct_debit_form(directDebitForm, true)))
+        sessionCache.get.map {
+          case Some(submission@TTPSubmission(_, _, _, Some(taxpayer), _, _, calcData, _)) => {
+            if (areEqual(taxpayer.selfAssessment.get.debits, calcData.debits)) Ok(direct_debit_form(directDebitForm, true))
+            else throw new RuntimeException("Invalid input")
+          }
+          case _ => throw new RuntimeException("Invalid request submitted")
+        }
       }
   }
+
+  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 
   def getDirectDebitAssistance: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext => implicit request =>
@@ -44,7 +52,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
         sessionCache.get.map {
           case Some(submission@TTPSubmission(Some(schedule), None, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
             Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true))
-          case Some(submission@TTPSubmission(Some(schedule), Some(_), _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _,_)) =>
+          case Some(submission@TTPSubmission(Some(schedule), Some(_), _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
             Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, true))
           case _ => throw new RuntimeException("No data found")
         }
@@ -66,7 +74,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit authContext => implicit request =>
       authorizedForSsttp {
         sessionCache.get.map {
-          case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _,_)) =>
+          case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _, _)) =>
             Ok(direct_debit_confirmation(schedule, submission.arrangementDirectDebit.get, true))
           case _ => throw new RuntimeException("No data found")
         }
