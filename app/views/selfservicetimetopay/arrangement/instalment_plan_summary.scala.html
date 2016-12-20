@@ -20,7 +20,7 @@ Time To Pay Instalment Summary Pretty Print Page
         title = Messages("ssttp.common.title"),
         loggedIn = signedIn
     ) {
-    <a href="javascript:window.print()" class="js-visible no-print float--right gutter-left print-link js-visible">@Messages("ssttp.arrangement.instalment-summary.print")</a>
+    <a href="javascript:window.print()" class="js-visible no-print float--right gutter-left print-link js-visible trackedPrintLink">@Messages("ssttp.arrangement.instalment-summary.print")</a>
        <header class="page-header text">
             <h2>@Messages("ssttp.arrangement.instalment-summary.title")</h2>
         </header>
@@ -96,7 +96,7 @@ Time To Pay Instalment Summary Pretty Print Page
             }
         </section>
         <div>&nbsp;</div>
-        <div><a class="back-link" href="@routes.CalculatorController.getCalculateInstalments(None)">@Messages("ssttp.calculator.form.back")</a></div>
+        <div><a class="back-link trackedBackLink" href="@routes.CalculatorController.getCalculateInstalments(None)">@Messages("ssttp.calculator.form.back")</a></div>
 
     }
 
