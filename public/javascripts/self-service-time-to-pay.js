@@ -3,15 +3,15 @@ $("a.trackedOutboundLink").on("mouseup", function() {
 });
 
 $("a.trackedSignInSidebar").on("mouseup", function() {
-    ga("send", "event", "click-sidebar-signin", $("h1, h2").first().text() );
+    ga("send", "event", "click-sidebar-signin", window.location.pathname );
 });
 
 $(".trackedPrintLink").on("mouseup", function() {
-    ga("send", "event", "click-print", $("h1, h2").first().text());
+    ga("send", "event", "click-print", window.location.pathname);
 });
 
 $(".trackedBackLink").on("mouseup", function() {
-    ga("send", "event", "clicked-back", $("h1, h2").first().text());
+    ga("send", "event", "clicked-back", window.location.pathname);
 });
 
 
