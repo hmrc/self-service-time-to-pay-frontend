@@ -125,7 +125,7 @@
                 <div class="grid-layout__column grid-layout__column--1-3"><strong>@currency(schedule.totalPayable)</strong></div>
             </div>
         }
-        <details>
+        <details class="trackedDetails" id="how-we-calculate-interest">
             <summary>@Messages("ssttp.calculator.results.interest-info.title")</summary>
             <div>
             @message_list(Some("bullets"), "ssttp.calculator.results.interest-info.list.")

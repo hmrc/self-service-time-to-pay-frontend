@@ -29,7 +29,7 @@ Amounts Due Misalignment page - designed to be shown when the debts a user enter
             <div class="bordered-box bordered-box--shaded">
                 <h3>@Messages("ssttp.calculator.misalignment-page.total-in-account")</h3>
                 <p>@currency(debitsTotal)</p>
-                <details>
+                <details class="trackedDetails" id="view-breakdown-misalignment">
                     <summary>@Messages("ssttp.calculator.misalignment-page.account-breakdown.title")</summary>
                     @what_you_owe(debits)
                     <div class="subsection grid-layout divider--bottom font-xsmall">
