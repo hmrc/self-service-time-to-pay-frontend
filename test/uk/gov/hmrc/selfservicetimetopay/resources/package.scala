@@ -71,7 +71,7 @@ package object resources {
     Seq(calculatorPaymentScheduleInstalment,
       calculatorPaymentScheduleInstalment)
   )
-  val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule), Some(BankDetails("012131", "1234567890", None, None, None, Some("0987654321"))), None, Some(taxPayer), Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)), Some(EligibilityExistingTTP(Some(false))), CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)))
+  val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule), Some(BankDetails(Some("012131"), Some("1234567890"), None, None, None, Some("0987654321"))), None, Some(taxPayer), Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)), Some(EligibilityExistingTTP(Some(false))), CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)))
 
   val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
   val ttpSubmissionNLI: TTPSubmission = TTPSubmission(schedule = Some(calculatorPaymentSchedule), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
@@ -171,7 +171,7 @@ package object resources {
     "accountNumber" -> ""
   )
 
-  val bankDetails = BankDetails("123456", "12345678", None, None, None, None)
+  val bankDetails = BankDetails(Some("123456"), Some("12345678"), None, None, None, None)
 
   val directDebitBank = DirectDebitBank("", Seq.empty)
 

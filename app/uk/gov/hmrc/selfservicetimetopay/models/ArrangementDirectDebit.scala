@@ -24,7 +24,7 @@ case class ArrangementDirectDebit(accountName:String,
 object ArrangementDirectDebit {
   def from(bankDetails: BankDetails): ArrangementDirectDebit = {
     ArrangementDirectDebit(bankDetails.accountName.getOrElse(""),
-      bankDetails.sortCode,
-      bankDetails.accountNumber)
+      bankDetails.sortCode.getOrElse(""),
+      bankDetails.accountNumber.getOrElse(""))
   }
 }

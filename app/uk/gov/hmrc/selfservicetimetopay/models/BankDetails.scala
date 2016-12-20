@@ -16,14 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class BankDetails(sortCode: String,
-                       accountNumber: String,
+case class BankDetails(sortCode: Option[String] = None,
+                       accountNumber: Option[String] = None,
                        bankName: Option[String] = None,
                        bankAddress: Option[Address] = None,
                        accountName: Option[String] = None,
-                       ddiRefNumber: Option[String] = None) {
-
-  def formattedSortCode():String = {
-    "%s - %s - %s".format(sortCode.substring(0, 1), sortCode.substring(2, 3), sortCode.substring(4, 5))
-  }
-}
+                       ddiRefNumber: Option[String] = None)

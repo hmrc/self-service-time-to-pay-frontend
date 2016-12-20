@@ -75,8 +75,8 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
       result.isLeft shouldBe true
       val account = result.left.get
 
-      account.sortCode shouldBe "123456"
-      account.accountNumber shouldBe "12345678"
+      account.sortCode.get shouldBe "123456"
+      account.accountNumber.get shouldBe "12345678"
       account.bankAddress shouldBe Some(Address(addressLine1 = "", postcode = ""))
     }
   }

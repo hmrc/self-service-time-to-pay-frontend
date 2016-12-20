@@ -135,25 +135,23 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
           validFormData =>
             directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode,
               validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
-              .flatMap(directDebitSubmitRouting))
+              .flatMap(directDebitSubmitRouting(validFormData.accountName)))
       }
   }
 
   private def banksListValidation(bankDetails: Seq[DirectDebitInstruction], formData: ArrangementExistingDirectDebit): BankDetails = {
     bankDetails match {
       case bd :: Nil =>
-        val selectedBankDetails = bankDetails.head
-        BankDetails(sortCode = selectedBankDetails.sortCode.get,
-          accountNumber = selectedBankDetails.accountNumber.get,
-          ddiRefNumber = selectedBankDetails.referenceNumber)
+        BankDetails(ddiRefNumber = bankDetails.head.referenceNumber)
       case Nil =>
-        BankDetails(sortCode = formData.arrangementDirectDebit.get.sortCode,
-          accountNumber = formData.arrangementDirectDebit.get.accountNumber,
-          ddiRefNumber = None)
+        BankDetails(sortCode = Some(formData.arrangementDirectDebit.get.sortCode),
+          accountNumber = Some(formData.arrangementDirectDebit.get.accountNumber),
+          ddiRefNumber = None,
+          accountName = Some(formData.arrangementDirectDebit.get.accountName))
     }
   }
 
-  private def directDebitSubmitRouting(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Future[Result]] = {
+  private def directDebitSubmitRouting(accName: String)(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Future[Result]] = {
     case Left(singleBankDetails) =>
       sessionCache.get.flatMap {
         _.fold(Future.successful(redirectToStartPage))(ttp => {
@@ -164,14 +162,17 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
           directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
             directDebitBank => {
               val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
-                p.accountNumber.get.equalsIgnoreCase(singleBankDetails.accountNumber) && p.sortCode.get.equals(singleBankDetails.sortCode)
+                p.accountNumber.get.equalsIgnoreCase(singleBankDetails.accountNumber.get) && p.sortCode.get.equals(singleBankDetails.sortCode.get)
               })
 
               val bankDetailsToSave = instructions match {
                 case instruction :: Nil =>
-                  BankDetails(singleBankDetails.sortCode, singleBankDetails.accountNumber, None, None, None,
-                    Some(instructions.head.referenceNumber.get))
-                case Nil => singleBankDetails
+                  val head: DirectDebitInstruction = instructions.head
+                  BankDetails(ddiRefNumber = Some(head.referenceNumber.get),
+                    accountNumber = head.accountNumber,
+                    sortCode = head.sortCode,
+                    accountName = Some(accName))
+                case Nil => singleBankDetails.copy(accountName = Some(accName))
               }
 
               sessionCache.put(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
