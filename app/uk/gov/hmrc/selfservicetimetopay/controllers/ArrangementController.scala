@@ -70,6 +70,11 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                                           endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map[Result] {
                       _ => Redirect(routes.CalculatorController.getPaymentToday())
                     }
+                  case TTPSubmission(None, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _) =>
+                    sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
+                      endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map[Result] {
+                      _ => Redirect(routes.CalculatorController.getPaymentToday())
+                    }
                   case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _) =>
                     if (areEqual(tpSA.debits, meDebits)) {
                       sessionCache.put(newSubmission).flatMap[Result] {
@@ -97,8 +102,12 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       authorizedForSsttp {
         sessionCache.get.flatMap {
           _.fold(redirectToStart)(ttp => {
-            Future.successful(Ok(instalment_plan_summary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
-              createDayOfForm(ttp), signedIn = true)))
+            if (areEqual(ttp.taxpayer.get.selfAssessment.get.debits, ttp.calculatorData.debits)) {
+              Future.successful(Ok(instalment_plan_summary(ttp.schedule.getOrElse(throw new RuntimeException("No schedule data")),
+                createDayOfForm(ttp), signedIn = true)))
+            } else {
+              Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
+            }
           })
         }
       }
