@@ -267,7 +267,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         scheduledPaymentFrequency = paymentFrequency,
         balancingPaymentAmount = lastInstalment.amount.toString(),
         balancingPaymentDate = lastInstalment.paymentDate,
-        totalLiability = schedule.amountToPay.toString())
+        totalLiability = (schedule.instalments.map(_.amount).sum + schedule.initialPayment).toString())
 
       PaymentPlanRequest("SSTTP", LocalDateTime.now().toString, knownFact, ddInstruction, pp, printFlag = true)
     }
