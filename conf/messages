@@ -168,6 +168,7 @@ ssttp.calculator.results.title=Calculate your instalments
 
 ssttp.calculator.results.heading.what-you-owe=What you owe
 ssttp.calculator.results.you-owe=You owe a total of:
+ssttp.calculator.results.you-owe.breakdown=View breakdown
 ssttp.calculator.results.you-can-afford=You can afford to pay:
 ssttp.calculator.results.your-instalment-balance=Your balance for instalments:
 ssttp.calculator.results.heading.choose-your-instalments=Select how many months you need

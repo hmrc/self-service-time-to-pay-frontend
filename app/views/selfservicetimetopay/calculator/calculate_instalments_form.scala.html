@@ -3,15 +3,17 @@
 
     @param schedule The PaymentSchedule to show
     @param monthOptions List of number of months available to pay over
-    @param auth Boolean set to true if the user is authenticated, default false
+    @param debits Option[Seq[Debit]] list of tax debits from the user's SA account
+    @param loggedIn Boolean set to true if the user is authenticated, default false
 *@
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@import uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController
-@(schedule:CalculatorPaymentSchedule, durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[BigDecimal], monthOptions:Seq[Int], loggedIn: Boolean)(implicit request: Request[_])
+@import play.twirl.api.HtmlFormat
+@(schedule:CalculatorPaymentSchedule, debits:Option[Seq[Debit]], durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[BigDecimal], monthOptions:Seq[Int], loggedIn: Boolean)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, button, fieldErrors, numberinput, inlinecurrencyinput}
-@import selfservicetimetopay.partials.currency
+@import selfservicetimetopay.partials.{currency, what_you_owe}
 @import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
@@ -27,7 +29,17 @@
     <section>
         <h2>@Messages("ssttp.calculator.results.heading.what-you-owe")</h2>
         <div class="subsection grid-layout divider--bottom">
-            <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.you-owe")</div>
+            <div class="grid-layout__column grid-layout__column--2-3">@Messages("ssttp.calculator.results.you-owe")
+            @debits match {
+                case Some(debits: Seq[Debit]) => {
+                    <details class="trackedDetails" id="calculatorWhatYouOweBreakdown">
+                        <summary class="font-xsmall">@Messages("ssttp.calculator.results.you-owe.breakdown")</summary>
+                        @what_you_owe(debits, true)
+                    </details>
+                }
+                case _ => {}
+            }
+            </div>
             <div class="grid-layout__column grid-layout__column--1-3">@currency(schedule.amountToPay)</div>
         </div>
         <div class="subsection divider--bottom grid-layout">
