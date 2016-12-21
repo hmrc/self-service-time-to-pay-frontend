@@ -23,7 +23,7 @@ import java.time.LocalDate
 case class DirectDebitInstruction(sortCode: Option[String] = None,
                                   accountNumber: Option[String] = None,
                                   referenceNumber: Option[String] = None,
-                                  creationDate: Option[LocalDate],
+                                  creationDate: Option[LocalDate] = None,
                                   paperAuddisFlag: Option[Boolean] = Some(true),
                                   ddiRefNumber: Option[String] = None,
                                   ddiReferenceNo: Option[String] = None,

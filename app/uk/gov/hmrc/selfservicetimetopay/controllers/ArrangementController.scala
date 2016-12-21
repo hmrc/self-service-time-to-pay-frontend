@@ -235,9 +235,9 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     val startDate: Option[LocalDate] = submission.schedule.get.startDate
     submission.bankDetails.get.ddiRefNumber match {
       case Some(refNo) =>
-        paymentPlan(submission, DirectDebitInstruction(creationDate = startDate, ddiRefNumber = Some(refNo)))
+        paymentPlan(submission, DirectDebitInstruction(ddiRefNumber = Some(refNo)))
       case None =>
-        paymentPlan(submission, DirectDebitInstruction(creationDate = startDate,
+        paymentPlan(submission, DirectDebitInstruction(
           sortCode = submission.bankDetails.get.sortCode,
           accountNumber = submission.bankDetails.get.accountNumber,
           accountName = submission.bankDetails.get.accountName))
