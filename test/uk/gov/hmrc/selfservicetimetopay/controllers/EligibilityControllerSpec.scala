@@ -25,6 +25,9 @@ import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
 import uk.gov.hmrc.http.cache.client.CacheMap
+import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel, CredentialStrength}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
@@ -38,6 +41,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
+  val mockAuthConnector: AuthConnector= mock[AuthConnector]
 
   val typeOfTaxForm = Seq(
     "type_of_tax.hasSelfAssessmentDebt" -> "true",
@@ -63,7 +67,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
   )
 
   "EligibilityController" should {
-    val controller = new EligibilityController() {
+    val controller = new EligibilityController(mockAuthConnector) {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     }
 
@@ -124,7 +128,10 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url
     }
 
-    "submit existing ttp given no existing ttp data and redirect to amount you owe page" in {
+    "submit existing ttp given no existing ttp data and logged in user and redirect to amount you owe page via misalignment page" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any()))
+        .thenReturn(Some(Authority("", Accounts(), None, None, Strong, ConfidenceLevel.L200, None, None, None)))
+
       val request = FakeRequest().withFormUrlEncodedBody(falseExistingTtpForm: _*).withCookies(sessionProvider.createTtpCookie())
 
       val response: Future[Result] = await(controller.submitExistingTtp.apply(request))
@@ -132,7 +139,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       status(response) shouldBe SEE_OTHER
 
       redirectLocation(response).get shouldBe
-        uk.gov.hmrc.selfservicetimetopay.controllers.routes.CalculatorController.start().url
+        uk.gov.hmrc.selfservicetimetopay.controllers.routes.ArrangementController.determineMisalignment().url
     }
 
     "submit existing ttp given existing ttp data and redirect to call us page" in {

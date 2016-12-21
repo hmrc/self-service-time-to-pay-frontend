@@ -159,7 +159,7 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector),
     classOf[CalculatorController] -> new CalculatorController(calculatorConnector),
     classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, calculatorConnector, taxPayerConnector, eligibilityConnector),
-    classOf[EligibilityController] -> new EligibilityController(),
+    classOf[EligibilityController] -> new EligibilityController(authConnector),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
   )
 

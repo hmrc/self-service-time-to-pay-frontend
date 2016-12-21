@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
+import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, TTPSubmission}
@@ -25,7 +26,7 @@ import views.html.selfservicetimetopay.eligibility._
 
 import scala.concurrent.Future
 
-class EligibilityController extends TimeToPayController {
+class EligibilityController(authConnector: AuthConnector) extends TimeToPayController {
 
   def start: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.getTypeOfTax())
@@ -68,10 +69,13 @@ class EligibilityController extends TimeToPayController {
       formWithErrors => Future.successful(BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))),
       validFormData => {
         updateOrCreateInCache(found => found.copy(eligibilityExistingTtp = Some(validFormData), durationMonths = Some(3)),
-          () => TTPSubmission(eligibilityExistingTtp = Some(validFormData), durationMonths = Some(3))).map(_ => {
+          () => TTPSubmission(eligibilityExistingTtp = Some(validFormData), durationMonths = Some(3))).flatMap[Result](_ => {
           validFormData match {
-            case EligibilityExistingTTP(Some(false)) => Redirect(routes.CalculatorController.start())
-            case _ => Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())
+            case EligibilityExistingTTP(Some(false)) =>
+              authConnector.currentAuthority.map[Result] { authority =>
+                Redirect(routes.ArrangementController.determineMisalignment())
+              }.recover{case e: Throwable => Redirect(routes.CalculatorController.start())}
+            case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
           }
         })
       })
