@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit.DAYS
-import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import java.time.{LocalDate, ZonedDateTime}
 
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
@@ -33,6 +33,7 @@ import views.html.selfservicetimetopay.arrangement.{application_complete, instal
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import scala.math.BigDecimal
 
 class ArrangementController(ddConnector: DirectDebitConnector,
                             arrangementConnector: ArrangementConnector,
@@ -66,7 +67,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                 newSubmission match {
                   case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _), _) =>
                     sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
-                                          endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map[Result] {
+                      endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map[Result] {
                       _ => Redirect(routes.CalculatorController.getPaymentToday())
                     }
                   case TTPSubmission(None, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _) =>
@@ -156,7 +157,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     var endDate = LocalDate.of(schedule.endDate.get.getYear, schedule.endDate.get.getMonth, formData.dayOfMonth).minusDays(1)
 
     // if there is no initial payment then first payment becomes initial payment but its startdate can be changed by user
-    if(ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
+    if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
       // if the day entered by the user is older than today, then set the firstPaymentDate to next month
       if (formData.dayOfMonth.compareTo(LocalDate.now.getDayOfMonth) < 0) {
         firstPmnttDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
@@ -167,13 +168,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       }
     } else {
       // if there is an initial payment and if first payment is less than 14 days from now+5 days move by a month
-      if(firstPmnttDate.isBefore(startDate))  {
+      if (firstPmnttDate.isBefore(startDate)) {
         firstPmnttDate = firstPmnttDate.plusMonths(1)
-        if(DAYS.between(startDate, firstPmnttDate) <= 14) {
+        if (DAYS.between(startDate, firstPmnttDate) <= 14) {
           firstPmnttDate = firstPmnttDate.plusMonths(1)
         }
       } else {
-        if(DAYS.between(startDate, firstPmnttDate) <= 14) {
+        if (DAYS.between(startDate, firstPmnttDate) <= 14) {
           firstPmnttDate = firstPmnttDate.plusMonths(1)
         }
       }
@@ -254,14 +255,17 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     } yield {
       val knownFact = List(KnownFact(cesa, utr))
 
+      val initialPayment = if (schedule.initialPayment > BigDecimal.exact(0)) Some(schedule.initialPayment.toString()) else None
+      val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.startDate.get.plusDays(7)))
+
       val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
       val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
       val pp = PaymentPlan(ppType = "Time to Pay",
         paymentReference = s"${utr}K",
         hodService = cesa,
         paymentCurrency = paymentCurrency,
-        initialPaymentAmount = schedule.initialPayment.toString(),
-        initialPaymentStartDate = schedule.startDate.get,
+        initialPaymentAmount = initialPayment,
+        initialPaymentStartDate = initialStartDate,
         scheduledPaymentAmount = firstInstalment.amount.toString(),
         scheduledPaymentStartDate = firstInstalment.paymentDate,
         scheduledPaymentEndDate = lastInstalment.paymentDate,
