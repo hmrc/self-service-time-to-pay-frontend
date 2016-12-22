@@ -1,27 +1,30 @@
 @*
     Partial view to show list of what a user owes having validated against their account
+
+    @param debits Seq[Debit] list of tax debits to showd
+    @param smallFormat Boolean, default false, apply the small font modifier to this list to show within another element
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@(debits:Seq[Debit])
+@(debits:Seq[Debit], smallFormat:Boolean = false)
 @import java.time.format.DateTimeFormatter
 @import selfservicetimetopay.partials.{currency, charge_code}
 @import java.util.Locale
 @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
-    <div class="subsection grid-layout divider--bottom font-xsmall">
+    <div class="@if(!smallFormat){subsection}else{grid-layout--no-gutter} grid-layout divider--bottom font-xsmall">
         <div class="grid-layout__column grid-layout__column--3-4"><strong>@Messages("ssttp.amounts_due.due")</strong></div>
         <div class="grid-layout__column grid-layout__column--1-4"><strong>@Messages("ssttp.amounts_due.amount")</strong></div>
     </div>
     @debits.map { debit =>
-        <div class="subsection grid-layout divider--bottom font-xsmall">
+        <div class="@if(!smallFormat){subsection}else{grid-layout--no-gutter} grid-layout font-xsmall@if(!smallFormat){ divider--bottom}">
             <div class="grid-layout__column grid-layout__column--3-4">
-                <div><span class="font-small">@debit.dueDate.format(formatter)</span></div>
+                <div><span class="@if(smallFormat){font-xxsmall}else{font-small}">@debit.dueDate.format(formatter)</span></div>
                 <small>@{debit.originCode match {
                     case Some(code:String) => <span class="font-xsmall">{charge_code(code, debit.taxYearEnd)}</span>
                     case _ =>
                 }}</small>
             </div>
             <div class="grid-layout__column grid-layout__column--1-4 align--middle">
-                <p class="font-small">@currency(debit.amount)</p>
+                <p><span class="@if(smallFormat){font-xxsmall}else{font-small}">@currency(debit.amount)</span></p>
             </div>
         </div>
     }
