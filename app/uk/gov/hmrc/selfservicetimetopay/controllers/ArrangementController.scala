@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit.DAYS
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
@@ -269,7 +270,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         balancingPaymentDate = lastInstalment.paymentDate,
         totalLiability = (schedule.instalments.map(_.amount).sum + schedule.initialPayment).toString())
 
-      PaymentPlanRequest("SSTTP", LocalDateTime.now().toString, knownFact, ddInstruction, pp, printFlag = true)
+      PaymentPlanRequest("SSTTP", ZonedDateTime.now.format(DateTimeFormatter.ISO_INSTANT), knownFact, ddInstruction, pp, printFlag = true)
     }
 
     maybePaymentPlanRequest.getOrElse(throw new RuntimeException(s"PaymentPlanRequest creation failed - TTPSubmission: $submission"))
