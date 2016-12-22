@@ -140,7 +140,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def submitCalculateInstalments: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
-      case Some(ttpSubmission@TTPSubmission(Some(schedule), _, _, taxpayer@Some(_), Some(_), _, cd@CalculatorInput(debits, paymentToday, _, _, _, _), _)) =>
+      case Some(ttpSubmission@TTPSubmission(Some(schedule), _, _, taxpayer:Option[Taxpayer], Some(_), _, cd@CalculatorInput(debits, paymentToday, _, _, _, _), _)) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         CalculatorForm.durationForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
@@ -158,7 +158,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def submitCalculateInstalmentsPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
-      case Some(ttpData@TTPSubmission(Some(schedule), _, _, taxpayer@Some(_), _, _, cd, _)) =>
+      case Some(ttpData@TTPSubmission(Some(schedule), _, _, taxpayer:Option[Taxpayer], _, _, cd, _)) =>
         val durationForm = CalculatorForm.durationForm.fill(CalculatorDuration(3))
         CalculatorForm.createPaymentTodayForm(cd.debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
