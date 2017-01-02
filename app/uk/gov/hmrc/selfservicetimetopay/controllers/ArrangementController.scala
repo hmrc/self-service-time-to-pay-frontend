@@ -156,28 +156,25 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   If there is an initial payment and if the first payment is less than 14 days from now
    */
   def createCalculatorInput(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth): Option[CalculatorInput] = {
-    val schedule = ttpSubmission.schedule.get
-    val startDate = schedule.startDate.get
+    val startDate = ttpSubmission.schedule.get.startDate.get
     val durationMonths = ttpSubmission.durationMonths.get
+    val initialDate = startDate.withDayOfMonth(formData.dayOfMonth)
 
-    var firstPaymentDate = startDate.withDayOfMonth(formData.dayOfMonth)
-    var endDate = LocalDate.of(schedule.endDate.get.getYear, schedule.endDate.get.getMonth, formData.dayOfMonth).minusDays(1)
-
-    if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
+    val (firstPaymentDate: LocalDate, lastPaymentDate: LocalDate) = if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
       if (formData.dayOfMonth.compareTo(LocalDate.now.getDayOfMonth) < 0)
-        firstPaymentDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
+        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
       else
-        firstPaymentDate = startDate.withDayOfMonth(formData.dayOfMonth)
-
-      endDate = firstPaymentDate.plusMonths(durationMonths).withDayOfMonth(formData.dayOfMonth).minusDays(1)
+        (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
     } else {
-      if (DAYS.between(startDate, firstPaymentDate) <= 14) firstPaymentDate = firstPaymentDate.plusMonths(1)
-      if (firstPaymentDate.isBefore(startDate)) firstPaymentDate = firstPaymentDate.plusMonths(1)
-
-      endDate = firstPaymentDate.plusMonths(durationMonths).minusDays(1)
+      if (initialDate.isBefore(startDate) && DAYS.between(startDate, initialDate.plusMonths(1)) <= 14)
+        (initialDate.plusMonths(2), initialDate.plusMonths(durationMonths + 2).minusDays(1))
+      else if (initialDate.isBefore(startDate))
+        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
+      else if (DAYS.between(startDate, initialDate) <= 14)
+        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
     }
 
-    Some(ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate), endDate = endDate))
+    Some(ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate), endDate = lastPaymentDate))
   }
 
   def submit(): Action[AnyContent] = AuthorisedSaUser {
@@ -219,7 +216,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
               } yield ttp
 
               result.flatMap {
-                _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), success => applicationSuccessful)
+                _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), _ => applicationSuccessful)
               }
             })
         }
