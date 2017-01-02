@@ -147,14 +147,6 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     })
   }
 
-  // TODO Refactor post MVP
-  /*
-  This method determines the rules for changing which day of the month the user wishes to make there instalment plan payments.
-  For the scenario where the user has decided to make no initial payment:
-    The first payment becomes the initial payment
-    If the day entered by the user is older than today, then the first payment date will begin the following month
-  If there is an initial payment and if the first payment is less than 14 days from now
-   */
   def createCalculatorInput(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth): Option[CalculatorInput] = {
     val startDate = ttpSubmission.schedule.get.startDate.get
     val durationMonths = ttpSubmission.durationMonths.get
