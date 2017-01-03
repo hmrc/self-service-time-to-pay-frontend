@@ -153,16 +153,16 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     val initialDate = startDate.withDayOfMonth(formData.dayOfMonth)
 
     val (firstPaymentDate: LocalDate, lastPaymentDate: LocalDate) = if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
-      if (formData.dayOfMonth.compareTo(LocalDate.now.getDayOfMonth) < 0)
+      if (DAYS.between(startDate, initialDate) < 7)
         (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
       else
         (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
     } else {
-      if (initialDate.isBefore(startDate) && DAYS.between(startDate, initialDate.plusMonths(1)) <= 14)
+      if (initialDate.isBefore(startDate.plusWeeks(1)) && DAYS.between(startDate.plusWeeks(1), initialDate.plusMonths(1)) <= 14)
         (initialDate.plusMonths(2), initialDate.plusMonths(durationMonths + 2).minusDays(1))
-      else if (initialDate.isBefore(startDate))
+      else if (initialDate.isBefore(startDate.plusWeeks(1)))
         (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
-      else if (DAYS.between(startDate, initialDate) <= 14)
+      else if (DAYS.between(startDate.plusWeeks(1), initialDate) <= 14)
         (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
       else
         (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
