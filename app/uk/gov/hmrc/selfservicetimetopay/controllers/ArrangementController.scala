@@ -164,6 +164,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
       else if (DAYS.between(startDate, initialDate) <= 14)
         (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
+      else
+        (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
     }
 
     Some(ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate), endDate = lastPaymentDate))
