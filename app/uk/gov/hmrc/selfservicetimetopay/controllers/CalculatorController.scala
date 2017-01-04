@@ -23,7 +23,10 @@ import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.util.JacksonMapper
 import views.html.selfservicetimetopay.calculator._
+
+import scala.util.control.Exception._
 
 import scala.concurrent.Future
 
@@ -34,9 +37,15 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def getAmountsDue: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) =>
-        Ok(amounts_due_form(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm, ttpData.taxpayer.isDefined))
-      case _ => Ok(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm))
+      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) => {
+        val analyticData = if (Seq("add", "remove").contains(request.flash.get("ga_debit_operation").getOrElse("")) && request.flash.get("ga_debit_data").isDefined) {
+          Some((true, JacksonMapper.readValue(request.flash.get("ga_debit_data").get, classOf[Debit])))
+        } else {
+          None
+        }
+        Ok(amounts_due_form(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm, analyticData, ttpData.taxpayer.isDefined))
+      }
+      case _ => Ok(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm, None))
     }
   }
 
@@ -45,8 +54,8 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       formWithErrors =>
         sessionCache.get.map {
           case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) =>
-            BadRequest(amounts_due_form(CalculatorAmountsDue(debits), formWithErrors, ttpData.taxpayer.isDefined))
-          case _ => BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors))
+            BadRequest(amounts_due_form(CalculatorAmountsDue(debits), formWithErrors, None, ttpData.taxpayer.isDefined))
+          case _ => BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors, None))
         },
 
       validFormData => {
@@ -59,7 +68,10 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         }.flatMap { ttpData =>
           Logger.info(ttpData.toString)
           sessionCache.put(ttpData).map {
-            _ => Redirect(routes.CalculatorController.getAmountsDue())
+            _ => Redirect(routes.CalculatorController.getAmountsDue()).flashing(
+              "ga_debit_operation" ->  "add",
+              "ga_debit_data" ->  JacksonMapper.writeValueAsString(validFormData)
+            )
           }
         }
       }
@@ -70,11 +82,17 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     val index = CalculatorForm.removeAmountDueForm.bindFromRequest()
     sessionCache.get.map {
       case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _)) =>
-        ttpSubmission.copy(calculatorData = cd.copy(debits = debits.patch(index.value.get, Nil, 1)))
-      case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty))
-    }.flatMap { ttpData =>
-      sessionCache.put(ttpData).map {
-        _ => Redirect(routes.CalculatorController.getAmountsDue())
+        (ttpSubmission.copy(calculatorData = cd.copy(debits = debits.patch(index.value.get, Nil, 1))), Some(debits(index.value.get)))
+      case _ => (TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty)), None)
+    }.flatMap[Result] { data:(TTPSubmission, Option[Debit]) =>
+      sessionCache.put(data._1).map {
+        _ => data._2 match {
+            case Some(d: Debit) => Redirect(routes.CalculatorController.getAmountsDue()).flashing(
+              "ga_debit_operation" -> "remove",
+              "ga_debit_data" -> JacksonMapper.writeValueAsString(d)
+            )
+            case _ => Redirect(routes.CalculatorController.getAmountsDue())
+          }
       }
     }
   }
@@ -88,7 +106,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       case _ => Some(IndexedSeq.empty)
     }.map { ttpData =>
       if (ttpData.isEmpty) BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty),
-        CalculatorForm.amountDueForm.withGlobalError("You need to add at least one amount due"), loggedIn))
+        CalculatorForm.amountDueForm.withGlobalError("You need to add at least one amount due"), None, loggedIn))
       else Redirect(routes.CalculatorController.getPaymentToday())
     }
   }
