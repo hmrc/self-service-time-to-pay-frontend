@@ -5,6 +5,7 @@
         mainClass: Option[String] = None,
         scriptElem: Option[Html] = None,
         linksElem:  Option[Html] = None,
+        analyticsCalls: Seq[Html] = Seq.empty,
         noGetHelp:Boolean = false,
         loggedIn:Boolean = false)(mainContent: Html)(implicit request: Request[_])
 @import uk.gov.hmrc.play.views.html.layouts
@@ -33,6 +34,7 @@
     mainContent = layouts.article(mainContent),
     scriptElem = Some(scriptElems),
     linksElem = linksElem,
+
     noGetHelp = noGetHelp,
     loggedIn = loggedIn
 )

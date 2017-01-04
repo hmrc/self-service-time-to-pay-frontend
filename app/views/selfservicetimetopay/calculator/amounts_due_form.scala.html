@@ -1,7 +1,6 @@
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountsDue
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, Debit}
 
-@(amountsDue:CalculatorAmountsDue, dataForm: Form[Debit], loggedIn: Boolean = false)(implicit request: Request[_])
+@(amountsDue:CalculatorAmountsDue, dataForm: Form[Debit], lastAdded:Option[Debit], loggedIn: Boolean = false)(implicit request: Request[_])
 
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, dateinput, button, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
