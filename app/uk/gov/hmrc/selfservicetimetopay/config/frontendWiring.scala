@@ -33,7 +33,7 @@ import uk.gov.hmrc.selfservicetimetopay.auth.{SaGovernmentGateway, SaRegime}
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
-import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.{CheckSessionAction, SessionProvider}
 
@@ -119,7 +119,12 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
 
   def authorizedForSsttp(block: (Option[TTPSubmission] => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
     campaignManagerConnector.isAuthorisedWhitelist(authContext.principal.accounts.sa.get.utr.utr).flatMap {
-      case true => sessionCache.get.flatMap(block(_))
+      case true => sessionCache.get.flatMap[Result] {
+        case Some(TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(false, _)))) =>
+          Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
+        case optSubmission =>
+          block(optSubmission)
+      }
       case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
     }
   }
