@@ -46,9 +46,13 @@ object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName wi
 
 object SessionCacheConnector extends KeystoreConnector with AppName with ServicesConfig {
   override val sessionKey: String = getConfString("keystore.sessionKey", throw new RuntimeException("Could not find session key"))
+
   override def defaultSource: String = appName
+
   override def baseUri: String = baseUrl("keystore")
+
   override def domain: String = getConfString("keystore.domain", throw new RuntimeException("Could not find config keystore.domain"))
+
   override def http: HttpGet with HttpPut with HttpDelete = WSHttp
 }
 
@@ -58,6 +62,7 @@ object FrontendAuditConnector extends Auditing with AppName with RunMode {
 
 object FrontendAuthConnector extends AuthConnector with ServicesConfig {
   override val serviceUrl: String = baseUrl("auth")
+
   override def http: HttpGet = WSHttp
 }
 
@@ -105,20 +110,17 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
   protected lazy val sessionCache: KeystoreConnector = SessionCacheConnector
   protected lazy val Action: ActionBuilder[Request] = checkSessionAction andThen PlayAction
   protected type AsyncPlayUserRequest = AuthContext => Request[AnyContent] => Future[Result]
-  protected lazy val authenticationProvider:GovernmentGateway = SaGovernmentGateway
+  protected lazy val authenticationProvider: GovernmentGateway = SaGovernmentGateway
   protected lazy val saRegime = SaRegime(authenticationProvider)
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
   protected lazy val campaignManagerConnector: CampaignManagerConnector = CampaignManagerConnector
 
   def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
 
-  def authorizedForSsttp(block: => Future[Result])(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
-    campaignManagerConnector.isAuthorisedWhitelist(authContext.principal.accounts.sa.get.utr.utr).flatMap { isAuthorised =>
-      if (isAuthorised) {
-        block
-      } else {
-        Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
-      }
+  def authorizedForSsttp(block: (Option[TTPSubmission] => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
+    campaignManagerConnector.isAuthorisedWhitelist(authContext.principal.accounts.sa.get.utr.utr).flatMap {
+      case true => sessionCache.get.flatMap(block(_))
+      case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
     }
   }
 
@@ -154,7 +156,8 @@ trait ServiceRegistry extends ServicesConfig {
 
 }
 
-trait ControllerRegistry { registry: ServiceRegistry =>
+trait ControllerRegistry {
+  registry: ServiceRegistry =>
   private lazy val controllers = Map[Class[_], Controller](
     classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector),
     classOf[CalculatorController] -> new CalculatorController(calculatorConnector),
@@ -163,5 +166,5 @@ trait ControllerRegistry { registry: ServiceRegistry =>
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
   )
 
-  def getController[A](controllerClass: Class[A]) : A = controllers(controllerClass).asInstanceOf[A]
+  def getController[A](controllerClass: Class[A]): A = controllers(controllerClass).asInstanceOf[A]
 }

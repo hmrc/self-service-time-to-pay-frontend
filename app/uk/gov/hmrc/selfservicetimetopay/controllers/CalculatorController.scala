@@ -122,11 +122,9 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
     authorizedForSsttp {
-      sessionCache.get.map {
-        case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _), _)) =>
-          Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, loggedIn = true))
-        case _ => throw new RuntimeException("Unhandled case in getMisalignmentPage")
-      }
+      case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _), _)) =>
+        Future.successful(Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, loggedIn = true)))
+      case _ => throw new RuntimeException("Unhandled case in getMisalignmentPage")
     }
   }
 
