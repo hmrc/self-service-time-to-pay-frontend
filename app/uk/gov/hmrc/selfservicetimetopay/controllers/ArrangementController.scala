@@ -44,9 +44,9 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   val paymentFrequency = "Calendar Monthly"
   val paymentCurrency = "GBP"
 
-  def eligibilityCheck(taxpayer: Taxpayer)(implicit hc: HeaderCarrier): Future[Result] = {
-    eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).flatMap[Result] {
-      case EligibilityStatus(true, _) => Future.successful(Redirect(routes.ArrangementController.getInstalmentSummary()))
+  def eligibilityCheck(ttpSubmission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
+    eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), ttpSubmission.taxpayer.get)).flatMap[Result] {
+      case EligibilityStatus(true, _) => changeScheduleDay(ttpSubmission, LocalDate.now.getDayOfMonth)
       case EligibilityStatus(_, reasons) =>
         Logger.info(s"Failed eligibility check because: $reasons")
         Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
@@ -76,11 +76,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                       _ => Redirect(routes.CalculatorController.getPaymentToday())
                     }
                   case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _) =>
-                    if (areEqual(tpSA.debits, meDebits)) {
-                      sessionCache.put(newSubmission).flatMap[Result] {
-                        _ => eligibilityCheck(tp)
-                      }
-                    } else {
+                    if (areEqual(tpSA.debits, meDebits)) eligibilityCheck(newSubmission)
+                    else {
                       sessionCache.put(newSubmission).flatMap[Result] {
                         _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
                       }
@@ -129,14 +126,14 @@ class ArrangementController(ddConnector: DirectDebitConnector,
           },
           validFormData => {
             sessionCache.get.flatMap {
-              _.fold(redirectToStart)(ttp => changeScheduleDay(ttp, validFormData))
+              _.fold(redirectToStart)(ttp => changeScheduleDay(ttp, validFormData.dayOfMonth))
             }
           })
       }
   }
 
-  def changeScheduleDay(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth)(implicit hc: HeaderCarrier): Future[Result] = {
-    createCalculatorInput(ttpSubmission, formData).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
+  def changeScheduleDay(ttpSubmission: TTPSubmission, dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[Result] = {
+    createCalculatorInput(ttpSubmission, dayOfMonth).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
       calculatorConnector.calculatePaymentSchedule(cal).flatMap {
         response => {
           sessionCache.put(ttpSubmission.copy(schedule = Some(response.head), calculatorData = cal)).map {
@@ -147,10 +144,10 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     })
   }
 
-  def createCalculatorInput(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth): Option[CalculatorInput] = {
+  def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
     val startDate = ttpSubmission.schedule.get.startDate.get
     val durationMonths = ttpSubmission.durationMonths.get
-    val initialDate = startDate.withDayOfMonth(formData.dayOfMonth)
+    val initialDate = startDate.withDayOfMonth(dayOfMonth)
 
     val (firstPaymentDate: LocalDate, lastPaymentDate: LocalDate) = if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
       if (DAYS.between(startDate, initialDate) < 7)
