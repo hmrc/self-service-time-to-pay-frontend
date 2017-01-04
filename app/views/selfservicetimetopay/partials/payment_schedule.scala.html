@@ -11,7 +11,7 @@
 @defining(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)) { formatter =>
      @if(schedule.initialPayment > BigDecimal(0)) {
          <div class="subsection grid-layout divider--bottom font-xsmall">
-             <div class="grid-layout__column grid-layout__column--3-4"><strong>@LocalDate.now.plusDays(5).format(formatter)</strong>
+             <div class="grid-layout__column grid-layout__column--3-4"><strong>@LocalDate.now.plusWeeks(1).format(formatter)</strong>
                     @Messages("ssttp.arrangement.instalment-summary.schedule.initial-payment")
              </div>
              <div class="grid-layout__column grid-layout__column--1-4">@currency(schedule.initialPayment)</div>

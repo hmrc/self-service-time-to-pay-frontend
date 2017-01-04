@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,9 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   val paymentFrequency = "Calendar Monthly"
   val paymentCurrency = "GBP"
 
-  def eligibilityCheck(taxpayer: Taxpayer)(implicit hc: HeaderCarrier): Future[Result] = {
-    eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).flatMap[Result] {
-      case EligibilityStatus(true, _) => Future.successful(Redirect(routes.ArrangementController.getInstalmentSummary()))
+  def eligibilityCheck(ttpSubmission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
+    eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), ttpSubmission.taxpayer.get)).flatMap[Result] {
+      case EligibilityStatus(true, _) => changeScheduleDay(ttpSubmission, LocalDate.now.getDayOfMonth)
       case EligibilityStatus(_, reasons) =>
         Logger.info(s"Failed eligibility check because: $reasons")
         Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
@@ -76,11 +76,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                       _ => Redirect(routes.CalculatorController.getPaymentToday())
                     }
                   case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _) =>
-                    if (areEqual(tpSA.debits, meDebits)) {
-                      sessionCache.put(newSubmission).flatMap[Result] {
-                        _ => eligibilityCheck(tp)
-                      }
-                    } else {
+                    if (areEqual(tpSA.debits, meDebits)) eligibilityCheck(newSubmission)
+                    else {
                       sessionCache.put(newSubmission).flatMap[Result] {
                         _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
                       }
@@ -129,14 +126,14 @@ class ArrangementController(ddConnector: DirectDebitConnector,
           },
           validFormData => {
             sessionCache.get.flatMap {
-              _.fold(redirectToStart)(ttp => changeScheduleDay(ttp, validFormData))
+              _.fold(redirectToStart)(ttp => changeScheduleDay(ttp, validFormData.dayOfMonth))
             }
           })
       }
   }
 
-  def changeScheduleDay(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth)(implicit hc: HeaderCarrier): Future[Result] = {
-    createCalculatorInput(ttpSubmission, formData).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
+  def changeScheduleDay(ttpSubmission: TTPSubmission, dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[Result] = {
+    createCalculatorInput(ttpSubmission, dayOfMonth).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
       calculatorConnector.calculatePaymentSchedule(cal).flatMap {
         response => {
           sessionCache.put(ttpSubmission.copy(schedule = Some(response.head), calculatorData = cal)).map {
@@ -147,43 +144,28 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     })
   }
 
-  // TODO Refactor post MVP
-  def createCalculatorInput(ttpSubmission: TTPSubmission, formData: ArrangementDayOfMonth): Option[CalculatorInput] = {
-    val schedule = ttpSubmission.schedule.get
-    val startDate = schedule.startDate.get
+  def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
+    val startDate = ttpSubmission.schedule.get.startDate.get
+    val durationMonths = ttpSubmission.durationMonths.get
+    val initialDate = startDate.withDayOfMonth(dayOfMonth)
 
-    var firstPmnttDate = startDate.withDayOfMonth(formData.dayOfMonth)
-    // set end date base on number of months the user selected
-    var endDate = LocalDate.of(schedule.endDate.get.getYear, schedule.endDate.get.getMonth, formData.dayOfMonth).minusDays(1)
-
-    // if there is no initial payment then first payment becomes initial payment but its startdate can be changed by user
-    if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
-      // if the day entered by the user is older than today, then set the firstPaymentDate to next month
-      if (formData.dayOfMonth.compareTo(LocalDate.now.getDayOfMonth) < 0) {
-        firstPmnttDate = startDate.plusMonths(1).withDayOfMonth(formData.dayOfMonth)
-        endDate = firstPmnttDate.plusMonths(ttpSubmission.durationMonths.get).withDayOfMonth(formData.dayOfMonth).minusDays(1)
-      } else {
-        firstPmnttDate = startDate.withDayOfMonth(formData.dayOfMonth)
-        endDate = firstPmnttDate.plusMonths(ttpSubmission.durationMonths.get).withDayOfMonth(formData.dayOfMonth).minusDays(1)
-      }
+    val (firstPaymentDate: LocalDate, lastPaymentDate: LocalDate) = if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
+      if (DAYS.between(startDate, initialDate) < 7)
+        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
+      else
+        (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
     } else {
-      // if there is an initial payment and if first payment is less than 14 days from now+5 days move by a month
-      if (firstPmnttDate.isBefore(startDate)) {
-        firstPmnttDate = firstPmnttDate.plusMonths(1)
-        if (DAYS.between(startDate, firstPmnttDate) <= 14) {
-          firstPmnttDate = firstPmnttDate.plusMonths(1)
-        }
-      } else {
-        if (DAYS.between(startDate, firstPmnttDate) <= 14) {
-          firstPmnttDate = firstPmnttDate.plusMonths(1)
-        }
-      }
-      endDate = firstPmnttDate.plusMonths(ttpSubmission.durationMonths.get).minusDays(1)
+      if (initialDate.isBefore(startDate.plusWeeks(1)) && DAYS.between(startDate.plusWeeks(1), initialDate.plusMonths(1)) <= 14)
+        (initialDate.plusMonths(2), initialDate.plusMonths(durationMonths + 2).minusDays(1))
+      else if (initialDate.isBefore(startDate.plusWeeks(1)))
+        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
+      else if (DAYS.between(startDate.plusWeeks(1), initialDate) <= 14)
+        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
+      else
+        (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
     }
 
-    val input = ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPmnttDate), endDate = endDate)
-
-    Some(input)
+    Some(ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate), endDate = lastPaymentDate))
   }
 
   def submit(): Action[AnyContent] = AuthorisedSaUser {
@@ -218,14 +200,14 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     submission.taxpayer match {
       case Some(Taxpayer(_, _, Some(SelfAssessment(Some(utr), _, _, _)))) =>
         ddConnector.createPaymentPlan(checkExistingBankDetails(submission), SaUtr(utr)).flatMap[Result] {
-          _.fold(error => Future.successful(Redirect(routes.DirectDebitController.getDirectDebitAssistance())),
+          _.fold(_ => Future.successful(Redirect(routes.DirectDebitController.getDirectDebitAssistance())),
             success => {
               val result = for {
                 ttp <- arrangementConnector.submitArrangements(createArrangement(success, submission))
               } yield ttp
 
               result.flatMap {
-                _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), success => applicationSuccessful)
+                _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), _ => applicationSuccessful)
               }
             })
         }
@@ -234,7 +216,6 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   }
 
   private def checkExistingBankDetails(submission: TTPSubmission): PaymentPlanRequest = {
-    val startDate: Option[LocalDate] = submission.schedule.get.startDate
     submission.bankDetails.get.ddiRefNumber match {
       case Some(refNo) =>
         paymentPlan(submission, DirectDebitInstruction(ddiRefNumber = Some(refNo)))
@@ -256,7 +237,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       val knownFact = List(KnownFact(cesa, utr))
 
       val initialPayment = if (schedule.initialPayment > BigDecimal.exact(0)) Some(schedule.initialPayment.toString()) else None
-      val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.startDate.get.plusDays(7)))
+      val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.startDate.get.plusWeeks(1)))
 
       val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
       val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
