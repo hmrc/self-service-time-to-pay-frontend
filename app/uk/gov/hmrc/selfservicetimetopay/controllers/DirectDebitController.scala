@@ -31,112 +31,91 @@ import scala.concurrent.Future
 
 class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
 
-  def getDirectDebit: Action[AnyContent] = AuthorisedSaUser {
-    implicit authContext => implicit request =>
-      authorizedForSsttp {
-        sessionCache.get.map {
-          case Some(submission@TTPSubmission(_, _, _, Some(taxpayer), _, _, calcData, _)) => {
-            if (areEqual(taxpayer.selfAssessment.get.debits, calcData.debits)) Ok(direct_debit_form(directDebitForm, true))
-            else throw new RuntimeException("Invalid input")
-          }
-          case _ => throw new RuntimeException("Invalid request submitted")
-        }
-      }
+  def getDirectDebit: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
+    authorizedForSsttp {
+      case Some(submission@TTPSubmission(_, _, _, Some(taxpayer), _, _, calcData, _, _)) if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
+         Future.successful(Ok(direct_debit_form(directDebitForm, true)))
+      case _ => throw new RuntimeException("Invalid request submitted")
+    }
   }
 
-  def getDirectDebitAssistance: Action[AnyContent] = AuthorisedSaUser {
-    implicit authContext => implicit request =>
-      authorizedForSsttp {
-        sessionCache.get.map {
-          case Some(submission@TTPSubmission(Some(schedule), None, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
-            Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true))
-          case Some(submission@TTPSubmission(Some(schedule), Some(_), _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
-            Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, true))
-          case _ => throw new RuntimeException("No data found")
-        }
-      }
+  def getDirectDebitAssistance: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
+    authorizedForSsttp {
+      case Some(submission@TTPSubmission(Some(schedule), None, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _, _)) =>
+        Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true)))
+      case Some(submission@TTPSubmission(Some(schedule), Some(_), _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _, _)) =>
+        Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, true)))
+      case _ => throw new RuntimeException("No data found")
+    }
   }
 
-  def getDirectDebitError: Action[AnyContent] = AuthorisedSaUser {
-    implicit authContext => implicit request =>
-      authorizedForSsttp {
-        sessionCache.get.map {
-          case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
-            Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, true))
-          case _ => throw new RuntimeException("No data found")
-        }
-      }
+  def getDirectDebitError: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
+    authorizedForSsttp {
+      case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _, _)) =>
+        Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, true)))
+      case _ => throw new RuntimeException("No data found")
+    }
   }
 
-  def getDirectDebitConfirmation: Action[AnyContent] = AuthorisedSaUser {
-    implicit authContext => implicit request =>
-      authorizedForSsttp {
-        sessionCache.get.map {
-          case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _, _)) =>
-            Ok(direct_debit_confirmation(schedule, submission.arrangementDirectDebit.get, true))
-          case _ => throw new RuntimeException("No data found")
-        }
-      }
+  def getDirectDebitConfirmation: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
+    authorizedForSsttp {
+      case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _, _, _)) =>
+        Future.successful(Ok(direct_debit_confirmation(schedule, submission.arrangementDirectDebit.get, true)))
+      case _ => throw new RuntimeException("No data found")
+    }
   }
 
-  def getBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser {
-    implicit authContext => implicit request =>
-      authorizedForSsttp {
-        sessionCache.get.map {
-          case Some(submission@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _)) =>
-            Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true))
-          case _ => throw new RuntimeException("No data found")
-        }
-      }
+  def getBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
+    authorizedForSsttp {
+      case Some(submission@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _, _)) =>
+        Future.successful(Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true)))
+      case _ => throw new RuntimeException("No data found")
+    }
   }
 
-  def submitBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser {
-    implicit authContext => implicit request =>
-      authorizedForSsttp {
-        sessionCache.get.flatMap {
-          case Some(ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _)) =>
-            existingBankAccountForm.bindFromRequest().fold(
-              formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, existingDDBanks.directDebitInstruction))),
-              validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit) match {
-                case (Some(_), Some(_)) =>
-                  Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true)))
-                case (Some(ddi), None) =>
-                  val newBankDetails =
-                    banksListValidation(existingDDBanks.directDebitInstruction.filter(_.referenceNumber.get == ddi), validFormData)
+  def submitBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
+    authorizedForSsttp {
+      case Some(ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _, _)) =>
+        existingBankAccountForm.bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, existingDDBanks.directDebitInstruction))),
+          validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit) match {
+            case (Some(_), Some(_)) =>
+              Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true)))
+            case (Some(ddi), None) =>
+              val newBankDetails =
+                banksListValidation(existingDDBanks.directDebitInstruction.filter(_.referenceNumber.get == ddi), validFormData)
+              sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
+                _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
+              }
+            case (None, Some(arrangementDirectDebit: ArrangementDirectDebit)) =>
+              directDebitConnector.getBank(arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber).flatMap[Result] {
+                case Some(bankDetails) =>
+                  val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction
+                    .filter(_.accountNumber.get == arrangementDirectDebit.accountNumber), validFormData)
                   sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
                     _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
                   }
-                case (None, Some(arrangementDirectDebit: ArrangementDirectDebit)) =>
-                  directDebitConnector.getBank(arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber).flatMap[Result] {
-                    case Some(bankDetails) =>
-                      val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction
-                        .filter(_.accountNumber.get == arrangementDirectDebit.accountNumber), validFormData)
-                      sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
-                        _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
-                      }
-                    case None => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
-                  }
-                case _ => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
-              })
-          case _ => throw new RuntimeException("Unhandled case in submitBankAccountNotFound")
-        }
-      }
+                case None => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
+              }
+            case _ => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
+          })
+      case _ => throw new RuntimeException("Unhandled case in submitBankAccountNotFound")
+    }
   }
 
   def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.ArrangementController.submit())
   }
 
-  def submitDirectDebit: Action[AnyContent] = AuthorisedSaUser {
-    implicit authContext => implicit request =>
-      authorizedForSsttp {
-        directDebitForm.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(direct_debit_form(formWithErrors, true))),
-          validFormData =>
-            directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode,
-              validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
-              .flatMap(directDebitSubmitRouting(validFormData.accountName)))
-      }
+  def submitDirectDebit: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
+    authorizedForSsttp { _ =>
+      directDebitForm.bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(direct_debit_form(formWithErrors, true))),
+        validFormData =>
+          directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode,
+            validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
+            .flatMap(directDebitSubmitRouting(validFormData.accountName)))
+    }
   }
 
   private def banksListValidation(bankDetails: Seq[DirectDebitInstruction], formData: ArrangementExistingDirectDebit): BankDetails = {

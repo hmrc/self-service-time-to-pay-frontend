@@ -151,6 +151,65 @@ class ArrangementControllerSpec extends UnitSpec
       redirectLocation(response).get contains "/gg/sign-in"
     }
 
+    "redirect to ineligible (call us) page if EligibilityStatus is set to false within the TTPSubmission data (where an authenticated resource is called)" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
+        .thenReturn(Future.successful(true))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityStatus = Option(EligibilityStatus(eligible = false, Seq("error")))))))
+
+      val response = controller.getInstalmentSummary()
+        .apply(FakeRequest("POST", "/arrangement/instalment-summary")
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId"))
+
+      redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url
+    }
+
+    "NOT redirect to ineligible (call us) page if EligibilityStatus is None within the TTPSubmission data (where an authenticated resource is called)" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
+        .thenReturn(Future.successful(true))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission)))
+
+      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+
+      when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
+
+      val response = controller.getInstalmentSummary()
+        .apply(FakeRequest("POST", "/arrangement/instalment-summary")
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId"))
+
+      redirectLocation(response) shouldNot be(controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url)
+    }
+
+    "NOT redirect to ineligible (call us) page if EligibilityStatus is successful within the TTPSubmission data (where an authenticated resource is called)" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
+        .thenReturn(Future.successful(true))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityStatus = Option(EligibilityStatus(true, Seq.empty))))))
+
+      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+
+      when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
+
+      val response = controller.getInstalmentSummary()
+        .apply(FakeRequest("POST", "/arrangement/instalment-summary")
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId"))
+
+      redirectLocation(response) shouldNot be(controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url)
+    }
+
     "redirect to misalignment page if logged in and not logged in debits do not sum() to the same value" in {
       implicit val hc = new HeaderCarrier
 
