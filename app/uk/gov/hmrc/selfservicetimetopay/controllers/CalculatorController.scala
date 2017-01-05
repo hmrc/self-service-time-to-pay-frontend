@@ -39,7 +39,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) => {
         val analyticData = if (Seq("add", "remove").contains(request.flash.get("ga_debit_operation").getOrElse("")) && request.flash.get("ga_debit_data").isDefined) {
-          Some((true, JacksonMapper.readValue(request.flash.get("ga_debit_data").get, classOf[Debit])))
+          Some((request.flash.get("ga_debit_operation").get == "add", JacksonMapper.readValue(request.flash.get("ga_debit_data").get, classOf[Debit])))
         } else {
           None
         }

@@ -14,19 +14,20 @@
     Some(selfservicetimetopay.partials.sign_in_sidebar())
 }}
 
-@analyticsCalls = @{delta.map(d => {
-    val op = if(d._1) {"ec:addProduct"} else { "ec:removeProduct"}
-    s"ga('$op', { 'id': 'USER_AMOUNT_DUE', 'name': 'Amount Due', 'price': ${d._2.amount}, 'position': ${amountsDue.amountsDue.length}});"
-}).toSeq}
-
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.calculator.form.amounts_due.title"),
     sidebarLinks = sidebarLnks,
     loggedIn = loggedIn,
-    googleAnalyticsCalls = analyticsCalls
+    googleAnalyticsCalls = delta.map(d => {
+        s"ga('ec:addProduct', { 'id': 'USER_AMOUNT_DUE', 'name': 'Amount Due', 'price': '${d._2.amount}', 'position': ${amountsDue.amountsDue.length}});\n" +
+        s"ga('ec:setAction', '${if(d._1){"add"}else{"remove"}}');\n"
+    }).toSeq,
+    scriptElem = delta.map(d => {
+        Html(s"<script type='text/javascript'>ga('send', 'event', 'UX', 'click', '${if(d._1){"add"}else{"remove"}} amount due');</script>")
+    })
 ){
     <header class="page-header text">
-        <h2>@Messages("ssttp.calculator.form.amounts_due.title")</h2>
+        <h1 class="heading-h1">@Messages("ssttp.calculator.form.amounts_due.title")</h1>
     </header>
     @formErrorSummary(Messages("ssttp.calculator.form.amounts_due.error.summary.title"), dataForm, Seq.empty)
     <p>@Messages("ssttp.calculator.form.amounts_due.intro")</p>
