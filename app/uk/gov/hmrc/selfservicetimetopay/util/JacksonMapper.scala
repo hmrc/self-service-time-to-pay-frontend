@@ -17,11 +17,16 @@
 package uk.gov.hmrc.selfservicetimetopay.util
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+
 
 object JacksonMapper extends ObjectMapper {
   configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
-  registerModule(DefaultScalaModule)
+  findAndRegisterModules()
+  configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
   setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
 }

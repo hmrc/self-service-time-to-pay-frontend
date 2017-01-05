@@ -1,7 +1,6 @@
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountsDue
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, Debit}
 
-@(amountsDue:CalculatorAmountsDue, dataForm: Form[Debit], loggedIn: Boolean = false)(implicit request: Request[_])
+@(amountsDue:CalculatorAmountsDue, dataForm: Form[Debit], delta:Option[(Boolean, Debit)], loggedIn: Boolean = false)(implicit request: Request[_])
 
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, dateinput, button, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
@@ -16,12 +15,19 @@
 }}
 
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.calculator.form.amounts_due.title"),
     sidebarLinks = sidebarLnks,
-    loggedIn = loggedIn
+    loggedIn = loggedIn,
+    googleAnalyticsCalls = delta.map(d => {
+        s"ga('ec:addProduct', { 'id': 'USER_AMOUNT_DUE', 'name': 'Amount Due', 'price': '${d._2.amount}', 'position': ${amountsDue.amountsDue.length}});\n" +
+        s"ga('ec:setAction', '${if(d._1){"add"}else{"remove"}}');\n"
+    }).toSeq,
+    scriptElem = delta.map(d => {
+        Html(s"<script type='text/javascript'>ga('send', 'event', 'UX', 'click', '${if(d._1){"add"}else{"remove"}} amount due');</script>")
+    })
 ){
     <header class="page-header text">
-        <h2>@Messages("ssttp.calculator.form.amounts_due.title")</h2>
+        <h1 class="heading-h1">@Messages("ssttp.calculator.form.amounts_due.title")</h1>
     </header>
     @formErrorSummary(Messages("ssttp.calculator.form.amounts_due.error.summary.title"), dataForm, Seq.empty)
     <p>@Messages("ssttp.calculator.form.amounts_due.intro")</p>
