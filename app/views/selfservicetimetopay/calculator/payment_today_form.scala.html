@@ -8,11 +8,11 @@
 @import selfservicetimetopay.helpers.forms.{currencyinput, form, formErrorSummary, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers._
 @selfservicetimetopay.main(
-  title = Messages("ssttp.common.title"),
+  title = Messages("ssttp.calculator.form.payment_today.title"),
   loggedIn = loggedIn
 ){
   <header class="page-header text">
-    <h2 class="h1-heading">@Messages("ssttp.calculator.form.payment_today.title")</h2>
+    <h1>@Messages("ssttp.calculator.form.payment_today.title")</h1>
   </header>
   @form(routes.CalculatorController.submitPaymentToday(), 'class -> "group") {
     @formErrorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm, Seq.empty)

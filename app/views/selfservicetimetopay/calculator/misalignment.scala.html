@@ -11,11 +11,11 @@ Amounts Due Misalignment page - designed to be shown when the debts a user enter
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.calculator.misalignment-page.title"),
     loggedIn = loggedIn
 ){
     <header class="page-header text">
-        <h2 class="h1-heading">@Messages("ssttp.calculator.misalignment-page.title")</h2>
+        <h1>@Messages("ssttp.calculator.misalignment-page.title")</h1>
     </header>
     @highlight('_modifierClass  -> "highlight-message--light"){
         <p>@Messages("ssttp.calculator.misalignment-page.subtitle")</p>

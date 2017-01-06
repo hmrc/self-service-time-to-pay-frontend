@@ -3,11 +3,11 @@ Self-service Time To Pay service unavailable page to redirect users to the call-
 *@
 @(loggedIn: Boolean = false)(implicit request: Request[_])
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.unavailable.title"),
     loggedIn = loggedIn
 ) {
     <header class="page-header text">
-        <h2>@Messages("ssttp.unavailable.title")</h2>
+        <h1>@Messages("ssttp.unavailable.title")</h1>
     </header>
     <p>@Messages("ssttp.unavailable.intro")</p>
     <p>@Messages("ssttp.unavailable.instructions")</p>

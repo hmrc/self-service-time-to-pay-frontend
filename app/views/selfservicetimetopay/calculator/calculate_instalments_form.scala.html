@@ -17,12 +17,12 @@
 @import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.calculator.results.title"),
     loggedIn = loggedIn
 ){
     <a target="_blank" href="@routes.CalculatorController.getCalculateInstalmentsPrint()" class="float--right gutter-left print-link print-hidden js-visible trackedPrintLink">@Messages("ssttp.arrangement.instalment-summary.print")</a>
     <header class="page-header text">
-        <h2>@Messages("ssttp.calculator.results.title")</h2>
+        <h1>@Messages("ssttp.calculator.results.title")</h1>
     </header>
     @formErrorSummary(Messages("ssttp.error.summary.title"), paymentTodayAmountForm, Seq.empty)
     @formErrorSummary(Messages("ssttp.error.summary.title"), durationForm, Seq.empty)

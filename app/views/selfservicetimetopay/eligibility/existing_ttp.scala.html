@@ -3,11 +3,11 @@
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.helpers.forms._
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.eligibility.form.existing_ttp.title"),
     loggedIn = loggedIn
 ) {
     <header class="page-header text">
-        <h2>@Messages("ssttp.eligibility.form.existing_ttp.title")</h2>
+        <h1>@Messages("ssttp.eligibility.form.existing_ttp.title")</h1>
     </header>
     @form(routes.EligibilityController.submitExistingTtp(), 'class -> "group") {
         @formErrorSummary(Messages("ssttp.eligibility.form.existing_ttp.error.summary.title"), dataForm, Seq.empty)

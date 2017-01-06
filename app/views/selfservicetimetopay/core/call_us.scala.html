@@ -4,11 +4,11 @@
 @(loggedIn: Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.message_list
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.call-us.title"),
     loggedIn = loggedIn
 ){
     <header class="page-header text">
-        <h2>@Messages("ssttp.call-us.title")</h2>
+        <h1>@Messages("ssttp.call-us.title")</h1>
     </header>
     <p class="subsection">@Messages("ssttp.call-us.intro")</p>
     <p class="subsection">

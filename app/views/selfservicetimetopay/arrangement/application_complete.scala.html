@@ -14,13 +14,9 @@
 @import selfservicetimetopay.helpers.message_list
 @import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule}
 @import selfservicetimetopay.partials.currency
-@printCssLink = {
-  <link rel='stylesheet' href='@routes.Assets.at("css/self-service-time-to-pay.css")' />
-}
 
 @selfservicetimetopay.main(
-  title = Messages("ssttp.common.title"),
-  linksElem = Some(printCssLink),
+  title = Messages("ssttp.arrangement.complete.title"),
   loggedIn = loggedIn,
   sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar())
 ){

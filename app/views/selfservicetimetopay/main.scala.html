@@ -24,6 +24,12 @@
 }else{
     @HtmlFormat.empty
 }}
+@linksElems = {
+    @linksElem.getOrElse("")
+    <link rel='stylesheet' href='@routes.Assets.at("css/self-service-time-to-pay.css")' />
+}
+
+
 @govuk_wrapper(appConfig = uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig,
     title = title,
     mainClass = mainClass,
@@ -33,7 +39,7 @@
     contentHeader = contentHeader,
     mainContent = layouts.article(mainContent),
     scriptElem = Some(scriptElems),
-    linksElem = linksElem,
+    linksElem = Some(linksElems),
     googleAnalyticsCalls = googleAnalyticsCalls,
     noGetHelp = noGetHelp,
     loggedIn = loggedIn

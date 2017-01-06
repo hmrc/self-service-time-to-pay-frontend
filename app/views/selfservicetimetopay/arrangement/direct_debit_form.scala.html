@@ -13,12 +13,12 @@ Time To Pay Direct Debit Form Page
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
 @selfservicetimetopay.main(
-  title = Messages("ssttp.common.title"),
+  title = Messages("ssttp.arrangement.direct-debit.form.title"),
   loggedIn = loggedIn,
   sidebarLinks = Some(having_problems_sidebar())
 ){
     <header class="page-header text">
-        <h2>@Messages("ssttp.arrangement.direct-debit.form.title")</h2>
+        <h1>@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
     </header>
       @form(routes.DirectDebitController.submitDirectDebit()) {
       @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
