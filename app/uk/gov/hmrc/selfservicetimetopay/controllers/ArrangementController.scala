@@ -189,7 +189,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     submission.taxpayer match {
       case Some(Taxpayer(_, _, Some(SelfAssessment(Some(utr), _, _, _)))) =>
         ddConnector.createPaymentPlan(checkExistingBankDetails(submission), SaUtr(utr)).flatMap[Result] {
-          _.fold(_ => Future.successful(Redirect(routes.DirectDebitController.getDirectDebitAssistance())),
+          _.fold(_ => Future.successful(Redirect(routes.DirectDebitController.getDirectDebitError())),
             success => {
               val result = for {
                 ttp <- arrangementConnector.submitArrangements(createArrangement(success, submission))
