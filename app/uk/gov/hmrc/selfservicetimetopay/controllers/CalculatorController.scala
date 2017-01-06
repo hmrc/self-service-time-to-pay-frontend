@@ -156,7 +156,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def submitCalculateInstalments: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
-      case Some(ttpSubmission@TTPSubmission(Some(schedule), _, _, taxpayer:Option[Taxpayer], Some(_), _, cd@CalculatorInput(debits, paymentToday, _, _, _, _), _, _)) =>
+      case Some(ttpSubmission@TTPSubmission(Some(schedule), _, _, taxpayer, Some(_), _, cd@CalculatorInput(debits, paymentToday, _, _, _, _), _, _)) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         CalculatorForm.durationForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
@@ -164,8 +164,8 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
             case _ => None
           }, formWithErrors, form, 2 to 11, ttpSubmission.taxpayer.isDefined))),
           validFormData => {
-            val newEndDate = cd.startDate.plusMonths(validFormData.months).minusDays(1)
-            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(endDate = newEndDate), durationMonths = Some(validFormData.months))).apply(request)
+            val newEndDate = cd.startDate.plusMonths(validFormData.months.get).minusDays(1)
+            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(endDate = newEndDate), durationMonths = validFormData.months))(request)
           }
         )
       case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
@@ -175,7 +175,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
   def submitCalculateInstalmentsPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
       case Some(ttpData@TTPSubmission(Some(schedule), _, _, taxpayer:Option[Taxpayer], _, _, cd, _, _)) =>
-        val durationForm = CalculatorForm.durationForm.fill(CalculatorDuration(3))
+        val durationForm = CalculatorForm.durationForm.fill(CalculatorDuration(Some(3)))
         CalculatorForm.createPaymentTodayForm(cd.debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
             case Some(Taxpayer(_, _, Some(sa))) => Some(sa.debits)

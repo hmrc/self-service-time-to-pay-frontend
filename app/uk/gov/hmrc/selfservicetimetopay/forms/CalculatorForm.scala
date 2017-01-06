@@ -99,13 +99,16 @@ object CalculatorForm {
   val durationForm = createDurationForm()
 
   def createDurationForm(): Form[CalculatorDuration] = {
-    def greaterThan: Constraint[Int] = Constraint[Int]("constraint.duration-more-than") { o =>
-      if (o < minMonths) Invalid(ValidationError("ssttp.calculator.form.duration.months.greater-than", minMonths)) else Valid
+    def greaterThan: Constraint[String] = Constraint[String]("constraint.duration-more-than") { o =>
+      if (tryToInt(o).fold(false)(_ < minMonths)) Invalid(ValidationError("ssttp.calculator.form.duration.months.greater-than", minMonths)) else Valid
     }
-    def lessThan: Constraint[Int] = Constraint[Int]("constraint.duration-more-than") { o =>
-      if (o > maxMonths) Invalid(ValidationError("ssttp.calculator.form.duration.months.less-than", maxMonths)) else Valid
+    def lessThan: Constraint[String] = Constraint[String]("constraint.duration-more-than") { o =>
+      if (tryToInt(o).fold(false)(_ > maxMonths)) Invalid(ValidationError("ssttp.calculator.form.duration.months.less-than", maxMonths)) else Valid
     }
 
-    Form(mapping("months" -> number.verifying(greaterThan, lessThan))(CalculatorDuration.apply)(CalculatorDuration.unapply))
+    Form(mapping("months" -> text
+      .verifying("ssttp.calculator.form.duration.months.required", months => isInt(months))
+      .verifying(greaterThan, lessThan)
+    )(months => CalculatorDuration.apply(tryToInt(months)))(calculatorDuration => calculatorDuration.months.map(m => m.toString)))
   }
 }
