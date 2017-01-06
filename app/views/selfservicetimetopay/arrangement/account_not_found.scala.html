@@ -16,12 +16,12 @@ Time To Pay Bank account not found - select existing direct debit or create new 
             bankAccounts.map{ b => (b.referenceNumber.get, b.accountNumber.get + " | " + b.sortCode.get) }
 }
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.arrangement.misalignment.title"),
     loggedIn = loggedIn,
     sidebarLinks = Some(having_problems_sidebar())
 ){
     <header class="page-header text">
-        <h2>@Messages("ssttp.arrangement.misalignment.title")</h2>
+        <h1>@Messages("ssttp.arrangement.misalignment.title")</h1>
     </header>
         @highlight('_modifierClass -> "highlight-message--light"){<p>@Messages("ssttp.arrangement.misalignment.subtitle")</p>}
         @form(routes.DirectDebitController.submitBankAccountNotFound()) {

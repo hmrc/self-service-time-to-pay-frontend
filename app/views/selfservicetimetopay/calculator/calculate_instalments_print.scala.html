@@ -15,14 +15,16 @@
     <script type="text/javascript">$(function(){window.print()})</script>
 }
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.calculator.results.title"),
     mainClass = Some("hard--bottom"),
     bodyClasses = None,
     scriptElem = Some(script),
     noGetHelp = true,
     loggedIn = loggedIn
 ){
-    <h1>@Messages("ssttp.calculator.results.title")</h1>
+    <header class="page-header text">
+        <h1>@Messages("ssttp.calculator.results.title")</h1>
+    </header>
     <section>
         <h2>@Messages("ssttp.calculator.results.heading.what-you-owe")</h2>
         <div class="subsection grid-layout divider--bottom">

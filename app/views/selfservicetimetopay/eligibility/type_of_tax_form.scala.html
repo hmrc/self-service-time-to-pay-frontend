@@ -6,11 +6,11 @@
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.helpers.forms._
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.eligibility.form.type_of_tax.title"),
     loggedIn = loggedIn
 ){
   <header class="page-header text">
-    <h2>@Messages("ssttp.eligibility.form.type_of_tax.title")</h2>
+    <h1>@Messages("ssttp.eligibility.form.type_of_tax.title")</h1>
   </header>
   @form(routes.EligibilityController.submitTypeOfTax(), 'class -> "group") {
     @formErrorSummary(Messages("ssttp.eligibility.form.type_of_tax.error.summary.title"), dataForm, Seq.empty)

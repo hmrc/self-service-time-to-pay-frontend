@@ -2,11 +2,11 @@
 @import selfservicetimetopay.helpers.{highlight, message_list}
 
 @selfservicetimetopay.main(
-    title = Messages("ssttp.common.title"),
+    title = Messages("ssttp.you-need-to-file.title"),
     loggedIn = signedIn
 ){
     <header class="page-header text">
-        <h2 class="h1-heading">@Messages("ssttp.you-need-to-file.title")</h2>
+        <h1>@Messages("ssttp.you-need-to-file.title")</h1>
     </header>
     <section class="section  divider--bottom">
         @highlight('_modifierClass -> "highlight-message--light") {

@@ -13,7 +13,7 @@
 @import selfservicetimetopay.partials.{what_you_owe, currency}
 
 @selfservicetimetopay.main(
-  title = Messages("ssttp.common.title"),
+  title = Messages("ssttp.arrangement.direct-debit.assistance.title"),
   loggedIn = loggedIn
 ){
   @if(showErrorNotification) {
@@ -25,7 +25,7 @@
       </div>
   }
   <header class="page-header text">
-    <h2>@Messages("ssttp.arrangement.direct-debit.assistance.title")</h2>
+    <h1>@Messages("ssttp.arrangement.direct-debit.assistance.title")</h1>
   </header>
 
   <section>
