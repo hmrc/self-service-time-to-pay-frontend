@@ -44,7 +44,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       case Some(submission@TTPSubmission(Some(schedule), None, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _, _)) =>
         Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true)))
       case Some(submission@TTPSubmission(Some(schedule), Some(_), _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _, _)) =>
-        Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, true)))
+        Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true)))
       case _ => throw new RuntimeException("No data found")
     }
   }
