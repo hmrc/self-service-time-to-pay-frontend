@@ -1,0 +1,8 @@
+@* Google Analytics code to report a Debit as a product item
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@(debit:Debit, position:Int)
+@import selfservicetimetopay.partials.charge_code
+@id = @{debit.originCode.getOrElse("USER_AMOUNT_DUE")}
+@name = @{debit.originCode.fold[String]("User Entered Amount Due"){ c => charge_code(c, debit.taxYearEnd).body.trim}}
+ga('ec:addProduct', { 'id': '@id', 'name': '@name', 'price': '@debit.amount', 'position': @position});

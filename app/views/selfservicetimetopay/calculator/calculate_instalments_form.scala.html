@@ -10,16 +10,40 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@import play.twirl.api.HtmlFormat
-@(schedule:CalculatorPaymentSchedule, debits:Option[Seq[Debit]], durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[CalculatorPaymentToday], monthOptions:Seq[Int], loggedIn: Boolean)(implicit request: Request[_])
+@(schedule:CalculatorPaymentSchedule, debits:Option[Seq[Debit]], durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[BigDecimal], monthOptions:Seq[Int], gaReportingTask:Option[String], loggedIn: Boolean)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, button, fieldErrors, numberinput, inlinecurrencyinput}
-@import selfservicetimetopay.partials.{currency, what_you_owe}
+@import selfservicetimetopay.partials.{currency, what_you_owe, gaAmountDueProduct}
 @import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
+@gaPaymentTodayAdd(initialPayment:BigDecimal, i:Int) = {
+    $(function() {
+        ga('ec:addProduct', { 'id': 'INITIAL_PAYMENT', 'name': 'Initial Payment', 'price': '@initialPayment', 'position': @i});
+        ga('ec:setAction', 'add');
+    });
+}
+@gaDoCheckout(d:Seq[Debit], step:Int, option:String) = {
+    $(function() {
+        @Html(d.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
+        ga('ec:addProduct', { 'id': 'INITIAL_PAYMENT', 'name': 'Initial Payment', 'price': '@schedule.initialPayment', 'position': @{d.length+1}});
+        ga('ec:setAction','checkout', { 'step': @step, 'option': '@option'});
+        ga('send', 'event', 'ecommerce', 'click', 'calculate instalments');
+    });
+}
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.results.title"),
-    loggedIn = loggedIn
+    loggedIn = loggedIn,
+    googleAnalyticsCalls = (gaReportingTask match {
+        case Some("paymentToday") => gaPaymentTodayAdd(schedule.initialPayment, debits.getOrElse(Seq.empty).length+1).body
+        case _ => ""
+    }).toSeq,
+    scriptElem = Some(Html("<script type='text/javascript'>" + (gaReportingTask match {
+        case Some("paymentToday") => debits.fold(""){gaDoCheckout(_, 2, if(loggedIn){"logged-in"}else{"non-logged-in"}).body}
+        case Some("recalculate") => debits.fold(""){gaDoCheckout(_, 2, "logged-in").body}
+        case _ => ""
+    }) + "</script>"))
 ){
     <a target="_blank" href="@routes.CalculatorController.getCalculateInstalmentsPrint()" class="float--right gutter-left print-link print-hidden js-visible trackedPrintLink">@Messages("ssttp.arrangement.instalment-summary.print")</a>
     <header class="page-header text">

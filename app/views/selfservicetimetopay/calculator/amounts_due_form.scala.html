@@ -6,25 +6,31 @@
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import java.time.format.DateTimeFormatter
 @import java.util.Locale
-@import selfservicetimetopay.partials.currency
+@import selfservicetimetopay.partials.{currency, gaAmountDueProduct}
 
 @sidebarLnks = @{if(loggedIn){
     None
 }else{
     Some(selfservicetimetopay.partials.sign_in_sidebar())
 }}
-
+@submitGACallback = {
+    $(function() {
+        $('#amountsDueForm').on('submit', function() {
+            @Html(amountsDue.amountsDue.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
+            ga('ec:setAction','checkout', { 'step': 1 });
+            ga('send', 'event', 'ecommerce', 'click', 'amounts due submit');
+        });
+    });
+}
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.form.amounts_due.title"),
     sidebarLinks = sidebarLnks,
     loggedIn = loggedIn,
-    googleAnalyticsCalls = delta.map(d => {
-        s"ga('ec:addProduct', { 'id': 'USER_AMOUNT_DUE', 'name': 'Amount Due', 'price': '${d._2.amount}', 'position': ${amountsDue.amountsDue.length}});\n" +
-        s"ga('ec:setAction', '${if(d._1){"add"}else{"remove"}}');\n"
-    }).toSeq,
-    scriptElem = delta.map(d => {
-        Html(s"<script type='text/javascript'>ga('send', 'event', 'UX', 'click', '${if(d._1){"add"}else{"remove"}} amount due');</script>")
-    })
+    googleAnalyticsCalls = delta.map(d => gaAmountDueProduct(d._2, amountsDue.amountsDue.length) +
+        s"ga('ec:setAction', '${if(d._1){"add"}else{"remove"}}');\n").toSeq,
+    scriptElem = Some(Html("<script type='text/javascript'>" +
+        submitGACallback +
+        "</script>"))
 ){
     <header class="page-header text">
         <h1>@Messages("ssttp.calculator.form.amounts_due.title")</h1>
@@ -92,7 +98,7 @@
             </div>
         </div>
     </div>
-    @form(routes.CalculatorController.submitAmountsDue(), 'class -> "group") {
+    @form(routes.CalculatorController.submitAmountsDue(), 'class -> "group", 'id -> "amountsDueForm") {
         @if(amountsDue.amountsDue.isEmpty) {
             @submit('disabled -> "disabled"){@Messages("ssttp.calculator.form.continue")}
         } else {
