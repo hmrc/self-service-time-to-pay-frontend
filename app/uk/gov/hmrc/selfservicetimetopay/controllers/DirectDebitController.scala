@@ -119,7 +119,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   private def banksListValidation(bankDetails: Seq[DirectDebitInstruction], formData: ArrangementExistingDirectDebit): BankDetails = {
     bankDetails match {
       case bd :: Nil =>
-        BankDetails(ddiRefNumber = bankDetails.head.referenceNumber)
+        BankDetails(sortCode = bd.sortCode, accountNumber = bd.accountNumber, ddiRefNumber = bankDetails.head.referenceNumber)
       case Nil =>
         BankDetails(sortCode = Some(formData.arrangementDirectDebit.get.sortCode),
           accountNumber = Some(formData.arrangementDirectDebit.get.accountNumber),
