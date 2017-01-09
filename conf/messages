@@ -231,7 +231,7 @@ ssttp.you-need-to-file.other-tax=If you’re unsure how to proceed for any reaso
 ssttp.you-need-to-file.other-tax.number=0300 200 3822
 
 ssttp.arrangement.instalment-summary.title=Your instalment plan summary
-ssttp.arrangement.instalment-summary.print=print
+ssttp.arrangement.instalment-summary.print=Print
 ssttp.arrangement.instalment-summary.initial-payment-of=An initial payment of:
 ssttp.arrangement.instalment-summary.initial-payment.hint=taken up to {0} days from today
 ssttp.arrangement.instalment-summary.monthly-instalments=monthly instalments of:
