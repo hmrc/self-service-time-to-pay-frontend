@@ -22,9 +22,10 @@ import java.util.Calendar
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
-import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentToday, _}
 
 import scala.math.BigDecimal.RoundingMode
+import scala.util.Try
 import scala.util.control.Exception.catching
 
 object CalculatorForm {
@@ -85,12 +86,13 @@ object CalculatorForm {
 
   val removeAmountDueForm = Form(single("index" -> number))
 
-  def createPaymentTodayForm(totalDue: BigDecimal) = {
+  def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentToday] = {
     Form(mapping(
-      "amount" -> optional(bigDecimal)
-        .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", a => a.isEmpty || a.get.setScale(2, RoundingMode.HALF_UP) < totalDue)
-        .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", a => a.isEmpty || a.get >= 0)
-    )(CalculatorPaymentToday.apply)(CalculatorPaymentToday.unapply))
+      "amount" -> text
+        .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => (i != null) && i.nonEmpty })
+        .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", a => a.isEmpty || BigDecimal(a).setScale(2, RoundingMode.HALF_UP) < totalDue)
+        .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", a => a.isEmpty || BigDecimal(a) >= 0)
+    )(text => CalculatorPaymentToday(BigDecimal(text)))(bd => Some(bd.amount.toString)))
   }
 
   val minMonths = 2
