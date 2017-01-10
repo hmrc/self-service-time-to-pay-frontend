@@ -1,6 +1,7 @@
 @*
 Time To Pay Instalment Summary Display Page
 
+@param debits Seq[Debit] The debits being paid by this plan
 @param schedule CalculatorPaymentSchedule The results data to display
 @param dayForm Form[ArrangementDayOfMonth] For for day of month selection for direct debit
 
@@ -9,15 +10,25 @@ Time To Pay Instalment Summary Display Page
 Time To Pay Instalment Summary Pretty Print Page
 @param schedule CalculatorPaymentSchedule The results data to display
 *@
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
-@(schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth], signedIn: Boolean = false)(implicit request: Request[_])
-    @import selfservicetimetopay.partials.{payment_schedule, currency, day_ordinal}
-    @import selfservicetimetopay.helpers.{highlight, alert, message_list}
-    @import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
-    @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-    @selfservicetimetopay.main(
+@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule,ArrangementDayOfMonth,Debit}
+@(debits:Seq[Debit], schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth], signedIn: Boolean = false)(implicit request: Request[_])
+@import selfservicetimetopay.partials.{payment_schedule, currency, day_ordinal, gaDoCheckout}
+@import selfservicetimetopay.helpers.{highlight, alert, message_list}
+@import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@gaCheckoutCode = {
+    @gaDoCheckout(debits = debits,
+        step = 1,
+        revenue = schedule.totalPayable,
+        initialPayment = Some(schedule.initialPayment),
+        interest = schedule.totalInterestCharged,
+        duration = schedule.instalments.length,
+        regularPayment = schedule.instalments.head.amount
+    )
+}
+@selfservicetimetopay.main(
         title = Messages("ssttp.arrangement.instalment-summary.title"),
+        googleAnalyticsCalls = Seq(gaCheckoutCode.body.seq),
         loggedIn = signedIn
     ) {
     <a href="javascript:window.print()" class="js-visible no-print float--right gutter-left print-link js-visible trackedPrintLink">@Messages("ssttp.arrangement.instalment-summary.print")</a>

@@ -98,8 +98,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     implicit request =>
       authorizedForSsttp {
         case None => redirectToStart
-        case Some(ttp@TTPSubmission(Some(schedule), _, _, _, _, _, _, _, _)) if areEqual(ttp.taxpayer.get.selfAssessment.get.debits, ttp.calculatorData.debits) =>
-          Future.successful(Ok(instalment_plan_summary(schedule, createDayOfForm(ttp), signedIn = true)))
+        case Some(ttp@TTPSubmission(Some(schedule), _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _)) if areEqual(ttp.taxpayer.get.selfAssessment.get.debits, ttp.calculatorData.debits) =>
+          Future.successful(Ok(instalment_plan_summary(debits, schedule, createDayOfForm(ttp), signedIn = true)))
         case Some(TTPSubmission(None, _, _, _, _, _, _, _, _)) => throw new RuntimeException("No schedule data")
         case _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
       }
@@ -115,7 +115,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       authorizedForSsttp { submission =>
         ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
           formWithErrors => {
-            Future.successful(BadRequest(instalment_plan_summary(submission.get.schedule.get, formWithErrors, signedIn = true)))
+            Future.successful(BadRequest(instalment_plan_summary(submission.get.taxpayer.get.selfAssessment.get.debits, submission.get.schedule.get, formWithErrors, signedIn = true)))
           },
           validFormData => {
             submission match {

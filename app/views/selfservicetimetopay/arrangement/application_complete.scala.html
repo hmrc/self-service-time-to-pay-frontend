@@ -9,16 +9,24 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.{Debit, CalculatorPaymentSchedule, ArrangementDirectDebit}
 
 @(debits:Seq[Debit], directDebit:ArrangementDirectDebit, schedule:CalculatorPaymentSchedule, loggedIn: Boolean = false)(implicit request: Request[_])
-
-
 @import selfservicetimetopay.helpers.message_list
-@import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule}
-@import selfservicetimetopay.partials.currency
+@import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule, gaDoCheckout, currency}
 
+@gaCheckoutCode = {
+  @gaDoCheckout(debits = debits,
+    step = 4,
+    revenue = schedule.totalPayable,
+    initialPayment = Some(schedule.initialPayment),
+    interest = schedule.totalInterestCharged,
+    duration = schedule.instalments.length,
+    regularPayment = schedule.instalments.head.amount
+  )
+}
 @selfservicetimetopay.main(
   title = Messages("ssttp.arrangement.complete.title"),
   loggedIn = loggedIn,
-  sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar())
+  sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar()),
+  googleAnalyticsCalls = Seq(gaCheckoutCode.body)
 ){
   <div class="transaction-banner--complete">
     <div class="transaction-banner__heading" role="banner">@Messages("ssttp.arrangement.complete.title")</div>

@@ -2,7 +2,11 @@
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @(debit:Debit, position:Int)
+@import java.time.format.DateTimeFormatter
+@import java.util.Locale
 @import selfservicetimetopay.partials.charge_code
 @id = @{debit.originCode.getOrElse("USER_AMOUNT_DUE")}
 @name = @{debit.originCode.fold[String]("User Entered Amount Due"){ c => charge_code(c, debit.taxYearEnd).body.trim}}
-ga('ec:addProduct', { 'id': '@id', 'name': '@name', 'price': '@debit.amount', 'position': @position});
+@defining(DateTimeFormatter.ofPattern("yyyyMMdd", Locale.ENGLISH)) { formatter =>
+    ga('ec:addProduct', { 'id': '@id', 'name': '@name', 'price': '@debit.amount', 'position': @position, 'dimension1': '@debit.dueDate.format(formatter)' });
+}

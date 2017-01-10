@@ -33,8 +33,8 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
   def getDirectDebit: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
     authorizedForSsttp {
-      case Some(submission@TTPSubmission(_, _, _, Some(taxpayer), _, _, calcData, _, _)) if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
-         Future.successful(Ok(direct_debit_form(directDebitForm, true)))
+      case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer), _, _, calcData, _, _)) if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
+         Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, true)))
       case _ => throw new RuntimeException("Invalid request submitted")
     }
   }
@@ -58,7 +58,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getDirectDebitConfirmation: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
     authorizedForSsttp {
       case Some(submission@TTPSubmission(Some(schedule), Some(bankDetails), _, _, _, _, _, _, _)) =>
-        Future.successful(Ok(direct_debit_confirmation(schedule, submission.arrangementDirectDebit.get, true)))
+        Future.successful(Ok(direct_debit_confirmation(submission.calculatorData.debits, schedule, submission.arrangementDirectDebit.get, true)))
       case _ => throw new RuntimeException("No data found")
     }
   }
@@ -106,9 +106,9 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   }
 
   def submitDirectDebit: Action[AnyContent] = AuthorisedSaUser { implicit authContext => implicit request =>
-    authorizedForSsttp { _ =>
+    authorizedForSsttp { submission =>
       directDebitForm.bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(direct_debit_form(formWithErrors, true))),
+        formWithErrors => Future.successful(BadRequest(direct_debit_form(submission.get.calculatorData.debits, submission.get.schedule.get, formWithErrors, true))),
         validFormData =>
           directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode,
             validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)

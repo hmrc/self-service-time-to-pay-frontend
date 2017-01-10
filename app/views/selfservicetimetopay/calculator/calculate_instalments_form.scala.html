@@ -2,46 +2,38 @@
     Time To Pay Payment Schedule Calculator Page
 
     @param schedule The PaymentSchedule to show
-    @param monthOptions List of number of months available to pay over
     @param debits Option[Seq[Debit]] list of tax debits from the user's SA account
+    @param durationForm Form[CalcualtorDuration] form representing the instalment plan duration
+    @param paymentTodayForm Form[CalcualtorDuration] form representing the initial payment
+    @param monthOptions List of number of months available to pay over
     @param loggedIn Boolean set to true if the user is authenticated, default false
 *@
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(schedule:CalculatorPaymentSchedule, debits:Option[Seq[Debit]], durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[BigDecimal], monthOptions:Seq[Int], gaReportingTask:Option[String], loggedIn: Boolean)(implicit request: Request[_])
+@import uk.gov.hmrc.selfservicetimetopay.models.{Debit, CalculatorDuration, CalculatorPaymentToday, CalculatorPaymentSchedule}
+@(schedule:CalculatorPaymentSchedule, debits:Option[Seq[Debit]], durationForm:Form[CalculatorDuration], paymentTodayAmountForm: Form[CalculatorPaymentToday], monthOptions:Seq[Int], gaReportingTask:Option[String], loggedIn: Boolean)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, button, fieldErrors, numberinput, inlinecurrencyinput}
 @import selfservicetimetopay.partials.{currency, what_you_owe, gaAmountDueProduct}
 @import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
-@gaPaymentTodayAdd(initialPayment:BigDecimal, i:Int) = {
-    $(function() {
-        ga('ec:addProduct', { 'id': 'INITIAL_PAYMENT', 'name': 'Initial Payment', 'price': '@initialPayment', 'position': @i});
-        ga('ec:setAction', 'add');
-    });
+@gaPaymentTodayImpression(initialPayment:BigDecimal) = {
+    ga('ec:addProduct', { 'id': 'INITIAL_PAYMENT', 'name': 'Initial Payment', 'price': '@initialPayment'});
+    ga('ec:setAction', 'detail');
 }
-@gaDoCheckout(d:Seq[Debit], step:Int, option:String) = {
-    $(function() {
-        @Html(d.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
-        ga('ec:addProduct', { 'id': 'INITIAL_PAYMENT', 'name': 'Initial Payment', 'price': '@schedule.initialPayment', 'position': @{d.length+1}});
-        ga('ec:setAction','checkout', { 'step': @step, 'option': '@option'});
-        ga('send', 'event', 'ecommerce', 'click', 'calculate instalments');
-    });
+@gaDurationImpression(s:CalculatorPaymentSchedule) = {
+    ga('ec:addProduct', { 'id': 'PAYMENT_PLAN', 'name': 'Payment Plan', 'price': '@s.totalInterestCharged', 'variant': '@s.instalments.length});
+    ga('ec:setAction', 'detail');
 }
 
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.results.title"),
     loggedIn = loggedIn,
-    googleAnalyticsCalls = (gaReportingTask match {
-        case Some("paymentToday") => gaPaymentTodayAdd(schedule.initialPayment, debits.getOrElse(Seq.empty).length+1).body
-        case _ => ""
-    }).toSeq,
+    googleAnalyticsCalls = gaReportingTask match {
+        case Some("paymentToday") => Seq(gaPaymentTodayImpression(schedule.initialPayment).body)
+        case Some("duration") => Seq(gaPaymentTodayImpression(schedule.initialPayment).body)
+        case _ => Seq.empty
+    },
     scriptElem = Some(Html("<script type='text/javascript'>" + (gaReportingTask match {
-        case Some("paymentToday") => debits.fold(""){gaDoCheckout(_, 2, if(loggedIn){"logged-in"}else{"non-logged-in"}).body}
-        case Some("recalculate") => debits.fold(""){gaDoCheckout(_, 2, "logged-in").body}
         case _ => ""
     }) + "</script>"))
 ){

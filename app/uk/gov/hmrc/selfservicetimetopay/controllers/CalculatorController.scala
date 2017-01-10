@@ -166,7 +166,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
           }, formWithErrors, form, 2 to 11, None, ttpSubmission.taxpayer.isDefined))),
           validFormData => {
             val newEndDate = cd.startDate.plusMonths(validFormData.months.get).minusDays(1)
-            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(endDate = newEndDate), durationMonths = validFormData.months))(request)
+            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(endDate = newEndDate), durationMonths = validFormData.months), None)(request)
           }
         )
       case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))

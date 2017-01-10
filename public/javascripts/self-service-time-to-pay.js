@@ -8,6 +8,11 @@ $(function() {
         ga("send", "event", "click-sidebar-signin", window.location.pathname);
     });
 
+    $("a.trackedAssistanceSidebar").on("mouseup", function () {
+        ga("send", "event", "click-direct-debit-assistance", window.location.pathname);
+    });
+
+
     $(".trackedPrintLink").on("mouseup", function () {
         ga("send", "event", "click-print", window.location.pathname);
     });
@@ -39,9 +44,4 @@ $(function() {
         ga("send", "event", "calculator-duration-increase-from", $("input[name=months]").val());
     });
 });
-
-
-
-
-
 

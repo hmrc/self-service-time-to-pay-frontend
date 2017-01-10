@@ -4,18 +4,31 @@ Time To Pay Direct Debit Form Page
 @param schedule PaymentSchedule The results data to display
 
 *@
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-@(ddForm:Form[ArrangementDirectDebit], loggedIn: Boolean = false)(implicit request: Request[_])
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
+@(debits:Seq[Debit], schedule:CalculatorPaymentSchedule, ddForm:Form[ArrangementDirectDebit], loggedIn: Boolean = false)(implicit request: Request[_])
 
-@import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields}
+@import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields, gaDoCheckout}
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
+@gaCheckoutCode = {
+@gaDoCheckout(debits = debits,
+    step = 2,
+    revenue = schedule.totalPayable,
+    initialPayment = Some(schedule.initialPayment),
+    interest = schedule.totalInterestCharged,
+    duration = schedule.instalments.length,
+    regularPayment = schedule.instalments.head.amount
+)
+}
 @selfservicetimetopay.main(
   title = Messages("ssttp.arrangement.direct-debit.form.title"),
   loggedIn = loggedIn,
-  sidebarLinks = Some(having_problems_sidebar())
+  sidebarLinks = Some(having_problems_sidebar()),
+  googleAnalyticsCalls = if(ddForm.hasErrors){Seq.empty}else{Seq(gaCheckoutCode.body)}
 ){
     <header class="page-header text">
         <h1>@Messages("ssttp.arrangement.direct-debit.form.title")</h1>

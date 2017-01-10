@@ -1,0 +1,18 @@
+@* Google Analytics code to report a checkout
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@(debits:Seq[Debit],
+    step:Int,
+    revenue: BigDecimal,
+    initialPayment:Option[BigDecimal],
+    interest: BigDecimal,
+    duration: Int,
+    regularPayment: BigDecimal
+)
+@import selfservicetimetopay.partials.gaAmountDueProduct
+@Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
+@initialPayment.map { initialP =>
+    ga('ec:addProduct', { 'id': 'INITIAL_PAYMENT', 'name': 'Initial Payment', 'price': '@initialP', 'position': @{debits.length+1}});
+}
+ga('ec:addProduct', { 'id': 'PAYMENT_PLAN', 'name': 'Payment Plan', 'price': '@interest', 'variant': '@duration', 'position': @{debits.length+2}});
+ga('ec:setAction','checkout', { 'step': @step, 'revenue': '@revenue', 'metric1': '@initialPayment', 'metric2': '@interest', 'metric3': '@duration', 'metric4': '@regularPayment'});
