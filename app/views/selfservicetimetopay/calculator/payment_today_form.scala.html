@@ -4,7 +4,8 @@
   @param dataForm Form[bigDecimal] representing the form for the value to be entered
   @param loggedIn Boolean, default false whether the user is logged into their tax account
 *@
-@(dataForm: Form[BigDecimal], loggedIn: Boolean = false)(implicit request: Request[_])
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
+@(dataForm: Form[CalculatorPaymentToday], loggedIn: Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.forms.{currencyinput, form, formErrorSummary, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers._
 @selfservicetimetopay.main(
