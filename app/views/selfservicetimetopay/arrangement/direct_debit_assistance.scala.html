@@ -2,8 +2,8 @@
   Time To Pay Direct Debit Assistance and Error Page
 
   @param schedule CalculatorPaymentSchedule The results data to display
-  @param directDebit CalcualtorDirectDebit The direct debit details
-  @param showErrornotification Boolean, default false  If true display an error notification on the page
+  @param debits Sequence of Debit The direct debit details
+  @param showErrorNotification Boolean, default false  If true display an error notification on the page
   @param loggedIn Boolean default false, If true display the sign out link in the page header
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, Debit}
@@ -11,6 +11,7 @@
 
 @import selfservicetimetopay.helpers.highlight
 @import selfservicetimetopay.partials.{what_you_owe, currency}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
 @selfservicetimetopay.main(
   title = Messages("ssttp.arrangement.direct-debit.assistance.title"),
@@ -79,4 +80,7 @@
       </div>
     </div>
   </section>
+  @if(!showErrorNotification) {
+    <p><a class="back-link" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.arrangement.direct-debit.assistance.back")</a></p>
+  }
 }
