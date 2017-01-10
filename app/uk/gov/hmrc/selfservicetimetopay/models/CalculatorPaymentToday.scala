@@ -21,6 +21,13 @@ import scala.math.BigDecimal.RoundingMode.HALF_UP
 case class CalculatorPaymentToday(amount: BigDecimal)
 
 object CalculatorPaymentToday {
+  def apply(str: String): CalculatorPaymentToday = {
+    str match {
+      case s if s.isEmpty => CalculatorPaymentToday(BigDecimal(0))
+      case s => CalculatorPaymentToday(BigDecimal(s))
+    }
+  }
+
   implicit def bigDecimalToCalculatorPaymentToday(bd: BigDecimal): CalculatorPaymentToday = {
     CalculatorPaymentToday(bd)
   }

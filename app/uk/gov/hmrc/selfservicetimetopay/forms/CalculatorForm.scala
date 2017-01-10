@@ -89,10 +89,10 @@ object CalculatorForm {
   def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentToday] = {
     Form(mapping(
       "amount" -> text
-        .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => (i != null) && i.nonEmpty })
+        .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => (i != null) && (i.isEmpty || Try(BigDecimal(i)).isSuccess)})
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", a => a.isEmpty || BigDecimal(a).setScale(2, RoundingMode.HALF_UP) < totalDue)
         .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", a => a.isEmpty || BigDecimal(a) >= 0)
-    )(text => CalculatorPaymentToday(BigDecimal(text)))(bd => Some(bd.amount.toString)))
+    )(text => CalculatorPaymentToday(text))(bd => Some(bd.amount.toString)))
   }
 
   val minMonths = 2
