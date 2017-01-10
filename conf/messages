@@ -182,12 +182,12 @@ ssttp.calculator.results.monthly-payments=Monthly payments of:
 ssttp.calculator.results.monthly-payments.per-month=per month
 ssttp.calculator.results.monthly-payments.increase=Increase value
 ssttp.calculator.results.monthly-payments.decrease=Decrease value
-ssttp.calculator.results.monthly-payments.hint=calculated at 2.75%
+ssttp.calculator.results.monthly-payments.hint=Base rate + 2.5%
 
-ssttp.calculator.results.total-interest=Total Interest:
+ssttp.calculator.results.total-interest=Total interest:
 ssttp.calculator.results.interest-added-to-final=added to the final payment
 
-ssttp.calculator.results.total-replayment=Your total repayment:
+ssttp.calculator.results.total-replayment=Your payments will total:
 
 ssttp.calculator.results.interest-info.title=How we calculate interest
 ssttp.calculator.results.interest-info.list.1=the interest rate is based on the base rate established by the Bank of England plus 2.5% per annum, and calculated as simple interest
