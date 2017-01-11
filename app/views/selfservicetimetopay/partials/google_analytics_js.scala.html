@@ -4,4 +4,5 @@
 *@
 @(commands:Seq[String])
 ga('require', 'ec');
+ga('set', 'currencyCode', 'GBP');
 @commands.map(Html(_))
