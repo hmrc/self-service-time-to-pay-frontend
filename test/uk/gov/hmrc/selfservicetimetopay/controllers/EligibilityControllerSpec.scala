@@ -27,7 +27,7 @@ import play.api.test.{FakeApplication, FakeRequest}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel, CredentialStrength}
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
@@ -67,8 +67,9 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
   )
 
   "EligibilityController" should {
-    val controller = new EligibilityController(mockAuthConnector) {
+    val controller = new EligibilityController() {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
+      override lazy val authConnector: AuthConnector = mockAuthConnector
     }
 
     "redirect successfully to the type of tax page" in {

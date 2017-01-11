@@ -115,7 +115,7 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
   protected lazy val campaignManagerConnector: CampaignManagerConnector = CampaignManagerConnector
 
-  def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
+  def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, GGConfidence).async(body)
 
   def authorizedForSsttp(block: (Option[TTPSubmission] => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
     campaignManagerConnector.isAuthorisedWhitelist(authContext.principal.accounts.sa.get.utr.utr).flatMap {
@@ -167,7 +167,7 @@ trait ControllerRegistry {
     classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector),
     classOf[CalculatorController] -> new CalculatorController(calculatorConnector),
     classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, calculatorConnector, taxPayerConnector, eligibilityConnector),
-    classOf[EligibilityController] -> new EligibilityController(authConnector),
+    classOf[EligibilityController] -> new EligibilityController(),
     classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
   )
 

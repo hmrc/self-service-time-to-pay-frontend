@@ -1,36 +1,23 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, Debit}
 
-@(amountsDue:CalculatorAmountsDue, dataForm: Form[Debit], delta:Option[(Boolean, Debit)], loggedIn: Boolean = false)(implicit request: Request[_])
+@(amountsDue: CalculatorAmountsDue, dataForm: Form[Debit], loggedIn: Boolean = false)(implicit request: Request[_])
 
 @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, currencyinput, dateinput, button, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import java.time.format.DateTimeFormatter
 @import java.util.Locale
-@import selfservicetimetopay.partials.{currency, gaAmountDueProduct}
+@import selfservicetimetopay.partials.currency
 
 @sidebarLnks = @{if(loggedIn){
     None
 }else{
     Some(selfservicetimetopay.partials.sign_in_sidebar())
 }}
-@submitGACallback = {
-    $(function() {
-        $('#amountsDueForm').on('submit', function() {
-            @Html(amountsDue.amountsDue.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
-            ga('ec:setAction','checkout', { 'step': 1 });
-            ga('send', 'event', 'ecommerce', 'click', 'amounts due submit');
-        });
-    });
-}
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.form.amounts_due.title"),
     sidebarLinks = sidebarLnks,
-    loggedIn = loggedIn,
-    googleAnalyticsCalls = delta.map(d => gaAmountDueProduct(d._2, amountsDue.amountsDue.length) +
-        s"ga('ec:setAction', '${if(d._1){"add"}else{"remove"}}');\n").toSeq,
-    scriptElem = Some(Html("<script type='text/javascript'>" +
-        submitGACallback +
-        "</script>"))
+    loggedIn = loggedIn
 ){
     <header class="page-header text">
         <h1>@Messages("ssttp.calculator.form.amounts_due.title")</h1>

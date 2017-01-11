@@ -23,10 +23,7 @@ import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.util.JacksonMapper
 import views.html.selfservicetimetopay.calculator._
-
-import scala.util.control.Exception._
 
 import scala.concurrent.Future
 
@@ -37,15 +34,9 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def getAmountsDue: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) => {
-        val analyticData = if (Seq("add", "remove").contains(request.flash.get("ga_debit_operation").getOrElse("")) && request.flash.get("ga_debit_data").isDefined) {
-          Some((request.flash.get("ga_debit_operation").get == "add", JacksonMapper.readValue(request.flash.get("ga_debit_data").get, classOf[Debit])))
-        } else {
-          None
-        }
-        Ok(amounts_due_form(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm, analyticData, ttpData.taxpayer.isDefined))
-      }
-      case _ => Ok(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm, None))
+      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) =>
+        Ok(amounts_due_form(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm, ttpData.taxpayer.isDefined))
+      case _ => Ok(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm))
     }
   }
 
@@ -54,8 +45,8 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       formWithErrors =>
         sessionCache.get.map {
           case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) =>
-            BadRequest(amounts_due_form(CalculatorAmountsDue(debits), formWithErrors, None, ttpData.taxpayer.isDefined))
-          case _ => BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors, None))
+            BadRequest(amounts_due_form(CalculatorAmountsDue(debits), formWithErrors, ttpData.taxpayer.isDefined))
+          case _ => BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors))
         },
 
       validFormData => {
@@ -68,10 +59,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         }.flatMap { ttpData =>
           Logger.info(ttpData.toString)
           sessionCache.put(ttpData).map {
-            _ => Redirect(routes.CalculatorController.getAmountsDue()).flashing(
-              "ga_debit_operation" ->  "add",
-              "ga_debit_data" ->  JacksonMapper.writeValueAsString(validFormData)
-            )
+            _ => Redirect(routes.CalculatorController.getAmountsDue())
           }
         }
       }
@@ -87,10 +75,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     }.flatMap[Result] { data:(TTPSubmission, Option[Debit]) =>
       sessionCache.put(data._1).map {
         _ => data._2 match {
-            case Some(d: Debit) => Redirect(routes.CalculatorController.getAmountsDue()).flashing(
-              "ga_debit_operation" -> "remove",
-              "ga_debit_data" -> JacksonMapper.writeValueAsString(d)
-            )
+            case Some(d: Debit) => Redirect(routes.CalculatorController.getAmountsDue())
             case _ => Redirect(routes.CalculatorController.getAmountsDue())
           }
       }
@@ -106,7 +91,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       case _ => Some(IndexedSeq.empty)
     }.map { ttpData =>
       if (ttpData.isEmpty) BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty),
-        CalculatorForm.amountDueForm.withGlobalError("You need to add at least one amount due"), None, loggedIn))
+        CalculatorForm.amountDueForm.withGlobalError("You need to add at least one amount due"), loggedIn))
       else Redirect(routes.CalculatorController.getPaymentToday())
     }
   }
@@ -116,14 +101,14 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _)) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         Future.successful(Ok(calculate_instalments_form(schedule, Some(sa.debits),
-          CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11,
-              request.flash.get("gaReportingTask"), ttpData.taxpayer.isDefined)))
+          CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, ttpData.taxpayer.isDefined)))
+
       case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _)) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         Future.successful(Ok(calculate_instalments_form(schedule, None,
-          CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, request.flash.get("gaReportingTask"), ttpData.taxpayer.isDefined)))
+          CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, ttpData.taxpayer.isDefined)))
       case Some(ttpData@TTPSubmission(None, _, _, _, _, _, _, _, _)) =>
-        updateSchedule(ttpData, request.flash.get("gaReportingTask")).apply(request)
+        updateSchedule(ttpData).apply(request)
       case _ =>
         Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
     }
@@ -150,7 +135,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
   def submitRecalculate: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap {
       case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _)) =>
-        updateSchedule(ttpData, Some("recalculate")).apply(request)
+        updateSchedule(ttpData).apply(request)
       case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
     }
   }
@@ -163,10 +148,10 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
           formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
             case Some(Taxpayer(_, _, Some(sa))) => Some(sa.debits)
             case _ => None
-          }, formWithErrors, form, 2 to 11, None, ttpSubmission.taxpayer.isDefined))),
+          }, formWithErrors, form, 2 to 11, ttpSubmission.taxpayer.isDefined))),
           validFormData => {
             val newEndDate = cd.startDate.plusMonths(validFormData.months.get).minusDays(1)
-            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(endDate = newEndDate), durationMonths = validFormData.months), None)(request)
+            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(endDate = newEndDate), durationMonths = validFormData.months))(request)
           }
         )
       case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
@@ -181,10 +166,10 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
           formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
             case Some(Taxpayer(_, _, Some(sa))) => Some(sa.debits)
             case _ => None
-          }, durationForm, formWithErrors, 2 to 11, None, ttpData.taxpayer.isDefined))),
+          }, durationForm, formWithErrors, 2 to 11, ttpData.taxpayer.isDefined))),
           validFormData => {
             val ttpSubmission = ttpData.copy(calculatorData = cd.copy(initialPayment = validFormData))
-            updateSchedule(ttpSubmission, None).apply(request)
+            updateSchedule(ttpSubmission).apply(request)
           }
         )
       case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) if debits.isEmpty =>
@@ -215,7 +200,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(payment_today_form(formWithErrors, ttpSubmission.taxpayer.isDefined))),
           validFormData => {
-            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData)), Some("paymentToday")).apply(request)
+            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).apply(request)
           }
         )
       case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
@@ -249,7 +234,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     newInput
   }
 
-  private def updateSchedule(ttpData: TTPSubmission, gaReportingTask:Option[String]): Action[AnyContent] = Action.async { implicit request =>
+  private def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async { implicit request =>
     ttpData match {
       case TTPSubmission(_, _, _, None, _, _, calculatorInput, durationMonths, _) =>
         var newInput = calculatorInput
@@ -262,9 +247,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
           case Seq(schedule) =>
             sessionCache.put(ttpData.copy(schedule = Some(schedule))).map[Result] { result =>
-              Redirect(routes.CalculatorController.getCalculateInstalments(None)).flashing(
-                "gaReportingTask" -> gaReportingTask.getOrElse("")
-              )
+              Redirect(routes.CalculatorController.getCalculateInstalments(None))
             }
           case _ => throw new RuntimeException("Failed to get schedule")
         }
@@ -275,9 +258,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
           case Seq(schedule) =>
             sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = newInput)).map[Result] { result =>
-              Redirect(routes.CalculatorController.getCalculateInstalments(None)).flashing(
-                "gaReportingTask" -> gaReportingTask.getOrElse("")
-              )
+              Redirect(routes.CalculatorController.getCalculateInstalments(None))
             }
           case _ => throw new RuntimeException("Failed to get schedule")
         }
