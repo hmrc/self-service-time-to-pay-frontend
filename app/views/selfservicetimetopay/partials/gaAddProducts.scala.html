@@ -1,0 +1,19 @@
+@* Google Analytics code to add all the products for a TTP Arrangement - note that after this an action and event need to be called.
+    @param debits Seq[Debit] list of debits to create as productsdefining
+    @param initialPayment Option[BigDecimal] Initial payment if specified yet otherwise none
+    @param paymentPlan Option(Int, BigDecimal) Optional tuple of (duration:Int, interest:BigDecimal) representing the payment plan if specified
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@(debits:Seq[Debit],
+    initialPayment:Option[BigDecimal],
+    paymentPlan: Option[(Int, BigDecimal)]
+)
+@import selfservicetimetopay.partials.gaAmountDueProduct
+@Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
+@initialPayment.map { initial =>
+    ga('ec:addProduct', { 'id': 'INITIAL_PAYMENT', 'name': 'Initial Payment', 'price': '@initial', 'position': @{debits.length+1}});
+}
+@paymentPlan.map { plan =>
+    ga('ec:addProduct', { 'id': 'PAYMENT_PLAN', 'name': 'Payment Plan', 'price': '@plan._2', 'variant': '@plan._1', 'position': @{debits.length + 2}});
+}
+

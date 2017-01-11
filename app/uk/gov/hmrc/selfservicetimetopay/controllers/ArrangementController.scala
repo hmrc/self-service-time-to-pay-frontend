@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit.DAYS
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
@@ -174,8 +174,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       authorizedForSsttp {
         case None => redirectToStart
         case Some(submission) =>
-          sessionCache.remove().map(_ => Ok(application_complete(submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
-            submission.arrangementDirectDebit.get, submission.schedule.get, loggedIn = true)))
+          sessionCache.remove().map(_ => Ok(application_complete(
+              debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
+              transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
+              directDebit = submission.arrangementDirectDebit.get,
+              schedule = submission.schedule.get,
+              loggedIn = true))
+          )
       }
   }
 

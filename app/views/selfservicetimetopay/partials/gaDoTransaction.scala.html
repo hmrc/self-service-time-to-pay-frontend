@@ -1,4 +1,4 @@
-@* Google Analytics code to report a checkout
+@* Google Analytics code to report a complete transaction
 
     @param debits Seq[Debit] list of debits to create as productsdefining
     @param step Int Step of the checkout funnel configured in GA
@@ -7,10 +7,11 @@
     @param interest BigDecimal  Interest paid for the payment plan
     @param duration Int duration of the payment plan
     @param regularPayment BigDecimal the monthly payment for the payment plan
+    @
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @(debits:Seq[Debit],
-    step:Int,
+    id:String,
     revenue: BigDecimal,
     initialPayment:Option[BigDecimal],
     interest: BigDecimal,
@@ -19,4 +20,4 @@
 )
 @import selfservicetimetopay.partials.gaAddProducts
 @gaAddProducts(debits, initialPayment, Some((duration, interest)))
-ga('ec:setAction','checkout', { 'step': @step, 'revenue': '@revenue', 'metric1': '@initialPayment', 'metric2': '@interest', 'metric3': '@duration', 'metric4': '@regularPayment'});
+ga('ec:setAction', 'purchase', { 'id': '@id', 'revenue': '@revenue', 'metric1': '@initialPayment', 'metric2': '@interest', 'metric3': '@duration', 'metric4': '@regularPayment'});

@@ -8,13 +8,13 @@
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{Debit, CalculatorPaymentSchedule, ArrangementDirectDebit}
 
-@(debits:Seq[Debit], directDebit:ArrangementDirectDebit, schedule:CalculatorPaymentSchedule, loggedIn: Boolean = false)(implicit request: Request[_])
+@(debits:Seq[Debit], transactionId: String, directDebit:ArrangementDirectDebit, schedule:CalculatorPaymentSchedule, loggedIn: Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.helpers.message_list
-@import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule, gaDoCheckout, currency}
+@import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule, gaDoTransaction, currency}
 
 @gaCheckoutCode = {
-  @gaDoCheckout(debits = debits,
-    step = 4,
+  @gaDoTransaction(debits = debits,
+    id = transactionId,
     revenue = schedule.totalPayable,
     initialPayment = Some(schedule.initialPayment),
     interest = schedule.totalInterestCharged,
