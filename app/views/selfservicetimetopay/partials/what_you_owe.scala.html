@@ -1,7 +1,7 @@
 @*
     Partial view to show list of what a user owes having validated against their account
 
-    @param debits Seq[Debit] list of tax debits to showd
+    @param debits Seq[Debit] list of tax debits to show
     @param smallFormat Boolean, default false, apply the small font modifier to this list to show within another element
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
@@ -15,6 +15,7 @@
         <div class="grid-layout__column grid-layout__column--1-4"><strong>@Messages("ssttp.amounts_due.amount")</strong></div>
     </div>
     @debits.map { debit =>
+        @if(smallFormat && !debits.head.equals(debit)){<br>}
         <div class="@if(!smallFormat){subsection}else{grid-layout--no-gutter} grid-layout font-xsmall@if(!smallFormat){ divider--bottom}">
             <div class="grid-layout__column grid-layout__column--3-4">
                 <div><span class="@if(smallFormat){font-xxsmall}else{font-small}">@debit.dueDate.format(formatter)</span></div>
