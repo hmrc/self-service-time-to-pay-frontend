@@ -49,6 +49,8 @@ case class Debit(originCode: Option[String] = None,
 }
 
 object CalculatorAmountDue {
+  val MaxCurrencyValue: BigDecimal = BigDecimal.exact("1e12")
+
   def apply(amt: BigDecimal, dueByYear: Int, dueByMonth: Int, dueByDay: Int): Debit = {
     Debit(None, amt, LocalDate.of(dueByYear, dueByMonth, dueByDay), None, None)
   }
