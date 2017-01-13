@@ -17,8 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import play.api.Logger
-import play.api.http.Status
-import uk.gov.hmrc.play.http.{HttpResponse, HeaderCarrier, HttpGet}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import uk.gov.hmrc.selfservicetimetopay.models.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
