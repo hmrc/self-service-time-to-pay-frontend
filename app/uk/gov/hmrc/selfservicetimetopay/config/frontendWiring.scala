@@ -86,7 +86,7 @@ object ArrangementConnector extends ArrangementConnector with ServicesConfig {
 
 object TaxPayerConnector extends TaxPayerConnector with ServicesConfig {
   val taxPayerURL: String = baseUrl("taxpayer")
-  val serviceURL = "tax-payer"
+  val serviceURL = "taxpayer"
   val http = WSHttp
 }
 
