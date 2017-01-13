@@ -29,7 +29,9 @@ object DirectDebitForm {
   def parseIntOption(str:String) =  Try(str.toInt).toOption
 
   val directDebitMapping = mapping(
-    "accountName" -> text.verifying("ssttp.direct-debit.form.error.accountName.required", _.trim!=""),
+    "accountName" -> text.verifying("ssttp.direct-debit.form.error.accountName.required", _.trim!="")
+      .verifying("ssttp.direct-debit.form.error.accountName.not-text", x => x.length == x.replaceAll("[^a-zA-Z '.& \\/]", "").length)
+      .verifying("ssttp.direct-debit.form.error.accountName.length", _.trim.length < 40),
     "sortCode" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim!="")
       .verifying("ssttp.direct-debit.form.error.sortCode.not-number", x => (x.trim=="") || (x.replaceAll("[^0-9]", "")!="") || parseIntOption(x).nonEmpty)
       .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.replaceAll("[^0-9]", "")=="") || (x.trim.length==6)),
