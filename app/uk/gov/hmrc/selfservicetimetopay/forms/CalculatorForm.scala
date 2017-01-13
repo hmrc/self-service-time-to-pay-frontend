@@ -22,6 +22,7 @@ import java.util.Calendar
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
+import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue.MaxCurrencyValue
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentToday, _}
 
 import scala.math.BigDecimal.RoundingMode
@@ -70,17 +71,21 @@ object CalculatorForm {
     }
   }
 
-  val amountDueForm = Form(mapping(
-    "amount" -> optional(bigDecimal)
-      .verifying("ssttp.calculator.form.amounts_due.amount.required", _.nonEmpty)
-      .verifying("ssttp.calculator.form.amounts_due.amount.positive", x => x.isEmpty || (x.get.compare(BigDecimal("0")) > 0)),
-    "dueBy" -> dueByDateTuple.verifying(validDate)
-  )
-  ((amount:Option[BigDecimal], date:(String, Option[Int], String)) =>
-    CalculatorAmountDue(amount.get, tryToInt(date._1).get, date._2.get, tryToInt(date._3).get))
-  ((amountDue:Debit) => Option((Option(amountDue.amount),
-    (amountDue.dueByYear.toString, Option(amountDue.dueByMonth), amountDue.dueByDay.toString))))
-  )
+  val amountDueForm: Form[Debit] = amountDueForm(0)
+
+  def amountDueForm(totalDebits: BigDecimal): Form[Debit] = {
+    Form(mapping(
+      "amount" -> optional(bigDecimal)
+        .verifying("ssttp.calculator.form.amounts_due.amount.required", _.nonEmpty)
+        .verifying("ssttp.calculator.form.amounts_due.amount.positive", x => x.isEmpty || (x.get.compare(BigDecimal("0")) > 0))
+        .verifying("ssttp.calculator.form.amounts_due.amount.less-than-maxval", x => x.isEmpty || x.get.compare(MaxCurrencyValue - totalDebits) < 0),
+      "dueBy" -> dueByDateTuple.verifying(validDate)
+    )((amount:Option[BigDecimal], date:(String, Option[Int], String)) =>
+      CalculatorAmountDue(amount.get, tryToInt(date._1).get, date._2.get, tryToInt(date._3).get))
+    ((amountDue:Debit) => Option((Option(amountDue.amount),
+      (amountDue.dueByYear.toString, Option(amountDue.dueByMonth), amountDue.dueByDay.toString))))
+    )
+  }
 
   case class RemoveItem(index: Int)
 
