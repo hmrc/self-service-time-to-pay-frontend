@@ -47,7 +47,7 @@ object CalculatorForm {
   val dueByDateTuple = tuple(
     "dueByYear" -> text
       .verifying("ssttp.calculator.form.amounts_due.due_by.required-year", { i: String => (i != null) && i.nonEmpty })
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year-number", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
       .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-high", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByYearMax)) })
       .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-low", { i => !isInt(i) || (isInt(i) && (i.toInt >= dueByYearMin)) }),
     "dueByMonth" -> optional(number)
@@ -55,7 +55,7 @@ object CalculatorForm {
       .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-month", x => x.isEmpty || ( x.get <= dueByMonthMax) && (x.get >= dueByMonthMin)),
     "dueByDay" -> text
       .verifying("ssttp.calculator.form.amounts_due.due_by.required-day", { i: String => (i != null) && i.nonEmpty })
-      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day-number", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
+      .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
       .verifying("ssttp.calculator.form.amounts_due.due_by.not-valid-day", { i => !isInt(i) || (isInt(i) && ( i.toInt <= dueByDayMax) && (i.toInt >= dueByDayMin))})
   )
 

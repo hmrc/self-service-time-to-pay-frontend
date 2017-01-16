@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 
 class ArrangementFormSpec extends PlaySpec {
 
-  "ArrangementForm.directDebitForm" must {
+  "ArrangementForm.dayOfMonthForm" must {
 
     "return no errors with valid data" in {
       val postData = Json.obj(

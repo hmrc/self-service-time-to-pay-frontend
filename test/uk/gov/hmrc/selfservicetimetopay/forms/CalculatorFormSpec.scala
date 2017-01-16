@@ -61,6 +61,13 @@ class CalculatorFormSpec extends PlaySpec {
       assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amounts_due.amount.positive"))))
     }
 
+    "return an error if amount is too high" in {
+      val postData = Json.obj("amount" -> "9999999999999999999999999999999999999999999999999999999999999999999999999999999")
+      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+
+      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amounts_due.amount.less-than-maxval"))))
+    }
+
     "return an error if dueByDay is empty" in {
       val postData = Json.obj("dueBy.dueByDay" -> "")
       val validatedForm = CalculatorForm.amountDueForm.bind(postData)
@@ -72,7 +79,7 @@ class CalculatorFormSpec extends PlaySpec {
       val postData = Json.obj("dueBy.dueByDay" -> "1.5")
       val validatedForm = CalculatorForm.amountDueForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.amounts_due.due_by.not-valid-day-number"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.amounts_due.due_by.not-valid-day"))))
     }
 
     "return an error if dueByDay is less than 1" in {
@@ -122,7 +129,7 @@ class CalculatorFormSpec extends PlaySpec {
       val postData = Json.obj("dueBy.dueByYear" -> "2000.5")
       val validatedForm = CalculatorForm.amountDueForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.amounts_due.due_by.not-valid-year-number"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.amounts_due.due_by.not-valid-year"))))
     }
 
 
@@ -151,6 +158,29 @@ class CalculatorFormSpec extends PlaySpec {
       assert(validatedForm.errors.contains(FormError("dueBy", List("ssttp.calculator.form.amounts_due.due_by.not-valid-date"))))
     }
 
+    "return errors when user inputs invalid characters in dueByYear " in {
+      val postData = Json.obj("amount" -> "2000.05",
+        "dueBy.dueByDay" -> "20",
+        "dueBy.dueByMonth" -> "2",
+        "dueBy.dueByYear" -> "201.e7"
+      )
+
+      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.amounts_due.due_by.not-valid-year"))))
+    }
+
+    "return errors when user inputs invalid characters in dueByDay" in {
+      val postData = Json.obj("amount" -> "2000.05",
+        "dueBy.dueByDay" -> "2.1e",
+        "dueBy.dueByMonth" -> "2",
+        "dueBy.dueByYear" -> "2017"
+      )
+
+      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.amounts_due.due_by.not-valid-day"))))
+    }
 
   }
 }
