@@ -34,7 +34,7 @@ object ArrangementForm {
     Form(mapping(
       "dayOfMonth" -> text
         .verifying("ssttp.arrangement.instalment-summary.payment-day.required", { i: String => (i != null) && i.nonEmpty })
-        .verifying("ssttp.arrangement.instalment-summary.payment-day.number", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
+        .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
         .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt >= 1)) })
         .verifying("ssttp.arrangement.instalment-summary.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt <= 28)) })
     )(dayOfMonth => ArrangementDayOfMonth(tryToInt(dayOfMonth).get))(data => Some(data.dayOfMonth.toString))
