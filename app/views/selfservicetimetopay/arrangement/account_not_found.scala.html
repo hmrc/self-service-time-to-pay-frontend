@@ -3,10 +3,8 @@ Time To Pay Bank account not found - select existing direct debit or create new 
     @param Form[ArrangementExistingDirectDebit]  The form for this page
     @param Seq[BankDetails] Existing bank details to re-use
 *@
-@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementExistingDirectDebit
-@import uk.gov.hmrc.selfservicetimetopay.models.BankDetails
-@import uk.gov.hmrc.selfservicetimetopay.models.DirectDebitInstruction
-@(ddForm:Form[ArrangementExistingDirectDebit], bankAccounts:Seq[DirectDebitInstruction], loggedIn: Boolean = false)(implicit request: Request[_]))
+@import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitInstruction, ArrangementExistingDirectDebit}
+@(ddForm:Form[ArrangementExistingDirectDebit], bankAccounts:Seq[DirectDebitInstruction], loggedIn: Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields}
 @import selfservicetimetopay.helpers.highlight
 @import selfservicetimetopay.helpers.forms.{form, select, formErrorSummary, submit}
@@ -46,4 +44,3 @@ Time To Pay Bank account not found - select existing direct debit or create new 
         }
     <div><a class="back-link" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.arrangement.misalignment.back")</a></div>
 }
-

@@ -248,7 +248,6 @@ ssttp.arrangement.instalment-summary.payment-day.change.of-the-month=of the mont
 ssttp.arrangement.instalment-summary.payment-day.submit=Update
 ssttp.arrangement.instalment-summary.payment-day.out-of-range=Date must be between 1 and 28
 ssttp.arrangement.instalment-summary.payment-day.required=Enter a valid date
-ssttp.arrangement.instalment-summary.payment-day.number=Date must be between 1 and 28
 ssttp.arrangement.instalment-summary.schedule.title=Direct Debit payment schedule
 ssttp.arrangement.instalment-summary.schedule.initial-payment=(initial payment)
 ssttp.arrangement.instalment-summary.schedule.final-payment=(final payment)
