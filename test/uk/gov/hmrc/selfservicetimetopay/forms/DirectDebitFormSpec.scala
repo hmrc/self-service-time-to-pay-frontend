@@ -48,18 +48,6 @@ class DirectDebitFormSpec extends PlaySpec {
       assert(validatedForm.errors.contains(FormError("accountName", List("ssttp.direct-debit.form.error.accountName.not-text"))))
     }
 
-    "return error with too many characters in accountName" in {
-      val postData = Json.obj(
-        "accountName" -> "This account name should be over forty characters and fail validation",
-        "sortCode" -> "123456",
-        "accountNumber" -> "12345678"
-      )
-
-      val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
-
-      assert(validatedForm.errors.contains(FormError("accountName", List("ssttp.direct-debit.form.error.accountName.length"))))
-    }
-
     "return error with sortCode containing too few numbers" in {
       val postData = Json.obj(
         "accountName" -> "Bob",
@@ -120,7 +108,7 @@ class DirectDebitFormSpec extends PlaySpec {
       assert(validatedForm.errors.contains(FormError("accountName", List("ssttp.direct-debit.form.error.accountName.not-text"))))
     }
 
-    "return no erros when accountName contains valid special characters" in {
+    "return no error when accountName contains valid special characters" in {
       val postData = Json.obj(
         "accountName" -> "John Smith'",
         "sortCode" -> "123456",
