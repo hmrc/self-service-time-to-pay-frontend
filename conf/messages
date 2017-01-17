@@ -281,14 +281,13 @@ ssttp.direct-debit.form.sortCode.hint=Example: 000000
 ssttp.direct-debit.form.error.account=Name.required=Enter an account name
 ssttp.direct-debit.form.error.accountName.required=Enter an account name
 ssttp.direct-debit.form.error.accountName.not-text=Account name contains characters that aren''t valid
-ssttp.direct-debit.form.error.accountName.length=Account name is too long
 ssttp.direct-debit.form.error.accountNumber.required=Enter an account number
 ssttp.direct-debit.form.error.sortCode.required=Enter a sort code
 ssttp.direct-debit.form.error.sortCode.not-number=Sort code must be a number
-ssttp.direct-debit.form.error.sortCode.not-valid=Sort code must be a six digit number
+ssttp.direct-debit.form.error.sortCode.not-valid=Sort code must be a 6 digit number
 ssttp.direct-debit.form.error.accountNumber.not-number=Bank account number must not include letters or symbols
 ssttp.direct-debit.form.error.accountNumber.not-account=Enter a valid bank account number
-ssttp.direct-debit.form.error.accountNumber.not-valid=Account number must be an eight digit number
+ssttp.direct-debit.form.error.accountNumber.not-valid=Account number must be an 8 digit number
 ssttp.direct-debit.form.confirmation.header=By continuing, you’re confirming that:
 ssttp.direct-debit.form.confirmation.list.1=you have the authority to set up a Direct Debit against this account
 ssttp.direct-debit.form.confirmation.list.2=this account does not require dual signatories
