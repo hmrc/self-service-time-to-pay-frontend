@@ -77,7 +77,8 @@ Time To Pay Instalment Summary Pretty Print Page
                 <summary class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
                 <div class="panel--indent">
                     @form(routes.ArrangementController.changeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm") {
-                        @inlinetextinput(dayForm("dayOfMonth"), 'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
+                        @inlinetextinput(dayForm("dayOfMonth"),
+                            'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
                             '_labelClass -> "label--inline", '_inputClass -> "input--xsmall",
                             'labelSuffix -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.of-the-month"))
                         @submit('_buttonClass -> "button--secondary") {
