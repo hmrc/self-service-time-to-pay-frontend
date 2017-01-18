@@ -14,7 +14,7 @@ Time To Pay Instalment Summary Pretty Print Page
 @(debits:Seq[Debit], schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth], signedIn: Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.partials.{payment_schedule, currency, day_ordinal, gaDoCheckout}
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
-@import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit, fieldErrors}
+@import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @gaCheckoutCode = {
     @gaDoCheckout(debits = debits,
