@@ -127,7 +127,6 @@ ssttp.calculator.form.amounts_due.due_by.not-valid-month=You need to enter a val
 ssttp.calculator.form.amounts_due.due_by.required-day=You need to enter a day
 ssttp.calculator.form.amounts_due.due_by.not-valid-day=You need to enter a valid day
 ssttp.calculator.form.amounts_due.due_by.not-valid-date=You need to enter a valid date
-#ssttp.calculator.form.amounts_due.due_by.not-within-range=
 ssttp.error.summary.title=Something you''ve entered isn''t valid
 
 
@@ -309,7 +308,7 @@ ssttp.direct-debit.initial-payment=(initial payment)
 ssttp.direct-debit.final-payment=(final payment)
 
 ssttp.arrangement.direct-debit.form.error.summary.title=Something you’ve entered isn’t valid
-ssttp.arrangement.direct-debit.confirmation.title=Direct Debit Confirmation
+ssttp.arrangement.direct-debit.confirmation.title=Direct Debit confirmation
 ssttp.arrangement.direct-debit.confirmation.total-payment=Total payment will be:
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary=Instruction to your bank
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.title=Instruction to your Bank or Building Society to pay by Direct Debit
