@@ -222,13 +222,13 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     if (calculatorInput.initialPayment.equals(BigDecimal(0))) {
       newInput = calculatorInput.copy(
         debits = sa.debits, initialPayment = BigDecimal(0),
-        firstPaymentDate = Some(calculatorInput.startDate),
-        endDate = calculatorInput.startDate.plusMonths(durationMonths - 1))
+        firstPaymentDate = Some(firstPmntDate),
+        endDate = calculatorInput.startDate.plusMonths(durationMonths + 1).minusDays(1))
     } else {
       // if there is an initial payment then startDate = firstPaymentDate
       newInput = if (sa.debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
         calculatorInput.copy(debits = sa.debits, initialPayment = BigDecimal(0),
-          firstPaymentDate = Some(calculatorInput.startDate.plusMonths(1)),
+          firstPaymentDate = Some(firstPmntDate),
           endDate = endDate
         )
       } else {
@@ -245,11 +245,9 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     ttpData match {
       case TTPSubmission(_, _, _, None, _, _, calculatorInput, durationMonths, _) =>
         var newInput = calculatorInput
-        // if there is an initial payment then move startDate and endDate by a month
-        if(calculatorInput.initialPayment > BigDecimal(0)) {
-          newInput = calculatorInput.copy(firstPaymentDate = Some(calculatorInput.startDate.plusMonths(1)),
-            endDate = calculatorInput.startDate.plusMonths(durationMonths.get)) // firstPaymentDate + durationMonths
-        }
+
+        newInput = calculatorInput.copy(firstPaymentDate = Some(calculatorInput.startDate.plusMonths(1)),
+          endDate = calculatorInput.startDate.plusMonths(durationMonths.get))
 
         calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
           case Seq(schedule) =>
