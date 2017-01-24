@@ -71,7 +71,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                 case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _)
                   if areEqual(tpSA.debits, meDebits) =>
                   eligibilityCheck(tp).flatMap { es =>
-                    changeScheduleDay(newSubmission.copy(eligibilityStatus = Option(es)), LocalDate.now.getDayOfMonth)
+                    changeScheduleDay(newSubmission.copy(eligibilityStatus = Option(es)), LocalDate.now.getDayOfMonth + 7)
                   }.map(changeDateUpdated => sessionCache.put(changeDateUpdated).map(_ => changeDateUpdated))
                     .flatMap(eventualSubmission => eventualSubmission)
                     .flatMap {
@@ -137,10 +137,17 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     })
   }
 
+  private def checkDayOfMonth(dayOfMonth: Int): Int = dayOfMonth match {
+    case 29 | 30 | 31 => 1
+    case _ => dayOfMonth
+  }
+
   def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
+
     val startDate = ttpSubmission.schedule.get.startDate.get
     val durationMonths = ttpSubmission.durationMonths.get
-    val initialDate = startDate.withDayOfMonth(dayOfMonth)
+
+    val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
 
     val (firstPaymentDate: LocalDate, lastPaymentDate: LocalDate) = if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
       if (DAYS.between(startDate, initialDate) < 7)
@@ -175,11 +182,11 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         case None => redirectToStart
         case Some(submission) =>
           sessionCache.remove().map(_ => Ok(application_complete(
-              debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
-              transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
-              directDebit = submission.arrangementDirectDebit.get,
-              schedule = submission.schedule.get,
-              loggedIn = true))
+            debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
+            transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
+            directDebit = submission.arrangementDirectDebit.get,
+            schedule = submission.schedule.get,
+            loggedIn = true))
           )
       }
   }
