@@ -70,8 +70,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                   }
                 case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _)
                   if areEqual(tpSA.debits, meDebits) =>
-                  eligibilityCheck(tp).flatMap { es =>
-                    changeScheduleDay(newSubmission.copy(eligibilityStatus = Option(es)), LocalDate.now.getDayOfMonth)
+                  eligibilityCheck(tp).map { es =>
+                    newSubmission.copy(eligibilityStatus = Option(es))
                   }.map(changeDateUpdated => sessionCache.put(changeDateUpdated).map(_ => changeDateUpdated))
                     .flatMap(eventualSubmission => eventualSubmission)
                     .flatMap {
@@ -137,10 +137,17 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     })
   }
 
+  private def checkDayOfMonth(dayOfMonth: Int): Int = dayOfMonth match {
+    case day if day > 28 => 1
+    case _ => dayOfMonth
+  }
+
   def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
-    val startDate = ttpSubmission.schedule.get.startDate.get
+
+    val startDate = ttpSubmission.calculatorData.startDate
     val durationMonths = ttpSubmission.durationMonths.get
-    val initialDate = startDate.withDayOfMonth(dayOfMonth)
+
+    val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
 
     val (firstPaymentDate: LocalDate, lastPaymentDate: LocalDate) = if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
       if (DAYS.between(startDate, initialDate) < 7)
@@ -148,11 +155,11 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       else
         (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
     } else {
-      if (initialDate.isBefore(startDate.plusWeeks(1)) && DAYS.between(startDate.plusWeeks(1), initialDate.plusMonths(1)) <= 14)
+      if (initialDate.isBefore(startDate.plusWeeks(1)) && DAYS.between(startDate.plusWeeks(1), initialDate.plusMonths(1)) < 14)
         (initialDate.plusMonths(2), initialDate.plusMonths(durationMonths + 2).minusDays(1))
       else if (initialDate.isBefore(startDate.plusWeeks(1)))
         (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
-      else if (DAYS.between(startDate.plusWeeks(1), initialDate) <= 14)
+      else if (DAYS.between(startDate.plusWeeks(1), initialDate) < 14)
         (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
       else
         (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
@@ -175,11 +182,11 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         case None => redirectToStart
         case Some(submission) =>
           sessionCache.remove().map(_ => Ok(application_complete(
-              debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
-              transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
-              directDebit = submission.arrangementDirectDebit.get,
-              schedule = submission.schedule.get,
-              loggedIn = true))
+            debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
+            transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
+            directDebit = submission.arrangementDirectDebit.get,
+            schedule = submission.schedule.get,
+            loggedIn = true))
           )
       }
   }
