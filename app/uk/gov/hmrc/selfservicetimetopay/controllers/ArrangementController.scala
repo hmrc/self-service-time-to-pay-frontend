@@ -70,8 +70,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                   }
                 case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _)
                   if areEqual(tpSA.debits, meDebits) =>
-                  eligibilityCheck(tp).flatMap { es =>
-                    changeScheduleDay(newSubmission.copy(eligibilityStatus = Option(es)), LocalDate.now.getDayOfMonth + 7)
+                  eligibilityCheck(tp).map { es =>
+                    newSubmission.copy(eligibilityStatus = Option(es))
                   }.map(changeDateUpdated => sessionCache.put(changeDateUpdated).map(_ => changeDateUpdated))
                     .flatMap(eventualSubmission => eventualSubmission)
                     .flatMap {
@@ -138,13 +138,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   }
 
   private def checkDayOfMonth(dayOfMonth: Int): Int = dayOfMonth match {
-    case 29 | 30 | 31 => 1
+    case day if day > 28 => 1
     case _ => dayOfMonth
   }
 
   def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
 
-    val startDate = ttpSubmission.schedule.get.startDate.get
+    val startDate = ttpSubmission.calculatorData.startDate
     val durationMonths = ttpSubmission.durationMonths.get
 
     val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
@@ -155,11 +155,11 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       else
         (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
     } else {
-      if (initialDate.isBefore(startDate.plusWeeks(1)) && DAYS.between(startDate.plusWeeks(1), initialDate.plusMonths(1)) <= 14)
+      if (initialDate.isBefore(startDate.plusWeeks(1)) && DAYS.between(startDate.plusWeeks(1), initialDate.plusMonths(1)) < 14)
         (initialDate.plusMonths(2), initialDate.plusMonths(durationMonths + 2).minusDays(1))
       else if (initialDate.isBefore(startDate.plusWeeks(1)))
         (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
-      else if (DAYS.between(startDate.plusWeeks(1), initialDate) <= 14)
+      else if (DAYS.between(startDate.plusWeeks(1), initialDate) < 14)
         (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
       else
         (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
