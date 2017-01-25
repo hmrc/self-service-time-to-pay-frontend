@@ -248,7 +248,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
         calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
           case Seq(schedule) =>
-            sessionCache.put(ttpData.copy(schedule = Some(schedule))).map[Result] { _ =>
+            sessionCache.put(ttpData.copy(schedule = Some(schedule),  calculatorData = newInput)).map[Result] { _ =>
               Redirect(routes.CalculatorController.getCalculateInstalments(None))
             }
           case _ => throw new RuntimeException("Failed to get schedule")
