@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfservicetimetopay
 
 import java.time.LocalDate
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json, Reads}
 import play.api.mvc.Request
 import play.api.mvc.Results._
