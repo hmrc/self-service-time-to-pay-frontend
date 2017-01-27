@@ -108,7 +108,7 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
   protected lazy val saRegime = SaRegime(authenticationProvider)
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
 
-  def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, GGConfidence).async(body)
+  def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
 
   def authorizedForSsttp(block: (Option[TTPSubmission] => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
       sessionCache.get.flatMap[Result] {

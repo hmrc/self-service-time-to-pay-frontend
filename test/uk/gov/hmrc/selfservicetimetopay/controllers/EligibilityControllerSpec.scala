@@ -75,24 +75,6 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       override lazy val authConnector: AuthConnector = mockAuthConnector
     }
 
-    "redirect to unauthorised page (unavailable) if user is below the confidence level threshold" in {
-
-      //val request = FakeRequest().withCookies(sessionProvider.createTtpCookie()).withFormUrlEncodedBody(bothTypeOfTaxForm: _*)
-
-      //val response: Future[Result] = await(controller.submitTypeOfTax.apply(request))
-
-      val request = FakeRequest().withFormUrlEncodedBody(trueExistingTtpForm: _*).withCookies(sessionProvider.createTtpCookie())
-
-      when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(None))
-      when(mockSessionCache.get(any(), any()))
-        .thenReturn(Future.successful(Some(TTPSubmission(eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
-          eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false))))))
-
-      val response = await(controller.submitTypeOfTax.apply(request))
-
-      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.getUnavailable().url
-    }
-
     "redirect successfully to the type of tax page" in {
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
