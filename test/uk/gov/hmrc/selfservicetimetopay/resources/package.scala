@@ -176,7 +176,6 @@ package object resources {
   val directDebitBank = DirectDebitBank("", Seq.empty)
 
   val authorisedUser = Authority("", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None)
-  val unAuthConfidenceUser = Authority("", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L50, None, None, None)
   val authorisedUserNoSA = Authority("", Accounts(), None, None, Strong, L200, None, None, None)
 
   val sessionProvider = new SessionProvider() {}
