@@ -18,13 +18,12 @@ package uk.gov.hmrc.selfservicetimetopay
 
 import java.time.LocalDate
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json, Reads}
 import play.api.mvc.Request
 import play.api.mvc.Results._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.auth._
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.{L200, L50}
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
