@@ -86,8 +86,7 @@ ssttp.eligibility.form.type_of_tax.required=Choose at least one option
 
 
 
-ssttp.eligibility.form.existing_ttp.title=Existing instalment plans
-ssttp.eligibility.form.existing_ttp.question.prompt=Are you already paying an HMRC debt in instalments?
+ssttp.eligibility.form.existing_ttp.title=Are you already paying an HMRC debt in instalments?
 ssttp.eligibility.form.existing_ttp.question.yes=Yes
 ssttp.eligibility.form.existing_ttp.question.no=No
 
