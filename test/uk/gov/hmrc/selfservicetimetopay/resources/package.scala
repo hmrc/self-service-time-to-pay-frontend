@@ -24,7 +24,7 @@ import play.api.mvc.Request
 import play.api.mvc.Results._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.auth._
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.{L200, L50}
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
@@ -176,6 +176,7 @@ package object resources {
   val directDebitBank = DirectDebitBank("", Seq.empty)
 
   val authorisedUser = Authority("", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None)
+  val unAuthConfidenceUser = Authority("", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L50, None, None, None)
   val authorisedUserNoSA = Authority("", Accounts(), None, None, Strong, L200, None, None, None)
 
   val sessionProvider = new SessionProvider() {}

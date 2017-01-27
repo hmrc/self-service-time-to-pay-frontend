@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import org.mockito.Matchers
+import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
@@ -28,9 +29,11 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel}
+import uk.gov.hmrc.play.http.SessionKeys
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
@@ -70,6 +73,24 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     val controller = new EligibilityController() {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
       override lazy val authConnector: AuthConnector = mockAuthConnector
+    }
+
+    "redirect to unauthorised page (unavailable) if user is below the confidence level threshold" in {
+
+      //val request = FakeRequest().withCookies(sessionProvider.createTtpCookie()).withFormUrlEncodedBody(bothTypeOfTaxForm: _*)
+
+      //val response: Future[Result] = await(controller.submitTypeOfTax.apply(request))
+
+      val request = FakeRequest().withFormUrlEncodedBody(trueExistingTtpForm: _*).withCookies(sessionProvider.createTtpCookie())
+
+      when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(None))
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(TTPSubmission(eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
+          eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false))))))
+
+      val response = await(controller.submitTypeOfTax.apply(request))
+
+      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.getUnavailable().url
     }
 
     "redirect successfully to the type of tax page" in {
