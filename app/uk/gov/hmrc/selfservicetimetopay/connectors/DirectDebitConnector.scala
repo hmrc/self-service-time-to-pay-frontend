@@ -47,6 +47,7 @@ trait DirectDebitConnector {
   implicit val readValidateOrRetrieveAccounts = new BankAccountHttpReads {
     override def read(method: String, url: String, response: HttpResponse) = response.status match {
       case OK => Left(response.json.as[BankDetails])
+      case NOT_FOUND if response.body.contains("BP not found") => Right(DirectDebitBank.none)
       case NOT_FOUND => Right(response.json.as[DirectDebitBank])
       case _ => handleResponse(method, url)(response) match {
         case _ => Right(DirectDebitBank.none)
@@ -66,7 +67,12 @@ trait DirectDebitConnector {
   }
 
   def getBanks(saUtr: SaUtr)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DirectDebitBank] = {
-    http.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks")
+    http.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response => response }
+      .recover {
+        case e: uk.gov.hmrc.play.http.NotFoundException if e.message.contains("BP not found") => DirectDebitBank.none
+        case e: Exception => Logger.error(e.getMessage)
+          throw new RuntimeException("GETBANKS threw unexpected error")
+      }
   }
 
   def validateOrRetrieveAccounts(sortCode: String, accountNumber: String, saUtr: SaUtr)
