@@ -173,8 +173,6 @@ ssttp.calculator.results.heading.choose-your-instalments=Select how many months 
 ssttp.calculator.results.heading.your-instalments=Your instalment calculation
 ssttp.calculator.results.recalculate-button.label=Update monthly payment amount
 ssttp.calculator.results.instalments-over=Instalments over:
-ssttp.calculator.results.instalments-over.month.plural=months
-ssttp.calculator.results.instalments-over.month.singular=month
 
 ssttp.calculator.results.monthly-payments=Monthly payments of:
 ssttp.calculator.results.monthly-payments.per-month=per month
@@ -268,7 +266,6 @@ ssttp.arrangement.misalignment.back=Back
 
 ssttp.arrangement.direct-debit.form.title=Set up a direct debit
 ssttp.arrangement.direct-debit.form.bank-details=Enter your banking details
-ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
 ssttp.arrangement.direct-debit.form.submit=Agree and continue
 ssttp.arrangement.direct-debit.form.back=Back
 ssttp.direct-debit.form.accountName=Account name
@@ -300,7 +297,6 @@ ssttp.direct-debit.title=Direct Debit payment schedule
 ssttp.direct-debit.account-name=Account name
 ssttp.direct-debit.account-number=Account number
 ssttp.direct-debit.sort-code=Sort code
-ssttp.direct-debit.payment-frequency=Payment frequency
 ssttp.direct-debit.monthly=Monthly
 ssttp.direct-debit.initial-payment=(initial payment)
 ssttp.direct-debit.final-payment=(final payment)
@@ -341,7 +337,6 @@ ssttp.arrangement.complete.next.list.3=payments will be taken according to the s
 ssttp.arrangement.complete.one-off-service=This is intended as a one-off service to offer additional support. You shouldn’t expect to be able to make your future HMRC payments using an instalment plan.
 ssttp.arrangement.complete.what-you-owe=What you owe
 ssttp.arrangement.complete.payment-plan={0} month instalment plan
-ssttp.arrangement.complete.interest-rate=Interest at {0}%
 ssttp.arrangement.complete.total=TOTAL:
 
 #Service unavailable (shutter) page
