@@ -76,8 +76,7 @@ ssttp.landing.before-you-start.list.3=how much you can afford to pay now
 ssttp.landing.start-button.label=Start
 
 #eligibility
-ssttp.eligibility.form.type_of_tax.title=Type of tax
-ssttp.eligibility.form.type_of_tax.question.prompt=Is the amount you owe for:
+ssttp.eligibility.form.type_of_tax.title=Is the amount you owe for:
 ssttp.eligibility.form.type_of_tax.question.hint=Choose one or both
 ssttp.eligibility.form.type_of_tax.question.self-assessment=Self Assessment
 ssttp.eligibility.form.type_of_tax.question.other=Other types of tax
