@@ -152,11 +152,10 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
               })
 
               val bankDetailsToSave = instructions match {
-                case instruction :: Nil =>
-                  val head: DirectDebitInstruction = instructions.head
-                  BankDetails(ddiRefNumber = Some(head.referenceNumber.get),
-                    accountNumber = head.accountNumber,
-                    sortCode = head.sortCode,
+                case instruction :: _ =>
+                  BankDetails(ddiRefNumber = Some(instruction.referenceNumber.get),
+                    accountNumber = instruction.accountNumber,
+                    sortCode = instruction.sortCode,
                     accountName = Some(accName))
                 case Nil => singleBankDetails.copy(accountName = Some(accName))
               }
