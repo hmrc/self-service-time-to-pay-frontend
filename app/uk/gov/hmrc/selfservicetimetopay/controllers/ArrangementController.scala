@@ -86,6 +86,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                     _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
                   }
                 case _ =>
+                  Logger.info("No match found for newSubmission in determineMisalignment")
                   Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
               }
             }
@@ -98,7 +99,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     implicit request =>
       authorizedForSsttp {
         case None => redirectToStart
-        case Some(ttp@TTPSubmission(Some(schedule), _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _)) if areEqual(ttp.taxpayer.get.selfAssessment.get.debits, ttp.calculatorData.debits) =>
+        case Some(ttp@TTPSubmission(Some(schedule), _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _))
+          if areEqual(ttp.taxpayer.get.selfAssessment.get.debits, ttp.calculatorData.debits) =>
           Future.successful(Ok(instalment_plan_summary(debits, schedule, createDayOfForm(ttp), signedIn = true)))
         case Some(TTPSubmission(None, _, _, _, _, _, _, _, _)) => throw new RuntimeException("No schedule data")
         case _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
@@ -115,11 +117,17 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       authorizedForSsttp { submission =>
         ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
           formWithErrors => {
-            Future.successful(BadRequest(instalment_plan_summary(submission.get.taxpayer.get.selfAssessment.get.debits, submission.get.schedule.get, formWithErrors, signedIn = true)))
+            Future.successful(BadRequest(instalment_plan_summary(
+              submission.get.taxpayer.get.selfAssessment.get.debits,
+              submission.get.schedule.get,
+              formWithErrors,
+              signedIn = true)))
           },
           validFormData => {
             submission match {
-              case None => redirectToStart
+              case None =>
+                Logger.info("No submission found in changeSchedulePaymentDay, redirecting to start")
+                redirectToStart
               case Some(ttp) => changeScheduleDay(ttp, validFormData.dayOfMonth).flatMap { ttpSubmission =>
                 sessionCache.put(ttpSubmission).map {
                   _ => Redirect(routes.ArrangementController.getInstalmentSummary())
@@ -143,10 +151,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   }
 
   def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
-
     val startDate = ttpSubmission.calculatorData.startDate
     val durationMonths = ttpSubmission.durationMonths.get
-
     val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
 
     val (firstPaymentDate: LocalDate, lastPaymentDate: LocalDate) = if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
@@ -173,7 +179,9 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   def submit(): Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case None => redirectToStart
+        case None =>
+          Logger.info("No submission found, redirecting to start")
+          redirectToStart
         case Some(ttp) => arrangementSetUp(ttp)
       }
   }
@@ -181,7 +189,9 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   def applicationComplete(): Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case None => redirectToStart
+        case None =>
+          Logger.info("No submission found in applicationComplete, redirecting to start")
+          redirectToStart
         case Some(submission) =>
           sessionCache.remove().map(_ => Ok(application_complete(
             debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
@@ -231,7 +241,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   }
 
   private def paymentPlan(submission: TTPSubmission, ddInstruction: DirectDebitInstruction): PaymentPlanRequest = {
-    val maybePaymentPlanRequest = for {
+    val paymentPlanRequest = for {
       schedule <- submission.schedule
       taxPayer <- submission.taxpayer
       sa <- taxPayer.selfAssessment
@@ -261,13 +271,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       PaymentPlanRequest("SSTTP", ZonedDateTime.now.format(DateTimeFormatter.ISO_INSTANT), knownFact, ddInstruction, pp, printFlag = true)
     }
 
-    maybePaymentPlanRequest.getOrElse(throw new RuntimeException(s"PaymentPlanRequest creation failed - TTPSubmission: $submission"))
+    paymentPlanRequest.getOrElse(throw new RuntimeException(s"PaymentPlanRequest creation failed - TTPSubmission: $submission"))
   }
 
   private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
                                 submission: TTPSubmission): TTPArrangement = {
     val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo
-    val ddReference: String = ddInstruction.directDebitInstruction.head.ddiReferenceNo.get
+    val ddReference: String = ddInstruction.directDebitInstruction.head.ddiReferenceNo.getOrElse(throw new RuntimeException("ddReference not available"))
     val taxpayer = submission.taxpayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
     val schedule = submission.schedule.getOrElse(throw new RuntimeException("Schedule data not present"))
 
