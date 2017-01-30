@@ -49,18 +49,78 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
   }
 
   "Calling getBanksList" should {
-    "return populate list of DirectDebitBank" in {
+    val validationURL = urlPathMatching("/direct-debit/.*/banks")
+    val getRequest = get(validationURL)
 
-      val jsonResponse = Json.fromJson[DirectDebitBank](getBanksResponseJSON).get
+    "return populated list of DirectDebitBank" in {
+      stubFor(getRequest.willReturn(
+        aResponse().withStatus(Status.OK).withBody(
+          """{
+            |  "processingDate": "2001-12-17T09:30:47Z",
+            |  "directDebitInstruction": [
+            |    {
+            |      "sortCode": "123456",
+            |      "accountNumber": "12345678",
+            |      "referenceNumber": "111222333",
+            |      "creationDate": "2001-01-01"
+            |    },
+            |    {
+            |      "sortCode": "654321",
+            |      "accountNumber": "87654321",
+            |      "referenceNumber": "444555666",
+            |      "creationDate": "2001-01-01"
+            |    }
+            |  ]
+            |}""".stripMargin
+        )
+      ))
 
-      when(testConnector.getBanks(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(jsonResponse))
+      val response = await(realConnector.getBanks(SaUtr("SAUTR")))
 
-      val saUtr = SaUtr("test")
-      val result = await(testConnector.getBanks(saUtr))
+      wmVerify(1, getRequestedFor(validationURL))
 
-      result.processingDate shouldBe "2001-12-17T09:30:47Z"
-      result.directDebitInstruction.head.sortCode shouldBe Some("123456")
-      result.directDebitInstruction.head.ddiReferenceNo shouldBe None
+      response.directDebitInstruction.size shouldBe 2
+      response.directDebitInstruction.head.accountNumber.getOrElse("fail") shouldBe "12345678"
+      response.directDebitInstruction.last.referenceNumber.getOrElse("fail") shouldBe "444555666"
+    }
+
+    "return empty list of DirectDebitBank when no accounts found" in {
+      stubFor(getRequest.willReturn(
+        aResponse().withStatus(Status.OK).withBody(
+          """{
+            |  "processingDate": "2001-12-17T09:30:47Z",
+            |  "directDebitInstruction": []
+            |}""".stripMargin
+        )
+      ))
+
+      val response = await(realConnector.getBanks(SaUtr("SAUTR")))
+
+      wmVerify(1, getRequestedFor(validationURL))
+
+      response.directDebitInstruction.isEmpty shouldBe true
+      response.processingDate shouldBe "2001-12-17T09:30:47Z"
+    }
+
+
+    "return empty list when BP not found" in {
+      stubFor(getRequest.willReturn(
+        aResponse().withStatus(Status.NOT_FOUND).withBody(
+          """{
+            |
+            |"reason": "BP not found",
+            |
+            |"reasonCode": "002"
+            |
+            |}""".stripMargin
+        )
+      ))
+
+      val response = await(realConnector.getBanks(SaUtr("SAUTR")))
+
+      wmVerify(1, getRequestedFor(validationURL))
+
+      response.directDebitInstruction.isEmpty shouldBe true
     }
   }
 
@@ -100,10 +160,9 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
 
   "Calling validateOrRetrieveAccounts method" should {
     val validationURL = urlPathMatching("/direct-debit/.*/bank")
+    val getRequest = get(validationURL)
 
     "pass a GET request with accountName to the SSTTP service and return a success response" in {
-      val getRequest = get(validationURL)
-
       stubFor(getRequest.willReturn(
         aResponse().withStatus(Status.OK).withBody(
           """{
@@ -122,9 +181,6 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
     }
 
     "pass a GET request without accountName to the SSTTP service and return a success response" in {
-
-      val getRequest = get(validationURL)
-
       stubFor(getRequest.willReturn(
         aResponse().withStatus(Status.OK).withBody(
           """{
@@ -142,9 +198,6 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
     }
 
     "pass a GET request without accountName to the SSTTP service and return a not found (emtpy) response" in {
-
-      val getRequest = get(validationURL)
-
       stubFor(getRequest.willReturn(
         aResponse().withStatus(Status.NOT_FOUND).withBody(
           """{
@@ -163,9 +216,6 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
     }
 
     "pass a GET request without accountName to the SSTTP service and return a not found (alternatives) response" in {
-
-      val getRequest = get(validationURL)
-
       stubFor(getRequest.willReturn(
         aResponse().withStatus(Status.NOT_FOUND).withBody(
           """{
@@ -194,6 +244,27 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
 
       response.isRight shouldBe true
       response.right.get.directDebitInstruction.size shouldBe 2
+    }
+
+    "pass a GET request and return an empty list for BP not found" in {
+      stubFor(getRequest.willReturn(
+        aResponse().withStatus(Status.NOT_FOUND).withBody(
+          """{
+            |
+            |"reason": "BP not found",
+            |
+            |"reasonCode": "002"
+            |
+            |}""".stripMargin
+        )
+      ))
+
+      val response = await(realConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+
+      wmVerify(1, getRequestedFor(validationURL))
+
+      response.isRight shouldBe true
+      response.right.get.directDebitInstruction.isEmpty shouldBe true
     }
   }
 
