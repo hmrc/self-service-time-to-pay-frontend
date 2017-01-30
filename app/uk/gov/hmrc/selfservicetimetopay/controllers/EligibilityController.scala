@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
+import play.api.Logger
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, TTPSubmission}
@@ -33,8 +34,8 @@ class EligibilityController extends TimeToPayController {
 
   def getTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(_, _, _, _, typeOfTax @ Some(_), _,_, _, _))=>
-            Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), ttpData.taxpayer.isDefined))
+      case Some(ttpData@TTPSubmission(_, _, _, _, typeOfTax@Some(_), _, _, _, _)) =>
+        Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), ttpData.taxpayer.isDefined))
       case _ => Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm))
     }
   }
@@ -56,11 +57,10 @@ class EligibilityController extends TimeToPayController {
 
   def getExistingTtp: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(_, _, _, _, _, existingTtp @ Some(_), _, _, _))=>
+      case Some(ttpData@TTPSubmission(_, _, _, _, _, existingTtp@Some(_), _, _, _)) =>
         Ok(existing_ttp(EligibilityForm.existingTtpForm.fill(existingTtp.get), ttpData.taxpayer.isDefined))
       case _ => Ok(existing_ttp(EligibilityForm.existingTtpForm))
     }
-
   }
 
   def submitExistingTtp: Action[AnyContent] = Action.async { implicit request =>
@@ -73,7 +73,10 @@ class EligibilityController extends TimeToPayController {
             case EligibilityExistingTTP(Some(false)) =>
               authConnector.currentAuthority.map[Result] { authority =>
                 Redirect(routes.ArrangementController.determineMisalignment())
-              }.recover{case e: Throwable => Redirect(routes.CalculatorController.start())}
+              }.recover { case e: Throwable =>
+                Logger.info(s"${e.getMessage}")
+                Redirect(routes.CalculatorController.start())
+              }
             case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
           }
         })

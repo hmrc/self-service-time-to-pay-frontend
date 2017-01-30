@@ -26,7 +26,7 @@ class SelfServiceTimeToPayController extends TimeToPayController {
 
   def start: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData:TTPSubmission) => Ok(service_start(ttpData.taxpayer.isDefined))
+      case Some(ttpData: TTPSubmission) => Ok(service_start(ttpData.taxpayer.isDefined))
       case _ => Ok(service_start())
     }
   }
@@ -35,23 +35,23 @@ class SelfServiceTimeToPayController extends TimeToPayController {
     Redirect(routes.EligibilityController.start())
   }
 
-  def getTtpCallUs: Action[AnyContent] =  Action.async { implicit request =>
+  def getTtpCallUs: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData:TTPSubmission) => Ok(call_us(ttpData.taxpayer.isDefined))
+      case Some(ttpData: TTPSubmission) => Ok(call_us(ttpData.taxpayer.isDefined))
       case _ => Ok(call_us())
     }
   }
 
   def getYouNeedToFile: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData:TTPSubmission) => Ok(you_need_to_file(ttpData.taxpayer.isDefined))
+      case Some(ttpData: TTPSubmission) => Ok(you_need_to_file(ttpData.taxpayer.isDefined))
       case _ => Ok(you_need_to_file())
     }
   }
 
   def getUnavailable: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData:TTPSubmission) => Ok(unavailable(ttpData.taxpayer.isDefined))
+      case Some(ttpData: TTPSubmission) => Ok(unavailable(ttpData.taxpayer.isDefined))
       case _ => Ok(unavailable())
     }
   }
