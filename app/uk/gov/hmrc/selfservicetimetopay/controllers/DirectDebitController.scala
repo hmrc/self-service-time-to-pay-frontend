@@ -150,10 +150,11 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
               val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
                 p.accountNumber.get.equalsIgnoreCase(singleBankDetails.accountNumber.get) && p.sortCode.get.equals(singleBankDetails.sortCode.get)
               })
-
               val bankDetailsToSave = instructions match {
                 case instruction :: _ =>
-                  BankDetails(ddiRefNumber = Some(instruction.referenceNumber.get),
+                  val refNumber = instructions.filter(refNo => refNo.ddiReferenceNo.isDefined).
+                    map(instruction => instruction.ddiReferenceNo).min
+                  BankDetails(ddiRefNumber = refNumber,
                     accountNumber = instruction.accountNumber,
                     sortCode = instruction.sortCode,
                     accountName = Some(accName))
