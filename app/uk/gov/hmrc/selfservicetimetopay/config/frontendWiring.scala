@@ -96,6 +96,12 @@ object EligibilityConnector extends EligibilityConnector with ServicesConfig {
   val http = WSHttp
 }
 
+object CampaignManagerConnector extends CampaignManagerConnector with ServicesConfig {
+  val campaignURL: String = baseUrl("campaign-manager")
+  val serviceURL = "campaign-manager/message/ssttp"
+  val http = WSHttp
+}
+
 trait TimeToPayController extends FrontendController with Actions with CheckSessionAction {
   checkSessionAction: CheckSessionAction =>
 
@@ -107,16 +113,20 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
   protected lazy val authenticationProvider: GovernmentGateway = SaGovernmentGateway
   protected lazy val saRegime = SaRegime(authenticationProvider)
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
+  protected lazy val campaignManagerConnector: CampaignManagerConnector = CampaignManagerConnector
 
   def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
 
   def authorizedForSsttp(block: (Option[TTPSubmission] => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
-      sessionCache.get.flatMap[Result] {
+    campaignManagerConnector.isAuthorisedWhitelist(authContext.principal.accounts.sa.get.utr.utr).flatMap {
+      case true => sessionCache.get.flatMap[Result] {
         case Some(TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(false, _)))) =>
           Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
         case optSubmission =>
           block(optSubmission)
       }
+      case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
+    }
   }
 
   override implicit def hc(implicit request: Request[_]): HeaderCarrier = {
@@ -125,8 +135,7 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
     }
   }
 
-  protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)
-                                     (implicit hc: HeaderCarrier) = {
+  protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier) = {
     sessionCache.get.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")
@@ -147,6 +156,7 @@ trait ServiceRegistry extends ServicesConfig {
   lazy val eligibilityConnector: EligibilityConnector = EligibilityConnector
   lazy val calculatorConnector: CalculatorConnector = CalculatorConnector
   lazy val taxPayerConnector: TaxPayerConnector = TaxPayerConnector
+  lazy val campaignManagerConnector: CampaignManagerConnector = CampaignManagerConnector
 }
 
 trait ControllerRegistry {
