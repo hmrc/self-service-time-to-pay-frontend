@@ -30,10 +30,12 @@ Text input field using Component Library Styles as  documented:
     c = if(field.hasErrors) c + " error-field" else c
     c.trim
 }
-@labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_modifierClass -> wrapperClass){
+@labelWrap('for -> elements.field.name, '_modifierClass -> wrapperClass){
+    @fieldErrors(field)
+    @argsMap.getOrElse('label, "")
     <input type="text"@if(inputClass.nonEmpty){ class="@inputClass" } name="@elements.field.name" id="@elements.field.name" value="@value"
-        @if( elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
-        @if( elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
+        @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
+        @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
         @if(elements.args.get('_error_id).isDefined) { aria-labeledby="@elements.args.get('_error_id)" }
         @if(elements.args.get('_hintId).isDefined) { aria-describedby="@elements.args.get('_hintId)" }
         @if(elements.args.get('_maxlength).isDefined) { maxlength="@elements.args.get('_maxlength)" }
@@ -50,6 +52,5 @@ Text input field using Component Library Styles as  documented:
             }
         </datalist>
     }
-    @fieldErrors(field)
 }
 
