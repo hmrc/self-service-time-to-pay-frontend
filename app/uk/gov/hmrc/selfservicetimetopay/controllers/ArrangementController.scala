@@ -151,7 +151,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   }
 
   def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
-    val startDate = ttpSubmission.calculatorData.startDate
+    val startDate = LocalDate.now()
     val durationMonths = ttpSubmission.durationMonths.get
     val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
 
@@ -173,7 +173,9 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
     }
 
-    Some(ttpSubmission.calculatorData.copy(firstPaymentDate = Some(firstPaymentDate), endDate = lastPaymentDate))
+    Some(ttpSubmission.calculatorData.copy(startDate = startDate,
+      firstPaymentDate = Some(firstPaymentDate),
+      endDate = lastPaymentDate))
   }
 
   def submit(): Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
