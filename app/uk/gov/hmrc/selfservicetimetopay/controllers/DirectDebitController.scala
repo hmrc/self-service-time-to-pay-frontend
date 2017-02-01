@@ -147,8 +147,6 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
 
           directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
             directDebitBank => {
-              println("DDI BANKS" + directDebitBank.directDebitInstruction)
-              val stuff = "HELLO"
               val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
                 p.accountNumber.get.equalsIgnoreCase(singleBankDetails.accountNumber.get) && p.sortCode.get.equals(singleBankDetails.sortCode.get)
               })
