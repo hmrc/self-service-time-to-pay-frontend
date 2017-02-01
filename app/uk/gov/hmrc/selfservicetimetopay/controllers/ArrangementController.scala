@@ -220,11 +220,16 @@ class ArrangementController(ddConnector: DirectDebitConnector,
               } yield ttp
 
               result.flatMap {
-                _.fold(error => Future.failed(new RuntimeException(s"Exception: ${error.code} + ${error.message}")), _ => applicationSuccessful)
+                _.fold(error => {
+                  Logger.error( s"Exception: ${error.code} + ${error.message}")
+                  Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
+                }, _ => applicationSuccessful)
               }
             })
         }
-      case _ => throw new RuntimeException("Taxpayer or related data not present")
+      case _ =>
+        Logger.error("Taxpayer or related data not present")
+        Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
     }
   }
 

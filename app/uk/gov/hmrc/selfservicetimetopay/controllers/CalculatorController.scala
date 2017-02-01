@@ -129,7 +129,9 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       authorizedForSsttp {
         case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) =>
           Future.successful(Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, loggedIn = true)))
-        case _ => throw new RuntimeException("Unhandled case in getMisalignmentPage")
+        case _ =>
+          Logger.error("Unhandled case in getMisalignmentPage")
+          Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
       }
   }
 
@@ -175,10 +177,10 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         )
       case Some(TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) if debits.isEmpty =>
         Logger.error("failed to get calculatorData")
-        throw new RuntimeException("failed to get calculatorData")
+        Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
       case _ =>
         Logger.error("No TTP Data available")
-        throw new RuntimeException("No TTP Data available")
+        Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
     }
   }
 
