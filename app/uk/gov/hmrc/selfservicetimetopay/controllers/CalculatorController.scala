@@ -226,7 +226,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
   }
 
   private def validateCalculatorDates(calculatorInput: CalculatorInput, numberOfMonths: Int, debits: Seq[Debit]): CalculatorInput = {
-    val firstPaymentDate = dayOfMonthCheck(calculatorInput.startDate.plusWeeks(1))
+    val firstPaymentDate = dayOfMonthCheck(LocalDate.now().plusWeeks(1))
 
     if (calculatorInput.initialPayment > 0) {
       if (debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
@@ -239,7 +239,9 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       }
     }
     else
-      calculatorInput.copy(firstPaymentDate = Some(firstPaymentDate), endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
+      calculatorInput.copy(startDate = LocalDate.now(),
+        firstPaymentDate = Some(firstPaymentDate),
+        endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
   }
 
   private def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async { implicit request =>
