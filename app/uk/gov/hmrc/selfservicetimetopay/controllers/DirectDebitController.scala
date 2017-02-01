@@ -152,8 +152,8 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
               })
               val bankDetailsToSave = instructions match {
                 case instruction :: _ =>
-                  val refNumber = instructions.filter(refNo => refNo.ddiReferenceNo.isDefined).
-                    map(instruction => instruction.ddiReferenceNo).min
+                  val refNumber = instructions.filter(refNo => refNo.referenceNumber.isDefined).
+                    map(instruction => instruction.referenceNumber).min
                   BankDetails(ddiRefNumber = refNumber,
                     accountNumber = instruction.accountNumber,
                     sortCode = instruction.sortCode,
