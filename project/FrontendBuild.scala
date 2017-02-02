@@ -24,15 +24,13 @@ private object AppDependencies {
   private val playJsonLoggerVersion = "2.1.1"
   private val frontendBootstrapVersion = "6.7.0"
   private val govukTemplateVersion = "4.0.0"
-  private val playUiVersion = "4.17.2"
+  private val playUiVersion = "4.18.0"
   private val playPartialsVersion = "4.6.0"
   private val playAuthorisedFrontendVersion = "5.7.0"
   private val playConfigVersion = "2.1.0"
   private val hmrcTestVersion = "1.8.0"
   private val cachingClientVersion = "5.6.0"
-  private val mongoCachingVersion = "3.2.0"
   private val playConditionalMappingVersion = "0.2.0"
-  private val jacksonVersion = "2.7.8"
   private val domainVersion = "3.7.0"
 
   val compile = Seq(
@@ -47,15 +45,7 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "play-ui" % playUiVersion,
     "uk.gov.hmrc" %% "domain" % domainVersion,
     "uk.gov.hmrc" %% "http-caching-client" % cachingClientVersion,
-    //"uk.gov.hmrc" %% "mongo-caching" % mongoCachingVersion,
-    "uk.gov.hmrc" %% "play-conditional-form-mapping" % playConditionalMappingVersion,
-    "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
-    "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
-    "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonVersion,
-    "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
-    "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % jacksonVersion,
-    "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % jacksonVersion,
-    "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % jacksonVersion
+    "uk.gov.hmrc" %% "play-conditional-form-mapping" % playConditionalMappingVersion
   )
 
   trait TestDependencies {
