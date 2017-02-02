@@ -91,14 +91,12 @@ Time To Pay Instalment Summary Pretty Print Page
         <section>
             <h2>@Messages("ssttp.arrangement.instalment-summary.schedule.title")</h2>
             @payment_schedule(schedule)
-            @highlight('_modifierClass -> "highlight-message--light") {
-                <p>@Messages("ssttp.arrangement.instalment-summary.terms.warning")</p>
-            }
             @alert('_modifierClass -> "alert--info alert--info__light") {
                 @Messages("ssttp.arrangement.instalment-summary.terms.cancelled-if")
                 @message_list(Some("bullets"), "ssttp.arrangement.instalment-summary.terms.cancelled-if.")
-                <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.made-payable-immidiately")</div>
-                <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-payments")</div>
+                <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.made-payable-immediately")</div>
+                <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.refunds")</div>
+                <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.interest-change")</div>
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
             }
             @form(routes.ArrangementController.submitInstalmentSummary()) {
