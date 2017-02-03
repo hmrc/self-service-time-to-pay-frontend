@@ -242,7 +242,7 @@ ssttp.arrangement.instalment-summary.payment-day.out-of-range=Date must be betwe
 ssttp.arrangement.instalment-summary.payment-day.required=Enter a valid date
 ssttp.arrangement.instalment-summary.schedule.title=Direct Debit payment schedule
 ssttp.arrangement.instalment-summary.schedule.initial-payment=(initial payment)
-ssttp.arrangement.instalment-summary.schedule.final-payment=(final payment)
+ssttp.arrangement.instalment-summary.schedule.final-payment=(including {0} interest)
 ssttp.arrangement.instalment-summary.terms.warning=By continuing you are agreeing to these terms
 ssttp.arrangement.instalment-summary.terms.cancelled-if=We can cancel this agreement if you:
 ssttp.arrangement.instalment-summary.terms.cancelled-if.1=pay late or miss a payment
@@ -290,9 +290,9 @@ ssttp.direct-debit.form.confirmation.list.2=this account does not require dual s
 
 ssttp.direct-debit.guarantee.title=Direct Debit Guarantee
 ssttp.direct-debit.guarantee.list.1=This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
-ssttp.direct-debit.guarantee.list.2=I there are any changes to the amount, date or frequency of your Direct Debit HM Revenue & Customs (HMRC) will notify you 10 working days in advance of your account being debited or as otherwise agreed. If you request HMRC to collect a payment, confirmation of the amount and date will be given to you at the time of the request.
-ssttp.direct-debit.guarantee.list.3=If an error is made in the payment of your Direct Debit, by HMRC or your bank or building society, you are entitled to a full immediate refund of the amount paid from your bank or building society.
-ssttp.direct-debit.guarantee.list.4=If you receive a refund you are not entitled to, you must pay it back when HMRC asks you to.
+ssttp.direct-debit.guarantee.list.2=If there are any changes to the amount, date or frequency of your Direct Debit HM Revenue & Customs will notify you 10 working days in advance of your account being debited or as otherwise agreed. If you request HM Revenue & Customs to collect a payment, confirmation of the amount and date will be given to you at the time of the request.
+ssttp.direct-debit.guarantee.list.3=If an error is made in the payment of your Direct Debit by HM Revenue & Customs or your bank or building society you are entitled to a full immediate refund of the amount paid from your bank or building society.
+ssttp.direct-debit.guarantee.list.4=If you receive a refund you are not entitled to, you must pay it back when HM Revenue & Customs asks you to.
 ssttp.direct-debit.guarantee.list.5=You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please notify us.
 
 ssttp.direct-debit.title=Direct Debit payment schedule
@@ -305,9 +305,10 @@ ssttp.direct-debit.initial-payment=(initial payment)
 ssttp.direct-debit.final-payment=(final payment)
 
 ssttp.arrangement.direct-debit.form.error.summary.title=Something you’ve entered isn’t valid
-ssttp.arrangement.direct-debit.confirmation.title=Direct Debit confirmation
+ssttp.arrangement.direct-debit.confirmation.title=Confirm your payments
+ssttp.arrangement.direct-debit.confirmation.your-bank=Your bank
 ssttp.arrangement.direct-debit.confirmation.total-payment=Total payment will be:
-ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary=Instruction to your bank
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary=View Direct Debit Guarantee
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.title=Instruction to your Bank or Building Society to pay by Direct Debit
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.1=HM Revenue and Customs (HMRC)
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.2=Direct Debit Section

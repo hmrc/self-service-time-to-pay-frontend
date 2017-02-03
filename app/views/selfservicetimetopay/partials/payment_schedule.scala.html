@@ -1,5 +1,5 @@
 @*
-    Partial view to show list of direct debit payments in the payment schedule
+Partial view to show list of direct debit payments in the payment schedule
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @(schedule:CalculatorPaymentSchedule)
@@ -9,22 +9,30 @@
 @import java.util.Locale
 
 @defining(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)) { formatter =>
-     @if(schedule.initialPayment > BigDecimal(0)) {
-         <div class="subsection grid-layout divider--bottom font-xsmall">
-             <div class="grid-layout__column grid-layout__column--3-4"><strong>@LocalDate.now.plusWeeks(1).format(formatter)</strong>
-                    @Messages("ssttp.arrangement.instalment-summary.schedule.initial-payment")
-             </div>
-             <div class="grid-layout__column grid-layout__column--1-4">@currency(schedule.initialPayment)</div>
-         </div>
-     }
-    @schedule.instalments.map { instalment =>
-        <div class="subsection grid-layout divider--bottom font-xsmall">
-            <div class="grid-layout__column grid-layout__column--3-4"><strong>@instalment.paymentDate.format(formatter)</strong>
-                @if(instalment == schedule.instalments.last) {
-                    @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment")
-                }
-            </div>
-            <div class="grid-layout__column grid-layout__column--1-4">@currency(instalment.amount)</div>
+@if(schedule.initialPayment > BigDecimal(0)) {
+<div class="subsection grid-layout divider--bottom font-xsmall">
+    <div class="grid-layout__column grid-layout__column--3-4">
+        <div><strong>@LocalDate.now.plusWeeks(1).format(formatter)</strong></div>
+        <div>@Messages("ssttp.arrangement.instalment-summary.schedule.initial-payment")</div>
+    </div>
+    <div class="grid-layout__column grid-layout__column--1-4">@currency(schedule.initialPayment)</div>
+</div>
+}
+@schedule.instalments.map { instalment =>
+<div class="subsection grid-layout divider--bottom font-xsmall">
+    <p>
+    <div class="grid-layout__column grid-layout__column--3-4">
+        <div><strong>@instalment.paymentDate.format(formatter)</strong></div>
+        @if(instalment == schedule.instalments.last) {
+        <div>@Messages("ssttp.arrangement.instalment-summary.schedule.final-payment",
+            currency(schedule.totalInterestCharged))
         </div>
-    }
+        }
+    </div>
+    </p>
+    <p>
+    <div class="grid-layout__column grid-layout__column--1-4">@currency(instalment.amount)</div>
+    </p>
+</div>
+}
 }
