@@ -6,17 +6,15 @@
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @(directDebit:ArrangementDirectDebit, print:Boolean = false)
-@import uk.gov.hmrc.play.config.AssetsConfig
 <div class="section">
-    <div class="grid-layout grid-layout--no-gutter">
+    <div class="subsection grid-layout divider--bottom font-xsmall">
         <div class="grid-layout__column grid-layout__column--3-4">
-            <h3>@Messages("ssttp.direct-debit.title")</h3>
+            <strong>@Messages("ssttp.direct-debit.account-name")</strong>
         </div>
         <div class="grid-layout__column grid-layout__column--1-4">
-            <h3><img src="@{AssetsConfig.assetsPrefix}/images/direct-debit-logo-2x.png" width="148px" height="60px"></h3>
+            @directDebit.accountName
         </div>
     </div>
-
     <div class="subsection grid-layout divider--bottom font-xsmall">
         <div class="grid-layout__column grid-layout__column--3-4">
             <strong>@Messages("ssttp.direct-debit.account-number")</strong>
@@ -31,7 +29,7 @@
             <strong>@Messages("ssttp.direct-debit.sort-code")</strong>
         </div>
         <div class="grid-layout__column grid-layout__column--1-4">
-            @directDebit.sortCode
+            @directDebit.formatSortCode
         </div>
     </div>
 </div>

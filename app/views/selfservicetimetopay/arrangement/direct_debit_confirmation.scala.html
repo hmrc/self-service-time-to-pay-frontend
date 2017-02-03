@@ -13,7 +13,7 @@ Time To Pay Direct Debit Conformation Display Page
 @import selfservicetimetopay.partials.currency
 @import uk.gov.hmrc.selfservicetimetopay.controllers.{routes => ssttpRoutes}
 @import selfservicetimetopay.partials.{direct_debit_details, payment_schedule, direct_debit_guarantee, gaDoCheckout}
-
+@import uk.gov.hmrc.play.config.AssetsConfig
 @gaCheckoutCode = {
     @gaDoCheckout(debits = debits,
         step = 3,
@@ -33,8 +33,10 @@ Time To Pay Direct Debit Conformation Display Page
         <h1>@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
     </header>
     <section>
+        <h2>@Messages("ssttp.arrangement.direct-debit.confirmation.your-bank")</h2>
         @direct_debit_details(directDebit)
         <div class="subsection">
+                <h3>@Messages("ssttp.direct-debit.title")</h3>
             @payment_schedule(schedule)
             <div class="subsection text--right">
                 @Messages("ssttp.arrangement.direct-debit.confirmation.total-payment")
@@ -46,25 +48,24 @@ Time To Pay Direct Debit Conformation Display Page
     <section>
         <details>
             <summary>@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary")</summary>
-            <div class="panel-indent">
-                <h3>@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.title")</h3>
-                @message_list(None, "ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.")
-                @message_list(None, "ssttp.arrangement.direct-debit.confirmation.bank-instruction.phone.")
-                <p><strong>@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.label")</strong>
-                    @Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.number")</p>
-                <p><span class="font-xsmall">@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.text")</span></p>
-                <p><strong>@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.do-not-send-to-bank")</strong></p>
-            </div>
+            <div>
+                <p class="text--right">
+                <img src="@{AssetsConfig.assetsPrefix}/images/direct-debit-logo-2x.png" width="148px" height="60px">
+                </p>
+               <ul class="bullets">
+                   <li>@Messages("ssttp.direct-debit.guarantee.list.1") </li>
+                   <li>@Messages("ssttp.direct-debit.guarantee.list.2")</li>
+                   <li>@Messages("ssttp.direct-debit.guarantee.list.3")</li>
+                   <li>@Messages("ssttp.direct-debit.guarantee.list.4")</li>
+                   <li>@Messages("ssttp.direct-debit.guarantee.list.5")</li>
+            </ul>
+           </div>
         </details>
-        @alert(){@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.please-check")}
         @form(ssttpRoutes.ArrangementController.submit(), 'class -> "group"){
             @submit(){@Messages("ssttp.arrangement.direct-debit.confirmation.confirm-payment")}
         }
         <div>&nbsp;</div>
         <div><a class="back-link" href="@ssttpRoutes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a></div>
     </section>
-
-    <div class="divider--bottom"></div>
-    @direct_debit_guarantee()
 }
 

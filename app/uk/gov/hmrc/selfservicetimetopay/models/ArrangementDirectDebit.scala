@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.models
 case class ArrangementDirectDebit(accountName:String,
                                   sortCode: String,
                                   accountNumber:String) {
+  def formatSortCode :String = sortCode.grouped(2).foldLeft("")((a,b) => b + " - " + a).dropRight(3)
 }
 
 object ArrangementDirectDebit {
