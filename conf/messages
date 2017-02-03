@@ -293,7 +293,7 @@ ssttp.direct-debit.guarantee.list.1=This Guarantee is offered by all banks and b
 ssttp.direct-debit.guarantee.list.2=If there are any changes to the amount, date or frequency of your Direct Debit HM Revenue & Customs will notify you 10 working days in advance of your account being debited or as otherwise agreed. If you request HM Revenue & Customs to collect a payment, confirmation of the amount and date will be given to you at the time of the request.
 ssttp.direct-debit.guarantee.list.3=If an error is made in the payment of your Direct Debit by HM Revenue & Customs or your bank or building society you are entitled to a full immediate refund of the amount paid from your bank or building society.
 ssttp.direct-debit.guarantee.list.4=If you receive a refund you are not entitled to, you must pay it back when HM Revenue & Customs asks you to.
-ssttp.direct-debit.guarantee.list.5=You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please notify us.
+ssttp.direct-debit.guarantee.list.5=You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please also notify us.
 
 ssttp.direct-debit.title=Direct Debit payment schedule
 ssttp.direct-debit.account-name=Account name
@@ -323,7 +323,7 @@ ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.number
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.text=Please pay HMRC Direct Debits from the account detailed in this instruction subject to the safeguards assured by the Direct Debit Guarantee. I understand that this instruction may remain with HMRC and, if so, details will be passed electronically to my Bank/Building Society.
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.do-not-send-to-bank=Please do not send this form to your bank.
 ssttp.arrangement.instalment-summary.total-interest=Total interest of:
-ssttp.arrangement.direct-debit.confirmation.confirm-payment=Confirm payment
+ssttp.arrangement.direct-debit.confirmation.confirm-payment=Confirm payments
 
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.please-check=Please check this information carefully before confirming payment
 ssttp.arrangement.direct-debit.assistance.title=Call for Direct Debit Assistance
