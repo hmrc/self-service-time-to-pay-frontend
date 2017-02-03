@@ -6,7 +6,7 @@ Time To Pay Direct Debit Conformation Display Page
 
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, ArrangementDirectDebit, Debit}
-@(debits: Seq[Debit], schedule:CalculatorPaymentSchedule, directDebit:ArrangementDirectDebit, loggedIn: Boolean = false)(implicit request: Request[_])
+@(debits: Seq[Debit], schedule: CalculatorPaymentSchedule, directDebit: ArrangementDirectDebit, loggedIn: Boolean = false)(implicit request: Request[_])
 
 @import selfservicetimetopay.helpers.{alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, submit}
@@ -15,20 +15,20 @@ Time To Pay Direct Debit Conformation Display Page
 @import selfservicetimetopay.partials.{direct_debit_details, payment_schedule, direct_debit_guarantee, gaDoCheckout}
 @import uk.gov.hmrc.play.config.AssetsConfig
 @gaCheckoutCode = {
-    @gaDoCheckout(debits = debits,
-        step = 3,
-        revenue = schedule.totalPayable,
-        initialPayment = Some(schedule.initialPayment),
-        interest = schedule.totalInterestCharged,
-        duration = schedule.instalments.length,
-        regularPayment = schedule.instalments.head.amount
-    )
+@gaDoCheckout(debits = debits,
+    step = 3,
+    revenue = schedule.totalPayable,
+    initialPayment = Some(schedule.initialPayment),
+    interest = schedule.totalInterestCharged,
+    duration = schedule.instalments.length,
+    regularPayment = schedule.instalments.head.amount
+)
 }
 @selfservicetimetopay.main(
     title = Messages("ssttp.arrangement.direct-debit.confirmation.title"),
     googleAnalyticsCalls = Seq(gaCheckoutCode.body),
     loggedIn = loggedIn
-){
+) {
     <header class="page-header text">
         <h1>@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
     </header>
@@ -36,7 +36,7 @@ Time To Pay Direct Debit Conformation Display Page
         <h2>@Messages("ssttp.arrangement.direct-debit.confirmation.your-bank")</h2>
         @direct_debit_details(directDebit)
         <div class="subsection">
-                <h3>@Messages("ssttp.direct-debit.title")</h3>
+            <h3>@Messages("ssttp.direct-debit.title")</h3>
             @payment_schedule(schedule)
             <div class="subsection text--right">
                 @Messages("ssttp.arrangement.direct-debit.confirmation.total-payment")
@@ -44,25 +44,26 @@ Time To Pay Direct Debit Conformation Display Page
             </div>
         </div>
     </section>
-
     <section>
         <details>
             <summary>@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary")</summary>
             <div>
                 <p class="text--right">
-                <img src="@{AssetsConfig.assetsPrefix}/images/direct-debit-logo-2x.png" width="148px" height="60px">
+                    <img src="@{AssetsConfig.assetsPrefix}/images/direct-debit-logo-2x.png" width="148px" height="60px">
                 </p>
-               <ul class="bullets">
-                   <li>@Messages("ssttp.direct-debit.guarantee.list.1") </li>
-                   <li>@Messages("ssttp.direct-debit.guarantee.list.2")</li>
-                   <li>@Messages("ssttp.direct-debit.guarantee.list.3")</li>
-                   <li>@Messages("ssttp.direct-debit.guarantee.list.4")</li>
-                   <li>@Messages("ssttp.direct-debit.guarantee.list.5")</li>
-            </ul>
-           </div>
+                <ul class="bullets">
+                    <li>@Messages("ssttp.direct-debit.guarantee.list.1")</li>
+                    <li>@Messages("ssttp.direct-debit.guarantee.list.2")</li>
+                    <li>@Messages("ssttp.direct-debit.guarantee.list.3")</li>
+                    <li>@Messages("ssttp.direct-debit.guarantee.list.4")</li>
+                    <li>@Messages("ssttp.direct-debit.guarantee.list.5")</li>
+                </ul>
+            </div>
         </details>
-        @form(ssttpRoutes.ArrangementController.submit(), 'class -> "group"){
-            @submit(){@Messages("ssttp.arrangement.direct-debit.confirmation.confirm-payment")}
+        @form(ssttpRoutes.ArrangementController.submit(), 'class -> "group") {
+            @submit() {
+                @Messages("ssttp.arrangement.direct-debit.confirmation.confirm-payment")
+            }
         }
         <div>&nbsp;</div>
         <div><a class="back-link" href="@ssttpRoutes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a></div>
