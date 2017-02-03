@@ -2,13 +2,17 @@
     Time To Pay Payment Schedule Calculation footer for authenticated and whitelisted users
     @param print: Boolean set to true to show the print version
 *@
-@(print:Boolean = false)
+@(print:Boolean = false)(implicit request: Request[_])
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import selfservicetimetopay.helpers.forms._
 <section>
     <div class="table-cell--light">
         <div class="subsection divider--bottom grid-layout">
             <div class="grid-layout__column grid-layout__column--2-3"><p>@Messages("ssttp.calculator.results.auth.continue")</p></div>
-            <div class="grid-layout__column grid-layout__column--1-3 text--center align--middle">@if(!print){<p><a href="@routes.ArrangementController.determineMisalignment()" id="continueButton" class="button" role="button">@Messages("ssttp.calculator.results.auth.continue.link")</a></p>}</div>
+            <div class="grid-layout__column grid-layout__column--1-3 text--center align--middle">@if(!print){
+                @form(routes.ArrangementController.determineMisalignment()){
+                @submit(){@Messages("ssttp.calculator.results.auth.continue.link")}
+                }}</div>
         </div>
     </div>
 
