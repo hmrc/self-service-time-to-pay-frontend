@@ -91,11 +91,11 @@ Time To Pay Payment Schedule Calculator Page
                                         <i class="arrow arrow--down"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.decrease")</span>
                                 }) { label =>
                                     @if(schedule.instalments.length != monthOptions.min) {
-                                        @button('type -> "submit", 'id -> "calculatorDurationDecrease", '_modifierClass -> "button button--secondary button--spaced flush") {
+                                        @button('type -> "submit", 'id -> "calculatorDurationDecrease", '_modifierClass -> "button button--secondary button--spaced flush",'title ->"Decrease value") {
                                             @label
                                         }
                                     } else {
-                                        <span class="button button--secondary button--spaced disabled flush" aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")" role="button">@label</span>
+                                        <span class="button button--secondary button--spaced disabled flush"  aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")" role="button">@label</span>
                                     }
                                 }
                             }
@@ -114,7 +114,7 @@ Time To Pay Payment Schedule Calculator Page
                                         <i class="arrow arrow--up"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.increase")</span>
                                 }) { label =>
                                     @if(schedule.instalments.length != monthOptions.max) {
-                                        @button('type -> "submit", 'id -> "calculatorDurationIncrease", '_modifierClass -> "button button--secondary button--spaced flush-ends flush--left") {
+                                        @button('type -> "submit",'id -> "calculatorDurationIncrease", '_modifierClass -> "button button--secondary button--spaced flush-ends flush--left",'title ->"Increase value") {
                                             @label
                                         }
                                     } else {
