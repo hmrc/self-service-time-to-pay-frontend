@@ -128,22 +128,22 @@ ssttp.calculator.form.amounts_due.due_by.not-valid-date=You need to enter a vali
 ssttp.error.summary.title=Something you''ve entered isn''t valid
 
 
-ssttp.calculator.misalignment-page.title=These amounts don’t match
-ssttp.calculator.misalignment-page.subtitle=Check the following differences:
-ssttp.calculator.misalignment-page.total-entered=The total amount you entered:
-ssttp.calculator.misalignment-page.total-in-account=The total amount owing in your tax account:
+ssttp.calculator.misalignment-page.title=Check the amounts you owe
+ssttp.calculator.misalignment-page.subtitle=The figures you entered don’t match the figures in your tax account.
+ssttp.calculator.misalignment-page.total-entered=You entered:
+ssttp.calculator.misalignment-page.total-in-account=Your tax account shows:
 ssttp.calculator.misalignment-page.account-breakdown.title=View a breakdown of the amounts
 ssttp.calculator.misalignment-page.account-breakdown.total=TOTAL:
-ssttp.calculator.misalignment-page.possible-reasons.title=The figures you entered don’t match the figures in your tax account. This could be because:
+ssttp.calculator.misalignment-page.possible-reasons.title=These differences could be because:
 ssttp.calculator.misalignment-page.possible-reasons.list.1=you haven’t filed your Self Assessment tax return
 ssttp.calculator.misalignment-page.possible-reasons.list.2=you filed less than 3 days ago and your account hasn’t updated yet
 ssttp.calculator.misalignment-page.possible-reasons.list.3=you didn’t include all outstanding amounts in your calculation
 ssttp.calculator.misalignment-page.possible-reasons.list.4=you included an amount that isn't related to your Self Assessment
 ssttp.calculator.misalignment-page.your-options=Your options
-ssttp.calculator.misalignment-page.recalculate.label=Continue and recalculate instalments using the total in your tax account
+ssttp.calculator.misalignment-page.recalculate.label=Recalculate instalments using the total in your tax account
 ssttp.calculator.misalignment-page.recalculate.button=Recalculate
-ssttp.calculator.misalignment-page.query.label=Query an amount in your tax account
-ssttp.calculator.misalignment-page.query.number=0300 322 7015
+ssttp.calculator.misalignment-page.query.label=Find out about an amount in your tax account
+ssttp.calculator.misalignment-page.query.number=0300 200 3822
 
 ssttp.calculator.form.payment_today.title=How much can you afford to pay?
 
