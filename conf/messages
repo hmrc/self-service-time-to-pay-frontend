@@ -189,7 +189,7 @@ ssttp.calculator.results.total-replayment=Your payments will total:
 ssttp.calculator.results.interest-info.title=How we calculate interest
 ssttp.calculator.results.interest-info.content=We charge the Bank of England base rate plus 2.5%, calculated as simple interest. Your monthly payments won’t be affected if the interest rate changes during your instalment plan. Any differences in the amount of interest you owe will be settled in your final payment. We only charge interest on overdue amounts.
 
-ssttp.calculator.results.interest-info.warning=We’ve based these figures on the information you’ve given us. They might change when you log in, depending on the outstanding Self Assessment amounts in your tax account.
+ssttp.calculator.results.interest-info.warning=We’ve based these figures on the information you’ve given us. They might change when you sign in, depending on the outstanding Self Assessment amounts in your tax account.
 
 ssttp.calculator.results.next-steps=Next steps
 ssttp.calculator.results.sign-in=Sign in to your tax account to confirm this arrangement and set up a Direct Debit
