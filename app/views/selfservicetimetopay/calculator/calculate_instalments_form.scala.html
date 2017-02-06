@@ -91,7 +91,7 @@ Time To Pay Payment Schedule Calculator Page
                                         <i class="arrow arrow--down"></i><span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.decrease")</span>
                                 }) { label =>
                                     @if(schedule.instalments.length != monthOptions.min) {
-                                        @button('type -> "submit",'title -> "I am title", 'id -> "calculatorDurationDecrease", '_modifierClass -> "button button--secondary button--spaced flush",'title ->"Decrease value") {
+                                        @button('type -> "submit", 'id -> "calculatorDurationDecrease", '_modifierClass -> "button button--secondary button--spaced flush",'title ->"Decrease value") {
                                             @label
                                         }
                                     } else {
