@@ -17,17 +17,15 @@ Amounts Due Misalignment page - designed to be shown when the debts a user enter
     <header class="page-header text">
         <h1>@Messages("ssttp.calculator.misalignment-page.title")</h1>
     </header>
-    @highlight('_modifierClass  -> "highlight-message--light"){
         <p>@Messages("ssttp.calculator.misalignment-page.subtitle")</p>
-    }
     <section class="section">
         <div class="bordered-box">
-            <h3>@Messages("ssttp.calculator.misalignment-page.total-entered")</h3>
+            <p><strong>@Messages("ssttp.calculator.misalignment-page.total-entered")</strong></p>
             <p>@currency(amountsDue.total)</p>
         </div>
         @defining(debits.map(_.amount).sum) { debitsTotal =>
             <div class="bordered-box bordered-box--shaded">
-                <h3>@Messages("ssttp.calculator.misalignment-page.total-in-account")</h3>
+                <p><strong>@Messages("ssttp.calculator.misalignment-page.total-in-account")</strong></p>
                 <p>@currency(debitsTotal)</p>
                 <details class="trackedDetails" id="view-breakdown-misalignment">
                     <summary>@Messages("ssttp.calculator.misalignment-page.account-breakdown.title")</summary>
@@ -45,7 +43,7 @@ Amounts Due Misalignment page - designed to be shown when the debts a user enter
         @message_list(Some("bullets"), "ssttp.calculator.misalignment-page.possible-reasons.list.")
     </section>
     <section>
-        <h3 class="divider--bottom">@Messages("ssttp.calculator.misalignment-page.your-options")</h3>
+        <h2 class="divider--bottom">@Messages("ssttp.calculator.misalignment-page.your-options")</h2>
         @form(routes.CalculatorController.submitRecalculate(), 'class -> "group") {
             <div class="grid-layout grid-layout--no-gutter divider--bottom">
                 <div class="grid-layout__column grid-layout__column--2-3"><p>@Messages("ssttp.calculator.misalignment-page.recalculate.label")</p></div>
