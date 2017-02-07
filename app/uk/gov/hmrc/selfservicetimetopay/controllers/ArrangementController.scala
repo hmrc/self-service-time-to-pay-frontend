@@ -201,7 +201,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
             directDebit = submission.arrangementDirectDebit.get,
             schedule = submission.schedule.get,
             loggedIn = true))
-          )
+         )
       }
   }
 

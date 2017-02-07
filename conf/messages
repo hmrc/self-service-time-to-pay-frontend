@@ -45,10 +45,9 @@ ssttp.amounts_due.amount=Amount:
 
 #help and advice sidebar
 ssttp.sidebar.help-and-advice.title=Help and advice
-ssttp.sidebar.help-and-advice.intro=We recommend that you read the following information to make sure you can pay all future bills in full and on time.
-ssttp.sidebar.help-and-advice.ways-to-pay=different ways to pay HMRC
-ssttp.sidebar.help-and-advice.payments-on-account=learn about payments on account
-ssttp.sidebar.help-and-advice.dont-pay=what happens if you don''t pay your bill
+ssttp.sidebar.help-and-advice.ways-to-pay=Different ways to pay HMRC
+ssttp.sidebar.help-and-advice.payments-on-account=Learn about payments on account
+ssttp.sidebar.help-and-advice.dont-pay=What happens if you don''t pay your bill
 ssttp.sidebar.help-and-advice.feedback=Please leave some feedback and tell us what you think of this service.
 ssttp.sidebar.help-and-advice.feedback.submit=Send your feedback
 
@@ -333,12 +332,13 @@ ssttp.arrangement.direct-debit.assistance.alert.1=We’re having problems submit
 ssttp.arrangement.direct-debit.assistance.back=Back
 
 ssttp.arrangement.complete.title=Application complete
-ssttp.arrangement.complete.subtitle=We’ve received your application to pay in instalments.
+ssttp.arrangement.complete.subtitle=We''ve received your application to pay in instalments.
 ssttp.arrangement.complete.next=What happens next?
-ssttp.arrangement.complete.next.list.1=you don’t need to do anything else
-ssttp.arrangement.complete.next.list.2=we’ll send you the instalment plan and the Direct Debit details when your agreement has been set up, which should take about five days
-ssttp.arrangement.complete.next.list.3=payments will be taken according to the schedule below
-ssttp.arrangement.complete.summary=You don't need to do anything else. We'll send you the instalment plan and the Direct Debit details when your agreement has been set up, which should take about 5 days. Your payments will be taken on the dates shown below.
+ssttp.arrangement.complete.please-help-use=Please help us to improve this service
+ssttp.arrangement.complete.send-feed-back=Send use your feedback
+ssttp.arrangement.complete.your-bank=Your bank
+ssttp.arrangement.complete.direct-debit-payment=Direct Debit payment schedule
+ssttp.arrangement.complete.summary=You don’t need to do anything else. We’ll send you the instalment plan and the Direct Debit details when your agreement has been set up, which should take about 5 days.
 ssttp.arrangement.complete.what-you-owe=What you owe
 ssttp.arrangement.complete.payment-plan={0} month instalment plan
 ssttp.arrangement.complete.interest-rate=Interest at {0}%
