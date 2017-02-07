@@ -201,7 +201,7 @@ ssttp.calculator.results.call-us.auth-non-whitelist.intro=To proceed with this a
 
 ssttp.calculator.results.call-us.into=If you can’t proceed with this for any reason call us to discuss your options
 ssttp.calculator.results.call-us.no-auth.number=0300 200 3822
-ssttp.calculator.results.call-us.auth.number=0300 322 7015
+ssttp.calculator.results.call-us.auth.number=0300 200 3822
 
 ssttp.call-us.title=Please call us
 ssttp.call-us.intro=We’d like to help you clear your tax debt in instalments but we need some more detailed information from you first.
@@ -333,10 +333,10 @@ ssttp.arrangement.direct-debit.assistance.back=Back
 
 ssttp.arrangement.complete.title=Application complete
 ssttp.arrangement.complete.subtitle=We''ve received your application to pay in instalments.
-ssttp.arrangement.complete.what-happens-next=What happens next?
+ssttp.arrangement.complete.next=What happens next?
 ssttp.arrangement.complete.please-help-use=Please help us to improve this service
 ssttp.arrangement.complete.send-feed-back=Send use your feedback
-ssttp.arrangement.complete.one-off-service=You don’t need to do anything else. We’ll send you the instalment plan and the Direct Debit details when your agreement has been set up, which should take about 5 days.
+ssttp.arrangement.complete.summary=You don’t need to do anything else. We’ll send you the instalment plan and the Direct Debit details when your agreement has been set up, which should take about 5 days.
 ssttp.arrangement.complete.what-you-owe=What you owe
 ssttp.arrangement.complete.payment-plan={0} month instalment plan
 ssttp.arrangement.complete.interest-rate=Interest at {0}%

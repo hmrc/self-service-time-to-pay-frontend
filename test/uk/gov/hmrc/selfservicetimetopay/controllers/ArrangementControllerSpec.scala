@@ -53,7 +53,6 @@ class ArrangementControllerSpec extends UnitSpec
   val calculatorConnector: CalculatorConnector = mock[CalculatorConnector]
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
-  val mockCampaignManagerConnector: CampaignManagerConnector = mock[CampaignManagerConnector]
   val mockSessionProvider: SessionProvider = mock[SessionProvider]
   val mockCacheMap: CacheMap = mock[CacheMap]
 
@@ -61,7 +60,6 @@ class ArrangementControllerSpec extends UnitSpec
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
     override lazy val authenticationProvider: GovernmentGateway = mockAuthenticationProvider
-    override lazy val campaignManagerConnector: CampaignManagerConnector = mockCampaignManagerConnector
   }
 
   override protected def beforeEach(): Unit = {
@@ -72,8 +70,7 @@ class ArrangementControllerSpec extends UnitSpec
       taxPayerConnector,
       calculatorConnector,
       mockSessionProvider,
-      mockEligibilityConnector,
-      mockCampaignManagerConnector)
+      mockEligibilityConnector)
   }
 
   val validDayForm = Seq(
@@ -92,7 +89,6 @@ class ArrangementControllerSpec extends UnitSpec
 
       when(arrangementConnector.submitArrangements(any())(any())).thenReturn(Future.successful(Right(SubmissionSuccess())))
 
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any())).thenReturn(Future.successful(true))
 
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()).withSession(SessionKeys.userId -> "someUserId"))
 
@@ -100,9 +96,6 @@ class ArrangementControllerSpec extends UnitSpec
     }
 
     "redirect to start if no data in session cache" in {
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
-        .thenReturn(Future.successful(true))
-
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(None))
 
@@ -115,18 +108,14 @@ class ArrangementControllerSpec extends UnitSpec
     }
 
     "update payment schedule date" in {
+
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
-
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      when(calculatorConnector.calculatePaymentSchedule(any())(any()))
-        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
-
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
-        .thenReturn(Future.successful(true))
+      when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
       val response = controller.changeSchedulePaymentDay()
         .apply(FakeRequest("POST", "/arrangement/instalment-summary/change-day")
@@ -146,9 +135,6 @@ class ArrangementControllerSpec extends UnitSpec
     "redirect to ineligible (call us) page if EligibilityStatus is set to false within the TTPSubmission data (where an authenticated resource is called)" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
-        .thenReturn(Future.successful(true))
-
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityStatus = Option(EligibilityStatus(eligible = false, Seq("error")))))))
 
@@ -162,9 +148,6 @@ class ArrangementControllerSpec extends UnitSpec
 
     "NOT redirect to ineligible (call us) page if EligibilityStatus is None within the TTPSubmission data (where an authenticated resource is called)" in {
       implicit val hc = new HeaderCarrier
-
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
-        .thenReturn(Future.successful(true))
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
@@ -185,11 +168,8 @@ class ArrangementControllerSpec extends UnitSpec
       "the TTPSubmission data (where an authenticated resource is called)" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
-        .thenReturn(Future.successful(true))
-
       when(mockSessionCache.get(any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityStatus = Option(EligibilityStatus(true, Seq.empty))))))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityStatus = Option(EligibilityStatus(eligible = true, Seq.empty))))))
 
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
@@ -213,8 +193,6 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
-        .thenReturn(Future.successful(true))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
         .withCookies(sessionProvider.createTtpCookie())
@@ -234,8 +212,6 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
       when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
-        .thenReturn(Future.successful(true))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
         .withCookies(sessionProvider.createTtpCookie())
@@ -253,8 +229,6 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
-      when(mockCampaignManagerConnector.isAuthorisedWhitelist(any())(any(), any()))
-        .thenReturn(Future.successful(true))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
         .withCookies(sessionProvider.createTtpCookie())
