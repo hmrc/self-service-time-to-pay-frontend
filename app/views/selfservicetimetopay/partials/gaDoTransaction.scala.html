@@ -10,7 +10,9 @@
     @
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@(debits:Seq[Debit],
+
+@(
+    debits:Seq[Debit],
     id:String,
     revenue: BigDecimal,
     initialPayment:Option[BigDecimal],
@@ -19,5 +21,11 @@
     regularPayment: BigDecimal
 )
 @import selfservicetimetopay.partials.gaAddProducts
+
+@initialPaymentMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.initialPaymentMetric}
+@interestMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.interestMetric}
+@durationMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.durationMetric}
+@regularPaymentMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.regularPaymentMetric}
+
 @gaAddProducts(debits, initialPayment, Some((duration, interest)))
-ga('ec:setAction', 'purchase', { 'id': '@id', 'revenue': '@revenue', 'metric7': '@initialPayment', 'metric8': '@interest', 'metric9': '@duration', 'metric10': '@regularPayment'});
+ga('ec:setAction', 'purchase', { 'id': '@id', 'revenue': '@revenue', '@initialPaymentMetric': '@initialPayment', '@interestMetric': '@interest', '@durationMetric': '@duration', '@regularPaymentMetric': '@regularPayment'});
