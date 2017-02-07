@@ -195,12 +195,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
           Logger.info("No submission found in applicationComplete, redirecting to start")
           redirectToStart
         case Some(submission) =>
-        Future.successful(Ok(application_complete(
+        sessionCache.remove().map(_ => Ok(application_complete(
             debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
             transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
             directDebit = submission.arrangementDirectDebit.get,
             schedule = submission.schedule.get,
-            loggedIn = true)))
+            loggedIn = true))
+        )
       }
   }
 
