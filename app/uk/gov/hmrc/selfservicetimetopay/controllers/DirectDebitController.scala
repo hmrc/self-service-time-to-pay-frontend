@@ -55,7 +55,8 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit request =>
       authorizedForSsttp {
         case Some(submission@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _)) =>
-          Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, submission.taxpayer.isDefined, loggedIn = true)))
+          Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, submission.taxpayer.isDefined,
+            showErrorNotification = true)))
         case _ => throw new RuntimeException("No data found")
       }
   }
