@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -54,7 +55,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit request =>
       authorizedForSsttp {
         case Some(submission@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _)) =>
-          Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, submission.taxpayer.isDefined, true)))
+          Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, submission.taxpayer.isDefined, loggedIn = true)))
         case _ => throw new RuntimeException("No data found")
       }
   }
@@ -65,7 +66,9 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
         case Some(submission@TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _)) =>
           Future.successful(Ok(direct_debit_confirmation(submission.calculatorData.debits,
             schedule, submission.arrangementDirectDebit.get, submission.taxpayer.isDefined)))
-        case _ => throw new RuntimeException("No data found")
+        case _ =>
+          Logger.error( s"Schedule missing from cache")
+          Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
       }
   }
 
@@ -73,7 +76,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     implicit request =>
       authorizedForSsttp {
         case Some(TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _, _)) =>
-          Future.successful(Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true)))
+          Future.successful(Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, loggedIn = true)))
         case _ => throw new RuntimeException("No data found")
       }
   }
@@ -86,7 +89,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
             formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, existingDDBanks.directDebitInstruction))),
             validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit) match {
               case (Some(_), Some(_)) =>
-                Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, true)))
+                Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, loggedIn = true)))
               case (Some(ddi), None) =>
                 val newBankDetails =
                   banksListValidation(existingDDBanks.directDebitInstruction.filter(_.referenceNumber.get == ddi), validFormData)
@@ -118,7 +121,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
       authorizedForSsttp { submission =>
         directDebitForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(direct_debit_form(submission.get.calculatorData.debits,
-            submission.get.schedule.get, formWithErrors, true))),
+            submission.get.schedule.get, formWithErrors, loggedIn = true))),
           validFormData =>
             directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode,
               validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
