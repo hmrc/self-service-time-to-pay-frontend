@@ -58,7 +58,9 @@
       <div class="grid-layout__column grid-layout__column--3-4"><p><strong>@Messages("ssttp.arrangement.complete.total")</strong></p></div>
       <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@currency(schedule.totalPayable)</strong></p></div>
     </div>
+  <h2>@Messages("ssttp.arrangement.complete.your-bank")</h2>
     <span class="no-print">@direct_debit_details(directDebit)</span>
+  <h2>@Messages("ssttp.arrangement.complete.direct-debit-payment")</h2>
     <span class="print-only">@direct_debit_details(directDebit, true)</span>
     @payment_schedule(schedule)
   </section>
