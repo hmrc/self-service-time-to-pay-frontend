@@ -28,7 +28,7 @@ trait ConnectorSpec  extends UnitSpec  with OneServerPerSuite with MockitoSugar 
   import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 
   object WiremockHelper {
-    val wiremockPort = 9854
+    val wiremockPort = 1234
     val wiremockHost = "localhost"
     val url = s"http://$wiremockHost:$wiremockPort"
   }
