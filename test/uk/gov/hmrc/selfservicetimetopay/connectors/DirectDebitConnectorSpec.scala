@@ -37,9 +37,7 @@ import scala.concurrent.Future
 
 class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with WithFakeApplication {
 
-  override lazy val wiremockPort = 9854
 
-  val mockHttp: WSHttp = mock[WSHttp]
   implicit val headerCarrier = HeaderCarrier()
 
   object testConnector extends DirectDebitConnector {
