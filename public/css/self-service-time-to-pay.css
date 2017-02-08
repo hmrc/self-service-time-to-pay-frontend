@@ -9,6 +9,10 @@
 .print-only{
     display: none;
 }
+ /* GitHub Bug: Make <details> arrow work in Firefox */
+  details summary {
+    display: list-item !important;
+ }
 
 @media print {
     .no-print {
