@@ -27,7 +27,8 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.WithFakeApplication
-import uk.gov.hmrc.selfservicetimetopay.config.{DirectDebitConnector => realConnector}
+import uk.gov.hmrc.selfservicetimetopay.config.{DirectDebitConnector, WSHttp}
+import uk.gov.hmrc.selfservicetimetopay.config.DirectDebitConnector.baseUrl
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -37,9 +38,13 @@ import scala.concurrent.Future
 
 class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with WithFakeApplication {
 
-  override lazy val wiremockPort = 9854
+  object DirectDebitConnectorTest extends DirectDebitConnector with ServicesConfig {
+    lazy val directDebitURL: String = WiremockHelper.url
+    lazy val serviceURL = "direct-debit"
+    lazy val http = WSHttp
+  }
 
-  val mockHttp: WSHttp = mock[WSHttp]
+
   implicit val headerCarrier = HeaderCarrier()
 
   object testConnector extends DirectDebitConnector {
@@ -75,7 +80,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(realConnector.getBanks(SaUtr("SAUTR")))
+      val response = await(DirectDebitConnectorTest.getBanks(SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -94,7 +99,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(realConnector.getBanks(SaUtr("SAUTR")))
+      val response = await(DirectDebitConnectorTest.getBanks(SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -116,7 +121,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(realConnector.getBanks(SaUtr("SAUTR")))
+      val response = await(DirectDebitConnectorTest.getBanks(SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -173,7 +178,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(realConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+      val response = await(DirectDebitConnectorTest.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -190,7 +195,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(realConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+      val response = await(DirectDebitConnectorTest.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -207,7 +212,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(realConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+      val response = await(DirectDebitConnectorTest.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -238,7 +243,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(realConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+      val response = await(DirectDebitConnectorTest.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -259,7 +264,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
         )
       ))
 
-      val response = await(realConnector.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
+      val response = await(DirectDebitConnectorTest.validateOrRetrieveAccounts("123456", "12345678", SaUtr("SAUTR")))
 
       wmVerify(1, getRequestedFor(validationURL))
 
