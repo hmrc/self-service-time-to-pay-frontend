@@ -273,7 +273,6 @@ ssttp.direct-debit.form.accountName=Account name
 ssttp.direct-debit.form.sortCode=Sort code
 ssttp.direct-debit.form.accountNumber=Account number
 ssttp.direct-debit.form.sortCode.hint=Example: 000000
-ssttp.direct-debit.form.error.account=Name.required=Enter an account name
 ssttp.direct-debit.form.error.accountName.required=Enter an account name
 ssttp.direct-debit.form.error.accountName.not-text=Account name contains characters that aren''t valid
 ssttp.direct-debit.form.error.accountNumber.required=Enter an account number
@@ -335,7 +334,6 @@ ssttp.arrangement.complete.title=Application complete
 ssttp.arrangement.complete.subtitle=We''ve received your application to pay in instalments.
 ssttp.arrangement.complete.next=What happens next?
 ssttp.arrangement.complete.please-help-use=Please help us to improve this service
-ssttp.arrangement.complete.send-feed-back=Send use your feedback
 ssttp.arrangement.complete.your-bank=Your bank
 ssttp.arrangement.complete.direct-debit-payment=Direct Debit payment schedule
 ssttp.arrangement.complete.summary=You don’t need to do anything else. We’ll send you the instalment plan and the Direct Debit details when your agreement has been set up, which should take about 5 days.
