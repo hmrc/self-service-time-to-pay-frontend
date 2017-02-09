@@ -46,7 +46,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) =>
         Ok(amount_due_date_form(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm(debits.map(_.amount).sum), ttpData.taxpayer.isDefined))
-      case _ => Redirect(routes.CalculatorController.getAmountsDue())
+      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
     }
   }
 
