@@ -259,6 +259,7 @@ ssttp.arrangement.misalignment.title=Bank account not found
 ssttp.arrangement.misalignment.subtitle=There was a problem with the bank details you entered
 ssttp.arrangement.misalignment.form.error.summary.title=Something you’ve entered isn’t valid
 ssttp.arrangement.misalignment.existing.title=Choose an existing account
+ssttp.arrangement.misalignment.direct-debit.or=Or
 ssttp.arrangement.misalignment.direct-debit.reenter=Re-enter your bank details
 ssttp.arrangement.misalignment.submit=Agree and continue
 ssttp.arrangement.misalignment.back=Back
@@ -272,7 +273,6 @@ ssttp.direct-debit.form.accountName=Account name
 ssttp.direct-debit.form.sortCode=Sort code
 ssttp.direct-debit.form.accountNumber=Account number
 ssttp.direct-debit.form.sortCode.hint=Example: 000000
-ssttp.direct-debit.form.error.account=Name.required=Enter an account name
 ssttp.direct-debit.form.error.accountName.required=Enter an account name
 ssttp.direct-debit.form.error.accountName.not-text=Account name contains characters that aren''t valid
 ssttp.direct-debit.form.error.accountNumber.required=Enter an account number
