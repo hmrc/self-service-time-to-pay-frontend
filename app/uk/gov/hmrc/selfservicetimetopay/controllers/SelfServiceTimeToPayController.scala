@@ -18,9 +18,12 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.{SsttpFrontendConfig, TimeToPayController}
-import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm, EligibilityForm}
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, CalculatorInput, TTPSubmission}
 import views.html.selfservicetimetopay.core._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.html.selfservicetimetopay.calculator.amounts_due_form
+import views.html.selfservicetimetopay.eligibility.type_of_tax_form
 
 class SelfServiceTimeToPayController extends TimeToPayController {
 
@@ -33,6 +36,14 @@ class SelfServiceTimeToPayController extends TimeToPayController {
 
   def submit: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.start())
+  }
+  def getSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(ttpData@TTPSubmission(_, _, _, _, typeOfTax@Some(_), _, _, _, _)) =>
+        //todo if their signed in what do we do?
+        Ok(sign_in_question(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), ttpData.taxpayer.isDefined))
+      case _ => Ok(sign_in_question(EligibilityForm.typeOfTaxForm))
+    }
   }
 
   def getTtpCallUs: Action[AnyContent] = Action.async { implicit request =>

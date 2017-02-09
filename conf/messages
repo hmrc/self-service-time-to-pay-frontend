@@ -95,6 +95,17 @@ ssttp.eligibility.form.existing_ttp.required=Choose one option
 ssttp.eligibility.form.continue=Continue
 ssttp.eligibility.form.back=Back
 
+ssttp.eligibility.form.type_of_tax.question.hint=Choose one or both
+ssttp.eligibility.form.type_of_tax.question.self-assessment=Self Assessment
+ssttp.eligibility.form.type_of_tax.question.other=Other types of tax
+
+ssttp.eligibility.form.type_of_tax.error.summary.title=You haven''t selected an option
+
+ssttp.core.form.sign_in_question.title=Would you like to sign in to view what you owe?
+ssttp.core.form.sign_in_question.yes_label=Yes - sign in to retrieve tax amounts
+ssttp.core.form.sign_in_question.no_label=No - enter tax owed manually
+ssttp.core.form.sign_in_question.continue=Continue
+
 #calculator
 ssttp.calculator.form.amounts_due.title=About what you owe
 ssttp.calculator.form.amounts_due.intro=Enter the amounts you need to pay.

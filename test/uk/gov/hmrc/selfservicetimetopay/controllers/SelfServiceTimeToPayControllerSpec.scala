@@ -75,6 +75,14 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
 
       bodyOf(result) should include(Messages("ssttp.you-need-to-file.title"))
     }
+    "successfully display the sign in option page" in {
+       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+            val response: Result = controller.getSignInQuestion.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+
+              status(response) shouldBe OK
+
+              bodyOf(response) should include(Messages("ssttp.core.form.sign_in_question.title"))
+          }
   }
 
 }

@@ -12,6 +12,9 @@ POST        /eligibility/type-of-tax                          @uk.gov.hmrc.selfs
 GET         /eligibility/existing-ttp                         @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.getExistingTtp()
 POST        /eligibility/existing-ttp                         @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.submitExistingTtp()
 
+# SignInQuestion
+GET         /sign-in-question                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getSignInQuestion()
+
 # Calculator
 GET         /calculator                                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.start()
 GET         /calculator/amounts-due                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getAmountsDue()
