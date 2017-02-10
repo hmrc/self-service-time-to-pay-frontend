@@ -34,6 +34,14 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     Redirect(routes.CalculatorController.getAmountsDue())
   }
 
+  def getAmountOwed: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(what_you_owe_amount()))
+  }
+
+//  def submitAmountOwed: Action[AnyContent] = Action.async { implicit request =>
+//
+//  }
+
   def getAmountsDue: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) =>
