@@ -35,7 +35,8 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
   }
 
   def getAmountOwed: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(what_you_owe_amount()))
+    val dataForm = CalculatorForm.createSinglePaymentForm(BigDecimal("0"))
+    Future.successful(Ok(what_you_owe_amount(dataForm)))
   }
 
 //  def submitAmountOwed: Action[AnyContent] = Action.async { implicit request =>

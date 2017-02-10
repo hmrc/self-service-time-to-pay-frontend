@@ -1,7 +1,14 @@
-@()(implicit request: Request[_])
+@import selfservicetimetopay.helpers.forms.{currencyinput, form}
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorSinglePayment
+
+@(dataform:Form[CalculatorSinglePayment])(implicit request: Request[_])
 
 @selfservicetimetopay.main(
-    title = Messages("ssttp.calculator.form.amounts_due.title")
+    title = Messages("ssttp.calculator.form.what-you-owe-amount.title1")
 ){
-    <p>"Hello World"</p>
+    <h1>@Messages("ssttp.calculator.form.what-you-owe-amount.title1")
+    <br>@Messages("ssttp.calculator.form.what-you-owe-amount.title2", "31 January 2017")</h1>
+    @currencyinput(dataform("amount"),
+        '_inputClass -> "input--small input--no-spinner")
+
 }

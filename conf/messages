@@ -105,6 +105,9 @@ ssttp.calculator.form.amounts_due.when_due.question.day=Day
 ssttp.calculator.form.amounts_due.when_due.question.month=Month
 ssttp.calculator.form.amounts_due.when_due.question.year=Year
 
+ssttp.calculator.form.what-you-owe-amount.title1=How much is due on
+ssttp.calculator.form.what-you-owe-amount.title2={0}?
+
 ssttp.calculator.form.amounts_due.add=Add
 ssttp.calculator.form.amounts_due.remove=Remove
 ssttp.calculator.form.amounts_due.total=Total
