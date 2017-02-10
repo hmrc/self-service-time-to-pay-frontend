@@ -1,0 +1,39 @@
+@*
+Partial view to show list of direct debit payments in the the entered_all_amount_question form
+*@
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
+@(schedule:CalculatorPaymentSchedule)
+@import java.time.format.DateTimeFormatter
+@import java.time.LocalDate
+@import selfservicetimetopay.partials.currency
+@import java.util.Locale
+
+@defining(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)) { formatter =>
+@if(schedule.initialPayment > BigDecimal(0)) {
+<div class="grid-layout divider--bottom font-xsmall">
+    <table class="amounts-owed-table">
+        <thead>
+            <tr>
+                <td><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.due-date")</strong></td>
+                <td><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.amount")</strong></td>
+                <td><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.remove")</strong></td>
+            </tr>
+        <thead>
+        <tbody>
+            <tr>
+                <td>@LocalDate.now.plusWeeks(1).format(formatter)</td>
+                <td>@currency(schedule.initialPayment)</td>
+                <td><p class="button button--small button--table">@Messages("ssttp.calculator.form.entered_all_amounts_question.remove-label")</p><td>
+            </tr>
+            @schedule.instalments.map { instalment =>
+            <tr>
+                <td>@instalment.paymentDate.format(formatter)</td>
+                <td>@currency(instalment.amount)</td>
+                <td><p class="button button--small button--table">@Messages("ssttp.calculator.form.entered_all_amounts_question.remove-label")</p><td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+}
+}

@@ -204,6 +204,20 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         Redirect(routes.SelfServiceTimeToPayController.start())
     }
   }
+  def getEnterAllAmountsQuestion: Action[AnyContent] = Action.async { implicit request =>
+    Logger.info("method called")
+    //todo do this right!
+    sessionCache.get.map {
+      case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(tp), _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _)) =>
+         Ok(entered_all_amounts_q(debits, schedule))
+      case Some(TTPSubmission(Some(schedule), _, _, None, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _)) =>
+        Ok(entered_all_amounts_q(debits, schedule))
+      case _ =>
+        Logger.info("3")
+        Logger.info("No TTP Data match in getPaymentToday")
+        Redirect(routes.SelfServiceTimeToPayController.start())
+    }
+  }
 
   def submitPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {

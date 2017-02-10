@@ -25,8 +25,11 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.i18n.Messages
+import play.api.mvc.Result
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -176,6 +179,14 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
       status(result) shouldBe Status.SEE_OTHER
     }
+    "successfully display the amounts due date page" in {
+            when(mockSessionCache.get(any(), any()))
+              .thenReturn(Future.successful(Some(ttpSubmission)))
+            val response: Result = controller.getEnterAllAmountsQuestion().apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
+              status(response) shouldBe OK
+
+              bodyOf(response) should include(Messages("ssttp.calculator.form.entered_all_amounts_question.title"))
+          }
   }
 }
