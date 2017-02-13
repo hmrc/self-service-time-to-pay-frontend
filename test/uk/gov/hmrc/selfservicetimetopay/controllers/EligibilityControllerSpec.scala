@@ -85,6 +85,14 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       redirectLocation(response).get shouldBe controllers.routes.EligibilityController.getTypeOfTax().url
     }
+    "successfully display the sign in option page" in {
+      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      val response: Result = controller.getSignInQuestion.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+
+      status(response) shouldBe OK
+
+      bodyOf(response) should include(Messages("ssttp.eligibility.form.sign_in_question.title"))
+    }
 
     "successfully display the type of tax page" in {
       val response: Result = controller.getTypeOfTax.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))

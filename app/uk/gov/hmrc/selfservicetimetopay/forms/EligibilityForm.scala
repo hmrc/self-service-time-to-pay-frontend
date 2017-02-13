@@ -19,21 +19,38 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, SignInQuestion}
 
 object EligibilityForm {
 
-  def atLeastOneRequired: Constraint[(Boolean, Boolean)] = Constraint[(Boolean, Boolean)]("constraint.required") { data  =>
-    if (!data._1 && !data._2) Invalid(ValidationError("ssttp.eligibility.form.type_of_tax.required")) else Valid
+  def atLeastOneRequired(validationErrorMessage: String): Constraint[(Boolean, Boolean)] = Constraint[(Boolean, Boolean)]("constraint.required") { data =>
+    if (!data._1 && !data._2) Invalid(ValidationError(validationErrorMessage)) else Valid
   }
 
+  def areBothSelected(validationErrorMessage: String): Constraint[(Boolean, Boolean)] = Constraint[(Boolean, Boolean)]("constraint.required") {data =>
+    if(data._1 && data._2) Invalid(ValidationError(validationErrorMessage)) else Valid
+  }
+
+  val signInTuple = tuple(
+    "signIn" -> boolean,
+    "enterInManually" -> boolean
+  )
+
+  val signInQuestionForm: Form[SignInQuestion] = {
+    Form(mapping(
+      "signInOption" -> signInTuple
+        .verifying(areBothSelected("ssttp.eligibility.form.sign_in_question.only-one"))
+        .verifying(atLeastOneRequired("ssttp.eligibility.form.sign_in_question.required"))
+    )(signInOption => SignInQuestion(signInOption._1, signInOption._2))
+    (signInOption => Some((signInOption.signIn, signInOption.enterInManually))))
+  }
   val typeOfTaxTuple = tuple(
     "hasSelfAssessmentDebt" -> boolean,
     "hasOtherDebt" -> boolean
   )
 
   val typeOfTaxForm = Form(mapping(
-    "type_of_tax" -> typeOfTaxTuple.verifying(atLeastOneRequired)
+    "type_of_tax" -> typeOfTaxTuple.verifying(atLeastOneRequired("ssttp.eligibility.form.type_of_tax.required"))
   )(type_of_tax => EligibilityTypeOfTax(type_of_tax._1, type_of_tax._2))
   (type_of_tax => Some((type_of_tax.hasSelfAssessmentDebt, type_of_tax.hasOtherDebt))))
 

@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.{SsttpFrontendConfig, TimeToPayController}
 import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm, EligibilityForm}
-import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, CalculatorInput, EligibilityTypeOfTax, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.core._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator.amounts_due_form
@@ -39,25 +39,6 @@ class SelfServiceTimeToPayController extends TimeToPayController {
   def submit: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.start())
   }
-  def getSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(_, _, _, _, typeOfTax@Some(_), _, _, _, _)) =>
-        Ok(sign_in_question(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), ttpData.taxpayer.isDefined))
-      case _ =>
-        Ok(service_start())
-    }
-  }
-  def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
-    //missaligment is the sign in page
-    //todo perform logic to go to sign in page or enter tax manually page
-    sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(_, _, _, _, typeOfTax@Some(_), _, _, _, _)) =>
-        Redirect(routes.ArrangementController.determineMisalignment())
-      case _ =>
-        Ok(service_start())
-    }
-  }
-
 
   def getTtpCallUs: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
