@@ -14,6 +14,7 @@ POST        /eligibility/existing-ttp                         @uk.gov.hmrc.selfs
 
 # SignInQuestion
 GET         /sign-in-question                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getSignInQuestion()
+POST        /sign-in-question                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.submitSignInQuestion()
 
 # Calculator
 GET         /calculator                                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.start()

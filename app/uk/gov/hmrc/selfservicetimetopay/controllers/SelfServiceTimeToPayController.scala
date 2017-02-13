@@ -19,11 +19,13 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.{SsttpFrontendConfig, TimeToPayController}
 import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm, EligibilityForm}
-import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, CalculatorInput, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, CalculatorInput, EligibilityTypeOfTax, TTPSubmission}
 import views.html.selfservicetimetopay.core._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator.amounts_due_form
 import views.html.selfservicetimetopay.eligibility.type_of_tax_form
+
+import scala.concurrent.Future
 
 class SelfServiceTimeToPayController extends TimeToPayController {
 
@@ -45,6 +47,17 @@ class SelfServiceTimeToPayController extends TimeToPayController {
         Ok(service_start())
     }
   }
+  def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
+    //missaligment is the sign in page
+    //todo perform logic to go to sign in page or enter tax manually page
+    sessionCache.get.map {
+      case Some(ttpData@TTPSubmission(_, _, _, _, typeOfTax@Some(_), _, _, _, _)) =>
+        Redirect(routes.ArrangementController.determineMisalignment())
+      case _ =>
+        Ok(service_start())
+    }
+  }
+
 
   def getTtpCallUs: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {

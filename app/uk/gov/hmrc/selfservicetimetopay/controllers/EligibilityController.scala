@@ -22,6 +22,7 @@ import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.html.selfservicetimetopay.core.sign_in_question
 import views.html.selfservicetimetopay.eligibility._
 
 import scala.concurrent.Future
@@ -72,10 +73,11 @@ class EligibilityController extends TimeToPayController {
           validFormData match {
             case EligibilityExistingTTP(Some(false)) =>
               authConnector.currentAuthority.map[Result] { authority =>
+                //todo Do I leave this here?
                 Redirect(routes.ArrangementController.determineMisalignment())
               }.recover { case e: Throwable =>
                 Logger.info(s"${e.getMessage}")
-                Redirect(routes.CalculatorController.start())
+                Redirect(routes.SelfServiceTimeToPayController.getSignInQuestion())
               }
             case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
           }
