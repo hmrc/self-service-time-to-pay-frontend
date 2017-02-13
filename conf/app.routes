@@ -23,6 +23,8 @@ POST        /calculator/amounts-due/remove                    @uk.gov.hmrc.selfs
 # submit page with amount(s) due
 POST        /calculator/amounts-due                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitAmountsDue()
 GET         /calculator/amounts-due-summary                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getEnterAllAmountsQuestion()
+GET         /calculator/what-you-owe-date                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getDebitDate()
+POST        /calculator/what-you-owe-date                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitDebitDate()
 GET         /calculator/what-you-owe-amount                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getAmountOwed()
 POST        /calculator/what-you-owe-amount                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitAmountOwed()
 GET         /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentToday()

@@ -27,7 +27,7 @@ case class TTPSubmission(schedule: Option[CalculatorPaymentSchedule] = None,
                          calculatorData: CalculatorInput = CalculatorInput.initial,
                          durationMonths: Option[Int] = Some(3),
                          eligibilityStatus: Option[EligibilityStatus] = None,
-                         debtDate: Option[LocalDate] = None) {
+                         debitDate: Option[LocalDate] = None) {
 
   def arrangementDirectDebit: Option[ArrangementDirectDebit] = bankDetails.map(f => ArrangementDirectDebit.from(f))
 }
