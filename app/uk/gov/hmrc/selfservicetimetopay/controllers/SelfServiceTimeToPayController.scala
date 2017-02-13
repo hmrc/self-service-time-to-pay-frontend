@@ -40,9 +40,9 @@ class SelfServiceTimeToPayController extends TimeToPayController {
   def getSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, typeOfTax@Some(_), _, _, _, _)) =>
-        //todo if their signed in what do we do?
         Ok(sign_in_question(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), ttpData.taxpayer.isDefined))
-      case _ => Ok(sign_in_question(EligibilityForm.typeOfTaxForm))
+      case _ =>
+        Ok(service_start())
     }
   }
 
