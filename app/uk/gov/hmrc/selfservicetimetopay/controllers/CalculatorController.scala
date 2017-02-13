@@ -238,9 +238,9 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     Logger.info("method called")
     //todo do this right!
     sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(tp), _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _)) =>
+      case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(tp), _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _,_)) =>
          Ok(entered_all_amounts_q(debits, schedule))
-      case Some(TTPSubmission(Some(schedule), _, _, None, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _)) =>
+      case Some(TTPSubmission(Some(schedule), _, _, None, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
         Ok(entered_all_amounts_q(debits, schedule))
       case _ =>
         Logger.info("3")
