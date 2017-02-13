@@ -100,6 +100,14 @@ object CalculatorForm {
     )(text => CalculatorPaymentToday(text))(bd => Some(bd.amount.toString)))
   }
 
+  def createSinglePaymentForm(): Form[CalculatorSinglePayment] = {
+    Form(mapping(
+      "amount" -> text
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-owed", { i: String => (i != null) && (i.isEmpty || Try(BigDecimal(i)).isSuccess)})
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.nonnegitive", a => a.isEmpty || BigDecimal(a) >= 0)
+    )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
+  }
+
   val minMonths = 2
   val maxMonths = 11
 

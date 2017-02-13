@@ -1,0 +1,20 @@
+@import selfservicetimetopay.helpers.forms.{currencyinput, form, formErrorSummary, submit}
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorSinglePayment
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
+@(dataForm:Form[CalculatorSinglePayment], debitDueDate: String)(implicit request: Request[_])
+
+@selfservicetimetopay.main(
+    title = Messages("ssttp.calculator.form.what-you-owe-amount.title1")
+){
+    <h1>@Messages("ssttp.calculator.form.what-you-owe-amount.title1")
+    <br>@Messages("ssttp.calculator.form.what-you-owe-amount.title2", debitDueDate)</h1>
+    @form(routes.CalculatorController.submitAmountOwed(), 'class -> "group") {
+        @formErrorSummary(Messages("ssttp.calculator.form.what-you-owe-amount.error.summary.title"), dataForm, Seq.empty)
+        @currencyinput(dataForm("amount"),
+            '_inputClass -> "input--small input--no-spinner")
+        <p>
+        @submit(){@Messages("ssttp.calculator.form.what-you-owe-amount.continue")}
+        </p>
+    }
+}

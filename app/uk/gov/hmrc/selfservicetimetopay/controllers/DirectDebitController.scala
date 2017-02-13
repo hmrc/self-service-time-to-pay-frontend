@@ -35,7 +35,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getDirectDebit: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer), _, _, calcData, _, _))
+        case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer), _, _, calcData, _, _, _))
           if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
           Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, submission.taxpayer.isDefined)))
         case _ => throw new RuntimeException("Invalid request submitted")
@@ -45,7 +45,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getDirectDebitAssistance: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _, _)) =>
+        case Some(submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer@Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
           Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, submission.taxpayer.isDefined)))
         case _ => throw new RuntimeException("No data found")
       }
@@ -54,7 +54,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getDirectDebitError: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case Some(submission@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _)) =>
+        case Some(submission@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
           Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, submission.taxpayer.isDefined,
             showErrorNotification = true)))
         case _ => throw new RuntimeException("No data found")
@@ -64,7 +64,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getDirectDebitConfirmation: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case Some(submission@TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _)) =>
+        case Some(submission@TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _, _)) =>
           Future.successful(Ok(direct_debit_confirmation(submission.calculatorData.debits,
             schedule, submission.arrangementDirectDebit.get, submission.taxpayer.isDefined)))
         case _ =>
@@ -76,7 +76,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def getBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case Some(TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _, _)) =>
+        case Some(TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _, _, _)) =>
           Future.successful(Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction, loggedIn = true)))
         case _ => throw new RuntimeException("No data found")
       }
@@ -85,7 +85,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
   def submitBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case Some(ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _, _)) =>
+        case Some(ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _, _, _)) =>
           existingBankAccountForm.bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, existingDDBanks.directDebitInstruction))),
             validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit) match {
