@@ -100,12 +100,11 @@ object CalculatorForm {
     )(text => CalculatorPaymentToday(text))(bd => Some(bd.amount.toString)))
   }
 
-  def createSinglePaymentForm(totalDue: BigDecimal): Form[CalculatorSinglePayment] = {
+  def createSinglePaymentForm(): Form[CalculatorSinglePayment] = {
     Form(mapping(
       "amount" -> text
-        .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => (i != null) && (i.isEmpty || Try(BigDecimal(i)).isSuccess)})
-        .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", a => a.isEmpty || BigDecimal(a).setScale(2, RoundingMode.HALF_UP) < totalDue)
-        .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", a => a.isEmpty || BigDecimal(a) >= 0)
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-owed", { i: String => (i != null) && (i.isEmpty || Try(BigDecimal(i)).isSuccess)})
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.nonnegitive", a => a.isEmpty || BigDecimal(a) >= 0)
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
 
