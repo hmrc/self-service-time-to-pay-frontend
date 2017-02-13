@@ -1,0 +1,31 @@
+@import selfservicetimetopay.helpers.forms.{numbericdateinput, form, formErrorSummary, submit}
+@import selfservicetimetopay.helpers.message_list
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.models.DebitDueDate
+
+@(dataForm:Form[DebitDueDate])(implicit request: Request[_])
+
+@selfservicetimetopay.main(
+    title = Messages("ssttp.calculator.form.what-you-owe-date.title")
+){
+    <h1>@Messages("ssttp.calculator.form.what-you-owe-date.title")</h1>
+    <span class="form-hint form-hint">@Messages("ssttp.calculator.form.what-you-owe-date.example")</span>
+    @form(routes.CalculatorController.submitDebitDate(), 'class -> "group") {
+        @formErrorSummary(Messages("ssttp.calculator.form.what-you-owe-date.error.summary.title"), dataForm, Seq.empty)
+        @numbericdateinput("dueBy", dataForm, dataForm("dueBy.dueByYear"), dataForm("dueBy.dueByMonth"), dataForm("dueBy.dueByDay"),
+            'dayLabel -> Messages("ssttp.calculator.form.what-you-owe-date.when_due.question.day"),
+            'monthLabel -> Messages("ssttp.calculator.form.what-you-owe-date.when_due.question.month"),
+            'yearLabel -> Messages("ssttp.calculator.form.what-you-owe-date.when_due.question.year"),
+            '_inputGroupClass -> "gutter-left",
+            '_inputClass -> "input--small input--no-spinner")
+        <details class="trackedDetails" id="you-may-owe-more-than-one-amount">
+            <summary>@Messages("ssttp.calculator.form.what-you-owe-date.summary.title")</summary>
+            <p>@Messages("ssttp.calculator.form.what-you-owe-date.info.header")</p>
+            @message_list(Some("bullets"), "ssttp.calculator.form.what-you-owe-date.info.list")
+            <p>@Messages("ssttp.calculator.form.what-you-owe-date.info.advice")</p>
+        </details>
+        <p>
+        @submit(){@Messages("ssttp.calculator.form.what-you-owe-amount.continue")}
+        </p>
+    }
+}

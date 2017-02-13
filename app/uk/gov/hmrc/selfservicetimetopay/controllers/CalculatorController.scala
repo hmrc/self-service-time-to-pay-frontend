@@ -34,6 +34,29 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     Redirect(routes.CalculatorController.getAmountsDue())
   }
 
+  def getDebitDate: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map[Result] {
+      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _)) =>
+        val dataForm = CalculatorForm.createDebitDateForm()
+        Ok(what_you_owe_date(dataForm))
+      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
+    }
+  }
+
+  def submitDebitDate: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map[Result] {
+      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, _, _, _, None)) =>
+        CalculatorForm.createDebitDateForm().bindFromRequest().fold(
+          formWithErrors => BadRequest(what_you_owe_date(formWithErrors)),
+          validFormData => {
+            sessionCache.put(ttpData.copy(debitDate = Some(LocalDate.of(validFormData.dueByYear, validFormData.dueByMonth, validFormData.duebyDay))))
+            Redirect(routes.CalculatorController.getAmountOwed())
+          }
+        )
+      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
+    }
+  }
+
   def getAmountOwed: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map[Result] {
       case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, Some(debitDate))) =>
@@ -45,15 +68,13 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def submitAmountOwed: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map[Result] {
-      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, Some(debitDate))) =>
+      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, Some(debtDate))) =>
         CalculatorForm.createSinglePaymentForm().bindFromRequest().fold(
-          formWithErrors => {
-            BadRequest(what_you_owe_amount(formWithErrors, debitDate.toString))
-          },
+          formWithErrors => BadRequest(what_you_owe_amount(formWithErrors, debtDate.toString)),
           validFormData => {
             sessionCache.put(ttpData.copy(
-              calculatorData = ttpData.calculatorData.copy(debits :+ Debit(amount = validFormData.amount, dueDate = debitDate)),
-              debtDate = None))
+              calculatorData = ttpData.calculatorData.copy(debits :+ Debit(amount = validFormData.amount, dueDate = debtDate)),
+              debitDate = None))
             Redirect(routes.CalculatorController.getAmountsDue())
           }
         )
