@@ -10,7 +10,8 @@ Entered all amounts question page
 @(debits:Seq[Debit], schedule: CalculatorPaymentSchedule,signedIn: Boolean = false)(implicit request: Request[_])
 @import selfservicetimetopay.partials.{payment_schedule_editable, gaDoCheckout}
 @import selfservicetimetopay.helpers.forms.{form , submit}
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.controllers.{routes => localRoutes}
+@import uk.gov.hmrc.selfservicetimetopay.controllers._
 @gaCheckoutCode = {
 @gaDoCheckout(debits = debits,
 step = 1,
@@ -31,7 +32,7 @@ loggedIn = signedIn
 </header>
 <section>
     @payment_schedule_editable(schedule)
-    <p><a href="https://www.gov.uk/done/pay-bill-in-instalments" class="button--secondary flush--sides">@Messages("ssttp.calculator.form.entered_all_amounts_question.add-another-amount-label")</a></p>
+    <p><a href="@localRoutes.CalculatorController.getDebitDate()" class="button--secondary flush--sides">@Messages("ssttp.calculator.form.entered_all_amounts_question.add-another-amount-label")</a></p>
     <p>
         @form(routes.ArrangementController.determineMisalignment()){
         @submit(){@Messages("ssttp.calculator.results.auth.continue.link")}
