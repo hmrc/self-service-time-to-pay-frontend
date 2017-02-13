@@ -92,7 +92,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def getAmountsDueDate: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) =>
+      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
         Ok(amount_due_date_form(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm(debits.map(_.amount).sum), ttpData.taxpayer.isDefined))
       case _ => Ok(amount_due_date_form(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm))
     }
@@ -160,7 +160,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         Future.successful(Ok(calculate_instalments_form(schedule, Some(sa.debits),
           CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, ttpData.taxpayer.isDefined)))
-      case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+      case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _))if debits.nonEmpty  =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         Future.successful(Ok(calculate_instalments_form(schedule, None,
           CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, ttpData.taxpayer.isDefined)))
