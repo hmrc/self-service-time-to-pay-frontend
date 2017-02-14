@@ -197,8 +197,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       "enterInManually" -> "true"
     )
 
-
-    "Successfully redirect to the amounts due page when sign in page is set to  true " in {
+    "Successfully redirect to the amounts due page when sign in page is set to true" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any()))
