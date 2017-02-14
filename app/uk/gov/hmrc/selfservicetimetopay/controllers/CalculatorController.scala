@@ -133,11 +133,12 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
   def submitRemoveAmountDue: Action[AnyContent] = Action.async { implicit request =>
     val index = CalculatorForm.removeAmountDueForm.bindFromRequest()
     sessionCache.get.map {
+      //todo if we remove the last debit we need to redirect to the due date page
       case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
         ttpSubmission.copy(calculatorData = cd.copy(debits = debits.patch(index.value.get, Nil, 1)))
       case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty))
     }.flatMap[Result] { data: TTPSubmission =>
-      sessionCache.put(data).map(_ => Redirect(routes.CalculatorController.getAmountsDue()))
+      sessionCache.put(data).map(_ => Redirect(routes.CalculatorController.getWhatYouOweReview()))
     }
   }
 
@@ -160,7 +161,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         Future.successful(Ok(calculate_instalments_form(schedule, Some(sa.debits),
           CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, ttpData.taxpayer.isDefined)))
-      case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _ , _))if debits.nonEmpty  =>
+      case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         Future.successful(Ok(calculate_instalments_form(schedule, None,
           CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, ttpData.taxpayer.isDefined)))
@@ -263,18 +264,13 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         Redirect(routes.SelfServiceTimeToPayController.start())
     }
   }
-  def getEnterAllAmountsQuestion: Action[AnyContent] = Action.async { implicit request =>
-    Logger.info("method called")
-    //todo do this right!
+
+  def getWhatYouOweReview: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(tp), _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _,_)) =>
-         Ok(entered_all_amounts_q(debits, schedule))
-      case Some(TTPSubmission(Some(schedule), _, _, None, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
-        Ok(entered_all_amounts_q(debits, schedule))
-      case _ =>
-        Logger.info("3")
-        Logger.info("No TTP Data match in getPaymentToday")
-        Redirect(routes.SelfServiceTimeToPayController.start())
+      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)),
+      Some(EligibilityExistingTTP(Some(false))), CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+        Ok(what_you_owe_review(debits))
+      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
     }
   }
 
