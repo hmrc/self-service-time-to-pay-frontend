@@ -132,6 +132,18 @@ ssttp.calculator.form.amounts_due.due_by.not-valid-day=You need to enter a valid
 ssttp.calculator.form.amounts_due.due_by.not-valid-date=You need to enter a valid date
 ssttp.error.summary.title=Something you''ve entered isn''t valid
 
+ssttp.calculator.form.amounts_due_date_form.title=What's the due date of the amount you owe?
+ssttp.calculator.form.amounts_due_date_form.example=Example, 31 1 2017
+ssttp.calculator.form.amounts_due_date_form.info.title=You may owe more then one amount
+ssttp.calculator.form.amounts_due_date_form.info.header=You need to include:
+ssttp.calculator.form.amounts_due_date_form.info.list.1=all payments on account
+ssttp.calculator.form.amounts_due_date_form.info.list.2=any penalties you have
+ssttp.calculator.form.amounts_due_date_form.info.list.3=any unpaid amounts from previous tax years
+ssttp.calculator.form.amounts_due_date_form.info.advice=You can add more later if you need to
+ssttp.calculator.form.amounts_due_date_form.info.continue=Continue
+ssttp.calculator.form.amounts_due_date_form.info.day=Day
+ssttp.calculator.form.amounts_due_date_form.info.month=Month
+ssttp.calculator.form.amounts_due_date_form.info.year=Year
 
 ssttp.calculator.misalignment-page.title=Check the amounts you owe
 ssttp.calculator.misalignment-page.subtitle=The figures you entered don’t match the figures in your tax account.

@@ -1,0 +1,44 @@
+@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, Debit}
+
+@(amountsDue: CalculatorAmountsDue, dataForm: Form[Debit], loggedIn: Boolean = false)(implicit request: Request[_])
+
+@import java.time.format.DateTimeFormatter
+@import java.util.Locale
+@import selfservicetimetopay.helpers.forms.{dateDueInput, form, formErrorSummary, submit}
+@import selfservicetimetopay.helpers.message_list
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
+@selfservicetimetopay.main(
+title = Messages("ssttp.calculator.form.amounts_due_date_form.title"),
+sidebarLinks = None,
+loggedIn = loggedIn
+){
+<header class="page-header text">
+    <h1>@Messages("ssttp.calculator.form.amounts_due_date_form.title")</h1>
+</header>
+@formErrorSummary(Messages("ssttp.calculator.form.amounts_due.error.summary.title"), dataForm, Seq.empty)
+<span class="form-hint form-hint">@Messages("ssttp.calculator.form.amounts_due_date_form.example")</span>
+@defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
+}
+@form(routes.CalculatorController.submitAddAmountDue(), 'class -> "group") {
+<div class="form-field--group input-amount-date">
+            @dateDueInput("dueBy", dataForm, dataForm("dueBy.dueByYear"), dataForm("dueBy.dueByMonth"), dataForm("dueBy.dueByDay"),
+            'dayLabel -> Messages("ssttp.calculator.form.amounts_due_date_form.info.day"),
+            'monthLabel -> Messages("ssttp.calculator.form.amounts_due_date_form.info.month"),
+            'yearLabel -> Messages("ssttp.calculator.form.amounts_due_date_form.info.year"),
+            '_inputGroupClass -> "gutter-left",
+            '_hideErrors -> "true"
+            )
+</div>
+}
+<details class="trackedDetails" id="how-we-calculate-interest">
+    <summary>@Messages("ssttp.calculator.form.amounts_due_date_form.info.title")</summary>
+        <p>@Messages("ssttp.calculator.form.amounts_due_date_form.info.header")</p>
+        @message_list(Some("bullets"), "ssttp.calculator.form.amounts_due_date_form.info.list.")
+        <p>@Messages("ssttp.calculator.form.amounts_due_date_form.info.advice")</p>
+</details>
+@form(routes.CalculatorController.submitAmountsDue(), 'class -> "group", 'id -> "amountsDueForm") {
+@submit(){@Messages("ssttp.calculator.form.amounts_due_date_form.info.continue")}
+}
+<p><a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.calculator.form.back")</a></p>
+}

@@ -18,6 +18,7 @@ POST        /eligibility/sign-in-question                     @uk.gov.hmrc.selfs
 # Calculator
 GET         /calculator                                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.start()
 GET         /calculator/amounts-due                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getAmountsDue()
+GET         /calculator/amounts-due-date                      @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getAmountsDueDate()
 # add a single amount
 POST        /calculator/amounts-due/add                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitAddAmountDue()
 # remove a single amount

@@ -42,6 +42,14 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     }
   }
 
+  def getAmountsDueDate: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) =>
+        Ok(amount_due_date_form(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm(debits.map(_.amount).sum), ttpData.taxpayer.isDefined))
+      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
+    }
+  }
+
   def submitAddAmountDue: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap { ttpData =>
       val totalDebits = ttpData match {
