@@ -24,6 +24,8 @@ POST        /calculator/amounts-due/add                       @uk.gov.hmrc.selfs
 POST        /calculator/amounts-due/remove                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitRemoveAmountDue()
 # submit page with amount(s) due
 POST        /calculator/amounts-due                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitAmountsDue()
+GET         /calculator/payment-today-question                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPayTodayQuestionFrom()
+POST        /calculator/payment-today-question                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPayTodayQuestion()
 GET         /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentToday()
 POST        /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPaymentToday()
 GET         /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalments(months:Option[Int])

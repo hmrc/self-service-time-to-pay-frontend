@@ -151,11 +151,18 @@ ssttp.calculator.misalignment-page.query.label=Find out about an amount in your 
 ssttp.calculator.misalignment-page.query.number=0300 200 3822
 
 ssttp.calculator.form.payment_today.title=How much can you afford to pay now?
-
 ssttp.calculator.form.payment_today.error.summary.title=You haven''t entered an amount
 ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required=Enter an amount of £0.00 or more
 ssttp.calculator.form.payment_today.amount.nonnegitive=Enter an amount of £0.00 or more
+
+ssttp.calculator.form.payment_today_question.title=Would you like to make a payment today?
+ssttp.calculator.form.payment_today_question.error.summary.title=Would you like to make a payment today?
+ssttp.calculator.form.payment_today_question.required=Please select an answer
+ssttp.calculator.form.payment_today_question.yes_label=yes
+ssttp.calculator.form.payment_today_question.no_label=no
+ssttp.calculatorform.payment_today_question.why_pay_today.title=Why make a payment today?
+ssttp.calculatorform.payment_today_question.why_pay_today.info=You''ll reduce the amount you need to pay per month and the total interest you’ll be charged.
 
 ssttp.calculator.form.duration.months.required=Enter a valid number of months
 ssttp.calculator.form.duration.months.greater-than=Number of months must be 2 or more

@@ -118,4 +118,9 @@ object CalculatorForm {
       .verifying(greaterThan, lessThan)
     )(months => CalculatorDuration.apply(tryToInt(months)))(calculatorDuration => calculatorDuration.months.map(m => m.toString)))
   }
+
+  val payTodayForm: Form[PayTodayQuestion] = Form(mapping(
+        "paytoday" -> optional(boolean).verifying("ssttp.eligibility.form.existing_ttp.required", _.nonEmpty)
+    )(PayTodayQuestion.apply)(PayTodayQuestion.unapply))
+
 }
