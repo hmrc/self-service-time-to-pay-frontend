@@ -57,8 +57,15 @@ class EligibilityFormSpec extends PlaySpec {
   }
   "EligibilityForm.signInQuestionForm" must {
 
-    "return no errors with valid data" in {
+    "return no errors with valid data when enter in manually is selected" in {
       val postData = Json.obj("signInOption.signIn" -> "false","signInOption.enterInManually" -> "true")
+
+      val validatedForm = EligibilityForm.signInQuestionForm.bind(postData)
+
+      assert(validatedForm.errors.isEmpty)
+    }
+    "return no errors with valid data when sign is selected" in {
+      val postData = Json.obj("signInOption.signIn" -> "true","signInOption.enterInManually" -> "false")
 
       val validatedForm = EligibilityForm.signInQuestionForm.bind(postData)
 
