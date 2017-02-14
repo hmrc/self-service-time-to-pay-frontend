@@ -1,6 +1,6 @@
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorSinglePayment
-
+@import selfservicetimetopay.helpers.forms.{ form, formErrorSummary, submit, currencyinput}
 @(dataForm: Form[CalculatorSinglePayment], debitDueDate: String)(implicit request: Request[_])
 
 @selfservicetimetopay.main(
