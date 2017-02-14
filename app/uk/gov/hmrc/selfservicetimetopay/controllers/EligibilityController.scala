@@ -56,7 +56,7 @@ class EligibilityController extends TimeToPayController {
 
   def getSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _)) =>
+      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _)) =>
         val dataForm = EligibilityForm.signInQuestionForm
         Ok(sign_in_question(dataForm))
       case _ => Redirect(routes.SelfServiceTimeToPayController.start())
@@ -65,13 +65,12 @@ class EligibilityController extends TimeToPayController {
 
   def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _)) =>
+      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _)) =>
         EligibilityForm.signInQuestionForm.bindFromRequest().fold(
           formWithErrors => BadRequest(sign_in_question(formWithErrors)),
           validFormData => validFormData match {
             case SignInQuestion(true, false) => Redirect(routes.ArrangementController.determineMisalignment())
-            case SignInQuestion(false, true) => //todo put connection to due date of debt
-              Redirect(routes.SelfServiceTimeToPayController.start())
+            case SignInQuestion(false, true) => Redirect(routes.CalculatorController.getDebitDate())
           }
         )
       case _ => Redirect(routes.SelfServiceTimeToPayController.start())
