@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel}
-import uk.gov.hmrc.play.http.SessionKeys
+import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
@@ -179,6 +179,17 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       status(response) shouldBe BAD_REQUEST
     }
-  }
+    import play.api.http.Status
+    "Successfully redirect to the start page when missing submission data for the sign in question page" in {
+            implicit val hc = new HeaderCarrier
 
+             when(mockSessionCache.get(any(), any()))
+             .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+
+              val result = await(controller.getSignInQuestion.apply(FakeRequest()
+               .withCookies(sessionProvider.createTtpCookie())))
+              status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
+          }
+  }
 }
