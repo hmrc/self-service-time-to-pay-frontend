@@ -224,8 +224,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
               result.flatMap {
                 _.fold(error => {
                   Logger.error( s"Exception: ${error.code} + ${error.message}")
-                  sessionCache.remove()
-                  Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
+                  Future.successful(Redirect(routes.ArrangementController.applicationComplete()))
                 }, _ => applicationSuccessful)
               }
             })

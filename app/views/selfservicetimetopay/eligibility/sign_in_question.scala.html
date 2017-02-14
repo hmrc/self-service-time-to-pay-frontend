@@ -1,0 +1,34 @@
+@*
+Ask the user if they want to sign in at this step
+*@
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import selfservicetimetopay.helpers.forms._
+@import uk.gov.hmrc.selfservicetimetopay.models.SignInQuestion
+@(dataForm: Form[SignInQuestion])(implicit request: Request[_])
+    @selfservicetimetopay.main(
+        title = Messages("ssttp.eligibility.form.sign_in_question.title")
+    ) {
+        <header class="page-header text">
+            <h1>@Messages("ssttp.eligibility.form.sign_in_question.title")</h1>
+        </header>
+        @form(routes.EligibilityController.submitSignInQuestion(), 'class -> "group") {
+            @formErrorSummary(Messages("ssttp.eligibility.form.sign_in_question.error.summary.title"), dataForm, Seq.empty)
+            @fieldset(dataForm, "signInOption", '_modifierClass -> "form-field-group") {
+                @checkbox(field = dataForm("signInOption.signIn"),
+                    label = Option(Html(Messages("ssttp.eligibility.form.sign_in_question.yes_label"))),
+                    '_modifierClass -> "--single",
+                    '_labelClass -> "block-label"
+                )
+                @checkbox(field = dataForm("signInOption.enterInManually"),
+                    label = Option(Html(Messages("ssttp.eligibility.form.sign_in_question.no_label"))),
+                    '_modifierClass -> "--single",
+                    '_labelClass -> "block-label"
+                )
+            }
+            @submit() {
+                @Messages("ssttp.eligibility.form.sign_in_question.continue")
+            }
+        }
+        <p><a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.eligibility.form.sign_in_question.back")</a></p>
+    }
+

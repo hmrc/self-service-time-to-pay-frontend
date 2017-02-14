@@ -21,6 +21,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
+import play.api.http.Status
 import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
@@ -29,11 +30,10 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel}
-import uk.gov.hmrc.play.http.SessionKeys
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
@@ -44,7 +44,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
-  val mockAuthConnector: AuthConnector= mock[AuthConnector]
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   val typeOfTaxForm = Seq(
     "type_of_tax.hasSelfAssessmentDebt" -> "true",
@@ -84,6 +84,14 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       status(response) shouldBe SEE_OTHER
 
       redirectLocation(response).get shouldBe controllers.routes.EligibilityController.getTypeOfTax().url
+    }
+    "successfully display the sign in option page" in {
+      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      val response: Result = controller.getSignInQuestion.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+
+      status(response) shouldBe OK
+
+      bodyOf(response) should include(Messages("ssttp.eligibility.form.sign_in_question.title"))
     }
 
     "successfully display the type of tax page" in {
@@ -170,6 +178,37 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       val response: Future[Result] = await(controller.submitExistingTtp.apply(request))
 
       status(response) shouldBe BAD_REQUEST
+    }
+
+    "Successfully redirect to the start page when missing submission data for the sign in question page" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+
+      val result = await(controller.getSignInQuestion.apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    }
+
+    val signInPagePicked = Seq(
+      "signIn" -> "false",
+      "enterInManually" -> "true"
+    )
+
+    "Successfully redirect to the amounts due page when sign in page is set to true" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission)))
+
+      val result = await(controller.submitSignInQuestion().apply(FakeRequest()
+        .withFormUrlEncodedBody("signInOption.signIn" -> "true", "signInOption.enterInManually" -> "true"))
+        .withCookies(sessionProvider.createTtpCookie()))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
     }
   }
 

@@ -95,6 +95,22 @@ class ArrangementControllerSpec extends UnitSpec
       redirectLocation(response).get shouldBe controllers.routes.ArrangementController.applicationComplete().url
     }
 
+    "return success and display the application complete page on successfully set up debit when DES call returns an error" in {
+
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission)))
+
+      when(ddConnector.createPaymentPlan(any(), any())(any())).thenReturn(Future.successful(Right(directDebitInstructionPaymentPlan)))
+
+      when(arrangementConnector.submitArrangements(any())(any())).thenReturn(Future.successful(Left(SubmissionError(504, "Timeout"))))
+
+      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()).withSession(SessionKeys.userId -> "someUserId"))
+
+      redirectLocation(response).get shouldBe controllers.routes.ArrangementController.applicationComplete().url
+    }
+
     "redirect to start if no data in session cache" in {
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(None))
