@@ -70,7 +70,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     "hasExistingTTP" -> "true"
   )
 
-  val controller = new EligibilityController() {
+  val mockEligibilityController = new EligibilityController() {
     override lazy val sessionCache = mockSessionCache
     override lazy val authConnector = mockAuthConnector
   }
@@ -86,7 +86,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val response: Result = controller.start.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+      val response: Result = mockEligibilityController.start.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
       status(response) shouldBe SEE_OTHER
       redirectLocation(response).get shouldBe controllers.routes.EligibilityController.getTypeOfTax().url
@@ -98,7 +98,8 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
-      val result = await(controller.getTypeOfTax.apply(FakeRequest()
+      val result = await(mockEligibilityController.getTypeOfTax
+        .apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe OK
@@ -111,7 +112,8 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = await(controller.getExistingTtp.apply(FakeRequest()
+      val result = await(mockEligibilityController.getExistingTtp
+        .apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe OK
@@ -123,10 +125,12 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
 
-      val result = await(controller.submitTypeOfTax().apply(FakeRequest()
-        .withFormUrlEncodedBody("type_of_tax.hasSelfAssessmentDebt" -> "true", "type_of_tax.hasOtherDebt" -> "false"))
-        .withCookies(sessionProvider.createTtpCookie()))
+      val result = await(mockEligibilityController.submitTypeOfTax()
+        .apply(FakeRequest().withFormUrlEncodedBody("type_of_tax.hasSelfAssessmentDebt" -> "true", "type_of_tax.hasOtherDebt" -> "false")
+        .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe routes.EligibilityController.getExistingTtp().url
@@ -137,10 +141,12 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
 
-      val result = await(controller.submitTypeOfTax.apply(FakeRequest()
-        .withFormUrlEncodedBody(bothTypeOfTaxForm: _*))
-        .withCookies(sessionProvider.createTtpCookie()))
+      val result = await(mockEligibilityController.submitTypeOfTax
+        .apply(FakeRequest().withFormUrlEncodedBody(bothTypeOfTaxForm: _*)
+        .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url
@@ -151,10 +157,12 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
 
-      val result = await(controller.submitTypeOfTax.apply(FakeRequest()
-        .withFormUrlEncodedBody(otherTaxForm: _*))
-        .withCookies(sessionProvider.createTtpCookie()))
+      val result = await(mockEligibilityController.submitTypeOfTax
+        .apply(FakeRequest().withFormUrlEncodedBody(otherTaxForm: _*)
+        .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url
@@ -167,10 +175,12 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
         .thenReturn(Some(Authority("", Accounts(), None, None, Strong, ConfidenceLevel.L200, None, None, None)))
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
 
-      val result = await(controller.submitExistingTtp.apply(FakeRequest()
-        .withFormUrlEncodedBody(falseExistingTtpForm: _*))
-        .withCookies(sessionProvider.createTtpCookie()))
+      val result = await(mockEligibilityController.submitExistingTtp
+        .apply(FakeRequest().withFormUrlEncodedBody(falseExistingTtpForm: _*)
+        .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe
@@ -182,10 +192,12 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
 
-      val result = await(controller.submitExistingTtp.apply(FakeRequest()
-        .withFormUrlEncodedBody(trueExistingTtpForm: _*))
-        .withCookies(sessionProvider.createTtpCookie()))
+      val result = await(mockEligibilityController.submitExistingTtp
+        .apply(FakeRequest().withFormUrlEncodedBody(trueExistingTtpForm: _*)
+        .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get shouldBe controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url
@@ -197,7 +209,8 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = await(controller.submitTypeOfTax.apply(FakeRequest()
+      val result = await(mockEligibilityController.submitTypeOfTax
+        .apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe BAD_REQUEST
@@ -209,7 +222,8 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = await(controller.submitExistingTtp.apply(FakeRequest()
+      val result = await(mockEligibilityController.submitExistingTtp
+        .apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe BAD_REQUEST
@@ -221,7 +235,8 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = await(controller.getSignInQuestion.apply(FakeRequest()
+      val result = await(mockEligibilityController.getSignInQuestion
+        .apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       bodyOf(result) should include(Messages("ssttp.eligibility.form.sign_in_question.title"))
@@ -234,7 +249,8 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
-      val result = await(controller.getSignInQuestion.apply(FakeRequest()
+      val result = await(mockEligibilityController.getSignInQuestion
+        .apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -248,7 +264,8 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = await(controller.submitSignInQuestion.apply(FakeRequest()
+      val result = await(mockEligibilityController.submitSignInQuestion
+        .apply(FakeRequest()
         .withFormUrlEncodedBody("signInOption.signIn" -> "false", "signInOption.enterInManually" -> "true")
         .withCookies(sessionProvider.createTtpCookie())))
 
@@ -263,7 +280,8 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = await(controller.submitSignInQuestion.apply(FakeRequest()
+      val result = await(mockEligibilityController.submitSignInQuestion
+        .apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.BAD_REQUEST
@@ -277,7 +295,8 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = await(controller.submitSignInQuestion.apply(FakeRequest()
+      val result = await(mockEligibilityController.submitSignInQuestion
+        .apply(FakeRequest()
         .withFormUrlEncodedBody("signInOption.signIn" -> "true", "signInOption.enterInManually" -> "true")
         .withCookies(sessionProvider.createTtpCookie())))
 
