@@ -45,7 +45,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def submitDebitDate: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map[Result] {
-      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, _, _, _, None)) =>
+      case Some(ttpData@TTPSubmission(_, _, _, _, _, _, _, _, _, _)) =>
         CalculatorForm.createDebitDateForm().bindFromRequest().fold(
           formWithErrors => BadRequest(what_you_owe_date(formWithErrors)),
           validFormData => {
