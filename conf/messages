@@ -109,8 +109,7 @@ ssttp.calculator.form.what-you-owe-amount.title1=How much is due on
 ssttp.calculator.form.what-you-owe-amount.title2={0}?
 ssttp.calculator.form.what-you-owe-amount.continue=Continue
 ssttp.calculator.form.what-you-owe-amount.error.summary.title=You haven''t entered an amount
-ssttp.calculator.form.what-you-owe-amount.amount.less-than-owed=You need to enter an amount less than the amount you owe
-ssttp.calculator.form.what-you-owe-amount.amount.nonnegitive=Enter an amount of £0.00 or more
+ssttp.calculator.form.what-you-owe-amount.amount.required=Enter an amount of £0.00 or more
 
 ssttp.calculator.form.what-you-owe-date.title=What''s the due date of the amount you owe?
 ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low=Year must be 1996 or later
