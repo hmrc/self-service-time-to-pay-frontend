@@ -18,9 +18,14 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.{SsttpFrontendConfig, TimeToPayController}
-import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm, EligibilityForm}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.core._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.html.selfservicetimetopay.calculator.amounts_due_form
+import views.html.selfservicetimetopay.eligibility.type_of_tax_form
+
+import scala.concurrent.Future
 
 class SelfServiceTimeToPayController extends TimeToPayController {
 
