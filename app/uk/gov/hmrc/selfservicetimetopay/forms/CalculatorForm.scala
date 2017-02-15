@@ -66,7 +66,7 @@ object CalculatorForm {
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-high", { i => i <= dueByYearMax })
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low", { i => i >= dueByYearMin }),
     "dueByMonth" -> number
-      .verifying("ssttp.calculator.form.what-you-owe.due_by.not-valid-month", { i => (i <= dueByMonthMax) && (i >= dueByMonthMin) }),
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i => (i <= dueByMonthMax) && (i >= dueByMonthMin) }),
     "dueByDay" -> number
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i => (i <= dueByDayMax) && (i >= dueByDayMin) })
   )
