@@ -1,0 +1,74 @@
+@*
+A data input field using Component Library Styles as  documented:
+Label: http://hmrc.github.io/assets-frontend/section-label.html
+Input http://hmrc.github.io/assets-frontend/section-text-input.html
+
+@param field Field The form field the input value represents
+@param args options arguments for the template
+    'label -> Text for the field label
+    'hint -> Hint for the combined date field group
+    'dayLabel -> Text to use for day field (default empty)
+    'monthLabel -> Text to use for month field (default empty)
+    'yearLabel -> Text to use for year field (default empty)
+    '_labelClass -> Label Modifier class
+    '_modifierClass -> Modifier class for the input class, includes:
+        input--xxsmall, input--xsmall, input--small,  input--normal,
+        input--fullwidth, input--no-spinner, input--cleared,
+        input--link
+    '_inputGroupClass -> Modifier class to apply to the group of all three date fields
+    '_hideErrors -> set to "true" to stop error messages being displayed
+*@
+@(name: String, frm:Form[_], yearField: Field, monthField: Field, dayField: Field, args: (Symbol, String)*)(implicit lang: Lang = Lang("en"))
+@import java.time.Month
+@import java.time.format.TextStyle
+@import views.html.helper.FieldElements
+@import selfservicetimetopay.helpers.forms.{formErrors, fieldset, fieldErrors, select, numberinput}
+@argsMap = @{ args.toMap }
+@dayElements = @{ new FieldElements(dayField.id, dayField, null, argsMap, lang) }
+@monthElements = @{ new FieldElements(monthField.id, monthField, null, argsMap, lang) }
+@yearElements = @{ new FieldElements(yearField.id, yearField, null, argsMap, lang) }
+@monthOptions = @{for(m <- 1 to 12) yield (m.toString, Month.of(m).getDisplayName(TextStyle.FULL, lang.toLocale))}
+@fieldsetErrorsClass = @{
+    var errorsClass = if(frm.error(name).nonEmpty){"soft--right "}else{""}
+    if(yearField.errors.nonEmpty || monthField.errors.nonEmpty || dayField.errors.nonEmpty) {
+        errorsClass += "form-field-group--error form-field--error"
+    }
+    errorsClass.trim
+}
+@fieldset(frm, name, '_modifierClass -> fieldsetErrorsClass){
+    @if(argsMap.get('label).isDefined){<legend>@argsMap.get('label)</legend>}
+    @if(argsMap.getOrElse('_hideErrors, "false").contentEquals("false")){@formErrors(frm, '_field -> name)}
+    <ul class="list--inline group">
+        <li>
+        @numberinput(dayField, 'label -> argsMap.getOrElse('dayLabel, ""),
+            'step -> 1,
+            '_modifierClass -> "form-field--inline",
+            '_labelClass -> "label--inline-tight",
+            '_inputClass -> "input--cleared input--xxsmall input--no-spinner",
+            '_hideErrors -> true,
+            '_required -> true)
+        </li>
+        <li>
+        @numberinput(monthField,'label -> argsMap.getOrElse('monthLabel, ""),
+            '_modifierClass -> "gutter-left form-field--inline",
+            'step -> 1,
+            '_labelClass -> "label--inline-tight",
+            '_inputClass -> "input--cleared input--xxsmall input--no-spinner",
+            '_hideErrors -> true,
+            '_required -> true)
+        </li>
+        <li>
+        @numberinput(yearField,
+            'label -> argsMap.getOrElse('yearLabel, ""),
+            'step -> 1,
+            '_labelClass -> "gutter-left label--inline-tight",
+            '_modifierClass -> "form-field--inline",
+            '_inputClass -> "input--cleared input--xsmall input--no-spinner",
+            '_hideErrors -> true,
+            '_required -> true)
+        </li>
+    </ul>
+    @if(argsMap.get('hint).isDefined) {
+        <div class="form-hint form-hint--small float--left">@argsMap.get('hint)</div>
+    }
+}

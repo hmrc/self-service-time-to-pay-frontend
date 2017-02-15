@@ -1,0 +1,37 @@
+@*
+Partial view to show list of direct debit payments in the the entered_all_amount_question form
+@param debits Seq[Debit] The debits being paid by this plan
+*@
+@import java.time.format.DateTimeFormatter
+@import java.util.Locale
+
+@import selfservicetimetopay.helpers.forms.{button, form}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@(debits: Seq[Debit])(implicit request: Request[_])
+@defining(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)) { formatter =>
+    <table>
+        <thead>
+            <tr>
+                <td><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.due-date")</strong></td>
+                <td><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.amount")</strong></td>
+                <td><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.remove")</strong></td>
+            </tr>
+        </thead>
+        <tbody>
+        @debits.zipWithIndex.map { case (debit, index) =>
+        <tr>
+            <td>@debit.dueDate.format(formatter)</td>
+            <td>@currency(debit.amount)</td>
+            @form(routes.CalculatorController.submitRemoveAmountDue()) {
+                <input type="hidden" name="index" value="@index" />
+                <td><p>@button('type -> "submit", '_modifierClass -> "button--secondary") {
+                    @Messages("ssttp.calculator.form.entered_all_amounts_question.remove-label")
+                }</p></td>
+            }
+        </tr>
+        }
+        </tbody>
+    </table>
+}
+

@@ -28,9 +28,9 @@ class CalculatorFormSpec extends PlaySpec {
 
     "return no errors with valid data " in {
       val postData = Json.obj("amount" -> "2000.05",
-            "dueBy.dueByDay" -> "20",
-            "dueBy.dueByMonth" -> "2",
-            "dueBy.dueByYear" -> "2017"
+        "dueBy.dueByDay" -> "20",
+        "dueBy.dueByMonth" -> "2",
+        "dueBy.dueByYear" -> "2017"
       )
 
       val validatedForm = CalculatorForm.amountDueForm.bind(postData)
@@ -181,6 +181,7 @@ class CalculatorFormSpec extends PlaySpec {
 
       assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.amounts_due.due_by.not-valid-day"))))
     }
+
     "payTodayForm return   errors when nothing is selected  when " in {
       val postData = Json.obj()
 
@@ -188,6 +189,7 @@ class CalculatorFormSpec extends PlaySpec {
 
       assert(validatedForm.errors.contains(FormError("paytoday", List("ssttp.calculator.form.payment_today_question.required"))))
     }
+
     "payTodayForm should return no errors when user does not select anything in " in {
       val postData = Json.obj("paytoday" -> "true")
 
@@ -195,6 +197,5 @@ class CalculatorFormSpec extends PlaySpec {
 
       assert(validatedForm.errors.isEmpty)
     }
-
   }
 }
