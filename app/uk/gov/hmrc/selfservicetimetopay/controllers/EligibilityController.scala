@@ -69,8 +69,8 @@ class EligibilityController extends TimeToPayController {
         EligibilityForm.signInQuestionForm.bindFromRequest().fold(
           formWithErrors => BadRequest(sign_in_question(formWithErrors)),
           validFormData => validFormData match {
-            case SignInQuestion(true, false) => Redirect(routes.ArrangementController.determineMisalignment())
-            case SignInQuestion(false, true) => //todo put connection to due date of debt
+            case SignInQuestion(Some(true)) => Redirect(routes.ArrangementController.determineMisalignment())
+            case SignInQuestion(Some(false)) => //todo put connection to due date of debt
               Redirect(routes.SelfServiceTimeToPayController.start())
           }
         )
