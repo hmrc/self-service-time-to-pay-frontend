@@ -78,7 +78,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
   def submitAmountOwed: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.map[Result] {
-        case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, Some(debitDate))) =>
+        case Some(ttpData@TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), CalculatorInput(debits, _, _, _, _, _), _, _, Some(debitDate))) =>
           CalculatorForm.createSinglePaymentForm().bindFromRequest().fold(
             formWithErrors => BadRequest(what_you_owe_amount(formWithErrors, debitDate.toString)),
             validFormData => {
