@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.mvc.{Action, _}
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
-import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm}
+import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator._
