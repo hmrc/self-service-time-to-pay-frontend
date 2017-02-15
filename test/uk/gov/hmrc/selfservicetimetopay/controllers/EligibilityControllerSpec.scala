@@ -258,7 +258,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
-    "Successfully submit the sign in question page with valid form data" in {
+    "Redirect to getDebitDate page if user selects false" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any()))
@@ -266,11 +266,27 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
       val result = await(mockEligibilityController.submitSignInQuestion
         .apply(FakeRequest()
-        .withFormUrlEncodedBody("signInOption.signIn" -> "false", "signInOption.enterInManually" -> "true")
+        .withFormUrlEncodedBody("signIn" -> "false")
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get shouldBe routes.CalculatorController.getDebitDate().url
+      verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
+    "Redirect to sign in page if user selects true" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
+
+      val result = await(mockEligibilityController.submitSignInQuestion
+        .apply(FakeRequest()
+          .withFormUrlEncodedBody("signIn" -> "true")
+          .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.ArrangementController.determineMisalignment().url
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
