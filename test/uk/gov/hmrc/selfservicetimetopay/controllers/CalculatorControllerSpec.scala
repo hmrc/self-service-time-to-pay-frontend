@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector, SessionCacheConnector}
+import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
@@ -188,6 +188,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
     }
 
     "Return 303 for submitPayTodayQuestion when eligibilityExistingTtp is missing" in {
@@ -200,6 +201,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
     }
 
     "Return 303 for submitPayTodayQuestion when eligibilityTypeOfTax is missing" in {
@@ -212,9 +214,10 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
     }
 
-    "Return 303 for submitPayTodayQuestion when there is no debits is missing" in {
+    "Return 303 for submitPayTodayQuestion when there are no debits" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any()))
@@ -224,9 +227,10 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
     }
 
-    "Return 200 for submitPayTodayQuestion it has debits eligibilityTypeOfTax and eligibilityExistingTtp" in {
+    "Return 200 for submitPayTodayQuestion if there are debits and valid eligibility answers" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any()))
@@ -236,6 +240,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.OK
+      bodyOf(result) should include(Messages("ssttp.calculator.form.payment_today_question.title"))
     }
 
     "Successfully display the what you owe date page" in {
