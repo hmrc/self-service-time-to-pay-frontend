@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import java.time.LocalDate
 
 import play.api.Logger
-import play.api.mvc.{Action, _}
+import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
@@ -47,7 +47,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)),
       Some(EligibilityExistingTTP(Some(false))), CalculatorInput(debits, _, _, _, _, _), _, _)) if debits.nonEmpty =>
         val dataForm = CalculatorForm.payTodayForm
-        Ok(whould_you_like_to_pay_today(dataForm))
+        Ok(payment_today_question(dataForm))
       case _ => Redirect(routes.SelfServiceTimeToPayController.start())
     }
   }
@@ -57,8 +57,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)),
       Some(EligibilityExistingTTP(Some(false))), CalculatorInput(debits, _, _, _, _, _), _, _)) if debits.nonEmpty =>
         CalculatorForm.payTodayForm.bindFromRequest().fold(
-          formWithErrors => BadRequest(whould_you_like_to_pay_today(formWithErrors)),
-          validFormData => validFormData match {
+          formWithErrors => BadRequest(payment_today_question(formWithErrors)), {
             case PayTodayQuestion(Some(true)) =>
               Redirect(routes.CalculatorController.getPaymentToday())
             case PayTodayQuestion(Some(false)) =>
