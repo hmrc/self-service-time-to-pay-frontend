@@ -338,7 +338,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.BAD_REQUEST
-      bodyOf(result) should include(Messages("ssttp.calculator.form.what-you-owe.due_by.not-valid-month"))
+      bodyOf(result) should include(Messages("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month"))
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
