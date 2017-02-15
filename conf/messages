@@ -111,6 +111,29 @@ ssttp.calculator.form.amounts_due.when_due.question.day=Day
 ssttp.calculator.form.amounts_due.when_due.question.month=Month
 ssttp.calculator.form.amounts_due.when_due.question.year=Year
 
+ssttp.calculator.form.what-you-owe-amount.title1=How much is due on
+ssttp.calculator.form.what-you-owe-amount.title2={0}?
+ssttp.calculator.form.what-you-owe-amount.continue=Continue
+ssttp.calculator.form.what-you-owe-amount.error.summary.title=You haven''t entered an amount
+ssttp.calculator.form.what-you-owe-amount.amount.required=Enter an amount of £0.00 or more
+
+ssttp.calculator.form.what-you-owe-date.title=What''s the due date of the amount you owe?
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low=Year must be 1996 or later
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-high=Year is too far in the future
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month=You need to enter a valid month
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day=You need to enter a valid day
+ssttp.calculator.form.what-you-owe-date.example=Example, 31 1 2017
+ssttp.calculator.form.what-you-owe-date.error.summary.title=You are missing an entry
+ssttp.calculator.form.what-you-owe-date.when_due.question.day=Day
+ssttp.calculator.form.what-you-owe-date.when_due.question.month=Month
+ssttp.calculator.form.what-you-owe-date.when_due.question.year=Year
+ssttp.calculator.form.what-you-owe-date.summary.title=You may owe more than one amount
+ssttp.calculator.form.what-you-owe-date.info.header=You need to include:
+ssttp.calculator.form.what-you-owe-date.info.list.1=all payments on account
+ssttp.calculator.form.what-you-owe-date.info.list.2=any penalties you have
+ssttp.calculator.form.what-you-owe-date.info.list.3=any unpaid amounts from previous tax years
+ssttp.calculator.form.what-you-owe-date.info.advice=You can add more later if you need to.
+
 ssttp.calculator.form.amounts_due.add=Add
 ssttp.calculator.form.amounts_due.remove=Remove
 ssttp.calculator.form.amounts_due.total=Total
