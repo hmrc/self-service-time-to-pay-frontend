@@ -155,6 +155,13 @@ ssttp.calculator.form.amounts_due.due_by.not-valid-day=You need to enter a valid
 ssttp.calculator.form.amounts_due.due_by.not-valid-date=You need to enter a valid date
 ssttp.error.summary.title=Something you''ve entered isn''t valid
 
+ssttp.calculator.form.entered_all_amounts_question.title=Have you entered all of the amounts you owe?
+ssttp.calculator.form.entered_all_amounts_question.due-date=Due date
+ssttp.calculator.form.entered_all_amounts_question.amount=Amount
+ssttp.calculator.form.entered_all_amounts_question.remove=Remove?
+ssttp.calculator.form.entered_all_amounts_question.remove-label=Remove
+ssttp.calculator.form.entered_all_amounts_question.add-another-amount-label=Add another amount
+ssttp.calculator.form.entered_all_amounts_question.continue=Continue
 
 ssttp.calculator.misalignment-page.title=Check the amounts you owe
 ssttp.calculator.misalignment-page.subtitle=The figures you entered don’t match the figures in your tax account.

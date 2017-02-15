@@ -56,6 +56,9 @@ class EligibilityController extends TimeToPayController {
 
   def getSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), calcInput, _, _, _))
+        if calcInput.debits.nonEmpty =>
+        Redirect(routes.CalculatorController.getWhatYouOweReview())
       case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _)) =>
         val dataForm = EligibilityForm.signInQuestionForm
         Ok(sign_in_question(dataForm))
@@ -97,7 +100,7 @@ class EligibilityController extends TimeToPayController {
                 Redirect(routes.ArrangementController.determineMisalignment())
               }.recover { case e: Throwable =>
                 Logger.info(s"${e.getMessage}")
-                Redirect(routes.CalculatorController.start())
+                Redirect(routes.EligibilityController.getSignInQuestion())
               }
             case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
           }

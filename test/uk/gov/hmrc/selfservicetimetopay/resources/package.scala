@@ -188,6 +188,7 @@ package object resources {
 
   val mockAuthenticationProvider = new GovernmentGateway {
     override def continueURL: String = s"${SsttpFrontendConfig.loginCallBackFullPath}"
+
     override def loginURL: String = SsttpFrontendConfig.loginUrl
 
     override def handleNotAuthenticated(implicit request: Request[_]): PartialFunction[UserCredentials, Future[Either[AuthContext, FailureResult]]] = {

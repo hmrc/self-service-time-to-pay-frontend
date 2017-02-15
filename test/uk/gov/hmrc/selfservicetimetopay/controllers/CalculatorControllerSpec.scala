@@ -25,6 +25,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
 import play.api.i18n.Messages
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.cache.client.CacheMap
@@ -32,7 +33,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, SessionCacheConnector}
-import uk.gov.hmrc.selfservicetimetopay.models.{Debit, EligibilityExistingTTP, EligibilityTypeOfTax}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
@@ -42,7 +43,6 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
-
   val controller = new CalculatorController(mockCalculatorConnector) {
     override lazy val sessionCache = mockSessionCache
     override lazy val authConnector = mockAuthConnector
@@ -336,7 +336,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
-      redirectLocation(result).get shouldBe routes.CalculatorController.getAmountsDue().url
+      redirectLocation(result).get shouldBe routes.CalculatorController.getWhatYouOweReview().url
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
@@ -374,5 +374,34 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
+    "successfully display the what you owe review page" in {
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
+      val response: Result = controller.getWhatYouOweReview().apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+
+      status(response) shouldBe OK
+
+      bodyOf(response) should include(Messages("ssttp.calculator.form.entered_all_amounts_question.title"))
+    }
+
+    "successfully redirect to start page when trying to access what you owe review page if there are no debits" in {
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k.copy(calculatorData = CalculatorInput.initial))))
+      val response: Result = controller.getWhatYouOweReview().apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+
+      status(response) shouldBe Status.SEE_OTHER
+
+      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    }
+
+    "successfully redirect  load page with invalid eligibility questions should go to start" in {
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+      val response: Result = controller.getWhatYouOweReview().apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+
+      status(response) shouldBe Status.SEE_OTHER
+
+      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    }
   }
 }

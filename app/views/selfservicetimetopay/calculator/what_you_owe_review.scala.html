@@ -1,0 +1,30 @@
+@*
+Entered what you owe review page
+@param debits Seq[Debit] The debits being paid by this plan
+*@
+
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import selfservicetimetopay.partials.{payment_schedule_editable, gaDoCheckout}
+@import selfservicetimetopay.helpers.forms.{form , submit}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
+@(debits:Seq[Debit])(implicit request: Request[_])
+@selfservicetimetopay.main(
+title = Messages("ssttp.arrangement.instalment-summary.title")
+) {
+<header class="page-header text">
+    <h1>@Messages("ssttp.calculator.form.entered_all_amounts_question.title")</h1>
+</header>
+<section>
+    @payment_schedule_editable(debits)
+    <p><a href="@routes.CalculatorController.getDebitDate()" class="button--secondary flush--sides">@Messages("ssttp.calculator.form.entered_all_amounts_question.add-another-amount-label")</a></p>
+    <p>
+        @form(routes.CalculatorController.getPaymentToday()){
+        @submit(){@Messages("ssttp.calculator.results.auth.continue.link")}
+    }</p>
+</section>
+<div>&nbsp;</div>
+<div><a class="back-link" href="@routes.CalculatorController.getDebitDate()">@Messages("ssttp.calculator.form.back")</a></div>
+
+}
+
