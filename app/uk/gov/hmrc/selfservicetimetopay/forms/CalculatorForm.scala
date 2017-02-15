@@ -25,6 +25,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue.MaxCurrencyValue
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentToday, _}
 
+import scala.collection.immutable.Range
 import scala.math.BigDecimal.RoundingMode
 import scala.util.Try
 import scala.util.control.Exception.catching
@@ -132,11 +133,9 @@ object CalculatorForm {
   def createSinglePaymentForm(): Form[CalculatorSinglePayment] = {
     Form(mapping(
       "amount" -> text
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-owed", { i: String => (i != null) && (i.isEmpty || Try(BigDecimal(i)).isSuccess) })
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.nonnegitive", a => a.isEmpty || BigDecimal(a) >= 0)
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", {i: String => Try(BigDecimal(i)).isSuccess && BigDecimal(i) > 0})
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
-
   val minMonths = 2
   val maxMonths = 11
 

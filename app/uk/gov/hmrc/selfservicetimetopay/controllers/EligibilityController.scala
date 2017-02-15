@@ -20,10 +20,9 @@ import play.api.mvc._
 import play.api.Logger
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, SignInQuestion, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.eligibility._
-
 import scala.concurrent.Future
 
 class EligibilityController extends TimeToPayController {
@@ -55,6 +54,32 @@ class EligibilityController extends TimeToPayController {
     )
   }
 
+  def getSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), calcInput, _, _, _))
+        if calcInput.debits.nonEmpty =>
+        Redirect(routes.CalculatorController.getWhatYouOweReview())
+      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _)) =>
+        val dataForm = EligibilityForm.signInQuestionForm
+        Ok(sign_in_question(dataForm))
+      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
+    }
+  }
+
+  def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _)) =>
+        EligibilityForm.signInQuestionForm.bindFromRequest().fold(
+          formWithErrors => BadRequest(sign_in_question(formWithErrors)),
+          validFormData => validFormData match {
+            case SignInQuestion(true, false) => Redirect(routes.ArrangementController.determineMisalignment())
+            case SignInQuestion(false, true) => Redirect(routes.CalculatorController.getDebitDate())
+          }
+        )
+      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
+    }
+  }
+
   def getExistingTtp: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, _, existingTtp@Some(_), _, _, _, _)) =>
@@ -75,7 +100,7 @@ class EligibilityController extends TimeToPayController {
                 Redirect(routes.ArrangementController.determineMisalignment())
               }.recover { case e: Throwable =>
                 Logger.info(s"${e.getMessage}")
-                Redirect(routes.CalculatorController.start())
+                Redirect(routes.EligibilityController.getSignInQuestion())
               }
             case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
           }

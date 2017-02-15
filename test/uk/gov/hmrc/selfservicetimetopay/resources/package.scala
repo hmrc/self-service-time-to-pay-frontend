@@ -71,6 +71,7 @@ package object resources {
       calculatorPaymentScheduleInstalment)
   )
   val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule), Some(BankDetails(Some("012131"), Some("1234567890"), None, None, None, Some("0987654321"))), None, Some(taxPayer), Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)), Some(EligibilityExistingTTP(Some(false))), CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)))
+  val ttpSubmissionNoAmounts: TTPSubmission = TTPSubmission(eligibilityTypeOfTax = Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)), eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))))
 
   val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
   val ttpSubmissionNLI: TTPSubmission = TTPSubmission(schedule = Some(calculatorPaymentSchedule), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
