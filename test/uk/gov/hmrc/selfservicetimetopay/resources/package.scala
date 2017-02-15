@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
-import uk.gov.hmrc.selfservicetimetopay.models.{Debit, _}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.SessionProvider
 
@@ -80,7 +80,6 @@ package object resources {
   val ttpSubmissionNLIEmpty: TTPSubmission = TTPSubmission()
 
   val calculatorAmountDueOver10k: Debit = Debit(amount = BigDecimal(11293.22), dueDate = LocalDate.now())
-  val sequenceOfDebits: Seq[Debit] = Seq(Debit(amount = BigDecimal(11293.22), dueDate = LocalDate.now()), Debit(amount = BigDecimal(124.22), dueDate = LocalDate.now()), Debit(amount = BigDecimal(123.22), dueDate = LocalDate.now()))
   val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)), eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDueOver10k)))
 
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
