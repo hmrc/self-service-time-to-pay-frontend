@@ -108,30 +108,29 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         case Some(TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) => debits.map(_.amount).sum
         case _ => BigDecimal(0)
       }
+      CalculatorForm.amountDueForm(totalDebits).bindFromRequest().fold(
+        formWithErrors =>
+          ttpData match {
+            case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
+              Future.successful(BadRequest(amounts_due_form(CalculatorAmountsDue(debits), formWithErrors, ttpData.taxpayer.isDefined)))
+            case _ => Future.successful(BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors)))
+          },
+        validFormData => {
+          val newTtpData = ttpData match {
+            case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
+              ttpSubmission.copy(calculatorData = cd.copy(debits = debits :+ validFormData))
+            case Some(ttpSubmission@TTPSubmission(_, _, _, _, Some(_), Some(_), cd, _, _, _)) =>
+              ttpSubmission.copy(calculatorData = cd.copy(debits = IndexedSeq(validFormData)))
+            case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq(validFormData)))
+          }
 
-          CalculatorForm.amountDueForm(totalDebits).bindFromRequest().fold(
-            formWithErrors =>
-              ttpData match {
-                case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-                  Future.successful(BadRequest(amounts_due_form(CalculatorAmountsDue(debits), formWithErrors, ttpData.taxpayer.isDefined)))
-                case _ => Future.successful(BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors)))
-              },
-            validFormData => {
-              val newTtpData = ttpData match {
-                case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-                  ttpSubmission.copy(calculatorData = cd.copy(debits = debits :+ validFormData))
-                case Some(ttpSubmission@TTPSubmission(_, _, _, _, Some(_), Some(_), cd, _, _, _)) =>
-                  ttpSubmission.copy(calculatorData = cd.copy(debits = IndexedSeq(validFormData)))
-                case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq(validFormData)))
-              }
-
-              Logger.info(newTtpData.toString)
-              sessionCache.put(newTtpData).map[Result] {
-                _ => Redirect(routes.CalculatorController.getAmountsDue())
-              }
-            }
-          )
-      }
+          Logger.info(newTtpData.toString)
+          sessionCache.put(newTtpData).map[Result] {
+            _ => Redirect(routes.CalculatorController.getAmountsDue())
+          }
+        }
+      )
+    }
   }
 
   def submitRemoveAmountDue: Action[AnyContent] = Action.async { implicit request =>
