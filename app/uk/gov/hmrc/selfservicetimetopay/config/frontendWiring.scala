@@ -112,7 +112,7 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
 
   def authorizedForSsttp(block: (Option[TTPSubmission] => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
       sessionCache.get.flatMap[Result] {
-        case Some(TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(false, _)))) =>
+        case Some(TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(false, _)), _)) =>
           Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
         case optSubmission =>
           block(optSubmission)

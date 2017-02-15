@@ -109,6 +109,29 @@ ssttp.calculator.form.amounts_due.when_due.question.day=Day
 ssttp.calculator.form.amounts_due.when_due.question.month=Month
 ssttp.calculator.form.amounts_due.when_due.question.year=Year
 
+ssttp.calculator.form.what-you-owe-amount.title1=How much is due on
+ssttp.calculator.form.what-you-owe-amount.title2={0}?
+ssttp.calculator.form.what-you-owe-amount.continue=Continue
+ssttp.calculator.form.what-you-owe-amount.error.summary.title=You haven''t entered an amount
+ssttp.calculator.form.what-you-owe-amount.amount.required=Enter an amount of £0.00 or more
+
+ssttp.calculator.form.what-you-owe-date.title=What''s the due date of the amount you owe?
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low=Year must be 1996 or later
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-high=Year is too far in the future
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month=You need to enter a valid month
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day=You need to enter a valid day
+ssttp.calculator.form.what-you-owe-date.example=Example, 31 1 2017
+ssttp.calculator.form.what-you-owe-date.error.summary.title=You are missing an entry
+ssttp.calculator.form.what-you-owe-date.when_due.question.day=Day
+ssttp.calculator.form.what-you-owe-date.when_due.question.month=Month
+ssttp.calculator.form.what-you-owe-date.when_due.question.year=Year
+ssttp.calculator.form.what-you-owe-date.summary.title=You may owe more than one amount
+ssttp.calculator.form.what-you-owe-date.info.header=You need to include:
+ssttp.calculator.form.what-you-owe-date.info.list.1=all payments on account
+ssttp.calculator.form.what-you-owe-date.info.list.2=any penalties you have
+ssttp.calculator.form.what-you-owe-date.info.list.3=any unpaid amounts from previous tax years
+ssttp.calculator.form.what-you-owe-date.info.advice=You can add more later if you need to.
+
 ssttp.calculator.form.amounts_due.add=Add
 ssttp.calculator.form.amounts_due.remove=Remove
 ssttp.calculator.form.amounts_due.total=Total
@@ -130,6 +153,13 @@ ssttp.calculator.form.amounts_due.due_by.not-valid-day=You need to enter a valid
 ssttp.calculator.form.amounts_due.due_by.not-valid-date=You need to enter a valid date
 ssttp.error.summary.title=Something you''ve entered isn''t valid
 
+ssttp.calculator.form.entered_all_amounts_question.title=Have you entered all of the amounts you owe?
+ssttp.calculator.form.entered_all_amounts_question.due-date=Due date
+ssttp.calculator.form.entered_all_amounts_question.amount=Amount
+ssttp.calculator.form.entered_all_amounts_question.remove=Remove?
+ssttp.calculator.form.entered_all_amounts_question.remove-label=Remove
+ssttp.calculator.form.entered_all_amounts_question.add-another-amount-label=Add another amount
+ssttp.calculator.form.entered_all_amounts_question.continue=Continue
 
 ssttp.calculator.misalignment-page.title=Check the amounts you owe
 ssttp.calculator.misalignment-page.subtitle=The figures you entered don’t match the figures in your tax account.
@@ -149,11 +179,18 @@ ssttp.calculator.misalignment-page.query.label=Find out about an amount in your 
 ssttp.calculator.misalignment-page.query.number=0300 200 3822
 
 ssttp.calculator.form.payment_today.title=How much can you afford to pay now?
-
 ssttp.calculator.form.payment_today.error.summary.title=You haven''t entered an amount
 ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required=Enter an amount of £0.00 or more
 ssttp.calculator.form.payment_today.amount.nonnegitive=Enter an amount of £0.00 or more
+
+ssttp.calculator.form.payment_today_question.title=Would you like to make a payment today?
+ssttp.calculator.form.payment_today_question.error.summary.title=Would you like to make a payment today?
+ssttp.calculator.form.payment_today_question.required=Please select an answer
+ssttp.calculator.form.payment_today_question.yes_label=Yes
+ssttp.calculator.form.payment_today_question.no_label=No
+ssttp.calculatorform.payment_today_question.why_pay_today.title=Why make a payment today?
+ssttp.calculatorform.payment_today_question.why_pay_today.info=You''ll reduce the amount you need to pay per month and the total interest you’ll be charged.
 
 ssttp.calculator.form.duration.months.required=Enter a valid number of months
 ssttp.calculator.form.duration.months.greater-than=Number of months must be 2 or more
