@@ -217,7 +217,7 @@ class ArrangementControllerSpec extends UnitSpec
       redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getMisalignmentPage().url
     }
 
-    "redirect to instalment page if logged in and not logged in debits do sum() to the same value" in {
+    "redirect to getPayTodayQuestion page if logged in and not logged in debits do sum() to the same value" in {
       implicit val hc = new HeaderCarrier
 
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))

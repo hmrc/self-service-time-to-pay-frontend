@@ -48,6 +48,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer))
   }
 
+  def start: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+    implicit request =>
+      authorizedForSsttp {
+        _ => Future.successful(Redirect(routes.ArrangementController.getInstalmentSummary()))
+      }
+  }
+
   def determineMisalignment: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp { submission =>
