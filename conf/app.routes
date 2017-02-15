@@ -25,11 +25,12 @@ POST        /calculator/amounts-due/remove                    @uk.gov.hmrc.selfs
 # submit page with amount(s) due
 POST        /calculator/amounts-due                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitAmountsDue()
 GET         /calculator/what-you-owe-review                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getWhatYouOweReview()
+POST        /calculator.what-you-owe-review                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitWhatYouOweReview()
 GET         /calculator/what-you-owe-date                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getDebitDate()
 POST        /calculator/what-you-owe-date                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitDebitDate()
 GET         /calculator/what-you-owe-amount                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getAmountOwed()
 POST        /calculator/what-you-owe-amount                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitAmountOwed()
-GET         /calculator/payment-today-question                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPayTodayQuestionFrom()
+GET         /calculator/payment-today-question                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPayTodayQuestion()
 POST        /calculator/payment-today-question                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPayTodayQuestion()
 GET         /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentToday()
 POST        /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPaymentToday()

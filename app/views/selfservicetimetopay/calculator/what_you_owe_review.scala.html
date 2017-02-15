@@ -19,12 +19,12 @@ title = Messages("ssttp.arrangement.instalment-summary.title")
     @payment_schedule_editable(debits)
     <p><a href="@routes.CalculatorController.getDebitDate()" class="button--secondary flush--sides">@Messages("ssttp.calculator.form.entered_all_amounts_question.add-another-amount-label")</a></p>
     <p>
-        @form(routes.CalculatorController.getPaymentToday()){
+        @form(routes.CalculatorController.getPayTodayQuestion()){
         @submit(){@Messages("ssttp.calculator.results.auth.continue.link")}
     }</p>
 </section>
 <div>&nbsp;</div>
-<div><a class="back-link" href="@routes.CalculatorController.getDebitDate()">@Messages("ssttp.calculator.form.back")</a></div>
+<div><a class="back-link" href="@routes.EligibilityController.getSignInQuestion()">@Messages("ssttp.calculator.form.back")</a></div>
 
 }
 

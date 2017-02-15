@@ -4,9 +4,10 @@ Ask the user if they want to sign in at this step
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.helpers.forms._
 @import uk.gov.hmrc.selfservicetimetopay.models.PayTodayQuestion
-@(dataForm: Form[PayTodayQuestion])(implicit request: Request[_])
+@(dataForm: Form[PayTodayQuestion], loggedIn: Boolean = false)(implicit request: Request[_])
 @selfservicetimetopay.main(
-    title = Messages("ssttp.calculator.form.payment_today_question.title")
+    title = Messages("ssttp.calculator.form.payment_today_question.title"),
+    loggedIn = loggedIn
 ) {
     <header class="page-header text">
         <h1>@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
@@ -30,5 +31,11 @@ Ask the user if they want to sign in at this step
             @Messages("ssttp.eligibility.form.sign_in_question.continue")
         }
     }
-    <p><a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.eligibility.form.sign_in_question.back")</a></p>
+    <p>
+        @if(loggedIn) {
+            <a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.eligibility.form.sign_in_question.back")</a>
+        } else {
+            <a class="back-link" href="@routes.CalculatorController.getWhatYouOweReview()">@Messages("ssttp.eligibility.form.sign_in_question.back")</a>
+        }
+    </p>
 }

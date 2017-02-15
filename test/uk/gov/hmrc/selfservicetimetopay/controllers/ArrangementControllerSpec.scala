@@ -233,7 +233,7 @@ class ArrangementControllerSpec extends UnitSpec
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId"))
 
-      redirectLocation(response).get shouldBe controllers.routes.ArrangementController.getInstalmentSummary().url
+      redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getPayTodayQuestion().url
     }
 
     "redirect to instalment page if the not logged in user has not created any debits" in {
@@ -250,7 +250,7 @@ class ArrangementControllerSpec extends UnitSpec
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId"))
 
-      redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getPaymentToday().url
+      redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getPayTodayQuestion().url
     }
   }
 

@@ -184,7 +184,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
-      val result = await(controller.getPayTodayQuestionFrom().apply(FakeRequest()
+      val result = await(controller.getPayTodayQuestion().apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -197,7 +197,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityExistingTtp = None))))
 
-      val result = await(controller.getPayTodayQuestionFrom().apply(FakeRequest()
+      val result = await(controller.getPayTodayQuestion().apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -210,7 +210,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityTypeOfTax = None))))
 
-      val result = await(controller.getPayTodayQuestionFrom().apply(FakeRequest()
+      val result = await(controller.getPayTodayQuestion().apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -223,7 +223,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = Seq.empty)))))
 
-      val result = await(controller.getPayTodayQuestionFrom().apply(FakeRequest()
+      val result = await(controller.getPayTodayQuestion().apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -236,7 +236,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
 
-      val result = await(controller.getPayTodayQuestionFrom().apply(FakeRequest()
+      val result = await(controller.getPayTodayQuestion().apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.OK
