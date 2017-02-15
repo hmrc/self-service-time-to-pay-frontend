@@ -373,6 +373,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       bodyOf(result) should include(Messages("ssttp.calculator.form.what-you-owe-amount.amount.required"))
       verify(mockSessionCache, times(1)).get(any(), any())
     }
+
     "successfully display the what you owe review page" in {
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
@@ -382,23 +383,25 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
       bodyOf(response) should include(Messages("ssttp.calculator.form.entered_all_amounts_question.title"))
     }
-  }
-  "successfully redirect what you owe review page if there is no direct debits" in {
-    when(mockSessionCache.get(any(), any()))
-      .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k.copy(calculatorData = CalculatorInput.initial))))
-    val response: Result = controller.getWhatYouOweReview().apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
-    status(response) shouldBe Status.SEE_OTHER
+    "successfully redirect to start page when trying to access what you owe review page if there are no debits" in {
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k.copy(calculatorData = CalculatorInput.initial))))
+      val response: Result = controller.getWhatYouOweReview().apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
-    redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.start().url
-  }
-  "successfully redirect  load page with invalid eligibility questions should go to start" in {
-    when(mockSessionCache.get(any(), any()))
-      .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
-    val response: Result = controller.getWhatYouOweReview().apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+      status(response) shouldBe Status.SEE_OTHER
 
-    status(response) shouldBe Status.SEE_OTHER
+      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    }
 
-    redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    "successfully redirect  load page with invalid eligibility questions should go to start" in {
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+      val response: Result = controller.getWhatYouOweReview().apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+
+      status(response) shouldBe Status.SEE_OTHER
+
+      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    }
   }
 }
