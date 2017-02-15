@@ -56,9 +56,9 @@ class EligibilityController extends TimeToPayController {
 
   def getSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), calcInput, _, _, _))
-        if calcInput.debits.nonEmpty =>
-        Redirect(routes.CalculatorController.getWhatYouOweReview())
+      case Some(TTPSubmission(_, _, _, tp, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _))
+        if tp.isDefined =>
+        Redirect(routes.CalculatorController.getPayTodayQuestion())
       case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _)) =>
         val dataForm = EligibilityForm.signInQuestionForm
         Ok(sign_in_question(dataForm))
@@ -68,12 +68,16 @@ class EligibilityController extends TimeToPayController {
 
   def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _)) =>
+      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), cd, _, _, _)) =>
         EligibilityForm.signInQuestionForm.bindFromRequest().fold(
           formWithErrors => BadRequest(sign_in_question(formWithErrors)),
-          validFormData => validFormData match {
+          {
             case SignInQuestion(true, false) => Redirect(routes.ArrangementController.determineMisalignment())
-            case SignInQuestion(false, true) => Redirect(routes.CalculatorController.getDebitDate())
+            case SignInQuestion(false, true) =>
+              if(cd.debits.nonEmpty)
+                Redirect(routes.CalculatorController.getWhatYouOweReview())
+              else
+                Redirect(routes.CalculatorController.getDebitDate())
           }
         )
       case _ => Redirect(routes.SelfServiceTimeToPayController.start())

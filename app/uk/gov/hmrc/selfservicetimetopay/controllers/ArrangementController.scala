@@ -48,6 +48,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer))
   }
 
+  def start: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+    implicit request =>
+      authorizedForSsttp {
+        _ => Future.successful(Redirect(routes.ArrangementController.getInstalmentSummary()))
+      }
+  }
+
   def determineMisalignment: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp { submission =>
@@ -61,12 +68,12 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                 case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _), _, _, _) =>
                   sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
                     endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map {
-                    _ => Redirect(routes.CalculatorController.getPaymentToday())
+                    _ => Redirect(routes.CalculatorController.getPayTodayQuestion())
                   }
                 case TTPSubmission(None, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _, _) =>
                   sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
                     endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map {
-                    _ => Redirect(routes.CalculatorController.getPaymentToday())
+                    _ => Redirect(routes.CalculatorController.getPayTodayQuestion())
                   }
                 case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _, _)
                   if areEqual(tpSA.debits, meDebits) =>
@@ -76,7 +83,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                     .flatMap(eventualSubmission => eventualSubmission)
                     .flatMap {
                       case TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
-                        Future.successful(Redirect(routes.ArrangementController.getInstalmentSummary()))
+                        Future.successful(Redirect(routes.CalculatorController.getPayTodayQuestion()))
                       case TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) =>
                         Logger.info(s"Failed eligibility check because: $reasons")
                         Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))

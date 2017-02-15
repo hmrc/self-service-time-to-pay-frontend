@@ -178,6 +178,71 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
+    "Return 303 for submitPayTodayQuestion when TTPSubmission is missing" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+
+      val result = await(controller.getPayTodayQuestion().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    }
+
+    "Return 303 for submitPayTodayQuestion when eligibilityExistingTtp is missing" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityExistingTtp = None))))
+
+      val result = await(controller.getPayTodayQuestion().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    }
+
+    "Return 303 for submitPayTodayQuestion when eligibilityTypeOfTax is missing" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityTypeOfTax = None))))
+
+      val result = await(controller.getPayTodayQuestion().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    }
+
+    "Return 303 for submitPayTodayQuestion when there are no debits" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = Seq.empty)))))
+
+      val result = await(controller.getPayTodayQuestion().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    }
+
+    "Return 200 for submitPayTodayQuestion if there are debits and valid eligibility answers" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
+
+      val result = await(controller.getPayTodayQuestion().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include(Messages("ssttp.calculator.form.payment_today_question.title"))
+    }
+
     "Successfully display the what you owe date page" in {
       implicit val hc = new HeaderCarrier
 
