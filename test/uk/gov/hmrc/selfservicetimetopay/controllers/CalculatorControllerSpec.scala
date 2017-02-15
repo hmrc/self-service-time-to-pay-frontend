@@ -211,6 +211,10 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(mock[CacheMap])
+
+
       val result = await(controller.submitDebitDate().apply(FakeRequest()
         .withFormUrlEncodedBody("dueBy.dueByYear" -> "2017",
           "dueBy.dueByMonth" -> "1",

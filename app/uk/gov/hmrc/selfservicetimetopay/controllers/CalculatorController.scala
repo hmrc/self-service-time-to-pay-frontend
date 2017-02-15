@@ -38,7 +38,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     sessionCache.get.flatMap {
       case Some(ttpData@TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, debitDate)) =>
         debitDate match {
-          case Some(LocalDate) =>
+          case Some(_) =>
             sessionCache.put(ttpData.copy(debitDate = None)).map[Result] {
               _ => Ok(what_you_owe_date(CalculatorForm.createDebitDateForm()))
             }
