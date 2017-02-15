@@ -26,6 +26,8 @@ import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator._
+import java.util.Locale
+import java.time.format.DateTimeFormatter
 
 import scala.concurrent.Future
 
@@ -70,7 +72,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       sessionCache.get.map[Result] {
         case Some(TTPSubmission(_, _, _, None, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, Some(debitDate))) =>
           val dataForm = CalculatorForm.createSinglePaymentForm()
-          Ok(what_you_owe_amount(dataForm, debitDate.toString))
+          Ok(what_you_owe_amount(dataForm, debitDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH))))
         case _ => Redirect(routes.SelfServiceTimeToPayController.start())
       }
   }
