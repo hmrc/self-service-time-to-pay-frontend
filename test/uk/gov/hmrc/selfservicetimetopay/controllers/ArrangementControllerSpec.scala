@@ -236,7 +236,7 @@ class ArrangementControllerSpec extends UnitSpec
       redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getPayTodayQuestion().url
     }
 
-    "redirect to instalment page if the not logged in user has not created any debits" in {
+    "redirect to getPayTodayQuestion page if the not logged in user has not created any debits" in {
       implicit val hc = new HeaderCarrier
 
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = Seq.empty))
