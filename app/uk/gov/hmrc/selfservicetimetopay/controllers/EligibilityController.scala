@@ -72,8 +72,8 @@ class EligibilityController extends TimeToPayController {
         EligibilityForm.signInQuestionForm.bindFromRequest().fold(
           formWithErrors => BadRequest(sign_in_question(formWithErrors)),
           {
-            case SignInQuestion(true, false) => Redirect(routes.ArrangementController.determineMisalignment())
-            case SignInQuestion(false, true) =>
+            case SignInQuestion(Some(true)) => Redirect(routes.ArrangementController.determineMisalignment())
+            case SignInQuestion(Some(false)) =>
               if(cd.debits.nonEmpty)
                 Redirect(routes.CalculatorController.getWhatYouOweReview())
               else

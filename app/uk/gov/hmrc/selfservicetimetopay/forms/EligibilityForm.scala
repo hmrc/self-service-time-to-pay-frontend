@@ -31,18 +31,10 @@ object EligibilityForm {
     if(data._1 && data._2) Invalid(ValidationError(validationErrorMessage)) else Valid
   }
 
-  val signInTuple = tuple(
-    "signIn" -> boolean,
-    "enterInManually" -> boolean
-  )
-
   val signInQuestionForm: Form[SignInQuestion] = {
     Form(mapping(
-      "signInOption" -> signInTuple
-        .verifying(areBothSelected("ssttp.eligibility.form.sign_in_question.only-one"))
-        .verifying(atLeastOneRequired("ssttp.eligibility.form.sign_in_question.required"))
-    )(signInOption => SignInQuestion(signInOption._1, signInOption._2))
-    (signInOption => Some((signInOption.signIn, signInOption.enterInManually))))
+      "signIn" -> optional(boolean).verifying("ssttp.eligibility.form.sign_in_question.required", _.nonEmpty)
+    )(SignInQuestion.apply)(SignInQuestion.unapply))
   }
   val typeOfTaxTuple = tuple(
     "hasSelfAssessmentDebt" -> boolean,

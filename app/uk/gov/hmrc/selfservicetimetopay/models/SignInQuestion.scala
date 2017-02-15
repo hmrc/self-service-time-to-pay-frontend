@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class SignInQuestion(signIn: Boolean, enterInManually: Boolean)
+case class SignInQuestion(signInAnswer: Option[Boolean])

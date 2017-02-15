@@ -58,28 +58,23 @@ class EligibilityFormSpec extends PlaySpec {
   "EligibilityForm.signInQuestionForm" must {
 
     "return no errors with valid data when enter in manually is selected" in {
-      val postData = Json.obj("signInOption.signIn" -> "false","signInOption.enterInManually" -> "true")
+      val postData = Json.obj("signIn" -> "false")
 
       val validatedForm = EligibilityForm.signInQuestionForm.bind(postData)
 
       assert(validatedForm.errors.isEmpty)
     }
-    "return no errors with valid data when sign is selected" in {
-      val postData = Json.obj("signInOption.signIn" -> "true","signInOption.enterInManually" -> "false")
+    "return no errors with valid data when sign in is selected" in {
+      val postData = Json.obj("signIn" -> "true")
 
       val validatedForm = EligibilityForm.signInQuestionForm.bind(postData)
 
       assert(validatedForm.errors.isEmpty)
     }
-    "return an error when neither value has not been set" in {
-      val validatedForm = EligibilityForm.signInQuestionForm.bind(Json.obj("signInOption.signIn" -> "false","signInOption.enterInManually" -> "false"))
+    "return an error when the user does not pick an answer" in {
+      val validatedForm = EligibilityForm.signInQuestionForm.bind(Json.obj())
 
-      assert(validatedForm.errors.contains(FormError("signInOption", List("ssttp.eligibility.form.sign_in_question.required"))))
-    }
-    "return an error when both value have  been set" in {
-      val validatedForm = EligibilityForm.signInQuestionForm.bind(Json.obj("signInOption.signIn" -> "true","signInOption.enterInManually" -> "true"))
-
-      assert(validatedForm.errors.contains(FormError("signInOption", List("ssttp.eligibility.form.sign_in_question.only-one"))))
+      assert(validatedForm.errors.contains(FormError("signIn", List("ssttp.eligibility.form.sign_in_question.required"))))
     }
   }
 }
