@@ -54,7 +54,6 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
   }
 
    def submitPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
-     println("method called")
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)),
       Some(EligibilityExistingTTP(Some(false))), CalculatorInput(debits, _, _, _, _, _), _, _)) if debits.nonEmpty =>

@@ -181,6 +181,20 @@ class CalculatorFormSpec extends PlaySpec {
 
       assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.amounts_due.due_by.not-valid-day"))))
     }
+    "payTodayForm return no  errors with valid data when " in {
+      val postData = Json.obj()
+
+      val validatedForm = CalculatorForm.payTodayForm.bind(postData)
+
+      assert(validatedForm.errors.contains(FormError("paytoday", List("ssttp.calculator.form.payment_today_question.required"))))
+    }
+    "payTodayForm should return errors when user does not select anything in " in {
+      val postData = Json.obj("paytoday" -> "true")
+
+      val validatedForm = CalculatorForm.payTodayForm.bind(postData)
+
+      assert(validatedForm.errors.isEmpty)
+    }
 
   }
 }

@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, EligibilityConnector, SessionCacheConnector}
-import uk.gov.hmrc.selfservicetimetopay.models.{Debit, EligibilityExistingTTP, EligibilityTypeOfTax}
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, Debit, EligibilityExistingTTP, EligibilityTypeOfTax}
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
@@ -175,6 +175,62 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.SEE_OTHER
+    }
+    "Return 303 for submitPayTodayQuestion when TTPSubmission is missing" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+
+      val result = await(controller.getPayTodayQuestionFrom().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+    }
+    "Return 303 for submitPayTodayQuestion when eligibilityExistingTtp is missing" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityExistingTtp = None))))
+
+      val result = await(controller.getPayTodayQuestionFrom().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+    }
+
+    "Return 303 for submitPayTodayQuestion when eligibilityTypeOfTax is missing" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityTypeOfTax = None))))
+
+      val result = await(controller.getPayTodayQuestionFrom().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+    }
+    "Return 303 for submitPayTodayQuestion when there is no debits is missing" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = Seq.empty)))))
+
+      val result = await(controller.getPayTodayQuestionFrom().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+    }
+    "Return 200 for submitPayTodayQuestion it has debits eligibilityTypeOfTax and eligibilityExistingTtp" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
+
+      val result = await(controller.getPayTodayQuestionFrom().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.OK
     }
 
   }

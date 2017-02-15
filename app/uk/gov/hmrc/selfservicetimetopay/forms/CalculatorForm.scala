@@ -120,7 +120,7 @@ object CalculatorForm {
   }
 
   val payTodayForm: Form[PayTodayQuestion] = Form(mapping(
-        "paytoday" -> optional(boolean).verifying("ssttp.eligibility.form.existing_ttp.required", _.nonEmpty)
+        "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)
     )(PayTodayQuestion.apply)(PayTodayQuestion.unapply))
 
 }
