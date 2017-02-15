@@ -22,11 +22,10 @@ import play.api.Logger
 import play.api.mvc.{Action, _}
 import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
-import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm, EligibilityForm}
+import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator._
-import views.html.selfservicetimetopay.eligibility.sign_in_question
 
 import scala.concurrent.Future
 
@@ -46,14 +45,14 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
   def getPayTodayQuestionFrom: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)),
-      Some(EligibilityExistingTTP(Some(false))), CalculatorInput(debits, _, _, _, _, _), _, _))if debits.nonEmpty =>
+      Some(EligibilityExistingTTP(Some(false))), CalculatorInput(debits, _, _, _, _, _), _, _)) if debits.nonEmpty =>
         val dataForm = CalculatorForm.payTodayForm
         Ok(whould_you_like_to_pay_today(dataForm))
       case _ => Redirect(routes.SelfServiceTimeToPayController.start())
     }
   }
 
-   def submitPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
+  def submitPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)),
       Some(EligibilityExistingTTP(Some(false))), CalculatorInput(debits, _, _, _, _, _), _, _)) if debits.nonEmpty =>
@@ -70,7 +69,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     }
   }
 
-      def submitAddAmountDue: Action[AnyContent] = Action.async { implicit request =>
+  def submitAddAmountDue: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap { ttpData =>
       val totalDebits = ttpData match {
         case Some(TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _)) => debits.map(_.amount).sum
