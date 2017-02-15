@@ -72,7 +72,6 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       sessionCache.get.map[Result] {
         case Some(TTPSubmission(_, _, _, None, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, Some(debitDate))) =>
           val dataForm = CalculatorForm.createSinglePaymentForm()
-          //debitDate.format() DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
           Ok(what_you_owe_amount(dataForm, debitDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH))))
         case _ => Redirect(routes.SelfServiceTimeToPayController.start())
       }
