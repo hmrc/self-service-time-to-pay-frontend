@@ -134,6 +134,7 @@ object CalculatorForm {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", {i: String => Try(BigDecimal(i)).isSuccess && BigDecimal(i) > 0})
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval", {i: String => if(i.nonEmpty){Try(BigDecimal(i)).isSuccess && BigDecimal(i) < MaxCurrencyValue}else{true}})
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
   val minMonths = 2

@@ -422,6 +422,24 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
+
+    "Submit amount greater than or equal to 1000000000000 in form data for the what you owe amount page and return errors" in {
+      implicit val hc = new HeaderCarrier
+
+      val requiredSubmission = ttpSubmissionNoAmounts.copy(debitDate = Some(LocalDate.parse("2017-01-31")))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(requiredSubmission)))
+
+      val result = await(controller.submitAmountOwed().apply(FakeRequest()
+        .withFormUrlEncodedBody("amount" -> "1000000000000")
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.BAD_REQUEST
+      bodyOf(result) should include(Messages("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval"))
+      verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
     "Submit empty amount in form data for the what you owe amount page and return errors" in {
       implicit val hc = new HeaderCarrier
 
