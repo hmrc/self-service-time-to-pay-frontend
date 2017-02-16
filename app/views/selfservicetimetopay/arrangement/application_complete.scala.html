@@ -33,7 +33,7 @@
     <div class="transaction-banner__heading" role="banner">@Messages("ssttp.arrangement.complete.title")</div>
     <p class="heading-large" id="ssttpOutcome">@Messages("ssttp.arrangement.complete.subtitle")</p>
   </div>
-  <a href="javascript:window.print()" class="js-visible no-print float--right gutter-left print-link js-visible trackedPrintLink">@Messages("ssttp.arrangement.instalment-summary.print")</a>
+  <a href="javascript:window.print()" class="js-visible no-print float--right gutter-left print-link js-visible trackedPrintLink openOnPrint">@Messages("ssttp.arrangement.instalment-summary.print")</a>
   <section class="section divider--bottom">
     <h2>@Messages("ssttp.arrangement.complete.next")</h2>
     <p>@Messages("ssttp.arrangement.complete.summary")</p>
@@ -42,10 +42,9 @@
   <h2>@Messages("ssttp.arrangement.complete.please-help-use")</h2>
   <p><a href="https://www.gov.uk/done/pay-bill-in-instalments" class="button">@Messages("ssttp.sidebar.help-and-advice.feedback.submit")</a></p>
 </section>
-  <section class="section">
-    <h2>@Messages("ssttp.arrangement.complete.what-you-owe")</h2>
-  </section>
-<section>
+    <details>
+        <summary>@Messages("ssttp.arrangement.complete.payment-details.summary")</summary>
+        <h2>@Messages("ssttp.arrangement.complete.what-you-owe")</h2>
     @what_you_owe(debits)
     <div class="subsection grid-layout divider--bottom font-xsmall">
       <div class="grid-layout__column grid-layout__column--3-4">
@@ -63,6 +62,7 @@
   <h2>@Messages("ssttp.arrangement.complete.direct-debit-payment")</h2>
     <span class="print-only">@direct_debit_details(directDebit, true)</span>
     @payment_schedule(schedule)
+    </details>
   </section>
 }
 

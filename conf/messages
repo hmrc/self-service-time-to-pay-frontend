@@ -382,6 +382,7 @@ ssttp.arrangement.complete.what-you-owe=What you owe
 ssttp.arrangement.complete.payment-plan={0} month instalment plan
 ssttp.arrangement.complete.interest-rate=Interest at {0}%
 ssttp.arrangement.complete.total=TOTAL:
+ssttp.arrangement.complete.payment-details.summary=Payment plan summary 
 
 #Service unavailable (shutter) page
 ssttp.unavailable.title=Please call us
