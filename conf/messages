@@ -93,7 +93,7 @@ ssttp.eligibility.form.existing_ttp.required=Choose one option
 ssttp.eligibility.form.continue=Continue
 ssttp.eligibility.form.back=Back
 
-ssttp.eligibility.form.sign_in_question.title=Would you like to sign in to view what you owe?
+ssttp.eligibility.form.sign_in_question.title=Would you like to sign in and view what you owe?
 ssttp.eligibility.form.sign_in_question.yes_label=Yes - sign in and view what I owe
 ssttp.eligibility.form.sign_in_question.no_label=No - I''ll enter what I owe manually
 ssttp.eligibility.form.sign_in_question.continue=Continue
@@ -268,7 +268,7 @@ ssttp.you-need-to-file.other-tax=If you’re unsure how to proceed for any reaso
 ssttp.you-need-to-file.other-tax.number=0300 200 3822
 
 ssttp.arrangement.instalment-summary.title=Your instalment plan summary
-ssttp.arrangement.instalment-summary.print=Print
+ssttp.arrangement.instalment-summary.print=View a print summary
 ssttp.arrangement.instalment-summary.initial-payment-of=An initial payment of:
 ssttp.arrangement.instalment-summary.initial-payment.hint=taken up to {0} days from today
 ssttp.arrangement.instalment-summary.monthly-instalments=monthly instalments of:
