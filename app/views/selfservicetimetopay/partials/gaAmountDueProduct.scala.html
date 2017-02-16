@@ -7,6 +7,10 @@
 @import selfservicetimetopay.partials.charge_code
 @id = @{debit.originCode.getOrElse("USER_AMOUNT_DUE")}
 @name = @{debit.originCode.fold[String]("User Entered Amount Due"){ c => charge_code(c, debit.taxYearEnd).body.trim}}
+@dueDateDimension = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.dueDateDimension}
+
 @defining(DateTimeFormatter.ofPattern("yyyyMMdd", Locale.ENGLISH)) { formatter =>
-    ga('ec:addProduct', { 'id': '@id', 'name': '@name', 'price': '@debit.amount', 'quantity': 1, 'position': @position, 'dimension1': '@debit.dueDate.format(formatter)' });
+    ga('ec:addProduct', {'id': '@id', 'name': '@name',
+                        'price': '@debit.amount', 'quantity': 1, 'position': @position,
+                        '@dueDateDimension': '@debit.dueDate.format(formatter)' });
 }
