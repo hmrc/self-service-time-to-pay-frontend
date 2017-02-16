@@ -11,8 +11,10 @@ $(function() {
     $("a.trackedAssistanceSidebar").on("mouseup", function () {
         ga("send", "event", "click-direct-debit-assistance", window.location.pathname);
     });
-
-
+    $(".openOnPrint").on('mouseup', function () {
+        if ($('html').hasClass('no-details')) then ($("body")).find('details').addClass("open")
+        else ($("body")).find('details').attr("open", "")
+    })
     $(".trackedPrintLink").on("mouseup", function () {
         ga("send", "event", "click-print", window.location.pathname);
     });
@@ -22,7 +24,6 @@ $(function() {
             state = (d.prop("open") === true) ? "open" : "close";
         ga("send", "event", state, d.attr("id"));
     })
-
     $("#calculatorInitialPaymentForm").on("submit", function () {
         ga("send", "event", "calculator-payment-today-update", $(this).find("input[name=amount]").val());
     });
