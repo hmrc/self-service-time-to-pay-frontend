@@ -13,9 +13,9 @@ Partial view to show list of direct debit payments in the the entered_all_amount
     <table>
         <thead>
             <tr>
-                <td><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.due-date")</strong></td>
-                <td><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.amount")</strong></td>
-                <td><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.remove")</strong></td>
+                <td style="width: 68%"><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.due-date")</strong></td>
+                <td style="width: 22%"><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.amount")</strong></td>
+                <td style="width: 10%"><strong>@Messages("ssttp.calculator.form.entered_all_amounts_question.remove")</strong></td>
             </tr>
         </thead>
         <tbody>
@@ -25,7 +25,7 @@ Partial view to show list of direct debit payments in the the entered_all_amount
             <td>@currency(debit.amount)</td>
             @form(routes.CalculatorController.submitRemoveAmountDue()) {
                 <input type="hidden" name="index" value="@index" />
-                <td><p>@button('type -> "submit", '_modifierClass -> "button--secondary") {
+                <td><p>@button('type -> "submit", '_modifierClass -> "button--table") {
                     @Messages("ssttp.calculator.form.entered_all_amounts_question.remove-label")
                 }</p></td>
             }
