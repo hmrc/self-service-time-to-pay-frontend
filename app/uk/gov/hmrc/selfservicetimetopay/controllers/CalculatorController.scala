@@ -83,7 +83,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
         case Some(ttpData@TTPSubmission(_, _, _, None, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))),
         CalculatorInput(debits, _, _, _, _, _), _, _, Some(debitDate))) =>
           CalculatorForm.createSinglePaymentForm().bindFromRequest().fold(
-            formWithErrors => BadRequest(what_you_owe_amount(formWithErrors, debitDate.toString)),
+            formWithErrors => BadRequest(what_you_owe_amount(formWithErrors,debitDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)))),
             validFormData => {
               sessionCache.put(ttpData.copy(
                 calculatorData = ttpData.calculatorData.copy(debits :+ Debit(amount = validFormData.amount, dueDate = debitDate)),
