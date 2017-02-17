@@ -457,6 +457,21 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
+    "the what you owe amount page should format the date correctly on a bad subbmission in" in {
+      implicit val hc = new HeaderCarrier
+
+      val requiredSubmission = ttpSubmissionNoAmounts.copy(debitDate = Some(LocalDate.parse("2017-01-31")))
+      val formattedDateString =  "31 January 2017?"
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(requiredSubmission)))
+      val result = await(controller.submitAmountOwed().apply(FakeRequest()
+        .withFormUrlEncodedBody("amount" -> "-500")
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.BAD_REQUEST
+      bodyOf(result) should include(formattedDateString)
+    }
+
     "successfully display the what you owe review page" in {
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
