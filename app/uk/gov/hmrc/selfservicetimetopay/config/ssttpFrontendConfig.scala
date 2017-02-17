@@ -60,4 +60,9 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
   lazy val interestMetric = getConfString("google-analytics.initialPaymentMetric", "metric8")
   lazy val durationMetric = getConfString("google-analytics.initialPaymentMetric", "metric9")
   lazy val regularPaymentMetric = getConfString("google-analytics.initialPaymentMetric", "metric10")
+  lazy val monthlyDueDateMetric = getConfString("google-analytics.monthlyDueDateMetric", "metric11")
+  lazy val dueDateDimension = getConfString("google-analytics.dueDateDimension", "dimension45")
+  lazy val callForDirectDebitAssistanceDimension = getConfString("google-analytics.dueDateDimension", "dimension46")
+  lazy val printCompletePageDimension = getConfString("google-analytics.dueDateDimension", "dimension47")
+  lazy val clickFeedbackOnComplete = getConfString("google-analytics.dueDateDimension", "dimension48")
 }
