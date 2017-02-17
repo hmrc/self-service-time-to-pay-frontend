@@ -25,7 +25,7 @@
 @regularPaymentMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.regularPaymentMetric}
 @monthlyDueDateMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.monthlyDueDateMetric}
 
-@gaAddProducts(debits, initialPayment, Some((duration, interest)))
+@gaAddProducts(debits, initialPayment, Some((duration, interest)), regularPayment)
 
 ga('ec:setAction','checkout',
     { 'step': @step,
