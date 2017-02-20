@@ -17,6 +17,8 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 import play.api.Logger
 import play.api.mvc._
@@ -26,10 +28,6 @@ import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator._
-import java.util.Locale
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit.DAYS
-import org.joda.time.Days
 
 import scala.concurrent.Future
 
@@ -199,7 +197,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
       sessionCache.get.flatMap {
         case Some(ttpData@TTPSubmission(Some(
         CalculatorPaymentSchedule(Some(startDate), _, _, _, _, _, _, _)), _, _, _, _, _, _, _, _, _))
-          if DAYS.between(startDate, LocalDate.now) != 0 =>
+          if !startDate.equals(LocalDate.now) =>
           updateSchedule(ttpData).apply(request)
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _,
         CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
