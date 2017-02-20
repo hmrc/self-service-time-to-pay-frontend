@@ -57,8 +57,8 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
           CalculatorForm.createDebitDateForm().bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(what_you_owe_date(formWithErrors))),
             validFormData => {
-              sessionCache.put(ttpData.copy(debitDate = Some(LocalDate.of(validFormData.dueByYear,
-                validFormData.dueByMonth, validFormData.duebyDay)))).map[Result] {
+              sessionCache.put(ttpData.copy(debitDate = Some(LocalDate.of(validFormData.dueByYear.toInt,
+                validFormData.dueByMonth.toInt, validFormData.duebyDay.toInt)))).map[Result] {
                 _ => Redirect(routes.CalculatorController.getAmountOwed())
               }
             }
