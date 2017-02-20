@@ -69,6 +69,7 @@ object CalculatorForm {
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low", { i => !isInt(i) || (isInt(i) && (i.toInt >= dueByYearMin)) }),
     "dueByMonth" -> text
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i: String => (i != null) && i.nonEmpty })
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number",  { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByMonthMax) && (i.toInt >= dueByMonthMin))}),
     "dueByDay" -> text
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i: String => (i != null) && i.nonEmpty })
