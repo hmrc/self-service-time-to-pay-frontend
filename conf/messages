@@ -118,10 +118,14 @@ ssttp.calculator.form.what-you-owe-amount.amount.required=Enter an amount of £0
 ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval=Total amounts must be less than £1,000,000,000,000
 
 ssttp.calculator.form.what-you-owe-date.title=What''s the due date of the amount you owe?
+ssttp.calculator.form.what-you-owe.due_by.not-valid-date=You need to enter a valid date
 ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low=Year must be 1996 or later
 ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-high=Year is too far in the future
-ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month=You need to enter a valid month
-ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day=You need to enter a valid day
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year=Enter a valid Year
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month=Enter a valid month
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number=Month must be between 1 and 12
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day=Enter a valid day
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number=Day must be between 1 and 31
 ssttp.calculator.form.what-you-owe-date.example=Example, 31 1 2017
 ssttp.calculator.form.what-you-owe-date.error.summary.title=You are missing an entry
 ssttp.calculator.form.what-you-owe-date.when_due.question.day=Day

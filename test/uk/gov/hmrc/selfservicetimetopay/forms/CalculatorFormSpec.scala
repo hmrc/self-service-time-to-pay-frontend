@@ -67,84 +67,84 @@ class CalculatorFormSpec extends PlaySpec {
 
       assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amounts_due.amount.less-than-maxval"))))
     }
-
+    //todo remove the tests to do with the other form
     "return an error if dueByDay is empty" in {
       val postData = Json.obj("dueBy.dueByDay" -> "")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.amounts_due.due_by.required-day"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day"))))
     }
 
     "return an error if dueByDay is not a whole number" in {
       val postData = Json.obj("dueBy.dueByDay" -> "1.5")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.amounts_due.due_by.not-valid-day"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day"))))
     }
 
     "return an error if dueByDay is less than 1" in {
       val postData = Json.obj("dueBy.dueByDay" -> "0")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.amounts_due.due_by.not-valid-day"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number"))))
     }
 
     "return an error if dueByDay is more than 31" in {
       val postData = Json.obj("dueBy.dueByDay" -> "32")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.amounts_due.due_by.not-valid-day"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number"))))
     }
 
     "return an error if dueByMonth is empty" in {
-      val postData = Json.obj()
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val postData = Json.obj("dueBy.dueByMonth" -> "")
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByMonth", List("ssttp.calculator.form.amounts_due.due_by.required-month"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByMonth", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month"))))
     }
 
     "return an error if dueByMonth is less than 1" in {
       val postData = Json.obj("dueBy.dueByMonth" -> "0")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByMonth", List("ssttp.calculator.form.amounts_due.due_by.not-valid-month"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByMonth", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number"))))
     }
 
     "return an error if dueByMonth is more than 12" in {
       val postData = Json.obj("dueBy.dueByMonth" -> "13")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByMonth", List("ssttp.calculator.form.amounts_due.due_by.not-valid-month"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByMonth", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number"))))
     }
 
     "return an error if dueByYear is empty" in {
       val postData = Json.obj("dueBy.dueByYear" -> "")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.amounts_due.due_by.required-year"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year"))))
     }
 
 
     "return an error if dueByYear is not a whole number" in {
       val postData = Json.obj("dueBy.dueByYear" -> "2000.5")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.amounts_due.due_by.not-valid-year"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year"))))
     }
 
 
     "return an error if dueByYear is before 1996" in {
       val postData = Json.obj("dueBy.dueByYear" -> "1995")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-low"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low"))))
     }
 
     "return an error if dueByYear is more than 1 year ahead" in {
       val postData = Json.obj("dueBy.dueByYear" -> (Calendar.getInstance().get(Calendar.YEAR) + 2).toString)
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-high"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-high"))))
     }
 
     "return an error if dueBy is not a real date" in {
@@ -153,9 +153,9 @@ class CalculatorFormSpec extends PlaySpec {
         "dueBy.dueByMonth" -> "2",
         "dueBy.dueByDay" -> "31"
       )
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy", List("ssttp.calculator.form.amounts_due.due_by.not-valid-date"))))
+      assert(validatedForm.errors.contains(FormError("dueBy", List("ssttp.calculator.form.what-you-owe.due_by.not-valid-date"))))
     }
 
     "return errors when user inputs invalid characters in dueByYear " in {
@@ -165,9 +165,9 @@ class CalculatorFormSpec extends PlaySpec {
         "dueBy.dueByYear" -> "201.e7"
       )
 
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.amounts_due.due_by.not-valid-year"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByYear", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year"))))
     }
 
     "return errors when user inputs invalid characters in dueByDay" in {
@@ -177,11 +177,10 @@ class CalculatorFormSpec extends PlaySpec {
         "dueBy.dueByYear" -> "2017"
       )
 
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
+      val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.amounts_due.due_by.not-valid-day"))))
+      assert(validatedForm.errors.contains(FormError("dueBy.dueByDay", List("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day"))))
     }
-
     "return errors when nothing is selected in payTodayForm" in {
       val postData = Json.obj()
 
