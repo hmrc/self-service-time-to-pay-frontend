@@ -348,11 +348,13 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
     if (calculatorInput.initialPayment > 0) {
       if (debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
-        calculatorInput.copy(initialPayment = BigDecimal(0),
+        calculatorInput.copy(startDate = LocalDate.now,
+          initialPayment = BigDecimal(0),
           firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
           endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
       } else {
-        calculatorInput.copy(firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
+        calculatorInput.copy(startDate = LocalDate.now,
+          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
           endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
       }
     }
