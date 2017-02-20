@@ -53,7 +53,7 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
   }
 
   "CalculatorControllerSpec" should {
-    "Return OK for non-logged-in calculation submission" in {
+    "Return OK for non-logged-in calculation submission with valid start date" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any()))
