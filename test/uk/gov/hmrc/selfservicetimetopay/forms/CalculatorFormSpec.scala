@@ -67,7 +67,6 @@ class CalculatorFormSpec extends PlaySpec {
 
       assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amounts_due.amount.less-than-maxval"))))
     }
-    //todo remove the tests to do with the other form
     "return an error if dueByDay is empty" in {
       val postData = Json.obj("dueBy.dueByDay" -> "")
       val validatedForm = CalculatorForm.createDebitDateForm.bind(postData)
