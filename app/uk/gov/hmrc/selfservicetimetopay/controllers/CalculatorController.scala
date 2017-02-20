@@ -28,6 +28,8 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator._
 import java.util.Locale
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit.DAYS
+import org.joda.time.Days
 
 import scala.concurrent.Future
 
@@ -195,6 +197,10 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
   def getCalculateInstalments(months: Option[Int]): Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.flatMap {
+        case Some(ttpData@TTPSubmission(Some(
+        CalculatorPaymentSchedule(Some(startDate), _, _, _, _, _, _, _)), _, _, _, _, _, _, _, _, _))
+          if DAYS.between(startDate, LocalDate.now) != 0 =>
+          updateSchedule(ttpData).apply(request)
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _,
         CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
