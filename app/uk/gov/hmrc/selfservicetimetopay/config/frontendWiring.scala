@@ -33,7 +33,7 @@ import uk.gov.hmrc.selfservicetimetopay.auth.{SaGovernmentGateway, SaRegime}
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.{CheckSessionAction, SessionProvider}
 
@@ -110,12 +110,14 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
 
   def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
 
-  def authorizedForSsttp(block: (Option[TTPSubmission] => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
+  def authorizedForSsttp(block: (TTPSubmission => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
       sessionCache.get.flatMap[Result] {
-        case Some(TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(false, _)), _)) =>
+        //Include all data required past eligibility
+        case Some(submission@TTPSubmission(Some(_), _, _, Some(_), Some(EligibilityTypeOfTax(true, false)),
+        Some(EligibilityExistingTTP(Some(false))), _, _, Some(EligibilityStatus(true, _)), _)) =>
+          block(submission)
+        case _ =>
           Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
-        case optSubmission =>
-          block(optSubmission)
       }
   }
 

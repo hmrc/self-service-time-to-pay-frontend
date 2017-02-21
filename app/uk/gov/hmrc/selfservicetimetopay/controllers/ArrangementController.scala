@@ -57,59 +57,62 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def determineMisalignment: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
-      authorizedForSsttp { submission =>
-        val sa = authContext.principal.accounts.sa.get
 
-        taxPayerConnector.getTaxPayer(sa.utr.utr).flatMap[Result] {
-          _.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())))(t => {
-            submission.fold(redirectToStart) { ttp =>
-              val newSubmission = ttp.copy(taxpayer = Some(t))
-              newSubmission match {
-                case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _), _, _, _) =>
-                  sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
-                    endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map {
-                    _ => Redirect(routes.CalculatorController.getPayTodayQuestion())
-                  }
-                case TTPSubmission(None, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _, _) =>
-                  sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
-                    endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map {
-                    _ => Redirect(routes.CalculatorController.getPayTodayQuestion())
-                  }
-                case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _, _)
-                  if areEqual(tpSA.debits, meDebits) =>
-                  eligibilityCheck(tp).map { es =>
-                    newSubmission.copy(eligibilityStatus = Option(es))
-                  }.map(changeDateUpdated => sessionCache.put(changeDateUpdated).map(_ => changeDateUpdated))
-                    .flatMap(eventualSubmission => eventualSubmission)
-                    .flatMap {
-                      case TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
-                        Future.successful(Redirect(routes.CalculatorController.getPayTodayQuestion()))
-                      case TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) =>
-                        Logger.info(s"Failed eligibility check because: $reasons")
-                        Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
-                    }
-                case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _, _) =>
-                  sessionCache.put(newSubmission).flatMap {
-                    _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
-                  }
-                case _ =>
-                  Logger.info("No match found for newSubmission in determineMisalignment")
-                  Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
-              }
-            }
-          })
-        }
+      //Need to match on session and route accordingly
+      sessionCache.get.map { session =>
+          Redirect(routes.CalculatorController.getPayTodayQuestion())
       }
+//      authorizedForSsttp { submission =>
+//        val sa = authContext.principal.accounts.sa.get
+//
+//        taxPayerConnector.getTaxPayer(sa.utr.utr).flatMap[Result] {
+//          _.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())))(t => {
+//            submission.fold(redirectToStart) { ttp =>
+//              val newSubmission = ttp.copy(taxpayer = Some(t))
+//              newSubmission match {
+//                case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _), _, _, _) =>
+//                  sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
+//                    endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map {
+//                    _ => Redirect(routes.CalculatorController.getPayTodayQuestion())
+//                  }
+//                case TTPSubmission(None, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _, _) =>
+//                  sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
+//                    endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map {
+//                    _ => Redirect(routes.CalculatorController.getPayTodayQuestion())
+//                  }
+//                case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _, _)
+//                  if areEqual(tpSA.debits, meDebits) =>
+//                  eligibilityCheck(tp).map { es =>
+//                    newSubmission.copy(eligibilityStatus = Option(es))
+//                  }.map(changeDateUpdated => sessionCache.put(changeDateUpdated).map(_ => changeDateUpdated))
+//                    .flatMap(eventualSubmission => eventualSubmission)
+//                    .flatMap {
+//                      case TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
+//                        Future.successful(Redirect(routes.CalculatorController.getPayTodayQuestion()))
+//                      case TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) =>
+//                        Logger.info(s"Failed eligibility check because: $reasons")
+//                        Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
+//                    }
+//                case TTPSubmission(_, _, _, Some(tp@Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(meDebits, _, _, _, _, _), _, _, _) =>
+//                  sessionCache.put(newSubmission).flatMap {
+//                    _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
+//                  }
+//                case _ =>
+//                  Logger.info("No match found for newSubmission in determineMisalignment")
+//                  Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+//              }
+//            }
+//          })
+//        }
+//      }
   }
 
   def getInstalmentSummary: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case None => redirectToStart
-        case Some(ttp@TTPSubmission(Some(schedule), _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _))
+        case ttp@TTPSubmission(Some(schedule), _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)
           if areEqual(ttp.taxpayer.get.selfAssessment.get.debits, ttp.calculatorData.debits) =>
           Future.successful(Ok(instalment_plan_summary(debits, schedule, createDayOfForm(ttp), signedIn = true)))
-        case Some(TTPSubmission(None, _, _, _, _, _, _, _, _, _)) => throw new RuntimeException("No schedule data")
         case _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
       }
   }
@@ -125,21 +128,14 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
           formWithErrors => {
             Future.successful(BadRequest(instalment_plan_summary(
-              submission.get.taxpayer.get.selfAssessment.get.debits,
-              submission.get.schedule.get,
+              submission.taxpayer.get.selfAssessment.get.debits,
+              submission.schedule.get,
               formWithErrors,
               signedIn = true)))
           },
-          validFormData => {
-            submission match {
-              case None =>
-                Logger.info("No submission found in changeSchedulePaymentDay, redirecting to start")
-                redirectToStart
-              case Some(ttp) => changeScheduleDay(ttp, validFormData.dayOfMonth).flatMap { ttpSubmission =>
-                sessionCache.put(ttpSubmission).map {
-                  _ => Redirect(routes.ArrangementController.getInstalmentSummary())
-                }
-              }
+          validFormData => changeScheduleDay(submission, validFormData.dayOfMonth).flatMap { ttpSubmission =>
+            sessionCache.put(ttpSubmission).map {
+              _ => Redirect(routes.ArrangementController.getInstalmentSummary())
             }
           })
       }
@@ -187,28 +183,19 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def submit(): Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
-      authorizedForSsttp {
-        case None =>
-          Logger.info("No submission found, redirecting to start")
-          redirectToStart
-        case Some(ttp) => arrangementSetUp(ttp)
-      }
+      authorizedForSsttp { ttp => arrangementSetUp(ttp) }
   }
 
   def applicationComplete(): Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
-      authorizedForSsttp {
-        case None =>
-          Logger.info("No submission found in applicationComplete, redirecting to start")
-          redirectToStart
-        case Some(submission) =>
-          sessionCache.remove().map(_ => Ok(application_complete(
-            debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
-            transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
-            directDebit = submission.arrangementDirectDebit.get,
-            schedule = submission.schedule.get,
-            loggedIn = true))
-         )
+      authorizedForSsttp { submission =>
+        sessionCache.remove().map(_ => Ok(application_complete(
+          debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
+          transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
+          directDebit = submission.arrangementDirectDebit.get,
+          schedule = submission.schedule.get,
+          loggedIn = true))
+        )
       }
   }
 
@@ -230,7 +217,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
               result.flatMap {
                 _.fold(error => {
-                  Logger.error( s"Exception: ${error.code} + ${error.message}")
+                  Logger.error(s"Exception: ${error.code} + ${error.message}")
                   Future.successful(Redirect(routes.ArrangementController.applicationComplete()))
                 }, _ => applicationSuccessful)
               }
