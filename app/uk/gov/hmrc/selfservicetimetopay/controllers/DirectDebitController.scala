@@ -32,35 +32,35 @@ import scala.concurrent.Future
 
 class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
 
-  def getDirectDebit: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+  def getDirectDebit: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
         case submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer), _, _, calcData, _, _, _)
           if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
           Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, submission.taxpayer.isDefined)))
-        case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+        case _ => Future.successful(redirectOnError)
       }
   }
 
-  def getDirectDebitAssistance: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+  def getDirectDebitAssistance: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
         case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
           Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule)))
-        case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+        case _ => Future.successful(redirectOnError)
       }
   }
 
-  def getDirectDebitError: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+  def getDirectDebitError: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
         case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
           Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, showErrorNotification = true)))
-        case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+        case _ => Future.successful(redirectOnError)
       }
   }
 
-  def getDirectDebitConfirmation: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+  def getDirectDebitConfirmation: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
         case submission@TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _, _) =>
@@ -68,22 +68,22 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
             schedule, submission.arrangementDirectDebit.get, submission.taxpayer.isDefined)))
         case _ =>
           Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
-          Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+          Future.successful(redirectOnError)
       }
   }
 
-  def getBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+  def getBankAccountNotFound: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
         case TTPSubmission(_, _, Some(existingDDBanks), _, _, _, _, _, _, _) =>
           Future.successful(Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction)))
         case _ =>
           Logger.error(s"Existing DD banks missing on Bank account not found page")
-          Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+          Future.successful(redirectOnError)
       }
   }
 
-  def submitBankAccountNotFound: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+  def submitBankAccountNotFound: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
         case ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _, _, _) =>
@@ -112,7 +112,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
             })
         case _ =>
           Logger.error(s"Existing DD banks missing when submitting Bank account not found page")
-          Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+          Future.successful(redirectOnError)
       }
   }
 
@@ -120,7 +120,7 @@ class DirectDebitController(directDebitConnector: DirectDebitConnector) extends 
     Redirect(routes.ArrangementController.submit())
   }
 
-  def submitDirectDebit: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+  def submitDirectDebit: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp { submission =>
         directDebitForm.bindFromRequest().fold(

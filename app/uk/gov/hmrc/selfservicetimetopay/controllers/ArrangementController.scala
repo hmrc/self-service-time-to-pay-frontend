@@ -44,18 +44,18 @@ class ArrangementController(ddConnector: DirectDebitConnector,
   val paymentFrequency = "Calendar Monthly"
   val paymentCurrency = "GBP"
 
-  def start: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+  def start: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
         case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp)
-        case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+        case _ => Future.successful(redirectOnError)
       }
   }
 
-  def determineMisalignment: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
+  def determineMisalignment: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
-        case None => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+        case None => Future.successful(redirectOnError)
 
         case Some(ttp@TTPSubmission(_, _, _, _, _, _, _, _, _, _)) =>
           taxPayerConnector.getTaxPayer(authContext.principal.accounts.sa.get.utr.utr).flatMap[Result] {
@@ -88,7 +88,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
                   case _ =>
                     Logger.error("No match found for newSubmission in determineMisalignment")
-                    Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+                    Future.successful(redirectOnError)
                 }
               }
               )
@@ -96,7 +96,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       }
   }
 
-  def getInstalmentSummary: Action[AnyContent] = AuthorisedSaUser {
+  def getInstalmentSummary: Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
@@ -107,13 +107,13 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         }
   }
 
-  def submitInstalmentSummary: Action[AnyContent] = AuthorisedSaUser {
+  def submitInstalmentSummary: Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
         authorizedForSsttp(_ => Future.successful(Redirect(routes.DirectDebitController.getDirectDebit())))
   }
 
-  def changeSchedulePaymentDay(): Action[AnyContent] = AuthorisedSaUser {
+  def changeSchedulePaymentDay(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
@@ -154,11 +154,6 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     }))
   }
 
-  private def checkDayOfMonth(dayOfMonth: Int): Int = dayOfMonth match {
-    case day if day > 28 => 1
-    case _ => dayOfMonth
-  }
-
   private def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
     val startDate = LocalDate.now()
     val durationMonths = ttpSubmission.durationMonths.get
@@ -187,7 +182,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
       endDate = lastPaymentDate))
   }
 
-  def submit(): Action[AnyContent] = AuthorisedSaUser {
+  def submit(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
@@ -195,7 +190,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         }
   }
 
-  def applicationComplete(): Action[AnyContent] = AuthorisedSaUser {
+  def applicationComplete(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
@@ -210,9 +205,12 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         }
   }
 
-  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
+  private def checkDayOfMonth(dayOfMonth: Int): Int = dayOfMonth match {
+    case day if day > 28 => 1
+    case _ => dayOfMonth
+  }
 
-  private def redirectToStart = successful[Result](Redirect(routes.SelfServiceTimeToPayController.start()))
+  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]): Boolean = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 
   private def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
 

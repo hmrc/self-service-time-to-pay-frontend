@@ -17,7 +17,6 @@
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{verify => wmVerify, _}
-import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import play.api.http.Status
@@ -27,8 +26,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.WithFakeApplication
-import uk.gov.hmrc.selfservicetimetopay.config.{DirectDebitConnector, WSHttp}
-import uk.gov.hmrc.selfservicetimetopay.config.DirectDebitConnector.baseUrl
+import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
