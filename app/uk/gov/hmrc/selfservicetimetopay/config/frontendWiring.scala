@@ -117,7 +117,7 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
         Some(EligibilityExistingTTP(Some(false))), _, _, Some(EligibilityStatus(true, _)), _)) =>
           block(submission)
         case _ =>
-          Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
+          Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
       }
   }
 

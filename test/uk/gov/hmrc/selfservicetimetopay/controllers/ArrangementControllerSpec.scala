@@ -120,7 +120,6 @@ class ArrangementControllerSpec extends UnitSpec
         .withSession(SessionKeys.userId -> "someUserId"))
 
       redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.start().url
-
     }
 
     "update payment schedule date" in {
@@ -148,7 +147,7 @@ class ArrangementControllerSpec extends UnitSpec
       redirectLocation(response).get contains "/gg/sign-in"
     }
 
-    "redirect to ineligible (call us) page if EligibilityStatus is set to false within the TTPSubmission data (where an authenticated resource is called)" in {
+    "redirect to start page if EligibilityStatus is set to false within the TTPSubmission data (where an authenticated resource is called)" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any()))
@@ -159,7 +158,7 @@ class ArrangementControllerSpec extends UnitSpec
           .withCookies(sessionProvider.createTtpCookie())
           .withSession(SessionKeys.userId -> "someUserId"))
 
-      redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url
+      redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.start().url
     }
 
     "NOT redirect to ineligible (call us) page if EligibilityStatus is None within the TTPSubmission data (where an authenticated resource is called)" in {
@@ -217,7 +216,7 @@ class ArrangementControllerSpec extends UnitSpec
       redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getMisalignmentPage().url
     }
 
-    "redirect to getPayTodayQuestion page if logged in and not logged in debits do sum() to the same value" in {
+    "redirect to instalment summary page if logged in and not logged in debits do sum() to the same value" in {
       implicit val hc = new HeaderCarrier
 
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
@@ -233,7 +232,7 @@ class ArrangementControllerSpec extends UnitSpec
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId"))
 
-      redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getPayTodayQuestion().url
+      redirectLocation(response).get shouldBe controllers.routes.ArrangementController.getInstalmentSummary().url
     }
 
     "redirect to getPayTodayQuestion page if the not logged in user has not created any debits" in {
