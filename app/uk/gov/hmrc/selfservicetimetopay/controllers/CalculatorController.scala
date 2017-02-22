@@ -230,19 +230,22 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def getMisalignmentPage: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
-      authorizedForSsttp {
-        case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
-          Future.successful(Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, loggedIn = true)))
+      sessionCache.get.map {
+        case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
+          if (!areEqual(sa.debits, debits)) Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, loggedIn = true))
+          else Redirect(routes.ArrangementController.getInstalmentSummary())
         case _ =>
           Logger.error("Unhandled case in getMisalignmentPage")
-          Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
+          Redirect(routes.SelfServiceTimeToPayController.getUnavailable())
       }
   }
 
   def submitRecalculate: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
-    implicit request => authorizedForSsttp {
-        ttpData => updateSchedule(ttpData).apply(request)
-    }
+    implicit request =>
+      sessionCache.get.flatMap[Result] {
+        case Some(ttpData@TTPSubmission(_,_,_,_,_,_,_,_,_,_)) => updateSchedule(ttpData).apply(request)
+        case None => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
+      }
   }
 
   def submitCalculateInstalments: Action[AnyContent] = Action.async {
@@ -270,7 +273,7 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     implicit request =>
       sessionCache.get.flatMap[Result] {
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, taxpayer, Some(EligibilityTypeOfTax(true, false)),
-          Some(EligibilityExistingTTP(Some(false))), cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
+        Some(EligibilityExistingTTP(Some(false))), cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
           val durationForm = CalculatorForm.durationForm.fill(CalculatorDuration(Some(3)))
           CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
@@ -387,4 +390,6 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
           }
       }
   }
+
+  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 }

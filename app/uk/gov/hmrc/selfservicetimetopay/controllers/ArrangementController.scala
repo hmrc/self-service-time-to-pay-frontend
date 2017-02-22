@@ -46,21 +46,10 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def start: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>
-      authorizedForSsttp {
-        _ => Future.successful(Redirect(routes.ArrangementController.getInstalmentSummary()))
+      sessionCache.get.flatMap {
+        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp)
+        case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.start()))
       }
-  }
-
-  private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission)(implicit hc: HeaderCarrier) = {
-    eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).map { es =>
-      newSubmission.copy(eligibilityStatus = Option(es))
-    }.flatMap(updatedSubmission => sessionCache.put(updatedSubmission).map(_ => updatedSubmission match {
-      case TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
-        Redirect(routes.ArrangementController.getInstalmentSummary())
-      case TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) =>
-        Logger.debug(s"Failed eligibility check because: $reasons")
-        Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())
-    }))
   }
 
   def determineMisalignment: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
@@ -85,8 +74,17 @@ class ArrangementController(ddConnector: DirectDebitConnector,
                     }
 
                   case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
-                    if (areEqual(debits, tpSA.debits)) eligibilityCheck(taxPayer, newSubmission)
-                    else Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
+                    if (areEqual(debits, tpSA.debits)) {
+                      sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
+                        endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).flatMap {
+                        _ => eligibilityCheck(taxPayer, newSubmission)
+                      }
+                    }
+                    else {
+                      sessionCache.put(newSubmission).flatMap {
+                        _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
+                      }
+                    }
 
                   case _ =>
                     Logger.error("No match found for newSubmission in determineMisalignment")
@@ -100,7 +98,8 @@ class ArrangementController(ddConnector: DirectDebitConnector,
 
   def getInstalmentSummary: Action[AnyContent] = AuthorisedSaUser {
     implicit authContext =>
-      implicit request => authorizedForSsttp {
+      implicit request =>
+        authorizedForSsttp {
           case ttp@TTPSubmission(Some(schedule), _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)
             if areEqual(ttp.taxpayer.get.selfAssessment.get.debits, ttp.calculatorData.debits) =>
             Future.successful(Ok(instalment_plan_summary(debits, schedule, createDayOfForm(ttp), signedIn = true)))
@@ -136,11 +135,23 @@ class ArrangementController(ddConnector: DirectDebitConnector,
         }
   }
 
-  def changeScheduleDay(ttpSubmission: TTPSubmission, dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
+  private def changeScheduleDay(ttpSubmission: TTPSubmission, dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
     createCalculatorInput(ttpSubmission, dayOfMonth).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
       calculatorConnector.calculatePaymentSchedule(cal)
         .map[TTPSubmission](seqCalcInput => ttpSubmission.copy(schedule = Option(seqCalcInput.head), calculatorData = cal))
     })
+  }
+
+  private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission)(implicit hc: HeaderCarrier) = {
+    eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).map { es =>
+      newSubmission.copy(eligibilityStatus = Option(es))
+    }.flatMap(updatedSubmission => sessionCache.put(updatedSubmission).map(_ => updatedSubmission match {
+      case TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
+        Redirect(routes.ArrangementController.getInstalmentSummary())
+      case TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) =>
+        Logger.debug(s"Failed eligibility check because: $reasons")
+        Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())
+    }))
   }
 
   private def checkDayOfMonth(dayOfMonth: Int): Int = dayOfMonth match {
@@ -148,7 +159,7 @@ class ArrangementController(ddConnector: DirectDebitConnector,
     case _ => dayOfMonth
   }
 
-  def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
+  private def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
     val startDate = LocalDate.now()
     val durationMonths = ttpSubmission.durationMonths.get
     val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
