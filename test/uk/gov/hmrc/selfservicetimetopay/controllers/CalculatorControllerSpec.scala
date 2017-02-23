@@ -53,17 +53,37 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
   }
 
   "CalculatorControllerSpec" should {
-    "Return OK for non-logged-in calculation submission" in {
+    "Return OK for non-logged-in calculation submission with valid start date" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmissionNLI)))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLI.copy(schedule = Some(calculatorPaymentSchedule.copy(startDate = Some(LocalDate.now)))))))
 
       val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())))
 
       status(result) shouldBe Status.OK
       verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
+    "Update the schedule in the cache if the startDate is out of date" in {
+      implicit val hc = new HeaderCarrier
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLI)))
+
+      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
+        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
+
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(Future.successful(mock[CacheMap]))
+
+      val result = await(controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())))
+
+      status(result) shouldBe Status.SEE_OTHER
+      verify(mockSessionCache, times(1)).get(any(), any())
+      verify(mockCalculatorConnector, times(1)).calculatePaymentSchedule(any())(any())
+      verify(mockSessionCache, times(1)).put(any())(any(), any())
     }
 
     "if no schedule is present, generate a schedule and populate it in the session" in {

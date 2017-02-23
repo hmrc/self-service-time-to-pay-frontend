@@ -26,6 +26,8 @@ import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.calculator._
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 import scala.concurrent.Future
 
@@ -99,6 +101,8 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
   def getCalculateInstalments(months: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap {
+      case Some(ttpData@TTPSubmission(Some(CalculatorPaymentSchedule(Some(startDate), _, _, _, _, _, _, _)), _, _, _, _, _, _, _, _))
+        if !startDate.equals(LocalDate.now) => updateSchedule(ttpData).apply(request)
       case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _)) =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
         Future.successful(Ok(calculate_instalments_form(schedule, Some(sa.debits),
@@ -230,11 +234,11 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
 
     if (calculatorInput.initialPayment > 0) {
       if (debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
-        calculatorInput.copy(initialPayment = BigDecimal(0),
+        calculatorInput.copy(startDate = LocalDate.now, initialPayment = BigDecimal(0),
           firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
           endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
       } else {
-        calculatorInput.copy(firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
+        calculatorInput.copy(startDate = LocalDate.now, firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
           endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
       }
     }
