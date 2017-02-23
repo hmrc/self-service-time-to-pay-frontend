@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.config
 
 import play.api.Logger
 import play.api.mvc.{ActionBuilder, AnyContent, Controller, Request, Result, Action => PlayAction}
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
@@ -33,7 +34,7 @@ import uk.gov.hmrc.selfservicetimetopay.auth.{SaGovernmentGateway, SaRegime}
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.{CheckSessionAction, SessionProvider}
 
@@ -108,14 +109,18 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
   protected lazy val saRegime = SaRegime(authenticationProvider)
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
 
-  def AuthorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
+  protected val validTypeOfTax = Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true))
+  protected val validExistingTTP = Some(EligibilityExistingTTP(Some(false)))
 
-  def authorizedForSsttp(block: (Option[TTPSubmission] => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
+  def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
+
+  def authorizedForSsttp(block: (TTPSubmission => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
       sessionCache.get.flatMap[Result] {
-        case Some(TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(false, _)), _)) =>
-          Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
-        case optSubmission =>
-          block(optSubmission)
+        case Some(submission@TTPSubmission(Some(_), _, _, Some(_), `validTypeOfTax`,
+        `validExistingTTP`, _, _, Some(EligibilityStatus(true, _)), _)) =>
+          block(submission)
+        case _ =>
+          Future.successful(redirectOnError)
       }
   }
 
@@ -125,7 +130,9 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
     }
   }
 
-  protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier) = {
+  protected def redirectOnError: Result = Redirect(routes.SelfServiceTimeToPayController.start())
+
+  protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier): Future[CacheMap] = {
     sessionCache.get.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")
