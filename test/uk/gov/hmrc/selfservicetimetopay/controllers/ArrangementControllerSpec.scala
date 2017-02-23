@@ -80,8 +80,122 @@ class ArrangementControllerSpec extends UnitSpec
   )
 
   "Self Service Time To Pay Arrangement Controller" should {
-    "successfully display the instalment summary page with required data in submission" in {
+    "redirect to start with an empty submission for determine misalignment" in {
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(None))
 
+      val response = await(controller.determineMisalignment()
+        .apply(FakeRequest()
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId")))
+
+      status(response) shouldBe SEE_OTHER
+      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.start().url
+    }
+
+    "redirect to you need to file when sa debits are less than £32.00 for determine misalignment" in {
+      val requiredSa = selfAssessment.get.copy(debits = Seq.empty)
+
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer.copy(selfAssessment = Some(requiredSa)))))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission)))
+
+      val response = await(controller.determineMisalignment()
+        .apply(FakeRequest()
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId")))
+
+      status(response) shouldBe SEE_OTHER
+      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
+    }
+
+    "redirect to pay today question when no amounts have been entered for determine misalignment" in {
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial))))
+
+      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+
+      val response = await(controller.determineMisalignment()
+        .apply(FakeRequest()
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId")))
+
+      status(response) shouldBe SEE_OTHER
+      redirectLocation(response).get shouldBe routes.CalculatorController.getPayTodayQuestion().url
+    }
+
+    "redirect to instalment summary when entered amounts and sa amounts are equal and user is eligible for determine misalignment" in {
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = taxPayer.selfAssessment.get.debits)))))
+
+      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
+
+      val response = await(controller.determineMisalignment()
+        .apply(FakeRequest()
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId")))
+
+      status(response) shouldBe SEE_OTHER
+      redirectLocation(response).get shouldBe routes.ArrangementController.getInstalmentSummary().url
+    }
+
+    "redirect to call us page when entered amounts and sa amounts are equal and user is ineligible for determine misalignment" in {
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = taxPayer.selfAssessment.get.debits)))))
+
+      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq("ineligible"))))
+
+      val response = await(controller.determineMisalignment()
+        .apply(FakeRequest()
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId")))
+
+      status(response) shouldBe SEE_OTHER
+      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
+    }
+
+    "redirect to misalignment when entered amounts and sa amounts aren't equal for determine misalignment" in {
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue))))))
+
+      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+
+      val response = await(controller.determineMisalignment()
+        .apply(FakeRequest()
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId")))
+
+      status(response) shouldBe SEE_OTHER
+      redirectLocation(response).get shouldBe routes.CalculatorController.getMisalignmentPage().url
+    }
+
+    "redirect to call us page when tax payer connector fails to retrieve data for determine misalignment" in {
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(None))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+
+      val response = await(controller.determineMisalignment()
+        .apply(FakeRequest()
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId")))
+
+      status(response) shouldBe SEE_OTHER
+      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
+    }
+
+    "successfully display the instalment summary page with required data in submission" in {
       val requiredSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
 
       when(mockSessionCache.get(any(), any()))
@@ -187,9 +301,9 @@ class ArrangementControllerSpec extends UnitSpec
 
       val response = controller.changeSchedulePaymentDay()
         .apply(FakeRequest("POST", "/arrangement/instalment-summary/change-day")
-        .withCookies(sessionProvider.createTtpCookie())
-        .withSession(SessionKeys.userId -> "someUserId")
-        .withFormUrlEncodedBody(validDayForm: _*))
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId")
+          .withFormUrlEncodedBody(validDayForm: _*))
 
       redirectLocation(response).get shouldBe controllers.routes.ArrangementController.getInstalmentSummary().url
     }
@@ -273,7 +387,9 @@ class ArrangementControllerSpec extends UnitSpec
     val controller = new TimeToPayController() {
       override val sessionProvider: SessionProvider = mockSessionProvider
 
-      def go() = Action { Ok("") }
+      def go() = Action {
+        Ok("")
+      }
     }
 
     "be set within the session cookie when the user first hits a page" in {
