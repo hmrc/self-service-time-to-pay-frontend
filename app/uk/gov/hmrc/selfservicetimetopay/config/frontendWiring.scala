@@ -116,7 +116,6 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
 
   def authorizedForSsttp(block: (TTPSubmission => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
       sessionCache.get.flatMap[Result] {
-        //Include all data required past eligibility
         case Some(submission@TTPSubmission(Some(_), _, _, Some(_), `validTypeOfTax`,
         `validExistingTTP`, _, _, Some(EligibilityStatus(true, _)), _)) =>
           block(submission)
