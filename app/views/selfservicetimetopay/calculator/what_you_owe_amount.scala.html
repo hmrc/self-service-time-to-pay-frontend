@@ -2,7 +2,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorSinglePayment
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
-@(dataForm:Form[CalculatorSinglePayment], debitDueDate: String)(implicit request: Request[_])
+@(dataForm:Form[CalculatorSinglePayment], debitDueDate: String)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.form.what-you-owe-amount.title1")

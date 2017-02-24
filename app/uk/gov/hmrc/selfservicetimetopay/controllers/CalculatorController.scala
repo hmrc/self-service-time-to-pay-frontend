@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
+import javax.inject._
 
 import java.time.LocalDate
 
@@ -31,7 +32,7 @@ import java.time.format.DateTimeFormatter
 
 import scala.concurrent.Future
 
-class CalculatorController(calculatorConnector: CalculatorConnector) extends TimeToPayController {
+class CalculatorController @Inject() (val messagesApi: play.api.i18n.MessagesApi, calculatorConnector: CalculatorConnector) extends TimeToPayController with play.api.i18n.I18nSupport {
   def start: Action[AnyContent] = Action { request =>
     Redirect(routes.CalculatorController.getAmountsDue())
   }

@@ -8,7 +8,7 @@
     initialPayment:Option[BigDecimal],
     paymentPlan: Option[(Int, BigDecimal)],
     regularPayment: BigDecimal
-)
+)(implicit messages: play.api.i18n.Messages)
 @import selfservicetimetopay.partials.gaAmountDueProduct
 
 @Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)

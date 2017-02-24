@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
+import javax.inject._
 
 import play.api.Logger
 import play.api.mvc._
@@ -30,7 +31,7 @@ import views.html.selfservicetimetopay.arrangement._
 import scala.collection.immutable.::
 import scala.concurrent.Future
 
-class DirectDebitController(directDebitConnector: DirectDebitConnector) extends TimeToPayController {
+class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesApi, directDebitConnector: DirectDebitConnector) extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def getDirectDebit: Action[AnyContent] = AuthorisedSaUser { implicit authContext =>
     implicit request =>

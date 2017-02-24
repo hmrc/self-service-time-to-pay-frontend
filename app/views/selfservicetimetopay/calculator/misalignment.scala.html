@@ -3,7 +3,7 @@ Amounts Due Misalignment page - designed to be shown when the debts a user enter
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountsDue
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@(amountsDue:CalculatorAmountsDue, debits:Seq[Debit], loggedIn: Boolean = false)(implicit request: Request[_])
+@(amountsDue:CalculatorAmountsDue, debits:Seq[Debit], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @import selfservicetimetopay.helpers.{highlight, message_list}
 @import selfservicetimetopay.helpers.forms.{form, submit}

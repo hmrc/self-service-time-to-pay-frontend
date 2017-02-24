@@ -36,7 +36,7 @@ import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.{CheckSessionAction, SessionProvider}
-
+import javax.inject.Singleton
 import scala.concurrent.Future
 
 object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName with RunMode with HttpAuditing {
@@ -151,12 +151,30 @@ trait ServiceRegistry extends ServicesConfig {
 trait ControllerRegistry {
   registry: ServiceRegistry =>
   private lazy val controllers = Map[Class[_], Controller](
-    classOf[DirectDebitController] -> new DirectDebitController(directDebitConnector),
-    classOf[CalculatorController] -> new CalculatorController(calculatorConnector),
-    classOf[ArrangementController] -> new ArrangementController(directDebitConnector, arrangementConnector, calculatorConnector, taxPayerConnector, eligibilityConnector),
-    classOf[EligibilityController] -> new EligibilityController(),
-    classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController()
+    classOf[DirectDebitController] -> new DirectDebitController(messagesApi, directDebitConnector),
+    classOf[CalculatorController] -> new CalculatorController(messagesApi, calculatorConnector),
+    classOf[ArrangementController] -> new ArrangementController(messagesApi, directDebitConnector, arrangementConnector, calculatorConnector, taxPayerConnector, eligibilityConnector),
+    classOf[EligibilityController] -> new EligibilityController(messagesApi),
+    classOf[SelfServiceTimeToPayController] -> new SelfServiceTimeToPayController(messagesApi)
   )
 
   def getController[A](controllerClass: Class[A]): A = controllers(controllerClass).asInstanceOf[A]
+
+  import play.api.Play.current
+  import play.api.i18n._
+
+  // lazy val messagesApi = current.injector.instanceOf[MessagesApi]  
+  // lazy val directDebitConnector = current.injector.instanceOf[DirectDebitConnector]
+  // lazy val calculatorConnector = current.injector.instanceOf[CalculatorConnector]
+  // lazy val arrangementConnector = current.injector.instanceOf[ArrangementConnector]
+  // lazy val taxPayerConnector = current.injector.instanceOf[TaxPayerConnector]
+  // lazy val eligibilityConnector = current.injector.instanceOf[EligibilityConnector]
+
+  def messagesApi: MessagesApi  
+  def directDebitConnector: DirectDebitConnector
+  def calculatorConnector: CalculatorConnector
+  def arrangementConnector: ArrangementConnector
+  def taxPayerConnector: TaxPayerConnector
+  def eligibilityConnector: EligibilityConnector  
+
 }

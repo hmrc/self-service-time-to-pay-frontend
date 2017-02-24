@@ -13,7 +13,7 @@
     @param content The HTML inside the button
 *@
 @import selfservicetimetopay.helpers.forms.{button => formsButton }
-@(args: (Symbol, String)*)(content:Html)
+@(args: (Symbol, String)*)(content:Html)(implicit messages: play.api.i18n.Messages)
 @argsMap = @{ args.toMap }
 @defining({
     var a = argsMap.filterNot(entry => entry._1.name.startsWith("_")) + ('type -> "submit")

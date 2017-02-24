@@ -6,7 +6,7 @@ Dispay the errors for a whole form, or a specified field/group
     @param args options arguments for the template
         '_id  -> Id indentifier for use with the errors
 *@
-@(theForm: Form[_], args:(Symbol, String)*)(implicit lang: Lang = Lang("en"))
+@(theForm: Form[_], args:(Symbol, String)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import selfservicetimetopay.helpers.forms.errorList
 @{
   val argsMap = args.toMap

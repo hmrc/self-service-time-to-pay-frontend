@@ -7,7 +7,7 @@
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@(schedule:CalculatorPaymentSchedule, debits:Option[Seq[Debit]], loggedIn:Boolean = false)(implicit request: Request[_])
+@(schedule:CalculatorPaymentSchedule, debits:Option[Seq[Debit]], loggedIn:Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.{message_list, pluralize}
 @import selfservicetimetopay.partials.{currency, what_you_owe}
 @import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer}

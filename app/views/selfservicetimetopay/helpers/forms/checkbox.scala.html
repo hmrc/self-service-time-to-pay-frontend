@@ -9,12 +9,12 @@
     '_labelClass -> class to add to the label element as per http://hmrc.github.io/assets-frontend/section-label.html
     '_inputClass -> Class to add to the input element
 *@
-@(field: Field, label: Option[Html], args:(Symbol, Any)*)(implicit lang: Lang = Lang("en"))
+@(field: Field, label: Option[Html], args:(Symbol, Any)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import views.html.helper.FieldElements
 @import selfservicetimetopay.helpers.forms.fieldErrors
 @import selfservicetimetopay.helpers.labelWrap
 @argsMap = @{args.toMap}
-@elements = @{ new FieldElements(field.id, field, null, args.toMap, lang) }
+@elements = @{ new FieldElements(field.id, field, null, args.toMap, messages) }
 @value = @{ field.value match { case Some(x) => x case None => "false" case x => x }}
 @wrapperClass = @{
     var w = Seq.empty ++ Seq("form-field") ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")

@@ -28,11 +28,15 @@ import uk.gov.hmrc.play.filters.NoCacheFilter
 import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
 import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
 
-object FrontendGlobal extends DefaultFrontendGlobal with ServiceRegistry with ControllerRegistry {
+import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
+import play.api.i18n._
+
+object FrontendGlobal extends DefaultFrontendGlobal with ServiceRegistry with MicroserviceFilterSupport with I18nSupport with ControllerRegistry {
+
+  implicit lazy val messagesApi: MessagesApi = Play.current.injector.instanceOf[MessagesApi]
 
   override val loggingFilter = LoggingFilter
   override val frontendAuditFilter = AuditFilter
-
 
   override def frontendFilters: Seq[EssentialFilter] = {
     defaultFrontendFilters ++ Seq(NoCacheFilter)
@@ -43,12 +47,14 @@ object FrontendGlobal extends DefaultFrontendGlobal with ServiceRegistry with Co
     ApplicationCrypto.verifyConfiguration()
   }
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html = {
+    
     views.html.selfservicetimetopay.error_template(pageTitle, heading, message)
+  }
 
   override def microserviceMetricsConfig(implicit app: Application): Option[Configuration] = app.configuration.getConfig("microservice.metrics")
 
-  override def getControllerInstance[A](controllerClass: Class[A]): A = {
+  def getControllerInstance[A](controllerClass: Class[A]): A = {
     getController(controllerClass)
   }
 }
@@ -57,12 +63,12 @@ object ControllerConfiguration extends ControllerConfig {
   lazy val controllerConfigs = Play.current.configuration.underlying.as[Config]("controllers")
 }
 
-object LoggingFilter extends FrontendLoggingFilter {
+object LoggingFilter extends FrontendLoggingFilter with MicroserviceFilterSupport {
   override def controllerNeedsLogging(controllerName: String): Boolean =
     ControllerConfiguration.paramsForController(controllerName).needsLogging
 }
 
-object AuditFilter extends FrontendAuditFilter with RunMode with AppName {
+object AuditFilter extends FrontendAuditFilter with RunMode with AppName with MicroserviceFilterSupport {
 
   override lazy val maskedFormFields = Seq("password")
 

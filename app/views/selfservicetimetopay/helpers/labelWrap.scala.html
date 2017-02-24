@@ -15,7 +15,7 @@ Add a Label around some HTML as per Component Library:
                             label--inlineDropDown
     
 *@
-@(args:(Symbol, Any)*)(content: => Html = Html(""))
+@(args:(Symbol, Any)*)(content: => Html = Html(""))(implicit messages: play.api.i18n.Messages)
 @argsMap = @{ args.toMap }
 <label@if(argsMap.get('_modifierClass)){ class="@argsMap.get('_modifierClass)"}@if(argsMap.get('for)){ for="@argsMap.get('for)"}>
     @argsMap.getOrElse('labelText, "")

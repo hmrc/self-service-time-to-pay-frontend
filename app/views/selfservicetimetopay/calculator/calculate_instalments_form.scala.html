@@ -11,7 +11,7 @@ Time To Pay Payment Schedule Calculator Page
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @import play.twirl.api.HtmlFormat
-@(schedule: CalculatorPaymentSchedule, debits: Option[Seq[Debit]], durationForm: Form[CalculatorDuration], paymentTodayAmountForm: Form[CalculatorPaymentToday], monthOptions: Seq[Int], loggedIn: Boolean)(implicit request: Request[_])
+@(schedule: CalculatorPaymentSchedule, debits: Option[Seq[Debit]], durationForm: Form[CalculatorDuration], paymentTodayAmountForm: Form[CalculatorPaymentToday], monthOptions: Seq[Int], loggedIn: Boolean)(implicit messages: play.api.i18n.Messages, request: Request[_])
     @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
     @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, button, fieldErrors, numberinput, inlinecurrencyinput}
     @import selfservicetimetopay.partials.{currency, what_you_owe}

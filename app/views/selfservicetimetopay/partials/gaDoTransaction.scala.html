@@ -20,7 +20,7 @@
     duration: Int,
     regularPayment: BigDecimal,
     step: Int
-)
+)(implicit messages: play.api.i18n.Messages)
 @import selfservicetimetopay.partials.gaAddProducts
 
 @initialPaymentMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.initialPaymentMetric}

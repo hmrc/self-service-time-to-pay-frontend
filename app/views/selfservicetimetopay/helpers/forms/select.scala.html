@@ -16,12 +16,12 @@ Input http://hmrc.github.io/assets-frontend/section-text-input.html
         '_noLabel -> set to true to not wrap element in a label
 
 *@
-@(field:Field, optionsList:Seq[(String, String)], args: (Symbol, Any)*)(implicit lang: Lang = Lang("en"))
+@(field:Field, optionsList:Seq[(String, String)], args: (Symbol, Any)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import selfservicetimetopay.helpers.forms.fieldErrors
 @import selfservicetimetopay.helpers.labelWrap
 @import views.html.helper.FieldElements
 @argsMap = @{ args.toMap }
-@elements = @{ new FieldElements(field.id, field, null, argsMap, lang) }
+@elements = @{ new FieldElements(field.id, field, null, argsMap, messages) }
 @fieldValue = @{ field.value match { case Some(x) => x case None => "" case x => x }}
 @wrapperClass = @{
     var w = Seq("form-field") ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")

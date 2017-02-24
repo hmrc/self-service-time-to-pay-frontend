@@ -1,4 +1,4 @@
-@(signedIn: Boolean = false)(implicit request: Request[_])
+@(signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.{highlight, message_list}
 
 @selfservicetimetopay.main(

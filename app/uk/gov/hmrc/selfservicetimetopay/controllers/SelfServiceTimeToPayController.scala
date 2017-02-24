@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
+import javax.inject._
 
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.{SsttpFrontendConfig, TimeToPayController}
@@ -27,7 +28,7 @@ import views.html.selfservicetimetopay.eligibility.type_of_tax_form
 
 import scala.concurrent.Future
 
-class SelfServiceTimeToPayController extends TimeToPayController {
+class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.MessagesApi) extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def start: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {

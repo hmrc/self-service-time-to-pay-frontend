@@ -5,7 +5,7 @@
     @param print Boolean set to true to make a print friendly version with all the details in a single column layout
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-@(directDebit:ArrangementDirectDebit, print:Boolean = false)
+@(directDebit:ArrangementDirectDebit, print:Boolean = false)(implicit messages: play.api.i18n.Messages)
 <div class="section">
     <div class="subsection grid-layout divider--bottom font-xsmall">
         <div class="grid-layout__column grid-layout__column--3-4">

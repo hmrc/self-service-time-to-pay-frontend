@@ -4,7 +4,7 @@ Ask the user if they want to sign in at this step
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.helpers.forms._
 @import uk.gov.hmrc.selfservicetimetopay.models.SignInQuestion
-@(dataForm: Form[SignInQuestion])(implicit request: Request[_])
+@(dataForm: Form[SignInQuestion])(implicit messages: play.api.i18n.Messages, request: Request[_])
     @selfservicetimetopay.main(
         title = Messages("ssttp.eligibility.form.sign_in_question.title")
     ) {

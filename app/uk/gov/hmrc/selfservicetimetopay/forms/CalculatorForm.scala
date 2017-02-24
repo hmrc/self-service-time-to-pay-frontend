@@ -126,7 +126,7 @@ object CalculatorForm {
     )((date: (Int, Int, Int)) =>
       DebitDueDate(date._1, date._2, date._3))
     ((amountDue: DebitDueDate) =>
-      Some(amountDue.dueByYear, amountDue.dueByMonth, amountDue.duebyDay))
+      Some((amountDue.dueByYear, amountDue.dueByMonth, amountDue.duebyDay)))
     )
   }
 

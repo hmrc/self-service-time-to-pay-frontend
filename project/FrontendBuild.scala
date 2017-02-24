@@ -17,7 +17,7 @@ object FrontendBuild extends Build with MicroService {
 
 private object AppDependencies {
 
-  import play.PlayImport._
+  import play.sbt.PlayImport._
   import play.core.PlayVersion
 
   private val playHealthVersion = "1.1.0"
@@ -35,16 +35,16 @@ private object AppDependencies {
 
   val compile = Seq(
     ws,
-    "uk.gov.hmrc" %% "frontend-bootstrap" % frontendBootstrapVersion,
-    "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
-    "uk.gov.hmrc" %% "play-authorised-frontend" % playAuthorisedFrontendVersion,
-    "uk.gov.hmrc" %% "play-config" % playConfigVersion,
-    "uk.gov.hmrc" %% "play-json-logger" % playJsonLoggerVersion,
-    "uk.gov.hmrc" %% "govuk-template" % govukTemplateVersion,
-    "uk.gov.hmrc" %% "play-health" % playHealthVersion,
-    "uk.gov.hmrc" %% "play-ui" % playUiVersion,
-    "uk.gov.hmrc" %% "domain" % domainVersion,
-    "uk.gov.hmrc" %% "http-caching-client" % cachingClientVersion,
+    "uk.gov.hmrc" %% "frontend-bootstrap" %  "7.10.0",
+    "uk.gov.hmrc" %% "play-partials" %  "5.3.0",
+    "uk.gov.hmrc" %% "play-authorised-frontend" %  "6.3.0",
+    "uk.gov.hmrc" %% "play-config" %  "3.1.0",
+    "uk.gov.hmrc" %% "logback-json-logger" %  "3.1.0",
+    "uk.gov.hmrc" %% "govuk-template" %  "5.1.0",
+    "uk.gov.hmrc" %% "play-health" %  "2.1.0",
+    "uk.gov.hmrc" %% "play-ui" %  "7.0.0",
+    "uk.gov.hmrc" %% "domain" %  "4.1.0",
+    "uk.gov.hmrc" %% "http-caching-client" %  "6.2.0",
     "uk.gov.hmrc" %% "play-conditional-form-mapping" % playConditionalMappingVersion
   )
 
@@ -56,7 +56,7 @@ private object AppDependencies {
   object Test {
     def apply(): Seq[ModuleID] = new TestDependencies {
       override lazy val test = Seq(
-        "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
+        "uk.gov.hmrc" %% "hmrctest" %  "2.3.0",
         "org.scalatest" %% "scalatest" % "2.2.6" % scope,
         "org.scalatestplus" %% "play" % "1.2.0" % scope,
         "org.pegdown" % "pegdown" % "1.6.0" % scope,

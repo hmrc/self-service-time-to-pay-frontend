@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
+import javax.inject._
 
 import play.api.mvc._
 import play.api.Logger
@@ -25,7 +26,7 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.eligibility._
 import scala.concurrent.Future
 
-class EligibilityController extends TimeToPayController {
+class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesApi) extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def start: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.getTypeOfTax())

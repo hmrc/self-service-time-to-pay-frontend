@@ -12,7 +12,7 @@
         linksElem: Option[Html] = None,
         googleAnalyticsCalls: Seq[String] = Seq.empty,
         noGetHelp:Boolean = false,
-        loggedIn:Boolean = false)(implicit request: Request[_])
+        loggedIn:Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers, layouts => uiLayouts}

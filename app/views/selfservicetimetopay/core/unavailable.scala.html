@@ -1,7 +1,7 @@
 @*
 Self-service Time To Pay service unavailable page to redirect users to the call-in service when SSTTP is unavailable
 *@
-@(loggedIn: Boolean = false)(implicit request: Request[_])
+@(loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @selfservicetimetopay.main(
     title = Messages("ssttp.unavailable.title"),
     loggedIn = loggedIn

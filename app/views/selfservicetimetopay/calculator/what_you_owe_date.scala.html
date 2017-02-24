@@ -3,7 +3,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.DebitDueDate
 
-@(dataForm:Form[DebitDueDate])(implicit request: Request[_])
+@(dataForm:Form[DebitDueDate])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.form.what-you-owe-date.title")
