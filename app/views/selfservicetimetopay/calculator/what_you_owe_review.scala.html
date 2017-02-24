@@ -4,8 +4,8 @@ Entered what you owe review page
 *@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@import selfservicetimetopay.partials.{payment_schedule_editable, gaDoCheckout}
-@import selfservicetimetopay.helpers.forms.{form , submit}
+@import selfservicetimetopay.partials.payment_schedule_editable
+@import selfservicetimetopay.helpers.forms.{form, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
 @(debits:Seq[Debit])(implicit request: Request[_])

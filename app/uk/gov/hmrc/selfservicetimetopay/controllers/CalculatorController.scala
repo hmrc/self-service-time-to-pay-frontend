@@ -168,8 +168,10 @@ class CalculatorController(calculatorConnector: CalculatorConnector) extends Tim
     val index = CalculatorForm.removeAmountDueForm.bindFromRequest()
     sessionCache.get.map {
       case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-        ttpSubmission.copy(calculatorData = cd.copy(debits = debits.patch(index.value.get, Nil, 1)))
-      case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty))
+        ttpSubmission.copy(calculatorData = cd.copy(debits = debits.patch(index.value.get, Nil, 1)),
+          schedule = None)
+      case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty),
+        schedule = None)
     }.flatMap[Result] {
       case data@TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`,
       CalculatorInput(debits, _, _, _, _, _), _, _, _) if debits.isEmpty =>
