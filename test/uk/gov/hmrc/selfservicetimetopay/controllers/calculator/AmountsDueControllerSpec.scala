@@ -20,7 +20,7 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
@@ -30,6 +30,8 @@ import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, Eligibi
 import uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.resources._
+import akka.stream._
+import akka.actor.ActorSystem
 
 import scala.concurrent.Future
 
@@ -37,6 +39,11 @@ class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
 
   private val gaToken = "GA-TOKEN"
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
+
+  implicit val messagesApi: MessagesApi = mock[MessagesApi]
+  implicit val messages: Messages = mock[Messages]  
+  implicit val system = ActorSystem("QuickStart")
+  implicit val mat: akka.stream.Materializer = ActorMaterializer()
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
@@ -49,7 +56,7 @@ class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
   )
 
   "AmountsDueControllerSpec" should {
-    val controller = new CalculatorController(mockCalculatorConnector) {
+    val controller = new CalculatorController(messagesApi, mockCalculatorConnector) {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     }
 

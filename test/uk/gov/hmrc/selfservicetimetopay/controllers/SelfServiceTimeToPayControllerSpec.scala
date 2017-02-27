@@ -21,12 +21,14 @@ import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.{FakeApplication, FakeRequest}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 import uk.gov.hmrc.selfservicetimetopay.resources._
+import akka.stream._
+import akka.actor.ActorSystem
 
 import scala.concurrent.Future
 
@@ -35,10 +37,15 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
   private val gaToken = "GA-TOKEN"
   override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
 
+  implicit val messagesApi: MessagesApi = mock[MessagesApi]
+  implicit val messages: Messages = mock[Messages]  
+  implicit val system = ActorSystem("QuickStart")
+  implicit val mat: akka.stream.Materializer = ActorMaterializer()
+
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
 
   "SelfServiceTimeToPayController" should {
-    val controller = new SelfServiceTimeToPayController() {
+    val controller = new SelfServiceTimeToPayController(messagesApi) {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     }
 

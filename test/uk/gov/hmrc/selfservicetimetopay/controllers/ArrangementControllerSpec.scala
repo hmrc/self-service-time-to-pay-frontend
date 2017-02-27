@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
-import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
+import uk.gov.hmrc.selfservicetimetopay.controllers.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.controllers
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -56,7 +56,7 @@ class ArrangementControllerSpec extends UnitSpec
   val mockSessionProvider: SessionProvider = mock[SessionProvider]
   val mockCacheMap: CacheMap = mock[CacheMap]
 
-  val controller = new ArrangementController(ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector, mockEligibilityConnector) {
+  val controller = new ArrangementController(mock[play.api.i18n.MessagesApi], ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector, mockEligibilityConnector) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
     override lazy val authenticationProvider: GovernmentGateway = mockAuthenticationProvider

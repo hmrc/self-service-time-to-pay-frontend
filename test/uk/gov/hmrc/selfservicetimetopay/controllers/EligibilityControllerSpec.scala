@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.api.test.{FakeApplication, FakeRequest}
@@ -36,6 +36,8 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 import uk.gov.hmrc.selfservicetimetopay.resources._
+import akka.stream._
+import akka.actor.ActorSystem
 
 import scala.concurrent.Future
 
@@ -46,6 +48,10 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  implicit val messagesApi: MessagesApi = mock[MessagesApi]
+  implicit val messages: Messages = mock[Messages]  
+  implicit val system = ActorSystem("QuickStart")
+  implicit val mat: akka.stream.Materializer = ActorMaterializer()
 
   val typeOfTaxForm = Seq(
     "type_of_tax.hasSelfAssessmentDebt" -> "true",
@@ -70,7 +76,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
     "hasExistingTTP" -> "true"
   )
 
-  val mockEligibilityController = new EligibilityController() {
+  val mockEligibilityController = new EligibilityController(messagesApi) {
     override lazy val sessionCache = mockSessionCache
     override lazy val authConnector = mockAuthConnector
   }
@@ -172,7 +178,7 @@ class EligibilityControllerSpec extends UnitSpec with MockitoSugar with WithFake
       implicit val hc = new HeaderCarrier
 
       when(mockAuthConnector.currentAuthority(Matchers.any()))
-        .thenReturn(Some(Authority("", Accounts(), None, None, Strong, ConfidenceLevel.L200, None, None, None)))
+        .thenReturn(Some(Authority("", Accounts(), None, None, Strong, ConfidenceLevel.L200, None, None, None, "")))
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
       when(mockSessionCache.put(any())(any(), any()))

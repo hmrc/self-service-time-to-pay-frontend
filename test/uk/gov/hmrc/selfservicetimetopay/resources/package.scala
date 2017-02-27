@@ -175,16 +175,24 @@ package object resources {
 
   val directDebitBank = DirectDebitBank("", Seq.empty)
 
-  val authorisedUser = Authority("", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None)
-  val authorisedUserNoSA = Authority("", Accounts(), None, None, Strong, L200, None, None, None)
+  val authorisedUser = Authority("", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None, "")
+  val authorisedUserNoSA = Authority("", Accounts(), None, None, Strong, L200, None, None, None, "")
 
   val sessionProvider = new SessionProvider() {}
 
-  val loggedInUser = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L300)
-  val loggedInUserUnderConfidenceThreshold = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L50)
+  val loggedInUser = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L300, "")
+  val loggedInUserUnderConfidenceThreshold = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L50, "")
   val saAccount = SaAccount(link = "link", utr = SaUtr("1233"))
-  val authContext = AuthContext(user = loggedInUser, principal = Principal(name = Some("usere"),
-    accounts = Accounts(sa = Some(saAccount))), attorney = None, userDetailsUri = None, enrolmentsUri = None)
+  val authContext = AuthContext(
+    user = loggedInUser,
+    principal = Principal(
+      name = Some("usere"),
+      accounts = Accounts(sa = Some(saAccount))),
+    attorney = None,
+    userDetailsUri = None,
+    enrolmentsUri = None,
+    idsUri = None
+  )
 
   val mockAuthenticationProvider = new GovernmentGateway {
     override def continueURL: String = s"${SsttpFrontendConfig.loginCallBackFullPath}"

@@ -42,6 +42,7 @@ trait MicroService {
       libraryDependencies ++= appDependencies,
       parallelExecution in Test := false,
       fork in Test := false,
+//      scalacOptions ++= Seq("-Ywarn-dead-code", "-Ywarn-unused-import"),
       retrieveManaged := true,
       evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
     )

@@ -24,9 +24,9 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
-import play.api.i18n.Messages
+import play.api.i18n.{Messages,MessagesApi}
 import play.api.mvc.Result
-import play.api.test.FakeRequest
+import play.api.test._
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
@@ -35,6 +35,8 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
+import akka.stream._
+import akka.actor.ActorSystem
 
 import scala.concurrent.Future
 
@@ -43,10 +45,17 @@ class CalculatorControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
-  val controller = new CalculatorController(mockCalculatorConnector) {
+  implicit val messagesApi: MessagesApi = mock[MessagesApi]
+  implicit val messages: Messages = mock[Messages]  
+
+  val controller = new CalculatorController(messagesApi, mockCalculatorConnector) {
     override lazy val sessionCache = mockSessionCache
     override lazy val authConnector = mockAuthConnector
   }
+
+  implicit val system = ActorSystem("QuickStart")
+  implicit val mat: akka.stream.Materializer = ActorMaterializer()
+
 
   override def beforeEach() {
     reset(mockAuthConnector, mockSessionCache, mockCalculatorConnector)
