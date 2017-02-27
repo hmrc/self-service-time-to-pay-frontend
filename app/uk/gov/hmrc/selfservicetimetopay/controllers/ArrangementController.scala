@@ -25,7 +25,6 @@ import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._

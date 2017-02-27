@@ -23,10 +23,14 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import com.google.inject._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
+@ImplementedBy(classOf[DirectDebitConnectorImpl])
 trait DirectDebitConnector {
   type DDSubmissionResult = Either[SubmissionError, DirectDebitInstructionPaymentPlan]
 
@@ -94,4 +98,10 @@ trait DirectDebitConnector {
     Logger.error(s"Failure from DES, code $code and body $message")
     Left(SubmissionError(code, message))
   }
+}
+
+class DirectDebitConnectorImpl extends DirectDebitConnector with ServicesConfig {
+  lazy val directDebitURL: String = baseUrl("direct-debit")
+  lazy val serviceURL = "direct-debit"
+  lazy val http = WSHttp
 }

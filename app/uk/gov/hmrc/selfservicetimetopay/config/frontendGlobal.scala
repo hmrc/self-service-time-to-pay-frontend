@@ -31,9 +31,10 @@ import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
 import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
 import play.api.i18n._
 
-object FrontendGlobal extends DefaultFrontendGlobal with ServiceRegistry with MicroserviceFilterSupport with I18nSupport with ControllerRegistry {
+object FrontendGlobal extends DefaultFrontendGlobal with MicroserviceFilterSupport with I18nSupport {
 
   implicit lazy val messagesApi: MessagesApi = Play.current.injector.instanceOf[MessagesApi]
+  implicit lazy val auditConnector = FrontendAuditConnector
 
   override val loggingFilter = LoggingFilter
   override val frontendAuditFilter = AuditFilter
@@ -54,9 +55,6 @@ object FrontendGlobal extends DefaultFrontendGlobal with ServiceRegistry with Mi
 
   override def microserviceMetricsConfig(implicit app: Application): Option[Configuration] = app.configuration.getConfig("microservice.metrics")
 
-  def getControllerInstance[A](controllerClass: Class[A]): A = {
-    getController(controllerClass)
-  }
 }
 
 object ControllerConfiguration extends ControllerConfig {

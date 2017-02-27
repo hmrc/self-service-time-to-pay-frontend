@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import javax.inject._
 
 import play.api.mvc._
-import uk.gov.hmrc.selfservicetimetopay.config.{SsttpFrontendConfig, TimeToPayController}
+import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
 import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm, EligibilityForm}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.html.selfservicetimetopay.core._

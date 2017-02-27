@@ -17,17 +17,33 @@
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpPost}
-import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, CalculatorPaymentSchedule}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import scala.concurrent.Future
 
+import com.google.inject._
+
+@ImplementedBy(classOf[CalculatorConnectorImpl])
 trait CalculatorConnector {
   val calculatorURL: String
   val serviceURL: String
   val http: HttpPost
 
-  def calculatePaymentSchedule(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[Seq[CalculatorPaymentSchedule]] = {
-    http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](s"$calculatorURL/$serviceURL", liabilities)
+  def calculatePaymentSchedule(
+    liabilities: CalculatorInput
+  )(implicit
+    hc: HeaderCarrier
+  ): Future[Seq[CalculatorPaymentSchedule]] = {
+    http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](
+      s"$calculatorURL/$serviceURL", liabilities)
   }
+}
+
+@Singleton
+class CalculatorConnectorImpl extends CalculatorConnector with ServicesConfig {
+  val calculatorURL: String = baseUrl("time-to-pay-calculator")
+  val serviceURL = "time-to-pay-calculator/paymentschedule"
+  val http = WSHttp
 }

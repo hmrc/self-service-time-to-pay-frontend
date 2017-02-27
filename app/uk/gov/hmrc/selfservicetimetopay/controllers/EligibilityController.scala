@@ -19,7 +19,6 @@ import javax.inject._
 
 import play.api.mvc._
 import play.api.Logger
-import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, SignInQuestion, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
