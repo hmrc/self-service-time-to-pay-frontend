@@ -117,7 +117,7 @@ class DirectDebitControllerSpec extends PlaySpec with MockitoSugar with OneAppPe
 
       status(response) mustBe SEE_OTHER
 
-      redirectLocation(response).get mustBe controllers.routes.DirectDebitController.getDirectDebitConfirmation().url
+      controllers.routes.DirectDebitController.getDirectDebitConfirmation().url must endWith(redirectLocation(response).get)
     }}
 
     "submit direct debit form with valid form data and invalid bank details and redirect to invalid bank details page" in { running(app) {
@@ -139,7 +139,7 @@ class DirectDebitControllerSpec extends PlaySpec with MockitoSugar with OneAppPe
 
       status(response) mustBe SEE_OTHER
 
-      redirectLocation(response).get mustBe controllers.routes.DirectDebitController.getBankAccountNotFound().url
+      controllers.routes.DirectDebitController.getBankAccountNotFound().url must endWith(redirectLocation(response).get)
     }}
 
     "submit direct debit form with invalid form data and return a bad request" in { running(app) { 
