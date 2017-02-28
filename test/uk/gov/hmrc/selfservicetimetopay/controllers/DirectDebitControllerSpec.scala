@@ -53,8 +53,6 @@ class DirectDebitControllerSpec extends PlaySpec with MockitoSugar with OneAppPe
 
   val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   def getMessages(r: FakeRequest[_]): Messages = messagesApi.preferred(r)
-  // implicit val system = ActorSystem("QuickStart")
-  // implicit val mat: akka.stream.Materializer = ActorMaterializer()
 
   private val gaToken = "GA-TOKEN"
 
