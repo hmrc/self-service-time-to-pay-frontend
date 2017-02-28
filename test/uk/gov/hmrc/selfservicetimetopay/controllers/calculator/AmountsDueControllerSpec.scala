@@ -35,15 +35,7 @@ import akka.actor.ActorSystem
 
 import scala.concurrent.Future
 
-class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication with ScalaFutures {
-
-  private val gaToken = "GA-TOKEN"
-  override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
-
-  implicit val messagesApi: MessagesApi = mock[MessagesApi]
-  implicit val messages: Messages = mock[Messages]  
-  implicit val system = ActorSystem("QuickStart")
-  implicit val mat: akka.stream.Materializer = ActorMaterializer()
+class AmountsDueControllerSpec extends PlayMessagesSpec with MockitoSugar  {
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
@@ -64,19 +56,19 @@ class AmountsDueControllerSpec extends UnitSpec with MockitoSugar with WithFakeA
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val response: Result = controller.start.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+      val response = controller.start.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
-      status(response) shouldBe SEE_OTHER
+      status(response) mustBe SEE_OTHER
 
-      redirectLocation(response).get shouldBe routes.CalculatorController.getAmountsDue().url
+      redirectLocation(response).get mustBe routes.CalculatorController.getAmountsDue().url
     }
 
     "successfully display the amounts you owe page" in {
-      val response: Result = controller.getAmountsDue().apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+      val request = FakeRequest().withCookies(sessionProvider.createTtpCookie())
+      val response = controller.getAmountsDue().apply(request)
 
-      status(response) shouldBe OK
-
-      bodyOf(response) should include(Messages("ssttp.calculator.form.amounts_due.title"))
+      status(response) mustBe OK
+      contentAsString(response) must include(getMessages(request)("ssttp.calculator.form.amounts_due.title"))
     }
 
     "successfully add a valid amount due entry" in {

@@ -46,13 +46,7 @@ import play.api.test._
 import play.api.test.Helpers._
 import play.api.inject.guice.GuiceApplicationBuilder
 
-class DirectDebitControllerSpec extends PlaySpec with MockitoSugar with OneAppPerSuite {
-
-  implicit override lazy val app = new GuiceApplicationBuilder().
-    disable[com.kenshoo.play.metrics.PlayModule].build()
-
-  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  def getMessages(r: FakeRequest[_]): Messages = messagesApi.preferred(r)
+class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
   private val gaToken = "GA-TOKEN"
 

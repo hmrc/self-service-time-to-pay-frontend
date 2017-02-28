@@ -32,16 +32,8 @@ import akka.actor.ActorSystem
 
 import scala.concurrent.Future
 
-class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
-
-  private val gaToken = "GA-TOKEN"
-  override lazy val fakeApplication = FakeApplication(additionalConfiguration = Map("google-analytics.token" -> gaToken))
-
-  implicit val messagesApi: MessagesApi = mock[MessagesApi]
-  implicit val messages: Messages = mock[Messages]  
-  implicit val system = ActorSystem("QuickStart")
-  implicit val mat: akka.stream.Materializer = ActorMaterializer()
-
+class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSugar  {
+  
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
 
   "SelfServiceTimeToPayController" should {
@@ -51,36 +43,38 @@ class SelfServiceTimeToPayControllerSpec extends UnitSpec with MockitoSugar with
 
     "return 200 and display the service start page" in {
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      val request = FakeRequest().withCookies(sessionProvider.createTtpCookie()) 
+      val result = controller.start.apply(request)
 
-      val result:Result = controller.start.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+      status(result) mustBe OK
 
-      status(result) shouldBe OK
-
-      bodyOf(result) should include(Messages("ssttp.common.title"))
+      contentAsString(result) must include(getMessages(request)("ssttp.common.title"))
     }
 
     "redirect to the eligibility section if user selects start" in {
-      val result:Result = controller.submit.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+      val result = controller.submit.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
-      status(result) shouldBe SEE_OTHER
+      status(result) mustBe SEE_OTHER
 
-      redirectLocation(result).get shouldBe controllers.routes.EligibilityController.start().url
+      controllers.routes.EligibilityController.start().url must endWith(redirectLocation(result).get)
     }
 
     "return 200 and display call us page successfully" in {
-      val result:Result = controller.getTtpCallUs.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+      val request = FakeRequest().withCookies(sessionProvider.createTtpCookie())
+      val result = controller.getTtpCallUs.apply(request)
 
-      status(result) shouldBe OK
+      status(result) mustBe OK
 
-      bodyOf(result) should include(Messages("ssttp.call-us.title"))
+      contentAsString(result) must include(getMessages(request)("ssttp.call-us.title"))
     }
 
     "return 200 and display you need to file page successfully" in {
-      val result: Result = controller.getYouNeedToFile.apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
+      val request = FakeRequest().withCookies(sessionProvider.createTtpCookie())
+      val result = controller.getYouNeedToFile.apply(request)
 
-      status(result) shouldBe OK
+      status(result) mustBe OK
 
-      bodyOf(result) should include(Messages("ssttp.you-need-to-file.title"))
+      contentAsString(result) must include(getMessages(request)("ssttp.you-need-to-file.title"))
     }
   }
 
