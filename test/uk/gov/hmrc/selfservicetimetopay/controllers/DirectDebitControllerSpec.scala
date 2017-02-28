@@ -51,19 +51,6 @@ class DirectDebitControllerSpec extends PlaySpec with MockitoSugar with OneAppPe
   implicit override lazy val app = new GuiceApplicationBuilder().
     disable[com.kenshoo.play.metrics.PlayModule].build()
 
-  // implicit val headerCarrier = HeaderCarrier()
-  // implicit val authContext = AuthContext(
-  //   user = loggedInUser,
-  //   principal = Principal(
-  //     name = Some("user"),
-  //     accounts = Accounts(sa = Some(saAccount))),
-  //   attorney = None,
-  //   userDetailsUri = None,
-  //   enrolmentsUri = None,
-  //   idsUri = None
-  // )
-
-  //val messagesApi: MessagesApi = mock[MessagesApi]
   val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   def getMessages(r: FakeRequest[_]): Messages = messagesApi.preferred(r)
   // implicit val system = ActorSystem("QuickStart")
