@@ -36,7 +36,7 @@ Inline currenct input field using Component Library Styles as  documented:
 }
 @inputContent = {
 @if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false) {@fieldErrors(field)}
-    <span class="input-currency@if(argsMap.get('_currencyClass)){ @argsMap.get('_currencyClass)}"><input type="number" class="input--left-padding@if(inputClass.nonEmpty){ @inputClass}"
+    <span class="input-currency@if(argsMap.get('_currencyClass)){ @argsMap.get('_currencyClass)}"><input type="text" class="input--left-padding@if(inputClass.nonEmpty){ @inputClass}"
     name="@elements.field.name" id="@elements.field.name" value="@value"
         @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
         @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
@@ -46,7 +46,6 @@ Inline currenct input field using Component Library Styles as  documented:
         @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }
         @if(elements.args.get('_pattern).isDefined) { pattern="@elements.args.get('_pattern)" }
         @if(elements.args.get('_title).isDefined) { title="@elements.args.get('_title)" }
-        @if(elements.args.get('_required).isDefined) { required }
         /></span>
 }
 @if(argsMap.getOrElse('_noLabel, false).asInstanceOf[Boolean]) {

@@ -40,7 +40,6 @@ Input http://hmrc.github.io/assets-frontend/section-text-input.html
         @if(elements.args.get('_error_id).isDefined){ aria-labeledby="@elements.args.get('_error_id)" }
         @if(elements.args.get('_hintId).isDefined){ aria-describedby="@elements.args.get('_hintId)" }
         @if(elements.args.get('_title).isDefined){ title="@elements.args.get('_title)" }
-        @if(elements.args.get('_required).isDefined){ required }>
         @optionsList.map { case (value, label) =>
             <option value="@value" @if(fieldValue==value){ selected}>@label</option>
         }
