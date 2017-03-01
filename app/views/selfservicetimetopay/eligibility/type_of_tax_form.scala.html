@@ -2,7 +2,7 @@
 Self Service Time to Pay eligibility page - ask user what kind of tax debts they have to pay
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.EligibilityTypeOfTax
-@(dataForm: Form[EligibilityTypeOfTax], loggedIn: Boolean = false)(implicit request: Request[_])
+@(dataForm: Form[EligibilityTypeOfTax], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.helpers.forms._
 @selfservicetimetopay.main(

@@ -33,8 +33,12 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import play.api.inject.guice.GuiceApplicationBuilder
 
 class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with WithFakeApplication {
+
+  implicit override lazy val app = new GuiceApplicationBuilder().
+    disable[com.kenshoo.play.metrics.PlayModule].build()
 
   object DirectDebitConnectorTest extends DirectDebitConnector with ServicesConfig {
     lazy val directDebitURL: String = WiremockHelper.url

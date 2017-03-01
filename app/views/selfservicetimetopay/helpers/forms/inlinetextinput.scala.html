@@ -13,12 +13,12 @@ Text input field using Component Library Styles as  documented:
                 input--fullwidth, input--no-spinner, input--cleared,
                 input--link
 *@
-@(field: Field, args: (Symbol, Any)*)(implicit lang: Lang = Lang("en"))
+@(field: Field, args: (Symbol, Any)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import selfservicetimetopay.helpers.forms.fieldErrors
 @import selfservicetimetopay.helpers.labelWrap
 @import views.html.helper.FieldElements
 @argsMap = @{ args.toMap }
-@elements = @{ new FieldElements(field.id, field, null, argsMap, lang) }
+@elements = @{ new FieldElements(field.id, field, null, argsMap, messages) }
 @value = @{ field.value match { case Some(x) => x case None => "" case x => x }}
 @wrapperClass = @{
     var w = Seq.empty ++ argsMap.getOrElse('_labelClass, "").asInstanceOf[String].split(" ")
@@ -42,7 +42,6 @@ Text input field using Component Library Styles as  documented:
         @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }
         @if(elements.args.get('_pattern).isDefined) { pattern="@elements.args.get('_pattern)" }
         @if(elements.args.get('_title).isDefined) { title="@elements.args.get('_title)" }
-        @if(elements.args.get('_required).isDefined) { required }
         @if(elements.args.get('datalist).isDefined) { list="@{elements.field.name}_datalist" }
     />
     @argsMap.getOrElse('labelSuffix, "")

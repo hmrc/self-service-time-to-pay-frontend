@@ -3,6 +3,7 @@ import sbt.Tests.{SubProcess, Group}
 import sbt._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 
+import play.sbt.routes.RoutesCompiler.autoImport._
 trait MicroService {
 
   import uk.gov.hmrc._
@@ -14,7 +15,7 @@ trait MicroService {
   val appName: String
 
   lazy val appDependencies : Seq[ModuleID] = ???
-  lazy val plugins : Seq[Plugins] = Seq(play.PlayScala)
+  lazy val plugins : Seq[Plugins] = Seq(play.sbt.PlayScala)
   lazy val playSettings : Seq[Setting[_]] = Seq.empty
 
   lazy val scoverageSettings = {
@@ -29,17 +30,19 @@ trait MicroService {
   }
 
   lazy val microservice = Project(appName, file("."))
-    .enablePlugins(Seq(play.PlayScala) ++ plugins : _*)
+    .enablePlugins(Seq(play.sbt.PlayScala) ++ plugins : _*)
     .settings(playSettings ++ scoverageSettings : _*)
     .settings(scalaSettings: _*)
     .settings(publishingSettings: _*)
     .settings(defaultSettings(): _*)
     .settings(
       targetJvm := "jvm-1.8",
+      routesGenerator := StaticRoutesGenerator,
       scalaVersion := "2.11.8",
       libraryDependencies ++= appDependencies,
       parallelExecution in Test := false,
       fork in Test := false,
+//      scalacOptions ++= Seq("-Ywarn-dead-code", "-Ywarn-unused-import"),
       retrieveManaged := true,
       evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
     )

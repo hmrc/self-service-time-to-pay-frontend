@@ -2,7 +2,7 @@
     Time To Pay Payment Schedule Calculation footer for authenticated and whitelisted users
     @param print: Boolean set to true to show the print version
 *@
-@(print:Boolean = false)(implicit request: Request[_])
+@(print:Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.helpers.forms._
 <section>

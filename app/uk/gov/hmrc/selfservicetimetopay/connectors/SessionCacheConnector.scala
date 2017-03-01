@@ -20,12 +20,18 @@ import play.api.libs.json.{Reads, Writes}
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.SessionId
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import com.google.inject._
+import uk.gov.hmrc.play.config.AppName
 
 import scala.concurrent.Future
 
+@ImplementedBy(classOf[SessionCacheConnectorImpl])
 trait SessionCacheConnector extends SessionCache with ServicesConfig {
   val sessionKey: String
 
@@ -42,4 +48,17 @@ trait SessionCacheConnector extends SessionCache with ServicesConfig {
   override def remove()(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     super.remove()(ttpSessionCarrier)
   }
+}
+
+@Singleton
+class SessionCacheConnectorImpl extends KeystoreConnector with AppName with ServicesConfig {
+  override val sessionKey: String = getConfString("keystore.sessionKey", throw new RuntimeException("Could not find session key"))
+
+  override def defaultSource: String = appName
+
+  override def baseUri: String = baseUrl("keystore")
+
+  override def domain: String = getConfString("keystore.domain", throw new RuntimeException("Could not find config keystore.domain"))
+
+  override def http: HttpGet with HttpPut with HttpDelete = WSHttp
 }

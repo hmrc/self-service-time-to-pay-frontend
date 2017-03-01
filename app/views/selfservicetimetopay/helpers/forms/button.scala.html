@@ -9,6 +9,6 @@
         Any additional args with names NOT starting with underscore (_) will be applied as button element arguments
     @param content The Html inside the button
 *@
-@(args: (Symbol, String)*)(content: Html)
+@(args: (Symbol, String)*)(content: Html)(implicit messages: play.api.i18n.Messages)
 @argsMap = @{ args.toMap }
 <button class="@{("button " + argsMap.getOrElse('_modifierClass, "").trim)}" @toHtmlArgs(argsMap.filterNot(entry => entry._1.name.startsWith("_")))>@content</button>

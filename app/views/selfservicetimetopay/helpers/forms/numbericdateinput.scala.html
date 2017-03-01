@@ -18,15 +18,15 @@ Input http://hmrc.github.io/assets-frontend/section-text-input.html
     '_inputGroupClass -> Modifier class to apply to the group of all three date fields
     '_hideErrors -> set to "true" to stop error messages being displayed
 *@
-@(name: String, frm:Form[_], yearField: Field, monthField: Field, dayField: Field, args: (Symbol, String)*)(implicit lang: Lang = Lang("en"))
+@(name: String, frm:Form[_], yearField: Field, monthField: Field, dayField: Field, args: (Symbol, String)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import java.time.Month
 @import java.time.format.TextStyle
 @import views.html.helper.FieldElements
 @import selfservicetimetopay.helpers.forms.{formErrors, fieldset, fieldErrors, select, numberinput}
 @argsMap = @{ args.toMap }
-@dayElements = @{ new FieldElements(dayField.id, dayField, null, argsMap, lang) }
-@monthElements = @{ new FieldElements(monthField.id, monthField, null, argsMap, lang) }
-@yearElements = @{ new FieldElements(yearField.id, yearField, null, argsMap, lang) }
+@dayElements = @{ new FieldElements(dayField.id, dayField, null, argsMap, messages) }
+@monthElements = @{ new FieldElements(monthField.id, monthField, null, argsMap, messages) }
+@yearElements = @{ new FieldElements(yearField.id, yearField, null, argsMap, messages) }
 @monthOptions = @{for(m <- 1 to 12) yield (m.toString, Month.of(m).getDisplayName(TextStyle.FULL, lang.toLocale))}
 @fieldsetErrorsClass = @{
     var errorsClass = if(frm.error(name).nonEmpty){"soft--right "}else{""}

@@ -11,11 +11,11 @@
     '_inputClass -> Class to add to the input element
  @param content Html the code used for the title of the radiobuttons if any
 *@
-@(field: Field, optionsList: Seq[(String, String)], args:(Symbol, Any)*)(content: Html)(implicit lang: Lang = Lang("en"))
+@(field: Field, optionsList: Seq[(String, String)], args:(Symbol, Any)*)(content: Html)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import views.html.helper.FieldElements
 @import selfservicetimetopay.helpers.labelWrap
 @import selfservicetimetopay.helpers.forms.fieldErrors
-@elements = @{ new FieldElements(field.id, field, null, args.toMap, lang) }
+@elements = @{ new FieldElements(field.id, field, null, args.toMap, messages) }
 @fieldValue = @{ field.value match { case Some(x) => x case None => "" case x => x }}
 @fieldSetClass = @{ 
   var c = elements.args.getOrElse('_modifierClass, "").asInstanceOf[String].trim

@@ -5,7 +5,7 @@
   @param loggedIn Boolean, default false whether the user is logged into their tax account
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
-@(dataForm: Form[CalculatorPaymentToday], loggedIn: Boolean = false)(implicit request: Request[_])
+@(dataForm: Form[CalculatorPaymentToday], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.forms.{currencyinput, form, formErrorSummary, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers._
 

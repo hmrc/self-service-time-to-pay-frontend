@@ -20,9 +20,13 @@ import play.api.Logger
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import uk.gov.hmrc.selfservicetimetopay.models.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import com.google.inject._
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@ImplementedBy(classOf[TaxPayerConnectorImpl])
 trait TaxPayerConnector {
   val taxPayerURL: String
   val serviceURL: String
@@ -38,4 +42,11 @@ trait TaxPayerConnector {
         throw new RuntimeException(e.getMessage)
     }
   }
+}
+
+@Singleton
+class TaxPayerConnectorImpl extends TaxPayerConnector with ServicesConfig {
+  val taxPayerURL: String = baseUrl("taxpayer")
+  val serviceURL = "taxpayer"
+  val http = WSHttp
 }

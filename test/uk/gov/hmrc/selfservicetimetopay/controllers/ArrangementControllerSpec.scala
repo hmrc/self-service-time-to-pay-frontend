@@ -23,8 +23,6 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import play.api.http.Status
-import play.api.i18n.Messages
 import play.api.libs.json.Format
 import play.api.mvc.Cookie
 import play.api.test.FakeRequest
@@ -33,9 +31,7 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.GovernmentGateway
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse, SessionKeys}
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
-import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.controllers
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -44,8 +40,8 @@ import uk.gov.hmrc.selfservicetimetopay.util.SessionProvider
 
 import scala.concurrent.Future
 
-class ArrangementControllerSpec extends UnitSpec
-  with MockitoSugar with WithFakeApplication with ScalaFutures with BeforeAndAfterEach {
+class ArrangementControllerSpec extends PlayMessagesSpec
+  with MockitoSugar  with ScalaFutures with BeforeAndAfterEach {
   type SubmissionResult = Either[SubmissionError, SubmissionSuccess]
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
@@ -58,7 +54,7 @@ class ArrangementControllerSpec extends UnitSpec
   val mockSessionProvider: SessionProvider = mock[SessionProvider]
   val mockCacheMap: CacheMap = mock[CacheMap]
 
-  val controller = new ArrangementController(ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector, mockEligibilityConnector) {
+  val controller = new ArrangementController(messagesApi, ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector, mockEligibilityConnector) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
     override lazy val authenticationProvider: GovernmentGateway = mockAuthenticationProvider
@@ -79,18 +75,18 @@ class ArrangementControllerSpec extends UnitSpec
     "dayOfMonth" -> "10"
   )
 
-  "Self Service Time To Pay Arrangement Controller" should {
+  "Self Service Time To Pay Arrangement Controller" must {
     "redirect to start with an empty submission for determine misalignment" in {
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val response = await(controller.determineMisalignment()
+      val response = controller.determineMisalignment()
         .apply(FakeRequest()
           .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId")))
+          .withSession(SessionKeys.userId -> "someUserId"))
 
-      status(response) shouldBe SEE_OTHER
-      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.start().url
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.start().url
     }
 
     "redirect to you need to file when sa debits are less than £32.00 for determine misalignment" in {
@@ -101,13 +97,13 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
-      val response = await(controller.determineMisalignment()
+      val response = controller.determineMisalignment()
         .apply(FakeRequest()
           .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId")))
+          .withSession(SessionKeys.userId -> "someUserId"))
 
-      status(response) shouldBe SEE_OTHER
-      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
     }
 
     "redirect to pay today question when no amounts have been entered for determine misalignment" in {
@@ -118,13 +114,13 @@ class ArrangementControllerSpec extends UnitSpec
 
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val response = await(controller.determineMisalignment()
+      val response = controller.determineMisalignment()
         .apply(FakeRequest()
           .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId")))
+          .withSession(SessionKeys.userId -> "someUserId"))
 
-      status(response) shouldBe SEE_OTHER
-      redirectLocation(response).get shouldBe routes.CalculatorController.getPayTodayQuestion().url
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.CalculatorController.getPayTodayQuestion().url
     }
 
     "redirect to instalment summary when entered amounts and sa amounts are equal and user is eligible for determine misalignment" in {
@@ -136,13 +132,13 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
 
-      val response = await(controller.determineMisalignment()
+      val response = controller.determineMisalignment()
         .apply(FakeRequest()
           .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId")))
+          .withSession(SessionKeys.userId -> "someUserId"))
 
-      status(response) shouldBe SEE_OTHER
-      redirectLocation(response).get shouldBe routes.ArrangementController.getInstalmentSummary().url
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.ArrangementController.getInstalmentSummary().url
     }
 
     "redirect to call us page when entered amounts and sa amounts are equal and user is ineligible for determine misalignment" in {
@@ -154,13 +150,13 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq("ineligible"))))
 
-      val response = await(controller.determineMisalignment()
+      val response = controller.determineMisalignment()
         .apply(FakeRequest()
           .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId")))
+          .withSession(SessionKeys.userId -> "someUserId"))
 
-      status(response) shouldBe SEE_OTHER
-      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
     }
 
     "redirect to misalignment when entered amounts and sa amounts aren't equal for determine misalignment" in {
@@ -171,13 +167,13 @@ class ArrangementControllerSpec extends UnitSpec
 
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val response = await(controller.determineMisalignment()
+      val response = controller.determineMisalignment()
         .apply(FakeRequest()
           .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId")))
+          .withSession(SessionKeys.userId -> "someUserId"))
 
-      status(response) shouldBe SEE_OTHER
-      redirectLocation(response).get shouldBe routes.CalculatorController.getMisalignmentPage().url
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.CalculatorController.getMisalignmentPage().url
     }
 
     "redirect to call us page when tax payer connector fails to retrieve data for determine misalignment" in {
@@ -186,13 +182,13 @@ class ArrangementControllerSpec extends UnitSpec
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
-      val response = await(controller.determineMisalignment()
+      val response = controller.determineMisalignment()
         .apply(FakeRequest()
           .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId")))
+          .withSession(SessionKeys.userId -> "someUserId"))
 
-      status(response) shouldBe SEE_OTHER
-      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
     }
 
     "successfully display the instalment summary page with required data in submission" in {
@@ -205,13 +201,14 @@ class ArrangementControllerSpec extends UnitSpec
 
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
-      val response = await(controller.getInstalmentSummary()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId")))
+      val request = FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())
+        .withSession(SessionKeys.userId -> "someUserId")
 
-      status(response) shouldBe OK
-      bodyOf(response) should include(Messages("ssttp.arrangement.instalment-summary.title"))
+      val response = controller.getInstalmentSummary().apply(request)
+
+      status(response) mustBe OK
+      contentAsString(response) must include(getMessages(request)("ssttp.arrangement.instalment-summary.title"))
     }
 
     "redirect to the start page when missing required data for the instalment summary page" in {
@@ -227,8 +224,8 @@ class ArrangementControllerSpec extends UnitSpec
           .withCookies(sessionProvider.createTtpCookie())
           .withSession(SessionKeys.userId -> "someUserId"))
 
-      status(response) shouldBe SEE_OTHER
-      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.start().url
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.start().url
     }
 
     "successfully display the application complete page with required data in submission" in {
@@ -240,13 +237,14 @@ class ArrangementControllerSpec extends UnitSpec
 
       when(mockSessionCache.remove()(any())).thenReturn(Future.successful(mock[HttpResponse]))
 
-      val response = await(controller.applicationComplete()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId")))
+      val request = FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())
+        .withSession(SessionKeys.userId -> "someUserId")
 
-      status(response) shouldBe OK
-      bodyOf(response) should include(Messages("ssttp.arrangement.complete.title"))
+      val response = controller.applicationComplete().apply(request)
+
+      status(response) mustBe OK
+      contentAsString(response) must include(getMessages(request)("ssttp.arrangement.complete.title"))
     }
 
     "redirect to the start page when missing required data for the application complete page" in {
@@ -258,8 +256,8 @@ class ArrangementControllerSpec extends UnitSpec
           .withCookies(sessionProvider.createTtpCookie())
           .withSession(SessionKeys.userId -> "someUserId"))
 
-      status(response) shouldBe SEE_OTHER
-      redirectLocation(response).get shouldBe routes.SelfServiceTimeToPayController.start().url
+      status(response) mustBe SEE_OTHER
+      controllers.routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(response).get)
     }
 
     "return success and display the application complete page on successfully set up debit when DES call returns an error" in {
@@ -275,7 +273,7 @@ class ArrangementControllerSpec extends UnitSpec
 
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()).withSession(SessionKeys.userId -> "someUserId"))
 
-      redirectLocation(response).get shouldBe controllers.routes.ArrangementController.applicationComplete().url
+      controllers.routes.ArrangementController.applicationComplete().url must endWith(redirectLocation(response).get)
     }
 
     "redirect to start if no data in session cache" in {
@@ -286,7 +284,7 @@ class ArrangementControllerSpec extends UnitSpec
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId"))
 
-      redirectLocation(response).get shouldBe controllers.routes.SelfServiceTimeToPayController.start().url
+      controllers.routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(response).get)
     }
 
     "update payment schedule date" in {
@@ -305,7 +303,7 @@ class ArrangementControllerSpec extends UnitSpec
           .withSession(SessionKeys.userId -> "someUserId")
           .withFormUrlEncodedBody(validDayForm: _*))
 
-      redirectLocation(response).get shouldBe controllers.routes.ArrangementController.getInstalmentSummary().url
+      controllers.routes.ArrangementController.getInstalmentSummary().url must endWith(redirectLocation(response).get)
     }
 
     "redirect to login if user not logged in" in {
@@ -329,7 +327,7 @@ class ArrangementControllerSpec extends UnitSpec
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId"))
 
-      redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getMisalignmentPage().url
+      controllers.routes.CalculatorController.getMisalignmentPage().url must endWith(redirectLocation(response).get)
     }
 
     "redirect to instalment summary page if logged in and not logged in debits do sum() to the same value" in {
@@ -348,7 +346,7 @@ class ArrangementControllerSpec extends UnitSpec
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId"))
 
-      redirectLocation(response).get shouldBe controllers.routes.ArrangementController.getInstalmentSummary().url
+      controllers.routes.ArrangementController.getInstalmentSummary().url must endWith(redirectLocation(response).get)
     }
 
     "redirect to getPayTodayQuestion page if the not logged in user has not created any debits" in {
@@ -365,43 +363,41 @@ class ArrangementControllerSpec extends UnitSpec
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId"))
 
-      redirectLocation(response).get shouldBe controllers.routes.CalculatorController.getPayTodayQuestion().url
+      controllers.routes.CalculatorController.getPayTodayQuestion().url must endWith(redirectLocation(response).get)
     }
   }
 
-  "ttpSessionId" should {
+  "ttpSessionId" must {
     val controller = new TimeToPayController() {
       override val sessionProvider: SessionProvider = mockSessionProvider
 
-      def go() = Action {
-        Ok("")
-      }
+      def go() = Action { Ok("") }
     }
 
     "be set within the session cookie when the user first hits a page" in {
       when(mockSessionProvider.createTtpCookie()).thenReturn(Cookie(name = ttpSessionId, value = "12345"))
-      status(await(controller.go()(FakeRequest()))) shouldBe 303
+      status(controller.go()(FakeRequest())) mustBe 303
       verify(mockSessionProvider, times(1)).createTtpCookie()
     }
 
     "be set within the session cookie every time a user hits a page without it being sent in the session" in {
       when(mockSessionProvider.createTtpCookie()).thenReturn(Cookie(name = ttpSessionId, value = "12345"))
-      status(await(controller.go()(FakeRequest()))) shouldBe 303
-      status(await(controller.go()(FakeRequest()))) shouldBe 303
-      status(await(controller.go()(FakeRequest().withSession("sessionId" -> "22222")))) shouldBe 303
-      status(await(controller.go()(FakeRequest().withSession()))) shouldBe 303
+      status(controller.go()(FakeRequest())) mustBe 303
+      status(controller.go()(FakeRequest())) mustBe 303
+      status(controller.go()(FakeRequest().withSession("sessionId" -> "22222"))) mustBe 303
+      status(controller.go()(FakeRequest().withSession())) mustBe 303
       verify(mockSessionProvider, times(4)).createTtpCookie()
     }
 
     "be maintained across multiple not logged in requests" in {
       when(mockSessionProvider.createTtpCookie()).thenReturn(Cookie(name = ttpSessionId, value = "12345"))
-      status(await(controller.go()(FakeRequest()))) shouldBe 303
-      status(await(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345"))))) shouldBe 200
-      status(await(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345"))))) shouldBe 200
-      status(await(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345"))))) shouldBe 200
-      status(await(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345"))))) shouldBe 200
+      status(controller.go()(FakeRequest())) mustBe 303
+      status(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345")))) mustBe 200
+      status(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345")))) mustBe 200
+      status(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345")))) mustBe 200
+      status(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345")))) mustBe 200
 
-      status(await(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "123456"))))) shouldBe 200
+      status(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "123456")))) mustBe 200
       verify(mockSessionProvider, times(1)).createTtpCookie()
     }
   }

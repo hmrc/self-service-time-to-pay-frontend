@@ -16,12 +16,12 @@ Inline currenct input field using Component Library Styles as  documented:
             '_hideErrors -> set as true to hide errors other than the field highlight
             '_noLabel -> set to true to not wrap element in a label
 *@
-@(field: Field, args: (Symbol, Any)*)(implicit lang: Lang = Lang("en"))
+@(field: Field, args: (Symbol, Any)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import views.html.helper.FieldElements
 @import selfservicetimetopay.helpers.labelWrap
 @import selfservicetimetopay.helpers.forms.fieldErrors
 @argsMap = @{ args.toMap }
-@elements = @{ new FieldElements(field.id, field, null, argsMap, lang) }
+@elements = @{ new FieldElements(field.id, field, null, argsMap, messages) }
 @value = @{(field.value match { case Some(x) => try { Some(BigDecimal(x).formatted("%1.2f")) } catch { case ex: Exception => Some(x) } case None => None}).getOrElse("")}
 @wrapperClass = @{
   var w = Seq.empty ++ argsMap.getOrElse('_labelClass, "").asInstanceOf[String].split(" ")
@@ -36,7 +36,7 @@ Inline currenct input field using Component Library Styles as  documented:
 }
 @inputContent = {
 @if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false) {@fieldErrors(field)}
-    <span class="input-currency@if(argsMap.get('_currencyClass)){ @argsMap.get('_currencyClass)}"><input type="number" class="input--left-padding@if(inputClass.nonEmpty){ @inputClass}"
+    <span class="input-currency@if(argsMap.get('_currencyClass)){ @argsMap.get('_currencyClass)}"><input type="text" class="input--left-padding@if(inputClass.nonEmpty){ @inputClass}"
     name="@elements.field.name" id="@elements.field.name" value="@value"
         @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
         @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
@@ -46,7 +46,6 @@ Inline currenct input field using Component Library Styles as  documented:
         @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }
         @if(elements.args.get('_pattern).isDefined) { pattern="@elements.args.get('_pattern)" }
         @if(elements.args.get('_title).isDefined) { title="@elements.args.get('_title)" }
-        @if(elements.args.get('_required).isDefined) { required }
         /></span>
 }
 @if(argsMap.getOrElse('_noLabel, false).asInstanceOf[Boolean]) {

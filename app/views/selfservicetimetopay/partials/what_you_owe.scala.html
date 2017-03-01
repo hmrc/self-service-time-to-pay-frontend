@@ -5,7 +5,7 @@
     @param smallFormat Boolean, default false, apply the small font modifier to this list to show within another element
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@(debits:Seq[Debit], smallFormat:Boolean = false)
+@(debits:Seq[Debit], smallFormat:Boolean = false)(implicit messages: play.api.i18n.Messages)
 @import java.time.format.DateTimeFormatter
 @import selfservicetimetopay.partials.{currency, charge_code}
 @import java.util.Locale

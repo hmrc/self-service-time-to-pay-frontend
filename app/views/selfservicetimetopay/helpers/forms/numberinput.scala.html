@@ -17,12 +17,12 @@ Number input field using Component Library Styles as  documented:
             '_hideErrors -> set as true to hide errors other than the field highlight
             '_noLabel -> set to true to not wrap element in a label
 *@
-@(field: Field, args: (Symbol, Any)*)(implicit lang: Lang = Lang("en"))
+@(field: Field, args: (Symbol, Any)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import selfservicetimetopay.helpers.forms.fieldErrors
 @import selfservicetimetopay.helpers.labelWrap
 @import views.html.helper.FieldElements
 @argsMap = @{ args.toMap }
-@elements = @{ new FieldElements(field.id, field, null, argsMap, lang) }
+@elements = @{ new FieldElements(field.id, field, null, argsMap, messages) }
 @value = @{ field.value match { case Some(x) => x case None => "" case x => x }}
 @wrapperClass = @{
     var w = Seq("form-field") ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")
@@ -35,13 +35,14 @@ Number input field using Component Library Styles as  documented:
     c.trim
 }
 
+
+
 @inputContent = {
     @if(argsMap.get('hint).isDefined) {<div class="form-hint form-hint--small">@argsMap.get('hint)</div>}
     @if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false){@fieldErrors(field)}
-    <input type="number"@if(inputClass.nonEmpty){ class="@inputClass" } name="@elements.field.name" id="@elements.field.name" value="@value"
+    <input type="text"@if(inputClass.nonEmpty){ class="@inputClass" } name="@elements.field.name" id="@elements.field.name" value="@value"
         @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
         @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
-        @if(elements.args.get('_required).isDefined) { required }
         @if(elements.args.get('_error_id).isDefined) { aria-labeledby="@elements.args.get('_error_id)" }
         @if(elements.args.get('_hintId).isDefined) { aria-describedby="@elements.args.get('_hintId)" }
         @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }

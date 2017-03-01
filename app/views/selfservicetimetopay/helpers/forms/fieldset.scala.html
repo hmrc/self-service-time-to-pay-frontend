@@ -7,7 +7,7 @@
         EXCEPT those starting with _ (underscore). e.g. 'id -> "fieldGroup" but not '_id -> "fieldGroup".
 
 *@
-@(dataForm:Form[_], fieldName: String, args:(Symbol, Any)*)(content: Html)(implicit lang: Lang = Lang("en"))
+@(dataForm:Form[_], fieldName: String, args:(Symbol, Any)*)(content: Html)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import play.api.i18n._
 @import views.html.helper._
 @import scala.collection.mutable.ListBuffer

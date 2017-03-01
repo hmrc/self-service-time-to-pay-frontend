@@ -3,7 +3,7 @@
     @param yearEnding Option[LocalDate] specify tax year ending to potentially include in the message
 *@
 @import java.time.LocalDate
-@(code:String, yearEnding:Option[LocalDate])
+@(code:String, yearEnding:Option[LocalDate])(implicit messages: play.api.i18n.Messages)
 @import java.time.format.DateTimeFormatter
 @import java.util.Locale
 @defining("ssttp.common.charge-code.%s".format(code)) { message =>

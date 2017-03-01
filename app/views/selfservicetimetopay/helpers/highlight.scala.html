@@ -6,7 +6,7 @@
     '_modifierClass  ->  highlight-message--content-body, highlight-message--full-width, highlight-message--indent
                             highlight-message--icon-top, highlight-message--light, highlight-message--dark
 *@
-@(args:(Symbol, String)*)(content:Html)
+@(args:(Symbol, String)*)(content:Html)(implicit messages: play.api.i18n.Messages)
 @argsMap = @{ args.toMap }
 <div class="highlight-message@if(argsMap.get('_modifierClass).isDefined){ @argsMap.get('_modifierClass)}">
     @content

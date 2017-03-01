@@ -7,7 +7,7 @@
     '_modifierClass  ->  alert--success, alert--failure, alert--important, alert--info, alert--borderless, alert--slim
                             alert--info
 *@
-@(args:(Symbol, String)*)(content:Html)
+@(args:(Symbol, String)*)(content:Html)(implicit messages: play.api.i18n.Messages)
 @argsMap = @{ args.toMap }
 <div class="alert@if(argsMap.get('_modifierClass).isDefined){ @argsMap.get('_modifierClass)}" role="alert">
     <p class="alert__message">@content</p>

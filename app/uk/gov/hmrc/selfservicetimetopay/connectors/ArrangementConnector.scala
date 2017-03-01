@@ -21,7 +21,9 @@ import play.api.http.Status
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import com.google.inject._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -29,6 +31,7 @@ case class SubmissionSuccess()
 
 case class SubmissionError(code: Int, message: String)
 
+@ImplementedBy(classOf[ArrangementConnectorImpl])
 trait ArrangementConnector {
   type SubmissionResult = Either[SubmissionError, SubmissionSuccess]
 
@@ -57,4 +60,11 @@ trait ArrangementConnector {
     Logger.error(s"Failure from DES, code $code and body $message")
     Left(SubmissionError(code, message))
   }
+}
+
+@Singleton
+class ArrangementConnectorImpl extends ArrangementConnector with ServicesConfig {
+  val arrangementURL: String = baseUrl("time-to-pay-arrangement")
+  val serviceURL = "ttparrangements"
+  val http = WSHttp
 }

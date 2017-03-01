@@ -7,7 +7,7 @@ Format a list of error messages for the given list
       '_fieldId       -> If specified adds a data-input-name and id prefix to the error itmes
                           If more than one errors are given then they will also have an index number appended to the prefix
 *@
-@(errors:Seq[(String, String)], args:(Symbol, Any)*)
+@(errors:Seq[(String, String)], args:(Symbol, Any)*)(implicit messages: play.api.i18n.Messages)
 @import selfservicetimetopay.helpers.forms.errorInline
 @argsMap = @{args.toMap}
 @Html(errors.map { e => {

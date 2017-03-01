@@ -2,7 +2,7 @@
 Partial view to show list of direct debit payments in the payment schedule
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(schedule:CalculatorPaymentSchedule)
+@(schedule:CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages)
 @import java.time.format.DateTimeFormatter
 @import java.time.LocalDate
 @import selfservicetimetopay.partials.currency

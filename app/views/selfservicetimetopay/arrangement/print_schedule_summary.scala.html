@@ -5,7 +5,7 @@ Time To Pay Instalment Summary Display Page
 
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(schedule:CalculatorPaymentSchedule)(implicit request: Request[_])
+@(schedule:CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
 @selfservicetimetopay.main(
   title = Messages("ssttp.arrangement.instalment-summary.title"),

@@ -11,7 +11,7 @@
     scheduleDuration: Int,
     totalInterest: BigDecimal,
     regularPayment: BigDecimal
-)
+)(implicit messages: play.api.i18n.Messages)
 
 
 @Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)

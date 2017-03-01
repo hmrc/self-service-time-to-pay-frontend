@@ -7,7 +7,7 @@
         linksElem:  Option[Html] = None,
         googleAnalyticsCalls: Seq[String] = Seq.empty,
         noGetHelp:Boolean = false,
-        loggedIn:Boolean = false)(mainContent: Html)(implicit request: Request[_])
+        loggedIn:Boolean = false)(mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import uk.gov.hmrc.play.views.html.layouts
 @import uk.gov.hmrc.selfservicetimetopay.controllers.{routes => localRoutes}
 @sidebar = {

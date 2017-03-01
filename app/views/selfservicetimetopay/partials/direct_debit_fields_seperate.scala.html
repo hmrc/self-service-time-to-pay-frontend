@@ -2,7 +2,7 @@
    Partial view to display the direct debit details in a 2 column type layout
 *@
 @(ddForm:Form[_], accountNameField:Field, sortCodeFieldName:String,
-        sortCodeField1:Field, sortCodeField2:Field, sortCodeField3:Field, accountNumberField:Field)
+        sortCodeField1:Field, sortCodeField2:Field, sortCodeField3:Field, accountNumberField:Field)(implicit messages: play.api.i18n.Messages)
 @import selfservicetimetopay.helpers.forms.{textinput, fieldset, inlinenumberinput, numberinput}
 @textinput(accountNameField,
     'label -> Messages("ssttp.direct-debit.form.accountName"),

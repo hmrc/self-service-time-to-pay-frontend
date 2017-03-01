@@ -15,16 +15,15 @@
  */
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
-
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import javax.inject._
 
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.config.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -35,11 +34,11 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.math.BigDecimal
 
-class ArrangementController(ddConnector: DirectDebitConnector,
+class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesApi, ddConnector: DirectDebitConnector,
                             arrangementConnector: ArrangementConnector,
                             calculatorConnector: CalculatorConnector,
                             taxPayerConnector: TaxPayerConnector,
-                            eligibilityConnector: EligibilityConnector) extends TimeToPayController {
+                            eligibilityConnector: EligibilityConnector) extends TimeToPayController with play.api.i18n.I18nSupport {
   val cesa: String = "CESA"
   val paymentFrequency = "Calendar Monthly"
   val paymentCurrency = "GBP"

@@ -1,7 +1,7 @@
 @*
     Self Service Time to Pay Call Us Page for when a user can't set up time to pay online
 *@
-@(loggedIn: Boolean = false)(implicit request: Request[_])
+@(loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.message_list
 @selfservicetimetopay.main(
     title = Messages("ssttp.call-us.title"),

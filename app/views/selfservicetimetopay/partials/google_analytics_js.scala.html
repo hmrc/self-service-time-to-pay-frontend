@@ -2,7 +2,7 @@
     Helper to add the javascript code for google analytics including plugins and setting metrics and dimensions before the initial pageview event is sent
     @param Seq[String] String of javascript commands to use to report additional data
 *@
-@(commands:Seq[String])
+@(commands:Seq[String])(implicit messages: play.api.i18n.Messages)
 ga('require', 'ec');
 ga('set', 'currencyCode', 'GBP');
 @commands.map(Html(_))
