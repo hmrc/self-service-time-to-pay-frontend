@@ -17,7 +17,6 @@
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{verify => wmVerify, _}
-import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import play.api.http.Status

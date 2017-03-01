@@ -18,25 +18,21 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
 
+import akka.actor.ActorSystem
+import akka.stream._
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status
-import play.api.i18n.{Messages,MessagesApi}
-import play.api.mvc.Result
-import play.api.test._
 import play.api.test.Helpers._
+import play.api.test._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import akka.stream._
-import akka.actor.ActorSystem
 
 import scala.concurrent.Future
 
@@ -60,17 +56,38 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
   }
 
   "CalculatorControllerSpec" should {
-    "Return OK for non-logged-in calculation submission" in {
+    "Return OK for non-logged-in calculation submission with valid start date" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLI.copy(schedule = Some(calculatorPaymentSchedule.copy(startDate = Some(LocalDate.now)))))))
+
+      val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
+
+      status(result) mustBe Status.OK
+      verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
+    "Update the schedule in the cache if the startDate is out of date" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
-      val result = (controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
+        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
-      status(result) mustBe Status.OK
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(Future.successful(mock[CacheMap]))
+
+      val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
+
+      status(result) mustBe Status.SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any())
+      verify(mockCalculatorConnector, times(1)).calculatePaymentSchedule(any())(any())
+      verify(mockSessionCache, times(1)).put(any())(any(), any())
     }
 
     "if no schedule is present, generate a schedule and populate it in the session" in {
@@ -85,8 +102,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.put(any())(any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
-      val result = (controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.CalculatorController.getCalculateInstalments(None).url must endWith(redirectLocation(result).get)
@@ -96,14 +113,16 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "Return BadRequest if the form value = total amount due" in {
       implicit val hc = new HeaderCarrier
 
-      val submission = ttpSubmissionNLI.copy(eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)), eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))), calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now()))))
+      val submission = ttpSubmissionNLI.copy(eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)),
+        eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
+        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now()))))
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(submission)))
 
-      val result = (controller.submitPaymentToday().apply(FakeRequest()
+      val result = controller.submitPaymentToday().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "300.00")
-        .withCookies(sessionProvider.createTtpCookie())))
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.BAD_REQUEST
       verify(mockSessionCache, times(1)).get(any(), any())
@@ -120,9 +139,9 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(submission)))
 
-      val result = (controller.submitPaymentToday().apply(FakeRequest()
+      val result = controller.submitPaymentToday().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "299.999")
-        .withCookies(sessionProvider.createTtpCookie())))
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.BAD_REQUEST
       verify(mockSessionCache, times(1)).get(any(), any())
@@ -145,9 +164,9 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.put(any())(any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
-      val result = (controller.submitPaymentToday().apply(FakeRequest()
+      val result = controller.submitPaymentToday().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "299.994")
-        .withCookies(sessionProvider.createTtpCookie())))
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any())
@@ -165,8 +184,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.put(any())(any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
-      val result = (controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.CalculatorController.getCalculateInstalments(None).url must endWith(redirectLocation(result).get)
@@ -178,8 +197,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
-      val result = (controller.submitPaymentToday().apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = controller.submitPaymentToday().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any())
@@ -191,8 +210,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
-      val result = (controller.getPayTodayQuestion().apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = controller.getPayTodayQuestion().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -204,8 +223,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityExistingTtp = None))))
 
-      val result = (controller.getPayTodayQuestion().apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = controller.getPayTodayQuestion().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -217,8 +236,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityTypeOfTax = None))))
 
-      val result = (controller.getPayTodayQuestion().apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = controller.getPayTodayQuestion().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -230,8 +249,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = Seq.empty)))))
 
-      val result = (controller.getPayTodayQuestion().apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = controller.getPayTodayQuestion().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -244,7 +263,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (controller.getPayTodayQuestion().apply(request))
+      val result = controller.getPayTodayQuestion().apply(request)
 
       status(result) mustBe Status.OK
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.payment_today_question.title"))
@@ -257,7 +276,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (controller.getDebitDate().apply(request))
+      val result = controller.getDebitDate().apply(request)
 
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-date.example"))
       verify(mockSessionCache, times(1)).get(any(), any())
@@ -269,8 +288,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
-      val result = (controller.getDebitDate().apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = controller.getDebitDate().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -286,11 +305,11 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.put(any())(any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
-      val result = (controller.submitDebitDate().apply(FakeRequest()
+      val result = controller.submitDebitDate().apply(FakeRequest()
         .withFormUrlEncodedBody("dueBy.dueByYear" -> "2017",
           "dueBy.dueByMonth" -> "1",
           "dueBy.dueByDay" -> "31")
-        .withCookies(sessionProvider.createTtpCookie())))
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.CalculatorController.getAmountOwed().url must endWith(redirectLocation(result).get)
@@ -307,7 +326,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
           "dueBy.dueByMonth" -> "1",
           "dueBy.dueByDay" -> "31")
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (controller.submitDebitDate().apply(request))
+      val result = controller.submitDebitDate().apply(request)
 
       status(result) mustBe Status.BAD_REQUEST
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low"))
@@ -324,7 +343,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
           "dueBy.dueByMonth" -> "1",
           "dueBy.dueByDay" -> "31")
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (controller.submitDebitDate().apply(request))
+      val result = controller.submitDebitDate().apply(request)
 
       status(result) mustBe Status.BAD_REQUEST
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-high"))
@@ -341,10 +360,10 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
           "dueBy.dueByMonth" -> "13",
           "dueBy.dueByDay" -> "31")
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (controller.submitDebitDate().apply(request))
+      val result = controller.submitDebitDate().apply(request)
 
       status(result) mustBe Status.BAD_REQUEST
-      contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month"))
+      contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number"))
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
@@ -358,10 +377,10 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
           "dueBy.dueByMonth" -> "1",
           "dueBy.dueByDay" -> "32")
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (controller.submitDebitDate().apply(request))
+      val result = controller.submitDebitDate().apply(request)
 
       status(result) mustBe Status.BAD_REQUEST
-      contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day"))
+      contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number"))
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
@@ -374,7 +393,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(requiredSubmission)))
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (controller.getAmountOwed().apply(request))
+      val result = controller.getAmountOwed().apply(request)
 
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-amount.title1"))
       verify(mockSessionCache, times(1)).get(any(), any())
@@ -386,8 +405,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = (controller.getAmountOwed().apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = controller.getAmountOwed().apply(FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -402,9 +421,9 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(requiredSubmission)))
 
-      val result = (controller.submitAmountOwed().apply(FakeRequest()
+      val result = controller.submitAmountOwed().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "5000")
-        .withCookies(sessionProvider.createTtpCookie())))
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.CalculatorController.getWhatYouOweReview().url must endWith(redirectLocation(result).get)
@@ -421,7 +440,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       val request = FakeRequest()
         .withFormUrlEncodedBody("amount" -> "-500")
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (controller.submitAmountOwed().apply(request))
+      val result = controller.submitAmountOwed().apply(request)
 
       status(result) mustBe Status.BAD_REQUEST
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-amount.amount.required"))
@@ -439,7 +458,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       val request = FakeRequest()
         .withFormUrlEncodedBody("amount" -> "1000000000000")
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (controller.submitAmountOwed().apply(request))
+      val result = controller.submitAmountOwed().apply(request)
 
       status(result) mustBe Status.BAD_REQUEST
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval"))
@@ -456,7 +475,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       val request = FakeRequest()
         .withFormUrlEncodedBody("amount" -> "")
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (controller.submitAmountOwed().apply(request))
+      val result = controller.submitAmountOwed().apply(request)
 
       status(result) mustBe Status.BAD_REQUEST
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-amount.amount.required"))
@@ -470,9 +489,9 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       val formattedDateString =  "31 January 2017?"
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(requiredSubmission)))
-      val result = (controller.submitAmountOwed().apply(FakeRequest()
+      val result = controller.submitAmountOwed().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "-500")
-        .withCookies(sessionProvider.createTtpCookie())))
+        .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.BAD_REQUEST
       contentAsString(result) must include(formattedDateString)

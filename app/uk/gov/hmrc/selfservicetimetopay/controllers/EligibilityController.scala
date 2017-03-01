@@ -17,12 +17,13 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 import javax.inject._
 
-import play.api.mvc._
 import play.api.Logger
+import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, SignInQuestion, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.eligibility._
+
 import scala.concurrent.Future
 
 class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesApi) extends TimeToPayController with play.api.i18n.I18nSupport {
@@ -56,19 +57,19 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
 
   def getSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, tp, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _))
+      case Some(TTPSubmission(_, _, _, tp, `validTypeOfTax`, `validExistingTTP`, _, _, _, _))
         if tp.isDefined =>
         Redirect(routes.CalculatorController.getPayTodayQuestion())
-      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), _, _, _, _)) =>
+      case Some(TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`, _, _, _, _)) =>
         val dataForm = EligibilityForm.signInQuestionForm
         Ok(sign_in_question(dataForm))
-      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
+      case _ => redirectOnError
     }
   }
 
   def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, Some(EligibilityTypeOfTax(true, false)), Some(EligibilityExistingTTP(Some(false))), cd, _, _, _)) =>
+      case Some(TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`, cd, _, _, _)) =>
         EligibilityForm.signInQuestionForm.bindFromRequest().fold(
           formWithErrors => BadRequest(sign_in_question(formWithErrors)),
           {
@@ -80,7 +81,7 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
                 Redirect(routes.CalculatorController.getDebitDate())
           }
         )
-      case _ => Redirect(routes.SelfServiceTimeToPayController.start())
+      case _ => redirectOnError
     }
   }
 

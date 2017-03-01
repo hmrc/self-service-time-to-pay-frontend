@@ -21,5 +21,10 @@
 @(modifierClass: Option[String], messagePrefix: String, args: (Symbol, String)*)(implicit messages: play.api.i18n.Messages)
 @import play.api.Play.current
 @argsMap = @{ args.toMap }
-@if(Messages.isDefinedAt("default")) {
+@if(messages.messages.messages.get("default").isDefined) {
+    <ul@if(modifierClass.isDefined){ class="@modifierClass.get"}>
+    @for(message <- messages.messages.messages("default").filterKeys(_.startsWith(messagePrefix)).keys.toSeq.sorted) {
+        <li@if(argsMap.get('_itemClass).isDefined){ class="@argsMap.get('_itemClass)"}>@Messages(message)</li>
+    }
+    </ul>
 }

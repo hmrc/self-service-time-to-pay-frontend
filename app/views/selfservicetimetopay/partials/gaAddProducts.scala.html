@@ -4,35 +4,36 @@
     @param paymentPlan Option(Int, BigDecimal) Optional tuple of (duration:Int, interest:BigDecimal) representing the payment plan if specified
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import selfservicetimetopay.partials.gaAmountDueProduct
+
 @(debits:Seq[Debit],
     initialPayment:Option[BigDecimal],
-    paymentPlan: Option[(Int, BigDecimal)],
+    scheduleDuration: Int,
+    totalInterest: BigDecimal,
     regularPayment: BigDecimal
 )(implicit messages: play.api.i18n.Messages)
-@import selfservicetimetopay.partials.gaAmountDueProduct
+
 
 @Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
 @initialPayment.map { initial =>
     ga('ec:addProduct', { 'id': 'INITIAL_PAYMENT', 'name': 'Initial Payment', 'price': '@initial', 'quantity': 1, 'position': @{debits.length+1}});
 }
 
-@paymentPlan.map { plan =>
-    ga('ec:addProduct',
+ga('ec:addProduct',
 {'id': 'Schedule Total Interest',
     'name': 'Schedule Total Interest',
-    'price': '@plan._2',
+    'price': '@totalInterest',
     'quantity': 1,
-    'variant': '@plan._1',
     'position': @{debits.length + 2}
 });
-    ga('ec:addProduct',
+
+ga('ec:addProduct',
     {'id': 'Schedule Duration',
     'name': 'Schedule Duration',
-    'price': '@plan._1',
+    'price': '@scheduleDuration',
     'quantity': 1,
     'position': @{debits.length + 3}
 });
-}
 
 ga('ec:addProduct',
 {'id': 'regular_payment','name': 'Regular payment','price': '@regularPayment', 'quantity': 1, 'position': @{debits.length + 4}});

@@ -7,7 +7,7 @@
   @param loggedIn Boolean default false, If true display the sign out link in the page header
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, Debit}
-@(debits:Seq[Debit], schedule:CalculatorPaymentSchedule, loggedIn: Boolean = false, showErrorNotification: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(debits:Seq[Debit], schedule:CalculatorPaymentSchedule, loggedIn: Boolean = true, showErrorNotification: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @import selfservicetimetopay.helpers.highlight
 @import selfservicetimetopay.partials.{what_you_owe, currency}
