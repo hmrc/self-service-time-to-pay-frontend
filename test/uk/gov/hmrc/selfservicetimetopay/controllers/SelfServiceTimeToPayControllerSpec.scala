@@ -19,16 +19,11 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Result
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.test.{FakeApplication, FakeRequest}
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import akka.stream._
-import akka.actor.ActorSystem
 
 import scala.concurrent.Future
 

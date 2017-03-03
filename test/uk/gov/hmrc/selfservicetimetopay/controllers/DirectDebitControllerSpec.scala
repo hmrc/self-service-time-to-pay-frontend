@@ -18,33 +18,22 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import play.api._
 import play.api.i18n.Messages
 import play.api.mvc.Result
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.test.{FakeApplication, FakeRequest}
-import play.mvc.Http.RequestHeader
 import uk.gov.hmrc.http.cache.client.CacheMap
+import uk.gov.hmrc.play.frontend.auth.GovernmentGateway
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
-import uk.gov.hmrc.play.frontend.auth.{AuthContext, GovernmentGateway, Principal}
-import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.http.SessionKeys
 import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllers
 import uk.gov.hmrc.selfservicetimetopay.models.DirectDebitBank
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import play.api.i18n.{Messages,MessagesApi}
+
 import scala.concurrent.Future
 import scala.util.Try
-import akka.stream._
-import akka.actor.ActorSystem
-import org.scalatestplus.play._
-import play.api.test._
-import play.api.test.Helpers._
-import play.api.inject.guice.GuiceApplicationBuilder
 
 class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 

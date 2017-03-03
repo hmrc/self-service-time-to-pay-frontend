@@ -115,7 +115,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
       val submission = ttpSubmissionNLI.copy(eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)),
         eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
-        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now()))))
+        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = BigDecimal("300.00"), dueDate = LocalDate.now()))))
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(submission)))
@@ -128,7 +128,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
-    "Return BadRequest if the form value = total amount due (via rounding)" in {
+    "Return BadRequest if the form value has more than 2 decimal places" in {
       implicit val hc = new HeaderCarrier
 
       val submission = ttpSubmissionNLI.copy(eligibilityTypeOfTax =
@@ -144,31 +144,6 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.BAD_REQUEST
-      verify(mockSessionCache, times(1)).get(any(), any())
-    }
-
-    "Return 303 if the form value < total amount due (via rounding)" in {
-      implicit val hc = new HeaderCarrier
-
-      val submission = ttpSubmissionNLI.copy(eligibilityTypeOfTax =
-        Some(EligibilityTypeOfTax(true, false)),
-        eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))),
-        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now()))))
-
-      when(mockSessionCache.get(any(), any()))
-        .thenReturn(Future.successful(Some(submission)))
-
-      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
-        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
-
-      when(mockSessionCache.put(any())(any(), any()))
-        .thenReturn(Future.successful(mock[CacheMap]))
-
-      val result = controller.submitPaymentToday().apply(FakeRequest()
-        .withFormUrlEncodedBody("amount" -> "299.994")
-        .withCookies(sessionProvider.createTtpCookie()))
-
-      status(result) mustBe Status.SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 

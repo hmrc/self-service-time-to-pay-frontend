@@ -70,7 +70,7 @@ object CalculatorForm {
     "dueByMonth" -> text
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i: String => (i != null) && i.nonEmpty })
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number",  { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByMonthMax) && (i.toInt >= dueByMonthMin))}),
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByMonthMax) && (i.toInt >= dueByMonthMin)) }),
     "dueByDay" -> text
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i: String => (i != null) && i.nonEmpty })
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
@@ -78,7 +78,7 @@ object CalculatorForm {
   )
 
   def dateValidator: Constraint[(String, String, String)] =
-    Constraint[(String,String, String)]("ssttp.calculator.form.what-you-owe.due_by.not-valid-date") { data =>
+    Constraint[(String, String, String)]("ssttp.calculator.form.what-you-owe.due_by.not-valid-date") { data =>
       if (data._1.isEmpty || data._2.isEmpty || data._3.isEmpty) {
         Valid
       } else {
@@ -124,9 +124,14 @@ object CalculatorForm {
   def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentToday] = {
     Form(mapping(
       "amount" -> text
-        .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => (i != null) && (i.isEmpty || Try(BigDecimal(i)).isSuccess) })
-        .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", a => a.isEmpty || BigDecimal(a).setScale(2, RoundingMode.HALF_UP) < totalDue)
-        .verifying("ssttp.calculator.form.payment_today.amount.nonnegitive", a => a.isEmpty || BigDecimal(a) >= 0)
+        .verifying("ssttp.calculator.form.payment_today.amount.required", { i => Try(BigDecimal(i)).isSuccess && BigDecimal(i) >= 0 })
+        .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
+          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true})
+        .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", i =>
+          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < totalDue else true)
+        .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
+          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
+        })
     )(text => CalculatorPaymentToday(text))(bd => Some(bd.amount.toString)))
   }
 
@@ -143,10 +148,15 @@ object CalculatorForm {
   def createSinglePaymentForm(): Form[CalculatorSinglePayment] = {
     Form(mapping(
       "amount" -> text
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", {i: String => Try(BigDecimal(i)).isSuccess && BigDecimal(i) > 0})
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval", {i: String => if(i.nonEmpty){Try(BigDecimal(i)).isSuccess && BigDecimal(i) < MaxCurrencyValue}else{true}})
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", { i: String => Try(BigDecimal(i)).isSuccess && BigDecimal(i) > 0 })
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval", { i: String =>
+          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
+        })
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.decimal-places", { i =>
+          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true})
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
+
   val minMonths = 2
   val maxMonths = 11
 
@@ -168,7 +178,7 @@ object CalculatorForm {
   }
 
   val payTodayForm: Form[PayTodayQuestion] = Form(mapping(
-        "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)
-    )(PayTodayQuestion.apply)(PayTodayQuestion.unapply))
+    "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)
+  )(PayTodayQuestion.apply)(PayTodayQuestion.unapply))
 
 }
