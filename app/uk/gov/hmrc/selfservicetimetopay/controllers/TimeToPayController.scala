@@ -16,31 +16,22 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import play.api.mvc.{ActionBuilder, AnyContent, Request, Result, Action => PlayAction}
 import play.api.{Logger, Play}
-import play.api.mvc.{ActionBuilder, AnyContent, Controller, Request, Result, Action => PlayAction}
-import uk.gov.hmrc.play.audit.http.HttpAuditing
-import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
-import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
-import uk.gov.hmrc.play.config.{AppName, RunMode, ServicesConfig}
 import uk.gov.hmrc.play.frontend.auth._
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.play.http.hooks.HttpHook
-import uk.gov.hmrc.play.http.ws._
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpDelete, HttpGet, HttpPut}
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.auth.{SaGovernmentGateway, SaRegime}
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
-import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
-import uk.gov.hmrc.selfservicetimetopay.controllers._
+import uk.gov.hmrc.selfservicetimetopay.config._
+import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector}
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.{CheckSessionAction, SessionProvider}
-import javax.inject.Singleton
 
 import scala.concurrent.Future
-import uk.gov.hmrc.selfservicetimetopay.config._
 
 trait TimeToPayController extends FrontendController with Actions with CheckSessionAction {
   checkSessionAction: CheckSessionAction =>
@@ -58,7 +49,7 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
 
   protected def redirectOnError: Result = Redirect(routes.SelfServiceTimeToPayController.start())
 
-  private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L0, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
+  private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
 
   def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
 
