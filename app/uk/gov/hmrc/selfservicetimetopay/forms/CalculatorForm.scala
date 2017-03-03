@@ -152,7 +152,7 @@ object CalculatorForm {
         .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })
-        .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.decimal-places", { i =>
           if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true})
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
