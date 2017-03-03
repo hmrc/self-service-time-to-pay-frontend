@@ -116,6 +116,7 @@ ssttp.calculator.form.what-you-owe-amount.continue=Continue
 ssttp.calculator.form.what-you-owe-amount.error.summary.title=You haven''t entered an amount
 ssttp.calculator.form.what-you-owe-amount.amount.required=Enter an amount of £0.01 or more
 ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval=Total amounts must be less than £1,000,000,000,000
+ssttp.calculator.form.what-you-owe-amount.amount.decimal-places=Amount must not contain more than 2 decimal places
 
 ssttp.calculator.form.what-you-owe-date.title=What''s the due date of the amount you owe?
 ssttp.calculator.form.what-you-owe.due_by.not-valid-date=You need to enter a valid date
@@ -188,7 +189,8 @@ ssttp.calculator.form.payment_today.title=How much can you afford to pay now?
 ssttp.calculator.form.payment_today.error.summary.title=You haven''t entered an amount
 ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required=Enter an amount of £0.00 or more
-ssttp.calculator.form.payment_today.amount.nonnegative=Enter an amount of £0.00 or more
+ssttp.calculator.form.payment_today.amount.decimal-places=Amount must not contain more than 2 decimal places
+ssttp.calculator.form.payment_today.amount.less-than-maxval=Total amounts must be less than £1,000,000,000,000
 
 ssttp.calculator.form.payment_today_question.title=Would you like to make a payment today?
 ssttp.calculator.form.payment_today_question.error.summary.title=Would you like to make a payment today?

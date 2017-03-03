@@ -25,7 +25,6 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse, Upstream4xxResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.connectors.{ArrangementConnector => realConnector}
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.resources._
 

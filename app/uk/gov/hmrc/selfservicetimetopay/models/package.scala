@@ -19,11 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.time.LocalDate
 
 import play.api.libs.json._
-
 import uk.gov.hmrc.selfservicetimetopay.models._
-
-import scala.math.BigDecimal
-import scala.math.BigDecimal.RoundingMode
 
 package object modelsFormat {
   implicit val localDateFormatter = new Format[LocalDate] {

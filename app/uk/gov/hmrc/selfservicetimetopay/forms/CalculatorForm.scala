@@ -125,9 +125,11 @@ object CalculatorForm {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.payment_today.amount.required", { i => Try(BigDecimal(i)).isSuccess && BigDecimal(i) >= 0 })
+        .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
+          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true})
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", i =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < totalDue else true)
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval", { i: String =>
+        .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })
     )(text => CalculatorPaymentToday(text))(bd => Some(bd.amount.toString)))
@@ -150,6 +152,8 @@ object CalculatorForm {
         .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })
+        .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
+          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true})
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
 
