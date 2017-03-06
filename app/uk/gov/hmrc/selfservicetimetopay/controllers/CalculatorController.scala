@@ -274,8 +274,8 @@ class CalculatorController @Inject() (val messagesApi: play.api.i18n.MessagesApi
     implicit request =>
       sessionCache.get.flatMap[Result] {
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, taxpayer, `validTypeOfTax`,
-        `validExistingTTP`, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-          val durationForm = CalculatorForm.durationForm.fill(CalculatorDuration(Some(3)))
+        `validExistingTTP`, cd@CalculatorInput(debits, _, _, _, _, _), Some(months), _, _)) =>
+          val durationForm = CalculatorForm.durationForm.fill(CalculatorDuration(Some(months)))
           CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
               case Some(Taxpayer(_, _, Some(sa))) => Some(sa.debits)
