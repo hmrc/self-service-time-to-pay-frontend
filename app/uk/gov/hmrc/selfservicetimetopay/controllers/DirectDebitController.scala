@@ -18,8 +18,10 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import javax.inject._
 
 import play.api.Logger
+import play.api.data.{Form, FormError}
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.play.frontend.bootstrap.ShowErrorPage
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
@@ -38,7 +40,7 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
       authorizedForSsttp {
         case submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer), _, _, calcData, _, _, _)
           if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
-          Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, submission.taxpayer.isDefined)))
+          Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm,submission.taxpayer.isDefined)))
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -64,55 +66,13 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   def getDirectDebitConfirmation: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
+        case submission@TTPSubmission(_, _, Some(existingDDBanks), _, _, _, _, _, _, _) =>
+          Future.successful(Redirect(routes.DirectDebitController.getDirectDebit()))
         case submission@TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _, _) =>
           Future.successful(Ok(direct_debit_confirmation(submission.calculatorData.debits,
             schedule, submission.arrangementDirectDebit.get, submission.taxpayer.isDefined)))
         case _ =>
           Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
-          Future.successful(redirectOnError)
-      }
-  }
-
-  def getBankAccountNotFound: Action[AnyContent] = authorisedSaUser { implicit authContext =>
-    implicit request =>
-      authorizedForSsttp {
-        case TTPSubmission(_, _, Some(existingDDBanks), _, _, _, _, _, _, _) =>
-          Future.successful(Ok(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction)))
-        case _ =>
-          Logger.error(s"Existing DD banks missing on Bank account not found page")
-          Future.successful(redirectOnError)
-      }
-  }
-
-  def submitBankAccountNotFound: Action[AnyContent] = authorisedSaUser { implicit authContext =>
-    implicit request =>
-      authorizedForSsttp {
-        case ttpData@TTPSubmission(Some(_), _, Some(existingDDBanks), _, _, _, _, _, _, _) =>
-          existingBankAccountForm.bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(account_not_found(formWithErrors, existingDDBanks.directDebitInstruction))),
-            validFormData => (validFormData.existingDdi, validFormData.arrangementDirectDebit) match {
-              case (Some(_), Some(_)) =>
-                Future.successful(BadRequest(account_not_found(existingBankAccountForm, existingDDBanks.directDebitInstruction)))
-              case (Some(ddi), None) =>
-                val newBankDetails =
-                  banksListValidation(existingDDBanks.directDebitInstruction.filter(_.referenceNumber.get == ddi), validFormData)
-                sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
-                  _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
-                }
-              case (None, Some(arrangementDirectDebit: ArrangementDirectDebit)) =>
-                directDebitConnector.getBank(arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber).flatMap[Result] {
-                  case Some(_) =>
-                    val newBankDetails = banksListValidation(existingDDBanks.directDebitInstruction
-                      .filter(_.accountNumber.get == arrangementDirectDebit.accountNumber), validFormData)
-                    sessionCache.put(ttpData.copy(bankDetails = Some(newBankDetails))).map[Result] {
-                      _ => Redirect(routes.DirectDebitController.getDirectDebitConfirmation())
-                    }
-                  case None => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
-                }
-              case _ => Future.successful(Redirect(routes.DirectDebitController.getBankAccountNotFound()))
-            })
-        case _ =>
-          Logger.error(s"Existing DD banks missing when submitting Bank account not found page")
           Future.successful(redirectOnError)
       }
   }
@@ -128,62 +88,63 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
           formWithErrors => Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
             submission.schedule.get, formWithErrors))),
           validFormData =>
-            directDebitConnector.validateOrRetrieveAccounts(validFormData.sortCode,
-              validFormData.accountNumber.toString, authContext.principal.accounts.sa.get.utr)
-              .flatMap(directDebitSubmitRouting(validFormData.accountName)))
+            directDebitConnector.getBank(validFormData.sortCode,
+              validFormData.accountNumber.toString).flatMap {
+                case Some(bankDetails) => checkBankDetails(bankDetails,validFormData.accountName)
+                case None =>
+                  Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
+                    submission.schedule.get, directDebitForm.copy(errors = directDebitFormWithBankAccountError),
+                      isBankError = true)
+              ))
+            }
+        )
       }
   }
 
-  private def banksListValidation(bankDetails: Seq[DirectDebitInstruction], formData: ArrangementExistingDirectDebit): BankDetails = {
+  private def checkBankDetails(bankDetails: BankDetails,accName:String)(implicit hc: HeaderCarrier) ={
+    sessionCache.get.flatMap {
+      _.fold(Future.successful(redirectToStartPage))(ttp => {
+        val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
+        val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
+
+        directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
+          directDebitBank => {
+            val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
+              p.accountNumber.get.equalsIgnoreCase(bankDetails.accountNumber.get) && p.sortCode.get.equals(bankDetails.sortCode.get)
+            })
+            val bankDetailsToSave = instructions match {
+              case instruction :: _ =>
+                val refNumber = instructions.filter(refNo => refNo.referenceNumber.isDefined).
+                  map(instruction => instruction.referenceNumber).min
+                BankDetails(ddiRefNumber = refNumber,
+                  accountNumber = instruction.accountNumber,
+                  sortCode = instruction.sortCode,
+                  accountName = Some(accName))
+              case Nil => bankDetails.copy(accountName = Some(accName))
+            }
+            sessionCache.put(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
+              _ => Redirect(toDDCreationPage)
+            }
+          }
+        }
+      })
+    }
+  }
+
+  private def banksListValidation(bankDetails: Seq[DirectDebitInstruction], formData: ArrangementDirectDebit): BankDetails = {
     bankDetails match {
       case bd :: tail =>
         BankDetails(sortCode = bd.sortCode, accountNumber = bd.accountNumber, ddiRefNumber = bd.referenceNumber)
       case Nil =>
-        BankDetails(sortCode = Some(formData.arrangementDirectDebit.get.sortCode),
-          accountNumber = Some(formData.arrangementDirectDebit.get.accountNumber),
+        BankDetails(sortCode = Some(formData.sortCode),
+          accountNumber = Some(formData.accountNumber),
           ddiRefNumber = None,
-          accountName = Some(formData.arrangementDirectDebit.get.accountName))
+          accountName = Some(formData.accountName))
     }
   }
 
-  private def directDebitSubmitRouting(accName: String)(implicit hc: HeaderCarrier): PartialFunction[Either[BankDetails, DirectDebitBank], Future[Result]] = {
-    case Left(singleBankDetails) =>
-      sessionCache.get.flatMap {
-        _.fold(Future.successful(redirectToStartPage))(ttp => {
-          val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
-          val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
-
-          directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
-            directDebitBank => {
-              val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
-                p.accountNumber.get.equalsIgnoreCase(singleBankDetails.accountNumber.get) && p.sortCode.get.equals(singleBankDetails.sortCode.get)
-              })
-              val bankDetailsToSave = instructions match {
-                case instruction :: _ =>
-                  val refNumber = instructions.filter(refNo => refNo.referenceNumber.isDefined).
-                    map(instruction => instruction.referenceNumber).min
-                  BankDetails(ddiRefNumber = refNumber,
-                    accountNumber = instruction.accountNumber,
-                    sortCode = instruction.sortCode,
-                    accountName = Some(accName))
-                case Nil => singleBankDetails.copy(accountName = Some(accName))
-              }
-
-              sessionCache.put(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
-                _ => Redirect(toDDCreationPage)
-              }
-            }
-          }
-        })
-      }
-    case Right(existingDDBanks) =>
-      updateOrCreateInCache(found => found.copy(existingDDBanks = Some(existingDDBanks)),
-        () => TTPSubmission(None, None, Some(existingDDBanks), None, None))
-        .map(_ => Redirect(toBankSelectionPage))
-  }
 
   private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 
   private val toDDCreationPage = routes.DirectDebitController.getDirectDebitConfirmation()
-  private val toBankSelectionPage = routes.DirectDebitController.getBankAccountNotFound()
 }

@@ -69,12 +69,10 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
     "submit direct debit form with valid form data and valid bank details and redirect to direct debit confirmation page" in { running(app) {
 
-      when(mockDDConnector.validateOrRetrieveAccounts(Matchers.any(), Matchers.any(),
-        Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Left(bankDetails)))
-      when(mockDDConnector.getBanks(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(DirectDebitBank("", Seq.empty)))
+      when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
       when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
+        ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
@@ -82,16 +80,13 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
         .withFormUrlEncodedBody(validDirectDebitForm: _*)
       implicit val messages = getMessages(request)
       val response = controller.submitDirectDebit(request)
+      status(response) mustBe BAD_REQUEST
 
-      status(response) mustBe SEE_OTHER
-
-      controllers.routes.DirectDebitController.getDirectDebitConfirmation().url must endWith(redirectLocation(response).get)
     }}
 
-    "submit direct debit form with valid form data and invalid bank details and redirect to invalid bank details page" in { running(app) {
+    "submit direct debit form with valid form data and invalid bank details it should be a bad request" in { running(app) {
 
-      when(mockDDConnector.validateOrRetrieveAccounts(Matchers.any(), Matchers.any(),
-        Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Right(directDebitBank)))
+      when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
 
       when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
@@ -105,9 +100,9 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
       implicit val messages = getMessages(request)
       val response = controller.submitDirectDebit(request)
 
-      status(response) mustBe SEE_OTHER
+      status(response) mustBe BAD_REQUEST
 
-      controllers.routes.DirectDebitController.getBankAccountNotFound().url must endWith(redirectLocation(response).get)
+      contentAsString(response) must include (Messages("ssttp.direct-debit.form.bank-not-found-info"))
     }}
 
     "submit direct debit form with invalid form data and return a bad request" in { running(app) { 

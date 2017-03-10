@@ -7,7 +7,8 @@ Time To Pay Direct Debit Form Page
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(debits:Seq[Debit], schedule:CalculatorPaymentSchedule, ddForm:Form[ArrangementDirectDebit], loggedIn: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitInstruction}
+@(debits:Seq[Debit], schedule:CalculatorPaymentSchedule, ddForm:Form[ArrangementDirectDebit],isBankError:Boolean = false,loggedIn: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields, gaDoCheckout}
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
@@ -34,7 +35,10 @@ Time To Pay Direct Debit Form Page
         <h1>@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
     </header>
       @form(routes.DirectDebitController.submitDirectDebit()) {
-      @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
+      @if(isBankError){
+          @formErrorSummary(Messages("ssttp.direct-debit.form.bank-not-found-heading"), ddForm, Seq.empty)}else{
+          @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
+          }
       <h2>@Messages("ssttp.arrangement.direct-debit.form.bank-details")</h2>
       @direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode"), ddForm("accountNumber"))
       @direct_debit_confirmation()
