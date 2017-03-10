@@ -18,10 +18,8 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import javax.inject._
 
 import play.api.Logger
-import play.api.data.{Form, FormError}
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.frontend.bootstrap.ShowErrorPage
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
@@ -93,7 +91,8 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
                 case Some(bankDetails) => checkBankDetails(bankDetails,validFormData.accountName)
                 case None =>
                   Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
-                    submission.schedule.get, directDebitForm.copy(errors = directDebitFormWithBankAccountError),
+                    submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
+                    "accountNumber" -> validFormData.accountNumber,"sortCode" -> validFormData.sortCode)),
                       isBankError = true)
               ))
             }

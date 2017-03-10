@@ -16,11 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.forms
 
-import io.netty.util.Mapping
-import play.api.data.{Form, FormError}
 import play.api.data.Forms._
-import play.api.i18n.Messages
-import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, ArrangementExistingDirectDebit}
+import play.api.data.{Form, FormError}
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 
 import scala.util.Try
 
@@ -41,7 +39,6 @@ object DirectDebitForm {
   )(ArrangementDirectDebit.apply)(ArrangementDirectDebit.unapply)
 
   val directDebitForm = Form(directDebitMapping)
-    //todo use a proper error message
-  val directDebitFormWithBankAccountError = Seq(FormError(" ","ssttp.direct-debit.form.bank-not-found-info"))
+  val directDebitFormWithBankAccountError =directDebitForm.copy(errors = Seq(FormError(" ","ssttp.direct-debit.form.bank-not-found-info")))
 
 }
