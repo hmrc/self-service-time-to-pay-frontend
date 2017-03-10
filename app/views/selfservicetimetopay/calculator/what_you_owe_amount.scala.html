@@ -7,8 +7,10 @@
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.form.what-you-owe-amount.title1")
 ){
-    <h1>@Messages("ssttp.calculator.form.what-you-owe-amount.title1")
-    <br>@Messages("ssttp.calculator.form.what-you-owe-amount.title2", debitDueDate)</h1>
+    <header class="page-header text">
+        <h1>@Messages("ssttp.calculator.form.what-you-owe-amount.title1")
+        <br>@Messages("ssttp.calculator.form.what-you-owe-amount.title2", debitDueDate)</h1>
+    </header>
     @form(routes.CalculatorController.submitAmountOwed(), 'class -> "group") {
         @formErrorSummary(Messages("ssttp.calculator.form.what-you-owe-amount.error.summary.title"), dataForm, Seq.empty)
         @currencyinput(dataForm("amount"),

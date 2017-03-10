@@ -185,7 +185,7 @@ ssttp.calculator.misalignment-page.recalculate.button=Recalculate
 ssttp.calculator.misalignment-page.query.label=Find out about an amount in your tax account
 ssttp.calculator.misalignment-page.query.number=0300 200 3822
 
-ssttp.calculator.form.payment_today.title=How much can you afford to pay now?
+ssttp.calculator.form.payment_today.title=How much can you afford to pay?
 ssttp.calculator.form.payment_today.error.summary.title=You haven''t entered an amount
 ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required=Enter an amount of £0.00 or more
