@@ -1,7 +1,7 @@
 @*
     Self Service Time to Pay Call Us Page for when a user can't set up time to pay online
 *@
-@(loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(loggedIn: Boolean = false, typeOfTaxNumber: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.message_list
 @selfservicetimetopay.main(
     title = Messages("ssttp.call-us.title"),
@@ -15,5 +15,11 @@
         @Messages("ssttp.call-us.we-need-to-know.list")
         @message_list(Some("bullets"), "ssttp.call-us.we-need-to-know.list.")
     </p>
-    <p><strong>@Messages("ssttp.call-us.contact-instructions", Messages("ssttp.call-us.contact-number"))</strong></p>
+
+    @if(typeOfTaxNumber) {
+        <p><strong> @Messages("ssttp.call-us.contact-instructions", Messages("ssttp.type-of-tax.contact-number"))</strong></p>
+    } else {
+        <p><strong> @Messages("ssttp.call-us.contact-instructions", Messages("ssttp.sa-helpline.contact-number"))</strong></p>
+    }
+
 }
