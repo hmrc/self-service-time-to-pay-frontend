@@ -296,7 +296,7 @@ ssttp.arrangement.instalment-summary.terms.cancelled-if.4=pay another tax bill l
 ssttp.arrangement.instalment-summary.terms.cancelled-if.5=don’t submit your future tax returns on time
 ssttp.arrangement.instalment-summary.terms.made-payable-immediately=If we cancel this agreement you’ll have to pay the whole amount due straight away.
 ssttp.arrangement.instalment-summary.terms.refunds=We can use any refunds you might get to pay off this debt.
-ssttp.arrangement.instalment-summary.terms.interest-change=If the interest rate changes during your instalment plan, we’ll settle the amount of interest you owe in your final payment.
+ssttp.arrangement.instalment-summary.terms.interest-change=If the interest rate changes during your instalment plan we’ll settle the amount of interest you owe in your final payment.
 ssttp.arrangement.instalment-summary.terms.future-debts=This isn’t a payment plan for new tax bills, it only covers the amounts you need to pay now. 
 ssttp.arrangement.instalment-summary.submit=Continue
 
@@ -376,17 +376,18 @@ ssttp.arrangement.direct-debit.assistance.alert.1=We’re having problems submit
 ssttp.arrangement.direct-debit.assistance.back=Back
 
 ssttp.arrangement.complete.title=Application complete
+ssttp.arrangement.complete.body=We'’ve received your application to pay in instalments.
 ssttp.arrangement.complete.subtitle=We''ve received your application to pay in instalments.
 ssttp.arrangement.complete.next=What happens next?
 ssttp.arrangement.complete.please-help-use=Please help us to improve this service
 ssttp.arrangement.complete.your-bank=Your bank
 ssttp.arrangement.complete.direct-debit-payment=Direct Debit payment schedule
-ssttp.arrangement.complete.summary=You don’t need to do anything else. We’ll send you the instalment plan and the Direct Debit details when your agreement has been set up, which should take about 5 days.
+ssttp.arrangement.complete.summary=You don'’t need to do anything else. We'’ll send you the instalment plan and Direct Debit details in the post, which should take about 5 days.
 ssttp.arrangement.complete.what-you-owe=What you owe
 ssttp.arrangement.complete.payment-plan={0} month instalment plan
 ssttp.arrangement.complete.interest-rate=Interest at {0}%
 ssttp.arrangement.complete.total=TOTAL:
-ssttp.arrangement.complete.payment-details.summary=Payment plan summary 
+ssttp.arrangement.complete.payment-details.summary=View a print summary
 
 #Service unavailable (shutter) page
 ssttp.unavailable.title=Please call us

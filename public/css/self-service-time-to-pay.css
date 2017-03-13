@@ -13,7 +13,13 @@
   details summary {
     display: list-item !important;
  }
-
+  .alterBottom {
+      margin-bottom: 19px;
+      padding-bottom: 19px;
+  }
+  .removeBottom{
+      margin-bottom: 0px;
+  }
 @media print {
     .no-print {
         display: none;
@@ -23,6 +29,4 @@
         display: block;
     }
 }
-.section{
-    padding: 0px;
-}
+
