@@ -130,18 +130,6 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     }
   }
 
-  private def banksListValidation(bankDetails: Seq[DirectDebitInstruction], formData: ArrangementDirectDebit): BankDetails = {
-    bankDetails match {
-      case bd :: tail =>
-        BankDetails(sortCode = bd.sortCode, accountNumber = bd.accountNumber, ddiRefNumber = bd.referenceNumber)
-      case Nil =>
-        BankDetails(sortCode = Some(formData.sortCode),
-          accountNumber = Some(formData.accountNumber),
-          ddiRefNumber = None,
-          accountName = Some(formData.accountName))
-    }
-  }
-
 
   private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 
