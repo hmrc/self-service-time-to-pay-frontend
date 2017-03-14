@@ -24,3 +24,7 @@
         display: block;
     }
 }
+
+.ssttp-grid-layout-padding-above {
+    margin-top: -10px;
+}
