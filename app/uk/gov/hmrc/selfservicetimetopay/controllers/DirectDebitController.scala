@@ -85,17 +85,19 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
         directDebitForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
             submission.schedule.get, formWithErrors))),
-          validFormData =>
+          validFormData => {
             directDebitConnector.getBank(validFormData.sortCode,
               validFormData.accountNumber.toString).flatMap {
-                case Some(bankDetails) => checkBankDetails(bankDetails,validFormData.accountName)
-                case None =>
-                  Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
-                    submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
-                    "accountNumber" -> validFormData.accountNumber,"sortCode" -> validFormData.sortCode)),
-                      isBankError = true)
-              ))
+              case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
+              case None =>
+                val (sc1::sc2::sc3::_) = validFormData.sortCode.grouped(2).toList
+                Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
+                  submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
+                    "accountNumber" -> validFormData.accountNumber, "sortCode1" -> sc1, "sortCode2" -> sc1, "sortCode3" -> sc1)),
+                  isBankError = true)
+                ))
             }
+          }
         )
       }
   }

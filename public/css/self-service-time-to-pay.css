@@ -10,6 +10,7 @@
 .print-only{
     display: none;
 }
+
  /* GitHub Bug: Make <details> arrow work in Firefox */
   details summary {
     display: list-item !important;
@@ -23,4 +24,12 @@
     .print-only{
         display: block;
     }
+}
+.container {
+    float:left;
+    white-space: nowrap;
+}
+.sortcode {
+    margin-right:8px;
+    display: inline-block;
 }

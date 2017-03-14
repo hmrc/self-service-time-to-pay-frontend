@@ -314,8 +314,7 @@ ssttp.arrangement.misalignment.direct-debit.reenter=Re-enter your bank details
 ssttp.arrangement.misalignment.submit=Agree and continue
 ssttp.arrangement.misalignment.back=Back
 
-ssttp.arrangement.direct-debit.form.title=Set up a direct debit
-ssttp.arrangement.direct-debit.form.bank-details=Enter your banking details
+ssttp.arrangement.direct-debit.form.title=Enter your banking details
 ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
 ssttp.arrangement.direct-debit.form.submit=Continue
 ssttp.arrangement.direct-debit.form.back=Back
