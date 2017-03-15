@@ -7,7 +7,7 @@ Time To Pay Direct Debit Form Page
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(debits:Seq[Debit], schedule:CalculatorPaymentSchedule, ddForm:Form[ArrangementDirectDebit],isBankError:Boolean = false,loggedIn: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(debits: Seq[Debit], schedule: CalculatorPaymentSchedule, ddForm: Form[ArrangementDirectDebit], isBankError: Boolean = false, loggedIn: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields, gaDoCheckout}
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
@@ -25,24 +25,34 @@ Time To Pay Direct Debit Form Page
 )
 }
 @selfservicetimetopay.main(
-  title = Messages("ssttp.arrangement.direct-debit.form.title"),
-  loggedIn = loggedIn,
-  sidebarLinks = Some(having_problems_sidebar()),
-  googleAnalyticsCalls = if(ddForm.hasErrors){Seq.empty}else{Seq(gaCheckoutCode.body)}
-){
+    title = Messages("ssttp.arrangement.direct-debit.form.title"),
+    loggedIn = loggedIn,
+    sidebarLinks = Some(having_problems_sidebar()),
+    googleAnalyticsCalls = if(ddForm.hasErrors) {
+        Seq.empty
+    } else {
+        Seq(gaCheckoutCode.body)
+    }
+) {
     <header class="page-header text">
         <h1>@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
     </header>
-      @form(routes.DirectDebitController.submitDirectDebit()) {
-      @if(isBankError){
-          @formErrorSummary(Messages("ssttp.direct-debit.form.bank-not-found-heading"), ddForm, Seq.empty)}else{
-          @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
-          }
-      @direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode1"),ddForm("sortCode2"),ddForm("sortCode3"), ddForm("accountNumber"))
-      @direct_debit_confirmation()
-      @submit(){@Messages("ssttp.arrangement.direct-debit.form.submit")}
-      <p>&nbsp;</p>
+    @form(routes.DirectDebitController.submitDirectDebit()) {
+        @if(isBankError) {
+            @formErrorSummary(Messages("ssttp.direct-debit.form.bank-not-found-heading"), ddForm, Seq.empty)
+        } else {
+            @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
+        }
+        <fieldset class="form-field-group">
+            <legend><span class="visually-hidden">Enter your banking details</span></legend>
+            @direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode1"), ddForm("sortCode2"), ddForm("sortCode3"), ddForm("accountNumber"))
+            @direct_debit_confirmation()
+        </fieldset>
+        @submit() {
+            @Messages("ssttp.arrangement.direct-debit.form.submit")
+        }
+        <p>&nbsp;</p>
     }
-  <p><a class="back-link" href="@routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.direct-debit.form.back")</a></p>
+    <p><a class="back-link" href="@routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.direct-debit.form.back")</a></p>
 }
 

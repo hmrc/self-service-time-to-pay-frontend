@@ -15,9 +15,11 @@
  */
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
+
 import javax.inject._
 
 import play.api.Logger
+import play.api.data.{Form, FormError}
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -30,7 +32,7 @@ import views.html.selfservicetimetopay.arrangement._
 import scala.collection.immutable.::
 import scala.concurrent.Future
 
-class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesApi, directDebitConnector: DirectDebitConnector)
+class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi, directDebitConnector: DirectDebitConnector)
   extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def getDirectDebit: Action[AnyContent] = authorisedSaUser { implicit authContext =>
@@ -38,7 +40,7 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
       authorizedForSsttp {
         case submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer), _, _, calcData, _, _, _)
           if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
-          Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm,submission.taxpayer.isDefined)))
+          Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, submission.taxpayer.isDefined)))
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -84,13 +86,13 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
       authorizedForSsttp { submission =>
         directDebitForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
-            submission.schedule.get, formWithErrors))),
+            submission.schedule.get, filterSortCodeErrors(formWithErrors)))),
           validFormData => {
             directDebitConnector.getBank(validFormData.sortCode,
               validFormData.accountNumber.toString).flatMap {
               case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
               case None =>
-                val (sc1::sc2::sc3::_) = validFormData.sortCode.grouped(2).toList
+                val (sc1 :: sc2 :: sc3 :: _) = validFormData.sortCode.grouped(2).toList
                 Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
                   submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
                     "accountNumber" -> validFormData.accountNumber, "sortCode1" -> sc1, "sortCode2" -> sc1, "sortCode3" -> sc1)),
@@ -102,7 +104,15 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
       }
   }
 
-  private def checkBankDetails(bankDetails: BankDetails,accName:String)(implicit hc: HeaderCarrier) ={
+  def filterSortCodeErrors(form: Form[ArrangementDirectDebit]): Form[ArrangementDirectDebit] = {
+    val errorsNoDubs = form.errors.foldLeft[Seq[FormError]](Nil) { (acc, r) => {
+      if (acc.exists(_.message == r.message)) acc :+ r.copy(messages = Seq(" ")) else acc :+ r
+    }
+    }
+    form.copy(errors = errorsNoDubs)
+  }
+
+  private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit hc: HeaderCarrier) = {
     sessionCache.get.flatMap {
       _.fold(Future.successful(redirectToStartPage))(ttp => {
         val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))

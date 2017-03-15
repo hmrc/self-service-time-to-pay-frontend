@@ -32,14 +32,11 @@ object DirectDebitForm {
     "accountName" -> text.verifying("ssttp.direct-debit.form.error.accountName.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountName.not-text", x => x.length == x.replaceAll("[^a-zA-Z '.& \\/]", "").length),
     "sortCode1" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-number", x => validateSortCode(x))
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => validateNumberLength(x, 2)),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x =>  validateNumberLength(x, 2)),
     "sortCode2" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-number", x => validateSortCode(x))
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => validateNumberLength(x, 2)),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x =>  validateNumberLength(x, 2)),
     "sortCode3" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-number", x => validateSortCode(x))
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => validateNumberLength(x, 2)),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x =>  validateNumberLength(x, 2)),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => validateNumberLength(x, 8))
   )({ case (name, sc1, sc2, sc3, acctNo) => ArrangementDirectDebit(name, sc1 ++ sc2 ++ sc3, acctNo) }
@@ -51,10 +48,6 @@ object DirectDebitForm {
       sc3,
       arrangementDirectDebit.accountNumber))
   })
-
-  def validateSortCode(sortCodeBit: String): Boolean = {
-    (sortCodeBit.trim == "") || (sortCodeBit.replaceAll("[^0-9]", "") != "") || parseIntOption(sortCodeBit).nonEmpty
-  }
 
   def validateNumberLength(number: String, length: Int): Boolean = {
     number.replaceAll("[^0-9]", "").length == length

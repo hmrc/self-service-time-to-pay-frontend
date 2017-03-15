@@ -25,11 +25,21 @@
         display: block;
     }
 }
+.sortcode {
+    margin:0;
+    display: inline-block;
+}
+.visually-hidden{
+    display: None;
+}
 .container {
     float:left;
     white-space: nowrap;
 }
-.sortcode {
-    margin-right:8px;
-    display: inline-block;
+
+fieldset.container{
+    margin-bottom: 14.25px;
+}
+ul.container{
+    margin: 0px;!important;
 }

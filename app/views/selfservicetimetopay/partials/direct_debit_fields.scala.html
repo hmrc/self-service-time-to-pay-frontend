@@ -2,37 +2,18 @@
 Partial view to display the direct debit details in a 2 column type layout
 *@
 @(ddForm: Form[_], accountNameField: Field, sortCodeField1: Field,sortCodeField2: Field, sortCodeField3: Field, accountNumberField: Field)(implicit messages: play.api.i18n.Messages)
-@import selfservicetimetopay.helpers.forms.textinput
+@import selfservicetimetopay.helpers.forms.{textinput,sortcodeinput}
 @textinput(accountNameField,
     'label -> Messages("ssttp.direct-debit.form.accountName"),
     '_maxlength -> "39",
     '_inputClass -> "input--cleared"
-
 )
-<p><label>Sort Code</label></p>
-<fieldset class="container">
-    <div class = "sortcode">
-    @textinput(sortCodeField1,
-        '_maxlength -> "2",
-        '_inputClass -> "input--xxsmall input--cleared input--no-spinner"
-    )
-        -
-    </div>
-    <div class="sortcode">
-    @textinput(sortCodeField2,
-        '_maxlength -> "2",
-        '_inputClass -> "input--xxsmall input--cleared input--no-spinner"
-    )
-        -
-    </div>
-    <div class="sortcode">
-    @textinput(sortCodeField3,
-        '_maxlength -> "2",
-        '_inputClass -> "input--xxsmall input--cleared input--no-spinner"
-    )
-            &nbsp;
-    </div>
-</fieldset>
+@sortcodeinput("sortCode", ddForm, sortCodeField1,sortCodeField2, sortCodeField3,
+    'sort1Label -> Messages("ssttp.direct-debit.form.sortCode1"),
+    'sort2Label -> Messages("ssttp.direct-debit.form.sortCode2"),
+    'sort3Label -> Messages("ssttp.direct-debit.form.sortCode3"),
+    '_inputGroupClass -> "gutter-left",
+    '_inputClass -> "input--small input--no-spinner")
 @textinput(accountNumberField,
     'label -> Messages("ssttp.direct-debit.form.accountNumber"),
     '_maxlength -> "8",
