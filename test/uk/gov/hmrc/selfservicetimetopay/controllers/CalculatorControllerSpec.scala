@@ -179,6 +179,18 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
+    "Return the payment-today from for getPayTodayQuestion if there is an initial payment  already made" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k.copy(calculatorData = CalculatorInput.initial.copy(initialPayment = BigDecimal(2))))))
+      val request = FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())
+      val result = controller.getPayTodayQuestion().apply(request)
+
+      status(result) mustBe Status.SEE_OTHER
+    }
+
     "Return 303 for submitPayTodayQuestion when TTPSubmission is missing" in {
       implicit val hc = new HeaderCarrier
 
@@ -243,6 +255,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       status(result) mustBe Status.OK
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.payment_today_question.title"))
     }
+
 
     "Successfully display the what you owe date page" in {
       implicit val hc = new HeaderCarrier
