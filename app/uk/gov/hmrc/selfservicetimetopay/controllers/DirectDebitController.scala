@@ -95,7 +95,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
                 val (sc1 :: sc2 :: sc3 :: _) = validFormData.sortCode.grouped(2).toList
                 Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
                   submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
-                    "accountNumber" -> validFormData.accountNumber, "sortCode1" -> sc1, "sortCode2" -> sc1, "sortCode3" -> sc1)),
+                    "accountNumber" -> validFormData.accountNumber, "sortCode1" -> sc1, "sortCode2" -> sc2, "sortCode3" -> sc3)),
                   isBankError = true)
                 ))
             }
@@ -105,11 +105,11 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   }
 
   def filterSortCodeErrors(form: Form[ArrangementDirectDebit]): Form[ArrangementDirectDebit] = {
-    val errorsNoDubs = form.errors.foldLeft[Seq[FormError]](Nil) { (acc, r) => {
-      if (acc.exists(_.message == r.message)) acc :+ r.copy(messages = Seq(" ")) else acc :+ r
+    val formErrorsNoDuplicates = form.errors.foldLeft[Seq[FormError]](Nil) { (acc, formError) => {
+      if (acc.exists(_.message == formError.message)) acc :+ formError.copy(messages = Seq(" ")) else acc :+ formError
     }
     }
-    form.copy(errors = errorsNoDubs)
+    form.copy(errors = formErrorsNoDuplicates)
   }
 
   private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit hc: HeaderCarrier) = {
