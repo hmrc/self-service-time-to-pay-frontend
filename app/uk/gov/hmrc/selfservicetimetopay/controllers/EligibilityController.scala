@@ -20,7 +20,7 @@ import javax.inject._
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, SignInQuestion, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.eligibility._
 
@@ -69,13 +69,15 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
 
   def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`, cd, _, _, _)) =>
+      case Some(tpp:TTPSubmission)if tpp.eligibilityExistingTtp == `validExistingTTP` && tpp.eligibilityTypeOfTax == `validTypeOfTax`  =>
         EligibilityForm.signInQuestionForm.bindFromRequest().fold(
           formWithErrors => BadRequest(sign_in_question(formWithErrors)),
           {
-            case SignInQuestion(Some(true)) => Redirect(routes.ArrangementController.determineMisalignment())
+            case SignInQuestion(Some(true)) =>
+              if(tpp.calculatorData.debits.nonEmpty) sessionCache.put(tpp.copy(calculatorData = CalculatorInput.initial))
+              Redirect(routes.ArrangementController.determineMisalignment())
             case SignInQuestion(Some(false)) =>
-              if(cd.debits.nonEmpty)
+              if(tpp.calculatorData.debits.nonEmpty)
                 Redirect(routes.CalculatorController.getWhatYouOweReview())
               else
                 Redirect(routes.CalculatorController.getDebitDate())
