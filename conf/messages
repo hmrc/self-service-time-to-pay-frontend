@@ -274,7 +274,7 @@ ssttp.you-need-to-file.other-tax=If you’re unsure how to proceed for any reaso
 ssttp.you-need-to-file.other-tax.number=0300 200 3504
 
 ssttp.arrangement.instalment-summary.title=Your instalment plan summary
-ssttp.arrangement.instalment-summary.print=View a print summary
+ssttp.arrangement.instalment-summary.print=Print
 ssttp.arrangement.instalment-summary.initial-payment-of=An initial payment of:
 ssttp.arrangement.instalment-summary.initial-payment.hint=taken up to {0} days from today
 ssttp.arrangement.instalment-summary.monthly-instalments=monthly instalments of:
@@ -382,6 +382,7 @@ ssttp.arrangement.direct-debit.assistance.alert.1=We’re having problems submit
 ssttp.arrangement.direct-debit.assistance.back=Back
 
 ssttp.arrangement.complete.title=Application complete
+ssttp.arrangement.complete.print=View a print summary
 ssttp.arrangement.complete.subtitle=We''ve received your application to pay in instalments.
 ssttp.arrangement.complete.next=What happens next?
 ssttp.arrangement.complete.please-help-use=Please help us to improve this service
