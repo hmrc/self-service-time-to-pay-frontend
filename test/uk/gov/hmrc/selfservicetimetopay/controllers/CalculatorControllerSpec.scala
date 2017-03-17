@@ -408,6 +408,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(requiredSubmission)))
+      when(mockSessionCache.put(any())(any(), any()))
+        .thenReturn(Future.successful(mock[CacheMap]))
 
       val result = controller.submitAmountOwed().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "5000")

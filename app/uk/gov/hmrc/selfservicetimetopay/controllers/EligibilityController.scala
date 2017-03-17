@@ -20,7 +20,7 @@ import javax.inject._
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityTypeOfTax, SignInQuestion, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.eligibility._
 
@@ -68,20 +68,27 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   }
 
   def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`, cd, _, _, _)) =>
+    sessionCache.get.flatMap[Result] {
+      case Some(ttp@TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`, _, _, _, _))  =>
         EligibilityForm.signInQuestionForm.bindFromRequest().fold(
-          formWithErrors => BadRequest(sign_in_question(formWithErrors)),
+          formWithErrors => Future.successful(BadRequest(sign_in_question(formWithErrors))),
           {
-            case SignInQuestion(Some(true)) => Redirect(routes.ArrangementController.determineMisalignment())
-            case SignInQuestion(Some(false)) =>
-              if(cd.debits.nonEmpty)
-                Redirect(routes.CalculatorController.getWhatYouOweReview())
+            case SignInQuestion(Some(true)) =>
+              if(ttp.calculatorData.debits.nonEmpty) {
+                sessionCache.put(ttp.copy(calculatorData = CalculatorInput.initial)).map[Result] {
+                  _ => Redirect(routes.ArrangementController.determineMisalignment())
+                }
+              }
               else
-                Redirect(routes.CalculatorController.getDebitDate())
+                Future.successful(Redirect(routes.ArrangementController.determineMisalignment()))
+            case SignInQuestion(Some(false)) =>
+              if(ttp.calculatorData.debits.nonEmpty)
+                Future.successful(Redirect(routes.CalculatorController.getWhatYouOweReview()))
+              else
+                Future.successful(Redirect(routes.CalculatorController.getDebitDate()))
           }
         )
-      case _ => redirectOnError
+      case _ => Future.successful(redirectOnError)
     }
   }
 
