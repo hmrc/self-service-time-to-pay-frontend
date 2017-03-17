@@ -96,11 +96,11 @@ Time To Pay Payment Schedule Calculator Page
                                         <span class="hidden" aria-label="">@Messages("ssttp.calculator.results.monthly-payments.decrease")</span>
                                 }) { label =>
                                     @if(schedule.instalments.length != monthOptions.min) {
-                                        @button('type -> "submit", 'id -> "calculatorDurationDecrease", '_modifierClass -> "button button--spaced flush--ends flush--left",'title ->"Decrease value") {
+                                        @button('type -> "submit", 'id -> "calculatorDurationDecrease", '_modifierClass -> "button button--spaced flush--ends flush--left ssttp-minus-calc",'title ->"Decrease value") {
                                             <strong>@Messages("ssttp.calculator.results.monthly-payments.minus")</strong>
                                         }
                                     } else {
-                                        <span class="button button--spaced flush--ends flush--left disabled"  aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")" role="button">
+                                        <span class="button button--spaced flush--ends flush--left ssttp-minus-calc disabled"  aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")" role="button">
                                             <strong>@Messages("ssttp.calculator.results.monthly-payments.minus")</strong>
                                         </span>
                                     }
@@ -116,11 +116,11 @@ Time To Pay Payment Schedule Calculator Page
                                         <span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.increase")</span>
                                 }) { label =>
                                     @if(schedule.instalments.length != monthOptions.max) {
-                                        @button('type -> "submit",'id -> "calculatorDurationIncrease", '_modifierClass -> "button button--spaced flush-ends flush--left",'title ->"Increase value") {
+                                        @button('type -> "submit",'id -> "calculatorDurationIncrease", '_modifierClass -> "button button--spaced flush-ends flush--left ssttp-plus-calc",'title ->"Increase value") {
                                             <strong>@Messages("ssttp.calculator.results.monthly-payments.plus")</strong>
                                         }
                                     } else {
-                                        <span class="button button--spaced flush-ends flush--left disabled" aria-label="@Messages("ssttp.calculator.results.monthly-payments.increase")" role="button">
+                                        <span class="button button--spaced flush-ends flush--left ssttp-plus-calc disabled" aria-label="@Messages("ssttp.calculator.results.monthly-payments.increase")" role="button">
                                             <strong>@Messages("ssttp.calculator.results.monthly-payments.plus")</strong>
                                         </span>
                                     }

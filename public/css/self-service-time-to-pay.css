@@ -11,6 +11,16 @@
     width: 39%;
 }
 
+.ssttp-plus-calc {
+    line-height: 1.1;
+    padding: 0.35em 0.65em 0.15em 0.65em;
+}
+
+.ssttp-minus-calc {
+    line-height: 1.1;
+    padding: 0.35em 0.75em 0.15em 0.75em;
+}
+
 .print-only{
     display: none;
 }
