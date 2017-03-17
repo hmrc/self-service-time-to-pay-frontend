@@ -81,19 +81,19 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
 
   def submitAmountOwed: Action[AnyContent] = Action.async {
     implicit request =>
-      sessionCache.get.map[Result] {
+      sessionCache.get.flatMap[Result] {
         case Some(ttpData@TTPSubmission(_, _, _, None, `validTypeOfTax`, `validExistingTTP`,
         CalculatorInput(debits, _, _, _, _, _), _, _, Some(debitDate))) =>
           CalculatorForm.createSinglePaymentForm().bindFromRequest().fold(
-            formWithErrors => BadRequest(what_you_owe_amount(formWithErrors, debitDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)))),
+            formWithErrors => Future.successful(BadRequest(what_you_owe_amount(formWithErrors,
+              debitDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH))))),
             validFormData => {
               sessionCache.put(ttpData.copy(
                 calculatorData = ttpData.calculatorData.copy(debits :+ Debit(amount = validFormData.amount, dueDate = debitDate)),
-                debitDate = None))
-              Redirect(routes.CalculatorController.getWhatYouOweReview())
+                debitDate = None)).map(_ => Redirect(routes.CalculatorController.getWhatYouOweReview()))
             }
           )
-        case _ => redirectOnError
+        case _ => Future.successful(redirectOnError)
       }
   }
 
