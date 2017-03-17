@@ -1,0 +1,81 @@
+@*
+A data input field using Component Library Styles as  documented:
+Label: http://hmrc.github.io/assets-frontend/section-label.html
+Input http://hmrc.github.io/assets-frontend/section-text-input.html
+
+@param field Field The form field the input value represents
+@param args options arguments for the template
+'label -> Text for the field label
+'hint -> Hint for the combined date field group
+'sortCode1-> Text to use for  field 1 (default empty)
+'sortCode2 -> Text to use for field 2(default empty)
+'sortCode3 -> Text to use for field 3(default empty)
+'_labelClass -> Label Modifier class
+'_modifierClass -> Modifier class for the input class, includes:
+input--xxsmall, input--xsmall, input--small,  input--normal,
+input--fullwidth, input--no-spinner, input--cleared,
+input--link
+'_inputGroupClass -> Modifier class to apply to the group of all three text fields
+'_hideErrors -> set to "true" to stop error messages being displayed
+*@
+@(name: String, frm:Form[_], sortCode1: Field, sortCode2: Field, sortCode3: Field, args: (Symbol, String)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
+@import views.html.helper.FieldElements
+@import selfservicetimetopay.helpers.forms.{fieldsetErrors,textinputnoerrors}
+@argsMap = @{ args.toMap }
+@sortCode1Elements = @{ new FieldElements(sortCode1.id, sortCode1, null, argsMap, messages) }
+@sortCode2Elements = @{ new FieldElements(sortCode2.id, sortCode2, null, argsMap, messages) }
+@sortCode3Elements = @{ new FieldElements(sortCode3.id, sortCode3, null, argsMap, messages) }
+@fieldsetErrorsClass = @{
+    var errorsClass = if(frm.error(name).nonEmpty){"soft--right "}else{""}
+    if(sortCode1.errors.nonEmpty || sortCode2.errors.nonEmpty || sortCode3.errors.nonEmpty) {
+        errorsClass += "form-field--error"
+    }
+    errorsClass.trim
+}
+@fieldsetErrors(frm, name, '_modifierClass -> (fieldsetErrorsClass + " form-field")){
+<div class = "form-field form-field-error">
+    @if(argsMap.get('label).isDefined){<legend>@argsMap.get('label)</legend>}
+    @if(argsMap.getOrElse('_hideErrors, "false").contentEquals("false")){@formErrors(frm, '_field -> name)}
+    <label>Sort code</label>
+    @if(sortCode1.hasErrors){@fieldErrors(sortCode1)} else {@if(sortCode2.hasErrors){@fieldErrors(sortCode2)}  else {@if(sortCode3.hasErrors){@fieldErrors(sortCode3)}}}
+    <ul class="container list--inline group list--collapse hide-inline-list--collapse-targets">
+        <li>
+            <div class="sortcode">
+            @textinputnoerrors(sortCode1,
+            'step -> 1,
+            '_inputClass -> "input--xxsmall",
+            '_hideErrors -> true,
+            '_maxlength -> "2",
+            '_required -> true)
+            </div>
+        </li>
+        <li>
+            <div class = "sortcode">
+            @textinputnoerrors(sortCode2,
+            'label -> "-",
+            'step -> 1,
+            '_labelClass -> "label--inline-tight",
+            '_inputClass -> "input--xxsmall input--no-spinner",
+            '_hideErrors -> true,
+            '_maxlength -> "2",
+            '_required -> true)
+            </div>
+        </li>
+        <li>
+            <div class = "sortcode">
+            @textinputnoerrors(sortCode3,
+            'label -> "-",
+            'step -> 1,
+            '_labelClass -> "label--inline-tight",
+            '_inputClass -> "input--xxsmall input--no-spinner",
+            '_hideErrors -> true,
+            '_maxlength -> "2",
+            '_required -> true)
+            </div>
+        </li>
+    </ul>
+</div>
+    @if(argsMap.get('hint).isDefined) {
+        <div class="form-hint form-hint--small float--left">@argsMap.get('hint)</div>
+    }
+    }
