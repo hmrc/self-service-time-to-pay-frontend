@@ -53,7 +53,7 @@ Time To Pay Payment Schedule Calculator Page
                         @fieldErrors(paymentTodayAmountForm("amount"))
                         @Messages("ssttp.calculator.results.you-can-afford")
                     </div>
-                    <div class="grid-layout__column grid-layout__column--1-2 align--middle no-wrap">
+                    <div class="grid-layout__column grid-layout__column--1-2 ssttp-grid-layout-payment-today">
                         <span>@inlinecurrencyinput(paymentTodayAmountForm("amount"), '_hideErrors -> true, '_noLabel -> true, '_inputClass -> "input--small input--no-spinner")</span>
                             &nbsp;
                         @button('type -> "submit", '_modifierClass -> "button--secondary flush--sides") {
