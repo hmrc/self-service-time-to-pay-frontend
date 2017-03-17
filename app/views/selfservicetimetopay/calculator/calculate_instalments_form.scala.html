@@ -164,5 +164,5 @@ Time To Pay Payment Schedule Calculator Page
                 }
             }
         </section>
-        <p><a class="back-link" href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a></p>
+        <p>@if(schedule.initialPayment.equals(BigDecimal(0))){<a class="back-link" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>}else{<a class="back-link" href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a>}</p>
     }

@@ -43,3 +43,7 @@ fieldset.container{
 ul.container{
     margin: 0px;!important;
 }
+.ssttp-grid-layout-padding-above {
+    margin-top: -10px;
+}
+

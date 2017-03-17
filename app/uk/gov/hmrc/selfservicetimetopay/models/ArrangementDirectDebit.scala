@@ -18,11 +18,8 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 case class ArrangementDirectDebit(accountName:String,
                                   sortCode: String,
-                                  accountNumber:String)  {
-}
-
+                                  accountNumber:String)
 object ArrangementDirectDebit {
-
   def from(bankDetails: BankDetails): ArrangementDirectDebit = {
     ArrangementDirectDebit(bankDetails.accountName.getOrElse(""),
       bankDetails.sortCode.getOrElse(""),
