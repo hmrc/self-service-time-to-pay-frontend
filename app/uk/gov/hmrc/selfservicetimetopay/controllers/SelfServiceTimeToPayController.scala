@@ -38,7 +38,8 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
 
   def getTtpCallUs: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData: TTPSubmission) => Ok(call_us(ttpData.taxpayer.isDefined))
+      case Some(TTPSubmission(_, _, _, taxpayer, Some(EligibilityTypeOfTax(_, hasOtherDebt)), _, _, _, _, _)) =>
+        Ok(call_us(typeOfTaxNumber = hasOtherDebt, loggedIn = taxpayer.isDefined))
       case _ => Ok(call_us())
     }
   }

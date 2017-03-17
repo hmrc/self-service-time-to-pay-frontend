@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -30,7 +31,7 @@ import views.html.selfservicetimetopay.calculator._
 
 import scala.concurrent.Future
 
-class CalculatorController @Inject() (val messagesApi: play.api.i18n.MessagesApi, calculatorConnector: CalculatorConnector)
+class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi, calculatorConnector: CalculatorConnector)
   extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def start: Action[AnyContent] = Action { request =>
@@ -109,8 +110,8 @@ class CalculatorController @Inject() (val messagesApi: play.api.i18n.MessagesApi
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, tp, `validTypeOfTax`,
       `validExistingTTP`, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
-        val dataForm = CalculatorForm.payTodayForm
-        Ok(payment_today_question(dataForm, tp.isDefined))
+          val dataForm = CalculatorForm.payTodayForm
+          Ok(payment_today_question(dataForm, tp.isDefined))
       case _ => redirectOnError
     }
   }
@@ -244,7 +245,7 @@ class CalculatorController @Inject() (val messagesApi: play.api.i18n.MessagesApi
   def submitRecalculate: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap[Result] {
-        case Some(ttpData@TTPSubmission(_,_,_,_,_,_,_,_,_,_)) => updateSchedule(ttpData).apply(request)
+        case Some(ttpData@TTPSubmission(_, _, _, _, _, _, _, _, _, _)) => updateSchedule(ttpData).apply(request)
         case None => Future.successful(redirectOnError)
       }
   }
@@ -295,9 +296,11 @@ class CalculatorController @Inject() (val messagesApi: play.api.i18n.MessagesApi
   def getPaymentToday: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.map {
-        case Some(TTPSubmission(_, _, _, taxpayer, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+        case Some(TTPSubmission( _, _, _, taxpayer, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
-          if (paymentToday.equals(BigDecimal(0))) Ok(payment_today_form(form, taxpayer.isDefined))
+          if (paymentToday.equals(BigDecimal(0))) {
+            Ok(payment_today_form(form, taxpayer.isDefined))
+          }
           else Ok(payment_today_form(form.fill(paymentToday), taxpayer.isDefined))
         case _ =>
           Logger.info("Missing required data for get payment today page")

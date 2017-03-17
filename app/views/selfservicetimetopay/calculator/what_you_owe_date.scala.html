@@ -8,7 +8,9 @@
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.form.what-you-owe-date.title")
 ){
+    <header class="page-header text">
     <h1>@Messages("ssttp.calculator.form.what-you-owe-date.title")</h1>
+    </header>
     <span class="form-hint form-hint">@Messages("ssttp.calculator.form.what-you-owe-date.example")</span>
     @form(routes.CalculatorController.submitDebitDate(), 'class -> "group") {
         @formErrorSummary(Messages("ssttp.calculator.form.what-you-owe-date.error.summary.title"), dataForm, Seq.empty)

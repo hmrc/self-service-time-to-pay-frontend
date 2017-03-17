@@ -1,5 +1,6 @@
 .page-header h1 {
     font-size: 36px;
+    margin-top: 15px;
 }
 
 .page-header h1.h1-heading {
@@ -28,5 +29,8 @@
     .print-only{
         display: block;
     }
+}
+.ssttp-grid-layout-padding-above {
+    margin-top: -10px;
 }
 

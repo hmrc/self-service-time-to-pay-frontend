@@ -173,19 +173,18 @@ ssttp.calculator.misalignment-page.subtitle=The figures you entered don’t matc
 ssttp.calculator.misalignment-page.total-entered=You entered:
 ssttp.calculator.misalignment-page.total-in-account=Your tax account shows:
 ssttp.calculator.misalignment-page.account-breakdown.title=View a breakdown
-ssttp.calculator.misalignment-page.account-breakdown.total=TOTAL:
+ssttp.calculator.misalignment-page.account-breakdown.total=Total:
 ssttp.calculator.misalignment-page.possible-reasons.title=These differences could be because:
-ssttp.calculator.misalignment-page.possible-reasons.list.1=you haven’t filed your Self Assessment tax return
-ssttp.calculator.misalignment-page.possible-reasons.list.2=you filed less than 3 days ago and your account hasn’t updated yet
-ssttp.calculator.misalignment-page.possible-reasons.list.3=you didn’t include all outstanding amounts in your calculation
-ssttp.calculator.misalignment-page.possible-reasons.list.4=you included an amount that isn't related to your Self Assessment
+ssttp.calculator.misalignment-page.possible-reasons.list.1=didn'’t include all outstanding amounts in your calculation
+ssttp.calculator.misalignment-page.possible-reasons.list.2=included an amount that isn''t related to your Self Assessment
+ssttp.calculator.misalignment-page.advice=Recalculate your instalments using the total in your tax account. If you can''t continue call us on 0300 200 3822.
 ssttp.calculator.misalignment-page.your-options=Your options
 ssttp.calculator.misalignment-page.recalculate.label=Recalculate instalments using the total in your tax account
 ssttp.calculator.misalignment-page.recalculate.button=Recalculate
 ssttp.calculator.misalignment-page.query.label=Find out about an amount in your tax account
 ssttp.calculator.misalignment-page.query.number=0300 200 3822
 
-ssttp.calculator.form.payment_today.title=How much can you afford to pay now?
+ssttp.calculator.form.payment_today.title=How much can you afford to pay?
 ssttp.calculator.form.payment_today.error.summary.title=You haven''t entered an amount
 ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required=Enter an amount of £0.00 or more
@@ -261,7 +260,8 @@ ssttp.call-us.we-need-to-know.list.3=about any savings or investments you have
 ssttp.call-us.we-need-to-know.list.4=if you can pay some of the bill now
 ssttp.call-us.we-need-to-know.list.5=your bank details
 ssttp.call-us.contact-instructions=When you have all of this, call us on {0}.
-ssttp.call-us.contact-number=0300 200 3835
+ssttp.type-of-tax.contact-number=0300 200 3835
+ssttp.sa-helpline.contact-number=0300 200 3822
 
 ssttp.you-need-to-file.title=Insufficient funds in your tax account
 ssttp.you-need-to-file.intro=The amount outstanding in your tax account isn’t enough to set up an instalment plan.
@@ -271,10 +271,24 @@ ssttp.you-need-to-file.because.list.2=you filed less than 3 days ago and your ac
 ssttp.you-need-to-file.check-account.link=Go to your tax account
 ssttp.you-need-to-file.check-account=to check your balance or file your Self Assessment tax return.
 ssttp.you-need-to-file.other-tax=If you’re unsure how to proceed for any reason, call us on
-ssttp.you-need-to-file.other-tax.number=0300 200 3822
+ssttp.you-need-to-file.other-tax.number=0300 200 3504
 
 ssttp.arrangement.instalment-summary.title=Your instalment plan summary
+<<<<<<< HEAD
 ssttp.arrangement.instalment-summary.print=Print
+||||||| merged common ancestors
+ssttp.arrangement.instalment-summary.print=View a print summary
+ssttp.arrangement.instalment-summary.initial-payment-of=An initial payment of:
+ssttp.arrangement.instalment-summary.initial-payment.hint=taken up to {0} days from today
+ssttp.arrangement.instalment-summary.monthly-instalments=monthly instalments of:
+ssttp.arrangement.instalment-summary.total-repayment=Total repayment:
+=======
+ssttp.arrangement.instalment-summary.print=Print
+ssttp.arrangement.instalment-summary.initial-payment-of=An initial payment of:
+ssttp.arrangement.instalment-summary.initial-payment.hint=taken up to {0} days from today
+ssttp.arrangement.instalment-summary.monthly-instalments=monthly instalments of:
+ssttp.arrangement.instalment-summary.total-repayment=Total repayment:
+>>>>>>> master
 ssttp.arrangement.instalment-summary.payment-day.taken-on=Your payments will be taken on the
 ssttp.arrangement.instalment-summary.payment-day.day-of-month={0} of the month
 ssttp.arrangement.instalment-summary.payment-day.next-working-day=or the next working day.
@@ -320,6 +334,8 @@ ssttp.direct-debit.form.accountNumber=Account number
 ssttp.direct-debit.form.sortCode.hint=Example: 000000
 ssttp.direct-debit.form.error.accountName.required=Enter an account name
 ssttp.direct-debit.form.error.accountName.not-text=Account name contains characters that aren''t valid
+ssttp.direct-debit.form.bank-not-found-heading=This isn''t a valid bank account
+ssttp.direct-debit.form.bank-not-found-info=Re-enter your bank details
 ssttp.direct-debit.form.error.accountNumber.required=Enter an account number
 ssttp.direct-debit.form.error.sortCode.required=Enter a sort code
 ssttp.direct-debit.form.error.sortCode.not-number=Sort code must be a number
@@ -377,7 +393,7 @@ ssttp.arrangement.direct-debit.assistance.back=Back
 
 ssttp.arrangement.complete.title=Application complete
 ssttp.arrangement.complete.body=We'’ve received your application to pay in instalments.
-ssttp.arrangement.complete.subtitle=We''ve received your application to pay in instalments.
+ssttp.arrangement.complete.print=View a print summary
 ssttp.arrangement.complete.next=What happens next?
 ssttp.arrangement.complete.please-help-use=Please help us to improve this service
 ssttp.arrangement.complete.your-bank=Your bank
