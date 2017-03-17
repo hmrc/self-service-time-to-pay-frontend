@@ -9,10 +9,8 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.{Debit, CalculatorPaymentSchedule, ArrangementDirectDebit}
 
 @(debits:Seq[Debit], transactionId: String, directDebit:ArrangementDirectDebit, schedule:CalculatorPaymentSchedule, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
-@import selfservicetimetopay.helpers.message_list
 @import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule, gaDoTransaction, currency}
-@import selfservicetimetopay.helpers.forms._
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
 @gaCheckoutCode = {
   @gaDoTransaction(debits = debits,
     id = transactionId,
