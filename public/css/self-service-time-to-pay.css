@@ -10,6 +10,7 @@
 .print-only{
     display: none;
 }
+
  /* GitHub Bug: Make <details> arrow work in Firefox */
   details summary {
     display: list-item !important;
@@ -24,7 +25,25 @@
         display: block;
     }
 }
+.sortcode {
+    margin:0;
+    display: inline-block;
+}
+.visually-hidden{
+    display: None;
+}
+.container {
+    float:left;
+    white-space: nowrap;
+}
 
+fieldset.container{
+    margin-bottom: 14.25px;
+}
+ul.container{
+    margin: 0px;!important;
+}
 .ssttp-grid-layout-padding-above {
     margin-top: -10px;
 }
+

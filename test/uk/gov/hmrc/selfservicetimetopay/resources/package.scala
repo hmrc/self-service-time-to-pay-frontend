@@ -166,7 +166,9 @@ package object resources {
 
   val invalidBankDetailsForm = Seq(
     "accountName" -> "Jane Doe",
-    "sortCode" -> "123123",
+    "sortCode1" -> "12",
+    "sortCode2" -> "34",
+    "sortCode3" -> "56",
     "accountNumber" -> "12345678"
   )
 
