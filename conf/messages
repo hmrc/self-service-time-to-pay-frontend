@@ -49,7 +49,7 @@ ssttp.sidebar.help-and-advice.ways-to-pay=Different ways to pay HMRC
 ssttp.sidebar.help-and-advice.payments-on-account=Learn about payments on account
 ssttp.sidebar.help-and-advice.dont-pay=What happens if you don''t pay your bill
 ssttp.sidebar.help-and-advice.feedback=Please leave some feedback and tell us what you think of this service.
-ssttp.sidebar.help-and-advice.feedback.submit=Send your feedback
+ssttp.sidebar.help-and-advice.feedback.submit=Send us your feedback
 
 
 #sign in sidebar
@@ -300,7 +300,7 @@ ssttp.arrangement.instalment-summary.terms.cancelled-if.4=pay another tax bill l
 ssttp.arrangement.instalment-summary.terms.cancelled-if.5=don’t submit your future tax returns on time
 ssttp.arrangement.instalment-summary.terms.made-payable-immediately=If we cancel this agreement you’ll have to pay the whole amount due straight away.
 ssttp.arrangement.instalment-summary.terms.refunds=We can use any refunds you might get to pay off this debt.
-ssttp.arrangement.instalment-summary.terms.interest-change=If the interest rate changes during your instalment plan, we’ll settle the amount of interest you owe in your final payment.
+ssttp.arrangement.instalment-summary.terms.interest-change=If the interest rate changes during your instalment plan we’ll settle the amount of interest you owe in your final payment.
 ssttp.arrangement.instalment-summary.terms.future-debts=This isn’t a payment plan for new tax bills, it only covers the amounts you need to pay now. 
 ssttp.arrangement.instalment-summary.submit=Continue
 
@@ -342,7 +342,6 @@ ssttp.direct-debit.guarantee.list.2=If there are any changes to the amount, date
 ssttp.direct-debit.guarantee.list.3=If an error is made in the payment of your Direct Debit by HM Revenue & Customs or your bank or building society you are entitled to a full and immediate refund of the amount paid from your bank or building society.
 ssttp.direct-debit.guarantee.list.4=If you receive a refund you are not entitled to, you must pay it back when HM Revenue & Customs asks you to.
 ssttp.direct-debit.guarantee.list.5=You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please also notify us.
-
 ssttp.direct-debit.title=Direct Debit payment schedule
 ssttp.direct-debit.account-name=Account name
 ssttp.direct-debit.account-number=Account number
@@ -381,18 +380,18 @@ ssttp.arrangement.direct-debit.assistance.alert.1=We’re having problems submit
 ssttp.arrangement.direct-debit.assistance.back=Back
 
 ssttp.arrangement.complete.title=Application complete
-ssttp.arrangement.complete.print=View a print summary
-ssttp.arrangement.complete.subtitle=We''ve received your application to pay in instalments.
+ssttp.arrangement.complete.body=We''ve received your application to pay in instalments.
+ssttp.arrangement.complete.print=Print
 ssttp.arrangement.complete.next=What happens next?
 ssttp.arrangement.complete.please-help-use=Please help us to improve this service
 ssttp.arrangement.complete.your-bank=Your bank
 ssttp.arrangement.complete.direct-debit-payment=Direct Debit payment schedule
-ssttp.arrangement.complete.summary=You don’t need to do anything else. We’ll send you the instalment plan and the Direct Debit details when your agreement has been set up, which should take about 5 days.
+ssttp.arrangement.complete.summary=You don'’t need to do anything else. We'’ll send you the instalment plan and Direct Debit details in the post, which should take about 5 days.
 ssttp.arrangement.complete.what-you-owe=What you owe
 ssttp.arrangement.complete.payment-plan={0} month instalment plan
 ssttp.arrangement.complete.interest-rate=Interest at {0}%
 ssttp.arrangement.complete.total=TOTAL:
-ssttp.arrangement.complete.payment-details.summary=Payment plan summary 
+ssttp.arrangement.complete.payment-details.summary=View a print summary
 
 #Service unavailable (shutter) page
 ssttp.unavailable.title=Please call us

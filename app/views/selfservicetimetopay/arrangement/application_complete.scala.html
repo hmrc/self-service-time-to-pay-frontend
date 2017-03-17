@@ -9,10 +9,8 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.{Debit, CalculatorPaymentSchedule, ArrangementDirectDebit}
 
 @(debits:Seq[Debit], transactionId: String, directDebit:ArrangementDirectDebit, schedule:CalculatorPaymentSchedule, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
-@import selfservicetimetopay.helpers.message_list
 @import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule, gaDoTransaction, currency}
-@import selfservicetimetopay.helpers.forms._
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
 @gaCheckoutCode = {
   @gaDoTransaction(debits = debits,
     id = transactionId,
@@ -31,21 +29,22 @@
   sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar()),
   googleAnalyticsCalls = Seq(gaCheckoutCode.body)
 ){
-  <div class="transaction-banner--complete">
+  <div class="transaction-banner--complete removeBottom">
     <div class="transaction-banner__heading" role="banner">@Messages("ssttp.arrangement.complete.title")</div>
-    <p class="heading-large" id="ssttpOutcome">@Messages("ssttp.arrangement.complete.subtitle")</p>
+      <p>@Messages("ssttp.arrangement.complete.body")</p>
   </div>
   <section class="section divider--bottom">
-    <h2>@Messages("ssttp.arrangement.complete.next")</h2>
+          <p><a href="javascript:window.print()" class="js-visible no-print float--right  print-link js-visible trackedPrintLink openOnPrint">@Messages("ssttp.arrangement.complete.print")</a></p>
+          <h2>@Messages("ssttp.arrangement.complete.next")</h2>
     <p>@Messages("ssttp.arrangement.complete.summary")</p>
-      <button onclick="window.print()" class="js-visible no-print button--secondary js-visible trackedPrintLink openOnPrint">@Messages("ssttp.arrangement.complete.print")</button>
   </section>
 <section class="section divider--bottom">
   <h2>@Messages("ssttp.arrangement.complete.please-help-use")</h2>
-  <p><a href="https://www.gov.uk/done/pay-bill-in-instalments" class="button">@Messages("ssttp.sidebar.help-and-advice.feedback.submit")</a></p>
+  <span><a href="https://www.gov.uk/done/pay-bill-in-instalments" class="button">@Messages("ssttp.sidebar.help-and-advice.feedback.submit")</a></span>
 </section>
+  <section>
     <details>
-        <summary>@Messages("ssttp.arrangement.complete.payment-details.summary")</summary>
+        <summary class = "ssttp-summary-app-complete button button--secondary gutter-left">@Messages("ssttp.arrangement.complete.payment-details.summary")</summary>
         <h2>@Messages("ssttp.arrangement.complete.what-you-owe")</h2>
     @what_you_owe(debits)
     <div class="subsection grid-layout divider--bottom font-xsmall">

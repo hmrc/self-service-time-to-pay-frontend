@@ -12,8 +12,8 @@ Time To Pay Instalment Summary Pretty Print Page
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule,ArrangementDayOfMonth,Debit}
 @(debits:Seq[Debit], schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth], signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
-@import selfservicetimetopay.partials.{payment_schedule, currency, day_ordinal, gaDoCheckout}
-@import selfservicetimetopay.helpers.{highlight, alert, message_list}
+@import selfservicetimetopay.partials.{payment_schedule, day_ordinal, gaDoCheckout}
+@import selfservicetimetopay.helpers.{alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @gaCheckoutCode = {
@@ -31,51 +31,21 @@ Time To Pay Instalment Summary Pretty Print Page
         googleAnalyticsCalls = Seq(gaCheckoutCode.body.seq),
         loggedIn = signedIn
     ) {
-    <a href="javascript:window.print()" class="js-visible no-print float--right gutter-left print-link js-visible trackedPrintLink">@Messages("ssttp.arrangement.instalment-summary.print")</a>
        <header class="page-header text">
+           <p><a href="javascript:window.print()" class="js-visible no-print float--right  print-link js-visible trackedPrintLink">@Messages("ssttp.arrangement.instalment-summary.print")</a></p>
             <h1>@Messages("ssttp.arrangement.instalment-summary.title")</h1>
         </header>
-        <section class="section">
+        <section class="alterBottom">
             <div class="subsection grid-layout">
-                <div class="grid-layout__column grid-layout__column--1-2">
-                @Messages("ssttp.arrangement.instalment-summary.initial-payment-of")
-                </div>
-                <div class="grid-layout__column grid-layout__column--1-2">
-                    <strong> @currency(schedule.initialPayment)</strong>
-                    <div class="form-hint form-hint--small">@Messages("ssttp.arrangement.instalment-summary.initial-payment.hint", 5)</div>
-                </div>
-            </div>
-            <div class="subsection grid-layout">
-                <div class="grid-layout__column grid-layout__column--1-2">
-                    <strong>@schedule.instalments.length</strong> @Messages("ssttp.arrangement.instalment-summary.monthly-instalments")
-                </div>
-                <div class="grid-layout__column grid-layout__column--1-2">
-                    <strong>@currency(schedule.instalments.head.amount)</strong>
-                </div>
-            </div>
-            <div class="subsection grid-layout divider--bottom">
-                <div class="grid-layout__column grid-layout__column--1-2">
-                    @Messages("ssttp.arrangement.instalment-summary.total-interest")
-                </div>
-                <div class="grid-layout__column grid-layout__column--1-2">
-                    <strong>@currency(schedule.totalInterestCharged)</strong>
-                    <div class="form-hint form-hint--small">@Messages("ssttp.calculator.results.interest-added-to-final")</div>
-                </div>
-            </div>
-            <div class="subsection grid-layout">
-                <div class="grid-layout__column grid-layout__column--1-2">
-                @Messages("ssttp.arrangement.instalment-summary.total-repayment")
-                </div>
-                <div class="grid-layout__column grid-layout__column--1-2">
-                    <strong>@currency(schedule.totalPayable)</strong>
-                </div>
+                    @payment_schedule(schedule)
             </div>
             <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on")
                 <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", day_ordinal(schedule.instalments.head.paymentDate.getDayOfMonth))</strong>
                 @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")</p>
+
             <details @if(dayForm.hasErrors) { open}>
-                <summary class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
-                <div class="panel--indent">
+                <summary>@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
+                <div class="panel-indent">
                     @form(routes.ArrangementController.changeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm") {
                         @inlinetextinput(dayForm("dayOfMonth"),
                             'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
@@ -89,8 +59,6 @@ Time To Pay Instalment Summary Pretty Print Page
             </details>
         </section>
         <section>
-            <h2>@Messages("ssttp.arrangement.instalment-summary.schedule.title")</h2>
-            @payment_schedule(schedule)
             @alert('_modifierClass -> "alert--info alert--info__light") {
                 @Messages("ssttp.arrangement.instalment-summary.terms.cancelled-if")
                 @message_list(Some("bullets"), "ssttp.arrangement.instalment-summary.terms.cancelled-if.")
