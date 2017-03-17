@@ -32,13 +32,13 @@ object DirectDebitForm {
     "accountName" -> text.verifying("ssttp.direct-debit.form.error.accountName.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountName.not-text", x => x.length == x.replaceAll("[^a-zA-Z '.& \\/]", "").length),
     "sortCode1" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x =>  validateNumberLength(x, 2)),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim=="") |  validateNumberLength(x, x.length) && validateNumberLength(x, 2)),
     "sortCode2" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x =>  validateNumberLength(x, 2)),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim=="") | (validateNumberLength(x, x.length) && validateNumberLength(x, 2))),
     "sortCode3" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x =>  validateNumberLength(x, 2)),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim=="") | (validateNumberLength(x, x.length) && validateNumberLength(x, 2))),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => validateNumberLength(x, 8))
+      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x =>  (x.trim=="") | (validateNumberLength(x, x.length) && validateNumberLength(x, 8)))
   )({ case (name, sc1, sc2, sc3, acctNo) => ArrangementDirectDebit(name, sc1 ++ sc2 ++ sc3, acctNo) }
   )({ case arrangementDirectDebit =>
     val (sc1::sc2::sc3::_)= arrangementDirectDebit.sortCode.grouped(2).toList
@@ -49,6 +49,11 @@ object DirectDebitForm {
       arrangementDirectDebit.accountNumber))
   })
 
+  def validateSortCode(sortCodeInput:String,sortCodeLength:Int):Boolean =sortCodeInput match {
+    case sc if !validateNumberLength(sc,2) => false
+    case sc if !validateNumberLength(sc,sc.length) =>  false
+
+  }
   def validateNumberLength(number: String, length: Int): Boolean = {
     number.replaceAll("[^0-9]", "").length == length
   }
