@@ -98,7 +98,7 @@ ssttp.eligibility.form.sign_in_question.yes_label=Yes - sign in and view what I 
 ssttp.eligibility.form.sign_in_question.no_label=No - I''ll enter what I owe manually
 ssttp.eligibility.form.sign_in_question.continue=Continue
 ssttp.eligibility.form.sign_in_question.back=Back
-ssttp.eligibility.form.sign_in_question.required=Please select an answer
+ssttp.eligibility.form.sign_in_question.required=Choose one option
 ssttp.eligibility.form.sign_in_question.error.summary.title=You haven''t selected an option
 #calculator
 ssttp.calculator.form.amounts_due.title=About what you owe
