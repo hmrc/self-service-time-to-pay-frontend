@@ -68,22 +68,23 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   }
 
   def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(tpp:TTPSubmission)if tpp.eligibilityExistingTtp == `validExistingTTP` && tpp.eligibilityTypeOfTax == `validTypeOfTax`  =>
+    sessionCache.get.flatMap[Result] {
+      case Some(ttp@TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`, _, _, _, _))  =>
         EligibilityForm.signInQuestionForm.bindFromRequest().fold(
-          formWithErrors => BadRequest(sign_in_question(formWithErrors)),
+          formWithErrors => Future.successful(BadRequest(sign_in_question(formWithErrors))),
           {
             case SignInQuestion(Some(true)) =>
-              if(tpp.calculatorData.debits.nonEmpty) sessionCache.put(tpp.copy(calculatorData = CalculatorInput.initial))
-              Redirect(routes.ArrangementController.determineMisalignment())
+              if(ttp.calculatorData.debits.nonEmpty){sessionCache.put(ttp.copy(calculatorData = CalculatorInput.initial)).map[Result] {
+                _ => Redirect(routes.ArrangementController.determineMisalignment())}}
+              else Future.successful(Redirect(routes.ArrangementController.determineMisalignment()))
             case SignInQuestion(Some(false)) =>
-              if(tpp.calculatorData.debits.nonEmpty)
-                Redirect(routes.CalculatorController.getWhatYouOweReview())
+              if(ttp.calculatorData.debits.nonEmpty)
+                Future.successful(Redirect(routes.CalculatorController.getWhatYouOweReview()))
               else
-                Redirect(routes.CalculatorController.getDebitDate())
+                Future.successful(Redirect(routes.CalculatorController.getDebitDate()))
           }
         )
-      case _ => redirectOnError
+      case _ => Future.successful(redirectOnError)
     }
   }
 
