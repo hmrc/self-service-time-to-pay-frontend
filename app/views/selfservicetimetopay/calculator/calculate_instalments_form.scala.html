@@ -84,7 +84,7 @@ Time To Pay Payment Schedule Calculator Page
                         <ul class="list--inline">
                             <li>
                             @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline") {
-                                <input type="hidden" name="@durationForm("months").name" value="@{
+                                <input  type="hidden" name="@durationForm("months").name" value="@{
                                     schedule.instalments.length - 1
                                 }" />
                                 @defining({
