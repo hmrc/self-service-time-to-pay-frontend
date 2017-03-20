@@ -33,8 +33,8 @@ Time To Pay Payment Schedule Calculator Page
                 <div class="grid-layout__column grid-layout__column--1-2">@Messages("ssttp.calculator.results.you-owe")
                     @debits match {
                         case Some(debits: Seq[Debit]) => {
-                            <details class="trackedDetails" id="calculatorWhatYouOweBreakdown">
-                                <summary class="font-xsmall">@Messages("ssttp.calculator.results.you-owe.breakdown")</summary>
+                            <details class="gutter-left trackedDetails" id="calculatorWhatYouOweBreakdown">
+                                <summary class="summary font-xsmall">@Messages("ssttp.calculator.results.you-owe.breakdown")</summary>
                                 @what_you_owe(debits, true)
                             </details>
                         }
