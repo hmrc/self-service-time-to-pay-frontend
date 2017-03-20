@@ -33,6 +33,14 @@
     padding-bottom: 10px;
 }
 
+.ssttp-spinner-margin-calc {
+    margin-left: -10px;
+}
+
+.ssttp-spinner-button-margin-calc {
+    margin-right: 5px;
+}
+
 .print-only{
     display: none;
 }
