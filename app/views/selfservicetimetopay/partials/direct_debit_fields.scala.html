@@ -6,7 +6,7 @@ Partial view to display the direct debit details in a 2 column type layout
 @textinput(accountNameField,
     'label -> Messages("ssttp.direct-debit.form.accountName"),
     '_maxlength -> "39",
-    '_inputClass -> "input--cleared"
+    '_inputClass -> "input--cleared accountName"
 )
 @sortcodeinput("sortCode", ddForm, sortCodeField1,sortCodeField2, sortCodeField3,
     'sort1Label -> Messages("ssttp.direct-debit.form.sortCode1"),

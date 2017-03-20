@@ -55,6 +55,9 @@ ul.container{
     margin: 0px;!important;
 }
 
+input.accountName{
+    width:50%;
+}
 .ssttp-grid-layout-padding-above {
     margin-top: -10px;
 }
