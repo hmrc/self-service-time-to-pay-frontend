@@ -213,17 +213,17 @@ ssttp.calculator.results.title=Calculate your instalments
 ssttp.calculator.results.heading.what-you-owe=What you owe
 ssttp.calculator.results.you-owe=You owe a total of:
 ssttp.calculator.results.you-owe.breakdown=View breakdown
-ssttp.calculator.results.you-can-afford=You can afford to pay:
+ssttp.calculator.results.you-can-afford=Your payment today:
 ssttp.calculator.results.your-instalment-balance=Your balance for instalments:
 ssttp.calculator.results.heading.choose-your-instalments=Select how many months you need
 ssttp.calculator.results.heading.your-instalments=Your instalment calculation
 ssttp.calculator.results.recalculate-button.label=Update monthly payment amount
-ssttp.calculator.results.instalments-over=Instalments over:
-ssttp.calculator.results.instalments-over.month.plural=months
-ssttp.calculator.results.instalments-over.month.singular=month
+ssttp.calculator.results.instalments-over=Instalments:
 
 ssttp.calculator.results.monthly-payments=Monthly payments of:
 ssttp.calculator.results.monthly-payments.per-month=per month
+ssttp.calculator.results.monthly-payments.plus=+
+ssttp.calculator.results.monthly-payments.minus=-
 ssttp.calculator.results.monthly-payments.increase=Increase value
 ssttp.calculator.results.monthly-payments.decrease=Decrease value
 ssttp.calculator.results.monthly-payments.hint=Base rate + 2.5%
@@ -234,15 +234,15 @@ ssttp.calculator.results.interest-added-to-final=added to the final payment
 ssttp.calculator.results.total-repayment=Your payments will total:
 
 ssttp.calculator.results.interest-info.title=How we calculate interest
-ssttp.calculator.results.interest-info.content=We charge the Bank of England base rate plus 2.5%, calculated as simple interest. Your monthly payments won’t be affected if the interest rate changes during your instalment plan. We’ll settle any differences in the amount of interest you owe in your final payment. We only charge interest on overdue amounts.
+ssttp.calculator.results.interest-info.content=We charge the Bank of England base rate plus 2.5%, calculated as simple interest. Your monthly payments won''t be affected if the interest rate changes during your instalment plan. If we need to, we''ll settle the difference at the end of the plan. We only charge interest on overdue amounts.
 
 ssttp.calculator.results.interest-info.warning=We’ve based these figures on the information you’ve given us. They might change when you sign in, depending on the outstanding Self Assessment amounts in your tax account.
 
 ssttp.calculator.results.next-steps=Next steps
-ssttp.calculator.results.sign-in=Sign in to your tax account to confirm this arrangement and set up a Direct Debit
+ssttp.calculator.results.sign-in=Sign in to your tax account to continue and set up a Direct Debit. If you can''t continue, call us on 0300 200 3822.
 ssttp.calculator.results.sign-in.link=Sign in
 
-ssttp.calculator.results.auth.continue=View a summary of this arrangement and set up a Direct Debit payment.
+ssttp.calculator.results.auth.continue=Continue with this instalment plan and set up a Direct Debit. If you can''t continue, call us on 0300 200 3822.
 ssttp.calculator.results.auth.continue.link=Continue
 
 ssttp.calculator.results.call-us.auth-non-whitelist.intro=To proceed with this arrangement call us to discuss your options.

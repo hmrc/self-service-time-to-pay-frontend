@@ -7,6 +7,40 @@
     font-size: 48px;
 }
 
+.ssttp-grid-layout-payment-today {
+    width: 39%;
+}
+
+.ssttp-plus-calc {
+    line-height: 1.1;
+    padding: 0.35em 0.65em 0.15em 0.65em;
+}
+
+.ssttp-minus-calc {
+    line-height: 1.1;
+    padding: 0.35em 0.75em 0.15em 0.75em;
+}
+
+.ssttp-spacing-calc {
+    margin: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.ssttp-breakdown-calc {
+    margin: 0px;
+    padding-top: 0px;
+    padding-bottom: 10px;
+}
+
+.ssttp-spinner-margin-calc {
+    margin-left: -10px;
+}
+
+.ssttp-spinner-button-margin-calc {
+    margin-right: 5px;
+}
+
 .print-only{
     display: none;
 }
