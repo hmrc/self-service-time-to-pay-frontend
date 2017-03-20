@@ -388,9 +388,9 @@ ssttp.arrangement.complete.your-bank=Your bank
 ssttp.arrangement.complete.direct-debit-payment=Direct Debit payment schedule
 ssttp.arrangement.complete.summary=You don'’t need to do anything else. We'’ll send you the instalment plan and Direct Debit details in the post, which should take about 5 days.
 ssttp.arrangement.complete.what-you-owe=What you owe
-ssttp.arrangement.complete.payment-plan={0} month instalment plan
+ssttp.arrangement.complete.payment-plan=Interest on instalment plan
 ssttp.arrangement.complete.interest-rate=Interest at {0}%
-ssttp.arrangement.complete.total=TOTAL:
+ssttp.arrangement.complete.total=Total:
 ssttp.arrangement.complete.payment-details.summary=View a print summary
 
 #Service unavailable (shutter) page
