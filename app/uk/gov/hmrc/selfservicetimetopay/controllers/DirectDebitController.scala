@@ -20,6 +20,7 @@ import javax.inject._
 
 import play.api.Logger
 import play.api.data.{Form, FormError}
+import play.api.i18n.Messages
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -109,7 +110,14 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       if (acc.exists(_.message == formError.message)) acc :+ formError.copy(messages = Seq(" ")) else acc :+ formError
     }
     }
-    form.copy(errors = formErrorsNoDuplicates)
+    //Filter out sort code required is Sort code must be a 6 digit number is already there
+    if (formErrorsNoDuplicates.exists(_.messages == Seq("ssttp.direct-debit.form.error.sortCode.not-valid"))) {
+      val (sortCodeRequiredError, formErrors) = formErrorsNoDuplicates.partition(_.messages == Seq("ssttp.direct-debit.form.error.sortCode.required"))
+      val sortCodeNoSortCodeRequiredMessage: Seq[FormError] = sortCodeRequiredError.map(_.copy(messages = Seq(" ")))
+      form.copy(errors = formErrors ++ sortCodeNoSortCodeRequiredMessage)
+    } else {
+      form.copy(errors = formErrorsNoDuplicates)
+    }
   }
 
   private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit hc: HeaderCarrier) = {
