@@ -7,9 +7,9 @@
 
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{Debit, CalculatorPaymentSchedule, ArrangementDirectDebit}
-
-@(debits:Seq[Debit], transactionId: String, directDebit:ArrangementDirectDebit, schedule:CalculatorPaymentSchedule, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule, gaDoTransaction, currency}
+
+@(debits: Seq[Debit], transactionId: String, directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @gaCheckoutCode = {
   @gaDoTransaction(debits = debits,
@@ -34,35 +34,35 @@
       <p>@Messages("ssttp.arrangement.complete.body")</p>
   </div>
   <section class="section divider--bottom">
-          <p><a href="javascript:window.print()" class="js-visible no-print float--right  print-link js-visible trackedPrintLink openOnPrint">@Messages("ssttp.arrangement.complete.print")</a></p>
-          <h2>@Messages("ssttp.arrangement.complete.next")</h2>
+    <p><a href="javascript:window.print()" class="js-visible no-print float--right  print-link js-visible trackedPrintLink openOnPrint">@Messages("ssttp.arrangement.complete.print")</a></p>
+    <h2>@Messages("ssttp.arrangement.complete.next")</h2>
     <p>@Messages("ssttp.arrangement.complete.summary")</p>
   </section>
-<section class="section divider--bottom">
-  <h2>@Messages("ssttp.arrangement.complete.please-help-use")</h2>
-  <span><a href="https://www.gov.uk/done/pay-bill-in-instalments" class="button">@Messages("ssttp.sidebar.help-and-advice.feedback.submit")</a></span>
-</section>
+  <section class="section divider--bottom">
+    <h2>@Messages("ssttp.arrangement.complete.please-help-use")</h2>
+    <span><a href="https://www.gov.uk/done/pay-bill-in-instalments" class="button">@Messages("ssttp.sidebar.help-and-advice.feedback.submit")</a></span>
+  </section>
   <section>
     <details>
-        <summary class = "ssttp-summary-app-complete button button--secondary gutter-left">@Messages("ssttp.arrangement.complete.payment-details.summary")</summary>
-        <h2>@Messages("ssttp.arrangement.complete.what-you-owe")</h2>
-    @what_you_owe(debits)
-    <div class="subsection grid-layout divider--bottom font-xsmall">
-      <div class="grid-layout__column grid-layout__column--3-4">
-        <p>@Messages("ssttp.arrangement.complete.payment-plan", schedule.instalments.length)</p>
-        <p><span class="font-xsmall">@Messages("ssttp.calculator.results.monthly-payments.hint")</span></p>
+      <summary class = "ssttp-summary-app-complete button button--secondary gutter-left">@Messages("ssttp.arrangement.complete.payment-details.summary")</summary>
+      <h2>@Messages("ssttp.arrangement.complete.what-you-owe")</h2>
+      @what_you_owe(debits)
+      <div class="subsection grid-layout divider--bottom font-xsmall ssttp-grid-layout-padding-above-large">
+        <div class="grid-layout__column grid-layout__column--3-4">
+          <p>@Messages("ssttp.arrangement.complete.payment-plan", schedule.instalments.length)<br>
+          <span class="font-xsmall">@Messages("ssttp.calculator.results.monthly-payments.hint")</span></p>
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p>@currency(schedule.totalInterestCharged)</p></div>
       </div>
-      <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p>@currency(schedule.totalInterestCharged)</p></div>
-    </div>
-    <div class="subsection grid-layout divider--bottom font-xsmall">
-      <div class="grid-layout__column grid-layout__column--3-4"><p><strong>@Messages("ssttp.arrangement.complete.total")</strong></p></div>
-      <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@currency(schedule.totalPayable)</strong></p></div>
-    </div>
-  <h2>@Messages("ssttp.arrangement.complete.your-bank")</h2>
-    <span class="no-print">@direct_debit_details(directDebit)</span>
-  <h2>@Messages("ssttp.arrangement.complete.direct-debit-payment")</h2>
-    <span class="print-only">@direct_debit_details(directDebit, print = true)</span>
-    @payment_schedule(schedule)
+      <div class="subsection grid-layout divider--bottom font-xsmall ssttp-grid-layout-padding-above-large">
+        <div class="grid-layout__column grid-layout__column--3-4"><p><strong>@Messages("ssttp.arrangement.complete.total")</strong></p></div>
+        <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@currency(schedule.totalPayable)</strong></p></div>
+      </div><p>&nbsp;</p>
+      <h2>@Messages("ssttp.arrangement.complete.your-bank")</h2>
+      <span class="no-print">@direct_debit_details(directDebit)</span>
+      <h2>@Messages("ssttp.arrangement.complete.direct-debit-payment")</h2>
+      <span class="print-only">@direct_debit_details(directDebit, print = true)</span>
+      @payment_schedule(schedule)
     </details>
   </section>
 }
