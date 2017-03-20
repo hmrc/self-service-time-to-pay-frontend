@@ -1,4 +1,4 @@
-@import selfservicetimetopay.helpers.forms.{numbericdateinput, form, formErrorSummary, submit}
+@import selfservicetimetopay.helpers.forms.{numbericdateinput, form, formErrorSummary, submit,formErrorSummaryDates}
 @import selfservicetimetopay.helpers.message_list
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.DebitDueDate
@@ -13,7 +13,9 @@
     </header>
     <span class="form-hint form-hint">@Messages("ssttp.calculator.form.what-you-owe-date.example")</span>
     @form(routes.CalculatorController.submitDebitDate(), 'class -> "group") {
-        @formErrorSummary(Messages("ssttp.calculator.form.what-you-owe-date.error.summary.title"), dataForm, Seq.empty)
+       @if(dataForm.errors.length > 1){@formErrorSummaryDates(Messages("ssttp.calculator.form.what-you-owe-date.error.summary.title"), dataForm, Seq.empty)}else{
+           @formErrorSummary(Messages("ssttp.calculator.form.what-you-owe-date.error.summary.title"), dataForm, Seq.empty)
+       }
         @numbericdateinput("dueBy", dataForm, dataForm("dueBy.dueByYear"), dataForm("dueBy.dueByMonth"), dataForm("dueBy.dueByDay"),
             'dayLabel -> Messages("ssttp.calculator.form.what-you-owe-date.when_due.question.day"),
             'monthLabel -> Messages("ssttp.calculator.form.what-you-owe-date.when_due.question.month"),

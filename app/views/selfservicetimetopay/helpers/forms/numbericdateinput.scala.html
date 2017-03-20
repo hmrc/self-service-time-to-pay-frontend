@@ -22,7 +22,7 @@ Input http://hmrc.github.io/assets-frontend/section-text-input.html
 @import java.time.Month
 @import java.time.format.TextStyle
 @import views.html.helper.FieldElements
-@import selfservicetimetopay.helpers.forms.{formErrors, fieldset, fieldErrors, select, numberinput}
+@import selfservicetimetopay.helpers.forms.{formErrors, fieldset, fieldErrors, select, numberinput, errorList}
 @argsMap = @{ args.toMap }
 @dayElements = @{ new FieldElements(dayField.id, dayField, null, argsMap, messages) }
 @monthElements = @{ new FieldElements(monthField.id, monthField, null, argsMap, messages) }
@@ -38,13 +38,18 @@ Input http://hmrc.github.io/assets-frontend/section-text-input.html
 @fieldset(frm, name, '_modifierClass -> fieldsetErrorsClass){
     @if(argsMap.get('label).isDefined){<legend>@argsMap.get('label)</legend>}
     @if(argsMap.getOrElse('_hideErrors, "false").contentEquals("false")){@formErrors(frm, '_field -> name)}
+    @if(frm.errors.length > 1){<span class="error-notification" role="alert">@Messages("ssttp.calculator.form.what-you-owe.due_by.not-valid-date")</span>}else{
+        @fieldErrors(yearField)
+        @fieldErrors(monthField)
+        @fieldErrors(dayField)
+    }
     <ul class="list--inline group">
         <li>
         @numberinput(dayField, 'label -> argsMap.getOrElse('dayLabel, ""),
             'step -> 1,
             '_modifierClass -> "form-field--inline",
             '_labelClass -> "label--inline-tight",
-            '_inputClass -> "input--cleared input--xxsmall input--no-spinner",
+            '_inputClass -> "input--cleared input--xxsmall input--no-spinner ssttp-margin-numericdateinput",
             '_hideErrors -> true,
             '_required -> true)
         </li>
@@ -53,7 +58,7 @@ Input http://hmrc.github.io/assets-frontend/section-text-input.html
             '_modifierClass -> "gutter-left form-field--inline",
             'step -> 1,
             '_labelClass -> "label--inline-tight",
-            '_inputClass -> "input--cleared input--xxsmall input--no-spinner",
+            '_inputClass -> "input--cleared input--xxsmall input--no-spinner ssttp-margin-numericdateinput",
             '_hideErrors -> true,
             '_required -> true)
         </li>
@@ -63,7 +68,7 @@ Input http://hmrc.github.io/assets-frontend/section-text-input.html
             'step -> 1,
             '_labelClass -> "gutter-left label--inline-tight",
             '_modifierClass -> "form-field--inline",
-            '_inputClass -> "input--cleared input--xsmall input--no-spinner",
+            '_inputClass -> "input--cleared input--xsmall input--no-spinner ssttp-margin-numericdateinput",
             '_hideErrors -> true,
             '_required -> true)
         </li>

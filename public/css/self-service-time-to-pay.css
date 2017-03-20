@@ -46,4 +46,7 @@ ul.container{
 .ssttp-grid-layout-padding-above {
     margin-top: -10px;
 }
+.ssttp-margin-numericdateinput {
+    margin-left: 0px !important;
+}
 
