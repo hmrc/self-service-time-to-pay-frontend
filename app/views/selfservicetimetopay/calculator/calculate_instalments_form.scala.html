@@ -6,17 +6,16 @@ Time To Pay Payment Schedule Calculator Page
 @param debits Option[Seq[Debit]] list of tax debits from the user's SA account
 @param loggedIn Boolean set to true if the user is authenticated, default false
 *@
+@import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
+@import selfservicetimetopay.helpers.forms.{form, formErrorSummary, button, fieldErrors, numberinput, inlinecurrencyinput}
+@import selfservicetimetopay.partials.{currency, what_you_owe}
+@import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@import play.twirl.api.HtmlFormat
 @(schedule: CalculatorPaymentSchedule, debits: Option[Seq[Debit]], durationForm: Form[CalculatorDuration], paymentTodayAmountForm: Form[CalculatorPaymentToday], monthOptions: Seq[Int], loggedIn: Boolean)(implicit messages: play.api.i18n.Messages, request: Request[_])
-    @import selfservicetimetopay.helpers.{message_list, pluralize, labelWrap}
-    @import selfservicetimetopay.helpers.forms.{form, formErrorSummary, button, fieldErrors, numberinput, inlinecurrencyinput}
-    @import selfservicetimetopay.partials.{currency, what_you_owe}
-    @import selfservicetimetopay.calculator.{calculate_instalments_auth_footer, calculate_instalments_no_auth_footer}
-    @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
     @selfservicetimetopay.main(
         title = Messages("ssttp.calculator.results.title"),
         loggedIn = loggedIn
@@ -29,21 +28,22 @@ Time To Pay Payment Schedule Calculator Page
         @formErrorSummary(Messages("ssttp.error.summary.title"), durationForm, Seq.empty)
         <section>
             <h2>@Messages("ssttp.calculator.results.heading.what-you-owe")</h2>
-            <div class="subsection grid-layout divider--bottom">
-                <div class="grid-layout__column grid-layout__column--1-2">@Messages("ssttp.calculator.results.you-owe")
-                    @debits match {
-                        case Some(debits: Seq[Debit]) => {
-                            <details class="gutter-left trackedDetails" id="calculatorWhatYouOweBreakdown">
-                                <summary class="summary font-xsmall">@Messages("ssttp.calculator.results.you-owe.breakdown")</summary>
-                                @what_you_owe(debits, true)
-                            </details>
-                        }
-                        case _ => {}
-                    }
-                </div>
+            <div class="subsection grid-layout ssttp-spacing-calc">
+                <div class="grid-layout__column grid-layout__column--1-2">@Messages("ssttp.calculator.results.you-owe")</div>
                 <div class="grid-layout__column grid-layout__column--1-2">@currency(schedule.amountToPay)</div>
             </div>
-            <div class="subsection divider--bottom grid-layout">
+            <div class="subsection grid-layout divider--bottom ssttp-breakdown-calc">
+                <div class="grid-layout__column grid-layout__column--1-4">@debits match {
+                    case Some(debits: Seq[Debit]) => {
+                        <details class="gutter-left trackedDetails" id="calculatorWhatYouOweBreakdown">
+                            <summary class="summary font-xsmall">@Messages("ssttp.calculator.results.you-owe.breakdown")</summary>
+                            @what_you_owe(debits, true)
+                        </details>
+                    }
+                    case _ => {}
+                }</div>
+            </div>
+            <div class="subsection divider--bottom grid-layout ssttp-spacing-calc">
             @form(routes.CalculatorController.submitCalculateInstalmentsPaymentToday(), 'id -> "calculatorInitialPaymentForm") {
                 @labelWrap(
                     'for -> "amount",
@@ -63,7 +63,7 @@ Time To Pay Payment Schedule Calculator Page
                 }
             }
             </div>
-            <div class="subsection grid-layout divider--bottom">
+            <div class="subsection grid-layout divider--bottom ssttp-spacing-calc">
                 <div class="grid-layout__column grid-layout__column--1-2">@Messages("ssttp.calculator.results.your-instalment-balance")</div>
                 <div class="grid-layout__column grid-layout__column--1-2"><strong>@currency(schedule.instalmentBalance)</strong></div>
             </div>
@@ -73,7 +73,7 @@ Time To Pay Payment Schedule Calculator Page
             @labelWrap('for -> "months", '_modifierClass -> {
                 "label--full-length " + (if(durationForm("months").errors.nonEmpty) "form-field--error" else "")
             }) {
-                <div class="subsection grid-layout divider--bottom flush--bottom">
+                <div class="subsection grid-layout divider--bottom flush--bottom ssttp-spacing-calc">
                     <div class="grid-layout__column grid-layout__column--1-2"><ul class="list--inline">
                         <li>
                             @fieldErrors(durationForm("months"))
@@ -132,11 +132,11 @@ Time To Pay Payment Schedule Calculator Page
                 </div>
             }
             @defining(schedule.instalmentBalance) { payment =>
-                <div class="subsection grid-layout divider--bottom">
+                <div class="subsection grid-layout divider--bottom ssttp-spacing-calc">
                     <div class="grid-layout__column grid-layout__column--1-2">@Messages("ssttp.calculator.results.monthly-payments")</div>
                     <div class="grid-layout__column grid-layout__column--1-2"><strong>@currency(schedule.instalments.head.amount) @Messages("ssttp.calculator.results.monthly-payments.per-month")</strong></div>
                 </div>
-                <div class="subsection grid-layout divider--bottom">
+                <div class="subsection grid-layout divider--bottom ssttp-spacing-calc">
                     <div class="grid-layout__column grid-layout__column--1-2">@Messages("ssttp.calculator.results.total-interest")
                         <div class="font-xsmall">@Messages("ssttp.calculator.results.monthly-payments.hint")</div>
                     </div>
@@ -144,7 +144,7 @@ Time To Pay Payment Schedule Calculator Page
                         <div class="font-xsmall">@Messages("ssttp.calculator.results.interest-added-to-final")</div>
                     </div>
                 </div>
-                <div class="subsection grid-layout divider--bottom">
+                <div class="subsection grid-layout divider--bottom ssttp-spacing-calc">
                     <div class="grid-layout__column grid-layout__column--1-2">@Messages("ssttp.calculator.results.total-repayment")</div>
                     <div class="grid-layout__column grid-layout__column--1-2"><strong>@currency(schedule.totalPayable)</strong></div>
                 </div>

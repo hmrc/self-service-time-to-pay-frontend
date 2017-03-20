@@ -21,6 +21,18 @@
     padding: 0.35em 0.75em 0.15em 0.75em;
 }
 
+.ssttp-spacing-calc {
+    margin: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.ssttp-breakdown-calc {
+    margin: 0px;
+    padding-top: 0px;
+    padding-bottom: 10px;
+}
+
 .print-only{
     display: none;
 }

@@ -10,22 +10,22 @@
 @import selfservicetimetopay.partials.{currency, charge_code}
 @import java.util.Locale
 @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
-    <div class="@if(!smallFormat){subsection}else{grid-layout--no-gutter} grid-layout divider--bottom font-xsmall">
+    <div class="@if(smallFormat){grid-layout--no-gutter}else{subsection} grid-layout divider--bottom font-xsmall">
         <div class="grid-layout__column grid-layout__column--3-4"><strong>@Messages("ssttp.amounts_due.due")</strong></div>
         <div class="grid-layout__column grid-layout__column--1-4"><strong>@Messages("ssttp.amounts_due.amount")</strong></div>
     </div>
     @debits.map { debit =>
         @if(smallFormat && !debits.head.equals(debit)){<br>}
-        <div class="@if(!smallFormat){subsection}else{grid-layout--no-gutter} grid-layout font-xsmall@if(!smallFormat){ divider--bottom}">
+        <div class="@if(smallFormat){grid-layout--no-gutter}else{subsection} grid-layout font-xsmall@if(!smallFormat){ divider--bottom}">
             <div class="grid-layout__column grid-layout__column--3-4">
-                <div><span class="@if(smallFormat){font-xxsmall}else{font-small}">@debit.dueDate.format(formatter)</span></div>
+                <div><span class="@if(smallFormat){font-xsmall}else{font-small}">@debit.dueDate.format(formatter)</span></div>
                 <small>@{debit.originCode match {
                     case Some(code:String) => <span class="font-xsmall">{charge_code(code, debit.taxYearEnd)}</span>
                     case _ =>
                 }}</small>
             </div>
             <div class="grid-layout__column grid-layout__column--1-4 align--middle">
-                <p><span class="@if(smallFormat){font-xxsmall}else{font-small}">@currency(debit.amount)</span></p>
+                <p><span class="@if(smallFormat){font-xsmall}else{font-small}">@currency(debit.amount)</span></p>
             </div>
         </div>
     }
