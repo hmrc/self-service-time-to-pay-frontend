@@ -8,7 +8,7 @@ Partial view to show list of direct debit payments in the payment schedule
 @import selfservicetimetopay.partials.currency
 @import java.util.Locale
 
-@defining(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)) { formatter =>
+@defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
 @if(schedule.initialPayment > BigDecimal(0)) {
 <div class="subsection grid-layout divider--bottom font-xsmall ssttp-spacing-instalment-summary">
     <div class="grid-layout__column grid-layout__column--3-4">

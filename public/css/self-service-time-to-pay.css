@@ -101,6 +101,9 @@ input.accountName{
 .ssttp-grid-layout-padding-above {
     margin-top: -10px;
 }
+.ssttp-margin-numericdateinput {
+    margin-left: 0px !important;
+}
 
 .ssttp-grid-layout-padding-above-large {
     margin-top: -20px;

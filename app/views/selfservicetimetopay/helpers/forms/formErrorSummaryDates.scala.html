@@ -1,0 +1,18 @@
+@(heading: String, form: Form[_], classes: Seq[String] = Seq.empty, dataJourney: Option[String] = None)(implicit messages: play.api.i18n.Messages)
+<div class="flash error-summary@if(form.hasErrors) { error-summary--show} @classes.mkString(" ")"
+id="error-summary-display"
+role="alert"
+aria-labelledby="error-summary-heading"
+tabindex="-1">
+    <h2 id="error-summary-heading" class="h3-heading">@heading</h2>
+    <ul class="js-error-summary-messages">
+    @if(form.hasErrors) {
+            <li role="tooltip">
+                <a  href="#dueBy.dueByDay" id="not-valid-date-error-summary" data-focuses="dueBy.dueByDay">
+                    @Messages("ssttp.calculator.form.what-you-owe.due_by.not-valid-date")
+                </a>
+            </li>
+
+    }
+    </ul>
+</div>

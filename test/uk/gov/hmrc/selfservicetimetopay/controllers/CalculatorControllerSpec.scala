@@ -371,6 +371,41 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number"))
       verify(mockSessionCache, times(1)).get(any(), any())
     }
+    "Submit blank data in the form data and return a not valid-date error" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
+      val request = FakeRequest()
+        .withFormUrlEncodedBody("dueBy.dueByYear" -> "",
+          "dueBy.dueByMonth" -> "",
+          "dueBy.dueByDay" -> "")
+        .withCookies(sessionProvider.createTtpCookie())
+      val result = controller.submitDebitDate().apply(request)
+
+      status(result) mustBe Status.BAD_REQUEST
+      contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe.due_by.not-valid-date"))
+      verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
+    "Submit just one invalid feild in the form data and return the error twice valid-date error" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
+      val request = FakeRequest()
+        .withFormUrlEncodedBody("dueBy.dueByYear" -> "2017",
+          "dueBy.dueByMonth" -> "10",
+          "dueBy.dueByDay" -> "")
+        .withCookies(sessionProvider.createTtpCookie())
+      val result = controller.submitDebitDate().apply(request)
+      def countSubstring( str:String, substr:String ) = substr.r.findAllMatchIn(str).length
+      status(result) mustBe Status.BAD_REQUEST
+      contentAsString(result) must not include(getMessages(request)("ssttp.calculator.form.what-you-owe.due_by.not-valid-date"))
+      countSubstring( contentAsString(result),getMessages(request)("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day")) mustBe 2
+      verify(mockSessionCache, times(1)).get(any(), any())
+    }
+
 
     "Successfully display the what you owe amount page" in {
       implicit val hc = new HeaderCarrier

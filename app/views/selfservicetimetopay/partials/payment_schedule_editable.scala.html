@@ -9,7 +9,7 @@ Partial view to show list of direct debit payments in the the entered_all_amount
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @(debits: Seq[Debit])(implicit messages: play.api.i18n.Messages, request: Request[_])
-@defining(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)) { formatter =>
+@defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
     <table>
         <thead>
             <tr>
