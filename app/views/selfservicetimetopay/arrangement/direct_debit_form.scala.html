@@ -21,7 +21,8 @@ Time To Pay Direct Debit Form Page
     initialPayment = Some(schedule.initialPayment),
     interest = schedule.totalInterestCharged,
     duration = schedule.instalments.length,
-    regularPayment = schedule.instalments.head.amount
+    regularPayment = schedule.instalments.head.amount,
+    paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
 )
 }
 @selfservicetimetopay.main(

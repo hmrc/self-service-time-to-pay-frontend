@@ -9,15 +9,11 @@
 @name = @{debit.originCode.fold[String]("User Entered Amount Due"){ c => charge_code(c, debit.taxYearEnd).body.trim}}
 @dueDateDimension = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.dueDateDimension}
 
-@defining(DateTimeFormatter.ofPattern("yyyyMMdd", Locale.ENGLISH)) { formatter =>
-    ga('ec:addProduct', {'id': '@id', 'name': '@name',
-                        'price': '@debit.amount', 'quantity': 1, 'position': @position });
-
-
-    ga('ec:addProduct',
-    {'id': 'Debit Due Date',
-    'name': 'Debit Due Date',
-    'price': '@debit.dueDate.format(formatter)',
-    'quantity': 1,
-    'position': @{position + 1}});
+@defining(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)) { formatter =>
+    ga('ec:addProduct', {'id': '@id',
+                         'name': '@name',
+                         'price': '@debit.amount',
+                         'quantity': 1,
+                         'position': @position,
+                         '@dueDateDimension': @debit.dueDate});
 }
