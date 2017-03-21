@@ -11,7 +11,6 @@
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import java.time.LocalDate
-@import selfservicetimetopay.partials.gaAmountDueProduct
 @(
     debits:Seq[Debit],
     id:String,
@@ -29,18 +28,6 @@
 @durationMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.durationMetric}
 @regularPaymentMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.regularPaymentMetric}
 @monthlyDueDateMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.monthlyDueDateMetric}
-@callForDirectDebitAssistanceDimension = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.callForDirectDebitAssistanceDimension}
-@printCompletePageDimension = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.printCompletePageDimension}
-@clickFeedbackOnComplete = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.clickFeedbackOnComplete}
-@Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
-
-ga('ec:setAction','checkout',
-    { 'step': @step,
-    'revenue': '@revenue',
-    '@initialPaymentMetric': '@initialPayment',
-    '@interestMetric': '@interest',
-    '@durationMetric': '@duration',
-    '@regularPaymentMetric': '@regularPayment'});
 
 ga('ec:setAction', 'purchase', { 'id': '@id', 'revenue': '@revenue',
     '@initialPaymentMetric': '@initialPayment',

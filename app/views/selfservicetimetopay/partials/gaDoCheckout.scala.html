@@ -15,7 +15,8 @@
     initialPayment:Option[BigDecimal],
     interest: BigDecimal,
     duration: Int,
-    regularPayment: BigDecimal
+    regularPayment: BigDecimal,
+    paymentDay: Int
 )(implicit messages: play.api.i18n.Messages)
 @import selfservicetimetopay.partials.gaAmountDueProduct
 
@@ -33,4 +34,5 @@ ga('ec:setAction','checkout',
     '@initialPaymentMetric': '@initialPayment',
     '@interestMetric': '@interest',
     '@durationMetric': '@duration',
-    '@regularPaymentMetric': '@regularPayment'});
+    '@regularPaymentMetric': '@regularPayment',
+    '@monthlyDueDateMetric': '});
