@@ -26,7 +26,7 @@
 @regularPaymentMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.regularPaymentMetric}
 @monthlyDueDateMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.monthlyDueDateMetric}
 
-@Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
+@debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2))
 
 ga('ec:setAction','checkout',
     { 'step': @step,
