@@ -10,9 +10,8 @@
     @
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@import selfservicetimetopay.partials.gaAddProducts
 @import java.time.LocalDate
-
+@import selfservicetimetopay.partials.gaAmountDueProduct
 @(
     debits:Seq[Debit],
     id:String,
@@ -24,7 +23,6 @@
     monthlyDueDate: LocalDate,
     step: Int
 )(implicit messages: play.api.i18n.Messages)
-@import selfservicetimetopay.partials.gaAddProducts
 
 @initialPaymentMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.initialPaymentMetric}
 @interestMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.interestMetric}
@@ -34,8 +32,7 @@
 @callForDirectDebitAssistanceDimension = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.callForDirectDebitAssistanceDimension}
 @printCompletePageDimension = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.printCompletePageDimension}
 @clickFeedbackOnComplete = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.clickFeedbackOnComplete}
-
-@gaAddProducts(debits, initialPayment, duration, interest, regularPayment)
+@Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
 
 ga('ec:setAction','checkout',
     { 'step': @step,
