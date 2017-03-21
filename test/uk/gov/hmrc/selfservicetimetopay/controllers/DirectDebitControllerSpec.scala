@@ -105,7 +105,35 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
       contentAsString(response) must include (Messages("ssttp.direct-debit.form.bank-not-found-info"))
     }}
 
-    "submit direct debit form with invalid form data and return a bad request" in { running(app) { 
+    "submit direct debit form with an invalid number it should display a single error" in { running(app) {
+
+      when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+
+      when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+
+      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+
+      val request = FakeRequest()
+        .withCookies(sessionProvider.createTtpCookie())
+        .withSession(SessionKeys.userId -> "someUserId")
+        .withFormUrlEncodedBody( Seq(
+          "accountName" -> "Jane Doe",
+          "sortCode1" -> "af",
+          "sortCode2" -> "",
+          "sortCode3" -> "",
+          "accountNumber" -> "12345678"
+        ): _*)
+      implicit val messages = getMessages(request)
+      val response = controller.submitDirectDebit(request)
+
+      status(response) mustBe BAD_REQUEST
+      contentAsString(response) must not include Messages("ssttp.direct-debit.form.error.sortCode.required")
+      contentAsString(response) must include (Messages("ssttp.direct-debit.form.error.sortCode.not-valid"))
+    }}
+
+
+    "submit direct debit form with invalid form data and return a bad request" in { running(app) {
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId")
