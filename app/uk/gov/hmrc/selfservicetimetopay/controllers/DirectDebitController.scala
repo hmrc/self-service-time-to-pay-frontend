@@ -106,15 +106,16 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   }
 
   def filterSortCodeErrors(form: Form[ArrangementDirectDebit]): Form[ArrangementDirectDebit] = {
-    val formErrorsNoDuplicates = form.errors.foldLeft[Seq[FormError]](Nil) { (acc, formError) => {
-      if (acc.exists(_.message == formError.message)) acc :+ formError.copy(messages = Seq(" ")) else acc :+ formError
+    val formErrorsNoDuplicates = form.errors.foldLeft[Seq[FormError]](Nil) {
+      (acc, formError) => {
+        if (acc.exists(_.message == formError.message)) acc :+ formError.copy(messages = Seq(" ")) else acc :+ formError
+      }
     }
-    }
-    //Filter out sort code required is Sort code must be a 6 digit number is already there
+
     if (formErrorsNoDuplicates.exists(_.messages == Seq("ssttp.direct-debit.form.error.sortCode.not-valid"))) {
       val (sortCodeRequiredError, formErrors) = formErrorsNoDuplicates.partition(_.messages == Seq("ssttp.direct-debit.form.error.sortCode.required"))
-      val sortCodeNoSortCodeRequiredMessage: Seq[FormError] = sortCodeRequiredError.map(_.copy(messages = Seq(" ")))
-      form.copy(errors = formErrors ++ sortCodeNoSortCodeRequiredMessage)
+      val noSortCodeRequiredMessage: Seq[FormError] = sortCodeRequiredError.map(_.copy(messages = Seq(" ")))
+      form.copy(errors = formErrors ++ noSortCodeRequiredMessage)
     } else {
       form.copy(errors = formErrorsNoDuplicates)
     }
