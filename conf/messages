@@ -115,13 +115,13 @@ ssttp.calculator.form.what-you-owe-amount.title2={0}?
 ssttp.calculator.form.what-you-owe-amount.continue=Continue
 ssttp.calculator.form.what-you-owe-amount.error.summary.title=You haven''t entered an amount
 ssttp.calculator.form.what-you-owe-amount.amount.required=Enter an amount of £0.01 or more
-ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval=Total amounts must be less than £100,000.00
+ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval=Total amount must be less than £100,000.00
 ssttp.calculator.form.what-you-owe-amount.amount.decimal-places=Amount must not contain more than 2 decimal places
 
 ssttp.calculator.form.what-you-owe-date.title=What''s the due date of the amount you owe?
 ssttp.calculator.form.what-you-owe.due_by.not-valid-date=Enter a valid date
 ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low=Year must be 1996 or later
-ssttp.calculator.form.what-you-owe-date.duef_by.not-valid-year-too-high=Year is too far in the future
+ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-high=Year is too far in the future
 ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year=Enter a valid year
 ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month=Enter a valid month
 ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number=Month must be between 1 and 12
