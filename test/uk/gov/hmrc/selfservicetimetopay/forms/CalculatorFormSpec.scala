@@ -32,40 +32,6 @@ class CalculatorFormSpec extends PlaySpec {
         "dueBy.dueByMonth" -> "2",
         "dueBy.dueByYear" -> "2017"
       )
-
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
-
-      assert(validatedForm.errors.isEmpty)
-    }
-
-    "return an error if amount is empty" in {
-      val postData = Json.obj(
-
-      )
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
-
-      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amounts_due.amount.required"))))
-    }
-
-    "return an error if amount is zero" in {
-      val postData = Json.obj("amount" -> "0")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
-
-      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amounts_due.amount.positive"))))
-    }
-
-    "return an error if amount is negative" in {
-      val postData = Json.obj("amount" -> "-10")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
-
-      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amounts_due.amount.positive"))))
-    }
-
-    "return an error if amount is too high" in {
-      val postData = Json.obj("amount" -> "9999999999999999999999999999999999999999999999999999999999999999999999999999999")
-      val validatedForm = CalculatorForm.amountDueForm.bind(postData)
-
-      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amounts_due.amount.less-than-maxval"))))
     }
     "return an error if dueByDay is empty" in {
       val postData = Json.obj("dueBy.dueByDay" -> "")
