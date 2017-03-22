@@ -69,7 +69,7 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
 
   def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
-      case Some(ttp@TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`, _, _, _, _))  =>
+      case Some(ttp@TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`, _, _, _, _)) =>
         EligibilityForm.signInQuestionForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(sign_in_question(formWithErrors))),
           {

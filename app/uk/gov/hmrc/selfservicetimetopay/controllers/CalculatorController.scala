@@ -34,6 +34,9 @@ import scala.concurrent.Future
 class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi, calculatorConnector: CalculatorConnector)
   extends TimeToPayController with play.api.i18n.I18nSupport {
 
+  def submitSignIn: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Redirect(routes.ArrangementController.determineMisalignment()))
+  }
 
   def getDebitDate: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap {
