@@ -19,8 +19,8 @@
     interest = schedule.totalInterestCharged,
     duration = schedule.instalments.length,
     regularPayment = schedule.instalments.head.amount,
-    monthlyDueDate = schedule.instalments.head.paymentDate,
-    step = 4
+    step = 4,
+    paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
   )
 }
 @selfservicetimetopay.main(
