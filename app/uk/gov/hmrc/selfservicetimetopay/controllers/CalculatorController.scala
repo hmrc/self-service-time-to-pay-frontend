@@ -34,9 +34,6 @@ import scala.concurrent.Future
 class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi, calculatorConnector: CalculatorConnector)
   extends TimeToPayController with play.api.i18n.I18nSupport {
 
-  def start: Action[AnyContent] = Action { request =>
-    Redirect(routes.CalculatorController.getAmountsDue())
-  }
 
   def getDebitDate: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap {
@@ -97,14 +94,6 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
-  def getAmountsDue: Action[AnyContent] = Action.async {
-    implicit request =>
-      sessionCache.get.map {
-        case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-          Ok(amounts_due_form(CalculatorAmountsDue(debits), CalculatorForm.amountDueForm(debits.map(_.amount).sum), ttpData.taxpayer.isDefined))
-        case _ => Ok(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), CalculatorForm.amountDueForm))
-      }
-  }
 
   def getPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
@@ -134,36 +123,6 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     }
   }
 
-  def submitAddAmountDue: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.flatMap { ttpData =>
-      val totalDebits = ttpData match {
-        case Some(TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) => debits.map(_.amount).sum
-        case _ => BigDecimal(0)
-      }
-      CalculatorForm.amountDueForm(totalDebits).bindFromRequest().fold(
-        formWithErrors =>
-          ttpData match {
-            case Some(ttpData@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-              Future.successful(BadRequest(amounts_due_form(CalculatorAmountsDue(debits), formWithErrors, ttpData.taxpayer.isDefined)))
-            case _ => Future.successful(BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty), formWithErrors)))
-          },
-        validFormData => {
-          val newTtpData = ttpData match {
-            case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-              ttpSubmission.copy(calculatorData = cd.copy(debits = debits :+ validFormData))
-            case Some(ttpSubmission@TTPSubmission(_, _, _, _, Some(_), Some(_), cd, _, _, _)) =>
-              ttpSubmission.copy(calculatorData = cd.copy(debits = IndexedSeq(validFormData)))
-            case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq(validFormData)))
-          }
-
-          Logger.info(newTtpData.toString)
-          sessionCache.put(newTtpData).map[Result] {
-            _ => Redirect(routes.CalculatorController.getAmountsDue())
-          }
-        }
-      )
-    }
-  }
 
   def submitRemoveAmountDue: Action[AnyContent] = Action.async { implicit request =>
     val index = CalculatorForm.removeAmountDueForm.bindFromRequest()
@@ -182,19 +141,6 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     }
   }
 
-  def submitAmountsDue: Action[AnyContent] = Action.async {
-    implicit request =>
-      sessionCache.get.map {
-        case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-          (Some(debits), ttpSubmission.taxpayer.isDefined)
-        case _ => (Some(IndexedSeq.empty), false)
-      }.map {
-        ttpData: (Option[Seq[Debit]], Boolean) =>
-          if (ttpData._1.isEmpty) BadRequest(amounts_due_form(CalculatorAmountsDue(IndexedSeq.empty),
-            CalculatorForm.amountDueForm.withGlobalError("You need to add at least one amount due"), ttpData._2))
-          else Redirect(routes.CalculatorController.getPaymentToday())
-      }
-  }
 
   def getCalculateInstalments(months: Option[Int]): Action[AnyContent] = Action.async {
     implicit request =>
