@@ -16,7 +16,6 @@ GET         /eligibility/sign-in-question                     @uk.gov.hmrc.selfs
 POST        /eligibility/sign-in-question                     @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.submitSignInQuestion()
 
 # Calculator
-
 # remove a single amount
 POST        /calculator/amounts-due/remove                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitRemoveAmountDue()
 GET         /calculator/what-you-owe-review                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getWhatYouOweReview()
@@ -43,8 +42,8 @@ POST        /calculator/recalculate                           @uk.gov.hmrc.selfs
 # Arrangement
 POST        /arrangement                                      @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.start()
 GET         /arrangement/instalment-summary                   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummary()
-POST        /arrangement/instalment-summary/change-day        @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.changeSchedulePaymentDay()
 POST        /arrangement/instalment-summary                   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submitInstalmentSummary()
+POST        /arrangement/instalment-summary/change-day        @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.changeSchedulePaymentDay()
 GET         /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
 POST        /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
 GET         /arrangement/direct-debit-confirmation            @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()
