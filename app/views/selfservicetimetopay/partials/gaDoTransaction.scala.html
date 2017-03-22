@@ -20,8 +20,8 @@
     interest: BigDecimal,
     duration: Int,
     regularPayment: BigDecimal,
-    monthlyDueDate: LocalDate,
-    step: Int
+    step: Int,
+    paymentDay: Int
 )(implicit messages: play.api.i18n.Messages)
 
 @initialPaymentMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.initialPaymentMetric}
@@ -32,9 +32,17 @@
 
 @Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
 
-ga('ec:setAction', 'purchase', { 'id': '@id', 'revenue': '@revenue',
+ga('ec:setAction','checkout',
+    { 'step': @step,
+    'revenue': '@revenue',
     '@initialPaymentMetric': '@initialPayment',
-    '@interestMetric': '@interest',
     '@durationMetric': '@duration',
     '@regularPaymentMetric': '@regularPayment',
-    '@monthlyDueDateMetric': '@monthlyDueDate'});
+    '@monthlyDueDateMetric': '@paymentDay'});
+
+ga('ec:setAction', 'purchase', { 'id': '@id', 'revenue': '@revenue',
+    'tax': '@interest',
+    '@initialPaymentMetric': '@initialPayment',
+    '@durationMetric': '@duration',
+    '@regularPaymentMetric': '@regularPayment',
+    '@monthlyDueDateMetric': '@paymentDay'});
