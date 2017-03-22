@@ -72,6 +72,9 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
                       _ => Redirect(routes.CalculatorController.getPayTodayQuestion())
                     }
 
+                  case TTPSubmission(None, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
+                    Future.successful(Redirect(routes.CalculatorController.getPayTodayQuestion()))
+
                   case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
                     if (areEqual(debits, tpSA.debits)) {
                       sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
