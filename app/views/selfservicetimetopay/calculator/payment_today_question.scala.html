@@ -13,6 +13,7 @@ Ask the user if they want to sign in at this step
         <h1>@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
     </header>
     @form(routes.CalculatorController.submitPayTodayQuestion(), 'class -> "group") {
+        @formErrorSummary(Messages("ssttp.calculator.form.payment_today_question.required.title"), dataForm, Seq.empty)
         @radiobuttons(dataForm("paytoday"), Seq(
             "true" -> Messages("ssttp.calculator.form.payment_today_question.yes_label"),
             "false" -> Messages("ssttp.calculator.form.payment_today_question.no_label")
