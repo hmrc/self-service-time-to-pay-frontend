@@ -113,8 +113,9 @@ ssttp.calculator.form.amounts_due.when_due.question.year=Year
 ssttp.calculator.form.what-you-owe-amount.title1=How much is due on
 ssttp.calculator.form.what-you-owe-amount.title2={0}?
 ssttp.calculator.form.what-you-owe-amount.continue=Continue
-ssttp.calculator.form.what-you-owe-amount.error.summary.title=You haven''t entered an amount
-ssttp.calculator.form.what-you-owe-amount.amount.required=Enter an amount of £0.01 or more
+ssttp.calculator.form.what-you-owe-amount.error.summary.title=Something you''ve entered isn''t valid
+ssttp.calculator.form.what-you-owe-amount.amount.required=Enter an amount
+ssttp.calculator.form.what-you-owe-amount.amount.required.min=The amount must be more than £0.00
 ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval=Total amount must be less than £100,000.00
 ssttp.calculator.form.what-you-owe-amount.amount.decimal-places=Amount must not contain more than 2 decimal places
 
@@ -143,8 +144,7 @@ ssttp.calculator.form.amounts_due.add=Add
 ssttp.calculator.form.amounts_due.remove=Remove
 ssttp.calculator.form.amounts_due.total=Total
 
-ssttp.calculator.form.amounts_due.error.summary.title=Something you''ve entered isn''t valid
-
+ssttp.calculator.form.amounts_due.error.summary.title=Something you've entered isn't valid
 ssttp.calculator.form.amounts_due.amount.required=You need to enter an amount
 ssttp.calculator.form.amounts_due.amount.positive=The amount must be more than £0.00
 ssttp.calculator.form.amounts_due.amount.less-than-maxval=Total amounts must be less than £1,000,000,000,000

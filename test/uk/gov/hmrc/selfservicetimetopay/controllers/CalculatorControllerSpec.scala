@@ -468,7 +468,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       val result = controller.submitAmountOwed().apply(request)
 
       status(result) mustBe Status.BAD_REQUEST
-      contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-amount.amount.required"))
+      contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-amount.amount.required.min"))
       verify(mockSessionCache, times(1)).get(any(), any())
     }
 
