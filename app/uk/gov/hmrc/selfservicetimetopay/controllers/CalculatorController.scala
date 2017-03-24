@@ -97,7 +97,6 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
-
   def getPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, tp, `validTypeOfTax`,
@@ -108,6 +107,10 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     }
   }
 
+  /**
+    * Checks the response for the pay today question. If yes navigate to payment today page
+    * otherwise navigate to calculator page and set the initial payment to 0
+    */
   def submitPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
       case Some(ttpData@TTPSubmission(_, _, _, tp, `validTypeOfTax`,
@@ -126,7 +129,9 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     }
   }
 
-
+  /**
+    * Grabs the index of the amount selected from the frontend and removes it from the TTPSubmission
+    */
   def submitRemoveAmountDue: Action[AnyContent] = Action.async { implicit request =>
     val index = CalculatorForm.removeAmountDueForm.bindFromRequest()
     sessionCache.get.map {
@@ -144,7 +149,13 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     }
   }
 
-
+  /**
+    * Loads the calculator page. Several checks are performed:
+    * - Checks to see if the session data is out of date and updates calculations if so
+    * - If Taxpayer exists, load auth version of calculator
+    * - If user input debits are not empty, load the calculator (avoids direct navigation)
+    * - If schedule data is missing, update TTPSubmission
+    */
   def getCalculateInstalments(months: Option[Int]): Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.flatMap {
@@ -179,6 +190,10 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
+  /**
+    * If the debts the user has entered do not match the amounts in their Taxpayer data
+    * then load the misalignment page, otherwise proceed to the instalment summary page
+    */
   def getMisalignmentPage: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.map {
@@ -199,6 +214,10 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
+  /**
+    * Handles the change in number of months for an instalment when the user has increased or decreased
+    * the number of months
+    */
   def submitCalculateInstalments: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.flatMap[Result] {
@@ -220,6 +239,9 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
+  /**
+    * This handles updating the initial payment that a user enters on the calculator page
+    */
   def submitCalculateInstalmentsPaymentToday: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.flatMap[Result] {
@@ -247,9 +269,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       sessionCache.get.map {
         case Some(TTPSubmission( _, _, _, taxpayer, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
-          if (paymentToday.equals(BigDecimal(0))) {
+          if (paymentToday.equals(BigDecimal(0)))
             Ok(payment_today_form(form, taxpayer.isDefined))
-          }
           else Ok(payment_today_form(form.fill(paymentToday), taxpayer.isDefined))
         case _ =>
           Logger.info("Missing required data for get payment today page")
@@ -288,10 +309,14 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   }
 
   private def dayOfMonthCheck(date: LocalDate): LocalDate = date.getDayOfMonth match {
-    case day if day > 28 => date.plusMonths(1).withDayOfMonth(1)
+    case day if day > 28 => date.withDayOfMonth(1).plusMonths(1)
     case _ => date
   }
 
+  /**
+    * Applies the 7 and 14 day rules for the calculator page, using today's date.
+    * See the function createCalculatorInput in Arrangement Controller for further information
+    */
   private def validateCalculatorDates(calculatorInput: CalculatorInput, numberOfMonths: Int, debits: Seq[Debit]): CalculatorInput = {
     val firstPaymentDate = dayOfMonthCheck(LocalDate.now().plusWeeks(1))
 
@@ -313,6 +338,10 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
   }
 
+  /**
+    * Update the schedule data stored in TTPSubmission, ensuring that 7 and 14 day payment
+    * rules are applied
+    */
   private def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async {
     implicit request =>
       ttpData match {

@@ -78,9 +78,7 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
                 sessionCache.put(ttp.copy(calculatorData = CalculatorInput.initial)).map[Result] {
                   _ => Redirect(routes.ArrangementController.determineMisalignment())
                 }
-              }
-              else
-                Future.successful(Redirect(routes.ArrangementController.determineMisalignment()))
+              } else Future.successful(Redirect(routes.ArrangementController.determineMisalignment()))
             case SignInQuestion(Some(false)) =>
               if(ttp.calculatorData.debits.nonEmpty)
                 Future.successful(Redirect(routes.CalculatorController.getWhatYouOweReview()))
