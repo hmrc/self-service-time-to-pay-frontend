@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 
 import java.time.{DateTimeException, LocalDate}
 import java.util.Calendar
+import java.util.logging.Logger
 
 import play.api.data.Form
 import play.api.data.Forms._
@@ -25,8 +26,6 @@ import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue.MaxCurrencyValue
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentToday, _}
 
-import scala.collection.immutable.Range
-import scala.math.BigDecimal.RoundingMode
 import scala.util.Try
 import scala.util.control.Exception.catching
 
@@ -48,12 +47,14 @@ object CalculatorForm {
 
   val dueByDateValidation = tuple(
     "dueByDay" -> text
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i: String => ((i != null) && i.nonEmpty) || i.contains(".")})
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByDayMax) && (i.toInt >= dueByDayMin)) }),
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i: String => (i != null) && i.nonEmpty})
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i =>  i.isEmpty || (i.nonEmpty && isInt(i))})
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i: String => !i.contains(".")})
+       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByDayMax) && (i.toInt >= dueByDayMin)) }),
     "dueByMonth" -> text
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i: String => ((i != null) && i.nonEmpty) || i.contains(".")})
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i: String => ((i != null) && i.nonEmpty)})
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i: String => !i.contains(".")})
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByMonthMax) && (i.toInt >= dueByMonthMin)) }),
     "dueByYear" -> text
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year", { i: String => (i != null) && i.nonEmpty })
