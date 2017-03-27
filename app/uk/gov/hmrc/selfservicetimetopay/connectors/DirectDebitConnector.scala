@@ -60,7 +60,7 @@ trait DirectDebitConnector {
   }
 
   /**
-    * Checks if the given bank details are valid by checking against the Bank Account Reputation Service
+    * Checks if the given bank details are valid by checking against the Bank Account Reputation Service via Direct Debit service
     */
   def getBank(sortCode: String, accountNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BankDetails]] = {
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
@@ -74,7 +74,7 @@ trait DirectDebitConnector {
   }
 
   /**
-    * Retrieves a sequence of lists associated with a given saUtr
+    * Retrieves stored bank details associated with a given saUtr
     */
   def getBanks(saUtr: SaUtr)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DirectDebitBank] = {
     http.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response => response }

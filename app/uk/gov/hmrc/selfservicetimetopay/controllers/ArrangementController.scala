@@ -56,9 +56,9 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     * Firstly the debits in the Taxpayer are checked to see if they are less than £32. Next a check is
     * performed to see if the calculator input debits are empty, this is to check to see if the user
     * came from the sign in question. The third check is whether schedule data is present in the
-    * TTPSubmission. If not then the user should be directed to the pay today question.
+    * TTPSubmission. If not, then the user should be directed to the pay today question.
     * Lastly, a check is performed to see if the user input debits match the Taxpayer
-    * debits. If not, display misalignment page otherwise perform ab eligibility check.
+    * debits. If not, display misalignment page otherwise perform an eligibility check.
     */
   def determineMisalignment: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
@@ -242,7 +242,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   private def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
 
   /**
-    * Submits a payment plan to the direct-debit service and then submits the arrangement to the arrangement service
+    * Submits a payment plan to the direct-debit service and then submits the arrangement to the arrangement service.
     * As the arrangement details are persisted in a database, the user is directed to the application
     * complete page if we get an error response from DES passed back by the arrangement service.
     */

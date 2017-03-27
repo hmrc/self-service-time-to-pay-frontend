@@ -191,7 +191,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   }
 
   /**
-    * If the debts the user has entered do not match the amounts in their Taxpayer data
+    * If the debits the user has entered do not match the amounts in their Taxpayer data
     * then load the misalignment page, otherwise proceed to the instalment summary page
     */
   def getMisalignmentPage: Action[AnyContent] = authorisedSaUser { implicit authContext =>
