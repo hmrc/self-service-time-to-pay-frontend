@@ -108,9 +108,37 @@ class DirectDebitFormSpec extends PlaySpec {
       assert(validatedForm.errors.contains(FormError("accountNumber", List("ssttp.direct-debit.form.error.accountNumber.not-valid"))))
     }
 
+    "return error with empty accountName" in {
+      val postData = Json.obj(
+        "accountName" -> "",
+        "sortCode1" -> "12",
+        "sortCode2" -> "34",
+        "sortCode3" -> "56",
+        "accountNumber" -> "12345678"
+      )
+
+      val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
+
+      assert(validatedForm.errors.contains(FormError("accountName", List("ssttp.direct-debit.form.error.accountName.required"))))
+    }
+
+    "return error with accountName not starting with a letter" in {
+      val postData = Json.obj(
+        "accountName" -> "123456789",
+        "sortCode1" -> "12",
+        "sortCode2" -> "34",
+        "sortCode3" -> "56",
+        "accountNumber" -> "12345678"
+      )
+
+      val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
+
+      assert(validatedForm.errors.contains(FormError("accountName", List("ssttp.direct-debit.form.error.accountName.letter-start"))))
+    }
+
     "return error with accountName containing numbers" in {
       val postData = Json.obj(
-        "accountName" -> "12345678",
+        "accountName" -> "a12345678",
         "sortCode1" -> "12",
         "sortCode2" -> "34",
         "sortCode3" -> "56",
@@ -124,7 +152,7 @@ class DirectDebitFormSpec extends PlaySpec {
 
     "return no error when accountName contains valid special characters" in {
       val postData = Json.obj(
-        "accountName" -> "John Smith'",
+        "accountName" -> "John Smith''''''&&&",
         "sortCode1" -> "12",
         "sortCode2" -> "34",
         "sortCode3" -> "56",
