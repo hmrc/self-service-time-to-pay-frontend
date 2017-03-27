@@ -60,7 +60,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
             formWithErrors => Future.successful(BadRequest(what_you_owe_date(formWithErrors))),
             validFormData => {
               sessionCache.put(ttpData.copy(debitDate = Some(LocalDate.of(validFormData.dueByYear.toInt,
-                validFormData.dueByMonth.toInt, validFormData.duebyDay.toInt)))).map[Result] {
+                validFormData.dueByMonth.toInt, validFormData.dueByDay.toInt)))).map[Result] {
                 _ => Redirect(routes.CalculatorController.getAmountOwed())
               }
             }

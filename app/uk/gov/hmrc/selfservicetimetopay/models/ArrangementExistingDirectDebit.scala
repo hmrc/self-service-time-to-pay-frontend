@@ -16,6 +16,5 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class ArrangementExistingDirectDebit(
-  existingDdi: Option[String],
-  arrangementDirectDebit: Option[ArrangementDirectDebit])
+case class ArrangementExistingDirectDebit(existingDdi: Option[String],
+                                          arrangementDirectDebit: Option[ArrangementDirectDebit])
