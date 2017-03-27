@@ -31,6 +31,9 @@ import uk.gov.hmrc.play.config.AppName
 
 import scala.concurrent.Future
 
+/**
+  * Talks to the keystore service to save and retrieve TTPSubmission data
+  */
 @ImplementedBy(classOf[SessionCacheConnectorImpl])
 trait SessionCacheConnector extends SessionCache with ServicesConfig {
   val sessionKey: String

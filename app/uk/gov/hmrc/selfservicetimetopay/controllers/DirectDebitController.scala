@@ -67,7 +67,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def getDirectDebitConfirmation: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case submission@TTPSubmission(_, _, Some(existingDDBanks), _, _, _, _, _, _, _) =>
+        case TTPSubmission(_, _, Some(_), _, _, _, _, _, _, _) =>
           Future.successful(Redirect(routes.DirectDebitController.getDirectDebit()))
         case submission@TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _, _) =>
           Future.successful(Ok(direct_debit_confirmation(submission.calculatorData.debits,
@@ -105,6 +105,10 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       }
   }
 
+  /**
+    * To streamline the number of errors that are displayed on the direct debit form, the
+    * error messages associated with ArrangementDirectDebit form are filtered through
+    */
   def filterSortCodeErrors(form: Form[ArrangementDirectDebit]): Form[ArrangementDirectDebit] = {
     val sortCodeRequiredMessage = Seq("ssttp.direct-debit.form.error.sortCode.required")
 
@@ -124,6 +128,11 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     form.copy(errors = formErrorsNoDuplicates)
   }
 
+  /**
+    * Using saUtr, gets a list of banks associated with the user. Checks the user entered
+    * bank details to see if they already exist. If it does, return existing bank details
+    * otherwise return user entered bank details.
+    */
   private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit hc: HeaderCarrier) = {
     sessionCache.get.flatMap {
       _.fold(Future.successful(redirectToStartPage))(ttp => {

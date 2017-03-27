@@ -31,13 +31,11 @@ trait CalculatorConnector {
   val serviceURL: String
   val http: HttpPost
 
-  def calculatePaymentSchedule(
-    liabilities: CalculatorInput
-  )(implicit
-    hc: HeaderCarrier
-  ): Future[Seq[CalculatorPaymentSchedule]] = {
-    http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](
-      s"$calculatorURL/$serviceURL", liabilities)
+  /**
+    * Send the calculator input information to the time-to-pay-calculator service and retrieve back a payment schedule
+    */
+  def calculatePaymentSchedule(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[Seq[CalculatorPaymentSchedule]] = {
+    http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](s"$calculatorURL/$serviceURL", liabilities)
   }
 }
 
