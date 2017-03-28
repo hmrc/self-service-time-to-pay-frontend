@@ -18,11 +18,12 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 
 import java.time.{DateTimeException, LocalDate}
 import java.util.Calendar
+
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue.MaxCurrencyValue
-import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentToday, _}
+import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.util.Try
 import scala.util.control.Exception.catching
