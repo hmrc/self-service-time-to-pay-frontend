@@ -178,6 +178,14 @@ class CalculatorFormSpec extends PlaySpec {
       assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.what-you-owe-amount.amount.required"))))
     }
 
+    "return errors when amount is less then zero" in {
+      val postData = Json.obj("amount" -> "-5")
+
+      val validatedForm = CalculatorForm.createSinglePaymentForm().bind(postData)
+
+      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.what-you-owe-amount.amount.required.min"))))
+    }
+
     "return errors when amount is too high" in {
       val postData = Json.obj("amount" -> "1000000000001")
 
