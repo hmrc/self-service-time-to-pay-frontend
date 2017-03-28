@@ -28,20 +28,24 @@ object DirectDebitForm {
 
   def parseIntOption(str: String) = Try(str.toInt).toOption
 
+  def condTrue(condition: Boolean, statement: Boolean) = if (condition) statement else true
+
   val directDebitMapping = mapping(
     "accountName" -> text.verifying("ssttp.direct-debit.form.error.accountName.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.accountName.not-text", x => x.length == x.replaceAll("[^a-zA-Z '.& \\/]", "").length),
+      .verifying("ssttp.direct-debit.form.error.accountName.length", x => condTrue(x.trim != "", x.trim.length > 1))
+      .verifying("ssttp.direct-debit.form.error.accountName.letter-start", x => condTrue(x.length > 1, x.matches("^[a-zA-Z].{1,39}$")))
+      .verifying("ssttp.direct-debit.form.error.accountName.not-text", x => condTrue(x.matches("^[a-zA-Z].{1,39}$"), x.length == x.replaceAll("[^a-zA-Z '.& \\/]", "").length)),
     "sortCode1" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim=="") |  validateNumberLength(x, x.length) && validateNumberLength(x, 2)),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim == "") | validateNumberLength(x, x.length) && validateNumberLength(x, 2)),
     "sortCode2" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim=="") | (validateNumberLength(x, x.length) && validateNumberLength(x, 2))),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim == "") | (validateNumberLength(x, x.length) && validateNumberLength(x, 2))),
     "sortCode3" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim=="") | (validateNumberLength(x, x.length) && validateNumberLength(x, 2))),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim == "") | (validateNumberLength(x, x.length) && validateNumberLength(x, 2))),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x =>  (x.trim=="") | (validateNumberLength(x, x.length) && validateNumberLength(x, 8)))
+      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | (validateNumberLength(x, x.length) && validateNumberLength(x, 8)))
   )({ case (name, sc1, sc2, sc3, acctNo) => ArrangementDirectDebit(name, sc1 ++ sc2 ++ sc3, acctNo) }
   )({ case arrangementDirectDebit =>
-    val (sc1::sc2::sc3::_)= arrangementDirectDebit.sortCode.grouped(2).toList
+    val (sc1 :: sc2 :: sc3 :: _) = arrangementDirectDebit.sortCode.grouped(2).toList
     Some((arrangementDirectDebit.accountName,
       sc1,
       sc2,
@@ -49,11 +53,12 @@ object DirectDebitForm {
       arrangementDirectDebit.accountNumber))
   })
 
-  def validateSortCode(sortCodeInput:String,sortCodeLength:Int):Boolean =sortCodeInput match {
-    case sc if !validateNumberLength(sc,2) => false
-    case sc if !validateNumberLength(sc,sc.length) =>  false
+  def validateSortCode(sortCodeInput: String, sortCodeLength: Int): Boolean = sortCodeInput match {
+    case sc if !validateNumberLength(sc, 2) => false
+    case sc if !validateNumberLength(sc, sc.length) => false
 
   }
+
   def validateNumberLength(number: String, length: Int): Boolean = {
     number.replaceAll("[^0-9]", "").length == length
   }

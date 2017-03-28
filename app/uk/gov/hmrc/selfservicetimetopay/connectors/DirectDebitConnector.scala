@@ -39,8 +39,8 @@ trait DirectDebitConnector {
   val http: HttpGet with HttpPost
 
   def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DDSubmissionResult] = {
-    http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", paymentPlan).map { Result =>
-      Right(Result)
+    http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", paymentPlan).map {
+      Result => Right(Result)
     }.recover {
       case e: Throwable => onError(e)
     }
@@ -59,6 +59,9 @@ trait DirectDebitConnector {
     }
   }
 
+  /**
+    * Checks if the given bank details are valid by checking against the Bank Account Reputation Service via Direct Debit service
+    */
   def getBank(sortCode: String, accountNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BankDetails]] = {
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
     http.GET[HttpResponse](s"$directDebitURL/$serviceURL/bank?$queryString").map {
@@ -70,6 +73,9 @@ trait DirectDebitConnector {
     }
   }
 
+  /**
+    * Retrieves stored bank details associated with a given saUtr
+    */
   def getBanks(saUtr: SaUtr)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DirectDebitBank] = {
     http.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response => response }
       .recover {

@@ -69,7 +69,7 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
 
   def submitSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
-      case Some(ttp@TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`, _, _, _, _))  =>
+      case Some(ttp@TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`, _, _, _, _)) =>
         EligibilityForm.signInQuestionForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(sign_in_question(formWithErrors))),
           {
@@ -78,9 +78,7 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
                 sessionCache.put(ttp.copy(calculatorData = CalculatorInput.initial)).map[Result] {
                   _ => Redirect(routes.ArrangementController.determineMisalignment())
                 }
-              }
-              else
-                Future.successful(Redirect(routes.ArrangementController.determineMisalignment()))
+              } else Future.successful(Redirect(routes.ArrangementController.determineMisalignment()))
             case SignInQuestion(Some(false)) =>
               if(ttp.calculatorData.debits.nonEmpty)
                 Future.successful(Redirect(routes.CalculatorController.getWhatYouOweReview()))

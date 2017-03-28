@@ -19,7 +19,6 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import javax.inject._
-
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.domain.SaUtr
@@ -29,7 +28,6 @@ import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
-
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.math.BigDecimal
@@ -51,6 +49,17 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
       }
   }
 
+  /**
+    * This step is performed immediately after the user has logged in. It grabs the Taxpayer data and
+    * then performs several checks to determine where the user should go next. This is because there are
+    * two points where the user could log in, via the sign in question or via the calculator page.
+    * Firstly the debits in the Taxpayer are checked to see if they are less than £32. Next a check is
+    * performed to see if the calculator input debits are empty, this is to check to see if the user
+    * came from the sign in question. The third check is whether schedule data is present in the
+    * TTPSubmission. If not, then the user should be directed to the pay today question.
+    * Lastly, a check is performed to see if the user input debits match the Taxpayer
+    * debits. If not, display misalignment page otherwise perform an eligibility check.
+    */
   def determineMisalignment: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
@@ -137,6 +146,9 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
         }
   }
 
+  /**
+    * Take the updated calculator input information and send it to the calculator service
+    */
   private def changeScheduleDay(ttpSubmission: TTPSubmission, dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
     createCalculatorInput(ttpSubmission, dayOfMonth).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
       calculatorConnector.calculatePaymentSchedule(cal)
@@ -144,6 +156,9 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     })
   }
 
+  /**
+    * Call the eligibility service using the Taxpayer data and display the appropriate page based on the result
+    */
   private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission)(implicit hc: HeaderCarrier) = {
     eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer)).map { es =>
       newSubmission.copy(eligibilityStatus = Option(es))
@@ -156,6 +171,16 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     }))
   }
 
+  /**
+    * As the user can change which day of the month they wish to make their payments, then a recalculation
+    * must be made as this would effect the interest amounts. Rules here must be applied and this function
+    * calculates the first payment date and the last payment date by applying these rules.
+    *
+    * Rules:
+    * - First payment must be at least 7 days from today's date
+    * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
+    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
+    */
   private def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
     val startDate = LocalDate.now()
     val durationMonths = ttpSubmission.durationMonths.get
@@ -216,6 +241,11 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
 
   private def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
 
+  /**
+    * Submits a payment plan to the direct-debit service and then submits the arrangement to the arrangement service.
+    * As the arrangement details are persisted in a database, the user is directed to the application
+    * complete page if we get an error response from DES passed back by the arrangement service.
+    */
   private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
     submission.taxpayer match {
       case Some(Taxpayer(_, _, Some(SelfAssessment(Some(utr), _, _, _)))) =>
@@ -228,11 +258,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
 
               result.flatMap {
                 _.fold(error => {
-                  Logger.error(s"Exception: ${
-                    error.code
-                  } + ${
-                    error.message
-                  }")
+                  Logger.error(s"Exception: ${error.code} + ${error.message}")
                   Future.successful(Redirect(routes.ArrangementController.applicationComplete()))
                 }, _ => applicationSuccessful)
               }
@@ -244,6 +270,10 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     }
   }
 
+  /**
+    * Checks if the TTPSubmission data contains an existing direct debit reference number and either
+    * passes this information to a payment plan constructor function or builds a new Direct Debit Instruction
+    */
   private def checkExistingBankDetails(submission: TTPSubmission): PaymentPlanRequest = {
     submission.bankDetails.get.ddiRefNumber match {
       case Some(refNo) =>
@@ -256,6 +286,9 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     }
   }
 
+  /**
+    * Builds and returns a payment plan
+    */
   private def paymentPlan(submission: TTPSubmission, ddInstruction: DirectDebitInstruction): PaymentPlanRequest = {
     val paymentPlanRequest = for {
       schedule <- submission.schedule
@@ -292,6 +325,9 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     paymentPlanRequest.getOrElse(throw new RuntimeException(s"PaymentPlanRequest creation failed - TTPSubmission: $submission"))
   }
 
+  /**
+    * Builds and returns a TTPArrangement
+    */
   private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
                                 submission: TTPSubmission): TTPArrangement = {
     val ppReference: String = ddInstruction.paymentPlan.head.ppReferenceNo

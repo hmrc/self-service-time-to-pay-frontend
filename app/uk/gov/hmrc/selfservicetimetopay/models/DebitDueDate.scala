@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class DebitDueDate (duebyDay: String, dueByMonth: String, dueByYear: String)
+case class DebitDueDate(dueByDay: String, dueByMonth: String, dueByYear: String)

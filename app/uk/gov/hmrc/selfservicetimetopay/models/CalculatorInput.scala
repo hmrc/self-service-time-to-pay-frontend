@@ -30,6 +30,9 @@ object CalculatorInput {
 }
 
 object CalculatorDef {
-  def apply(relativeEndDate: Int): CalculatorInput = CalculatorInput(startDate = LocalDate.now(), endDate = LocalDate.now().plusMonths(relativeEndDate).minusDays(1))
-  def apply(startDate: LocalDate, relativeEndDate: Int): CalculatorInput = CalculatorInput(startDate = startDate, endDate = startDate.plusMonths(relativeEndDate).minusDays(1))
+  def apply(relativeEndDate: Int): CalculatorInput = CalculatorInput(startDate = LocalDate.now(),
+    endDate = LocalDate.now().plusMonths(relativeEndDate).minusDays(1))
+
+  def apply(startDate: LocalDate, relativeEndDate: Int): CalculatorInput = CalculatorInput(startDate = startDate,
+    endDate = startDate.plusMonths(relativeEndDate).minusDays(1))
 }

@@ -49,10 +49,14 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
 
   protected def redirectOnError: Result = Redirect(routes.SelfServiceTimeToPayController.start())
 
-  private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200, Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
+  private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200,
+    Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
 
   def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
 
+  /**
+    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
+    */
   def authorizedForSsttp(block: (TTPSubmission => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
     sessionCache.get.flatMap[Result] {
       case Some(submission@TTPSubmission(Some(_), _, _, Some(_), `validTypeOfTax`,

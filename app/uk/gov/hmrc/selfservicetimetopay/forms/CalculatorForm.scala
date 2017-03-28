@@ -47,7 +47,7 @@ object CalculatorForm {
     "dueByDay" -> text
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i: String =>hasValue(i) & !i.contains(".")})
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i => i.contains(".") ||  i.isEmpty || (i.nonEmpty && isInt(i))})
-       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i => !isInt(i)  || (isInt(i) && (i.toInt <= dueByDayMax) && (i.toInt >= dueByDayMin)) }),
+       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByDayMax) && (i.toInt >= dueByDayMin)) }),
     "dueByMonth" -> text
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i: String => hasValue(i) & !i.contains(".")})
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number", { i =>i.contains(".") ||  i.isEmpty || (i.nonEmpty && isInt(i))})
@@ -85,6 +85,7 @@ object CalculatorForm {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.payment_today.amount.required.min", { i: String =>  if (i.nonEmpty && Try(BigDecimal(i)).isSuccess &&  BigDecimal(i).scale <= 2 ) BigDecimal(i) >= 0.00 else true})
+        .verifying("ssttp.calculator.form.payment_today.amount.required", { i => Try(BigDecimal(i)).isSuccess})
         .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
           if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true})
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", i =>
@@ -101,7 +102,7 @@ object CalculatorForm {
     )((date: (String, String, String)) =>
       DebitDueDate(date._1, date._2, date._3))
     ((amountDue: DebitDueDate) =>
-      Some((amountDue.dueByYear, amountDue.dueByMonth, amountDue.duebyDay)))
+      Some((amountDue.dueByYear, amountDue.dueByMonth, amountDue.dueByDay)))
     )
   }
 
