@@ -18,8 +18,6 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 
 import java.time.{DateTimeException, LocalDate}
 import java.util.Calendar
-import java.util.logging.Logger
-
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
