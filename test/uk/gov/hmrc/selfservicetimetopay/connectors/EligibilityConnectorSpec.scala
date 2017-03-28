@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, SelfAssessment}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -52,6 +51,7 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
 
       result.eligible shouldBe true
     }
+
     "return an illegible response" in {
       val jsonResponse = Json.fromJson[EligibilityStatus](checkEligibilityFalseResponse).get
 
@@ -64,5 +64,4 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       result.reasons.contains("TotalDebtIsTooHigh") shouldBe true
     }
   }
-
 }

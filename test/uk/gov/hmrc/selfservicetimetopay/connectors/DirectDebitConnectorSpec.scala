@@ -46,7 +46,6 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
     lazy val http = WSHttp
   }
 
-
   implicit val headerCarrier = HeaderCarrier()
 
   object testConnector extends DirectDebitConnector {
@@ -109,7 +108,6 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
       response.processingDate shouldBe "2001-12-17T09:30:47Z"
     }
 
-
     "return empty list when BP not found" in {
       stubFor(getRequest.willReturn(
         aResponse().withStatus(Status.NOT_FOUND).withBody(
@@ -130,7 +128,6 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
       response.directDebitInstruction.isEmpty shouldBe true
     }
   }
-
 
   "Calling createPaymentPlan" should {
     "return DirectDebitInstructionPaymentPlan" in {

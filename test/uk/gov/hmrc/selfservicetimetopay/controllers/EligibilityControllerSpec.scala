@@ -64,8 +64,8 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
   )
 
   val mockEligibilityController = new EligibilityController(messagesApi) {
-    override lazy val sessionCache = mockSessionCache
-    override lazy val authConnector = mockAuthConnector
+    override lazy val sessionCache: SessionCacheConnector = mockSessionCache
+    override lazy val authConnector: AuthConnector = mockAuthConnector
   }
 
   override def beforeEach() {
@@ -92,8 +92,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (mockEligibilityController.getTypeOfTax
-        .apply(request))
+      val result = mockEligibilityController.getTypeOfTax.apply(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(getMessages(request)("ssttp.eligibility.form.type_of_tax.title"))
@@ -106,8 +105,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (mockEligibilityController.getExistingTtp
-        .apply(request))
+      val result = mockEligibilityController.getExistingTtp.apply(request)
 
       status(result) mustBe OK
       contentAsString(result) must include(getMessages(request)("ssttp.eligibility.form.existing_ttp.title"))
@@ -121,9 +119,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
-      val result = (mockEligibilityController.submitTypeOfTax()
+      val result = mockEligibilityController.submitTypeOfTax()
         .apply(FakeRequest().withFormUrlEncodedBody("type_of_tax.hasSelfAssessmentDebt" -> "true", "type_of_tax.hasOtherDebt" -> "false")
-        .withCookies(sessionProvider.createTtpCookie())))
+          .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe SEE_OTHER
       routes.EligibilityController.getExistingTtp().url must endWith(redirectLocation(result).get)
@@ -137,9 +135,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
-      val result = (mockEligibilityController.submitTypeOfTax
+      val result = mockEligibilityController.submitTypeOfTax
         .apply(FakeRequest().withFormUrlEncodedBody(bothTypeOfTaxForm: _*)
-        .withCookies(sessionProvider.createTtpCookie())))
+          .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe SEE_OTHER
       controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url must endWith(redirectLocation(result).get)
@@ -153,9 +151,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
-      val result = (mockEligibilityController.submitTypeOfTax
+      val result = mockEligibilityController.submitTypeOfTax
         .apply(FakeRequest().withFormUrlEncodedBody(otherTaxForm: _*)
-        .withCookies(sessionProvider.createTtpCookie())))
+          .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe SEE_OTHER
       controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url must endWith(redirectLocation(result).get)
@@ -183,9 +181,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
-      val result = (mockEligibilityController.submitExistingTtp
+      val result = mockEligibilityController.submitExistingTtp
         .apply(FakeRequest().withFormUrlEncodedBody(falseExistingTtpForm: _*)
-        .withCookies(sessionProvider.createTtpCookie())))
+          .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe
@@ -200,9 +198,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
-      val result = (mockEligibilityController.submitExistingTtp
+      val result = mockEligibilityController.submitExistingTtp
         .apply(FakeRequest().withFormUrlEncodedBody(trueExistingTtpForm: _*)
-        .withCookies(sessionProvider.createTtpCookie())))
+          .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe SEE_OTHER
       controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url must endWith(redirectLocation(result).get)
@@ -214,9 +212,8 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = (mockEligibilityController.submitTypeOfTax
-        .apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = mockEligibilityController.submitTypeOfTax
+        .apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe BAD_REQUEST
     }
@@ -227,9 +224,8 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = (mockEligibilityController.submitExistingTtp
-        .apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = mockEligibilityController.submitExistingTtp
+        .apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe BAD_REQUEST
     }
@@ -241,8 +237,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (mockEligibilityController.getSignInQuestion
-        .apply(request))
+      val result = mockEligibilityController.getSignInQuestion.apply(request)
 
       contentAsString(result) must include(getMessages(request)("ssttp.eligibility.form.sign_in_question.title"))
       verify(mockSessionCache, times(1)).get(any(), any())
@@ -254,9 +249,8 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
-      val result = (mockEligibilityController.getSignInQuestion
-        .apply(FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = mockEligibilityController.getSignInQuestion
+        .apply(FakeRequest().withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -269,10 +263,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = (mockEligibilityController.submitSignInQuestion
-        .apply(FakeRequest()
-        .withFormUrlEncodedBody("signIn" -> "false")
-        .withCookies(sessionProvider.createTtpCookie())))
+      val result = mockEligibilityController.submitSignInQuestion
+        .apply(FakeRequest().withFormUrlEncodedBody("signIn" -> "false")
+          .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.CalculatorController.getDebitDate().url must endWith(redirectLocation(result).get)
@@ -285,10 +278,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = (mockEligibilityController.submitSignInQuestion
-        .apply(FakeRequest()
-          .withFormUrlEncodedBody("signIn" -> "true")
-          .withCookies(sessionProvider.createTtpCookie())))
+      val result = mockEligibilityController.submitSignInQuestion
+        .apply(FakeRequest().withFormUrlEncodedBody("signIn" -> "true")
+          .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.SEE_OTHER
       routes.ArrangementController.determineMisalignment().url must endWith(redirectLocation(result).get)
@@ -302,8 +294,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
-      val result = (mockEligibilityController.submitSignInQuestion
-        .apply(request))
+      val result = mockEligibilityController.submitSignInQuestion.apply(request)
 
       status(result) mustBe Status.BAD_REQUEST
       contentAsString(result) must include(getMessages(request)("ssttp.eligibility.form.sign_in_question.required"))
@@ -316,15 +307,13 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
-      val result = (mockEligibilityController.submitSignInQuestion
+      val result = mockEligibilityController.submitSignInQuestion
         .apply(FakeRequest()
-        .withFormUrlEncodedBody("signInOption.signIn" -> "true", "signInOption.enterInManually" -> "true")
-        .withCookies(sessionProvider.createTtpCookie())))
+          .withFormUrlEncodedBody("signInOption.signIn" -> "true", "signInOption.enterInManually" -> "true")
+          .withCookies(sessionProvider.createTtpCookie()))
 
       status(result) mustBe Status.BAD_REQUEST
       verify(mockSessionCache, times(1)).get(any(), any())
     }
-
   }
-
 }

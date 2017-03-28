@@ -50,13 +50,14 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
       result shouldBe Right(SubmissionSuccess())
     }
-  }
 
-  "return Left(SubmissionError(401, \"Unauthorized\"))" in {
-    when(testConnector.http.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.failed(Upstream4xxResponse("Unauthorized", 401, 401, Map())))
+    "return Left(SubmissionError(401, \"Unauthorized\"))" in {
+      when(testConnector.http.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.failed(Upstream4xxResponse("Unauthorized", UNAUTHORIZED, UNAUTHORIZED, Map())))
 
-    val result = await(testConnector.submitArrangements(submitArrangementResponse))
+      val result = await(testConnector.submitArrangements(submitArrangementResponse))
 
-    result shouldBe Left(SubmissionError(401, "Unauthorized"))
+      result shouldBe Left(SubmissionError(UNAUTHORIZED, "Unauthorized"))
+    }
   }
 }

@@ -90,6 +90,9 @@ package object resources {
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
   val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq("TotalDebtIsTooHigh"))
 
+  val eligibilityTypeOfTaxOk: Option[EligibilityTypeOfTax] = Some(EligibilityTypeOfTax(true, false))
+  val eligibilityExistingTTPOk: Option[EligibilityExistingTTP] = Some(EligibilityExistingTTP(Some(false)))
+
   val directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan = {
     DirectDebitInstructionPaymentPlan(LocalDate.now().toString, "1234567890", List(
       DirectDebitInstruction(
