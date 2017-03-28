@@ -47,21 +47,23 @@ object CalculatorForm {
 
   val dueByDateValidation = tuple(
     "dueByDay" -> text
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i: String => (i != null) && i.nonEmpty})
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i =>  i.isEmpty || (i.nonEmpty && isInt(i))})
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i: String => !i.contains(".")})
-       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByDayMax) && (i.toInt >= dueByDayMin)) }),
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i: String =>hasValue(i) & !i.contains(".")})
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i => i.contains(".") ||  i.isEmpty || (i.nonEmpty && isInt(i))})
+       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i => !isInt(i)  || (isInt(i) && (i.toInt <= dueByDayMax) && (i.toInt >= dueByDayMin)) }),
     "dueByMonth" -> text
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i: String => ((i != null) && i.nonEmpty)})
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i: String => !i.contains(".")})
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i: String => hasValue(i) & !i.contains(".")})
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number", { i =>i.contains(".") ||  i.isEmpty || (i.nonEmpty && isInt(i))})
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByMonthMax) && (i.toInt >= dueByMonthMin)) }),
     "dueByYear" -> text
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year", { i: String => (i != null) && i.nonEmpty })
+      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year", { i: String =>hasValue(i) })
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-high", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByYearMax)) })
       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low", { i => !isInt(i) || (isInt(i) && (i.toInt >= dueByYearMin)) })
   )
+  def hasValue(textBox:String):Boolean ={
+    (textBox != null) && textBox.nonEmpty
+  }
+
 
   def dateValidator: Constraint[(String, String, String)] =
     Constraint[(String, String, String)]("ssttp.calculator.form.what-you-owe.due_by.not-valid-date") { data =>
@@ -110,7 +112,7 @@ object CalculatorForm {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", { i: String =>  Try(BigDecimal(i)).isSuccess})
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required.min", { i: String =>  if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= 0.01 else true})
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required.min", { i: String =>  if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= 0.00 else true})
         .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })
