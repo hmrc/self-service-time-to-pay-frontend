@@ -55,6 +55,7 @@ class EligibilityFormSpec extends PlaySpec {
       assert(validatedForm.errors.contains(FormError("hasExistingTTP", List("ssttp.eligibility.form.existing_ttp.required"))))
     }
   }
+
   "EligibilityForm.signInQuestionForm" must {
 
     "return no errors with valid data when enter in manually is selected" in {
@@ -64,6 +65,7 @@ class EligibilityFormSpec extends PlaySpec {
 
       assert(validatedForm.errors.isEmpty)
     }
+
     "return no errors with valid data when sign in is selected" in {
       val postData = Json.obj("signIn" -> "true")
 
@@ -71,6 +73,7 @@ class EligibilityFormSpec extends PlaySpec {
 
       assert(validatedForm.errors.isEmpty)
     }
+
     "return an error when the user does not pick an answer" in {
       val validatedForm = EligibilityForm.signInQuestionForm.bind(Json.obj())
 

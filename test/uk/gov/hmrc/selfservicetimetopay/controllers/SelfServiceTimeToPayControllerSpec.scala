@@ -38,7 +38,7 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
 
     "return 200 and display the service start page" in {
       when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      val request = FakeRequest().withCookies(sessionProvider.createTtpCookie()) 
+      val request = FakeRequest().withCookies(sessionProvider.createTtpCookie())
       val result = controller.start.apply(request)
 
       status(result) mustBe OK
@@ -72,5 +72,4 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
       contentAsString(result) must include(getMessages(request)("ssttp.you-need-to-file.title"))
     }
   }
-
 }

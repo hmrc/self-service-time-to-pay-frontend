@@ -28,16 +28,12 @@ import uk.gov.hmrc.play.frontend.auth.GovernmentGateway
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.SessionKeys
 import uk.gov.hmrc.selfservicetimetopay.connectors.{DirectDebitConnector, SessionCacheConnector}
-import uk.gov.hmrc.selfservicetimetopay.controllers
-import uk.gov.hmrc.selfservicetimetopay.models.DirectDebitBank
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.Future
 import scala.util.Try
 
 class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
-
-  private val gaToken = "GA-TOKEN"
 
   val mockDDConnector: DirectDebitConnector = mock[DirectDebitConnector]
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
@@ -131,7 +127,6 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
       contentAsString(response) must not include Messages("ssttp.direct-debit.form.error.sortCode.required")
       contentAsString(response) must include (Messages("ssttp.direct-debit.form.error.sortCode.not-valid"))
     }}
-
 
     "submit direct debit form with invalid form data and return a bad request" in { running(app) {
       val request = FakeRequest()

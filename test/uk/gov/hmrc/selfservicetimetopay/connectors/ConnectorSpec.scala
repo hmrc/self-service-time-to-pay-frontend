@@ -20,12 +20,11 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.OneServerPerSuite
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import uk.gov.hmrc.play.test.UnitSpec
+import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 
-trait ConnectorSpec  extends UnitSpec  with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach with BeforeAndAfterAll {
-
-  import com.github.tomakehurst.wiremock.WireMockServer
-  import com.github.tomakehurst.wiremock.client.WireMock
-  import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+trait ConnectorSpec extends UnitSpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach with BeforeAndAfterAll {
 
   object WiremockHelper {
     val wiremockPort = 1234
@@ -33,22 +32,22 @@ trait ConnectorSpec  extends UnitSpec  with OneServerPerSuite with MockitoSugar 
     val url = s"http://$wiremockHost:$wiremockPort"
   }
 
-    import WiremockHelper._
+  import WiremockHelper._
 
-    val wmConfig = wireMockConfig().port(wiremockPort)
-    val wireMockServer = new WireMockServer(wmConfig)
-
+  val wmConfig = wireMockConfig().port(wiremockPort)
+  val wireMockServer = new WireMockServer(wmConfig)
 
   override def beforeAll() = {
     wireMockServer.stop()
     wireMockServer.start()
     WireMock.configureFor(wiremockHost, wiremockPort)
   }
+
   override def beforeEach() = {
     WireMock.reset()
   }
+
   override def afterAll() = {
     wireMockServer.stop()
   }
-
 }
