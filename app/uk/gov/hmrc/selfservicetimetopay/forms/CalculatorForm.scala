@@ -112,7 +112,7 @@ object CalculatorForm {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", { i: String =>  Try(BigDecimal(i)).isSuccess})
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required.min", { i: String =>  if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= 0.00 else true})
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required.min", { i: String =>  if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.01 else true})
         .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })
