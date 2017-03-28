@@ -188,7 +188,7 @@ ssttp.calculator.form.payment_today.title=How much can you afford to pay?
 ssttp.calculator.form.payment_today.error.summary.title=Something you''ve entered isn''t valid
 ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required=Enter an amount
-ssttp.calculator.form.payment_today.amount.required.min=Enter an amount of £0.00 or more
+ssttp.calculator.form.payment_today.amount.required.min=The amount must be more than £0.00
 ssttp.calculator.form.payment_today.amount.decimal-places=Amount must not contain more than 2 decimal places
 ssttp.calculator.form.payment_today.amount.less-than-maxval=Total amounts must be less than £1,000,000,000,000
 
