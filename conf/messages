@@ -310,7 +310,6 @@ ssttp.arrangement.misalignment.title=Bank account not found
 ssttp.arrangement.misalignment.subtitle=There was a problem with the bank details you entered
 ssttp.arrangement.misalignment.form.error.summary.title=Something you’ve entered isn’t valid
 ssttp.arrangement.misalignment.existing.title=Choose an existing account
-ssttp.arrangement.misalignment.direct-debit.or=Or
 ssttp.arrangement.misalignment.direct-debit.reenter=Re-enter your bank details
 ssttp.arrangement.misalignment.submit=Agree and continue
 ssttp.arrangement.misalignment.back=Back
