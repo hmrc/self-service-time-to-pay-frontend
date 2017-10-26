@@ -6,6 +6,7 @@
     title = Messages("ssttp.eligibility.form.existing_ttp.title"),
     loggedIn = loggedIn
 ) {
+    <p><a class="back-link" href="@routes.EligibilityController.getTypeOfTax()">@Messages("ssttp.eligibility.form.back")</a></p>
     <header class="page-header text">
         <h1>@Messages("ssttp.eligibility.form.existing_ttp.title")</h1>
     </header>
@@ -22,5 +23,4 @@
         }
         @submit(){@Messages("ssttp.eligibility.form.continue")}
     }
-    <p><a class="back-link" href="@routes.EligibilityController.getTypeOfTax()">@Messages("ssttp.eligibility.form.back")</a></p>
 }

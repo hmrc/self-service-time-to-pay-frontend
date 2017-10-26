@@ -28,6 +28,7 @@ Time To Pay Direct Debit Conformation Display Page
     googleAnalyticsCalls = Seq(gaCheckoutCode.body),
     loggedIn = loggedIn
 ) {
+    <div><a class="back-link" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a></div>
     <header class="page-header text">
         <h1>@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
     </header>
@@ -65,7 +66,6 @@ Time To Pay Direct Debit Conformation Display Page
             }
         }
         <div>&nbsp;</div>
-        <div><a class="back-link" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a></div>
     </section>
 }
 
