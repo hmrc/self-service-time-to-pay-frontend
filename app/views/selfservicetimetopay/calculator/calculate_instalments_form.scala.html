@@ -20,7 +20,7 @@ Time To Pay Payment Schedule Calculator Page
         title = Messages("ssttp.calculator.results.title"),
         loggedIn = loggedIn
     ) {
-<p>@if(schedule.initialPayment.equals(BigDecimal(0))){<a class="back-link" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>}else{<a class="back-link" href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a>}</p>
+        <p>@if(schedule.initialPayment.equals(BigDecimal(0))){<a class="back-link" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>}else{<a class="back-link" href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.back")</a>}</p>
         <a target="_blank" href="@routes.CalculatorController.getCalculateInstalmentsPrint()" class="float--right gutter-left print-link print-hidden js-visible trackedPrintLink">@Messages("ssttp.arrangement.instalment-summary.print")</a>
         <header class="page-header text">
             <h1>@Messages("ssttp.calculator.results.title")</h1>

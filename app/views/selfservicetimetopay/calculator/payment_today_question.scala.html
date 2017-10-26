@@ -9,13 +9,13 @@ Ask the user if they want to sign in at this step
     title = Messages("ssttp.calculator.form.payment_today_question.title"),
     loggedIn = loggedIn
 ) {
-<p>
-    @if(loggedIn) {
-    <a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.eligibility.form.sign_in_question.back")</a>
-    } else {
-    <a class="back-link" href="@routes.CalculatorController.getWhatYouOweReview()">@Messages("ssttp.eligibility.form.sign_in_question.back")</a>
-    }
-</p>
+    <p>
+        @if(loggedIn) {
+        <a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.eligibility.form.sign_in_question.back")</a>
+        } else {
+        <a class="back-link" href="@routes.CalculatorController.getWhatYouOweReview()">@Messages("ssttp.eligibility.form.sign_in_question.back")</a>
+        }
+    </p>
     <header class="page-header text">
         <h1>@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
     </header>
