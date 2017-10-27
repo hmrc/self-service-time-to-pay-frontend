@@ -227,7 +227,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
               transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
               directDebit = submission.arrangementDirectDebit.get,
               schedule = submission.schedule.get,
-              loggedIn = true))
+              isSignedIn))
             )
         }
   }

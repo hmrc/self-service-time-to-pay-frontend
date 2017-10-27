@@ -72,6 +72,7 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
       super.hc(request).withExtraHeaders(ttpSessionId -> id.value)
     }
   }
+   def isSignedIn(implicit hc:HeaderCarrier): Boolean = hc.authorization.isDefined
 
   protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier) = {
     sessionCache.get.flatMap {

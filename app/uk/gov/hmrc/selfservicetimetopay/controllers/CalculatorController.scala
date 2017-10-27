@@ -102,7 +102,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       case Some(TTPSubmission(_, _, _, tp, `validTypeOfTax`,
       `validExistingTTP`, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val dataForm = CalculatorForm.payTodayForm
-          Ok(payment_today_question(dataForm, tp.isDefined))
+          Ok(payment_today_question(dataForm, isSignedIn))
       case _ => redirectOnError
     }
   }
@@ -116,7 +116,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       case Some(ttpData@TTPSubmission(_, _, _, tp, `validTypeOfTax`,
       `validExistingTTP`, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
         CalculatorForm.payTodayForm.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(payment_today_question(formWithErrors, tp.isDefined))), {
+          formWithErrors => Future.successful(BadRequest(payment_today_question(formWithErrors, isSignedIn))), {
             case PayTodayQuestion(Some(true)) =>
               Future.successful(Redirect(routes.CalculatorController.getPaymentToday()))
             case PayTodayQuestion(Some(false)) =>
@@ -167,11 +167,11 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
           Future.successful(Ok(calculate_instalments_form(schedule, Some(sa.debits),
-            CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, ttpData.taxpayer.isDefined)))
+            CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, isSignedIn)))
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
           Future.successful(Ok(calculate_instalments_form(schedule, None,
-            CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, ttpData.taxpayer.isDefined)))
+            CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, isSignedIn)))
         case Some(ttpData@TTPSubmission(None, _, _, _, _, _, _, _, _, _)) =>
           updateSchedule(ttpData).apply(request)
         case _ =>
@@ -183,9 +183,9 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     implicit request =>
       sessionCache.get.map {
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
-          Ok(calculate_instalments_print(schedule, Some(sa.debits), ttpData.taxpayer.isDefined))
+          Ok(calculate_instalments_print(schedule, Some(sa.debits), isSignedIn))
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, _, _, _, _)) =>
-          Ok(calculate_instalments_print(schedule, None, ttpData.taxpayer.isDefined))
+          Ok(calculate_instalments_print(schedule, None, isSignedIn))
         case _ => redirectOnError
       }
   }
@@ -198,7 +198,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     implicit request =>
       sessionCache.get.map {
         case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-          if (!areEqual(sa.debits, debits)) Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, loggedIn = true))
+          if (!areEqual(sa.debits, debits)) Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, isSignedIn))
           else Redirect(routes.ArrangementController.getInstalmentSummary())
         case _ =>
           Logger.error("Unhandled case in getMisalignmentPage")
@@ -227,7 +227,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
             formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, tp match {
               case Some(Taxpayer(_, _, Some(sa))) => Some(sa.debits)
               case _ => None
-            }, formWithErrors, form, 2 to 11, ttpData.taxpayer.isDefined))),
+            }, formWithErrors, form, 2 to 11, isSignedIn))),
             validFormData => {
               val newEndDate = cd.startDate.plusMonths(validFormData.months.get).minusDays(1)
               updateSchedule(ttpData.copy(calculatorData = cd.copy(endDate = newEndDate), durationMonths = validFormData.months))(request)
@@ -252,7 +252,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
             formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
               case Some(Taxpayer(_, _, Some(sa))) => Some(sa.debits)
               case _ => None
-            }, durationForm, formWithErrors, 2 to 11, ttpData.taxpayer.isDefined))),
+            }, durationForm, formWithErrors, 2 to 11, isSignedIn))),
             validFormData => {
               val ttpSubmission = ttpData.copy(calculatorData = cd.copy(initialPayment = validFormData))
               updateSchedule(ttpSubmission).apply(request)
@@ -270,8 +270,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         case Some(TTPSubmission( _, _, _, taxpayer, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
           if (paymentToday.equals(BigDecimal(0)))
-            Ok(payment_today_form(form, taxpayer.isDefined))
-          else Ok(payment_today_form(form.fill(paymentToday), taxpayer.isDefined))
+            Ok(payment_today_form(form, isSignedIn))
+          else Ok(payment_today_form(form.fill(paymentToday), isSignedIn))
         case _ =>
           Logger.info("Missing required data for get payment today page")
           redirectOnError
@@ -297,7 +297,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     sessionCache.get.flatMap[Result] {
       case Some(ttpSubmission@TTPSubmission(_, _, _, _, Some(_), Some(_), cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
         CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(payment_today_form(formWithErrors, ttpSubmission.taxpayer.isDefined))),
+          formWithErrors => Future.successful(BadRequest(payment_today_form(formWithErrors, isSignedIn))),
           validFormData => {
             updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).apply(request)
           }

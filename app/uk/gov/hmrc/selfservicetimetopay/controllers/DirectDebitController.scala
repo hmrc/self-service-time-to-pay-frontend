@@ -20,7 +20,6 @@ import javax.inject._
 
 import play.api.Logger
 import play.api.data.{Form, FormError}
-import play.api.i18n.Messages
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -41,7 +40,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       authorizedForSsttp {
         case submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer), _, _, calcData, _, _, _)
           if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
-          Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, submission.taxpayer.isDefined)))
+          Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, isSignedIn)))
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -50,7 +49,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     implicit request =>
       authorizedForSsttp {
         case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
-          Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule)))
+          Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -59,7 +58,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     implicit request =>
       authorizedForSsttp {
         case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
-          Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, showErrorNotification = true)))
+          Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -71,7 +70,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
           Future.successful(Redirect(routes.DirectDebitController.getDirectDebit()))
         case submission@TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _, _) =>
           Future.successful(Ok(direct_debit_confirmation(submission.calculatorData.debits,
-            schedule, submission.arrangementDirectDebit.get, submission.taxpayer.isDefined)))
+            schedule, submission.arrangementDirectDebit.get, isSignedIn)))
         case _ =>
           Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
           Future.successful(redirectOnError)
