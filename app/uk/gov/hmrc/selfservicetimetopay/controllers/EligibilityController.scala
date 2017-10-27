@@ -32,13 +32,13 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   def start: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.getTypeOfTax())
   }
-  private def isSignedIn(implicit hc:HeaderCarrier): Boolean = hc.authorization.isDefined
 
   def getTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, typeOfTax@Some(_), _, _, _, _, _)) =>
         Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), isSignedIn))
-      case _ => Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm))
+      case _ =>
+        Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm,isSignedIn))
     }
   }
 
@@ -96,7 +96,7 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, _, existingTtp@Some(_), _, _, _, _)) =>
         Ok(existing_ttp(EligibilityForm.existingTtpForm.fill(existingTtp.get), isSignedIn))
-      case _ => Ok(existing_ttp(EligibilityForm.existingTtpForm))
+      case _ => Ok(existing_ttp(EligibilityForm.existingTtpForm,isSignedIn))
     }
   }
 

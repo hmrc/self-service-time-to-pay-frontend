@@ -27,8 +27,8 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
 
   def start: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData: TTPSubmission) => Ok(service_start(ttpData.taxpayer.isDefined))
-      case _ => Ok(service_start())
+      case Some(ttpData: TTPSubmission) => Ok(service_start(isSignedIn))
+      case _ => Ok(service_start(isSignedIn))
     }
   }
 
@@ -39,22 +39,22 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
   def getTtpCallUs: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, taxpayer, Some(EligibilityTypeOfTax(_, hasOtherDebt)), _, _, _, _, _)) =>
-        Ok(call_us(typeOfTaxNumber = hasOtherDebt, loggedIn = taxpayer.isDefined))
-      case _ => Ok(call_us())
+        Ok(call_us(typeOfTaxNumber = hasOtherDebt, loggedIn = isSignedIn))
+      case _ => Ok(call_us(isSignedIn))
     }
   }
 
   def getYouNeedToFile: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData: TTPSubmission) => Ok(you_need_to_file(ttpData.taxpayer.isDefined))
-      case _ => Ok(you_need_to_file())
+      case Some(ttpData: TTPSubmission) => Ok(you_need_to_file(isSignedIn))
+      case _ => Ok(you_need_to_file(isSignedIn))
     }
   }
 
   def getUnavailable: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData: TTPSubmission) => Ok(unavailable(ttpData.taxpayer.isDefined))
-      case _ => Ok(unavailable())
+      case Some(ttpData: TTPSubmission) => Ok(unavailable(isSignedIn))
+      case _ => Ok(unavailable(isSignedIn))
     }
   }
 
