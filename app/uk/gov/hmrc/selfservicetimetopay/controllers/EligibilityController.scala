@@ -19,6 +19,7 @@ import javax.inject._
 
 import play.api.Logger
 import play.api.mvc._
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.forms.EligibilityForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -31,11 +32,12 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   def start: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.EligibilityController.getTypeOfTax())
   }
+  private def isSignedIn(implicit hc:HeaderCarrier): Boolean = hc.authorization.isDefined
 
   def getTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, typeOfTax@Some(_), _, _, _, _, _)) =>
-        Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), ttpData.taxpayer.isDefined))
+        Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm.fill(typeOfTax.get), isSignedIn))
       case _ => Ok(type_of_tax_form(EligibilityForm.typeOfTaxForm))
     }
   }
@@ -93,7 +95,7 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   def getExistingTtp: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(ttpData@TTPSubmission(_, _, _, _, _, existingTtp@Some(_), _, _, _, _)) =>
-        Ok(existing_ttp(EligibilityForm.existingTtpForm.fill(existingTtp.get), ttpData.taxpayer.isDefined))
+        Ok(existing_ttp(EligibilityForm.existingTtpForm.fill(existingTtp.get), isSignedIn))
       case _ => Ok(existing_ttp(EligibilityForm.existingTtpForm))
     }
   }
