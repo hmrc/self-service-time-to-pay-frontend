@@ -149,6 +149,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     }
   }
 
+  private val monthOptions = 2 to 11
   /**
     * Loads the calculator page. Several checks are performed:
     * - Checks to see if the session data is out of date and updates calculations if so
@@ -167,11 +168,11 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
           Future.successful(Ok(calculate_instalments_form(schedule, Some(sa.debits),
-            CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, isSignedIn)))
+            CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, monthOptions, isSignedIn)))
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
           Future.successful(Ok(calculate_instalments_form(schedule, None,
-            CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, 2 to 11, isSignedIn)))
+            CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, monthOptions, isSignedIn)))
         case Some(ttpData@TTPSubmission(None, _, _, _, _, _, _, _, _, _)) =>
           updateSchedule(ttpData).apply(request)
         case _ =>
@@ -227,7 +228,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
             formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, tp match {
               case Some(Taxpayer(_, _, Some(sa))) => Some(sa.debits)
               case _ => None
-            }, formWithErrors, form, 2 to 11, isSignedIn))),
+            }, formWithErrors, form,monthOptions, isSignedIn))),
             validFormData => {
               val newEndDate = cd.startDate.plusMonths(validFormData.months.get).minusDays(1)
               updateSchedule(ttpData.copy(calculatorData = cd.copy(endDate = newEndDate), durationMonths = validFormData.months))(request)
@@ -252,7 +253,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
             formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
               case Some(Taxpayer(_, _, Some(sa))) => Some(sa.debits)
               case _ => None
-            }, durationForm, formWithErrors, 2 to 11, isSignedIn))),
+            }, durationForm, formWithErrors, monthOptions, isSignedIn))),
             validFormData => {
               val ttpSubmission = ttpData.copy(calculatorData = cd.copy(initialPayment = validFormData))
               updateSchedule(ttpSubmission).apply(request)
