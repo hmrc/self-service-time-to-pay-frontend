@@ -46,7 +46,7 @@ trait TaxPayerConnector {
 
 @Singleton
 class TaxPayerConnectorImpl extends TaxPayerConnector with ServicesConfig {
-  val taxPayerURL: String = baseUrl("taxpayer")
+  val taxPayerURL: String = baseUrl("time-to-pay-taxpayer")
   val serviceURL = "taxpayer"
   val http = WSHttp
 }
