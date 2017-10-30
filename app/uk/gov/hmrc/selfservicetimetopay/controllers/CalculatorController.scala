@@ -101,8 +101,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, tp, `validTypeOfTax`,
       `validExistingTTP`, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
-          val dataForm = CalculatorForm.payTodayForm
-          Ok(payment_today_question(dataForm, isSignedIn))
+        val dataForm = CalculatorForm.payTodayForm
+        Ok(payment_today_question(dataForm, isSignedIn))
       case _ => redirectOnError
     }
   }
@@ -150,6 +150,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   }
 
   private val monthOptions = 2 to 11
+
   /**
     * Loads the calculator page. Several checks are performed:
     * - Checks to see if the session data is out of date and updates calculations if so
@@ -163,7 +164,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         case Some(ttpData@TTPSubmission(Some(
         CalculatorPaymentSchedule(Some(startDate), _, _, _, _, _, _, _)), _, _, _, _, _, _, _, _, _))
           if !startDate.equals(LocalDate.now) =>
-          updateSchedule(ttpData).apply(request)
+          updateSchedule(ttpData)(request)
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _,
         CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
@@ -174,7 +175,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           Future.successful(Ok(calculate_instalments_form(schedule, None,
             CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, monthOptions, isSignedIn)))
         case Some(ttpData@TTPSubmission(None, _, _, _, _, _, _, _, _, _)) =>
-          updateSchedule(ttpData).apply(request)
+          updateSchedule(ttpData)(request)
         case _ =>
           Future.successful(redirectOnError)
       }
@@ -210,7 +211,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def submitRecalculate: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap[Result] {
-        case Some(ttpData@TTPSubmission(_, _, _, _, _, _, _, _, _, _)) => updateSchedule(ttpData).apply(request)
+        case Some(ttpData@TTPSubmission(_, _, _, _, _, _, _, _, _, _)) =>
+          updateSchedule(ttpData)(request)
         case None => Future.successful(redirectOnError)
       }
   }
@@ -228,7 +230,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
             formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, tp match {
               case Some(Taxpayer(_, _, Some(sa))) => Some(sa.debits)
               case _ => None
-            }, formWithErrors, form,monthOptions, isSignedIn))),
+            }, formWithErrors, form, monthOptions, isSignedIn))),
             validFormData => {
               val newEndDate = cd.startDate.plusMonths(validFormData.months.get).minusDays(1)
               updateSchedule(ttpData.copy(calculatorData = cd.copy(endDate = newEndDate), durationMonths = validFormData.months))(request)
@@ -256,7 +258,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
             }, durationForm, formWithErrors, monthOptions, isSignedIn))),
             validFormData => {
               val ttpSubmission = ttpData.copy(calculatorData = cd.copy(initialPayment = validFormData))
-              updateSchedule(ttpSubmission).apply(request)
+              updateSchedule(ttpSubmission)(request)
             }
           )
         case _ =>
@@ -268,7 +270,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def getPaymentToday: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.map {
-        case Some(TTPSubmission( _, _, _, taxpayer, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+        case Some(TTPSubmission(_, _, _, taxpayer, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
           if (paymentToday.equals(BigDecimal(0)))
             Ok(payment_today_form(form, isSignedIn))
