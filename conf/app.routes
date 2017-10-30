@@ -38,7 +38,7 @@ GET         /arrangement/determine-misalignment               @uk.gov.hmrc.selfs
 
 #Misalignment Page
 GET         /calculator/amounts-dont-match                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getMisalignmentPage()
-POST        /calculator/recalculate                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitRecalculate()
+GET         /calculator/recalculate                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitRecalculate()
 
 # Arrangement
 POST        /arrangement                                      @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.start()
