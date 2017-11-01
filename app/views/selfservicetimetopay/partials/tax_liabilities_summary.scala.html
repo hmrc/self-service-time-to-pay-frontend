@@ -1,0 +1,35 @@
+@*
+Partial view to show list of direct debit payments in the the entered_all_amount_question form
+@param debits Seq[Debit] The debits being paid by this plan
+*@
+@import java.time.format.DateTimeFormatter
+@import java.util.Locale
+
+@import selfservicetimetopay.partials.charge_code
+@import uk.gov.hmrc.selfservicetimetopay.models.Debitebit
+@(debits: Seq[Debit])(implicit messages: play.api.i18n.Messages, request: Request[_])
+@defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
+    <table>
+        <thead>
+            <tr>
+                <td style="width: 68%"><strong>@Messages("ssttp.calculator.tax-liabilities-page.due-options")</strong></td>
+                <td style="width: 22%"><strong>@Messages("ssttp.calculator.tax-liabilities-page.amount")</strong></td>
+            </tr>
+        </thead>
+        <tbody>
+            @debits.map { debit =>
+                <tr>
+                    <td><p>@debit.dueDate.format(formatter)</p>
+                        @charge_code(debit.originCode.get, debit.taxYearEnd)
+                    </td>
+                    <td>@currency(debit.amount)</td>
+                </tr>
+            }
+            <tr>
+                <td style="width: 68%"><strong>@Messages("ssttp.calculator.tax-liabilities-page.total-owed")</strong></td>
+                <td style="width: 22%"><strong>@currency(debits.map(_.amount).sum)</strong></td>
+            </tr>
+        </tbody>
+    </table>
+}
+
