@@ -184,6 +184,14 @@ ssttp.calculator.misalignment-page.recalculate.button=Recalculate
 ssttp.calculator.misalignment-page.query.label=Find out about an amount in your tax account
 ssttp.calculator.misalignment-page.query.number=0300 200 3822
 
+ssttp.calculator.tax-liabilities-page.title=Your tax account summary
+ssttp.calculator.tax-liabilities-page.due-options=Due:
+ssttp.calculator.tax-liabilities-page.amount=Amount:
+ssttp.calculator.tax-liabilities-page.total-owed=Total owed:
+ssttp.calculator.tax-liabilities-page.advise=Continue to calculate your instalment plan. If you can't continue call us on 0300 200 3822.
+ssttp.calculator.tax-liabilities-page.button-continue=Continue
+ssttp.calculator.tax-liabilities-page.button-back=Back
+
 ssttp.calculator.form.payment_today.title=How much can you afford to pay?
 ssttp.calculator.form.payment_today.error.summary.title=Something you''ve entered isn''t valid
 ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an amount less than the amount you owe

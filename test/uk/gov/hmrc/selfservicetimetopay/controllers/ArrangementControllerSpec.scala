@@ -105,7 +105,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
     }
 
-    "redirect to 'pay today question' when no amounts have been entered for determine misalignment" in {
+    "redirect to 'Tax Liabilities' when no amounts have been entered for determine misalignment" in {
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
 
       when(mockSessionCache.get(any(), any()))
@@ -119,7 +119,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
           .withSession(SessionKeys.userId -> "someUserId"))
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.CalculatorController.getPayTodayQuestion().url
+      redirectLocation(response).get mustBe routes.CalculatorController.getTaxLiabilities().url
     }
 
     "redirect to 'instalment summary' when entered amounts and sa amounts are equal and user is eligible for determine misalignment" in {
@@ -348,7 +348,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       controllers.routes.ArrangementController.getInstalmentSummary().url must endWith(redirectLocation(response).get)
     }
 
-    "redirect to getPayTodayQuestion page if the not logged in user has not created any debits" in {
+    "redirect to getTaxLiabilities page if the not logged in user has not created any debits" in {
       implicit val hc = new HeaderCarrier
 
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = Seq.empty))
@@ -362,7 +362,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
         .withCookies(sessionProvider.createTtpCookie())
         .withSession(SessionKeys.userId -> "someUserId"))
 
-      controllers.routes.CalculatorController.getPayTodayQuestion().url must endWith(redirectLocation(response).get)
+      controllers.routes.CalculatorController.getTaxLiabilities().url must endWith(redirectLocation(response).get)
     }
   }
 

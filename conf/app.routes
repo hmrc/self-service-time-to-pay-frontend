@@ -33,6 +33,7 @@ POST        /calculator/instalments                           @uk.gov.hmrc.selfs
 POST        /calculator/instalments/payment-today             @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsPaymentToday()
 GET         /calculator/instalments/print                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalmentsPrint()
 POST        /calculator/sign-in                               @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitSignIn()
+GET         /calculator/tax-liabilities                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getTaxLiabilities()
 
 GET         /arrangement/determine-misalignment               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.determineMisalignment()
 

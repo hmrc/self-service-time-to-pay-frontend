@@ -1,0 +1,24 @@
+@import selfservicetimetopay.helpers.forms.{form, submit}
+@import selfservicetimetopay.partials.tax_liabilities_summary
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.models.Debitebit
+@(debits: Seq[Debit], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+@selfservicetimetopay.main(
+    title = Messages("ssttp.calculator.tax-liabilities-page.title"),
+    loggedIn = loggedIn
+) {
+    <p><a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.calculator.tax-liabilities-page.button-back")</a></p>
+    <header class="page-header text">
+        <h1>@Messages("ssttp.calculator.tax-liabilities-page.title")</h1>
+    </header>
+    @tax_liabilities_summary(debits)
+    <p>@Messages("ssttp.calculator.tax-liabilities-page.advise")</p>
+    <p>
+    @form(routes.CalculatorController.getPayTodayQuestion()) {
+        @submit() {
+            @Messages("ssttp.calculator.tax-liabilities-page.button-continue")
+        }
+    }</p>
+}
+

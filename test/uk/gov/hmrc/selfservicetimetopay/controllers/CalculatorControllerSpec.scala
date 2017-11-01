@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import akka.actor.ActorSystem
 import akka.stream._
+import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -28,7 +29,7 @@ import play.api.test.Helpers._
 import play.api.test._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -254,7 +255,6 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       status(result) mustBe OK
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.payment_today_question.title"))
     }
-
 
     "Successfully display the what you owe date page" in {
       implicit val hc = new HeaderCarrier

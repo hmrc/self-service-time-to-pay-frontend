@@ -97,6 +97,17 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
+  //todo find a way to test around the authorisedSaUser
+  def getTaxLiabilities: Action[AnyContent] = authorisedSaUser {
+    implicit authContext =>
+      implicit request =>
+        sessionCache.get.map {
+          case Some(ttpData@TTPSubmission(_, _, _, Some(tp), `validTypeOfTax`, `validExistingTTP`, _, _, _, _)) =>
+            Ok(tax_liabilities(tp.selfAssessment.get.debits, isSignedIn))
+          case _ => redirectOnError
+        }
+  }
+
   def getPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, tp, `validTypeOfTax`,
@@ -270,7 +281,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def getPaymentToday: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.map {
-        case Some(TTPSubmission(_, _, _, taxpayer, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+        case Some(TTPSubmission(_, _, _, Some(_), _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
           if (paymentToday.equals(BigDecimal(0)))
             Ok(payment_today_form(form, isSignedIn))

@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import javax.inject._
+
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.domain.SaUtr
@@ -28,6 +29,7 @@ import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
+
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.math.BigDecimal
@@ -60,6 +62,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     * Lastly, a check is performed to see if the user input debits match the Taxpayer
     * debits. If not, display misalignment page otherwise perform an eligibility check.
     */
+  //todo refactor this give's makes my head sore
   def determineMisalignment: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
@@ -78,11 +81,11 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
                   case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _), _, _, _) =>
                     sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
                       endDate = LocalDate.now().plusMonths(3).minusDays(1), debits = tpSA.debits))).map {
-                      _ => Redirect(routes.CalculatorController.getPayTodayQuestion())
+                      _ => Redirect(routes.CalculatorController.getTaxLiabilities())
                     }
 
                   case TTPSubmission(None, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
-                    Future.successful(Redirect(routes.CalculatorController.getPayTodayQuestion()))
+                    Future.successful(Redirect(routes.CalculatorController.getTaxLiabilities()))
 
                   case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
                     if (areEqual(debits, tpSA.debits)) {
