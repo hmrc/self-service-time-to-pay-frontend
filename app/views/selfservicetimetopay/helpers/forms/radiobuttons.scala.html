@@ -2,7 +2,7 @@
  Render a set of radiobuttons using the HMRC Compnent Library Styles
  http://hmrc.github.io/assets-frontend/section-form.html
  http://hmrc.github.io/assets-frontend/section-radio-input.html
-                                       
+
  @param field Field the form field to bind to
  @param optionsList Seq[(String, String)] Options to display for the field mapping value to label
  @param args Additional parameters:
@@ -17,7 +17,7 @@
 @import selfservicetimetopay.helpers.forms.fieldErrors
 @elements = @{ new FieldElements(field.id, field, null, args.toMap, messages) }
 @fieldValue = @{ field.value match { case Some(x) => x case None => "" case x => x }}
-@fieldSetClass = @{ 
+@fieldSetClass = @{
   var c = elements.args.getOrElse('_modifierClass, "").asInstanceOf[String].trim
   if (field.hasErrors) {
     c += " form-field-group--error"

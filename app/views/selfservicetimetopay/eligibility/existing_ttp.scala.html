@@ -12,11 +12,12 @@
     </header>
     @form(routes.EligibilityController.submitExistingTtp(), 'class -> "group") {
         @formErrorSummary(Messages("ssttp.eligibility.form.existing_ttp.error.summary.title"), dataForm, Seq.empty)
-        @radiobuttons(dataForm("hasExistingTTP"), Seq(
+        @radiobuttonsinline(dataForm("hasExistingTTP"), Seq(
             "true" -> Messages("ssttp.eligibility.form.existing_ttp.question.yes"),
             "false" -> Messages("ssttp.eligibility.form.existing_ttp.question.no")
-        ),
+        ),true,
             '_label -> Html(Messages("ssttp.eligibility.form.existing_ttp.question")),
+            '_modifierClass -> "multiple-choice inline",
             '_groupClass -> "form-field",
             '_labelClass -> "block-label block-label--inline"
         ) {

@@ -1,0 +1,57 @@
+@*
+Render a set of radiobuttons using the HMRC Compnent Library Styles
+http://hmrc.github.io/assets-frontend/section-form.html
+http://hmrc.github.io/assets-frontend/section-radio-input.html
+
+@param field Field the form field to bind to
+@param optionsList Seq[(String, String)] Options to display for the field mapping value to label
+@param args Additional parameters:
+'_modifierClass -> Modifier class to apply to whole input div, can be one of [-tall, -single, --inline, --inline-text-input, --inline-spaced-right, --inline-spaced-left ]
+'_labelClass -> class to add to the label element as per http://hmrc.github.io/assets-frontend/section-label.html
+'_inputClass -> Class to add to the input element
+@param content Html the code used for the title of the radiobuttons if any
+*@
+@(field: Field, optionsList: Seq[(String, String)], inline: Boolean, args: (Symbol, Any)*)(content: Html)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
+@import views.html.helper.FieldElements
+@import selfservicetimetopay.helpers.labelWrap
+@import selfservicetimetopay.helpers.forms.fieldErrors
+@elements = @{
+    new FieldElements(field.id, field, null, args.toMap, messages)
+}
+@fieldValue = @{
+    field.value match {
+        case Some(x) => x
+        case None => ""
+        case x => x
+    }
+}
+@fieldSetClass = @{
+    var c = elements.args.getOrElse('_modifierClass, "").asInstanceOf[String].trim
+    if(field.hasErrors) {
+        c += " form-field-group--error"
+    }
+    c.trim
+}
+@defining({
+    var classes = elements.args.getOrElse('_inputClass, "").toString
+    if(field.hasErrors) {
+        classes += " error-field"
+    }
+    classes
+}) { inputClass =>
+    <a name="@elements.field.name"></a>
+    <fieldset>
+        @content
+        <div class="form-field@if(elements.args.get('_modifierClass)) {@elements.args.get('_modifierClass)} ">
+            @fieldErrors(field)
+        @optionsList.zipWithIndex.map { case (valueAndLabel, index) =>
+        <div class="multiple-choice">
+            <input id="radio@{if(inline)"-inline"}-@{index + 1}" type="radio" name="@elements.field.name" value="@valueAndLabel._1" @if(fieldValue == valueAndLabel._1) {
+                checked="checked"}>
+            <label for="radio@{if(inline)"-inline"}-@{index + 1}">@valueAndLabel._2</label>
+        </div>
+        }
+        </div>
+    </fieldset>
+}
+
