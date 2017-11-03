@@ -13,10 +13,10 @@ Ask the user if they want to sign in at this step
     </header>
     @form(routes.EligibilityController.submitSignInQuestion(), 'class -> "group") {
         @formErrorSummary(Messages("ssttp.eligibility.form.sign_in_question.error.summary.title"), dataForm, Seq.empty)
-        @radiobuttons(dataForm("signIn"), Seq(
+        @radiobuttonsinline(dataForm("signIn"), Seq(
             "true" -> Messages("ssttp.eligibility.form.sign_in_question.yes_label"),
             "false" -> Messages("ssttp.eligibility.form.sign_in_question.no_label")
-        ),
+        ),false,
             '_label -> Html(Messages("ssttp.eligibility.form.sign_in_question")),
             '_groupClass -> "form-field",
             '_labelClass -> "block-label block-label--inline"

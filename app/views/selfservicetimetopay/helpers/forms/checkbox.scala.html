@@ -12,7 +12,6 @@
 @(field: Field, label: Option[Html], args:(Symbol, Any)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import views.html.helper.FieldElements
 @import selfservicetimetopay.helpers.forms.fieldErrors
-@import selfservicetimetopay.helpers.labelWrap
 @argsMap = @{args.toMap}
 @elements = @{ new FieldElements(field.id, field, null, args.toMap, messages) }
 @value = @{ field.value match { case Some(x) => x case None => "false" case x => x }}
@@ -23,8 +22,7 @@
 }
 <div class="@wrapperClass">
     @fieldErrors(field)
-    @labelWrap('labelText -> label.getOrElse(""), '_modifierClass -> elements.args.get('_labelClass), 'for -> elements.id){
         <input type="checkbox" id="@elements.id" name="@elements.field.name" value="true" @if(value=="true"){checked="checked"}
            @if( elements.args.get('_inputClass) ){ class="@elements.args.get('_inputClass)" } />
-   }
+          <label for="@elements.id">@label.getOrElse("")</label>
 </div>

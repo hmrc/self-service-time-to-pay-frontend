@@ -20,12 +20,12 @@ Self Service Time to Pay eligibility page - ask user what kind of tax debts they
             @formErrors(dataForm, '_field -> "type_of_tax")
             @checkbox(field = dataForm("type_of_tax.hasSelfAssessmentDebt"),
                 label = Option(Html(Messages("ssttp.eligibility.form.type_of_tax.question.self-assessment"))),
-                '_modifierClass -> "--single",
+                '_modifierClass -> "multiple-choice",
                 '_labelClass -> "block-label"
             )
             @checkbox(field = dataForm("type_of_tax.hasOtherDebt"),
                 label = Option(Html(Messages("ssttp.eligibility.form.type_of_tax.question.other"))),
-                '_modifierClass -> "--single",
+                '_modifierClass -> "multiple-choice",
                 '_labelClass -> "block-label"
             )
         }
