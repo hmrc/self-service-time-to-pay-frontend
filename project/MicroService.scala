@@ -42,7 +42,6 @@ trait MicroService {
       libraryDependencies ++= appDependencies,
       parallelExecution in Test := false,
       fork in Test := false,
-      retrieveManaged := true,
       evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
     )
     .configs(IntegrationTest)
