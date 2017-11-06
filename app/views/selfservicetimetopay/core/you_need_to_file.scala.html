@@ -1,10 +1,11 @@
 @(signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.{highlight, message_list}
-
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @selfservicetimetopay.main(
     title = Messages("ssttp.you-need-to-file.title"),
     loggedIn = signedIn
 ){
+    <p><a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.you-need-to-file.back")</a></p>
     <header class="page-header text">
         <h1>@Messages("ssttp.you-need-to-file.title")</h1>
     </header>
