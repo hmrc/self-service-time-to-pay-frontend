@@ -1,0 +1,87 @@
+
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import selfservicetimetopay.partials.payment_schedule_editable
+@import selfservicetimetopay.helpers.forms.{form, submit}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
+@import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+@(
+        playSession: Map[String, String],
+        cache: List[(String, String)],
+        authority: String
+)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+@selfservicetimetopay.main(
+    title = "User's related and session data"
+) {
+
+    <p>
+        <h2>Cache from Key Store</h2>
+        <table>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+
+            @cache.map { item =>
+                <tr>
+                    <td style="vertical-align: top">@item._1</td>
+                    <td style="word-break: break-all">
+                        <pre style="border: none">@item._2</pre>
+                    </td>
+                </tr>
+            }
+        </table>
+    </p>
+
+    <p>
+        <h2>Authority</h2>
+        <pre style="border: none">@{authority}</pre>
+    </p>
+
+
+    <p>
+        <h2>Play Session </h2>
+        <table>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+
+            @playSession.map { item =>
+                <tr>
+                    <td style="vertical-align: top">@item._1</td>
+                    <td style="word-break: break-all">
+                        <code style="border: none">@item._2</code>
+                    </td>
+                </tr>
+            }
+        </table>
+    </p>
+
+
+    <p>
+        <h2>Cookies</h2>
+        <table>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+
+            @request.cookies.toList.map { item =>
+                <tr>
+                    <td style="vertical-align: top">@{
+                        item.name
+                    }</td>
+                    <td style="word-break: break-all">
+                        <code style="border: none">@{
+                            item.value
+                        }</code>
+                    </td>
+                </tr>
+            }
+        </table>
+    </p>
+
+}
+
