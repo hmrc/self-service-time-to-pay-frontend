@@ -35,6 +35,10 @@ To view the UI **during development**,
 3. View in the browser
  http://localhost:9063/pay-what-you-owe-in-instalments
 
+4. For debug purposes
+  http://localhost:9063/pay-what-you-owe-in-instalments/test-only/session
+
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
