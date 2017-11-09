@@ -72,6 +72,7 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
       super.hc(request).withExtraHeaders(ttpSessionId -> id.value)
     }
   }
+  //I noticed a lot of dublication in the code where the log to see if someone was signed in was to see if the tax payer was defined
    def isSignedIn(implicit hc:HeaderCarrier): Boolean = hc.authorization.isDefined
 
   protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier) = {
