@@ -70,6 +70,17 @@ package object resources {
     Seq(calculatorPaymentScheduleInstalment,
       calculatorPaymentScheduleInstalment)
   )
+  val calculatorPaymentScheduleLessThenOnePayment: CalculatorPaymentSchedule = CalculatorPaymentSchedule(
+    Some(LocalDate.parse("2001-01-01")),
+    Some(LocalDate.parse("2001-01-01")),
+    BigDecimal(1024.12),
+    BigDecimal(20123.76),
+    BigDecimal(1024.12),
+    BigDecimal(102.67),
+    BigDecimal(20123.76),
+    Seq(calculatorPaymentScheduleInstalment,
+      calculatorPaymentScheduleInstalment)
+  )
   val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule),
     Some(BankDetails(Some("012131"), Some("1234567890"), None, None, None, Some("0987654321"))), None,
     Some(taxPayer), Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),

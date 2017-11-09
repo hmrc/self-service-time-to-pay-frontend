@@ -120,6 +120,8 @@ object CalculatorForm {
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
 
+
+  //todo perhaps move all the caluclator logic to it's own service
   val minMonths = 2
   val maxMonths = 11
 

@@ -25,7 +25,7 @@ case class TTPSubmission(schedule: Option[CalculatorPaymentSchedule] = None,
                          eligibilityTypeOfTax: Option[EligibilityTypeOfTax] = None,
                          eligibilityExistingTtp: Option[EligibilityExistingTTP] = None,
                          calculatorData: CalculatorInput = CalculatorInput.initial,
-                         durationMonths: Option[Int] = Some(3),
+                         durationMonths: Option[Int] = Some(2),
                          eligibilityStatus: Option[EligibilityStatus] = None,
                          debitDate: Option[LocalDate] = None) {
 

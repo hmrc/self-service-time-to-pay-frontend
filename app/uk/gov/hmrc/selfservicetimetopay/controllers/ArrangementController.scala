@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import javax.inject._
-
+import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.createCalculatorInput
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.domain.SaUtr
@@ -193,43 +193,6 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     }
   }
 
-  /**
-    * As the user can change which day of the month they wish to make their payments, then a recalculation
-    * must be made as this would effect the interest amounts. Rules here must be applied and this function
-    * calculates the first payment date and the last payment date by applying these rules.
-    *
-    * Rules:
-    * - First payment must be at least 7 days from today's date
-    * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
-    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
-    */
-  private def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
-    val startDate = LocalDate.now()
-    val durationMonths = ttpSubmission.durationMonths.get
-    val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
-
-    val (firstPaymentDate: LocalDate, lastPaymentDate: LocalDate) = if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
-      if (DAYS.between(startDate, initialDate) < 7 && DAYS.between(startDate, initialDate.plusMonths(1)) < 7)
-        (initialDate.plusMonths(2), initialDate.plusMonths(durationMonths + 2).minusDays(1))
-      else if (DAYS.between(startDate, initialDate) < 7)
-        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
-      else
-        (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
-    } else {
-      if (initialDate.isBefore(startDate.plusWeeks(1)) && DAYS.between(startDate.plusWeeks(1), initialDate.plusMonths(1)) < 14)
-        (initialDate.plusMonths(2), initialDate.plusMonths(durationMonths + 2).minusDays(1))
-      else if (initialDate.isBefore(startDate.plusWeeks(1)))
-        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
-      else if (DAYS.between(startDate.plusWeeks(1), initialDate) < 14)
-        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
-      else
-        (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
-    }
-
-    Some(ttpSubmission.calculatorData.copy(startDate = startDate,
-      firstPaymentDate = Some(firstPaymentDate),
-      endDate = lastPaymentDate))
-  }
 
   def submit(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
@@ -252,11 +215,6 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               isSignedIn))
             )
         }
-  }
-
-  private def checkDayOfMonth(dayOfMonth: Int): Int = dayOfMonth match {
-    case day if day > 28 => 1
-    case _ => dayOfMonth
   }
 
   private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]): Boolean = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
