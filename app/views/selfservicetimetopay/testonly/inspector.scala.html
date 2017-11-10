@@ -1,10 +1,6 @@
-
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@import selfservicetimetopay.partials.payment_schedule_editable
-@import selfservicetimetopay.helpers.forms.{form, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.testonly.{routes => testonlyroutes}
 
-@import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
 @(
         playSession: Map[String, String],
         cache: List[(String, String)],
@@ -27,9 +23,9 @@
     <p>
         <h2>Quick links</h2>
         <ul>
-            <li><a class="link" href="@routes.TestOnlyController.clearPlaySession()">clear play session</a></li>
-            <li><a class="link" href="@routes.TestOnlyController.clearTtpSessionIdCookie()">clear 'ttpSessionId' cookie </a></li>
-            <li><a class="link" href="@routes.TestOnlyController.quickLogIn()">quick log in</a></li>
+            <li><a class="link" href="@testonlyroutes.InspectorController.clearPlaySession()">clear play session</a></li>
+            <li><a class="link" href="@testonlyroutes.InspectorController.clearTtpSessionIdCookie()">clear 'ttpSessionId' cookie </a></li>
+            <li><a class="link" href="@testonlyroutes.TestUsersController.logIn()">quick log in</a></li>
         </ul>
     </p>
 

@@ -36,7 +36,7 @@ To view the UI **during development**,
  http://localhost:9063/pay-what-you-owe-in-instalments
 
 4. For debug purposes
-  http://localhost:9063/pay-what-you-owe-in-instalments/test-only/session
+  http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector
 
 
 ### License
