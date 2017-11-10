@@ -31,7 +31,3 @@ case class TTPSubmission(schedule: Option[CalculatorPaymentSchedule] = None,
 
   def arrangementDirectDebit: Option[ArrangementDirectDebit] = bankDetails.map(f => ArrangementDirectDebit.from(f))
 }
-
-object TTPSubmission {
-
-}
