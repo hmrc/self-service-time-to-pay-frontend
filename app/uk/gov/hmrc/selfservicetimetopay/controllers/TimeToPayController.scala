@@ -84,4 +84,9 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
         sessionCache.put(notFound())
     }
   }
+
+
+  implicit class SuccessfullOps[T](t: T) {
+    def successfullF: Future[T] = Future.successful(t)
+  }
 }

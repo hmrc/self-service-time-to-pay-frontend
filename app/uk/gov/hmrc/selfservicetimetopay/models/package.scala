@@ -83,9 +83,31 @@ package object modelsFormat {
   implicit val bankAccountResponseFormatter = Format(eitherReads[BankDetails, DirectDebitBank], eitherWrites[BankDetails, DirectDebitBank])
 
   //Eligibility formatters
+
+  def parseFromString(jsonString: String): Option[Reason] = jsonString.trim.toLowerCase match {
+    case "nodebt" => Some(NoDebt)
+    case "debtisinsignificant" => Some(DebtIsInsignificant)
+    case "olddebtistoohigh" => Some(OldDebtIsTooHigh)
+    case "totaldebtistoohigh" => Some(TotalDebtIsTooHigh)
+    case x if x.contains("returnneedssubmitting") => Some(ReturnNeedsSubmitting)
+    case _ =>
+      None
+  }
+
+  implicit val formatEligibilityReasons = new Format[Reason] {
+
+    override def writes(o: Reason): JsValue = JsString(o.toString)
+
+    override def reads(json: JsValue): JsResult[Reason] = json match {
+      case o: JsString => parseFromString(o.value).fold[JsResult[Reason]](JsError(s"Failed to parse $json as Reason"))(JsSuccess(_))
+      case _ => JsError(s"Failed to parse $json as Reason")
+    }
+  }
+
   implicit val eligibilityStatusFormatter: Format[EligibilityStatus] = Json.format[EligibilityStatus]
   implicit val eligibilityRequestFormatter: Format[EligibilityRequest] = Json.format[EligibilityRequest]
 
   //Submission formatter
   implicit val submissionFormatter: Format[TTPSubmission] = Json.format[TTPSubmission]
+
 }

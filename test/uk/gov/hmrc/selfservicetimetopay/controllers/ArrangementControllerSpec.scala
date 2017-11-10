@@ -90,6 +90,24 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to 'you need to file' when sa debits are less than £32.00 for determine misalignment" in {
       val requiredSa = selfAssessment.get.copy(debits = Seq.empty)
+      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
+
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer.copy(selfAssessment = Some(requiredSa)))))
+
+      when(mockSessionCache.get(any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission)))
+
+      val response = controller.determineMisalignment()
+        .apply(FakeRequest()
+          .withCookies(sessionProvider.createTtpCookie())
+          .withSession(SessionKeys.userId -> "someUserId"))
+
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
+    }
+    "redirect to 'you need to file' when the user has not filled " in {
+      val requiredSa = selfAssessment.get.copy(debits = Seq.empty)
+      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(ReturnNeedsSubmitting))))
 
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer.copy(selfAssessment = Some(requiredSa)))))
 
@@ -105,9 +123,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
     }
 
+
     "redirect to 'Tax Liabilities' when no amounts have been entered for determine misalignment" in {
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
-
+      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial))))
 
@@ -147,7 +166,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq("ineligible"))))
+      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
 
       val response = controller.determineMisalignment()
         .apply(FakeRequest()
@@ -160,7 +179,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to misalignment when entered amounts and sa amounts aren't equal for determine misalignment" in {
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
-
+      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue))))))
 
@@ -306,6 +325,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to login if user not logged in" in {
+
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()))
 
       redirectLocation(response).get contains "/gg/sign-in"
@@ -313,7 +333,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to misalignment page if logged in and not logged in debits do not sum() to the same value" in {
       implicit val hc = new HeaderCarrier
-
+      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       val localTtpSubmission = ttpSubmission.copy(calculatorData =
         ttpSubmission.calculatorData.copy(debits = Seq(Debit(amount = 212.01, dueDate = LocalDate.now()))))
 
@@ -352,7 +372,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       implicit val hc = new HeaderCarrier
 
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = Seq.empty))
-
+      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer))) //121.20 debits
       when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
