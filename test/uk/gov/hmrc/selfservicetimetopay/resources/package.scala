@@ -46,7 +46,7 @@ package object resources {
   val checkEligibilityTrueResponse = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityTrueResponse.json")
   val checkEligibilityFalseRequest = validateAndReturn[EligibilityRequest]("test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseRequest.json")
   val checkEligibilityFalseResponse = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponse.json")
-
+  val checkEligibilityFalseResponseNotSubmitted = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/CheckEligibilityFalseResponseNotSubmmited.json")
   def validateAndReturn[T](filename: String)(implicit rds: Reads[T]): T = {
     Json.parse(Source.fromFile(filename).mkString).validate[T].fold(
       error => throw new RuntimeException(s"$error"),
@@ -88,7 +88,7 @@ package object resources {
   val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(eligibilityTypeOfTax = Some(EligibilityTypeOfTax(true, false)), eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDueOver10k)))
 
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
-  val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq("TotalDebtIsTooHigh"))
+  val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq(TotalDebtIsTooHigh))
 
   val eligibilityTypeOfTaxOk: Option[EligibilityTypeOfTax] = Some(EligibilityTypeOfTax(true, false))
   val eligibilityExistingTTPOk: Option[EligibilityExistingTTP] = Some(EligibilityExistingTTP(Some(false)))

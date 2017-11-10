@@ -24,9 +24,10 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, SelfAssessment}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, ReturnNeedsSubmitting, SelfAssessment, TotalDebtIsTooHigh}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -52,6 +53,17 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       result.eligible shouldBe true
     }
 
+    "return an illegible response for turns needs failing" in {
+      val jsonResponse = Json.fromJson[EligibilityStatus](checkEligibilityFalseResponseNotSubmitted).get
+
+      when(testConnector.http.POST[SelfAssessment, EligibilityStatus](any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future(jsonResponse))
+
+      val result = await(testConnector.checkEligibility(checkEligibilityFalseRequest))
+
+      result.eligible shouldBe false
+      result.reasons.contains(ReturnNeedsSubmitting) shouldBe true
+    }
     "return an illegible response" in {
       val jsonResponse = Json.fromJson[EligibilityStatus](checkEligibilityFalseResponse).get
 
@@ -61,7 +73,7 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       val result = await(testConnector.checkEligibility(checkEligibilityFalseRequest))
 
       result.eligible shouldBe false
-      result.reasons.contains("TotalDebtIsTooHigh") shouldBe true
+      result.reasons.contains(TotalDebtIsTooHigh) shouldBe true
     }
   }
 }
