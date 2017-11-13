@@ -16,21 +16,45 @@
 
 package uk.gov.hmrc.selfservicetimetopay.testonly
 
+import play.api.http.Status
+import play.api.libs.json.JsValue
+
 import scala.util.Random
 
 case class TestUser(
-  utr: Utr = Utr.random(),
-  hasSAEnrolment: Boolean = true,
-  authorityId: AuthorityId = AuthorityId.random,
-  affinityGroup: AffinityGroup = AffinityGroup.Individual,
-  confidenceLevel: Int = 200
+  utr: Utr,
+  hasSAEnrolment: Boolean,
+  authorityId: AuthorityId,
+  affinityGroup: AffinityGroup = AffinityGroup.individual,
+  confidenceLevel: Int,
+  returns: JsValue,
+  returnsResponseStatusCode: Int,
+  debits: JsValue,
+  debitsResponseStatusCode: Int
 )
 
+object TestUser {
+
+  def exemplary() = TestUser(
+    utr = Utr.random(),
+    hasSAEnrolment = true,
+    authorityId = AuthorityId.random,
+    affinityGroup = AffinityGroup.individual,
+    confidenceLevel = 200,
+    returns = TestUserReturns.sample1,
+    returnsResponseStatusCode = Status.OK,
+    debits = TestUserDebits.sample1,
+    debitsResponseStatusCode = Status.OK
+  )
+
+}
 case class AffinityGroup(v: String)
 
 
 object AffinityGroup {
-  val Individual = AffinityGroup("Individual")
+  val individual = AffinityGroup("Individual")
+  val organisation = AffinityGroup("Organisation")
+  val agent = AffinityGroup("Agent")
 }
 
 /**

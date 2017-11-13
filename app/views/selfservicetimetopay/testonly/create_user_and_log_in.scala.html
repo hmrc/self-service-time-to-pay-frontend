@@ -1,0 +1,122 @@
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import views.html.selfservicetimetopay.helpers.forms._
+@import uk.gov.hmrc.selfservicetimetopay.testonly.{routes => testonlyroutes}
+@import uk.gov.hmrc.selfservicetimetopay.testonly._
+@import play.api.libs.json.Json
+
+@(dataForm: Form[TestUserForm])(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+
+@selfservicetimetopay.main(
+    title = "User's related and session data"
+) {
+
+    <header>
+        <h1>Define your test user</h1>
+        <p>This is `test-only` endpoint for testing purposes.</p>
+    </header>
+
+    @form(testonlyroutes.TestUsersController.logIn(), 'class -> "group") {
+        @formErrorSummary("Fix errors", dataForm, Seq.empty)
+
+        @button('type -> "submit") {
+            create user and log in
+        }
+
+        <div class="grid-layout__column grid-layout__column--1-2 ssttp-grid-layout-payment-today">
+            <p>
+                <h2>CredId</h2>
+                <span class="flush--ends form-field--hint">This is known as well as <em>AuthoriyId</em>. Put here any random string or leave empty for random value.</span>
+                @textinput(field = dataForm("authority-id"),
+                    'label -> "authority-id",
+                    '_maxlength -> "10",
+                    '_inputClass -> "input--cleared"
+                )
+            </p>
+
+            <p>
+                <h2>Affinity Group</h2>
+                <span class="flush--ends form-field--hint"></span>
+                @radiobuttonsinline(dataForm("affinity-group"), Seq(
+                    "Individual" -> "Individual",
+                    "Organisation" -> "Organisation",
+                    "Agent" -> "Agent"
+                ),false,
+                    '_label -> Html("label"),
+                    '_modifierClass -> "multiple-choice inline",
+                    '_groupClass -> "form-field",
+                    '_labelClass -> "block-label block-label--inline"
+                ) {
+                }
+
+            </p>
+
+            <p>
+                <h2>Does the user have SA enrolment</h2>
+                <span class="flush--ends form-field--hint">If <em>No</em> then below setup will be ignored</span>
+
+                @radiobuttonsinline(dataForm("has-sa-enrolment"), Seq(
+                    "true" -> "Yes",
+                    "false" -> "No"
+                ),true,
+                    '_label -> Html("label"),
+                    '_modifierClass -> "multiple-choice inline",
+                    '_groupClass -> "form-field",
+                    '_labelClass -> "block-label block-label--inline"
+                ) {
+                }
+            </p>
+
+            <p>
+                <h2>UTR</h2>
+                <span class="flush--ends form-field--hint">10 digits or leave blank for random UTR</span>
+                @textinput(field = dataForm("utr"),
+                    'label -> "UTR",
+                    '_maxlength -> "10",
+                    '_inputClass -> "input--cleared"
+                )
+            </p>
+
+            <p>
+                <h2>Returns</h2>
+                <span class="flush--ends form-field--hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/returns</em>. Read <a href="https://confluence.tools.tax.service.gov.uk/display/SSTTP/DES+API+Tracker">DES API Tracker </a> for more details.</span>
+                @textinput(field = dataForm("returns-status-code"),
+                    'label -> "returns http status code",
+                    '_maxlength -> "3",
+                    '_inputClass -> "input--cleared"
+                )
+                <label for="returns-response-body">returns json response</label>
+                <textarea
+                        class="@{if(dataForm("returns-response-body") hasErrors) "error-field form-field--error" else ""}"
+                        rows="20"
+                        style="width: 100%; height: auto"
+                        name="returns-response-body"
+                id=returns-response-body>@dataForm("returns-response-body").value.getOrElse("")</textarea>
+            </p>
+            <p>
+                <h2>Debits</h2>
+                <span class="flush--ends form-field--hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/debits</em>. Read <a href="https://confluence.tools.tax.service.gov.uk/display/SSTTP/DES+API+Tracker">DES API Tracker </a> for more details.</span>
+                @textinput(field = dataForm("debits-status-code"),
+                    'label -> "debits http status code",
+                    '_maxlength -> "3",
+                    '_inputClass -> "input--cleared"
+                )
+                <label for="debits-response-body">debits json response</label>
+                <textarea
+                        class="@{if(dataForm("debits-response-body") hasErrors) "error-field form-field--error" else ""}"
+                        rows="20"
+                        style="width: 100%; height: auto"
+                        name="debits-response-body"
+                id=debits-response-body>@dataForm("debits-response-body").value.getOrElse("")</textarea>
+            </p>
+
+            @button('type -> "submit") {
+                create user and log in
+            }
+        </div>
+
+    }
+
+
+}
+
