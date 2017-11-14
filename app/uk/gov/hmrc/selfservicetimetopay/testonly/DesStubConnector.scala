@@ -66,16 +66,7 @@ class DesStubConnector extends ServicesConfig {
       }
   }
 
-  private lazy val baseUrl: String = baseUrl("des-stub")
-
-  private def buildReturs(tu: TestUser): JsObject = {
-    val title = nextTitle()
-    val forname = nextForname()
-    val surname = nextSurname()
-    val email = s"$title.$forname.$surname@$surname$surname.com"
-
-    ???
-  }
+  private lazy val baseUrl: String = baseUrl("des-services")
 
   private def nextTitle(): String = choose("Mr", "Miss", "Mrs", "Ms")
 
