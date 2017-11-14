@@ -46,7 +46,7 @@ class SaStubConnector extends ServicesConfig {
       }
   }
 
-  private lazy val baseUrl: String = baseUrl("sa-stub")
+  private lazy val baseUrl: String = baseUrl("sa-services")
   private def buildTaxpayer(): JsObject = {
     val title = nextTitle()
     val forname = nextForname()
