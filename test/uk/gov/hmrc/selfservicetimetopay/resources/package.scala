@@ -54,7 +54,7 @@ package object resources {
     )
   }
 
-  val debit: Debit = Debit(Some("originCode"), BigDecimal(121.2), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now()))
+  val debit: Debit = Debit(Some("originCode"), BigDecimal(121.2), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now().minusYears(1)))
   val selfAssessment: Option[SelfAssessment] = Some(SelfAssessment(Some("utr"), None, List(debit), None))
   val taxPayer: Taxpayer = Taxpayer(Some("Bob"), List(), selfAssessment)
   val calculatorPaymentScheduleInstalment = CalculatorPaymentScheduleInstalment(LocalDate.now(), BigDecimal(1234.22))
