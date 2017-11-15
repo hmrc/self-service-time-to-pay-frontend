@@ -16,20 +16,25 @@
 
 package uk.gov.hmrc.selfservicetimetopay.config
 
+import akka.stream.Materializer
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
-import play.api.mvc.{EssentialFilter, Request}
+import play.api.mvc._
 import play.api.{Application, Configuration, Play}
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.filters.FrontendAuditFilter
 import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode}
-import uk.gov.hmrc.play.filters.NoCacheFilter
+import uk.gov.hmrc.play.filters.{CacheControlFilter, MicroserviceFilterSupport, NoCacheFilter, RecoveryFilter}
 import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
 import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
-
-import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
 import play.api.i18n._
+import uk.gov.hmrc.play.filters.frontend.SessionTimeoutFilter
+import uk.gov.hmrc.selfservicetimetopay.testonly.routes
+
+import scala.concurrent.Future
+
+
 
 object FrontendGlobal extends DefaultFrontendGlobal with MicroserviceFilterSupport with I18nSupport {
 
@@ -40,7 +45,15 @@ object FrontendGlobal extends DefaultFrontendGlobal with MicroserviceFilterSuppo
   override val frontendAuditFilter = AuditFilter
 
   override def frontendFilters: Seq[EssentialFilter] = {
-    defaultFrontendFilters ++ Seq(NoCacheFilter)
+
+    //We want to replace SessionTimeoutFilter with SessionTimeoutFilterWrapper
+    //which omits application of this filter for 'TestUsersController.logIn()' functionality.
+    val t = defaultFrontendFilters.map {
+      case s: SessionTimeoutFilter => new SessionTimeoutFilterWrapper(s)
+      case x => x
+    }
+
+    t ++ Seq(NoCacheFilter)
   }
 
   override def onStart(app: Application) {
@@ -76,4 +89,17 @@ object AuditFilter extends FrontendAuditFilter with RunMode with AppName with Mi
 
   override def controllerNeedsAuditing(controllerName: String): Boolean =
     ControllerConfiguration.paramsForController(controllerName).needsAuditing
+}
+
+/**
+  * Special case for SessionTimeoutFilter which doesn't apply for one test-only endpoint.
+  */
+class SessionTimeoutFilterWrapper(sessionTimeoutFilter: SessionTimeoutFilter) extends Filter {
+  override implicit def mat: Materializer = sessionTimeoutFilter.mat
+  override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] =
+    if (isSpecialRequest(rh)) f(rh) else sessionTimeoutFilter(f)(rh)
+
+  private def isSpecialRequest(rh: RequestHeader) =
+    rh.method == routes.TestUsersController.logIn().method &&
+      rh.path == routes.TestUsersController.logIn().path()
 }

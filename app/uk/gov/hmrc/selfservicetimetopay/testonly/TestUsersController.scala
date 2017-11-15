@@ -115,12 +115,20 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
     val setReturnsF = desStubConnector.setReturns(tu)
     val setDebitsF = desStubConnector.setDebits(tu)
 
-    for {
+    val result = for {
       session <- sessionF
       _ <- setTaxpayerResponseF
       _ <- setReturnsF
       _ <- setDebitsF
-    } yield redirectToSessionView.withSession(session)
+      r = redirectToSessionView.withSession(session.+("dupa" -> "blada"))
+    } yield {
+
+
+      r
+
+    }
+
+    result
 
   }
 
