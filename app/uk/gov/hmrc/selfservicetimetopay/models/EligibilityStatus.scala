@@ -21,6 +21,7 @@ case object NoDebt extends Reason("NoDebt")
 case object DebtIsInsignificant extends Reason("DebtIsInsignificant")
 case object OldDebtIsTooHigh extends Reason("OldDebtIsTooHigh")
 case object TotalDebtIsTooHigh extends Reason("TotalDebtIsTooHigh")
+case object TTPIsLessThenTwoMonths extends Reason("TTPIsLessThenTwoMonths")
 case object ReturnNeedsSubmitting extends Reason("ReturnNeedsSubmitting")
 
 case class EligibilityStatus(eligible: Boolean, reasons: Seq[Reason])

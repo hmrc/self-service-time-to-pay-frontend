@@ -20,7 +20,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject._
-
+import uk.gov.hmrc.selfservicetimetopay.models.TTPIsLessThenTwoMonths
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
@@ -188,7 +188,9 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
             Future.successful(Ok(calculate_instalments_form(schedule, Some(sa.debits),
               CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, setMonthOptions(Some(sa)), isSignedIn)))
           }else {
-            Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
+            //todo perhaps move to time-to-pay-eligbility?
+            sessionCache.put(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(false,Seq(TTPIsLessThenTwoMonths))))).map{_ =>
+            Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())}
           }
 
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
