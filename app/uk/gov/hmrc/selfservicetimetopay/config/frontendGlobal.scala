@@ -19,21 +19,20 @@ package uk.gov.hmrc.selfservicetimetopay.config
 import akka.stream.Materializer
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
+import play.api.i18n._
 import play.api.mvc._
 import play.api.{Application, Configuration, Play}
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.filters.FrontendAuditFilter
 import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode}
-import uk.gov.hmrc.play.filters.{CacheControlFilter, MicroserviceFilterSupport, NoCacheFilter, RecoveryFilter}
+import uk.gov.hmrc.play.filters.frontend.SessionTimeoutFilter
+import uk.gov.hmrc.play.filters.{MicroserviceFilterSupport, NoCacheFilter}
 import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
 import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
-import play.api.i18n._
-import uk.gov.hmrc.play.filters.frontend.SessionTimeoutFilter
 import uk.gov.hmrc.selfservicetimetopay.testonly.routes
 
 import scala.concurrent.Future
-
 
 
 object FrontendGlobal extends DefaultFrontendGlobal with MicroserviceFilterSupport with I18nSupport {
