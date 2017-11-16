@@ -53,7 +53,6 @@ object CalculatorLogic {
     */
   //todo write test's I am too afraid to touch this !
   def createCalculatorInput(ttpSubmission: TTPSubmission, dayOfMonth: Int): Option[CalculatorInput] = {
-
     val startDate = LocalDate.now()
     val durationMonths = setMaxMonthsAllowed(ttpSubmission.taxpayer.flatMap(_.selfAssessment), startDate)
     val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
@@ -152,7 +151,6 @@ object CalculatorLogic {
 
   def validateCalculatorDates(calculatorInput: CalculatorInput, numberOfMonths: Int, debits: Seq[Debit]): CalculatorInput = {
     val firstPaymentDate = dayOfMonthCheck(LocalDate.now().plusWeeks(1))
-
     if (calculatorInput.initialPayment > 0) {
       if (debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
         calculatorInput.copy(startDate = LocalDate.now,

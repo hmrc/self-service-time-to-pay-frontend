@@ -247,7 +247,6 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     */
   def submitCalculateInstalments: Action[AnyContent] = Action.async {
     implicit request =>
-      Logger.info("\n\nI may need to add logic in here as well\n\n")
       sessionCache.get.flatMap[Result] {
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, tp, Some(_), _, cd@CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
