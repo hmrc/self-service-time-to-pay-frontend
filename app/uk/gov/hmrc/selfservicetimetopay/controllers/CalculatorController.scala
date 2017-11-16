@@ -20,18 +20,17 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject._
-import uk.gov.hmrc.selfservicetimetopay.models.TTPIsLessThenTwoMonths
+
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
-import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.models.{TTPIsLessThenTwoMonths, _}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.{setMaxMonthsAllowed, validateCalculatorDates}
 import views.html.selfservicetimetopay.calculator._
-import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.validateCalculatorDates
-import scala.collection.immutable
+
 import scala.concurrent.Future
-import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.setMaxMonthsAllowed
 
 class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi, calculatorConnector: CalculatorConnector)
   extends TimeToPayController with play.api.i18n.I18nSupport {
@@ -44,11 +43,16 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     sessionCache.get.flatMap {
       case Some(ttpData@TTPSubmission(_, _, _, None, `validTypeOfTax`, `validExistingTTP`, _, _, _, debitDate)) =>
         debitDate match {
-          case Some(_) =>
+          case Some(dd) =>
             sessionCache.put(ttpData.copy(debitDate = None)).map[Result] {
-              _ => Ok(what_you_owe_date(CalculatorForm.createDebitDateForm()))
+              _ => Ok(what_you_owe_date(CalculatorForm.createDebitDateForm().bind(Map(
+                "dueBy.dueByYear" -> dd.getYear.toString,
+                "dueBy.dueByMonth" -> dd.getMonthValue.toString,
+                "dueBy.dueByDay" -> dd.getDayOfMonth.toString
+              ))))
             }
-          case _ => Future.successful(Ok(what_you_owe_date(CalculatorForm.createDebitDateForm())))
+          case _ =>
+            Future.successful(Ok(what_you_owe_date(CalculatorForm.createDebitDateForm())))
         }
       case _ => Future.successful(redirectOnError)
     }
@@ -163,8 +167,10 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   }
 
   val minimunMonthsAllowedTTP = 2
-  private def setMonthOptions(selfAssessment: Option[SelfAssessment] = None) : Seq[Int] =
-    minimunMonthsAllowedTTP to setMaxMonthsAllowed(selfAssessment,LocalDate.now())
+
+  private def setMonthOptions(selfAssessment: Option[SelfAssessment] = None): Seq[Int] =
+    minimunMonthsAllowedTTP to setMaxMonthsAllowed(selfAssessment, LocalDate.now())
+
   /**
     * Loads the calculator page. Several checks are performed:
     * - Checks to see if the session data is out of date and updates calculations if so
@@ -184,13 +190,14 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
 
-          if(setMaxMonthsAllowed(Some(sa),LocalDate.now()) >= minimunMonthsAllowedTTP) {
+          if (setMaxMonthsAllowed(Some(sa), LocalDate.now()) >= minimunMonthsAllowedTTP) {
             Future.successful(Ok(calculate_instalments_form(schedule, Some(sa.debits),
               CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, setMonthOptions(Some(sa)), isSignedIn)))
-          }else {
+          } else {
             //todo perhaps move to time-to-pay-eligbility?
-            sessionCache.put(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(false,Seq(TTPIsLessThenTwoMonths))))).map{_ =>
-            Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())}
+            sessionCache.put(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(false, Seq(TTPIsLessThenTwoMonths))))).map { _ =>
+              Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())
+            }
           }
 
         case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
@@ -296,7 +303,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       sessionCache.get.map {
         case Some(TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
-          if (paymentToday.equals(BigDecimal(0)))Ok(payment_today_form(form, isSignedIn))
+          if (paymentToday.equals(BigDecimal(0))) Ok(payment_today_form(form, isSignedIn))
           else Ok(payment_today_form(form.fill(paymentToday), isSignedIn))
         case _ =>
           Logger.info("Missing required data for get payment today page")
