@@ -17,12 +17,14 @@
        @if(dataForm.errors.length > 1){@formErrorSummaryDates(Messages("ssttp.calculator.form.what-you-owe-date.error.summary.title"), dataForm, Seq.empty)}else{
            @formErrorSummary(Messages("ssttp.calculator.form.what-you-owe-date.error.summary.title"), dataForm, Seq.empty)
        }
+        <div class="numbersonly">
         @numbericdateinput("dueBy", dataForm, dataForm("dueBy.dueByYear"), dataForm("dueBy.dueByMonth"), dataForm("dueBy.dueByDay"),
             'dayLabel -> Messages("ssttp.calculator.form.what-you-owe-date.when_due.question.day"),
             'monthLabel -> Messages("ssttp.calculator.form.what-you-owe-date.when_due.question.month"),
             'yearLabel -> Messages("ssttp.calculator.form.what-you-owe-date.when_due.question.year"),
             '_inputGroupClass -> "gutter-left",
             '_inputClass -> "input--small input--no-spinner")
+        </div>
         <details class="trackedDetails" id="you-may-owe-more-than-one-amount">
             <summary>@Messages("ssttp.calculator.form.what-you-owe-date.summary.title")</summary>
             <p>@Messages("ssttp.calculator.form.what-you-owe-date.info.header")</p>

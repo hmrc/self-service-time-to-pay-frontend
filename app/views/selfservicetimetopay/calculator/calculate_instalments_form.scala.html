@@ -85,7 +85,9 @@ Time To Pay Payment Schedule Calculator Page
                         <ul class="list--inline ssttp-spinner-margin-calc">
                             <li>
                             @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline", 'id -> "calculatorDurationForm") {
+                                <div class ="numbersonly">
                                 @numberinput(durationForm("months"), '_hideErrors -> true, '_noLabel -> true, '_inputClass -> "input--xxsmall input--no-spinner")
+                                </div>
                             }
                             </li>
                             <li>
