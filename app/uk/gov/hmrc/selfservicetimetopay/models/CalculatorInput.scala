@@ -26,7 +26,7 @@ case class CalculatorInput(debits:Seq[Debit] = Seq.empty,
                            paymentFrequency:String = "MONTHLY")
 
 object CalculatorInput {
-  val initial = CalculatorDef(3)
+  val initial = CalculatorDef(2)
 }
 
 object CalculatorDef {

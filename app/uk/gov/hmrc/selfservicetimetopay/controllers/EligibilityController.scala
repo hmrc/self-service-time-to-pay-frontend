@@ -46,8 +46,8 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     EligibilityForm.typeOfTaxForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.html.selfservicetimetopay.eligibility.type_of_tax_form(formWithErrors))),
       validFormData => {
-        updateOrCreateInCache(found => found.copy(eligibilityTypeOfTax = Some(validFormData), durationMonths = Some(3)),
-          () => TTPSubmission(eligibilityTypeOfTax = Some(validFormData), durationMonths = Some(3))).map(_ => {
+        updateOrCreateInCache(found => found.copy(eligibilityTypeOfTax = Some(validFormData)),
+          () => TTPSubmission(eligibilityTypeOfTax = Some(validFormData))).map(_ => {
           validFormData match {
             case EligibilityTypeOfTax(true, false) => Redirect(routes.EligibilityController.getExistingTtp())
             case _ => Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())
@@ -104,8 +104,8 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     EligibilityForm.existingTtpForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.html.selfservicetimetopay.eligibility.existing_ttp(formWithErrors))),
       validFormData => {
-        updateOrCreateInCache(found => found.copy(eligibilityExistingTtp = Some(validFormData), durationMonths = Some(3)),
-          () => TTPSubmission(eligibilityExistingTtp = Some(validFormData), durationMonths = Some(3))).flatMap[Result](_ => {
+        updateOrCreateInCache(found => found.copy(eligibilityExistingTtp = Some(validFormData)),
+          () => TTPSubmission(eligibilityExistingTtp = Some(validFormData))).flatMap[Result](_ => {
           validFormData match {
             case EligibilityExistingTTP(Some(false)) =>
               authConnector.currentAuthority.map[Result] { authority =>
