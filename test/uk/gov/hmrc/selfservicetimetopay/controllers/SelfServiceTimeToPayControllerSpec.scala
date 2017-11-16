@@ -69,7 +69,7 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
 
       status(result) mustBe OK
 
-      contentAsString(result) must include(getMessages(request)("ssttp.you-need-to-file.title"))
+      contentAsString(result) must include(getMessages(request)("ssttp.you-need-to-file.check-account"))
     }
   }
 }
