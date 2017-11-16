@@ -4,23 +4,17 @@
 @selfservicetimetopay.main(
     title = Messages("ssttp.you-need-to-file.title"),
     loggedIn = signedIn
-){
-    <p><a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.you-need-to-file.back")</a></p>
+) {
     <header class="page-header text">
         <h1>@Messages("ssttp.you-need-to-file.title")</h1>
     </header>
-    <section class="section  divider--bottom">
-        @highlight('_modifierClass -> "highlight-message--light") {
-            <p>@Messages("ssttp.you-need-to-file.intro")</p>
-        }
-        <p class="subsection">@Messages("ssttp.you-need-to-file.because")</p>
-        @message_list(Some("bullets"), "ssttp.you-need-to-file.because.list.")
-        <p class="subsection"><a href="https://online.hmrc.gov.uk/">
-            @Messages("ssttp.you-need-to-file.check-account.link")</a> @Messages("ssttp.you-need-to-file.check-account")
-        </p>
-    </section>
-    <section class="section">
-        <p>@Messages("ssttp.you-need-to-file.other-tax")</p>
-        <p><strong>@Messages("ssttp.you-need-to-file.other-tax.number")</strong></p>
-    </section>
+    <div class="panel-indent">
+        <p>@Messages("ssttp.you-need-to-file.intro")</p>
+    </div>
+    <p class="subsection">@Messages("ssttp.you-need-to-file.because")</p>
+    @message_list(Some("bullets"), "ssttp.you-need-to-file.because.list.")
+    <p class="subsection"><a href="https://online.hmrc.gov.uk/">
+    @Messages("ssttp.you-need-to-file.check-account.link")</a> @Messages("ssttp.you-need-to-file.check-account")
+    </p>
+    <p>@Messages("ssttp.you-need-to-file.other-tax")</p>
 }
