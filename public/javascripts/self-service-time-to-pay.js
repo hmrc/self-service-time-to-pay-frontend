@@ -44,4 +44,24 @@ $(function() {
     $("#calculatorDurationIncrease").on("mouseup", function () {
         ga("send", "event", "calculator-duration-increase-from", $("input[name=months]").val());
     });
+    //This is used to prevent a user from entering letters
+    $(".numbersonly input").on("keypress", function () {
+        var charCode = event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+    });
+    //This is used to prevent a user from entering letters or more then two digits after a decimal
+    $(".moneyonly input").on("keypress", function () {
+        var character = String.fromCharCode(event.keyCode)
+        var newValue = this.value + character;
+        if (isNaN(newValue) || hasDecimalPlace(newValue, 3)) {
+            event.preventDefault();
+            return false;
+        }
+    });
+
+    function hasDecimalPlace(value, x) {
+        var pointIndex = value.indexOf('.');
+        return  pointIndex >= 0 && pointIndex < value.length - x;
+    };
 });
