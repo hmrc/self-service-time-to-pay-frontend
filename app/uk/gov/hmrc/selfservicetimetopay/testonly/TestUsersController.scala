@@ -120,16 +120,8 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
       _ <- setTaxpayerResponseF
       _ <- setReturnsF
       _ <- setDebitsF
-      r = redirectToSessionView.withSession(session.+("dupa" -> "blada"))
-    } yield {
-
-
-      r
-
-    }
-
+    } yield redirectToSessionView.withSession(session)
     result
-
   }
 
 

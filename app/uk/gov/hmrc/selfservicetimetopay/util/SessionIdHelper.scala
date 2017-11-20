@@ -45,8 +45,8 @@ object CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Reque
   protected lazy val redirectToStartPage = Results.Redirect(routes.SelfServiceTimeToPayController.start())
 
   def filter[A](request: Request[A]): Future[Option[Result]] = {
-      val response = request.maybeTTPSessionId.fold (
-        Some(redirectToStartPage.withSession(TTPSession.newTTPSession()))
+      val response: Option[Result] = request.maybeTTPSessionId.fold[Option[Result]] (
+        Some(redirectToStartPage.withSession(request.session + TTPSession.newTTPSession()))
       ) (_ => None)
 
     Future.successful(response)
