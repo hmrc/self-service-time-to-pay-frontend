@@ -25,6 +25,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
+import play.api.mvc.Request
 import play.api.test.Helpers._
 import play.api.test._
 import uk.gov.hmrc.http.cache.client.CacheMap
@@ -419,6 +420,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(requiredSubmission)))
       val request = FakeRequest()
         .withCookies(sessionProvider.createTtpCookie())
+        .withSession("asdf" -> "asdf")
       val result = controller.getAmountOwed().apply(request)
 
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-amount.title1"))

@@ -26,6 +26,7 @@ import uk.gov.hmrc.selfservicetimetopay.controllers._
 
 import scala.util.control.NonFatal
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSession
 
 class InspectorController @Inject()(val messagesApi: play.api.i18n.MessagesApi, ddConnector: DirectDebitConnector,
                                    calculatorConnector: CalculatorConnector,
@@ -39,9 +40,9 @@ extends TimeToPayController with play.api.i18n.I18nSupport with ServicesConfig {
     redirectToInspectorView.withSession()
   }
 
-  def clearTtpSessionIdCookie() = Action { implicit request =>
-    redirectToInspectorView.withCookies(
-      sessionProvider.createTtpCookie()
+  def clearTtpSession() = Action { implicit request =>
+    redirectToInspectorView.withSession(
+      request.session - TTPSession.ttpSessionId
     )
   }
 
