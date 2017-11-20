@@ -29,7 +29,6 @@ import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.util.SessionProvider
 
 import scala.concurrent.Future
 import scala.io.Source
@@ -198,8 +197,6 @@ package object resources {
 
   val authorisedUser = Authority("", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None, "")
   val authorisedUserNoSA = Authority("", Accounts(), None, None, Strong, L200, None, None, None, "")
-
-  val sessionProvider = new SessionProvider() {}
 
   val loggedInUser = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L300, "")
   val loggedInUserUnderConfidenceThreshold = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L50, "")

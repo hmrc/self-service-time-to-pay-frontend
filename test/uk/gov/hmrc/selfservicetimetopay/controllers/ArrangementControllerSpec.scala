@@ -31,12 +31,11 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.GovernmentGateway
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse, SessionKeys}
-import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.controllers
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import uk.gov.hmrc.selfservicetimetopay.util.SessionProvider
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSession
 
 import scala.concurrent.Future
 
@@ -50,7 +49,6 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
   val calculatorConnector: CalculatorConnector = mock[CalculatorConnector]
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
-  val mockSessionProvider: SessionProvider = mock[SessionProvider]
   val mockCacheMap: CacheMap = mock[CacheMap]
 
   val controller = new ArrangementController(messagesApi, ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector, mockEligibilityConnector) {
@@ -66,7 +64,6 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       arrangementConnector,
       taxPayerConnector,
       calculatorConnector,
-      mockSessionProvider,
       mockEligibilityConnector)
   }
 
@@ -79,10 +76,13 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val response = controller.determineMisalignment()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.determineMisalignment().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
+
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.start().url
@@ -97,10 +97,13 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
-      val response = controller.determineMisalignment()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.determineMisalignment().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
+
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
@@ -116,8 +119,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       val response = controller.determineMisalignment()
         .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId"))
+          .withSession(
+            SessionKeys.userId -> "someUserId",
+            TTPSession.newTTPSession()
+          )
+        )
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
@@ -132,10 +138,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val response = controller.determineMisalignment()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.determineMisalignment().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.CalculatorController.getTaxLiabilities().url
@@ -150,10 +158,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
 
-      val response = controller.determineMisalignment()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.determineMisalignment().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.ArrangementController.getInstalmentSummary().url
@@ -168,10 +178,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
 
-      val response = controller.determineMisalignment()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.determineMisalignment().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
@@ -185,10 +197,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val response = controller.determineMisalignment()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.determineMisalignment().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.CalculatorController.getMisalignmentPage().url
@@ -200,10 +214,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
-      val response = controller.determineMisalignment()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.determineMisalignment().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
@@ -219,9 +235,13 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
+
       val request = FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())
-        .withSession(SessionKeys.userId -> "someUserId")
+      .withSession(
+        SessionKeys.userId -> "someUserId",
+        TTPSession.newTTPSession()
+      )
+
 
       val response = controller.getInstalmentSummary().apply(request)
 
@@ -237,10 +257,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
-      val response = controller.getInstalmentSummary()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.getInstalmentSummary().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.start().url
@@ -255,9 +277,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       when(mockSessionCache.remove()(any())).thenReturn(Future.successful(mock[HttpResponse]))
 
-      val request = FakeRequest()
-        .withCookies(sessionProvider.createTtpCookie())
-        .withSession(SessionKeys.userId -> "someUserId")
+      val request = FakeRequest().withSession(
+        SessionKeys.userId -> "someUserId",
+        TTPSession.newTTPSession()
+      )
+
 
       val response = controller.applicationComplete().apply(request)
 
@@ -269,10 +293,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val response = controller.applicationComplete()
-        .apply(FakeRequest()
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.applicationComplete().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
 
       status(response) mustBe SEE_OTHER
       controllers.routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(response).get)
@@ -289,8 +315,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       when(arrangementConnector.submitArrangements(any())(any())).thenReturn(Future.successful(Left(SubmissionError(GATEWAY_TIMEOUT, "Timeout"))))
 
-      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit")
-        .withCookies(sessionProvider.createTtpCookie()).withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
 
       controllers.routes.ArrangementController.applicationComplete().url must endWith(redirectLocation(response).get)
     }
@@ -299,10 +328,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any()))
         .thenReturn(Future.successful(None))
 
-      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit")
-        .withCookies(sessionProvider.createTtpCookie())
-        .withSession(SessionKeys.userId -> "someUserId"))
-
+      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(
+        SessionKeys.userId -> "someUserId",
+        TTPSession.newTTPSession()
+      )
+      )
       controllers.routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(response).get)
     }
 
@@ -316,17 +346,22 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
       val response = controller.changeSchedulePaymentDay()
-        .apply(FakeRequest("POST", "/arrangement/instalment-summary/change-day")
-          .withCookies(sessionProvider.createTtpCookie())
-          .withSession(SessionKeys.userId -> "someUserId")
-          .withFormUrlEncodedBody(validDayForm: _*))
+        .apply(FakeRequest("POST", "/arrangement/instalment-summary/change-day").withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+        .withFormUrlEncodedBody(validDayForm: _*))
 
       controllers.routes.ArrangementController.getInstalmentSummary().url must endWith(redirectLocation(response).get)
     }
 
     "redirect to login if user not logged in" in {
 
-      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withCookies(sessionProvider.createTtpCookie()))
+      val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(
+          TTPSession.newTTPSession()
+        )
+      )
+
 
       redirectLocation(response).get contains "/gg/sign-in"
     }
@@ -343,8 +378,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
-        .withCookies(sessionProvider.createTtpCookie())
-        .withSession(SessionKeys.userId -> "someUserId"))
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+       )
 
       controllers.routes.CalculatorController.getMisalignmentPage().url must endWith(redirectLocation(response).get)
     }
@@ -361,9 +399,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
-      val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
-        .withCookies(sessionProvider.createTtpCookie())
-        .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment").withSession(
+        SessionKeys.userId -> "someUserId",
+        TTPSession.newTTPSession()
+      ))
 
       controllers.routes.ArrangementController.getInstalmentSummary().url must endWith(redirectLocation(response).get)
     }
@@ -378,9 +417,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
 
-      val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
-        .withCookies(sessionProvider.createTtpCookie())
-        .withSession(SessionKeys.userId -> "someUserId"))
+      val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment").withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSession.newTTPSession()
+        )
+      )
+
 
       controllers.routes.CalculatorController.getTaxLiabilities().url must endWith(redirectLocation(response).get)
     }
@@ -388,36 +430,14 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
   "ttpSessionId" must {
     val controller = new TimeToPayController() {
-      override val sessionProvider: SessionProvider = mockSessionProvider
-
       def go() = Action { Ok("") }
     }
 
     "be set within the session cookie when the user first hits a page" in {
-      when(mockSessionProvider.createTtpCookie()).thenReturn(Cookie(name = ttpSessionId, value = "12345"))
-      status(controller.go()(FakeRequest())) mustBe SEE_OTHER
-      verify(mockSessionProvider, times(1)).createTtpCookie()
+      val eventualResult = controller.go()(FakeRequest())
+      status(eventualResult) mustBe SEE_OTHER
+      session(eventualResult).get(TTPSession.ttpSessionId).isDefined mustBe true
     }
 
-    "be set within the session cookie every time a user hits a page without it being sent in the session" in {
-      when(mockSessionProvider.createTtpCookie()).thenReturn(Cookie(name = ttpSessionId, value = "12345"))
-      status(controller.go()(FakeRequest())) mustBe SEE_OTHER
-      status(controller.go()(FakeRequest())) mustBe SEE_OTHER
-      status(controller.go()(FakeRequest().withSession("sessionId" -> "22222"))) mustBe SEE_OTHER
-      status(controller.go()(FakeRequest().withSession())) mustBe SEE_OTHER
-      verify(mockSessionProvider, times(4)).createTtpCookie()
-    }
-
-    "be maintained across multiple not logged in requests" in {
-      when(mockSessionProvider.createTtpCookie()).thenReturn(Cookie(name = ttpSessionId, value = "12345"))
-      status(controller.go()(FakeRequest())) mustBe SEE_OTHER
-      status(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345")))) mustBe OK
-      status(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345")))) mustBe OK
-      status(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345")))) mustBe OK
-      status(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "12345")))) mustBe OK
-
-      status(controller.go()(FakeRequest().withCookies(Cookie(name = ttpSessionId, value = "123456")))) mustBe OK
-      verify(mockSessionProvider, times(1)).createTtpCookie()
-    }
   }
 }

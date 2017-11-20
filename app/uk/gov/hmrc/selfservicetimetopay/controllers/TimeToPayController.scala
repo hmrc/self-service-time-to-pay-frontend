@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import play.api.mvc.{ActionBuilder, AnyContent, Request, Result, Action => PlayAction}
+import play.api.mvc.{ActionBuilder, AnyContent, Request, Result, Results, Action => PlayAction}
 import play.api.{Logger, Play}
 import uk.gov.hmrc.play.frontend.auth._
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
@@ -28,7 +28,7 @@ import uk.gov.hmrc.selfservicetimetopay.config._
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector}
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.util.{CheckSessionAction}
+import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 
 import scala.concurrent.Future
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSession._
@@ -48,7 +48,7 @@ trait TimeToPayController extends FrontendController with Actions {
   protected val validExistingTTP = Some(EligibilityExistingTTP(Some(false)))
 
   protected def redirectOnError: Result = Redirect(routes.SelfServiceTimeToPayController.start())
-
+  protected lazy val redirectToStartPage = Results.Redirect(routes.SelfServiceTimeToPayController.start())
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200,
     Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
 
