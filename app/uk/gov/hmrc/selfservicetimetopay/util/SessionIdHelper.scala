@@ -19,27 +19,36 @@ package uk.gov.hmrc.selfservicetimetopay.util
 import java.util.UUID
 
 import play.api.mvc._
-import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSession._
 
 import scala.concurrent.Future
 
-trait SessionProvider {
-  def createTtpCookie() = Cookie(name = ttpSessionId, value = s"ttp-session-${UUID.randomUUID}")
+case class TTPSession(v: String)
+
+object TTPSession {
+  lazy val ttpSessionId: String = "ttpSessionId"
+  def newTTPSession(): (String, String) = ttpSessionId -> s"ttp-session-${UUID.randomUUID}"
+
+  implicit class GetTTPSessionOps[A](request: Request[A]) {
+    def maybeTTPSessionId: Option[TTPSession] = request.session.get(ttpSessionId).map(TTPSession.apply)
+
+    def getTTPSessionId: TTPSession = maybeTTPSessionId.getOrElse(
+      throw new RuntimeException(s"Expected $ttpSessionId to be in the play session")
+    )
+  }
 }
 
-trait CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Request] {
-  val sessionProvider: SessionProvider
+
+object CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Request] {
 
   protected lazy val redirectToStartPage = Results.Redirect(routes.SelfServiceTimeToPayController.start())
 
   def filter[A](request: Request[A]): Future[Option[Result]] = {
-    Future.successful(
-      request.cookies.find(_.name == ttpSessionId).fold[Option[Result]](
-        Some(redirectToStartPage.withCookies(sessionProvider.createTtpCookie()))
-      ) {
-        _ => None
-      }
-    )
+      val response = request.maybeTTPSessionId.fold (
+        Some(redirectToStartPage.withSession(TTPSession.newTTPSession()))
+      ) (_ => None)
+
+    Future.successful(response)
   }
 }

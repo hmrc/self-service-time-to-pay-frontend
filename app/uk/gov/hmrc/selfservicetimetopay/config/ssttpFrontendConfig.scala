@@ -53,7 +53,7 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
   lazy val loginCallbackPath = getConfString("auth.login-callback.path", "")
   lazy val loginCallBackFullPath = s"$loginCallbackBaseUrl$loginCallbackPath"
   lazy val logoutUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath"
-  lazy val ttpSessionId = "ttpSessionId"
+
 
   // GA enhanced e-commerce custom vars
   lazy val initialPaymentMetric = getConfString("google-analytics.initialPaymentMetric", "metric7")

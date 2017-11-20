@@ -24,22 +24,22 @@ import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.auth.{SaGovernmentGateway, SaRegime}
-import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.config._
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector}
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.util.{CheckSessionAction, SessionProvider}
+import uk.gov.hmrc.selfservicetimetopay.util.{CheckSessionAction}
 
 import scala.concurrent.Future
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSession._
 
-trait TimeToPayController extends FrontendController with Actions with CheckSessionAction {
-  checkSessionAction: CheckSessionAction =>
 
-  override val sessionProvider: SessionProvider = new SessionProvider() {}
+
+trait TimeToPayController extends FrontendController with Actions {
+
   override lazy val authConnector: AuthConnector = FrontendAuthConnector
   implicit lazy val sessionCache: KeystoreConnector = Play.current.injector.instanceOf[KeystoreConnector]
-  protected lazy val Action: ActionBuilder[Request] = checkSessionAction andThen PlayAction
+  protected lazy val Action: ActionBuilder[Request] = CheckSessionAction andThen PlayAction
   protected type AsyncPlayUserRequest = AuthContext => Request[AnyContent] => Future[Result]
   protected lazy val authenticationProvider: GovernmentGateway = SaGovernmentGateway
   protected lazy val saRegime = SaRegime(authenticationProvider)
@@ -68,10 +68,11 @@ trait TimeToPayController extends FrontendController with Actions with CheckSess
   }
 
   override implicit def hc(implicit request: Request[_]): HeaderCarrier = {
-    request.cookies.find(_.name == ttpSessionId).fold(super.hc(request)) { id =>
-      super.hc(request).withExtraHeaders(ttpSessionId -> id.value)
+    request.maybeTTPSessionId.fold(super.hc(request)) { ttpSession =>
+      super.hc(request).withExtraHeaders(ttpSessionId -> ttpSession.v)
     }
   }
+
   //I noticed a lot of dublication in the code where the log to see if someone was signed in was to see if the tax payer was defined
    def isSignedIn(implicit hc:HeaderCarrier): Boolean = hc.authorization.isDefined
 
