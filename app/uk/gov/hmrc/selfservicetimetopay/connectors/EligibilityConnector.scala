@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpPost}
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityRequest, EligibilityStatus, SelfAssessment}
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import com.google.inject._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpPost}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import com.google.inject._
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityRequest, EligibilityStatus}
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @ImplementedBy(classOf[EligibilityConnectorImpl])
 trait EligibilityConnector {
@@ -32,11 +32,10 @@ trait EligibilityConnector {
   val serviceURL: String
   val http: HttpPost
 
-  def checkEligibility(eligibilityRequest: EligibilityRequest)(implicit hc: HeaderCarrier): Future[EligibilityStatus] = {
+  def checkEligibility(eligibilityRequest: EligibilityRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EligibilityStatus] = {
     http.POST[EligibilityRequest, EligibilityStatus](s"$eligibilityURL/$serviceURL", eligibilityRequest)
   }
 }
-
 @Singleton
 class EligibilityConnectorImpl extends EligibilityConnector with ServicesConfig {
   val eligibilityURL: String = baseUrl("time-to-pay-eligibility")

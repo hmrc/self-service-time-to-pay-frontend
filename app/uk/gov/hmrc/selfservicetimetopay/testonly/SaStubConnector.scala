@@ -20,7 +20,7 @@ import com.google.inject.Singleton
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 
 import scala.concurrent.{ExecutionContext, Future}
