@@ -21,7 +21,7 @@ import javax.inject.Inject
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action => PlayAction}
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, DirectDebitConnector, EligibilityConnector, TaxPayerConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._

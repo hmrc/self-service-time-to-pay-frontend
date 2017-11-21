@@ -19,13 +19,15 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 import com.google.inject._
 import play.api.libs.json.{Reads, Writes}
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
-import uk.gov.hmrc.play.config.{AppName, ServicesConfig}
-import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.play.http.logging.SessionId
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector}
+import uk.gov.hmrc.http.logging.SessionId
+import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
 import uk.gov.hmrc.selfservicetimetopay.models._
-import uk.gov.hmrc.selfservicetimetopay.util.TTPSession._
+import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
+import uk.gov.hmrc.play.config.ServicesConfig
+import com.google.inject._
+import uk.gov.hmrc.http._
+import uk.gov.hmrc.play.config.AppName
+import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 
 import scala.concurrent.Future
 

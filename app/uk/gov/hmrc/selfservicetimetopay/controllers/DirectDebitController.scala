@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.data.{Form, FormError}
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.models._

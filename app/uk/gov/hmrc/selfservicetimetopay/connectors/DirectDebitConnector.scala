@@ -20,14 +20,14 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.http._
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import com.google.inject._
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import scala.concurrent.{ExecutionContext, Future}
 
 @ImplementedBy(classOf[DirectDebitConnectorImpl])
@@ -62,12 +62,12 @@ trait DirectDebitConnector {
   /**
     * Checks if the given bank details are valid by checking against the Bank Account Reputation Service via Direct Debit service
     */
-  def getBank(sortCode: String, accountNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BankDetails]] = {
+  def getBank(sortCode: String, accountNumber: String)(implicit hc: HeaderCarrier): Future[Option[BankDetails]] = {
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
     http.GET[HttpResponse](s"$directDebitURL/$serviceURL/bank?$queryString").map {
       response => Some(response.json.as[BankDetails])
     }.recover {
-      case e: uk.gov.hmrc.play.http.NotFoundException => None
+      case e: uk.gov.hmrc.http.NotFoundException => None
       case e: Exception => Logger.error(e.getMessage)
         throw new RuntimeException("Direct debit returned unexpected response")
     }
@@ -76,10 +76,10 @@ trait DirectDebitConnector {
   /**
     * Retrieves stored bank details associated with a given saUtr
     */
-  def getBanks(saUtr: SaUtr)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DirectDebitBank] = {
+  def getBanks(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitBank] = {
     http.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response => response }
       .recover {
-        case e: uk.gov.hmrc.play.http.NotFoundException if e.message.contains("BP not found") => DirectDebitBank.none
+        case e: uk.gov.hmrc.http.NotFoundException if e.message.contains("BP not found") => DirectDebitBank.none
         case e: Exception => Logger.error(e.getMessage)
           throw new RuntimeException("GETBANKS threw unexpected error")
       }

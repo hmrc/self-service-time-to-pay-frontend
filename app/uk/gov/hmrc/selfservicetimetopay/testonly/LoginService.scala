@@ -23,7 +23,7 @@ import org.joda.time.DateTime
 import play.api.http.HeaderNames
 import play.api.mvc.Session
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import play.api.libs.json.{Json, _}
 

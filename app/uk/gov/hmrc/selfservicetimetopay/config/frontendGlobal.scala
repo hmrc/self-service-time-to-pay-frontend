@@ -24,12 +24,9 @@ import play.api.mvc._
 import play.api.{Application, Configuration, Play}
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.ApplicationCrypto
-import uk.gov.hmrc.play.audit.filters.FrontendAuditFilter
 import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode}
-import uk.gov.hmrc.play.filters.frontend.SessionTimeoutFilter
-import uk.gov.hmrc.play.filters.{MicroserviceFilterSupport, NoCacheFilter}
 import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
-import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
+import uk.gov.hmrc.play.frontend.filters._
 import uk.gov.hmrc.selfservicetimetopay.testonly.routes
 
 import scala.concurrent.Future

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import play.api.Logger
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
 import uk.gov.hmrc.selfservicetimetopay.models.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import com.google.inject._
@@ -36,7 +36,7 @@ trait TaxPayerConnector {
     http.GET[HttpResponse](s"$taxPayerURL/$serviceURL/$utr").map {
       response => Some(response.json.as[Taxpayer])
     }.recover {
-      case e: uk.gov.hmrc.play.http.NotFoundException => Logger.error("Taxpayer not found")
+      case e: uk.gov.hmrc.http.NotFoundException => Logger.error("Taxpayer not found")
         None
       case e: Exception => Logger.error(e.getMessage)
         throw new RuntimeException(e.getMessage)

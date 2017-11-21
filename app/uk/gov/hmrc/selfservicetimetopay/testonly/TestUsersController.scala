@@ -25,7 +25,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.controllers.TimeToPayController
-import views.html.selfservicetimetopay.testonly._
+import views.html.selfservicetimetopay.testonly.create_user_and_log_in
 
 import scala.concurrent.Future
 import scala.util.Try
