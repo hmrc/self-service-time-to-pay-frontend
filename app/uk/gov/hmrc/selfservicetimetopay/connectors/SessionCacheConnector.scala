@@ -36,7 +36,7 @@ import scala.concurrent.Future
 trait SessionCacheConnector extends SessionCache with ServicesConfig {
   val sessionKey: String
 
-  def ttpSessionCarrier()(implicit hc:HeaderCarrier) = hc.copy(sessionId = hc.extraHeaders.toMap.get(ttpSessionId).map(SessionId))
+  def ttpSessionCarrier()(implicit hc:HeaderCarrier): HeaderCarrier = hc.copy(sessionId = hc.extraHeaders.toMap.get(ttpSessionId).map(SessionId))
 
   def put(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], hc: HeaderCarrier): Future[CacheMap] = {
     cache[TTPSubmission](sessionKey, body)(writes, ttpSessionCarrier)

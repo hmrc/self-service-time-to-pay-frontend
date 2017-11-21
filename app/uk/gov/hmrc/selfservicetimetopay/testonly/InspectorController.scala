@@ -19,14 +19,15 @@ package uk.gov.hmrc.selfservicetimetopay.testonly
 import javax.inject.Inject
 
 import play.api.libs.json.{Json, Writes}
+import play.api.mvc.{Action => PlayAction}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, DirectDebitConnector, EligibilityConnector, TaxPayerConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
-
-import scala.util.control.NonFatal
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSession
+
+import scala.util.control.NonFatal
 
 class InspectorController @Inject()(val messagesApi: play.api.i18n.MessagesApi, ddConnector: DirectDebitConnector,
                                    calculatorConnector: CalculatorConnector,

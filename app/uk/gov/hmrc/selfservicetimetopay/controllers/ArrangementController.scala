@@ -135,7 +135,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     * Call the eligibility service using the Taxpayer data and display the appropriate page based on the result
     */
   private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
-    lazy val youNeedToFile = Redirect(routes.SelfServiceTimeToPayController.getYouNeedToFile()).successfullF
+    lazy val youNeedToFile = Redirect(routes.SelfServiceTimeToPayController.getYouNeedToFile()).successfulF
     val isDebtToLittle = taxpayer.selfAssessment.get.debits.map(debit => debit.amount).sum < BigDecimal.exact("32.00")
 
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
@@ -144,7 +144,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) =>
         youNeedToFile
       case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
-        Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()).successfullF
+        Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()).successfulF
     }
 
     if (isDebtToLittle) youNeedToFile
@@ -175,7 +175,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
         setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map(_ => gotoTaxLiabilities)
 
       case TTPSubmission(None, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
-        gotoTaxLiabilities.successfullF
+        gotoTaxLiabilities.successfulF
 
       case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
         if (areEqual(debits, tpSA.debits)) {
@@ -189,7 +189,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
 
       case _ =>
         Logger.error("No match found for newSubmission in determineMisalignment")
-        redirectOnError.successfullF
+        redirectOnError.successfulF
     }
   }
 
@@ -230,7 +230,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     submission.taxpayer match {
       case Some(Taxpayer(_, _, Some(SelfAssessment(Some(utr), _, _, _)))) =>
         ddConnector.createPaymentPlan(checkExistingBankDetails(submission), SaUtr(utr)).flatMap[Result] {
-          _.fold(_ => Redirect(routes.DirectDebitController.getDirectDebitError()).successfullF,
+          _.fold(_ => Redirect(routes.DirectDebitController.getDirectDebitError()).successfulF,
             success => {
               val result = for {
                 ttp <- arrangementConnector.submitArrangements(createArrangement(success, submission))
@@ -239,7 +239,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               result.flatMap {
                 _.fold(error => {
                   Logger.error(s"Exception: ${error.code} + ${error.message}")
-                  Redirect(routes.ArrangementController.applicationComplete()).successfullF
+                  Redirect(routes.ArrangementController.applicationComplete()).successfulF
                 }, _ => applicationSuccessful)
               }
             })

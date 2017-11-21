@@ -63,7 +63,7 @@ trait TimeToPayController extends FrontendController with Actions {
       `validExistingTTP`, _, _, Some(EligibilityStatus(true, _)), _)) =>
         block(submission)
       case _ =>
-        Future.successful(redirectOnError)
+        redirectOnError.successfulF
     }
   }
 
@@ -89,6 +89,6 @@ trait TimeToPayController extends FrontendController with Actions {
 
 
   implicit class SuccessfullOps[T](t: T) {
-    def successfullF: Future[T] = Future.successful(t)
+    def successfulF: Future[T] = Future.successful(t)
   }
 }
