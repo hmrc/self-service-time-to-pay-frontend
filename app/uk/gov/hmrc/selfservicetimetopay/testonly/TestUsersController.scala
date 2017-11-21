@@ -18,17 +18,16 @@ package uk.gov.hmrc.selfservicetimetopay.testonly
 
 import javax.inject._
 
-import play.api.i18n.I18nSupport
+import play.api.data.Forms._
+import play.api.data._
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, Request, Result}
-import play.api.i18n.MessagesApi
-import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.controllers.TimeToPayController
-import play.api.data._
-import play.api.data.Forms._
 import views.html.selfservicetimetopay.testonly._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.util.Try
 
 case class TestUserForm (
