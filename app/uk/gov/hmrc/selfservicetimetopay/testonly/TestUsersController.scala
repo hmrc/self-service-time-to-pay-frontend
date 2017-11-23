@@ -22,7 +22,7 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.mvc._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.controllers.TimeToPayController
 import views.html.selfservicetimetopay.testonly.create_user_and_log_in
@@ -109,17 +109,18 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
   }
 
   private def logIn(tu: TestUser)(implicit request: Request[AnyContent]): Future[Result] = {
-    val sessionF = loginService.logIn(tu)
+    val loginSessionF = loginService.logIn(tu)
     val setTaxpayerResponseF = saStubConnector.setTaxpayerResponse(tu.utr)
     val setReturnsF = desStubConnector.setReturns(tu)
     val setDebitsF = desStubConnector.setDebits(tu)
 
     val result = for {
-      session <- sessionF
+      loginSession <- loginSessionF
       _ <- setTaxpayerResponseF
       _ <- setReturnsF
       _ <- setDebitsF
-    } yield redirectToSessionView.withSession(session)
+      newSession = Session(request.session.data ++ loginSession.data)
+    } yield redirectToSessionView.withSession(newSession)
     result
   }
 
