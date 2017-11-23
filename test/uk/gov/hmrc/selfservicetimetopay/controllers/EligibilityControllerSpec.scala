@@ -77,8 +77,8 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect successfully to the type of tax page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.get(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
       val response = mockEligibilityController.start.apply(FakeRequest()
         .withSession(SessionKeys.userId -> "someUserId", TTPSession.newTTPSession()))
@@ -90,7 +90,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "successfully display the type of tax page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
       val request = FakeRequest()
         .withSession(SessionKeys.userId -> "someUserId", TTPSession.newTTPSession())
@@ -103,7 +103,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "successfully display the existing ttp page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
       val request = FakeRequest()
         .withSession(SessionKeys.userId -> "someUserId", TTPSession.newTTPSession())
@@ -116,9 +116,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "successfully submit type of tax page with valid form data" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
-      when(mockSessionCache.put(any())(any(), any()))
+      when(mockSessionCache.put(any())(any(), any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
       val result = mockEligibilityController.submitTypeOfTax()
@@ -132,9 +132,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "submit type of tax given both types of tax and redirect to call us page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
-      when(mockSessionCache.put(any())(any(), any()))
+      when(mockSessionCache.put(any())(any(), any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
       val result = mockEligibilityController.submitTypeOfTax
@@ -148,9 +148,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "submit type of tax given other types of tax and redirect to call us page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
-      when(mockSessionCache.put(any())(any(), any()))
+      when(mockSessionCache.put(any())(any(), any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
       val result = mockEligibilityController.submitTypeOfTax
@@ -164,7 +164,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "submit existing ttp given no existing ttp data and logged in user and redirect to amount you owe page via misalignment page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockAuthConnector.currentAuthority(Matchers.any()))
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Some(
           Authority(
             "",
@@ -178,9 +178,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
             None,
             ""
           ))))
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
-      when(mockSessionCache.put(any())(any(), any()))
+      when(mockSessionCache.put(any())(any(), any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
       val result = mockEligibilityController.submitExistingTtp
@@ -195,9 +195,9 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "submit existing ttp given existing ttp data and redirect to call us page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
-      when(mockSessionCache.put(any())(any(), any()))
+      when(mockSessionCache.put(any())(any(), any(), any()))
         .thenReturn(Future.successful(mock[CacheMap]))
 
       val result = mockEligibilityController.submitExistingTtp
@@ -211,7 +211,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect to self on type of tax page and display errors when invalid data is submitted" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
       val result = mockEligibilityController.submitTypeOfTax
@@ -223,7 +223,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect to self on existing ttp page and display errors when invalid data is submitted" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
       val result = mockEligibilityController.submitExistingTtp
@@ -235,20 +235,20 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "Successfully display the sign in question page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
       val request = FakeRequest()
         .withSession(SessionKeys.userId -> "someUserId", TTPSession.newTTPSession())
       val result = mockEligibilityController.getSignInQuestion.apply(request)
 
       contentAsString(result) must include(getMessages(request)("ssttp.eligibility.form.sign_in_question.title"))
-      verify(mockSessionCache, times(1)).get(any(), any())
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
 
     "Successfully redirect to the start page when missing submission data for the sign in question page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
       val result = mockEligibilityController.getSignInQuestion
@@ -256,13 +256,13 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       status(result) mustBe Status.SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
-      verify(mockSessionCache, times(1)).get(any(), any())
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
 
     "Redirect to getDebitDate page if user selects false" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
       val result = mockEligibilityController.submitSignInQuestion
@@ -271,13 +271,13 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       status(result) mustBe Status.SEE_OTHER
       routes.CalculatorController.getDebitDate().url must endWith(redirectLocation(result).get)
-      verify(mockSessionCache, times(1)).get(any(), any())
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
 
     "Redirect to sign in page if user selects true" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
       val result = mockEligibilityController.submitSignInQuestion
@@ -286,13 +286,13 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       status(result) mustBe Status.SEE_OTHER
       routes.ArrangementController.determineMisalignment().url must endWith(redirectLocation(result).get)
-      verify(mockSessionCache, times(1)).get(any(), any())
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
 
     "Submit no options selected in form data and return errors for the sign in question page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
       val request = FakeRequest()
         .withSession(SessionKeys.userId -> "someUserId", TTPSession.newTTPSession())
@@ -300,13 +300,13 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       status(result) mustBe Status.BAD_REQUEST
       contentAsString(result) must include(getMessages(request)("ssttp.eligibility.form.sign_in_question.required"))
-      verify(mockSessionCache, times(1)).get(any(), any())
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
 
     "Submit both options selected in form data and return errors for the sign in question page" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
       val result = mockEligibilityController.submitSignInQuestion
@@ -315,7 +315,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
           .withSession(SessionKeys.userId -> "someUserId", TTPSession.newTTPSession()))
 
       status(result) mustBe Status.BAD_REQUEST
-      verify(mockSessionCache, times(1)).get(any(), any())
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
   }
 }

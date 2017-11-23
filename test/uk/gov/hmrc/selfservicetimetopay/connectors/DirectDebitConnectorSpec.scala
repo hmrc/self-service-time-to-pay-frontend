@@ -24,7 +24,6 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.WithFakeApplication
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -133,7 +132,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Wi
     "return DirectDebitInstructionPaymentPlan" in {
       val jsonResponse = Json.fromJson[DirectDebitInstructionPaymentPlan](createPaymentPlanResponseJSON).get
 
-      when(testConnector.http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](any(), any(), any())(any(), any(), any()))
+      when(testConnector.http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
       val saUtr = SaUtr("test")

@@ -22,8 +22,8 @@ import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, CalculatorPaymentSchedule}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -45,7 +45,7 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
     "return a payment schedule" in {
       val jsonResponse = Json.fromJson[Seq[CalculatorPaymentSchedule]](submitLiabilitiesResponseJSON).get
 
-      when(testConnector.http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any()))
+      when(testConnector.http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
       val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))
@@ -57,7 +57,7 @@ class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with ServicesCo
     }
 
     "return no payment schedule" in {
-      when(testConnector.http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any()))
+      when(testConnector.http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(Seq()))
 
       val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))

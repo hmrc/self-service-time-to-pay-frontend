@@ -73,7 +73,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
   "Self Service Time To Pay Arrangement Controller" must {
     "redirect to start with an empty submission for determine misalignment" in {
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
       val response = controller.determineMisalignment().apply(FakeRequest()
@@ -90,11 +90,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to 'you need to file' when sa debits are less than £32.00 for determine misalignment" in {
       val requiredSa = selfAssessment.get.copy(debits = Seq.empty)
-      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
+      when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
 
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer.copy(selfAssessment = Some(requiredSa)))))
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
       val response = controller.determineMisalignment().apply(FakeRequest()
@@ -110,11 +110,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
     "redirect to 'you need to file' when the user has not filled " in {
       val requiredSa = selfAssessment.get.copy(debits = Seq.empty)
-      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(ReturnNeedsSubmitting))))
+      when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(ReturnNeedsSubmitting))))
 
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer.copy(selfAssessment = Some(requiredSa)))))
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
       val response = controller.determineMisalignment()
@@ -132,11 +132,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to 'Tax Liabilities' when no amounts have been entered for determine misalignment" in {
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
-      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
-      when(mockSessionCache.get(any(), any()))
+      when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial))))
 
-      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
@@ -152,11 +152,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect to 'instalment summary' when entered amounts and sa amounts are equal and user is eligible for determine misalignment" in {
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
-      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
 
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
@@ -172,11 +172,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect to 'call us page' when entered amounts and sa amounts are equal and user is ineligible for determine misalignment" in {
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
-      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
 
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
@@ -191,11 +191,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to misalignment when entered amounts and sa amounts aren't equal for determine misalignment" in {
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
-      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
-      when(mockSessionCache.get(any(), any()))
+      when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue))))))
 
-      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
@@ -211,7 +211,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect to call us page when tax payer connector fails to retrieve data for determine misalignment" in {
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(None))
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
       val response = controller.determineMisalignment().apply(FakeRequest()
@@ -228,10 +228,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "successfully display the instalment summary page with required data in submission" in {
       val requiredSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(requiredSubmission)))
 
-      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
@@ -250,10 +250,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to the start page when missing required data for the instalment summary page" in {
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
-      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
@@ -272,10 +272,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       val requiredSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(requiredSubmission)))
 
-      when(mockSessionCache.remove()(any())).thenReturn(Future.successful(mock[HttpResponse]))
+      when(mockSessionCache.remove()(any(), any())).thenReturn(Future.successful(mock[HttpResponse]))
 
       val request = FakeRequest().withSession(
         SessionKeys.userId -> "someUserId",
@@ -290,7 +290,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to the start page when missing required data for the application complete page" in {
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
       val response = controller.applicationComplete().apply(FakeRequest()
@@ -308,7 +308,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
       when(ddConnector.createPaymentPlan(any(), any())(any())).thenReturn(Future.successful(Right(directDebitInstructionPaymentPlan)))
@@ -325,7 +325,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to start page if there is no data in the session cache" in {
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(
@@ -339,9 +339,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "update payment schedule date" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any()))
+      when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
@@ -368,13 +368,13 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to misalignment page if logged in and not logged in debits do not sum() to the same value" in {
       implicit val hc = new HeaderCarrier
-      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
+      when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       val localTtpSubmission = ttpSubmission.copy(calculatorData =
         ttpSubmission.calculatorData.copy(debits = Seq(Debit(amount = 212.01, dueDate = LocalDate.now()))))
 
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer))) //121.20 debits
-      when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
-      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
@@ -393,10 +393,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
 
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer))) //121.20 debits
-      when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
-      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
-      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
+      when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment").withSession(
@@ -411,10 +411,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       implicit val hc = new HeaderCarrier
 
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = Seq.empty))
-      when(mockEligibilityConnector.checkEligibility(any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
+      when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer))) //121.20 debits
-      when(mockSessionCache.get(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
-      when(mockSessionCache.put(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment").withSession(
