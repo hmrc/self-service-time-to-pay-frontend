@@ -21,7 +21,7 @@ import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.http.SessionKeys
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 import uk.gov.hmrc.selfservicetimetopay.resources._
