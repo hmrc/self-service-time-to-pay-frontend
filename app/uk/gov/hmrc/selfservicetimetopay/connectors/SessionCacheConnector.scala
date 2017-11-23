@@ -18,18 +18,16 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import com.google.inject._
 import play.api.libs.json.{Reads, Writes}
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import uk.gov.hmrc.http.logging.SessionId
+import uk.gov.hmrc.play.config.{AppName, ServicesConfig}
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.ttpSessionId
-import uk.gov.hmrc.selfservicetimetopay.models._
-import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector, _}
-import uk.gov.hmrc.play.config.ServicesConfig
-import com.google.inject._
-import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.config.AppName
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector}
+import uk.gov.hmrc.selfservicetimetopay.models._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Talks to the keystore service to save and retrieve TTPSubmission data
@@ -40,16 +38,16 @@ trait SessionCacheConnector extends SessionCache with ServicesConfig {
 
   def ttpSessionCarrier()(implicit hc:HeaderCarrier): HeaderCarrier = hc.copy(sessionId = hc.extraHeaders.toMap.get(ttpSessionId).map(SessionId))
 
-  def put(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], hc: HeaderCarrier): Future[CacheMap] = {
-    cache[TTPSubmission](sessionKey, body)(writes, ttpSessionCarrier)
+  def put(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], hc: HeaderCarrier, ec:ExecutionContext): Future[CacheMap] = {
+    cache[TTPSubmission](sessionKey, body)(writes, ttpSessionCarrier, ec)
   }
 
-  def get(implicit hc: HeaderCarrier, reads: Reads[TTPSubmission]): Future[Option[TTPSubmission]] = {
-    fetchAndGetEntry[TTPSubmission](sessionKey)(ttpSessionCarrier, reads)
+  def get(implicit hc: HeaderCarrier, reads: Reads[TTPSubmission], ec:ExecutionContext): Future[Option[TTPSubmission]] = {
+    fetchAndGetEntry[TTPSubmission](sessionKey)(ttpSessionCarrier, reads, ec)
   }
 
-  override def remove()(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    super.remove()(ttpSessionCarrier)
+  override def remove()(implicit hc: HeaderCarrier, ec:ExecutionContext): Future[HttpResponse] = {
+    super.remove()(ttpSessionCarrier, ec)
   }
 }
 
