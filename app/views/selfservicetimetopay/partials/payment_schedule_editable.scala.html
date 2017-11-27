@@ -25,7 +25,7 @@ Partial view to show list of direct debit payments in the the entered_all_amount
             <td>@currency(debit.amount)</td>
             @form(routes.CalculatorController.submitRemoveAmountDue()) {
                 <input type="hidden" name="index" value="@index" />
-                <td><p>@button('type -> "submit", '_modifierClass -> "button--table") {
+                <td><p>@button('type -> "submit", '_modifierClass -> "button--link") {
                     @Messages("ssttp.calculator.form.entered_all_amounts_question.remove-label")
                 }</p></td>
             }
