@@ -1,0 +1,6 @@
+
+
+GET        /inspector                               @uk.gov.hmrc.selfservicetimetopay.testonly.InspectorController.inspect()
+GET        /clear-play-session                      @uk.gov.hmrc.selfservicetimetopay.testonly.InspectorController.clearPlaySession()
+GET        /create-user-and-log-in                  @uk.gov.hmrc.selfservicetimetopay.testonly.TestUsersController.testUsers()
+POST       /create-user-and-log-in                  @uk.gov.hmrc.selfservicetimetopay.testonly.TestUsersController.logIn()
