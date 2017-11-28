@@ -65,7 +65,3 @@ GET         /assets/*file                                     controllers.Assets
 
 #TODO: move them to testOnlyDoNotUseInProd.routes
 
-GET        /test-only/inspector                               @uk.gov.hmrc.selfservicetimetopay.testonly.InspectorController.inspect()
-GET        /test-only/clear-play-session                      @uk.gov.hmrc.selfservicetimetopay.testonly.InspectorController.clearPlaySession()
-GET        /test-only/create-user-and-log-in                  @uk.gov.hmrc.selfservicetimetopay.testonly.TestUsersController.testUsers()
-POST       /test-only/create-user-and-log-in                  @uk.gov.hmrc.selfservicetimetopay.testonly.TestUsersController.logIn()
