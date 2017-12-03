@@ -35,6 +35,7 @@ GET         /calculator/instalments/print                     @uk.gov.hmrc.selfs
 POST        /calculator/sign-in                               @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitSignIn()
 GET         /calculator/tax-liabilities                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getTaxLiabilities()
 
+GET         /arrangement/recover-ttpsession/:token            @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.recoverTTPSession(token: String)
 GET         /arrangement/determine-misalignment               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.determineMisalignment()
 
 #Misalignment Page

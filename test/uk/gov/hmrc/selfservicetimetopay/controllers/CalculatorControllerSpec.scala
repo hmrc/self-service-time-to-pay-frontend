@@ -35,7 +35,7 @@ import uk.gov.hmrc.play.health.routes
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import uk.gov.hmrc.selfservicetimetopay.util.TTPSession
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 import scala.concurrent.Future
 
@@ -66,7 +66,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmissionNLI.copy(schedule = Some(calculatorPaymentSchedule.copy(startDate = Some(LocalDate.now)))))))
 
       val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe OK
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -85,7 +85,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(mock[CacheMap]))
 
       val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -106,7 +106,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(mock[CacheMap]))
 
       val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       routes.CalculatorController.getCalculateInstalments(None).url must endWith(redirectLocation(result).get)
@@ -125,7 +125,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
       val result = controller.submitPaymentToday().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "300.00")
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -144,7 +144,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
       val result = controller.submitPaymentToday().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "299.999")
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -163,7 +163,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(mock[CacheMap]))
 
       val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       routes.CalculatorController.getCalculateInstalments(None).url must endWith(redirectLocation(result).get)
@@ -176,7 +176,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
       val result = controller.submitPaymentToday().apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -188,7 +188,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k.copy(calculatorData = CalculatorInput.initial.copy(initialPayment = BigDecimal(2))))))
       val request = FakeRequest()
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.getPayTodayQuestion().apply(request)
 
       status(result) mustBe SEE_OTHER
@@ -201,7 +201,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
       val result = controller.getPayTodayQuestion().apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -214,7 +214,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityExistingTtp = None))))
 
       val result = controller.getPayTodayQuestion().apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -227,7 +227,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityTypeOfTax = None))))
 
       val result = controller.getPayTodayQuestion().apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -240,7 +240,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = Seq.empty)))))
 
       val result = controller.getPayTodayQuestion().apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -252,7 +252,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
       val request = FakeRequest()
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.getPayTodayQuestion().apply(request)
 
       status(result) mustBe OK
@@ -265,7 +265,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
       val request = FakeRequest()
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.getDebitDate().apply(request)
 
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.what-you-owe-date.example"))
@@ -279,7 +279,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
       val result = controller.getDebitDate().apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -299,7 +299,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withFormUrlEncodedBody("dueBy.dueByYear" -> "2017",
           "dueBy.dueByMonth" -> "1",
           "dueBy.dueByDay" -> "31")
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       routes.CalculatorController.getAmountOwed().url must endWith(redirectLocation(result).get)
@@ -315,7 +315,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withFormUrlEncodedBody("dueBy.dueByYear" -> "1900",
           "dueBy.dueByMonth" -> "1",
           "dueBy.dueByDay" -> "31")
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.submitDebitDate().apply(request)
 
       status(result) mustBe BAD_REQUEST
@@ -332,7 +332,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withFormUrlEncodedBody("dueBy.dueByYear" -> "2111",
           "dueBy.dueByMonth" -> "1",
           "dueBy.dueByDay" -> "31")
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.submitDebitDate().apply(request)
 
       status(result) mustBe BAD_REQUEST
@@ -349,7 +349,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withFormUrlEncodedBody("dueBy.dueByYear" -> "2017",
           "dueBy.dueByMonth" -> "13",
           "dueBy.dueByDay" -> "31")
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.submitDebitDate().apply(request)
 
       status(result) mustBe BAD_REQUEST
@@ -366,7 +366,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withFormUrlEncodedBody("dueBy.dueByYear" -> "2017",
           "dueBy.dueByMonth" -> "1",
           "dueBy.dueByDay" -> "32")
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.submitDebitDate().apply(request)
 
       status(result) mustBe BAD_REQUEST
@@ -383,7 +383,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withFormUrlEncodedBody("dueBy.dueByYear" -> "",
           "dueBy.dueByMonth" -> "",
           "dueBy.dueByDay" -> "")
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.submitDebitDate().apply(request)
 
       status(result) mustBe BAD_REQUEST
@@ -401,7 +401,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withFormUrlEncodedBody("dueBy.dueByYear" -> "2017",
           "dueBy.dueByMonth" -> "10",
           "dueBy.dueByDay" -> "")
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
 
       val result = controller.submitDebitDate().apply(request)
 
@@ -421,7 +421,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(requiredSubmission)))
       val request = FakeRequest()
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
         .withSession("asdf" -> "asdf")
       val result = controller.getAmountOwed().apply(request)
 
@@ -436,7 +436,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmissionNoAmounts)))
 
       val result = controller.getAmountOwed().apply(FakeRequest()
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -455,7 +455,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
       val result = controller.submitAmountOwed().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "5000")
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
       routes.CalculatorController.getWhatYouOweReview().url must endWith(redirectLocation(result).get)
@@ -471,7 +471,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(requiredSubmission)))
       val request = FakeRequest()
         .withFormUrlEncodedBody("amount" -> "-500")
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.submitAmountOwed().apply(request)
 
       status(result) mustBe BAD_REQUEST
@@ -488,7 +488,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(requiredSubmission)))
       val request = FakeRequest()
         .withFormUrlEncodedBody("amount" -> "100000")
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.submitAmountOwed().apply(request)
 
       status(result) mustBe BAD_REQUEST
@@ -505,7 +505,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(requiredSubmission)))
       val request = FakeRequest()
         .withFormUrlEncodedBody("amount" -> "")
-        .withSession(TTPSession.newTTPSession())
+        .withSession(TTPSessionId.newTTPSession())
       val result = controller.submitAmountOwed().apply(request)
 
       status(result) mustBe BAD_REQUEST
@@ -522,7 +522,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(requiredSubmission)))
       val result = controller.submitAmountOwed().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "-500")
-        .withSession(TTPSession.newTTPSession()))
+        .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(formattedDateString)
@@ -531,7 +531,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "successfully display what you owe review page" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
-      val request = FakeRequest().withSession(TTPSession.newTTPSession())
+      val request = FakeRequest().withSession(TTPSessionId.newTTPSession())
       val response = controller.getWhatYouOweReview().apply(request)
 
       status(response) mustBe OK
@@ -542,7 +542,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "successfully redirect to start page when trying to access what you owe review page if there are no debits" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k.copy(calculatorData = CalculatorInput.initial))))
-      val response = controller.getWhatYouOweReview().apply(FakeRequest().withSession(TTPSession.newTTPSession()))
+      val response = controller.getWhatYouOweReview().apply(FakeRequest().withSession(TTPSessionId.newTTPSession()))
 
       status(response) mustBe SEE_OTHER
 
@@ -552,7 +552,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "successfully redirect to start page when there are invalid eligibility questions" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
-      val response = controller.getWhatYouOweReview().apply(FakeRequest().withSession(TTPSession.newTTPSession()))
+      val response = controller.getWhatYouOweReview().apply(FakeRequest().withSession(TTPSessionId.newTTPSession()))
 
       status(response) mustBe SEE_OTHER
 

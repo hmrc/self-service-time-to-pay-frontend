@@ -24,6 +24,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.auth.Token
 import uk.gov.hmrc.selfservicetimetopay.controllers.TimeToPayController
 import views.html.selfservicetimetopay.testonly.create_user_and_log_in
 
@@ -31,14 +32,15 @@ import scala.concurrent.Future
 import scala.util.Try
 
 case class TestUserForm (
-  utr: Option[String],
-  returnsJson: String,
-  returnsResponseStatusCode: String,
-  hasSAEnrolment: Boolean,
-  authorityId: Option[String],
-  affinityGroup: String,
-  debitsJson: String,
-  debitsResponseStatusCode: String
+                          utr: Option[String],
+                          returnsJson: String,
+                          returnsResponseStatusCode: String,
+                          hasSAEnrolment: Boolean,
+                          authorityId: Option[String],
+                          affinityGroup: String,
+                          debitsJson: String,
+                          debitsResponseStatusCode: String,
+                          continueUrl: Option[String]
 ) {
 
   def asTestUser: TestUser = TestUser(
@@ -50,7 +52,8 @@ case class TestUserForm (
     returns = Json.parse(returnsJson),
     returnsResponseStatusCode = returnsResponseStatusCode.toInt,
     debits = Json.parse(debitsJson),
-    debitsResponseStatusCode = debitsResponseStatusCode.toInt
+    debitsResponseStatusCode = debitsResponseStatusCode.toInt,
+    continueUrl = continueUrl
   )
 }
 
@@ -63,7 +66,8 @@ object TestUserForm {
     authorityId = None,
     affinityGroup = AffinityGroup.individual.v,
     debitsJson = Json.prettyPrint(TestUserDebits.sample1),
-    debitsResponseStatusCode = "200"
+    debitsResponseStatusCode = "200",
+    continueUrl = None
   )
 }
 
@@ -90,7 +94,8 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
         .verifying("'debits' response body must be valid json value", x => Try(Json.parse(x)).isSuccess),
       "debits-status-code" -> text
         .verifying("'debits' status code must not be empty", !_.isEmpty)
-        .verifying("'debits' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100)
+        .verifying("'debits' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100),
+      "continue-url" -> optional(text)
     )(TestUserForm.apply)(TestUserForm.unapply)
   )
 
@@ -119,8 +124,9 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
       _ <- setTaxpayerResponseF
       _ <- setReturnsF
       _ <- setDebitsF
-      newSession = Session(request.session.data ++ loginSession.data)
-    } yield redirectToSessionView.withSession(newSession)
+      newSession = Session(loginSession.data)
+      url = tu.continueUrl.getOrElse(routes.InspectorController.inspect().url)
+    } yield Redirect(url).withSession(newSession)
     result
   }
 

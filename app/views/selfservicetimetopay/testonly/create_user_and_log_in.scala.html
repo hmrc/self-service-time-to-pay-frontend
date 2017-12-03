@@ -25,6 +25,16 @@
 
         <div class="grid-layout__column grid-layout__column--1-2 ssttp-grid-layout-payment-today">
             <p>
+                <h2>Continue URL</h2>
+                <span class="flush--ends form-field--hint"></span>
+                @textinput(field = dataForm("continue-url"),
+                    'label -> "continue-url",
+                    '_inputClass -> "input--cleared"
+                )
+            </p>
+
+
+          <p>
                 <h2>CredId</h2>
                 <span class="flush--ends form-field--hint">This is known as well as <em>AuthoriyId</em>. Put here any random string or leave empty for random value.</span>
                 @textinput(field = dataForm("authority-id"),

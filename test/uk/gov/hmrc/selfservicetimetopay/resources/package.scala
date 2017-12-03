@@ -212,16 +212,5 @@ package object resources {
     idsUri = None
   )
 
-  val mockAuthenticationProvider = new GovernmentGateway {
-    override def continueURL: String = s"${SsttpFrontendConfig.loginCallBackFullPath}"
-
-    override def loginURL: String = SsttpFrontendConfig.loginUrl
-
-    override def handleNotAuthenticated(implicit request: Request[_]): PartialFunction[UserCredentials, Future[Either[AuthContext, FailureResult]]] = {
-      case UserCredentials(Some("underThreshold"), _) => Future.successful(Left(authContext.copy(user = loggedInUserUnderConfidenceThreshold)))
-      case UserCredentials(None, _) => Future.successful(Right(Redirect(loginURL)))
-      case _ => Future.successful(Left(authContext))
-    }
-  }
 
 }

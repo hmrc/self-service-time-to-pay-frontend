@@ -22,15 +22,16 @@ import play.api.libs.json.JsValue
 import scala.util.Random
 
 case class TestUser(
-  utr: Utr,
-  hasSAEnrolment: Boolean,
-  authorityId: AuthorityId,
-  affinityGroup: AffinityGroup = AffinityGroup.individual,
-  confidenceLevel: Int,
-  returns: JsValue,
-  returnsResponseStatusCode: Int,
-  debits: JsValue,
-  debitsResponseStatusCode: Int
+                     utr: Utr,
+                     hasSAEnrolment: Boolean,
+                     authorityId: AuthorityId,
+                     affinityGroup: AffinityGroup = AffinityGroup.individual,
+                     confidenceLevel: Int,
+                     returns: JsValue,
+                     returnsResponseStatusCode: Int,
+                     debits: JsValue,
+                     debitsResponseStatusCode: Int,
+                     continueUrl: Option[String]
 )
 
 object TestUser {
@@ -44,7 +45,8 @@ object TestUser {
     returns = TestUserReturns.sample1,
     returnsResponseStatusCode = Status.OK,
     debits = TestUserDebits.sample1,
-    debitsResponseStatusCode = Status.OK
+    debitsResponseStatusCode = Status.OK,
+    continueUrl = None
   )
 
 }

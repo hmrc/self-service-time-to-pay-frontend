@@ -19,7 +19,9 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.time.LocalDate
 
 import play.api.libs.json._
+import uk.gov.hmrc.selfservicetimetopay.auth.{Token, TokenData}
 import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 package object modelsFormat {
   implicit val localDateFormatter = new Format[LocalDate] {
@@ -110,5 +112,9 @@ package object modelsFormat {
 
   //Submission formatter
   implicit val submissionFormatter: Format[TTPSubmission] = Json.format[TTPSubmission]
+
+  implicit val ttpSessionIdFormat: OFormat[TTPSessionId] = Json.format[TTPSessionId]
+  implicit val tokenFormat: OFormat[Token] = Json.format[Token]
+  implicit val tokenDataFormat: OFormat[TokenData] = Json.format[TokenData]
 
 }

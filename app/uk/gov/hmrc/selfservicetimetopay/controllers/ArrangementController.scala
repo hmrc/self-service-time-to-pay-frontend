@@ -17,24 +17,29 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit.DAYS
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import javax.inject._
-import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.createCalculatorInput
+import java.time.Duration
+
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, Result, Results}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.cache.client.CacheMap
+import uk.gov.hmrc.selfservicetimetopay.auth.{Token, TokenData}
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.createCalculatorInput
+import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction.redirectToStartPage
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.math.BigDecimal
+import play.api.mvc.{ActionBuilder, AnyContent, Request, Result, Results, Action => PlayAction}
 
 class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi, ddConnector: DirectDebitConnector,
                                       arrangementConnector: ArrangementConnector,
@@ -53,6 +58,25 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       }
   }
 
+  def recoverTTPSession(token: String): Action[AnyContent] = PlayAction.async { implicit request =>
+    for {
+      tokenData <- sessionCache4TokensConnector
+        .getAndRemove(Token(token))
+        .map(_.get) //java.util.NoSuchElementException: None.get  ==> someone tried to reuse expired token
+      ttpSessionKV = TTPSessionId.ttpSessionId -> tokenData.associatedTTPSession.v
+      isTokenValid = isTokenStillValid(tokenData)
+      redirect =
+        if(isTokenValid){
+          Results.Redirect(routes.ArrangementController.determineMisalignment())
+        }
+        else{
+          Logger.logger.debug(s"Token expired: $tokenData")
+          Redirect(routes.SelfServiceTimeToPayController.start())
+        }
+    } yield redirect.withSession(request.session + ttpSessionKV)
+  }
+
+  private def isTokenStillValid(tokenData: TokenData): Boolean = tokenData.expirationDate.isAfter(LocalDateTime.now())
   /**
     * This step is performed immediately after the user has logged in. It grabs the Taxpayer data and
     * then performs several checks to determine where the user should go next. This is because there are

@@ -16,6 +16,10 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import java.time.LocalDateTime
+import java.util.UUID
+import javax.inject.Inject
+
 import play.api.mvc.{ActionBuilder, AnyContent, Request, Result, Results, Action => PlayAction}
 import play.api.{Logger, Play}
 import uk.gov.hmrc.play.frontend.auth._
@@ -23,26 +27,57 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.auth.{SaGovernmentGateway, SaRegime}
+import uk.gov.hmrc.selfservicetimetopay.auth._
 import uk.gov.hmrc.selfservicetimetopay.config._
-import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector}
+import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCache4TokensConnector, SessionCacheConnector => KeystoreConnector}
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 
-import scala.concurrent.Future
-import uk.gov.hmrc.selfservicetimetopay.util.TTPSession._
+import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId._
 
 
 
 trait TimeToPayController extends FrontendController with Actions {
 
+  def sessionCache4TokensConnector: SessionCache4TokensConnector = _sessionCache4TokensConnector
+
+  private var _sessionCache4TokensConnector: SessionCache4TokensConnector = _
+
+  @Inject()
+  def set(sessionCache4TokensConnector: SessionCache4TokensConnector) = _sessionCache4TokensConnector = sessionCache4TokensConnector
+
+
+  private def provideSaRegime()(implicit request: Request[_]): SaRegime = {
+    val tokenData: TokenData = TokenData(
+      Token(UUID.randomUUID().toString),
+      expirationDate = LocalDateTime.now().plusMinutes(1),
+      associatedTTPSession = request.getTTPSessionId
+    )
+    val gg = provideGG(tokenData)
+    new SaRegime(gg)
+  }
+
+  def provideGG(tokenData: TokenData) = new GovernmentGateway {
+
+    override def continueURL: String = s"${SsttpFrontendConfig.loginCallbackBaseUrl}${routes.ArrangementController.recoverTTPSession(tokenData.token.v)}"
+    override def loginURL: String = SsttpFrontendConfig.loginUrl
+    override def redirectToLogin(implicit request: Request[_]): Future[FailureResult] = {
+      val persistTokenDataF = sessionCache4TokensConnector.put(tokenData)
+      val redirectF = super.redirectToLogin(request)
+      for {
+        _ <- persistTokenDataF
+        redirect <- redirectF
+      } yield redirect
+    }
+  }
+
   override lazy val authConnector: AuthConnector = FrontendAuthConnector
   implicit lazy val sessionCache: KeystoreConnector = Play.current.injector.instanceOf[KeystoreConnector]
   protected lazy val Action: ActionBuilder[Request] = CheckSessionAction andThen PlayAction
   protected type AsyncPlayUserRequest = AuthContext => Request[AnyContent] => Future[Result]
-  protected lazy val authenticationProvider: GovernmentGateway = SaGovernmentGateway
-  protected lazy val saRegime = SaRegime(authenticationProvider)
+
 
   protected val validTypeOfTax = Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true))
   protected val validExistingTTP = Some(EligibilityExistingTTP(Some(false)))
@@ -52,7 +87,10 @@ trait TimeToPayController extends FrontendController with Actions {
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200,
     Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
 
-  def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = AuthorisedFor(saRegime, timeToPayConfidenceLevel).async(body)
+  def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = PlayAction.async { implicit request =>
+    val taxRegime = provideSaRegime()
+    AuthorisedFor(taxRegime, timeToPayConfidenceLevel).async(body)(request)
+  }
 
   /**
     * Manages code blocks where the user should be logged in and meet certain eligibility criteria

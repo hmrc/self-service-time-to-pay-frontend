@@ -42,7 +42,11 @@ trait MicroService {
       libraryDependencies ++= appDependencies,
       parallelExecution in Test := false,
       fork in Test := false,
-      evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
+      evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+      routesImport ++= Seq(
+        "uk.gov.hmrc.selfservicetimetopay.auth.Token",
+        "uk.gov.hmrc.selfservicetimetopay.auth.Token._"
+      )
     )
     .configs(IntegrationTest)
     .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)

@@ -16,7 +16,14 @@
 
 package uk.gov.hmrc.selfservicetimetopay.auth
 
+import java.time.LocalDateTime
+import java.util.UUID
+import javax.inject.Inject
+
 import play.api.Logger
+import play.api.mvc.Request
+import play.api.mvc.Results.Redirect
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
 import uk.gov.hmrc.play.frontend.auth.{AuthenticationProvider, GovernmentGateway, TaxRegime}
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
@@ -29,7 +36,7 @@ object SaGovernmentGateway extends GovernmentGateway {
   override def loginURL: String = SsttpFrontendConfig.loginUrl
 }
 
-case class SaRegime(authenticationProvider: AuthenticationProvider) extends TaxRegime {
+class SaRegime(val authenticationProvider: AuthenticationProvider) extends TaxRegime {
 
   override def isAuthorised(accounts: Accounts): Boolean = accounts.sa.isDefined
 

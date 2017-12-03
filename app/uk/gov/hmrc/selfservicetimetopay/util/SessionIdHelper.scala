@@ -20,20 +20,20 @@ import java.util.UUID
 
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-import uk.gov.hmrc.selfservicetimetopay.util.TTPSession._
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId._
 
 import scala.concurrent.Future
 
-case class TTPSession(v: String)
+case class TTPSessionId(v: String)
 
-object TTPSession {
+object TTPSessionId {
   lazy val ttpSessionId: String = "ttpSessionId"
   def newTTPSession(): (String, String) = ttpSessionId -> s"ttp-session-${UUID.randomUUID}"
 
   implicit class GetTTPSessionOps[A](request: Request[A]) {
-    def maybeTTPSessionId: Option[TTPSession] = request.session.get(ttpSessionId).map(TTPSession.apply)
+    def maybeTTPSessionId: Option[TTPSessionId] = request.session.get(ttpSessionId).map(TTPSessionId.apply)
 
-    def getTTPSessionId: TTPSession = maybeTTPSessionId.getOrElse(
+    def getTTPSessionId: TTPSessionId = maybeTTPSessionId.getOrElse(
       throw new RuntimeException(s"Expected $ttpSessionId to be in the play session")
     )
   }
@@ -46,7 +46,7 @@ object CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Reque
 
   def filter[A](request: Request[A]): Future[Option[Result]] = {
       val response: Option[Result] = request.maybeTTPSessionId.fold[Option[Result]] (
-        Some(redirectToStartPage.withSession(request.session + TTPSession.newTTPSession()))
+        Some(redirectToStartPage.withSession(request.session + TTPSessionId.newTTPSession()))
       ) (_ => None)
 
     Future.successful(response)
