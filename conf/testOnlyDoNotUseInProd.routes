@@ -1,7 +1,8 @@
+->         /                                                                                  prod.Routes
 
 
-GET        /inspector                               @uk.gov.hmrc.selfservicetimetopay.testonly.InspectorController.inspect()
-GET        /clear-play-session                      @uk.gov.hmrc.selfservicetimetopay.testonly.InspectorController.clearPlaySession()
-GET        /create-user-and-log-in                  @uk.gov.hmrc.selfservicetimetopay.testonly.TestUsersController.testUsers()
-POST       /create-user-and-log-in                  @uk.gov.hmrc.selfservicetimetopay.testonly.TestUsersController.logIn()
+GET        /pay-what-you-owe-in-instalments/test-only/inspector                               @uk.gov.hmrc.selfservicetimetopay.testonly.InspectorController.inspect()
+GET        /pay-what-you-owe-in-instalments/test-only/clear-play-session                      @uk.gov.hmrc.selfservicetimetopay.testonly.InspectorController.clearPlaySession()
+GET        /pay-what-you-owe-in-instalments/test-only/create-user-and-log-in                  @uk.gov.hmrc.selfservicetimetopay.testonly.TestUsersController.testUsers()
+POST       /pay-what-you-owe-in-instalments/test-only/create0-user-and-log-in                 @uk.gov.hmrc.selfservicetimetopay.testonly.TestUsersController.logIn()
 GET        /config                                  @uk.gov.hmrc.selfservicetimetopay.testonly.TestOnlyController.config()
