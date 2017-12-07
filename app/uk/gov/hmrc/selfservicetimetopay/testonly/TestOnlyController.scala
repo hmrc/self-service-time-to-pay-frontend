@@ -18,21 +18,16 @@ package uk.gov.hmrc.selfservicetimetopay.testonly
 
 import javax.inject._
 
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
-import play.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
-import play.api.mvc.{Action => PlayAction}
+import play.api.mvc.{Action => PlayAction, _}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.connectors.TaxPayerConnector
 import uk.gov.hmrc.selfservicetimetopay.controllers.TimeToPayController
-import uk.gov.hmrc.selfservicetimetopay.testonly.helpers.ProxyActions
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-class TestOnlyController @Inject()(val messagesApi: MessagesApi, proxy: ProxyActions, taxpayerConnector: TaxPayerConnector)
+class TestOnlyController @Inject()(val messagesApi: MessagesApi, taxpayerConnector: TaxPayerConnector)
 extends TimeToPayController with I18nSupport with ServicesConfig {
 
   def config() = PlayAction { r =>
