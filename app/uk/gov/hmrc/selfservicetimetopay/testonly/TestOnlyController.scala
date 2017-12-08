@@ -22,6 +22,7 @@ import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action => PlayAction, _}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.connectors.TaxPayerConnector
 import uk.gov.hmrc.selfservicetimetopay.controllers.TimeToPayController
@@ -49,6 +50,18 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
     for {
       taxpayer <- getTaxpayerF
     } yield Ok(taxpayer)
+  }
+
+  def taxpayerConfig() = PlayAction.async { implicit request =>
+    val baseUrl = taxpayerConnector.taxPayerURL
+    taxpayerConnector.http.GET[HttpResponse](s"$baseUrl/taxpayer/test-only/config")
+      .map(r => Status(r.status)(r.json))
+  }
+
+  def taxpayerConnectorsConfig() = PlayAction.async { implicit request =>
+    val baseUrl = taxpayerConnector.taxPayerURL
+    taxpayerConnector.http.GET[HttpResponse](s"$baseUrl/taxpayer/test-only/connectors-config")
+      .map(r => Status(r.status)(r.json))
   }
 
 }
