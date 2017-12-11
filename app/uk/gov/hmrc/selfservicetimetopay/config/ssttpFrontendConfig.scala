@@ -34,16 +34,16 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private val contactHost = configuration.getString("contact-frontend.host").getOrElse("")
+  private val contactFrontendBaseUrl = baseUrl("contact-frontend")
   private val contactFormServiceIdentifier = "self-service-time-to-pay"
 
   override lazy val assetsPrefix = loadConfig("assets.url") + loadConfig("assets.version")
   override lazy val analyticsToken = loadConfig("google-analytics.token")
   override lazy val analyticsHost = loadConfig("google-analytics.host")
-  override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  override lazy val betaFeedbackUrlNoAuth = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
-  override lazy val betaFeedbackUrlAuth = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemPartialUrl = s"$contactFrontendBaseUrl/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemNonJSUrl = s"$contactFrontendBaseUrl/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  override lazy val betaFeedbackUrlNoAuth = s"$contactFrontendBaseUrl/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+  override lazy val betaFeedbackUrlAuth = s"$contactFrontendBaseUrl/contact/beta-feedback?service=$contactFormServiceIdentifier"
 
   private lazy val companyAuthFrontend = getConfString("company-auth.url", throw new RuntimeException("Company auth url required"))
   private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
