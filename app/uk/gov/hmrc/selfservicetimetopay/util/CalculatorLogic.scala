@@ -58,7 +58,7 @@ object CalculatorLogic {
     val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
     val daysInWeek = 7
     val (firstPaymentDate: LocalDate, lastPaymentDate: LocalDate) = if (ttpSubmission.calculatorData.initialPayment.equals(BigDecimal(0))) {
-      if (DAYS.between(startDate, initialDate) < daysInWeek && DAYS.between(startDate, initialDate.plusMonths(1)) < 7)
+      if (DAYS.between(startDate, initialDate) < daysInWeek && DAYS.between(startDate, initialDate.plusMonths(1)) < daysInWeek)
         (initialDate.plusMonths(2), initialDate.plusMonths(durationMonths + 2).minusDays(1))
       else if (DAYS.between(startDate, initialDate) < 7)
         (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
@@ -75,9 +75,12 @@ object CalculatorLogic {
         (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
     }
 
-    Some(ttpSubmission.calculatorData.copy(startDate = startDate,
+    Some(ttpSubmission.calculatorData.copy(
+      startDate = startDate,
       firstPaymentDate = Some(firstPaymentDate),
-      endDate = lastPaymentDate))
+      endDate = lastPaymentDate,
+      initialPayment = ttpSubmission.schedule.get.initialPayment
+    ))
   }
 
   /*
