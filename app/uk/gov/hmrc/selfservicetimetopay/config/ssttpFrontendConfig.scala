@@ -36,6 +36,7 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
 
   private val contactFrontendBaseUrl = baseUrl("contact-frontend")
   private val contactFormServiceIdentifier = "self-service-time-to-pay"
+  private val feedbackSurveyFrontend = baseUrl("feedback-survey-frontend")
 
   override lazy val assetsPrefix = loadConfig("assets.url") + loadConfig("assets.version")
   override lazy val analyticsToken = loadConfig("google-analytics.token")
@@ -52,7 +53,7 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
   lazy val loginCallbackBaseUrl = getConfString("auth.login-callback.base-url", "")
   lazy val loginCallbackPath = getConfString("auth.login-callback.path", "")
   lazy val loginCallBackFullPath = s"$loginCallbackBaseUrl$loginCallbackPath"
-  lazy val logoutUrl: String = s"$companyAuthFrontend$companyAuthSignOutPath"
+  lazy val logoutUrl: String = s"$feedbackSurveyFrontend/feedback-survey/?origin=PWYOII"
 
 
   // GA enhanced e-commerce custom vars

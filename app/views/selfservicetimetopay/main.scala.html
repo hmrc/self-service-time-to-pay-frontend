@@ -20,7 +20,7 @@
     @if(scriptElem.isDefined){@scriptElem}
 }
 @links = {@if(loggedIn){
-    <li><a href="@localRoutes.SelfServiceTimeToPayController.signout(None)">@Messages("ssttp.common.sign-out")</a></li>
+    <li><a href="@localRoutes.SelfServiceTimeToPayController.signOut(None)">@Messages("ssttp.common.sign-out")</a></li>
 }else{
     @HtmlFormat.empty
 }}
