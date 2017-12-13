@@ -58,7 +58,7 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
     }
   }
 
-  def signout(continueUrl: Option[String]): Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.remove().map(_ => Redirect(SsttpFrontendConfig.logoutUrl).withNewSession)
+  def signOut(continueUrl: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.remove().map(_ => Redirect(SsttpFrontendConfig.logoutUrl))
   }
 }
