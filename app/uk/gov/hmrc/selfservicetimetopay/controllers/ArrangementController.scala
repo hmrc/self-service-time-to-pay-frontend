@@ -40,12 +40,15 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.math.BigDecimal
 import play.api.mvc.{ActionBuilder, AnyContent, Request, Result, Results, Action => PlayAction}
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext
+import uk.gov.hmrc.selfservicetimetopay.service.AuditService
 
 class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi, ddConnector: DirectDebitConnector,
                                       arrangementConnector: ArrangementConnector,
                                       calculatorConnector: CalculatorConnector,
                                       taxPayerConnector: TaxPayerConnector,
-                                      eligibilityConnector: EligibilityConnector) extends TimeToPayController with play.api.i18n.I18nSupport {
+                                      eligibilityConnector: EligibilityConnector,
+                                      auditService: AuditService) extends TimeToPayController with play.api.i18n.I18nSupport {
   val cesa: String = "CESA"
   val paymentFrequency = "Calendar Monthly"
   val paymentCurrency = "GBP"
@@ -257,8 +260,11 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
           _.fold(_ => Redirect(routes.DirectDebitController.getDirectDebitError()).successfulF,
             success => {
               val result = for {
+
                 ttp <- arrangementConnector.submitArrangements(createArrangement(success, submission))
+                _  =    auditService.sendSubmissionEvent(submission, success)
               } yield ttp
+
 
               result.flatMap {
                 _.fold(error => {
