@@ -40,7 +40,6 @@ class AuditService {
   private def eventFor(submission: TTPSubmission, directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan)(implicit hc: HeaderCarrier) = {
 
     //todo Find out whether the bank account check needs to be in the event, if they get this far this should be a successful check
-    val outCome = "Some value"
     //at this stage all optional values should be present
     val utr: String = submission.taxpayer.get.selfAssessment.get.utr.get
 
@@ -56,7 +55,6 @@ class AuditService {
       auditType = "directDebitSetup",
       tags = hc.headers.toMap,
       detail = Json.obj(
-        "outCome" -> outCome,
         "utr" -> utr,
         "bankDetails" -> Json.obj(
           "name" -> name,
