@@ -40,6 +40,8 @@ case class TestUserForm (
                           affinityGroup: String,
                           debitsJson: String,
                           debitsResponseStatusCode: String,
+                          saTaxpayer: String,
+                          saTaxpayerResponseStatusCode: String,
                           continueUrl: Option[String]
 ) {
 
@@ -53,11 +55,14 @@ case class TestUserForm (
     returnsResponseStatusCode = returnsResponseStatusCode.toInt,
     debits = Json.parse(debitsJson),
     debitsResponseStatusCode = debitsResponseStatusCode.toInt,
+    saTaxpayer = Json.parse(saTaxpayer),
+    saTaxpayerResponseStatusCode = saTaxpayerResponseStatusCode.toInt,
     continueUrl = continueUrl
   )
 }
 
 object TestUserForm {
+
   val initial = TestUserForm(
     utr = None,
     returnsJson = Json.prettyPrint(TestUserReturns.sample1),
@@ -67,6 +72,8 @@ object TestUserForm {
     affinityGroup = AffinityGroup.individual.v,
     debitsJson = Json.prettyPrint(TestUserDebits.sample1),
     debitsResponseStatusCode = "200",
+    saTaxpayer = Json.prettyPrint(TestUserSaTaxpayer.buildTaxpayer()),
+    saTaxpayerResponseStatusCode = "200",
     continueUrl = None
   )
 }
@@ -95,6 +102,11 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
       "debits-status-code" -> text
         .verifying("'debits' status code must not be empty", !_.isEmpty)
         .verifying("'debits' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100),
+      "sa-taxpayer-response-body" -> text
+        .verifying("'sa-taxpayer-response-body' response body must be valid json value", x => Try(Json.parse(x)).isSuccess),
+      "sa-taxpayer-status-code" -> text
+        .verifying("'sa-taxpayer-status-code' status code must not be empty", !_.isEmpty)
+        .verifying("'sa-taxpayer-status-code' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100),
       "continue-url" -> optional(text)
     )(TestUserForm.apply)(TestUserForm.unapply)
   )
@@ -115,7 +127,7 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
 
   private def logIn(tu: TestUser)(implicit request: Request[AnyContent]): Future[Result] = {
     val loginSessionF = loginService.logIn(tu)
-    val setTaxpayerResponseF = saStubConnector.setTaxpayerResponse(tu.utr)
+    val setTaxpayerResponseF = saStubConnector.setTaxpayerResponse(tu)
     val setReturnsF = desStubConnector.setReturns(tu)
     val setDebitsF = desStubConnector.setDebits(tu)
 
@@ -128,22 +140,6 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
       url = tu.continueUrl.getOrElse(routes.InspectorController.inspect().url)
     } yield Redirect(url).withSession(newSession)
     result
-  }
-
-
-  def logInX(): Action[AnyContent] = Action.async { implicit request =>
-
-    val tu = TestUser.exemplary()
-
-    val sessionF = loginService.logIn(tu)
-    val setTaxpayerResponseF = saStubConnector.setTaxpayerResponse(tu.utr)
-    val setReturnsF = desStubConnector.setReturns(tu)
-
-    for {
-      session <- sessionF
-      _ <- setTaxpayerResponseF
-      _ <- setReturnsF
-    } yield redirectToSessionView.withSession(session)
   }
 
   private lazy val redirectToSessionView = Redirect(routes.InspectorController.inspect())
