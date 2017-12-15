@@ -35,6 +35,7 @@ import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.controllers
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
+import uk.gov.hmrc.selfservicetimetopay.service.AuditService
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 import scala.concurrent.Future
@@ -45,6 +46,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val ddConnector: DirectDebitConnector = mock[DirectDebitConnector]
+  val auditService : AuditService = mock[AuditService]
   val arrangementConnector: ArrangementConnector = mock[ArrangementConnector]
   val taxPayerConnector: TaxPayerConnector = mock[TaxPayerConnector]
   val calculatorConnector: CalculatorConnector = mock[CalculatorConnector]
@@ -52,7 +54,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
   val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
   val mockCacheMap: CacheMap = mock[CacheMap]
 
-  val controller = new ArrangementController(messagesApi, ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector, mockEligibilityConnector) {
+  val controller = new ArrangementController(messagesApi, ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector, mockEligibilityConnector, auditService) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
   }
