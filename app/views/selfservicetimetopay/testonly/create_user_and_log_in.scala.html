@@ -120,6 +120,23 @@
                 id=debits-response-body>@dataForm("debits-response-body").value.getOrElse("")</textarea>
             </p>
 
+          <p>
+            <h2>Taxpayer definition in SA</h2>
+            <span class="flush--ends form-field--hint">Define response in SA-STUB for <em>GET /sa/individual/:saUtr/designatory-details/taxpayer</em>. Read <a href="https://github.tools.tax.service.gov.uk/HMRC/sa#get-saindividualsautrdesignatory-detailstaxpayer">SA docs</a> for more details.</span>
+            @textinput(field = dataForm("sa-taxpayer-status-code"),
+              'label -> "sa taxpayer http status code",
+              '_maxlength -> "3",
+              '_inputClass -> "input--cleared"
+            )
+            <label for="sa-taxpayer-response-body">Taxpayer definition in SA json response</label>
+            <textarea
+            class="@{if(dataForm("sa-taxpayer-response-body") hasErrors) "error-field form-field--error" else ""}"
+            rows="20"
+            style="width: 100%; height: auto"
+            name="sa-taxpayer-response-body"
+            id=sa-taxpayer-response-body>@dataForm("sa-taxpayer-response-body").value.getOrElse("")</textarea>
+          </p>
+
             @button('type -> "submit") {
                 create user and log in
             }

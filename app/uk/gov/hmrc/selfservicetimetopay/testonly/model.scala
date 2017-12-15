@@ -31,6 +31,8 @@ case class TestUser(
                      returnsResponseStatusCode: Int,
                      debits: JsValue,
                      debitsResponseStatusCode: Int,
+                     saTaxpayer: JsValue,
+                     saTaxpayerResponseStatusCode: Int,
                      continueUrl: Option[String]
 )
 
@@ -46,10 +48,13 @@ object TestUser {
     returnsResponseStatusCode = Status.OK,
     debits = TestUserDebits.sample1,
     debitsResponseStatusCode = Status.OK,
+    saTaxpayer = TestUserSaTaxpayer.buildTaxpayer(),
+    saTaxpayerResponseStatusCode = Status.OK,
     continueUrl = None
   )
 
 }
+
 case class AffinityGroup(v: String)
 
 
