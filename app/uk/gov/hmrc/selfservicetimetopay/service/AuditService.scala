@@ -31,10 +31,10 @@ import scala.concurrent.ExecutionContext
 @Singleton()
 class AuditService {
 
-  def audiConnector = FrontendAuditConnector
+  def auditConnector = FrontendAuditConnector
 
   def sendSubmissionEvent(submission: TTPSubmission, directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan)(implicit headerCarrier: HeaderCarrier, executionContext: ExecutionContext) = {
-    audiConnector.sendExtendedEvent(eventFor(submission, directDebitInstructionPaymentPlan))
+    auditConnector.sendExtendedEvent(eventFor(submission, directDebitInstructionPaymentPlan))
   }
 
   private def eventFor(submission: TTPSubmission, directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan)(implicit hc: HeaderCarrier) = {
