@@ -114,34 +114,16 @@ object CalculatorLogic {
 
   /*
   * Rules:
-   a)    End of the calendar month before the due date of the next liability which is outside of the TTP
+   a)    End of the calendar month before the due date of the next liability which is outside of the TTP We are not checking this rule
    b)    End of the calendar month before the due date of the next non-submitted SA return
    c)    12 months from the earliest due date of the amounts included in the TTP (*ignoring due dates for any amounts under £32)
     */
   def calculateGapInMonths(selfAssessment: SelfAssessment, todayDate: LocalDate): Int = {
-    //todo this code needs a serious refactoring
-    val endOfTaxYearMonthDay = (4, 6)
-
-    def beforeAprilSixth(date: LocalDate): Boolean = date.isBefore(date.withMonth(endOfTaxYearMonthDay._1).withDayOfMonth(endOfTaxYearMonthDay._2))
-
-    //todo clean up too be pretty
-    val currentTaxYear = if (beforeAprilSixth(todayDate)) todayDate.withMonth(endOfTaxYearMonthDay._1).withDayOfMonth(endOfTaxYearMonthDay._2)
-    else todayDate.plusYears(1).withMonth(endOfTaxYearMonthDay._1).withDayOfMonth(endOfTaxYearMonthDay._2)
-
-
-    val (currentLiabilities, futureLiabilities): (Seq[Debit], Seq[Debit]) =
-      selfAssessment.debits.partition(d => d.taxYearEnd.exists(_.isBefore(currentTaxYear.minusYears(1))))
-
-    val futureLiabilitiesDueDateEarliest: Option[LocalDate] = if (futureLiabilities.isEmpty) None else Option(futureLiabilities.map(_.dueDate).min)
 
     val nextSubmissionReturn: Option[LocalDate] = selfAssessment.returns.flatMap(getFutureReturn)
 
-
-    val yearAfterEarliestCurrantLiabilities: Option[LocalDate] = if (currentLiabilities.exists(_.amount < 32)) None else
-      Option(currentLiabilities.map(_.dueDate).min.plusYears(1))
-
-    val differenceFutureLiabilities: Int = futureLiabilitiesDueDateEarliest.map(fl =>
-      monthDifference(todayDate, endOfMonthBeforeLastDay(fl))).getOrElse(maxAllowedMonthlyInstalments)
+    val yearAfterEarliestCurrantLiabilities: Option[LocalDate] =
+      Option(selfAssessment.debits.filter(_.amount > 32).map(_.dueDate).min.plusYears(1))
 
     val differenceNextSubmissionReturn: Int = nextSubmissionReturn.map(sr =>
       monthDifference(todayDate, endOfMonthBeforeLastDay(sr))).getOrElse(maxAllowedMonthlyInstalments)
@@ -149,7 +131,8 @@ object CalculatorLogic {
     val differenceEarliestDueDate: Int = yearAfterEarliestCurrantLiabilities.map(el =>
       monthDifference(todayDate, el)).getOrElse(maxAllowedMonthlyInstalments)
 
-    List(differenceFutureLiabilities, differenceNextSubmissionReturn, differenceEarliestDueDate).min
+    val smallestDifferance = List(differenceNextSubmissionReturn, differenceEarliestDueDate).min
+    if(smallestDifferance > maxAllowedMonthlyInstalments)maxAllowedMonthlyInstalments else smallestDifferance
   }
 
   def validateCalculatorDates(calculatorInput: CalculatorInput, numberOfMonths: Int, debits: Seq[Debit]): CalculatorInput = {
