@@ -40,6 +40,8 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
   private val testStartDate = LocalDate.of(2017, Month.JANUARY, 2)
   val testReturn2016 = Return(LocalDate.of(2016, Month.APRIL, 5), None, Some(LocalDate.of(2017, Month.JANUARY, 31)), None)
   val testReturn2017 = Return(LocalDate.of(2017, Month.APRIL, 5), None, Some(LocalDate.of(2018, Month.JANUARY, 31)), None)
+
+  val testReturn2018 = Return(LocalDate.of(2018, Month.APRIL, 5), None, None, None)
   private val testReturns = Some(List(testReturn2016))
   val sa = SelfAssessment().copy(returns = testReturns)
   //https://confluence.tools.tax.service.gov.uk/display/SSTTP/TTP+End+Date+Scenarios%3A+Standard
@@ -130,6 +132,14 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
       makeDebit("POA1", "2016-04-05", 1100, "2017-01-31"),
       makeDebit("POA2", "2016-04-05", 1100, "2017-01-31")), returns = Some(List(testReturn2016, testReturn2017))), 11)
   )
+  val scenariosBasedCustom = Table(("todayDate", "self assessment", "expected answer"),
+  (testStartDate.withMonth(12).withDayOfMonth(18), sa.copy(debits
+    = List(makeDebit("IN1", "2018-04-05", 30, "2018-01-31"),
+    makeDebit("IN2", "2018-04-05", 500, "2018-07-31")), returns = Some(List(testReturn2017.copy(
+    receivedDate = Some(LocalDate.of(2017, Month.NOVEMBER, 24))
+  ), testReturn2018))), 11))
+
+
   //todo ask ela about 11 13 15
   "CalculatorLogic" should {
     TableDrivenPropertyChecks.forAll(scenariosBasedAroundJanuaryDuedate) { (startDate: LocalDate, selfA: SelfAssessment, answer: Int) =>
@@ -167,6 +177,16 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
 
       }
     }
+  }
+
+    "CalculatorLogic" should {
+      TableDrivenPropertyChecks.forAll(scenariosBasedCustom) { (startDate: LocalDate, selfA: SelfAssessment, answer: Int) =>
+        s"scenarios Based Around Custom the correct number of months($answer) for start date : $startDate and SelfAssessment $selfA" in {
+          val result: Int = calculateGapInMonths(selfA, startDate)
+          assert(result == answer)
+
+        }
+      }
   }
 
   "setMaxMonthsAllowed" should {
