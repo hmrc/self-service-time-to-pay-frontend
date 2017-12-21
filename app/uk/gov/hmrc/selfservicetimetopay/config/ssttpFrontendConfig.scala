@@ -34,7 +34,7 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private val contactFrontendBaseUrl = baseUrl("contact-frontend")
+  private val contactFrontendBaseUrl = getConfString("contact-frontend.url", "")
   private val contactFormServiceIdentifier = "self-service-time-to-pay"
   private lazy val feedbackSurveyFrontend = getConfString("feedback-survey-frontend.url", "")
 
