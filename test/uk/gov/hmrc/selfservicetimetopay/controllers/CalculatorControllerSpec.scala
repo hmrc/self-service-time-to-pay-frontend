@@ -35,7 +35,7 @@ import uk.gov.hmrc.play.health.routes
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
+import uk.gov.hmrc.selfservicetimetopay.util.{CalculatorLogic, TTPSessionId}
 
 import scala.concurrent.Future
 
@@ -44,8 +44,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
-
-  val controller = new CalculatorController(messagesApi, mockCalculatorConnector) {
+  val mockLogic: CalculatorLogic = mock[CalculatorLogic]
+  val controller = new CalculatorController(messagesApi, mockCalculatorConnector,mockLogic) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
   }
