@@ -19,23 +19,47 @@ package uk.gov.hmrc.selfservicetimetopay.util
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
+import javax.inject.Inject
 
 import play.api.Logger
 import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.service.WorkingDaysService
 
 import scala.math.BigDecimal
 
-object CalculatorLogic {
-  /**
-    * Applies the 7 and 14 day rules for the calculator page, using today's date.
-    * See the function createCalculatorInput in Arrangement Controller for further information
-    */
+class CalculatorLogic @Inject()(workingDays:WorkingDaysService) {
   //todo try and refactor
   private def dayOfMonthCheck(date: LocalDate): LocalDate = date.getDayOfMonth match {
     case day if day > 28 => date.withDayOfMonth(1).plusMonths(1)
     case _ => date
   }
 
+  //just put 5 working days in here
+  def validateCalculatorDates(calculatorInput: CalculatorInput, numberOfMonths: Int, debits: Seq[Debit]): CalculatorInput = {
+    val firstPaymentDate: LocalDate = dayOfMonthCheck(workingDays.addWorkingDays(LocalDate.now(),5))
+    if (calculatorInput.initialPayment > 0) {
+      if (debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
+        calculatorInput.copy(startDate = LocalDate.now,
+          initialPayment = BigDecimal(0),
+          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
+          endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
+      } else {
+        calculatorInput.copy(startDate = LocalDate.now,
+          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
+          endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
+      }
+    }
+    else
+      calculatorInput.copy(startDate = LocalDate.now(),
+        firstPaymentDate = Some(firstPaymentDate),
+        endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
+  }
+}
+object CalculatorLogic{
+  /**
+    * Applies the 7 and 14 day rules for the calculator page, using today's date.
+    * See the function createCalculatorInput in Arrangement Controller for further information
+    */
   private def checkDayOfMonth(dayOfMonth: Int): Int = dayOfMonth match {
     case day if day > 28 => 1
     case _ => dayOfMonth
@@ -133,25 +157,5 @@ object CalculatorLogic {
 
     val smallestDifferance = List(differenceNextSubmissionReturn, differenceEarliestDueDate).min
     if(smallestDifferance > maxAllowedMonthlyInstalments)maxAllowedMonthlyInstalments else smallestDifferance
-  }
-
-  def validateCalculatorDates(calculatorInput: CalculatorInput, numberOfMonths: Int, debits: Seq[Debit]): CalculatorInput = {
-    val firstPaymentDate = dayOfMonthCheck(LocalDate.now().plusWeeks(1))
-    if (calculatorInput.initialPayment > 0) {
-      if (debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
-        calculatorInput.copy(startDate = LocalDate.now,
-          initialPayment = BigDecimal(0),
-          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
-          endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
-      } else {
-        calculatorInput.copy(startDate = LocalDate.now,
-          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
-          endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
-      }
-    }
-    else
-      calculatorInput.copy(startDate = LocalDate.now(),
-        firstPaymentDate = Some(firstPaymentDate),
-        endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
   }
 }
