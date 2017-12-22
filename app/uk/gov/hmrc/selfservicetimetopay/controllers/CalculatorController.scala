@@ -27,12 +27,14 @@ import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models.{TTPIsLessThenTwoMonths, _}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.{setMaxMonthsAllowed, validateCalculatorDates}
+import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic
+import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.{setMaxMonthsAllowed}
 import views.html.selfservicetimetopay.calculator._
 
 import scala.concurrent.Future
 
-class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi, calculatorConnector: CalculatorConnector)
+class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi, calculatorConnector: CalculatorConnector,
+                                     logic: CalculatorLogic)
   extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def submitSignIn: Action[AnyContent] = Action.async { implicit request =>
@@ -350,7 +352,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     implicit request =>
       ttpData match {
         case TTPSubmission(_, _, _, None, _, _, calculatorInput, durationMonths, _, _) =>
-          val newInput = validateCalculatorDates(calculatorInput, durationMonths.get, calculatorInput.debits)
+          val newInput = logic.validateCalculatorDates(calculatorInput, durationMonths.get, calculatorInput.debits)
           calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
             case Seq(schedule) =>
               sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = newInput)).map[Result] {
@@ -362,7 +364,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           }
 
         case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, calculatorInput, durationMonths, _, _) =>
-          val newInput = validateCalculatorDates(calculatorInput, durationMonths.get, sa.debits).copy(debits = sa.debits)
+          val newInput = logic.validateCalculatorDates(calculatorInput, durationMonths.get, sa.debits).copy(debits = sa.debits)
           calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
             case Seq(schedule) =>
               sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = newInput)).map[Result] {
