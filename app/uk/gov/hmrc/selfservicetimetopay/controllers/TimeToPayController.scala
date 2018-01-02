@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.auth._
+import uk.gov.hmrc.selfservicetimetopay.auth.{SaRegime, _}
 import uk.gov.hmrc.selfservicetimetopay.config._
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCache4TokensConnector, SessionCacheConnector => KeystoreConnector}
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}

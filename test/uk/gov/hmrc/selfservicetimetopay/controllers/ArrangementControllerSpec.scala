@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
 
+import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Ignore}
@@ -40,13 +41,12 @@ import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 import scala.concurrent.Future
 
-@Ignore//TODO pawel (looks like some mockups weren't set up properly...)
 class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
   type SubmissionResult = Either[SubmissionError, SubmissionSuccess]
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val ddConnector: DirectDebitConnector = mock[DirectDebitConnector]
-  val auditService : AuditService = mock[AuditService]
+  val auditService: AuditService = mock[AuditService]
   val arrangementConnector: ArrangementConnector = mock[ArrangementConnector]
   val taxPayerConnector: TaxPayerConnector = mock[TaxPayerConnector]
   val calculatorConnector: CalculatorConnector = mock[CalculatorConnector]
@@ -72,16 +72,16 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
   val validDayForm = Seq(
     "dayOfMonth" -> "10"
   )
-
   "Self Service Time To Pay Arrangement Controller" must {
     "redirect to start with an empty submission for determine misalignment" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(None))
-
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
       )
 
@@ -91,6 +91,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to 'you need to file' when sa debits are less than £32.00 for determine misalignment" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val requiredSa = selfAssessment.get.copy(debits = Seq.empty)
       when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
 
@@ -102,7 +103,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
       )
 
@@ -111,6 +113,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
     }
     "redirect to 'you need to file' when the user has not filled " in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val requiredSa = selfAssessment.get.copy(debits = Seq.empty)
       when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(ReturnNeedsSubmitting))))
 
@@ -123,7 +126,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
         .apply(FakeRequest()
           .withSession(
             SessionKeys.userId -> "someUserId",
-            TTPSessionId.newTTPSession()
+            TTPSessionId.newTTPSession(),
+            "token" -> "1234"
           )
         )
 
@@ -133,6 +137,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
 
     "redirect to 'Tax Liabilities' when no amounts have been entered for determine misalignment" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
       when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(mockSessionCache.get(any(), any(), any()))
@@ -143,7 +148,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
       )
 
@@ -152,6 +158,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to 'instalment summary' when entered amounts and sa amounts are equal and user is eligible for determine misalignment" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
 
       when(mockSessionCache.get(any(), any(), any()))
@@ -163,7 +170,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
       )
 
@@ -173,7 +181,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to 'call us page' when entered amounts and sa amounts are equal and user is ineligible for determine misalignment" in {
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
-
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
@@ -183,7 +191,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
       )
 
@@ -192,6 +201,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to misalignment when entered amounts and sa amounts aren't equal for determine misalignment" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
       when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(mockSessionCache.get(any(), any(), any()))
@@ -202,7 +212,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
       )
 
@@ -211,6 +222,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to call us page when tax payer connector fails to retrieve data for determine misalignment" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(None))
 
       when(mockSessionCache.get(any(), any(), any()))
@@ -219,7 +231,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val response = controller.determineMisalignment().apply(FakeRequest()
         .withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
       )
 
@@ -228,6 +241,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "successfully display the instalment summary page with required data in submission" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val requiredSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
 
       when(mockSessionCache.get(any(), any(), any()))
@@ -239,10 +253,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
 
       val request = FakeRequest()
-      .withSession(
-        SessionKeys.userId -> "someUserId",
-        TTPSessionId.newTTPSession()
-      )
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
+        )
 
 
       val response = controller.getInstalmentSummary().apply(request)
@@ -252,6 +267,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to the start page when missing required data for the instalment summary page" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
@@ -262,7 +278,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val response = controller.getInstalmentSummary().apply(FakeRequest()
         .withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
       )
 
@@ -271,6 +288,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "successfully display the application complete page with required data in submission" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
       val requiredSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
 
@@ -281,7 +299,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       val request = FakeRequest().withSession(
         SessionKeys.userId -> "someUserId",
-        TTPSessionId.newTTPSession()
+        TTPSessionId.newTTPSession(),
+        "token" -> "1234"
       )
 
 
@@ -292,13 +311,15 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to the start page when missing required data for the application complete page" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(None))
 
       val response = controller.applicationComplete().apply(FakeRequest()
         .withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
       )
 
@@ -309,7 +330,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "return success and display the application complete page on successfully set up debit when DES call returns an error" in {
 
       implicit val hc = new HeaderCarrier
-
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
@@ -318,9 +339,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(arrangementConnector.submitArrangements(any())(any())).thenReturn(Future.successful(Left(SubmissionError(GATEWAY_TIMEOUT, "Timeout"))))
 
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
-        )
+        SessionKeys.userId -> "someUserId",
+        TTPSessionId.newTTPSession(),
+        "token" -> "1234"
+      )
       )
 
       controllers.routes.ArrangementController.applicationComplete().url must endWith(redirectLocation(response).get)
@@ -329,10 +351,11 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect to start page if there is no data in the session cache" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(None))
-
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(
         SessionKeys.userId -> "someUserId",
-        TTPSessionId.newTTPSession()
+        TTPSessionId.newTTPSession(),
+        "token" -> "1234"
       )
       )
       controllers.routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(response).get)
@@ -340,7 +363,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "update payment schedule date" in {
       implicit val hc = new HeaderCarrier
-
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
@@ -350,18 +373,23 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val response = controller.changeSchedulePaymentDay()
         .apply(FakeRequest("POST", "/arrangement/instalment-summary/change-day").withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
-        .withFormUrlEncodedBody(validDayForm: _*))
+          .withFormUrlEncodedBody(validDayForm: _*))
 
       controllers.routes.ArrangementController.getInstalmentSummary().url must endWith(redirectLocation(response).get)
     }
 
     "redirect to login if user not logged in" in {
-
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(None))
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val response = controller.submit().apply(FakeRequest("POST", "/arrangement/submit").withSession(
-          TTPSessionId.newTTPSession()
-        )
+        SessionKeys.userId -> "someUserId",
+        TTPSessionId.newTTPSession(),
+        "token" -> "1234"
+      )
       )
 
 
@@ -369,6 +397,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to misalignment page if logged in and not logged in debits do not sum() to the same value" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       implicit val hc = new HeaderCarrier
       when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       val localTtpSubmission = ttpSubmission.copy(calculatorData =
@@ -382,16 +411,17 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment")
         .withSession(
           SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
         )
-       )
+      )
 
       controllers.routes.CalculatorController.getMisalignmentPage().url must endWith(redirectLocation(response).get)
     }
 
     "redirect to instalment summary page if logged in and not logged in debits do sum() to the same value" in {
       implicit val hc = new HeaderCarrier
-
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
 
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer))) //121.20 debits
@@ -403,7 +433,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment").withSession(
         SessionKeys.userId -> "someUserId",
-        TTPSessionId.newTTPSession()
+        TTPSessionId.newTTPSession(),
+        "token" -> "1234"
       ))
 
       controllers.routes.ArrangementController.getInstalmentSummary().url must endWith(redirectLocation(response).get)
@@ -411,7 +442,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to getTaxLiabilities page if the not logged in user has not created any debits" in {
       implicit val hc = new HeaderCarrier
-
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = Seq.empty))
       when(mockEligibilityConnector.checkEligibility(any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer))) //121.20 debits
@@ -420,9 +451,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
 
       val response = controller.determineMisalignment().apply(FakeRequest("GET", "/arrangement/determine-misalignment").withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession()
-        )
+        SessionKeys.userId -> "someUserId",
+        TTPSessionId.newTTPSession(),
+        "token" -> "1234"
+      )
       )
 
 
@@ -432,7 +464,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
   "ttpSessionId" must {
     val controller = new TimeToPayController() {
-      def go() = Action { Ok("") }
+      def go() = Action {
+        Ok("")
+      }
     }
 
     "be set within the session cookie when the user first hits a page" in {

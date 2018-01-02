@@ -195,8 +195,8 @@ package object resources {
 
   val directDebitBank = DirectDebitBank("", Seq.empty)
 
-  val authorisedUser = Authority("", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None, "")
-  val authorisedUserNoSA = Authority("", Accounts(), None, None, Strong, L200, None, None, None, "")
+  val authorisedUser = Authority("someUserId", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None, "")
+  val authorisedUserNoSA = Authority("someUserId", Accounts(), None, None, Strong, L200, None, None, None, "")
 
   val loggedInUser = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L300, "")
   val loggedInUserUnderConfidenceThreshold = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L50, "")
