@@ -91,7 +91,6 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     * Lastly, a check is performed to see if the user input debits match the Taxpayer
     * debits. If not, display misalignment page otherwise perform an eligibility check.
     */
-  //todo refactor this give's makes my head sore
   def determineMisalignment: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
@@ -100,7 +99,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
         case Some(ttp@TTPSubmission(_, _, _, _, _, _, _, _, _, _)) =>
           taxPayerConnector.getTaxPayer(authContext.principal.accounts.sa.get.utr.utr).flatMap[Result] {
             tp =>
-              tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())))(taxPayer => {
+              tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion())))(taxPayer => {
                 val newSubmission = ttp.copy(taxpayer = Some(taxPayer))
                 eligibilityCheck(taxPayer, newSubmission)
               }
@@ -171,7 +170,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) =>
         youNeedToFile
       case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
-        Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()).successfulF
+        Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()).successfulF
     }
 
     if (isDebtToLittle) youNeedToFile

@@ -142,7 +142,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
           .withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
-      controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url must endWith(redirectLocation(result).get)
+      controllers.routes.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax().url must endWith(redirectLocation(result).get)
     }
 
     "submit type of tax given other types of tax and redirect to call us page" in {
@@ -158,7 +158,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
           .withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
-      controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url must endWith(redirectLocation(result).get)
+      controllers.routes.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax().url must endWith(redirectLocation(result).get)
     }
 
     "submit existing ttp given no existing ttp data and logged in user and redirect to amount you owe page via misalignment page" in {
@@ -205,7 +205,7 @@ class EligibilityControllerSpec extends PlayMessagesSpec with MockitoSugar with 
           .withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
-      controllers.routes.SelfServiceTimeToPayController.getTtpCallUs().url must endWith(redirectLocation(result).get)
+      controllers.routes.SelfServiceTimeToPayController.getTtpCallUsExistingTTP().url must endWith(redirectLocation(result).get)
     }
 
     "redirect to self on type of tax page and display errors when invalid data is submitted" in {

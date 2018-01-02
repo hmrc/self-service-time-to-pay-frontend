@@ -50,6 +50,7 @@ trait TimeToPayController extends FrontendController with Actions {
 
 
   private def provideSaRegime()(implicit request: Request[_]): SaRegime = {
+    Logger.info("")
     val tokenData: TokenData = TokenData(
       Token(UUID.randomUUID().toString),
       expirationDate = LocalDateTime.now().plusMinutes(10),
