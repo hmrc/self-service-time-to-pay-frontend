@@ -50,7 +50,7 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
           () => TTPSubmission(eligibilityTypeOfTax = Some(validFormData))).map(_ => {
           validFormData match {
             case EligibilityTypeOfTax(true, false) => Redirect(routes.EligibilityController.getExistingTtp())
-            case _ => Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())
+            case _ => Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax())
           }
         })
       }
@@ -114,7 +114,7 @@ class EligibilityController @Inject() (val messagesApi: play.api.i18n.MessagesAp
                 Logger.info(s"${e.getMessage}")
                 Redirect(routes.EligibilityController.getSignInQuestion())
               }
-            case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))
+            case _ => Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsExistingTTP()))
           }
         })
       })

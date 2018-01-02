@@ -43,7 +43,35 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
       case _ => Ok(call_us(isSignedIn))
     }
   }
-
+  //todo refactoring remove dublication
+  def getTtpCallUsTypeOfTax: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, taxpayer, Some(EligibilityTypeOfTax(_, hasOtherDebt)), _, _, _, _, _)) =>
+        Ok(call_us(typeOfTaxNumber = hasOtherDebt, loggedIn = isSignedIn))
+      case _ => Ok(call_us(isSignedIn))
+    }
+  }
+  def getTtpCallUsExistingTTP: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, taxpayer, Some(EligibilityTypeOfTax(_, hasOtherDebt)), _, _, _, _, _)) =>
+        Ok(call_us(typeOfTaxNumber = hasOtherDebt, loggedIn = isSignedIn))
+      case _ => Ok(call_us(isSignedIn))
+    }
+  }
+  def getTtpCallUsCalculatorInstalments: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, taxpayer, Some(EligibilityTypeOfTax(_, hasOtherDebt)), _, _, _, _, _)) =>
+        Ok(call_us(typeOfTaxNumber = hasOtherDebt, loggedIn = isSignedIn))
+      case _ => Ok(call_us(isSignedIn))
+    }
+  }
+  def getTtpCallUsSignInQuestion: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, taxpayer, Some(EligibilityTypeOfTax(_, hasOtherDebt)), _, _, _, _, _)) =>
+        Ok(call_us(typeOfTaxNumber = hasOtherDebt, loggedIn = isSignedIn))
+      case _ => Ok(call_us(isSignedIn))
+    }
+  }
   def getYouNeedToFile: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(ttpData: TTPSubmission) => Ok(you_need_to_file(isSignedIn))

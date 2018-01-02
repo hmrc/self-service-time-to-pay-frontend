@@ -56,6 +56,10 @@ POST        /arrangement/submit                               @uk.gov.hmrc.selfs
 GET         /arrangement/summary                              @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
 # Alternative pages
 GET         /you-need-to-file                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
+GET         /eligibility/type-of-tax/call-us                  @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax()
+GET         /eligibility/existing-ttp/call-us                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsExistingTTP()
+GET         /calculator/instalments/call-us                   @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()
+GET         /eligibility/sign-in-question/call-us             @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()
 GET         /call-us                                          @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
 GET         /unavailable                                      @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getUnavailable()
 GET         /sign-out                                         @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.signOut(continueUrl: Option[String])
