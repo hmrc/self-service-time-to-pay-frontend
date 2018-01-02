@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,31 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import java.io.InputStream
-import javax.inject.Inject
-
-import com.google.inject.ImplementedBy
-import play.api.Environment
+import com.google.inject.{ImplementedBy, Singleton}
 import play.api.libs.json.{Json, Reads}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpPost}
-import uk.gov.hmrc.play.config.inject.ServicesConfig
+import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
+import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
 import uk.gov.hmrc.time.workingdays.{BankHoliday, BankHolidaySet}
 
 import scala.concurrent.Future
 
-class WSBankHolidaysConnector @Inject()() extends BankHolidaysConnector {
-  override val http = WSHttp
-  val url = getConfString("bank-holidays.url", "")
-
-  override protected def environment = ???
-}
-@ImplementedBy(classOf[WSBankHolidaysConnector])
-trait BankHolidaysConnector extends ServicesConfig{
+@ImplementedBy(classOf[WSBankHolidaysConnectorImpl])
+trait BankHolidaysConnector {
   protected implicit val bankHolidayReads: Reads[BankHoliday]       = Json.reads[BankHoliday]
   protected implicit val bankHolidaySetReads: Reads[BankHolidaySet] = Json.reads[BankHolidaySet]
   val url:String
   val http: HttpGet
+
   def bankHolidays(division: String = "england-and-wales")(implicit hc: HeaderCarrier): Future[BankHolidaySet] = {
     http.GET[Map[String, BankHolidaySet]](url) map {
       holidaySets => holidaySets(division)
     }
   }
+}
+@Singleton
+class WSBankHolidaysConnectorImpl extends BankHolidaysConnector with ServicesConfig {
+  override val http = WSHttp
+  val url = getConfString("bank-holidays.url", "")
 }
