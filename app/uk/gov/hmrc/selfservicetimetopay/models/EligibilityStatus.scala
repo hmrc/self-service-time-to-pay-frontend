@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,5 +25,3 @@ case object TTPIsLessThenTwoMonths extends Reason("TTPIsLessThenTwoMonths")
 case object ReturnNeedsSubmitting extends Reason("ReturnNeedsSubmitting")
 
 case class EligibilityStatus(eligible: Boolean, reasons: Seq[Reason])
-
-

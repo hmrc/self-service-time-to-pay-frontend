@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
 import javax.inject.Inject
 
-import play.api.Logger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.service.WorkingDaysService
 
@@ -109,7 +108,7 @@ object CalculatorLogic{
 
   /*
     * Rules:
-      * - First payment must be at least 7 days from today's date
+      * - First payment must be at least 5 working days from today's date
     * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
     * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
       */
