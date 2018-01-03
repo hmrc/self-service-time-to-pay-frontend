@@ -40,11 +40,11 @@ class CalculatorLogic @Inject()(workingDays:WorkingDaysService) {
       if (debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
         calculatorInput.copy(startDate = LocalDate.now,
           initialPayment = BigDecimal(0),
-          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
+          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
           endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
       } else {
         calculatorInput.copy(startDate = LocalDate.now,
-          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusWeeks(2))),
+          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
           endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
       }
     }
