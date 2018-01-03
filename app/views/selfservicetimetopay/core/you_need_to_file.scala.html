@@ -1,20 +1,35 @@
-@(signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.{highlight, message_list}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import selfservicetimetopay.partials.tax_liabilities_summary
+@(debits: Seq[Debit],signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @selfservicetimetopay.main(
     title = Messages("ssttp.you-need-to-file.title"),
     loggedIn = signedIn
 ) {
+   <p><a class="back-link" href="#" onClick="history.go(-1);return true;">@Messages("ssttp.you-need-to-file.form.back")</a></p>
     <header class="page-header text">
         <h1>@Messages("ssttp.you-need-to-file.title")</h1>
     </header>
-    <div class="panel-indent">
         <p>@Messages("ssttp.you-need-to-file.intro")</p>
-    </div>
     <p class="subsection">@Messages("ssttp.you-need-to-file.because")</p>
     @message_list(Some("bullets"), "ssttp.you-need-to-file.because.list.")
     <p class="subsection"><a href="https://online.hmrc.gov.uk/">
     @Messages("ssttp.you-need-to-file.check-account.link")</a> @Messages("ssttp.you-need-to-file.check-account")
     </p>
-    <p>@Messages("ssttp.you-need-to-file.other-tax")</p>
-}
+    <p>@Messages("ssttp.you-need-to-file.self-assessment-number")</p>
+    <p>@Messages("ssttp.you-need-to-file.self-assessment-number-recently")</p>
+    <p>@Messages("ssttp.you-need-to-file.self-assessment-number-text-phone")</p>
+    <p>@Messages("ssttp.you-need-to-file.opening-times")</p>  
+    <ul class="bullets">
+      <li>@Messages("ssttp.you-need-to-file.monday-friday")</li>
+      <li>@Messages("ssttp.you-need-to-file.saturday")</li>
+      <li>@Messages("ssttp.you-need-to-file.sunday")</li>
+    </ul>
+   <section>
+        <details>
+            <summary class="summary">@Messages("ssttp.you-need-to-file.debits-title")</summary>
+            @tax_liabilities_summary(debits)
+        </details>
+   </section>
+            }

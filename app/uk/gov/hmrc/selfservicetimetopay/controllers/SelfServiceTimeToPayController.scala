@@ -52,8 +52,8 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
 
   def getYouNeedToFile: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData: TTPSubmission) => Ok(you_need_to_file(isSignedIn))
-      case _ => Ok(you_need_to_file(isSignedIn))
+      case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) => Ok(you_need_to_file(sa.debits,isSignedIn))
+      case _ => Ok(service_start(isSignedIn))
     }
   }
 
