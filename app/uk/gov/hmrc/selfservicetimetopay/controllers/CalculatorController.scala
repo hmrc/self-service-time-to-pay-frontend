@@ -198,7 +198,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           } else {
             //todo perhaps move to time-to-pay-eligbility?
             sessionCache.put(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(false, Seq(TTPIsLessThenTwoMonths))))).map { _ =>
-              Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs())
+              Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments())
             }
           }
 

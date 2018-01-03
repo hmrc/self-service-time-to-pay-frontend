@@ -197,7 +197,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       )
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion().url
     }
 
     "redirect to misalignment when entered amounts and sa amounts aren't equal for determine misalignment" in {
@@ -237,7 +237,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       )
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUs().url
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion().url
     }
 
     "successfully display the instalment summary page with required data in submission" in {

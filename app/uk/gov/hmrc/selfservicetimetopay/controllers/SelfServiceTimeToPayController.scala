@@ -44,7 +44,6 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
     }
   }
 
-  //todo refactoring remove dublication
   def getTtpCallUs: Action[AnyContent] = actionCallUs
   def getTtpCallUsTypeOfTax: Action[AnyContent] = actionCallUs
   def getTtpCallUsExistingTTP: Action[AnyContent] = actionCallUs
