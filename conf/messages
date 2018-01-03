@@ -275,13 +275,21 @@ ssttp.type-of-tax.contact-number=0300 200 3835
 ssttp.sa-helpline.contact-number=0300 200 3835
 
 ssttp.you-need-to-file.title=Your tax account isn''t up to date
+ssttp.you-need-to-file.form.back=Back
 ssttp.you-need-to-file.intro=The amount outstanding in your tax account isn’t enough to set up an instalment plan.
 ssttp.you-need-to-file.because=This is because:
 ssttp.you-need-to-file.because.list.1=you haven’t filed your Self Assessment tax return
 ssttp.you-need-to-file.because.list.2=you filed less than 3 days ago and your account hasn’t updated yet
 ssttp.you-need-to-file.check-account.link=Go to your tax account
 ssttp.you-need-to-file.check-account=to check your balance or file your Self Assessment tax return.
-ssttp.you-need-to-file.other-tax=If you'’re unsure how to proceed call us on , call us on 0300 200 3822
+ssttp.you-need-to-file.opening-times=Our opening times are:
+ssttp.you-need-to-file.monday-friday=Monday to Friday: 8am to 8pm
+ssttp.you-need-to-file.saturday=Saturday: 8am to 4pm
+ssttp.you-need-to-file.sunday=Closed Sundays, Christmas Day, Boxing Day and New Years Day
+ssttp.you-need-to-file.self-assessment-number=If you’'re unsure how to proceed call the Self Assessment Payment Helpline on 0300 200 3822
+ssttp.you-need-to-file.self-assessment-number-recently=If you have recently been self employed, call 0300 200 3500
+ssttp.you-need-to-file.self-assessment-number-text-phone=Textphone: 0300 200 3519
+ssttp.you-need-to-file.debits-title=View a breakdown of what you owe
 
 ssttp.arrangement.instalment-summary.title=Your instalment plan summary
 ssttp.arrangement.instalment-summary.print=Print
