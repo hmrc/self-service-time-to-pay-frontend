@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
 import javax.inject.Inject
 
+import play.api.Logger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.service.WorkingDaysService
 
@@ -33,7 +34,6 @@ class CalculatorLogic @Inject()(workingDays:WorkingDaysService) {
     case _ => date
   }
 
-  //just put 5 working days in here
   def validateCalculatorDates(calculatorInput: CalculatorInput, numberOfMonths: Int, debits: Seq[Debit]): CalculatorInput = {
     val firstPaymentDate: LocalDate = dayOfMonthCheck(workingDays.addWorkingDays(LocalDate.now(),5))
     if (calculatorInput.initialPayment > 0) {
@@ -41,11 +41,11 @@ class CalculatorLogic @Inject()(workingDays:WorkingDaysService) {
         calculatorInput.copy(startDate = LocalDate.now,
           initialPayment = BigDecimal(0),
           firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
-          endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
+          endDate = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
       } else {
         calculatorInput.copy(startDate = LocalDate.now,
           firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
-          endDate = calculatorInput.startDate.plusMonths(numberOfMonths))
+          endDate = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
       }
     }
     else
