@@ -40,7 +40,7 @@ class SaStubConnector extends ServicesConfig {
     val setTaxpayerUrl = s"$baseUrl/sa/individual/${tu.utr.v}/designatory-details/taxpayer"
 
     WSHttp
-      .PATCH(setTaxpayerUrl, predefinedResponse)
+      .POST(setTaxpayerUrl, predefinedResponse)
       .map{
         r =>
           if(r.status != 200) throw new RuntimeException(s"Could not set up taxpayer in SA-STUB: ${tu.utr}")
