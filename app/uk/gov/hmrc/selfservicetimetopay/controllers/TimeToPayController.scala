@@ -37,6 +37,8 @@ import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId._
 
+import scala.util.{Failure, Success, Try}
+
 
 
 trait TimeToPayController extends FrontendController with Actions {
@@ -89,8 +91,13 @@ trait TimeToPayController extends FrontendController with Actions {
     Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
 
   def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = PlayAction.async { implicit request =>
-    val taxRegime = provideSaRegime()
-    AuthorisedFor(taxRegime, timeToPayConfidenceLevel).async(body)(request)
+    Try {provideSaRegime()} match {
+      case Success(taxRegime) => AuthorisedFor(taxRegime, timeToPayConfidenceLevel).async(body)(request)
+      case Failure(e)         => {
+        Logger.warn("Redirecting to start page because there was no ttpSessionId", e)
+        redirectOnError.successfulF
+      }
+    }
   }
 
   /**
