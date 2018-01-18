@@ -70,7 +70,7 @@ object AffinityGroup {
 case class AuthorityId(v: String)
 
 object AuthorityId {
-  def random = AuthorityId(s"authorityId-${Math.abs(Random.nextLong())}")
+  def random = AuthorityId(s"authId-${Math.abs(Random.nextLong()%1000)}") //length must be < 25 characters (dunno why...)
 }
 
 case class AuthorityUri(v: String)
