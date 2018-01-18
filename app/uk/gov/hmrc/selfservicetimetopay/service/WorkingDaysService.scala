@@ -39,7 +39,7 @@ class WorkingDaysService @Inject()(val bankHolidaysConnector: BankHolidaysConnec
   def addWorkingDays(date:  LocalDate, days: Int): LocalDate = {
     implicit val hols: BankHolidaySet =
       Try {
-        Await.result(bankHolidaysConnector.bankHolidays()(HeaderCarrier()), 5 seconds)
+        Await.result(bankHolidaysConnector.bankHolidays()(HeaderCarrier()), 15 seconds)
       }.getOrElse {
         Logger.error("Failed to load bank holidays schedule from BankHolidaysConnector, using default bank holiday set")
         test
