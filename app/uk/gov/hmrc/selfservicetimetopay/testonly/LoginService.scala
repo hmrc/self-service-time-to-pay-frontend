@@ -61,7 +61,7 @@ class LoginService extends ServicesConfig {
     implicit val hc = HeaderCarrier()
 
     val requestBody = loginJson(tu)
-    WSHttp.POST(s"$authLoginApiUrl/government-gateway/legacy/login", requestBody).map(r=>
+    WSHttp.POST(s"$authLoginApiUrl/government-gateway/session/login", requestBody).map(r=>
       (
         AuthToken(
           r.header(HeaderNames.AUTHORIZATION).getOrElse(throw new RuntimeException(s"missing 'AUTHORIZATION' header: $r"))
