@@ -44,7 +44,7 @@ object TestUserReturns {
         "returns": [
           {
             "taxYearEnd":   "2017-04-05",
-            "dueDate":      "2018-01-31"
+            "dueDate":      "2019-01-31"
           },
           {
             "taxYearEnd":   "2016-04-05",

@@ -31,7 +31,7 @@ object TestUserDebits {
                "originCode": "IN1",
                "creationDate": "2017-11-05"
              },
-             "relevantDueDate": "2018-02-05",
+             "relevantDueDate": "2019-02-05",
              "totalOutstanding": 2511
            },
            {
@@ -40,7 +40,7 @@ object TestUserDebits {
                "originCode": "IN2",
                "creationDate": "2017-11-05"
              },
-             "relevantDueDate": "2018-02-25",
+             "relevantDueDate": "2019-02-25",
              "totalOutstanding": 3266
            }
          ]

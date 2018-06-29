@@ -51,8 +51,8 @@ object DirectDebitForm {
       sc2,
       sc3,
       arrangementDirectDebit.accountNumber))
-  })
 
+  })
   def validateSortCode(sortCodeInput: String, sortCodeLength: Int): Boolean = sortCodeInput match {
     case sc if !validateNumberLength(sc, 2) => false
     case sc if !validateNumberLength(sc, sc.length) => false
