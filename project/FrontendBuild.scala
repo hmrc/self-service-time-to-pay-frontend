@@ -44,7 +44,7 @@ private object AppDependencies {
   )
 
   trait TestDependencies {
-    lazy val scope: String = "test"
+    lazy val scope: String = "test,it"
     lazy val test: Seq[ModuleID] = ???
   }
 
