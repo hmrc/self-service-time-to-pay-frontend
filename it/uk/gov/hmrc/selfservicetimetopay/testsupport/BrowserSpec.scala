@@ -2,7 +2,7 @@ package uk.gov.hmrc.selfservicetimetopay.testsupport
 
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.scalatest.FreeSpec
+import org.scalatest.{BeforeAndAfterEach, FreeSpec}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -10,7 +10,8 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 class BrowserSpec extends FreeSpec
   with GuiceOneServerPerSuite
   with WireMockSupport
-  with RichMatchersIt {
+  with RichMatchersIt
+  with BeforeAndAfterEach{
 
   //TODO: change this to something faster. phantomjs could be an option
   protected implicit val webDriver: WebDriver = new HtmlUnitDriver(true)
@@ -29,5 +30,7 @@ class BrowserSpec extends FreeSpec
       "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port
     )
     .build()
-
+  override def  afterEach() ={
+    webDriver.manage().deleteAllCookies()
+  }
 }
