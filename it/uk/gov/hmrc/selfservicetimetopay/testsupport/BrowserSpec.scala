@@ -22,21 +22,12 @@ class BrowserSpec extends FreeSpec
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
       "microservice.services.auth.port" -> WireMockSupport.port,
-      "microservice.services.direct-debit-backend.port" -> WireMockSupport.port,
-      "microservice.services.bars.port" -> WireMockSupport.port,
-      "application.router" -> "testOnlyDoNotUseInAppConf.Routes"
+      "microservice.services.direct-debit.port" -> WireMockSupport.port,
+      "microservice.services.time-to-pay-calculator.port" -> WireMockSupport.port,
+      "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
+      "microservice.services.time-to-pay-eligibility.port" -> WireMockSupport.port,
+      "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port
     )
     .build()
-
-  /**
-    * This will put into browser the `mdtp` cookie shipped with proper `sessionId` and other required stuff
-    * so [[action.AuthenticatedAction]] will be happy and allow for access. Later on this `sessionId` will match
-    * the `sessionId` in `Journey`
-    */
-  protected def login(): Unit = {
-    val sessionCookieCrypto: SessionCookieCrypto = app.injector.instanceOf[SessionCookieCrypto]
-    AuthResponses.logInResponse(sessionCookieCrypto.crypto)
-    webDriver.get(s"http://localhost:${WireMockSupport.port}${AuthResponses.loginPath}")
-  }
 
 }

@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 import com.github.tomakehurst.wiremock.client.WireMock.{verify => wmVerify, _}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.SaUtr
@@ -34,7 +35,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import play.api.inject.guice.GuiceApplicationBuilder
 
-class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with WithFakeApplication {
+class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with GuiceOneServerPerSuite {
 
   implicit override lazy val app = new GuiceApplicationBuilder().
     disable[com.kenshoo.play.metrics.PlayModule].build()
