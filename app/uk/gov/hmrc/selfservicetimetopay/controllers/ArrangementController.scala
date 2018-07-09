@@ -261,7 +261,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               val result = for {
 
                 ttp <- arrangementConnector.submitArrangements(createArrangement(success, submission))
-                _  =    auditService.sendSubmissionEvent(submission, success)
+                _  =    auditService.sendSubmissionEvent(submission)
               } yield ttp
 
 

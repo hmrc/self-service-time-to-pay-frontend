@@ -33,16 +33,15 @@ class AuditService {
 
   def auditConnector = FrontendAuditConnector
 
-  def sendSubmissionEvent(submission: TTPSubmission, directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan)(implicit headerCarrier: HeaderCarrier, executionContext: ExecutionContext) = {
-    auditConnector.sendExtendedEvent(eventFor(submission, directDebitInstructionPaymentPlan))
+  def sendSubmissionEvent(submission: TTPSubmission)(implicit headerCarrier: HeaderCarrier, executionContext: ExecutionContext) = {
+    auditConnector.sendExtendedEvent(eventFor(submission))
   }
 
-  private def eventFor(submission: TTPSubmission, directDebitInstructionPaymentPlan: DirectDebitInstructionPaymentPlan)(implicit hc: HeaderCarrier) = {
+  private def eventFor(submission: TTPSubmission)(implicit hc: HeaderCarrier) = {
 
     //todo Find out whether the bank account check needs to be in the event, if they get this far this should be a successful check
     //at this stage all optional values should be present
     val utr: String = submission.taxpayer.get.selfAssessment.get.utr.get
-
     val name: String = submission.bankDetails.map(_.accountName.get).get
     val accountNumber: String = submission.bankDetails.map(_.accountNumber.get).get
     val sortCode: String = submission.bankDetails.map(_.sortCode.get).get

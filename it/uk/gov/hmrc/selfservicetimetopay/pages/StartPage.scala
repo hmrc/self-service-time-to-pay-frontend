@@ -12,5 +12,5 @@ object StartPage extends CommonPage {
 
  override def getPageHeader(implicit driver: WebDriver): String = probing(_.findElement(By.className("h1-heading")).getText)
 
-  def clickStart()(implicit driver: WebDriver): Unit = probing(_.findElement(By.id("start")).click())
+  def clickStart()(implicit driver: WebDriver): Unit = probing(_.findElement(By.className("button--get-started")).click())
 }

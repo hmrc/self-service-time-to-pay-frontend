@@ -1,6 +1,6 @@
 package uk.gov.hmrc.selfservicetimetopay.pages
 
-import org.openqa.selenium.WebDriver
+import org.openqa.selenium.{By, WebDriver}
 
 object ExistingTtpPage  extends CommonPage {
 
@@ -12,4 +12,7 @@ object ExistingTtpPage  extends CommonPage {
     getPageHeader shouldBe "Are you already paying an HMRC debt in instalments?"
   }
 
+  def clickYes()(implicit webDriver: WebDriver) =  probing(_.findElement(By.id("radio-inline-1")).click())
+
+  def clickNo()(implicit webDriver: WebDriver) =  probing(_.findElement(By.id("radio-inline-2")).click())
 }

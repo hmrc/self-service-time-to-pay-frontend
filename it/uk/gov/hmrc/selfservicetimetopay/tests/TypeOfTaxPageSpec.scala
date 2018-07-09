@@ -26,14 +26,14 @@ class TypeOfTaxPageSpec extends BrowserSpec {
   "show the please call use page if Other types of tax is selected " in new TestSetup {
     page.clickOtherTypesOfTaxs()
     page.clickContinue()
-    PleaseCallUse.assertPageIsDisplayed()
+    PleaseCallUse.assertPageIsDisplayed("type-of-tax")
   }
 
   "show the please call use page if Other types of tax is selected as well as self assessment  " in new TestSetup {
     page.clickOtherTypesOfTaxs()
     page.clickSelfAssessment()
     page.clickContinue()
-    PleaseCallUse.assertPageIsDisplayed()
+    PleaseCallUse.assertPageIsDisplayed("type-of-tax")
   }
 
   "show the existing ttp page if self assessment is selected" in new TestSetup {
