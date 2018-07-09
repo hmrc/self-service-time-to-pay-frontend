@@ -1,0 +1,34 @@
+{
+  "customerName":"Adam",
+  "addresses":[
+    {
+    "addressLine1":"adressLine1",
+    "addressLine2":"adressLine2",
+    "addressLine3":"adressLine3",
+    "addressLine4":"adressLine4",
+    "addressLine5":"adressLine5",
+    "postcode":"postcode"
+  }],
+  "selfAssessment": {
+    "debits": [
+      {
+        "originCode": "POA2",
+        "amount": 25000.52,
+        "dueDate": "2016-01-31",
+        "interest": {
+          "calculationDate": "2016-06-01",
+          "amountAccrued": 42.32
+        },
+        "taxYearEnd": "2017-04-05"
+      }
+    ],
+
+    "utr": "1234567890",
+    "communicationPreferences": {
+        "welshLanguageIndicator": true,
+        "audioIndicator": true,
+        "largePrintIndicator": true,
+        "brailleIndicator": true
+    }
+
+}}

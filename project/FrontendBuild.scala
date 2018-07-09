@@ -44,7 +44,7 @@ private object AppDependencies {
   )
 
   trait TestDependencies {
-    lazy val scope: String = "test"
+    lazy val scope: String = "test,it"
     lazy val test: Seq[ModuleID] = ???
   }
 
@@ -57,7 +57,7 @@ private object AppDependencies {
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
         "com.github.tomakehurst" % "wiremock" % "2.2.2" % scope,
         "org.mockito" % "mockito-core" % "1.10.19" % scope,
-        "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % scope
+        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope
       )
     }.test
   }

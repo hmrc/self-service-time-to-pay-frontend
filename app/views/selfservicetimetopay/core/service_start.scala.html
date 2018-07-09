@@ -16,7 +16,7 @@
         @Messages("ssttp.landing.before-you-start")
         @message_list(Some("bullets"), "ssttp.landing.before-you-start.list.")
     </p>
-    @form(routes.SelfServiceTimeToPayController.submit(), 'class -> "group") {
+    @form(routes.SelfServiceTimeToPayController.submit(), 'class -> "group",'id -> "start") {
        @submit('_buttonClass -> "button--get-started"){@Messages("ssttp.landing.start-button.label")}
     }
 }

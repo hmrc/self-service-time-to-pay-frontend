@@ -34,6 +34,7 @@ import scala.concurrent.Future
 import scala.io.Source
 
 package object resources {
+  val taxPayerJson = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/taxPayer.json")
   val getBanksResponseJSON = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/GetBanksResponse.json")
   val createPaymentPlanResponseJSON = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/GetDirectDebitInstructionPaymentPlanResponse.json")
   val submitArrangementResponse: TTPArrangement = validateAndReturn[TTPArrangement]("test/uk/gov/hmrc/selfservicetimetopay/resources/GetArrangementResponse.json")
@@ -85,6 +86,8 @@ package object resources {
     Some(taxPayer), Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)),
     Some(EligibilityExistingTTP(Some(false))),
     CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)), Some(3), Some(EligibilityStatus(true, Seq.empty)))
+
+
 
   val ttpSubmissionNoAmounts: TTPSubmission = TTPSubmission(eligibilityTypeOfTax = Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true)), eligibilityExistingTtp = Some(EligibilityExistingTTP(Some(false))))
 
@@ -191,8 +194,8 @@ package object resources {
     "accountNumber" -> ""
   )
 
-  val bankDetails = BankDetails(Some("123456"), Some("12345678"), None, None, None, None)
-
+  val bankDetails = BankDetails(Some("123456"), Some("12345678"), Some("bank-name"), None, Some("Cersei Lannister"), None)
+  val ttpSubmissionWithBankDetails = ttpSubmission.copy(bankDetails = Some(bankDetails))
   val directDebitBank = DirectDebitBank("", Seq.empty)
 
   val authorisedUser = Authority("someUserId", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None, "")
