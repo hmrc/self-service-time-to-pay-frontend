@@ -7,7 +7,7 @@ class ExistingTtpPageSpec extends BrowserSpec{
 
   val page = ExistingTtpPage
 
-  "Load the page up" in new TestSetup {
+/*  "Load the page up" in new TestSetup {
     page.assertPageIsDisplayed()
   }
 
@@ -34,7 +34,7 @@ class ExistingTtpPageSpec extends BrowserSpec{
   }
 //todo nb do signed in journeys no time now as it will require a lot of work
   //add in all pages and do stubs
-
+*/
 
   trait TestSetup {
     goTo(StartPage.path)

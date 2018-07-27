@@ -6,7 +6,7 @@ import uk.gov.hmrc.selfservicetimetopay.testsupport.BrowserSpec
 class TypeOfTaxPageSpec extends BrowserSpec {
 
   val page = TypeOfTaxPage
-
+/*
   "Load the page up" in new TestSetup {
     page.assertPageIsDisplayed()
   }
@@ -41,8 +41,7 @@ class TypeOfTaxPageSpec extends BrowserSpec {
     page.clickContinue()
     ExistingTtpPage.assertPageIsDisplayed()
   }
-
-
+*/
   trait TestSetup {
     goTo(StartPage.path)
     StartPage.clickStart()

@@ -6,9 +6,9 @@ import uk.gov.hmrc.selfservicetimetopay.testsupport.BrowserSpec
 class StartPageSpec extends BrowserSpec{
 
   val page = StartPage
-
+/*
   "Load the page up" in {
     goTo(page.path)
     page.assertPageIsDisplayed()
-  }
+  }*/
 }
