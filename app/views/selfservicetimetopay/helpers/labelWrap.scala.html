@@ -1,20 +1,19 @@
 @*
-Add a Label around some HTML as per Component Library:
-    http://hmrc.github.io/assets-frontend/section-label.html
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
-@param args options arguments for the template
-    'labelText          -> The text to use as the label
-    'for                -> Specify a value for the 'for' attribute
-    '_modifierClass     -> Add a modifier class to the label as documented in Component Library including:
-                            indent, bold,
-                            label--inline, label-inline--tight, label--inline-right,
-                            vertically-aligned-input, top-aligned-input,
-                            block-label:hover, block-label--inline, block-label--inline-right, block-label--stacked,
-                            form-date,
-                            label--inlineRadio, label--inlineRadio--overhead, label--inlineRadio--overhead-wide, label--inlineRadio--expanded,
-                            label--inlineDropDown
-    
-*@
 @(args:(Symbol, Any)*)(content: => Html = Html(""))(implicit messages: play.api.i18n.Messages)
 @argsMap = @{ args.toMap }
 <label@if(argsMap.get('_modifierClass)){ class="@argsMap.get('_modifierClass)"}@if(argsMap.get('for)){ for="@argsMap.get('for)"}>
