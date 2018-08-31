@@ -35,10 +35,10 @@ private object AppDependencies {
 
   val compile = Seq(
     ws,
-    "uk.gov.hmrc" %% "frontend-bootstrap" %  "8.22.0",
+    "uk.gov.hmrc" %% "frontend-bootstrap" %  "10.2.0",
     "uk.gov.hmrc" %% "play-partials" %  "6.1.0",
-    "uk.gov.hmrc" %% "domain" %  "4.1.0",
-    "uk.gov.hmrc" %% "http-caching-client" %  "7.0.0",
+    "uk.gov.hmrc" %% "domain" %  "5.2.0",
+    "uk.gov.hmrc" %% "http-caching-client" %  "7.1.0",
     "uk.gov.hmrc" %% "time" % "3.1.0",
     "uk.gov.hmrc" %% "play-conditional-form-mapping" % playConditionalMappingVersion
   )
@@ -51,7 +51,7 @@ private object AppDependencies {
   object Test {
     def apply(): Seq[ModuleID] = new TestDependencies {
       override lazy val test = Seq(
-        "uk.gov.hmrc" %% "hmrctest" %  "2.3.0",
+        "uk.gov.hmrc" %% "hmrctest" %  "3.0.0",
         "org.pegdown" % "pegdown" % "1.6.0" % scope,
         "org.jsoup" % "jsoup" % "1.8.3" % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,

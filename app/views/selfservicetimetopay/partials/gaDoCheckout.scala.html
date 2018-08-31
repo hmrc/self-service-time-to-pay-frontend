@@ -1,13 +1,19 @@
-@* Google Analytics code to report a checkout
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
-    @param debits Seq[Debit] list of debits to create as productsdefining
-    @param step Int Step of the checkout funnel configured in GA
-    @revenue BigDecimal total paid on this payment plan, (debits+interest)
-    @param initialPayment Option[BigDecimal] Initial payment if specified yet otherwise none
-    @param interest BigDecimal  Interest paid for the payment plan
-    @param duration Int duration of the payment plan
-    @param regularPayment BigDecimal the monthly payment for the payment plan
-*@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @(debits:Seq[Debit],
     step:Int,

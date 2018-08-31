@@ -1,12 +1,19 @@
 @*
-Format a list of error messages for the given list
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
-    @param errors Seq[String] of error messages
-    @param args options arguments for the template
-      '_modifierClass -> String additional classes to be added to each error message
-      '_fieldId       -> If specified adds a data-input-name and id prefix to the error itmes
-                          If more than one errors are given then they will also have an index number appended to the prefix
-*@
 @(errors:Seq[(String, String)], args:(Symbol, Any)*)(implicit messages: play.api.i18n.Messages)
 @import selfservicetimetopay.helpers.forms.errorInline
 @argsMap = @{args.toMap}

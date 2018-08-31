@@ -1,23 +1,19 @@
 @*
-    Helper template to format a list of messages in an unordered list element <ul>
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
-    @param modifierClass:String -> Class to apply to the ul element
-    @param messagePrefix:String -> Prefix for messages in the messages template.
-        Any messages starting with this prefix will be rendered as list items in <li>
-
-    e.g
-    conf/messages:
-        mesasges.list.1=Item 1
-        mesasges.list.2=Item 2
-        mesasges.list.3=Item 3
-
-    @message_list(Some("bullets"), "messages.list.") will return:
-        <ul class="bullets">
-            <li>Item 1</li>
-            <li>Item 2</li>
-            <li>Item 3</li>
-        </ul>
-*@
 @(modifierClass: Option[String], messagePrefix: String, args: (Symbol, String)*)(implicit messages: play.api.i18n.Messages)
 @import play.api.Play.current
 @argsMap = @{ args.toMap }

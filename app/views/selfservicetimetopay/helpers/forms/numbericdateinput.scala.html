@@ -1,23 +1,19 @@
 @*
-A data input field using Component Library Styles as  documented:
-Label: http://hmrc.github.io/assets-frontend/section-label.html
-Input http://hmrc.github.io/assets-frontend/section-text-input.html
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
-@param field Field The form field the input value represents
-@param args options arguments for the template
-    'label -> Text for the field label
-    'hint -> Hint for the combined date field group
-    'dayLabel -> Text to use for day field (default empty)
-    'monthLabel -> Text to use for month field (default empty)
-    'yearLabel -> Text to use for year field (default empty)
-    '_labelClass -> Label Modifier class
-    '_modifierClass -> Modifier class for the input class, includes:
-        input--xxsmall, input--xsmall, input--small,  input--normal,
-        input--fullwidth, input--no-spinner, input--cleared,
-        input--link
-    '_inputGroupClass -> Modifier class to apply to the group of all three date fields
-    '_hideErrors -> set to "true" to stop error messages being displayed
-*@
 @(name: String, frm:Form[_], yearField: Field, monthField: Field, dayField: Field, args: (Symbol, String)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import java.time.Month
 @import java.time.format.TextStyle
