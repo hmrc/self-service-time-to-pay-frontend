@@ -56,7 +56,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def start: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
-        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp)
+        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp,authContext.principal.accounts.sa.get.utr.utr)
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -101,7 +101,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
             tp =>
               tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion())))(taxPayer => {
                 val newSubmission = ttp.copy(taxpayer = Some(taxPayer))
-                eligibilityCheck(taxPayer, newSubmission)
+                eligibilityCheck(taxPayer, newSubmission,authContext.principal.accounts.sa.get.utr.utr)
               }
               )
           }
@@ -160,7 +160,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   /**
     * Call the eligibility service using the Taxpayer data and display the appropriate page based on the result
     */
-  private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
+  private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission,utr: String)(implicit hc: HeaderCarrier): Future[Result] = {
     lazy val youNeedToFile = Redirect(routes.SelfServiceTimeToPayController.getYouNeedToFile()).successfulF
     val isDebtToLittle = taxpayer.selfAssessment.get.debits.map(debit => debit.amount).sum < BigDecimal.exact("32.00")
 
@@ -176,7 +176,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     if (isDebtToLittle) youNeedToFile
     else {
       for {
-        es <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer))
+        es <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer),utr)
         updatedSubmission = newSubmission.copy(eligibilityStatus = Option(es))
         _ <- sessionCache.put(updatedSubmission)
         result <- checkSubmission(updatedSubmission)
