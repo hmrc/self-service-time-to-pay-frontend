@@ -18,10 +18,9 @@ package uk.gov.hmrc.selfservicetimetopay.service
 
 
 import java.time.LocalDate
-import javax.inject.Inject
 
+import javax.inject.{Inject, Singleton}
 import org.joda.time
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.BankHolidaysConnector
 import uk.gov.hmrc.time.workingdays._
@@ -29,24 +28,14 @@ import uk.gov.hmrc.time.workingdays._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import scala.util.Try
 
+@Singleton
 class WorkingDaysService @Inject()(val bankHolidaysConnector: BankHolidaysConnector) {
 
-  //todo do this better no time now! I need a shower after writeing this!
-  val test = BankHolidaySet("Hello",List.empty)
-
+  implicit val hols: BankHolidaySet = Await.result(bankHolidaysConnector.bankHolidays()(HeaderCarrier()), 60 seconds)
   def addWorkingDays(date:  LocalDate, days: Int): LocalDate = {
-    implicit val hols: BankHolidaySet =
-      Try {
-        Await.result(bankHolidaysConnector.bankHolidays()(HeaderCarrier()), 15 seconds)
-      }.getOrElse {
-        Logger.error("Failed to load bank holidays schedule from BankHolidaysConnector, using default bank holiday set")
-        test
-      }
-   //turn java to jodatime
     val joda =  org.joda.time.LocalDate.now().withMonthOfYear(date.getMonthValue).withDayOfMonth(date.getDayOfMonth).withYear(date.getYear)
-    val jodaLocalDate: time.LocalDate = (joda).plusWorkingDays(days)
+    val jodaLocalDate: time.LocalDate = joda.plusWorkingDays(days)
     LocalDate.now().withYear(jodaLocalDate.getYear).withDayOfMonth(jodaLocalDate.getDayOfMonth).withMonth(jodaLocalDate.getMonthOfYear)
   }
 }
