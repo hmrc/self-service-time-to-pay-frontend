@@ -21,21 +21,51 @@ import java.time.LocalDate
 
 import javax.inject.{Inject, Singleton}
 import org.joda.time
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.connectors.BankHolidaysConnector
+import play.api.libs.json.OFormat
 import uk.gov.hmrc.time.workingdays._
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
 import scala.language.postfixOps
 
 @Singleton
-class WorkingDaysService @Inject()(val bankHolidaysConnector: BankHolidaysConnector) {
+class WorkingDaysService @Inject()() {
 
-  implicit val hols: BankHolidaySet = Await.result(bankHolidaysConnector.bankHolidays()(HeaderCarrier()), 60 seconds)
-  def addWorkingDays(date:  LocalDate, days: Int): LocalDate = {
-    val joda =  org.joda.time.LocalDate.now().withMonthOfYear(date.getMonthValue).withDayOfMonth(date.getDayOfMonth).withYear(date.getYear)
+  //todo perhaps read from file
+  //todo figure out why connector was not working in Prod?
+  //todo quick workaround to fix prod
+  implicit val hols: BankHolidaySet = BankHolidays()
+
+  def addWorkingDays(date: LocalDate, days: Int): LocalDate = {
+    val joda = org.joda.time.LocalDate.now().withMonthOfYear(date.getMonthValue).withDayOfMonth(date.getDayOfMonth).withYear(date.getYear)
     val jodaLocalDate: time.LocalDate = joda.plusWorkingDays(days)
     LocalDate.now().withYear(jodaLocalDate.getYear).withDayOfMonth(jodaLocalDate.getDayOfMonth).withMonth(jodaLocalDate.getMonthOfYear)
+  }
+}
+
+import play.api.libs.json.Json
+
+import scala.io.Source
+//todo move this else where
+object ResourceReader {
+  def read(resourcePath: String): String = Source
+    .fromInputStream(
+      this.getClass.getResourceAsStream(resourcePath)
+    )
+    .getLines()
+    .mkString("\n")
+}
+
+
+object BankHolidays {
+  lazy implicit val bankHolidayFmt: OFormat[BankHolidaySet] = Json.format[BankHolidaySet]
+  lazy implicit val BankHolidays: OFormat[BankHoliday] = Json.format[BankHoliday]
+  type BankHolidaysByRegion = Map[String, BankHolidaySet]
+
+  def apply(): BankHolidaySet = {
+
+    val jsonString = ResourceReader.read("/bank_holidays.json")
+
+    val json = Json.parse(jsonString)
+    val map = json.as[BankHolidaysByRegion]
+    map.apply("england-and-wales")
   }
 }

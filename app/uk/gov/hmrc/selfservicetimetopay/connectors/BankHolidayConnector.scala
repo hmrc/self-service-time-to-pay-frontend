@@ -26,6 +26,7 @@ import uk.gov.hmrc.time.workingdays.{BankHoliday, BankHolidaySet}
 
 import scala.concurrent.Future
 
+//todo add this connector back in
 @ImplementedBy(classOf[WSBankHolidaysConnectorImpl])
 trait BankHolidaysConnector {
   protected implicit val bankHolidayReads: Reads[BankHoliday]       = Json.reads[BankHoliday]
