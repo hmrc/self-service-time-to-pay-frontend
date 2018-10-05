@@ -18,34 +18,23 @@ package uk.gov.hmrc.selfservicetimetopay.service
 
 import java.time.LocalDate
 import java.time.LocalDate.{of => d}
-import org.joda.time.{LocalDate => JodaDate}
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatest.Inspectors
-import org.scalatest.mock.MockitoSugar
-import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.selfservicetimetopay.connectors.BankHolidaysConnector
-import uk.gov.hmrc.time.workingdays.{BankHoliday, BankHolidaySet}
 
-import scala.concurrent.Future
-/*
-class WorkingDaysServiceSpec extends UnitSpec  with MockitoSugar  with Inspectors {
+import org.scalatest.Inspectors
+import uk.gov.hmrc.play.test.UnitSpec
+
+class WorkingDaysServiceSpec extends UnitSpec   with Inspectors {
 
   private case class Test(date: LocalDate, daysToAdd: Int, expected: LocalDate)
-
-    val mockConnector = mock[BankHolidaysConnector]
-
-
 
   "addWorkingDays" must {
 
     "skip over weekends as well as bank holidays" in {
 
       val tests = Seq[Test](
-        Test(date = d(2017, 3, 22), daysToAdd = 1, expected = d(2017, 3, 23)),
-        Test(date = d(2017, 3, 22), daysToAdd = 2, expected = d(2017, 3, 28)),
-        Test(date = d(2017, 3, 23), daysToAdd = 1, expected = d(2017, 3, 28)),
-        Test(date = d(2017, 3, 23), daysToAdd = 2, expected = d(2017, 3, 29))
+        Test(date = d(2019, 12, 24), daysToAdd = 1, expected = d(2019, 12, 27)),
+        Test(date = d(2018, 10, 5), daysToAdd = 1, expected = d(2018, 10, 8)),
+        Test(date = d(2018, 10, 5), daysToAdd = 5, expected = d(2018, 10, 12)),
+        Test(date = d(2018, 10, 5), daysToAdd = 6, expected = d(2018, 10, 15))
       )
 
       forAll(tests) { test =>
@@ -56,4 +45,3 @@ class WorkingDaysServiceSpec extends UnitSpec  with MockitoSugar  with Inspector
     }
   }
 }
-*/

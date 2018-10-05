@@ -25,13 +25,12 @@ import play.api.libs.json.OFormat
 import uk.gov.hmrc.time.workingdays._
 
 import scala.language.postfixOps
+import uk.gov.hmrc.selfservicetimetopay.util.ResourceReader
 
 @Singleton
 class WorkingDaysService @Inject()() {
 
-  //todo perhaps read from file
-  //todo figure out why connector was not working in Prod?
-  //todo quick workaround to fix prod
+
   implicit val hols: BankHolidaySet = BankHolidays()
 
   def addWorkingDays(date: LocalDate, days: Int): LocalDate = {
@@ -42,17 +41,6 @@ class WorkingDaysService @Inject()() {
 }
 
 import play.api.libs.json.Json
-
-import scala.io.Source
-//todo move this else where
-object ResourceReader {
-  def read(resourcePath: String): String = Source
-    .fromInputStream(
-      this.getClass.getResourceAsStream(resourcePath)
-    )
-    .getLines()
-    .mkString("\n")
-}
 
 
 object BankHolidays {
