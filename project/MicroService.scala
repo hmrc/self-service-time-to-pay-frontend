@@ -4,13 +4,14 @@ import sbt.Tests.{Group, SubProcess}
 import sbt._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import play.sbt.routes.RoutesCompiler.autoImport._
+import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
+import uk.gov.hmrc.versioning.SbtGitVersioning
+import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
+
 trait MicroService {
 
   import uk.gov.hmrc._
   import DefaultBuildSettings._
-  import uk.gov.hmrc.{SbtBuildInfo, ShellPrompt}
-
-  import TestPhases._
 
   val appName: String
 
@@ -29,10 +30,15 @@ trait MicroService {
     )
   }
   lazy val microservice = Project(appName, file("."))
-    .enablePlugins(Seq(play.sbt.PlayScala) ++ plugins : _*)
+    .enablePlugins(Seq(play.sbt.PlayScala,
+                       SbtAutoBuildPlugin,
+                       SbtGitVersioning,
+                       SbtDistributablesPlugin,
+                       SbtArtifactory) ++ plugins : _*)
     .settings(playSettings ++ scoverageSettings : _*)
     .settings(scalaSettings: _*)
     .settings(PlayKeys.playDefaultPort := 9063)
+    .settings(majorVersion := 0)
     .settings(publishingSettings: _*)
     .settings(defaultSettings(): _*)
     .settings(
