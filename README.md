@@ -23,7 +23,7 @@ To view the UI **during development**,
 
 1. Start all the related services
     ```bash
-    sm --start SELF_SERVICE_TIME_TO_PAY_ALL -f
+    sm --start SSTTP -f
     ```
 
 2. Run the micro-service from sbt, after stopping any already running SELF_SERVICE_TIME_TO_PAY_FRONTEND service
