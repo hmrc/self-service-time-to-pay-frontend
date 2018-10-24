@@ -38,72 +38,10 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def submitSignIn: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.ArrangementController.determineMisalignment()))
+    Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
   }
 
-  def getDebitDate: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.flatMap {
-      case Some(ttpData@TTPSubmission(_, _, _, None, `validTypeOfTax`, `validExistingTTP`, _, _, _, debitDate)) =>
-        debitDate match {
-          case Some(dd) =>
-            sessionCache.put(ttpData.copy(debitDate = None)).map[Result] {
-              _ => Ok(what_you_owe_date(CalculatorForm.createDebitDateForm().bind(Map(
-                "dueBy.dueByYear" -> dd.getYear.toString,
-                "dueBy.dueByMonth" -> dd.getMonthValue.toString,
-                "dueBy.dueByDay" -> dd.getDayOfMonth.toString
-              ))))
-            }
-          case _ =>
-            Future.successful(Ok(what_you_owe_date(CalculatorForm.createDebitDateForm())))
-        }
-      case _ => Future.successful(redirectOnError)
-    }
-  }
 
-  def submitDebitDate: Action[AnyContent] = Action.async {
-    implicit request =>
-      sessionCache.get.flatMap {
-        case Some(ttpData@TTPSubmission(_, _, _, None, `validTypeOfTax`, `validExistingTTP`, _, _, _, None)) =>
-          CalculatorForm.createDebitDateForm().bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(what_you_owe_date(formWithErrors))),
-            validFormData => {
-              sessionCache.put(ttpData.copy(debitDate = Some(LocalDate.of(validFormData.dueByYear.toInt,
-                validFormData.dueByMonth.toInt, validFormData.dueByDay.toInt)))).map[Result] {
-                _ => Redirect(routes.CalculatorController.getAmountOwed())
-              }
-            }
-          )
-        case _ => Future.successful(redirectOnError)
-      }
-  }
-
-  def getAmountOwed: Action[AnyContent] = Action.async {
-    implicit request =>
-      sessionCache.get.map[Result] {
-        case Some(TTPSubmission(_, _, _, None, `validTypeOfTax`, `validExistingTTP`, _, _, _, Some(debitDate))) =>
-          val dataForm = CalculatorForm.createSinglePaymentForm()
-          Ok(what_you_owe_amount(dataForm, debitDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH))))
-        case _ => redirectOnError
-      }
-  }
-
-  def submitAmountOwed: Action[AnyContent] = Action.async {
-    implicit request =>
-      sessionCache.get.flatMap[Result] {
-        case Some(ttpData@TTPSubmission(_, _, _, None, `validTypeOfTax`, `validExistingTTP`,
-        CalculatorInput(debits, _, _, _, _, _), _, _, Some(debitDate))) =>
-          CalculatorForm.createSinglePaymentForm().bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(what_you_owe_amount(formWithErrors,
-              debitDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH))))),
-            validFormData => {
-              sessionCache.put(ttpData.copy(
-                calculatorData = ttpData.calculatorData.copy(debits :+ Debit(amount = validFormData.amount, dueDate = debitDate)),
-                debitDate = None)).map(_ => Redirect(routes.CalculatorController.getWhatYouOweReview()))
-            }
-          )
-        case _ => Future.successful(redirectOnError)
-      }
-  }
 
   //todo find a way to test around the authorisedSaUser
   def getTaxLiabilities: Action[AnyContent] = authorisedSaUser {
@@ -160,9 +98,6 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty),
         schedule = None)
     }.flatMap[Result] {
-      case data@TTPSubmission(_, _, _, _, `validTypeOfTax`, `validExistingTTP`,
-      CalculatorInput(debits, _, _, _, _, _), _, _, _) if debits.isEmpty =>
-        sessionCache.put(data).map(_ => Redirect(routes.CalculatorController.getDebitDate()))
       case data =>
         sessionCache.put(data).map(_ => Redirect(routes.CalculatorController.getWhatYouOweReview()))
     }
@@ -226,20 +161,6 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
-  /**
-    * If the debits the user has entered do not match the amounts in their Taxpayer data
-    * then load the misalignment page, otherwise proceed to the instalment summary page
-    */
-  def getMisalignmentPage: Action[AnyContent] = authorisedSaUser { implicit authContext =>
-    implicit request =>
-      sessionCache.get.map {
-        case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-          if (!areEqual(sa.debits, debits)) Ok(misalignment(CalculatorAmountsDue(debits), sa.debits, isSignedIn))
-          else Redirect(routes.ArrangementController.getInstalmentSummary())
-        case _ =>
-          Redirect(routes.SelfServiceTimeToPayController.getUnavailable())
-      }
-  }
 
   def submitRecalculate: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>

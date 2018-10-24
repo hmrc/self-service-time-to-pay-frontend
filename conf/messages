@@ -75,91 +75,8 @@ ssttp.landing.before-you-start.list.2=have no other tax debts
 ssttp.landing.before-you-start.list.3=have no other HMRC payment plans set up
 ssttp.landing.start-button.label=Start now
 
-#eligibility
-ssttp.eligibility.form.type_of_tax.title=Is the amount you owe for:
-ssttp.eligibility.form.type_of_tax.question.hint=Choose one or both
-ssttp.eligibility.form.type_of_tax.question.self-assessment=Self Assessment
-ssttp.eligibility.form.type_of_tax.question.other=Other types of tax
-
-ssttp.eligibility.form.type_of_tax.error.summary.title=You haven''t selected an option
-ssttp.eligibility.form.type_of_tax.required=Choose at least one option
-
-ssttp.eligibility.form.existing_ttp.title=Are you already paying an HMRC debt in instalments?
-ssttp.eligibility.form.existing_ttp.question.yes=Yes
-ssttp.eligibility.form.existing_ttp.question.no=No
-
-ssttp.eligibility.form.existing_ttp.error.summary.title=You haven''t selected an option
-ssttp.eligibility.form.existing_ttp.required=Choose one option
-
-ssttp.eligibility.form.continue=Continue
-ssttp.eligibility.form.back=Back
-
-ssttp.eligibility.form.sign_in_question.title=Would you like to sign in and view what you owe?
-ssttp.eligibility.form.sign_in_question.yes_label=Yes - sign in and view what I owe
-ssttp.eligibility.form.sign_in_question.no_label=No - I''ll enter what I owe manually
-ssttp.eligibility.form.sign_in_question.continue=Continue
-ssttp.eligibility.form.sign_in_question.back=Back
-ssttp.eligibility.form.sign_in_question.required=Choose one option
-ssttp.eligibility.form.sign_in_question.error.summary.title=You haven''t selected an option
 #calculator
-ssttp.calculator.form.amounts_due.title=About what you owe
-ssttp.calculator.form.amounts_due.intro=Enter the amounts you need to pay.
-ssttp.calculator.form.amounts_due.amount=Amount
-ssttp.calculator.form.amounts_due.due_date=Due date
-ssttp.calculator.form.amounts_due.when_due.question.hint=Example: 31 January 2017
-ssttp.calculator.form.amounts_due.when_due.question.day=Day
-ssttp.calculator.form.amounts_due.when_due.question.month=Month
-ssttp.calculator.form.amounts_due.when_due.question.year=Year
 
-ssttp.calculator.form.what-you-owe-amount.title1=How much is due on
-ssttp.calculator.form.what-you-owe-amount.title2={0}?
-ssttp.calculator.form.what-you-owe-amount.continue=Continue
-ssttp.calculator.form.what-you-owe-amount.error.summary.title=Something you''ve entered isn''t valid
-ssttp.calculator.form.what-you-owe-amount.amount.required=Enter an amount
-ssttp.calculator.form.what-you-owe-amount.amount.required.min=The amount must be more than £0.00
-ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval=Total amount must be less than £100,000.00
-ssttp.calculator.form.what-you-owe-amount.amount.decimal-places=Amount must not contain more than 2 decimal places
-
-ssttp.calculator.form.what-you-owe-date.title=What''s the due date of the amount you owe?
-ssttp.calculator.form.what-you-owe.due_by.not-valid-date=Enter a valid date
-ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low=Year must be 1996 or later
-ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-high=Year is too far in the future
-ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year=Enter a valid year
-ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month=Enter a valid month
-ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number=Month must be between 1 and 12
-ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day=Enter a valid day
-ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number=Day must be between 1 and 31
-ssttp.calculator.form.what-you-owe-date.example=Example, 31 1 2017
-ssttp.calculator.form.what-you-owe-date.error.summary.title=Something you''ve entered isn''t valid
-ssttp.calculator.form.what-you-owe-date.when_due.question.day=Day
-ssttp.calculator.form.what-you-owe-date.when_due.question.month=Month
-ssttp.calculator.form.what-you-owe-date.when_due.question.year=Year
-ssttp.calculator.form.what-you-owe-date.summary.title=You may owe more than one amount
-ssttp.calculator.form.what-you-owe-date.info.header=You need to include:
-ssttp.calculator.form.what-you-owe-date.info.list.1=all payments on account
-ssttp.calculator.form.what-you-owe-date.info.list.2=any penalties you have
-ssttp.calculator.form.what-you-owe-date.info.list.3=any unpaid amounts from previous tax years
-ssttp.calculator.form.what-you-owe-date.info.advice=You can add more later if you need to.
-
-ssttp.calculator.form.amounts_due.add=Add
-ssttp.calculator.form.amounts_due.remove=Remove
-ssttp.calculator.form.amounts_due.total=Total
-
-ssttp.calculator.form.amounts_due.error.summary.title=Something you''ve entered isn''t valid
-ssttp.calculator.form.amounts_due.amount.required=You need to enter an amount
-ssttp.calculator.form.amounts_due.amount.positive=The amount must be more than £0.00
-ssttp.calculator.form.amounts_due.amount.less-than-maxval=Total amounts must be less than £1,000,000,000,000
-ssttp.calculator.form.amounts_due.due_by.required=You need to enter a date
-ssttp.calculator.form.amounts_due.due_by.required-year=You need to enter a year
-ssttp.calculator.form.amounts_due.due_by.not-valid-year=You need to enter a valid year
-ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-low=Year must be 1996 or later
-ssttp.calculator.form.amounts_due.due_by.not-valid-year-too-high=Year is too far in the future
-ssttp.calculator.form.amounts_due.due_by.required-month=You need to enter a month
-ssttp.calculator.form.amounts_due.due_by.not-valid-month=You need to enter a valid month
-ssttp.calculator.form.amounts_due.due_by.required-day=You need to enter a day
-ssttp.calculator.form.amounts_due.due_by.not-valid-day=You need to enter a valid day
-ssttp.calculator.form.amounts_due.due_by.not-valid-date=You need to enter a valid date
-ssttp.error.summary.title=Something you''ve entered isn''t valid
 
 ssttp.calculator.form.entered_all_amounts_question.title=Have you entered all of the amounts you owe?
 ssttp.calculator.form.entered_all_amounts_question.due-date=Due date
@@ -169,22 +86,6 @@ ssttp.calculator.form.entered_all_amounts_question.remove-label=Remove
 ssttp.calculator.form.entered_all_amounts_question.add-another-amount-label=Add another amount
 ssttp.calculator.form.entered_all_amounts_question.continue=Continue
 
-ssttp.calculator.misalignment-page.title=Check the amounts you owe
-ssttp.calculator.misalignment-page.subtitle=The figures you entered don’t match the figures in your tax account.
-ssttp.calculator.misalignment-page.total-entered=You entered:
-ssttp.calculator.misalignment-page.total-in-account=Your tax account shows:
-ssttp.calculator.misalignment-page.account-breakdown.title=View a breakdown
-ssttp.calculator.misalignment-page.account-breakdown.total=Total:
-ssttp.calculator.misalignment-page.possible-reasons.title=These differences could be because:
-ssttp.calculator.misalignment-page.possible-reasons.list.1=didn'’t include all outstanding amounts in your calculation
-ssttp.calculator.misalignment-page.possible-reasons.list.2=included an amount that isn''t related to your Self Assessment
-ssttp.calculator.misalignment-page.advice=Recalculate your instalments using the total in your tax account. If you can''t continue call us on 0300 200 3835.
-ssttp.calculator.misalignment-page.your-options=Your options
-ssttp.calculator.misalignment-page.recalculate.label=Recalculate instalments using the total in your tax account
-ssttp.calculator.misalignment-page.recalculate.button=Recalculate
-ssttp.calculator.misalignment-page.query.label=Find out about an amount in your tax account
-ssttp.calculator.misalignment-page.query.number=0300 200 3835
-ssttp.calculator.misalignment-page.back=Back
 
 ssttp.calculator.tax-liabilities-page.title=Your tax account summary
 ssttp.calculator.tax-liabilities-page.due-options=Due:
@@ -323,14 +224,6 @@ ssttp.arrangement.instalment-summary.terms.interest-change=If the interest rate 
 ssttp.arrangement.instalment-summary.terms.future-debts=This isn’t a payment plan for new tax bills, it only covers the amounts you need to pay now. 
 ssttp.arrangement.instalment-summary.submit=Continue
 
-ssttp.arrangement.misalignment.title=Bank account not found
-ssttp.arrangement.misalignment.subtitle=There was a problem with the bank details you entered
-ssttp.arrangement.misalignment.form.error.summary.title=Something you’ve entered isn’t valid
-ssttp.arrangement.misalignment.existing.title=Choose an existing account
-ssttp.arrangement.misalignment.direct-debit.or=Or
-ssttp.arrangement.misalignment.direct-debit.reenter=Re-enter your bank details
-ssttp.arrangement.misalignment.submit=Agree and continue
-ssttp.arrangement.misalignment.back=Back
 
 ssttp.arrangement.direct-debit.form.title=Enter your banking details
 ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
