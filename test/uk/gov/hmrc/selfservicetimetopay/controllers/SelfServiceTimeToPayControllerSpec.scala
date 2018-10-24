@@ -48,12 +48,12 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
       contentAsString(result) must include(getMessages(request)("ssttp.common.title"))
     }
 
-    "redirect to the eligibility section if user selects start" in {
+    "redirect to the sign in page if user is not logged in" in {
       val result = controller.submit.apply(FakeRequest().withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession()))
 
       status(result) mustBe SEE_OTHER
 
-      controllers.routes.EligibilityController.start().url must endWith(redirectLocation(result).get)
+      controllers.routes.ArrangementController.determineMisalignment().url must endWith(redirectLocation(result).get)
     }
 
     "return 200 and display call us page successfully" in {

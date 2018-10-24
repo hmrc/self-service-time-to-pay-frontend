@@ -33,7 +33,7 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
   }
 
   def submit: Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.EligibilityController.start())
+    Redirect(routes.ArrangementController.determineMisalignment())
   }
 
   def actionCallUs: Action[AnyContent] = Action.async { implicit request =>

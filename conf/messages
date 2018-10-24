@@ -63,16 +63,17 @@ ssttp.sidebar.having_problems.title=Having problems?
 ssttp.sidebar.having_problems.intro=If you’re having problems or need extra help you can call us for assistance.
 
 #landing
-ssttp.landing.title=Pay what you owe in instalments
+ssttp.landing.title=Set up a payment plan
 
-ssttp.landing.intro=This arrangement allows you to pay the tax you owe in instalments. It only covers the amounts you need to pay now and is not an ongoing payment plan for new tax bills.
-ssttp.landing.alert=This is intended as a one-off service to offer additional support. You shouldn’t expect to be able to make your future HMRC payments using an instalment plan.
-ssttp.landing.keep-up-to-date=You must keep up to date with your payments. If you don’t, HMRC can make the entire outstanding amount payable immediately.
-ssttp.landing.before-you-start=Before you start you’ll need to know:
-ssttp.landing.before-you-start.list.1=what you owe
-ssttp.landing.before-you-start.list.2=when it''s due
-ssttp.landing.before-you-start.list.3=how much you can afford to pay now
-ssttp.landing.start-button.label=Start
+ssttp.landing.intro=A payment plan allows you to pay the tax you owe in instalments. The plan covers the amounts you need to pay now.
+ssttp.landing.alert=We intend this as a one-off to give you extra support. You must keep up to date with your payments. If you don''t, HMRC may ask you to pay the entire outstanding amount.
+ssttp.landing.before-you-start=Before you start
+ssttp.landing.before-you-start.p.1=This payment plan is for self-assessment tax only.
+ssttp.landing.before-you-start.p.2=To be eligible to set up an online payment plan you need to:
+ssttp.landing.before-you-start.list.1=owe £10,000 or less
+ssttp.landing.before-you-start.list.2=have no other tax debts
+ssttp.landing.before-you-start.list.3=have no other HMRC payment plans set up
+ssttp.landing.start-button.label=Start now
 
 #eligibility
 ssttp.eligibility.form.type_of_tax.title=Is the amount you owe for:
