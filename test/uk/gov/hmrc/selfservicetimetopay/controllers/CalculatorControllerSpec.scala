@@ -116,9 +116,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "Return BadRequest if the form value = total amount due" in {
       implicit val hc = new HeaderCarrier
 
-      val submission = ttpSubmissionNLI.copy(eligibilityTypeOfTax = eligibilityTypeOfTaxOk,
-        eligibilityExistingTtp = eligibilityExistingTTPOk,
-        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = BigDecimal("300.00"), dueDate = LocalDate.now()))))
+      val submission = ttpSubmissionNLI.copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = BigDecimal("300.00"), dueDate = LocalDate.now()))))
 
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(submission)))
@@ -134,10 +132,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "Return BadRequest if the form value has more than 2 decimal places" in {
       implicit val hc = new HeaderCarrier
 
-      val submission = ttpSubmissionNLI.copy(eligibilityTypeOfTax =
-        eligibilityTypeOfTaxOk,
-        eligibilityExistingTtp = eligibilityExistingTTPOk,
-        calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now()))))
+      val submission = ttpSubmissionNLI.copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now()))))
 
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(submission)))
@@ -207,31 +202,6 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
     }
 
-    "Return 303 for submitPayTodayQuestion when eligibilityExistingTtp is missing" in {
-      implicit val hc = new HeaderCarrier
-
-      when(mockSessionCache.get(any(), any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityExistingTtp = None))))
-
-      val result = controller.getPayTodayQuestion().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
-
-      status(result) mustBe SEE_OTHER
-      routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
-    }
-
-    "Return 303 for submitPayTodayQuestion when eligibilityTypeOfTax is missing" in {
-      implicit val hc = new HeaderCarrier
-
-      when(mockSessionCache.get(any(), any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmission.copy(eligibilityTypeOfTax = None))))
-
-      val result = controller.getPayTodayQuestion().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
-
-      status(result) mustBe SEE_OTHER
-      routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
-    }
 
     "Return 303 for submitPayTodayQuestion when there are no debits" in {
       implicit val hc = new HeaderCarrier

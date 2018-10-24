@@ -56,7 +56,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def start: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
-        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp,authContext.principal.accounts.sa.get.utr.utr)
+        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer),  _, _, _, _)) => eligibilityCheck(taxpayer, ttp,authContext.principal.accounts.sa.get.utr.utr)
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -108,7 +108,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
-          case ttp@TTPSubmission(Some(schedule), _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
+          case ttp@TTPSubmission(Some(schedule), _, _, _,  cd@CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
             Future.successful(Ok(instalment_plan_summary(debits, schedule, createDayOfForm(ttp), signedIn = true)))
           case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
         }
@@ -160,11 +160,11 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     val isDebtToLittle = taxpayer.selfAssessment.get.debits.map(debit => debit.amount).sum < BigDecimal.exact("32.00")
 
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
-      case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
+      case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(true, _)), _) =>
         checkSubmissionForCalculatorPage(taxpayer, ttp)
-      case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) =>
+      case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(_, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) =>
         youNeedToFile
-      case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
         Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()).successfulF
     }
 
@@ -191,14 +191,14 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     val gotoEligibility = Redirect(routes.ArrangementController.determineEligibility())
 
     newSubmission match {
-      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _), _, _, _) =>
+      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))),  CalculatorInput(_, _, _, _, _, _), _, _, _) =>
 
         setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map(_ => gotoTaxLiabilities)
 
-      case TTPSubmission(None, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
+      case TTPSubmission(None, _, _, Some(Taxpayer(_, _, Some(tpSA))),  CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
         gotoTaxLiabilities.successfulF
 
-      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
+      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))),  CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
         if (areEqual(debits, tpSA.debits)) {
           setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map {
             _ => gotoInstalmentSummary

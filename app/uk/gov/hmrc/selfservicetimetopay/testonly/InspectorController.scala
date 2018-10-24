@@ -60,8 +60,6 @@ extends TimeToPayController with play.api.i18n.I18nSupport with ServicesConfig {
     } yield Ok(views.html.selfservicetimetopay.testonly.inspector(
       request.session.data,
       List(
-        "eligibilityTypeOfTax" -> maybeSubmission.flatMap(_.eligibilityTypeOfTax).json,
-        "eligibilityExistingTtp" -> maybeSubmission.flatMap(_.eligibilityExistingTtp).json,
         "debitDate" -> maybeSubmission.flatMap(_.debitDate).json,
         "taxpayer" -> maybeSubmission.flatMap(_.taxpayer).json,
         "schedule" -> maybeSubmission.flatMap(_.schedule).json,

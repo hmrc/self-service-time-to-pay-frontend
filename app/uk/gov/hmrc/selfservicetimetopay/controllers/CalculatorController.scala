@@ -48,7 +48,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     implicit authContext =>
       implicit request =>
         sessionCache.get.map {
-          case Some(ttpData@TTPSubmission(_, _, _, Some(tp), `validTypeOfTax`, `validExistingTTP`, _, _, _, _)) =>
+          case Some(ttpData@TTPSubmission(_, _, _, Some(tp), _, _, _, _)) =>
             Ok(tax_liabilities(tp.selfAssessment.get.debits, isSignedIn))
           case _ => redirectOnError
         }
@@ -56,8 +56,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
 
   def getPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, tp, `validTypeOfTax`,
-      `validExistingTTP`, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+      case Some(TTPSubmission(_, _, _, tp, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
         val dataForm = CalculatorForm.payTodayForm
         Ok(payment_today_question(dataForm, isSignedIn))
       case _ => redirectOnError
@@ -70,8 +69,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     */
   def submitPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
-      case Some(ttpData@TTPSubmission(_, _, _, tp, `validTypeOfTax`,
-      `validExistingTTP`, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+      case Some(ttpData@TTPSubmission(_, _, _, tp, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
         CalculatorForm.payTodayForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(payment_today_question(formWithErrors, isSignedIn))), {
             case PayTodayQuestion(Some(true)) =>
@@ -92,7 +90,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def submitRemoveAmountDue: Action[AnyContent] = Action.async { implicit request =>
     val index = CalculatorForm.removeAmountDueForm.bindFromRequest()
     sessionCache.get.map {
-      case Some(ttpSubmission@TTPSubmission(_, _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
+      case Some(ttpSubmission@TTPSubmission(_, _, _, _,cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
         ttpSubmission.copy(calculatorData = cd.copy(debits = debits.patch(index.value.get, Nil, 1)),
           schedule = None)
       case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty),
@@ -119,11 +117,11 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     implicit request =>
       sessionCache.get.flatMap {
         case Some(ttpData@TTPSubmission(Some(
-        CalculatorPaymentSchedule(Some(startDate), _, _, _, _, _, _, _)), _, _, _, _, _, _, _, _, _))
+        CalculatorPaymentSchedule(Some(startDate), _, _, _, _, _, _, _)), _, _, _, _, _, _, _))
           if !startDate.equals(LocalDate.now) =>
           updateSchedule(ttpData)(request)
 
-        case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _,
+        case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))),
         CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
 
@@ -137,13 +135,13 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
             }
           }
 
-        case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+        case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
 
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
           Future.successful(Ok(calculate_instalments_form(schedule, None,
             CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, setMonthOptions(), isSignedIn)))
 
-        case Some(ttpData@TTPSubmission(None, _, _, _, _, _, _, _, _, _)) =>
+        case Some(ttpData@TTPSubmission(None, _, _, _, _, _, _, _)) =>
           updateSchedule(ttpData)(request)
         case _ =>
           Future.successful(redirectOnError)
@@ -153,9 +151,9 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def getCalculateInstalmentsPrint: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.map {
-        case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
+        case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))),  _, _, _, _)) =>
           Ok(calculate_instalments_print(schedule, Some(sa.debits), isSignedIn))
-        case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, _, _, _, _, _, _)) =>
+        case Some(ttpData@TTPSubmission(Some(schedule),  _, _, _, _, _, _, _)) =>
           Ok(calculate_instalments_print(schedule, None, isSignedIn))
         case _ => redirectOnError
       }
@@ -165,7 +163,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def submitRecalculate: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap[Result] {
-        case Some(ttpData@TTPSubmission(_, _, _, _, _, _, _, _, _, _)) =>
+        case Some(ttpData@TTPSubmission(_, _, _,  _, _, _, _, _)) =>
           updateSchedule(ttpData)(request)
         case None => Future.successful(redirectOnError)
       }
@@ -178,7 +176,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def submitCalculateInstalments: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.flatMap[Result] {
-        case Some(ttpData@TTPSubmission(Some(schedule), _, _, tp, Some(_), _, cd@CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
+        case Some(ttpData@TTPSubmission(Some(schedule), _, _, tp, cd@CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
           CalculatorForm.durationForm.bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, tp match {
@@ -202,8 +200,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def submitCalculateInstalmentsPaymentToday: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.flatMap[Result] {
-        case Some(ttpData@TTPSubmission(Some(schedule), _, _, taxpayer, `validTypeOfTax`,
-        `validExistingTTP`, cd@CalculatorInput(debits, _, _, _, _, _), Some(months), _, _)) =>
+        case Some(ttpData@TTPSubmission(Some(schedule), _, _, taxpayer, cd@CalculatorInput(debits, _, _, _, _, _), Some(months), _, _)) =>
           val durationForm = CalculatorForm.durationForm.fill(CalculatorDuration(Some(months)))
           CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(calculate_instalments_form(schedule, taxpayer match {
@@ -224,7 +221,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def getPaymentToday: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.map {
-        case Some(TTPSubmission(_, _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+        case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
           if (paymentToday.equals(BigDecimal(0))) Ok(payment_today_form(form, isSignedIn))
           else Ok(payment_today_form(form.fill(paymentToday), isSignedIn))
@@ -236,8 +233,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
 
   def getWhatYouOweReview: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, `validTypeOfTax`,
-      `validExistingTTP`, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+      case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
         Ok(what_you_owe_review(debits))
       case _ =>
         Logger.info("Missing required data for what you owe review page")
@@ -251,7 +247,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
 
   def submitPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
-      case Some(ttpSubmission@TTPSubmission(_, _, _, _, Some(_), Some(_), cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
+      case Some(ttpSubmission@TTPSubmission(_, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
         CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(payment_today_form(formWithErrors, isSignedIn))),
           validFormData => {
@@ -272,7 +268,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   private def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async {
     implicit request =>
       ttpData match {
-        case TTPSubmission(_, _, _, None, _, _, calculatorInput, durationMonths, _, _) =>
+        case TTPSubmission(_, _, _, None,  calculatorInput, durationMonths, _, _) =>
           val newInput = logic.validateCalculatorDates(calculatorInput, durationMonths.get, calculatorInput.debits)
           calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
             case Seq(schedule) =>
@@ -284,7 +280,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
               Future.successful(redirectOnError)
           }
 
-        case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, calculatorInput, durationMonths, _, _) =>
+        case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorInput, durationMonths, _, _) =>
           val newInput = logic.validateCalculatorDates(calculatorInput, durationMonths.get, sa.debits).copy(debits = sa.debits)
           calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
             case Seq(schedule) =>
