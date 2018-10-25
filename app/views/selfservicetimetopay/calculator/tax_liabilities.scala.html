@@ -15,25 +15,37 @@
  *@
 
 @import selfservicetimetopay.helpers.forms.{form, submit}
-@import selfservicetimetopay.partials.tax_liabilities_summary
+@import selfservicetimetopay.partials._
+@import java.time.format.DateTimeFormatter
+@import java.util.Locale
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @(debits: Seq[Debit], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @selfservicetimetopay.main(
-    title = Messages("ssttp.calculator.tax-liabilities-page.title"),
+    title = Messages("ssttp.calculator.self-assessment-account-summary-page.title"),
     loggedIn = loggedIn
 ) {
-    <header class="page-header text">
-        <h1>@Messages("ssttp.calculator.tax-liabilities-page.title")</h1>
-    </header>
+    <p><a class="back-link" href="@routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.calculator.self-assessment-account-summary-page.button-back")</a></p>
+    @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
+        <header class="page-header text">
+            <h1 class="heading-xlarge">@Messages("ssttp.calculator.self-assessment-account-summary-page.title")</h1>
+        </header>
+        <h4 class="heading-small">@Messages("ssttp.calculator.self-assessment-account-summary-page.total-due") @currency(debits.map(_.amount).sum)</h4>
+    @debits.headOption.map{ debit =>
+        @debit.taxYearEnd.map{ tye =>
+        <p class="form-hint">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-year-ending") @tye.format(formatter)</p>
+    }}
+        <details>
+            <summary><span class="summary">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-account-details")</span></summary>
     @tax_liabilities_summary(debits)
-    <p>@Messages("ssttp.calculator.tax-liabilities-page.advise")</p>
-    <p>
-    @form(routes.CalculatorController.getPayTodayQuestion()) {
-        @submit() {
-            @Messages("ssttp.calculator.tax-liabilities-page.button-continue")
-        }
-    }</p>
+        </details>
+        <p>
+        @form(routes.CalculatorController.getPayTodayQuestion()) {
+            @submit() {
+                @Messages("ssttp.calculator.self-assessment-account-summary-page.button-continue")
+            }
+        }</p>
+    }
 }
 

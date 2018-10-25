@@ -15,23 +15,16 @@
  *@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@import selfservicetimetopay.partials.payment_schedule_editable
 @import selfservicetimetopay.helpers.forms.{form, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
-@(debits:Seq[Debit])(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(debits:Seq[Debit],initialPayment:BigDecimal)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @selfservicetimetopay.main(
-    title = Messages("ssttp.calculator.form.entered_all_amounts_question.title")
+    title = Messages("ssttp.calculator.form.payment_summary.title")
 ) {
 
     <header class="page-header text">
-        <h1>@Messages("ssttp.calculator.form.entered_all_amounts_question.title")</h1>
+        <h1>@Messages("ssttp.calculator.form.payment_summary.title")</h1>
     </header>
-    @payment_schedule_editable(debits)
-    <p>
-        @form(routes.CalculatorController.submitWhatYouOweReview()){
-        @submit(){@Messages("ssttp.calculator.results.auth.continue.link")}
-    }</p>
-    <div>&nbsp;</div>
 }
 

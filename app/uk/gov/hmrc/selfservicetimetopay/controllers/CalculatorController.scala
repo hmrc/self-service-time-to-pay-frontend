@@ -53,7 +53,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           case _ => redirectOnError
         }
   }
-
+//todo perhaps wrap in auth
   def getPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, tp, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
@@ -84,22 +84,6 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     }
   }
 
-  /**
-    * Grabs the index of the amount selected from the frontend and removes it from the TTPSubmission
-    */
-  def submitRemoveAmountDue: Action[AnyContent] = Action.async { implicit request =>
-    val index = CalculatorForm.removeAmountDueForm.bindFromRequest()
-    sessionCache.get.map {
-      case Some(ttpSubmission@TTPSubmission(_, _, _, _,cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
-        ttpSubmission.copy(calculatorData = cd.copy(debits = debits.patch(index.value.get, Nil, 1)),
-          schedule = None)
-      case _ => TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = IndexedSeq.empty),
-        schedule = None)
-    }.flatMap[Result] {
-      case data =>
-        sessionCache.put(data).map(_ => Redirect(routes.CalculatorController.getWhatYouOweReview()))
-    }
-  }
 
   val minimunMonthsAllowedTTP = 2
 
@@ -230,28 +214,15 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           redirectOnError
       }
   }
-
-  def getWhatYouOweReview: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
-        Ok(what_you_owe_review(debits))
-      case _ =>
-        Logger.info("Missing required data for what you owe review page")
-        redirectOnError
-    }
-  }
-
-  def submitWhatYouOweReview: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(routes.CalculatorController.getPayTodayQuestion()))
-  }
-
   def submitPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
       case Some(ttpSubmission@TTPSubmission(_, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
         CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(payment_today_form(formWithErrors, isSignedIn))),
           validFormData => {
-            updateSchedule(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).apply(request)
+            sessionCache.put(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).map{_ =>
+              Redirect(routes.CalculatorController.getPaymentSummary())
+            }
           }
         )
       case _ =>
@@ -259,6 +230,18 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         Future.successful(redirectOnError)
     }
   }
+
+  def getPaymentSummary: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+        Ok(payment_summary(debits,initialPayment))
+      case _ =>
+        Logger.info("Missing required data for what you owe review page")
+        redirectOnError
+    }
+  }
+
+
 
 
   /**

@@ -29,8 +29,7 @@
   </header>
   @form(routes.CalculatorController.submitPaymentToday(), 'id -> "paymentTodayForm", 'class -> "group") {
     @formErrorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm, Seq.empty)
-      @currencyinput(dataForm("amount"),
-        '_inputClass -> "input--small input--no-spinner")
+      £<input type="number" step="any" min="0" class="form-control input--small" maxLength="10" name="amount" id="amount" value=@dataForm("amount").value required/>
     <p>
       @submit(){@Messages("ssttp.calculator.form.continue")}
     </p>

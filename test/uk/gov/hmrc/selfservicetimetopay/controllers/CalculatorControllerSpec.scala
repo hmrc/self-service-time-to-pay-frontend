@@ -25,13 +25,11 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
-import play.api.mvc.Request
 import play.api.test.Helpers._
 import play.api.test._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
-import uk.gov.hmrc.play.health.routes
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -167,14 +165,9 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "Return 303 for non-logged-in when TTPSubmission is missing for submitPaymentToday" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
-
-      val result = controller.submitPaymentToday().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
-
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+      val result = controller.submitPaymentToday().apply(FakeRequest())
       status(result) mustBe SEE_OTHER
-      verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
 
     "Return the payment-today from for getPayTodayQuestion if there is an initial payment  already made" in {
@@ -229,21 +222,21 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       contentAsString(result) must include(getMessages(request)("ssttp.calculator.form.payment_today_question.title"))
     }
 
-    "successfully display what you owe review page" in {
+    "successfully display payment summary page" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
       val request = FakeRequest().withSession(TTPSessionId.newTTPSession())
-      val response = controller.getWhatYouOweReview().apply(request)
+      val response = controller.getPaymentSummary().apply(request)
 
       status(response) mustBe OK
 
-      contentAsString(response) must include(getMessages(request)("ssttp.calculator.form.entered_all_amounts_question.title"))
+      contentAsString(response) must include(getMessages(request)("ssttp.calculator.form.payment_summary.title"))
     }
 
     "successfully redirect to start page when trying to access what you owe review page if there are no debits" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k.copy(calculatorData = CalculatorInput.initial))))
-      val response = controller.getWhatYouOweReview().apply(FakeRequest().withSession(TTPSessionId.newTTPSession()))
+      val response = controller.getPaymentSummary().apply(FakeRequest().withSession(TTPSessionId.newTTPSession()))
 
       status(response) mustBe SEE_OTHER
 
@@ -253,7 +246,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "successfully redirect to start page when there are invalid eligibility questions" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
-      val response = controller.getWhatYouOweReview().apply(FakeRequest().withSession(TTPSessionId.newTTPSession()))
+      val response = controller.getPaymentSummary().apply(FakeRequest().withSession(TTPSessionId.newTTPSession()))
 
       status(response) mustBe SEE_OTHER
 

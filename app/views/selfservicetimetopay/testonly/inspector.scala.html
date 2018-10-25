@@ -53,7 +53,7 @@
 
             <li><a class="link" href="@routes.SelfServiceTimeToPayController.start()">@{routes.SelfServiceTimeToPayController.start().path()}</a></li>
 
-            <li><a class="link" href="@routes.CalculatorController.getWhatYouOweReview()">@{routes.CalculatorController.getWhatYouOweReview().path()}</a></li>
+            <li><a class="link" href="@routes.CalculatorController.getPaymentSummary()">@{routes.CalculatorController.getPaymentSummary().path()}</a></li>
             <li><a class="link" href="@routes.CalculatorController.getPayTodayQuestion()">@{routes.CalculatorController.getPayTodayQuestion().path()}</a></li>
             <li><a class="link" href="@routes.CalculatorController.getPaymentToday()">@{routes.CalculatorController.getPaymentToday().path()}</a></li>
             <li><a class="link" href="@routes.CalculatorController.getCalculateInstalments(None)">@{routes.CalculatorController.getCalculateInstalments(None).path()}</a></li>
@@ -61,9 +61,7 @@
             <li><a class="link" href="@routes.CalculatorController.getTaxLiabilities()">@{routes.CalculatorController.getTaxLiabilities().path()}</a></li>
             <li><a class="link" href="@routes.ArrangementController.determineEligibility()>@{routes.ArrangementController.determineEligibility().path()}</a></li>
 
-            <li><a class="link" href="@routes.CalculatorController.submitRecalculate()">@{routes.CalculatorController.submitRecalculate().path()}</a></li>
-
-            <li><a class="link" href="@routes.ArrangementController.getInstalmentSummary()">@{routes.ArrangementController.getInstalmentSummary().path()}</a></li>
+            <li><a class="link" href="@routes.ArrangementController.getInstalmentSummary()">@{routes.ArrangementController.getInstalmentSummary().path()} </a></li>
             <li><a class="link" href="@routes.DirectDebitController.getDirectDebit()">@{routes.DirectDebitController.getDirectDebit().path()}</a></li>
             <li><a class="link" href="@routes.DirectDebitController.getDirectDebitConfirmation()">@{routes.DirectDebitController.getDirectDebitConfirmation().path()}</a></li>
             <li><a class="link" href="@routes.DirectDebitController.getDirectDebitAssistance()">@{routes.DirectDebitController.getDirectDebitAssistance().path()}</a></li>

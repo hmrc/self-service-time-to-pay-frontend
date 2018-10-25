@@ -7,10 +7,8 @@ GET         /                                                 @uk.gov.hmrc.selfs
 POST        /                                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.submit()
 
 # Calculator
-# remove a single amount
-POST        /calculator/amounts-due/remove                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitRemoveAmountDue()
-GET         /calculator/what-you-owe-review                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getWhatYouOweReview()
-POST        /calculator/what-you-owe-review                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitWhatYouOweReview()
+
+GET         /calculator/payment-summary                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentSummary()
 GET         /calculator/payment-today-question                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPayTodayQuestion()
 POST        /calculator/payment-today-question                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPayTodayQuestion()
 GET         /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentToday()
