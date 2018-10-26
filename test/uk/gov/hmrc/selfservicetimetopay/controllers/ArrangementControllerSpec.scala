@@ -81,7 +81,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
-
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
           SessionKeys.userId -> "someUserId",
@@ -100,7 +100,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockEligibilityConnector.checkEligibility(any(),any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(ReturnNeedsSubmitting))))
 
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer.copy(selfAssessment = Some(requiredSa)))))
-
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))uss
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 

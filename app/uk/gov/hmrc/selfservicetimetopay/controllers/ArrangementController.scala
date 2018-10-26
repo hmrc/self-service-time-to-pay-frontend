@@ -97,8 +97,9 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
             tp =>
               tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion())))(taxPayer => {
                 val newSubmission = TTPSubmission(taxpayer = Some(taxPayer))
-                sessionCache.put(newSubmission)
-                eligibilityCheck(taxPayer, newSubmission,authContext.principal.accounts.sa.get.utr.utr)
+                sessionCache.put(newSubmission).flatMap { _ =>
+                  eligibilityCheck(taxPayer, newSubmission, authContext.principal.accounts.sa.get.utr.utr)
+                }
               }
               )
           }

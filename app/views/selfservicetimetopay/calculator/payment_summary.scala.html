@@ -20,11 +20,31 @@
 
 @(debits:Seq[Debit],initialPayment:BigDecimal)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @selfservicetimetopay.main(
-    title = Messages("ssttp.calculator.form.payment_summary.title")
+    title = Messages("ssttp.calculator.form.payment_summary.title"),
+    loggedIn = true
 ) {
 
     <header class="page-header text">
         <h1>@Messages("ssttp.calculator.form.payment_summary.title")</h1>
     </header>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")
+                <br><p>@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p></th>
+                <td class="numeric" scope="col"> £@initialPayment</td>
+                <th class="numeric" scope="col"><a href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.change")</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">@Messages("ssttp.calculator.form.payment_summary.amount.remaining")</th>
+                <td class="numeric">@{debits.map(_.amount).sum - initialPayment}</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <a class="button" href="@routes.CalculatorController.getCalculateInstalments(Some(5))">@Messages("ssttp.calculator.form.payment_summary.continue")</a>
 }
 
