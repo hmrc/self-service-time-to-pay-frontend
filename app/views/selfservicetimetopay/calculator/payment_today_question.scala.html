@@ -23,17 +23,14 @@
     loggedIn = loggedIn
 ) {
     <p>
-        @if(loggedIn) {
-        <a class="back-link" href="@routes.EligibilityController.getExistingTtp()">@Messages("ssttp.eligibility.form.sign_in_question.back")</a>
-        } else {
-        <a class="back-link" href="@routes.CalculatorController.getWhatYouOweReview()">@Messages("ssttp.eligibility.form.sign_in_question.back")</a>
-        }
+        <a class="back-link" href="@routes.CalculatorController.getTaxLiabilities()">@Messages("ssttp.calculator.payment_today_question.button-back")</a>
     </p>
     <header class="page-header text">
         <h1>@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
     </header>
+    <p>@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
+    @formErrorSummary(Messages("ssttp.calculator.form.payment_today_question.required.title"), dataForm, Seq.empty)
     @form(routes.CalculatorController.submitPayTodayQuestion(), 'class -> "group") {
-        @formErrorSummary(Messages("ssttp.calculator.form.payment_today_question.required.title"), dataForm, Seq.empty)
         @radiobuttonsinline(dataForm("paytoday"), Seq(
             "true" -> Messages("ssttp.calculator.form.payment_today_question.yes_label"),
             "false" -> Messages("ssttp.calculator.form.payment_today_question.no_label")
@@ -44,14 +41,8 @@
             '_labelClass -> "block-label block-label--inline"
         ) {
         }
-            &nbsp;
-        <details>
-            <summary>@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.title")</summary>
-            <p>@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
-        </details>
-
         @submit() {
-            @Messages("ssttp.eligibility.form.sign_in_question.continue")
+            @Messages("ssttp.calculator.payment_today_question.button-continue")
         }
     }
 }

@@ -38,7 +38,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def getDirectDebit: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer), _, _, calcData, _, _, _)
+        case submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer),  calcData, _, _, _)
           if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
           Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, isSignedIn)))
         case _ => Future.successful(redirectOnError)
@@ -48,7 +48,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def getDirectDebitAssistance: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
+        case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _) =>
           Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
         case _ => Future.successful(redirectOnError)
       }
@@ -57,7 +57,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def getDirectDebitError: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
+        case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _) =>
           Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
         case _ => Future.successful(redirectOnError)
       }
@@ -66,9 +66,9 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def getDirectDebitConfirmation: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case TTPSubmission(_, _, Some(_), _, _, _, _, _, _, _) =>
+        case TTPSubmission(_, _, Some(_), _, _, _, _, _) =>
           Future.successful(Redirect(routes.DirectDebitController.getDirectDebit()))
-        case submission@TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _, _) =>
+        case submission@TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _) =>
           Future.successful(Ok(direct_debit_confirmation(submission.calculatorData.debits,
             schedule, submission.arrangementDirectDebit.get, isSignedIn)))
         case _ =>

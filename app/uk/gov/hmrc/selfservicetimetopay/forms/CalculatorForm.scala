@@ -16,9 +16,6 @@
 
 package uk.gov.hmrc.selfservicetimetopay.forms
 
-import java.time.{DateTimeException, LocalDate}
-import java.util.Calendar
-
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
@@ -29,12 +26,6 @@ import scala.util.Try
 import scala.util.control.Exception.catching
 
 object CalculatorForm {
-  val dueByYearMax = Calendar.getInstance().get(Calendar.YEAR) + 1
-  val dueByYearMin = 1996
-  val dueByMonthMin = 1
-  val dueByMonthMax = 12
-  val dueByDayMin = 1
-  val dueByDayMax = 31
 
   def tryToInt(input: String) = {
     catching(classOf[NumberFormatException]) opt input.toInt
@@ -44,37 +35,12 @@ object CalculatorForm {
     tryToInt(input).nonEmpty
   }
 
-  val dueByDateValidation = tuple(
-    "dueByDay" -> text
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day", { i: String =>hasValue(i) & !i.contains(".")})
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i => i.contains(".") ||  i.isEmpty || (i.nonEmpty && isInt(i))})
-       .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-day-number", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByDayMax) && (i.toInt >= dueByDayMin)) }),
-    "dueByMonth" -> text
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month", { i: String => hasValue(i) & !i.contains(".")})
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number", { i =>i.contains(".") ||  i.isEmpty || (i.nonEmpty && isInt(i))})
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-month-number", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByMonthMax) && (i.toInt >= dueByMonthMin)) }),
-    "dueByYear" -> text
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year", { i: String =>hasValue(i) })
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-high", { i => !isInt(i) || (isInt(i) && (i.toInt <= dueByYearMax)) })
-      .verifying("ssttp.calculator.form.what-you-owe-date.due_by.not-valid-year-too-low", { i => !isInt(i) || (isInt(i) && (i.toInt >= dueByYearMin)) })
-  )
+
   def hasValue(textBox:String):Boolean ={
     (textBox != null) && textBox.nonEmpty
   }
 
 
-  def dateValidator: Constraint[(String, String, String)] =
-    Constraint[(String, String, String)]("ssttp.calculator.form.what-you-owe.due_by.not-valid-date") { data =>
-      if (data._1.isEmpty || data._2.isEmpty || data._3.isEmpty) {
-        Valid
-      } else {
-        catching(classOf[DateTimeException]).opt(LocalDate.of(tryToInt(data._3).get, tryToInt(data._2).get, tryToInt(data._1).get)) match {
-          case d: Some[LocalDate] => Valid
-          case _ => Invalid(ValidationError("ssttp.calculator.form.what-you-owe.due_by.not-valid-date"))
-        }
-      }
-    }
 
 
 
@@ -97,15 +63,6 @@ object CalculatorForm {
     )(text => CalculatorPaymentToday(text))(bd => Some(bd.amount.toString)))
   }
 
-  def createDebitDateForm(): Form[DebitDueDate] = {
-    Form(mapping(
-      "dueBy" -> dueByDateValidation.verifying(dateValidator)
-    )((date: (String, String, String)) =>
-      DebitDueDate(date._1, date._2, date._3))
-    ((amountDue: DebitDueDate) =>
-      Some((amountDue.dueByYear, amountDue.dueByMonth, amountDue.dueByDay)))
-    )
-  }
 
   def createSinglePaymentForm(): Form[CalculatorSinglePayment] = {
     Form(mapping(

@@ -52,7 +52,6 @@ trait TimeToPayController extends FrontendController with Actions {
 
 
   private def provideSaRegime()(implicit request: Request[_]): SaRegime = {
-    Logger.info("")
     val tokenData: TokenData = TokenData(
       Token(UUID.randomUUID().toString),
       expirationDate = LocalDateTime.now().plusMinutes(10),
@@ -105,8 +104,7 @@ trait TimeToPayController extends FrontendController with Actions {
     */
   def authorizedForSsttp(block: (TTPSubmission => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
     sessionCache.get.flatMap[Result] {
-      case Some(submission@TTPSubmission(Some(_), _, _, Some(_), `validTypeOfTax`,
-      `validExistingTTP`, _, _, Some(EligibilityStatus(true, _)), _)) =>
+      case Some(submission@TTPSubmission(Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _)) =>
         block(submission)
       case _ =>
         redirectOnError.successfulF

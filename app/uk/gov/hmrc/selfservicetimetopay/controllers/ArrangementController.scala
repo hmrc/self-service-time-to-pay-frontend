@@ -56,7 +56,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def start: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
-        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp,authContext.principal.accounts.sa.get.utr.utr)
+        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer),  _, _, _, _)) => eligibilityCheck(taxpayer, ttp,authContext.principal.accounts.sa.get.utr.utr)
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -70,7 +70,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       isTokenValid = isTokenStillValid(tokenData)
       redirect =
         if(isTokenValid){
-          Results.Redirect(routes.ArrangementController.determineMisalignment())
+          Results.Redirect(routes.ArrangementController.determineEligibility())
         }
         else{
           Logger.logger.debug(s"Token expired: $tokenData")
@@ -91,31 +91,27 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     * Lastly, a check is performed to see if the user input debits match the Taxpayer
     * debits. If not, display misalignment page otherwise perform an eligibility check.
     */
-  def determineMisalignment: Action[AnyContent] = authorisedSaUser { implicit authContext =>
+  def determineEligibility: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
-      sessionCache.get.flatMap {
-        case None => Future.successful(redirectOnError)
-
-        case Some(ttp@TTPSubmission(_, _, _, _, _, _, _, _, _, _)) =>
           taxPayerConnector.getTaxPayer(authContext.principal.accounts.sa.get.utr.utr).flatMap[Result] {
             tp =>
               tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion())))(taxPayer => {
-                val newSubmission = ttp.copy(taxpayer = Some(taxPayer))
-                eligibilityCheck(taxPayer, newSubmission,authContext.principal.accounts.sa.get.utr.utr)
+                val newSubmission = TTPSubmission(taxpayer = Some(taxPayer))
+                sessionCache.put(newSubmission).flatMap { _ =>
+                  eligibilityCheck(taxPayer, newSubmission, authContext.principal.accounts.sa.get.utr.utr)
+                }
               }
               )
           }
-      }
   }
 
   def getInstalmentSummary: Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
-          case ttp@TTPSubmission(Some(schedule), _, _, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)
-            if areEqual(ttp.taxpayer.get.selfAssessment.get.debits, ttp.calculatorData.debits) =>
+          case ttp@TTPSubmission(Some(schedule), _, _, _,  cd@CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
             Future.successful(Ok(instalment_plan_summary(debits, schedule, createDayOfForm(ttp), signedIn = true)))
-          case _ => Future.successful(Redirect(routes.CalculatorController.getMisalignmentPage()))
+          case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
         }
   }
 
@@ -165,11 +161,11 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     val isDebtToLittle = taxpayer.selfAssessment.get.debits.map(debit => debit.amount).sum < BigDecimal.exact("32.00")
 
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
-      case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
+      case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(true, _)), _) =>
         checkSubmissionForCalculatorPage(taxpayer, ttp)
-      case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) =>
+      case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(_, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) =>
         youNeedToFile
-      case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
         Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()).successfulF
     }
 
@@ -193,28 +189,28 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
 
     val gotoTaxLiabilities = Redirect(routes.CalculatorController.getTaxLiabilities())
     val gotoInstalmentSummary = Redirect(routes.ArrangementController.getInstalmentSummary())
-    val gotoMisalignementPage = Redirect(routes.CalculatorController.getMisalignmentPage())
+    val gotoEligibility = Redirect(routes.ArrangementController.determineEligibility())
 
     newSubmission match {
-      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _), _, _, _) =>
+      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))),  CalculatorInput(_, _, _, _, _, _), _, _, _) =>
 
         setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map(_ => gotoTaxLiabilities)
 
-      case TTPSubmission(None, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
+      case TTPSubmission(None, _, _, Some(Taxpayer(_, _, Some(tpSA))),  CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
         gotoTaxLiabilities.successfulF
 
-      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
+      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))),  CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
         if (areEqual(debits, tpSA.debits)) {
           setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map {
             _ => gotoInstalmentSummary
           }
         }
         else {
-          sessionCache.put(newSubmission).map(_ => gotoMisalignementPage)
+          sessionCache.put(newSubmission).map(_ => gotoEligibility)
         }
 
       case _ =>
-        Logger.error("No match found for newSubmission in determineMisalignment")
+        Logger.error("No match found for newSubmission in determineEligibility")
         redirectOnError.successfulF
     }
   }

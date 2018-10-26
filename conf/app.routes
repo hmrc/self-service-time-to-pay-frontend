@@ -5,25 +5,10 @@
 # Home page
 GET         /                                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.start()
 POST        /                                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.submit()
-# Eligibility
-GET         /eligibility                                      @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.start()
-GET         /eligibility/type-of-tax                          @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.getTypeOfTax()
-POST        /eligibility/type-of-tax                          @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.submitTypeOfTax()
-GET         /eligibility/existing-ttp                         @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.getExistingTtp()
-POST        /eligibility/existing-ttp                         @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.submitExistingTtp()
-# SignInQuestion
-GET         /eligibility/sign-in-question                     @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.getSignInQuestion()
-POST        /eligibility/sign-in-question                     @uk.gov.hmrc.selfservicetimetopay.controllers.EligibilityController.submitSignInQuestion()
 
 # Calculator
-# remove a single amount
-POST        /calculator/amounts-due/remove                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitRemoveAmountDue()
-GET         /calculator/what-you-owe-review                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getWhatYouOweReview()
-POST        /calculator/what-you-owe-review                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitWhatYouOweReview()
-GET         /calculator/what-you-owe-date                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getDebitDate()
-POST        /calculator/what-you-owe-date                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitDebitDate()
-GET         /calculator/what-you-owe-amount                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getAmountOwed()
-POST        /calculator/what-you-owe-amount                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitAmountOwed()
+
+GET         /calculator/payment-summary                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentSummary()
 GET         /calculator/payment-today-question                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPayTodayQuestion()
 POST        /calculator/payment-today-question                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPayTodayQuestion()
 GET         /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentToday()
@@ -36,10 +21,9 @@ POST        /calculator/sign-in                               @uk.gov.hmrc.selfs
 GET         /calculator/tax-liabilities                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getTaxLiabilities()
 
 GET         /arrangement/recover-ttpsession/:token            @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.recoverTTPSession(token: String)
-GET         /arrangement/determine-misalignment               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.determineMisalignment()
+GET         /arrangement/determine-eligibility               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.determineEligibility()
 
 #Misalignment Page
-GET         /calculator/amounts-dont-match                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getMisalignmentPage()
 GET         /calculator/recalculate                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitRecalculate()
 
 # Arrangement

@@ -1,0 +1,50 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import selfservicetimetopay.helpers.forms.{form, submit}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
+@(debits:Seq[Debit],initialPayment:BigDecimal)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@selfservicetimetopay.main(
+    title = Messages("ssttp.calculator.form.payment_summary.title"),
+    loggedIn = true
+) {
+
+    <header class="page-header text">
+        <h1>@Messages("ssttp.calculator.form.payment_summary.title")</h1>
+    </header>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")
+                <br><p>@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p></th>
+                <td class="numeric" scope="col"> £@initialPayment</td>
+                <th class="numeric" scope="col"><a href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.change")</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">@Messages("ssttp.calculator.form.payment_summary.amount.remaining")</th>
+                <td class="numeric">@{debits.map(_.amount).sum - initialPayment}</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <a class="button" href="@routes.CalculatorController.getCalculateInstalments(Some(5))">@Messages("ssttp.calculator.form.payment_summary.continue")</a>
+}
+
