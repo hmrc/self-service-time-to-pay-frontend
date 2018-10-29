@@ -34,7 +34,7 @@ import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.controllers
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import uk.gov.hmrc.selfservicetimetopay.service.AuditService
+import uk.gov.hmrc.selfservicetimetopay.service.{AuditService, CalculatorService}
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 import scala.concurrent.Future
@@ -47,12 +47,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
   val auditService: AuditService = mock[AuditService]
   val arrangementConnector: ArrangementConnector = mock[ArrangementConnector]
   val taxPayerConnector: TaxPayerConnector = mock[TaxPayerConnector]
-  val calculatorConnector: CalculatorConnector = mock[CalculatorConnector]
+  val calculatorService: CalculatorService = mock[CalculatorService]
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
   val mockCacheMap: CacheMap = mock[CacheMap]
 
-  val controller = new ArrangementController(messagesApi, ddConnector, arrangementConnector, calculatorConnector, taxPayerConnector, mockEligibilityConnector, auditService) {
+  val controller = new ArrangementController(messagesApi, ddConnector, arrangementConnector, calculatorService, taxPayerConnector, mockEligibilityConnector, auditService) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
   }
@@ -63,7 +63,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       ddConnector,
       arrangementConnector,
       taxPayerConnector,
-      calculatorConnector,
+      calculatorService,
       mockEligibilityConnector)
   }
 
@@ -181,52 +181,6 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion().url
     }
 
-    "successfully display the instalment summary page with required data in submission" in {
-      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      val requiredSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
-
-      when(mockSessionCache.get(any(), any(), any()))
-        .thenReturn(Future.successful(Some(requiredSubmission)))
-
-      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-
-      when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
-
-
-      val request = FakeRequest()
-        .withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
-        )
-
-
-      val response = controller.getInstalmentSummary().apply(request)
-
-      status(response) mustBe OK
-      contentAsString(response) must include(getMessages(request)("ssttp.arrangement.instalment-summary.title"))
-    }
-
-    "redirect to the start page when missing required data for the instalment summary page" in {
-      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache.get(any(), any(), any()))
-        .thenReturn(Future.successful(None))
-
-      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-
-      when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
-
-      val response = controller.getInstalmentSummary().apply(FakeRequest()
-        .withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
-        )
-      )
-
-      status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.start().url
-    }
 
     "successfully display the application complete page with required data in submission" in {
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
@@ -302,25 +256,6 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       controllers.routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(response).get)
     }
 
-    "update payment schedule date" in {
-      implicit val hc = new HeaderCarrier
-      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache.get(any(), any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-
-      when(calculatorConnector.calculatePaymentSchedule(any())(any())).thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
-
-      val response = controller.changeSchedulePaymentDay()
-        .apply(FakeRequest().withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
-        )
-          .withFormUrlEncodedBody(validDayForm: _*))
-
-      controllers.routes.ArrangementController.getInstalmentSummary().url must endWith(redirectLocation(response).get)
-    }
 
     "redirect to login if user not logged in" in {
       when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))

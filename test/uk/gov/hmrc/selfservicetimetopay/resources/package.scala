@@ -19,15 +19,12 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.time.LocalDate
 
 import play.api.libs.json.{JsValue, Json, Reads}
-import play.api.mvc.Request
-import play.api.mvc.Results._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.frontend.auth._
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
-import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
-import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, _}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
@@ -81,6 +78,10 @@ package object resources {
     Seq(calculatorPaymentScheduleInstalment,
       calculatorPaymentScheduleInstalment)
   )
+  val eventualSchedules: Future[Seq[CalculatorPaymentSchedule]] = Future.successful(Seq(calculatorPaymentSchedule))
+  val calculatorPaymentScheduleMap = Map(2 -> calculatorPaymentSchedule,3 -> calculatorPaymentSchedule,
+    4 -> calculatorPaymentSchedule,5 -> calculatorPaymentScheduleLessThenOnePayment)
+
   val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule),
     Some(BankDetails(Some("012131"), Some("1234567890"), None, None, None, Some("0987654321"))), None,
     Some(taxPayer),

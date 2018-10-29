@@ -13,18 +13,14 @@ GET         /calculator/payment-today-question                @uk.gov.hmrc.selfs
 POST        /calculator/payment-today-question                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPayTodayQuestion()
 GET         /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentToday()
 POST        /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPaymentToday()
-GET         /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalments(months:Option[Int])
-POST        /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
-POST        /calculator/instalments/payment-today             @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsPaymentToday()
-GET         /calculator/instalments/print                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalmentsPrint()
+GET         /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalments()
+
 POST        /calculator/sign-in                               @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitSignIn()
 GET         /calculator/tax-liabilities                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getTaxLiabilities()
 
 GET         /arrangement/recover-ttpsession/:token            @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.recoverTTPSession(token: String)
 GET         /arrangement/determine-eligibility               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.determineEligibility()
 
-#Misalignment Page
-GET         /calculator/recalculate                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitRecalculate()
 
 # Arrangement
 POST        /arrangement                                      @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.start()

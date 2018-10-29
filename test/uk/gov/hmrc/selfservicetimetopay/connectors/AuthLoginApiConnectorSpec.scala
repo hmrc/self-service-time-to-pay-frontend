@@ -35,7 +35,7 @@ class AuthLoginApiConnectorSpec extends UnitSpec with MockitoSugar with Services
 
   implicit val hc = HeaderCarrier()
 
-  object testConnector extends AuthLoginApiConnector {
+  object testConnector extends CalculatorConnector {
     val calculatorURL = ""
     val http: WSHttp = mock[WSHttp]
     val serviceURL = "paymentSchedule"

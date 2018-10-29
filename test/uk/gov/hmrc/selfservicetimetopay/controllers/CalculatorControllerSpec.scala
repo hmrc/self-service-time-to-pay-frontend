@@ -20,7 +20,6 @@ import java.time.LocalDate
 
 import akka.actor.ActorSystem
 import akka.stream._
-import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -28,12 +27,12 @@ import org.scalatest.mock.MockitoSugar
 import play.api.test.Helpers._
 import play.api.test._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, SessionCacheConnector}
+import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import uk.gov.hmrc.selfservicetimetopay.util.{CalculatorLogic, TTPSessionId}
+import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 import scala.concurrent.Future
 
@@ -41,9 +40,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
-  val mockCalculatorConnector: CalculatorConnector = mock[CalculatorConnector]
-  val mockLogic: CalculatorLogic = mock[CalculatorLogic]
-  val controller = new CalculatorController(messagesApi, mockCalculatorConnector,mockLogic) {
+  val mockCalculatorService = mock[CalculatorService]
+  val controller = new CalculatorController(messagesApi,mockCalculatorService) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
   }
@@ -53,63 +51,33 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
 
   override def beforeEach() {
-    reset(mockAuthConnector, mockSessionCache, mockCalculatorConnector)
+    reset(mockAuthConnector, mockSessionCache,mockCalculatorService)
   }
 
   "CalculatorControllerSpec" should {
-    "Return OK for non-logged-in calculation submission with valid start date" in {
+    "Return 303 when there is no Sa in session" in {
       implicit val hc = new HeaderCarrier
 
-      when(mockSessionCache.get(any(), any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmissionNLI.copy(schedule = Some(calculatorPaymentSchedule.copy(startDate = Some(LocalDate.now)))))))
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
-      val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
+      val result = controller.getCalculateInstalments().apply(FakeRequest()
+        .withSession(TTPSessionId.newTTPSession()))
+
+      status(result) mustBe SEE_OTHER
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
+    }
+    "Return 200 when there is a Sa in session" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      val result = controller.getCalculateInstalments().apply(FakeRequest()
         .withSession(TTPSessionId.newTTPSession()))
 
       status(result) mustBe OK
       verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
 
-    "Update the schedule in the cache if the startDate is out of date" in {
-      implicit val hc = new HeaderCarrier
-
-      when(mockSessionCache.get(any(), any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmissionNLI)))
-
-      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
-        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
-
-      when(mockSessionCache.put(any())(any(), any(), any()))
-        .thenReturn(Future.successful(mock[CacheMap]))
-
-      val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
-
-      status(result) mustBe SEE_OTHER
-      verify(mockSessionCache, times(1)).get(any(), any(), any())
-      verify(mockCalculatorConnector, times(1)).calculatePaymentSchedule(any())(any())
-      verify(mockSessionCache, times(1)).put(any())(any(), any(), any())
-    }
-
-    "if no schedule is present, generate a schedule and populate it in the session" in {
-      implicit val hc = new HeaderCarrier
-
-      when(mockSessionCache.get(any(), any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmissionNLI.copy(schedule = None))))
-
-      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
-        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
-
-      when(mockSessionCache.put(any())(any(), any(), any()))
-        .thenReturn(Future.successful(mock[CacheMap]))
-
-      val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
-
-      status(result) mustBe SEE_OTHER
-      routes.CalculatorController.getCalculateInstalments(None).url must endWith(redirectLocation(result).get)
-      verify(mockSessionCache, times(1)).get(any(), any(), any())
-    }
 
     "Return BadRequest if the form value = total amount due" in {
       implicit val hc = new HeaderCarrier
@@ -143,24 +111,6 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
 
-    "Return 303 for non-logged-in when schedule is missing" in {
-      implicit val hc = new HeaderCarrier
-
-      when(mockSessionCache.get(any(), any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmissionNLINoSchedule)))
-
-      when(mockCalculatorConnector.calculatePaymentSchedule(any())(any()))
-        .thenReturn(Future.successful(Seq(calculatorPaymentSchedule)))
-
-      when(mockSessionCache.put(any())(any(), any(), any()))
-        .thenReturn(Future.successful(mock[CacheMap]))
-
-      val result = controller.getCalculateInstalments(Some(3)).apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
-
-      status(result) mustBe SEE_OTHER
-      routes.CalculatorController.getCalculateInstalments(None).url must endWith(redirectLocation(result).get)
-    }
 
     "Return 303 for non-logged-in when TTPSubmission is missing for submitPaymentToday" in {
       implicit val hc = new HeaderCarrier
