@@ -20,11 +20,8 @@ import java.time.{LocalDate, Month}
 
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.PlaySpec
-import uk.gov.hmrc.selfservicetimetopay.models.{Debit, Return, SelfAssessment}
-import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.calculateGapInMonths
-import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.setMaxMonthsAllowed
-import uk.gov.hmrc.selfservicetimetopay.models.Interest
-
+import uk.gov.hmrc.selfservicetimetopay.models.{Debit, Interest, Return, SelfAssessment}
+import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService._
 class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
 
 
@@ -187,11 +184,5 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
 
         }
       }
-  }
-
-  "setMaxMonthsAllowed" should {
-    "return 11 if there is no tax payer set ie user is not logged in" in {
-      assert(setMaxMonthsAllowed(None, testStartDate) == 11)
-    }
   }
 }

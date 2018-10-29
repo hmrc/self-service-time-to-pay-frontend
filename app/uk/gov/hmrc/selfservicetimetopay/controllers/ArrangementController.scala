@@ -18,9 +18,8 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
-import javax.inject._
-import java.time.Duration
 
+import javax.inject._
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result, Results}
 import uk.gov.hmrc.domain.SaUtr
@@ -31,21 +30,17 @@ import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.util.CalculatorLogic.createCalculatorInput
-import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction.redirectToStartPage
+import uk.gov.hmrc.selfservicetimetopay.service.{AuditService, CalculatorService}
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.math.BigDecimal
-import play.api.mvc.{ActionBuilder, AnyContent, Request, Result, Results, Action => PlayAction}
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext
-import uk.gov.hmrc.selfservicetimetopay.service.AuditService
 
 class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi, ddConnector: DirectDebitConnector,
                                       arrangementConnector: ArrangementConnector,
-                                      calculatorConnector: CalculatorConnector,
+                                      calculatorService: CalculatorService,
                                       taxPayerConnector: TaxPayerConnector,
                                       eligibilityConnector: EligibilityConnector,
                                       auditService: AuditService) extends TimeToPayController with play.api.i18n.I18nSupport {
@@ -61,7 +56,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       }
   }
 
-  def recoverTTPSession(token: String): Action[AnyContent] = PlayAction.async { implicit request =>
+  def recoverTTPSession(token: String): Action[AnyContent] = Action.async { implicit request =>
     for {
       tokenData <- sessionCache4TokensConnector
         .getAndRemove(Token(token))
@@ -147,11 +142,12 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     * Take the updated calculator input information and send it to the calculator service
     */
   private def changeScheduleDay(ttpSubmission: TTPSubmission, dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
-    createCalculatorInput(ttpSubmission, dayOfMonth).fold(throw new RuntimeException("Could not create calculator input"))(cal => {
-      calculatorConnector.calculatePaymentSchedule(cal)
-        .map[TTPSubmission](seqCalcInput => ttpSubmission.copy(schedule = Option(seqCalcInput.head), calculatorData = cal))
-    })
-  }
+//   val cal  =  calculatorService.createCalculatorInput(2,dayOfMonth,ttpSubmission.calculatorData.initialPayment,ttpSubmission.calculatorData.debits)
+//      calculatorConnector.calculatePaymentSchedule(cal)
+//        .map[TTPSubmission](seqCalcInput => ttpSubmission.copy(schedule = Option(seqCalcInput.head), calculatorData = cal))
+    Future.successful(ttpSubmission)
+    }
+
 
   /**
     * Call the eligibility service using the Taxpayer data and display the appropriate page based on the result

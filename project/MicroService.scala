@@ -37,6 +37,7 @@ trait MicroService {
                        SbtArtifactory) ++ plugins : _*)
     .settings(playSettings ++ scoverageSettings : _*)
     .settings(scalaSettings: _*)
+    .settings(scalacOptions += "-Ypartial-unification")
     .settings(PlayKeys.playDefaultPort := 9063)
     .settings(majorVersion := 0)
     .settings(publishingSettings: _*)

@@ -57,7 +57,8 @@ private object AppDependencies {
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
         "com.github.tomakehurst" % "wiremock" % "2.2.2" % scope,
         "org.mockito" % "mockito-core" % "1.10.19" % scope,
-        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope
+        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope,
+        "org.typelevel" %% "cats-core" % "1.4.0"
       )
     }.test
   }
