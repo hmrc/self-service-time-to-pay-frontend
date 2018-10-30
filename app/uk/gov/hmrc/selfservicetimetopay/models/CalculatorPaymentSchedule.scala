@@ -25,6 +25,8 @@ case class CalculatorPaymentSchedule(startDate: Option[LocalDate],
                                      instalmentBalance: BigDecimal,
                                      totalInterestCharged: BigDecimal,
                                      totalPayable: BigDecimal,
-                                     instalments: Seq[CalculatorPaymentScheduleInstalment])
+                                     instalments: Seq[CalculatorPaymentScheduleInstalment]){
+  def getMonthlyInstalment = instalments.head.amount
+}
 
 case class CalculatorPaymentScheduleInstalment(paymentDate:LocalDate, amount:BigDecimal)

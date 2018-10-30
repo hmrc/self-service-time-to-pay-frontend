@@ -104,8 +104,8 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
-          case ttp@TTPSubmission(Some(schedule), _, _, _,  cd@CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
-            Future.successful(Ok(instalment_plan_summary(debits, schedule, createDayOfForm(ttp), signedIn = true)))
+          case ttp@TTPSubmission(Some(schedule), _, _, _,  cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
+            Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule, createDayOfForm(ttp))))
           case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
         }
   }
@@ -125,9 +125,9 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               formWithErrors => {
                 Future.successful(BadRequest(instalment_plan_summary(
                   submission.taxpayer.get.selfAssessment.get.debits,
+                  submission.schedule.get.initialPayment,
                   submission.schedule.get,
-                  formWithErrors,
-                  signedIn = true)))
+                  formWithErrors)))
               },
               validFormData => changeScheduleDay(submission, validFormData.dayOfMonth).flatMap {
                 ttpSubmission =>
@@ -142,6 +142,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     * Take the updated calculator input information and send it to the calculator service
     */
   private def changeScheduleDay(ttpSubmission: TTPSubmission, dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
+    //todo add in the new date
 //   val cal  =  calculatorService.createCalculatorInput(2,dayOfMonth,ttpSubmission.calculatorData.initialPayment,ttpSubmission.calculatorData.debits)
 //      calculatorConnector.calculatePaymentSchedule(cal)
 //        .map[TTPSubmission](seqCalcInput => ttpSubmission.copy(schedule = Option(seqCalcInput.head), calculatorData = cal))
