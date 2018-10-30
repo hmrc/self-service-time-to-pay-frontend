@@ -55,7 +55,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
   }
 
   "CalculatorControllerSpec" should {
-    "Return 303 when there is no Sa in session" in {
+    "getCalculateInstalments Return 303 when there is no Sa in session" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLI)))
@@ -66,7 +66,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
-    "Return 200 when there is a Sa in session" in {
+    "getCalculateInstalments Return 200 when there is a Sa in session" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
@@ -77,8 +77,52 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       status(result) mustBe OK
       verify(mockSessionCache, times(1)).get(any(), any(), any())
     }
+    "submitCalculateInstalments Return 303 when there is no Sa in session" in {
+      implicit val hc = new HeaderCarrier
 
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
+      val result = controller.submitCalculateInstalments().apply(FakeRequest()
+        .withSession(TTPSessionId.newTTPSession()))
+
+      status(result) mustBe SEE_OTHER
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
+    }
+    "submitCalculateInstalments Return 400 when there is a Sa in session but nothing was posted" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      val result = controller.submitCalculateInstalments().apply(FakeRequest()
+        .withSession(TTPSessionId.newTTPSession()))
+
+      status(result) mustBe BAD_REQUEST
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
+    }
+    "submitCalculateInstalments Return 303 when there is a Sa in session" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      val result = controller.submitCalculateInstalments().apply(FakeRequest()
+        .withSession(TTPSessionId.newTTPSession())
+        .withFormUrlEncodedBody("chosen_month" -> "3"))
+
+      status(result) mustBe SEE_OTHER
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
+    }
+    "submitCalculateInstalments put the chosen months of instalments into the session" in {
+      implicit val hc = new HeaderCarrier
+
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      val result = controller.submitCalculateInstalments().apply(FakeRequest()
+        .withSession(TTPSessionId.newTTPSession())
+        .withFormUrlEncodedBody("chosen_month" -> "3"))
+      status(result) mustBe SEE_OTHER
+      verify(mockSessionCache, times(1)).get(any(), any(), any())
+      verify(mockSessionCache, times(1)).put(any())(any(),any(),any())
+    }
     "Return BadRequest if the form value = total amount due" in {
       implicit val hc = new HeaderCarrier
 

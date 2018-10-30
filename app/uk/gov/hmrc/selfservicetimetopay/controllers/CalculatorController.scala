@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
 
+import akka.japi.Option
 import javax.inject._
 import play.api.Logger
 import play.api.mvc._
@@ -26,8 +27,9 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService
 import views.html.selfservicetimetopay.calculator._
-
+import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.getMaxMonthsAllowed
 import scala.concurrent.Future
+import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.minimunMonthsAllowedTTP
 
 class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
                                      calculatorService: CalculatorService)
@@ -36,7 +38,6 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def submitSignIn: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
   }
-
 
 
   //todo find a way to test around the authorisedSaUser
@@ -49,7 +50,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           case _ => redirectOnError
         }
   }
-//todo perhaps wrap in auth
+
+  //todo perhaps wrap in auth
   def getPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, tp, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
@@ -92,13 +94,14 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           redirectOnError
       }
   }
+
   def submitPaymentToday: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.flatMap[Result] {
       case Some(ttpSubmission@TTPSubmission(_, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
         CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(payment_today_form(formWithErrors, isSignedIn))),
           validFormData => {
-            sessionCache.put(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).map{_ =>
+            sessionCache.put(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).map { _ =>
               Redirect(routes.CalculatorController.getPaymentSummary())
             }
           }
@@ -106,6 +109,17 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       case _ =>
         Logger.info("No TTP Data match in submitPaymentToday")
         Future.successful(redirectOnError)
+    }
+  }
+
+
+  def getPaymentSummary: Action[AnyContent] = Action.async { implicit request =>
+    sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _)) if debits.nonEmpty =>
+        Ok(payment_summary(debits, initialPayment))
+      case _ =>
+        Logger.info("Missing required data for what you owe review page")
+        redirectOnError
     }
   }
 
@@ -118,94 +132,41 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     */
   def getCalculateInstalments(): Action[AnyContent] = Action.async {
     implicit request =>
-    /*  sessionCache.get.flatMap {
-        case Some(ttpData@TTPSubmission(Some(
-        CalculatorPaymentSchedule(Some(startDate), _, _, _, _, _, _, _)), _, _, _, _, _, _, _))
-          if !startDate.equals(LocalDate.now) =>
-          updateSchedule(ttpData)(request)
-
-        case Some(ttpData@TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))),
-        CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) =>
-          val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
-
-          if (setMaxMonthsAllowed(Some(sa), LocalDate.now()) >= minimunMonthsAllowedTTP) {
-            Future.successful(Ok(calculate_instalments_form(schedule, Some(sa.debits),
-              CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, setMonthOptions(Some(sa)), isSignedIn)))
-          } else {
-            //todo perhaps move to time-to-pay-eligbility?
+      sessionCache.get.flatMap {
+        case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
+          if (getMaxMonthsAllowed(sa, LocalDate.now()) >= minimunMonthsAllowedTTP) {
+            calculatorService.getInstalmentsSchedule(sa).map { monthsToSchedule =>
+              Ok(calculate_instalments_form(CalculatorForm.createInstalmentForm(), monthsToSchedule, true))
+            }
+          }
+          else {
             sessionCache.put(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(false, Seq(TTPIsLessThenTwoMonths))))).map { _ =>
               Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments())
             }
           }
 
-        case Some(ttpData@TTPSubmission(Some(schedule), _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
-
-          val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).fill(paymentToday)
-          Future.successful(Ok(calculate_instalments_form(schedule, None,
-            CalculatorForm.durationForm.bind(Map("months" -> schedule.instalments.length.toString)), form, setMonthOptions(), isSignedIn)))
-
-        case Some(ttpData@TTPSubmission(None, _, _, _, _, _, _, _)) =>
-          updateSchedule(ttpData)(request)
-        case _ =>
-          Future.successful(redirectOnError)
-      }*/
+        case _ => Future.successful(redirectOnError)
+      }
+  }
+  def submitCalculateInstalments(): Action[AnyContent] = Action.async {
+    implicit request =>
+      //todo perhaps when we refactor the calt service we can get rid of the
       sessionCache.get.flatMap {
         case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
-          calculatorService.getInstalmentsSchedule(sa).map(monthsToSchedule =>
-            Ok(calculate_instalments_form(monthsToSchedule, true))
+          CalculatorForm.createInstalmentForm().bindFromRequest().fold(
+            formWithErrors => {
+              calculatorService.getInstalmentsSchedule(sa).map { monthsToSchedule =>
+                BadRequest(calculate_instalments_form(formWithErrors, monthsToSchedule, true))
+              }
+            },
+            validFormData => {
+              calculatorService.getInstalmentsSchedule(sa).map { monthsToSchedule =>
+                sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.instalmentMonthsChosen))))
+                Redirect(routes.ArrangementController.getInstalmentSummary())
+              }
+            }
           )
-        case _ =>   Future.successful(redirectOnError)
+        case _ => Future.successful(redirectOnError)
       }
   }
-
-
-  def getPaymentSummary: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _)) if debits.nonEmpty =>
-        Ok(payment_summary(debits,initialPayment))
-      case _ =>
-        Logger.info("Missing required data for what you owe review page")
-        redirectOnError
-    }
-  }
-
-
-
-
-  /**
-    * Update the schedule data stored in TTPSubmission, ensuring that 7 and 14 day payment
-    * rules are applied
-    */
-  /*
-  private def updateSchedule(ttpData: TTPSubmission): Action[AnyContent] = Action.async {
-    implicit request =>
-      ttpData match {
-        case TTPSubmission(_, _, _, None,  calculatorInput, durationMonths, _, _) =>
-          val newInput = logic.validateCalculatorDates(calculatorInput, durationMonths.get, calculatorInput.debits)
-          calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
-            case Seq(schedule) =>
-              sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = newInput)).map[Result] {
-                _ => Redirect(routes.CalculatorController.getCalculateInstalments())
-              }
-            case _ =>
-              Logger.error("Failed to get payment schedule from calculator when updating schedule")
-              Future.successful(redirectOnError)
-          }
-
-        case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorInput, durationMonths, _, _) =>
-          val newInput = logic.validateCalculatorDates(calculatorInput, durationMonths.get, sa.debits).copy(debits = sa.debits)
-          calculatorConnector.calculatePaymentSchedule(newInput).flatMap {
-            case Seq(schedule) =>
-              sessionCache.put(ttpData.copy(schedule = Some(schedule), calculatorData = newInput)).map[Result] {
-                _ => Redirect(routes.CalculatorController.getCalculateInstalments())
-              }
-            case _ =>
-              Logger.error("Failed to get payment schedule from calculator when updating schedule")
-              Future.successful(redirectOnError)
-          }
-      }
-  }
-  */
-
-  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 }

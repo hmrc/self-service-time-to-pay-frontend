@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay
 
 import java.time.LocalDate
 
+import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
 import uk.gov.hmrc.selfservicetimetopay.auth.{Token, TokenData}
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -62,6 +63,7 @@ package object modelsFormat {
   implicit val taxPayerFormatter: Format[Taxpayer] = Json.format[Taxpayer]
 
   //Calculator formatters
+
   implicit val calculatorAmountsDueFormatter: Format[CalculatorAmountsDue] = Json.format[CalculatorAmountsDue]
   implicit val calculatorDurationFormatter: Format[CalculatorDuration] = Json.format[CalculatorDuration]
   implicit val calculatorPaymentScheduleInstalmentFormatter: Format[CalculatorPaymentScheduleInstalment] = Json.format[CalculatorPaymentScheduleInstalment]
@@ -110,7 +112,6 @@ package object modelsFormat {
 
   implicit val eligibilityStatusFormatter: Format[EligibilityStatus] = Json.format[EligibilityStatus]
   implicit val eligibilityRequestFormatter: Format[EligibilityRequest] = Json.format[EligibilityRequest]
-
   //Submission formatter
   implicit val submissionFormatter: Format[TTPSubmission] = Json.format[TTPSubmission]
 

@@ -28,6 +28,7 @@ import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.getMonthRange
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
+import scala.collection.immutable.ListMap
 
 class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
                                   workingDays:WorkingDaysService) {
@@ -42,7 +43,7 @@ class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
         calculatorConnector.calculatePaymentSchedule(calcInput).map(x => (numberOfMonths, x.head))
     }
     val returnedValues: Future[Seq[(Int, CalculatorPaymentSchedule)]] =  Future.sequence(futureSchedules)
-    returnedValues.map(_.toMap)
+    returnedValues.map(a => ListMap(a.sortBy(_._1):_*))
   }
 
   private def dayOfMonthCheck(date: LocalDate): LocalDate = date.getDayOfMonth match {

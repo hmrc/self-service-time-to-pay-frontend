@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue.MaxCurrencyValue
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -76,27 +75,11 @@ object CalculatorForm {
           if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true})
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
-
-
-  //todo perhaps move all the caluclator logic to it's own service
-  val minMonths = 2
-  val maxMonths = 11
-
-  val durationForm = createDurationForm()
-
-  def createDurationForm(): Form[CalculatorDuration] = {
-    def greaterThan: Constraint[String] = Constraint[String]("constraint.duration-more-than") { o =>
-      if (tryToInt(o).fold(false)(_ < minMonths)) Invalid(ValidationError("ssttp.calculator.form.duration.months.greater-than", minMonths)) else Valid
-    }
-
-    def lessThan: Constraint[String] = Constraint[String]("constraint.duration-more-than") { o =>
-      if (tryToInt(o).fold(false)(_ > maxMonths)) Invalid(ValidationError("ssttp.calculator.form.duration.months.less-than", maxMonths)) else Valid
-    }
-
-    Form(mapping("months" -> text
-      .verifying("ssttp.calculator.form.duration.months.required", months => isInt(months))
-      .verifying(greaterThan, lessThan)
-    )(months => CalculatorDuration.apply(tryToInt(months)))(calculatorDuration => calculatorDuration.months.map(m => m.toString)))
+  def createInstalmentForm(): Form[ChoseMonths] = {
+    Form(mapping(
+      "chosen_month" -> text
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", { i: String =>  Try(BigDecimal(i)).isSuccess})
+    )(text => ChoseMonths(text.toInt))(_ => Some(text.toString)))
   }
 
   val payTodayForm: Form[PayTodayQuestion] = Form(mapping(

@@ -19,11 +19,12 @@ Time To Pay Instalment Summary Pretty Print Page
 @param schedule CalculatorPaymentSchedule The results data to display
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule,ArrangementDayOfMonth,Debit}
-@(debits:Seq[Debit], schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth], signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(debits:Seq[Debit],initialPayment:BigDecimal, schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth], signedIn: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.partials.{payment_schedule, day_ordinal, gaDoCheckout}
 @import selfservicetimetopay.helpers.{alert, message_list}
 @import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import selfservicetimetopay.partials.{instalments_plan_summary_table}
 @gaCheckoutCode = {
     @gaDoCheckout(debits = debits,
         step = 1,
@@ -42,16 +43,21 @@ Time To Pay Instalment Summary Pretty Print Page
     ) {
        <div><a class="back-link" href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a></div>
        <header class="page-header text">
-           <p><a href="javascript:window.print()" class="js-visible no-print float--right  print-link js-visible trackedPrintLink">@Messages("ssttp.arrangement.instalment-summary.print")</a></p>
+
             <h1>@Messages("ssttp.arrangement.instalment-summary.title")</h1>
         </header>
+         <table>
+        <thead>
+            <tr>
+                <th scope="col">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")
+                <br><p>@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p></th>
+                <td class="numeric" scope="col"> £@initialPayment</td>
+                <th class="numeric" scope="col"><a href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.change")</a></th>
+            </tr>
+        </thead>
+        </table>
+        @instalments_plan_summary_table(schedule)
         <section class="alterBottom">
-            <div class="subsection grid-layout">
-                    @payment_schedule(schedule)
-            </div>
-            <p>@Messages("ssttp.arrangement.instalment-summary.payment-day.taken-on")
-                <strong>@Messages("ssttp.arrangement.instalment-summary.payment-day.day-of-month", day_ordinal(schedule.instalments.head.paymentDate.getDayOfMonth))</strong>
-                @Messages("ssttp.arrangement.instalment-summary.payment-day.next-working-day")</p>
 
             <details @if(dayForm.hasErrors) { open}>
                 <summary>@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
@@ -81,7 +87,7 @@ Time To Pay Instalment Summary Pretty Print Page
                 @submit() {
                     @Messages("ssttp.arrangement.instalment-summary.submit")
                 }
-            }
+      }
         </section>
         <div>&nbsp;</div>
 
