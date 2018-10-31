@@ -25,7 +25,7 @@
         <thead>
             <tr>
                 <th scope="col">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")
-                    <br><p>@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint")</p></th>
+                    <br><p>@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint",paymentSchedule.instalments.length)</p></th>
                 <th class="numeric" scope="col"><p>@currency(paymentSchedule.getMonthlyInstalment)</p></th>
                 <th class= scope="col"><a href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change")</a></th>
             </tr>

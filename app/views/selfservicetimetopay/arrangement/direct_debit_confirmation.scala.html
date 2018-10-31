@@ -44,14 +44,7 @@
     <section>
         <h2>@Messages("ssttp.arrangement.direct-debit.confirmation.your-bank")</h2>
         <p>@direct_debit_details(directDebit)</p>
-        <div class="subsection">
-            <h2>@Messages("ssttp.direct-debit.title")</h2>
-            <p>@payment_schedule(schedule)</p>
-            <div class="subsection text--right">
-                @Messages("ssttp.arrangement.direct-debit.confirmation.total-payment")
-                <strong>@currency(schedule.totalPayable)</strong>
-            </div>
-        </div>
+
     </section>
     <section>
         <details>
