@@ -271,7 +271,7 @@ ssttp.arrangement.complete.print=Print
 ssttp.arrangement.complete.print-label=Print your repayment summary
 ssttp.arrangement.complete.next=What happens next?
 ssttp.arrangement.complete.summary=We will send you a letter within 5 days to confirm your payment dates.
-ssttp.arrangement.complete.what-you-owe=First payment collected on: 28 March 2019
+ssttp.arrangement.complete.first-payment=First payment collected on: 
 ssttp.arrangement.complete.feedback=Send us feedback
 
 #Service unavailable (shutter) page

@@ -16,11 +16,13 @@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.{Debit, CalculatorPaymentSchedule, ArrangementDirectDebit}
 @import selfservicetimetopay.partials.{what_you_owe, direct_debit_details, payment_schedule, gaDoTransaction, currency}
-
+@import java.time.format.DateTimeFormatter
+@import java.time.LocalDate
+@import java.util.Locale
 @(debits: Seq[Debit], transactionId: String, directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @gaCheckoutCode = {
-  @gaDoTransaction(debits = debits,
+@gaDoTransaction(debits = debits,
     id = transactionId,
     revenue = schedule.totalPayable,
     initialPayment = Some(schedule.initialPayment),
@@ -29,48 +31,26 @@
     regularPayment = schedule.instalments.head.amount,
     step = 4,
     paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
-  )
+)
 }
 @selfservicetimetopay.main(
-  title = Messages("ssttp.arrangement.complete.title"),
-  loggedIn = loggedIn,
-  sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar()),
-  googleAnalyticsCalls = Seq(gaCheckoutCode.body)
-){
-  <div class="transaction-banner--complete removeBottom">
-    <div class="transaction-banner__heading" role="banner">@Messages("ssttp.arrangement.complete.title")</div>
-  </div>
-  <section class="section divider--bottom">
-      <a href="javascript:window.print()" class="js-visible no-print   js-visible trackedPrintLink openOnPrint">@Messages("ssttp.arrangement.complete.print-label")</a>
-    <h2>@Messages("ssttp.arrangement.complete.next")</h2>
-    <p>@Messages("ssttp.arrangement.complete.summary")</p>
-  </section>
-  <section class="section divider--bottom">
-    <h2>@Messages("ssttp.arrangement.complete.please-help-use")</h2>
-    <span><a href="https://www.tax.service.gov.uk/feedback-survey?origin=PWYOII" class="button">@Messages("ssttp.sidebar.help-and-advice.feedback.submit")</a></span>
-  </section>
-  <section>
-    <details>
-      <summary class = "ssttp-summary-app-complete button button--secondary gutter-left">@Messages("ssttp.arrangement.complete.payment-details.summary")</summary>
-      <h2>@Messages("ssttp.arrangement.complete.what-you-owe")</h2>
-      @what_you_owe(debits)
-      <div class="subsection grid-layout divider--bottom font-xsmall ssttp-grid-layout-padding-above-large">
-        <div class="grid-layout__column grid-layout__column--3-4">
-          <p>@Messages("ssttp.arrangement.complete.payment-plan", schedule.instalments.length)<br>
-          <span class="font-xsmall">@Messages("ssttp.calculator.results.monthly-payments.hint")</span></p>
-        </div>
-        <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p>@currency(schedule.totalInterestCharged)</p></div>
-      </div>
-      <div class="subsection grid-layout divider--bottom font-xsmall ssttp-grid-layout-padding-above-large">
-        <div class="grid-layout__column grid-layout__column--3-4"><p><strong>@Messages("ssttp.arrangement.complete.total")</strong></p></div>
-        <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@currency(schedule.totalPayable)</strong></p></div>
-      </div><p>&nbsp;</p>
-      <h2>@Messages("ssttp.arrangement.complete.your-bank")</h2>
-      <span class="no-print">@direct_debit_details(directDebit)</span>
-      <h2>@Messages("ssttp.arrangement.complete.direct-debit-payment")</h2>
-      <span class="print-only">@direct_debit_details(directDebit, print = true)</span>
-      @payment_schedule(schedule)
-    </details>
-  </section>
+    title = Messages("ssttp.arrangement.complete.title"),
+    loggedIn = loggedIn,
+    sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar()),
+    googleAnalyticsCalls = Seq(gaCheckoutCode.body)
+) {
+    <div class="transaction-banner--complete removeBottom">
+        <div class="transaction-banner__heading" role="banner">@Messages("ssttp.arrangement.complete.title")</div>
+    </div>
+    <section class="section divider--bottom">
+        <a href="javascript:window.print()" class="js-visible no-print   js-visible trackedPrintLink openOnPrint">@Messages("ssttp.arrangement.complete.print-label")</a>
+        <br>
+        <h2>@Messages("ssttp.arrangement.complete.next")</h2>
+        <p>@Messages("ssttp.arrangement.complete.summary")</p>
+        <p>@Messages("ssttp.arrangement.complete.first-payment")
+            @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
+            @schedule.startDate.get.format(formatter)}</p>
+        <span><a href="https://www.tax.service.gov.uk/feedback-survey?origin=PWYOII">@Messages("ssttp.sidebar.help-and-advice.feedback.submit")</a></span>
+    </section>
 }
 
