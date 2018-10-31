@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
+import cats.instances.map
 import javax.inject._
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result, Results}
@@ -33,7 +34,7 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.service.{AuditService, CalculatorService}
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
-
+import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.createCalculatorInput
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.math.BigDecimal
@@ -41,6 +42,7 @@ import scala.math.BigDecimal
 class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi, ddConnector: DirectDebitConnector,
                                       arrangementConnector: ArrangementConnector,
                                       calculatorService: CalculatorService,
+                                      calculatorConnector: CalculatorConnector,
                                       taxPayerConnector: TaxPayerConnector,
                                       eligibilityConnector: EligibilityConnector,
                                       auditService: AuditService) extends TimeToPayController with play.api.i18n.I18nSupport {
@@ -129,11 +131,17 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
                   submission.schedule.get,
                   formWithErrors)))
               },
-              validFormData => changeScheduleDay(submission, validFormData.dayOfMonth).flatMap {
-                ttpSubmission =>
-                  sessionCache.put(ttpSubmission).map {
-                    _ => Redirect(routes.ArrangementController.getInstalmentSummary())
-                  }
+              validFormData => {
+                submission match {
+                  case ttp@TTPSubmission(Some(schedule), _, _, _,  cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
+                    changeScheduleDay(submission,schedule, debits,validFormData.dayOfMonth).flatMap {
+                      ttpSubmission =>
+                        sessionCache.put(ttpSubmission).map {
+                          _ => Redirect(routes.ArrangementController.getInstalmentSummary())
+                        }
+                    }
+                  case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
+                }
               })
         }
   }
@@ -141,12 +149,13 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   /**
     * Take the updated calculator input information and send it to the calculator service
     */
-  private def changeScheduleDay(ttpSubmission: TTPSubmission, dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
-    //todo add in the new date
-//   val cal  =  calculatorService.createCalculatorInput(2,dayOfMonth,ttpSubmission.calculatorData.initialPayment,ttpSubmission.calculatorData.debits)
-//      calculatorConnector.calculatePaymentSchedule(cal)
-//        .map[TTPSubmission](seqCalcInput => ttpSubmission.copy(schedule = Option(seqCalcInput.head), calculatorData = cal))
-    Future.successful(ttpSubmission)
+  private def changeScheduleDay(ttpSubmission: TTPSubmission,schedule:CalculatorPaymentSchedule,debits:Seq[Debit], dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
+    val input =createCalculatorInput(
+      schedule.instalments.length,
+      dayOfMonth,
+      schedule.initialPayment,
+      debits)
+    calculatorConnector.calculatePaymentSchedule(input) .map[TTPSubmission](seqCalcInput => ttpSubmission.copy(schedule = Option(seqCalcInput.head), calculatorData = input))
     }
 
 

@@ -15,31 +15,39 @@
  *@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @(directDebit:ArrangementDirectDebit, print:Boolean = false)(implicit messages: play.api.i18n.Messages)
 <div>
     <div class="subsection grid-layout grid-layout--no-gutter divider--bottom font-xsmall">
-        <div class="grid-layout__column grid-layout__column--3-4">
+        <div class="grid-layout__column grid-layout__column--1-4">
             <strong>@Messages("ssttp.direct-debit.account-name")</strong>
         </div>
         <div class="grid-layout__column grid-layout__column--1-4">
             @directDebit.accountName
         </div>
+        <div class="grid-layout__column grid-layout__column--1-4">
+            <a href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.change")</a>
+        </div>
     </div>
     <div class="subsection grid-layout grid-layout--no-gutter divider--bottom font-xsmall">
-        <div class="grid-layout__column grid-layout__column--3-4">
+        <div class="grid-layout__column grid-layout__column--1-4">
             <strong>@Messages("ssttp.direct-debit.account-number")</strong>
         </div>
         <div class="grid-layout__column grid-layout__column--1-4">
             @directDebit.accountNumber
         </div>
+        <div class="grid-layout__column grid-layout__column--1-4">
+        </div>
     </div>
 
     <div class="subsection grid-layout grid-layout--no-gutter divider--bottom font-xsmall">
-        <div class="grid-layout__column grid-layout__column--3-4">
+        <div class="grid-layout__column grid-layout__column--1-4">
             <strong>@Messages("ssttp.direct-debit.sort-code")</strong>
         </div>
         <div class="grid-layout__column grid-layout__column--1-4">
             @directDebit.formatSortCode
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-4">
         </div>
     </div>
 </div>

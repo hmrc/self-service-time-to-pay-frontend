@@ -21,7 +21,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 
 class ArrangementDirectDebitSpec extends PlaySpec {
 
-  val arrangmentDirectDebitTest = ArrangementDirectDebit("Tyrion Lannister", "123456", "12345678")
+  val arrangmentDirectDebitTest = ArrangementDirectDebit("Tyrion Lannister", "123456", "12345678",Some(true))
 
   "the formatSortCode should format the sort code correctly " in {
     assert(arrangmentDirectDebitTest.formatSortCode == "12 - 34 - 56")

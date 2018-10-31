@@ -75,14 +75,15 @@ Time To Pay Instalment Summary Pretty Print Page
             </details>
         </section>
         <section>
-            @alert('_modifierClass -> "alert--info alert--info__light") {
+           <div class="panel panel-border-wide">
                 @Messages("ssttp.arrangement.instalment-summary.terms.cancelled-if")
+                     <br></br>
                 @message_list(Some("bullets"), "ssttp.arrangement.instalment-summary.terms.cancelled-if.")
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.made-payable-immediately")</div>
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.refunds")</div>
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.interest-change")</div>
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
-            }
+            </div>
             @form(routes.ArrangementController.submitInstalmentSummary()) {
                 @submit() {
                     @Messages("ssttp.arrangement.instalment-summary.submit")
