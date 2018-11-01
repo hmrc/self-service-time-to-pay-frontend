@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
-import cats.instances.map
 import javax.inject._
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Result, Results}
@@ -31,10 +30,11 @@ import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.createCalculatorInput
 import uk.gov.hmrc.selfservicetimetopay.service.{AuditService, CalculatorService}
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
-import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.createCalculatorInput
+
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.math.BigDecimal

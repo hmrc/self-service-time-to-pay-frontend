@@ -19,13 +19,16 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.time.LocalDate
 
 import play.api.libs.json.{JsValue, Json, Reads}
+import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.frontend.auth._
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, _}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 import scala.concurrent.Future
 import scala.io.Source
@@ -217,6 +220,7 @@ package object resources {
     enrolmentsUri = None,
     idsUri = None
   )
+
 
 
 }
