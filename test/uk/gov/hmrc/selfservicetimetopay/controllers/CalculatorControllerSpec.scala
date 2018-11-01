@@ -20,15 +20,17 @@ import java.time.LocalDate
 
 import akka.actor.ActorSystem
 import akka.stream._
+import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import play.api.test.Helpers._
 import play.api.test._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
+import uk.gov.hmrc.selfservicetimetopay.auth.{SaGovernmentGateway, TokenData}
+import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCache4TokensConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService
@@ -41,19 +43,24 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockCalculatorService = mock[CalculatorService]
+  val mockSessionCache4TokensConnector: SessionCache4TokensConnector = mock[SessionCache4TokensConnector]
+
   val controller = new CalculatorController(messagesApi,mockCalculatorService) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
+    override def provideGG(tokenData: TokenData)  = SaGovernmentGateway
+    override lazy val sessionCache4TokensConnector:SessionCache4TokensConnector = mockSessionCache4TokensConnector
   }
 
   implicit val system = ActorSystem("QuickStart")
   implicit val mat: akka.stream.Materializer = ActorMaterializer()
 
-
+  val goodSession: Seq[(String, String)] = Seq(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession(),"token" -> "1234")
   override def beforeEach() {
-    reset(mockAuthConnector, mockSessionCache,mockCalculatorService)
+    reset( mockSessionCache,mockCalculatorService)
   }
-
+  when(mockAuthConnector.currentAuthority(any(),any())).thenReturn(Future.successful(Some(authorisedUser)))
+  when(mockSessionCache4TokensConnector.put(any())(any(), any())).thenReturn(Future.successful(()))
   "CalculatorControllerSpec" should {
     "getCalculateInstalments Return 303 when there is no Sa in session" in {
       implicit val hc = new HeaderCarrier
@@ -61,7 +68,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
       val result = controller.getCalculateInstalments().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
+        .withSession(goodSession:_*))
 
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -72,7 +79,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.getCalculateInstalments().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
+        .withSession(goodSession:_*))
 
       status(result) mustBe OK
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -83,7 +90,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
+        .withSession(goodSession:_*))
 
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -94,7 +101,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
+        .withSession(goodSession:_*))
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -105,7 +112,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession())
+        .withSession(goodSession:_*)
         .withFormUrlEncodedBody("chosen_month" -> "3"))
 
       status(result) mustBe SEE_OTHER
@@ -117,7 +124,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession())
+        .withSession(goodSession:_*)
         .withFormUrlEncodedBody("chosen_month" -> "3"))
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -133,7 +140,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
       val result = controller.submitPaymentToday().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "300.00")
-        .withSession(TTPSessionId.newTTPSession()))
+        .withSession(goodSession:_*))
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -149,7 +156,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
       val result = controller.submitPaymentToday().apply(FakeRequest()
         .withFormUrlEncodedBody("amount" -> "299.999")
-        .withSession(TTPSessionId.newTTPSession()))
+        .withSession(goodSession:_*))
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -170,20 +177,20 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k.copy(calculatorData = CalculatorInput.initial.copy(initialPayment = BigDecimal(2))))))
       val request = FakeRequest()
-        .withSession(TTPSessionId.newTTPSession())
+        .withSession(goodSession:_*)
       val result = controller.getPayTodayQuestion().apply(request)
 
       status(result) mustBe SEE_OTHER
     }
 
-    "Return 303 for submitPayTodayQuestion when TTPSubmission is missing" in {
+    "Return 303 for getPayTodayQuestion when TTPSubmission is missing" in {
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
       val result = controller.getPayTodayQuestion().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
+        .withSession(goodSession:_*))
 
       status(result) mustBe SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -197,7 +204,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = Seq.empty)))))
 
       val result = controller.getPayTodayQuestion().apply(FakeRequest()
-        .withSession(TTPSessionId.newTTPSession()))
+        .withSession(goodSession:_*))
 
       status(result) mustBe SEE_OTHER
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(result).get)
@@ -209,7 +216,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
       val request = FakeRequest()
-        .withSession(TTPSessionId.newTTPSession())
+        .withSession(goodSession:_*)
       val result = controller.getPayTodayQuestion().apply(request)
 
       status(result) mustBe OK
@@ -219,7 +226,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "successfully display payment summary page" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
-      val request = FakeRequest().withSession(TTPSessionId.newTTPSession())
+      val request = FakeRequest().withSession(goodSession:_*)
       val response = controller.getPaymentSummary().apply(request)
 
       status(response) mustBe OK
@@ -230,7 +237,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "successfully redirect to start page when trying to access what you owe review page if there are no debits" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k.copy(calculatorData = CalculatorInput.initial))))
-      val response = controller.getPaymentSummary().apply(FakeRequest().withSession(TTPSessionId.newTTPSession()))
+      val response = controller.getPaymentSummary().apply(FakeRequest().withSession(goodSession:_*))
 
       status(response) mustBe SEE_OTHER
 
@@ -240,7 +247,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     "successfully redirect to start page when there are invalid eligibility questions" in {
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
-      val response = controller.getPaymentSummary().apply(FakeRequest().withSession(TTPSessionId.newTTPSession()))
+      val response = controller.getPaymentSummary().apply(FakeRequest()
+        .withSession(goodSession:_*))
 
       status(response) mustBe SEE_OTHER
 

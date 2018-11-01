@@ -48,7 +48,6 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
 
   private lazy val companyAuthFrontend = getConfString("company-auth.url", throw new RuntimeException("Company auth url required"))
   private lazy val companyAuthSignInPath = getConfString("company-auth.sign-in-path", "")
-  private lazy val companyAuthSignOutPath = getConfString("company-auth.sign-out-path", "")
   lazy val loginUrl: String = s"$companyAuthFrontend$companyAuthSignInPath"
   lazy val loginCallbackBaseUrl = getConfString("auth.login-callback.base-url", "")
   lazy val loginCallbackPath = getConfString("auth.login-callback.path", "")

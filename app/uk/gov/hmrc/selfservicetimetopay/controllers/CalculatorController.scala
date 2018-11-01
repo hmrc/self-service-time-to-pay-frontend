@@ -42,8 +42,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
 
   //todo find a way to test around the authorisedSaUser
   def getTaxLiabilities: Action[AnyContent] = authorisedSaUser {
+    implicit request =>
     implicit authContext =>
-      implicit request =>
         sessionCache.get.map {
           case Some(ttpData@TTPSubmission(_, _, _, Some(tp), _, _, _, _)) =>
             Ok(tax_liabilities(tp.selfAssessment.get.debits, isSignedIn))
@@ -51,8 +51,9 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         }
   }
 
-  //todo perhaps wrap in auth
-  def getPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
+  def getPayTodayQuestion: Action[AnyContent] = authorisedSaUser {
+    implicit request =>
+    implicit authContext =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, tp, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
         val dataForm = CalculatorForm.payTodayForm
@@ -65,7 +66,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     * Checks the response for the pay today question. If yes navigate to payment today page
     * otherwise navigate to calculator page and set the initial payment to 0
     */
-  def submitPayTodayQuestion: Action[AnyContent] = Action.async { implicit request =>
+  def submitPayTodayQuestion: Action[AnyContent] = authorisedSaUser{ implicit request =>
+    implicit authContext =>
     sessionCache.get.flatMap[Result] {
       case Some(ttpData@TTPSubmission(_, _, _, tp, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
         CalculatorForm.payTodayForm.bindFromRequest().fold(
@@ -82,8 +84,9 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     }
   }
 
-  def getPaymentToday: Action[AnyContent] = Action.async {
+  def getPaymentToday: Action[AnyContent] = authorisedSaUser {
     implicit request =>
+      implicit authContext =>
       sessionCache.get.map {
         case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _)) if debits.nonEmpty =>
           val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
@@ -95,7 +98,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
-  def submitPaymentToday: Action[AnyContent] = Action.async { implicit request =>
+  def submitPaymentToday: Action[AnyContent] =authorisedSaUser { implicit request =>
+    implicit authContext =>
     sessionCache.get.flatMap[Result] {
       case Some(ttpSubmission@TTPSubmission(_, _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _)) =>
         CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
@@ -113,7 +117,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   }
 
 
-  def getPaymentSummary: Action[AnyContent] = Action.async { implicit request =>
+  def getPaymentSummary: Action[AnyContent] = authorisedSaUser{ implicit request =>
+    implicit authContext =>
     sessionCache.get.map {
       case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _)) if debits.nonEmpty =>
         Ok(payment_summary(debits, initialPayment))
@@ -130,8 +135,9 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     * - If user input debits are not empty, load the calculator (avoids direct navigation)
     * - If schedule data is missing, update TTPSubmission
     */
-  def getCalculateInstalments(): Action[AnyContent] = Action.async {
+  def getCalculateInstalments(): Action[AnyContent] = authorisedSaUser {
     implicit request =>
+      implicit authContext =>
       sessionCache.get.flatMap {
         case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
           if (getMaxMonthsAllowed(sa, LocalDate.now()) >= minimunMonthsAllowedTTP) {
@@ -148,7 +154,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         case _ => Future.successful(redirectOnError)
       }
   }
-  def submitCalculateInstalments(): Action[AnyContent] = Action.async {
+  def submitCalculateInstalments(): Action[AnyContent] = authorisedSaUser {
+    implicit authContext =>
     implicit request =>
       //todo perhaps when we refactor the calt service we can get rid of the
       sessionCache.get.flatMap {

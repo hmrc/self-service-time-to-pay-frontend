@@ -86,46 +86,27 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       authorizedForSsttp { submission =>
         directDebitForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
-            submission.schedule.get, filterSortCodeErrors(formWithErrors)))),
+            submission.schedule.get, formWithErrors))),
           validFormData => {
-            directDebitConnector.getBank(validFormData.sortCode,
-              validFormData.accountNumber.toString).flatMap {
-              case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
-              case None =>
-                val (sc1 :: sc2 :: sc3 :: _) = validFormData.sortCode.grouped(2).toList
-                Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
-                  submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
-                    "accountNumber" -> validFormData.accountNumber, "sortCode1" -> sc1, "sortCode2" -> sc2, "sortCode3" -> sc3)),
-                  isBankError = true)
-                ))
-            }
+            if (validFormData.singleAccountHolder.get){
+              directDebitConnector.getBank(validFormData.sortCode,
+                validFormData.accountNumber.toString).flatMap {
+                case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
+                case None =>
+                  Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
+                    submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
+                      "accountNumber" -> validFormData.accountNumber, "sortCode" -> validFormData.sortCode)),
+                    isBankError = true)
+                  ))
+              }
+          }else{
+              //todo write tests and change to new page
+              Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))}
           }
         )
       }
   }
 
-  /**
-    * To streamline the number of errors that are displayed on the direct debit form, the
-    * error messages associated with ArrangementDirectDebit form are filtered through
-    */
-  def filterSortCodeErrors(form: Form[ArrangementDirectDebit]): Form[ArrangementDirectDebit] = {
-    val sortCodeRequiredMessage = Seq("ssttp.direct-debit.form.error.sortCode.required")
-
-    def removeEnterSortCodeErrors(errors: Seq[FormError]): Seq[FormError] = {
-      errors.map(e => if (e.messages == sortCodeRequiredMessage) {
-        e.copy(messages = Seq("ssttp.direct-debit.form.error.sortCode.not-valid"))
-      } else e)
-    }
-
-    val countOfSortCodeEnter = form.errors.count(_.messages == sortCodeRequiredMessage)
-    val checkSort = if (countOfSortCodeEnter < 3) form.copy(errors = removeEnterSortCodeErrors(form.errors)) else form
-    val formErrorsNoDuplicates = checkSort.errors.foldLeft[Seq[FormError]](Nil) {
-      (acc, formError) => {
-        if (acc.exists(_.message == formError.message)) acc :+ formError.copy(messages = Seq(" ")) else acc :+ formError
-      }
-    }
-    form.copy(errors = formErrorsNoDuplicates)
-  }
 
   /**
     * Using saUtr, gets a list of banks associated with the user. Checks the user entered
