@@ -12,6 +12,7 @@ trait MicroService {
 
   import uk.gov.hmrc._
   import DefaultBuildSettings._
+  import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
   val appName: String
 
