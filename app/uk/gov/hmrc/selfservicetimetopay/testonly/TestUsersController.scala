@@ -36,6 +36,7 @@ case class TestUserForm (
                           returnsJson: String,
                           returnsResponseStatusCode: String,
                           hasSAEnrolment: Boolean,
+                          isOnIA: Boolean,
                           authorityId: Option[String],
                           affinityGroup: String,
                           debitsJson: String,
@@ -48,6 +49,7 @@ case class TestUserForm (
   def asTestUser: TestUser = TestUser(
     utr = utr.map(Utr.apply).getOrElse(Utr.random()),
     hasSAEnrolment = hasSAEnrolment,
+    isOnIA = isOnIA,
     authorityId = authorityId.map(AuthorityId.apply).getOrElse(AuthorityId.random),
     affinityGroup = AffinityGroup(affinityGroup),
     confidenceLevel = 200,
@@ -68,6 +70,7 @@ object TestUserForm {
     returnsJson = Json.prettyPrint(TestUserReturns.sample1),
     returnsResponseStatusCode = "200",
     hasSAEnrolment = true,
+    isOnIA = true,
     authorityId = None,
     affinityGroup = AffinityGroup.individual.v,
     debitsJson = Json.prettyPrint(TestUserDebits.sample1),
@@ -82,7 +85,8 @@ class TestUsersController @Inject()(
   val messagesApi: MessagesApi,
   loginService: LoginService,
   saStubConnector: SaStubConnector,
-  desStubConnector: DesStubConnector
+  desStubConnector: DesStubConnector,
+  iaConnector:IaConnector
 )
 extends TimeToPayController with I18nSupport with ServicesConfig {
 
@@ -95,6 +99,7 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
         .verifying("'returns' status code must not be empty", !_.isEmpty)
         .verifying("'returns' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100),
       "has-sa-enrolment" -> boolean,
+      "isOnIA" -> boolean,
       "authority-id" -> optional(text),
       "affinity-group" -> text.verifying("'Affinity group' must not be 'Individual', 'Organisation' or 'Agent'", x => List("Individual", "Organisation", "Agent").contains(x)),
       "debits-response-body" -> text
@@ -130,12 +135,12 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
     val setTaxpayerResponseF = saStubConnector.setTaxpayerResponse(tu)
     val setReturnsF = desStubConnector.setReturns(tu)
     val setDebitsF = desStubConnector.setDebits(tu)
-
     val result = for {
       loginSession <- loginSessionF
       _ <- setTaxpayerResponseF
       _ <- setReturnsF
       _ <- setDebitsF
+      _ <- if(tu.isOnIA)iaConnector.uploadUtr(tu.utr.v) else Future.successful(())
       newSession = Session(loginSession.data)
       url = tu.continueUrl.getOrElse(routes.InspectorController.inspect().url)
     } yield Redirect(url).withSession(newSession)

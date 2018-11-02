@@ -24,6 +24,7 @@ import scala.util.Random
 case class TestUser(
                      utr: Utr,
                      hasSAEnrolment: Boolean,
+                     isOnIA: Boolean,
                      authorityId: AuthorityId,
                      affinityGroup: AffinityGroup = AffinityGroup.individual,
                      confidenceLevel: Int,
@@ -41,6 +42,7 @@ object TestUser {
   def exemplary() = TestUser(
     utr = Utr.random(),
     hasSAEnrolment = true,
+    isOnIA=true,
     authorityId = AuthorityId.random,
     affinityGroup = AffinityGroup.individual,
     confidenceLevel = 200,
