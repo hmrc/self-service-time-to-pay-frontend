@@ -76,6 +76,21 @@
                 }
 
             </p>
+            <p>
+        <h2>Put in ia</h2>
+            <span class="flush--ends form-field--hint"></span>
+            @radiobuttonsinline(dataForm("isOnIA"), Seq(
+                "true" -> "Yes",
+                "false" -> "No"
+            ),true,
+                '_label -> Html("label"),
+                '_modifierClass -> "multiple-choice inline",
+                '_groupClass -> "form-field",
+                '_labelClass -> "block-label block-label--inline"
+            ) {
+            }
+
+            </p>
 
             <p>
                 <h2>Does the user have SA enrolment</h2>
