@@ -120,7 +120,7 @@
 
             <p>
                 <h2>Returns</h2>
-                <span class="flush--ends form-field--hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/returns</em>. Read <a href="https://confluence.tools.tax.service.gov.uk/display/SSTTP/DES+API+Tracker">DES API Tracker </a> for more details.</span>
+                <span class="flush--ends form-field--hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/returns</em>. Read DES API Tracker for more details.</span>
                 @textinput(field = dataForm("returns-status-code"),
                     'label -> "returns http status code",
                     '_maxlength -> "3",
@@ -136,7 +136,7 @@
             </p>
             <p>
                 <h2>Debits</h2>
-                <span class="flush--ends form-field--hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/debits</em>. Read <a href="https://confluence.tools.tax.service.gov.uk/display/SSTTP/DES+API+Tracker">DES API Tracker </a> for more details.</span>
+                <span class="flush--ends form-field--hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/debits</em>. Read DES API Tracker for more details.</span>
                 @textinput(field = dataForm("debits-status-code"),
                     'label -> "debits http status code",
                     '_maxlength -> "3",
@@ -153,7 +153,7 @@
 
           <p>
             <h2>Taxpayer definition in SA</h2>
-            <span class="flush--ends form-field--hint">Define response in SA-STUB for <em>GET /sa/individual/:saUtr/designatory-details/taxpayer</em>. Read <a href="https://github.tools.tax.service.gov.uk/HMRC/sa#get-saindividualsautrdesignatory-detailstaxpayer">SA docs</a> for more details.</span>
+            <span class="flush--ends form-field--hint">Define response in SA-STUB for <em>GET /sa/individual/:saUtr/designatory-details/taxpayer</em>. Read SA docs for more details.</span>
             @textinput(field = dataForm("sa-taxpayer-status-code"),
               'label -> "sa taxpayer http status code",
               '_maxlength -> "3",

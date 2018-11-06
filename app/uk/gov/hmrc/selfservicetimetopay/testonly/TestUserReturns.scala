@@ -21,7 +21,6 @@ import play.api.libs.json.{JsValue, Json}
 object TestUserReturns {
 
   object Descriptions {
-    //https://confluence.tools.tax.service.gov.uk/display/SSTTP/DES+API+Tracker
 
     //tax year ends in yyyy-04-05
     val taxYearEnd = "Tax Year Indicator. Indicates the year ending 5/4/nnnn (MANDATORY)"
