@@ -41,7 +41,6 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
   val testReturn2018 = Return(LocalDate.of(2018, Month.APRIL, 5), None, None, None)
   private val testReturns = Some(List(testReturn2016))
   val sa = SelfAssessment().copy(returns = testReturns)
-  //https://confluence.tools.tax.service.gov.uk/display/SSTTP/TTP+End+Date+Scenarios%3A+Standard
   //Note the calculatorLOgic is not responceable for determining eligiblity
   val scenariosBasedAroundJanuaryDuedate = Table(
     ("todayDate", "self assessment", "expected answer"),
@@ -78,7 +77,6 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
     (testStartDate.withMonth(7).withDayOfMonth(1), sa.copy(debits
       = List(makeDebit("POA2", "2016-04-05", 3000, "2017-07-31"))), 5))
 
-  // https://confluence.tools.tax.service.gov.uk/display/SSTTP/TTP+End+Date+Scenarios%3A+Early+Filers
   val scenariosBasedAroundEarlyFilers = Table(
     ("todayDate", "self assessment", "expected answer"),
     //Customer 15
@@ -101,7 +99,6 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
       makeDebit("POA2", "2017-04-05", 3000, "2018-01-31")), returns = Some(List(testReturn2016, testReturn2017))), 11)
 
   )
-  //https://confluence.tools.tax.service.gov.uk/display/SSTTP/TTP+End+Date+Scenarios%3A+Late+Filing+Penalty
   val scenariosBasedAroundLateFilers = Table(
     ("todayDate", "self assessment", "expected answer"),
     //Customer 20
