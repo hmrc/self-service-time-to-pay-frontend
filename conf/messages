@@ -266,7 +266,7 @@ ssttp.arrangement.direct-debit.assistance.alert=Direct Debit submission failed.
 ssttp.arrangement.direct-debit.assistance.alert.1=We’re having problems submitting your Direct Debit instruction. Please call us to complete your application.
 ssttp.arrangement.direct-debit.assistance.back=Back
 
-ssttp.arrangement.complete.title=Application complete
+ssttp.arrangement.complete.title=Application successful
 ssttp.arrangement.complete.print=Print
 ssttp.arrangement.complete.print-label=Print your repayment summary
 ssttp.arrangement.complete.next=What happens next?
