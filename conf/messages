@@ -417,7 +417,7 @@ ssttp.arrangement.complete.payment-details.summary=View a print summary
 ssttp.unavailable.title=Please call us
 ssttp.unavailable.intro=This online service is available for tax payers who are enrolled in Self Assessment and make Self Assessment returns. It looks like this is not the case from your account.
 ssttp.unavailable.instructions=But if you call us, you will still have the opportunity to set up a payment plan.
-ssttp.unavailable.number=0300 200 3822
+ssttp.unavailable.number=Phone: 0300 200 3822
 
 #global errors
 global.error.400.title=Bad request=400
