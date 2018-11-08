@@ -74,6 +74,7 @@ trait TimeToPayController extends FrontendController with Actions {
         redirect <- redirectF
       } yield redirect
     }
+    override def origin: String = "pay-online"
   }
 
   override lazy val authConnector: AuthConnector = FrontendAuthConnector
