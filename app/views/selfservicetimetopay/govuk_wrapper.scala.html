@@ -27,12 +27,14 @@
         scriptElem: Option[Html] = None,
         linksElem: Option[Html] = None,
         googleAnalyticsCalls: Seq[String] = Seq.empty,
-        noGetHelp:Boolean = false,
-        loggedIn:Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+        noGetHelp: Boolean = false,
+        loggedIn: Boolean = false,
+        hasUserPanel: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers, layouts => uiLayouts}
 @import selfservicetimetopay.partials.google_analytics_js
+@import selfservicetimetopay.partials.beta_banner_with_user_panel
 
 @head = {
 @uiLayouts.head(
@@ -71,7 +73,7 @@
 
 @serviceInfo = {
 @uiLayouts.serviceInfo(
-    betaBanner = uiLayouts.betaBanner(loggedIn, appConfig.betaFeedbackUrlAuth, appConfig.betaFeedbackUrlNoAuth, true),
+    betaBanner = beta_banner_with_user_panel(loggedIn, appConfig.betaFeedbackUrlAuth, appConfig.betaFeedbackUrlNoAuth, true, false, hasUserPanel = hasUserPanel),
     includeGridWrapper = false,
     serviceInfoContent = Some(serviceInfoContent),
     includeHMRCBranding = false

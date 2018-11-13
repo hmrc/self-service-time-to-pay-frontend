@@ -37,7 +37,8 @@
     title = Messages("ssttp.arrangement.complete.title"),
     loggedIn = loggedIn,
     sidebarLinks = Some(selfservicetimetopay.partials.help_and_advice_sidebar()),
-    googleAnalyticsCalls = Seq(gaCheckoutCode.body)
+    googleAnalyticsCalls = Seq(gaCheckoutCode.body),
+    hasUserPanel = true
 ) {
     <div class="transaction-banner--complete removeBottom">
         <div class="transaction-banner__heading" role="banner">@Messages("ssttp.arrangement.complete.title")</div>

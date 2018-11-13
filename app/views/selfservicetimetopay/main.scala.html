@@ -23,7 +23,8 @@
         linksElem:  Option[Html] = None,
         googleAnalyticsCalls: Seq[String] = Seq.empty,
         noGetHelp:Boolean = false,
-        loggedIn:Boolean = false)(mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
+        loggedIn:Boolean = false,
+        hasUserPanel: Boolean = false)(mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import uk.gov.hmrc.play.views.html.layouts
 @import uk.gov.hmrc.selfservicetimetopay.controllers.{routes => localRoutes}
 @sidebar = {
@@ -31,6 +32,7 @@
         @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
     }
 }
+
 @scriptElems = {
     <script src="@routes.Assets.at("javascripts/self-service-time-to-pay.js")" type="text/javascript"></script>
     @if(scriptElem.isDefined){@scriptElem}
@@ -58,5 +60,6 @@
     linksElem = Some(linksElems),
     googleAnalyticsCalls = googleAnalyticsCalls,
     noGetHelp = noGetHelp,
-    loggedIn = loggedIn
+    loggedIn = loggedIn,
+    hasUserPanel = hasUserPanel
 )
