@@ -149,6 +149,12 @@ ssttp.call-us.contact-instructions=When you have all of this, call us on {0}.
 ssttp.type-of-tax.contact-number=0300 200 3835
 ssttp.sa-helpline.contact-number=0300 200 3835
 
+ssttp.direct-debit.unauthorized.title=If more then one person is required to authorise a Direct Debit
+ssttp.direct-debit.unauthorized.intro.p1=If more then one sigature is required to authorise the Direct Debit on this account,you will need to
+ssttp.direct-debit.unauthorized.intro.p1.link=complete a paper version of the mandate form.
+ssttp.direct-debit.unauthorized.intro.p2=You will need to return the form to HM Revenue and Customs.
+ssttp.direct-debit.unauthorized.button=Back to bank details
+
 ssttp.you-need-to-file.title=Your tax account isn''t up to date
 ssttp.you-need-to-file.form.back=Back
 ssttp.you-need-to-file.intro=The amount outstanding in your tax account isn’t enough to set up an instalment plan.

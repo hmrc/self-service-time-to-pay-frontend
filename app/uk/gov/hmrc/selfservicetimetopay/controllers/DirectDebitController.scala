@@ -17,7 +17,6 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import javax.inject._
-
 import play.api.Logger
 import play.api.data.{Form, FormError}
 import play.api.mvc._
@@ -28,6 +27,7 @@ import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement._
+import views.html.selfservicetimetopay.core.service_start
 
 import scala.collection.immutable.::
 import scala.concurrent.Future
@@ -76,6 +76,13 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
           Future.successful(redirectOnError)
       }
   }
+  def getDirectDebitUnAuthorised: Action[AnyContent] = Action.async { implicit request =>
+      sessionCache.get.map {
+        case Some(ttpData: TTPSubmission) => Ok(direct_debit_unauthorised(isSignedIn))
+        case _ => Ok(service_start(isSignedIn))
+      }
+      }
+
 
   def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
     Redirect(routes.ArrangementController.submit())
@@ -100,8 +107,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
                   ))
               }
           }else{
-              //todo write tests and change to new page
-              Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUs()))}
+              Future.successful(Redirect(routes.DirectDebitController.getDirectDebitUnAuthorised()))}
           }
         )
       }
