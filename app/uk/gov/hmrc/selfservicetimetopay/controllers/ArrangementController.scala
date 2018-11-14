@@ -94,7 +94,9 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def determineMisalignment: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
-        case None => Future.successful(redirectOnError)
+        case None =>
+          Logger.warn("We are redirecting because we got nothing from the session")
+          Future.successful(redirectOnError)
 
         case Some(ttp@TTPSubmission(_, _, _, _, _, _, _, _, _, _)) =>
           taxPayerConnector.getTaxPayer(authContext.principal.accounts.sa.get.utr.utr).flatMap[Result] {
@@ -166,10 +168,13 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
 
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
       case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
+        Logger.info("Going to calc page ")
         checkSubmissionForCalculatorPage(taxpayer, ttp)
       case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) =>
+        Logger.info("reasons " +  reasons)
         youNeedToFile
-      case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, _, _, Some(EligibilityStatus(_, reasons)), _) =>
+        Logger.info(" getTtpCallUsSignInQuestion " + reasons)
         Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()).successfulF
     }
 
@@ -197,10 +202,12 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
 
     newSubmission match {
       case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(empty@Seq(), _, _, _, _, _), _, _, _) =>
-
+        Logger.info("gotoTaxLiabilities and set default  " + newSubmission)
         setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map(_ => gotoTaxLiabilities)
 
       case TTPSubmission(None, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
+
+        Logger.info("gotoTaxLiabilities " + newSubmission)
         gotoTaxLiabilities.successfulF
 
       case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), _, _, CalculatorInput(debits, _, _, _, _, _), _, _, _) =>

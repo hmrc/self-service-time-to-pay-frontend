@@ -112,7 +112,9 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         sessionCache.get.map {
           case Some(ttpData@TTPSubmission(_, _, _, Some(tp), `validTypeOfTax`, `validExistingTTP`, _, _, _, _)) =>
             Ok(tax_liabilities(tp.selfAssessment.get.debits, isSignedIn))
-          case _ => redirectOnError
+          case x =>
+            Logger.warn("redirected on getTaxLiabilities " + x)
+            redirectOnError
         }
   }
 

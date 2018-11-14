@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 import javax.inject._
-
+import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -27,7 +27,9 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
 
   def start: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(ttpData: TTPSubmission) => Ok(service_start(isSignedIn))
+      case Some(ttpData: TTPSubmission) =>
+        Logger.info("We are the start with session " + ttpData)
+        Ok(service_start(isSignedIn))
       case _ => Ok(service_start(isSignedIn))
     }
   }
