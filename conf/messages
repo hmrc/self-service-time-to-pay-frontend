@@ -239,7 +239,7 @@ ssttp.direct-debit.initial-payment=(initial payment)
 ssttp.direct-debit.final-payment=(final payment)
 
 ssttp.arrangement.direct-debit.form.error.summary.title=Something you’ve entered isn’t valid
-ssttp.arrangement.direct-debit.confirmation.title=Confirm your payments
+ssttp.arrangement.direct-debit.confirmation.title=Confirm your details
 ssttp.arrangement.direct-debit.confirmation.your-bank=Your bank details
 ssttp.arrangement.direct-debit.confirmation.total-payment=Total payment will be:
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary=View Direct Debit Guarantee
