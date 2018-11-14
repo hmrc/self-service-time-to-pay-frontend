@@ -101,6 +101,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
         case Some(ttp@TTPSubmission(_, _, _, _, _, _, _, _, _, _)) =>
           taxPayerConnector.getTaxPayer(authContext.principal.accounts.sa.get.utr.utr).flatMap[Result] {
             tp =>
+              Logger.info("this in the taxpayer " + tp)
               tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion())))(taxPayer => {
                 val newSubmission = ttp.copy(taxpayer = Some(taxPayer))
                 eligibilityCheck(taxPayer, newSubmission,authContext.principal.accounts.sa.get.utr.utr)

@@ -54,8 +54,12 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
 
   def getYouNeedToFile: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) => Ok(you_need_to_file(sa.debits,isSignedIn))
-      case _ => Ok(service_start(isSignedIn))
+      case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
+        Logger.info("redirecting to getYouNeedToFile ")
+        Ok(you_need_to_file(sa.debits,isSignedIn))
+      case _ =>
+        Logger.warn("warn user is send to service")
+        Ok(service_start(isSignedIn))
     }
   }
 
