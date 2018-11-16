@@ -75,11 +75,12 @@ object CalculatorForm {
           if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true})
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
-  def createInstalmentForm(): Form[ChoseMonths] = {
+  //todo add in values for max allowed months in here
+  def createInstalmentForm(): Form[CalculatorDuration] = {
     Form(mapping(
-      "chosen_month" -> text
+      "months" -> text
         .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", { i: String =>  Try(BigDecimal(i)).isSuccess})
-    )(text => ChoseMonths(text.toInt))(_ => Some(text.toString)))
+    )(text => CalculatorDuration(Some(text.toInt)))(_ => Some(text.toString)))
   }
 
   val payTodayForm: Form[PayTodayQuestion] = Form(mapping(

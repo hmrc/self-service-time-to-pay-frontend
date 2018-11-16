@@ -125,17 +125,20 @@ ssttp.calculator.form.continue=Continue
 ssttp.calculator.form.back=Back
 
 ssttp.calculator.results.title=How many months do you want to make your repayments over?
-ssttp.calculator.results.month.option.1=months at 
-ssttp.calculator.results.month.option.2=per month
+ssttp.calculator.results.month.instalments=Instalments
+ssttp.calculator.results.month.payments=Monthly payments
 ssttp.calculator.results.month.option.table.total.interest=Total interest:
 ssttp.calculator.results.month.option.table.total.interest.base.rate=Base rate + 2.5%
-ssttp.calculator.results.month.option.table.total.interest.hint=added to the final payment
-ssttp.calculator.results.month.option.table.total.paid=Total paid:
+ssttp.calculator.results.month.option.table.total.interest.hint=Added to the final payment
+ssttp.calculator.results.month.option.table.total.repayment=Total repayment
+ssttp.calculator.results.month.option.table.total.repayment.hint=Including interest
 ssttp.calculator.results.section.title= How we calculate interest
 ssttp.calculator.results.section.p1=We only charge interest on overdue amounts.
 ssttp.calculator.results.section.p2=We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
 ssttp.calculator.results.section.p3=If the interest rate changes during your plan your monthly payments will not be affected.
 ssttp.calculator.results.error.title=Please Select a payment plan
+ssttp.calculator.results.monthly-payments.minus=-
+ssttp.calculator.results.monthly-payments.plus=+
 
 ssttp.call-us.title=Please call us
 ssttp.call-us.intro=We’d like to help you clear your tax debt in instalments but we need some more detailed information from you first.

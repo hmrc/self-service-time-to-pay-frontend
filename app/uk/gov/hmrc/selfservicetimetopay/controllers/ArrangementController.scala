@@ -202,6 +202,8 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
 
         setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map(_ => gotoTaxLiabilities)
 
+
+        //todo it says it's unreachable here invesigate
       case TTPSubmission(None, _, _, Some(Taxpayer(_, _, Some(tpSA))),  CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
         gotoTaxLiabilities.successfulF
 
