@@ -46,7 +46,7 @@
 }
 
 @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline", 'id -> "calculatorDurationForm") {
-    <div class ="numbersonly">
+    <div class ="numbersonly"   style="padding-right: 15px;">
         <input class="input--xxsmall"  name="@durationForm("months").name" value="@{paymentSchedule.instalments.length}" />
     </div>
 }
