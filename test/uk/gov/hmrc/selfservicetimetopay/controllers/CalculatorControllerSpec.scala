@@ -27,6 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import play.api.test.Helpers._
 import play.api.test._
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.selfservicetimetopay.auth.{SaGovernmentGateway, TokenData}
@@ -253,6 +254,46 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       status(response) mustBe SEE_OTHER
 
       routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(response).get)
+    }
+
+    "submitSignIn should redirect with a good session " in {
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+      val response = controller.submitSignIn().apply(FakeRequest()
+        .withSession(goodSession:_*))
+
+      status(response) mustBe SEE_OTHER
+    }
+
+    "getPaymentToday should redirect with a good session " in {
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+      val response = controller.getPaymentToday().apply(FakeRequest()
+        .withSession(goodSession:_*))
+
+      status(response) mustBe SEE_OTHER
+    }
+
+    "submitPayTodayQuestion should redirect with a good session and good request and to the getPaymentToday if true is selected" in {
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some( ttpSubmissionNLI.copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now())))))))
+      val response = controller.submitPayTodayQuestion().apply(FakeRequest()
+        .withFormUrlEncodedBody("paytoday" -> "true")
+        .withSession(goodSession:_*))
+
+      status(response) mustBe SEE_OTHER
+      routes.CalculatorController.getPaymentToday().url must endWith(redirectLocation(response).get)
+    }
+    "submitPayTodayQuestion should redirect with a good session and good request and to the getCalculateInstalments if true is selected" in {
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some( ttpSubmissionNLI.copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = 300.0, dueDate = LocalDate.now())))))))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      val response = controller.submitPayTodayQuestion().apply(FakeRequest()
+        .withFormUrlEncodedBody("paytoday" -> "false")
+        .withSession(goodSession:_*))
+
+      status(response) mustBe SEE_OTHER
+      routes.CalculatorController.getCalculateInstalments().url must endWith(redirectLocation(response).get)
     }
   }
 }
