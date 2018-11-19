@@ -194,23 +194,11 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   private def checkSubmissionForCalculatorPage(taxpayer: Taxpayer, newSubmission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
 
     val gotoTaxLiabilities = Redirect(routes.CalculatorController.getTaxLiabilities())
-    val gotoInstalmentSummary = Redirect(routes.ArrangementController.getInstalmentSummary())
-    val gotoEligibility = Redirect(routes.ArrangementController.determineEligibility())
 
     newSubmission match {
       case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))),  CalculatorInput(_, _, _, _, _, _), _, _, _) =>
 
         setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map(_ => gotoTaxLiabilities)
-
-      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))),  CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
-        if (areEqual(debits, tpSA.debits)) {
-          setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map {
-            _ => gotoInstalmentSummary
-          }
-        }
-        else {
-          sessionCache.put(newSubmission).map(_ => gotoEligibility)
-        }
 
       case _ =>
         Logger.error("No match found for newSubmission in determineEligibility")
