@@ -20,7 +20,6 @@ import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import views.html.selfservicetimetopay.arrangement.application_complete
 import views.html.selfservicetimetopay.core._
 
 class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.MessagesApi) extends TimeToPayController with play.api.i18n.I18nSupport {
