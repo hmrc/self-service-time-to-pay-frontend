@@ -20,7 +20,6 @@ import java.time.LocalDate
 
 import javax.inject._
 import play.api.Logger
-import play.api.i18n.Messages
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
@@ -140,10 +139,10 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     implicit request =>
       implicit authContext =>
         sessionCache.get.flatMap {
-          case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
+          case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _)) =>
             if (getMaxMonthsAllowed(sa, LocalDate.now()) >= minimunMonthsAllowedTTP) {
-              calculatorService.getInstalmentsSchedule(sa).map { monthsToSchedule =>
-                Ok(calculate_instalments_form(CalculatorForm.createInstalmentForm(),
+              calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
+                Ok(calculate_instalments_form(CalculatorForm.createInstalmentForm(getMonthRange(sa).map(_.toString)),
                   ttpData.lengthOfArrangement, monthsToSchedule, true, getMonthRange(sa)))
               }
             }
@@ -157,6 +156,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           case _ => Future.successful(redirectOnError)
         }
   }
+
   def submitCalculateInstalmentsRecalculate(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
@@ -166,26 +166,26 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def submitCalculateInstalments(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
-        //todo form validation for months that fall outside the range
         redirectCalPage(routes.ArrangementController.getInstalmentSummary())
   }
- private  def redirectCalPage(call:Call)(implicit request: Request[_],hc:HeaderCarrier) =
-   sessionCache.get.flatMap {
-    case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _)) =>
-      CalculatorForm.createInstalmentForm().bindFromRequest().fold(
-        formWithErrors => {
-          calculatorService.getInstalmentsSchedule(sa).map { monthsToSchedule =>
-            BadRequest(calculate_instalments_form(formWithErrors,
-              ttpData.lengthOfArrangement, monthsToSchedule, true, getMonthRange(sa)))
+
+  private def redirectCalPage(call: Call)(implicit request: Request[_], hc: HeaderCarrier) =
+    sessionCache.get.flatMap {
+      case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _)) =>
+        CalculatorForm.createInstalmentForm(getMonthRange(sa).map(_.toString)).bindFromRequest().fold(
+          formWithErrors => {
+            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
+              BadRequest(calculate_instalments_form(formWithErrors,
+                ttpData.lengthOfArrangement, monthsToSchedule, true, getMonthRange(sa)))
+            }
+          },
+          validFormData => {
+            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
+              sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.months.getOrElse(2)))))
+              Redirect(call)
+            }
           }
-        },
-        validFormData => {
-          calculatorService.getInstalmentsSchedule(sa).map { monthsToSchedule =>
-            sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.months.getOrElse(2)))))
-            Redirect(call)
-          }
-        }
-      )
-    case _ => Future.successful(redirectOnError)
-  }
+        )
+      case _ => Future.successful(redirectOnError)
+    }
 }

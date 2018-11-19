@@ -77,7 +77,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.getCalculateInstalments().apply(FakeRequest()
         .withSession(goodSession:_*))
 
@@ -99,7 +99,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
         .withSession(goodSession:_*))
 
@@ -110,7 +110,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
         .withSession(goodSession:_*)
         .withFormUrlEncodedBody("months" -> "3"))
@@ -122,7 +122,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       implicit val hc = new HeaderCarrier
 
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockCalculatorService.getInstalmentsSchedule(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
         .withSession(goodSession:_*)
         .withFormUrlEncodedBody("months" -> "3"))

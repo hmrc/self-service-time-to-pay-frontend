@@ -39,7 +39,7 @@
             <tr>
                 <th  scope="col">@Messages("ssttp.calculator.results.month.option.table.total.repayment")
                 <br><p>@Messages("ssttp.calculator.results.month.option.table.total.repayment.hint")</p></th>
-                <th class="numeric" scope="col">@currency(paymentSchedule.totalPayable)</th>
+                <th class="numeric" scope="col">@{currency(paymentSchedule.totalPayable - paymentSchedule.initialPayment)}</th>
             </tr>
         </thead>
     </table>

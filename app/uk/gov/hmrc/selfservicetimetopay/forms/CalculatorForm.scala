@@ -35,12 +35,9 @@ object CalculatorForm {
   }
 
 
-  def hasValue(textBox:String):Boolean ={
+  def hasValue(textBox: String): Boolean = {
     (textBox != null) && textBox.nonEmpty
   }
-
-
-
 
 
   case class RemoveItem(index: Int)
@@ -50,10 +47,11 @@ object CalculatorForm {
   def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentToday] = {
     Form(mapping(
       "amount" -> text
-        .verifying("ssttp.calculator.form.payment_today.amount.required.min", { i: String =>  if (i.nonEmpty && Try(BigDecimal(i)).isSuccess &&  BigDecimal(i).scale <= 2 ) BigDecimal(i) >= 0.00 else true})
-        .verifying("ssttp.calculator.form.payment_today.amount.required", { i => Try(BigDecimal(i)).isSuccess})
+        .verifying("ssttp.calculator.form.payment_today.amount.required.min", { i: String => if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.00 else true })
+        .verifying("ssttp.calculator.form.payment_today.amount.required", { i => Try(BigDecimal(i)).isSuccess })
         .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
-          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true})
+          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
+        })
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", i =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < totalDue else true)
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
@@ -66,22 +64,25 @@ object CalculatorForm {
   def createSinglePaymentForm(): Form[CalculatorSinglePayment] = {
     Form(mapping(
       "amount" -> text
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", { i: String =>  Try(BigDecimal(i)).isSuccess})
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required.min", { i: String =>  if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.01 else true})
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", { i: String => Try(BigDecimal(i)).isSuccess })
+        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required.min", { i: String => if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.01 else true })
         .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })
         .verifying("ssttp.calculator.form.what-you-owe-amount.amount.decimal-places", { i =>
-          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true})
+          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
+        })
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
+
   //todo add in values for max allowed months in here
-  def createInstalmentForm(): Form[CalculatorDuration] = {
+  def createInstalmentForm(monthRange: Seq[String] = Seq("2", "3", "4", "5", "6", "7", "8", "9", "10", "11")): Form[CalculatorDuration] = {
     Form(mapping(
       "months" -> text
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", { i: String =>  Try(BigDecimal(i)).isSuccess})
-    )(text => CalculatorDuration(Some(text.toInt)))(_ => Some(text.toString)))
-  }
+        .verifying("ssttp.calculator.results.month.required", { i: String => Try(BigDecimal(i)).isSuccess })
+        .verifying("ssttp.calculator.results.month.out-of-range", { i: String => monthRange.contains(i) })
+  )(text => CalculatorDuration(Some(text.toInt)))(_ => Some(text.toString)))
+}
 
   val payTodayForm: Form[PayTodayQuestion] = Form(mapping(
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)
