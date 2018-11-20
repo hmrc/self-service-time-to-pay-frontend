@@ -60,9 +60,9 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
 
   def recoverTTPSession(token: String): Action[AnyContent] = Action.async { implicit request =>
     for {
-      tokenData <- sessionCache4TokensConnector
+      tokenData: TokenData <- sessionCache4TokensConnector
         .getAndRemove(Token(token))
-        .map(_.get) //java.util.NoSuchElementException: None.get  ==> someone tried to reuse expired token
+        .map(_.getOrElse(throw new RuntimeException(s"There was no data associated with that token [token:$token]. Did someone try to reuse expired token huh?")))
       ttpSessionKV = TTPSessionId.ttpSessionId -> tokenData.associatedTTPSession.v
       isTokenValid = isTokenStillValid(tokenData)
       redirect =

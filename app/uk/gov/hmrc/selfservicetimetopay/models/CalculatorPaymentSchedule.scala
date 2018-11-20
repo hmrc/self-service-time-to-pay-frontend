@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
-
+import uk.gov.hmrc.selfservicetimetopay.modelsFormat.localDateOrdering
 case class CalculatorPaymentSchedule(startDate: Option[LocalDate],
                                      endDate: Option[LocalDate],
                                      initialPayment: BigDecimal,
@@ -27,6 +27,7 @@ case class CalculatorPaymentSchedule(startDate: Option[LocalDate],
                                      totalPayable: BigDecimal,
                                      instalments: Seq[CalculatorPaymentScheduleInstalment]){
   def getMonthlyInstalment = instalments.head.amount
+  def initialPaymentScheduleDate= instalments.map(_.paymentDate).min
 }
 
 case class CalculatorPaymentScheduleInstalment(paymentDate:LocalDate, amount:BigDecimal)
