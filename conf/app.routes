@@ -33,6 +33,7 @@ POST        /arrangement/direct-debit                         @uk.gov.hmrc.selfs
 GET         /arrangement/direct-debit-confirmation            @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()
 GET         /arrangement/direct-debit-assistance              @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitAssistance()
 GET         /arrangement/direct-debit-error                   @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitError()
+GET         /arrangement/direct-debit/unauthorized            @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitUnAuthorised()
 POST        /arrangement/submit                               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
 GET         /arrangement/summary                              @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
 # Alternative pages
@@ -48,6 +49,4 @@ GET         /sign-out                                         @uk.gov.hmrc.selfs
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                     controllers.Assets.at(path="/public", file)
 
-
-#TODO: move them to testOnlyDoNotUseInProd.routes
 
