@@ -48,7 +48,7 @@ package object modelsFormat {
       case Left(obj) => A.writes(obj)
       case Right(obj) => B.writes(obj)
     }
-
+  implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
   //Front end formatters
   implicit val eligibilityTypeOfTaxFormatter: Format[EligibilityTypeOfTax] = Json.format[EligibilityTypeOfTax]
   implicit val eligibilityExistingTTPFormatter: Format[EligibilityExistingTTP] = Json.format[EligibilityExistingTTP]

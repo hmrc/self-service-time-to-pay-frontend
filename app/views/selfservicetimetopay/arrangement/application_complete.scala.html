@@ -49,7 +49,7 @@
         <p>@Messages("ssttp.arrangement.complete.summary")</p>
         <p>@Messages("ssttp.arrangement.complete.first-payment")
             @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
-            @schedule.startDate.get.format(formatter)}</p>
+            @schedule.initialPaymentScheduleDate.format(formatter)}</p>
         <span><a href="https://www.tax.service.gov.uk/feedback-survey?origin=PWYOII">@Messages("ssttp.sidebar.help-and-advice.feedback.submit")</a></span>
     </section>
 }
