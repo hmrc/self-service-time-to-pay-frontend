@@ -169,23 +169,22 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         redirectCalPage(routes.ArrangementController.getInstalmentSummary())
   }
 
-  private def redirectCalPage(call: Call)(implicit request: Request[_], hc: HeaderCarrier) =
+  private def redirectCalPage(call: Call)(implicit request: Request[_], hc: HeaderCarrier):Future[Result] =
     sessionCache.get.flatMap {
       case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _)) =>
-        CalculatorForm.createInstalmentForm(getMonthRange(sa).map(_.toString)).bindFromRequest().fold(
-          formWithErrors => {
-            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
-              BadRequest(calculate_instalments_form(formWithErrors,
-                ttpData.lengthOfArrangement, monthsToSchedule, true, getMonthRange(sa)))
+        calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap {monthsToSchedule =>
+          CalculatorForm.createInstalmentForm(getMonthRange(sa).map(_.toString)).bindFromRequest().fold(
+            formWithErrors => {
+                Future.successful(
+                  BadRequest(calculate_instalments_form(formWithErrors, ttpData.lengthOfArrangement, monthsToSchedule, true, getMonthRange(sa))))
+            },
+            validFormData => {
+                sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.months.getOrElse(2))))).map { _ =>
+                  Redirect(call)
+                }
+              }
+          )
             }
-          },
-          validFormData => {
-            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
-              sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.months.getOrElse(2)))))
-              Redirect(call)
-            }
-          }
-        )
       case _ => Future.successful(redirectOnError)
     }
 }

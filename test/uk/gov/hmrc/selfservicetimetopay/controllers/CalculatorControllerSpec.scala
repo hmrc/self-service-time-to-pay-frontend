@@ -109,7 +109,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
     "submitCalculateInstalments Return 303 when there is a Sa in session" in {
       implicit val hc = new HeaderCarrier
-
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
@@ -121,7 +121,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
     "submitCalculateInstalments put the chosen months of instalments into the session" in {
       implicit val hc = new HeaderCarrier
-
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
