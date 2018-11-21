@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import javax.inject._
 import play.api.Logger
-import play.api.data.{Form, FormError}
 import play.api.mvc._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
@@ -38,7 +37,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def getDirectDebit: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       authorizedForSsttp {
-        case submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer),  calcData, _, _, _)
+        case submission@TTPSubmission(Some(schedule), _, _, Some(taxpayer), calcData, _, _, _)
           if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
           Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, isSignedIn)))
         case _ => Future.successful(redirectOnError)
@@ -76,12 +75,13 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
           Future.successful(redirectOnError)
       }
   }
+
   def getDirectDebitUnAuthorised: Action[AnyContent] = Action.async { implicit request =>
-      sessionCache.get.map {
-        case Some(ttpData: TTPSubmission) => Ok(direct_debit_unauthorised(isSignedIn))
-        case _ => Ok(service_start(isSignedIn))
-      }
-      }
+    sessionCache.get.map {
+      case Some(ttpData: TTPSubmission) => Ok(direct_debit_unauthorised(isSignedIn))
+      case _ => Ok(service_start(isSignedIn))
+    }
+  }
 
 
   def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
@@ -95,19 +95,16 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
           formWithErrors => Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
             submission.schedule.get, formWithErrors))),
           validFormData => {
-            if (validFormData.singleAccountHolder.get){
-              directDebitConnector.getBank(validFormData.sortCode,
-                validFormData.accountNumber.toString).flatMap {
-                case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
-                case None =>
-                  Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
-                    submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
-                      "accountNumber" -> validFormData.accountNumber, "sortCode" -> validFormData.sortCode)),
-                    isBankError = true)
-                  ))
-              }
-          }else{
-              Future.successful(Redirect(routes.DirectDebitController.getDirectDebitUnAuthorised()))}
+            directDebitConnector.getBank(validFormData.sortCode,
+              validFormData.accountNumber.toString).flatMap {
+              case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
+              case None =>
+                Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
+                  submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
+                    "accountNumber" -> validFormData.accountNumber, "sortCode" -> validFormData.sortCode)),
+                  isBankError = true)
+                ))
+            }
           }
         )
       }
