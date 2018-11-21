@@ -28,8 +28,7 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "Bob",
         "sortCode" -> "123456",
-        "accountNumber" -> "12345678",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "12345678"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
@@ -53,8 +52,7 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "Bob",
         "sortCode" -> "12345",
-        "accountNumber" -> "12345678",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "12345678"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
@@ -66,8 +64,7 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "Bob",
         "sortCode" -> "123456",
-        "accountNumber" -> "12345",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "12345"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
@@ -79,8 +76,7 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "Bob",
         "sortCode" -> "12345e",
-        "accountNumber" -> "12345678",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "12345678"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
@@ -92,8 +88,7 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "Bob",
         "sortCode" -> "123456",
-        "accountNumber" -> "1234567e",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "1234567e"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
@@ -105,8 +100,7 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "",
         "sortCode" -> "123456",
-        "accountNumber" -> "12345678",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "12345678"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
@@ -118,8 +112,7 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "123456789",
         "sortCode" -> "123456",
-        "accountNumber" -> "12345678",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "12345678"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
@@ -131,8 +124,7 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "a12345678",
         "sortCode" -> "123456",
-        "accountNumber" -> "12345678",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "12345678"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
@@ -144,8 +136,7 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "John Smith''''''&&&",
         "sortCode" -> "123456",
-        "accountNumber" -> "12345678",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "12345678"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
@@ -157,8 +148,7 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "John Smith'",
         "sortCode" -> "12345.",
-        "accountNumber" -> "12345678",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "12345678"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
@@ -170,25 +160,12 @@ class DirectDebitFormSpec extends PlaySpec {
       val postData = Json.obj(
         "accountName" -> "John Smith'",
         "sortCode" -> "123456",
-        "accountNumber" -> "123456.7",
-        "singleAccountHolder" -> "true"
+        "accountNumber" -> "123456.7"
       )
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
 
       assert(validatedForm.errors.contains(FormError("accountNumber", List("ssttp.direct-debit.form.error.accountNumber.not-valid"))))
-    }
-    "return error if singleAccountHolder does not have a value in" in {
-      val postData = Json.obj(
-        "accountName" -> "John Smith'",
-        "sortCode" -> "123456",
-        "accountNumber" -> "123456.7",
-        "singleAccountHolder" -> ""
-      )
-
-      val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
-
-      assert(validatedForm.errors.contains(FormError("singleAccountHolder", List("ssttp.direct-debit.form.single-account-holder.required"))))
     }
   }
 }

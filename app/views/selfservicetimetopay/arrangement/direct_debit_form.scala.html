@@ -58,19 +58,15 @@
         <fieldset class="form-field-group">
             <legend><span class="visually-hidden">Enter your banking details</span></legend>
             @direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode"), ddForm("accountNumber"))
-            <h3>@Messages("ssttp.direct-debit.form.single-account-holder.title")</h3>
-            <div class="inline">
-            @radiobuttonsinline(ddForm("singleAccountHolder"), Seq(
-                "true" -> Messages("ssttp.direct-debit.form.sign_in_question.yes_label"),
-                "false" -> Messages("ssttp.direct-debit.form.sign_in_question.no_label")
-            ),true,
-                '_label -> Html(Messages("ssttp.eligibility.form.sign_in_question")),
-                '_groupClass -> "form-field",
-                '_labelClass -> "block-label block-label--inline"
-            ){
-            }
-            </div>
         </fieldset>
+
+        <div class="panel panel-border-wide">
+            <p>@Messages("ssttp.direct-debit.form.message.title")</p>
+            <ul class="list list-bullet">
+                <li>@Messages("ssttp.direct-debit.form.message.named.account")</li>
+                <li>@Messages("ssttp.direct-debit.form.message.permission")</li>
+            </ul>
+        </div>
         @submit() {
             @Messages("ssttp.arrangement.direct-debit.form.submit")
         }
