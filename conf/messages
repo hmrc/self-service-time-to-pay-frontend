@@ -292,8 +292,9 @@ ssttp.unavailable.intro=This online service is available for tax payers who are 
 ssttp.unavailable.instructions=But if you call us, you will still have the opportunity to set up a payment plan.
 ssttp.unavailable.number=0300 200 3822
 
-#User pane
+#User panel
 ssttp.user.panel.help.improve=Help improve GOV.UK
+ssttp.user.panel.no.thanks=No thanks
 ssttp.user.panel.body.link=Get involved in making government services better (opens in a new window)
 
 #global errors
