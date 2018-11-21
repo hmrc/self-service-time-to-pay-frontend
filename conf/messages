@@ -236,9 +236,9 @@ ssttp.direct-debit.form.error.sortCode.not-valid=Sort code must be a 6 digit num
 ssttp.direct-debit.form.error.accountNumber.not-number=Bank account number must not include letters or symbols
 ssttp.direct-debit.form.error.accountNumber.not-valid=Account number must be an 8 digit number
 ssttp.direct-debit.form.single-account-holder.required=Please select an option
-ssttp.direct-debit.form.single-account-holder.title=Are you the only person required to authorise a Direct Debit from this account?
-ssttp.direct-debit.form.sign_in_question.yes_label=Yes
-ssttp.direct-debit.form.sign_in_question.no_label=No
+ssttp.direct-debit.form.message.title=To continue you must be:
+ssttp.direct-debit.form.message.named.account=a named account holder for this account
+ssttp.direct-debit.form.message.permission=able to set up Direct Debits without permission from the other account holders
 
 ssttp.direct-debit.guarantee.title=Direct Debit Guarantee
 ssttp.direct-debit.guarantee.list.1=This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
