@@ -24,9 +24,10 @@ case class ArrangementDirectDebit(accountName:String,
 }
 
 object ArrangementDirectDebit {
+  def cleanSortCode(sortCode:String) = sortCode.replaceAll("-","").replaceAll(" ","")
   def from(bankDetails: BankDetails): ArrangementDirectDebit = {
     ArrangementDirectDebit(bankDetails.accountName.getOrElse(""),
-      bankDetails.sortCode.getOrElse(""),
+      bankDetails.sortCode.map(cleanSortCode).getOrElse(""),
       bankDetails.accountNumber.getOrElse("")
     )
   }

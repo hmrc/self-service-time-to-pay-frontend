@@ -26,4 +26,5 @@ class ArrangementDirectDebitSpec extends PlaySpec {
   "the formatSortCode should format the sort code correctly " in {
     assert(arrangmentDirectDebitTest.formatSortCode == "12 - 34 - 56")
   }
+
 }

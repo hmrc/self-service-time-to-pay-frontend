@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit.cleanSortCode
 import scala.util.Try
 
 object DirectDebitForm {
@@ -36,10 +36,10 @@ object DirectDebitForm {
       .verifying("ssttp.direct-debit.form.error.accountName.letter-start", x => condTrue(x.length > 1, x.matches("^[a-zA-Z].{1,39}$")))
       .verifying("ssttp.direct-debit.form.error.accountName.not-text", x => condTrue(x.matches("^[a-zA-Z].{1,39}$"), x.length == x.replaceAll("[^a-zA-Z '.& \\/]", "").length)),
     "sortCode" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim == "") | validateNumberLength(x, x.length) && validateNumberLength(x, 6)),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim == "") | validateNumberLength(x, x.length) && validateNumberLength(x, 6) | validateNumberLength(x.replaceAll("-", "").replaceAll(" ", ""), 6)),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | (validateNumberLength(x, x.length) && validateNumberLength(x, 8)))
-  )({ case (name, sc, acctNo ) => ArrangementDirectDebit(name, sc, acctNo) }
+  )({ case (name, sc, acctNo ) => ArrangementDirectDebit(name, cleanSortCode(sc), acctNo) }
   )({ case arrangementDirectDebit => Some((arrangementDirectDebit.accountName, arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber))})
 
   def validateNumberLength(number: String, length: Int): Boolean = {
