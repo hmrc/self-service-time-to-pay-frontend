@@ -27,8 +27,4 @@ class ArrangementDirectDebitSpec extends PlaySpec {
     assert(arrangmentDirectDebitTest.formatSortCode == "12 - 34 - 56")
   }
 
-  val arrangementDirectDebitTest = ArrangementDirectDebit("Tyrion Lannister", "12-34-56", "12345678")
-  "should create the arrangement direct debit with dashes or spaces and remove them" in {
-    assert(arrangementDirectDebitTest == ArrangementDirectDebit("Tyrion Lannister", "123456", "12345678"))
-  }
 }
