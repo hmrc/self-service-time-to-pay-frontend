@@ -36,6 +36,30 @@ class DirectDebitFormSpec extends PlaySpec {
       assert(validatedForm.errors.isEmpty)
     }
 
+    "return no errors when sort code is of format 00-00-00" in {
+      val postData = Json.obj(
+        "accountName" -> "Bob",
+        "sortCode" -> "12-34-56",
+        "accountNumber" -> "12345678"
+      )
+
+      val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
+
+      assert(validatedForm.errors.isEmpty)
+    }
+
+    "return no errors when sort code is of format 00 00 00" in {
+      val postData = Json.obj(
+        "accountName" -> "Bob",
+        "sortCode" -> "12 34 56 ",
+        "accountNumber" -> "12345678"
+      )
+
+      val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
+
+      assert(validatedForm.errors.isEmpty)
+    }
+
     "return error with invalid special characters in accountName" in {
       val postData = Json.obj(
         "accountName" -> "John Smith####[]{}",
