@@ -140,3 +140,6 @@ input.accountName{
     float:right;
     font-weight: underline;
 }
+.banner-panel--hide{
+    display: none;
+}

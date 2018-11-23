@@ -23,14 +23,14 @@ hasUserPanel: Boolean = false
 )(implicit messages: Messages)
 
 @if(hasUserPanel) {
-<div class="govuk-grid-row">
+<div id="ur-panel"  class="govuk-grid-row banner-panel banner-panel--hide">
     <div class="govuk-grid-column-full">
         <div>
-            <span class="gov-uk-body-title">Help improve GOV.UK</a></span>
-            <span class="gov-uk-body-link pull-right"><p><u onclick="alert()">No thanks</u></p></span>
+            <span class="gov-uk-body-title">@messages("ssttp.beta.banner.help")</span>
+            <span class="gov-uk-body-link pull-right banner-panel__close"><a  href="#"  role="button">@Messages("ssttp.beta.banner.no.thanks")</a></span>
         </div>
         <p class="gov-uk-body-link">
-            <a href="https://signup.take-part-in-research.service.gov.uk/?utm_campaign=PWYOII_front_page&utm_source=Other&utm_medium=other&t=HMRC&id=180" target="_blank" rel="noopener noreferrer">Get involved in making government services better (opens in a new window)</a>
+            <a href="https://signup.take-part-in-research.service.gov.uk/?utm_campaign=PWYOII_front_page&utm_source=Other&utm_medium=other&t=HMRC&id=180" target="_blank" rel="noopener noreferrer">@messages("ssttp.beta.banner.p1")</a>
         </p>
     </div>
 </div>

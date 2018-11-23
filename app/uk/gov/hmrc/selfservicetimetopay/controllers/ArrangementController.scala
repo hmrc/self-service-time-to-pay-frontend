@@ -164,7 +164,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     */
   private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission,utr: String)(implicit hc: HeaderCarrier): Future[Result] = {
     lazy val youNeedToFile = Redirect(routes.SelfServiceTimeToPayController.getYouNeedToFile()).successfulF
-    val isDebtToLittle = taxpayer.selfAssessment.get.debits.map(debit => debit.amount).sum < BigDecimal.exact("32.00")
+
 
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
       case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(true, _)), _) =>
@@ -174,16 +174,12 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
         Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()).successfulF
     }
-
-    if (isDebtToLittle) youNeedToFile
-    else {
       for {
         es <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer),utr)
         updatedSubmission = newSubmission.copy(eligibilityStatus = Option(es))
         _ <- sessionCache.put(updatedSubmission)
         result <- checkSubmission(updatedSubmission)
       } yield result
-    }
   }
 
   def setDefaultCalculatorSchedule(newSubmission: TTPSubmission, debits: Seq[Debit])(implicit hc: HeaderCarrier): Future[CacheMap] = {
