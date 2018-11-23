@@ -108,3 +108,38 @@ input.accountName{
 .ssttp-grid-layout-padding-above-large {
     margin-top: -20px;
 }
+
+.govuk-grid-row {
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 10px;
+    display: flex;
+}
+
+.govuk-grid-column-full {
+    background-color: #005ea5;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 15px;
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-grid-column-full {
+        width: 100%;
+        float: left;
+    }
+}
+
+.gov-uk-body-title {
+    font-weight: bold;
+}
+.gov-uk-body-link a{
+    color: #fff;
+}
+.pull-right{
+    float:right;
+    font-weight: underline;
+}
+.banner-panel--hide{
+    display: none;
+}

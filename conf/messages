@@ -284,6 +284,11 @@ ssttp.arrangement.direct-debit.assistance.alert=Direct Debit submission failed.
 ssttp.arrangement.direct-debit.assistance.alert.1=We’re having problems submitting your Direct Debit instruction. Please call us to complete your application.
 ssttp.arrangement.direct-debit.assistance.back=Back
 
+#Beta Banner
+ssttp.beta.banner.help=Help improve GOV.UK
+ssttp.beta.banner.no.thanks=No Thanks
+ssttp.beta.banner.p1=Get involved in making government services better (opens in a new window)
+
 ssttp.arrangement.complete.title=Application successful
 ssttp.arrangement.complete.print-label=Print your repayment summary
 ssttp.arrangement.complete.next=What happens next?
