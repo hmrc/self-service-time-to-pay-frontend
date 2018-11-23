@@ -84,7 +84,7 @@ object CalculatorForm {
   )(text => CalculatorDuration(Some(text.toInt)))(_ => Some(text.toString)))
 }
 
-  val payTodayForm: Form[PayTodayQuestion] = Form(mapping(
+  def payTodayForm: Form[PayTodayQuestion] = Form(mapping(
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)
   )(PayTodayQuestion.apply)(PayTodayQuestion.unapply))
 

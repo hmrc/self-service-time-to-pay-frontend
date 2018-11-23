@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import java.time.LocalDate
-
 import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
@@ -91,7 +89,6 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
         )
       )
 
-
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
     }
@@ -148,7 +145,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
       when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
+      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(OldDebtIsTooHigh))))
 
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(

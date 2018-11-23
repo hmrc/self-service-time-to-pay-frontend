@@ -169,7 +169,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
       case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(true, _)), _) =>
         checkSubmissionForCalculatorPage(taxpayer, ttp)
-      case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(_, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) =>
+      case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) || reasons.contains(DebtIsInsignificant)  =>
         youNeedToFile
       case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
         Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()).successfulF

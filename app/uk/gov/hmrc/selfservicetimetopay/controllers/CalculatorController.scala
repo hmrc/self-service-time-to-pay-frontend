@@ -56,8 +56,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       implicit authContext =>
         sessionCache.get.map {
           case Some(TTPSubmission(_, _, _, tp, CalculatorInput(debits, _, _, _, _, _), _, _, _)) if debits.nonEmpty =>
-            val dataForm = CalculatorForm.payTodayForm
-            Ok(payment_today_question(dataForm, isSignedIn))
+            Ok(payment_today_question(CalculatorForm.payTodayForm, isSignedIn))
           case _ => redirectOnError
         }
   }
