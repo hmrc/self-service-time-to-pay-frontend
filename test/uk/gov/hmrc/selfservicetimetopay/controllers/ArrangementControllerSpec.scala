@@ -50,7 +50,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
   val mockCacheMap: CacheMap = mock[CacheMap]
-
+  val goodSession =   (SessionKeys.userId -> "someUserId",
+  TTPSessionId.newTTPSession(),
+  "token" -> "1234")
   val controller = new ArrangementController(messagesApi, ddConnector, arrangementConnector, calculatorService, calculatorConnecter, taxPayerConnector, mockEligibilityConnector, auditService) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
@@ -91,6 +93,26 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
+    }
+    "redirect to 'to ia' when the user is not on ia" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(IsNotOnIa))))
+
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
+
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      val response = controller.determineEligibility().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
+        )
+      )
+
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getIaCallUse().url
     }
     "redirect to 'you need to file' when the user has not filled " in {
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
