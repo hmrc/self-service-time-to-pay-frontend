@@ -40,6 +40,7 @@ GET         /arrangement/summary                              @uk.gov.hmrc.selfs
 GET         /you-need-to-file                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
 GET         /eligibility/type-of-tax/call-us                  @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax()
 GET         /eligibility/existing-ttp/call-us                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsExistingTTP()
+GET         /eligibility/ia/call-us                           @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getIaCallUse()
 GET         /calculator/instalments/call-us                   @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()
 GET         /eligibility/sign-in-question/call-us             @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()
 GET         /call-us                                          @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()

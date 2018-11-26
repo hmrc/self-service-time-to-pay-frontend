@@ -49,6 +49,7 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
   def getTtpCallUsExistingTTP: Action[AnyContent] = actionCallUs
   def getTtpCallUsCalculatorInstalments: Action[AnyContent] = actionCallUs
   def getTtpCallUsSignInQuestion: Action[AnyContent] = actionCallUs
+  def getIaCallUse: Action[AnyContent] = actionCallUs
 
   def getYouNeedToFile: Action[AnyContent] = Action.async { implicit request =>
     sessionCache.get.map {
