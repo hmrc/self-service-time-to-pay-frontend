@@ -51,6 +51,14 @@
         <p>@Messages("ssttp.arrangement.complete.first-payment")
             @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
             @schedule.initialPaymentScheduleDate.format(formatter)}</p>
+
+
+        <h2>@Messages("ssttp.arrangement.complete.help.h2")</h2>
+        <p>@Messages("ssttp.arrangement.complete.help.p1")</p>
+        <ul class="list-bullet">
+        <li>@Messages("ssttp.arrangement.complete.help.p2")</li>
+        <li>@Messages("ssttp.arrangement.complete.help.p3")</li>
+        </ul>
         <span><a href="https://www.tax.service.gov.uk/feedback-survey?origin=PWYOII">@Messages("ssttp.sidebar.help-and-advice.feedback.submit")</a></span>
     </section>
 }

@@ -66,7 +66,7 @@ ssttp.sidebar.having_problems.intro=If you’re having problems or need extra he
 ssttp.landing.title=Set up a payment plan
 
 ssttp.landing.intro=A payment plan allows you to pay the tax you owe in instalments. The plan covers the amounts you need to pay now.
-ssttp.landing.alert=We intend this as a one-off to give you extra support. You must keep up to date with your payments. If you don''t, HMRC may ask you to pay the entire outstanding amount.
+ssttp.landing.alert=We intend this as a one-off payment plan to give you extra support. You must keep up to date with your payments. If you do not, HMRC may ask you to pay the entire outstanding amount.
 ssttp.landing.before-you-start=Before you start
 ssttp.landing.before-you-start.p.1=This payment plan is for Self Assessment tax only.
 ssttp.landing.before-you-start.p.2=To be eligible to set up an online payment plan you need to:
@@ -78,9 +78,9 @@ ssttp.landing.start-button.label=Start now
 #calculator
 
 
-ssttp.calculator.form.payment_summary.title=Payment Summary
-ssttp.calculator.form.payment_summary.up-front-payment=Up-front payment
-ssttp.calculator.form.payment_summary.up-front-payment.hint=Taken in 3 to 5 days' time
+ssttp.calculator.form.payment_summary.title=Payment summary
+ssttp.calculator.form.payment_summary.up-front-payment=Upfront payment
+ssttp.calculator.form.payment_summary.up-front-payment.hint=Taken in 3 to 5 days'' time
 ssttp.calculator.form.payment_summary.up-front-payment.change=Change
 ssttp.calculator.form.payment_summary.amount.remaining=Remaining amount to pay
 ssttp.calculator.form.payment_summary.continue=Continue
@@ -89,14 +89,14 @@ ssttp.calculator.form.payment_summary.continue=Continue
 ssttp.calculator.self-assessment-account-summary-page.title=Your Self Assessment account summary
 ssttp.calculator.self-assessment-account-summary-page.due-options=Due
 ssttp.calculator.self-assessment-account-summary-page.amount=Amount
-ssttp.calculator.self-assessment-account-summary-page.total-due=Total due:
+ssttp.calculator.self-assessment-account-summary-page.total-due=Total due
 ssttp.calculator.self-assessment-account-summary-page.tax-year-ending=for the tax year ending
-ssttp.calculator.self-assessment-account-summary-page.tax-account-details=Tax account details
+ssttp.calculator.self-assessment-account-summary-page.tax-account-details=Self Assessment breakdown
 ssttp.calculator.self-assessment-account-summary-page.due-by=Due by
 ssttp.calculator.self-assessment-account-summary-page.button-continue=Continue
 ssttp.calculator.self-assessment-account-summary-page.button-back=Back
 
-ssttp.calculator.form.payment_today.title=How much can you pay up-front?
+ssttp.calculator.form.payment_today.title=How much can you pay upfront?
 ssttp.calculator.form.payment_today.error.summary.title=Something you''ve entered isn''t valid
 ssttp.calculator.form.payment_today.amount.less-than-owed=You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required=Enter the amount you want to pay upfront
@@ -104,14 +104,14 @@ ssttp.calculator.form.payment_today.amount.required.min=The amount must be more 
 ssttp.calculator.form.payment_today.amount.decimal-places=Amount must not contain more than 2 decimal places
 ssttp.calculator.form.payment_today.amount.less-than-maxval=Total amounts must be less than £1,000,000,000,000
 
-ssttp.calculator.form.payment_today_question.title=Can you make an up-front payment?
-ssttp.calculator.form.payment_today_question.error.summary.title=Can you make an up-front payment?
+ssttp.calculator.form.payment_today_question.title=Can you make an upfront payment?
+ssttp.calculator.form.payment_today_question.error.summary.title=Can you make an upfront payment?
 ssttp.calculator.form.payment_today_question.required.title=You haven''t selected an option
 ssttp.calculator.form.payment_today_question.required=Select ''yes'' if you want to make an upfront payment
 ssttp.calculator.form.payment_today_question.yes_label=Yes
 ssttp.calculator.form.payment_today_question.no_label=No
 
-ssttp.calculatorform.payment_today_question.why_pay_today.info=Making an up-front payment now before you set up your plan means your monthly payments will be lower.
+ssttp.calculatorform.payment_today_question.why_pay_today.info=Making an upfront payment before you set up your plan means your monthly payments will be lower.
 ssttp.calculator.payment_today_question.button-continue=Continue
 ssttp.calculator.payment_today_question.button-back=Back
 
@@ -124,7 +124,7 @@ ssttp.calculator.form.payment_today.update=Update
 ssttp.calculator.form.continue=Continue
 ssttp.calculator.form.back=Back
 
-ssttp.calculator.results.title=How many months do you want to make your repayments over?
+ssttp.calculator.results.title=How many months do you want to make your payments over?
 ssttp.calculator.results.month.instalments=Instalments
 ssttp.calculator.results.month.payments=Monthly payments
 ssttp.calculator.results.month.option.table.total.interest=Total interest:
@@ -135,8 +135,8 @@ ssttp.calculator.results.month.option.table.total.repayment.hint=Including inter
 ssttp.calculator.results.section.title=How we calculate interest
 ssttp.calculator.results.section.p1=We only charge interest on overdue amounts.
 ssttp.calculator.results.section.p2=We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
-ssttp.calculator.results.section.p3=If the interest rate changes during your plan your monthly payments will not be affected.
-ssttp.calculator.results.error.title=Please Select a payment plan
+ssttp.calculator.results.section.p3=If the interest rate changes during your plan, your monthly payments will not be change. If we need to, we''ll settle the difference at the end of the plan.
+ssttp.calculator.results.error.title=Please select a payment plan
 ssttp.calculator.results.monthly-payments.minus=-
 ssttp.calculator.results.monthly-payments.plus=+
 
@@ -179,10 +179,10 @@ ssttp.you-need-to-file.self-assessment-number-text-phone=Textphone: 0300 200 351
 ssttp.you-need-to-file.debits-title=View a breakdown of what you owe
 
 ssttp.arrangement.instalment-summary.title=Your payment schedule
-ssttp.arrangement.instalment-summary.up-front-payment=Up-front payment
+ssttp.arrangement.instalment-summary.up-front-payment=Upfront payment
 ssttp.arrangement.instalment-summary.up-front-payment.hint=Taken in 3 to 5 days' time
 ssttp.arrangement.instalment-summary.up-front-payment.change=Change
-ssttp.arrangement.instalment-summary-table.title=Your instalment plan summary
+ssttp.arrangement.instalment-summary-table.title=Your instalment plan
 ssttp.arrangement.instalment-summary-table.monthly-instalments=Monthly instalments
 ssttp.arrangement.instalment-summary-table.total-interest-hint=Collected over {0} months
 ssttp.arrangement.instalment-summary-table.monthly-instalments-change=Change
@@ -199,14 +199,14 @@ ssttp.arrangement.instalment-summary.payment-day.submit=Update
 ssttp.arrangement.instalment-summary-table.total-repayment-hint=Including interest
 ssttp.arrangement.instalment-summary.terms.cancelled-if=We can cancel this agreement if you:
 ssttp.arrangement.instalment-summary.terms.cancelled-if.1=pay late or miss a payment
-ssttp.arrangement.instalment-summary.terms.cancelled-if.2=don’t tell us about a change that means you can’t pay
-ssttp.arrangement.instalment-summary.terms.cancelled-if.3=don’t tell us if you can pay more or pay in full
+ssttp.arrangement.instalment-summary.terms.cancelled-if.2=do not tell us about a change that means you cannot pay
+ssttp.arrangement.instalment-summary.terms.cancelled-if.3=do not tell us if you can pay more or pay in full
 ssttp.arrangement.instalment-summary.terms.cancelled-if.4=pay another tax bill late
-ssttp.arrangement.instalment-summary.terms.cancelled-if.5=don’t submit your future tax returns on time
+ssttp.arrangement.instalment-summary.terms.cancelled-if.5=do not submit your future tax returns on time
 ssttp.arrangement.instalment-summary.terms.made-payable-immediately=If we cancel this agreement you’ll have to pay the whole amount due straight away.
 ssttp.arrangement.instalment-summary.terms.refunds=We can use any refunds you might get to pay off this debt.
 ssttp.arrangement.instalment-summary.terms.interest-change=If the interest rate changes during your instalment plan we’ll settle the amount of interest you owe in your final payment.
-ssttp.arrangement.instalment-summary.terms.future-debts=This isn’t a payment plan for new tax bills, it only covers the amounts you need to pay now. 
+ssttp.arrangement.instalment-summary.terms.future-debts=This is not a payment plan for new tax bills, it only covers the amounts you need to pay now. 
 ssttp.arrangement.instalment-summary.submit=Continue
 
 ssttp.direct-debit-assistance.initial-payment-of=An initial payment of:
@@ -275,7 +275,7 @@ ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.number
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.text=Please pay HMRC Direct Debits from the account detailed in this instruction subject to the safeguards assured by the Direct Debit Guarantee. I understand that this instruction may remain with HMRC and, if so, details will be passed electronically to my Bank/Building Society.
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.do-not-send-to-bank=Please do not send this form to your bank.
 ssttp.arrangement.instalment-summary.total-interest=Total interest of:
-ssttp.arrangement.direct-debit.confirmation.confirm-payment=Confirm payments
+ssttp.arrangement.direct-debit.confirmation.confirm-payment=Continue
 
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.please-check=Please check this information carefully before confirming payment
 ssttp.arrangement.direct-debit.assistance.title=Call for Direct Debit Assistance
@@ -290,11 +290,15 @@ ssttp.beta.banner.no.thanks=No Thanks
 ssttp.beta.banner.p1=Get involved in making government services better (opens in a new window)
 
 ssttp.arrangement.complete.title=Application successful
-ssttp.arrangement.complete.print-label=Print your repayment summary
+ssttp.arrangement.complete.print-label=Print your payment summary
 ssttp.arrangement.complete.next=What happens next?
 ssttp.arrangement.complete.summary=We will send you a letter within 5 days to confirm your payment dates.
 ssttp.arrangement.complete.first-payment=First payment collected on:
 ssttp.arrangement.complete.feedback=Send us feedback
+ssttp.arrangement.complete.help.h2=If you need help using this service
+ssttp.arrangement.complete.help.p1=Call the HMRC Helpline on 0300 200 3700 if you:
+ssttp.arrangement.complete.help.p2=need to make a change to your payment plan
+ssttp.arrangement.complete.help.p3=do not get a notification confirming your payment dates
 
 #Service unavailable (shutter) page
 ssttp.unavailable.title=Please call us
