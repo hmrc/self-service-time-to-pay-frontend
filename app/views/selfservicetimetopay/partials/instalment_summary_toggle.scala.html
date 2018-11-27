@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @(paymentSchedule:CalculatorPaymentSchedule,durationForm: Form[CalculatorDuration],monthSeq:Seq[Int])(implicit messages: play.api.i18n.Messages,request: Request[_])
 
+<<<<<<< HEAD
 <div class="summary_payment margin-top-40">
     <dl class="app-check-your-answers app-check-your-answers--long">
             <div class="app-check-your-answers__contents">
@@ -39,6 +40,32 @@
                 @currency(paymentSchedule.getMonthlyInstalment)
               </dd>
             </div>
+=======
+<div id="id_summary">
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">@Messages("ssttp.calculator.results.month.instalments")</th>
+                <th>@instalment_toggle(paymentSchedule,durationForm,monthSeq)</th>
+            </tr>
+            <tr>
+                <th scope="col">@Messages("ssttp.calculator.results.month.payments")</th>
+                <th class="numeric" scope="col"><p>@currency(paymentSchedule.getMonthlyInstalment)</p></th>
+            </tr>
+            <tr>
+                <th scope="col" class="bold">@Messages("ssttp.calculator.results.month.option.table.total.interest")
+                    <br><p>@Messages("ssttp.calculator.results.month.option.table.total.interest.hint")</p></th>
+                <th class="numeric" scope="col"><p>@currency(paymentSchedule.totalInterestCharged)</p></th>
+            </tr>
+            <tr>
+                <th  scope="col">@Messages("ssttp.calculator.results.month.option.table.total.repayment")
+                <br><p>@Messages("ssttp.calculator.results.month.option.table.total.repayment.hint")</p></th>
+                <th class="numeric" scope="col">@{currency(paymentSchedule.totalPayable - paymentSchedule.initialPayment)}</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+>>>>>>> [CC]Minor content tweaks
 
             <div class="app-check-your-answers__contents">
               <dt class="app-check-your-answers__question">

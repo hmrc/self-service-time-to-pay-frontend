@@ -86,7 +86,7 @@ ssttp.calculator.form.payment_summary.amount.remaining=Remaining amount to pay
 ssttp.calculator.form.payment_summary.continue=Continue
 
 
-ssttp.calculator.self-assessment-account-summary-page.title=Your self-assessment account summary
+ssttp.calculator.self-assessment-account-summary-page.title=Your Self Assessment account summary
 ssttp.calculator.self-assessment-account-summary-page.due-options=Due
 ssttp.calculator.self-assessment-account-summary-page.amount=Amount
 ssttp.calculator.self-assessment-account-summary-page.total-due=Total due:
@@ -186,7 +186,7 @@ ssttp.arrangement.instalment-summary-table.title=Your instalment plan summary
 ssttp.arrangement.instalment-summary-table.monthly-instalments=Monthly instalments
 ssttp.arrangement.instalment-summary-table.total-interest-hint=Collected over {0} months
 ssttp.arrangement.instalment-summary-table.monthly-instalments-change=Change
-ssttp.arrangement.instalment-summary-table.total-interest=Total interest:
+ssttp.arrangement.instalment-summary-table.total-interest=Total interest
 ssttp.arrangement.instalment-summary-table.hint=Added to final payment
 ssttp.arrangement.instalment-summary-table.total-repayment=Total repayment
 ssttp.arrangement.instalment-summary.payment-day.taken-on=Your payments will be taken on the

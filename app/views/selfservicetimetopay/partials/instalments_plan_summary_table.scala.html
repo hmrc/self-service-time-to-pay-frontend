@@ -19,6 +19,34 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule,ArrangementDayOfMonth,Debit}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @(paymentSchedule:CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages)
+<<<<<<< HEAD
+=======
+<h2>@Messages("ssttp.arrangement.instalment-summary-table.title")</h2>
+    <table>
+
+        <thead>
+            <tr>
+                <th scope="col">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")
+                    <br><p>@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint",paymentSchedule.instalments.length)</p></th>
+                <th class="numeric" scope="col"><p>@currency(paymentSchedule.getMonthlyInstalment)</p></th>
+                <th class= scope="col"  style="text-align: right"><a href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change")</a></th>
+            </tr>
+        </thead>
+            <tr>
+                <th scope="col" class="bold">@Messages("ssttp.arrangement.instalment-summary-table.total-interest")
+                    <br><p>@Messages("ssttp.arrangement.instalment-summary-table.hint")</p></th>
+                <th class="numeric" scope="col"><p>@currency(paymentSchedule.totalInterestCharged)</p></th>
+                <th> </th>
+            </tr>
+            <tr>
+        <tr>
+            <th scope="col" class="bold">@Messages("ssttp.arrangement.instalment-summary-table.total-repayment")
+                <br><p>@Messages("ssttp.arrangement.instalment-summary-table.total-repayment-hint")</p></th>
+            <th class="numeric" scope="col">@currency(paymentSchedule.totalPayable)</th>
+            <th> </th>
+        </tr>
+    </table>
+>>>>>>> [CC]Minor content tweaks
 
 <h2 class="heading-medium">@Messages("ssttp.arrangement.instalment-summary-table.title")</h2>
 
