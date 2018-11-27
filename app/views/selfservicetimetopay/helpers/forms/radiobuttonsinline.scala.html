@@ -42,8 +42,8 @@
     }
     classes
 }) { inputClass =>
-    <a name="@elements.field.name"></a>
-    <fieldset>
+
+    <fieldset id="@elements.field.name" class="@if(field.hasErrors){error}">
         @content
         <div class="form-field@if(elements.args.get('_modifierClass)) {@elements.args.get('_modifierClass)} ">
             @fieldErrors(field)
