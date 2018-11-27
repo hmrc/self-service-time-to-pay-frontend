@@ -45,7 +45,7 @@
         Seq(gaCheckoutCode.body)
     }
 ) {
-    <p><a class="back-link" href="@routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.direct-debit.form.back")</a></p>
+    <a class="link-back" href="@routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.direct-debit.form.back")</a>
     <header class="page-header text">
         <h1>@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
     </header>
@@ -72,4 +72,3 @@
         }
     }
 }
-

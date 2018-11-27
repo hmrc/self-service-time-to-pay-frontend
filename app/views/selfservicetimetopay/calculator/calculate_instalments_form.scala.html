@@ -25,15 +25,16 @@
     title = Messages("ssttp.calculator.results.title"),
     loggedIn = loggedIn
 ) {
-    <p><a class="back-link" href="@routes.CalculatorController.getPaymentSummary()">@Messages("ssttp.calculator.form.back")</a></p>
-    <header class="page-header text">
-        <h1>@Messages("ssttp.calculator.results.title")</h1>
-    </header>
+    <a class="link-back" href="@routes.CalculatorController.getPaymentSummary()">@Messages("ssttp.calculator.form.back")</a>
 
-        @formErrorSummary(Messages("ssttp.calculator.results.error.title"), durationForm, Seq.empty)
-        @instalment_summary_toggle(monthsToSchedule(currentChosenMonth), durationForm, monthSeq)
-    <p></p>
-    <details>
+    <h1 class="heading-large margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
+
+    @formErrorSummary(Messages("ssttp.calculator.results.error.title"), durationForm, Seq.empty)
+
+    @instalment_summary_toggle(monthsToSchedule(currentChosenMonth), durationForm, monthSeq)
+
+
+    <details class="margin-top-40 margin-bottom-30">
         <summary><span class="summary">@Messages("ssttp.calculator.results.section.title")</span></summary>
         <div class="panel panel-border-narrow">
             <ul class="list list-bullet">
@@ -44,6 +45,7 @@
 
         </div>
     </details>
+
     <button form="calculatorDurationForm" class="button" type="submit">@Messages("ssttp.calculator.form.continue")</button>
 
 }

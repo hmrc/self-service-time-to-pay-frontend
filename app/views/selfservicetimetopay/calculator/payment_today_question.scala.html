@@ -22,12 +22,11 @@
     title = Messages("ssttp.calculator.form.payment_today_question.title"),
     loggedIn = loggedIn
 ) {
-    <p>
-        <a class="back-link" href="@routes.CalculatorController.getTaxLiabilities()">@Messages("ssttp.calculator.payment_today_question.button-back")</a>
-    </p>
-    <header class="page-header text">
-        <h1>@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
-    </header>
+
+    <a class="link-back" href="@routes.CalculatorController.getTaxLiabilities()">@Messages("ssttp.calculator.payment_today_question.button-back")</a>
+
+    <h1 class="heading-xlarge">@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
+
     <p>@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
     @formErrorSummary(Messages("ssttp.calculator.form.payment_today_question.required.title"), dataForm, Seq.empty)
     @form(routes.CalculatorController.submitPayTodayQuestion(), 'class -> "group") {
@@ -36,8 +35,8 @@
             "false" -> Messages("ssttp.calculator.form.payment_today_question.no_label")
         ),true,
             '_label -> Html(Messages("ssttp.eligibility.form.existing_ttp.question")),
-            '_modifierClass -> "multiple-choice inline",
-            '_groupClass -> "form-field",
+            '_modifierClass -> "inline",
+            '_groupClass -> "form-group",
             '_labelClass -> "block-label block-label--inline"
         ) {
         }

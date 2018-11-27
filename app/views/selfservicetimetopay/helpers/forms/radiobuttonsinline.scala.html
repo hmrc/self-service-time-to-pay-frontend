@@ -43,9 +43,9 @@
     classes
 }) { inputClass =>
     <a name="@elements.field.name"></a>
-    <fieldset>
+    <fieldset class="form-group">
         @content
-        <div class="form-field@if(elements.args.get('_modifierClass)) {@elements.args.get('_modifierClass)} ">
+        <div class="@if(elements.args.get('_modifierClass)) {@elements.args.get('_modifierClass)} ">
             @fieldErrors(field)
         @optionsList.zipWithIndex.map { case (valueAndLabel, index) =>
         <div class="multiple-choice">
@@ -57,4 +57,3 @@
         </div>
     </fieldset>
 }
-
