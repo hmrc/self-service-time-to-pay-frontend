@@ -141,7 +141,7 @@ class DirectDebitFormSpec extends PlaySpec {
 
       val validatedForm = DirectDebitForm.directDebitForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("accountName", List("ssttp.direct-debit.form.error.accountName.letter-start"))))
+      assert(validatedForm.errors.contains(FormError("accountName", List("ssttp.direct-debit.form.error.accountName.check"))))
     }
 
     "return error with accountName containing numbers" in {
