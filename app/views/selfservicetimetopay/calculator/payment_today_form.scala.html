@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
 @(dataForm: Form[CalculatorPaymentToday], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
-@import selfservicetimetopay.helpers.forms.{currencyinput, form, formErrorSummary, submit}
+@import selfservicetimetopay.helpers.forms.{currencyinput, form, formErrorSummary, submit, inlinecurrencyinput}
 @import uk.gov.hmrc.selfservicetimetopay.controllers._
 
 @selfservicetimetopay.main(
@@ -24,13 +24,15 @@
   loggedIn = loggedIn
 ){
   <a class="link-back" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
-
+    @formErrorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm, Seq.empty)
   <h1 class="heading-large">@Messages("ssttp.calculator.form.payment_today.title")</h1>
 
   @form(routes.CalculatorController.submitPaymentToday(), 'id -> "paymentTodayForm", 'class -> "group") {
-    @formErrorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm, Seq.empty)
-      £<input type="number" step="any" min="0" class="form-control input--small" maxLength="10" name="amount" id="amount" value=@dataForm("amount").value required/>
-    <p>
+          @inlinecurrencyinput(
+              dataForm("amount"),
+              '_inputClass -> "form-control-1-4"
+          )
+      <p>
       @submit(){@Messages("ssttp.calculator.form.continue")}
     </p>
   }

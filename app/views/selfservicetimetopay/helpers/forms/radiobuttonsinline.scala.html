@@ -42,8 +42,8 @@
     }
     classes
 }) { inputClass =>
-    <a name="@elements.field.name"></a>
-    <fieldset class="form-group">
+
+    <fieldset id="@elements.field.name" class="@if(field.hasErrors){error}">
         @content
         <div class="@if(elements.args.get('_modifierClass)) {@elements.args.get('_modifierClass)} ">
             @fieldErrors(field)
@@ -57,3 +57,4 @@
         </div>
     </fieldset>
 }
+

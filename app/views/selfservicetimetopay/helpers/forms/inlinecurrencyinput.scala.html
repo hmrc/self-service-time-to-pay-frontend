@@ -34,7 +34,7 @@
 }
 @inputContent = {
 @if(argsMap.getOrElse('_hideErrors, false).asInstanceOf[Boolean] == false) {@fieldErrors(field)}
-    <span class="input-currency@if(argsMap.get('_currencyClass)){ @argsMap.get('_currencyClass)}"><input type="text" class="input--left-padding@if(inputClass.nonEmpty){ @inputClass}"
+    <span class="@if(argsMap.get('_currencyClass)){ @argsMap.get('_currencyClass)}">£<input type="text" class="input--left-padding@if(inputClass.nonEmpty){ @inputClass}"
     name="@elements.field.name" id="@elements.field.name" value="@value"
         @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
         @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
