@@ -38,7 +38,7 @@
         </thead>
         <tbody>
             <tr>
-                <th scope="row">@Messages("ssttp.calculator.form.payment_summary.amount.remaining")</th>
+                <th scope="row" class="bold">@Messages("ssttp.calculator.form.payment_summary.amount.remaining")</th>
                 <td class="numeric">£@{debits.map(_.amount).sum - initialPayment}</td>
                 <td></td>
             </tr>
