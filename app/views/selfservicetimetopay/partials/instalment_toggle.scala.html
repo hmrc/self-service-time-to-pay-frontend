@@ -22,7 +22,9 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @(paymentSchedule: CalculatorPaymentSchedule, durationForm: Form[CalculatorDuration], monthOptions: Seq[Int])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
-@form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "form-field--inline") {
+
+<div class="number-toggle">
+@form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "number-toggle-left") {
     <input type="hidden" name="@durationForm("months").name" value="@{
         paymentSchedule.instalments.length - 1
     }" />
@@ -45,13 +47,13 @@
     }
 }
 
-@form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "form-field--inline", 'id -> "calculatorDurationForm") {
-    <div class ="numbersonly"   style="padding-right: 15px;">
-        <input class="input--xxsmall"  name="@durationForm("months").name" value="@{paymentSchedule.instalments.length}" />
+@form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "number-toggle-input", 'id -> "calculatorDurationForm") {
+    <div class ="numbersonly">
+        <input class="form-control"  name="@durationForm("months").name" value="@{paymentSchedule.instalments.length}" />
     </div>
 }
 
-@form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "form-field--inline") {
+@form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "number-toggle-right") {
     <input type="hidden" name="@durationForm("months").name" value="@{paymentSchedule.instalments.length + 1}" />
     @defining({
             <span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.increase")</span>
@@ -70,3 +72,4 @@
         }
     }
 }
+</div>

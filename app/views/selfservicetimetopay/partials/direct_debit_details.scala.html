@@ -17,8 +17,9 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @(directDebit:ArrangementDirectDebit, print:Boolean = false)(implicit messages: play.api.i18n.Messages)
+
 <div>
-    <div class="subsection grid-layout grid-layout--no-gutter divider--bottom">
+    <div class="subsection grid-layout grid-layout--no-gutter">
         <div class="grid-layout__column grid-layout__column--1-4" style="font-weight: bold">
             @Messages("ssttp.direct-debit.account-name")
         </div>
@@ -31,7 +32,7 @@
             <a href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.change")</a>
         </div>
     </div>
-    <div class="subsection grid-layout grid-layout--no-gutter divider--bottom">
+    <div class="subsection grid-layout grid-layout--no-gutter ">
         <div class="grid-layout__column grid-layout__column--1-4"  style="font-weight: bold">
            @Messages("ssttp.direct-debit.account-number")
         </div>
@@ -44,9 +45,9 @@
         </div>
     </div>
 
-    <div class="subsection grid-layout grid-layout--no-gutter divider--bottom">
+    <div class="subsection grid-layout grid-layout--no-gutter">
         <div class="grid-layout__column grid-layout__column--1-4"  style="font-weight: bold">
-          @Messages("ssttp.direct-debit.sort-code")</strong>
+          @Messages("ssttp.direct-debit.sort-code")
         </div>
         <div class="grid-layout__column grid-layout__column--1-4">
         </div>

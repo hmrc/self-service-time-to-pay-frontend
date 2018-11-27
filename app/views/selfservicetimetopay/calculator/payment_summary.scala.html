@@ -23,28 +23,35 @@
     title = Messages("ssttp.calculator.form.payment_summary.title"),
     loggedIn = true
 ) {
-    <p><a class="back-link" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a></p>
-    <header class="page-header text">
-        <h1>@Messages("ssttp.calculator.form.payment_summary.title")</h1>
-    </header>
-    <table>
-        <thead>
-            <tr>
-                <th scope="col">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")
-                <br><p>@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p></th>
-                <td class="numeric" scope="col"> £@initialPayment</td>
-                <th class="numeric" scope="col"><a href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.change")</a></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">@Messages("ssttp.calculator.form.payment_summary.amount.remaining")</th>
-                <td class="numeric">£@{debits.map(_.amount).sum - initialPayment}</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
-    <br>
+    <a class="link-back" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
+
+    <h1 class="heading-large">@Messages("ssttp.calculator.form.payment_summary.title")</h1>
+
+    <dl class="app-check-your-answers app-check-your-answers--long margin-bottom-20">
+        <div class="app-check-your-answers__contents">
+          <dt class="app-check-your-answers__question">
+            @Messages("ssttp.calculator.form.payment_summary.up-front-payment")
+            <p class="small">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
+          </dt>
+          <dd class="app-check-your-answers__answer">
+            £@initialPayment
+          </dd>
+          <dd class="app-check-your-answers__change">
+              <a href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.change") <span class="visually-hidden">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</span></a>
+          </dd>
+        </div>
+        <div class="app-check-your-answers__contents">
+          <dt class="app-check-your-answers__question">
+            @Messages("ssttp.calculator.form.payment_summary.amount.remaining")
+          </dt>
+          <dd class="app-check-your-answers__answer">
+            £@{debits.map(_.amount).sum - initialPayment}
+          </dd>
+          <dd class="app-check-your-answers__change">
+
+          </dd>
+        </div>
+    </dl>
+
     <a class="button" href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.payment_summary.continue")</a>
 }
-

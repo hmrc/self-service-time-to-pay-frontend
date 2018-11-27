@@ -41,26 +41,35 @@ Time To Pay Instalment Summary Pretty Print Page
         googleAnalyticsCalls = Seq(gaCheckoutCode.body.seq),
         loggedIn = signedIn
     ) {
-       <div><a class="back-link" href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a></div>
-       <header class="page-header text">
+       <a class="link-back" href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a>
 
-            <h1>@Messages("ssttp.arrangement.instalment-summary.title")</h1>
-        </header>
-         <table>
-        <thead>
-            <tr>
-                <th scope="col">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")
-                <br><p>@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p></th>
-                <td class="numeric" scope="col"> £@initialPayment</td>
-                <th class="numeric" scope="col"><a href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.change")</a></th>
-            </tr>
-        </thead>
-        </table>
+        <h1 class="heading-large">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
+
+        <div class="summary_payment margin-top-40">
+            <dl class="app-check-your-answers app-check-your-answers--long">
+                    <div class="app-check-your-answers__contents">
+                      <dt class="app-check-your-answers__question">
+                        @Messages("ssttp.calculator.form.payment_summary.up-front-payment")
+                        <p class="small">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
+                      </dt>
+                      <dd class="app-check-your-answers__answer">
+                        £@initialPayment
+                      </dd>
+                      <dd class="app-check-your-answers__change">
+                          <a href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.change") <span class="visually-hidden">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</span></a>
+                        </dd>
+                    </div>
+                    </dl>
+
+        </div>
+
         @instalments_plan_summary_table(schedule)
-        <section class="alterBottom">
 
-            <details @if(dayForm.hasErrors) { open}>
-                <summary>@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</summary>
+
+
+
+            <details @if(dayForm.hasErrors) { open} class="margin-top-30 margin-bottom-30">
+                <summary><span class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</span></summary>
                 <div class="panel-indent">
                     @form(routes.ArrangementController.changeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm") {
                         @inlinetextinput(dayForm("dayOfMonth"),
@@ -73,7 +82,7 @@ Time To Pay Instalment Summary Pretty Print Page
                     }
                 </div>
             </details>
-        </section>
+
         <section>
            <div class="panel panel-border-wide">
                 @Messages("ssttp.arrangement.instalment-summary.terms.cancelled-if")
@@ -94,4 +103,3 @@ Time To Pay Instalment Summary Pretty Print Page
 
 
     }
-

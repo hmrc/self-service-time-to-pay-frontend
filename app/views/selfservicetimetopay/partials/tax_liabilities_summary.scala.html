@@ -20,27 +20,21 @@
 @import selfservicetimetopay.partials.charge_code
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @(debits: Seq[Debit])(implicit messages: play.api.i18n.Messages, request: Request[_])
-<div class="panel panel-border-wide">
+<div class="panel panel-border-narrow panel-tabular-data">
 @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
-    <table>
-        <thead>
-            <tr>
-                <td style="width: 68%"><h4>@Messages("ssttp.calculator.self-assessment-account-summary-page.due-options")</h4></td>
-                <td style="width: 22%"><h4>@Messages("ssttp.calculator.self-assessment-account-summary-page.amount")</h4></td>
-            </tr>
-        </thead>
-        <tbody>
+
             @debits.map { debit =>
-                <tr>
-                    <td>
-                        <h4>@charge_code(debit.originCode.get, debit.taxYearEnd)</h4>
-                       @(Messages("ssttp.calculator.self-assessment-account-summary-page.due-by"))  @debit.dueDate.format(formatter)
-                    </td>
-                    <td>@currency(debit.amount)</td>
-                </tr>
+
+                <div class="tabular-data__entry tabular-data__divider--full-width">
+                    <span class="tabular-data__heading tabular-data__heading--label">
+                        <h4 class="heading-small">@charge_code(debit.originCode.get, debit.taxYearEnd)</h4>
+                        <p>@(Messages("ssttp.calculator.self-assessment-account-summary-page.due-by"))  @debit.dueDate.format(formatter)</p>
+                    </span>
+                    <div class="tabular-data__data-1"><span class="normal-text">@currency(debit.amount)</span></div>
+                </div>
+
+
             }
-        </tbody>
-    </table>
+
 }
 </div>
-

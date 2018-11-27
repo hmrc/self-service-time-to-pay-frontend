@@ -26,19 +26,20 @@
     title = Messages("ssttp.calculator.self-assessment-account-summary-page.title"),
     loggedIn = loggedIn
 ) {
-    <p><a class="back-link" href="@routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.calculator.self-assessment-account-summary-page.button-back")</a></p>
+    <a class="link-back" href="@routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.calculator.self-assessment-account-summary-page.button-back")</a>
     @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
-        <header class="page-header text">
-            <h1 class="heading-xlarge">@Messages("ssttp.calculator.self-assessment-account-summary-page.title")</h1>
-        </header>
-        <h4 class="heading-small">@Messages("ssttp.calculator.self-assessment-account-summary-page.total-due") @currency(debits.map(_.amount).sum)</h4>
-    @debits.headOption.map{ debit =>
-        @debit.taxYearEnd.map{ tye =>
-        <p class="form-hint">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-year-ending") @tye.format(formatter)</p>
-    }}
+
+        <h1 class="heading-xlarge">@Messages("ssttp.calculator.self-assessment-account-summary-page.title")</h1>
+
+        <h2 class="heading-medium">@Messages("ssttp.calculator.self-assessment-account-summary-page.total-due") @currency(debits.map(_.amount).sum)</h2>
+        @debits.headOption.map{ debit =>
+            @debit.taxYearEnd.map{ tye =>
+            <p>@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-year-ending") @tye.format(formatter)</p>
+        }}
+
         <details>
             <summary><span class="summary">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-account-details")</span></summary>
-    @tax_liabilities_summary(debits)
+            @tax_liabilities_summary(debits)
         </details>
         <p>
         @form(routes.CalculatorController.getPayTodayQuestion()) {

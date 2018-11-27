@@ -37,18 +37,17 @@
     googleAnalyticsCalls = Seq(gaCheckoutCode.body),
     loggedIn = loggedIn
 ) {
-    <div><a class="back-link" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a></div>
-    <header class="page-header text">
-        <h1>@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
-    </header>
-    <section>
-        <h2>@Messages("ssttp.arrangement.direct-debit.confirmation.your-bank")</h2>
-        <p>@direct_debit_details(directDebit)</p>
+    <a class="link-back" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a>
 
-    </section>
-    <section>
+    <h1 class="heading-large">@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
+
+    <h2 class="heading-medium">@Messages("ssttp.arrangement.direct-debit.confirmation.your-bank")</h2>
+
+    @direct_debit_details(directDebit)
+
+    <section class="margin-top-30">
         <details>
-            <summary>@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary")</summary>
+            <summary><span class="summary">@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary")</span></summary>
             <div>
                 <p class="text--right">
                     <img src="@{AssetsConfig.assetsPrefix}/images/direct-debit-logo-2x.png" width="148px" height="60px">
@@ -67,7 +66,6 @@
                 @Messages("ssttp.arrangement.direct-debit.confirmation.confirm-payment")
             }
         }
-        <div>&nbsp;</div>
+
     </section>
 }
-
