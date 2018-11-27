@@ -53,7 +53,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def start: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
-        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer),  _, _, _, _)) => eligibilityCheck(taxpayer, ttp,authContext.principal.accounts.sa.get.utr.utr)
+        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _)) => eligibilityCheck(taxpayer, ttp, authContext.principal.accounts.sa.get.utr.utr)
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -66,17 +66,18 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       ttpSessionKV = TTPSessionId.ttpSessionId -> tokenData.associatedTTPSession.v
       isTokenValid = isTokenStillValid(tokenData)
       redirect =
-        if(isTokenValid){
-          Results.Redirect(routes.ArrangementController.determineEligibility())
-        }
-        else{
-          Logger.logger.debug(s"Token expired: $tokenData")
-          Redirect(routes.SelfServiceTimeToPayController.start())
-        }
+      if (isTokenValid) {
+        Results.Redirect(routes.ArrangementController.determineEligibility())
+      }
+      else {
+        Logger.logger.debug(s"Token expired: $tokenData")
+        Redirect(routes.SelfServiceTimeToPayController.start())
+      }
     } yield redirect.withSession(request.session + ttpSessionKV)
   }
 
   private def isTokenStillValid(tokenData: TokenData): Boolean = tokenData.expirationDate.isAfter(LocalDateTime.now())
+
   /**
     * This step is performed immediately after the user has logged in. It grabs the Taxpayer data and
     * then performs several checks to determine where the user should go next. This is because there are
@@ -90,23 +91,23 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     */
   def determineEligibility: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
-          taxPayerConnector.getTaxPayer(authContext.principal.accounts.sa.get.utr.utr).flatMap[Result] {
-            tp =>
-              tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion())))(taxPayer => {
-                val newSubmission = TTPSubmission(taxpayer = Some(taxPayer))
-                sessionCache.put(newSubmission).flatMap { _ =>
-                  eligibilityCheck(taxPayer, newSubmission, authContext.principal.accounts.sa.get.utr.utr)
-                }
-              }
-              )
+      taxPayerConnector.getTaxPayer(authContext.principal.accounts.sa.get.utr.utr).flatMap[Result] {
+        tp =>
+          tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion())))(taxPayer => {
+            val newSubmission = TTPSubmission(taxpayer = Some(taxPayer))
+            sessionCache.put(newSubmission).flatMap { _ =>
+              eligibilityCheck(taxPayer, newSubmission, authContext.principal.accounts.sa.get.utr.utr)
+            }
           }
+          )
+      }
   }
 
   def getInstalmentSummary: Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
-          case ttp@TTPSubmission(Some(schedule), _, _, _,  cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
+          case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
             Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule, createDayOfForm(ttp))))
           case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
         }
@@ -133,8 +134,8 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               },
               validFormData => {
                 submission match {
-                  case ttp@TTPSubmission(Some(schedule), _, _, _,  cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
-                    changeScheduleDay(submission,schedule, debits,validFormData.dayOfMonth).flatMap {
+                  case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
+                    changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
                       ttpSubmission =>
                         sessionCache.put(ttpSubmission).map {
                           _ => Redirect(routes.ArrangementController.getInstalmentSummary())
@@ -149,39 +150,43 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   /**
     * Take the updated calculator input information and send it to the calculator service
     */
-  private def changeScheduleDay(ttpSubmission: TTPSubmission,schedule:CalculatorPaymentSchedule,debits:Seq[Debit], dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
-    val input =createCalculatorInput(
+  private def changeScheduleDay(ttpSubmission: TTPSubmission, schedule: CalculatorPaymentSchedule, debits: Seq[Debit], dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
+    val input = createCalculatorInput(
       schedule.instalments.length,
       dayOfMonth,
       schedule.initialPayment,
       debits)
-    calculatorConnector.calculatePaymentSchedule(input) .map[TTPSubmission](seqCalcInput => ttpSubmission.copy(schedule = Option(seqCalcInput.head), calculatorData = input))
-    }
+    calculatorConnector.calculatePaymentSchedule(input).map[TTPSubmission](seqCalcInput => ttpSubmission.copy(schedule = Option(seqCalcInput.head), calculatorData = input))
+  }
 
 
   /**
     * Call the eligibility service using the Taxpayer data and display the appropriate page based on the result
     */
-  private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission,utr: String)(implicit hc: HeaderCarrier): Future[Result] = {
+  private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission, utr: String)(implicit hc: HeaderCarrier): Future[Result] = {
     lazy val youNeedToFile = Redirect(routes.SelfServiceTimeToPayController.getYouNeedToFile()).successfulF
     lazy val notOnIa = Redirect(routes.SelfServiceTimeToPayController.getIaCallUse()).successfulF
+    lazy val overTenThousandOwed = Redirect(routes.SelfServiceTimeToPayController.getOverTenThousandCallUs()).successfulF
 
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
-      case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(true, _)), _) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
         checkSubmissionForCalculatorPage(taxpayer, ttp)
-      case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(IsNotOnIa)   =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(IsNotOnIa) =>
         notOnIa
-      case ttp@TTPSubmission(_, _, _, _, _,  _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) || reasons.contains(DebtIsInsignificant)  =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(TotalDebtIsTooHigh) =>
+        overTenThousandOwed
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) || reasons.contains(DebtIsInsignificant) =>
         youNeedToFile
       case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
         Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()).successfulF
     }
-      for {
-        es <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer),utr)
-        updatedSubmission = newSubmission.copy(eligibilityStatus = Option(es))
-        _ <- sessionCache.put(updatedSubmission)
-        result <- checkSubmission(updatedSubmission)
-      } yield result
+
+    for {
+      es <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer), utr)
+      updatedSubmission = newSubmission.copy(eligibilityStatus = Option(es))
+      _ <- sessionCache.put(updatedSubmission)
+      result <- checkSubmission(updatedSubmission)
+    } yield result
   }
 
   def setDefaultCalculatorSchedule(newSubmission: TTPSubmission, debits: Seq[Debit])(implicit hc: HeaderCarrier): Future[CacheMap] = {
@@ -194,7 +199,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     val gotoTaxLiabilities = Redirect(routes.CalculatorController.getTaxLiabilities())
 
     newSubmission match {
-      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))),  CalculatorInput(_, _, _, _, _, _), _, _, _) =>
+      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), CalculatorInput(_, _, _, _, _, _), _, _, _) =>
 
         setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map(_ => gotoTaxLiabilities)
 
@@ -246,7 +251,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               val result = for {
 
                 ttp <- arrangementConnector.submitArrangements(createArrangement(success, submission))
-                _  =    auditService.sendSubmissionEvent(submission)
+                _ = auditService.sendSubmissionEvent(submission)
               } yield ttp
 
 
