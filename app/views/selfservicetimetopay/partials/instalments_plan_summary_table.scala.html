@@ -20,28 +20,48 @@
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @(paymentSchedule:CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages)
 
-<h2>@Messages("ssttp.arrangement.instalment-summary-table.title")</h2>
-    <table>
+<h2 class="heading-medium">@Messages("ssttp.arrangement.instalment-summary-table.title")</h2>
 
-        <thead>
-            <tr>
-                <th scope="col">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")
-                    <br><p>@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint",paymentSchedule.instalments.length)</p></th>
-                <th class="numeric" scope="col"><p>@currency(paymentSchedule.getMonthlyInstalment)</p></th>
-                <th class= scope="col"  style="text-align: right"><a href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change")</a></th>
-            </tr>
-        </thead>
-            <tr>
-                <th scope="col" class="bold">@Messages("ssttp.arrangement.instalment-summary-table.total-interest")
-                    <br><p>@Messages("ssttp.arrangement.instalment-summary-table.hint")</p></th>
-                <th class="numeric" scope="col"><p>@currency(paymentSchedule.totalInterestCharged)</p></th>
-                <th> </th>
-            </tr>
-            <tr>
-        <tr>
-            <th scope="col" class="bold">@Messages("ssttp.arrangement.instalment-summary-table.total-repayment")
-                <br><p>@Messages("ssttp.arrangement.instalment-summary-table.total-repayment-hint")</p></th>
-            <th class="numeric" scope="col">@currency(paymentSchedule.totalPayable)</th>
-            <th> </th>
-        </tr>
-    </table>
+<div id="id_payment" class="margin-top-40">
+    <dl class="app-check-your-answers app-check-your-answers--long">
+            <div class="app-check-your-answers__contents">
+              <dt class="app-check-your-answers__question">
+                @Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")
+                <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint",paymentSchedule.instalments.length)</p>
+              </dt>
+              <dd class="app-check-your-answers__answer">
+                @currency(paymentSchedule.getMonthlyInstalment)
+              </dd>
+              <dd class="app-check-your-answers__change">
+                  <a href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
+                </dd>
+            </div>
+
+            <div class="app-check-your-answers__contents">
+              <dt class="app-check-your-answers__question">
+                @Messages("ssttp.arrangement.instalment-summary-table.total-interest")
+                <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.hint")</p>
+              </dt>
+              <dd class="app-check-your-answers__answer">
+                @currency(paymentSchedule.totalInterestCharged)
+              </dd>
+              <dd class="app-check-your-answers__change">
+
+                </dd>
+            </div>
+
+            <div class="app-check-your-answers__contents">
+              <dt class="app-check-your-answers__question">
+                @Messages("ssttp.arrangement.instalment-summary-table.total-repayment")
+                <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.total-repayment-hint")</p>
+              </dt>
+              <dd class="app-check-your-answers__answer">
+                @currency(paymentSchedule.totalPayable)
+              </dd>
+              <dd class="app-check-your-answers__change">
+
+                </dd>
+            </div>
+    </dl>
+
+</div>
