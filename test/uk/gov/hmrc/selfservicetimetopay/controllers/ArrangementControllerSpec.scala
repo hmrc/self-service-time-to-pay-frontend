@@ -114,6 +114,26 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getIaCallUse().url
     }
+    "redirect to 'over ten k' when the user is has depts over 10k" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(TotalDebtIsTooHigh))))
+
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
+
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      val response = controller.determineEligibility().apply(FakeRequest()
+        .withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
+        )
+      )
+
+      status(response) mustBe SEE_OTHER
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getOverTenThousandCallUs().url
+    }
     "redirect to 'you need to file' when the user has not filled " in {
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val requiredSa = selfAssessment.get.copy(debits = Seq.empty)

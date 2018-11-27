@@ -303,6 +303,20 @@ ssttp.unavailable.instructions=But if you call us, you will still have the oppor
 ssttp.unavailable.number=0300 200 3822
 
 
+ssttp.overtenthosand.p1=To be eligible to set up a payment plan online the tax you owe must be £10,000 or less.
+ssttp.overtenthosand.p2=For further support you can contact the Business Support Service and speak to an adviser on 0300 200 3835.
+ssttp.overtenthosand.p2.number=0300 200 3835.
+ssttp.overtenthosand.before.you.call.h1=Before you call, make sure you have:
+ssttp.overtenthosand.before.you.call.l1=your reference number
+ssttp.overtenthosand.before.you.call.l2=information on any savings or investments you have
+ssttp.overtenthosand.before.you.call.l3=your bank details
+ssttp.overtenthosand.likely.to.ask.h1=We're likely to ask:
+ssttp.overtenthosand.likely.to.ask.l1=what you've done to try to pay the bill
+ssttp.overtenthosand.likely.to.ask.l2=if you can pay some of the bill now
+ssttp.overtenthosand.opening.hours.h1=Our opening times are:
+ssttp.overtenthosand.opening.hours.l1=Monday to Friday: 8am to 8pm
+ssttp.overtenthosand.opening.hours.l2=Saturday and Sunday: 8am to 4pm
+
 #global errors
 global.error.400.title=Bad request=400
 global.error.400.heading=Bad request
