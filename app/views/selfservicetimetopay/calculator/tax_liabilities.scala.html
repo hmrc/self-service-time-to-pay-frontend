@@ -29,7 +29,7 @@
     <a class="link-back" href="@routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.calculator.self-assessment-account-summary-page.button-back")</a>
     @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
 
-        <h1 class="heading-xlarge">@Messages("ssttp.calculator.self-assessment-account-summary-page.title")</h1>
+        <h1 class="heading-large">@Messages("ssttp.calculator.self-assessment-account-summary-page.title")</h1>
 
         <h2 class="heading-medium">@Messages("ssttp.calculator.self-assessment-account-summary-page.total-due") @currency(debits.map(_.amount).sum)</h2>
         @debits.headOption.map{ debit =>
@@ -49,4 +49,3 @@
         }</p>
     }
 }
-
