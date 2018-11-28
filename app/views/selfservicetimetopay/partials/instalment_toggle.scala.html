@@ -24,52 +24,56 @@
 
 
 <div class="number-toggle">
-@form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "number-toggle-left") {
-    <input type="hidden" name="@durationForm("months").name" value="@{
-        paymentSchedule.instalments.length - 1
-    }" />
-    @defining({
-            <span class="hidden" aria-label="">@Messages("ssttp.calculator.results.monthly-payments.decrease")</span>
-    }) { label =>
-        @if(paymentSchedule.instalments.length != monthOptions.min) {
-            @button('type -> "submit",
-                'id -> "calculatorDurationDecrease",
-                '_modifierClass -> "button",
-                'title -> "Decrease value") {
-                <strong>@Messages("ssttp.calculator.results.monthly-payments.minus")</strong>
+    @form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "number-toggle-left") {
+        <input type="hidden" name="@durationForm("months").name" value="@{
+            paymentSchedule.instalments.length - 1
+        }" />
+        @defining({
+                <span class="hidden" aria-label="">@Messages("ssttp.calculator.results.monthly-payments.decrease")</span>
+        }) { label =>
+            @if(paymentSchedule.instalments.length != monthOptions.min) {
+                @button('type -> "submit",
+                    'id -> "calculatorDurationDecrease",
+                    '_modifierClass -> "button",
+                    'title -> "Decrease value") {
+                    <strong for="calculatorDurationDecrease">@Messages("ssttp.calculator.results.monthly-payments.minus")</strong>
+
+                }
+            } else {
+                <span class="button"
+                aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")" role="button">
+                    <strong>@Messages("ssttp.calculator.results.monthly-payments.minus")</strong>
+                </span>
             }
-        } else {
-            <span class="button"
-            aria-label="@Messages("ssttp.calculator.results.monthly-payments.decrease")" role="button">
-                <strong>@Messages("ssttp.calculator.results.monthly-payments.minus")</strong>
-            </span>
         }
     }
-}
 
-@form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "number-toggle-input", 'id -> "calculatorDurationForm") {
-    <div class ="numbersonly">
-        <input class="form-control"  name="@durationForm("months").name" value="@{paymentSchedule.instalments.length}" />
-    </div>
-}
+    @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "number-toggle-input", 'id -> "calculatorDurationForm") {
+        <div class ="numbersonly">
+            <input id="@durationForm("months").name" class="form-control" name="@durationForm("months").name" value="@{
+                paymentSchedule.instalments.length
+            }"  title="@durationForm("months").name"/>
+        </div>
+    }
 
-@form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "number-toggle-right") {
-    <input type="hidden" name="@durationForm("months").name" value="@{paymentSchedule.instalments.length + 1}" />
-    @defining({
-            <span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.increase")</span>
-    }) { label =>
-        @if(paymentSchedule.instalments.length != monthOptions.max) {
-            @button('type -> "submit", 'id -> "calculatorDurationIncrease",
-                '_modifierClass -> "button",
-                'title -> "Increase value") {
-                <strong>@Messages("ssttp.calculator.results.monthly-payments.plus")</strong>
+    @form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "number-toggle-right") {
+        <input type="hidden" name="@durationForm("months").name" value="@{paymentSchedule.instalments.length + 1}" />
+        @defining({
+                <span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.increase")</span>
+        }) { label =>
+            @if(paymentSchedule.instalments.length != monthOptions.max) {
+                @button('type -> "submit", 'id -> "calculatorDurationIncrease",
+                    '_modifierClass -> "button",
+                    '_label -> "+",
+                    'title -> "Increase value") {
+                    <strong for="calculatorDurationIncrease">@Messages("ssttp.calculator.results.monthly-payments.plus")</strong>
+                }
+            } else {
+                <span class="button"
+                aria-label="@Messages("ssttp.calculator.results.monthly-payments.increase")" role="button">
+                    <strong>@Messages("ssttp.calculator.results.monthly-payments.plus")</strong>
+                </span>
             }
-        } else {
-            <span class="button"
-            aria-label="@Messages("ssttp.calculator.results.monthly-payments.increase")" role="button">
-                <strong>@Messages("ssttp.calculator.results.monthly-payments.plus")</strong>
-            </span>
         }
     }
-}
 </div>
