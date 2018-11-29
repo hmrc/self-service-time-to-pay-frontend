@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.auth.{SaRegime, _}
 import uk.gov.hmrc.selfservicetimetopay.config._
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCache4TokensConnector, SessionCacheConnector => KeystoreConnector}
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityExistingTTP, EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
 
@@ -84,7 +84,6 @@ trait TimeToPayController extends FrontendController with Actions {
 
 
   protected val validTypeOfTax = Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true))
-  protected val validExistingTTP = Some(EligibilityExistingTTP(Some(false)))
 
   protected def redirectOnError: Result = Redirect(routes.SelfServiceTimeToPayController.start())
   protected lazy val redirectToStartPage = Results.Redirect(routes.SelfServiceTimeToPayController.start())

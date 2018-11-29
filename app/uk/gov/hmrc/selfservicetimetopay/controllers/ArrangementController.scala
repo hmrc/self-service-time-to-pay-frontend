@@ -171,6 +171,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
       case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
         checkSubmissionForCalculatorPage(taxpayer, ttp)
+        //todo merge the bottom 3
       case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(IsNotOnIa) =>
         notOnIa
       case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(TotalDebtIsTooHigh) =>
@@ -233,7 +234,6 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
         }
   }
 
-  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]): Boolean = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 
   private def applicationSuccessful = successful(Redirect(routes.ArrangementController.applicationComplete()))
 
