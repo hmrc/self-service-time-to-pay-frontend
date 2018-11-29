@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.testonly.{routes => testonlyroutes}
 @import uk.gov.hmrc.selfservicetimetopay.testonly._
 @import play.api.libs.json.Json
+@import uk.gov.hmrc.play.views.html.helpers
 
 @(dataForm: Form[TestUserForm])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
@@ -32,9 +33,10 @@
         <p>This is `test-only` endpoint for testing purposes.</p>
     </header>
 
-    @form(testonlyroutes.TestUsersController.logIn(), 'class -> "group") {
-        @formErrorSummary("Fix errors", dataForm, Seq.empty)
-
+    @helpers.form(testonlyroutes.TestUsersController.logIn(), 'class -> "group") {
+        @if(dataForm.hasErrors) {
+            @helpers.errorSummary("Fix errors", dataForm)
+        }
         @button('type -> "submit") {
             create user and log in
         }
@@ -63,32 +65,30 @@
             <p>
                 <h2>Affinity Group</h2>
                 <span class="flush--ends form-field--hint"></span>
-                @radiobuttonsinline(dataForm("affinity-group"), Seq(
+            @helpers.inputRadioGroup(dataForm("affinity-group"), Seq(
                     "Individual" -> "Individual",
                     "Organisation" -> "Organisation",
                     "Agent" -> "Agent"
-                ),false,
+                ),
                     '_label -> Html("label"),
                     '_modifierClass -> "multiple-choice inline",
                     '_groupClass -> "form-field",
                     '_labelClass -> "block-label block-label--inline"
-                ) {
-                }
+                )
 
             </p>
             <p>
         <h2>Put in ia</h2>
             <span class="flush--ends form-field--hint"></span>
-            @radiobuttonsinline(dataForm("isOnIA"), Seq(
+            @helpers.inputRadioGroup(dataForm("isOnIA"), Seq(
                 "true" -> "Yes",
                 "false" -> "No"
-            ),true,
+            ),
                 '_label -> Html("label"),
                 '_modifierClass -> "multiple-choice inline",
                 '_groupClass -> "form-field",
                 '_labelClass -> "block-label block-label--inline"
-            ) {
-            }
+            )
 
             </p>
 
@@ -96,16 +96,15 @@
                 <h2>Does the user have SA enrolment</h2>
                 <span class="flush--ends form-field--hint">If <em>No</em> then below setup will be ignored</span>
 
-                @radiobuttonsinline(dataForm("has-sa-enrolment"), Seq(
+            @helpers.inputRadioGroup(dataForm("has-sa-enrolment"), Seq(
                     "true" -> "Yes",
                     "false" -> "No"
-                ),true,
+                ),
                     '_label -> Html("label"),
                     '_modifierClass -> "multiple-choice inline",
                     '_groupClass -> "form-field",
                     '_labelClass -> "block-label block-label--inline"
-                ) {
-                }
+                )
             </p>
 
             <p>

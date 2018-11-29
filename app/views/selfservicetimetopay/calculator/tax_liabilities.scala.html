@@ -14,7 +14,8 @@
  * limitations under the License.
  *@
 
-@import selfservicetimetopay.helpers.forms.{form, submit}
+@import selfservicetimetopay.helpers.forms.submit
+@import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.partials._
 @import java.time.format.DateTimeFormatter
 @import java.util.Locale
@@ -42,7 +43,7 @@
             @tax_liabilities_summary(debits)
         </details>
         <p>
-        @form(routes.CalculatorController.getPayTodayQuestion()) {
+        @helpers.form(routes.CalculatorController.getPayTodayQuestion()) {
             @submit() {
                 @Messages("ssttp.calculator.self-assessment-account-summary-page.button-continue")
             }

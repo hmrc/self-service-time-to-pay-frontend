@@ -17,18 +17,17 @@
 @(theForm: Form[_], args:(Symbol, String)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import selfservicetimetopay.helpers.forms.errorList
 @{
-  val argsMap = args.toMap
-  val theField = argsMap.getOrElse('_field, "")
-  var errors:Seq[(String, String)] = Seq.empty
-  var id = if(theField.isEmpty) argsMap.getOrElse('_id, theForm.toString) else theField
-  if (theField.isEmpty && theForm.hasGlobalErrors) {
-    errors = errors ++ theForm.globalErrors.map { e:FormError => (id, e.message)}
-  }
-  else if (theForm.error(theField).nonEmpty) {
-    errors = errors ++ theForm.errors(theField).map { e:FormError => (e.key, e.message)}
-  }
-  if (errors.nonEmpty) {
-    errorList(errors.map { case (k,m) => (k, Messages(m) )}, '_formId -> id)
-  }
+    val argsMap = args.toMap
+    val theField = argsMap.getOrElse('_field, "")
+    var errors:Seq[(String, String)] = Seq.empty
+    var id = if(theField.isEmpty) argsMap.getOrElse('_id, theForm.toString) else theField
+    if (theField.isEmpty && theForm.hasGlobalErrors) {
+        errors = errors ++ theForm.globalErrors.map { e:FormError => (id, e.message)}
+    }
+    else if (theForm.error(theField).nonEmpty) {
+        errors = errors ++ theForm.errors(theField).map { e:FormError => (e.key, e.message)}
+    }
+    if (errors.nonEmpty) {
+        errorList(errors.map { case (k,m) => (k, Messages(m) )}, '_formId -> id)
+    }
 }
-
