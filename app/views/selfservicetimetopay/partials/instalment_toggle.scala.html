@@ -14,17 +14,18 @@
  * limitations under the License.
  *@
 
-@import selfservicetimetopay.helpers.forms.{formErrorSummary, numberinput, button}
+@import selfservicetimetopay.helpers.forms.button
 @import selfservicetimetopay.partials.instalment_summary_toggle
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
-@import selfservicetimetopay.helpers.forms.{form, submit}
+@import selfservicetimetopay.helpers.forms.submit
+@import uk.gov.hmrc.play.views.html.helpers
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
 @(paymentSchedule: CalculatorPaymentSchedule, durationForm: Form[CalculatorDuration], monthOptions: Seq[Int])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 
 <div class="number-toggle">
-    @form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "number-toggle-left") {
+    @helpers.form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "number-toggle-left") {
         <input type="hidden" name="@durationForm("months").name" value="@{
             paymentSchedule.instalments.length - 1
         }" />
@@ -48,7 +49,7 @@
         }
     }
 
-    @form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "number-toggle-input", 'id -> "calculatorDurationForm") {
+    @helpers.form(routes.CalculatorController.submitCalculateInstalments(), 'class -> "number-toggle-input", 'id -> "calculatorDurationForm") {
         <div class ="numbersonly">
             <input id="@durationForm("months").name" class="form-control" name="@durationForm("months").name" value="@{
                 paymentSchedule.instalments.length
@@ -56,7 +57,7 @@
         </div>
     }
 
-    @form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "number-toggle-right") {
+    @helpers.form(routes.CalculatorController.submitCalculateInstalmentsRecalculate(), 'class -> "number-toggle-right") {
         <input type="hidden" name="@durationForm("months").name" value="@{paymentSchedule.instalments.length + 1}" />
         @defining({
                 <span class="hidden">@Messages("ssttp.calculator.results.monthly-payments.increase")</span>

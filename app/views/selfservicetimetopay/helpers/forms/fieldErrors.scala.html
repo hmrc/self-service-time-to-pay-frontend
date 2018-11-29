@@ -17,4 +17,3 @@
 @(field:Field, args:(Symbol, String)*)(implicit messages: play.api.i18n.Messages)
 @import selfservicetimetopay.helpers.forms.errorList
 @errorList(field.errors.map { m => (m.key,  Messages(m.message)) }, '_fieldId -> field.id)
-

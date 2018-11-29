@@ -21,7 +21,8 @@
 
 @import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields, gaDoCheckout}
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
-@import selfservicetimetopay.helpers.forms.{form, formErrorSummary, submit,radiobuttonsinline}
+@import uk.gov.hmrc.play.views.html.helpers
+@import selfservicetimetopay.helpers.forms.submit
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
 @gaCheckoutCode = {
@@ -46,13 +47,15 @@
     }
 ) {
     <a class="link-back" href="@routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.direct-debit.form.back")</a>
-    @if(isBankError) {
-        @formErrorSummary(Messages("ssttp.direct-debit.form.bank-not-found-heading"), ddForm, Seq.empty)
-    } else {
-        @formErrorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm, Seq.empty)
+    @if(ddForm.hasErrors) {
+        @if(isBankError) {
+            @helpers.errorSummary(Messages("ssttp.direct-debit.form.bank-not-found-heading"), ddForm)
+        } else {
+            @helpers.errorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm)
+        }
     }
         <h1 class="heading-large">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
-    @form(routes.DirectDebitController.submitDirectDebit()) {
+       @helpers.form(routes.DirectDebitController.submitDirectDebit()) {
 
         <fieldset class="form-field-group">
             <legend><span class="visually-hidden">Enter your banking details</span></legend>
