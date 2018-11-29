@@ -51,7 +51,6 @@ package object modelsFormat {
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
   //Front end formatters
   implicit val eligibilityTypeOfTaxFormatter: Format[EligibilityTypeOfTax] = Json.format[EligibilityTypeOfTax]
-  implicit val eligibilityExistingTTPFormatter: Format[EligibilityExistingTTP] = Json.format[EligibilityExistingTTP]
 
   //Tax payer formatters
   implicit val addressFormatter: Format[Address] = Json.format[Address]
