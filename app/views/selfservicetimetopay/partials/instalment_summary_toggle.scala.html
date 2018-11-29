@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @(paymentSchedule:CalculatorPaymentSchedule,durationForm: Form[CalculatorDuration],monthSeq:Seq[Int])(implicit messages: play.api.i18n.Messages,request: Request[_])
 <div class="summary_payment margin-top-40">
-    <dl class="app-check-your-answers app-check-your-answers--long">
+    <div class="app-check-your-answers app-check-your-answers--long">
             <div class="app-check-your-answers__contents">
               <dt class="app-check-your-answers__question">
                 @Messages("ssttp.calculator.results.month.instalments")
@@ -38,3 +38,23 @@
                 @currency(paymentSchedule.getMonthlyInstalment)
               </dd>
             </div>
+        <div class="app-check-your-answers__contents">
+            <dt class="app-check-your-answers__question">
+            @Messages("ssttp.calculator.results.month.option.table.total.interest")
+            <br><p>@Messages("ssttp.calculator.results.month.option.table.total.interest.hint")</p>
+            </dt>
+            <dd class="app-check-your-answers__answer">
+            @currency(paymentSchedule.totalInterestCharged)
+            </dd>
+        </div>
+        <div class="app-check-your-answers__contents">
+            <dt class="app-check-your-answers__question">
+                @Messages("ssttp.calculator.results.month.option.table.total.repayment")
+            <br><p>@Messages("ssttp.calculator.results.month.option.table.total.repayment.hint")</p>
+            </dt>
+            <dd class="app-check-your-answers__answer">
+            @currency(paymentSchedule.totalPayable - paymentSchedule.initialPayment)
+            </dd>
+        </div>
+    </div>
+</div>
