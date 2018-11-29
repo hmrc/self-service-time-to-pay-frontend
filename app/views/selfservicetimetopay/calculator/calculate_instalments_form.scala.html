@@ -14,13 +14,12 @@
  * limitations under the License.
  *@
 
-@import selfservicetimetopay.helpers.forms.formErrorSummary
 @import selfservicetimetopay.partials.instalment_summary_toggle
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, CalculatorDuration}
 @(durationForm: Form[CalculatorDuration], currentChosenMonth: Int = 2, monthsToSchedule: Map[Int, CalculatorPaymentSchedule], loggedIn: Boolean, monthSeq: Seq[Int])(implicit messages: play.api.i18n.Messages, request: Request[_])
-
-@import selfservicetimetopay.helpers.forms.{form, submit}
+@import uk.gov.hmrc.play.views.html.helpers
+@import selfservicetimetopay.helpers.forms.submit
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.results.title"),
     loggedIn = loggedIn
@@ -28,11 +27,11 @@
     <a class="link-back" href="@routes.CalculatorController.getPaymentSummary()">@Messages("ssttp.calculator.form.back")</a>
 
     <h1 class="heading-large margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
-
-    @formErrorSummary(Messages("ssttp.calculator.results.error.title"), durationForm, Seq.empty)
+    @if(durationForm.hasErrors){
+        @helpers.errorSummary(Messages("ssttp.calculator.results.error.title"),durationForm)
+    }
 
     @instalment_summary_toggle(monthsToSchedule(currentChosenMonth), durationForm, monthSeq)
-
 
     <details class="margin-top-40 margin-bottom-30">
         <summary><span class="summary">@Messages("ssttp.calculator.results.section.title")</span></summary>

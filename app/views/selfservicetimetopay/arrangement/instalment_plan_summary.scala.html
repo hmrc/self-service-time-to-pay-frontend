@@ -22,9 +22,10 @@ Time To Pay Instalment Summary Pretty Print Page
 @(debits:Seq[Debit],initialPayment:BigDecimal, schedule: CalculatorPaymentSchedule, dayForm: Form[ArrangementDayOfMonth], signedIn: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.partials.{payment_schedule, gaDoCheckout}
 @import selfservicetimetopay.helpers.{alert, message_list}
-@import selfservicetimetopay.helpers.forms.{form, inlinetextinput, submit}
+@import selfservicetimetopay.helpers.forms.submit
+@import uk.gov.hmrc.play.views.html.helpers
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import selfservicetimetopay.partials.{instalments_plan_summary_table}
+@import selfservicetimetopay.partials.instalments_plan_summary_table
 @gaCheckoutCode = {
     @gaDoCheckout(debits = debits,
         step = 1,
@@ -65,14 +66,11 @@ Time To Pay Instalment Summary Pretty Print Page
 
         @instalments_plan_summary_table(schedule)
 
-
-
-
-            <details @if(dayForm.hasErrors) { open} class="margin-top-30 margin-bottom-30">
+             <details @if(dayForm.hasErrors) {open} class="margin-top-30 margin-bottom-30">
                 <summary><span class="summary">@Messages("ssttp.arrangement.instalment-summary.payment-day.change")</span></summary>
                 <div class="panel-indent">
-                    @form(routes.ArrangementController.changeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm") {
-                        @inlinetextinput(dayForm("dayOfMonth"),
+                    @helpers.form(routes.ArrangementController.changeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm") {
+                        @helpers.input(dayForm("dayOfMonth"),
                             'label -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on"),
                             '_labelClass -> "label--inline", '_inputClass -> "input--xsmall",
                             'labelSuffix -> Messages("ssttp.arrangement.instalment-summary.payment-day.change.of-the-month"))
@@ -93,7 +91,7 @@ Time To Pay Instalment Summary Pretty Print Page
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.interest-change")</div>
                 <div class="subsection">@Messages("ssttp.arrangement.instalment-summary.terms.future-debts")</div>
             </div>
-            @form(routes.ArrangementController.submitInstalmentSummary()) {
+            @helpers.form(routes.ArrangementController.submitInstalmentSummary()) {
                 @submit() {
                     @Messages("ssttp.arrangement.instalment-summary.submit")
                 }

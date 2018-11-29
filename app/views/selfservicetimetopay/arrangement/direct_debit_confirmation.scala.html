@@ -15,7 +15,8 @@
  *@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, ArrangementDirectDebit, Debit}
-@import selfservicetimetopay.helpers.forms.{form, submit}
+@import selfservicetimetopay.helpers.forms.submit
+@import uk.gov.hmrc.play.views.html.helpers
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.partials.{direct_debit_details, payment_schedule, gaDoCheckout, currency}
 @import uk.gov.hmrc.play.config.AssetsConfig
@@ -61,7 +62,7 @@
                 </ul>
             </div>
         </details>
-        @form(routes.ArrangementController.submit(), 'class -> "group") {
+        @helpers.form(routes.ArrangementController.submit(), 'class -> "group") {
             @submit() {
                 @Messages("ssttp.arrangement.direct-debit.confirmation.confirm-payment")
             }

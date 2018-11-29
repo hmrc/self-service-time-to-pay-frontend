@@ -15,7 +15,8 @@
  *@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@import selfservicetimetopay.helpers.forms.{form, submit}
+@import selfservicetimetopay.helpers.forms.submit
+@import uk.gov.hmrc.play.views.html.helpers
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
 @(debits:Seq[Debit],initialPayment:BigDecimal)(implicit messages: play.api.i18n.Messages, request: Request[_])
