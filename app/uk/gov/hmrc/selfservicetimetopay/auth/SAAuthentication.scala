@@ -37,6 +37,6 @@ class SaRegime(val authenticationProvider: AuthenticationProvider) extends TaxRe
 
   override def unauthorisedLandingPage = {
     Logger.warn("No SA enrolment for current user")
-    Some(routes.SelfServiceTimeToPayController.getUnavailable().url)
+    Some(routes.SelfServiceTimeToPayController.getNotSaEnrolled().url)
   }
 }

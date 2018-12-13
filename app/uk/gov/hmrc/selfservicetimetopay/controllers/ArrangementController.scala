@@ -265,7 +265,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
         }
       case _ =>
         Logger.error("Taxpayer or related data not present")
-        Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable()))
+        Future.successful(Redirect(routes.SelfServiceTimeToPayController.getNotSaEnrolled()))
     }
   }
 
