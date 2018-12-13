@@ -28,24 +28,6 @@
         <h1>@Messages("ssttp.you-need-to-file.title")</h1>
     </header>
         <p>@Messages("ssttp.you-need-to-file.intro")</p>
-    <p class="subsection">@Messages("ssttp.you-need-to-file.because")</p>
-    @message_list(Some("bullets"), "ssttp.you-need-to-file.because.list.")
-    <p class="subsection"><a href="https://online.hmrc.gov.uk/">
-    @Messages("ssttp.you-need-to-file.check-account.link")</a> @Messages("ssttp.you-need-to-file.check-account")
-    </p>
-    <p>@Messages("ssttp.you-need-to-file.self-assessment-number")</p>
-    <p>@Messages("ssttp.you-need-to-file.self-assessment-number-recently")</p>
-    <p>@Messages("ssttp.you-need-to-file.self-assessment-number-text-phone")</p>
-    <p>@Messages("ssttp.you-need-to-file.opening-times")</p>
-    <ul class="bullets">
-      <li>@Messages("ssttp.you-need-to-file.monday-friday")</li>
-      <li>@Messages("ssttp.you-need-to-file.saturday")</li>
-      <li>@Messages("ssttp.you-need-to-file.sunday")</li>
-    </ul>
-   <section>
-        <details>
-            <summary class="summary">@Messages("ssttp.you-need-to-file.debits-title")</summary>
-            @tax_liabilities_summary(debits)
-        </details>
-   </section>
+    <p class="subsection"><a href="https://online.hmrc.gov.uk/">@Messages("ssttp.you-need-to-file.check-account.link")</a> @Messages("ssttp.you-need-to-file.check-account")
+
             }
