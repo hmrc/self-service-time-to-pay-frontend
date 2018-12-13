@@ -141,8 +141,9 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _)) =>
             if (getMaxMonthsAllowed(sa, LocalDate.now()) >= minimunMonthsAllowedTTP) {
               calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
+                val (lessTheSix, greaterThenSeven) = splitMonthsToSchedule(monthsToSchedule)
                 Ok(calculate_instalments_form(CalculatorForm.createInstalmentForm(getMonthRange(sa).map(_.toString)),
-                  ttpData.lengthOfArrangement, monthsToSchedule, true, getMonthRange(sa)))
+                  ttpData.lengthOfArrangement, lessTheSix, greaterThenSeven, true, getMonthRange(sa)))
               }
             }
             else {
@@ -156,34 +157,34 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         }
   }
 
-  def submitCalculateInstalmentsRecalculate(): Action[AnyContent] = authorisedSaUser {
-    implicit authContext =>
-      implicit request =>
-        redirectCalPage(routes.CalculatorController.getCalculateInstalments())
-  }
-
   def submitCalculateInstalments(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
         redirectCalPage(routes.ArrangementController.getInstalmentSummary())
   }
 
-  private def redirectCalPage(call: Call)(implicit request: Request[_], hc: HeaderCarrier):Future[Result] =
+  private def redirectCalPage(call: Call)(implicit request: Request[_], hc: HeaderCarrier): Future[Result] =
     sessionCache.get.flatMap {
       case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _)) =>
-        calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap {monthsToSchedule =>
+        calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule =>
+          val (lessTheSix, greaterThenSeven) = splitMonthsToSchedule(monthsToSchedule)
           CalculatorForm.createInstalmentForm(getMonthRange(sa).map(_.toString)).bindFromRequest().fold(
             formWithErrors => {
-                Future.successful(
-                  BadRequest(calculate_instalments_form(formWithErrors, ttpData.lengthOfArrangement, monthsToSchedule, true, getMonthRange(sa))))
+              Future.successful(
+                BadRequest(calculate_instalments_form(formWithErrors, ttpData.lengthOfArrangement, lessTheSix, greaterThenSeven, true, getMonthRange(sa))))
             },
             validFormData => {
-                sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.months.getOrElse(2))))).map { _ =>
-                  Redirect(call)
-                }
+              sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.months.getOrElse(2))))).map { _ =>
+                Redirect(call)
               }
-          )
             }
+          )
+        }
       case _ => Future.successful(redirectOnError)
     }
+
+  private def splitMonthsToSchedule(monthsToSchedule: Map[Int, CalculatorPaymentSchedule]) = {
+    val monthSplit: Map[Boolean, Map[Int, CalculatorPaymentSchedule]] = monthsToSchedule.groupBy(month => month._1 < 7)
+    (monthSplit(true), monthSplit(false))
+  }
 }

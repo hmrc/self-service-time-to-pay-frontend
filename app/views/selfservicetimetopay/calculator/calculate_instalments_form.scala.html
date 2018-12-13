@@ -14,10 +14,13 @@
  * limitations under the License.
  *@
 
-@import selfservicetimetopay.partials.instalment_summary_toggle
+@import selfservicetimetopay.partials._
+@import uk.gov.hmrc.play.views.html.helpers
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, CalculatorDuration}
-@(durationForm: Form[CalculatorDuration], currentChosenMonth: Int = 2, monthsToSchedule: Map[Int, CalculatorPaymentSchedule], loggedIn: Boolean, monthSeq: Seq[Int])(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(durationForm: Form[CalculatorDuration], currentChosenMonth: Int = 2,
+        monthsToScheduleToSix: Map[Int, CalculatorPaymentSchedule],
+        monthsToScheduleSevenToMax: Map[Int, CalculatorPaymentSchedule], loggedIn: Boolean, monthSeq: Seq[Int])(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.helpers.forms.submit
 @selfservicetimetopay.main(
@@ -31,17 +34,25 @@
         @helpers.errorSummary(Messages("ssttp.calculator.results.error.title"),durationForm)
     }
 
-    @instalment_summary_toggle(monthsToSchedule(currentChosenMonth), durationForm, monthSeq)
+    @helpers.form(routes.CalculatorController.submitCalculateInstalments(), 'id -> "paymentTodayForm", 'class -> "group") {
+        @monthsToScheduleToSix.map { a =>
+            @instalment_by_month(a._1, monthsToScheduleToSix(a._1))
 
-    <details class="margin-top-40 margin-bottom-30">
-        <summary><span class="summary">@Messages("ssttp.calculator.results.section.title")</span></summary>
-        <div class="panel panel-border-narrow">
-            <p>@Messages("ssttp.calculator.results.section.p1")</p>
-            <p>@Messages("ssttp.calculator.results.section.p2")</p>
-            <p>@Messages("ssttp.calculator.results.section.p3")</p>
-        </div>
-    </details>
+        }
+        @monthsToScheduleSevenToMax.map { a =>
+            @instalment_by_month(a._1, monthsToScheduleToSix(a._1))
 
-    <button form="calculatorDurationForm" class="button" type="submit">@Messages("ssttp.calculator.form.continue")</button>
-
+        }
+        <details class="margin-top-40 margin-bottom-30">
+            <summary><span class="summary">@Messages("ssttp.calculator.results.section.title")</span></summary>
+            <div class="panel panel-border-narrow">
+                <p>@Messages("ssttp.calculator.results.section.p1")</p>
+                <p>@Messages("ssttp.calculator.results.section.p2")</p>
+                <p>@Messages("ssttp.calculator.results.section.p3")</p>
+            </div>
+        </details>
+            @submit() {
+                @Messages("ssttp.calculator.form.continue")
+            }
+    }
 }
