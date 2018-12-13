@@ -90,7 +90,7 @@ trait TimeToPayController extends FrontendController with Actions {
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200,
     Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
 
-  def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = PlayAction.async { implicit request =>
+  def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = Action.async { implicit request =>
     Try {provideSaRegime()} match {
       case Success(taxRegime) => AuthorisedFor(taxRegime, timeToPayConfidenceLevel).async(body)(request)
       case Failure(e)         => {
