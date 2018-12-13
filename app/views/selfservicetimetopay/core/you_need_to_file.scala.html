@@ -16,18 +16,17 @@
 
 @import selfservicetimetopay.helpers.{highlight, message_list}
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@import selfservicetimetopay.partials.tax_liabilities_summary
-@(debits: Seq[Debit],signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+
+@(signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @selfservicetimetopay.main(
     title = Messages("ssttp.you-need-to-file.title"),
     loggedIn = signedIn
 ) {
-   <a class="link-back" href="#" onClick="history.go(-1);return true;">@Messages("ssttp.you-need-to-file.form.back")</a>
+   <a class="link-back" href="@routes.SelfServiceTimeToPayController.start().url">@Messages("ssttp.you-need-to-file.form.back")</a>
     <header class="page-header text">
         <h1>@Messages("ssttp.you-need-to-file.title")</h1>
     </header>
         <p>@Messages("ssttp.you-need-to-file.intro")</p>
     <p class="subsection"><a href="https://online.hmrc.gov.uk/">@Messages("ssttp.you-need-to-file.check-account.link")</a> @Messages("ssttp.you-need-to-file.check-account")
-
-            }
+}
