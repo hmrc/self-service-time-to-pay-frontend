@@ -126,9 +126,7 @@ ssttp.calculator.form.back=Back
 
 ssttp.calculator.results.title=How many months do you want to pay over?
 ssttp.calculator.results.month.instalments=Instalments
-ssttp.calculator.results.month.payments=Monthly payments
-ssttp.calculator.results.month.option.1=months at 
-ssttp.calculator.results.month.option.2=per month
+ssttp.calculator.results.month.option.1=months at
 ssttp.calculator.results.month.option.table.total.interest=Total interest:
 ssttp.calculator.results.month.option.table.total.interest.base.rate=Base rate + 2.5%
 ssttp.calculator.results.month.option.table.total.interest.hint=added to the final payment
@@ -138,11 +136,8 @@ ssttp.calculator.results.section.p1=We only charge interest on overdue amounts.
 ssttp.calculator.results.section.p2=We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
 ssttp.calculator.results.section.p3=If the interest rate changes during your plan, your monthly payments will not be change. If we need to, we''ll settle the difference at the end of the plan.
 ssttp.calculator.results.error.title=Please select a payment plan
-ssttp.calculator.results.monthly-payments.minus=-
-ssttp.calculator.results.monthly-payments.plus=+
-
-ssttp.calculator.results.month.required=Please enter in a number for the month
-ssttp.calculator.results.month.out-of-range=Please enter in a valid value
+ssttp.calculator.results.month.greater-then-six.header=Need a longer payment plan?
+ssttp.calculator.results.month.greater-then-six.intro=The interest rate and overall repayment will be higher when you choose a longer payment plan.
 
 ssttp.call-us.title=Please call us
 ssttp.call-us.intro=We’d like to help you clear your tax debt in instalments but we need some more detailed information from you first.
@@ -179,36 +174,45 @@ ssttp.you-need-to-file.self-assessment-number-recently=If you have recently been
 ssttp.you-need-to-file.self-assessment-number-text-phone=Textphone: 0300 200 3519
 ssttp.you-need-to-file.debits-title=View a breakdown of what you owe
 
-ssttp.arrangement.instalment-summary.title=Your payment schedule
+ssttp.arrangement.change_day.day=back
+ssttp.arrangement.change_day.title=Choose the day you want your monthly payments collected
+ssttp.arrangement.change_day.payment-day.required=Please enter a value
+ssttp.arrangement.change_day.payment-day.out-of-range=Please enter in a valid value
+ssttp.arrangement.change_day.payment-day.submit=Submit
+ssttp.arrangement.change_day.payment-day.change.take-payment-on=Change Day
+
+ssttp.arrangement.instalment-summary.title=Check your payment schedule details
 ssttp.arrangement.instalment-summary.up-front-payment=Upfront payment
 ssttp.arrangement.instalment-summary.up-front-payment.hint=Taken in 3 to 5 days' time
 ssttp.arrangement.instalment-summary.up-front-payment.change=Change
-ssttp.arrangement.instalment-summary-table.title=Your instalment plan
+ssttp.arrangement.instalment-summary-table.title=Your payment plan
 ssttp.arrangement.instalment-summary-table.monthly-instalments=Monthly instalments
 ssttp.arrangement.instalment-summary-table.total-interest-hint=Collected over {0} months
 ssttp.arrangement.instalment-summary-table.monthly-instalments-change=Change
 ssttp.arrangement.instalment-summary-table.total-interest=Total interest
 ssttp.arrangement.instalment-summary-table.hint=Added to final payment
+ssttp.arrangement.instalment-summary.payment-date.title=Monthly instalment collection date
+ssttp.arrangement.instalment-summary.payment-date.ending=or next working day
+ssttp.arrangement.instalment-summary.payment-date.change=Change
+
 ssttp.arrangement.instalment-summary-table.total-repayment=Total repayment
-ssttp.arrangement.instalment-summary.payment-day.taken-on=Your payments will be taken on the
-ssttp.arrangement.instalment-summary.payment-day.day-of-month={0} of the month
-ssttp.arrangement.instalment-summary.payment-day.next-working-day=or the next working day.
-ssttp.arrangement.instalment-summary.payment-day.change=Change payment day
-ssttp.arrangement.instalment-summary.payment-day.change.take-payment-on=Take payment on day
-ssttp.arrangement.instalment-summary.payment-day.change.of-the-month=of the month
-ssttp.arrangement.instalment-summary.payment-day.submit=Update
 ssttp.arrangement.instalment-summary-table.total-repayment-hint=Including interest
-ssttp.arrangement.instalment-summary.terms.cancelled-if=We can cancel this agreement if you:
-ssttp.arrangement.instalment-summary.terms.cancelled-if.1=pay late or miss a payment
-ssttp.arrangement.instalment-summary.terms.cancelled-if.2=do not tell us about a change that means you cannot pay
-ssttp.arrangement.instalment-summary.terms.cancelled-if.3=do not tell us if you can pay more or pay in full
-ssttp.arrangement.instalment-summary.terms.cancelled-if.4=pay another tax bill late
-ssttp.arrangement.instalment-summary.terms.cancelled-if.5=do not submit your future tax returns on time
-ssttp.arrangement.instalment-summary.terms.made-payable-immediately=If we cancel this agreement you’ll have to pay the whole amount due straight away.
-ssttp.arrangement.instalment-summary.terms.refunds=We can use any refunds you might get to pay off this debt.
-ssttp.arrangement.instalment-summary.terms.interest-change=If the interest rate changes during your instalment plan we’ll settle the amount of interest you owe in your final payment.
-ssttp.arrangement.instalment-summary.terms.future-debts=This is not a payment plan for new tax bills, it only covers the amounts you need to pay now. 
 ssttp.arrangement.instalment-summary.submit=Continue
+
+ssttp.arrangement.declaration.back=Back
+ssttp.arrangement.declaration.h1=Terms and conditions
+ssttp.arrangement.declaration.cancel-if=We can cancel this agreement if you:
+ssttp.arrangement.declaration.cancel-if.1=pay late or miss a payment
+ssttp.arrangement.declaration.cancel-if.2=pay another tax bill late
+ssttp.arrangement.declaration.cancel-if.3=do not submit your future tax returns on time
+ssttp.arrangement.declaration.warning.p1=If we cancel this agreement, you will need to pay the total amount you owe straight away.
+ssttp.arrangement.declaration.warning.p2=We can use any refunds you might get to pay off this debt.
+ssttp.arrangement.declaration.warning.p3=If your circumstances change and you can pay more or you can pay in full, you need to let us know.
+ssttp.arrangement.declaration.agreement.h1=Declaration
+ssttp.arrangement.declaration.agreement.p1=I agree to the terms and conditions of this payment plan. I confirm that this is the earliest I am able to settle this debt.
+ssttp.arrangement.declaration.agreement.confirm=Confirm and continue
+
+
 
 ssttp.direct-debit-assistance.initial-payment-of=An initial payment of:
 ssttp.direct-debit-assistance.initial-payment.hint=taken up to {0} days from today
@@ -261,7 +265,7 @@ ssttp.arrangement.direct-debit.form.error.summary.title=Something you’ve enter
 ssttp.arrangement.direct-debit.confirmation.title=Confirm your details
 ssttp.arrangement.direct-debit.confirmation.your-bank=Your bank details
 ssttp.arrangement.direct-debit.confirmation.total-payment=Total payment will be:
-ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary=View Direct Debit Guarantee
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary=You are covered by the Direct Debit Guarantee
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.title=Instruction to your Bank or Building Society to pay by Direct Debit
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.1=HM Revenue and Customs (HMRC)
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.2=Direct Debit Section

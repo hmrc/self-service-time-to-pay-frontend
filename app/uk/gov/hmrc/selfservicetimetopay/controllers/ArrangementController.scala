@@ -33,7 +33,7 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.createCalculatorInput
 import uk.gov.hmrc.selfservicetimetopay.service.{AuditService, CalculatorService}
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
-import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
+import views.html.selfservicetimetopay.arrangement.{application_complete, change_day, declaration, instalment_plan_summary}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -108,7 +108,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       implicit request =>
         authorizedForSsttp {
           case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
-            Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule, createDayOfForm(ttp))))
+            Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule)))
           case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
         }
   }
@@ -116,21 +116,30 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def submitInstalmentSummary: Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
-        authorizedForSsttp(_ => Future.successful(Redirect(routes.DirectDebitController.getDirectDebit())))
+        authorizedForSsttp(_ => Future.successful(Redirect(routes.ArrangementController.getDeclaration())))
   }
 
-  def changeSchedulePaymentDay(): Action[AnyContent] = authorisedSaUser {
+  def getChangeSchedulePaymentDay: Action[AnyContent] = authorisedSaUser {
+    implicit authContext =>
+      implicit request =>
+        authorizedForSsttp(ttp => Future.successful(Ok(change_day(createDayOfForm(ttp)))))
+  }
+
+  def getDeclaration: Action[AnyContent] = authorisedSaUser {
+    implicit authContext =>
+      implicit request =>
+        authorizedForSsttp(ttp => Future.successful(Ok(declaration())))
+  }
+
+  //todo change this
+  def submitChangeSchedulePaymentDay(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
           submission =>
             ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
               formWithErrors => {
-                Future.successful(BadRequest(instalment_plan_summary(
-                  submission.taxpayer.get.selfAssessment.get.debits,
-                  submission.schedule.get.initialPayment,
-                  submission.schedule.get,
-                  formWithErrors)))
+                Future.successful(BadRequest(change_day(formWithErrors)))
               },
               validFormData => {
                 submission match {
@@ -338,8 +347,8 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   }
 
   private def createDayOfForm(ttpSubmission: TTPSubmission) = {
-    ttpSubmission.calculatorData.firstPaymentDate.fold(ArrangementForm.dayOfMonthForm)(p => {
-      ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getDayOfMonth))
+    ttpSubmission.schedule.fold(ArrangementForm.dayOfMonthForm)(p => {
+      ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getMonthlyInstalmentDate))
     })
   }
 }

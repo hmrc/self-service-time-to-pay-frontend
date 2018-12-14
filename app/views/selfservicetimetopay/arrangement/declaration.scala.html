@@ -1,0 +1,41 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import selfservicetimetopay.helpers.{highlight, message_list}
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import selfservicetimetopay.partials.tax_liabilities_summary
+@(signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@selfservicetimetopay.main(
+    title = Messages("ssttp.overtenthosand.p1"),
+    loggedIn = signedIn
+) {
+   <a class="back-link" href="@routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.declaration.back")</a>
+
+    <h1>@Messages("ssttp.arrangement.declaration.h1")</h1>
+    <p>@Messages("ssttp.arrangement.declaration.cancel-if")</p>
+    <ul class="bullets">
+        <li>@Messages("ssttp.arrangement.declaration.cancel-if.1")</li>
+        <li>@Messages("ssttp.arrangement.declaration.cancel-if.2")</li>
+        <li>@Messages("ssttp.arrangement.declaration.cancel-if.3")</li>
+    </ul>
+    <p>@Messages("ssttp.arrangement.declaration.warning.p1")</p>
+    <p>@Messages("ssttp.arrangement.declaration.warning.p2")</p>
+    <p>@Messages("ssttp.arrangement.declaration.warning.p3")</p>
+    <h2>@Messages("ssttp.arrangement.declaration.agreement.h1")</h2>
+    <p>@Messages("ssttp.arrangement.declaration.agreement.p1")</p>
+    <a class="button" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.arrangement.declaration.agreement.confirm")</a>
+}

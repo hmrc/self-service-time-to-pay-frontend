@@ -88,31 +88,8 @@ class CalculatorFormSpec extends PlaySpec {
 
       val validatedForm = CalculatorForm.createInstalmentForm().bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("months", List("error.required"))))
+      assert(validatedForm.errors.contains(FormError("chosen_month", List("error.required"))))
     }
 
-    "return errors when nothing there is letters" in {
-      val postData = Json.obj("months" -> "January")
-
-      val validatedForm = CalculatorForm.createInstalmentForm().bind(postData)
-
-      assert(validatedForm.errors.contains(FormError("months", List("ssttp.calculator.results.month.required"))))
-    }
-
-    "return errors when the max month exceeds the range " in {
-      val postData = Json.obj("months" -> "12")
-
-      val validatedForm = CalculatorForm.createInstalmentForm().bind(postData)
-
-      assert(validatedForm.errors.contains(FormError("months", List("ssttp.calculator.results.month.out-of-range"))))
-    }
-
-    "return errors when the max month exceeds the range when we set it in " in {
-      val postData = Json.obj("months" -> "4")
-
-      val validatedForm = CalculatorForm.createInstalmentForm(Seq("2","3")).bind(postData)
-
-      assert(validatedForm.errors.contains(FormError("months", List("ssttp.calculator.results.month.out-of-range"))))
-    }
   }
 }
