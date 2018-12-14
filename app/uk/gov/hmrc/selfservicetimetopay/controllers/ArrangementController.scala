@@ -131,7 +131,6 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
         authorizedForSsttp(ttp => Future.successful(Ok(declaration())))
   }
 
-  //todo change this
   def submitChangeSchedulePaymentDay(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
@@ -143,7 +142,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               },
               validFormData => {
                 submission match {
-                  case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
+                  case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
                     changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
                       ttpSubmission =>
                         sessionCache.put(ttpSubmission).map {
