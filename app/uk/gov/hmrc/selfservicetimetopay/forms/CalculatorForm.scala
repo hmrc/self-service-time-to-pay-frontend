@@ -76,11 +76,10 @@ object CalculatorForm {
   }
 
   //todo add in values for max allowed months in here
-  def createInstalmentForm(monthRange: Seq[String] = Seq("2", "3", "4", "5", "6", "7", "8", "9", "10", "11")): Form[CalculatorDuration] = {
+  def createInstalmentForm(): Form[CalculatorDuration] = {
     Form(mapping(
-      "months" -> text
+      "chosen_month" -> text
         .verifying("ssttp.calculator.results.month.required", { i: String => Try(BigDecimal(i)).isSuccess })
-        .verifying("ssttp.calculator.results.month.out-of-range", { i: String => monthRange.contains(i) })
   )(text => CalculatorDuration(Some(text.toInt)))(_ => Some(text.toString)))
 }
 

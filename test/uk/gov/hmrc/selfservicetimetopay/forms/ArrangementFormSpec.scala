@@ -41,7 +41,7 @@ class ArrangementFormSpec extends PlaySpec {
 
       val validatedForm = ArrangementForm.dayOfMonthForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.instalment-summary.payment-day.out-of-range"))))
+      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.change_day.payment-day.out-of-range"))))
     }
 
     "return error with number greater than 28" in {
@@ -51,7 +51,7 @@ class ArrangementFormSpec extends PlaySpec {
 
       val validatedForm = ArrangementForm.dayOfMonthForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.instalment-summary.payment-day.out-of-range"))))
+      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.change_day.payment-day.out-of-range"))))
     }
 
     "return error with number with decimal place" in {
@@ -61,7 +61,7 @@ class ArrangementFormSpec extends PlaySpec {
 
       val validatedForm = ArrangementForm.dayOfMonthForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.instalment-summary.payment-day.out-of-range"))))
+      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.change_day.payment-day.out-of-range"))))
     }
 
     "return error with text instead of numbers" in {
@@ -71,7 +71,7 @@ class ArrangementFormSpec extends PlaySpec {
 
       val validatedForm = ArrangementForm.dayOfMonthForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.instalment-summary.payment-day.out-of-range"))))
+      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.change_day.payment-day.out-of-range"))))
     }
 
     "return error with special characters instead of numbers" in {
@@ -81,7 +81,7 @@ class ArrangementFormSpec extends PlaySpec {
 
       val validatedForm = ArrangementForm.dayOfMonthForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.instalment-summary.payment-day.out-of-range"))))
+      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.change_day.payment-day.out-of-range"))))
     }
 
     "return error with blank entry" in {
@@ -91,7 +91,7 @@ class ArrangementFormSpec extends PlaySpec {
 
       val validatedForm = ArrangementForm.dayOfMonthForm.bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.instalment-summary.payment-day.required"))))
+      assert(validatedForm.errors.contains(FormError("dayOfMonth", List("ssttp.arrangement.change_day.payment-day.required"))))
     }
   }
 }

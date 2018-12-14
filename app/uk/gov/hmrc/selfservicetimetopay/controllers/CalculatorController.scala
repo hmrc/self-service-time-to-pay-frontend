@@ -21,7 +21,6 @@ import java.time.LocalDate
 import javax.inject._
 import play.api.Logger
 import play.api.mvc._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -141,8 +140,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _)) =>
             if (getMaxMonthsAllowed(sa, LocalDate.now()) >= minimunMonthsAllowedTTP) {
               calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
-                Ok(calculate_instalments_form(CalculatorForm.createInstalmentForm(getMonthRange(sa).map(_.toString)),
-                  ttpData.lengthOfArrangement, monthsToSchedule, true, getMonthRange(sa)))
+                Ok(calculate_instalments_form(CalculatorForm.createInstalmentForm(),
+                  ttpData.lengthOfArrangement, monthsToSchedule, true))
               }
             }
             else {
@@ -156,34 +155,24 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         }
   }
 
-  def submitCalculateInstalmentsRecalculate(): Action[AnyContent] = authorisedSaUser {
-    implicit authContext =>
-      implicit request =>
-        redirectCalPage(routes.CalculatorController.getCalculateInstalments())
-  }
-
   def submitCalculateInstalments(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
-        redirectCalPage(routes.ArrangementController.getInstalmentSummary())
-  }
-
-  private def redirectCalPage(call: Call)(implicit request: Request[_], hc: HeaderCarrier):Future[Result] =
-    sessionCache.get.flatMap {
-      case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _)) =>
-        calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap {monthsToSchedule =>
-          CalculatorForm.createInstalmentForm(getMonthRange(sa).map(_.toString)).bindFromRequest().fold(
-            formWithErrors => {
-                Future.successful(
-                  BadRequest(calculate_instalments_form(formWithErrors, ttpData.lengthOfArrangement, monthsToSchedule, true, getMonthRange(sa))))
-            },
-            validFormData => {
-                sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.months.getOrElse(2))))).map { _ =>
-                  Redirect(call)
+        sessionCache.get.flatMap {
+          case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _)) =>
+            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule =>
+              CalculatorForm.createInstalmentForm().bindFromRequest().fold(
+                formWithErrors => {
+                  Future.successful(BadRequest(calculate_instalments_form(formWithErrors, ttpData.lengthOfArrangement, monthsToSchedule, true)))
+                },
+                validFormData => {
+                  sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.months.getOrElse(2))))).map { _ =>
+                    Redirect(routes.ArrangementController.getChangeSchedulePaymentDay())
+                  }
                 }
-              }
-          )
+              )
             }
-      case _ => Future.successful(redirectOnError)
-    }
+          case _ => Future.successful(redirectOnError)
+        }
+  }
 }

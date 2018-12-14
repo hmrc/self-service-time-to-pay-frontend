@@ -220,6 +220,39 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion().url
     }
+    "send user to the change payment day page in" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(None))
+
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission)))
+      val request = FakeRequest().withSession(
+          SessionKeys.userId -> "someUserId",
+          TTPSessionId.newTTPSession(),
+          "token" -> "1234"
+        )
+      val response = controller.getChangeSchedulePaymentDay().apply(request)
+
+      status(response) mustBe OK
+      contentAsString(response) must include(getMessages(request)("ssttp.arrangement.change_day.title"))
+    }
+
+    "send user to the Declartion page" in {
+      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(None))
+
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmission)))
+      val request = FakeRequest().withSession(
+        SessionKeys.userId -> "someUserId",
+        TTPSessionId.newTTPSession(),
+        "token" -> "1234"
+      )
+      val response = controller.getDeclaration().apply(request)
+
+      status(response) mustBe OK
+      contentAsString(response) must include(getMessages(request)("ssttp.arrangement.declaration.h1"))
+    }
 
 
     "successfully display the application complete page with required data in submission" in {

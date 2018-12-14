@@ -123,12 +123,6 @@ object CalculatorService {
     CalculatorInput(debits, initialPayment, startDate, lastPaymentDate, Some(firstPaymentDate))
   }
 
-  /*
-    * Rules:
-      * - First payment must be at least 5 working days from today's date
-    * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
-    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
-      */
   val minimunMonthsAllowedTTP = 2
   val maxAllowedMonthlyInstalments = 11
 

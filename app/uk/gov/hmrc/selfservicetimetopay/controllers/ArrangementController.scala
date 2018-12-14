@@ -33,7 +33,7 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.createCalculatorInput
 import uk.gov.hmrc.selfservicetimetopay.service.{AuditService, CalculatorService}
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
-import views.html.selfservicetimetopay.arrangement.{application_complete, instalment_plan_summary}
+import views.html.selfservicetimetopay.arrangement.{application_complete, change_day, declaration, instalment_plan_summary}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -108,7 +108,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       implicit request =>
         authorizedForSsttp {
           case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
-            Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule, createDayOfForm(ttp))))
+            Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule)))
           case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
         }
   }
@@ -116,25 +116,33 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def submitInstalmentSummary: Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
-        authorizedForSsttp(_ => Future.successful(Redirect(routes.DirectDebitController.getDirectDebit())))
+        authorizedForSsttp(_ => Future.successful(Redirect(routes.ArrangementController.getDeclaration())))
   }
 
-  def changeSchedulePaymentDay(): Action[AnyContent] = authorisedSaUser {
+  def getChangeSchedulePaymentDay: Action[AnyContent] = authorisedSaUser {
+    implicit authContext =>
+      implicit request =>
+        authorizedForSsttp(ttp => Future.successful(Ok(change_day(createDayOfForm(ttp)))))
+  }
+
+  def getDeclaration: Action[AnyContent] = authorisedSaUser {
+    implicit authContext =>
+      implicit request =>
+        authorizedForSsttp(ttp => Future.successful(Ok(declaration())))
+  }
+
+  def submitChangeSchedulePaymentDay(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
           submission =>
             ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
               formWithErrors => {
-                Future.successful(BadRequest(instalment_plan_summary(
-                  submission.taxpayer.get.selfAssessment.get.debits,
-                  submission.schedule.get.initialPayment,
-                  submission.schedule.get,
-                  formWithErrors)))
+                Future.successful(BadRequest(change_day(formWithErrors)))
               },
               validFormData => {
                 submission match {
-                  case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
+                  case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
                     changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
                       ttpSubmission =>
                         sessionCache.put(ttpSubmission).map {
@@ -222,13 +230,16 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def applicationComplete(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
+     //   ddInstruction.directDebitInstruction.head.ddiReferenceNo.getOrElse(throw new RuntimeException("ddReference not available"))
         authorizedForSsttp {
           submission =>
-            sessionCache.remove().map(_ => Ok(application_complete(
+            val ddref: String =  submission.bankDetails.get.ddiRefNumber.getOrElse(throw new RuntimeException("NO ddiRefNumber ref in session for " + submission))
+            Future.successful(Ok(application_complete(
               debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
               transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
               directDebit = submission.arrangementDirectDebit.get,
               schedule = submission.schedule.get,
+              ddref = ddref,
               isSignedIn))
             )
         }
@@ -259,7 +270,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
                 _.fold(error => {
                   Logger.error(s"Exception: ${error.code} + ${error.message}")
                   Redirect(routes.ArrangementController.applicationComplete()).successfulF
-                }, _ => applicationSuccessful)
+                }, ttp => applicationSuccessful)
               }
             })
         }
@@ -338,8 +349,8 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   }
 
   private def createDayOfForm(ttpSubmission: TTPSubmission) = {
-    ttpSubmission.calculatorData.firstPaymentDate.fold(ArrangementForm.dayOfMonthForm)(p => {
-      ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getDayOfMonth))
+    ttpSubmission.schedule.fold(ArrangementForm.dayOfMonthForm)(p => {
+      ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getMonthlyInstalmentDate))
     })
   }
 }

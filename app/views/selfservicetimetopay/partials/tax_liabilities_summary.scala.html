@@ -23,7 +23,9 @@
 @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
 
             @debits.map { debit =>
-
+                    @debit.taxYearEnd.map{ tye =>
+                        <p>@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-year-ending") @tye.format(formatter)</p>
+                    }
                 <div class="tabular-data__entry tabular-data__divider--full-width">
                     <span class="tabular-data__heading tabular-data__heading--label">
                         <h4 class="heading-small">@charge_code(debit.originCode.get, debit.taxYearEnd)</h4>
@@ -34,6 +36,5 @@
 
 
             }
-
 }
 </div>

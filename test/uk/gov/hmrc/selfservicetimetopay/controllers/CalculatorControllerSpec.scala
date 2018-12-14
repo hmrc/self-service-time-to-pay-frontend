@@ -114,7 +114,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
         .withSession(goodSession:_*)
-        .withFormUrlEncodedBody("months" -> "3"))
+        .withFormUrlEncodedBody("chosen_month" -> "3"))
 
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -126,7 +126,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
         .withSession(goodSession:_*)
-        .withFormUrlEncodedBody("months" -> "3"))
+        .withFormUrlEncodedBody("chosen_month" -> "3"))
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).get(any(), any(), any())
       verify(mockSessionCache, times(1)).put(any())(any(),any(),any())

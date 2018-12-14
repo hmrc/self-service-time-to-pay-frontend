@@ -15,7 +15,6 @@ GET         /calculator/payment-today                         @uk.gov.hmrc.selfs
 POST        /calculator/payment-today                         @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPaymentToday()
 GET         /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalments()
 POST        /calculator/instalments                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
-POST        /calculator/instalments/recalculate               @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsRecalculate()
 POST        /calculator/sign-in                               @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitSignIn()
 GET         /calculator/tax-liabilities                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getTaxLiabilities()
 
@@ -25,9 +24,11 @@ GET         /arrangement/determine-eligibility               @uk.gov.hmrc.selfse
 
 # Arrangement
 POST        /arrangement                                      @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.start()
+GET         /arrangement/declaration                          @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getDeclaration()
 GET         /arrangement/instalment-summary                   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getInstalmentSummary()
 POST        /arrangement/instalment-summary                   @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submitInstalmentSummary()
-POST        /arrangement/instalment-summary/change-day        @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.changeSchedulePaymentDay()
+GET         /arrangement/instalment-summary/change-day        @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.getChangeSchedulePaymentDay()
+POST        /arrangement/instalment-summary/change-day        @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submitChangeSchedulePaymentDay()
 GET         /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebit()
 POST        /arrangement/direct-debit                         @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.submitDirectDebit()
 GET         /arrangement/direct-debit-confirmation            @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitConfirmation()

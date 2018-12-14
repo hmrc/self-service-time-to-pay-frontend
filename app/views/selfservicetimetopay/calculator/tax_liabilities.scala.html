@@ -33,10 +33,6 @@
         <h1 class="heading-large">@Messages("ssttp.calculator.self-assessment-account-summary-page.title")</h1>
 
         <h2 class="heading-medium">@Messages("ssttp.calculator.self-assessment-account-summary-page.total-due") @currency(debits.map(_.amount).sum)</h2>
-        @debits.headOption.map{ debit =>
-            @debit.taxYearEnd.map{ tye =>
-            <p>@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-year-ending") @tye.format(formatter)</p>
-        }}
 
         <details>
             <summary><span class="summary">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-account-details")</span></summary>
