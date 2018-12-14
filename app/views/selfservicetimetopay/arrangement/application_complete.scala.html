@@ -19,7 +19,7 @@
 @import java.time.format.DateTimeFormatter
 @import java.time.LocalDate
 @import java.util.Locale
-@(debits: Seq[Debit], transactionId: String, directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(debits: Seq[Debit], transactionId: String, directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, ddref:String, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @gaCheckoutCode = {
 @gaDoTransaction(debits = debits,
@@ -41,7 +41,10 @@
     hasUserPanel = true
 ) {
     <div class="transaction-banner--complete removeBottom">
-        <div class="transaction-banner__heading" role="banner">@Messages("ssttp.arrangement.complete.title")</div>
+        <div class="transaction-banner__heading" role="banner">
+            <p>@Messages("ssttp.arrangement.complete.title")</p>
+            <p>@Messages("ssttp.arrangement.complete.ddref")</p>
+            <p>@ddref</p></div>
     </div>
     <section class="section divider--bottom">
         <a href="javascript:window.print()" class="js-visible no-print   js-visible trackedPrintLink openOnPrint">@Messages("ssttp.arrangement.complete.print-label")</a>

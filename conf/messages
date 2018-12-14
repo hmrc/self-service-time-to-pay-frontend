@@ -295,6 +295,7 @@ ssttp.beta.banner.no.thanks=No Thanks
 ssttp.beta.banner.p1=Get involved in making government services better (opens in a new window)
 
 ssttp.arrangement.complete.title=Application successful
+ssttp.arrangement.complete.ddref=Direct Debit mandate reference:
 ssttp.arrangement.complete.print-label=Print your payment summary
 ssttp.arrangement.complete.next=What happens next?
 ssttp.arrangement.complete.summary=We will send you a letter within 5 days to confirm your payment dates.

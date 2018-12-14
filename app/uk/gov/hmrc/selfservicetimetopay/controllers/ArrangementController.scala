@@ -230,13 +230,16 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def applicationComplete(): Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
       implicit request =>
+     //   ddInstruction.directDebitInstruction.head.ddiReferenceNo.getOrElse(throw new RuntimeException("ddReference not available"))
         authorizedForSsttp {
           submission =>
-            sessionCache.remove().map(_ => Ok(application_complete(
+            val ddref: String =  submission.bankDetails.get.ddiRefNumber.getOrElse(throw new RuntimeException("NO ddiRefNumber ref in session for " + submission))
+            Future.successful(Ok(application_complete(
               debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
               transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
               directDebit = submission.arrangementDirectDebit.get,
               schedule = submission.schedule.get,
+              ddref = ddref,
               isSignedIn))
             )
         }
@@ -267,7 +270,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
                 _.fold(error => {
                   Logger.error(s"Exception: ${error.code} + ${error.message}")
                   Redirect(routes.ArrangementController.applicationComplete()).successfulF
-                }, _ => applicationSuccessful)
+                }, ttp => applicationSuccessful)
               }
             })
         }
