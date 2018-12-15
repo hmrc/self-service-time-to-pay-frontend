@@ -14,15 +14,18 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @(loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @selfservicetimetopay.main(
     title = Messages("ssttp.unavailable.title"),
     loggedIn = loggedIn
 ) {
+    <a class="link-back" href="@routes.SelfServiceTimeToPayController.start().url">@Messages("ssttp.call-us.back")</a>
     <header class="page-header text">
         <h1>@Messages("ssttp.unavailable.title")</h1>
     </header>
     <p>@Messages("ssttp.unavailable.intro")</p>
-    <p>@Messages("ssttp.unavailable.instructions")</p>
-    <p><strong>@Messages("ssttp.unavailable.number")</strong></p>
+    <p><a href="https://www.gov.uk/log-in-file-self-assessment-tax-return/register-if-youre-self-employed">@Messages("ssttp.unavailable.tax-account-link")</a>
+        @Messages("ssttp.unavailable.tax-account")
+    </p>
 }

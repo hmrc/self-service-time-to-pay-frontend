@@ -88,7 +88,7 @@ trait TimeToPayController extends FrontendController with Actions {
   protected def redirectOnError: Result = Redirect(routes.SelfServiceTimeToPayController.start())
   protected lazy val redirectToStartPage = Results.Redirect(routes.SelfServiceTimeToPayController.start())
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200,
-    Future.successful(Redirect(routes.SelfServiceTimeToPayController.getUnavailable())))
+    Future.successful(Redirect(routes.SelfServiceTimeToPayController.getNotSaEnrolled())))
 
   def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = Action.async { implicit request =>
     Try {provideSaRegime()} match {

@@ -36,38 +36,28 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
     Redirect(routes.ArrangementController.determineEligibility())
   }
 
-  def actionCallUs: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, taxpayer,  _, _, _, _)) =>
-        Ok(call_us(typeOfTaxNumber = true, loggedIn = isSignedIn))
-      case _ => Ok(call_us(isSignedIn))
-    }
+  def actionCallUsInEligibily: Action[AnyContent] = Action { implicit request =>
+        Ok(call_us(loggedIn = isSignedIn))
   }
 
-  def getTtpCallUs: Action[AnyContent] = actionCallUs
-  def getTtpCallUsTypeOfTax: Action[AnyContent] = actionCallUs
-  def getTtpCallUsExistingTTP: Action[AnyContent] = actionCallUs
-  def getTtpCallUsCalculatorInstalments: Action[AnyContent] = actionCallUs
-  def getTtpCallUsSignInQuestion: Action[AnyContent] = actionCallUs
-  def getIaCallUse: Action[AnyContent] = actionCallUs
+  def getTtpCallUs: Action[AnyContent] = actionCallUsInEligibily
+  def getTtpCallUsTypeOfTax: Action[AnyContent] = actionCallUsInEligibily
+  def getTtpCallUsExistingTTP: Action[AnyContent] = actionCallUsInEligibily
+  def getTtpCallUsCalculatorInstalments: Action[AnyContent] = actionCallUsInEligibily
+  def getTtpCallUsSignInQuestion: Action[AnyContent] = actionCallUsInEligibily
+  def getIaCallUse: Action[AnyContent] = actionCallUsInEligibily
 
 
   def getOverTenThousandCallUs: Action[AnyContent] =  Action { implicit request =>
     Ok(over_ten_thosand(isSignedIn))
   }
 
-  def getYouNeedToFile: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _)) => Ok(you_need_to_file(sa.debits,isSignedIn))
-      case _ => Ok(service_start(isSignedIn))
-    }
+  def getYouNeedToFile: Action[AnyContent] = Action { implicit request =>
+    Ok(you_need_to_file(isSignedIn))
   }
 
-  def getUnavailable: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(ttpData: TTPSubmission) => Ok(unavailable(isSignedIn))
-      case _ => Ok(unavailable(isSignedIn))
-    }
+  def getNotSaEnrolled: Action[AnyContent] = Action { implicit request =>
+    Ok(not_enrolled(isSignedIn))
   }
 
   def signOut(continueUrl: Option[String]): Action[AnyContent] = Action.async { implicit request =>

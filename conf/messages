@@ -139,17 +139,22 @@ ssttp.calculator.results.error.title=Please select a payment plan
 ssttp.calculator.results.month.greater-then-six.header=Need a longer payment plan?
 ssttp.calculator.results.month.greater-then-six.intro=The interest rate and overall repayment will be higher when you choose a longer payment plan.
 
+ssttp.call-us.back=back
 ssttp.call-us.title=Please call us
-ssttp.call-us.intro=We’d like to help you clear your tax debt in instalments but we need some more detailed information from you first.
-ssttp.call-us.we-need-to-know.list=We’ll need to know:
-ssttp.call-us.we-need-to-know.list.1=your reference number
-ssttp.call-us.we-need-to-know.list.2=what you’ve done to try to pay the bill
-ssttp.call-us.we-need-to-know.list.3=about any savings or investments you have
-ssttp.call-us.we-need-to-know.list.4=if you can pay some of the bill now
-ssttp.call-us.we-need-to-know.list.5=your bank details
-ssttp.call-us.contact-instructions=When you have all of this, call us on {0}.
-ssttp.type-of-tax.contact-number=0300 200 3835
-ssttp.sa-helpline.contact-number=0300 200 3835
+ssttp.call-us.intro=You are not eligible to set up a payment plan online.
+ssttp.call-us.p1=You are not eligible to set up a payment plan online.
+ssttp.call-us.p2=For further support you can contact the Business Support Service and speak to an adviser on
+ssttp.call-us.p2.telephone=300 200 3835.
+ssttp.call-us.before-call.heading=Before you call, make sure you have:
+ssttp.call-us.before-call.l1=your reference number
+ssttp.call-us.before-call.l2=information on any savings or investments you have
+ssttp.call-us.before-call.l3=your bank details
+ssttp.call-us.likely-to-ask.heading=We''re likely to ask:
+ssttp.call-us.likely-to-ask.l1=what you''ve done to try to pay the bill
+ssttp.call-us.likely-to-ask.l2=if you can pay some of the bill now
+ssttp.call-us.opening-times.heading=Our opening times are:
+ssttp.call-us.opening-times.l1=Monday to Friday: 8am to 8pm
+ssttp.call-us.opening-times.l2=Saturday and Sunday: 8am to 4pm
 
 ssttp.direct-debit.unauthorized.title=If more then one person is required to authorise a Direct Debit
 ssttp.direct-debit.unauthorized.intro.p1=If more then one sigature is required to authorise the Direct Debit on this account, you will need to
@@ -157,22 +162,12 @@ ssttp.direct-debit.unauthorized.intro.p1.link=complete a paper version of the ma
 ssttp.direct-debit.unauthorized.intro.p2=You will need to return the form to HM Revenue and Customs.
 ssttp.direct-debit.unauthorized.button=Back to bank details
 
-ssttp.you-need-to-file.title=Your tax account isn''t up to date
+ssttp.you-need-to-file.title=File your return to use this service
 ssttp.you-need-to-file.form.back=Back
-ssttp.you-need-to-file.intro=The amount outstanding in your tax account isn’t enough to set up an instalment plan.
-ssttp.you-need-to-file.because=This is because:
-ssttp.you-need-to-file.because.list.1=you haven’t filed your Self Assessment tax return
-ssttp.you-need-to-file.because.list.2=you filed less than 3 days ago and your account hasn’t updated yet
+ssttp.you-need-to-file.intro=To be eligible to set up a payment plan online you need to have filed your Self Assessment tax return. Once you have done this, you can return to the service.
 ssttp.you-need-to-file.check-account.link=Go to your tax account
-ssttp.you-need-to-file.check-account=to check your balance or file your Self Assessment tax return.
-ssttp.you-need-to-file.opening-times=Our opening times are:
-ssttp.you-need-to-file.monday-friday=Monday to Friday: 8am to 8pm
-ssttp.you-need-to-file.saturday=Saturday: 8am to 4pm
-ssttp.you-need-to-file.sunday=Closed Sundays, Christmas Day, Boxing Day and New Years Day
-ssttp.you-need-to-file.self-assessment-number=If you’'re unsure how to proceed call the Self Assessment Payment Helpline on 0300 200 3822
-ssttp.you-need-to-file.self-assessment-number-recently=If you have recently been self employed, call 0300 200 3500
-ssttp.you-need-to-file.self-assessment-number-text-phone=Textphone: 0300 200 3519
-ssttp.you-need-to-file.debits-title=View a breakdown of what you owe
+ssttp.you-need-to-file.check-account=to file your Self Assessment tax return.
+
 
 ssttp.arrangement.change_day.day=back
 ssttp.arrangement.change_day.title=Choose the day you want your monthly payments collected
@@ -306,13 +301,14 @@ ssttp.arrangement.complete.help.p1=Call the HMRC Helpline on 0300 200 3700 if yo
 ssttp.arrangement.complete.help.p2=need to make a change to your payment plan
 ssttp.arrangement.complete.help.p3=do not get a notification confirming your payment dates
 
-#Service unavailable (shutter) page
-ssttp.unavailable.title=Please call us
-ssttp.unavailable.intro=This online service is available for tax payers who are enrolled in Self Assessment and make Self Assessment returns. It looks like this is not the case from your account.
-ssttp.unavailable.instructions=But if you call us, you will still have the opportunity to set up a payment plan.
-ssttp.unavailable.number=0300 200 3822
+#Service unavailable you do not have an sa enrollment page
+ssttp.unavailable.back=back
+ssttp.unavailable.title=You must be enroled to view your Self Assessment account
+ssttp.unavailable.intro=To be eligible to set up a payment plan online you must be enrolled to file your Self Assessment tax return.
+ssttp.unavailable.tax-account-link=Enrol to view your Self Assessment tax account
+ssttp.unavailable.tax-account=, then you can use this service to set up a payment plan .
 
-
+ssttp.overtenthosand.h1=Please call us
 ssttp.overtenthosand.p1=To be eligible to set up a payment plan online the tax you owe must be £10,000 or less.
 ssttp.overtenthosand.p2=For further support you can contact the Business Support Service and speak to an adviser on
 ssttp.overtenthosand.p2.number=0300 200 3835.

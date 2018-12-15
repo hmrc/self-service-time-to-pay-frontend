@@ -19,7 +19,7 @@ POST        /calculator/sign-in                               @uk.gov.hmrc.selfs
 GET         /calculator/tax-liabilities                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getTaxLiabilities()
 
 GET         /arrangement/recover-ttpsession/:token            @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.recoverTTPSession(token: String)
-GET         /arrangement/determine-eligibility               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.determineEligibility()
+GET         /arrangement/determine-eligibility                @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.determineEligibility()
 
 
 # Arrangement
@@ -37,16 +37,17 @@ GET         /arrangement/direct-debit-error                   @uk.gov.hmrc.selfs
 GET         /arrangement/direct-debit/unauthorized            @uk.gov.hmrc.selfservicetimetopay.controllers.DirectDebitController.getDirectDebitUnAuthorised()
 POST        /arrangement/submit                               @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.submit()
 GET         /arrangement/summary                              @uk.gov.hmrc.selfservicetimetopay.controllers.ArrangementController.applicationComplete()
-# Alternative pages
-GET         /you-need-to-file                                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
+# Alternative pages # ineligible  Pages
 GET         /eligibility/type-of-tax/call-us                  @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax()
 GET         /eligibility/existing-ttp/call-us                 @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsExistingTTP()
 GET         /eligibility/ia/call-us                           @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getIaCallUse()
 GET         /eligibility/sign-in-question/call-us             @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()
 GET         /eligibility/over-ten-thosand/call-us             @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getOverTenThousandCallUs()
 GET         /calculator/instalments/call-us                   @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()
-GET         /call-us                                          @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
-GET         /unavailable                                      @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getUnavailable()
+GET         /eligibility/you-need-to-file                     @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getYouNeedToFile()
+GET         /eligibility/call-us                              @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getTtpCallUs()
+GET         /eligibility/not-enrolled                         @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.getNotSaEnrolled()
+
 GET         /sign-out                                         @uk.gov.hmrc.selfservicetimetopay.controllers.SelfServiceTimeToPayController.signOut(continueUrl: Option[String])
 
 # Map static resources from the /public folder to the /assets URL path
