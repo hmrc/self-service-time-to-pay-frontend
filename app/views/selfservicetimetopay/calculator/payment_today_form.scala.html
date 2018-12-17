@@ -33,7 +33,8 @@
         'id -> "paymentTodayForm", 'class -> "group"){
         @helpers.input(
             dataForm("amount"),
-            '_inputClass -> "form-control-1-4"
+            '_inputClass -> "form-control-1-4",
+            '_label -> "£"
         )
         @submit(){@Messages("ssttp.calculator.form.continue")}
     }

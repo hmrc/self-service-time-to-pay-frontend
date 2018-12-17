@@ -39,7 +39,7 @@
 @selfservicetimetopay.main(
     title = Messages("ssttp.arrangement.direct-debit.form.title"),
     loggedIn = loggedIn,
-    sidebarLinks = Some(having_problems_sidebar()),
+    sidebarLinks =  None,
     googleAnalyticsCalls = if(ddForm.hasErrors) {
         Seq.empty
     } else {

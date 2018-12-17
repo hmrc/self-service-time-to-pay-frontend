@@ -149,6 +149,9 @@ input.accountName{
 .panel-tabular-data{
     padding-left: 1.4em;
 }
+.hug_left {
+    float:left;
+}
 
 @media (min-width: 641px){
     .panel-tabular-data .tabular-data__heading {
@@ -239,13 +242,14 @@ input.accountName{
 
 .app-check-your-answers__contents {
     position: relative;
-    border-bottom: 1px solid #bfc1c3;
+}
+.add_bottom_line{
+    border-bottom: 1px solid #bfc1c3 !important;
 }
 
 @media (min-width: 48.0625em) {
     .app-check-your-answers__contents {
         display: table-row;
-        border-bottom-width: 0;
     }
 }
 
@@ -269,7 +273,6 @@ input.accountName{
     .app-check-your-answers__answer,
     .app-check-your-answers__change {
         display: table-cell;
-        border-bottom: 1px solid #bfc1c3;
         padding: 0.63158em 1.05263em 0.47368em 0;
     }
 }
@@ -281,6 +284,10 @@ input.accountName{
 
 .app-check-your-answers__answer {
     padding-bottom: 0.47368em;
+}
+
+.align-left{
+    text-align: left;
 }
 
 .app-check-your-answers__change {

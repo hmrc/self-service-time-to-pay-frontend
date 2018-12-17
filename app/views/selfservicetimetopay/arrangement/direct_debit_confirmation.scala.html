@@ -42,8 +42,6 @@
 
     <h1 class="heading-large">@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
 
-    <h2 class="heading-medium">@Messages("ssttp.arrangement.direct-debit.confirmation.your-bank")</h2>
-
     @direct_debit_details(directDebit)
 
     <section class="margin-top-30">
@@ -53,13 +51,12 @@
                 <p class="text--right">
                     <img src="@{AssetsConfig.assetsPrefix}/images/direct-debit-logo-2x.png" width="148px" height="60px">
                 </p>
-                <ul class="bullets">
-                    <li class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.1")</li>
-                    <li class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.2")</li>
-                    <li class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.3")</li>
-                    <li class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.4")</li>
-                    <li class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.5")</li>
-                </ul>
+
+                    <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.1")</p>
+                    <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.2")</p>
+                    <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.3")</p>
+                    <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.4")</p>
+                    <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.5")</p>
             </div>
         </details>
         @helpers.form(routes.ArrangementController.submit(), 'class -> "group") {

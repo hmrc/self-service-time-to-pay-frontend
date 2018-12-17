@@ -25,7 +25,7 @@
     title = Messages("ssttp.calculator.results.title"),
     loggedIn = loggedIn
 ) {
-    <a class="link-back" href="@routes.ArrangementController.getChangeSchedulePaymentDay()">@Messages("ssttp.calculator.form.back")</a>
+    <a class="link-back" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
 
     <h1 class="heading-large margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
     @if(durationForm.hasErrors) {

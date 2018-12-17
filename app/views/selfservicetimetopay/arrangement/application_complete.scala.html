@@ -42,9 +42,11 @@
 ) {
     <div class="transaction-banner--complete removeBottom">
         <div class="transaction-banner__heading" role="banner">
-            <p>@Messages("ssttp.arrangement.complete.title")</p>
-            <p>@Messages("ssttp.arrangement.complete.ddref")</p>
-            <p>@ddref</p></div>
+            <p><strong class="bold">@Messages("ssttp.arrangement.complete.title")</strong>
+                <br/>
+                <br/>
+            @Messages("ssttp.arrangement.complete.ddref") <br/>
+                <strong class="bold">@ddref</strong></p></div>
     </div>
     <section class="section divider--bottom">
         <a href="javascript:window.print()" class="js-visible no-print   js-visible trackedPrintLink openOnPrint">@Messages("ssttp.arrangement.complete.print-label")</a>
@@ -58,11 +60,8 @@
 
         <h2>@Messages("ssttp.arrangement.complete.help.h2")</h2>
         <p>@Messages("ssttp.arrangement.complete.help.p1")</p>
-        <ul class="list-bullet">
-        <li>@Messages("ssttp.arrangement.complete.help.p2")</li>
-        <li>@Messages("ssttp.arrangement.complete.help.p3")</li>
-        </ul>
-        <span><a href="https://www.tax.service.gov.uk/feedback-survey?origin=PWYOII">@Messages("ssttp.sidebar.help-and-advice.feedback.submit")</a></span>
+
+        <span><a href="https://www.tax.service.gov.uk/feedback-survey?origin=PWYOII">@Messages("ssttp.arrangement.complete.feedback")</a>@Messages("ssttp.arrangement.complete.help.p2")</span>
     </section>
 }
 
