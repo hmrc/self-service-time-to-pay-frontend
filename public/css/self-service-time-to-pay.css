@@ -41,9 +41,7 @@
     margin-right: 5px;
 }
 
-.print-only{
-    display: none;
-}
+
 
  /* GitHub Bug: Make <details> arrow work in Firefox */
   details summary {
@@ -56,15 +54,7 @@
   .removeBottom{
       margin-bottom: 0px;
   }
-@media print {
-    .no-print {
-        display: none;
-    }
 
-    .print-only{
-        display: block;
-    }
-}
 .sortcode {
     margin:0;
     display: inline-block;
@@ -195,10 +185,18 @@ input.accountName{
     font-size: 16px;
     line-height: 1.25;
 }
+.printable {
+    display: none;
+}
 
 @media print {
-    .app-check-your-answers {
-        font-family: sans-serif;
+
+    body * {
+        visibility: hidden;
+        margin:0; padding:0;
+    }
+    .printable * {
+        visibility: visible;
     }
 }
 
@@ -209,12 +207,6 @@ input.accountName{
     }
 }
 
-@media print {
-    .app-check-your-answers {
-        font-size: 14pt;
-        line-height: 1.15;
-    }
-}
 
 @media (min-width: 48.0625em) {
     .app-check-your-answers {
@@ -334,8 +326,6 @@ input.accountName{
         width: 50%;
     }
 }
-
-
 
 .flash.error-summary {
     border: 5px solid #b10e1e;

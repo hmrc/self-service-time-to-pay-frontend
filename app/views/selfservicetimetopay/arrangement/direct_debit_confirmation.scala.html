@@ -18,7 +18,7 @@
 @import selfservicetimetopay.helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import selfservicetimetopay.partials.{direct_debit_details, payment_schedule, gaDoCheckout, currency}
+@import selfservicetimetopay.partials.{direct_debit_details,gaDoCheckout, currency}
 @import uk.gov.hmrc.play.config.AssetsConfig
 @(debits: Seq[Debit], schedule: CalculatorPaymentSchedule, directDebit: ArrangementDirectDebit, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 

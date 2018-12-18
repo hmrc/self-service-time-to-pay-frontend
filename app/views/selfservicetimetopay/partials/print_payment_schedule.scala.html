@@ -1,0 +1,78 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
+@(schedule: CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages)
+@import java.time.format.DateTimeFormatter
+@import java.time.LocalDate
+@import selfservicetimetopay.partials.currency
+@import java.util.Locale
+
+@defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
+    <h1>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
+@if(schedule.initialPayment > BigDecimal(0)) {
+    <div class="subsection grid-layout  font-xsmall ssttp-spacing-instalment-summary">
+        <div class="grid-layout__column grid-layout__column--3-4">
+            @Messages("ssttp.calculator.form.payment_summary.up-front-payment")
+            <p class="small">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
+        </div>
+        <div class="grid-layout__column grid-layout__column--1-4">
+            £@schedule.initialPayment
+        </div>
+    </div>
+
+}
+    <h2>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
+@schedule.instalments.map { instalment =>
+    <div class="subsection grid-layout  font-xsmall ssttp-spacing-instalment-summary">
+        <p>
+    <div class="grid-layout__column grid-layout__column--3-4">
+        <div ><strong class="bold">@instalment.paymentDate.format(formatter)</strong></div>
+        @if(instalment == schedule.instalments.last) {
+            <div>@Messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest",
+                currency(schedule.totalInterestCharged))
+            </div>
+        }
+    </div>
+        </p>
+        <p>
+    <div class="grid-layout__column grid-layout__column--1-4">@currency(instalment.amount)</div>
+        </p>
+    </div>
+}
+}
+<div class="subsection grid-layout divider--bottom font-xsmall ssttp-spacing-instalment-summary">
+    <p>
+<div class="grid-layout__column grid-layout__column--3-4">
+    <div><strong class="bold">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment")</strong></div>
+    <div>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment.hint", currency(schedule.totalPayable))
+    </div>
+</div>
+    </p>
+    <p>
+<div class="grid-layout__column grid-layout__column--1-4">@currency(schedule.totalPayable)</div>
+    </p>
+</div>
+
+<table>
+    <tbody>
+        <tr>
+            <td><p class="bold">@Messages("ssttp.arrangement.instalment-summary.payment-date.title")</p></td>
+            <td>@schedule.getMonthlyInstalmentDate @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")</td>
+        </tr>
+    </tbody>
+</table>
+
