@@ -233,14 +233,15 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
         authorizedForSsttp {
           submission =>
             val ddref: String =  submission.bankDetails.get.ddiRefNumber.getOrElse(throw new RuntimeException("NO ddiRefNumber ref in session for " + submission))
-          Future.successful(Ok(application_complete(
+          sessionCache.remove().map(_ => Ok(application_complete(
               debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
               transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
               directDebit = submission.arrangementDirectDebit.get,
               schedule = submission.schedule.get,
               ddref = ddref,
               isSignedIn))
-            )}
+            )
+        }
   }
 
 
