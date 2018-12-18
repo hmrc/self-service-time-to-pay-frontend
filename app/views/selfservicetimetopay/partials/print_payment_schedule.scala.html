@@ -22,57 +22,46 @@
 @import java.util.Locale
 
 @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
+
     <h1>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
-@if(schedule.initialPayment > BigDecimal(0)) {
-    <div class="subsection grid-layout  font-xsmall ssttp-spacing-instalment-summary">
-        <div class="grid-layout__column grid-layout__column--3-4">
-            @Messages("ssttp.calculator.form.payment_summary.up-front-payment")
-            <p class="small">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
-        </div>
-        <div class="grid-layout__column grid-layout__column--1-4">
-            £@schedule.initialPayment
-        </div>
-    </div>
+       <table>
+        <tbody>
+    @if(schedule.initialPayment > BigDecimal(0)) {
 
+     <tr>
+            <td><div class="bold">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</div>
+            <p class="small">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p></td>
+            <td>@currency(schedule.initialPayment)</td>
+    </tr>
 }
-    <h2>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
-@schedule.instalments.map { instalment =>
-    <div class="subsection grid-layout  font-xsmall ssttp-spacing-instalment-summary">
-        <p>
-    <div class="grid-layout__column grid-layout__column--3-4">
-        <div ><strong class="bold">@instalment.paymentDate.format(formatter)</strong></div>
-        @if(instalment == schedule.instalments.last) {
-            <div>@Messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest",
-                currency(schedule.totalInterestCharged))
-            </div>
-        }
-    </div>
-        </p>
-        <p>
-    <div class="grid-layout__column grid-layout__column--1-4">@currency(instalment.amount)</div>
-        </p>
-    </div>
-}
-}
-<div class="subsection grid-layout divider--bottom font-xsmall ssttp-spacing-instalment-summary">
-    <p>
-<div class="grid-layout__column grid-layout__column--3-4">
-    <div><strong class="bold">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment")</strong></div>
-    <div>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment.hint", currency(schedule.totalPayable))
-    </div>
-</div>
-    </p>
-    <p>
-<div class="grid-layout__column grid-layout__column--1-4">@currency(schedule.totalPayable)</div>
-    </p>
-</div>
-
+    </tbody>
+</table>
+    <h1>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h1>
 <table>
-    <tbody>
+<tbody>
+@schedule.instalments.map { instalment =>
+    <tr>
+       <td>
+       <div><strong class="bold">@instalment.paymentDate.format(formatter)</strong></div>
+        @if(instalment == schedule.instalments.last) {
+            @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest", currency(schedule.totalInterestCharged))
+
+        }
+     </td>
+        <td> @currency(instalment.amount)
+</td>
+   </tr>
+}
+}
+   <tr>
+     <td><strong class="bold">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment")</strong></td>
+     <td>@currency(schedule.totalPayable)</td>
+   </tr>
+
         <tr>
             <td><p class="bold">@Messages("ssttp.arrangement.instalment-summary.payment-date.title")</p></td>
             <td>@schedule.getMonthlyInstalmentDate @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")</td>
-        </tr>
+            </tr>
     </tbody>
 </table>
 

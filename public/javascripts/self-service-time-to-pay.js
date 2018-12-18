@@ -71,11 +71,13 @@ $(function() {
     var beforePrint = function() {
         console.log('Functionality to run before printing.');
         $(".printable").css("display","block");
+        $(".no_print").css("display","none");
     };
 
     var afterPrint = function() {
         console.log('Functionality to run after printing');
         $(".printable").css("display","none");
+        $(".no_print").css("display","block");
     };
 
     if (window.matchMedia) {
