@@ -36,20 +36,20 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
     Redirect(routes.ArrangementController.determineEligibility())
   }
 
-  def actionCallUsInEligibily: Action[AnyContent] = Action { implicit request =>
+  def actionCallUsInEligibility: Action[AnyContent] = Action { implicit request =>
         Ok(call_us(loggedIn = isSignedIn))
   }
 
-  def getTtpCallUs: Action[AnyContent] = actionCallUsInEligibily
-  def getTtpCallUsTypeOfTax: Action[AnyContent] = actionCallUsInEligibily
-  def getTtpCallUsExistingTTP: Action[AnyContent] = actionCallUsInEligibily
-  def getTtpCallUsCalculatorInstalments: Action[AnyContent] = actionCallUsInEligibily
-  def getTtpCallUsSignInQuestion: Action[AnyContent] = actionCallUsInEligibily
-  def getIaCallUse: Action[AnyContent] = actionCallUsInEligibily
+  def getTtpCallUs: Action[AnyContent] = actionCallUsInEligibility
+  def getTtpCallUsTypeOfTax: Action[AnyContent] = actionCallUsInEligibility
+  def getTtpCallUsExistingTTP: Action[AnyContent] = actionCallUsInEligibility
+  def getTtpCallUsCalculatorInstalments: Action[AnyContent] = actionCallUsInEligibility
+  def getTtpCallUsSignInQuestion: Action[AnyContent] = actionCallUsInEligibility
+  def getIaCallUse: Action[AnyContent] = actionCallUsInEligibility
 
 
-  def getOverTenThousandCallUs: Action[AnyContent] =  Action { implicit request =>
-    Ok(over_ten_thosand(isSignedIn))
+  def getDebtTooLarge: Action[AnyContent] =  Action { implicit request =>
+    Ok(debt_too_large(isSignedIn))
   }
 
   def getYouNeedToFile: Action[AnyContent] = Action { implicit request =>

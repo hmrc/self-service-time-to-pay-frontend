@@ -87,12 +87,11 @@ ssttp.calculator.form.payment_summary.continue=Continue
 
 
 ssttp.calculator.self-assessment-account-summary-page.title=Your Self Assessment account summary
-ssttp.calculator.self-assessment-account-summary-page.due-options=Due
 ssttp.calculator.self-assessment-account-summary-page.amount=Amount
 ssttp.calculator.self-assessment-account-summary-page.total-due=Total due
-ssttp.calculator.self-assessment-account-summary-page.tax-year-ending=for the tax year ending
+ssttp.calculator.self-assessment-account-summary-page.tax-year-ending=For the tax year ending
 ssttp.calculator.self-assessment-account-summary-page.tax-account-details=Self Assessment breakdown
-ssttp.calculator.self-assessment-account-summary-page.due-by=Due by
+ssttp.calculator.self-assessment-account-summary-page.due-by=Your payment is due on
 ssttp.calculator.self-assessment-account-summary-page.button-continue=Continue
 ssttp.calculator.self-assessment-account-summary-page.button-back=Back
 
@@ -134,21 +133,20 @@ ssttp.calculator.results.month.option.table.total.paid=Total paid:
 ssttp.calculator.results.section.title=How we calculate interest
 ssttp.calculator.results.section.p1=We only charge interest on overdue amounts.
 ssttp.calculator.results.section.p2=We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
-ssttp.calculator.results.section.p3=If the interest rate changes during your plan, your monthly payments will not be change. If we need to, we''ll settle the difference at the end of the plan.
+ssttp.calculator.results.section.p3=If the interest rate changes during your plan, your monthly payments will not change. If we need to, we''ll settle the difference at the end of the plan.
 ssttp.calculator.results.error.title=Please select a payment plan
 ssttp.calculator.results.month.greater-then-six.header=Need a longer payment plan?
 ssttp.calculator.results.month.greater-then-six.intro=The interest rate and overall repayment will be higher when you choose a longer payment plan.
 
-ssttp.call-us.back=back
+ssttp.call-us.back=Back
 ssttp.call-us.title=Please call us
 ssttp.call-us.intro=You are not eligible to set up a payment plan online.
 ssttp.call-us.p1=You are not eligible to set up a payment plan online.
 ssttp.call-us.p2=For further support you can contact the Business Support Service and speak to an adviser on
-ssttp.call-us.p2.telephone=300 200 3835.
+ssttp.call-us.p2.telephone=0300 200 3835.
 ssttp.call-us.before-call.heading=Before you call, make sure you have:
-ssttp.call-us.before-call.l1=your reference number
-ssttp.call-us.before-call.l2=information on any savings or investments you have
-ssttp.call-us.before-call.l3=your bank details
+ssttp.call-us.before-call.l1=information on any savings or investments you have
+ssttp.call-us.before-call.l2=your bank details
 ssttp.call-us.likely-to-ask.heading=We''re likely to ask:
 ssttp.call-us.likely-to-ask.l1=what you''ve done to try to pay the bill
 ssttp.call-us.likely-to-ask.l2=if you can pay some of the bill now
@@ -169,11 +167,11 @@ ssttp.you-need-to-file.check-account.link=Go to your tax account
 ssttp.you-need-to-file.check-account=to file your Self Assessment tax return.
 
 
-ssttp.arrangement.change_day.day=back
+ssttp.arrangement.change_day.day=Back
 ssttp.arrangement.change_day.title=Choose the day you want your monthly payments collected
 ssttp.arrangement.change_day.payment-day.required=Please enter a value
-ssttp.arrangement.change_day.payment-day.out-of-range=Please enter in a valid value
-ssttp.arrangement.change_day.payment-day.submit=Submit
+ssttp.arrangement.change_day.payment-day.out-of-range=Enter a number between 1 and 28
+ssttp.arrangement.change_day.payment-day.continue=Continue
 ssttp.arrangement.change_day.payment-day.change.take-payment-on=Change Day
 
 ssttp.arrangement.instalment-summary.title=Check your payment schedule details
@@ -189,6 +187,12 @@ ssttp.arrangement.instalment-summary-table.hint=Added to final payment
 ssttp.arrangement.instalment-summary.payment-date.title=Monthly instalment collection date
 ssttp.arrangement.instalment-summary.payment-date.ending=or next working day
 ssttp.arrangement.instalment-summary.payment-date.change=Change
+ssttp.arrangement.instalment-summary.schedule.final-payment-interest=Interest added to final payment
+
+ssttp.arrangement.print-summary.schedule.payment-plan.h1=Print payment summary
+ssttp.arrangement.print-summary.schedule.payment-plan.h2=Your payment plan
+ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment=Total repayment
+ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment.hint=Including interest
 
 ssttp.arrangement.instalment-summary-table.total-repayment=Total repayment
 ssttp.arrangement.instalment-summary-table.total-repayment-hint=Including interest
@@ -216,7 +220,7 @@ ssttp.direct-debit-assistance.interest-added-to-final=added to the final payment
 ssttp.direct-debit-assistance.total-repayment=Total repayment:
 ssttp.direct-debit-assistance.complete.total=Total:
 
-ssttp.arrangement.direct-debit.form.title=Enter account details to set up your Direct Debit
+ssttp.arrangement.direct-debit.form.title=Enter account details to set up a Direct Debit
 ssttp.arrangement.direct-debit.form.confirmed=Confirm Direct Debit agreement
 ssttp.arrangement.direct-debit.form.submit=Continue
 ssttp.arrangement.direct-debit.form.back=Back
@@ -240,7 +244,7 @@ ssttp.direct-debit.form.message.title=To continue you must be:
 ssttp.direct-debit.form.message.named.account=a named account holder for this account
 ssttp.direct-debit.form.message.permission=able to set up Direct Debits without permission from the other account holders
 
-ssttp.direct-debit.guarantee.title=Direct Debit Guarantee
+ssttp.direct-debit.guarantee.title=The Direct Debit Guarantee
 ssttp.direct-debit.guarantee.list.1=This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
 ssttp.direct-debit.guarantee.list.2=If there are any changes to the amount, date or frequency of your Direct Debit HM Revenue & Customs will notify you 10 working days in advance of your account being debited or as otherwise agreed. If you request HM Revenue & Customs to collect a payment, confirmation of the amount and date will be given to you at the time of the request.
 ssttp.direct-debit.guarantee.list.3=If an error is made in the payment of your Direct Debit by HM Revenue & Customs or your bank or building society you are entitled to a full and immediate refund of the amount paid from your bank or building society.
@@ -257,8 +261,7 @@ ssttp.direct-debit.initial-payment=(initial payment)
 ssttp.direct-debit.final-payment=(final payment)
 
 ssttp.arrangement.direct-debit.form.error.summary.title=Something you’ve entered isn’t valid
-ssttp.arrangement.direct-debit.confirmation.title=Confirm your details
-ssttp.arrangement.direct-debit.confirmation.your-bank=Your bank details
+ssttp.arrangement.direct-debit.confirmation.title=Check your Direct Debit details
 ssttp.arrangement.direct-debit.confirmation.total-payment=Total payment will be:
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary=You are covered by the Direct Debit Guarantee
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.title=Instruction to your Bank or Building Society to pay by Direct Debit
@@ -295,29 +298,27 @@ ssttp.arrangement.complete.print-label=Print your payment summary
 ssttp.arrangement.complete.next=What happens next?
 ssttp.arrangement.complete.summary=We will send you a letter within 5 days to confirm your payment dates.
 ssttp.arrangement.complete.first-payment=First payment collected on:
-ssttp.arrangement.complete.feedback=Send us feedback
-ssttp.arrangement.complete.help.h2=If you need help using this service
-ssttp.arrangement.complete.help.p1=Call the HMRC Helpline on 0300 200 3700 if you:
-ssttp.arrangement.complete.help.p2=need to make a change to your payment plan
-ssttp.arrangement.complete.help.p3=do not get a notification confirming your payment dates
+ssttp.arrangement.complete.feedback=What did you think of this service?
+ssttp.arrangement.complete.help.h2=If you need to change your payment plan
+ssttp.arrangement.complete.help.p1=Call the HMRC Helpline on 0300 200 3700.
+ssttp.arrangement.complete.help.p2= (takes 30 seconds)
 
 #Service unavailable you do not have an sa enrollment page
-ssttp.unavailable.back=back
-ssttp.unavailable.title=You must be enroled to view your Self Assessment account
-ssttp.unavailable.intro=To be eligible to set up a payment plan online you must be enrolled to file your Self Assessment tax return.
-ssttp.unavailable.tax-account-link=Enrol to view your Self Assessment tax account
-ssttp.unavailable.tax-account=, then you can use this service to set up a payment plan .
+ssttp.not.enrolled.back=Back
+ssttp.not.enrolled.title=You must be enrolled to view your Self Assessment account
+ssttp.not.enrolled.intro=To be eligible to set up a payment plan online you must be enrolled to file your Self Assessment tax return.
+ssttp.not.enrolled.tax-account-link=Enrol to view your Self Assessment tax account
+ssttp.not.enrolled.tax-account=, then you can use this service to set up a payment plan.
 
 ssttp.overtenthosand.h1=Please call us
 ssttp.overtenthosand.p1=To be eligible to set up a payment plan online the tax you owe must be £10,000 or less.
 ssttp.overtenthosand.p2=For further support you can contact the Business Support Service and speak to an adviser on
 ssttp.overtenthosand.p2.number=0300 200 3835.
 ssttp.overtenthosand.before.you.call.h1=Before you call, make sure you have:
-ssttp.overtenthosand.before.you.call.l1=your reference number
-ssttp.overtenthosand.before.you.call.l2=information on any savings or investments you have
-ssttp.overtenthosand.before.you.call.l3=your bank details
+ssttp.overtenthosand.before.you.call.l1=information on any savings or investments you have
+ssttp.overtenthosand.before.you.call.l2=your bank details
 ssttp.overtenthosand.likely.to.ask.h1=We''re likely to ask:
-ssttp.overtenthosand.likely.to.ask.l1=what you've done to try to pay the bill
+ssttp.overtenthosand.likely.to.ask.l1=what you''ve done to try to pay the bill
 ssttp.overtenthosand.likely.to.ask.l2=if you can pay some of the bill now
 ssttp.overtenthosand.opening.hours.h1=Our opening times are:
 ssttp.overtenthosand.opening.hours.l1=Monday to Friday: 8am to 8pm

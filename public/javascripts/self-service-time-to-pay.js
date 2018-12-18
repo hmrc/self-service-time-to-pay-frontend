@@ -11,10 +11,6 @@ $(function() {
     $("a.trackedAssistanceSidebar").on("mouseup", function () {
         ga("send", "event", "click-direct-debit-assistance", window.location.pathname);
     });
-    $(".openOnPrint").on('mouseup', function () {
-        if ($('html').hasClass('no-details')) then ($("body")).find('details').addClass("open")
-        else ($("body")).find('details').attr("open", "")
-    })
     $(".trackedPrintLink").on("mouseup", function () {
         ga("send", "event", "click-print", window.location.pathname);
     });
@@ -41,6 +37,10 @@ $(function() {
         ga("send", "event", "calculator-duration-decrease-from", $("input[name=months]").val());
     });
 
+    $("body").onfocus = function () {
+       Console.log("Hello Paul");
+    };
+
     $("#calculatorDurationIncrease").on("mouseup", function () {
         ga("send", "event", "calculator-duration-increase-from", $("input[name=months]").val());
     });
@@ -65,3 +65,33 @@ $(function() {
         return  pointIndex >= 0 && pointIndex < value.length - x;
     };
 });
+
+(function() {
+
+    var beforePrint = function() {
+        console.log('Functionality to run before printing.');
+        $(".printable").css("display","block");
+        $(".no_print").css("display","none");
+    };
+
+    var afterPrint = function() {
+        console.log('Functionality to run after printing');
+        $(".printable").css("display","none");
+        $(".no_print").css("display","block");
+    };
+
+    if (window.matchMedia) {
+        var mediaQueryList = window.matchMedia('print');
+        mediaQueryList.addListener(function(mql) {
+            if (mql.matches) {
+                beforePrint();
+            } else {
+                afterPrint();
+            }
+        });
+    }
+
+    window.onbeforeprint = beforePrint;
+    window.onafterprint = afterPrint;
+
+}());

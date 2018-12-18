@@ -132,7 +132,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       )
 
       status(response) mustBe SEE_OTHER
-      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getOverTenThousandCallUs().url
+      redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getDebtTooLarge().url
     }
     "redirect to 'you need to file' when the user has not filled " in {
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))

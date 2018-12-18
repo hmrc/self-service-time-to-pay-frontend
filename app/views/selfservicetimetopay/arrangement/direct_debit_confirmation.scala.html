@@ -18,7 +18,7 @@
 @import selfservicetimetopay.helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import selfservicetimetopay.partials.{direct_debit_details, payment_schedule, gaDoCheckout, currency}
+@import selfservicetimetopay.partials.{direct_debit_details,gaDoCheckout, currency}
 @import uk.gov.hmrc.play.config.AssetsConfig
 @(debits: Seq[Debit], schedule: CalculatorPaymentSchedule, directDebit: ArrangementDirectDebit, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
@@ -42,8 +42,6 @@
 
     <h1 class="heading-large">@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
 
-    <h2 class="heading-medium">@Messages("ssttp.arrangement.direct-debit.confirmation.your-bank")</h2>
-
     @direct_debit_details(directDebit)
 
     <section class="margin-top-30">
@@ -53,13 +51,12 @@
                 <p class="text--right">
                     <img src="@{AssetsConfig.assetsPrefix}/images/direct-debit-logo-2x.png" width="148px" height="60px">
                 </p>
-                <ul class="bullets">
-                    <li class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.1")</li>
-                    <li class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.2")</li>
-                    <li class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.3")</li>
-                    <li class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.4")</li>
-                    <li class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.5")</li>
-                </ul>
+                <h3>@Messages("ssttp.direct-debit.guarantee.title")</h3>
+                    <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.1")</p>
+                    <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.2")</p>
+                    <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.3")</p>
+                    <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.4")</p>
+                    <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.5")</p>
             </div>
         </details>
         @helpers.form(routes.ArrangementController.submit(), 'class -> "group") {

@@ -174,7 +174,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission, utr: String)(implicit hc: HeaderCarrier): Future[Result] = {
     lazy val youNeedToFile = Redirect(routes.SelfServiceTimeToPayController.getYouNeedToFile()).successfulF
     lazy val notOnIa = Redirect(routes.SelfServiceTimeToPayController.getIaCallUse()).successfulF
-    lazy val overTenThousandOwed = Redirect(routes.SelfServiceTimeToPayController.getOverTenThousandCallUs()).successfulF
+    lazy val overTenThousandOwed = Redirect(routes.SelfServiceTimeToPayController.getDebtTooLarge()).successfulF
 
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
       case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
