@@ -20,7 +20,7 @@
 @import java.time.LocalDate
 @import java.util.Locale
 
-@(debits: Seq[Debit], transactionId: String, directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, ddref: String, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(debits: Seq[Debit], transactionId: String, directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, ddref: Option[String], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 <div class="js-visible printable">
     @print_payment_schedule(schedule)
 </div>
@@ -48,10 +48,12 @@
         <div class="transaction-banner--complete removeBottom">
             <div class="transaction-banner__heading" role="banner">
                 <p><strong class="bold">@Messages("ssttp.arrangement.complete.title")</strong>
-                    <br/>
+                   @ddref.map{_ =>
+                       <br/>
                     <br/>
                     @Messages("ssttp.arrangement.complete.ddref") <br/>
-                    <strong class="bold">@ddref</strong></p></div>
+                    <strong class="bold">@ddref.get</strong></p>
+                }</div>
         </div>
         <section class="section divider--bottom">
             <a href="javascript:window.print()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.print-label")</a>

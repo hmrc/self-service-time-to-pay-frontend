@@ -232,7 +232,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       implicit request =>
         authorizedForSsttp {
           submission =>
-            val ddref: String =  submission.bankDetails.get.ddiRefNumber.getOrElse(throw new RuntimeException("NO ddiRefNumber ref in session for " + submission))
+            val ddref =  submission.bankDetails.get.ddiRefNumber
           sessionCache.remove().map(_ => Ok(application_complete(
               debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
               transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
