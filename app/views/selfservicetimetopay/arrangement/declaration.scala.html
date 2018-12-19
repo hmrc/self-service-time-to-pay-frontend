@@ -20,7 +20,7 @@
 @import selfservicetimetopay.partials.tax_liabilities_summary
 @(signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @selfservicetimetopay.main(
-    title = Messages("ssttp.overtenthosand.p1"),
+    title = Messages("ssttp.arrangement.declaration.h1"),
     loggedIn = signedIn
 ) {
    <a class="back-link" href="@routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.declaration.back")</a>
