@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.time.LocalDate
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
 import uk.gov.hmrc.selfservicetimetopay.auth.{Token, TokenData}
-import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.models.{NotLoggedInJourneyInfo, _}
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 package object modelsFormat {
@@ -108,6 +108,9 @@ package object modelsFormat {
       case _ => JsError(s"Failed to parse $json as Reason")
     }
   }
+
+  //Not Logged in journey formatters
+  implicit val notLoggedInJourneyInfoFormat: OFormat[NotLoggedInJourneyInfo] = Json.format[NotLoggedInJourneyInfo]
 
   implicit val eligibilityStatusFormatter: Format[EligibilityStatus] = Json.format[EligibilityStatus]
   implicit val eligibilityRequestFormatter: Format[EligibilityRequest] = Json.format[EligibilityRequest]

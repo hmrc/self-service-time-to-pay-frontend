@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,16 +60,15 @@ object CalculatorForm {
     )(text => CalculatorPaymentToday(text))(bd => Some(bd.amount.toString)))
   }
 
-
   def createSinglePaymentForm(): Form[CalculatorSinglePayment] = {
     Form(mapping(
       "amount" -> text
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required", { i: String => Try(BigDecimal(i)).isSuccess })
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.required.min", { i: String => if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.01 else true })
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval", { i: String =>
+        .verifying("ssttp.calculator.form.amount-due.required", { i: String => Try(BigDecimal(i)).isSuccess })
+        .verifying("ssttp.calculator.form.amount-due.required.min", { i: String => if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.01 else true })
+        .verifying("ssttp.calculator.form.amount-due.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })
-        .verifying("ssttp.calculator.form.what-you-owe-amount.amount.decimal-places", { i =>
+        .verifying("ssttp.calculator.form.amount-due.decimal-places", { i =>
           if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
         })
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))

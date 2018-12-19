@@ -16,17 +16,19 @@
 
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @(loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@import selfservicetimetopay.helpers.message_list
 @selfservicetimetopay.main(
-    title = Messages("ssttp.direct-debit.unauthorized.title"),
+    title = Messages("ssttp.calculator.payment-plan-calculator.start.title"),
     loggedIn = loggedIn
 ){
-    <a class="link-back" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a>
+
+    <a class="link-back" href="https://www.gov.uk/difficulties-paying-hmrc">@Messages("ssttp.calculator.payment-plan-calculator.start.back")</a>
     <header class="page-header text">
-        <h1>@Messages("ssttp.direct-debit.unauthorized.title")</h1>
+        <h1>@Messages("ssttp.calculator.payment-plan-calculator.start.title")</h1>
     </header>
-    <p>@Messages("ssttp.direct-debit.unauthorized.intro.p1") <a href="https://www.gov.uk/government/publications/vat-instruction-to-your-bank-or-building-society-to-pay-by-direct-debit-vatc9">@Messages("ssttp.direct-debit.unauthorized.intro.p1.link")</a></p>
-    <p>
-        @Messages("ssttp.direct-debit.unauthorized.intro.p2")
-    </p>
-    <a class="button" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.unauthorized.button")</a>
+
+    <p>@Messages("ssttp.calculator.payment-plan-calculator.start.p1")</p>
+    <p>@Messages("ssttp.calculator.payment-plan-calculator.start.p2")</p>
+
+    <a class="button button--get-started" href="@routes.CalculatorController.getAmountDue()">@Messages("ssttp.calculator.payment-plan-calculator.start.button")</a>
 }

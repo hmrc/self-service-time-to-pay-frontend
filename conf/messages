@@ -138,6 +138,52 @@ ssttp.calculator.results.error.title=Please select a payment plan
 ssttp.calculator.results.month.greater-then-six.header=Need a longer payment plan?
 ssttp.calculator.results.month.greater-then-six.intro=The interest rate and overall repayment will be higher when you choose a longer payment plan.
 
+# not logged in
+ssttp.calculator.payment-plan-calculator.start.back=Back
+ssttp.calculator.payment-plan-calculator.start.title=Payment plan calculator
+ssttp.calculator.payment-plan-calculator.start.p1=If you are concerned you cannot pay your Self Assessment tax bill, you may be able to set up a payment plan to pay in instalments.
+ssttp.calculator.payment-plan-calculator.start.p2=Use our payment plan calculator to find out how much your monthly instalments might be.
+ssttp.calculator.payment-plan-calculator.start.button=Start now
+
+ssttp.calculator.amount-due.start.back=Back
+ssttp.calculator.amount-due.start.title=How much do you owe?
+ssttp.calculator.amount-due.start.what-to-include=What to include
+ssttp.calculator.amount-due.start.what-to-include.b1=Balancing payment
+ssttp.calculator.amount-due.start.what-to-include.b2=First payment on account
+ssttp.calculator.amount-due.start.what-to-include.b3=Second payment on account
+ssttp.calculator.amount-due.start.what-to-include.b4=Penalties or added interest
+ssttp.calculator.amount-due.start.continue=Continue
+
+
+ssttp.calculator.check-calculation.back=Back
+ssttp.calculator.check-calculation.h1=Your estimated instalment calculation
+ssttp.calculator.check-calculation.table.total.due=Total calculated tax
+ssttp.calculator.check-calculation.table.total.due.change=Change
+ssttp.calculator.check-calculation.table.monthly-instalments=Monthly instalments
+ssttp.calculator.check-calculation.table.monthly-instalments.hint=Collected over {0} months
+ssttp.calculator.check-calculation.table.monthly-instalments.change=Change
+ssttp.calculator.check-calculation.h2=Interest may be added to your payments
+ssttp.calculator.check-calculation.p1=If you do not pay your tax bill on time, interest may be added to your repayments when you set up an instalment plan.
+ssttp.calculator.check-calculation.how-we-calculate-interest=How we calculate interest
+ssttp.calculator.check-calculation.how-we-calculate-interest.p1=We only charge interest on overdue amounts.
+ssttp.calculator.check-calculation.how-we-calculate-interest.p2=We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
+ssttp.calculator.check-calculation.how-we-calculate-interest.p3=If the interest rate changes during your plan, your monthly payments will not change. If we need to, we''ll settle the difference at the end of the plan.
+ssttp.calculator.check-calculation.what-happens-next=What happens next?
+ssttp.calculator.check-calculation.what-happens-next.p1.1=This is a calculation based on the information you provided. When you file your Self Assessment the exact figures you owe might be different.
+ssttp.calculator.check-calculation.what-happens-next.p1.link=Go to your tax account
+ssttp.calculator.check-calculation.what-happens-next.p1.2=to check your balance or file your Self Assessment tax return.
+ssttp.calculator.check-calculation.what-happens-next.p2=If you have already submitted your Self Assessment tax return you can
+ssttp.calculator.check-calculation.what-happens-next.p2.link=set up a payment plan
+ssttp.calculator.check-calculation.what-happens-next.p3.1=If you want to plan ahead for a future tax return you can use the
+ssttp.calculator.check-calculation.what-happens-next.p3.link=budget payment plan
+ssttp.calculator.check-calculation.what-happens-next.p3.2= to save towards a future liability.
+
+
+ssttp.calculator.form.amount-due.required=Enter the amount you owe the HMRC
+ssttp.calculator.form.amount-due.required.min=The amount must be more than £0.00
+ssttp.calculator.form.amount-due.decimal-places=Amount must not contain more than 2 decimal places
+ssttp.calculator.form.amount-due.less-than-maxval=Total amounts must be less than £100,000.00
+
 ssttp.call-us.back=Back
 ssttp.call-us.title=Please call us
 ssttp.call-us.intro=You are not eligible to set up a payment plan online.

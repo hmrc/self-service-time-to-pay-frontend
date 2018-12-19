@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@ case class TTPSubmission(schedule: Option[CalculatorPaymentSchedule] = None,
                          calculatorData: CalculatorInput = CalculatorInput.initial,
                          durationMonths: Option[Int] = Some(2),
                          eligibilityStatus: Option[EligibilityStatus] = None,
-                         debitDate: Option[LocalDate] = None) {
+                         debitDate: Option[LocalDate] = None,
+                         notLoggedInJourneyInfo: Option[NotLoggedInJourneyInfo] = None) {
 
   def lengthOfArrangement = schedule.map(_.instalments.length).getOrElse(2)
   def arrangementDirectDebit: Option[ArrangementDirectDebit] = bankDetails.map(f => ArrangementDirectDebit.from(f))

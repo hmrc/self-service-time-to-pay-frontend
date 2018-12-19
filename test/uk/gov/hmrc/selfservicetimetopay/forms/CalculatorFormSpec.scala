@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 
 class CalculatorFormSpec extends PlaySpec {
 
-  "CalculatorForm.amountDueForm" must {
+  "CalculatorForm.payTodayForm" must {
 
     "return errors when nothing is selected in payTodayForm" in {
       val postData = Json.obj()
@@ -47,13 +47,14 @@ class CalculatorFormSpec extends PlaySpec {
 
       assert(validatedForm.errors.isEmpty)
     }
-
+  }
+  "CalculatorForm.createSinglePaymentForm" must {
     "return errors when amount is empty" in {
       val postData = Json.obj("amount" -> "")
 
       val validatedForm = CalculatorForm.createSinglePaymentForm().bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.what-you-owe-amount.amount.required"))))
+      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amount-due.required"))))
     }
 
     "return errors when amount is less then zero" in {
@@ -61,7 +62,7 @@ class CalculatorFormSpec extends PlaySpec {
 
       val validatedForm = CalculatorForm.createSinglePaymentForm().bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.what-you-owe-amount.amount.required.min"))))
+      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amount-due.required.min"))))
     }
 
     "return errors when amount is too high" in {
@@ -69,7 +70,7 @@ class CalculatorFormSpec extends PlaySpec {
 
       val validatedForm = CalculatorForm.createSinglePaymentForm().bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.what-you-owe-amount.amount.less-than-maxval"))))
+      assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amount-due.less-than-maxval"))))
     }
 
     "return no errors when amount is valid" in {
