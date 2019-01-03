@@ -240,7 +240,7 @@ input.accountName{
 }
 
 @media (min-width: 48.0625em) {
-    .app-check-your-answers__contents {
+    .   app-check-your-answers__contents {
         display: table-row;
     }
 }

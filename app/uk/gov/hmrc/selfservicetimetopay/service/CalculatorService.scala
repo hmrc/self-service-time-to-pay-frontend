@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,11 @@ import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.{createCalcula
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
-
+import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService._
 class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
                                   workingDays: WorkingDaysService) {
 
+  //todo perhaps merge these methods and change back end so it only one call
   def getInstalmentsSchedule(sa: SelfAssessment, intialPayment: BigDecimal = BigDecimal(0))(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
 
     val input: List[(Int, CalculatorInput)] = getMonthRange(sa).map(month => {
@@ -40,8 +41,19 @@ class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
       (month, validateCalculatorDates(caltInput, month, sa.debits))
     }).toList
 
+    getCaltValues(input)
+  }
+  def getInstalmentsScheduleUnAuth(debits: Seq[Debit])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
 
-    val futureSchedules: Seq[Future[(Int, CalculatorPaymentSchedule)]] = input.map {
+    val input: List[(Int, CalculatorInput)] =  (minimunMonthsAllowedTTP to maxAllowedMonthlyInstalments).map(month => {
+      val caltInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, 0, debits)
+      (month, validateCalculatorDates(caltInput, month, debits))
+    }).toList
+    getCaltValues(input)
+  }
+
+  private def getCaltValues(inputs:List[(Int, CalculatorInput)])(implicit hc: HeaderCarrier, ec: ExecutionContext) ={
+    val futureSchedules: Seq[Future[(Int, CalculatorPaymentSchedule)]] = inputs.map {
       case (numberOfMonths, calcInput) =>
         calculatorConnector.calculatePaymentSchedule(calcInput).map(x => (numberOfMonths, x.head))
     }

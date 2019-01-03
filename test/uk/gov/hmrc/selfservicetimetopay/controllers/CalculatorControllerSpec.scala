@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -273,6 +273,90 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
       status(response) mustBe SEE_OTHER
     }
+
+
+    "getPaymentPlanCalculator should load the Payment Plan Calculator Start" in {
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+      val request = FakeRequest().withSession(goodSession:_*)
+      val response = controller.getPaymentPlanCalculator().apply(request)
+
+      status(response) mustBe OK
+      contentAsString(response) must include(getMessages(request)("ssttp.calculator.payment-plan-calculator.start.title"))
+    }
+
+    "getAmountDue should load the amount due page" in {
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+      val request = FakeRequest().withSession(goodSession:_*)
+      val response = controller.getAmountDue().apply(request)
+
+      status(response) mustBe OK
+      contentAsString(response) must include(getMessages(request)("ssttp.calculator.amount-due.start.title"))
+    }
+
+    "submitAmountDue should load the getAmountDue Page with a 400" in {
+      when(mockSessionCache.get(any(), any(), any()))
+        .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+      val request = FakeRequest().withSession(goodSession:_*)
+      val response = controller.submitAmountDue().apply(request)
+
+      status(response) mustBe BAD_REQUEST
+      contentAsString(response) must include(getMessages(request)("ssttp.calculator.amount-due.start.title"))
+    }
+
+    "submitAmountDue should update the session with amount submitted" in {
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      val request = FakeRequest().withSession(goodSession:_*)
+      val response = controller.submitAmountDue().apply(request.withFormUrlEncodedBody(("amount" -> "500")))
+
+      status(response) mustBe SEE_OTHER
+      routes.CalculatorController.getCalculateInstalmentsUnAuth().url must endWith(redirectLocation(response).get)
+      verify(mockSessionCache, times(1)).put(any())(any(), any(), any())
+    }
+
+    "getCalculateInstalmentsUnAuth should load the getCalculateInstalmentsUnAuth if amountDue is in the session" in {
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(2)))))))
+      when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      val request = FakeRequest().withSession(goodSession:_*)
+      val response = controller.getCalculateInstalmentsUnAuth().apply(request)
+
+      status(response) mustBe OK
+      contentAsString(response) must include(getMessages(request)("ssttp.calculator.results.title"))
+    }
+
+    "getCheckCalculation should load the check calculation page if amountDue is in the session and the chosen shcedule is there" in {
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(2),Some(calculatorPaymentSchedule)))))))
+      val request = FakeRequest().withSession(goodSession:_*)
+      val response = controller.getCheckCalculation().apply(request)
+
+      status(response) mustBe OK
+      contentAsString(response) must include(getMessages(request)("ssttp.calculator.check-calculation.h1"))
+    }
+
+    "submitCalculateInstalmentsUnAuth should return a bad request if the data is bad " in {
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(2)))))))
+      when(mockCalculatorService.getInstalmentsScheduleUnAuth(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      val request = FakeRequest().withSession(goodSession:_*)
+      val response = controller.submitCalculateInstalmentsUnAuth().apply(request)
+
+      status(response) mustBe BAD_REQUEST
+      contentAsString(response) must include(getMessages(request)("ssttp.calculator.results.title"))
+    }
+
+    "submitCalculateInstalmentsUnAuth should redirect a bad request if the data is bad " in {
+      when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(2)))))))
+      when(mockCalculatorService.getInstalmentsScheduleUnAuth(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
+      when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      val request = FakeRequest().withFormUrlEncodedBody("chosen_month" -> "2").withSession(goodSession:_*)
+      val response = controller.submitCalculateInstalmentsUnAuth().apply(request)
+
+      status(response) mustBe SEE_OTHER
+      routes.CalculatorController.getCheckCalculation().url must endWith(redirectLocation(response).get)
+    }
+
 
     "submitPayTodayQuestion should redirect with a good session and good request and to the getPaymentToday if true is selected" in {
       when(mockSessionCache.get(any(), any(), any()))

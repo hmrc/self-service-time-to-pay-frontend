@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def start: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
-        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _)) => eligibilityCheck(taxpayer, ttp, authContext.principal.accounts.sa.get.utr.utr)
+        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp, authContext.principal.accounts.sa.get.utr.utr)
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -107,7 +107,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
-          case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _) =>
+          case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _, _) =>
             Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule)))
           case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
         }
@@ -142,7 +142,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               },
               validFormData => {
                 submission match {
-                  case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _) =>
+                  case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _, _) =>
                     changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
                       ttpSubmission =>
                         sessionCache.put(ttpSubmission).map {
@@ -177,16 +177,16 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     lazy val overTenThousandOwed = Redirect(routes.SelfServiceTimeToPayController.getDebtTooLarge()).successfulF
 
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
-      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(true, _)), _) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(true, _)), _, _) =>
         checkSubmissionForCalculatorPage(taxpayer, ttp)
         //todo merge the bottom 3
-      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(IsNotOnIa) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _, _) if reasons.contains(IsNotOnIa) =>
         notOnIa
-      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(TotalDebtIsTooHigh) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _, _) if reasons.contains(TotalDebtIsTooHigh) =>
         overTenThousandOwed
-      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _) if reasons.contains(ReturnNeedsSubmitting) || reasons.contains(DebtIsInsignificant) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _, _) if reasons.contains(ReturnNeedsSubmitting) || reasons.contains(DebtIsInsignificant) =>
         youNeedToFile
-      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(_, _)), _) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(_, _)), _, _) =>
         Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()).successfulF
     }
 
@@ -208,7 +208,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     val gotoTaxLiabilities = Redirect(routes.CalculatorController.getTaxLiabilities())
 
     newSubmission match {
-      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), CalculatorInput(_, _, _, _, _, _), _, _, _) =>
+      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), CalculatorInput(_, _, _, _, _, _), _, _, _, _) =>
 
         setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map(_ => gotoTaxLiabilities)
 
