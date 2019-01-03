@@ -17,7 +17,9 @@
 package uk.gov.hmrc.selfservicetimetopay.config
 
 import play.api.Play.{configuration, current}
+import play.api.i18n.Lang
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
 trait AppConfig {
   val assetsPrefix: String
@@ -65,4 +67,11 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig {
   lazy val callForDirectDebitAssistanceDimension = getConfString("google-analytics.dueDateDimension", "dimension46")
   lazy val printCompletePageDimension = getConfString("google-analytics.dueDateDimension", "dimension47")
   lazy val clickFeedbackOnComplete = getConfString("google-analytics.dueDateDimension", "dimension48")
+   //Lang
+
+  val languageMapValue: Map[String, Lang] = Map(
+    "english" -> Lang("en"),
+    "cymraeg" -> Lang("cy"))
+
+  def routeToSwitchLanguage = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
 }

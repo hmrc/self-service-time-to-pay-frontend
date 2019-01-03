@@ -21,7 +21,8 @@
 
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.check-calculation.h1"),
-    loggedIn = loggedIn
+    loggedIn = loggedIn,
+    welshToggleEnabled =false
 ) {
     <a class="link-back" href="@routes.CalculatorController.getCalculateInstalmentsUnAuth().url">@Messages("ssttp.calculator.check-calculation.back")</a>
     <header class="page-header text">
