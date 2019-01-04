@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue.MaxCurrencyValue
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -38,11 +39,6 @@ object CalculatorForm {
   def hasValue(textBox: String): Boolean = {
     (textBox != null) && textBox.nonEmpty
   }
-
-
-  case class RemoveItem(index: Int)
-
-  val removeAmountDueForm = Form(single("index" -> number))
 
   def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentToday] = {
     Form(mapping(
@@ -78,8 +74,8 @@ object CalculatorForm {
   def createInstalmentForm(): Form[CalculatorDuration] = {
     Form(mapping(
       "chosen_month" -> text
-        .verifying("ssttp.calculator.results.month.required", { i: String => Try(BigDecimal(i)).isSuccess })
-  )(text => CalculatorDuration(Some(text.toInt)))(_ => Some(text.toString)))
+        .verifying("ssttp.calculator.results.month.required", { i: String =>Try(BigDecimal(i)).isSuccess })
+  )(text => CalculatorDuration(text.toInt))(_ => Some(text.toString)))
 }
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(

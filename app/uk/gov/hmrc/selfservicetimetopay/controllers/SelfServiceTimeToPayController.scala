@@ -37,7 +37,7 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
   }
 
   def actionCallUsInEligibility: Action[AnyContent] = Action { implicit request =>
-        Ok(call_us(loggedIn = isSignedIn))
+        Ok(call_us(isOnWelshLanguage(),loggedIn = isSignedIn))
   }
 
   def getTtpCallUs: Action[AnyContent] = actionCallUsInEligibility

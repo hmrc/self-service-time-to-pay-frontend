@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(appConfig:uk.gov.hmrc.selfservicetimetopay.config.AppConfig,
+@(appConfig: uk.gov.hmrc.selfservicetimetopay.config.AppConfig,
         title: String,
         mainClass: Option[String] = None,
         mainDataAttributes: Option[Html] = None,
@@ -29,12 +29,14 @@
         googleAnalyticsCalls: Seq[String] = Seq.empty,
         noGetHelp: Boolean = false,
         loggedIn: Boolean = false,
+        welshToggleEnabled:Boolean = true,
         hasUserPanel: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers, layouts => uiLayouts}
 @import selfservicetimetopay.partials.google_analytics_js
 @import selfservicetimetopay.partials.beta_banner_with_user_panel
+@import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig._
 
 @head = {
 @uiLayouts.head(
@@ -55,17 +57,19 @@
 
 @afterHeader = {}
 
-@gaJs = @{google_analytics_js(googleAnalyticsCalls)}
+@gaJs = @{
+    google_analytics_js(googleAnalyticsCalls)
+}
 
 @bodyEnd = {
-    @uiLayouts.footer(
-        analyticsToken = Some(appConfig.analyticsToken),
-        analyticsHost = appConfig.analyticsHost,
-        ssoUrl = None,
-        scriptElem = scriptElem,
-        gaCalls = None,
-        analyticsAdditionalJs = Some(gaJs)
-    )
+@uiLayouts.footer(
+    analyticsToken = Some(appConfig.analyticsToken),
+    analyticsHost = appConfig.analyticsHost,
+    ssoUrl = None,
+    scriptElem = scriptElem,
+    gaCalls = None,
+    analyticsAdditionalJs = Some(gaJs)
+)
 }
 
 @footerTop = {}
@@ -78,6 +82,12 @@
     serviceInfoContent = Some(serviceInfoContent),
     includeHMRCBranding = false
 )
+    @if(welshToggleEnabled) {
+        @views.html.language_selection(
+            languageMapValue,
+            routeToSwitchLanguage,
+            Some("pull-right"))
+    }
 }
 
 @mainContentHeader = {
@@ -89,7 +99,7 @@
 @getHelpForm = {
 @if(noGetHelp) {
     @HtmlFormat.empty
-}else{
+} else {
     @uiHelpers.reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)
 }
 }

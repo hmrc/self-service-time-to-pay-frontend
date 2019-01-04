@@ -23,7 +23,8 @@
 @import selfservicetimetopay.helpers.message_list
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.amount-due.start.title"),
-    loggedIn = loggedIn
+    loggedIn = loggedIn,
+    welshToggleEnabled =false
 ){
 
     <a class="link-back" href="@routes.CalculatorController.getPaymentPlanCalculator()">@Messages("ssttp.calculator.amount-due.start.back")</a>

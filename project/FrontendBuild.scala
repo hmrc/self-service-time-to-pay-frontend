@@ -40,6 +40,7 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "domain" %  "5.2.0",
     "uk.gov.hmrc" %% "http-caching-client" %  "7.1.0",
     "uk.gov.hmrc" %% "time" % "3.1.0",
+    "uk.gov.hmrc" %% "play-language" % "3.4.0",
     "uk.gov.hmrc" %% "play-conditional-form-mapping" % playConditionalMappingVersion
   )
 

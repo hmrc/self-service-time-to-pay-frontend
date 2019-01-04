@@ -24,6 +24,7 @@
         googleAnalyticsCalls: Seq[String] = Seq.empty,
         noGetHelp:Boolean = false,
         loggedIn:Boolean = false,
+        welshToggleEnabled:Boolean = true,
         hasUserPanel: Boolean = false)(mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import uk.gov.hmrc.play.views.html.layouts
 @import uk.gov.hmrc.selfservicetimetopay.controllers.{routes => localRoutes}
@@ -62,5 +63,6 @@
     googleAnalyticsCalls = googleAnalyticsCalls,
     noGetHelp = noGetHelp,
     loggedIn = loggedIn,
+    welshToggleEnabled = welshToggleEnabled,
     hasUserPanel = hasUserPanel
 )

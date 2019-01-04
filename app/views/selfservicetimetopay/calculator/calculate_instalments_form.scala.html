@@ -18,46 +18,49 @@
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentSchedule}
 @(durationForm: Form[CalculatorDuration], currentChosenMonth: Int = 2,
-        monthsToSchedule: Map[Int, CalculatorPaymentSchedule],redirectCall:Call, loggedIn: Boolean,isAuthJourney:Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
-@import selfservicetimetopay.helpers.forms.submit
-@import uk.gov.hmrc.play.views.html.helpers
-@selfservicetimetopay.main(
-    title = Messages("ssttp.calculator.results.title"),
-    loggedIn = loggedIn
-) {
-    <a class="link-back" href="@if(isAuthJourney){@routes.CalculatorController.getPayTodayQuestion()}else{@routes.CalculatorController.getAmountDue()}">@Messages("ssttp.calculator.form.back")</a>
+        monthsToSchedule: Map[Int, CalculatorPaymentSchedule], redirectCall: Call, loggedIn: Boolean, isAuthJourney: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
+    @import selfservicetimetopay.helpers.forms.submit
+    @import uk.gov.hmrc.play.views.html.helpers
+    @selfservicetimetopay.main(
+        title = Messages("ssttp.calculator.results.title"),
+        loggedIn = loggedIn,
+        welshToggleEnabled = isAuthJourney
+    ) {
+        <a class="link-back" href="@if(isAuthJourney) {@routes.CalculatorController.getPayTodayQuestion()} else {
+            @routes.CalculatorController.getAmountDue()
+        }">@Messages("ssttp.calculator.form.back")</a>
 
-    <h1 class="heading-large margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
-    @if(durationForm.hasErrors) {
-        @helpers.errorSummary(Messages("ssttp.calculator.results.error.title"), durationForm)
-    }
+        <h1 class="heading-large margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
+        @if(durationForm.hasErrors) {
+            @helpers.errorSummary(Messages("ssttp.calculator.results.error.title"), durationForm)
+        }
 
-    @helpers.form(redirectCall, 'id -> "paymentTodayForm", 'class -> "group") {
-      <div>
+        @helpers.form(redirectCall, 'id -> "paymentTodayForm", 'class -> "group") {
+            <div>
 
-        @{
-            monthsToSchedule.filter(month => month._1 < 7).map { lessThenSix => instalment_by_month(lessThenSix._1, lessThenSix._2) }
-          }
-        @{
-            val greaterThenSix =  monthsToSchedule.filter(month => month._1 >=7)
-            if(greaterThenSix.nonEmpty){
-                instalments_by_month_sub_section(greaterThenSix)
+                @{
+                    monthsToSchedule.filter(month => month._1 < 7).map { lessThenSix => instalment_by_month(lessThenSix._1, lessThenSix._2) }
+                }
+                @{
+                    val greaterThenSix = monthsToSchedule.filter(month => month._1 >= 7)
+                    if(greaterThenSix.nonEmpty) {
+                        instalments_by_month_sub_section(greaterThenSix)
+                    }
+                }
+            </div>
+            @if(isAuthJourney) {
+                <details class="divider--top--thick">
+                    <summary><span class="summary">@Messages("ssttp.calculator.results.section.title")</span></summary>
+                    <div class="panel panel-border-narrow">
+                        <p>@Messages("ssttp.calculator.results.section.p1")</p>
+                        <p>@Messages("ssttp.calculator.results.section.p2")</p>
+                        <p>@Messages("ssttp.calculator.results.section.p3")</p>
+                    </div>
+                </details>
+            }
+            @submit() {
+                @Messages("ssttp.calculator.form.continue")
             }
         }
-      </div>
-   @if(isAuthJourney) {
-       <details class="divider--top--thick">
-           <summary><span class="summary">@Messages("ssttp.calculator.results.section.title")</span></summary>
-           <div class="panel panel-border-narrow">
-               <p>@Messages("ssttp.calculator.results.section.p1")</p>
-               <p>@Messages("ssttp.calculator.results.section.p2")</p>
-               <p>@Messages("ssttp.calculator.results.section.p3")</p>
-           </div>
-       </details>
-   }
-        @submit() {
-            @Messages("ssttp.calculator.form.continue")
-        }
     }
-}
 

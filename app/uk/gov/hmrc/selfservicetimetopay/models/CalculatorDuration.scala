@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class CalculatorDuration(months: Option[Int])
+case class CalculatorDuration(chosenMonths: Int)

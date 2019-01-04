@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@(loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(isWelshEnabled:Boolean,loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.message_list
 @selfservicetimetopay.main(
     title = Messages("ssttp.call-us.title"),
@@ -41,6 +41,6 @@
     <h3>@Messages("ssttp.call-us.opening-times.heading")</h3>
     <ul class="bullets">
         <li>@Messages("ssttp.call-us.opening-times.l1")</li>
-        <li>@Messages("ssttp.call-us.opening-times.l2")</li>
+       @if(!isWelshEnabled){<li>@Messages("ssttp.call-us.opening-times.l2")</li>}
     </ul>
 }

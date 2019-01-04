@@ -40,6 +40,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
   }
 
+
   def getPaymentPlanCalculator: Action[AnyContent] = Action { implicit request =>
     Ok(payment_plan_calculator(isSignedIn))
   }
@@ -89,7 +90,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
               },
               validFormData => {
                 sessionCache.put(ttpData.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(amountDue),
-                  Some(monthsToSchedule(validFormData.months.getOrElse(2))))))).map { _ =>
+                  Some(monthsToSchedule(validFormData.chosenMonths)))))).map { _ =>
                   Redirect(routes.CalculatorController.getCheckCalculation())
                 }
               }
@@ -236,7 +237,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
                     monthsToSchedule, routes.CalculatorController.submitCalculateInstalments(), true)))
                 },
                 validFormData => {
-                  sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.months.getOrElse(2))))).map { _ =>
+                  sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.chosenMonths)))).map { _ =>
                     Redirect(routes.ArrangementController.getChangeSchedulePaymentDay())
                   }
                 }
