@@ -53,7 +53,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   def start: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
       sessionCache.get.flatMap {
-        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp, authContext.principal.accounts.sa.get.utr.utr)
+        case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp, authContext.principal.accounts.sa.get.utr.utr)
         case _ => Future.successful(redirectOnError)
       }
   }
@@ -107,7 +107,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     implicit authContext =>
       implicit request =>
         authorizedForSsttp {
-          case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _, _) =>
+          case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _, _, _) =>
             Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule)))
           case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
         }
@@ -142,7 +142,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               },
               validFormData => {
                 submission match {
-                  case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _, _) =>
+                  case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _) =>
                     changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
                       ttpSubmission =>
                         sessionCache.put(ttpSubmission).map {
@@ -177,16 +177,16 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     lazy val overTenThousandOwed = Redirect(routes.SelfServiceTimeToPayController.getDebtTooLarge()).successfulF
 
     def checkSubmission(ts: TTPSubmission): Future[Result] = ts match {
-      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(true, _)), _, _) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(true, _)), _, _, _) =>
         checkSubmissionForCalculatorPage(taxpayer, ttp)
-        //todo merge the bottom 3
-      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _, _) if reasons.contains(IsNotOnIa) =>
+      //todo merge the bottom 3
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _, _, _) if reasons.contains(IsNotOnIa) =>
         notOnIa
-      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _, _) if reasons.contains(TotalDebtIsTooHigh) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _, _, _) if reasons.contains(TotalDebtIsTooHigh) =>
         overTenThousandOwed
-      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _, _) if reasons.contains(ReturnNeedsSubmitting) || reasons.contains(DebtIsInsignificant) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(false, reasons)), _, _, _) if reasons.contains(ReturnNeedsSubmitting) || reasons.contains(DebtIsInsignificant) =>
         youNeedToFile
-      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(_, _)), _, _) =>
+      case ttp@TTPSubmission(_, _, _, _, _, _, Some(EligibilityStatus(_, _)), _, _, _) =>
         Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()).successfulF
     }
 
@@ -208,7 +208,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     val gotoTaxLiabilities = Redirect(routes.CalculatorController.getTaxLiabilities())
 
     newSubmission match {
-      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), CalculatorInput(_, _, _, _, _, _), _, _, _, _) =>
+      case TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(tpSA))), CalculatorInput(_, _, _, _, _, _), _, _, _, _, _) =>
 
         setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map(_ => gotoTaxLiabilities)
 
@@ -232,13 +232,12 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
       implicit request =>
         authorizedForSsttp {
           submission =>
-            val ddref =  submission.bankDetails.get.ddiRefNumber
-          sessionCache.remove().map(_ => Ok(application_complete(
+            sessionCache.remove().map(_ => Ok(application_complete(
               debits = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
               transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
               directDebit = submission.arrangementDirectDebit.get,
               schedule = submission.schedule.get,
-              ddref = ddref,
+              ddref = submission.ddRef,
               isSignedIn))
             )
         }
@@ -258,18 +257,18 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
         ddConnector.createPaymentPlan(checkExistingBankDetails(submission), SaUtr(utr)).flatMap[Result] {
           _.fold(_ => Redirect(routes.DirectDebitController.getDirectDebitError()).successfulF,
             success => {
+              val arrangement = createArrangement(success, submission)
               val result = for {
-
-                ttp <- arrangementConnector.submitArrangements(createArrangement(success, submission))
+                submissionResult <- arrangementConnector.submitArrangements(arrangement)
                 _ = auditService.sendSubmissionEvent(submission)
-              } yield ttp
-
+                _ = sessionCache.put(submission.copy(ddRef = Some(arrangement.directDebitReference)))
+              } yield submissionResult
 
               result.flatMap {
                 _.fold(error => {
                   Logger.error(s"Exception: ${error.code} + ${error.message}")
-                  Redirect(routes.ArrangementController.applicationComplete()).successfulF
-                }, ttp => applicationSuccessful)
+                  applicationSuccessful
+                }, _ => applicationSuccessful)
               }
             })
         }
