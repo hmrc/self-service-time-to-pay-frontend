@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.config
 
+import com.typesafe.config.Config
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.hooks.HttpHooks
 import uk.gov.hmrc.play.audit.http.HttpAuditing
@@ -25,21 +26,34 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.config.LoadAuditingConfig
 import uk.gov.hmrc.play.http.ws._
 
-trait WSHttp extends HttpGet with WSGet with HttpPut with WSPut with HttpPost with WSPost with HttpPatch with WSPatch with HttpDelete with WSDelete with Hooks with AppName
+trait WSHttp extends HttpGet
+  with WSGet
+  with HttpPut
+  with WSPut
+  with HttpPost
+  with WSPost
+  with HttpPatch
+  with WSPatch
+  with HttpDelete
+  with WSDelete
+  with Hooks
+  with AppName
 
-object WSHttp extends WSHttp
-
-trait Hooks extends  HttpHooks with HttpAuditing{
-  override lazy val auditConnector = FrontendAuditConnector
-  override val hooks = Seq(AuditingHook)
+object WSHttp extends WSHttp with DefaultRunModeAppNameConfig {
+  protected def configuration: Option[Config] = None
 }
 
-object FrontendAuditConnector extends Auditing with AppName with RunMode {
+trait Hooks extends  HttpHooks with HttpAuditing{
+  override lazy val auditConnector: FrontendAuditConnector.type = FrontendAuditConnector
+  override val hooks: Seq[AuditingHook.type] = Seq(AuditingHook)
+}
+
+object FrontendAuditConnector extends Auditing with AppName with RunMode with DefaultRunModeAppNameConfig {
   override lazy val auditingConfig = LoadAuditingConfig("auditing")
 }
 
-object FrontendAuthConnector extends AuthConnector with ServicesConfig {
+object FrontendAuthConnector extends AuthConnector with ServicesConfig with DefaultRunModeAppNameConfig {
   override val serviceUrl: String = baseUrl("auth")
 
-  override def http = WSHttp
+  override def http: WSHttp.type = WSHttp
 }

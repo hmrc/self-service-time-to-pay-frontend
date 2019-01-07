@@ -20,33 +20,33 @@ import com.github.tomakehurst.wiremock.client.WireMock.{verify => wmVerify, _}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.Application
 import play.api.http.Status
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.WithFakeApplication
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import play.api.inject.guice.GuiceApplicationBuilder
 
-class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with GuiceOneServerPerSuite {
+class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with GuiceOneServerPerSuite with DefaultRunModeAppNameConfig {
 
-  implicit override lazy val app = new GuiceApplicationBuilder().
+  implicit override lazy val app: Application = new GuiceApplicationBuilder().
     disable[com.kenshoo.play.metrics.PlayModule].build()
 
-  object DirectDebitConnectorTest extends DirectDebitConnector with ServicesConfig {
+  object DirectDebitConnectorTest extends DirectDebitConnector with ServicesConfig with DefaultRunModeAppNameConfig {
     lazy val directDebitURL: String = WiremockHelper.url
     lazy val serviceURL = "direct-debit"
-    lazy val http = WSHttp
+    lazy val http: WSHttp.type = WSHttp
   }
 
-  implicit val headerCarrier = HeaderCarrier()
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   object testConnector extends DirectDebitConnector {
     val directDebitURL = ""

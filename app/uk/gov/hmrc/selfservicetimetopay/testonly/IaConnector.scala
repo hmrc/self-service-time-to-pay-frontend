@@ -19,18 +19,18 @@ package uk.gov.hmrc.selfservicetimetopay.testonly
 import com.google.inject.Singleton
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IaConnector extends ServicesConfig{
+class IaConnector extends ServicesConfig with DefaultRunModeAppNameConfig {
 
   private lazy val baseUrl: String = baseUrl("ia")
 
   def uploadUtr(utr:String)(implicit hc:HeaderCarrier, executionContext: ExecutionContext): Future[Unit]  =
     WSHttp
-    .POSTEmpty(baseUrl+ s"/ia/upload/$utr")
+    .POSTEmpty(baseUrl + s"/ia/upload/$utr")
     .map{
       r =>
         if(r.status != 200) throw new RuntimeException(s"Could not upload utr into Ia")

@@ -21,8 +21,7 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.config.{AppName, ServicesConfig}
 import uk.gov.hmrc.selfservicetimetopay.auth.{Token, TokenData}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector}
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +41,7 @@ trait SessionCache4TokensConnector extends SessionCache with ServicesConfig {
     tokenData
   ).map(_ => println(s"ttp-token PUT $tokenData"))
 
-  def getAndRemove(token: Token)(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = for {
+  def getAndRemove(token: Token)(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[Option[TokenData]] = for {
     tokenData <- fetchAndGetEntry[TokenData](defaultSource, s"$formId-${token.v}", formId)
     _ <- delete(buildUri(defaultSource, s"$formId-${token.v}"))
     _ = println(s"ttp-token GETANDREMOVE $token $tokenData")
@@ -51,7 +50,7 @@ trait SessionCache4TokensConnector extends SessionCache with ServicesConfig {
 }
 
 @Singleton
-class SessionCache4TokensConnectorImpl extends SessionCache4TokensConnector with AppName with ServicesConfig {
+class SessionCache4TokensConnectorImpl extends SessionCache4TokensConnector with AppName with ServicesConfig with DefaultRunModeAppNameConfig {
 
   override def defaultSource: String = appName
 

@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.config
 import akka.stream.Materializer
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
+import play.api.Mode.Mode
 import play.api.i18n._
 import play.api.mvc._
 import play.api.{Application, Configuration, Play}
@@ -54,7 +55,7 @@ object FrontendGlobal extends DefaultFrontendGlobal with MicroserviceFilterSuppo
 
   override def onStart(app: Application) {
     super.onStart(app)
-    ApplicationCrypto.verifyConfiguration()
+    new ApplicationCrypto(Play.current.configuration.underlying).verifyConfiguration()
   }
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html = {
@@ -77,11 +78,17 @@ object LoggingFilter extends FrontendLoggingFilter with MicroserviceFilterSuppor
 
 object AuditFilter extends FrontendAuditFilter with RunMode with AppName with MicroserviceFilterSupport {
 
-  override lazy val maskedFormFields = Seq("password")
+  override lazy val maskedFormFields: Seq[String] = Seq("password")
 
-  override lazy val applicationPort = None
+  override lazy val applicationPort: Option[Int] = None
 
-  override lazy val auditConnector = FrontendAuditConnector
+  override lazy val auditConnector: FrontendAuditConnector.type = FrontendAuditConnector
+
+  override protected def mode: Mode = Play.current.mode
+
+  override protected def runModeConfiguration: Configuration = Play.current.configuration
+
+  override protected def appNameConfiguration: Configuration = Play.current.configuration
 
   override def controllerNeedsAuditing(controllerName: String): Boolean =
     ControllerConfiguration.paramsForController(controllerName).needsAuditing

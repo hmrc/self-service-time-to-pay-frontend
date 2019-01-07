@@ -23,7 +23,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, ReturnNeedsSubmitting, SelfAssessment, TotalDebtIsTooHigh}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -31,13 +31,13 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication {
+class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication with DefaultRunModeAppNameConfig {
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   object testConnector extends EligibilityConnector {
     val eligibilityURL: String = ""
-    val http = mock[WSHttp]
+    val http: WSHttp = mock[WSHttp]
     val serviceURL = "eligibility"
   }
 

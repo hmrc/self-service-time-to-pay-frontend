@@ -20,28 +20,15 @@ private object AppDependencies {
   import play.sbt.PlayImport._
   import play.core.PlayVersion
 
-  private val playHealthVersion = "1.1.0"
-  private val playJsonLoggerVersion = "2.1.1"
-  private val frontendBootstrapVersion = "6.7.0"
-  private val govukTemplateVersion = "4.0.0"
-  private val playUiVersion = "4.18.0"
-  private val playPartialsVersion = "4.6.0"
-  private val playAuthorisedFrontendVersion = "5.7.0"
-  private val playConfigVersion = "2.1.0"
-  private val hmrcTestVersion = "1.8.0"
-  private val cachingClientVersion = "5.6.0"
-  private val playConditionalMappingVersion = "0.2.0"
-  private val domainVersion = "3.7.0"
-
   val compile = Seq(
     ws,
-    "uk.gov.hmrc" %% "frontend-bootstrap" %  "10.2.0",
-    "uk.gov.hmrc" %% "play-partials" %  "6.1.0",
+    "uk.gov.hmrc" %% "frontend-bootstrap" %  "11.3.0",
+    "uk.gov.hmrc" %% "play-partials" %  "6.3.0",
     "uk.gov.hmrc" %% "domain" %  "5.2.0",
     "uk.gov.hmrc" %% "http-caching-client" %  "7.1.0",
     "uk.gov.hmrc" %% "time" % "3.1.0",
     "uk.gov.hmrc" %% "play-language" % "3.4.0",
-    "uk.gov.hmrc" %% "play-conditional-form-mapping" % playConditionalMappingVersion
+    "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0"
   )
 
   trait TestDependencies {

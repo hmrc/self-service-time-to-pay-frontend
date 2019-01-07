@@ -16,29 +16,29 @@
 
 package uk.gov.hmrc.selfservicetimetopay.testonly
 
-import javax.inject._
-
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
+import javax.inject._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action => PlayAction, _}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.config.DefaultRunModeAppNameConfig
 import uk.gov.hmrc.selfservicetimetopay.connectors.TaxPayerConnector
 import uk.gov.hmrc.selfservicetimetopay.controllers.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 class TestOnlyController @Inject()(val messagesApi: MessagesApi, taxpayerConnector: TaxPayerConnector)
-extends TimeToPayController with I18nSupport with ServicesConfig {
+extends TimeToPayController with I18nSupport with ServicesConfig with DefaultRunModeAppNameConfig {
 
-  def config() = PlayAction { r =>
+  def config(): PlayAction[AnyContent] = PlayAction { r =>
     val result: JsValue = Json.parse(
       ConfigFactory.load().root().render(ConfigRenderOptions.concise())
     )
     Results.Ok(result)
   }
 
-  def getTaxpayer() = authorisedSaUser { implicit authContext => implicit request =>
+  def getTaxpayer(): PlayAction[AnyContent] = authorisedSaUser { implicit authContext =>implicit request =>
     val utr = authContext.principal.accounts.sa.get.utr.utr
     val getTaxpayerF = taxpayerConnector.getTaxPayer(utr).map{
       case Some(t) => Json.toJson(t)
@@ -52,13 +52,13 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
     } yield Ok(taxpayer)
   }
 
-  def taxpayerConfig() = PlayAction.async { implicit request =>
+  def taxpayerConfig(): PlayAction[AnyContent] = PlayAction.async { implicit request =>
     val baseUrl = taxpayerConnector.taxPayerURL
     taxpayerConnector.http.GET[HttpResponse](s"$baseUrl/taxpayer/test-only/config")
       .map(r => Status(r.status)(r.json))
   }
 
-  def taxpayerConnectorsConfig() = PlayAction.async { implicit request =>
+  def taxpayerConnectorsConfig(): PlayAction[AnyContent] = PlayAction.async { implicit request =>
     val baseUrl = taxpayerConnector.taxPayerURL
     taxpayerConnector.http.GET[HttpResponse](s"$baseUrl/taxpayer/test-only/connectors-config")
       .map(r => Status(r.status)(r.json))

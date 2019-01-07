@@ -18,17 +18,16 @@ package uk.gov.hmrc.selfservicetimetopay.testonly
 
 import com.google.inject.Singleton
 import play.api.Logger
-import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.play.config.ServicesConfig
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Random
 
 
 @Singleton
-class SaStubConnector extends ServicesConfig {
+class SaStubConnector extends ServicesConfig with DefaultRunModeAppNameConfig {
 
   def setTaxpayerResponse(tu: TestUser)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 

@@ -24,20 +24,20 @@ import play.api.http.Status._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, Upstream4xxResponse}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutures with ServicesConfig with WithFakeApplication {
+class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutures with ServicesConfig with WithFakeApplication with DefaultRunModeAppNameConfig {
 
-  implicit val headerCarrier = HeaderCarrier()
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   object testConnector extends ArrangementConnector {
     val arrangementURL = ""
-    val http = mock[WSHttp]
+    val http: WSHttp = mock[WSHttp]
     val serviceURL = "ttparrangements"
   }
 
