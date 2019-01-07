@@ -28,7 +28,6 @@
     loggedIn = loggedIn
 ) {
     <a class="link-back" href="@routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.calculator.self-assessment-account-summary-page.button-back")</a>
-    @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
 
         <h1 class="heading-large">@Messages("ssttp.calculator.self-assessment-account-summary-page.title")</h1>
 
@@ -45,4 +44,3 @@
             }
         }</p>
     }
-}

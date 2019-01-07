@@ -26,7 +26,7 @@ import uk.gov.hmrc.time.workingdays._
 
 import scala.language.postfixOps
 import uk.gov.hmrc.selfservicetimetopay.util.ResourceReader
-
+import uk.gov.hmrc.selfservicetimetopay.util.DateHelper.turnJavaTimeToJoda
 @Singleton
 class WorkingDaysService @Inject()() {
 
@@ -34,7 +34,7 @@ class WorkingDaysService @Inject()() {
   implicit val hols: BankHolidaySet = BankHolidays()
 
   def addWorkingDays(date: LocalDate, days: Int): LocalDate = {
-    val joda = org.joda.time.LocalDate.now().withMonthOfYear(date.getMonthValue).withDayOfMonth(date.getDayOfMonth).withYear(date.getYear)
+    val joda = turnJavaTimeToJoda(date)
     val jodaLocalDate: time.LocalDate = joda.plusWorkingDays(days)
     LocalDate.now().withYear(jodaLocalDate.getYear).withDayOfMonth(jodaLocalDate.getDayOfMonth).withMonth(jodaLocalDate.getMonthOfYear)
   }

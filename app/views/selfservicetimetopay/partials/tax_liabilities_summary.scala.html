@@ -18,25 +18,25 @@
 @import java.util.Locale
 @import selfservicetimetopay.partials.charge_code
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import uk.gov.hmrc.play.language.LanguageUtils.Dates
+@import uk.gov.hmrc.selfservicetimetopay.util.DateHelper.turnJavaTimeToJoda
 @(debits: Seq[Debit])(implicit messages: play.api.i18n.Messages, request: Request[_])
 <div class="panel panel-border-narrow panel-tabular-data">
     <div class="tabular-data__divider--full-width">
-@defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
+
     @debits.head.taxYearEnd.map { tye =>
-            <span class="tabular-data__heading">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-year-ending") @tye.format(formatter)</span>
+            <span class="tabular-data__heading">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-year-ending") @Dates.formatDate(turnJavaTimeToJoda(tye))</span>
         }
 
             @debits.map { debit =>
                 <div class="tabular-data__entry border-bottom">
                     <span class="tabular-data__heading tabular-data__heading--label">
                         <h4 class="heading-small">@charge_code(debit.originCode.get, debit.taxYearEnd)</h4>
-                        <p>@(Messages("ssttp.calculator.self-assessment-account-summary-page.due-by"))  @debit.dueDate.format(formatter)</p>
+                        <p>@(Messages("ssttp.calculator.self-assessment-account-summary-page.due-by"))  @Dates.formatDate(turnJavaTimeToJoda(debit.dueDate))</p>
                     </span>
                     <div class="tabular-data__data-1"><span class="normal-text">@currency(debit.amount)</span></div>
                 </div>
 
-
             }
-}
     </div>
 </div>
