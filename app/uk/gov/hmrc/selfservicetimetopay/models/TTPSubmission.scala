@@ -26,7 +26,8 @@ case class TTPSubmission(schedule: Option[CalculatorPaymentSchedule] = None,
                          durationMonths: Option[Int] = Some(2),
                          eligibilityStatus: Option[EligibilityStatus] = None,
                          debitDate: Option[LocalDate] = None,
-                         notLoggedInJourneyInfo: Option[NotLoggedInJourneyInfo] = None) {
+                         notLoggedInJourneyInfo: Option[NotLoggedInJourneyInfo] = None,
+                         ddRef:Option[String] = None) {
 
   def lengthOfArrangement = schedule.map(_.instalments.length).getOrElse(2)
   def arrangementDirectDebit: Option[ArrangementDirectDebit] = bankDetails.map(f => ArrangementDirectDebit.from(f))
