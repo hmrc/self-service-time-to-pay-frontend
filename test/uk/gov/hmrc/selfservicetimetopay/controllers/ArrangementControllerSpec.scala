@@ -50,9 +50,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
   val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
   val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
   val mockCacheMap: CacheMap = mock[CacheMap]
-  val goodSession =   (SessionKeys.userId -> "someUserId",
-  TTPSessionId.newTTPSession(),
-  "token" -> "1234")
+
   val controller = new ArrangementController(messagesApi, ddConnector, arrangementConnector, calculatorService, calculatorConnecter, taxPayerConnector, mockEligibilityConnector, auditService) {
     override lazy val sessionCache: SessionCacheConnector = mockSessionCache
     override lazy val authConnector: AuthConnector = mockAuthConnector
@@ -85,9 +83,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
+          goodSession: _*
         )
       )
 
@@ -105,9 +101,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
+          goodSession: _*
         )
       )
 
@@ -125,9 +119,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
+          goodSession: _*
         )
       )
 
@@ -147,9 +139,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val response = controller.determineEligibility()
         .apply(FakeRequest()
           .withSession(
-            SessionKeys.userId -> "someUserId",
-            TTPSessionId.newTTPSession(),
-            "token" -> "1234"
+            goodSession: _*
           )
         )
 
@@ -169,9 +159,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
+          goodSession: _*
         )
       )
 
@@ -191,9 +179,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
+          goodSession: _*
         )
       )
 
@@ -211,9 +197,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
+          goodSession: _*
         )
       )
 
@@ -227,10 +211,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
       val request = FakeRequest().withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
-        )
+        goodSession: _*
+      )
       val response = controller.getChangeSchedulePaymentDay().apply(request)
 
       status(response) mustBe OK
@@ -244,9 +226,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
       val request = FakeRequest().withSession(
-        SessionKeys.userId -> "someUserId",
-        TTPSessionId.newTTPSession(),
-        "token" -> "1234"
+        goodSession: _*
       )
       val response = controller.getDeclaration().apply(request)
 
@@ -266,9 +246,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.remove()(any(), any())).thenReturn(Future.successful(mock[HttpResponse]))
 
       val request = FakeRequest().withSession(
-        SessionKeys.userId -> "someUserId",
-        TTPSessionId.newTTPSession(),
-        "token" -> "1234"
+        goodSession: _*
       )
 
 
@@ -285,9 +263,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       val response = controller.applicationComplete().apply(FakeRequest()
         .withSession(
-          SessionKeys.userId -> "someUserId",
-          TTPSessionId.newTTPSession(),
-          "token" -> "1234"
+          goodSession: _*
         )
       )
 
@@ -307,9 +283,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(arrangementConnector.submitArrangements(any())(any())).thenReturn(Future.successful(Left(SubmissionError(GATEWAY_TIMEOUT, "Timeout"))))
 
       val response = controller.submit().apply(FakeRequest().withSession(
-        SessionKeys.userId -> "someUserId",
-        TTPSessionId.newTTPSession(),
-        "token" -> "1234"
+        goodSession: _*
       )
       )
 
@@ -320,11 +294,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(None))
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      val response = controller.submit().apply(FakeRequest().withSession(
-        SessionKeys.userId -> "someUserId",
-        TTPSessionId.newTTPSession(),
-        "token" -> "1234"
-      )
+      val response = controller.submit().apply(FakeRequest().withSession(goodSession :_*)
       )
       controllers.routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(response).get)
     }
@@ -334,11 +304,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.get(any(), any(), any())).thenReturn(Future.successful(None))
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      val response = controller.submit().apply(FakeRequest().withSession(
-        SessionKeys.userId -> "someUserId",
-        TTPSessionId.newTTPSession(),
-        "token" -> "1234"
-      )
+      val response = controller.submit().apply(FakeRequest().withSession(goodSession :_*)
       )
 
 
@@ -356,11 +322,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.put(any())(any(), any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
 
-      val response = controller.determineEligibility().apply(FakeRequest().withSession(
-        SessionKeys.userId -> "someUserId",
-        TTPSessionId.newTTPSession(),
-        "token" -> "1234"
-      )
+      val response = controller.determineEligibility().apply(FakeRequest().withSession(goodSession :_*)
       )
 
 
