@@ -32,7 +32,7 @@ trait AppConfig {
 
 }
 
-object SsttpFrontendConfig extends AppConfig with ServicesConfig {
+object SsttpFrontendConfig extends AppConfig with ServicesConfig with DefaultRunModeAppNameConfig {
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 

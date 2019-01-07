@@ -17,20 +17,20 @@
 package uk.gov.hmrc.selfservicetimetopay.testonly
 
 import java.util.UUID
-import javax.inject.Singleton
 
+import javax.inject.Singleton
 import org.joda.time.DateTime
 import play.api.http.HeaderNames
 import play.api.mvc.Session
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import play.api.libs.json.{Json, _}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LoginService extends ServicesConfig {
+class LoginService extends ServicesConfig with DefaultRunModeAppNameConfig {
 
   def logIn(tu: TestUser)(implicit executionContext: ExecutionContext): Future[Session] = for {
     (at, au, gt) <- callAuthLoginApi(tu)

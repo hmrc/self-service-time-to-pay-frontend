@@ -23,7 +23,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, CalculatorPaymentSchedule}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -31,9 +31,9 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AuthLoginApiConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication {
+class AuthLoginApiConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication with DefaultRunModeAppNameConfig {
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   object testConnector extends CalculatorConnector {
     val calculatorURL = ""

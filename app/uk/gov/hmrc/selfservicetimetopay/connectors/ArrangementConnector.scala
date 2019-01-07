@@ -22,9 +22,10 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import com.google.inject._
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+
 import scala.concurrent.Future
 
 case class SubmissionSuccess()
@@ -63,8 +64,8 @@ trait ArrangementConnector {
 }
 
 @Singleton
-class ArrangementConnectorImpl extends ArrangementConnector with ServicesConfig {
+class ArrangementConnectorImpl extends ArrangementConnector with ServicesConfig with DefaultRunModeAppNameConfig {
   val arrangementURL: String = baseUrl("time-to-pay-arrangement")
   val serviceURL = "ttparrangements"
-  val http = WSHttp
+  val http: WSHttp.type = WSHttp
 }

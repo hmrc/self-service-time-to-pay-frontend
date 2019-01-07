@@ -18,17 +18,16 @@ package uk.gov.hmrc.selfservicetimetopay.testonly
 
 import com.google.inject.Singleton
 import play.api.Logger
-import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.play.config.ServicesConfig
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Random
 
 
 @Singleton
-class DesStubConnector extends ServicesConfig {
+class DesStubConnector extends ServicesConfig with DefaultRunModeAppNameConfig {
 
   def setReturns(tu: TestUser)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
@@ -67,22 +66,5 @@ class DesStubConnector extends ServicesConfig {
   }
 
   private lazy val baseUrl: String = baseUrl("des-services")
-
-  private def nextTitle(): String = choose("Mr", "Miss", "Mrs", "Ms")
-
-  private def nextForname(): String = choose(
-    "Sophia","Emma","Olivia","Ava","Mia","Isabella","Riley","Aria","Zoe","Charlotte","Lily","Layla","Amelia","Emily","Madelyn","Aubrey","Adalyn","Madison","Chloe","Harper","Abigail","Aaliyah","Avery","Evelyn","Kaylee","Ella","Ellie","Scarlett","Arianna","Hailey","Nora","Addison","Brooklyn","Hannah","Mila","Leah","Elizabeth","Sarah","Eliana","Mackenzie","Peyton","Maria","Grace","Adeline","Elena","Anna","Victoria","Camilla","Lillian",
-    "Jackson", "Aiden", "Lucas", "Liam", "Noah", "Ethan", "Mason", "Caden", "Oliver", "Elijah", "Grayson", "Jacob", "Michael", "Benjamin", "Carter", "James", "Jayden", "Logan", "Alexander", "Caleb", "Ryan", "Luke", "Daniel", "Jack", "William", "Owen", "Gabriel", "Matthew", "Connor", "Jayce", "Isaac", "Sebastian", "Henry", "Muhammad", "Cameron", "Wyatt", "Dylan", "Nathan", "Nicholas", "Julian", "Eli", "Levi", "Isaiah", "Landon", "David", "Christian", "Andrew", "Brayden", "John"
-  )
-
-  private def nextSurname(): String = choose(
-    "Williams","Johnson","Taylor","Thomas","Roberts","Khan","Lewis","Jackson","Clarke","James","Phillips","Wilson","Ali","Mason","Mitchell","Rose","Davis","Davies","Rodriguez","Cox","Alexander","Morgan","Moore","Mills","King","Adams","Garcia","White","Stone","Edwards","Watson","Malley","Walker","Austin","Pearce","Reid","Simon"
-  )
-
-  private def choose(s0: String, ss: String*) = {
-    val choices = s0 :: ss.toList
-    val choice = Random.nextInt(choices.size)
-    choices(choice)
-  }
 
 }

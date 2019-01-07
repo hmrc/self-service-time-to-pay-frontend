@@ -65,7 +65,7 @@
             <p>
                 <h2>Affinity Group</h2>
                 <span class="flush--ends form-field--hint"></span>
-            @helpers.inputRadioGroup(dataForm("affinity-group"), Seq(
+            @helpers.input_radio_group(dataForm("affinity-group"), Seq(
                     "Individual" -> "Individual",
                     "Organisation" -> "Organisation",
                     "Agent" -> "Agent"
@@ -80,7 +80,7 @@
             <p>
         <h2>Put in ia</h2>
             <span class="flush--ends form-field--hint"></span>
-            @helpers.inputRadioGroup(dataForm("isOnIA"), Seq(
+            @helpers.input_radio_group(dataForm("isOnIA"), Seq(
                 "true" -> "Yes",
                 "false" -> "No"
             ),
@@ -96,7 +96,7 @@
                 <h2>Does the user have SA enrolment</h2>
                 <span class="flush--ends form-field--hint">If <em>No</em> then below setup will be ignored</span>
 
-            @helpers.inputRadioGroup(dataForm("has-sa-enrolment"), Seq(
+            @helpers.input_radio_group(dataForm("has-sa-enrolment"), Seq(
                     "true" -> "Yes",
                     "false" -> "No"
                 ),

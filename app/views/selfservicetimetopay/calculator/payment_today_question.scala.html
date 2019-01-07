@@ -33,7 +33,7 @@
     <p>@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
     @helpers.form(action = routes.CalculatorController.submitPayTodayQuestion(),
         'id -> "paytoday",'class -> "form-group inline"){
-        @helpers.inputRadioGroup(dataForm("paytoday"),Seq(
+        @helpers.input_radio_group(dataForm("paytoday"),Seq(
                 "true" -> Messages("ssttp.calculator.form.payment_today_question.yes_label"),
                 "false" -> Messages("ssttp.calculator.form.payment_today_question.no_label")
         ), '_label -> Html(Messages("ssttp.eligibility.form.existing_ttp.question")),

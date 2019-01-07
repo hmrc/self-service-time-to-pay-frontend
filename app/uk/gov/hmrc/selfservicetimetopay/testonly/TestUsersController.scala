@@ -17,14 +17,13 @@
 package uk.gov.hmrc.selfservicetimetopay.testonly
 
 import javax.inject._
-
 import play.api.data.Forms._
 import play.api.data._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.auth.Token
+import uk.gov.hmrc.selfservicetimetopay.config.DefaultRunModeAppNameConfig
 import uk.gov.hmrc.selfservicetimetopay.controllers.TimeToPayController
 import views.html.selfservicetimetopay.testonly.create_user_and_log_in
 
@@ -88,7 +87,7 @@ class TestUsersController @Inject()(
   desStubConnector: DesStubConnector,
   iaConnector:IaConnector
 )
-extends TimeToPayController with I18nSupport with ServicesConfig {
+extends TimeToPayController with I18nSupport with ServicesConfig with DefaultRunModeAppNameConfig {
 
   private val testUserForm: Form[TestUserForm] = Form[TestUserForm](
     mapping(
@@ -101,7 +100,8 @@ extends TimeToPayController with I18nSupport with ServicesConfig {
       "has-sa-enrolment" -> boolean,
       "isOnIA" -> boolean,
       "authority-id" -> optional(text),
-      "affinity-group" -> text.verifying("'Affinity group' must not be 'Individual', 'Organisation' or 'Agent'", x => List("Individual", "Organisation", "Agent").contains(x)),
+      "affinity-group" -> text.verifying("'Affinity group' must not be 'Individual', 'Organisation' or 'Agent'",
+        x => List("Individual", "Organisation", "Agent").contains(x)),
       "debits-response-body" -> text
         .verifying("'debits' response body must be valid json value", x => Try(Json.parse(x)).isSuccess),
       "debits-status-code" -> text

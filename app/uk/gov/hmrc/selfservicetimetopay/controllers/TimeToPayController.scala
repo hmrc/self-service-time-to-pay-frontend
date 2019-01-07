@@ -18,25 +18,25 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.inject.Inject
 
+import javax.inject.Inject
 import play.api.mvc.{ActionBuilder, AnyContent, Request, Result, Results, Action => PlayAction}
 import play.api.{Logger, Play}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth._
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.auth.{SaRegime, _}
 import uk.gov.hmrc.selfservicetimetopay.config._
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCache4TokensConnector, SessionCacheConnector => KeystoreConnector}
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
-
-import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId._
 
+import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 
@@ -61,7 +61,7 @@ trait TimeToPayController extends FrontendController with Actions {
     new SaRegime(gg)
   }
 
-  def provideGG(tokenData: TokenData) = new GovernmentGateway {
+  def provideGG(tokenData: TokenData): GovernmentGateway = new GovernmentGateway {
 
     override def continueURL: String = s"${SsttpFrontendConfig.loginCallbackBaseUrl}${routes.ArrangementController.recoverTTPSession(tokenData.token.v)}"
     override def loginURL: String = SsttpFrontendConfig.loginUrl
@@ -86,24 +86,23 @@ trait TimeToPayController extends FrontendController with Actions {
   protected val validTypeOfTax = Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true))
 
   protected def redirectOnError: Result = Redirect(routes.SelfServiceTimeToPayController.start())
-  protected lazy val redirectToStartPage = Results.Redirect(routes.SelfServiceTimeToPayController.start())
+  protected lazy val redirectToStartPage: Result = Results.Redirect(routes.SelfServiceTimeToPayController.start())
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200,
     Future.successful(Redirect(routes.SelfServiceTimeToPayController.getNotSaEnrolled())))
 
   def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = Action.async { implicit request =>
     Try {provideSaRegime()} match {
       case Success(taxRegime) => AuthorisedFor(taxRegime, timeToPayConfidenceLevel).async(body)(request)
-      case Failure(e)         => {
+      case Failure(e)         =>
         Logger.warn("Redirecting to start page because there was no ttpSessionId", e)
         redirectOnError.successfulF
-      }
     }
   }
 
   /**
     * Manages code blocks where the user should be logged in and meet certain eligibility criteria
     */
-  def authorizedForSsttp(block: (TTPSubmission => Future[Result]))(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
+  def authorizedForSsttp(block: TTPSubmission => Future[Result])(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
     sessionCache.get.flatMap[Result] {
       case Some(submission@TTPSubmission(Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _, _)) =>
         block(submission)
@@ -121,7 +120,7 @@ trait TimeToPayController extends FrontendController with Actions {
   //I noticed a lot of dublication in the code where the log to see if someone was signed in was to see if the tax payer was defined
    def isSignedIn(implicit hc:HeaderCarrier): Boolean = hc.authorization.isDefined
 
-  protected def updateOrCreateInCache(found: (TTPSubmission) => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier) = {
+  protected def updateOrCreateInCache(found: TTPSubmission => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier): Future[CacheMap] = {
     sessionCache.get.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")

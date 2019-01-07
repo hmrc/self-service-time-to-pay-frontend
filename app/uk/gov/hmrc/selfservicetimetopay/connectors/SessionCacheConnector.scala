@@ -22,7 +22,7 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import uk.gov.hmrc.http.logging.SessionId
 import uk.gov.hmrc.play.config.{AppName, ServicesConfig}
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCacheConnector => KeystoreConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId.ttpSessionId
@@ -52,7 +52,7 @@ trait SessionCacheConnector extends SessionCache with ServicesConfig {
 }
 
 @Singleton
-class SessionCacheConnectorImpl extends KeystoreConnector with AppName with ServicesConfig {
+class SessionCacheConnectorImpl extends KeystoreConnector with AppName with ServicesConfig with DefaultRunModeAppNameConfig {
   override val sessionKey: String = getConfString("keystore.sessionKey", throw new RuntimeException("Could not find session key"))
 
   override def defaultSource: String = appName

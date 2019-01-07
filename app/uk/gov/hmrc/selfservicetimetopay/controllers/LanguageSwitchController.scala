@@ -18,18 +18,20 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import javax.inject.Inject
 import play.api.Application
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Lang, MessagesApi}
+import play.api.mvc.Call
 import uk.gov.hmrc.play.config.RunMode
 import uk.gov.hmrc.play.language.LanguageController
+import uk.gov.hmrc.selfservicetimetopay.config.DefaultRunModeAppNameConfig
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig._
 
 class LanguageSwitchController @Inject()(override implicit val messagesApi: MessagesApi, implicit val app: Application)
-  extends LanguageController with RunMode {
+  extends LanguageController with RunMode with DefaultRunModeAppNameConfig {
 
-  def langToCall(lang: String) = routeToSwitchLanguage
+  def langToCall(lang: String): String => Call = routeToSwitchLanguage
 
   // Replace with a suitable fallback or read it from config
   override protected def fallbackURL: String = routes.SelfServiceTimeToPayController.start().url
 
-  override def languageMap = languageMapValue
+  override def languageMap: Map[String, Lang] = languageMapValue
 }

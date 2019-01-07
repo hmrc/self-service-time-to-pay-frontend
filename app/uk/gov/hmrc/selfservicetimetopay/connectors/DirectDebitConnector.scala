@@ -16,19 +16,19 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import com.google.inject._
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
-import com.google.inject._
 
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @ImplementedBy(classOf[DirectDebitConnectorImpl])
 trait DirectDebitConnector {
@@ -48,8 +48,8 @@ trait DirectDebitConnector {
 
   trait BankAccountHttpReads extends HttpReads[Either[BankDetails, DirectDebitBank]] with HttpErrorFunctions
 
-  implicit val readValidateOrRetrieveAccounts = new BankAccountHttpReads {
-    override def read(method: String, url: String, response: HttpResponse) = response.status match {
+  implicit val readValidateOrRetrieveAccounts: BankAccountHttpReads = new BankAccountHttpReads {
+    override def read(method: String, url: String, response: HttpResponse): Either[BankDetails, DirectDebitBank] = response.status match {
       case OK => Left(response.json.as[BankDetails])
       case NOT_FOUND if response.body.contains("BP not found") => Right(DirectDebitBank.none)
       case NOT_FOUND => Right(response.json.as[DirectDebitBank])
@@ -101,8 +101,8 @@ trait DirectDebitConnector {
   }
 }
 
-class DirectDebitConnectorImpl extends DirectDebitConnector with ServicesConfig {
+class DirectDebitConnectorImpl extends DirectDebitConnector with ServicesConfig with DefaultRunModeAppNameConfig {
   lazy val directDebitURL: String = baseUrl("direct-debit")
   lazy val serviceURL = "direct-debit"
-  lazy val http = WSHttp
+  lazy val http: WSHttp.type = WSHttp
 }

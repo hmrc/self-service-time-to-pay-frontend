@@ -17,11 +17,10 @@
 package uk.gov.hmrc.selfservicetimetopay.testonly
 
 import javax.inject.Inject
-
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{Action => PlayAction}
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.config.DefaultRunModeAppNameConfig
 import uk.gov.hmrc.selfservicetimetopay.connectors.{CalculatorConnector, DirectDebitConnector, EligibilityConnector, TaxPayerConnector}
 import uk.gov.hmrc.selfservicetimetopay.controllers._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -34,7 +33,7 @@ class InspectorController @Inject()(val messagesApi: play.api.i18n.MessagesApi, 
                                    taxPayerConnector: TaxPayerConnector,
                                    eligibilityConnector: EligibilityConnector
                                   )
-extends TimeToPayController with play.api.i18n.I18nSupport with ServicesConfig {
+extends TimeToPayController with play.api.i18n.I18nSupport with ServicesConfig with DefaultRunModeAppNameConfig {
 
 
   def clearPlaySession() = Action { implicit request =>

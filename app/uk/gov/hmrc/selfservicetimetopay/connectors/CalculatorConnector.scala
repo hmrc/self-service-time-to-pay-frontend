@@ -20,10 +20,10 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpPost}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
+
 import scala.concurrent.Future
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-
 import com.google.inject._
 
 @ImplementedBy(classOf[CalculatorConnectorImpl])
@@ -41,8 +41,8 @@ trait CalculatorConnector {
 }
 
 @Singleton
-class CalculatorConnectorImpl extends CalculatorConnector with ServicesConfig {
+class CalculatorConnectorImpl extends CalculatorConnector with ServicesConfig with DefaultRunModeAppNameConfig {
   val calculatorURL: String = baseUrl("time-to-pay-calculator")
   val serviceURL = "time-to-pay-calculator/paymentschedule"
-  val http = WSHttp
+  val http: WSHttp.type = WSHttp
 }

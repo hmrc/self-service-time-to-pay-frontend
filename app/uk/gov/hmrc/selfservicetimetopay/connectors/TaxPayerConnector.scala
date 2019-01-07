@@ -22,7 +22,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import com.google.inject._
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,8 +45,8 @@ trait TaxPayerConnector {
 }
 
 @Singleton
-class TaxPayerConnectorImpl extends TaxPayerConnector with ServicesConfig {
+class TaxPayerConnectorImpl extends TaxPayerConnector with ServicesConfig with DefaultRunModeAppNameConfig {
   val taxPayerURL: String = baseUrl("time-to-pay-taxpayer")
   val serviceURL = "taxpayer"
-  val http = WSHttp
+  val http: WSHttp.type = WSHttp
 }

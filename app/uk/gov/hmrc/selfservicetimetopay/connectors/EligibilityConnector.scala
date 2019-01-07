@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 import com.google.inject._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpPost}
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.config.WSHttp
+import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityRequest, EligibilityStatus}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
@@ -37,8 +37,8 @@ trait EligibilityConnector {
   }
 }
 @Singleton
-class EligibilityConnectorImpl extends EligibilityConnector with ServicesConfig {
+class EligibilityConnectorImpl extends EligibilityConnector with ServicesConfig with DefaultRunModeAppNameConfig {
   val eligibilityURL: String = baseUrl("time-to-pay-eligibility")
   val serviceURL = "time-to-pay-eligibility/eligibility"
-  val http = WSHttp
+  val http: WSHttp.type = WSHttp
 }
