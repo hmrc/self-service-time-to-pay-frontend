@@ -19,8 +19,9 @@
 @import java.time.format.DateTimeFormatter
 @import java.time.LocalDate
 @import java.util.Locale
-
-@(debits: Seq[Debit], transactionId: String, directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, ddref: Option[String], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@import uk.gov.hmrc.play.language.LanguageUtils.Dates
+@import uk.gov.hmrc.selfservicetimetopay.util.DateHelper.turnJavaTimeToJoda
+@(debits: Seq[Debit], transactionId: String, directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, ddref: Option[String])(implicit messages: play.api.i18n.Messages, request: Request[_])
 <div class="js-visible printable">
     @print_payment_schedule(schedule)
 </div>
@@ -37,43 +38,43 @@
     )
     }
 <div class="no_print">
-    @selfservicetimetopay.main(
-        title = Messages("ssttp.arrangement.complete.title"),
-        loggedIn = loggedIn,
-        sidebarLinks = None,
-        googleAnalyticsCalls = Seq(gaCheckoutCode.body),
-        welshToggleEnabled =false,
-        hasUserPanel = true
-    ) {
+@selfservicetimetopay.main(
+    title = Messages("ssttp.arrangement.complete.title"),
+    loggedIn = true,
+    sidebarLinks = None,
+    googleAnalyticsCalls = Seq(gaCheckoutCode.body),
+    welshToggleEnabled = false,
+    hasUserPanel = true
+) {
 
-        <div class="transaction-banner--complete removeBottom">
-            <div class="transaction-banner__heading" role="banner">
-                <p><strong class="bold">@Messages("ssttp.arrangement.complete.title")</strong>
-                   @ddref.map{_ =>
-                       <br/>
+    <div class="transaction-banner--complete removeBottom">
+        <div class="transaction-banner__heading" role="banner">
+            <p><strong class="bold">@Messages("ssttp.arrangement.complete.title")</strong>
+                @ddref.map { _ =>
+                    <br/>
                     <br/>
                     @Messages("ssttp.arrangement.complete.ddref") <br/>
-                    <strong class="bold">@ddref.get</strong></p>
-                }</div>
-        </div>
-        <section class="section divider--bottom">
-            <a href="javascript:window.print()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.print-label")</a>
-            <br>
-            <br>
-            <h2>@Messages("ssttp.arrangement.complete.next")</h2>
-            <p>@Messages("ssttp.arrangement.complete.summary")</p>
-            <p>@Messages("ssttp.arrangement.complete.first-payment")
-                @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
-                    @schedule.initialPaymentScheduleDate.format(formatter)
-                }</p>
+                <strong class="bold">@ddref.get</strong></p>
+            }</div>
+    </div>
+    <section class="section divider--bottom">
+        <a href="javascript:window.print()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.print-label")</a>
+        <br>
+        <br>
+        <h2>@Messages("ssttp.arrangement.complete.next")</h2>
+        <p>@Messages("ssttp.arrangement.complete.summary")</p>
+        <p>@Messages("ssttp.arrangement.complete.first-payment")
+
+            @Dates.formatDate(turnJavaTimeToJoda(schedule.initialPaymentScheduleDate))
+        </p>
 
 
-            <h2>@Messages("ssttp.arrangement.complete.help.h2")</h2>
-            <p>@Messages("ssttp.arrangement.complete.help.p1")</p>
+        <h2>@Messages("ssttp.arrangement.complete.help.h2")</h2>
+        <p>@Messages("ssttp.arrangement.complete.help.p1")</p>
 
 
-            <span><a href="https://www.tax.service.gov.uk/feedback-survey?origin=PWYOII">@Messages("ssttp.arrangement.complete.feedback")</a> @Messages("ssttp.arrangement.complete.help.p2")</span>
-        </section>
-    }
+        <span><a href="https://www.tax.service.gov.uk/feedback-survey?origin=PWYOII">@Messages("ssttp.arrangement.complete.feedback")</a> @Messages("ssttp.arrangement.complete.help.p2")</span>
+    </section>
+}
 </div>
 

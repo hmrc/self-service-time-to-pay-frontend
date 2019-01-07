@@ -38,7 +38,6 @@ import views.html.selfservicetimetopay.arrangement.{application_complete, change
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.math.BigDecimal
-
 class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi, ddConnector: DirectDebitConnector,
                                       arrangementConnector: ArrangementConnector,
                                       calculatorService: CalculatorService,
@@ -237,9 +236,8 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
               directDebit = submission.arrangementDirectDebit.get,
               schedule = submission.schedule.get,
-              ddref = submission.ddRef,
-              isSignedIn))
-            )
+              ddref = submission.ddRef)
+            ))
         }
   }
 

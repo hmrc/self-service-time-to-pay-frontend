@@ -23,6 +23,7 @@ import uk.gov.hmrc.play.config.RunMode
 import uk.gov.hmrc.play.language.LanguageController
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig._
 
+
 class LanguageSwitchController @Inject()(override implicit val messagesApi: MessagesApi, implicit val app: Application)
   extends LanguageController with RunMode {
 

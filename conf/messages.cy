@@ -323,4 +323,4 @@ ssttp.overtenthosand.opening.hours.h1=Ein horiau agor yw:
 ssttp.overtenthosand.opening.hours.l1=Dydd Llun i ddydd Gwener: 08:30 – 17:00
 ssttp.overtenthosand.opening.hours.l2=
 
-error.required=Mae'r maes hwn yn ofynnol
+error.required=Mae''r maes hwn yn ofynnol
