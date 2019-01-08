@@ -40,7 +40,7 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
 
     "return 200 and display the service start page" in {
       when(mockSessionCache.get(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      val request = FakeRequest().withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession())
+      val request = FakeRequest().withSession(goodSession : _*)
       val result = controller.start.apply(request)
 
       status(result) mustBe OK
@@ -49,7 +49,7 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
     }
 
     "submit redirect to the determine Eligibility" in {
-      val result = controller.submit.apply(FakeRequest().withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession()))
+      val result = controller.submit.apply(FakeRequest().withSession(goodSession : _*))
 
       status(result) mustBe SEE_OTHER
 
@@ -57,7 +57,7 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
     }
 
     "return 200 and display call us page successfully" in {
-      val request = FakeRequest().withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession())
+      val request = FakeRequest().withSession(goodSession : _*)
       val result = controller.getTtpCallUs.apply(request)
 
       status(result) mustBe OK
@@ -66,7 +66,7 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
     }
 
     "return 200 and display you need to file page successfully" in {
-      val request = FakeRequest().withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession())
+      val request = FakeRequest().withSession(goodSession : _*)
       val result = controller.getYouNeedToFile.apply(request)
 
       status(result) mustBe OK

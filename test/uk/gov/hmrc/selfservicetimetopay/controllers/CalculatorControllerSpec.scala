@@ -56,7 +56,6 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
   implicit val system = ActorSystem("QuickStart")
   implicit val mat: akka.stream.Materializer = ActorMaterializer()
 
-  val goodSession: Seq[(String, String)] = Seq(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession(),"token" -> "1234")
   override def beforeEach() {
     reset( mockSessionCache,mockCalculatorService)
   }

@@ -221,5 +221,7 @@ package object resources {
   )
 
 
-
+  val goodSession =   Seq(SessionKeys.userId -> "someUserId",
+    TTPSessionId.newTTPSession(),
+    "token" -> "1234")
 }

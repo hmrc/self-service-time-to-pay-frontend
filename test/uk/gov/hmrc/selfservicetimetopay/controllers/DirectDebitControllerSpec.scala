@@ -58,7 +58,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
       when(mockSessionCache4TokensConnector.put(any())(any(), any())).thenReturn(Future.successful(()))
 
       val request = FakeRequest()
-        .withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession(),"token" -> "1234")
+        .withSession(goodSession : _*)
       implicit val messages = getMessages(request)
       val response = controller.getDirectDebit(request)
 
@@ -75,7 +75,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
         ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
       val request = FakeRequest()
-        .withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession(),"token" -> "1234")
+        .withSession(goodSession : _*)
         .withFormUrlEncodedBody(validDirectDebitForm: _*)
       implicit val messages = getMessages(request)
       val response = controller.submitDirectDebit(request)
@@ -93,7 +93,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
       val request = FakeRequest()
-        .withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession(),"token" -> "1234")
+        .withSession(goodSession : _*)
         .withFormUrlEncodedBody(invalidBankDetailsForm: _*)
       implicit val messages = getMessages(request)
       val response = controller.submitDirectDebit(request)
@@ -112,7 +112,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
       when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
       val request = FakeRequest()
-        .withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession(),"token" -> "1234")
+        .withSession(goodSession : _*)
         .withFormUrlEncodedBody( Seq(
           "accountName" -> "Jane Doe",
           "sortCode" -> "af",
@@ -129,7 +129,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
     "submit direct debit form with invalid form data and return a bad request" in { running(app) {
       val request = FakeRequest()
-        .withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession(),"token" -> "1234")
+        .withSession(goodSession : _*)
         .withFormUrlEncodedBody(inValidDirectDebitForm: _*)
       implicit val messages = getMessages(request)
       val response = controller.submitDirectDebit(request)
@@ -142,7 +142,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUserNoSA)))
 
       val request = FakeRequest()
-        .withSession(SessionKeys.userId -> "someUserId","token" -> "1234")
+        .withSession(goodSession : _*)
         .withFormUrlEncodedBody(validDirectDebitForm: _*)
       implicit val messages = getMessages(request)
       Try(await(controller.submitDirectDebit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
@@ -161,7 +161,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(mockSessionCache.get(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       val request = FakeRequest()
-        .withSession(SessionKeys.userId -> "someUserId", TTPSessionId.newTTPSession(),"token" -> "1234")
+        .withSession(goodSession : _*)
       implicit val messages = getMessages(request)
       val response = controller.getDirectDebitConfirmation(request)
 

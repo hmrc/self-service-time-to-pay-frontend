@@ -28,6 +28,7 @@ case class TTPSessionId(v: String)
 
 object TTPSessionId {
   lazy val ttpSessionId: String = "ttpSessionId"
+
   def newTTPSession(): (String, String) = ttpSessionId -> s"ttp-session-${UUID.randomUUID}"
 
   implicit class GetTTPSessionOps[A](request: Request[A]) {
@@ -37,17 +38,23 @@ object TTPSessionId {
       throw new RuntimeException(s"Expected $ttpSessionId to be in the play session")
     )
   }
+
 }
 
 
 object CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Request] {
 
   protected lazy val redirectToStartPage = Results.Redirect(routes.SelfServiceTimeToPayController.start())
+  //  /payment-plan-calculator
+  protected lazy val redirectToPaymentPlanCalculator = Results.Redirect(routes.CalculatorController.getPaymentPlanCalculator())
 
   def filter[A](request: Request[A]): Future[Option[Result]] = {
-      val response: Option[Result] = request.maybeTTPSessionId.fold[Option[Result]] (
+    val response: Option[Result] = request.maybeTTPSessionId.fold[Option[Result]](
+      if (request.uri.contains("payment-plan-calculator"))
+        Some(redirectToPaymentPlanCalculator.withSession(request.session + TTPSessionId.newTTPSession()))
+      else
         Some(redirectToStartPage.withSession(request.session + TTPSessionId.newTTPSession()))
-      ) (_ => None)
+    )(_ => None)
 
     Future.successful(response)
   }
