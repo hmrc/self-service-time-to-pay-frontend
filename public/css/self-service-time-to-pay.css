@@ -73,6 +73,9 @@
     padding-top: 10px;
     padding-bottom: 10px;
 }
+.clear{
+    clear:both;
+}
 
 summary.ssttp-summary-app-complete{
     width: 200px;
