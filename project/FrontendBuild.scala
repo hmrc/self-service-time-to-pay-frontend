@@ -20,12 +20,12 @@ private object AppDependencies {
   import play.sbt.PlayImport._
   import play.core.PlayVersion
 
-  val compile = Seq(
+  val compile: Seq[ModuleID] = Seq(
     ws,
-    "uk.gov.hmrc" %% "frontend-bootstrap" %  "11.3.0",
+    "uk.gov.hmrc" %% "frontend-bootstrap" %  "12.1.0",
     "uk.gov.hmrc" %% "play-partials" %  "6.3.0",
     "uk.gov.hmrc" %% "domain" %  "5.2.0",
-    "uk.gov.hmrc" %% "http-caching-client" %  "7.1.0",
+    "uk.gov.hmrc" %% "http-caching-client" %  "8.0.0",
     "uk.gov.hmrc" %% "time" % "3.1.0",
     "uk.gov.hmrc" %% "play-language" % "3.4.0",
     "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0"
@@ -38,7 +38,7 @@ private object AppDependencies {
 
   object Test {
     def apply(): Seq[ModuleID] = new TestDependencies {
-      override lazy val test = Seq(
+      override lazy val test: Seq[ModuleID] = Seq(
         "uk.gov.hmrc" %% "hmrctest" %  "3.0.0",
         "org.pegdown" % "pegdown" % "1.6.0" % scope,
         "org.jsoup" % "jsoup" % "1.8.3" % scope,
