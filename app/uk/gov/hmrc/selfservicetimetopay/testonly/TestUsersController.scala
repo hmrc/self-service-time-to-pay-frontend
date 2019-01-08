@@ -38,6 +38,7 @@ case class TestUserForm (
                           isOnIA: Boolean,
                           authorityId: Option[String],
                           affinityGroup: String,
+                          hasOverTwoHundred:Boolean,
                           debitsJson: String,
                           debitsResponseStatusCode: String,
                           saTaxpayer: String,
@@ -51,7 +52,7 @@ case class TestUserForm (
     isOnIA = isOnIA,
     authorityId = authorityId.map(AuthorityId.apply).getOrElse(AuthorityId.random),
     affinityGroup = AffinityGroup(affinityGroup),
-    confidenceLevel = 200,
+    confidenceLevel = if(hasOverTwoHundred)200 else 100,
     returns = Json.parse(returnsJson),
     returnsResponseStatusCode = returnsResponseStatusCode.toInt,
     debits = Json.parse(debitsJson),
@@ -72,6 +73,7 @@ object TestUserForm {
     isOnIA = true,
     authorityId = None,
     affinityGroup = AffinityGroup.individual.v,
+    hasOverTwoHundred = true,
     debitsJson = Json.prettyPrint(TestUserDebits.sample1),
     debitsResponseStatusCode = "200",
     saTaxpayer = Json.prettyPrint(TestUserSaTaxpayer.buildTaxpayer()),
@@ -102,6 +104,7 @@ extends TimeToPayController with I18nSupport with ServicesConfig with DefaultRun
       "authority-id" -> optional(text),
       "affinity-group" -> text.verifying("'Affinity group' must not be 'Individual', 'Organisation' or 'Agent'",
         x => List("Individual", "Organisation", "Agent").contains(x)),
+      "over200" -> boolean,
       "debits-response-body" -> text
         .verifying("'debits' response body must be valid json value", x => Try(Json.parse(x)).isSuccess),
       "debits-status-code" -> text
