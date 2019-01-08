@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.config
 
+import akka.actor.ActorSystem
 import com.typesafe.config.Config
+import play.api.Play
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.hooks.HttpHooks
 import uk.gov.hmrc.play.audit.http.HttpAuditing
@@ -41,9 +43,11 @@ trait WSHttp extends HttpGet
 
 object WSHttp extends WSHttp with DefaultRunModeAppNameConfig {
   protected def configuration: Option[Config] = None
+
+  override protected def actorSystem: ActorSystem = Play.current.actorSystem
 }
 
-trait Hooks extends  HttpHooks with HttpAuditing{
+trait Hooks extends  HttpHooks with HttpAuditing {
   override lazy val auditConnector: FrontendAuditConnector.type = FrontendAuditConnector
   override val hooks: Seq[AuditingHook.type] = Seq(AuditingHook)
 }
