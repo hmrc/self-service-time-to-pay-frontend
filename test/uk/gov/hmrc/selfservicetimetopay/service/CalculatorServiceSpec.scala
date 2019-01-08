@@ -25,7 +25,9 @@ import org.scalatest.mock.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
+import uk.gov.hmrc.selfservicetimetopay.models.Return
 import uk.gov.hmrc.selfservicetimetopay.resources.{selfAssessment, _}
+import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.getFutureReturn
 
 import scala.concurrent.ExecutionContext.Implicits.global
 class CalculatorServiceSpec extends UnitSpec  with MockitoSugar  with ScalaFutures {
@@ -42,7 +44,10 @@ class CalculatorServiceSpec extends UnitSpec  with MockitoSugar  with ScalaFutur
       calculatorService.getInstalmentsSchedule(selfAssessment.get)
       verify(mockCalConnector, times(10)).calculatePaymentSchedule(any())(any())
     }
-
+    "getFutureReturn should return none is there is no due date on the returns or the returns are empty " in {
+      getFutureReturn(List(Return(LocalDate.now(),None,None,None))) shouldBe None
+      getFutureReturn(List.empty[Return]) shouldBe None
+    }
     "return the map sorted from lowest to highest" in {
       when(mockCalConnector.calculatePaymentSchedule(any())(any())).thenReturn(eventualSchedules)
       when(mockWorkingDaysService.addWorkingDays(any(),any())).thenReturn(LocalDate.now())

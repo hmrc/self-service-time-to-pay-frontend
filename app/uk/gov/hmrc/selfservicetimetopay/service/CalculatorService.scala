@@ -159,7 +159,8 @@ object CalculatorService {
   }
 
   def getFutureReturn(returnedFiled: List[Return]): Option[LocalDate] = {
-    if (returnedFiled.isEmpty) None else Option(returnedFiled.flatMap(_.dueDate.map(_.plusYears(1))).max)
+    val returnsDueDateFuture = returnedFiled.flatMap(_.dueDate.map(_.plusYears(1)))
+    if (returnsDueDateFuture.isEmpty) None else Option(returnsDueDateFuture.max)
   }
 
   /*
