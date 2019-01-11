@@ -4,6 +4,10 @@ ssttp.common.currency.symbol=£
 ssttp.common.print=Print
 ssttp.common.sign-out=Sign-out
 
+
+ssttp.payment-plan-calculator.title=Self Assessment payment plan calculator
+
+
 ssttp.common.charge-code.ASST=Revenue assessment
 ssttp.common.charge-code.BCC=Balancing Charge Credit
 ssttp.common.charge-code.BCD=Balancing payment

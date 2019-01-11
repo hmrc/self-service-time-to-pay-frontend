@@ -25,7 +25,8 @@
         noGetHelp:Boolean = false,
         loggedIn:Boolean = false,
         welshToggleEnabled:Boolean = true,
-        hasUserPanel: Boolean = false)(mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
+        hasUserPanel: Boolean = false,
+        navTitle: String = "ssttp.common.title")(mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import uk.gov.hmrc.play.views.html.layouts
 @import uk.gov.hmrc.selfservicetimetopay.controllers.{routes => localRoutes}
 @sidebar = {
@@ -64,5 +65,6 @@
     noGetHelp = noGetHelp,
     loggedIn = loggedIn,
     welshToggleEnabled = welshToggleEnabled,
-    hasUserPanel = hasUserPanel
+    hasUserPanel = hasUserPanel,
+    navTitle = navTitle
 )
