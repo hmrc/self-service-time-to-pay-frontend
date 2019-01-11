@@ -30,12 +30,12 @@
         noGetHelp: Boolean = false,
         loggedIn: Boolean = false,
         welshToggleEnabled:Boolean = true,
-        hasUserPanel: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+        hasUserPanel: Boolean = false,
+        navTitle: String = "ssttp.common.title")(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @import layouts.{govuk_template => hmrcGovUkTemplate}
+@import selfservicetimetopay.partials.{beta_banner_with_user_panel, google_analytics_js}
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers, layouts => uiLayouts}
-@import selfservicetimetopay.partials.google_analytics_js
-@import selfservicetimetopay.partials.beta_banner_with_user_panel
 @import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig._
 
 @head = {
@@ -48,7 +48,7 @@
 
 @insideHeader = {
 @uiLayouts.header_nav(
-    navTitle = Some(Messages("ssttp.common.title")),
+    navTitle = Some(Messages(navTitle)),
     navTitleLink = None,
     showBetaLink = false,
     navLinks = navLinks
