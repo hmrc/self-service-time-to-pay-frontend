@@ -46,11 +46,11 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   }
 
   def getAmountDue: Action[AnyContent] = Action { implicit request =>
-    Ok(amount_due(isSignedIn, CalculatorForm.createSinglePaymentForm()))
+    Ok(amount_due(isSignedIn, CalculatorForm.createAmountDueForm()))
   }
 
   def submitAmountDue: Action[AnyContent] = Action.async { implicit request =>
-    CalculatorForm.createSinglePaymentForm().bindFromRequest().fold(
+    CalculatorForm.createAmountDueForm().bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(amount_due(isSignedIn, formWithErrors))),
       amountDue => {
         //todo perhaps we dont need  a new one? this will whip the data from the auth journey is this ok ?User can just redo it?

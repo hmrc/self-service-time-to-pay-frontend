@@ -185,7 +185,7 @@ ssttp.calculator.check-calculation.what-happens-next.p3.2= to save towards a fut
 
 
 ssttp.calculator.form.amount-due.required=Enter the amount you owe the HMRC
-ssttp.calculator.form.amount-due.required.min=The amount must be more than £0.00
+ssttp.calculator.form.amount-due.required.min=The amount must be more than £32.00
 ssttp.calculator.form.amount-due.decimal-places=Amount must not contain more than 2 decimal places
 ssttp.calculator.form.amount-due.less-than-maxval=Total amounts must be less than £100,000.00
 

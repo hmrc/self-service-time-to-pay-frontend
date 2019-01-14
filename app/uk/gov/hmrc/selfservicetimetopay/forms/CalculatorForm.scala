@@ -56,11 +56,11 @@ object CalculatorForm {
     )(text => CalculatorPaymentToday(text))(bd => Some(bd.amount.toString)))
   }
 
-  def createSinglePaymentForm(): Form[CalculatorSinglePayment] = {
+  def createAmountDueForm(): Form[CalculatorSinglePayment] = {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.amount-due.required", { i: String => Try(BigDecimal(i)).isSuccess })
-        .verifying("ssttp.calculator.form.amount-due.required.min", { i: String => if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.01 else true })
+        .verifying("ssttp.calculator.form.amount-due.required.min", { i: String => if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 32.00 else true })
         .verifying("ssttp.calculator.form.amount-due.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })

@@ -52,7 +52,7 @@ class CalculatorFormSpec extends PlaySpec {
     "return errors when amount is empty" in {
       val postData = Json.obj("amount" -> "")
 
-      val validatedForm = CalculatorForm.createSinglePaymentForm().bind(postData)
+      val validatedForm = CalculatorForm.createAmountDueForm().bind(postData)
 
       assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amount-due.required"))))
     }
@@ -60,7 +60,7 @@ class CalculatorFormSpec extends PlaySpec {
     "return errors when amount is less then zero" in {
       val postData = Json.obj("amount" -> "-5")
 
-      val validatedForm = CalculatorForm.createSinglePaymentForm().bind(postData)
+      val validatedForm = CalculatorForm.createAmountDueForm().bind(postData)
 
       assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amount-due.required.min"))))
     }
@@ -68,7 +68,7 @@ class CalculatorFormSpec extends PlaySpec {
     "return errors when amount is too high" in {
       val postData = Json.obj("amount" -> "1000000000001")
 
-      val validatedForm = CalculatorForm.createSinglePaymentForm().bind(postData)
+      val validatedForm = CalculatorForm.createAmountDueForm().bind(postData)
 
       assert(validatedForm.errors.contains(FormError("amount", List("ssttp.calculator.form.amount-due.less-than-maxval"))))
     }
@@ -76,7 +76,7 @@ class CalculatorFormSpec extends PlaySpec {
     "return no errors when amount is valid" in {
       val postData = Json.obj("amount" -> "1234")
 
-      val validatedForm = CalculatorForm.createSinglePaymentForm().bind(postData)
+      val validatedForm = CalculatorForm.createAmountDueForm().bind(postData)
 
       assert(validatedForm.errors.isEmpty)
     }
