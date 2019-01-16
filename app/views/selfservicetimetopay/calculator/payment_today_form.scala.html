@@ -17,15 +17,17 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
 @import uk.gov.hmrc.selfservicetimetopay.controllers._
 @import uk.gov.hmrc.play.views.html.helpers
-@(dataForm: Form[CalculatorPaymentToday], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.forms.submit
+
+@(dataForm: Form[CalculatorPaymentToday], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
 @selfservicetimetopay.main(
   title = Messages("ssttp.calculator.form.payment_today.title"),
   loggedIn = loggedIn
 ){
   <a class="link-back" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
     @if(dataForm.hasErrors){
-        @helpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
+        @helpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm)
     }
   <h1 class="heading-large">@Messages("ssttp.calculator.form.payment_today.title")</h1>
 

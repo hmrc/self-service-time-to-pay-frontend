@@ -25,7 +25,6 @@
         <h1>@Messages("ssttp.not.enrolled.title")</h1>
     </header>
     <p>@Messages("ssttp.not.enrolled.intro")</p>
-    <p><a href="https://www.gov.uk/log-in-file-self-assessment-tax-return/register-if-youre-self-employed">@Messages("ssttp.not.enrolled.tax-account-link")</a>
-        @Messages("ssttp.not.enrolled.tax-account")
-    </p>
+    @* The <a> tag and the following @Messages transaltion need to be on the same line or Play will insert a space between them *@
+    <p><a href="https://www.gov.uk/log-in-file-self-assessment-tax-return/register-if-youre-self-employed">@Messages("ssttp.not.enrolled.tax-account-link")</a>@Messages("ssttp.not.enrolled.tax-account")</p>
 }

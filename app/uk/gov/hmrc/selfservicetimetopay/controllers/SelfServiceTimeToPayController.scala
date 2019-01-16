@@ -33,7 +33,7 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
   }
 
   def actionCallUsInEligibility: Action[AnyContent] = Action { implicit request =>
-        Ok(call_us(isOnWelshLanguage(),loggedIn = isSignedIn))
+        Ok(call_us(isWelsh,loggedIn = isSignedIn))
   }
 
   def getTtpCallUs: Action[AnyContent] = actionCallUsInEligibility
@@ -45,7 +45,7 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
 
 
   def getDebtTooLarge: Action[AnyContent] =  Action { implicit request =>
-    Ok(debt_too_large(isSignedIn))
+    Ok(debt_too_large(isSignedIn, isWelsh))
   }
 
   def getYouNeedToFile: Action[AnyContent] = Action { implicit request =>
