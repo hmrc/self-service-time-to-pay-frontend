@@ -17,11 +17,11 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
-
 import javax.inject._
+
 import play.api.Logger
-import play.api.mvc._
-import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorForm
+import play.api.mvc.{AnyContent, _}
+import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm, MonthlyAmountForm}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService
@@ -184,6 +184,19 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
+  def getMonthlyPayment: Action[AnyContent] = authorisedSaUser { implicit request =>
+    implicit authContext =>
+      sessionCache.get.flatMap[Result] {
+        case Some(ttpSubmission@TTPSubmission(_, _, _, Taxpayer(_,_,Some(SelfAssessment(_,_,debits,_))), _, _, _, _, _, _)) =>
+          val form = CalculatorForm.createMonthlyAmountForm()
+          Ok(monthly_amount(form,"",""))
+        case _ =>
+          Logger.info("No TTP Data match in getMonthlyPayment")
+          Future.successful(redirectOnError)
+      }
+  }
+
+  def submitMonthlyPayment = ???
 
   def getPaymentSummary: Action[AnyContent] = authorisedSaUser { implicit request =>
     implicit authContext =>

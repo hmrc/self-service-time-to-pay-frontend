@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
+@import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorPaymentTodayForm
 @import uk.gov.hmrc.selfservicetimetopay.controllers._
 @import uk.gov.hmrc.play.views.html.helpers
-@(dataForm: Form[CalculatorPaymentToday], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(dataForm: Form[CalculatorPaymentTodayForm], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.forms.submit
 @selfservicetimetopay.main(
   title = Messages("ssttp.calculator.form.payment_today.title"),
