@@ -43,6 +43,7 @@ class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
 
     getCalculatorValues(input)
   }
+
   def getInstalmentsScheduleUnAuth(debits: Seq[Debit])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
 
     val input: List[(Int, CalculatorInput)] =  (minimumMonthsAllowedTTP to maxAllowedMonthlyInstalments).map(month => {

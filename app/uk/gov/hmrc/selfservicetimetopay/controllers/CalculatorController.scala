@@ -234,7 +234,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
               CalculatorForm.createInstalmentForm().bindFromRequest().fold(
                 formWithErrors => {
                   Future.successful(BadRequest(calculate_instalments_form(formWithErrors, ttpData.lengthOfArrangement,
-                    monthsToSchedule, routes.CalculatorController.submitCalculateInstalments(), true)))
+                    monthsToSchedule, routes.CalculatorController.submitCalculateInstalments(), loggedIn = true)))
                 },
                 validFormData => {
                   sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.chosenMonths)))).map { _ =>
