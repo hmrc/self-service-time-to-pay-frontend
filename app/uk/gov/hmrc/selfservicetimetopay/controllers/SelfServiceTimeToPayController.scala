@@ -19,17 +19,13 @@ import javax.inject._
 
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
-import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.core._
 
 class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.MessagesApi) extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def start: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
-      case Some(ttpData: TTPSubmission) => Ok(service_start(isSignedIn))
-      case _ => Ok(service_start(isSignedIn))
-    }
+    sessionCache.get.map { _ => Ok(service_start(isSignedIn)) }
   }
 
   def submit: Action[AnyContent] = Action { implicit request =>

@@ -24,35 +24,36 @@ import javax.inject.Inject
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
 import uk.gov.hmrc.selfservicetimetopay.models._
-import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.{createCalculatorInput, getMonthRange}
+import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.{createCalculatorInput, getMonthRange, _}
 
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
-import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService._
+
 class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
                                   workingDays: WorkingDaysService) {
 
   //todo perhaps merge these methods and change back end so it only one call
-  def getInstalmentsSchedule(sa: SelfAssessment, intialPayment: BigDecimal = BigDecimal(0))(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
-
+  def getInstalmentsSchedule(sa: SelfAssessment, intialPayment: BigDecimal = BigDecimal(0))
+                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
     val input: List[(Int, CalculatorInput)] = getMonthRange(sa).map(month => {
-      val caltInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, intialPayment, sa.debits)
-      (month, validateCalculatorDates(caltInput, month, sa.debits))
+      val calculatorInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, intialPayment, sa.debits)
+      (month, validateCalculatorDates(calculatorInput, month, sa.debits))
     }).toList
 
-    getCaltValues(input)
+    getCalculatorValues(input)
   }
+
   def getInstalmentsScheduleUnAuth(debits: Seq[Debit])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
 
-    val input: List[(Int, CalculatorInput)] =  (minimunMonthsAllowedTTP to maxAllowedMonthlyInstalments).map(month => {
+    val input: List[(Int, CalculatorInput)] =  (minimumMonthsAllowedTTP to maxAllowedMonthlyInstalments).map(month => {
       val caltInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, 0, debits)
       (month, validateCalculatorDates(caltInput, month, debits))
     }).toList
-    getCaltValues(input)
+    getCalculatorValues(input)
   }
 
-  private def getCaltValues(inputs:List[(Int, CalculatorInput)])(implicit hc: HeaderCarrier, ec: ExecutionContext) ={
+  private def getCalculatorValues(inputs:List[(Int, CalculatorInput)])(implicit hc: HeaderCarrier, ec: ExecutionContext) ={
     val futureSchedules: Seq[Future[(Int, CalculatorPaymentSchedule)]] = inputs.map {
       case (numberOfMonths, calcInput) =>
         calculatorConnector.calculatePaymentSchedule(calcInput).map(x => (numberOfMonths, x.head))
@@ -70,7 +71,7 @@ class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
     val workingDaysInAWeek = 5
     val firstPaymentDate: LocalDate = dayOfMonthCheck(workingDays.addWorkingDays(LocalDate.now(), workingDaysInAWeek))
     if (calculatorInput.initialPayment > 0) {
-      if (debits.map(_.amount).sum.-(calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
+      if ((debits.map(_.amount).sum - calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
         calculatorInput.copy(startDate = LocalDate.now,
           initialPayment = BigDecimal(0),
           firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
@@ -135,7 +136,7 @@ object CalculatorService {
     CalculatorInput(debits, initialPayment, startDate, lastPaymentDate, Some(firstPaymentDate))
   }
 
-  val minimunMonthsAllowedTTP = 2
+  val minimumMonthsAllowedTTP = 2
   val maxAllowedMonthlyInstalments = 11
 
   //todo look at naming I am on auto pilot here!!!
@@ -147,7 +148,7 @@ object CalculatorService {
   }
 
   def getMonthRange(selfAssessment: SelfAssessment): Seq[Int] =
-    minimunMonthsAllowedTTP to getMaxMonthsAllowed(selfAssessment, LocalDate.now())
+    minimumMonthsAllowedTTP to getMaxMonthsAllowed(selfAssessment, LocalDate.now())
 
   implicit def ordered[A <% Comparable[_ >: A]]: Ordering[A] = new Ordering[A] {
     def compare(x: A, y: A): Int = x compareTo y
