@@ -118,7 +118,7 @@ trait TimeToPayController extends FrontendController with Actions {
   }
 
   //I noticed a lot of dublication in the code where the log to see if someone was signed in was to see if the tax payer was defined
-   def isSignedIn(implicit hc:HeaderCarrier): Boolean = hc.authorization.isDefined
+   def isSignedIn(implicit hc: HeaderCarrier): Boolean = hc.authorization.isDefined
 
   protected def updateOrCreateInCache(found: TTPSubmission => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier): Future[CacheMap] = {
     sessionCache.get.flatMap {
@@ -131,9 +131,9 @@ trait TimeToPayController extends FrontendController with Actions {
     }
   }
 
-  def isOnWelshLanguage()(implicit request: Request[_],hc: HeaderCarrier):Boolean = {
-    val currantLang:String =  request.cookies.get("PLAY_LANG").fold("en")(cookie => cookie.value)
-    if(currantLang == "cy")true else false
+  def isWelsh()(implicit request: Request[_], hc: HeaderCarrier): Boolean = {
+    val currantLang: String = request.cookies.get("PLAY_LANG").fold("en")(cookie => cookie.value)
+    if (currantLang == "cy") true else false
   }
 
   implicit class SuccessfullOps[T](t: T) {
