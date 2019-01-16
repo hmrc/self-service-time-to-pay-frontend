@@ -101,7 +101,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   }
 
 
-  def getCheckCalculation(): Action[AnyContent] = Action.async {
+  def getCheckCalculation: Action[AnyContent] = Action.async {
     implicit request =>
       sessionCache.get.flatMap {
         case Some(ttpData@TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(_, Some(schedule))), _)) =>
@@ -114,8 +114,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     implicit request =>
       implicit authContext =>
         sessionCache.get.map {
-          case Some(ttpData@TTPSubmission(_, _, _, Some(tp), _, _, _, _, _, _)) =>
-            Ok(tax_liabilities(tp.selfAssessment.get.debits, isSignedIn))
+          case Some(_@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
+            Ok(tax_liabilities(sa.debits, isSignedIn))
           case _ => redirectOnError
         }
   }
@@ -203,20 +203,20 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     * - If user input debits are not empty, load the calculator (avoids direct navigation)
     * - If schedule data is missing, update TTPSubmission
     */
-  def getCalculateInstalments(): Action[AnyContent] = authorisedSaUser {
+  def getCalculateInstalments: Action[AnyContent] = authorisedSaUser {
     implicit request =>
       implicit authContext =>
         sessionCache.get.flatMap {
           case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
-            if (getMaxMonthsAllowed(sa, LocalDate.now()) >= minimunMonthsAllowedTTP) {
+            if (getMaxMonthsAllowed(sa, LocalDate.now()) >= minimumMonthsAllowedTTP) {
               calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
                 Ok(calculate_instalments_form(CalculatorForm.createInstalmentForm(),
-                  ttpData.lengthOfArrangement, monthsToSchedule, routes.CalculatorController.submitCalculateInstalments(), true))
+                  ttpData.lengthOfArrangement, monthsToSchedule, routes.CalculatorController.submitCalculateInstalments(), loggedIn = true))
               }
             }
             else {
               //todo perhaps move these checks else where to eligbility service?
-              sessionCache.put(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(false, Seq(TTPIsLessThenTwoMonths))))).map { _ =>
+              sessionCache.put(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(eligible = false, Seq(TTPIsLessThenTwoMonths))))).map { _ =>
                 Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments())
               }
             }

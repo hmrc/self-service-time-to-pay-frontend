@@ -41,15 +41,16 @@ case class CommunicationPreferences(welshLanguageIndicator: Boolean = false,
                                      largePrintIndicator: Boolean = false,
                                      brailleIndicator: Boolean = false)
 
-case class Debit(originCode: Option[String] = None,
+// TODO: figure out - is this actually a liability?
+final case class Debit(originCode: Option[String] = None,
                  amount: BigDecimal,
                  dueDate: LocalDate,
                  interest: Option[Interest] = None,
                  taxYearEnd: Option[LocalDate] = None) {
 
-  def dueByYear = dueDate.getYear
-  def dueByMonth = dueDate.getMonthValue
-  def dueByDay = dueDate.getDayOfMonth
+  def dueByYear: Int = dueDate.getYear
+  def dueByMonth: Int = dueDate.getMonthValue
+  def dueByDay: Int = dueDate.getDayOfMonth
 }
 
 object CalculatorAmountDue {
