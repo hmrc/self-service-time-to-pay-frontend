@@ -131,11 +131,6 @@ trait TimeToPayController extends FrontendController with Actions {
     }
   }
 
-  def isWelsh()(implicit request: Request[_], hc: HeaderCarrier): Boolean = {
-    val currantLang: String = request.cookies.get("PLAY_LANG").fold("en")(cookie => cookie.value)
-    if (currantLang == "cy") true else false
-  }
-
   implicit class SuccessfullOps[T](t: T) {
     def successfulF: Future[T] = Future.successful(t)
   }
