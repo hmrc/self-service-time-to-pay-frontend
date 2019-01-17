@@ -187,14 +187,19 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def getMonthlyPayment: Action[AnyContent] = authorisedSaUser { implicit request =>
     implicit authContext =>
       sessionCache.get.flatMap[Result] {
-        case Some(ttpSubmission@TTPSubmission(_, _, _, Taxpayer(_,_,Some(SelfAssessment(_,_,debits,_))), _, _, _, _, _, _)) =>
+        case Some(TTPSubmission(_, _, _, Some(Taxpayer(_,_,Some(SelfAssessment(_,_,debits,_)))), _, _, _, _, _, _)) =>
           val form = CalculatorForm.createMonthlyAmountForm()
-          Ok(monthly_amount(form,"",""))
+          Future.successful(Ok(monthly_amount(
+            form,
+            roundToNearestHundred(debits.map(_.amount).sum.intValue() / 2).toString,
+            roundToNearestHundred(debits.map(_.amount).sum / 11).toString())))
         case _ =>
           Logger.info("No TTP Data match in getMonthlyPayment")
           Future.successful(redirectOnError)
       }
   }
+
+  def roundToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100)
 
   def submitMonthlyPayment = ???
 
