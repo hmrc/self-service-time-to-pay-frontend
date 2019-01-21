@@ -72,7 +72,8 @@ object CalculatorForm {
 
   def createMonthlyAmountForm(): Form[MonthlyAmountForm] ={
     Form(mapping(
-      "amount" -> bigDecimal)(MonthlyAmountForm.apply)(MonthlyAmountForm.unapply)
+      "amount" -> bigDecimal.verifying("ssttp.monthly.amount.out-of-bounds", i => {i > 100 || i < 100}))
+    (MonthlyAmountForm.apply)(MonthlyAmountForm.unapply)
     )
   }
 

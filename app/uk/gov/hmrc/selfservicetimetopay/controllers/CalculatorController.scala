@@ -198,15 +198,16 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
-  private def upperMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput): String = 
+  private def upperMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput): String =
     roundToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / minimumMonthsAllowedTTP).toString
-
 
   private def lowerMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput): String =
     roundToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / getMaxMonthsAllowed(sa, LocalDate.now())).toString
 
-
-  private def roundToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100)
+  private def roundToNearestHundred(value: BigDecimal): BigDecimal = {
+    if (value - BigDecimal((value.intValue() / 100) * 100) < 50) BigDecimal((value.intValue() / 100) * 100)
+    else BigDecimal((value.intValue() / 100) * 100) + 100
+  }
 
   def submitMonthlyPayment : Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
