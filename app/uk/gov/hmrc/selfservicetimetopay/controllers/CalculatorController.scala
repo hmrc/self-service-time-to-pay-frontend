@@ -190,16 +190,23 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         case Some(TTPSubmission(_, _, _, Some(Taxpayer(_,_,Some(sa))), calculatorData, _, _, _, _, _)) =>
           val form = CalculatorForm.createMonthlyAmountForm()
           Future.successful(Ok(monthly_amount(
-            form,
-            roundToNearestHundred(sa.debits.map(_.amount).sum.intValue() - calculatorData.initialPayment / minimumMonthsAllowedTTP).toString,
-            roundToNearestHundred(sa.debits.map(_.amount).sum - calculatorData.initialPayment / getMaxMonthsAllowed(sa, LocalDate.now())).toString)))
+            form, upperMonthlyPaymentBound(sa, calculatorData), lowerMonthlyPaymentBound(sa, calculatorData)
+          )))
         case _ =>
           Logger.info("No TTP Data match in getMonthlyPayment")
           Future.successful(redirectOnError)
       }
   }
 
-  def roundToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100)
+  private def upperMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput): String = 
+    roundToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / minimumMonthsAllowedTTP).toString
+
+
+  private def lowerMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput): String =
+    roundToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / getMaxMonthsAllowed(sa, LocalDate.now())).toString
+
+
+  private def roundToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100)
 
   def submitMonthlyPayment : Action[AnyContent] = authorisedSaUser {
     implicit authContext =>
@@ -210,12 +217,11 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
               CalculatorForm.createMonthlyAmountForm().bindFromRequest().fold(
                 formWithErrors => {
                   Future.successful(BadRequest(monthly_amount(
-                    formWithErrors,
-                    roundToNearestHundred(sa.debits.map(_.amount).sum.intValue() - calculatorData.initialPayment / minimumMonthsAllowedTTP).toString,
-                    roundToNearestHundred(sa.debits.map(_.amount).sum - calculatorData.initialPayment / getMaxMonthsAllowed(sa, LocalDate.now())).toString)))
+                    formWithErrors, upperMonthlyPaymentBound(sa, calculatorData), lowerMonthlyPaymentBound(sa, calculatorData)
+                  )))
                 },
                 validFormData => {
-                  sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.amount)))).map { _ =>
+                  sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.amount.intValue())))).map { _ =>
                     Redirect(routes.ArrangementController.getChangeSchedulePaymentDay())
                   }
                 }
