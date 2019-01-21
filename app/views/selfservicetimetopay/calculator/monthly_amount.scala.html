@@ -32,7 +32,7 @@
 
     <p>@Messages("ssttp.monthy.amount.hint", lowerBound, upperBound)</p>
 
-    @helpers.form(action = routes.CalculatorController.submitMonthlyPayment(),
+    @helpers.form(action = routes.CalculatorController.submitMonthlyPayment,
     'id -> "monthlyPaymentForm", 'class -> "group"){
     @helpers.input(
     dataForm("amount"),
