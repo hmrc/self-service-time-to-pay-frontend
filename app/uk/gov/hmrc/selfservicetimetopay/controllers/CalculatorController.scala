@@ -188,7 +188,8 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
     implicit authContext =>
       sessionCache.get.flatMap[Result] {
         case Some(TTPSubmission(_, _, _, Some(Taxpayer(_,_,Some(sa))), calculatorData, _, _, _, _, _)) =>
-          val form = CalculatorForm.createMonthlyAmountForm()
+          val form = CalculatorForm.createMonthlyAmountForm(
+            lowerMonthlyPaymentBound(sa, calculatorData).toInt, upperMonthlyPaymentBound(sa, calculatorData).toInt)
           Future.successful(Ok(monthly_amount(
             form, upperMonthlyPaymentBound(sa, calculatorData), lowerMonthlyPaymentBound(sa, calculatorData)
           )))
@@ -215,15 +216,16 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         sessionCache.get.flatMap {
           case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
             calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule =>
-              CalculatorForm.createMonthlyAmountForm().bindFromRequest().fold(
+              CalculatorForm.createMonthlyAmountForm(
+                lowerMonthlyPaymentBound(sa, calculatorData).toInt, upperMonthlyPaymentBound(sa, calculatorData).toInt).bindFromRequest().fold(
                 formWithErrors => {
                   Future.successful(BadRequest(monthly_amount(
                     formWithErrors, upperMonthlyPaymentBound(sa, calculatorData), lowerMonthlyPaymentBound(sa, calculatorData)
                   )))
                 },
                 validFormData => {
-                  sessionCache.put(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.amount.intValue())))).map { _ =>
-                    Redirect(routes.ArrangementController.getChangeSchedulePaymentDay())
+                  sessionCache.put(ttpData).map { _ =>
+                    Redirect(routes.CalculatorController.getCalculateInstalmentsAB())
                   }
                 }
               )
@@ -241,6 +243,17 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
           Logger.info("Missing required data for what you owe review page")
           redirectOnError
       }
+  }
+
+  def getCalculateInstalmentsAB: Action[AnyContent] = authorisedSaUser { implicit request =>
+    implicit authContext =>
+      sessionCache.get.map {
+      case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _, _, _)) =>
+        Ok(calculate_instalments_form_2())
+      case _ =>
+        Logger.info("Missing required data for what you owe review page")
+        redirectOnError
+  }
   }
 
   /**

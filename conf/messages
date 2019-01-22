@@ -378,4 +378,4 @@ ssttp.monthy.amount.title = How much can you afford to pay each month
 ssttp.monthly.amount.hint = Enter an amount between £{0} and £{1}
 ssttp.monthly.amount.negative = Please enter an amount greater than zero
 ssttp.monthly.amount.numbers-only = Enter numbers only
-ssttp.monthly.amount.out-of-bounds = Enter a figure between £{0} and £{1}
+ssttp.monthly.amount.out-of-bounds = Enter a figure between the given range

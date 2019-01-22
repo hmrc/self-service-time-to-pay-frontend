@@ -21,6 +21,7 @@
         monthsToSchedule: Map[Int, CalculatorPaymentSchedule], redirectCall: Call, loggedIn: Boolean, isAuthJourney: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.results.title"),
     loggedIn = loggedIn,

@@ -16,4 +16,28 @@
 
 package uk.gov.hmrc.selfservicetimetopay.forms
 
+
+import scala.math.BigDecimal.RoundingMode.HALF_UP
+
+
 case class MonthlyAmountForm(amount: BigDecimal)
+
+object MonthlyAmountForm {
+  def apply(str: String): MonthlyAmountForm = {
+    str match {
+      case s if s.isEmpty => MonthlyAmountForm(BigDecimal(0))
+      case s => MonthlyAmountForm(BigDecimal(s))
+    }
+  }
+
+  implicit def bigDecimalToMonthlyAmount(bd: BigDecimal): MonthlyAmountForm = {
+    MonthlyAmountForm(bd)
+  }
+
+  implicit def monthlyAmountToBigDecimal(maf: MonthlyAmountForm): BigDecimal = {
+    maf.amount.setScale(2, HALF_UP)
+  }
+
+  def unapply(arg: BigDecimal) = Option(arg.setScale(2, HALF_UP))
+}
+

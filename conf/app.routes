@@ -17,8 +17,11 @@ GET         /calculator/instalments                                       @uk.go
 POST        /calculator/instalments                                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
 POST        /calculator/sign-in                                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitSignIn()
 GET         /calculator/tax-liabilities                                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getTaxLiabilities()
+
 GET         /calculator/monthly-payment-amount                            @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getMonthlyPayment()
 POST        /calculator/monthly-payment-amount                            @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitMonthlyPayment()
+GET         /calculator/instalments/ab                                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalmentsAB()
+
 
 #  Not loggged in journey
 GET         /payment-plan-calculator/start                                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentPlanCalculator()

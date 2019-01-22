@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.i18n.Messages
 import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue.MaxCurrencyValue
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -70,11 +71,13 @@ object CalculatorForm {
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
 
-  def createMonthlyAmountForm(): Form[MonthlyAmountForm] ={
+  def createMonthlyAmountForm(min : Int, max: Int): Form[MonthlyAmountForm] ={
     Form(mapping(
-      "amount" -> bigDecimal.verifying("ssttp.monthly.amount.out-of-bounds", i => {i > 100 || i < 100}))
-    (MonthlyAmountForm.apply)(MonthlyAmountForm.unapply)
-    )
+      "amount" -> text
+        .verifying("ssttp.monthly.amount.numbers-only", { i: String =>  Try(BigDecimal(i)).isSuccess })
+        .verifying("ssttp.monthly.amount.out-of-bounds", {i: String => Try(BigDecimal(i)).isFailure || BigDecimal(i) >= min && BigDecimal(i) <= max}))
+    (text => MonthlyAmountForm(text))(bd => Some(bd.amount.toString)))
+
   }
 
   //todo add in values for max allowed months in here

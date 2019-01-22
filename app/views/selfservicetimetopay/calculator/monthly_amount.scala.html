@@ -28,17 +28,20 @@
 
     <a class="link-back" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
 
+    @if(dataForm.hasErrors){
+    @helpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
+    }
+
     <h1>@Messages("ssttp.monthy.amount.title")</h1>
 
     <p>@Messages("ssttp.monthly.amount.hint", lowerBound, upperBound)</p>
 
-    @helpers.form(action = routes.CalculatorController.submitMonthlyPayment,
-    'id -> "monthlyPaymentForm", 'class -> "group"){
-    @helpers.input(
-    dataForm("amount"),
-    '_inputClass -> "form-control-1-4",
-    '_label -> "£"
-    )
+    @helpers.form(action = routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group"){
+        @helpers.input(
+            dataForm("amount"),
+            '_inputClass -> "form-control-1-4",
+            '_label -> "£"
+        )
     @submit(){@Messages("ssttp.calculator.form.continue")}
     }
 }
