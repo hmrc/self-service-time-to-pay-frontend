@@ -234,6 +234,20 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         }
   }
 
+  def getClosestSchedule(num: BigDecimal, schedule: List[CalculatorPaymentSchedule]): CalculatorPaymentSchedule =
+    schedule.minBy(v => math.abs(v.amountToPay.toInt - num.toInt))
+
+  def getOtherClosest(closestSchedule: CalculatorPaymentSchedule,
+                      schedules: List[CalculatorPaymentSchedule],
+                      sa: SelfAssessment) : List[CalculatorPaymentSchedule] ={
+    if (schedules.indexOf(closestSchedule) == minimumMonthsAllowedTTP)
+      List(schedules(schedules.indexOf(closestSchedule), schedules.indexOf(closestSchedule) + 1, schedules.indexOf(closestSchedule) + 2))
+    else if(schedules.indexOf(closestSchedule) == getMaxMonthsAllowed(sa, LocalDate.now()))
+      List(schedules( schedules.indexOf(closestSchedule) - 1, schedules.indexOf(closestSchedule) - 2, schedules.indexOf(closestSchedule)))
+    else
+      List(schedules(schedules.indexOf(closestSchedule) - 1, schedules.indexOf(closestSchedule) + 1, schedules.indexOf(closestSchedule)))
+  }
+
   def getPaymentSummary: Action[AnyContent] = authorisedSaUser { implicit request =>
     implicit authContext =>
       sessionCache.get.map {
