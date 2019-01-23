@@ -225,7 +225,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
                 },
                 validFormData => {
                   sessionCache.put(ttpData).map { _ =>
-                    Redirect(routes.CalculatorController.getCalculateInstalmentsAB())
+                    Redirect(routes.CalculatorController.getCalculateInstalmentsAB(validFormData.amount))
                   }
                 }
               )
@@ -237,15 +237,32 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
   def getClosestSchedule(num: BigDecimal, schedule: List[CalculatorPaymentSchedule]): CalculatorPaymentSchedule =
     schedule.minBy(v => math.abs(v.amountToPay.toInt - num.toInt))
 
-  def getOtherClosest(closestSchedule: CalculatorPaymentSchedule,
+  def getSurroundingSchedule(closestSchedule: CalculatorPaymentSchedule,
                       schedules: List[CalculatorPaymentSchedule],
                       sa: SelfAssessment) : List[CalculatorPaymentSchedule] ={
     if (schedules.indexOf(closestSchedule) == minimumMonthsAllowedTTP)
-      List(schedules(schedules.indexOf(closestSchedule), schedules.indexOf(closestSchedule) + 1, schedules.indexOf(closestSchedule) + 2))
+      List(Some(closestSchedule) , getElementNItemsAbove(1, closestSchedule , schedules), getElementNItemsAbove(2, closestSchedule , schedules))
+        .flatten
     else if(schedules.indexOf(closestSchedule) == getMaxMonthsAllowed(sa, LocalDate.now()))
-      List(schedules( schedules.indexOf(closestSchedule) - 1, schedules.indexOf(closestSchedule) - 2, schedules.indexOf(closestSchedule)))
+      List(getElementNItemsBelow(2, closestSchedule, schedules), getElementNItemsBelow(1, closestSchedule , schedules), Some(closestSchedule))
+        .flatten
     else
-      List(schedules(schedules.indexOf(closestSchedule) - 1, schedules.indexOf(closestSchedule) + 1, schedules.indexOf(closestSchedule)))
+      List(getElementNItemsBelow(1, closestSchedule, schedules), Some(closestSchedule), getElementNItemsAbove(1, closestSchedule, schedules))
+        .flatten
+  }
+
+  private def getElementNItemsAbove[A](n: Int, a: A, list: List[A]): Option[A] = {
+    list.indexOf(a) match {
+      case -1 => None
+      case m => Some(list(m + n))
+    }
+  }
+
+  private def getElementNItemsBelow[A](n: Int, a: A, list: List[A]): Option[A] = {
+    list.indexOf(a) match {
+      case -1 => None
+      case m => Some(list(m - n))
+    }
   }
 
   def getPaymentSummary: Action[AnyContent] = authorisedSaUser { implicit request =>
@@ -259,14 +276,16 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       }
   }
 
-  def getCalculateInstalmentsAB: Action[AnyContent] = authorisedSaUser { implicit request =>
+  def getCalculateInstalmentsAB(amount: BigDecimal): Action[AnyContent] = authorisedSaUser { implicit request =>
     implicit authContext =>
-      sessionCache.get.map {
-      case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _, _, _)) =>
-        Ok(calculate_instalments_form_2())
+      sessionCache.get.flatMap {
+        case Some(ttpData@TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
+          calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { schedule =>
+            Ok(calculate_instalments_form_2(getSurroundingSchedule(getClosestSchedule(amount, schedule.values.toList), schedule.values.toList, sa)))
+          }
       case _ =>
         Logger.info("Missing required data for what you owe review page")
-        redirectOnError
+        Future.successful(redirectOnError)
   }
   }
 

@@ -20,7 +20,7 @@ GET         /calculator/tax-liabilities                                   @uk.go
 
 GET         /calculator/monthly-payment-amount                            @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getMonthlyPayment()
 POST        /calculator/monthly-payment-amount                            @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitMonthlyPayment()
-GET         /calculator/instalments/ab                                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalmentsAB()
+GET         /calculator/instalments/ab/:amount                            @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalmentsAB(amount: BigDecimal)
 
 
 #  Not loggged in journey

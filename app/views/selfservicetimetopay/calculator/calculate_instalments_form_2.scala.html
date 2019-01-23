@@ -15,8 +15,9 @@
  *@
 
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentSchedule}
 
-@()(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(monthsToSchedule:List[CalculatorPaymentSchedule])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @selfservicetimetopay.main(
 title = Messages("ssttp.calculator.results.title")
@@ -25,5 +26,7 @@ title = Messages("ssttp.calculator.results.title")
 <a class="link-back" href="@routes.CalculatorController.getMonthlyPayment">@Messages("ssttp.calculator.form.back")</a>
 
 <h1 class="heading-large margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
+
+<p>@{monthsToSchedule}</p>
 
 }
