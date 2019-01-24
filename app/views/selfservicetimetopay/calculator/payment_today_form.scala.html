@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.controllers._
 @import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.helpers.forms.submit
+@import views.selfservicetimetopay.helpers.forms.FieldConstructors._
 
 @(dataForm: Form[CalculatorPaymentToday], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
@@ -31,6 +32,42 @@
     }
   <h1 class="heading-large">@Messages("ssttp.calculator.form.payment_today.title")</h1>
 
+  <form action="@routes.CalculatorController.submitPaymentToday()" method="post">
+
+
+    </form>
+
+@*
+    <form action="@routes.CalculatorController.submitPaymentToday()" method="POST" id="paymentTodayForm" class="group">
+      <input type="hidden" name="csrfToken" value="07c55f28925e7f7df41d22d7923b3d08dc7b7108-1547809998243-77c995ea2f935872ce6c53b6">
+      <label for="amount" class="">
+        <span>
+        £
+        </span>
+        <input type="text" class="form-control-1-4" name="amount" id="amount" value="" aria-invalid="true">
+      </label>
+      <div class="form-group margin-top-30 form-field--submit">
+        <button class="button " type="submit">@Messages("ssttp.calculator.form.continue")</button>
+      </div>
+    </form>
+
+
+    <form action="@routes.CalculatorController.submitPaymentToday()" method="POST" id="paymentTodayForm" class="group">
+      <input type="hidden" name="csrfToken" value="07c55f28925e7f7df41d22d7923b3d08dc7b7108-1547809998243-77c995ea2f935872ce6c53b6">
+      <label for="amount" class=" form-field--error">
+        <span class="error-notification" role="tooltip" data-journey="search-page:error:amount">
+          Enter the amount you want to pay upfront
+        </span>
+        <span>
+          £
+        </span>
+        <input type="text" class="form-control-1-4" name="amount" id="amount" value="" aria-invalid="true">
+      </label>
+      <div class="form-group margin-top-30 form-field--submit">
+        <button class="button " type="submit">@Messages("ssttp.calculator.form.continue")</button>
+      </div>
+    </form>
+*@
     @helpers.form(action = routes.CalculatorController.submitPaymentToday(),
         'id -> "paymentTodayForm", 'class -> "group"){
         @helpers.input(
