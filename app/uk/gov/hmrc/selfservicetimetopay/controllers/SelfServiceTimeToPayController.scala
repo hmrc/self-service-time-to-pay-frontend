@@ -53,7 +53,7 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
   }
 
   def getNotSaEnrolled: Action[AnyContent] = Action { implicit request =>
-    Ok(not_enrolled(isSignedIn))
+    Ok(call_us(isSignedIn))
   }
 
   def signOut(continueUrl: Option[String]): Action[AnyContent] = Action.async { implicit request =>
