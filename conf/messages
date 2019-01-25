@@ -355,8 +355,10 @@ ssttp.arrangement.complete.help.p2= (takes 30 seconds)
 
 #Service unavailable you do not have an sa enrollment page
 ssttp.not.enrolled.back=Back
-ssttp.not.enrolled.title=You must be enrolled to view your Self Assessment account
-ssttp.not.enrolled.intro=To be eligible to set up a payment plan online you must be enrolled to file your Self Assessment tax return.
+ssttp.not.enrolled.title=Please call us
+ssttp.not.enrolled.intro.1=You are not eligible to set up a payment plan online.
+ssttp.not.enrolled.intro.2=For further support you can contact the Business Support Service and speak to an adviser on
+ssttp.not.enrolled.phone-number=0300 200 3835
 ssttp.not.enrolled.tax-account-link=Enrol to view your Self Assessment tax account
 ssttp.not.enrolled.tax-account=, then you can use this service to set up a payment plan.
 
