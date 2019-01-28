@@ -77,7 +77,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
   }
 
   def getDirectDebitUnAuthorised: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.get.map {
+    sessionCache.getTtpSessionCarrier.map {
       case Some(ttpData: TTPSubmission) => Ok(direct_debit_unauthorised(isSignedIn))
       case _ => Ok(service_start(isSignedIn))
     }
@@ -117,7 +117,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     * otherwise return user entered bank details.
     */
   private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit hc: HeaderCarrier) = {
-    sessionCache.get.flatMap {
+    sessionCache.getTtpSessionCarrier.flatMap {
       _.fold(Future.successful(redirectToStartPage))(ttp => {
         val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
         val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
@@ -137,7 +137,7 @@ class DirectDebitController @Inject()(val messagesApi: play.api.i18n.MessagesApi
                   accountName = Some(accName))
               case Nil => bankDetails.copy(accountName = Some(accName))
             }
-            sessionCache.put(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
+            sessionCache.putTtpSessionCarrier(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
               _ => Redirect(toDDCreationPage)
             }
           }

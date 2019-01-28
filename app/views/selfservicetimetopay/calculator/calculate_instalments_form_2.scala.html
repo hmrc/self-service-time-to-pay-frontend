@@ -14,10 +14,13 @@
  * limitations under the License.
  *@
 
+@import selfservicetimetopay.partials._
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentSchedule}
+@import uk.gov.hmrc.play.views.html.helpers
+@import selfservicetimetopay.helpers.forms.submit
 
-@(monthsToSchedule:List[CalculatorPaymentSchedule])(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(redirectCall: Call, durationForm: Form[CalculatorDuration], monthsToSchedule:List[CalculatorPaymentSchedule])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @selfservicetimetopay.main(
 title = Messages("ssttp.calculator.results.title")
@@ -27,6 +30,18 @@ title = Messages("ssttp.calculator.results.title")
 
 <h1 class="heading-large margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
 
-<p>@{monthsToSchedule}</p>
+@if(durationForm.hasErrors) {
+ @helpers.errorSummary(Messages("ssttp.calculator.results.error.title"), durationForm)
+}
+@helpers.form(redirectCall, 'id -> "paymentTodayForm", 'class -> "group") {
+ <div>
+  @{monthsToSchedule.map{mts => instalment_by_month(mts.endDate.get.getMonthValue - mts.startDate.get.getMonthValue, mts)}}
+ </div>
 
+<div class="clear">
+ @submit() {
+ @Messages("ssttp.calculator.form.continue")
+ }
+</div>
+}
 }

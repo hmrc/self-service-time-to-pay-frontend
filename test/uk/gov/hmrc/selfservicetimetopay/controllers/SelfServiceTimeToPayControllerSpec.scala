@@ -39,7 +39,7 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
     }
 
     "return 200 and display the service start page" in {
-      when(mockSessionCache.get(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       val request = FakeRequest().withSession(goodSession : _*)
       val result = controller.start.apply(request)
 
