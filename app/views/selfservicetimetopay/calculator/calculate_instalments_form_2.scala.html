@@ -35,7 +35,7 @@ title = Messages("ssttp.calculator.results.title")
 }
 @helpers.form(redirectCall, 'id -> "paymentTodayForm", 'class -> "group") {
  <div>
-  @{monthsToSchedule.map{mts => instalment_by_month(mts.endDate.get.getMonthValue - mts.startDate.get.getMonthValue, mts)}}
+  @{monthsToSchedule.map{mts => instalment_by_month((mts.endDate.get.getMonthValue-1) - mts.startDate.get.getMonthValue , mts)}}
  </div>
 
 <div class="clear">

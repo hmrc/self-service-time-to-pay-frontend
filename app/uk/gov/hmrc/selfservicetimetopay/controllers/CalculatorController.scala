@@ -234,9 +234,10 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
         }
   }
 
-  def getClosestSchedule(num: BigDecimal, schedule: List[CalculatorPaymentSchedule]): CalculatorPaymentSchedule = {
+  def getClosestSchedule(num: BigDecimal, schedule: List[CalculatorPaymentSchedule]): CalculatorPaymentSchedule =
     schedule.minBy(v => math.abs(v.getMonthlyInstalment.toInt - num.toInt))
-  }
+
+
   def getSurroundingSchedule(closestSchedule: CalculatorPaymentSchedule,
                       schedules: List[CalculatorPaymentSchedule],
                       sa: SelfAssessment) : List[CalculatorPaymentSchedule] ={
@@ -244,10 +245,10 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
       List(Some(closestSchedule) , getElementNItemsAbove(1, closestSchedule , schedules), getElementNItemsAbove(2, closestSchedule , schedules))
         .flatten
     else if(schedules.indexOf(closestSchedule) == getMaxMonthsAllowed(sa, LocalDate.now())-2)
-    List(getElementNItemsBelow(2, closestSchedule, schedules), getElementNItemsBelow(1, closestSchedule , schedules), Some(closestSchedule))
+      List(getElementNItemsBelow(2, closestSchedule, schedules), getElementNItemsBelow(1, closestSchedule , schedules), Some(closestSchedule))
         .flatten
     else
-    List(getElementNItemsBelow(1, closestSchedule, schedules), Some(closestSchedule), getElementNItemsAbove(1, closestSchedule, schedules))
+      List(getElementNItemsBelow(1, closestSchedule, schedules), Some(closestSchedule), getElementNItemsAbove(1, closestSchedule, schedules))
         .flatten
   }
 
