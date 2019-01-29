@@ -31,13 +31,6 @@
     }
   <h1 class="heading-large">@Messages("ssttp.calculator.form.payment_today.title")</h1>
 
-    @helpers.form(action = routes.CalculatorController.submitPaymentToday(),
-        'id -> "paymentTodayForm", 'class -> "group"){
-        @helpers.input(
-            dataForm("amount"),
-            '_inputClass -> "form-control-1-4",
-            '_label -> "£"
-        )
-        @submit(){@Messages("ssttp.calculator.form.continue")}
-    }
+ @selfservicetimetopay.helpers.forms.input(dataForm)
+
 }

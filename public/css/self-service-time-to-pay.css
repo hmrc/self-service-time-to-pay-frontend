@@ -45,7 +45,7 @@
 
  /* GitHub Bug: Make <details> arrow work in Firefox */
   details summary {
-    display: list-item !important;
+    /*display: list-item !important;*/
  }
   .alterBottom {
       margin-bottom: 19px;
@@ -237,13 +237,18 @@ input.accountName{
 
 .app-check-your-answers__contents {
     position: relative;
+    border-bottom: 1px solid #bfc1c3;
 }
 .add_bottom_line{
     border-bottom: 1px solid #bfc1c3 !important;
 }
 
+.no_bottom_line{
+    border-bottom: 0 !important;
+}
+
 @media (min-width: 48.0625em) {
-    .   app-check-your-answers__contents {
+    .app-check-your-answers__contents {
         display: table-row;
     }
 }
@@ -268,6 +273,7 @@ input.accountName{
     .app-check-your-answers__answer,
     .app-check-your-answers__change {
         display: table-cell;
+        border-bottom: 1px solid #bfc1c3;
         padding: 0.63158em 1.05263em 0.47368em 0;
     }
 }
@@ -275,6 +281,9 @@ input.accountName{
 .app-check-your-answers__question {
     font-weight: bold;
     margin: 0.63158em 4em 0.21053em 0;
+}
+.app-check-your-answers__question span.small{
+    font-weight: normal;
 }
 
 .app-check-your-answers__answer {
@@ -300,6 +309,8 @@ input.accountName{
 }
 .small{
     font-size: 16px;
+    line-height: 1.25;
+    margin-bottom: 0;
 }
 .number-toggle .form-control{
     width: 100%
