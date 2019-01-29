@@ -309,6 +309,12 @@ ssttp.not.enrolled.intro=I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n 
 ssttp.not.enrolled.tax-account-link=Ymrestrwch i fwrw golwg ar eich cyfrif treth Hunanasesiad
 ssttp.not.enrolled.tax-account=, yna gallwch ddefnyddio’r gwasanaeth hwn i drefnu cynllun talu.
 
+#not-enrolled-please-call-us
+ssttp.please-call-us.p1=Efallai y gallwch drefnu cynllun talu dros y ffôn, ond nid ydych yn gymwys i gael cynllun talu ar-lein.
+ssttp.please-call-us.p2-part1=Rydym yn argymell eich bod yn siarad ag ymgynghorydd ar
+ssttp.please-call-us.p2.phone-number=0300 200 1900
+ssttp.please-call-us.p2-part2=yng Ngwasanaeth Cwsmeriaid Cymraeg CThEM i drafod eich opsiynau talu.
+
 ssttp.over-ten-thosand.h1=Ffoniwch ni
 ssttp.over-ten-thosand.p1=I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £10,000 neu lai.
 ssttp.over-ten-thosand.p2=Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar
