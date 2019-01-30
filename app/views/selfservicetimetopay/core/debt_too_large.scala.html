@@ -18,28 +18,28 @@
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import selfservicetimetopay.partials.tax_liabilities_summary
-@(signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(signedIn: Boolean = false, isWelsh: Boolean)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @selfservicetimetopay.main(
-    title = Messages("ssttp.overtenthosand.p1"),
+    title = Messages("ssttp.over-ten-thosand.p1"),
     loggedIn = signedIn
 ) {
     <p><a class="back-link" href="#" onClick="history.go(-1);return true;">@Messages("ssttp.you-need-to-file.form.back")</a></p>
-    <h1>@Messages("ssttp.overtenthosand.h1")</h1>
-    <p>@Messages("ssttp.overtenthosand.p1")</p>
-    <p>@Messages("ssttp.overtenthosand.p2") <strong class ="bold">@Messages("ssttp.overtenthosand.p2.number")</strong></p>
-    <h3>@Messages("ssttp.overtenthosand.before.you.call.h1")</h3>
+    <h1>@Messages("ssttp.over-ten-thosand.h1")</h1>
+    <p>@Messages("ssttp.over-ten-thosand.p1")</p>
+    <p>@Messages("ssttp.over-ten-thosand.p2") <strong class ="bold">@Messages("ssttp.over-ten-thosand.p2.number")</strong></p>
+    <h3>@Messages("ssttp.over-ten-thosand.before.you.call.h1")</h3>
     <ul class="bullets">
-        <li>@Messages("ssttp.overtenthosand.before.you.call.l1")</li>
-        <li>@Messages("ssttp.overtenthosand.before.you.call.l2")</li>
+        <li>@Messages("ssttp.over-ten-thosand.before.you.call.l1")</li>
+        <li>@Messages("ssttp.over-ten-thosand.before.you.call.l2")</li>
     </ul>
-    <h3>@Messages("ssttp.overtenthosand.likely.to.ask.h1")</h3>
+    <h3>@Messages("ssttp.over-ten-thosand.likely.to.ask.h1")</h3>
     <ul class="bullets">
-        <li>@Messages("ssttp.overtenthosand.likely.to.ask.l1")</li>
-        <li>@Messages("ssttp.overtenthosand.likely.to.ask.l2")</li>
+        <li>@Messages("ssttp.over-ten-thosand.likely.to.ask.l1")</li>
+        <li>@Messages("ssttp.over-ten-thosand.likely.to.ask.l2")</li>
     </ul>
-    <h3>@Messages("ssttp.overtenthosand.opening.hours.h1")</h3>
+    <h3>@Messages("ssttp.over-ten-thosand.opening.hours.h1")</h3>
     <ul class="bullets">
-        <li>@Messages("ssttp.overtenthosand.opening.hours.l1")</li>
-        <li>@Messages("ssttp.overtenthosand.opening.hours.l2")</li>
+        <li>@Messages("ssttp.over-ten-thosand.opening.hours.l1")</li>
+        @if(!isWelsh) { <<li>@Messages("ssttp.over-ten-thosand.opening.hours.l2")</li> }
     </ul>
 }

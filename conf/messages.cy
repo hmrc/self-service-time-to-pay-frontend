@@ -306,21 +306,27 @@ ssttp.arrangement.complete.help.p2=(mae’n cymryd 30 eiliad)
 ssttp.not.enrolled.back=Yn ôl
 ssttp.not.enrolled.title=Mae’n rhaid eich bod wedi’ch ymrestru i fwrw golwg ar eich cyfrif Hunanasesiad
 ssttp.not.enrolled.intro=I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid eich bod wedi’ch ymrestru i gyflwyno’ch Ffurflen Dreth Hunanasesiad.
-ssttp.not.enrolled.tax-account-link=Ymrestrwch i fwrw golwg ar eich cyfrif Hunanasesiad
+ssttp.not.enrolled.tax-account-link=Ymrestrwch i fwrw golwg ar eich cyfrif treth Hunanasesiad
 ssttp.not.enrolled.tax-account=, yna gallwch ddefnyddio’r gwasanaeth hwn i drefnu cynllun talu.
 
-ssttp.overtenthosand.h1=Ffoniwch ni
-ssttp.overtenthosand.p1=I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £10,000 neu lai.
-ssttp.overtenthosand.p2=Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar
-ssttp.overtenthosand.p2.number=0300 200 1900.
-ssttp.overtenthosand.before.you.call.h1=Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
-ssttp.overtenthosand.before.you.call.l1=gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
-ssttp.overtenthosand.before.you.call.l2=eich manylion banc
-ssttp.overtenthosand.likely.to.ask.h1=Rydym yn debygol o ofyn:
-ssttp.overtenthosand.likely.to.ask.l1=beth rydych wedi’i wneud i geisio talu’r bil
-ssttp.overtenthosand.likely.to.ask.l2=a allwch dalu rhywfaint o’r bil nawr
-ssttp.overtenthosand.opening.hours.h1=Ein horiau agor yw:
-ssttp.overtenthosand.opening.hours.l1=Dydd Llun i ddydd Gwener: 08:30 – 17:00
-ssttp.overtenthosand.opening.hours.l2=
+#not-enrolled-please-call-us
+ssttp.please-call-us.p1=Efallai y gallwch drefnu cynllun talu dros y ffôn, ond nid ydych yn gymwys i gael cynllun talu ar-lein.
+ssttp.please-call-us.p2-part1=Rydym yn argymell eich bod yn siarad ag ymgynghorydd ar
+ssttp.please-call-us.p2.phone-number=0300 200 1900
+ssttp.please-call-us.p2-part2=yng Ngwasanaeth Cwsmeriaid Cymraeg CThEM i drafod eich opsiynau talu.
+
+ssttp.over-ten-thosand.h1=Ffoniwch ni
+ssttp.over-ten-thosand.p1=I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £10,000 neu lai.
+ssttp.over-ten-thosand.p2=Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar
+ssttp.over-ten-thosand.p2.number=0300 200 1900.
+ssttp.over-ten-thosand.before.you.call.h1=Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
+ssttp.over-ten-thosand.before.you.call.l1=gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
+ssttp.over-ten-thosand.before.you.call.l2=eich manylion banc
+ssttp.over-ten-thosand.likely.to.ask.h1=Rydym yn debygol o ofyn:
+ssttp.over-ten-thosand.likely.to.ask.l1=beth rydych wedi’i wneud i geisio talu’r bil
+ssttp.over-ten-thosand.likely.to.ask.l2=a allwch dalu rhywfaint o’r bil nawr
+ssttp.over-ten-thosand.opening.hours.h1=Ein horiau agor yw:
+ssttp.over-ten-thosand.opening.hours.l1=Dydd Llun i ddydd Gwener: 08:30 – 17:00
+ssttp.over-ten-thosand.opening.hours.l2=
 
 error.required=Mae''r maes hwn yn ofynnol

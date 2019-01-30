@@ -15,17 +15,42 @@
  *@
 
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@(loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
-@selfservicetimetopay.main(
-    title = Messages("ssttp.not.enrolled.title"),
-    loggedIn = loggedIn
-) {
-    <a class="link-back" href="@routes.SelfServiceTimeToPayController.start().url">@Messages("ssttp.not.enrolled.back")</a>
-    <header class="page-header text">
-        <h1>@Messages("ssttp.not.enrolled.title")</h1>
-    </header>
-    <p>@Messages("ssttp.not.enrolled.intro")</p>
-    <p><a href="https://www.gov.uk/log-in-file-self-assessment-tax-return/register-if-youre-self-employed">@Messages("ssttp.not.enrolled.tax-account-link")</a>
-        @Messages("ssttp.not.enrolled.tax-account")
-    </p>
-}
+@import selfservicetimetopay.helpers.message_list
+
+@(isWelsh: Boolean, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+    @selfservicetimetopay.main(
+        title = Messages("ssttp.call-us.title"),
+        loggedIn = loggedIn
+    ){
+        <a class="link-back" href="@routes.SelfServiceTimeToPayController.start().url">@Messages("ssttp.call-us.back")</a>
+
+        <header class="page-header text">
+            <h1>@Messages("ssttp.call-us.title")</h1>
+        </header>
+
+        <p>@Messages("ssttp.please-call-us.p1")</p>
+
+        <p>@Messages("ssttp.please-call-us.p2-part1") <strong class="bold">@Messages("ssttp.please-call-us.p2.phone-number")</strong> @Messages("ssttp.please-call-us.p2-part2")</p>
+
+        <h3>@Messages("ssttp.call-us.before-call.heading")</h3>
+
+        <ul class="bullets">
+            <li>@Messages("ssttp.call-us.before-call.l1")</li>
+            <li>@Messages("ssttp.call-us.before-call.l2")</li>
+        </ul>
+
+        <h3>@Messages("ssttp.call-us.likely-to-ask.heading")</h3>
+
+        <ul class="bullets">
+            <li>@Messages("ssttp.call-us.likely-to-ask.l1")</li>
+            <li>@Messages("ssttp.call-us.likely-to-ask.l2")</li>
+        </ul>
+
+        <h3>@Messages("ssttp.call-us.opening-times.heading")</h3>
+
+        <ul class="bullets">
+            <li>@Messages("ssttp.call-us.opening-times.l1")</li>
+            @if(!isWelsh) { <li>@Messages("ssttp.call-us.opening-times.l2")</li> }
+        </ul>
+    }
