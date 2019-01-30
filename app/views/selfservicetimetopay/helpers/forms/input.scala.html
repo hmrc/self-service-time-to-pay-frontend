@@ -19,21 +19,20 @@
 
 @(dataForm: Form[CalculatorPaymentTodayForm])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
-
 <form action="@routes.CalculatorController.submitPaymentToday()" method="post">
-@helper.CSRF.formField
-<label for="amount" class="@if(dataForm.hasErrors){form-field--error}">
-  @if(dataForm.hasErrors){
-    <span class="error-notification" role="tooltip" data-journey="search-page:error:amount">
-      @Messages("ssttp.calculator.form.payment_today.amount.required")
-    </span>
-  }
-  <span>
-  £
-  </span>
-  <input type="text" class="form-control-1-4" name="amount" id="amount" value="" aria-invalid="true">
-</label>
-<div class="form-group margin-top-30 form-field--submit">
-  <button class="button " type="submit">@Messages("ssttp.calculator.form.continue")</button>
-</div>
+
+    <label for="amount" class="@if(dataForm.hasErrors){form-field--error}">
+      @if(dataForm.hasErrors){
+        <span class="error-notification" role="tooltip" data-journey="search-page:error:amount">
+          @Messages("ssttp.calculator.form.payment_today.amount.required")
+        </span>
+      }
+      <span>
+      £
+      </span>
+      <input type="text" class="form-control-1-4" name="amount" id="amount" value="" aria-invalid="true">
+    </label>
+    <div class="form-group margin-top-30 form-field--submit">
+      <button class="button " type="submit">@Messages("ssttp.calculator.form.continue")</button>
+    </div>
 </form>
