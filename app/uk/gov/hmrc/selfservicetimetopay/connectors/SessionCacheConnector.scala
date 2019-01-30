@@ -54,6 +54,14 @@ trait SessionCacheConnector extends SessionCache with ServicesConfig {
     fetchAndGetEntry[BigDecimal]("amount")(ttpSessionCarrier, reads, ec)
   }
 
+  def putIsBPath(isBpath: Boolean)(implicit writes: Writes[Boolean], hc: HeaderCarrier, ec:ExecutionContext): Future[CacheMap] = {
+    cache[Boolean]("isBPath", isBpath)(writes, ttpSessionCarrier, ec)
+  }
+
+  def getIsBpath()(implicit hc: HeaderCarrier, reads: Reads[Boolean], ec:ExecutionContext): Future[Option[Boolean]] = {
+    fetchAndGetEntry[Boolean]("isBPath")(ttpSessionCarrier, reads, ec)
+  }
+
   override def remove()(implicit hc: HeaderCarrier, ec:ExecutionContext): Future[HttpResponse] = {
     super.remove()(ttpSessionCarrier, ec)
   }

@@ -186,6 +186,7 @@ class CalculatorController @Inject()(val messagesApi: play.api.i18n.MessagesApi,
 
   def getMonthlyPayment: Action[AnyContent] = authorisedSaUser { implicit request =>
     implicit authContext =>
+      sessionCache.putIsBPath(isBpath = true)
       sessionCache.getTtpSessionCarrier.flatMap[Result] {
         case Some(TTPSubmission(_, _, _, Some(Taxpayer(_,_,Some(sa))), calculatorData, _, _, _, _, _)) =>
           val form = CalculatorForm.createMonthlyAmountForm(
