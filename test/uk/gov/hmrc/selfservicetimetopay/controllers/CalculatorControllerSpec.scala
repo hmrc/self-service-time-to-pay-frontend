@@ -35,8 +35,9 @@ import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCache4TokensConnector
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService
-
 import scala.concurrent.Future
+import play.api.mvc.{Action, AnyContent}
+import play.api.Application
 
 class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -138,16 +139,13 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
     "Return BadRequest if the form value = total amount due" in {
       implicit val hc: HeaderCarrier = new HeaderCarrier
-
       val submission = ttpSubmissionNLI
         .copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount = BigDecimal("300.00"), dueDate = LocalDate.now()))))
 
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any()))
         .thenReturn(Future.successful(Some(submission)))
 
-      val result = controller.submitPaymentToday().apply(FakeRequest()
-        .withFormUrlEncodedBody("amount" -> "300.00")
-        .withSession(goodSession:_*))
+      val result = requestWithCsrfToken(controller.submitPaymentToday(), "300.00")
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).getTtpSessionCarrier(any(), any(), any())
@@ -162,9 +160,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any()))
         .thenReturn(Future.successful(Some(submission)))
 
-      val result = controller.submitPaymentToday().apply(FakeRequest()
-        .withFormUrlEncodedBody("amount" -> "299.999")
-        .withSession(goodSession:_*))
+      val result = requestWithCsrfToken(controller.submitPaymentToday(), "299.999")
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).getTtpSessionCarrier(any(), any(), any())
@@ -396,5 +392,12 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       status(response) mustBe SEE_OTHER
       routes.CalculatorController.getCalculateInstalments().url must endWith(redirectLocation(response).get)
     }
+  }
+
+  private def requestWithCsrfToken(action: Action[AnyContent], amount: String)(implicit app: Application) = {
+    val csrfAddToken = app.injector.instanceOf[play.filters.csrf.CSRFAddToken]
+    csrfAddToken(action).apply(FakeRequest()
+      .withFormUrlEncodedBody("amount" ->  amount)
+      .withSession(goodSession:_*))
   }
 }
