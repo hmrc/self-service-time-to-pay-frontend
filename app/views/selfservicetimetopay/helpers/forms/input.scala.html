@@ -20,7 +20,7 @@
 @(dataForm: Form[CalculatorPaymentToday])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 <form action="@routes.CalculatorController.submitPaymentToday()" method="post">
-
+    @helper.CSRF.formField
     <label for="amount" class="@if(dataForm.hasErrors){form-field--error}">
       @if(dataForm.hasErrors){
         <span class="error-notification" role="tooltip" data-journey="search-page:error:amount">
