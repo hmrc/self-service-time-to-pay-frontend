@@ -24,6 +24,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
+import play.api.Application
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers._
 import play.api.test._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -145,9 +147,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(submission)))
 
-      val result = controller.submitPaymentToday().apply(FakeRequest()
-        .withFormUrlEncodedBody("amount" -> "300.00")
-        .withSession(goodSession:_*))
+      val result = requestWithCsrfToken(controller.submitPaymentToday(), "300.00")
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -162,9 +162,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.get(any(), any(), any()))
         .thenReturn(Future.successful(Some(submission)))
 
-      val result = controller.submitPaymentToday().apply(FakeRequest()
-        .withFormUrlEncodedBody("amount" -> "299.999")
-        .withSession(goodSession:_*))
+      val result = requestWithCsrfToken(controller.submitPaymentToday(), "299.999")
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).get(any(), any(), any())
@@ -396,5 +394,12 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       status(response) mustBe SEE_OTHER
       routes.CalculatorController.getCalculateInstalments().url must endWith(redirectLocation(response).get)
     }
+  }
+
+  private def requestWithCsrfToken(action: Action[AnyContent], amount: String)(implicit app: Application) = {
+    val csrfAddToken = app.injector.instanceOf[play.filters.csrf.CSRFAddToken]
+    csrfAddToken(action).apply(FakeRequest()
+      .withFormUrlEncodedBody("amount" ->  amount)
+      .withSession(goodSession:_*))
   }
 }
