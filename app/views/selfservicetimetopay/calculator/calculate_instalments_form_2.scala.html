@@ -26,7 +26,7 @@
 title = Messages("ssttp.calculator.results.title")
 ) {
 
-<a class="link-back" href="@routes.CalculatorController.getMonthlyPayment">@Messages("ssttp.calculator.form.back")</a>
+<a class="link-back" onclick="back()" href="@routes.CalculatorController.getMonthlyPayment">@Messages("ssttp.calculator.form.back")</a>
 
 <h1 class="heading-large margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
 
@@ -48,10 +48,38 @@ title = Messages("ssttp.calculator.results.title")
 </details>
 
 
+<br>
 <div class="clear">
- @submit() {
- @Messages("ssttp.calculator.form.continue")
- }
+ <div class="form-group">
+  <button id="next" type="submit" class="button" onclick="continue()">@Messages("ssttp.calculator.form.continue")</button>
+ </div>
 </div>
 }
+
+<script type="text/javascript">
+
+function continue() {
+  window['optimizely'] = window['optimizely'] || [];
+  window['optimizely'].push({
+  type: "event",
+  eventName: "months-pay-over-continue",
+  tags: {
+    revenue: 0, // Optional in cents as integer (500 == $5.00)
+    value: 0.00 // Optional as float
+  }
+ });
+}
+
+function back() {
+  window['optimizely'] = window['optimizely'] || [];
+  window['optimizely'].push({
+  type: "event",
+  eventName: "pay-over-each-month-bank",
+  tags: {
+    revenue: 0, // Optional in cents as integer (500 == $5.00)
+    value: 0.00 // Optional as float
+  }
+ });
+}
+</script>
 }
