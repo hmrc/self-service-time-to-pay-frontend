@@ -47,7 +47,7 @@ extends TimeToPayController with play.api.i18n.I18nSupport with ServicesConfig w
   }
 
   def inspect() = Action.async { implicit request =>
-    val sessionCacheF = sessionCache.get
+    val sessionCacheF = sessionCache.getTtpSessionCarrier
     val authorityF = authConnector.currentAuthority.map(_.json).recover{
       case NonFatal(e) => e.getMessage
     }

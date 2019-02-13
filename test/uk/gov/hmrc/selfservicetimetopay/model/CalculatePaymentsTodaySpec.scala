@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.model
 
 import org.scalatestplus.play.PlaySpec
-import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
+import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorPaymentTodayForm
 
 class CalculatePaymentsTodaySpec extends PlaySpec {
 
@@ -25,20 +25,20 @@ class CalculatePaymentsTodaySpec extends PlaySpec {
   "calculatorPaymentToday apply" should {
     "convert the string into a big decimal when creating the object" in {
 
-      val calculatorPaymentToday = CalculatorPaymentToday("2")
-      assert(calculatorPaymentToday == CalculatorPaymentToday(BigDecimal(2)))
+      val calculatorPaymentToday = CalculatorPaymentTodayForm("2")
+      assert(calculatorPaymentToday == CalculatorPaymentTodayForm(BigDecimal(2)))
     }
   }
 
   "calculatorPaymentToday bigDecimalToCalculatorPaymentToday" should{
     "return a CalculatorPaymentToday when a big decimal is passed" in {
-      assert(CalculatorPaymentToday.bigDecimalToCalculatorPaymentToday(2)== CalculatorPaymentToday(BigDecimal(2)))
+      assert(CalculatorPaymentTodayForm.bigDecimalToCalculatorPaymentToday(2)== CalculatorPaymentTodayForm(BigDecimal(2)))
     }
   }
 
   "calculatorPaymentToday calculatorPaymentTodayToBigDecimal" should{
     "return a big decimal when a CalculatorPaymentToday is passed" in {
-      assert(CalculatorPaymentToday.calculatorPaymentTodayToBigDecimal(CalculatorPaymentToday(BigDecimal(2)))== BigDecimal(2))
+      assert(CalculatorPaymentTodayForm.calculatorPaymentTodayToBigDecimal(CalculatorPaymentTodayForm(BigDecimal(2)))== BigDecimal(2))
     }
   }
 }

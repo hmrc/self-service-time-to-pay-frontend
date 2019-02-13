@@ -103,7 +103,7 @@ trait TimeToPayController extends FrontendController with Actions {
     * Manages code blocks where the user should be logged in and meet certain eligibility criteria
     */
   def authorizedForSsttp(block: TTPSubmission => Future[Result])(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
-    sessionCache.get.flatMap[Result] {
+    sessionCache.getTtpSessionCarrier.flatMap[Result] {
       case Some(submission@TTPSubmission(Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _, _)) =>
         block(submission)
       case _ =>
@@ -121,13 +121,13 @@ trait TimeToPayController extends FrontendController with Actions {
    def isSignedIn(implicit hc: HeaderCarrier): Boolean = hc.authorization.isDefined
 
   protected def updateOrCreateInCache(found: TTPSubmission => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier): Future[CacheMap] = {
-    sessionCache.get.flatMap {
+    sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")
-        sessionCache.put(found(ttpSubmission))
+        sessionCache.putTtpSessionCarrier(found(ttpSubmission))
       case None =>
         Logger.info("No TTP Submission data found in cache")
-        sessionCache.put(notFound())
+        sessionCache.putTtpSessionCarrier(notFound())
     }
   }
 

@@ -38,12 +38,28 @@ trait SessionCacheConnector extends SessionCache with ServicesConfig {
 
   def ttpSessionCarrier()(implicit hc:HeaderCarrier): HeaderCarrier = hc.copy(sessionId = hc.extraHeaders.toMap.get(ttpSessionId).map(SessionId))
 
-  def put(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], hc: HeaderCarrier, ec:ExecutionContext): Future[CacheMap] = {
+  def putTtpSessionCarrier(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], hc: HeaderCarrier, ec:ExecutionContext): Future[CacheMap] = {
     cache[TTPSubmission](sessionKey, body)(writes, ttpSessionCarrier, ec)
   }
 
-  def get(implicit hc: HeaderCarrier, reads: Reads[TTPSubmission], ec:ExecutionContext): Future[Option[TTPSubmission]] = {
+  def getTtpSessionCarrier(implicit hc: HeaderCarrier, reads: Reads[TTPSubmission], ec:ExecutionContext): Future[Option[TTPSubmission]] = {
     fetchAndGetEntry[TTPSubmission](sessionKey)(ttpSessionCarrier, reads, ec)
+  }
+
+  def putAmount(amount: BigDecimal)(implicit writes: Writes[BigDecimal], hc: HeaderCarrier, ec:ExecutionContext): Future[CacheMap] = {
+    cache[BigDecimal]("amount", amount)(writes, ttpSessionCarrier, ec)
+  }
+
+  def getAmount()(implicit hc: HeaderCarrier, reads: Reads[BigDecimal], ec:ExecutionContext): Future[Option[BigDecimal]] = {
+    fetchAndGetEntry[BigDecimal]("amount")(ttpSessionCarrier, reads, ec)
+  }
+
+  def putIsBPath(isBpath: Boolean)(implicit writes: Writes[Boolean], hc: HeaderCarrier, ec:ExecutionContext): Future[CacheMap] = {
+    cache[Boolean]("isBPath", isBpath)(writes, ttpSessionCarrier, ec)
+  }
+
+  def getIsBpath()(implicit hc: HeaderCarrier, reads: Reads[Boolean], ec:ExecutionContext): Future[Option[Boolean]] = {
+    fetchAndGetEntry[Boolean]("isBPath")(ttpSessionCarrier, reads, ec)
   }
 
   override def remove()(implicit hc: HeaderCarrier, ec:ExecutionContext): Future[HttpResponse] = {

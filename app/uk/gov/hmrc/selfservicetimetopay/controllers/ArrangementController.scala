@@ -51,7 +51,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
 
   def start: Action[AnyContent] = authorisedSaUser { implicit authContext =>
     implicit request =>
-      sessionCache.get.flatMap {
+      sessionCache.getTtpSessionCarrier.flatMap {
         case Some(ttp@TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp, authContext.principal.accounts.sa.get.utr.utr)
         case _ => Future.successful(redirectOnError)
       }
@@ -94,7 +94,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
         tp =>
           tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion())))(taxPayer => {
             val newSubmission = TTPSubmission(taxpayer = Some(taxPayer))
-            sessionCache.put(newSubmission).flatMap { _ =>
+            sessionCache.putTtpSessionCarrier(newSubmission).flatMap { _ =>
               eligibilityCheck(taxPayer, newSubmission, authContext.principal.accounts.sa.get.utr.utr)
             }
           }
@@ -144,7 +144,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
                   case ttp@TTPSubmission(Some(schedule), _, _, _, cd@CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _) =>
                     changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
                       ttpSubmission =>
-                        sessionCache.put(ttpSubmission).map {
+                        sessionCache.putTtpSessionCarrier(ttpSubmission).map {
                           _ => Redirect(routes.ArrangementController.getInstalmentSummary())
                         }
                     }
@@ -192,13 +192,13 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
     for {
       es <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer), utr)
       updatedSubmission = newSubmission.copy(eligibilityStatus = Option(es))
-      _ <- sessionCache.put(updatedSubmission)
+      _ <- sessionCache.putTtpSessionCarrier(updatedSubmission)
       result <- checkSubmission(updatedSubmission)
     } yield result
   }
 
   def setDefaultCalculatorSchedule(newSubmission: TTPSubmission, debits: Seq[Debit])(implicit hc: HeaderCarrier): Future[CacheMap] = {
-    sessionCache.put(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
+    sessionCache.putTtpSessionCarrier(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
       endDate = LocalDate.now().plusMonths(2).minusDays(1), debits = debits)))
   }
 
@@ -259,7 +259,7 @@ class ArrangementController @Inject()(val messagesApi: play.api.i18n.MessagesApi
               val result = for {
                 submissionResult <- arrangementConnector.submitArrangements(arrangement)
                 _ = auditService.sendSubmissionEvent(submission)
-                _ = sessionCache.put(submission.copy(ddRef = Some(arrangement.directDebitReference)))
+                _ = sessionCache.putTtpSessionCarrier(submission.copy(ddRef = Some(arrangement.directDebitReference)))
               } yield submissionResult
 
               result.flatMap {

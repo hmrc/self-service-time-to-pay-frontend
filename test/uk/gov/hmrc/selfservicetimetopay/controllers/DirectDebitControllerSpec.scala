@@ -52,7 +52,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
     }
     "successfully display the direct debit form page" in {running(app) {
 
-      when(mockSessionCache.get(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
+      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
         ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(mockSessionCache4TokensConnector.put(any())(any(), any())).thenReturn(Future.successful(()))
@@ -71,7 +71,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
       when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(None))
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache.get(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
+      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
         ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
       val request = FakeRequest()
@@ -89,8 +89,8 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
-      when(mockSessionCache.get(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.putTtpSessionCarrier(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
       val request = FakeRequest()
         .withSession(goodSession : _*)
@@ -108,8 +108,8 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
-      when(mockSessionCache.get(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.put(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.putTtpSessionCarrier(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
       val request = FakeRequest()
         .withSession(goodSession : _*)
@@ -159,7 +159,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
     "successfully display the direct debit confirmation page" in { running(app) {
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache.get(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       val request = FakeRequest()
         .withSession(goodSession : _*)
       implicit val messages = getMessages(request)

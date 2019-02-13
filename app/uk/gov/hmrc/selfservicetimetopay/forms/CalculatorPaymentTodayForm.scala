@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfservicetimetopay.models
+package uk.gov.hmrc.selfservicetimetopay.forms
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
-case class CalculatorPaymentToday(amount: BigDecimal)
+case class CalculatorPaymentTodayForm(amount: BigDecimal)
 
-object CalculatorPaymentToday {
-  def apply(str: String): CalculatorPaymentToday = {
+object CalculatorPaymentTodayForm {
+  def apply(str: String): CalculatorPaymentTodayForm = {
     str match {
-      case s if s.isEmpty => CalculatorPaymentToday(BigDecimal(0))
-      case s => CalculatorPaymentToday(BigDecimal(s))
+      case s if s.isEmpty => CalculatorPaymentTodayForm(BigDecimal(0))
+      case s => CalculatorPaymentTodayForm(BigDecimal(s))
     }
   }
 
-  implicit def bigDecimalToCalculatorPaymentToday(bd: BigDecimal): CalculatorPaymentToday = {
-    CalculatorPaymentToday(bd)
+  implicit def bigDecimalToCalculatorPaymentToday(bd: BigDecimal): CalculatorPaymentTodayForm = {
+    CalculatorPaymentTodayForm(bd)
   }
 
-  implicit def calculatorPaymentTodayToBigDecimal(cpd: CalculatorPaymentToday): BigDecimal = {
+  implicit def calculatorPaymentTodayToBigDecimal(cpd: CalculatorPaymentTodayForm): BigDecimal = {
     cpd.amount.setScale(2, HALF_UP)
   }
 

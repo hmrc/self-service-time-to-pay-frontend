@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentToday
+@import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorPaymentTodayForm
 @import uk.gov.hmrc.selfservicetimetopay.controllers._
 
-@(dataForm: Form[CalculatorPaymentToday])(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(dataForm: Form[CalculatorPaymentTodayForm])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 <form action="@routes.CalculatorController.submitPaymentToday()" method="post">
     @helper.CSRF.formField
@@ -33,6 +33,20 @@
       <input type="text" class="form-control-1-4" name="amount" id="amount" value="" aria-invalid="true">
     </label>
     <div class="form-group margin-top-30 form-field--submit">
-      <button class="button " type="submit">@Messages("ssttp.calculator.form.continue")</button>
+      <button class="button " type="submit" onclick="continue">@Messages("ssttp.calculator.form.continue")</button>
     </div>
 </form>
+
+<script type="text/javascript">
+function continue() {
+    window['optimizely'] = window['optimizely'] || [];
+    window['optimizely'].push({
+        type: "event",
+        eventName: "afford-each-month-continue",
+        tags: {
+           revenue: 0, // Optional in cents as integer (500 == $5.00)
+           value: 0.00 // Optional as float
+         }
+    });
+}
+</script>

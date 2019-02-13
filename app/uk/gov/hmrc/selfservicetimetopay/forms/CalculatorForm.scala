@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.i18n.Messages
 import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue.MaxCurrencyValue
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -40,7 +41,7 @@ object CalculatorForm {
     (textBox != null) && textBox.nonEmpty
   }
 
-  def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentToday] = {
+  def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentTodayForm] = {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.payment_today.amount.required.min", { i: String => if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.00 else true })
@@ -53,7 +54,7 @@ object CalculatorForm {
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })
-    )(text => CalculatorPaymentToday(text))(bd => Some(bd.amount.toString)))
+    )(text => CalculatorPaymentTodayForm(text))(bd => Some(bd.amount.toString)))
   }
 
   def createAmountDueForm(): Form[CalculatorSinglePayment] = {
@@ -68,6 +69,15 @@ object CalculatorForm {
           if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
         })
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
+  }
+
+  def createMonthlyAmountForm(min : Int, max: Int): Form[MonthlyAmountForm] ={
+    Form(mapping(
+      "amount" -> text
+        .verifying("ssttp.monthly.amount.numbers-only", { i: String =>  Try(BigDecimal(i)).isSuccess })
+        .verifying("ssttp.monthly.amount.out-of-bounds", {i: String => Try(BigDecimal(i)).isFailure || BigDecimal(i) >= min && BigDecimal(i) <= max}))
+    (text => MonthlyAmountForm(text))(bd => Some(bd.amount.toString)))
+
   }
 
   //todo add in values for max allowed months in here
