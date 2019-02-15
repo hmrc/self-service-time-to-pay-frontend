@@ -19,9 +19,23 @@
 @(monthsToSchedule: Map[Int, CalculatorPaymentSchedule])(implicit messages: play.api.i18n.Messages)
 
 <details class="margin-top-40 margin-bottom-30">
-    <summary><span class="summary">@Messages("ssttp.calculator.results.month.greater-then-six.header")</span></summary>
+    <summary onclick="click"><span class="summary">@Messages("ssttp.calculator.results.month.greater-then-six.header")</span></summary>
     <div>
         <p>@Messages("ssttp.calculator.results.month.greater-then-six.intro")</p>
         @monthsToSchedule.map { greaterThenSix:(Int,CalculatorPaymentSchedule) => @instalment_by_month(greaterThenSix._1, greaterThenSix._2)}
     </div>
 </details>
+<script type="text/javascript">
+
+function click() {
+    window['optimizely'] = window['optimizely'] || [];
+    window['optimizely'].push({
+    type: "event",
+    eventName: "need-a-longer-plan",
+    tags: {
+    revenue: 0,
+    value: 0.00
+    }
+    });
+}
+</script>
