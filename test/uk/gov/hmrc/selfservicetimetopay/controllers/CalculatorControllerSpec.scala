@@ -25,6 +25,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
+import play.api.Application
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers._
 import play.api.test._
 import uk.gov.hmrc.http.cache.client.CacheMap
