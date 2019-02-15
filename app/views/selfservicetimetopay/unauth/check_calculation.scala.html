@@ -33,7 +33,7 @@
     <h2>@Messages("ssttp.calculator.check-calculation.h2")</h2>
     <p>@Messages("ssttp.calculator.check-calculation.p1")</p>
     <details>
-        <summary><span class="summary">@Messages("ssttp.calculator.check-calculation.how-we-calculate-interest")</span></summary>
+        <summary onclick="click"><span class="summary">@Messages("ssttp.calculator.check-calculation.how-we-calculate-interest")</span></summary>
         <div class="panel panel-border-wide">
             <p>@Messages("ssttp.calculator.check-calculation.how-we-calculate-interest.p1")</p>
             <p>@Messages("ssttp.calculator.check-calculation.how-we-calculate-interest.p2")</p>
@@ -57,3 +57,18 @@
         @Messages("ssttp.calculator.check-calculation.what-happens-next.p3.2")
     </p>
 }
+
+<script type="text/javascript">
+
+function click() {
+    window['optimizely'] = window['optimizely'] || [];
+    window['optimizely'].push({
+    type: "event",
+    eventName: "how-we-calculate-interest",
+    tags: {
+    revenue: 0,
+    value: 0.00
+    }
+    });
+}
+</script>

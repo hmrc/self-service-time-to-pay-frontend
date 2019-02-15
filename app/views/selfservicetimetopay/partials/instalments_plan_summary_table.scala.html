@@ -31,7 +31,9 @@
               <dd class="app-check-your-answers__answer no_bottom_line">
                 @currency(paymentSchedule.getMonthlyInstalment)
               </dd>
-              <dd class="app-check-your-answers__change no_bottom_line" onclick="change">
+
+              <dd class="app-check-your-answers__change no_bottom_line" onclick="change()">
+
                   <a href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
                 </dd>
             </div>
