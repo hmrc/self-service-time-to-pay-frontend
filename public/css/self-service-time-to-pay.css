@@ -375,3 +375,61 @@ input.accountName{
 .error{
     border-left:  5px solid #b10e1e;
 }
+
+
+.button{
+  padding-top: 9px;
+  padding-bottom: 6px;
+}
+
+h1,h1.heading-large{
+  margin-top:0px;
+  font-size:32px;
+  margin-bottom:30px;
+}
+
+.heading-medium{
+  font-size:24px;
+  margin-top:0;
+  margin-bottom:20px;
+}
+
+
+@media (max-width: 641px){
+  #amount.form-control-1-4{
+    width:96%;
+  }
+
+  .form-field--error #amount.form-control-1-4{
+    width:95%;
+  }
+}
+
+a.link-back{
+  top: -45px;
+  margin-bottom: 0px;
+  margin-top:0px;
+}
+
+
+h1.govuk-panel__title {
+    font-size: 36px;
+}
+
+
+.govuk-panel__body{
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 1.04167;
+}
+
+
+@media (min-width: 40.0625em) {
+    font-size: 36px;
+    line-height: 1.11111;
+    font-weight: 400;
+}
+
+.govuk-panel__body strong {
+    font-weight: bold;
+}

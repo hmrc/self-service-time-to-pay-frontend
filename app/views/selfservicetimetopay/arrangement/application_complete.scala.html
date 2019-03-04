@@ -22,9 +22,7 @@
 @import uk.gov.hmrc.play.language.LanguageUtils.Dates
 @import uk.gov.hmrc.selfservicetimetopay.util.DateHelper.turnJavaTimeToJoda
 @(debits: Seq[Debit], transactionId: String, directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, ddref: Option[String])(implicit messages: play.api.i18n.Messages, request: Request[_])
-<div class="js-visible printable">
-    @print_payment_schedule(schedule)
-</div>
+
     @gaCheckoutCode = {
     @gaDoTransaction(debits = debits,
         id = transactionId,
@@ -47,15 +45,18 @@
     hasUserPanel = true
 ) {
 
+
+
     <div class="transaction-banner--complete removeBottom">
         <div class="transaction-banner__heading" role="banner">
-            <p><strong class="bold">@Messages("ssttp.arrangement.complete.title")</strong>
+
+            <h1 class="govuk-panel__title">@Messages("ssttp.arrangement.complete.title")</h1>
+            <div class="govuk-panel__body">
                 @ddref.map { _ =>
-                    <br/>
-                    <br/>
-                    @Messages("ssttp.arrangement.complete.ddref") <br/>
-                <strong class="bold">@ddref.get</strong></p>
-            }</div>
+                @Messages("ssttp.arrangement.complete.ddref")<br/><strong>@ddref.get</strong>
+                }
+            </div>
+        </div>
     </div>
     <section class="section divider--bottom">
         <a href="javascript:window.print()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.print-label")</a>
@@ -76,5 +77,8 @@
         <span><a href="https://www.tax.service.gov.uk/feedback-survey?origin=PWYOII">@Messages("ssttp.arrangement.complete.feedback")</a> @Messages("ssttp.arrangement.complete.help.p2")</span>
     </section>
 }
+</div>
+<div class="js-visible printable">
+    @print_payment_schedule(schedule)
 </div>
 
