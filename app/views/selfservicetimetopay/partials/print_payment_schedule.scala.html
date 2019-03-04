@@ -23,7 +23,7 @@
 
 @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
 
-    <h1>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
+    <h2>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h2>
        <table>
         <tbody>
     @if(schedule.initialPayment > BigDecimal(0)) {
@@ -36,7 +36,7 @@
 }
     </tbody>
 </table>
-    <h1>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h1>
+    <h2>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
 <table>
 <tbody>
 @schedule.instalments.map { instalment =>
