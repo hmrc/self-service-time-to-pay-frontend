@@ -34,35 +34,23 @@ object TestUserReturns {
   }
 
   /**
-    * Assuming that today is 2017-11-15
+    * Assuming that today is 2019-03-15
     * User has submitted all tax relevant tax returns
     */
   val sample1: JsValue = Json.parse(
     s"""
-      {
-        "returns": [
-          {
-            "taxYearEnd":   "2017-04-05",
-            "dueDate":      "2019-01-31"
-          },
-          {
-            "taxYearEnd":   "2016-04-05",
-            "dueDate":      "2017-01-31",
-            "receivedDate": "2016-09-09"
-          },
-          {
-            "taxYearEnd":   "2015-04-05",
-            "dueDate":      "2016-01-31",
-            "receivedDate": "2017-09-09"
-          },
-          {
-            "taxYearEnd":   "2015-04-05",
-            "dueDate":      "2016-01-31",
-            "issueDate":    "2016-02-15",
-            "receivedDate": "2016-03-09"
-          }
-        ]
-      }
+       {
+         "returns" : [ {
+           "taxYearEnd" : "2019-04-05",
+           "dueDate" : "2019-01-31",
+           "issueDate" : "2018-02-15"
+         }, {
+           "taxYearEnd" : "2018-04-05",
+           "dueDate" : "2018-01-31",
+           "issueDate" : "2017-02-15",
+           "receivedDate" : "2018-03-09"
+         } ]
+       }
     """)
 
   /**

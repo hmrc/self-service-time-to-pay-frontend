@@ -24,26 +24,23 @@ object TestUserDebits {
   val sample1: JsValue = Json.parse(
     s"""
        {
-         "debits": [
-           {
-             "taxYearEnd": "2016-04-05",
-             "charge": {
-               "originCode": "IN1",
-               "creationDate": "2017-11-05"
-             },
-             "relevantDueDate": "2019-02-05",
-             "totalOutstanding": 2511
+         "debits" : [ {
+           "taxYearEnd" : "2019-04-05",
+           "charge" : {
+             "originCode" : "IN1",
+             "creationDate" : "2019-01-05"
            },
-           {
-             "taxYearEnd": "2016-04-05",
-             "charge": {
-               "originCode": "IN2",
-               "creationDate": "2017-11-05"
-             },
-             "relevantDueDate": "2019-02-25",
-             "totalOutstanding": 3266
-           }
-         ]
+           "relevantDueDate" : "2019-02-25",
+           "totalOutstanding" : 2500
+         },{
+           "taxYearEnd" : "2019-04-05",
+           "charge" : {
+             "originCode" : "IN2",
+             "creationDate" : "2019-01-05"
+           },
+           "relevantDueDate" : "2019-02-25",
+           "totalOutstanding" : 2500
+         } ]
        }
     """)
 
