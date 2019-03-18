@@ -26,7 +26,11 @@
 ){
     <a class="link-back" href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a>
     <h1>@Messages("ssttp.arrangement.change_day.title")</h1>
-    @helpers.form(routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm") {
+    <input id=defaultDate type="radio" name="chosen_month" value = 28>
+    <input id=otherDate type="radio" name="chosen_month" onclick = "toggle()">
+
+<div id="customDate">
+@helpers.form(routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm") {
         @helpers.input(dayForm("dayOfMonth"),
             'label -> Messages("ssttp.arrangement.change_day.payment-day.change.take-payment-on"),
             '_labelClass -> "label--inline", '_inputClass -> "input--xsmall")
@@ -34,5 +38,15 @@
             @Messages("ssttp.arrangement.change_day.payment-day.continue")
         }
     }
-
+</div>
 }
+<script>
+function toggle() {
+  var x = document.getElementById("customDate");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
