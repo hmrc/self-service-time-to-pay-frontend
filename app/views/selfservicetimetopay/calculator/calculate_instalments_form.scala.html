@@ -65,34 +65,10 @@
             <br>
             <div class="clear">
                 <div class="form-group">
-                    <button id="next" type="submit" class="button" onclick="continue()">@Messages("ssttp.calculator.form.continue")</button>
+                    <button id="next" type="submit" class="button" >@Messages("ssttp.calculator.form.continue")</button>
                 </div>
             </div>
         }
     </fieldset>
-<script type="text/javascript">
-function continue() {
-    window['optimizely'] = window['optimizely'] || [];
-    window['optimizely'].push({
-        type: "event",
-        eventName: "months-pay-over-continue",
-        tags: {
-            revenue: 0, // Optional in cents as integer (500 == $5.00)
-            value: 0.00 // Optional as float
-        }
-    });
-}
-function back() {
-    window['optimizely'] = window['optimizely'] || [];
-    window['optimizely'].push({
-        type: "event",
-        eventName: "pay-over-each-month-bank",
-        tags: {
-        revenue: 0, // Optional in cents as integer (500 == $5.00)
-        value: 0.00 // Optional as float
-        }
-    });
-}
-</script>
 }
 
