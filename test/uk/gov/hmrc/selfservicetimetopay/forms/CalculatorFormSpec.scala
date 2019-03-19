@@ -89,7 +89,7 @@ class CalculatorFormSpec extends PlaySpec {
 
       val validatedForm = CalculatorForm.createInstalmentForm().bind(postData)
 
-      assert(validatedForm.errors.contains(FormError("chosen_month", List("error.required"))))
+      assert(validatedForm.errors.contains(FormError("chosen-month", List("error.required"))))
     }
 
   }

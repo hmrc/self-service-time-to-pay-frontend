@@ -120,7 +120,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
         .withSession(goodSession:_*)
-        .withFormUrlEncodedBody("chosen_month" -> "3"))
+        .withFormUrlEncodedBody("chosen-month" -> "3"))
 
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).getTtpSessionCarrier(any(), any(), any())
@@ -133,7 +133,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockCalculatorService.getInstalmentsSchedule(any(),any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
         .withSession(goodSession:_*)
-        .withFormUrlEncodedBody("chosen_month" -> "3"))
+        .withFormUrlEncodedBody("chosen-month" -> "3"))
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).getTtpSessionCarrier(any(), any(), any())
       verify(mockSessionCache, times(1)).putTtpSessionCarrier(any())(any(),any(),any())
@@ -358,7 +358,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .thenReturn(Future.successful(Some(ttpSubmission.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(2)))))))
       when(mockCalculatorService.getInstalmentsScheduleUnAuth(any())( any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       when(mockSessionCache.putTtpSessionCarrier(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-      val request = FakeRequest().withFormUrlEncodedBody("chosen_month" -> "2").withSession(goodSession:_*)
+      val request = FakeRequest().withFormUrlEncodedBody("chosen-month" -> "2").withSession(goodSession:_*)
       val response = controller.submitCalculateInstalmentsUnAuth().apply(request)
 
       status(response) mustBe SEE_OTHER
