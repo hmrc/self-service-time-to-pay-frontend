@@ -36,8 +36,8 @@
 
 
     <div class="multiple-choice" data-target="@{noOfMonths}_id">
-        <input id=@noOfMonths type="radio" name="chosen_month" value=@{if (noOfMonths < 0){12 + noOfMonths} else {noOfMonths}}>
-        <label for=@noOfMonths>@{if (noOfMonths < 0){12 + noOfMonths} else {noOfMonths}} @Messages("ssttp.calculator.results.month.option.1") <strong class="bold">@currency(paymentSchedule.instalments.head.amount)</strong></label>
+        <input id=@noOfMonths type="radio" name="chosen-month" value=@{if (noOfMonths < 0) 12 + noOfMonths else noOfMonths}>
+        <label for=@noOfMonths>@{if (noOfMonths < 0) 12 + noOfMonths else noOfMonths} @Messages("ssttp.calculator.results.month.option.1") <strong class="bold">@currency(paymentSchedule.instalments.head.amount)</strong></label>
     </div>
 <div class="panel js-hidden" id="@{noOfMonths}_id">
 
