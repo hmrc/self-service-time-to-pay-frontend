@@ -26,27 +26,39 @@
 ){
     <a class="link-back" href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a>
     <h1>@Messages("ssttp.arrangement.change_day.title")</h1>
-    <input id=defaultDate type="radio" name="chosen_month" value = 28>
-    <input id=otherDate type="radio" name="chosen_month" onclick = "toggle()">
 
-<div id="customDate">
+
 @helpers.form(routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm") {
-        @helpers.input(dayForm("dayOfMonth"),
+        @helpers.input_radio_group(dayForm("dayOfMonth"), Seq(
+        "28" -> "28th or the next working day",
+        "false" -> "A different day"
+        ),
+        'label -> Messages("ssttp.arrangement.change_day.payment-day.change.take-payment-on" )
+    )
+<details>
+        <div id="customDate" class="panel panel-border-narrow">
+            @helpers.input(dayForm("dayOfMonth"),
             'label -> Messages("ssttp.arrangement.change_day.payment-day.change.take-payment-on"),
             '_labelClass -> "label--inline", '_inputClass -> "input--xsmall")
-        @submit() {
-            @Messages("ssttp.arrangement.change_day.payment-day.continue")
-        }
+        </div>
+
+</details>
+
+
+@submit() {
+@Messages("ssttp.arrangement.change_day.payment-day.continue")
+}
     }
-</div>
+
 }
 <script>
-function toggle() {
+function toggle_on() {
   var x = document.getElementById("customDate");
-  if (x.style.display === "none") {
     x.style.display = "block";
-  } else {
+
+}
+function toggle_off) {
+  var x = document.getElementById("customDate");
     x.style.display = "none";
-  }
 }
 </script>
