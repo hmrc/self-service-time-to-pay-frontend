@@ -14,13 +14,19 @@
  * limitations under the License.
  *@
 
+@import selfservicetimetopay.helpers.forms.submit
+@import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.partials._
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentSchedule}
-@(durationForm: Form[CalculatorDuration], currentChosenMonth: Int = 2,
-        monthsToSchedule: Map[Int, CalculatorPaymentSchedule], redirectCall: Call, loggedIn: Boolean, isAuthJourney: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
-@import selfservicetimetopay.helpers.forms.submit
-@import uk.gov.hmrc.play.views.html.helpers
+
+@(durationForm: Form[CalculatorDuration],
+    currentChosenMonth: Int = 2,
+    monthsToSchedule: Map[Int, CalculatorPaymentSchedule],
+    redirectCall: Call, loggedIn: Boolean,
+    isAuthJourney: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+
 
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.results.title"),
