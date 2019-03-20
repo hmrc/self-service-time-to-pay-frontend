@@ -39,20 +39,20 @@
         <input id=@noOfMonths type="radio" name="chosen-month" value=@{if (noOfMonths < 0) 12 + noOfMonths else noOfMonths}>
         <label for=@noOfMonths>@{if (noOfMonths < 0) 12 + noOfMonths else noOfMonths} @Messages("ssttp.calculator.results.month.option.1") <strong class="bold">@currency(paymentSchedule.instalments.head.amount)</strong></label>
     </div>
-<div class="panel js-hidden" id="@{noOfMonths}_id">
 
-    <table>
-        <thead>
-            <tr>
-                <th scope="col">@Messages("ssttp.calculator.results.month.option.table.total.interest")
-                    <br><p>@Messages("ssttp.calculator.results.month.option.table.total.interest.base.rate")</p></th>
-                <td class="numeric" scope="col"><p class="align-left">@currency(paymentSchedule.totalInterestCharged)
-                    <br>@Messages("ssttp.calculator.results.month.option.table.total.interest.hint")</p></td>
-            </tr>
-            <tr>
-                <th  scope="col">@Messages("ssttp.calculator.results.month.option.table.total.paid")</th>
-                <td class="numeric align-left" scope="col"><p class="align-left">@currency(paymentSchedule.totalPayable)</p></td>
-            </tr>
-        </thead>
-    </table>
-</div>
+    <div class="panel js-hidden" id="@{noOfMonths}_id">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">@Messages("ssttp.calculator.results.month.option.table.total.interest")
+                        <br><p>@Messages("ssttp.calculator.results.month.option.table.total.interest.base.rate")</p></th>
+                    <td class="numeric" scope="col"><p class="align-left">@currency(paymentSchedule.totalInterestCharged)
+                        <br>@Messages("ssttp.calculator.results.month.option.table.total.interest.hint")</p></td>
+                </tr>
+                <tr>
+                    <th  scope="col">@Messages("ssttp.calculator.results.month.option.table.total.paid")</th>
+                    <td class="numeric align-left" scope="col"><p class="align-left">@currency(paymentSchedule.totalPayable)</p></td>
+                </tr>
+            </thead>
+        </table>
+    </div>
