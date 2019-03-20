@@ -34,17 +34,17 @@
 
         <div class="multiple-choice">
             <input id="default" type="radio" name="dayOfMonth" value=28>
-             <label for="default"> 28th or next working day</label>
+             <label for="default">@Messages("ssttp.arrangement.changeday.default")</label>
         </div>
 
         <div class="multiple-choice" data-target= customDate>
             <input id="other" type="radio" name="other">
-            <label for="other"> a different day</label>
+            <label for="other">@Messages("ssttp.arrangement.changeday.different")</label>
         </div>
         <br><br>
 
         <div id="customDate" class="panel panel-border-narrow js-hidden form-group">
-            <label> Enter the day of the month </label>
+            <label>@Messages("ssttp.arrangement.changeday.enter.date")</label>
             <br>
             <input type="text" class="form-control-1-4" id="dayInput" name="dayOfMonth">
         </div>
