@@ -16,14 +16,15 @@
 
 package uk.gov.hmrc.selfservicetimetopay.forms
 
-import play.api.data.Form
+import play.api.data.{Form, FormError, Forms, Mapping}
 import play.api.data.Forms._
+import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.Messages
 import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue.MaxCurrencyValue
 import uk.gov.hmrc.selfservicetimetopay.models._
 
-import scala.util.Try
+import scala.util.{Success, Try}
 import scala.util.control.Exception.catching
 
 object CalculatorForm {
@@ -80,12 +81,27 @@ object CalculatorForm {
 
   }
 
-  //todo add in values for max allowed months in here
+  private val chosenMonthFormatter: Formatter[String] = new Formatter[String] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+      val month = data.get(key) match {
+        case None => data.get(key + ".value")
+        case x => x
+      }
+
+      //todo add in values for max allowed months in here
+      month match {
+        case Some(value) if Try(BigDecimal(value)).isSuccess => Right(value)
+        case _ => Left(Seq(FormError(key, "ssttp.calculator.results.month.required")))
+      }
+    }
+
+    override def unbind(key: String, value: String): Map[String, String] = Map(key + ".value" -> value.toString)
+  }
+
+  val chosenMonthMapping: Mapping[String] = Forms.of[String](chosenMonthFormatter)
+
   def createInstalmentForm(): Form[CalculatorDuration] = {
-    Form(mapping(
-      "chosen_month" -> text
-        .verifying("ssttp.calculator.results.month.required", { i: String =>Try(BigDecimal(i)).isSuccess })
-  )(text => CalculatorDuration(text.toInt))(_ => Some(text.toString)))
+    Form(mapping("chosen-month" -> chosenMonthMapping)(text => CalculatorDuration(text.toInt))(_ => Some(text.toString)))
 }
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(
