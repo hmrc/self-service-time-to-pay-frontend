@@ -26,13 +26,34 @@
 ){
     <a class="link-back" href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a>
     <h1>@Messages("ssttp.arrangement.change_day.title")</h1>
-    @helpers.form(routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm") {
-        @helpers.input(dayForm("dayOfMonth"),
-            'label -> Messages("ssttp.arrangement.change_day.payment-day.change.take-payment-on"),
-            '_labelClass -> "label--inline", '_inputClass -> "input--xsmall")
-        @submit() {
-            @Messages("ssttp.arrangement.change_day.payment-day.continue")
-        }
+    @if(dayForm.hasErrors) {
+    @helpers.errorSummary(Messages("ssttp.calculator.results.error.title"), dayForm)
+    }
+
+    @helpers.form(routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm", 'class -> "group") {
+
+        <div class="multiple-choice">
+            <input id="default" type="radio" name="dayOfMonth" value=28>
+             <label for="default"> 28th or next working day</label>
+        </div>
+
+        <div class="multiple-choice" data-target= customDate>
+            <input id="other" type="radio" name="other">
+            <label for="other"> a different day</label>
+        </div>
+        <br><br>
+
+        <div id="customDate" class="panel panel-border-narrow js-hidden form-group">
+            <label> Enter the day of the month </label>
+            <br>
+            <input type="text" class="form-control-1-4" id="dayInput" name="dayOfMonth">
+        </div>
+
+        <fieldset>
+            <div class="form-group">
+                <button id="next" type="submit" class="button" >@Messages("ssttp.arrangement.change_day.payment-day.continue")</button>
+            </div>
+        </fieldset>
     }
 
 }
