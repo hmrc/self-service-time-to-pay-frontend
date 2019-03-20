@@ -31,24 +31,24 @@
     }
 
     @helpers.form(routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm", 'class -> "group") {
-
+<div class="form-group">
         <div class="multiple-choice">
-            <input id="default" type="radio" name="dayOfMonth" value=28>
+            <input id="default" type="radio" name="dayOfMonth" value=28 onclick="uncheck(`other`)">
              <label for="default">@Messages("ssttp.arrangement.changeday.default")</label>
         </div>
 
-        <div class="multiple-choice" data-target= customDate>
-            <input id="other" type="radio" name="other">
+        <div class="multiple-choice " data-target= customDate>
+            <input id="other" type="radio" name="other" onclick="uncheck(`default`)">
             <label for="other">@Messages("ssttp.arrangement.changeday.different")</label>
         </div>
-        <br><br>
+
 
         <div id="customDate" class="panel panel-border-narrow js-hidden form-group">
             <label>@Messages("ssttp.arrangement.changeday.enter.date")</label>
             <br>
             <input type="text" class="form-control-1-4" id="dayInput" name="dayOfMonth">
         </div>
-
+</div>
         <fieldset>
             <div class="form-group">
                 <button id="next" type="submit" class="button" >@Messages("ssttp.arrangement.change_day.payment-day.continue")</button>
@@ -57,3 +57,11 @@
     }
 
 }
+
+<script>
+    function uncheck(id){
+        document.getElementById(id).checked = false
+
+        if(id=="other"){document.getElementById("customDate").style.display = "none"} else {document.getElementById("customDate").style.display = "block"}
+    }
+</script>
