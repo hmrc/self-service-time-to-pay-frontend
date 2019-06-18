@@ -11,5 +11,6 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-artifactory" % "0.13.0")
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.19" )
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.3.5")
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
+addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.2")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-bobby" % "0.33.0")

@@ -24,21 +24,20 @@ case class Token(v: String)
 case class TokenData(token: Token, expirationDate: LocalDateTime, associatedTTPSession: TTPSessionId)
 
 object Token {
-  import play.api.libs.json.{ JsError, JsString, JsSuccess, Reads }
+  import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
   import play.api.mvc.PathBindable
-  import  uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-
+  import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
   implicit val formTemplateIdBinder: PathBindable[Token] = valueClassBinder(_.v)
 
   def valueClassBinder[A: Reads](fromAtoString: A => String)(implicit stringBinder: PathBindable[String]) = {
 
-    def parseString(str: String) = {
-      JsString(str).validate[A] match {
-        case JsSuccess(a, _) => Right(a)
-        case JsError(error) => Left(s"No valid value in path: $str. Error: $error")
+      def parseString(str: String) = {
+        JsString(str).validate[A] match {
+          case JsSuccess(a, _) => Right(a)
+          case JsError(error)  => Left(s"No valid value in path: $str. Error: $error")
+        }
       }
-    }
 
     new PathBindable[A] {
       override def bind(key: String, value: String): Either[String, A] =

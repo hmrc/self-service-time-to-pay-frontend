@@ -27,8 +27,8 @@ trait AppConfig {
   val analyticsHost: String
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
-  val betaFeedbackUrlNoAuth :String
-  val betaFeedbackUrlAuth :String
+  val betaFeedbackUrlNoAuth: String
+  val betaFeedbackUrlAuth: String
 
 }
 
@@ -56,7 +56,6 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig with DefaultRun
   lazy val loginCallBackFullPath = s"$loginCallbackBaseUrl$loginCallbackPath"
   lazy val logoutUrl: String = s"$feedbackSurveyFrontend"
 
-
   // GA enhanced e-commerce custom vars
   lazy val initialPaymentMetric = getConfString("google-analytics.initialPaymentMetric", "metric7")
   lazy val interestMetric = getConfString("google-analytics.initialPaymentMetric", "metric8")
@@ -67,7 +66,7 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig with DefaultRun
   lazy val callForDirectDebitAssistanceDimension = getConfString("google-analytics.dueDateDimension", "dimension46")
   lazy val printCompletePageDimension = getConfString("google-analytics.dueDateDimension", "dimension47")
   lazy val clickFeedbackOnComplete = getConfString("google-analytics.dueDateDimension", "dimension48")
-   //Lang
+  //Lang
 
   val languageMapValue: Map[String, Lang] = Map(
     "english" -> Lang("en"),

@@ -22,43 +22,42 @@ import play.api.libs.json.JsValue
 import scala.util.Random
 
 case class TestUser(
-                     utr: Utr,
-                     hasSAEnrolment: Boolean,
-                     isOnIA: Boolean,
-                     authorityId: AuthorityId,
-                     affinityGroup: AffinityGroup = AffinityGroup.individual,
-                     confidenceLevel: Int,
-                     returns: JsValue,
-                     returnsResponseStatusCode: Int,
-                     debits: JsValue,
-                     debitsResponseStatusCode: Int,
-                     saTaxpayer: JsValue,
-                     saTaxpayerResponseStatusCode: Int,
-                     continueUrl: Option[String]
+    utr:                          Utr,
+    hasSAEnrolment:               Boolean,
+    isOnIA:                       Boolean,
+    authorityId:                  AuthorityId,
+    affinityGroup:                AffinityGroup  = AffinityGroup.individual,
+    confidenceLevel:              Int,
+    returns:                      JsValue,
+    returnsResponseStatusCode:    Int,
+    debits:                       JsValue,
+    debitsResponseStatusCode:     Int,
+    saTaxpayer:                   JsValue,
+    saTaxpayerResponseStatusCode: Int,
+    continueUrl:                  Option[String]
 )
 
 object TestUser {
 
   def exemplary() = TestUser(
-    utr = Utr.random(),
-    hasSAEnrolment = true,
-    isOnIA=true,
-    authorityId = AuthorityId.random,
-    affinityGroup = AffinityGroup.individual,
-    confidenceLevel = 200,
-    returns = TestUserReturns.sample1,
-    returnsResponseStatusCode = Status.OK,
-    debits = TestUserDebits.sample1,
-    debitsResponseStatusCode = Status.OK,
-    saTaxpayer = TestUserSaTaxpayer.buildTaxpayer(),
+    utr                          = Utr.random(),
+    hasSAEnrolment               = true,
+    isOnIA                       = true,
+    authorityId                  = AuthorityId.random,
+    affinityGroup                = AffinityGroup.individual,
+    confidenceLevel              = 200,
+    returns                      = TestUserReturns.sample1,
+    returnsResponseStatusCode    = Status.OK,
+    debits                       = TestUserDebits.sample1,
+    debitsResponseStatusCode     = Status.OK,
+    saTaxpayer                   = TestUserSaTaxpayer.buildTaxpayer(),
     saTaxpayerResponseStatusCode = Status.OK,
-    continueUrl = None
+    continueUrl                  = None
   )
 
 }
 
 case class AffinityGroup(v: String)
-
 
 object AffinityGroup {
   val individual = AffinityGroup("Individual")
@@ -67,12 +66,12 @@ object AffinityGroup {
 }
 
 /**
-  * The same as CredId
-  */
+ * The same as CredId
+ */
 case class AuthorityId(v: String)
 
 object AuthorityId {
-  def random = AuthorityId(s"authId-${Math.abs(Random.nextLong()%1000)}") //length must be < 25 characters (dunno why...)
+  def random = AuthorityId(s"authId-${Math.abs(Random.nextLong() % 1000)}") //length must be < 25 characters (dunno why...)
 }
 
 case class AuthorityUri(v: String)
@@ -80,8 +79,8 @@ case class AuthorityUri(v: String)
 case class GatewayToken(v: String)
 
 /**
-  * The same as bearer token
-  */
+ * The same as bearer token
+ */
 case class AuthToken(v: String)
 
 case class Utr(v: String)

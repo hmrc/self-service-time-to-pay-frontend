@@ -47,128 +47,144 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
     val controller = new DirectDebitController(messagesApi, mockDDConnector) {
       override lazy val sessionCache: SessionCacheConnector = mockSessionCache
       override lazy val authConnector: AuthConnector = mockAuthConnector
-      override def provideGG(tokenData: TokenData)  = SaGovernmentGateway
-      override lazy val sessionCache4TokensConnector:SessionCache4TokensConnector = mockSessionCache4TokensConnector
+      override def provideGG(tokenData: TokenData) = SaGovernmentGateway
+      override lazy val sessionCache4TokensConnector: SessionCache4TokensConnector = mockSessionCache4TokensConnector
     }
-    "successfully display the direct debit form page" in {running(app) {
+    "successfully display the direct debit form page" in {
+      running(app) {
 
-      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
-        ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
-      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache4TokensConnector.put(any())(any(), any())).thenReturn(Future.successful(()))
+        when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
+          ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
+        when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+        when(mockSessionCache4TokensConnector.put(any())(any(), any())).thenReturn(Future.successful(()))
 
-      val request = FakeRequest()
-        .withSession(goodSession : _*)
-      implicit val messages = getMessages(request)
-      val response = controller.getDirectDebit(request)
+        val request = FakeRequest()
+          .withSession(goodSession: _*)
+        implicit val messages = getMessages(request)
+        val response = controller.getDirectDebit(request)
 
-      status(response) mustBe OK
+        status(response) mustBe OK
 
-      contentAsString(response) must include(Messages("ssttp.arrangement.direct-debit.form.title"))
-    }}
+        contentAsString(response) must include(Messages("ssttp.arrangement.direct-debit.form.title"))
+      }
+    }
 
-    "submit direct debit form with valid form data and valid bank details and redirect to direct debit confirmation page" in { running(app) {
+    "submit direct debit form with valid form data and valid bank details and redirect to direct debit confirmation page" in {
+      running(app) {
 
-      when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(None))
-      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
-        ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
+        when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(None))
+        when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+        when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
+          ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
-      val request = FakeRequest()
-        .withSession(goodSession : _*)
-        .withFormUrlEncodedBody(validDirectDebitForm: _*)
-      implicit val messages = getMessages(request)
-      val response = controller.submitDirectDebit(request)
-      status(response) mustBe BAD_REQUEST
+        val request = FakeRequest()
+          .withSession(goodSession: _*)
+          .withFormUrlEncodedBody(validDirectDebitForm: _*)
+        implicit val messages = getMessages(request)
+        val response = controller.submitDirectDebit(request)
+        status(response) mustBe BAD_REQUEST
 
-    }}
+      }
+    }
 
-    "submit direct debit form with valid form data and invalid bank details it should be a bad request" in { running(app) {
+    "submit direct debit form with valid form data and invalid bank details it should be a bad request" in {
+      running(app) {
 
-      when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(None))
+        when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(None))
 
-      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+        when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
-      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.putTtpSessionCarrier(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+        when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+        when(mockSessionCache.putTtpSessionCarrier(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val request = FakeRequest()
-        .withSession(goodSession : _*)
-        .withFormUrlEncodedBody(invalidBankDetailsForm: _*)
-      implicit val messages = getMessages(request)
-      val response = controller.submitDirectDebit(request)
+        val request = FakeRequest()
+          .withSession(goodSession: _*)
+          .withFormUrlEncodedBody(invalidBankDetailsForm: _*)
+        implicit val messages = getMessages(request)
+        val response = controller.submitDirectDebit(request)
 
-      status(response) mustBe BAD_REQUEST
+        status(response) mustBe BAD_REQUEST
 
-    }}
+      }
+    }
 
-    "submit direct debit form with an invalid number it should display a single error" in { running(app) {
+    "submit direct debit form with an invalid number it should display a single error" in {
+      running(app) {
 
-      when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(None))
+        when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(None))
 
-      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+        when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
-      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.putTtpSessionCarrier(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+        when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+        when(mockSessionCache.putTtpSessionCarrier(Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
-      val request = FakeRequest()
-        .withSession(goodSession : _*)
-        .withFormUrlEncodedBody( Seq(
-          "accountName" -> "Jane Doe",
-          "sortCode" -> "af",
-          "accountNumber" -> "12345678",
-          "singleAccountHolder" -> "true"
-        ): _*)
-      implicit val messages = getMessages(request)
-      val response = controller.submitDirectDebit(request)
+        val request = FakeRequest()
+          .withSession(goodSession: _*)
+          .withFormUrlEncodedBody(Seq(
+            "accountName" -> "Jane Doe",
+            "sortCode" -> "af",
+            "accountNumber" -> "12345678",
+            "singleAccountHolder" -> "true"
+          ): _*)
+        implicit val messages = getMessages(request)
+        val response = controller.submitDirectDebit(request)
 
-      status(response) mustBe BAD_REQUEST
-      contentAsString(response) must not include Messages("ssttp.direct-debit.form.error.sortCode.required")
-      contentAsString(response) must include (Messages("ssttp.direct-debit.form.error.sortCode.not-valid"))
-    }}
+        status(response) mustBe BAD_REQUEST
+        contentAsString(response) must not include Messages("ssttp.direct-debit.form.error.sortCode.required")
+        contentAsString(response) must include (Messages("ssttp.direct-debit.form.error.sortCode.not-valid"))
+      }
+    }
 
-    "submit direct debit form with invalid form data and return a bad request" in { running(app) {
-      val request = FakeRequest()
-        .withSession(goodSession : _*)
-        .withFormUrlEncodedBody(inValidDirectDebitForm: _*)
-      implicit val messages = getMessages(request)
-      val response = controller.submitDirectDebit(request)
+    "submit direct debit form with invalid form data and return a bad request" in {
+      running(app) {
+        val request = FakeRequest()
+          .withSession(goodSession: _*)
+          .withFormUrlEncodedBody(inValidDirectDebitForm: _*)
+        implicit val messages = getMessages(request)
+        val response = controller.submitDirectDebit(request)
 
-      status(response) mustBe BAD_REQUEST
-    }}
+        status(response) mustBe BAD_REQUEST
+      }
+    }
 
-    "submit direct debit form with an authorised user without sa enrolment and throw an exception" in { running(app) {
+    "submit direct debit form with an authorised user without sa enrolment and throw an exception" in {
+      running(app) {
 
-      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUserNoSA)))
+        when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUserNoSA)))
 
-      val request = FakeRequest()
-        .withSession(goodSession : _*)
-        .withFormUrlEncodedBody(validDirectDebitForm: _*)
-      implicit val messages = getMessages(request)
-      Try(await(controller.submitDirectDebit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
-    }}
+        val request = FakeRequest()
+          .withSession(goodSession: _*)
+          .withFormUrlEncodedBody(validDirectDebitForm: _*)
+        implicit val messages = getMessages(request)
+        Try(await(controller.submitDirectDebit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
+      }
+    }
 
-    "submit direct debit form with an unauthorised user and throw an exception" in { running(app) {
+    "submit direct debit form with an unauthorised user and throw an exception" in {
+      running(app) {
 
-      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+        when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
 
-      val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
+        val request = FakeRequest().withFormUrlEncodedBody(validDirectDebitForm: _*)
 
-      Try(await(controller.submitDirectDebit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
-    }}
+        Try(await(controller.submitDirectDebit(request))).map(shouldNotSucceed).recover(expectingRuntimeException)
+      }
+    }
 
-    "successfully display the direct debit confirmation page" in { running(app) {
-      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      val request = FakeRequest()
-        .withSession(goodSession : _*)
-      implicit val messages = getMessages(request)
-      val response = controller.getDirectDebitConfirmation(request)
+    "successfully display the direct debit confirmation page" in {
+      running(app) {
+        when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
+        when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+        val request = FakeRequest()
+          .withSession(goodSession: _*)
+        implicit val messages = getMessages(request)
+        val response = controller.getDirectDebitConfirmation(request)
 
-      status(response) mustBe OK
+        status(response) mustBe OK
 
-      contentAsString(response) must include(getMessages(request)("ssttp.arrangement.direct-debit.confirmation.title"))
-    }}
+        contentAsString(response) must include(getMessages(request)("ssttp.arrangement.direct-debit.confirmation.title"))
+      }
+    }
   }
 
   private def shouldNotSucceed: PartialFunction[Result, Unit] = {
@@ -177,6 +193,6 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
   private def expectingRuntimeException: PartialFunction[Throwable, Unit] = {
     case e: RuntimeException => Unit
-    case e => fail(s"Wrong exception type was thrown: ${e.getClass.getSimpleName}"); Unit
+    case e                   => fail(s"Wrong exception type was thrown: ${e.getClass.getSimpleName}"); Unit
   }
 }

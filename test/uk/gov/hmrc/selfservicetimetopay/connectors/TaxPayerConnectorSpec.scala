@@ -29,7 +29,7 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class TaxPayerConnectorSpec  extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication with DefaultRunModeAppNameConfig {
+class TaxPayerConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication with DefaultRunModeAppNameConfig {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -43,7 +43,7 @@ class TaxPayerConnectorSpec  extends UnitSpec with MockitoSugar with ServicesCon
 
     "return a valid taxpayer" in {
       val taxPayerResponse = Json.fromJson[Taxpayer](taxPayerJson).get
-      val httpResponse = HttpResponse(201,Some(taxPayerJson))
+      val httpResponse = HttpResponse(201, Some(taxPayerJson))
       when(testConnector.http.GET[HttpResponse]("time-to-pay-taxpayer/taxpayer/testUTR")).thenReturn(httpResponse)
 
       val result = await(testConnector.getTaxPayer("testUTR"))

@@ -32,7 +32,7 @@ trait EligibilityConnector {
   val serviceURL: String
   val http: HttpPost
 
-  def checkEligibility(eligibilityRequest: EligibilityRequest,utr:String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EligibilityStatus] = {
+  def checkEligibility(eligibilityRequest: EligibilityRequest, utr: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EligibilityStatus] = {
     http.POST[EligibilityRequest, EligibilityStatus](s"$eligibilityURL/$serviceURL/$utr", eligibilityRequest)
   }
 }

@@ -37,7 +37,6 @@ object CalculatorForm {
     tryToInt(input).nonEmpty
   }
 
-
   def hasValue(textBox: String): Boolean = {
     (textBox != null) && textBox.nonEmpty
   }
@@ -72,12 +71,11 @@ object CalculatorForm {
     )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
   }
 
-  def createMonthlyAmountForm(min : Int, max: Int): Form[MonthlyAmountForm] ={
+  def createMonthlyAmountForm(min: Int, max: Int): Form[MonthlyAmountForm] = {
     Form(mapping(
       "amount" -> text
-        .verifying("ssttp.monthly.amount.numbers-only", { i: String =>  Try(BigDecimal(i)).isSuccess })
-        .verifying("ssttp.monthly.amount.out-of-bounds", {i: String => Try(BigDecimal(i)).isFailure || BigDecimal(i) >= min && BigDecimal(i) <= max}))
-    (text => MonthlyAmountForm(text))(bd => Some(bd.amount.toString)))
+        .verifying("ssttp.monthly.amount.numbers-only", { i: String => Try(BigDecimal(i)).isSuccess })
+        .verifying("ssttp.monthly.amount.out-of-bounds", { i: String => Try(BigDecimal(i)).isFailure || BigDecimal(i) >= min && BigDecimal(i) <= max })) (text => MonthlyAmountForm(text))(bd => Some(bd.amount.toString)))
 
   }
 
@@ -85,7 +83,7 @@ object CalculatorForm {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
       val month = data.get(key) match {
         case None => data.get(key + ".value")
-        case x => x
+        case x    => x
       }
 
       //todo add in values for max allowed months in here
@@ -102,7 +100,7 @@ object CalculatorForm {
 
   def createInstalmentForm(): Form[CalculatorDuration] = {
     Form(mapping("chosen-month" -> chosenMonthMapping)(text => CalculatorDuration(text.toInt))(_ => Some(text.toString)))
-}
+  }
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)

@@ -25,12 +25,12 @@ import scala.util.control.Exception._
 object ArrangementForm {
 
   val dayOfMonthForm = {
-    def tryToInt(input: String) = {
-      catching(classOf[NumberFormatException]) opt input.toInt
-    }
-    def isInt(input: String) = {
-      tryToInt(input).nonEmpty
-    }
+      def tryToInt(input: String) = {
+        catching(classOf[NumberFormatException]) opt input.toInt
+      }
+      def isInt(input: String) = {
+        tryToInt(input).nonEmpty
+      }
     Form(mapping(
       "dayOfMonth" -> text
         .verifying("ssttp.arrangement.change_day.payment-day.required", { i: String => (i != null) && i.nonEmpty })

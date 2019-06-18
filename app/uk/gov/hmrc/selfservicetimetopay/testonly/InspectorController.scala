@@ -28,13 +28,11 @@ import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 import scala.util.control.NonFatal
 
-class InspectorController @Inject()(val messagesApi: play.api.i18n.MessagesApi, ddConnector: DirectDebitConnector,
-                                   calculatorConnector: CalculatorConnector,
-                                   taxPayerConnector: TaxPayerConnector,
-                                   eligibilityConnector: EligibilityConnector
-                                  )
-extends TimeToPayController with play.api.i18n.I18nSupport with ServicesConfig with DefaultRunModeAppNameConfig {
-
+class InspectorController @Inject() (val messagesApi: play.api.i18n.MessagesApi, ddConnector: DirectDebitConnector,
+                                     calculatorConnector:  CalculatorConnector,
+                                     taxPayerConnector:    TaxPayerConnector,
+                                     eligibilityConnector: EligibilityConnector)
+  extends TimeToPayController with play.api.i18n.I18nSupport with ServicesConfig with DefaultRunModeAppNameConfig {
 
   def clearPlaySession() = Action { implicit request =>
     redirectToInspectorView.withSession()
@@ -76,7 +74,7 @@ extends TimeToPayController with play.api.i18n.I18nSupport with ServicesConfig w
 
   lazy val redirectToInspectorView = Redirect(routes.InspectorController.inspect())
 
-  implicit class JsonOps[A: Writes](a: A){
+  implicit class JsonOps[A: Writes](a: A) {
     def json: String = Json.prettyPrint(Json.toJson(a))
   }
 }

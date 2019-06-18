@@ -22,7 +22,6 @@ import uk.gov.hmrc.play.frontend.auth.{AuthenticationProvider, GovernmentGateway
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
 import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 
-
 object SaGovernmentGateway extends GovernmentGateway {
   override def continueURL: String = s"${SsttpFrontendConfig.loginCallBackFullPath}"
 

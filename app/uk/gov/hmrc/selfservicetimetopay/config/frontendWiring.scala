@@ -47,7 +47,7 @@ object WSHttp extends WSHttp with DefaultRunModeAppNameConfig {
   override protected def actorSystem: ActorSystem = Play.current.actorSystem
 }
 
-trait Hooks extends  HttpHooks with HttpAuditing {
+trait Hooks extends HttpHooks with HttpAuditing {
   override lazy val auditConnector: FrontendAuditConnector.type = FrontendAuditConnector
   override val hooks: Seq[AuditingHook.type] = Seq(AuditingHook)
 }

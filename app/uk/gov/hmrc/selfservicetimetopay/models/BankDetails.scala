@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class BankDetails(sortCode: Option[String] = None,
-                       accountNumber: Option[String] = None,
-                       bankName: Option[String] = None,
-                       bankAddress: Option[Address] = None,
-                       accountName: Option[String] = None,
-                       ddiRefNumber: Option[String] = None)
+case class BankDetails(sortCode:      Option[String]  = None,
+                       accountNumber: Option[String]  = None,
+                       bankName:      Option[String]  = None,
+                       bankAddress:   Option[Address] = None,
+                       accountName:   Option[String]  = None,
+                       ddiRefNumber:  Option[String]  = None)

@@ -39,8 +39,6 @@ import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId._
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-
-
 trait TimeToPayController extends FrontendController with Actions {
 
   def sessionCache4TokensConnector: SessionCache4TokensConnector = _sessionCache4TokensConnector
@@ -50,14 +48,13 @@ trait TimeToPayController extends FrontendController with Actions {
   @Inject()
   def set(sessionCache4TokensConnector: SessionCache4TokensConnector): Unit = _sessionCache4TokensConnector = sessionCache4TokensConnector
 
-
   private def provideSaRegime()(implicit request: Request[_]): SaRegime = {
     val tokenData: TokenData = TokenData(
       Token(UUID.randomUUID().toString),
-      expirationDate = LocalDateTime.now().plusMinutes(10),
+      expirationDate       = LocalDateTime.now().plusMinutes(10),
       associatedTTPSession = request.getTTPSessionId
     )
-    val gg = provideGG(tokenData)
+    val gg: AuthenticationProvider = provideGG(tokenData)
     new SaRegime(gg)
   }
 
@@ -82,29 +79,30 @@ trait TimeToPayController extends FrontendController with Actions {
   protected lazy val Action: ActionBuilder[Request] = CheckSessionAction andThen PlayAction
   protected type AsyncPlayUserRequest = AuthContext => Request[AnyContent] => Future[Result]
 
-
   protected val validTypeOfTax = Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true))
 
   protected def redirectOnError: Result = Redirect(routes.SelfServiceTimeToPayController.start())
   protected lazy val redirectToStartPage: Result = Results.Redirect(routes.SelfServiceTimeToPayController.start())
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200,
-    Future.successful(Redirect(routes.SelfServiceTimeToPayController.getNotSaEnrolled())))
+                                                                         Future.successful(Redirect(routes.SelfServiceTimeToPayController.getNotSaEnrolled())))
 
   def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = Action.async { implicit request =>
-    Try {provideSaRegime()} match {
-      case Success(taxRegime) => AuthorisedFor(taxRegime, timeToPayConfidenceLevel).async(body)(request)
-      case Failure(e)         =>
+    Try { provideSaRegime() } match {
+      case Success(taxRegime) =>
+        println("hello")
+        AuthorisedFor(taxRegime, timeToPayConfidenceLevel).async(body)(request)
+      case Failure(e) =>
         Logger.warn("Redirecting to start page because there was no ttpSessionId", e)
         redirectOnError.successfulF
     }
   }
 
   /**
-    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
-    */
+   * Manages code blocks where the user should be logged in and meet certain eligibility criteria
+   */
   def authorizedForSsttp(block: TTPSubmission => Future[Result])(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
     sessionCache.getTtpSessionCarrier.flatMap[Result] {
-      case Some(submission@TTPSubmission(Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _, _)) =>
+      case Some(submission @ TTPSubmission(Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _, _)) =>
         block(submission)
       case _ =>
         redirectOnError.successfulF
@@ -118,7 +116,7 @@ trait TimeToPayController extends FrontendController with Actions {
   }
 
   //I noticed a lot of dublication in the code where the log to see if someone was signed in was to see if the tax payer was defined
-   def isSignedIn(implicit hc: HeaderCarrier): Boolean = hc.authorization.isDefined
+  def isSignedIn(implicit hc: HeaderCarrier): Boolean = hc.authorization.isDefined
 
   protected def updateOrCreateInCache(found: TTPSubmission => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier): Future[CacheMap] = {
     sessionCache.getTtpSessionCarrier.flatMap {

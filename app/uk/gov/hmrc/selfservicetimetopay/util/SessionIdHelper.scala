@@ -41,7 +41,6 @@ object TTPSessionId {
 
 }
 
-
 object CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Request] {
 
   protected lazy val redirectToStartPage = Results.Redirect(routes.SelfServiceTimeToPayController.start())

@@ -39,8 +39,8 @@ object DirectDebitForm {
       .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim == "") | validateNumberLength(x, x.length) && validateNumberLength(x, 6) | validateNumberLength(x.replaceAll("-", "").replaceAll(" ", ""), 6)),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | (validateNumberLength(x, x.length) && validateNumberLength(x, 8)))
-  )({ case (name, sc, acctNo ) => ArrangementDirectDebit(name, cleanSortCode(sc), acctNo) }
-  )({ case arrangementDirectDebit => Some((arrangementDirectDebit.accountName, arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber))})
+  )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, cleanSortCode(sc), acctNo) }
+    )({ case arrangementDirectDebit => Some((arrangementDirectDebit.accountName, arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber)) })
 
   def validateNumberLength(number: String, length: Int): Boolean = {
     number.replaceAll("[^0-9]", "").length == length

@@ -20,7 +20,6 @@ import play.api.libs.json.{JsValue, Json}
 
 object TestUserDebits {
 
-
   val sample1: JsValue = Json.parse(
     s"""
        {
@@ -43,6 +42,5 @@ object TestUserDebits {
          } ]
        }
     """)
-
 
 }

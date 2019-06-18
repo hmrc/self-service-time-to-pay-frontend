@@ -20,18 +20,17 @@ import org.scalatest.concurrent.Eventually
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.controllers.PlayMessagesSpec
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import org.scalatest.concurrent.{ Eventually, IntegrationPatience, ScalaFutures }
+import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 class AuditServiceSpec extends PlayMessagesSpec with Eventually with ScalaFutures {
 
-   val AuditService  = new AuditService
+  val AuditService = new AuditService
   implicit val headerCarrier = HeaderCarrier()
-
 
   "AuditService" should {
     "send an audit " in {
-   AuditService.sendSubmissionEvent(ttpSubmissionWithBankDetails).futureValue
+      AuditService.sendSubmissionEvent(ttpSubmissionWithBankDetails).futureValue
     }
   }
 }

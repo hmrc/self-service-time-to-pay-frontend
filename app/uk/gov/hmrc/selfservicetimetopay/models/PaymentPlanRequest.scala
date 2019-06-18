@@ -19,25 +19,25 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import java.time.LocalDate
 
 //Direct-debit - input to createPaymentPlan
-case class PaymentPlanRequest(requestingService: String,
-                              submissionDateTime: String,
-                              knownFact: List[KnownFact],
+case class PaymentPlanRequest(requestingService:      String,
+                              submissionDateTime:     String,
+                              knownFact:              List[KnownFact],
                               directDebitInstruction: DirectDebitInstruction,
-                              paymentPlan: PaymentPlan,
-                              printFlag: Boolean)
+                              paymentPlan:            PaymentPlan,
+                              printFlag:              Boolean)
 
 case class KnownFact(service: String, value: String)
 
-case class PaymentPlan(ppType: String,
-                       paymentReference: String,
-                       hodService: String,
-                       paymentCurrency: String,
-                       initialPaymentAmount: Option[String],
-                       initialPaymentStartDate: Option[LocalDate],
-                       scheduledPaymentAmount: String,
+case class PaymentPlan(ppType:                    String,
+                       paymentReference:          String,
+                       hodService:                String,
+                       paymentCurrency:           String,
+                       initialPaymentAmount:      Option[String],
+                       initialPaymentStartDate:   Option[LocalDate],
+                       scheduledPaymentAmount:    String,
                        scheduledPaymentStartDate: LocalDate,
-                       scheduledPaymentEndDate: LocalDate,
+                       scheduledPaymentEndDate:   LocalDate,
                        scheduledPaymentFrequency: String,
-                       balancingPaymentAmount: String,
-                       balancingPaymentDate: LocalDate,
-                       totalLiability: String)
+                       balancingPaymentAmount:    String,
+                       balancingPaymentDate:      LocalDate,
+                       totalLiability:            String)

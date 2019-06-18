@@ -25,12 +25,10 @@ import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSH
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
 class SaStubConnector extends ServicesConfig with DefaultRunModeAppNameConfig {
 
   def setTaxpayerResponse(tu: TestUser)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-
 
     val predefinedResponse: JsValue = Json.obj(
       "status" -> tu.saTaxpayerResponseStatusCode,
@@ -42,12 +40,11 @@ class SaStubConnector extends ServicesConfig with DefaultRunModeAppNameConfig {
       .POST(setTaxpayerUrl, predefinedResponse)
       .map{
         r =>
-          if(r.status != 200) throw new RuntimeException(s"Could not set up taxpayer in SA-STUB: ${tu.utr}")
+          if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer in SA-STUB: ${tu.utr}")
           Logger.debug(s"Set up a predefined response in SA-STUB for ${tu.utr}")
       }
   }
 
   private lazy val baseUrl: String = baseUrl("sa-services")
-
 
 }

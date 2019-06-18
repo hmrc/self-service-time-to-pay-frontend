@@ -36,12 +36,11 @@ class LoginService extends ServicesConfig with DefaultRunModeAppNameConfig {
     (at, au, gt) <- callAuthLoginApi(tu)
   } yield buildSession(au, at, gt, tu)
 
-
   private def buildSession(
-    authorityUri: AuthorityUri,
-    authToken: AuthToken,
-    gatewayToken: GatewayToken,
-    tu: TestUser
+      authorityUri: AuthorityUri,
+      authToken:    AuthToken,
+      gatewayToken: GatewayToken,
+      tu:           TestUser
   ) = {
     Session(Map(
       SessionKeys.sessionId -> s"session-${UUID.randomUUID}",
@@ -61,17 +60,17 @@ class LoginService extends ServicesConfig with DefaultRunModeAppNameConfig {
     implicit val hc = HeaderCarrier()
 
     val requestBody = loginJson(tu)
-    WSHttp.POST(s"$authLoginApiUrl/government-gateway/session/login", requestBody).map(r=>
+    WSHttp.POST(s"$authLoginApiUrl/government-gateway/session/login", requestBody).map(r =>
       (
         AuthToken(
           r.header(HeaderNames.AUTHORIZATION).getOrElse(throw new RuntimeException(s"missing 'AUTHORIZATION' header: $r"))
         ),
-        AuthorityUri(
-          r.header(HeaderNames.LOCATION).getOrElse(throw new RuntimeException(s"missing 'LOCATION' header: $r"))
-        ),
-        GatewayToken(
-          (r.json \ "gatewayToken").asOpt[String].getOrElse(throw new RuntimeException(s"missing 'gatewayToken': ${r.body}"))
-        )
+          AuthorityUri(
+            r.header(HeaderNames.LOCATION).getOrElse(throw new RuntimeException(s"missing 'LOCATION' header: $r"))
+          ),
+            GatewayToken(
+              (r.json \ "gatewayToken").asOpt[String].getOrElse(throw new RuntimeException(s"missing 'gatewayToken': ${r.body}"))
+            )
       )
     )
   }
@@ -89,23 +88,24 @@ class LoginService extends ServicesConfig with DefaultRunModeAppNameConfig {
       "state" -> "Activated"
     )
 
-    val enrolments = if(tu.hasSAEnrolment) Json.arr(saEnrolment) else Json.arr()
+    val enrolments = if (tu.hasSAEnrolment) Json.arr(saEnrolment) else Json.arr()
 
     Json.obj(
 
-    "credId" -> tu.authorityId.v,
-    "affinityGroup" -> tu.affinityGroup.v,
-    "confidenceLevel" -> tu.confidenceLevel,
-    "credentialStrength" -> "weak",
-    "credentialRole" -> "User",
-    "usersName" -> JsNull,
-    "enrolments" -> enrolments,
-    "delegatedEnrolments" -> Json.arr(),
-    "email" -> "user@test.com",
-    "gatewayInformation" -> Json.obj()
-  )}
+      "credId" -> tu.authorityId.v,
+      "affinityGroup" -> tu.affinityGroup.v,
+      "confidenceLevel" -> tu.confidenceLevel,
+      "credentialStrength" -> "weak",
+      "credentialRole" -> "User",
+      "usersName" -> JsNull,
+      "enrolments" -> enrolments,
+      "delegatedEnrolments" -> Json.arr(),
+      "email" -> "user@test.com",
+      "gatewayInformation" -> Json.obj()
+    )
+  }
 
-  private implicit class JsonReplaceOp(j: JsObject){
+  private implicit class JsonReplaceOp(j: JsObject) {
     def replace(node: Symbol, newValue: String): JsObject = j.transform((__ \ node).json.put(JsString(newValue))).get
     def replace(node: Symbol, newValue: Int): JsObject = j.transform((__ \ node).json.put(JsNumber(newValue))).get
   }

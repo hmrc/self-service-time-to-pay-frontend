@@ -21,7 +21,6 @@ import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorPaymentTodayForm
 
 class CalculatePaymentsTodaySpec extends PlaySpec {
 
-
   "calculatorPaymentToday apply" should {
     "convert the string into a big decimal when creating the object" in {
 
@@ -30,15 +29,15 @@ class CalculatePaymentsTodaySpec extends PlaySpec {
     }
   }
 
-  "calculatorPaymentToday bigDecimalToCalculatorPaymentToday" should{
+  "calculatorPaymentToday bigDecimalToCalculatorPaymentToday" should {
     "return a CalculatorPaymentToday when a big decimal is passed" in {
-      assert(CalculatorPaymentTodayForm.bigDecimalToCalculatorPaymentToday(2)== CalculatorPaymentTodayForm(BigDecimal(2)))
+      assert(CalculatorPaymentTodayForm.bigDecimalToCalculatorPaymentToday(2) == CalculatorPaymentTodayForm(BigDecimal(2)))
     }
   }
 
-  "calculatorPaymentToday calculatorPaymentTodayToBigDecimal" should{
+  "calculatorPaymentToday calculatorPaymentTodayToBigDecimal" should {
     "return a big decimal when a CalculatorPaymentToday is passed" in {
-      assert(CalculatorPaymentTodayForm.calculatorPaymentTodayToBigDecimal(CalculatorPaymentTodayForm(BigDecimal(2)))== BigDecimal(2))
+      assert(CalculatorPaymentTodayForm.calculatorPaymentTodayToBigDecimal(CalculatorPaymentTodayForm(BigDecimal(2))) == BigDecimal(2))
     }
   }
 }

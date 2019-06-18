@@ -24,7 +24,7 @@ object CalculatorSinglePayment {
   def apply(str: String): CalculatorSinglePayment = {
     str match {
       case s if s.isEmpty => CalculatorSinglePayment(BigDecimal(0))
-      case s => CalculatorSinglePayment(BigDecimal(s))
+      case s              => CalculatorSinglePayment(BigDecimal(s))
     }
   }
 

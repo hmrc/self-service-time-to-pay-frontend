@@ -34,9 +34,9 @@ object TestUserReturns {
   }
 
   /**
-    * Assuming that today is 2019-03-15
-    * User has submitted all tax relevant tax returns
-    */
+   * Assuming that today is 2019-03-15
+   * User has submitted all tax relevant tax returns
+   */
   val sample1: JsValue = Json.parse(
     s"""
        {
@@ -54,10 +54,10 @@ object TestUserReturns {
     """)
 
   /**
-    * Assuming that today is 2017-11-15
-    * User has submitted all but last tax returns
-    * There is not filed last tax return.
-    */
+   * Assuming that today is 2017-11-15
+   * User has submitted all but last tax returns
+   * There is not filed last tax return.
+   */
   val sample2: JsValue = Json.parse(
     s"""
       {

@@ -50,12 +50,12 @@ trait ArrangementConnector {
 
   private def onError(ex: Throwable) = {
     val (code, message) = ex match {
-      case e: HttpException => (e.responseCode, e.getMessage)
+      case e: HttpException       => (e.responseCode, e.getMessage)
 
       case e: Upstream4xxResponse => (e.reportAs, e.getMessage)
       case e: Upstream5xxResponse => (e.reportAs, e.getMessage)
 
-      case e: Throwable => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
+      case e: Throwable           => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
     }
 
     Logger.error(s"Failure from DES, code $code and body $message")

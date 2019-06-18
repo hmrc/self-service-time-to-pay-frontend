@@ -17,9 +17,9 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 //Direct-debit - Output from createPaymentPlan
-case class DirectDebitInstructionPaymentPlan(processingDate: String,
-                                             acknowledgementId: String,
+case class DirectDebitInstructionPaymentPlan(processingDate:         String,
+                                             acknowledgementId:      String,
                                              directDebitInstruction: List[DirectDebitInstruction],
-                                             paymentPlan: List[DirectDebitPaymentPlan])
+                                             paymentPlan:            List[DirectDebitPaymentPlan])
 
 case class DirectDebitPaymentPlan(ppReferenceNo: String)

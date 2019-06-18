@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 object DateHelper {
 
-  def turnJavaTimeToJoda(date:LocalDate) = {
-  org.joda.time.LocalDate.now().withMonthOfYear(date.getMonthValue).withDayOfMonth(date.getDayOfMonth).withYear(date.getYear)
-  }}
+  def turnJavaTimeToJoda(date: LocalDate) = {
+    org.joda.time.LocalDate.now().withMonthOfYear(date.getMonthValue).withDayOfMonth(date.getDayOfMonth).withYear(date.getYear)
+  }
+}

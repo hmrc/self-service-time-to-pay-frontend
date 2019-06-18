@@ -27,8 +27,8 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
-  * This one ignores header carrier and sets key explicitly with token value
-  */
+ * This one ignores header carrier and sets key explicitly with token value
+ */
 @ImplementedBy(classOf[SessionCache4TokensConnectorImpl])
 trait SessionCache4TokensConnector extends SessionCache with ServicesConfig {
 

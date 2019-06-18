@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfservicetimetopay.service
 
-
 import java.time.LocalDate
 
 import javax.inject.{Inject, Singleton}
@@ -28,8 +27,7 @@ import scala.language.postfixOps
 import uk.gov.hmrc.selfservicetimetopay.util.ResourceReader
 import uk.gov.hmrc.selfservicetimetopay.util.DateHelper.turnJavaTimeToJoda
 @Singleton
-class WorkingDaysService @Inject()() {
-
+class WorkingDaysService @Inject() () {
 
   implicit val hols: BankHolidaySet = BankHolidays()
 
@@ -41,7 +39,6 @@ class WorkingDaysService @Inject()() {
 }
 
 import play.api.libs.json.Json
-
 
 object BankHolidays {
   lazy implicit val bankHolidayFmt: OFormat[BankHolidaySet] = Json.format[BankHolidaySet]

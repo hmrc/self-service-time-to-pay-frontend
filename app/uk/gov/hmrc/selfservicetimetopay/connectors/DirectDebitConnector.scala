@@ -60,40 +60,41 @@ trait DirectDebitConnector {
   }
 
   /**
-    * Checks if the given bank details are valid by checking against the Bank Account Reputation Service via Direct Debit service
-    */
+   * Checks if the given bank details are valid by checking against the Bank Account Reputation Service via Direct Debit service
+   */
   def getBank(sortCode: String, accountNumber: String)(implicit hc: HeaderCarrier): Future[Option[BankDetails]] = {
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
     http.GET[HttpResponse](s"$directDebitURL/$serviceURL/bank?$queryString").map {
       response => Some(response.json.as[BankDetails])
     }.recover {
       case e: uk.gov.hmrc.http.NotFoundException => None
-      case e: Exception => Logger.error(e.getMessage)
+      case e: Exception =>
+        Logger.error(e.getMessage)
         throw new RuntimeException("Direct debit returned unexpected response")
     }
   }
 
   /**
-    * Retrieves stored bank details associated with a given saUtr
-    */
+   * Retrieves stored bank details associated with a given saUtr
+   */
   def getBanks(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitBank] = {
     http.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response => response }
       .recover {
         case e: uk.gov.hmrc.http.NotFoundException if e.message.contains("BP not found") => DirectDebitBank.none
-        case e: Exception => Logger.error(e.getMessage)
+        case e: Exception =>
+          Logger.error(e.getMessage)
           throw new RuntimeException("GETBANKS threw unexpected error")
       }
   }
 
-
   private def onError(ex: Throwable) = {
     val (code, message) = ex match {
-      case e: HttpException => (e.responseCode, e.getMessage)
+      case e: HttpException       => (e.responseCode, e.getMessage)
 
       case e: Upstream4xxResponse => (e.reportAs, e.getMessage)
       case e: Upstream5xxResponse => (e.reportAs, e.getMessage)
 
-      case e: Throwable => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
+      case e: Throwable           => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
     }
 
     Logger.error(s"Failure from DES, code $code and body $message")

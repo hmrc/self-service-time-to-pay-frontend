@@ -30,12 +30,12 @@ import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
 
-class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
-                                  workingDays: WorkingDaysService) {
+class CalculatorService @Inject() (calculatorConnector: CalculatorConnector,
+                                   workingDays:         WorkingDaysService) {
 
   //todo perhaps merge these methods and change back end so it only one call
   def getInstalmentsSchedule(sa: SelfAssessment, intialPayment: BigDecimal = BigDecimal(0))
-                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
     val input: List[(Int, CalculatorInput)] = getMonthRange(sa).map(month => {
       val calculatorInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, intialPayment, sa.debits)
       (month, validateCalculatorDates(calculatorInput, month, sa.debits))
@@ -46,14 +46,14 @@ class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
 
   def getInstalmentsScheduleUnAuth(debits: Seq[Debit])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
 
-    val input: List[(Int, CalculatorInput)] =  (minimumMonthsAllowedTTP to maxAllowedMonthlyInstalments).map(month => {
+    val input: List[(Int, CalculatorInput)] = (minimumMonthsAllowedTTP to maxAllowedMonthlyInstalments).map(month => {
       val caltInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, 0, debits)
       (month, validateCalculatorDates(caltInput, month, debits))
     }).toList
     getCalculatorValues(input)
   }
 
-  private def getCalculatorValues(inputs:List[(Int, CalculatorInput)])(implicit hc: HeaderCarrier, ec: ExecutionContext) ={
+  private def getCalculatorValues(inputs: List[(Int, CalculatorInput)])(implicit hc: HeaderCarrier, ec: ExecutionContext) = {
     val futureSchedules: Seq[Future[(Int, CalculatorPaymentSchedule)]] = inputs.map {
       case (numberOfMonths, calcInput) =>
         calculatorConnector.calculatePaymentSchedule(calcInput).map(x => (numberOfMonths, x.head))
@@ -64,7 +64,7 @@ class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
 
   private def dayOfMonthCheck(date: LocalDate): LocalDate = date.getDayOfMonth match {
     case day if day > 28 => date.withDayOfMonth(1).plusMonths(1)
-    case _ => date
+    case _               => date
   }
 
   private def validateCalculatorDates(calculatorInput: CalculatorInput, numberOfMonths: Int, debits: Seq[Debit]): CalculatorInput = {
@@ -72,44 +72,43 @@ class CalculatorService @Inject()(calculatorConnector: CalculatorConnector,
     val firstPaymentDate: LocalDate = dayOfMonthCheck(workingDays.addWorkingDays(LocalDate.now(), workingDaysInAWeek))
     if (calculatorInput.initialPayment > 0) {
       if ((debits.map(_.amount).sum - calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
-        calculatorInput.copy(startDate = LocalDate.now,
-          initialPayment = BigDecimal(0),
-          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
-          endDate = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
+        calculatorInput.copy(startDate        = LocalDate.now,
+                             initialPayment   = BigDecimal(0),
+                             firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
+                             endDate          = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
       } else {
-        calculatorInput.copy(startDate = LocalDate.now,
-          firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
-          endDate = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
+        calculatorInput.copy(startDate        = LocalDate.now,
+                             firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
+                             endDate          = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
       }
-    }
-    else
-      calculatorInput.copy(startDate = LocalDate.now(),
-        firstPaymentDate = Some(firstPaymentDate),
-        endDate = calculatorInput.startDate.plusMonths(numberOfMonths),
-        debits = debits)
+    } else
+      calculatorInput.copy(startDate        = LocalDate.now(),
+                           firstPaymentDate = Some(firstPaymentDate),
+                           endDate          = calculatorInput.startDate.plusMonths(numberOfMonths),
+                           debits           = debits)
   }
 }
 
 object CalculatorService {
   /**
-    * Applies the 7 and 14 day rules for the calculator page, using today's date.
-    * See the function createCalculatorInput in Arrangement Controller for further information
-    */
+   * Applies the 7 and 14 day rules for the calculator page, using today's date.
+   * See the function createCalculatorInput in Arrangement Controller for further information
+   */
   private def checkDayOfMonth(dayOfMonth: Int): Int = dayOfMonth match {
     case day if day > 28 => 1
-    case _ => dayOfMonth
+    case _               => dayOfMonth
   }
 
   /**
-    * As the user can change which day of the month they wish to make their payments, then a recalculation
-    * must be made as this would effect the interest amounts. Rules here must be applied and this function
-    * calculates the first payment date and the last payment date by applying these rules.
-    *
-    * Rules:
-    * - First payment must be at least 7 days from today's date
-    * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
-    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
-    */
+   * As the user can change which day of the month they wish to make their payments, then a recalculation
+   * must be made as this would effect the interest amounts. Rules here must be applied and this function
+   * calculates the first payment date and the last payment date by applying these rules.
+   *
+   * Rules:
+   * - First payment must be at least 7 days from today's date
+   * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
+   * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
+   */
   //todo write test's I am too afraid to touch this !
   def createCalculatorInput(durationMonths: Int, dayOfMonth: Int, initialPayment: BigDecimal = BigDecimal(0), debits: Seq[Debit]): CalculatorInput = {
     val startDate = LocalDate.now()

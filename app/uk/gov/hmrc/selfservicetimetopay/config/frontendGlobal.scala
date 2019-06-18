@@ -32,7 +32,6 @@ import uk.gov.hmrc.selfservicetimetopay.testonly.routes
 
 import scala.concurrent.Future
 
-
 object FrontendGlobal extends DefaultFrontendGlobal with MicroserviceFilterSupport with I18nSupport {
 
   implicit lazy val messagesApi: MessagesApi = Play.current.injector.instanceOf[MessagesApi]
@@ -47,7 +46,7 @@ object FrontendGlobal extends DefaultFrontendGlobal with MicroserviceFilterSuppo
     //which omits application of this filter for 'TestUsersController.logIn()' functionality.
     val t = defaultFrontendFilters.map {
       case s: SessionTimeoutFilter => new SessionTimeoutFilterWrapper(s)
-      case x => x
+      case x                       => x
     }
 
     t ++ Seq(NoCacheFilter)
@@ -59,7 +58,7 @@ object FrontendGlobal extends DefaultFrontendGlobal with MicroserviceFilterSuppo
   }
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html = {
-    
+
     views.html.selfservicetimetopay.error_template(pageTitle, heading, message)
   }
 
@@ -95,8 +94,8 @@ object AuditFilter extends FrontendAuditFilter with RunMode with AppName with Mi
 }
 
 /**
-  * Special case for SessionTimeoutFilter which doesn't apply for one test-only endpoint.
-  */
+ * Special case for SessionTimeoutFilter which doesn't apply for one test-only endpoint.
+ */
 class SessionTimeoutFilterWrapper(sessionTimeoutFilter: SessionTimeoutFilter) extends Filter {
   override implicit def mat: Materializer = sessionTimeoutFilter.mat
   override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] =

@@ -48,7 +48,7 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       when(testConnector.http.POST[SelfAssessment, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = await(testConnector.checkEligibility(checkEligibilityTrueRequest,"1234567890"))
+      val result = await(testConnector.checkEligibility(checkEligibilityTrueRequest, "1234567890"))
 
       result.eligible shouldBe true
     }
@@ -59,7 +59,7 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       when(testConnector.http.POST[SelfAssessment, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = await(testConnector.checkEligibility(checkEligibilityFalseRequest,"1234567890"))
+      val result = await(testConnector.checkEligibility(checkEligibilityFalseRequest, "1234567890"))
 
       result.eligible shouldBe false
       result.reasons.contains(ReturnNeedsSubmitting) shouldBe true
@@ -70,7 +70,7 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with ServicesC
       when(testConnector.http.POST[SelfAssessment, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = await(testConnector.checkEligibility(checkEligibilityFalseRequest,"1234567890"))
+      val result = await(testConnector.checkEligibility(checkEligibilityFalseRequest, "1234567890"))
 
       result.eligible shouldBe false
       result.reasons.contains(TotalDebtIsTooHigh) shouldBe true

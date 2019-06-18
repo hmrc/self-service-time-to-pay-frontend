@@ -7,6 +7,8 @@ import play.sbt.routes.RoutesCompiler.autoImport._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
+import com.typesafe.sbt.SbtScalariform.ScalariformKeys
+import scalariform.formatter.preferences._
 
 trait MicroService {
 
@@ -55,6 +57,7 @@ trait MicroService {
         "uk.gov.hmrc.selfservicetimetopay.auth.Token._"
       )
     )
+    .settings(scalariformSettings: _*)
     .configs(IntegrationTest)
     .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
     .settings(
@@ -67,6 +70,37 @@ trait MicroService {
       Resolver.bintrayRepo("hmrc", "releases"),
       sbt.Resolver.jcenterRepo
     ))
+
+  lazy val scalariformSettings =
+  // description of options found here -> https://github.com/scala-ide/scalariform
+    ScalariformKeys.preferences := ScalariformKeys.preferences.value
+      .setPreference(AlignArguments, true)
+      .setPreference(AlignParameters, true)
+      .setPreference(AlignSingleLineCaseStatements, true)
+      .setPreference(AllowParamGroupsOnNewlines, true)
+      .setPreference(CompactControlReadability, false)
+      .setPreference(CompactStringConcatenation, false)
+      .setPreference(DanglingCloseParenthesis, Preserve)
+      .setPreference(DoubleIndentConstructorArguments, true)
+      .setPreference(DoubleIndentMethodDeclaration, true)
+      .setPreference(FirstArgumentOnNewline, Preserve)
+      .setPreference(FirstParameterOnNewline, Preserve)
+      .setPreference(FormatXml, true)
+      .setPreference(IndentLocalDefs, true)
+      .setPreference(IndentPackageBlocks, true)
+      .setPreference(IndentSpaces, 2)
+      .setPreference(IndentWithTabs, false)
+      .setPreference(MultilineScaladocCommentsStartOnFirstLine, false)
+      .setPreference(NewlineAtEndOfFile, true)
+      .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, false)
+      .setPreference(PreserveSpaceBeforeArguments, true)
+      .setPreference(RewriteArrowSymbols, false)
+      .setPreference(SpaceBeforeColon, false)
+      .setPreference(SpaceBeforeContextColon, false)
+      .setPreference(SpaceInsideBrackets, false)
+      .setPreference(SpaceInsideParentheses, false)
+      .setPreference(SpacesAroundMultiImports, false)
+      .setPreference(SpacesWithinPatternBinders, true)
 }
 
 private object TestPhases {

@@ -58,12 +58,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
   override protected def beforeEach(): Unit = {
     reset(mockAuthConnector,
-      mockSessionCache,
-      ddConnector,
-      arrangementConnector,
-      taxPayerConnector,
-      calculatorService,
-      mockEligibilityConnector)
+          mockSessionCache,
+          ddConnector,
+          arrangementConnector,
+          taxPayerConnector,
+          calculatorService,
+          mockEligibilityConnector)
   }
 
   val validDayForm = Seq(
@@ -147,7 +147,6 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getYouNeedToFile().url
     }
 
-
     "redirect to 'Tax Liabilities' when no amounts have been entered for determine eligibility" in {
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
@@ -167,7 +166,6 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       redirectLocation(response).get mustBe routes.CalculatorController.getTaxLiabilities().url
     }
 
-
     "redirect to 'call us page' when entered amounts and sa amounts are equal and user is ineligible for determine eligibility " in {
       when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
@@ -186,7 +184,6 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       status(response) mustBe SEE_OTHER
       redirectLocation(response).get mustBe routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion().url
     }
-
 
     "redirect to call us page when tax payer connector fails to retrieve data for determine eligibility" in {
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
@@ -234,7 +231,6 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       contentAsString(response) must include(getMessages(request)("ssttp.arrangement.declaration.h1"))
     }
 
-
     "successfully display the application complete page with required data in submission" in {
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
@@ -248,7 +244,6 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       val request = FakeRequest().withSession(
         goodSession: _*
       )
-
 
       val response = controller.applicationComplete().apply(request)
 
@@ -294,23 +289,20 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any()))
         .thenReturn(Future.successful(None))
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      val response = controller.submit().apply(FakeRequest().withSession(goodSession :_*)
+      val response = controller.submit().apply(FakeRequest().withSession(goodSession: _*)
       )
       controllers.routes.SelfServiceTimeToPayController.start().url must endWith(redirectLocation(response).get)
     }
-
 
     "redirect to login if user not logged in" in {
       when(mockSessionCache.putTtpSessionCarrier(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(Future.successful(None))
       when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      val response = controller.submit().apply(FakeRequest().withSession(goodSession :_*)
+      val response = controller.submit().apply(FakeRequest().withSession(goodSession: _*)
       )
-
 
       redirectLocation(response).get contains "/gg/sign-in"
     }
-
 
     "redirect to getTaxLiabilities page if the not logged in user has not created any debits" in {
       implicit val hc = new HeaderCarrier
@@ -322,9 +314,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockSessionCache.putTtpSessionCarrier(any())(any(), any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
 
-      val response = controller.determineEligibility().apply(FakeRequest().withSession(goodSession :_*)
+      val response = controller.determineEligibility().apply(FakeRequest().withSession(goodSession: _*)
       )
-
 
       controllers.routes.CalculatorController.getTaxLiabilities().url must endWith(redirectLocation(response).get)
     }

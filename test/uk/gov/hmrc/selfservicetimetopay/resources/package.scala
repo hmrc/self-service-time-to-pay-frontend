@@ -68,7 +68,7 @@ package object resources {
     BigDecimal(102.67),
     BigDecimal(20123.76),
     Seq(calculatorPaymentScheduleInstalment,
-      calculatorPaymentScheduleInstalment)
+        calculatorPaymentScheduleInstalment)
   )
   val calculatorPaymentScheduleLessThenOnePayment: CalculatorPaymentSchedule = CalculatorPaymentSchedule(
     Some(LocalDate.parse("2001-01-01")),
@@ -79,28 +79,26 @@ package object resources {
     BigDecimal(102.67),
     BigDecimal(20123.76),
     Seq(calculatorPaymentScheduleInstalment,
-      calculatorPaymentScheduleInstalment)
+        calculatorPaymentScheduleInstalment)
   )
   val eventualSchedules: Future[Seq[CalculatorPaymentSchedule]] = Future.successful(Seq(calculatorPaymentSchedule))
-  val calculatorPaymentScheduleMap = Map(2 -> calculatorPaymentSchedule,3 -> calculatorPaymentSchedule,
-    4 -> calculatorPaymentSchedule,5 -> calculatorPaymentScheduleLessThenOnePayment)
+  val calculatorPaymentScheduleMap = Map(2 -> calculatorPaymentSchedule, 3 -> calculatorPaymentSchedule,
+    4 -> calculatorPaymentSchedule, 5 -> calculatorPaymentScheduleLessThenOnePayment)
 
   val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule),
-    Some(BankDetails(Some("012131"), Some("1234567890"), None, None, None, Some("0987654321"))), None,
-    Some(taxPayer),
-    CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)), Some(3), Some(EligibilityStatus(true, Seq.empty)))
-
-
+                                                   Some(BankDetails(Some("012131"), Some("1234567890"), None, None, None, Some("0987654321"))), None,
+                                                   Some(taxPayer),
+                                                   CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)), Some(3), Some(EligibilityStatus(true, Seq.empty)))
 
   val ttpSubmissionNoAmounts: TTPSubmission = TTPSubmission()
 
-  val calculatorAmountDue: Debit = Debit(amount = BigDecimal(123.45), dueDate = LocalDate.now())
-  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(schedule = Some(calculatorPaymentSchedule), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
+  val calculatorAmountDue: Debit = Debit(amount  = BigDecimal(123.45), dueDate = LocalDate.now())
+  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(schedule       = Some(calculatorPaymentSchedule), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
 
   val ttpSubmissionNLINoSchedule: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
   val ttpSubmissionNLIEmpty: TTPSubmission = TTPSubmission()
 
-  val calculatorAmountDueOver10k: Debit = Debit(amount = BigDecimal(11293.22), dueDate = LocalDate.now())
+  val calculatorAmountDueOver10k: Debit = Debit(amount  = BigDecimal(11293.22), dueDate = LocalDate.now())
   val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDueOver10k)))
 
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
@@ -210,18 +208,17 @@ package object resources {
   val loggedInUserUnderConfidenceThreshold = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L50, "")
   val saAccount = SaAccount(link = "link", utr = SaUtr("1233"))
   val authContext = AuthContext(
-    user = loggedInUser,
-    principal = Principal(
-      name = Some("usere"),
+    user           = loggedInUser,
+    principal      = Principal(
+      name     = Some("usere"),
       accounts = Accounts(sa = Some(saAccount))),
-    attorney = None,
+    attorney       = None,
     userDetailsUri = None,
-    enrolmentsUri = None,
-    idsUri = None
+    enrolmentsUri  = None,
+    idsUri         = None
   )
 
-
-  val goodSession =   Seq(SessionKeys.userId -> "someUserId",
+  val goodSession = Seq(SessionKeys.userId -> "someUserId",
     TTPSessionId.newTTPSession(),
     "token" -> "1234")
 }

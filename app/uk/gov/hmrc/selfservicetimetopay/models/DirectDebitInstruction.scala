@@ -20,11 +20,11 @@ import java.time.LocalDate
 
 //Direct-debit - getBanks response
 //Direct-debit - part of input to createPaymentPlan
-case class DirectDebitInstruction(sortCode: Option[String] = None,
-                                  accountNumber: Option[String] = None,
-                                  referenceNumber: Option[String] = None,
-                                  creationDate: Option[LocalDate] = None,
-                                  paperAuddisFlag: Option[Boolean] = Some(true),
-                                  ddiRefNumber: Option[String] = None,
-                                  ddiReferenceNo: Option[String] = None,
-                                  accountName: Option[String] = None)
+case class DirectDebitInstruction(sortCode:        Option[String]    = None,
+                                  accountNumber:   Option[String]    = None,
+                                  referenceNumber: Option[String]    = None,
+                                  creationDate:    Option[LocalDate] = None,
+                                  paperAuddisFlag: Option[Boolean]   = Some(true),
+                                  ddiRefNumber:    Option[String]    = None,
+                                  ddiReferenceNo:  Option[String]    = None,
+                                  accountName:     Option[String]    = None)

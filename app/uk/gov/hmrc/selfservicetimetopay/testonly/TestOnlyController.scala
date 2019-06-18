@@ -28,8 +28,8 @@ import uk.gov.hmrc.selfservicetimetopay.connectors.TaxPayerConnector
 import uk.gov.hmrc.selfservicetimetopay.controllers.TimeToPayController
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-class TestOnlyController @Inject()(val messagesApi: MessagesApi, taxpayerConnector: TaxPayerConnector)
-extends TimeToPayController with I18nSupport with ServicesConfig with DefaultRunModeAppNameConfig {
+class TestOnlyController @Inject() (val messagesApi: MessagesApi, taxpayerConnector: TaxPayerConnector)
+  extends TimeToPayController with I18nSupport with ServicesConfig with DefaultRunModeAppNameConfig {
 
   def config(): PlayAction[AnyContent] = PlayAction { r =>
     val result: JsValue = Json.parse(
@@ -38,11 +38,11 @@ extends TimeToPayController with I18nSupport with ServicesConfig with DefaultRun
     Results.Ok(result)
   }
 
-  def getTaxpayer(): PlayAction[AnyContent] = authorisedSaUser { implicit authContext =>implicit request =>
+  def getTaxpayer(): PlayAction[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     val utr = authContext.principal.accounts.sa.get.utr.utr
     val getTaxpayerF = taxpayerConnector.getTaxPayer(utr).map{
       case Some(t) => Json.toJson(t)
-      case None => Json.obj("there is" -> "taxpayer for given UTR")
+      case None    => Json.obj("there is" -> "taxpayer for given UTR")
     }.recover{
       case e => Json.obj("exception" -> e.getMessage)
     }

@@ -49,11 +49,11 @@ class AuditService {
     val interestTotal: BigDecimal = submission.schedule.map(_.totalInterestCharged).get
     val total: BigDecimal = submission.schedule.map(_.totalPayable).get
 
-   ExtendedDataEvent(
+    ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
-      auditType = "directDebitSetup",
-      tags = hc.headers.toMap,
-      detail = Json.obj(
+      auditType   = "directDebitSetup",
+      tags        = hc.headers.toMap,
+      detail      = Json.obj(
         "utr" -> utr,
         "bankDetails" -> Json.obj(
           "name" -> name,

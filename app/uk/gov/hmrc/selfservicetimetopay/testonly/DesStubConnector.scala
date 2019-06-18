@@ -25,7 +25,6 @@ import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSH
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
 class DesStubConnector extends ServicesConfig with DefaultRunModeAppNameConfig {
 
@@ -42,7 +41,7 @@ class DesStubConnector extends ServicesConfig with DefaultRunModeAppNameConfig {
       .PATCH(setReturnsUrl, predefinedResponse)
       .map{
         r =>
-          if(r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's return in DES-STUB: $tu")
+          if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's return in DES-STUB: $tu")
           Logger.debug(s"Set up a predefined return in DES-STUB for $tu")
       }
   }
@@ -60,7 +59,7 @@ class DesStubConnector extends ServicesConfig with DefaultRunModeAppNameConfig {
       .PATCH(setReturnsUrl, predefinedResponse)
       .map{
         r =>
-          if(r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's debit in DES-STUB: $tu")
+          if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's debit in DES-STUB: $tu")
           Logger.debug(s"Set up a predefined debit in DES-STUB for $tu")
       }
   }

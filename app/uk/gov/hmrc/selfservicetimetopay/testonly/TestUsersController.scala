@@ -30,66 +30,66 @@ import views.html.selfservicetimetopay.testonly.create_user_and_log_in
 import scala.concurrent.Future
 import scala.util.Try
 
-case class TestUserForm (
-                          utr: Option[String],
-                          returnsJson: String,
-                          returnsResponseStatusCode: String,
-                          hasSAEnrolment: Boolean,
-                          isOnIA: Boolean,
-                          authorityId: Option[String],
-                          affinityGroup: String,
-                          hasOverTwoHundred:Boolean,
-                          debitsJson: String,
-                          debitsResponseStatusCode: String,
-                          saTaxpayer: String,
-                          saTaxpayerResponseStatusCode: String,
-                          continueUrl: Option[String]
+case class TestUserForm(
+    utr:                          Option[String],
+    returnsJson:                  String,
+    returnsResponseStatusCode:    String,
+    hasSAEnrolment:               Boolean,
+    isOnIA:                       Boolean,
+    authorityId:                  Option[String],
+    affinityGroup:                String,
+    hasOverTwoHundred:            Boolean,
+    debitsJson:                   String,
+    debitsResponseStatusCode:     String,
+    saTaxpayer:                   String,
+    saTaxpayerResponseStatusCode: String,
+    continueUrl:                  Option[String]
 ) {
 
   def asTestUser: TestUser = TestUser(
-    utr = utr.map(Utr.apply).getOrElse(Utr.random()),
-    hasSAEnrolment = hasSAEnrolment,
-    isOnIA = isOnIA,
-    authorityId = authorityId.map(AuthorityId.apply).getOrElse(AuthorityId.random),
-    affinityGroup = AffinityGroup(affinityGroup),
-    confidenceLevel = if(hasOverTwoHundred)200 else 100,
-    returns = Json.parse(returnsJson),
-    returnsResponseStatusCode = returnsResponseStatusCode.toInt,
-    debits = Json.parse(debitsJson),
-    debitsResponseStatusCode = debitsResponseStatusCode.toInt,
-    saTaxpayer = Json.parse(saTaxpayer),
+    utr                          = utr.map(Utr.apply).getOrElse(Utr.random()),
+    hasSAEnrolment               = hasSAEnrolment,
+    isOnIA                       = isOnIA,
+    authorityId                  = authorityId.map(AuthorityId.apply).getOrElse(AuthorityId.random),
+    affinityGroup                = AffinityGroup(affinityGroup),
+    confidenceLevel              = if (hasOverTwoHundred) 200 else 100,
+    returns                      = Json.parse(returnsJson),
+    returnsResponseStatusCode    = returnsResponseStatusCode.toInt,
+    debits                       = Json.parse(debitsJson),
+    debitsResponseStatusCode     = debitsResponseStatusCode.toInt,
+    saTaxpayer                   = Json.parse(saTaxpayer),
     saTaxpayerResponseStatusCode = saTaxpayerResponseStatusCode.toInt,
-    continueUrl = continueUrl
+    continueUrl                  = continueUrl
   )
 }
 
 object TestUserForm {
 
   val initial = TestUserForm(
-    utr = None,
-    returnsJson = Json.prettyPrint(TestUserReturns.sample1),
-    returnsResponseStatusCode = "200",
-    hasSAEnrolment = true,
-    isOnIA = true,
-    authorityId = None,
-    affinityGroup = AffinityGroup.individual.v,
-    hasOverTwoHundred = true,
-    debitsJson = Json.prettyPrint(TestUserDebits.sample1),
-    debitsResponseStatusCode = "200",
-    saTaxpayer = Json.prettyPrint(TestUserSaTaxpayer.buildTaxpayer()),
+    utr                          = None,
+    returnsJson                  = Json.prettyPrint(TestUserReturns.sample1),
+    returnsResponseStatusCode    = "200",
+    hasSAEnrolment               = true,
+    isOnIA                       = true,
+    authorityId                  = None,
+    affinityGroup                = AffinityGroup.individual.v,
+    hasOverTwoHundred            = true,
+    debitsJson                   = Json.prettyPrint(TestUserDebits.sample1),
+    debitsResponseStatusCode     = "200",
+    saTaxpayer                   = Json.prettyPrint(TestUserSaTaxpayer.buildTaxpayer()),
     saTaxpayerResponseStatusCode = "200",
-    continueUrl = None
+    continueUrl                  = None
   )
 }
 
-class TestUsersController @Inject()(
-  val messagesApi: MessagesApi,
-  loginService: LoginService,
-  saStubConnector: SaStubConnector,
-  desStubConnector: DesStubConnector,
-  iaConnector:IaConnector
+class TestUsersController @Inject() (
+    val messagesApi:  MessagesApi,
+    loginService:     LoginService,
+    saStubConnector:  SaStubConnector,
+    desStubConnector: DesStubConnector,
+    iaConnector:      IaConnector
 )
-extends TimeToPayController with I18nSupport with ServicesConfig with DefaultRunModeAppNameConfig {
+  extends TimeToPayController with I18nSupport with ServicesConfig with DefaultRunModeAppNameConfig {
 
   private val testUserForm: Form[TestUserForm] = Form[TestUserForm](
     mapping(
@@ -143,7 +143,7 @@ extends TimeToPayController with I18nSupport with ServicesConfig with DefaultRun
       _ <- setTaxpayerResponseF
       _ <- setReturnsF
       _ <- setDebitsF
-      _ <- if(tu.isOnIA)iaConnector.uploadUtr(tu.utr.v) else Future.successful(())
+      _ <- if (tu.isOnIA) iaConnector.uploadUtr(tu.utr.v) else Future.successful(())
       newSession = Session(loginSession.data)
       url = tu.continueUrl.getOrElse(routes.InspectorController.inspect().url)
     } yield Redirect(url).withSession(newSession)

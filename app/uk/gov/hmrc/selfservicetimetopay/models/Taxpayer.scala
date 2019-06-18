@@ -19,34 +19,34 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import java.time.LocalDate
 
 case class Taxpayer(
-  customerName: Option[String] = None,
-  addresses: Seq[Address] = Seq.empty,
-  selfAssessment: Option[SelfAssessment] = None
+    customerName:   Option[String]         = None,
+    addresses:      Seq[Address]           = Seq.empty,
+    selfAssessment: Option[SelfAssessment] = None
 )
 
-case class SelfAssessment(utr: Option[String] = None,
+case class SelfAssessment(utr:                      Option[String]                   = None,
                           communicationPreferences: Option[CommunicationPreferences] = None,
-                          debits: Seq[Debit] = Seq.empty,
-                          returns: Option[List[Return]] = None)
+                          debits:                   Seq[Debit]                       = Seq.empty,
+                          returns:                  Option[List[Return]]             = None)
 
 case class Address(addressLine1: Option[String] = None,
                    addressLine2: Option[String] = None,
                    addressLine3: Option[String] = None,
                    addressLine4: Option[String] = None,
                    addressLine5: Option[String] = None,
-                   postcode: Option[String] = None)
+                   postcode:     Option[String] = None)
 
 case class CommunicationPreferences(welshLanguageIndicator: Boolean = false,
-                                     audioIndicator: Boolean = false,
-                                     largePrintIndicator: Boolean = false,
-                                     brailleIndicator: Boolean = false)
+                                    audioIndicator:         Boolean = false,
+                                    largePrintIndicator:    Boolean = false,
+                                    brailleIndicator:       Boolean = false)
 
 // TODO: figure out - is this actually a liability?
-final case class Debit(originCode: Option[String] = None,
-                 amount: BigDecimal,
-                 dueDate: LocalDate,
-                 interest: Option[Interest] = None,
-                 taxYearEnd: Option[LocalDate] = None) {
+final case class Debit(originCode: Option[String]    = None,
+                       amount:     BigDecimal,
+                       dueDate:    LocalDate,
+                       interest:   Option[Interest]  = None,
+                       taxYearEnd: Option[LocalDate] = None) {
 
   def dueByYear: Int = dueDate.getYear
   def dueByMonth: Int = dueDate.getMonthValue

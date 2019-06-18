@@ -38,14 +38,14 @@ package object modelsFormat {
         case JsSuccess(value, path) => JsSuccess(Left(value), path)
         case JsError(e1) => B.reads(json) match {
           case JsSuccess(value, path) => JsSuccess(Right(value), path)
-          case JsError(e2) => JsError(JsError.merge(e1, e2))
+          case JsError(e2)            => JsError(JsError.merge(e1, e2))
         }
       }
     }
 
   implicit def eitherWrites[A, B](implicit A: Writes[A], B: Writes[B]): Writes[Either[A, B]] =
     Writes[Either[A, B]] {
-      case Left(obj) => A.writes(obj)
+      case Left(obj)  => A.writes(obj)
       case Right(obj) => B.writes(obj)
     }
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -88,12 +88,12 @@ package object modelsFormat {
   //Eligibility formatters
 
   def parseFromString(jsonString: String): Option[Reason] = jsonString.trim.toLowerCase match {
-    case "nodebt" => Some(NoDebt)
-    case "debtisinsignificant" => Some(DebtIsInsignificant)
-    case "olddebtistoohigh" => Some(OldDebtIsTooHigh)
-    case "totaldebtistoohigh" => Some(TotalDebtIsTooHigh)
-    case "ttpislessthentwomonths" => Some(TotalDebtIsTooHigh)
-    case "isnotonia" => Some(IsNotOnIa)
+    case "nodebt"                                 => Some(NoDebt)
+    case "debtisinsignificant"                    => Some(DebtIsInsignificant)
+    case "olddebtistoohigh"                       => Some(OldDebtIsTooHigh)
+    case "totaldebtistoohigh"                     => Some(TotalDebtIsTooHigh)
+    case "ttpislessthentwomonths"                 => Some(TotalDebtIsTooHigh)
+    case "isnotonia"                              => Some(IsNotOnIa)
     case x if x.contains("returnneedssubmitting") => Some(ReturnNeedsSubmitting)
     case _ =>
       None
@@ -105,7 +105,7 @@ package object modelsFormat {
 
     override def reads(json: JsValue): JsResult[Reason] = json match {
       case o: JsString => parseFromString(o.value).fold[JsResult[Reason]](JsError(s"Failed to parse $json as Reason"))(JsSuccess(_))
-      case _ => JsError(s"Failed to parse $json as Reason")
+      case _           => JsError(s"Failed to parse $json as Reason")
     }
   }
 

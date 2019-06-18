@@ -28,11 +28,11 @@ class IaConnector extends ServicesConfig with DefaultRunModeAppNameConfig {
 
   private lazy val baseUrl: String = baseUrl("ia")
 
-  def uploadUtr(utr:String)(implicit hc:HeaderCarrier, executionContext: ExecutionContext): Future[Unit]  =
+  def uploadUtr(utr: String)(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[Unit] =
     WSHttp
-    .POSTEmpty(baseUrl + s"/ia/upload/$utr")
-    .map{
-      r =>
-        if(r.status != 200) throw new RuntimeException(s"Could not upload utr into Ia")
-    }
+      .POSTEmpty(baseUrl + s"/ia/upload/$utr")
+      .map{
+        r =>
+          if (r.status != 200) throw new RuntimeException(s"Could not upload utr into Ia")
+      }
 }
