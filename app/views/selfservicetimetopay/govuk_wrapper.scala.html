@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(appConfig: uk.gov.hmrc.selfservicetimetopay.config.AppConfig,
+@(
         title: String,
         mainClass: Option[String] = None,
         mainDataAttributes: Option[Html] = None,
@@ -31,12 +31,12 @@
         loggedIn: Boolean = false,
         welshToggleEnabled:Boolean = true,
         hasUserPanel: Boolean = false,
-        navTitle: String = "ssttp.common.title")(implicit messages: play.api.i18n.Messages, request: Request[_])
+        navTitle: String = "ssttp.common.title")(implicit messages: play.api.i18n.Messages, request: Request[_], appConfig: config.AppConfig)
 
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import selfservicetimetopay.partials.{beta_banner_with_user_panel, google_analytics_js}
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers, layouts => uiLayouts}
-@import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig._
+
 
 @head = {
 @uiLayouts.head(
@@ -84,8 +84,8 @@
 )
     @if(welshToggleEnabled) {
         @views.html.language_selection(
-            languageMapValue,
-            routeToSwitchLanguage,
+          appConfig.languageMapValue,
+          appConfig.routeToSwitchLanguage,
             Some("pull-right"))
     }
 }

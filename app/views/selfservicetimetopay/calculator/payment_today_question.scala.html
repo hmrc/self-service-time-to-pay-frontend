@@ -14,17 +14,25 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
 @import uk.gov.hmrc.selfservicetimetopay.models.PayTodayQuestion
-@(dataForm: Form[PayTodayQuestion], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+@(
+        dataForm: Form[PayTodayQuestion],
+        loggedIn: Boolean = false)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.form.payment_today_question.title"),
     loggedIn = loggedIn
 ) {
 
-    <a class="link-back" href="@routes.CalculatorController.getTaxLiabilities()">@Messages("ssttp.calculator.payment_today_question.button-back")</a>
+    <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getTaxLiabilities()">@Messages("ssttp.calculator.payment_today_question.button-back")</a>
     @if(dataForm.hasErrors){
         @helpers.errorSummary(Messages("ssttp.calculator.form.payment_today_question.required.title"),dataForm)
     }
@@ -33,7 +41,7 @@
     </legend>
 
     <p>@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
-    @helpers.form(action = routes.CalculatorController.submitPayTodayQuestion(),
+    @helpers.form(action =ssttpcalculator.routes.CalculatorController.submitPayTodayQuestion(),
         'id -> "paytoday",'class -> "form-group inline"){
         @helpers.input_radio_group(dataForm("paytoday"),Seq(
                 "true" -> Messages("ssttp.calculator.form.payment_today_question.yes_label"),

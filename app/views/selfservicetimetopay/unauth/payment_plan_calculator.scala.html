@@ -14,9 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@(loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
-@import selfservicetimetopay.helpers.message_list
+@(
+        loggedIn: Boolean = false)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.payment-plan-calculator.start.title"),
     loggedIn = loggedIn,
@@ -31,5 +36,5 @@
     <p>@Messages("ssttp.calculator.payment-plan-calculator.start.p1")</p>
     <p>@Messages("ssttp.calculator.payment-plan-calculator.start.p2")</p>
 
-    <a class="button button--get-started" href="@routes.CalculatorController.getAmountDue()">@Messages("ssttp.calculator.payment-plan-calculator.start.button")</a>
+    <a class="button button--get-started" href="@ssttpcalculator.routes.CalculatorController.getAmountDue()">@Messages("ssttp.calculator.payment-plan-calculator.start.button")</a>
 }

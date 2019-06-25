@@ -20,8 +20,19 @@
 @import java.time.LocalDate
 @import java.util.Locale
 @import uk.gov.hmrc.play.language.LanguageUtils.Dates
-@import uk.gov.hmrc.selfservicetimetopay.util.DateHelper.turnJavaTimeToJoda
-@(debits: Seq[Debit], transactionId: String, directDebit: ArrangementDirectDebit, schedule: CalculatorPaymentSchedule, ddref: Option[String])(implicit messages: play.api.i18n.Messages, request: Request[_])
+@import util.DateHelper.turnJavaTimeToJoda
+
+
+@(
+        debits: Seq[Debit],
+        transactionId: String,
+        directDebit: ArrangementDirectDebit,
+        schedule: CalculatorPaymentSchedule,
+        ddref: Option[String])(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
 
     @gaCheckoutCode = {
     @gaDoTransaction(debits = debits,

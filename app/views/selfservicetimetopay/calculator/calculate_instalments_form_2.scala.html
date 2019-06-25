@@ -15,18 +15,25 @@
  *@
 
 @import selfservicetimetopay.partials._
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentSchedule}
 @import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.helpers.forms.submit
 
-@(redirectCall: Call, durationForm: Form[CalculatorDuration], monthsToSchedule:List[CalculatorPaymentSchedule])(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(
+        redirectCall: Call,
+        durationForm: Form[CalculatorDuration],
+        monthsToSchedule:List[CalculatorPaymentSchedule])(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
 
 @selfservicetimetopay.main(
 title = Messages("ssttp.calculator.results.title")
 ) {
 
-<a class="link-back" onclick="back()" href="@routes.CalculatorController.getMonthlyPayment">@Messages("ssttp.calculator.form.back")</a>
+<a class="link-back" onclick="back()" href="@ssttpcalculator.routes.CalculatorController.getMonthlyPayment">@Messages("ssttp.calculator.form.back")</a>
 
 <h1 class="heading-large margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
 

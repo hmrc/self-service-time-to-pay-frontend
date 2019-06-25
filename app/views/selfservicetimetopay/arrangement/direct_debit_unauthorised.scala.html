@@ -14,13 +14,19 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@(loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@import config.AppConfig
+@(
+        loggedIn: Boolean = false)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: AppConfig
+)
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.direct-debit.unauthorized.title"),
     loggedIn = loggedIn
 ){
-    <a class="link-back" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a>
+    <a class="link-back" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a>
     <header class="page-header text">
         <h1>@Messages("ssttp.direct-debit.unauthorized.title")</h1>
     </header>
@@ -28,5 +34,5 @@
     <p>
         @Messages("ssttp.direct-debit.unauthorized.intro.p2")
     </p>
-    <a class="button" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.unauthorized.button")</a>
+    <a class="button" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.unauthorized.button")</a>
 }

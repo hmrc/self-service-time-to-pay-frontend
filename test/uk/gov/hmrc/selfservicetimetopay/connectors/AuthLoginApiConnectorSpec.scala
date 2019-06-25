@@ -20,10 +20,11 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.config.ServicesConfig
+import ssttpcalculator.CalculatorConnector
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, CalculatorPaymentSchedule}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -31,21 +32,21 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AuthLoginApiConnectorSpec extends UnitSpec with MockitoSugar with ServicesConfig with WithFakeApplication with DefaultRunModeAppNameConfig {
+class AuthLoginApiConnectorSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  object testConnector extends CalculatorConnector {
-    val calculatorURL = ""
-    val http: WSHttp = mock[WSHttp]
-    val serviceURL = "paymentSchedule"
-  }
+  private val httpClient: HttpClient = mock[HttpClient]
+  val testConnector = new CalculatorConnector(
+    servicesConfig = mock[ServicesConfig],
+    httpClient     = httpClient
+  )
 
   "Calling submitLiabilities test only endpoint" should {
     "return a payment schedule" in {
       val jsonResponse = Json.fromJson[Seq[CalculatorPaymentSchedule]](submitLiabilitiesResponseJSON).get
 
-      when(testConnector.http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
+      when(httpClient.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
       val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))
@@ -57,7 +58,7 @@ class AuthLoginApiConnectorSpec extends UnitSpec with MockitoSugar with Services
     }
 
     "return no payment schedule" in {
-      when(testConnector.http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
+      when(httpClient.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(Seq()))
 
       val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))

@@ -18,16 +18,17 @@ package uk.gov.hmrc.selfservicetimetopay.service
 
 import java.time.LocalDate
 
+import bankholidays.WorkingDaysService
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
+import ssttpcalculator.{CalculatorConnector, CalculatorService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
 import uk.gov.hmrc.selfservicetimetopay.models.Return
 import uk.gov.hmrc.selfservicetimetopay.resources.{selfAssessment, _}
-import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.getFutureReturn
+import CalculatorService._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 class CalculatorServiceSpec extends UnitSpec with MockitoSugar with ScalaFutures {

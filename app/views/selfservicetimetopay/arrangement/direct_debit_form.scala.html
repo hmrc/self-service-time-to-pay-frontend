@@ -17,13 +17,24 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(debits: Seq[Debit], schedule: CalculatorPaymentSchedule, ddForm: Form[ArrangementDirectDebit], isBankError: Boolean = false, loggedIn: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+@(
+        debits: Seq[Debit],
+        schedule: CalculatorPaymentSchedule,
+        ddForm: Form[ArrangementDirectDebit],
+        isBankError: Boolean = false,
+        loggedIn: Boolean = true)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
 
 @import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields, gaDoCheckout}
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
 @import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.helpers.forms.submit
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
 
 @gaCheckoutCode = {
 @gaDoCheckout(debits = debits,
@@ -46,7 +57,7 @@
         Seq(gaCheckoutCode.body)
     }
 ) {
-    <a class="link-back" href="@routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.direct-debit.form.back")</a>
+    <a class="link-back" href="@ssttparrangement.routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.direct-debit.form.back")</a>
     @if(ddForm.hasErrors) {
         @if(isBankError) {
             @helpers.errorSummary(Messages("ssttp.direct-debit.form.bank-not-found-heading"), ddForm)
@@ -55,7 +66,7 @@
         }
     }
         <h1 class="heading-large">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
-       @helpers.form(routes.DirectDebitController.submitDirectDebit()) {
+       @helpers.form(ssttpdirectdebit.routes.DirectDebitController.submitDirectDebit()) {
 
         <fieldset class="form-field-group">
             <legend><span class="visually-hidden">Enter your banking details</span></legend>

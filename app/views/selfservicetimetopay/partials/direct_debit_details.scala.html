@@ -15,7 +15,8 @@
  *@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
+
 @(directDebit:ArrangementDirectDebit, print:Boolean = false)(implicit messages: play.api.i18n.Messages)
 
 <div class="add_bottom_line">
@@ -29,7 +30,7 @@
             </dd>
 
             <dd class="app-check-your-answers__change no_bottom_line">
-                <a href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.change")</a>
+                <a href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.change")</a>
             </dd>
         </div>
     </dl>

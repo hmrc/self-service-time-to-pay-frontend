@@ -14,17 +14,25 @@
  * limitations under the License.
  *@
 
-@import selfservicetimetopay.partials._
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@( schedule: CalculatorPaymentSchedule, loggedIn: Boolean)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@import views.html.selfservicetimetopay.partials.check_calculation_table
+
+
+
+@(
+        schedule: CalculatorPaymentSchedule,
+        loggedIn: Boolean)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
 
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.check-calculation.h1"),
     loggedIn = loggedIn,
     welshToggleEnabled =false,
     navTitle =  "ssttp.payment-plan-calculator.title"){
-    <a class="link-back" href="@routes.CalculatorController.getCalculateInstalmentsUnAuth().url">@Messages("ssttp.calculator.check-calculation.back")</a>
+    <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalmentsUnAuth().url">@Messages("ssttp.calculator.check-calculation.back")</a>
     <header class="page-header text">
         <h1>@Messages("ssttp.calculator.check-calculation.h1")</h1>
     </header>

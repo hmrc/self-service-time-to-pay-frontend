@@ -14,16 +14,19 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import selfservicetimetopay.helpers.message_list
-
-@(isWelsh: Boolean, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(
+        isWelsh: Boolean,
+        loggedIn: Boolean = false)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
 
     @selfservicetimetopay.main(
         title = Messages("ssttp.call-us.title"),
         loggedIn = loggedIn
     ){
-        <a class="link-back" href="@routes.SelfServiceTimeToPayController.start().url">@Messages("ssttp.call-us.back")</a>
+        <a class="link-back" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.start().url">@Messages("ssttp.call-us.back")</a>
 
         <header class="page-header text">
             <h1>@Messages("ssttp.call-us.title")</h1>

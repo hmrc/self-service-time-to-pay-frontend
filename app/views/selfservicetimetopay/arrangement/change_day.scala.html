@@ -15,22 +15,29 @@
  *@
 
 @import uk.gov.hmrc.play.views.html.helpers
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.helpers.forms.submit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
-@( dayForm: Form[ArrangementDayOfMonth])(implicit messages: play.api.i18n.Messages, request: Request[_])
-@import selfservicetimetopay.helpers.message_list
+
+@(
+        dayForm: Form[ArrangementDayOfMonth])(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
+
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.arrangement.change_day.title"),
     loggedIn = true
 ){
-    <a class="link-back" href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a>
+    <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a>
     <h1>@Messages("ssttp.arrangement.change_day.title")</h1>
     @if(dayForm.hasErrors) {
     @helpers.errorSummary(Messages("ssttp.calculator.results.error.title"), dayForm)
     }
 
-    @helpers.form(routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm", 'class -> "group") {
+    @helpers.form(ssttparrangement.routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm", 'class -> "group") {
 <div class="form-group">
         <div class="multiple-choice">
             <input id="default" type="radio" name="dayOfMonth" value=28 onclick="uncheck(`other`)">

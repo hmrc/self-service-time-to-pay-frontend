@@ -14,14 +14,17 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import views.html.selfservicetimetopay.helpers.forms._
-@import uk.gov.hmrc.selfservicetimetopay.testonly.{routes => testonlyroutes}
-@import uk.gov.hmrc.selfservicetimetopay.testonly._
-@import play.api.libs.json.Json
+@import testonly.TestUserForm
 @import uk.gov.hmrc.play.views.html.helpers
+@import views.html.selfservicetimetopay.helpers.forms._
 
-@(dataForm: Form[TestUserForm])(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+@(
+        dataForm: Form[TestUserForm])(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
 
 
 @selfservicetimetopay.main(
@@ -33,7 +36,7 @@
         <p>This is `test-only` endpoint for testing purposes.</p>
     </header>
 
-    @helpers.form(testonlyroutes.TestUsersController.logIn(), 'class -> "group") {
+    @helpers.form(testonly.routes.TestUsersController.logIn(), 'class -> "group") {
         @if(dataForm.hasErrors) {
             @helpers.errorSummary("Fix errors", dataForm)
         }

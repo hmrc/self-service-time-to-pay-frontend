@@ -14,18 +14,22 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorPaymentTodayForm
-@import uk.gov.hmrc.selfservicetimetopay.controllers._
 @import uk.gov.hmrc.play.views.html.helpers
-@import selfservicetimetopay.helpers.forms.submit
+@import ssttpcalculator.CalculatorPaymentTodayForm
 
-@(dataForm: Form[CalculatorPaymentTodayForm], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(
+        dataForm: Form[CalculatorPaymentTodayForm],
+        loggedIn: Boolean = false)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
 
 @selfservicetimetopay.main(
   title = Messages("ssttp.calculator.form.payment_today.title"),
   loggedIn = loggedIn
 ){
-  <a class="link-back" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
+  <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
     @if(dataForm.hasErrors){
         @helpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm)
     }

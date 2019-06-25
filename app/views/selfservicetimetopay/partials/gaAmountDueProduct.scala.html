@@ -15,13 +15,15 @@
  *@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@(debit:Debit, position:Int)(implicit messages: play.api.i18n.Messages)
+@import config.AppConfig
+@(debit:Debit, position:Int)(implicit messages: play.api.i18n.Messages, appConfig: AppConfig)
+
 @import java.time.format.DateTimeFormatter
 @import java.util.Locale
 @import selfservicetimetopay.partials.charge_code
 @id = @{debit.originCode.getOrElse("USER_AMOUNT_DUE")}
 @name = @{debit.originCode.fold[String]("User Entered Amount Due"){ c => charge_code(c, debit.taxYearEnd).body.trim}}
-@dueDateDimension = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.dueDateDimension}
+@dueDateDimension = {@appConfig.dueDateDimension}
 
 @defining(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)) { formatter =>
     ga('ec:addProduct', {'id': '@id',

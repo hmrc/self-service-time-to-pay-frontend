@@ -19,13 +19,25 @@ Time To Pay Instalment Summary Pretty Print Page
 @param schedule CalculatorPaymentSchedule The results data to display
 *@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule,Debit}
-@(debits:Seq[Debit],initialPayment:BigDecimal, schedule: CalculatorPaymentSchedule,signedIn: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+@(
+        debits:Seq[Debit],
+        initialPayment:BigDecimal,
+        schedule: CalculatorPaymentSchedule,
+        signedIn: Boolean = true)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
+
 @import selfservicetimetopay.partials.gaDoCheckout
 @import selfservicetimetopay.helpers.{alert, message_list}
 @import selfservicetimetopay.helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.partials._
+
+
 @gaCheckoutCode = {
     @gaDoCheckout(debits = debits,
         step = 1,
@@ -42,7 +54,7 @@ Time To Pay Instalment Summary Pretty Print Page
         googleAnalyticsCalls = Seq(gaCheckoutCode.body.seq),
         loggedIn = signedIn
     ) {
-       <a class="link-back" href="@routes.ArrangementController.getChangeSchedulePaymentDay()">@Messages("ssttp.calculator.form.back")</a>
+       <a class="link-back" href="@ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()">@Messages("ssttp.calculator.form.back")</a>
 
         <h1 class="heading-large">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
 
@@ -50,7 +62,7 @@ Time To Pay Instalment Summary Pretty Print Page
     <div></div>
         @monthly_instalments_date(schedule.getMonthlyInstalmentDate)
 
-            @helpers.form(routes.ArrangementController.submitInstalmentSummary()) {
+            @helpers.form(ssttparrangement.routes.ArrangementController.submitInstalmentSummary()) {
                 @submit() {
                     @Messages("ssttp.arrangement.instalment-summary.submit")
                 }

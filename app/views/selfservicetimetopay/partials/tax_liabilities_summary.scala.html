@@ -19,7 +19,7 @@
 @import selfservicetimetopay.partials.charge_code
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import uk.gov.hmrc.play.language.LanguageUtils.Dates
-@import uk.gov.hmrc.selfservicetimetopay.util.DateHelper.turnJavaTimeToJoda
+@import util.DateHelper.turnJavaTimeToJoda
 @(debits: Seq[Debit])(implicit messages: play.api.i18n.Messages, request: Request[_])
 <div class="panel panel-border-narrow panel-tabular-data">
     <div class="tabular-data__divider--full-width">

@@ -14,11 +14,15 @@
  * limitations under the License.
  *@
 
-@import selfservicetimetopay.helpers.{highlight, message_list}
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@import selfservicetimetopay.partials.tax_liabilities_summary
-@(signedIn: Boolean = false, isWelsh: Boolean)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(
+        signedIn: Boolean = false,
+        isWelsh: Boolean)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.over-ten-thosand.p1"),
     loggedIn = signedIn

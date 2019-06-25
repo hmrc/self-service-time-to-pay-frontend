@@ -18,17 +18,14 @@ package uk.gov.hmrc.selfservicetimetopay
 
 import java.time.LocalDate
 
+import cats.arrow.Strong
 import play.api.libs.json.{JsValue, Json, Reads}
-import play.api.test.FakeRequest
+import token.TTPSessionId
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.play.frontend.auth._
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.ConfidenceLevel.L200
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.CredentialStrength.Strong
-import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, _}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 import scala.concurrent.Future
 import scala.io.Source
@@ -200,23 +197,6 @@ package object resources {
   val bankDetails = BankDetails(Some("123456"), Some("12345678"), Some("bank-name"), None, Some("Cersei Lannister"), None)
   val ttpSubmissionWithBankDetails = ttpSubmission.copy(bankDetails = Some(bankDetails))
   val directDebitBank = DirectDebitBank("", Seq.empty)
-
-  val authorisedUser = Authority("someUserId", Accounts(sa = Some(SaAccount("", SaUtr("1234567890")))), None, None, Strong, L200, None, None, None, "")
-  val authorisedUserNoSA = Authority("someUserId", Accounts(), None, None, Strong, L200, None, None, None, "")
-
-  val loggedInUser = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L300, "")
-  val loggedInUserUnderConfidenceThreshold = LoggedInUser("foo/123456789", None, None, None, CredentialStrength.Weak, ConfidenceLevel.L50, "")
-  val saAccount = SaAccount(link = "link", utr = SaUtr("1233"))
-  val authContext = AuthContext(
-    user           = loggedInUser,
-    principal      = Principal(
-      name     = Some("usere"),
-      accounts = Accounts(sa = Some(saAccount))),
-    attorney       = None,
-    userDetailsUri = None,
-    enrolmentsUri  = None,
-    idsUri         = None
-  )
 
   val goodSession = Seq(SessionKeys.userId -> "someUserId",
     TTPSessionId.newTTPSession(),

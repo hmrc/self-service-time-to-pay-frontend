@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.service
 import java.time.LocalDate
 import java.time.LocalDate.{of => d}
 
+import bankholidays.WorkingDaysService
 import org.scalatest.Inspectors
 import uk.gov.hmrc.play.test.UnitSpec
 

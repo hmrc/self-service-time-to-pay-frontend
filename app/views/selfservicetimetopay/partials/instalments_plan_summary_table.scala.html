@@ -16,11 +16,17 @@
 
 @import selfservicetimetopay.partials.currency
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule,ArrangementDayOfMonth,Debit}
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.partials._
-@(paymentSchedule:CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages)
+
+
+@(
+        paymentSchedule:CalculatorPaymentSchedule)(implicit
+        messages: play.api.i18n.Messages,
+        appConfig: config.AppConfig
+)
 
 @if(paymentSchedule.initialPayment > 0){@upfront_payment(paymentSchedule)}
+
 <div id="id_payment" class="margin-top-40">
     <dl class="app-check-your-answers app-check-your-answers--long">
             <div class="app-check-your-answers__contents">
@@ -34,7 +40,7 @@
 
               <dd class="app-check-your-answers__change no_bottom_line" onclick="change()">
 
-                  <a href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
+                  <a href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
                 </dd>
             </div>
 

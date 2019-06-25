@@ -17,14 +17,18 @@
 @import selfservicetimetopay.helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.partials._
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentSchedule}
 
-@(durationForm: Form[CalculatorDuration],
-    currentChosenMonth: Int = 2,
-    monthsToSchedule: Map[Int, CalculatorPaymentSchedule],
-    redirectCall: Call, loggedIn: Boolean,
-    isAuthJourney: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(
+      durationForm: Form[CalculatorDuration],
+      currentChosenMonth: Int = 2,
+      monthsToSchedule: Map[Int, CalculatorPaymentSchedule],
+      redirectCall: Call, loggedIn: Boolean,
+      isAuthJourney: Boolean = true)(implicit
+      messages: play.api.i18n.Messages,
+      request: Request[_],
+      appConfig: config.AppConfig
+)
 
 
 
@@ -34,8 +38,8 @@
     welshToggleEnabled = isAuthJourney,
     navTitle = if(!isAuthJourney)"ssttp.payment-plan-calculator.title" else "ssttp.common.title"
 ) {
-    <a class="link-back" onclick="back()" href="@if(isAuthJourney) {@routes.CalculatorController.getPayTodayQuestion()} else {
-        @routes.CalculatorController.getAmountDue()
+    <a class="link-back" onclick="back()" href="@if(isAuthJourney) {@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()} else {
+        @ssttpcalculator.routes.CalculatorController.getAmountDue()
     }">@Messages("ssttp.calculator.form.back")</a>
     <fieldset>
         <legend>

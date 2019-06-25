@@ -17,10 +17,19 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, ArrangementDirectDebit, Debit}
 @import selfservicetimetopay.helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.partials.{direct_debit_details,gaDoCheckout, currency}
 @import uk.gov.hmrc.play.config.AssetsConfig
-@(debits: Seq[Debit], schedule: CalculatorPaymentSchedule, directDebit: ArrangementDirectDebit, loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+
+@(
+        debits: Seq[Debit],
+        schedule: CalculatorPaymentSchedule,
+        directDebit: ArrangementDirectDebit,
+        loggedIn: Boolean = false)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
 
 @gaCheckoutCode = {
 @gaDoCheckout(debits = debits,
@@ -38,7 +47,7 @@
     googleAnalyticsCalls = Seq(gaCheckoutCode.body),
     loggedIn = loggedIn
 ) {
-    <a class="link-back" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a>
+    <a class="link-back" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a>
 
     <h1 class="heading-large">@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
 
@@ -59,7 +68,7 @@
                     <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.5")</p>
             </div>
         </details>
-        @helpers.form(routes.ArrangementController.submit(), 'class -> "group") {
+        @helpers.form(ssttparrangement.routes.ArrangementController.submit(), 'class -> "group") {
             @submit() {
                 @Messages("ssttp.arrangement.direct-debit.confirmation.confirm-payment")
             }

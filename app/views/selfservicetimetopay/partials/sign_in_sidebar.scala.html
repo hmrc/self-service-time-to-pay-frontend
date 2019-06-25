@@ -15,13 +15,12 @@
  *@
 
 @()(implicit messages: play.api.i18n.Messages)
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 <div class="section--blue-top side-nav--mobile-visible">
     <h3 class="heading-small">@Messages("ssttp.sidebar.sign-in.title")</h3>
     <p class="font-xsmall">@Messages("ssttp.sidebar.sign-in.intro")</p>
     <nav class="service_info__navigation" role="navigation" aria-labelledby="parent-subsection">
         <ul>
-            <li class="font-xsmall"><a class="trackedSignInSidebar" href="@routes.ArrangementController.determineEligibility()">@Messages("ssttp.sidebar.sign-in.link")</a></li>
+            <li class="font-xsmall"><a class="trackedSignInSidebar" href="@ssttparrangement.routes.ArrangementController.determineEligibility()">@Messages("ssttp.sidebar.sign-in.link")</a></li>
         </ul>
     </nav>
 </div>

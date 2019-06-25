@@ -14,15 +14,15 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import uk.gov.hmrc.selfservicetimetopay.testonly.{routes => testonlyroutes}
-
 @(
         playSession: Map[String, String],
         cache: List[(String, String)],
         authority: String,
-        hcHeaders: Seq[(String, String)]
-)(implicit messages: play.api.i18n.Messages, request: Request[_])
+        hcHeaders: Seq[(String, String)])(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
 
 <script>
 </script>
@@ -38,12 +38,12 @@
     <p>
         <h2>Quick links</h2>
         <ul>
-            <li><a class="link" href="@testonlyroutes.InspectorController.clearPlaySession()">clear play session</a></li>
-            <li><a class="link" href="@testonlyroutes.TestUsersController.testUsers()">create user and log in</a></li>
-            <li><a class="link" href="@testonlyroutes.TestOnlyController.config()">show config of 'frontend' microservice</a></li>
-            <li><a class="link" href="@testonlyroutes.TestOnlyController.getTaxpayer()">show taxpayer</a></li>
-            <li><a class="link" href="@testonlyroutes.TestOnlyController.taxpayerConfig()">show config of 'taxpayer' microservice</a></li>
-            <li><a class="link" href="@testonlyroutes.TestOnlyController.taxpayerConnectorsConfig()">show connectors config of 'taxpayer' microservice</a></li>
+            <li><a class="link" href="@testonly.routes.InspectorController.clearPlaySession()">clear play session</a></li>
+            <li><a class="link" href="@testonly.routes.TestUsersController.testUsers()">create user and log in</a></li>
+            <li><a class="link" href="@testonly.routes.TestOnlyController.config()">show config of 'frontend' microservice</a></li>
+            <li><a class="link" href="@testonly.routes.TestOnlyController.getTaxpayer()">show taxpayer</a></li>
+            <li><a class="link" href="@testonly.routes.TestOnlyController.taxpayerConfig()">show config of 'taxpayer' microservice</a></li>
+            <li><a class="link" href="@testonly.routes.TestOnlyController.taxpayerConnectorsConfig()">show connectors config of 'taxpayer' microservice</a></li>
         </ul>
     </p>
 
@@ -51,26 +51,26 @@
         <h2>Pages</h2>
         <ul>
 
-            <li><a class="link" href="@routes.SelfServiceTimeToPayController.start()">@{routes.SelfServiceTimeToPayController.start().path()}</a></li>
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.start()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.start().path()}</a></li>
 
-            <li><a class="link" href="@routes.CalculatorController.getPaymentSummary()">@{routes.CalculatorController.getPaymentSummary().path()}</a></li>
-            <li><a class="link" href="@routes.CalculatorController.getPayTodayQuestion()">@{routes.CalculatorController.getPayTodayQuestion().path()}</a></li>
-            <li><a class="link" href="@routes.CalculatorController.getPaymentToday()">@{routes.CalculatorController.getPaymentToday().path()}</a></li>
-            <li><a class="link" href="@routes.CalculatorController.getTaxLiabilities()">@{routes.CalculatorController.getTaxLiabilities().path()}</a></li>
-            <li><a class="link" href="@routes.ArrangementController.determineEligibility()>@{routes.ArrangementController.determineEligibility().path()}</a></li>
+            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPaymentSummary()">@{ssttpcalculator.routes.CalculatorController.getPaymentSummary().path()}</a></li>
+            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@{ssttpcalculator.routes.CalculatorController.getPayTodayQuestion().path()}</a></li>
+            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">@{ssttpcalculator.routes.CalculatorController.getPaymentToday().path()}</a></li>
+            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getTaxLiabilities()">@{ssttpcalculator.routes.CalculatorController.getTaxLiabilities().path()}</a></li>
+            <li><a class="link" href="@ssttparrangement.routes.ArrangementController.determineEligibility()>@{ssttparrangement.routes.ArrangementController.determineEligibility().path()}</a></li>
 
-            <li><a class="link" href="@routes.ArrangementController.getInstalmentSummary()">@{routes.ArrangementController.getInstalmentSummary().path()} </a></li>
-            <li><a class="link" href="@routes.DirectDebitController.getDirectDebit()">@{routes.DirectDebitController.getDirectDebit().path()}</a></li>
-            <li><a class="link" href="@routes.DirectDebitController.getDirectDebitConfirmation()">@{routes.DirectDebitController.getDirectDebitConfirmation().path()}</a></li>
-            <li><a class="link" href="@routes.DirectDebitController.getDirectDebitAssistance()">@{routes.DirectDebitController.getDirectDebitAssistance().path()}</a></li>
-            <li><a class="link" href="@routes.DirectDebitController.getDirectDebitError()">@{routes.DirectDebitController.getDirectDebitError().path()}</a></li>
-            <li><a class="link" href="@routes.ArrangementController.applicationComplete()">@{routes.ArrangementController.applicationComplete().path()}</a></li>
+            <li><a class="link" href="@ssttparrangement.routes.ArrangementController.getInstalmentSummary()">@{ssttparrangement.routes.ArrangementController.getInstalmentSummary().path()} </a></li>
+            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebit().path()}</a></li>
+            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation().path()}</a></li>
+            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance().path()}</a></li>
+            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError().path()}</a></li>
+            <li><a class="link" href="@ssttparrangement.routes.ArrangementController.applicationComplete()">@{ssttparrangement.routes.ArrangementController.applicationComplete().path()}</a></li>
 
-            <li><a class="link" href="@routes.SelfServiceTimeToPayController.signOut(None)">@{routes.SelfServiceTimeToPayController.signOut(None).path()}</a></li>
-            <li><a class="link" href="@routes.SelfServiceTimeToPayController.getYouNeedToFile()">@{routes.SelfServiceTimeToPayController.getYouNeedToFile().path()}</a></li>
-            <li><a class="link" href="@routes.SelfServiceTimeToPayController.getTtpCallUs()">@{routes.SelfServiceTimeToPayController.getTtpCallUs().path()}</a></li>
-            <li><a class="link" href="@routes.SelfServiceTimeToPayController.getNotSaEnrolled()">@{routes.SelfServiceTimeToPayController.getNotSaEnrolled().path()}</a></li>
-            <li><a class="link" href="@routes.SelfServiceTimeToPayController.getDebtTooLarge()">@{routes.SelfServiceTimeToPayController.getDebtTooLarge().path()}</a></li>
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)">@{ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).path()}</a></li>
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile().path()}</a></li>
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs().path()}</a></li>
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled().path()}</a></li>
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge().path()}</a></li>
         </ul>
     </p>
 

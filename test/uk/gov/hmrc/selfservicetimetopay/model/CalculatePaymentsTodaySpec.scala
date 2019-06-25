@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.model
 
 import org.scalatestplus.play.PlaySpec
-import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorPaymentTodayForm
+import ssttpcalculator.CalculatorPaymentTodayForm
 
 class CalculatePaymentsTodaySpec extends PlaySpec {
 

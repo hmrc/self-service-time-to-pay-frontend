@@ -14,12 +14,11 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.forms.CalculatorPaymentTodayForm
-@import uk.gov.hmrc.selfservicetimetopay.controllers._
+@import ssttpcalculator.CalculatorPaymentTodayForm
 
 @(dataForm: Form[CalculatorPaymentTodayForm])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
-<form action="@routes.CalculatorController.submitPaymentToday()" method="post">
+<form action="@ssttpcalculator.routes.CalculatorController.submitPaymentToday()" method="post">
     @helper.CSRF.formField
     <label for="amount" class="@if(dataForm.hasErrors){form-field--error}">
       @if(dataForm.hasErrors){

@@ -1,0 +1,30 @@
+Upgrading play to 2.6
+
+* Filter
+    //We want to replace SessionTimeoutFilter with SessionTimeoutFilterWrapper
+    //which omits application of this filter for 'TestUsersController.logIn()' functionality.
+    val t = defaultFrontendFilters.map {
+      case s: SessionTimeoutFilter => new SessionTimeoutFilterWrapper(s)
+      case x                       => x
+    }
+
+
+* pawelilze AppConfig
+
+
+* removed that logic, is it ok?
+
+  override implicit def hc(implicit request: Request[_]): HeaderCarrier = {
+    request.maybeTTPSessionId.fold(super.hc(request)) { ttpSession =>
+      super.hc(request).withExtraHeaders(ttpSessionId -> ttpSession.v)
+    }
+  }
+
+
+*
+  //TODO: move it to some auth service (from FrontendController)
+  def isSignedIn(implicit hc: HeaderCarrier): Boolean = hc.authorization.isDefined
+
+* clean the specs
+* provide proper ItSpec with wiremock responses
+

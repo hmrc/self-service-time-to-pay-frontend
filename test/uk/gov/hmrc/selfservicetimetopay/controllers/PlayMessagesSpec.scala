@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
 import play.api.Application
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 
@@ -27,5 +27,6 @@ trait PlayMessagesSpec extends PlaySpec with OneAppPerSuite {
     disable[com.kenshoo.play.metrics.PlayModule].build()
 
   val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  val i18nSupport: I18nSupport = app.injector.instanceOf[I18nSupport]
   def getMessages(r: FakeRequest[_]): Messages = messagesApi.preferred(r)
 }

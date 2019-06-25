@@ -15,15 +15,22 @@
  *@
 
 @import selfservicetimetopay.helpers.{highlight, message_list}
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import selfservicetimetopay.partials.tax_liabilities_summary
-@(signedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+
+@(
+        signedIn: Boolean = false)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.arrangement.declaration.h1"),
     loggedIn = signedIn
 ) {
-   <a class="back-link" href="@routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.declaration.back")</a>
+   <a class="back-link" href="@ssttparrangement.routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.declaration.back")</a>
 
     <h1>@Messages("ssttp.arrangement.declaration.h1")</h1>
     <p>@Messages("ssttp.arrangement.declaration.cancel-if")</p>
@@ -37,5 +44,5 @@
     <p>@Messages("ssttp.arrangement.declaration.warning.p3")</p>
     <h2>@Messages("ssttp.arrangement.declaration.agreement.h1")</h2>
     <p>@Messages("ssttp.arrangement.declaration.agreement.p1")</p>
-    <a class="button" href="@routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.arrangement.declaration.agreement.confirm")</a>
+    <a class="button" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.arrangement.declaration.agreement.confirm")</a>
 }

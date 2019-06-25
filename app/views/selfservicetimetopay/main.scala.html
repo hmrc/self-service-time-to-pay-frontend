@@ -26,9 +26,13 @@
         loggedIn:Boolean = false,
         welshToggleEnabled:Boolean = true,
         hasUserPanel: Boolean = false,
-        navTitle: String = "ssttp.common.title")(mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
+        navTitle: String = "ssttp.common.title"
+)(
+        mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_], appConfig: config.AppConfig)
+
 @import uk.gov.hmrc.play.views.html.layouts
-@import uk.gov.hmrc.selfservicetimetopay.controllers.{routes => localRoutes}
+
+
 @sidebar = {
     @if(sidebarLinks.isDefined) {
         @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
@@ -41,7 +45,7 @@
     @if(scriptElem.isDefined){@scriptElem}
 }
 @links = {@if(loggedIn){
-    <li><a href="@localRoutes.SelfServiceTimeToPayController.signOut(None)">@Messages("ssttp.common.sign-out")</a></li>
+    <li><a href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)">@Messages("ssttp.common.sign-out")</a></li>
 }else{
     @HtmlFormat.empty
 }}
@@ -51,7 +55,7 @@
 }
 
 
-@govuk_wrapper(appConfig = uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig,
+@govuk_wrapper(
     title = title,
     mainClass = mainClass,
     bodyClasses = bodyClasses,

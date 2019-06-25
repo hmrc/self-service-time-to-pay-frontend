@@ -25,7 +25,7 @@ trait MicroService {
     import scoverage.ScoverageKeys
     Seq(
       // Semicolon-separated list of regexs matching classes to exclude
-      ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;.*AuthService.*;app.Routes.*;prod.*;testOnlyDoNotUseInProd.*;models\\.data\\..*;views.html.*;uk.gov.hmrc.BuildInfo;app.*;prod.*;config.*;uk.gov.hmrc.selfservicetimetopay.auth.*;uk.gov.hmrc.selfservicetimetopay.testonly.*;uk.gov.hmrc.selfservicetimetopay.models",
+      ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;.*AuthService.*;app.Routes.*;prod.*;testOnlyDoNotUseInProd.*;models\\.data\\..*;views.html.*;uk.gov.hmrc.BuildInfo;app.*;prod.*;config.*;uk.gov.hmrc.selfservicetimetopay.auth.*;testonly.testonly.*;uk.gov.hmrc.selfservicetimetopay.models",
       ScoverageKeys.coverageMinimum := 90,
       ScoverageKeys.coverageFailOnMinimum := false,
       ScoverageKeys.coverageHighlighting := true
@@ -53,8 +53,8 @@ trait MicroService {
       fork in Test := false,
       evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
       routesImport ++= Seq(
-        "uk.gov.hmrc.selfservicetimetopay.auth.Token",
-        "uk.gov.hmrc.selfservicetimetopay.auth.Token._"
+//        "uk.gov.hmrc.selfservicetimetopay.auth.Token",
+//        "uk.gov.hmrc.selfservicetimetopay.auth.Token._"
       )
     )
     .settings(scalariformSettings: _*)

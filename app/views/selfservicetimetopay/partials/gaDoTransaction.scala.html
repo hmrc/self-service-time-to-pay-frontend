@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import selfservicetimetopay.partials.gaAmountDueProduct
 @import java.time.LocalDate
+@import config.AppConfig
 @(
     debits:Seq[Debit],
     id:String,
@@ -27,13 +28,13 @@
     regularPayment: BigDecimal,
     step: Int,
     paymentDay: Int
-)(implicit messages: play.api.i18n.Messages)
+)(implicit messages: play.api.i18n.Messages, appConfig: AppConfig)
 
-@initialPaymentMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.initialPaymentMetric}
-@interestMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.interestMetric}
-@durationMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.durationMetric}
-@regularPaymentMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.regularPaymentMetric}
-@monthlyDueDateMetric = {@uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig.monthlyDueDateMetric}
+@initialPaymentMetric = {@appConfig.initialPaymentMetric}
+@interestMetric = {@appConfig.interestMetric}
+@durationMetric = {@appConfig.durationMetric}
+@regularPaymentMetric = {@appConfig.regularPaymentMetric}
+@monthlyDueDateMetric = {@appConfig.monthlyDueDateMetric}
 
 @Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
 

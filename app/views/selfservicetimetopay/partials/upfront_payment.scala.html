@@ -14,9 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(paymentSchedule:CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages)
+
+
+@(
+        paymentSchedule:CalculatorPaymentSchedule)(implicit
+        messages: play.api.i18n.Messages,
+        appConfig: config.AppConfig
+)
 
 <div id="id_payment" class="margin-top-40">
     <dl class="app-check-your-answers app-check-your-answers--long">
@@ -30,7 +35,7 @@
                 £@paymentSchedule.initialPayment
             </dd>
             <dd class="app-check-your-answers__change">
-                <a href="@routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.change") <span class="visually-hidden">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</span></a>
+                <a href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.change") <span class="visually-hidden">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</span></a>
             </dd>
         </div>
     </dl>

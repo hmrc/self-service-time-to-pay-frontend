@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.forms
 import org.scalatestplus.play.PlaySpec
 import play.api.data.FormError
 import play.api.libs.json.Json
+import ssttpcalculator.CalculatorForm
 
 class CalculatorFormSpec extends PlaySpec {
 

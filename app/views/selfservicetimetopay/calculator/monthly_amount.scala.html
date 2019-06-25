@@ -14,46 +14,40 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.forms.MonthlyAmountForm
-@import uk.gov.hmrc.selfservicetimetopay.controllers._
 @import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.helpers.forms.submit
+@import ssttpcalculator.MonthlyAmountForm
 
 
-@(dataForm: Form[MonthlyAmountForm],
+@(
+        dataForm: Form[MonthlyAmountForm],
         upperBound: String,
-        lowerBound: String,
-        loggedIn: Boolean,
-        isAuthJourney: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
+        lowerBound: String)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
 
-    @selfservicetimetopay.main(
-        title = Messages("ssttp.monthy.amount.title"),
-        loggedIn = loggedIn,
-        welshToggleEnabled = isAuthJourney,
-        navTitle = if(!isAuthJourney) "ssttp.payment-plan-calculator.title" else "ssttp.common.title"
-    ) {
+@selfservicetimetopay.main(
+    title = Messages("ssttp.monthy.amount.title")
+){
 
-        <a class="link-back" onclick="back()" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
-        <fieldset>
-            <legend>
-                <h1 class="heading-large margin-bottom-30">@Messages("ssttp.monthy.amount.title")</h1>
-            </legend>
+    <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
 
-            @if(dataForm.hasErrors) {
-                @helpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm)
-            }
-
-            <p>@Messages("ssttp.monthly.amount.hint", lowerBound, upperBound)</p>
-
-            @helpers.form(action = routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group") {
-                @helpers.input(
-                    dataForm("amount"),
-                    '_inputClass -> "form-control-1-4",
-                    '_label -> "£"
-                )
-                @submit() {
-                    @Messages("ssttp.calculator.form.continue")
-                }
-            }
-        </fieldset>
+    @if(dataForm.hasErrors){
+    @helpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
     }
+
+    <h1>@Messages("ssttp.monthy.amount.title")</h1>
+
+    <p>@Messages("ssttp.monthly.amount.hint", lowerBound, upperBound)</p>
+
+    @helpers.form(action = ssttpcalculator.routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group"){
+        @helpers.input(
+            dataForm("amount"),
+            '_inputClass -> "form-control-1-4",
+            '_label -> "£"
+        )
+    @submit(){@Messages("ssttp.calculator.form.continue")}
+    }
+}

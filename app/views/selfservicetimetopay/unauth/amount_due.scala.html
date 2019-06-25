@@ -14,20 +14,26 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorSinglePayment
-@import uk.gov.hmrc.selfservicetimetopay.controllers._
 @import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.helpers.forms.submit
-@(loggedIn: Boolean = false,dataForm: Form[CalculatorSinglePayment])(implicit messages: play.api.i18n.Messages, request: Request[_])
-@import selfservicetimetopay.helpers.message_list
+@import config.AppConfig
+
+@(
+        loggedIn: Boolean = false,
+        dataForm: Form[CalculatorSinglePayment])(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: AppConfig
+)
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.amount-due.start.title"),
     loggedIn = loggedIn,
     welshToggleEnabled =false,
     navTitle = "ssttp.payment-plan-calculator.title"){
 
-    <a class="link-back" href="@routes.CalculatorController.getPaymentPlanCalculator()">@Messages("ssttp.calculator.amount-due.start.back")</a>
+    <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getPaymentPlanCalculator()">@Messages("ssttp.calculator.amount-due.start.back")</a>
     @if(dataForm.hasErrors){
         @helpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
     }
@@ -35,7 +41,7 @@
         <h1>@Messages("ssttp.calculator.amount-due.start.title")</h1>
     </header>
 
-    @helpers.form(action = routes.CalculatorController.submitAmountDue(),
+    @helpers.form(action = ssttpcalculator.routes.CalculatorController.submitAmountDue(),
         'id -> "amountDue", 'class -> "group"){
         @helpers.input(
             dataForm("amount"),

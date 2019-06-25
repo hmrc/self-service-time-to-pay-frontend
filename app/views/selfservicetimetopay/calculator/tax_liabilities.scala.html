@@ -19,15 +19,23 @@
 @import selfservicetimetopay.partials._
 @import java.time.format.DateTimeFormatter
 @import java.util.Locale
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@(debits: Seq[Debit], loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+
+@(
+        debits: Seq[Debit],
+        loggedIn: Boolean = false)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
 
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.self-assessment-account-summary-page.title"),
     loggedIn = loggedIn
 ) {
-    <a class="link-back" href="@routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.calculator.self-assessment-account-summary-page.button-back")</a>
+    <a class="link-back" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.calculator.self-assessment-account-summary-page.button-back")</a>
 
         <h1 class="heading-large">@Messages("ssttp.calculator.self-assessment-account-summary-page.title")</h1>
 
@@ -38,7 +46,7 @@
             @tax_liabilities_summary(debits)
         </details>
         <p>
-        @helpers.form(routes.CalculatorController.getPayTodayQuestion()) {
+        @helpers.form(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()) {
             @submit() {
                 @Messages("ssttp.calculator.self-assessment-account-summary-page.button-continue")
             }

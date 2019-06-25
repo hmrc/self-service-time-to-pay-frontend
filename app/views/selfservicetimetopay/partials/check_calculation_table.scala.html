@@ -14,23 +14,23 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import selfservicetimetopay.partials.currency
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
+
+
 @(schedule:CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages)
 <table>
     <tbody>
         <tr>
             <td><p class="bold">@Messages("ssttp.calculator.check-calculation.table.total.due")</p></td>
             <td>@currency(schedule.totalPayable)</td>
-            <td><a  href="@routes.CalculatorController.getAmountDue()">@Messages("ssttp.calculator.check-calculation.table.total.due.change")</a></td>
+            <td><a  href="@ssttpcalculator.routes.CalculatorController.getAmountDue()">@Messages("ssttp.calculator.check-calculation.table.total.due.change")</a></td>
         </tr>
         <tr>
             <td><p class="bold">@Messages("ssttp.calculator.check-calculation.table.monthly-instalments")</p>
                 <p class="small">@Messages("ssttp.calculator.check-calculation.table.monthly-instalments.hint",schedule.instalments.length)</p></td>
             <td>@currency(schedule.getMonthlyInstalment)</td>
-            <td><a  href="@routes.CalculatorController.getCalculateInstalmentsUnAuth()">@Messages("ssttp.calculator.check-calculation.table.monthly-instalments.change")</a></td>
+            <td><a  href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalmentsUnAuth()">@Messages("ssttp.calculator.check-calculation.table.monthly-instalments.change")</a></td>
         </tr>
     </tbody>
 </table>

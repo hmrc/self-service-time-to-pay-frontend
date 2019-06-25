@@ -18,11 +18,9 @@ package uk.gov.hmrc.selfservicetimetopay
 
 import java.time.LocalDate
 
-import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
-import uk.gov.hmrc.selfservicetimetopay.auth.{Token, TokenData}
+import token.{TTPSessionId, Token, TokenData}
 import uk.gov.hmrc.selfservicetimetopay.models.{NotLoggedInJourneyInfo, _}
-import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 package object modelsFormat {
   implicit val localDateFormatter = new Format[LocalDate] {

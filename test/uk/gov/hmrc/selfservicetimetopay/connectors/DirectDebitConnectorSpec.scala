@@ -24,10 +24,11 @@ import play.api.Application
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -35,24 +36,23 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with GuiceOneServerPerSuite with DefaultRunModeAppNameConfig {
+class DirectDebitConnectorSpec extends ConnectorSpec with GuiceOneServerPerSuite {
 
   implicit override lazy val app: Application = new GuiceApplicationBuilder().
     disable[com.kenshoo.play.metrics.PlayModule].build()
 
-  object DirectDebitConnectorTest extends DirectDebitConnector with ServicesConfig with DefaultRunModeAppNameConfig {
-    lazy val directDebitURL: String = WiremockHelper.url
-    lazy val serviceURL = "direct-debit"
-    lazy val http: WSHttp.type = WSHttp
-  }
+  val DirectDebitConnectorTest = new DirectDebitConnector(
+    servicesConfig = mock[ServicesConfig],
+    httpClient     = mock[HttpClient]
+  )
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-  object testConnector extends DirectDebitConnector {
-    val directDebitURL = ""
-    val http: WSHttp = mock[WSHttp]
-    val serviceURL = "direct-debit"
-  }
+  private val httpClient: HttpClient = mock[HttpClient]
+  val testConnector = new DirectDebitConnector(
+    servicesConfig = mock[ServicesConfig],
+    httpClient     = httpClient
+  )
 
   "Calling getBanksList" should {
     val validationURL = urlPathMatching("/direct-debit/.*/banks")
@@ -133,7 +133,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with ServicesConfig with Gu
     "return DirectDebitInstructionPaymentPlan" in {
       val jsonResponse = Json.fromJson[DirectDebitInstructionPaymentPlan](createPaymentPlanResponseJSON).get
 
-      when(testConnector.http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](any(), any(), any())(any(), any(), any(), any()))
+      when(httpClient.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
       val saUtr = SaUtr("test")

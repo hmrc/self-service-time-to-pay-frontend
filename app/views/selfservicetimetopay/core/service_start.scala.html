@@ -14,11 +14,19 @@
  * limitations under the License.
  *@
 
-@(loggedIn: Boolean = false)(implicit messages: play.api.i18n.Messages, request: Request[_])
 @import selfservicetimetopay.helpers.{alert, message_list}
 @import selfservicetimetopay.helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
+
+
+@(
+    loggedIn: Boolean = false)(implicit
+    messages: play.api.i18n.Messages,
+    request: Request[_],
+    appConfig: config.AppConfig
+)
+
+
 @selfservicetimetopay.main(
     title = Messages("ssttp.landing.title"),
     loggedIn = loggedIn,
@@ -35,7 +43,7 @@
     <p class="subsection">
         @message_list(Some("bullets"), "ssttp.landing.before-you-start.list.")
     </p>
-    @helpers.form(routes.SelfServiceTimeToPayController.submit(), 'class -> "group",'id -> "start") {
+    @helpers.form(ssttpeligibility.routes.SelfServiceTimeToPayController.submit(), 'class -> "group",'id -> "start") {
        @submit('_buttonClass -> "button--get-started"){@Messages("ssttp.landing.start-button.label")}
     }
 }

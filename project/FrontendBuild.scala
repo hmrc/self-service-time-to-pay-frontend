@@ -22,13 +22,17 @@ private object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     ws,
-    "uk.gov.hmrc" %% "frontend-bootstrap" %  "12.4.0",
+    "uk.gov.hmrc" %% "govuk-template" % "5.26.0-play-25",
+    "uk.gov.hmrc" %% "play-ui" % "7.40.0-play-25",
+    "uk.gov.hmrc" %% "bootstrap-play-25" % "4.3.0",
+
     "uk.gov.hmrc" %% "play-partials" %  "6.5.0",
     "uk.gov.hmrc" %% "domain" %  "5.2.0",
-    "uk.gov.hmrc" %% "http-caching-client" %  "8.0.0",
     "uk.gov.hmrc" %% "time" % "3.1.0",
+    "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0",
     "uk.gov.hmrc" %% "play-language" % "3.4.0",
-    "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0"
+
+  "uk.gov.hmrc" %% "http-caching-client" % "8.4.0-play-25" //8.4.0-play-25, 8.4.0-play-26
   )
 
   trait TestDependencies {

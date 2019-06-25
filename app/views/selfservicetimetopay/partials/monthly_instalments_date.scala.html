@@ -29,16 +29,24 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *@
+
 @import selfservicetimetopay.partials.currency
-@import uk.gov.hmrc.selfservicetimetopay.controllers.routes
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(dayOfMonth: Int)(implicit messages: play.api.i18n.Messages)
+
+
+@(
+    dayOfMonth: Int)(implicit
+    messages: play.api.i18n.Messages,
+    appConfig: config.AppConfig
+)
+
+
 <table>
     <tbody>
         <tr>
             <td><p class="bold">@Messages("ssttp.arrangement.instalment-summary.payment-date.title")</p></td>
             <td>@dayOfMonth @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")</td>
-            <td><a  href="@routes.ArrangementController.getChangeSchedulePaymentDay()">@Messages("ssttp.arrangement.instalment-summary.payment-date.change")</a></td>
+            <td><a  href="@ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()">@Messages("ssttp.arrangement.instalment-summary.payment-date.change")</a></td>
         </tr>
     </tbody>
 </table>

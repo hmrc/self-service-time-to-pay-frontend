@@ -21,22 +21,27 @@ import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.SessionKeys
+import ssttpeligibility.SelfServiceTimeToPayController
+import sttpsubmission.SubmissionService
 import uk.gov.hmrc.selfservicetimetopay._
-import uk.gov.hmrc.selfservicetimetopay.connectors.SessionCacheConnector
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
+import _root_.controllers.action._
+import config.AppConfig
 
 import scala.concurrent.Future
 
 class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
-  val mockSessionCache: SessionCacheConnector = mock[SessionCacheConnector]
+  val mockSessionCache: SubmissionService = mock[SubmissionService]
+  implicit val appConfig: AppConfig = mock[AppConfig]
 
   "SelfServiceTimeToPayController" should {
-    val controller = new SelfServiceTimeToPayController(messagesApi) {
-      override lazy val sessionCache: SessionCacheConnector = mockSessionCache
-    }
+
+    val controller = new SelfServiceTimeToPayController(
+      i18nSupport       = i18nSupport,
+      submissionService = mockSessionCache,
+      as                = mock[Actions]
+    )
 
     "return 200 and display the service start page" in {
       when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
@@ -53,7 +58,7 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
 
       status(result) mustBe SEE_OTHER
 
-      controllers.routes.ArrangementController.determineEligibility().url must endWith(redirectLocation(result).get)
+      ssttparrangement.routes.ArrangementController.determineEligibility().url must endWith(redirectLocation(result).get)
     }
 
     "return 200 and display call us page successfully" in {
