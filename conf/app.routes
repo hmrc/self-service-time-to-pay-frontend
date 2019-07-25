@@ -13,15 +13,15 @@ GET         /calculator/payment-today-question                            @uk.go
 POST        /calculator/payment-today-question                            @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPayTodayQuestion()
 GET         /calculator/payment-today                                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentToday()
 POST        /calculator/payment-today                                     @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitPaymentToday()
-GET         /calculator/instalments                                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalments()
-POST        /calculator/instalments                                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
+GET         /calculator/instalments                                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalmentsOld()
+POST        /calculator/instalments                                       @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsOld()
 POST        /calculator/sign-in                                           @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitSignIn()
 GET         /calculator/tax-liabilities                                   @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getTaxLiabilities()
 
 GET         /calculator/monthly-payment-amount                            @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getMonthlyPayment()
 POST        /calculator/monthly-payment-amount                            @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitMonthlyPayment()
-GET         /calculator/instalments/ab                                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalmentsAB()
-POST        /calculator/instalments/ab                                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalmentsAB()
+GET         /calculator/instalments/ab                                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getCalculateInstalments()
+POST        /calculator/instalments/ab                                    @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.submitCalculateInstalments()
 
 #  Not loggged in journey
 GET         /payment-plan-calculator/start                                @uk.gov.hmrc.selfservicetimetopay.controllers.CalculatorController.getPaymentPlanCalculator()
