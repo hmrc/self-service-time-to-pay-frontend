@@ -199,7 +199,7 @@ ssttp.arrangement.instalment-summary-table.total-repayment-hint = Gan gynnwys ll
 ssttp.arrangement.instalment-summary.submit = Yn eich blaen
 
 ssttp.arrangement.declaration.back = Yn ôl
-ssttp.arrangement.declaration.h1 = Terms and conditions Telerau ac amodau
+ssttp.arrangement.declaration.h1 = Telerau ac amodau
 ssttp.arrangement.declaration.cancel-if = Gallwn ganslo’r cytundeb hwn os:
 ssttp.arrangement.declaration.cancel-if.1 = ydych yn talu’n hwyr neu’n methu taliad
 ssttp.arrangement.declaration.cancel-if.2 = ydych yn talu bil treth arall yn hwyr
@@ -337,3 +337,7 @@ ssttp.monthly.amount.hint = Nodwch swm sydd rhwng £{0}.  a   £{1}
 ssttp.monthly.amount.negative = Rhowch swm sy'n fwy na sero
 ssttp.monthly.amount.numbers-only = Rhowch rifau yn unig
 ssttp.monthly.amount.out-of-bounds = Rhowch ffigur rhwng yr ystod benodol
+
+ssttp.arrangement.changeday.default = 28ain diwrnod nesaf
+ssttp.arrangement.changeday.different = Diwrnod gwahanol
+ssttp.arrangement.changeday.enter.date = Ewch i mewn i ddiwrnod y mis
