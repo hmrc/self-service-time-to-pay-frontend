@@ -377,7 +377,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       routes.CalculatorController.getPaymentToday().url must endWith(redirectLocation(response).get)
     }
 
-    "submitPayTodayQuestion should redirect with a good session and good request and to the getCalculateInstalmentsOld if true is selected" in {
+    "submitPayTodayQuestion false should redirect with a good session and good request and to the getMonthlyPayment" in {
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(
         Future.successful(
           Some(ttpSubmissionNLI.copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount  = 300.0, dueDate = LocalDate.now())))))
@@ -389,8 +389,54 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withSession(goodSession: _*))
 
       status(response) mustBe SEE_OTHER
-      routes.CalculatorController.getCalculateInstalments().url must endWith(redirectLocation(response).get)
+      routes.CalculatorController.getMonthlyPayment().url must endWith(redirectLocation(response).get)
     }
+
+    "getMonthlyPayment should return 200 with a good session and good request" in {
+      when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(
+        Future.successful(
+          Some(ttpSubmissionNLI.copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount  = 300.0, dueDate = LocalDate.now())))))
+        )
+      )
+      when(mockSessionCache.putTtpSessionCarrier(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+
+      val request = FakeRequest().withSession(goodSession: _*)
+      val response = controller.getMonthlyPayment().apply(request)
+
+      status(response) mustBe OK
+      contentAsString(response) must include(getMessages(request)("ssttp.monthy.amount.title"))
+    }
+
+    "submitMonthlyPayment should redirect with a good session and good request to getCalculateInstalments" in {
+      when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(
+        Future.successful(
+          Some(ttpSubmissionNLI.copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount  = 300.0, dueDate = LocalDate.now())))))
+        )
+      )
+      when(mockSessionCache.putTtpSessionCarrier(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      val response = controller.submitMonthlyPayment().apply(FakeRequest()
+        .withFormUrlEncodedBody("paytoday" -> "false")
+        .withSession(goodSession: _*))
+
+      status(response) mustBe SEE_OTHER
+      routes.CalculatorController.getMonthlyPayment().url must endWith(redirectLocation(response).get)
+    }
+
+    "submitCalculateInstalments should redirect with a good session and request to getChangeSchedulePaymentDay if a valid month is selected" in {
+      when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(
+        Future.successful(
+          Some(ttpSubmissionNLI.copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount  = 300.0, dueDate = LocalDate.now())))))
+        )
+      )
+      when(mockSessionCache.putTtpSessionCarrier(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      val response = controller.submitMonthlyPayment().apply(FakeRequest()
+        .withFormUrlEncodedBody("chosen-month" -> "3")
+        .withSession(goodSession: _*))
+
+      status(response) mustBe SEE_OTHER
+      routes.CalculatorController.submitMonthlyPayment().url must endWith(redirectLocation(response).get)
+    }
+
   }
 
   private def requestWithCsrfToken(action: Action[AnyContent], amount: String)(implicit app: Application) = {

@@ -380,7 +380,7 @@ ssttp.over-ten-thosand.opening.hours.h1 = Our opening times are:
 ssttp.over-ten-thosand.opening.hours.l1 = Monday to Friday: 8am to 8pm
 ssttp.over-ten-thosand.opening.hours.l2 = Saturday and Sunday: 8am to 4pm
 
-ssttp.monthy.amount.title = How much can you afford to pay each month
+ssttp.monthy.amount.title = How much can you afford to pay each month?
 ssttp.monthly.amount.hint = Enter an amount between £{0} and £{1}
 ssttp.monthly.amount.negative = Please enter an amount greater than zero
 ssttp.monthly.amount.numbers-only = Enter numbers only
