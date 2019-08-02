@@ -49,7 +49,7 @@
             <div id="chosen-month">
 
                 @{
-                    monthsToSchedule.filter(month => month._1 < 6).map { lessThenSix => instalment_by_month(lessThenSix._1, lessThenSix._2) }
+                    monthsToSchedule.filter(month => month._1 < 7).map { lessThenSix => instalment_by_month(lessThenSix._1, lessThenSix._2) }
                 }
                 @{
                     val greaterThenSix = monthsToSchedule.filter(month => month._1 >= 6)
