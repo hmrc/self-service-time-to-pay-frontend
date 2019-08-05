@@ -66,24 +66,24 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
   when(mockSessionCache4TokensConnector.put(any())(any(), any())).thenReturn(Future.successful(()))
 
   "CalculatorControllerSpec" should {
-    "getCalculateInstalments Return 303 when there is no Sa in session" in {
+    "getCalculateInstalmentsOld Return 303 when there is no Sa in session" in {
       implicit val hc: HeaderCarrier = new HeaderCarrier
 
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
-      val result = controller.getCalculateInstalments().apply(FakeRequest()
+      val result = controller.getCalculateInstalmentsOld().apply(FakeRequest()
         .withSession(goodSession: _*))
 
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).getTtpSessionCarrier(any(), any(), any())
     }
 
-    "getCalculateInstalments Return 200 when there is a Sa in session" in {
+    "getCalculateInstalmentsOld Return 200 when there is a Sa in session" in {
       implicit val hc: HeaderCarrier = new HeaderCarrier
 
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(), any())(any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
-      val result = controller.getCalculateInstalments().apply(FakeRequest()
+      val result = controller.getCalculateInstalmentsOld().apply(FakeRequest()
         .withSession(goodSession: _*))
 
       status(result) mustBe OK
@@ -94,7 +94,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLI)))
 
-      val result = controller.submitCalculateInstalments().apply(FakeRequest()
+      val result = controller.submitCalculateInstalmentsOld().apply(FakeRequest()
         .withSession(goodSession: _*))
 
       status(result) mustBe SEE_OTHER
@@ -106,7 +106,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(), any())(any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
-      val result = controller.submitCalculateInstalments().apply(FakeRequest()
+      val result = controller.submitCalculateInstalmentsOld().apply(FakeRequest()
         .withSession(goodSession: _*))
 
       status(result) mustBe BAD_REQUEST
@@ -118,7 +118,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.putTtpSessionCarrier(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(), any())(any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
-      val result = controller.submitCalculateInstalments().apply(FakeRequest()
+      val result = controller.submitCalculateInstalmentsOld().apply(FakeRequest()
         .withSession(goodSession: _*)
         .withFormUrlEncodedBody("chosen-month" -> "3"))
 
@@ -131,7 +131,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.putTtpSessionCarrier(any())(any(), any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(), any())(any(), any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
-      val result = controller.submitCalculateInstalments().apply(FakeRequest()
+      val result = controller.submitCalculateInstalmentsOld().apply(FakeRequest()
         .withSession(goodSession: _*)
         .withFormUrlEncodedBody("chosen-month" -> "3"))
       status(result) mustBe SEE_OTHER
@@ -377,7 +377,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       routes.CalculatorController.getPaymentToday().url must endWith(redirectLocation(response).get)
     }
 
-    "submitPayTodayQuestion should redirect with a good session and good request and to the getCalculateInstalments if true is selected" in {
+    "submitPayTodayQuestion false should redirect with a good session and good request and to the getMonthlyPayment" in {
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any())).thenReturn(
         Future.successful(
           Some(ttpSubmissionNLI.copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount  = 300.0, dueDate = LocalDate.now())))))
@@ -389,8 +389,9 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withSession(goodSession: _*))
 
       status(response) mustBe SEE_OTHER
-      routes.CalculatorController.getCalculateInstalments().url must endWith(redirectLocation(response).get)
+      routes.CalculatorController.getMonthlyPayment().url must endWith(redirectLocation(response).get)
     }
+
   }
 
   private def requestWithCsrfToken(action: Action[AnyContent], amount: String)(implicit app: Application) = {

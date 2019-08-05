@@ -52,7 +52,7 @@
                     monthsToSchedule.filter(month => month._1 < 7).map { lessThenSix => instalment_by_month(lessThenSix._1, lessThenSix._2) }
                 }
                 @{
-                    val greaterThenSix = monthsToSchedule.filter(month => month._1 >= 7)
+                    val greaterThenSix = monthsToSchedule.filter(month => month._1 >= 6)
                     if(greaterThenSix.nonEmpty) {
                         instalments_by_month_sub_section(greaterThenSix)
                     }
