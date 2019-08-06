@@ -178,7 +178,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
         val form = CalculatorForm.createMonthlyAmountForm(
           lowerMonthlyPaymentBound(sa, calculatorData).toInt, upperMonthlyPaymentBound(sa, calculatorData).toInt)
         Future.successful(Ok(monthly_amount(
-          form, upperMonthlyPaymentBound(sa, calculatorData), lowerMonthlyPaymentBound(sa, calculatorData)
+          form, upperMonthlyPaymentBound(sa, calculatorData), lowerMonthlyPaymentBound(sa, calculatorData), isSignedIn
         )))
       case _ =>
         Logger.info("No TTP Data match in getMonthlyPayment")
@@ -204,7 +204,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
             lowerMonthlyPaymentBound(sa, calculatorData).toInt, upperMonthlyPaymentBound(sa, calculatorData).toInt).bindFromRequest().fold(
               formWithErrors => {
                 Future.successful(BadRequest(monthly_amount(
-                  formWithErrors, upperMonthlyPaymentBound(sa, calculatorData), lowerMonthlyPaymentBound(sa, calculatorData)
+                  formWithErrors, upperMonthlyPaymentBound(sa, calculatorData), lowerMonthlyPaymentBound(sa, calculatorData), isSignedIn
                 )))
               },
               validFormData => {

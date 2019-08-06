@@ -20,28 +20,40 @@
 @import selfservicetimetopay.helpers.forms.submit
 
 
-@(dataForm: Form[MonthlyAmountForm], upperBound: String, lowerBound: String)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(dataForm: Form[MonthlyAmountForm],
+        upperBound: String,
+        lowerBound: String,
+        loggedIn: Boolean,
+        isAuthJourney: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
-@selfservicetimetopay.main(
-    title = Messages("ssttp.monthy.amount.title")
-){
+    @selfservicetimetopay.main(
+        title = Messages("ssttp.monthy.amount.title"),
+        loggedIn = loggedIn,
+        welshToggleEnabled = isAuthJourney,
+        navTitle = if(!isAuthJourney) "ssttp.payment-plan-calculator.title" else "ssttp.common.title"
+    ) {
 
-    <a class="link-back" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
+        <a class="link-back" onclick="back()" href="@routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
+        <fieldset>
+            <legend>
+                <h1 class="heading-large margin-bottom-30">@Messages("ssttp.monthy.amount.title")</h1>
+            </legend>
 
-    @if(dataForm.hasErrors){
-    @helpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
+            @if(dataForm.hasErrors) {
+                @helpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm)
+            }
+
+            <p>@Messages("ssttp.monthly.amount.hint", lowerBound, upperBound)</p>
+
+            @helpers.form(action = routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group") {
+                @helpers.input(
+                    dataForm("amount"),
+                    '_inputClass -> "form-control-1-4",
+                    '_label -> "£"
+                )
+                @submit() {
+                    @Messages("ssttp.calculator.form.continue")
+                }
+            }
+        </fieldset>
     }
-
-    <h1>@Messages("ssttp.monthy.amount.title")</h1>
-
-    <p>@Messages("ssttp.monthly.amount.hint", lowerBound, upperBound)</p>
-
-    @helpers.form(action = routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group"){
-        @helpers.input(
-            dataForm("amount"),
-            '_inputClass -> "form-control-1-4",
-            '_label -> "£"
-        )
-    @submit(){@Messages("ssttp.calculator.form.continue")}
-    }
-}
