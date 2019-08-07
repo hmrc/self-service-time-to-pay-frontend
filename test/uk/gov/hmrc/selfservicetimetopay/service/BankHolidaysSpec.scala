@@ -29,7 +29,7 @@ class BankHolidaysSpec extends UnitSpec with Inspectors {
     ("New Year’s Day", "2020-01-01"),
     ("Good Friday", "2020-04-10"),
     ("Easter Monday", "2020-04-13"),
-    ("Early May bank holiday", "2020-05-04"),
+    ("Early May bank holiday", "2020-05-08"),
     ("Spring bank holiday", "2020-05-25"),
     ("Summer bank holiday", "2020-08-31"),
     ("Christmas Day", "2020-12-25"),
