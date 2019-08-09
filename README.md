@@ -5,7 +5,7 @@
 Self Service Time To Pay Frontend 
 
 
-### About
+### About 
 Self Service Time To Pay Frontend is the frontend microservice for Pay What You Owe In Instalments.
 It displays the web pages that users interact with and contacts multiple backend services to retrieve and store information.
 It has multiple endpoints that are navigated through in sequence, beginning with eligibility, through to calculator and then arrangement.
