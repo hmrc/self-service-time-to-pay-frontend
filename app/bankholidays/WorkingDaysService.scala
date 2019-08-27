@@ -21,7 +21,6 @@ import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import org.joda.time
 import uk.gov.hmrc.time.workingdays._
-import util.DateHelper.turnJavaTimeToJoda
 
 import scala.language.postfixOps
 @Singleton
@@ -32,6 +31,19 @@ class WorkingDaysService @Inject() () {
   def addWorkingDays(date: LocalDate, days: Int): LocalDate = {
     val joda = turnJavaTimeToJoda(date)
     val jodaLocalDate: time.LocalDate = joda.plusWorkingDays(days)
-    LocalDate.now().withYear(jodaLocalDate.getYear).withDayOfMonth(jodaLocalDate.getDayOfMonth).withMonth(jodaLocalDate.getMonthOfYear)
+
+    LocalDate
+      .now()
+      .withYear(jodaLocalDate.getYear)
+      .withDayOfMonth(jodaLocalDate.getDayOfMonth)
+      .withMonth(jodaLocalDate.getMonthOfYear)
+  }
+
+  private def turnJavaTimeToJoda(date: LocalDate) = {
+    org.joda.time.LocalDate
+      .now()
+      .withMonthOfYear(date.getMonthValue)
+      .withDayOfMonth(date.getDayOfMonth)
+      .withYear(date.getYear)
   }
 }

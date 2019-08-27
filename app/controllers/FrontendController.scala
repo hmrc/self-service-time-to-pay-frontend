@@ -16,12 +16,14 @@
 
 package controllers
 
-import play.api.mvc.{Request, Result, Results}
+import play.api.mvc.{MessagesControllerComponents, Request, Result, Results}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class FrontendController extends uk.gov.hmrc.play.bootstrap.controller.FrontendController {
+abstract class FrontendController(
+    mcc: MessagesControllerComponents
+) extends uk.gov.hmrc.play.bootstrap.controller.FrontendController(mcc) {
 
   implicit def toFuture(r: Result): Future[Result] = Future.successful(r)
 

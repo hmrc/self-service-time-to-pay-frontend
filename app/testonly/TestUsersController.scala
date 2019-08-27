@@ -23,10 +23,10 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.json.Json
 import play.api.mvc._
-import views.html.selfservicetimetopay.testonly.create_user_and_log_in
 import play.api.i18n.I18nSupport
+import views.Views
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 case class TestUserForm(
@@ -86,9 +86,13 @@ class TestUsersController @Inject() (
     saStubConnector:  SaStubConnector,
     desStubConnector: DesStubConnector,
     iaConnector:      IaConnector,
-    i18nSupport:      I18nSupport
-)(implicit appConfig: AppConfig)
-  extends FrontendController {
+    i18nSupport:      I18nSupport,
+    views:            Views,
+    cc:               MessagesControllerComponents)(
+    implicit
+    appConfig: AppConfig,
+    ec:        ExecutionContext
+) extends FrontendController(cc) {
 
   import i18nSupport._
 
@@ -121,13 +125,13 @@ class TestUsersController @Inject() (
   )
 
   def testUsers(): Action[AnyContent] = Action { implicit request =>
-    Ok(create_user_and_log_in(testUserForm.fill(TestUserForm.initial)))
+    Ok(views.create_user_and_log_in(testUserForm.fill(TestUserForm.initial)))
   }
 
   def logIn(): Action[AnyContent] = Action.async { implicit request =>
     testUserForm.bindFromRequest().fold(
       formWithErrors => Future.successful(
-        BadRequest(create_user_and_log_in(formWithErrors))
+        BadRequest(views.create_user_and_log_in(formWithErrors))
       ),
       tu =>
         logIn(tu.asTestUser)

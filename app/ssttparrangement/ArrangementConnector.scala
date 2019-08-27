@@ -21,15 +21,17 @@ import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrangementConnector @Inject() (
     servicesConfig: ServicesConfig,
-    httpClient:     HttpClient)(
+    httpClient:     HttpClient,
+    views:          Views)(
     implicit
     ec: ExecutionContext
 ) {

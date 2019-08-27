@@ -28,15 +28,14 @@ import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
+import scala.concurrent.ExecutionContext
+
 class TestOnlyController @Inject() (
     taxpayerConnector: TaxPayerConnector,
-    i18nSupport:       I18nSupport,
     as:                Actions,
-    httpClient:        HttpClient
-)
-  extends FrontendController {
-
-  import i18nSupport._
+    httpClient:        HttpClient,
+    cc:                MessagesControllerComponents)(implicit ec: ExecutionContext)
+  extends FrontendController(cc) {
 
   def config(): Action[AnyContent] = Action { r =>
     val result: JsValue = Json.parse(

@@ -36,34 +36,32 @@ class SubmissionService @Inject() (
 
   val sessionKey: String = "ttpSubmission"
 
-  def ttpSessionCarrier()(implicit hc: HeaderCarrier): HeaderCarrier = hc.copy(sessionId = hc.extraHeaders.toMap.get(TTPSessionId.ttpSessionId).map(SessionId))
-
-  def putTtpSessionCarrier(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], hc: HeaderCarrier, ec: ExecutionContext): Future[CacheMap] = {
-    sessionCache.cache[TTPSubmission](sessionKey, body)(writes, ttpSessionCarrier, ec)
+  def putTtpSessionCarrier(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], hc: HeaderCarrier): Future[CacheMap] = {
+    sessionCache.cache[TTPSubmission](sessionKey, body)
   }
 
-  def getTtpSessionCarrier(implicit hc: HeaderCarrier, reads: Reads[TTPSubmission], ec: ExecutionContext): Future[Option[TTPSubmission]] = {
-    sessionCache.fetchAndGetEntry[TTPSubmission](sessionKey)(ttpSessionCarrier, reads, ec)
+  def getTtpSessionCarrier(implicit hc: HeaderCarrier, reads: Reads[TTPSubmission]): Future[Option[TTPSubmission]] = {
+    sessionCache.fetchAndGetEntry[TTPSubmission](sessionKey)
   }
 
-  def putAmount(amount: BigDecimal)(implicit writes: Writes[BigDecimal], hc: HeaderCarrier, ec: ExecutionContext): Future[CacheMap] = {
-    sessionCache.cache[BigDecimal]("amount", amount)(writes, ttpSessionCarrier, ec)
+  def putAmount(amount: BigDecimal)(implicit writes: Writes[BigDecimal], hc: HeaderCarrier): Future[CacheMap] = {
+    sessionCache.cache[BigDecimal]("amount", amount)
   }
 
-  def getAmount()(implicit hc: HeaderCarrier, reads: Reads[BigDecimal], ec: ExecutionContext): Future[Option[BigDecimal]] = {
-    sessionCache.fetchAndGetEntry[BigDecimal]("amount")(ttpSessionCarrier, reads, ec)
+  def getAmount()(implicit hc: HeaderCarrier, reads: Reads[BigDecimal]): Future[Option[BigDecimal]] = {
+    sessionCache.fetchAndGetEntry[BigDecimal]("amount")
   }
 
-  def putIsBPath(isBpath: Boolean)(implicit writes: Writes[Boolean], hc: HeaderCarrier, ec: ExecutionContext): Future[CacheMap] = {
-    sessionCache.cache[Boolean]("isBPath", isBpath)(writes, ttpSessionCarrier, ec)
+  def putIsBPath(isBpath: Boolean)(implicit writes: Writes[Boolean], hc: HeaderCarrier): Future[CacheMap] = {
+    sessionCache.cache[Boolean]("isBPath", isBpath)
   }
 
-  def getIsBpath()(implicit hc: HeaderCarrier, reads: Reads[Boolean], ec: ExecutionContext): Future[Option[Boolean]] = {
-    sessionCache.fetchAndGetEntry[Boolean]("isBPath")(ttpSessionCarrier, reads, ec)
+  def getIsBpath()(implicit hc: HeaderCarrier, reads: Reads[Boolean]): Future[Option[Boolean]] = {
+    sessionCache.fetchAndGetEntry[Boolean]("isBPath")
   }
 
-  def remove()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    sessionCache.remove()(ttpSessionCarrier, ec)
+  def remove()(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    sessionCache.remove()
   }
 
   /**

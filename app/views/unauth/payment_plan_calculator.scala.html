@@ -1,0 +1,45 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@this(
+  main: views.html.main,
+  viewsHelpers: views.ViewsHelpers
+)
+
+@(
+  loggedIn: Boolean = false)(implicit
+  messages: play.api.i18n.Messages,
+  request: Request[_],
+  appConfig: config.AppConfig
+)
+
+
+@main(
+    title = Messages("ssttp.calculator.payment-plan-calculator.start.title"),
+    loggedIn = loggedIn,
+    welshToggleEnabled =false,
+    navTitle = "ssttp.payment-plan-calculator.title"){
+
+    <a class="link-back" href="https://www.gov.uk/difficulties-paying-hmrc">@Messages("ssttp.calculator.payment-plan-calculator.start.back")</a>
+    <header class="page-header text">
+        <h1>@Messages("ssttp.calculator.payment-plan-calculator.start.title")</h1>
+    </header>
+
+    <p>@Messages("ssttp.calculator.payment-plan-calculator.start.p1")</p>
+    <p>@Messages("ssttp.calculator.payment-plan-calculator.start.p2")</p>
+
+    <a class="button button--get-started" href="@ssttpcalculator.routes.CalculatorController.getAmountDue()">@Messages("ssttp.calculator.payment-plan-calculator.start.button")</a>
+}

@@ -28,25 +28,28 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-import views.html.selfservicetimetopay.arrangement._
-import views.html.selfservicetimetopay.core.service_start
+import views.Views
+import views.html.arrangement._
+import views.html.core.service_start
 
 import scala.collection.immutable.::
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DirectDebitController @Inject() (
-    i18nSupport:          play.api.i18n.I18nSupport,
+    mcc:                  MessagesControllerComponents,
     directDebitConnector: DirectDebitConnector,
     as:                   Actions,
-    submissionService:    SubmissionService
-)(implicit appConfig: AppConfig)
-  extends FrontendController {
-  import i18nSupport._
+    submissionService:    SubmissionService,
+    views:                Views)(
+    implicit
+    appConfig: AppConfig,
+    ec:        ExecutionContext
+) extends FrontendController(mcc) {
 
   def getDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
       case submission @ TTPSubmission(Some(schedule), _, _, Some(taxpayer), calcData, _, _, _, _, _) if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
-        Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, isSignedIn)))
+        Future.successful(Ok(views.direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, isSignedIn)))
       case _ => Future.successful(redirectOnError)
     }
   }
@@ -54,7 +57,7 @@ class DirectDebitController @Inject() (
   def getDirectDebitAssistance: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
       case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
-        Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
+        Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
       case _ => Future.successful(redirectOnError)
     }
   }
@@ -62,7 +65,7 @@ class DirectDebitController @Inject() (
   def getDirectDebitError: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
       case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
-        Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
+        Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
       case _ => Future.successful(redirectOnError)
     }
   }
@@ -72,39 +75,41 @@ class DirectDebitController @Inject() (
       case TTPSubmission(_, _, Some(_), _, _, _, _, _, _, _) =>
         Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()))
       case submission @ TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _, _) =>
-        Future.successful(Ok(direct_debit_confirmation(submission.calculatorData.debits,
-                                                       schedule, submission.arrangementDirectDebit.get, isSignedIn)))
+        Future.successful(Ok(views.direct_debit_confirmation(submission.calculatorData.debits,
+                                                             schedule, submission.arrangementDirectDebit.get, isSignedIn)))
       case _ =>
         Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
         Future.successful(redirectOnError)
     }
   }
 
-  def getDirectDebitUnAuthorised: Action[AnyContent] = as.checkSessionAction.async { implicit request =>
+  def getDirectDebitUnAuthorised: Action[AnyContent] = as.checkSession.async { implicit request =>
     submissionService.getTtpSessionCarrier.map {
-      case Some(ttpData: TTPSubmission) => Ok(direct_debit_unauthorised(isSignedIn))
-      case _                            => Ok(service_start(isSignedIn))
+      case Some(ttpData: TTPSubmission) => Ok(views.direct_debit_unauthorised(isSignedIn))
+      case _ =>
+        Logger.warn("No TTPSubmission, redirecting to start page")
+        Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.start)
     }
   }
 
-  def submitDirectDebitConfirmation: Action[AnyContent] = as.checkSessionAction { implicit request =>
+  def submitDirectDebitConfirmation: Action[AnyContent] = as.checkSession { implicit request =>
     Redirect(ssttparrangement.routes.ArrangementController.submit())
   }
 
   def submitDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp { submission =>
       directDebitForm.bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
-                                                                         submission.schedule.get, formWithErrors))),
+        formWithErrors => Future.successful(BadRequest(views.direct_debit_form(submission.calculatorData.debits,
+                                                                               submission.schedule.get, formWithErrors))),
         validFormData => {
           directDebitConnector.getBank(validFormData.sortCode,
                                        validFormData.accountNumber.toString).flatMap {
               case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
               case None =>
-                Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
-                                                               submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
+                Future.successful(BadRequest(views.direct_debit_form(submission.calculatorData.debits,
+                                                                     submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
                     "accountNumber" -> validFormData.accountNumber, "sortCode" -> validFormData.sortCode)),
-                                                               isBankError = true)
+                                                                     isBankError = true)
                 ))
             }
         }

@@ -25,6 +25,8 @@ object Token {
 
   implicit val formTemplateIdBinder: PathBindable[Token] = valueClassBinder(_.v)
 
+  //TODO: remove this one and use ValueClassBinder
+
   def valueClassBinder[A: Reads](fromAtoString: A => String)(implicit stringBinder: PathBindable[String]) = {
 
       def parseString(str: String) = {

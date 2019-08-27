@@ -17,23 +17,29 @@
 package language
 
 import config.AppConfig
+import controllers.FrontendController
 import javax.inject.Inject
 import play.api.Application
-import play.api.i18n.{I18nSupport, Lang, MessagesApi}
-import play.api.mvc.Call
-import uk.gov.hmrc.play.language.LanguageController
+import play.api.i18n.{Lang, Langs, MessagesApi}
+import play.api.mvc._
+import play.api.i18n.I18nSupport._
 
 class LanguageSwitchController @Inject() (
+    mcc:                               MessagesControllerComponents,
     appConfig:                         AppConfig,
+    langs:                             Langs,
     implicit override val messagesApi: MessagesApi,
     implicit val application:          Application
 )
-  extends LanguageController {
+  extends FrontendController(mcc) {
 
-  def langToCall(lang: String): String => Call = appConfig.routeToSwitchLanguage
+  def switchToLanguage(language: String): Action[AnyContent] = Action { implicit request =>
+    val redirectURL: String = {
+      val fallbackURL: String = ssttpeligibility.routes.SelfServiceTimeToPayController.start().url
+      request.headers.get(REFERER).getOrElse(fallbackURL)
+    }
 
-  // Replace with a suitable fallback or read it from config
-  override protected def fallbackURL: String = ssttpeligibility.routes.SelfServiceTimeToPayController.start().url
-
-  override def languageMap: Map[String, Lang] = appConfig.languageMapValue
+    val lang: Lang = langs.availables.find(_.code == language).getOrElse(request.lang)
+    Redirect(redirectURL).withLang(lang)
+  }
 }

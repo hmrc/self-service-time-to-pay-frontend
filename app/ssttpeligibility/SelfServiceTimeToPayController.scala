@@ -17,35 +17,35 @@
 package ssttpeligibility
 
 import config.AppConfig
+import controllers.FrontendController
 import controllers.action.Actions
-import controllers.{FrontendController, routes}
 import javax.inject._
-import play.api.i18n.I18nSupport
 import play.api.mvc._
 import sttpsubmission.SubmissionService
-import views.html.selfservicetimetopay.core._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.Views
+import views.html.core._
+
+import scala.concurrent.ExecutionContext
 
 class SelfServiceTimeToPayController @Inject() (
-    i18nSupport:       I18nSupport,
+    mcc:               MessagesControllerComponents,
     submissionService: SubmissionService,
-    as:                Actions
+    as:                Actions,
+    views:             Views)(implicit appConfig: AppConfig,
+                              ec: ExecutionContext
+) extends FrontendController(mcc) {
 
-)(implicit appConfig: AppConfig)
-  extends FrontendController {
-
-  import i18nSupport._
-
-  def start: Action[AnyContent] = as.checkSessionAction.async { implicit request =>
-    submissionService.getTtpSessionCarrier.map { _ => Ok(service_start(isSignedIn)) }
+  def start: Action[AnyContent] = as.checkSession.async { implicit request =>
+    submissionService.getTtpSessionCarrier.map { _ => Ok(views.service_start(isSignedIn, mcc.messagesApi)) }
   }
 
-  def submit: Action[AnyContent] = as.checkSessionAction { implicit request =>
+  def submit: Action[AnyContent] = as.checkSession { implicit request =>
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
-  def actionCallUsInEligibility: Action[AnyContent] = as.checkSessionAction { implicit request =>
-    Ok(call_us(isWelsh, loggedIn = isSignedIn))
+  def actionCallUsInEligibility: Action[AnyContent] = as.checkSession { implicit request =>
+    Ok(views.call_us(isWelsh, loggedIn = isSignedIn))
   }
 
   def getTtpCallUs: Action[AnyContent] = actionCallUsInEligibility
@@ -55,19 +55,19 @@ class SelfServiceTimeToPayController @Inject() (
   def getTtpCallUsSignInQuestion: Action[AnyContent] = actionCallUsInEligibility
   def getIaCallUse: Action[AnyContent] = actionCallUsInEligibility
 
-  def getDebtTooLarge: Action[AnyContent] = as.checkSessionAction { implicit request =>
-    Ok(debt_too_large(isSignedIn, isWelsh))
+  def getDebtTooLarge: Action[AnyContent] = as.checkSession { implicit request =>
+    Ok(views.debt_too_large(isSignedIn, isWelsh))
   }
 
-  def getYouNeedToFile: Action[AnyContent] = as.checkSessionAction { implicit request =>
-    Ok(you_need_to_file(isSignedIn))
+  def getYouNeedToFile: Action[AnyContent] = as.checkSession { implicit request =>
+    Ok(views.you_need_to_file(isSignedIn))
   }
 
-  def getNotSaEnrolled: Action[AnyContent] = as.checkSessionAction { implicit request =>
-    Ok(not_enrolled(isWelsh, isSignedIn))
+  def getNotSaEnrolled: Action[AnyContent] = as.checkSession { implicit request =>
+    Ok(views.not_enrolled(isWelsh, isSignedIn))
   }
 
-  def signOut(continueUrl: Option[String]): Action[AnyContent] = as.checkSessionAction.async { implicit request =>
+  def signOut(continueUrl: Option[String]): Action[AnyContent] = as.checkSession.async { implicit request =>
     submissionService.remove().map(_ => Redirect(appConfig.logoutUrl).withNewSession)
   }
 }

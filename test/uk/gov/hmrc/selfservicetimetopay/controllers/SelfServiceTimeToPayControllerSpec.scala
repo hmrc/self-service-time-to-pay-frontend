@@ -27,24 +27,26 @@ import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 import _root_.controllers.action._
 import config.AppConfig
-
+import play.api.mvc.MessagesControllerComponents
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
   val mockSessionCache: SubmissionService = mock[SubmissionService]
+  val mcc: MessagesControllerComponents = mock
   implicit val appConfig: AppConfig = mock[AppConfig]
 
   "SelfServiceTimeToPayController" should {
 
     val controller = new SelfServiceTimeToPayController(
-      i18nSupport       = i18nSupport,
+      mcc               = mcc,
       submissionService = mockSessionCache,
       as                = mock[Actions]
     )
 
     "return 200 and display the service start page" in {
-      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.getTtpSessionCarrier(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       val request = FakeRequest().withSession(goodSession: _*)
       val result = controller.start.apply(request)
 

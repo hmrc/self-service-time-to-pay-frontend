@@ -25,8 +25,8 @@ import controllers.action.Actions
 import controllers.{ErrorHandler, FrontendController}
 import javax.inject._
 import play.api.Logger
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.i18n.{I18nSupport, Messages}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import ssttpcalculator.{CalculatorConnector, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityConnector
@@ -37,14 +37,15 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.selfservicetimetopay.models._
-import views.html.selfservicetimetopay.arrangement.{application_complete, change_day, declaration, instalment_plan_summary}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.Views
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 import scala.math.BigDecimal
 
 class ArrangementController @Inject() (
+    mcc:                  MessagesControllerComponents,
     ddConnector:          DirectDebitConnector,
     arrangementConnector: ArrangementConnector,
     calculatorService:    CalculatorService,
@@ -52,14 +53,13 @@ class ArrangementController @Inject() (
     taxPayerConnector:    TaxPayerConnector,
     eligibilityConnector: EligibilityConnector,
     auditService:         AuditService,
-    i18nSupport:          I18nSupport,
     submissionService:    SubmissionService,
-    as:                   Actions)(
+    as:                   Actions,
+    views:                Views)(
     implicit
-    appConfig: AppConfig
-) extends FrontendController {
-
-  import i18nSupport._
+    appConfig: AppConfig,
+    ec:        ExecutionContext
+) extends FrontendController(mcc) {
 
   val cesa: String = "CESA"
   val paymentFrequency = "Calendar Monthly"
@@ -103,7 +103,7 @@ class ArrangementController @Inject() (
   def getInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
       case ttp @ TTPSubmission(Some(schedule), _, _, _, cd @ CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _, _, _) =>
-        Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule)))
+        Future.successful(Ok(views.instalment_plan_summary(debits, intialPayment, schedule)))
       case _ => Future.successful(Redirect(ssttparrangement.routes.ArrangementController.determineEligibility()))
     }
   }
@@ -113,11 +113,11 @@ class ArrangementController @Inject() (
   }
 
   def getChangeSchedulePaymentDay: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.authorizedForSsttp(ttp => Future.successful(Ok(change_day(createDayOfForm(ttp)))))
+    submissionService.authorizedForSsttp(ttp => Future.successful(Ok(views.change_day(createDayOfForm(ttp)))))
   }
 
   def getDeclaration: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.authorizedForSsttp(ttp => Future.successful(Ok(declaration())))
+    submissionService.authorizedForSsttp(ttp => Future.successful(Ok(views.declaration())))
   }
 
   def submitChangeSchedulePaymentDay(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
@@ -125,7 +125,7 @@ class ArrangementController @Inject() (
       submission =>
         ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
           formWithErrors => {
-            Future.successful(BadRequest(change_day(formWithErrors)))
+            Future.successful(BadRequest(views.change_day(formWithErrors)))
           },
           validFormData => {
             submission match {
@@ -213,7 +213,7 @@ class ArrangementController @Inject() (
   def applicationComplete(): Action[AnyContent] = as.authorisedSaUser.async{ implicit request =>
     submissionService.authorizedForSsttp {
       submission =>
-        submissionService.remove().map(_ => Ok(application_complete(
+        submissionService.remove().map(_ => Ok(views.application_complete(
           debits        = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
           transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
           directDebit   = submission.arrangementDirectDebit.get,

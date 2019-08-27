@@ -16,13 +16,20 @@
 
 package bankholidays
 
-import play.api.libs.json.{Json, OFormat}
+import org.joda.time.LocalTime
+import play.api.libs.json.{Format, Json, OFormat, Reads}
 import uk.gov.hmrc.time.workingdays.{BankHoliday, BankHolidaySet}
 import util.ResourceReader
 
 object BankHolidays {
   lazy implicit val bankHolidayFmt: OFormat[BankHolidaySet] = Json.format[BankHolidaySet]
-  lazy implicit val BankHolidays: OFormat[BankHoliday] = Json.format[BankHoliday]
+
+  lazy implicit val BankHolidays: OFormat[BankHoliday] = {
+    import play.api.libs.json.JodaReads._
+    import play.api.libs.json.JodaWrites._
+    Json.format[BankHoliday]
+  }
+
   type BankHolidaysByRegion = Map[String, BankHolidaySet]
 
   def apply(): BankHolidaySet = {

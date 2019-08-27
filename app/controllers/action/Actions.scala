@@ -16,19 +16,19 @@
 
 package controllers.action
 
-import controllers.actions.{AuthenticatedAction, AuthorisedSaUserAction, AuthorisedSaUserRequest}
 import javax.inject.Inject
 import play.api.mvc._
 
 class Actions @Inject() (
     authenticatedAction:    AuthenticatedAction,
-    authorisedSaUserAction: AuthorisedSaUserAction
-
+    authorisedSaUserAction: AuthorisedSaUserAction,
+    checkSessionAction:     CheckSessionAction,
+    defaultActionBuilder:   DefaultActionBuilder,
+    messagesActionBuilder:  MessagesActionBuilder
 ) {
 
-  def authorisedSaUser: ActionBuilder[AuthorisedSaUserRequest] =
-    play.api.mvc.Action andThen authenticatedAction andThen authorisedSaUserAction
+  def authorisedSaUser: ActionBuilder[AuthorisedSaUserRequest, AnyContent] =
+    messagesActionBuilder andThen authenticatedAction andThen authorisedSaUserAction
 
-  def checkSessionAction: ActionBuilder[Request] = CheckSessionAction
-
+  def checkSession: ActionBuilder[MessagesRequest, AnyContent] = messagesActionBuilder andThen checkSessionAction
 }

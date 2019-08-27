@@ -1,0 +1,138 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import play.twirl.api.HtmlFormat
+
+@this(
+  govUkTemplate: views.html.layouts.GovUkTemplate,
+  viewsHelpers: views.ViewsHelpers,
+  appConfig: config.AppConfig
+)
+
+
+@(
+        title: String,
+        mainClass: Option[String] = None,
+        mainDataAttributes: Option[Html] = None,
+        bodyClasses: Option[String] = None,
+        navLinks: Option[Html] = None,
+        sidebar: Html = HtmlFormat.empty,
+        contentHeader: Option[Html] = None,
+        mainContent: Html = HtmlFormat.empty,
+        serviceInfoContent: Html = HtmlFormat.empty,
+        scriptElem: Option[Html] = None,
+        linksElem: Option[Html] = None,
+        googleAnalyticsCalls: Seq[String] = Seq.empty,
+        noGetHelp: Boolean = false,
+        loggedIn: Boolean = false,
+        welshToggleEnabled:Boolean = true,
+        hasUserPanel: Boolean = false,
+        navTitle: String = "ssttp.common.title")(
+        implicit
+        request: Request[_],
+        messages: play.api.i18n.Messages
+)
+
+
+@import partials.{beta_banner_with_user_panel, google_analytics_js}
+
+
+@head = {
+@viewsHelpers.head(
+    linkElem = linksElem,
+    headScripts = None
+)
+    <meta name="format-detection" content="telephone=no" />
+}
+
+  @insideHeader = {
+  @viewsHelpers.headerNav(
+      navTitle = Some(Messages(navTitle)),
+      navTitleLink = None,
+      showBetaLink = false,
+      navLinks = navLinks
+  )
+  }
+
+@afterHeader = {}
+
+@gaJs = @{
+    google_analytics_js(googleAnalyticsCalls)
+}
+
+@bodyEnd = {
+@viewsHelpers.footer(
+    analyticsToken = Some(appConfig.analyticsToken),
+    analyticsHost = appConfig.analyticsHost,
+    ssoUrl = None,
+    scriptElem = scriptElem,
+    gaCalls = None,
+    analyticsAdditionalJs = Some(gaJs)
+)
+}
+
+@footerTop = {}
+@footerLinks = {}
+
+@serviceInfo = {
+@viewsHelpers.serviceInfo(
+    betaBanner = beta_banner_with_user_panel(loggedIn, appConfig.betaFeedbackUrlAuth, appConfig.betaFeedbackUrlNoAuth, true, false, hasUserPanel = hasUserPanel),
+    includeGridWrapper = false,
+    serviceInfoContent = Some(serviceInfoContent),
+    includeHMRCBranding = false
+)
+    @if(welshToggleEnabled) {
+        @partials.language_selection()
+    }
+}
+
+@mainContentHeader = {
+@if(contentHeader.isDefined) {
+    @viewsHelpers.mainContentHeader(contentHeader = contentHeader.get)
+}
+}
+
+@getHelpForm = {
+@if(noGetHelp) {
+    @HtmlFormat.empty
+} else {
+    @viewsHelpers.reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)
+}
+}
+
+@content = {
+@viewsHelpers.mainContent(
+    article = mainContent,
+    mainClass = mainClass,
+    mainDataAttributes = mainDataAttributes,
+    mainContentHeader = mainContentHeader,
+    serviceInfo = serviceInfo,
+    getHelpForm = getHelpForm,
+    sidebar = sidebar)
+}
+
+@govUkTemplate(
+  Some(title),
+  bodyClasses)(
+  head,
+  bodyEnd,
+  insideHeader,
+  afterHeader,
+  footerTop,
+  Some(viewsHelpers.footerLinks()),
+  nav = true)(
+  content
+)

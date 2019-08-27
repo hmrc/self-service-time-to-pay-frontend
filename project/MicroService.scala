@@ -46,15 +46,13 @@ trait MicroService {
     .settings(defaultSettings(): _*)
     .settings(
       targetJvm := "jvm-1.8",
-      routesGenerator := StaticRoutesGenerator,
       scalaVersion := "2.11.11",
       libraryDependencies ++= appDependencies,
       parallelExecution in Test := false,
       fork in Test := false,
       evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
       routesImport ++= Seq(
-//        "uk.gov.hmrc.selfservicetimetopay.auth.Token",
-//        "uk.gov.hmrc.selfservicetimetopay.auth.Token._"
+        "langswitch.Language"
       )
     )
     .settings(scalariformSettings: _*)

@@ -21,7 +21,7 @@ import controllers.FrontendController
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.Action
+import play.api.mvc.{Action, MessagesControllerComponents}
 import ssttpcalculator.CalculatorConnector
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityConnector
@@ -30,9 +30,11 @@ import sttpsubmission.SubmissionService
 import token.{TTPSessionId, TokenService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+import views.Views
 
+import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
 
 class InspectorController @Inject() (
@@ -40,12 +42,11 @@ class InspectorController @Inject() (
     calculatorConnector:  CalculatorConnector,
     taxPayerConnector:    TaxPayerConnector,
     eligibilityConnector: EligibilityConnector,
-    i18nSupport:          I18nSupport,
-    submissionService:    SubmissionService
-)(implicit appConfig: AppConfig)
-  extends FrontendController {
-
-  import i18nSupport._
+    cc:                   MessagesControllerComponents,
+    submissionService:    SubmissionService,
+    views:                Views)(implicit appConfig: AppConfig,
+                                 ec: ExecutionContext
+) extends FrontendController(cc) {
 
   def clearPlaySession() = Action { implicit request =>
     redirectToInspectorView.withSession()
@@ -63,7 +64,7 @@ class InspectorController @Inject() (
     for {
       maybeSubmission <- sessionCacheF
 
-    } yield Ok(views.html.selfservicetimetopay.testonly.inspector(
+    } yield Ok(views.inspector(
       request.session.data,
       List(
         "debitDate" -> maybeSubmission.flatMap(_.debitDate).json,

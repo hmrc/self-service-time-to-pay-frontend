@@ -28,3 +28,7 @@ Upgrading play to 2.6
 * clean the specs
 * provide proper ItSpec with wiremock responses
 
+* verify that start page displays proper content, you changed the messages_list.scala.view
+owe £10,000 or less
+have no other tax debts
+have no other HMRC payment plans set up

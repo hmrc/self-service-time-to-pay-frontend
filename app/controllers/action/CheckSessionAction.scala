@@ -16,21 +16,22 @@
 
 package controllers.action
 
-import java.util.UUID
-
-import token.TTPSessionId._
+import javax.inject.Inject
 import play.api.mvc._
 import token.TTPSessionId
+import token.TTPSessionId._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-object CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Request] {
+class CheckSessionAction @Inject() (
+    cc: MessagesControllerComponents
+) extends ActionFilter[MessagesRequest] {
 
   protected lazy val redirectToStartPage = Results.Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
   //  /payment-plan-calculator
   protected lazy val redirectToPaymentPlanCalculator = Results.Redirect(ssttpcalculator.routes.CalculatorController.getPaymentPlanCalculator())
 
-  def filter[A](request: Request[A]): Future[Option[Result]] = {
+  def filter[A](request: MessagesRequest[A]): Future[Option[Result]] = {
     val response: Option[Result] = request.maybeTTPSessionId.fold[Option[Result]](
       if (request.uri.contains("payment-plan-calculator"))
         Some(redirectToPaymentPlanCalculator.withSession(request.session + token.TTPSessionId.newTTPSession()))
@@ -41,10 +42,12 @@ object CheckSessionAction extends ActionBuilder[Request] with ActionFilter[Reque
     Future.successful(response)
   }
 
-  private implicit class GetTTPSessionOps[A](request: Request[A]) {
+  private implicit class GetTTPSessionOps[A](request: MessagesRequest[A]) {
     def maybeTTPSessionId: Option[TTPSessionId] = request.session.get(ttpSessionId).map(token.TTPSessionId.apply)
     def getTTPSessionId: TTPSessionId = maybeTTPSessionId.getOrElse(
       throw new RuntimeException(s"Expected $ttpSessionId to be in the play session")
     )
   }
+
+  override protected def executionContext: ExecutionContext = cc.executionContext
 }

@@ -20,29 +20,29 @@ import com.google.inject.Inject
 import config.ViewConfig
 import play.api.i18n.Messages
 import play.api.mvc.Results.{NotFound, Unauthorized}
-import play.api.mvc.{Request, Results}
+import play.api.mvc.{MessagesRequest, Request, Results}
 
 class UnhappyPathResponses @Inject() (viewConfig: ViewConfig, errorHandler: ErrorHandler) {
 
-  def notFound(implicit request: Request[_], messages: Messages) = NotFound(
+  def notFound(implicit request: MessagesRequest[_]) = NotFound(
     errorHandler.standardErrorTemplate(
       Messages("global.error.pageNotFound404.title"),
       Messages("global.error.pageNotFound404.heading"),
       Messages("global.error.pageNotFound404.message")))
 
-  def unauthorised(buttonLink: String)(implicit request: Request[_], messages: Messages) = Unauthorized(
+  def unauthorised(buttonLink: String)(implicit request: MessagesRequest[_]) = Unauthorized(
     errorHandler.standardErrorTemplate(
       Messages("error.auth.title"),
       Messages("error.auth.heading"),
       Messages("error.auth.message")))
 
-  def unauthorised(implicit request: Request[_], messages: Messages) = Unauthorized(
+  def unauthorised(implicit request: MessagesRequest[_]) = Unauthorized(
     errorHandler.standardErrorTemplate(
       Messages("unauthorised.title"),
       Messages("unauthorised.heading"),
       ""))
 
-  def gone(buttonLink: String)(implicit request: Request[_], messages: Messages) = Results.Gone(
+  def gone(buttonLink: String)(implicit request: MessagesRequest[_]) = Results.Gone(
     errorHandler.standardErrorTemplate(
       Messages("error.gone.title"),
       Messages("error.gone.heading"),

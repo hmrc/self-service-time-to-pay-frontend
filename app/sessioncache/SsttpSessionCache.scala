@@ -16,11 +16,12 @@
 
 package sessioncache
 
+import javax.inject.Inject
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 //TODO: remove it https://jira.tools.tax.service.gov.uk/browse/OPS-2713
-class SsttpSessionCache(servicesConfig: ServicesConfig, httpClient: HttpClient) extends uk.gov.hmrc.http.cache.client.SessionCache {
+class SsttpSessionCache @Inject() (servicesConfig: ServicesConfig, httpClient: HttpClient) extends uk.gov.hmrc.http.cache.client.SessionCache {
   override def defaultSource: String = servicesConfig.getString("appName")
 
   override def baseUri: String = servicesConfig.baseUrl("keystore")

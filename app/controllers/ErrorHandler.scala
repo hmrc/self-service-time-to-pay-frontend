@@ -25,14 +25,13 @@ import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 @Singleton
 class ErrorHandler @Inject() (i18nSupport:              I18nSupport,
+                              error_template:           views.html.error_template,
                               override val messagesApi: MessagesApi)(implicit viewConfig: ViewConfig,
                                                                      appConfig: AppConfig
 ) extends FrontendErrorHandler {
 
-  import i18nSupport._
-
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
-    views.html.selfservicetimetopay.error_template(pageTitle, heading, message)
+    error_template(pageTitle, heading, message)
 }
 
 object ErrorHandler {

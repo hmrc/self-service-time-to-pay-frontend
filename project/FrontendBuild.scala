@@ -22,17 +22,18 @@ private object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     ws,
-    "uk.gov.hmrc" %% "govuk-template" % "5.26.0-play-25",
-    "uk.gov.hmrc" %% "play-ui" % "7.40.0-play-25",
-    "uk.gov.hmrc" %% "bootstrap-play-25" % "4.3.0",
+    "uk.gov.hmrc" %% "govuk-template" % "5.26.0-play-26",
+    "uk.gov.hmrc" %% "play-ui" % "7.40.0-play-26",
+    "uk.gov.hmrc" %% "bootstrap-play-26" % "0.41.0",
+    "com.beachape" %% "enumeratum" % "1.5.13",
 
-    "uk.gov.hmrc" %% "play-partials" %  "6.5.0",
+    "uk.gov.hmrc" %% "play-partials" %  "6.9.0-play-26",
     "uk.gov.hmrc" %% "domain" %  "5.2.0",
     "uk.gov.hmrc" %% "time" % "3.1.0",
     "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0",
-    "uk.gov.hmrc" %% "play-language" % "3.4.0",
+    "com.typesafe.play" %% "play-json-joda" % "2.6.13",
 
-  "uk.gov.hmrc" %% "http-caching-client" % "8.4.0-play-25" //8.4.0-play-25, 8.4.0-play-26
+    "uk.gov.hmrc" %% "http-caching-client" % "8.4.0-play-26"
   )
 
   trait TestDependencies {
@@ -43,7 +44,6 @@ private object AppDependencies {
   object Test {
     def apply(): Seq[ModuleID] = new TestDependencies {
       override lazy val test: Seq[ModuleID] = Seq(
-        "uk.gov.hmrc" %% "hmrctest" %  "3.0.0",
         "org.pegdown" % "pegdown" % "1.6.0" % scope,
         "org.jsoup" % "jsoup" % "1.8.3" % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,

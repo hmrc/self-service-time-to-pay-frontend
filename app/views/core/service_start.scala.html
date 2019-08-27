@@ -1,0 +1,54 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helpers.{alert, message_list}
+@import helpers.forms.submit
+
+@this(
+  main: views.html.main,
+  viewsHelpers: views.ViewsHelpers
+)
+
+
+@(
+    loggedIn: Boolean = false,
+    messagesApi: play.api.i18n.MessagesApi)(implicit
+    messages: play.api.i18n.Messages,
+    request: Request[_],
+    appConfig: config.AppConfig
+)
+
+
+@main(
+    title = Messages("ssttp.landing.title"),
+    loggedIn = loggedIn,
+    hasUserPanel = true
+){
+
+    <h1 class="heading-xlarge">@Messages("ssttp.landing.title")</h1>
+
+    <p class="subsection">@Messages("ssttp.landing.intro")</p>
+    <div class="panel panel-border-wide"><p>@Messages("ssttp.landing.alert")</p></div>
+    <h2 class="heading-medium">@Messages("ssttp.landing.before-you-start")</h2>
+    <p>@Messages("ssttp.landing.before-you-start.p.1")</p>
+    <p>@Messages("ssttp.landing.before-you-start.p.2")</p>
+    <p class="subsection">
+        @message_list(Some("bullets"), "ssttp.landing.before-you-start.list.", messagesApi)
+    </p>
+    @viewsHelpers.form(ssttpeligibility.routes.SelfServiceTimeToPayController.submit(), 'class -> "group",'id -> "start") {
+       @submit('_buttonClass -> "button--get-started"){@Messages("ssttp.landing.start-button.label")}
+    }
+}

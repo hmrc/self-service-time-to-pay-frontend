@@ -15,31 +15,43 @@
  */
 
 package util.util
-import controllers.action.CheckSessionAction
+import controllers.action.{Actions, CheckSessionAction}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.PlaySpec
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc._
 import play.api.test.{FakeHeaders, FakeRequest}
 import uk.gov.hmrc.play.test.WithFakeApplication
 import uk.gov.hmrc.selfservicetimetopay.resources.goodSession
+
+import scala.concurrent.Future
 class CheckSessionActionSpec extends PlaySpec with WithFakeApplication with ScalaFutures {
+
+  val as = fakeApplication.injector.instanceOf[Actions]
+  val ok = Results.Ok("")
 
   "CheckSessionAction filter" should {
     "return None if the session is ok " in {
-      val result = CheckSessionAction.filter(FakeRequest().withSession(goodSession: _*)).futureValue
-      result.isEmpty mustBe true
+      val result = as.checkSession.invokeBlock(FakeRequest().withSession(goodSession: _*), (_: MessagesRequest[AnyContent]) => {
+        Future.successful(ok)
+      }).futureValue
+
+      result mustBe ok
     }
 
     "return a redirect if the session is not there and redirect to the start " in {
-      val result = CheckSessionAction.filter(FakeRequest()).futureValue
-      result.get.header.status mustBe SEE_OTHER
-      result.get.header.headers("location") mustBe ssttpeligibility.routes.SelfServiceTimeToPayController.start().url
+      val result = as.checkSession.invokeBlock(FakeRequest().withSession(goodSession: _*), (_: MessagesRequest[AnyContent]) => {
+        Future.successful(ok)
+      }).futureValue
+      result.header.status mustBe SEE_OTHER
+      result.header.headers("location") mustBe ssttpeligibility.routes.SelfServiceTimeToPayController.start().url
     }
     "return a redirect if the session is not there and redirect to the start of the unauth journey if url contains payment-plan-calculator " in {
-      val result = CheckSessionAction.filter(FakeRequest("GET", "/payment-plan-calculator", FakeHeaders(), AnyContentAsEmpty)).futureValue
-      result.get.header.status mustBe SEE_OTHER
-      result.get.header.headers("location") mustBe ssttpcalculator.routes.CalculatorController.getPaymentPlanCalculator().url
+      val result = as.checkSession.invokeBlock(FakeRequest().withSession(goodSession: _*), (_: MessagesRequest[AnyContent]) => {
+        Future.successful(ok)
+      }).futureValue
+      result.header.status mustBe SEE_OTHER
+      result.header.headers("location") mustBe ssttpcalculator.routes.CalculatorController.getPaymentPlanCalculator().url
     }
   }
 }

@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package controllers.action
 
 import com.google.inject.Inject
 import config.ViewConfig
-import controllers.UnhappyPathResponses
+import _root_.controllers.UnhappyPathResponses
 import play.api.Logger
-import play.api.i18n.I18nSupport
 import play.api.mvc.Results._
-import play.api.mvc.{ActionBuilder, Request, Result, WrappedRequest}
+import play.api.mvc._
 import uk.gov.hmrc.auth.core
-import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments, _}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-final class AuthenticatedRequest[A](val request:         Request[A],
+final class AuthenticatedRequest[A](val request:         MessagesRequest[A],
                                     val enrolments:      Enrolments,
                                     val confidenceLevel: ConfidenceLevel,
                                     val maybeUtr:        Option[String]
-) extends WrappedRequest[A](request) {
+) extends MessagesRequest[A](request, request.messagesApi) {
 
   private val sa = core.Enrolment("IR-SA")
   lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.contains(sa)
@@ -44,31 +44,36 @@ final class AuthenticatedRequest[A](val request:         Request[A],
 class AuthenticatedAction @Inject() (
     af:           AuthorisedFunctions,
     viewConfig:   ViewConfig,
-    i18nSupport:  I18nSupport,
-    badResponses: UnhappyPathResponses)(implicit ec: ExecutionContext) extends ActionBuilder[AuthenticatedRequest] {
+    badResponses: UnhappyPathResponses,
+    cc:           MessagesControllerComponents)(
+    implicit
+    ec: ExecutionContext
+) extends ActionRefiner[MessagesRequest, AuthenticatedRequest] {
 
-  import i18nSupport._
-
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+  override protected def refine[A](request: MessagesRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     implicit val r: Request[A] = request
+    implicit val mr: MessagesRequest[A] = request
 
     af.authorised.retrieve(
       Retrievals.allEnrolments and Retrievals.confidenceLevel and Retrievals.saUtr
     ).apply {
         case enrolments ~ confidenceLevel ~ utr =>
-          block(new AuthenticatedRequest(request, enrolments, confidenceLevel, utr))
-      }.recover {
+          Future.successful(
+            Right(new AuthenticatedRequest[A](request, enrolments, confidenceLevel, utr))
+          )
+      }
+      .recover {
         case _: NoActiveSession =>
-
           //TODO: what is a proper value to origin
-
-          Redirect(viewConfig.loginUrl, Map("continue" -> Seq(viewConfig.frontendBaseUrl + request.uri), "origin" -> Seq("pay-online")))
+          Left(Redirect(viewConfig.loginUrl, Map("continue" -> Seq(viewConfig.frontendBaseUrl + request.uri), "origin" -> Seq("pay-online"))))
         case e: AuthorisationException =>
           Logger.debug(s"Unauthorised because of ${e.reason}, $e")
-          badResponses.unauthorised
+          Left(badResponses.unauthorised)
       }
   }
+
+  override protected def executionContext: ExecutionContext = cc.executionContext
 
 }
 
