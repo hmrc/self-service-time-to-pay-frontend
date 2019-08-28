@@ -24,6 +24,7 @@ import play.api.data._
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.i18n.I18nSupport
+import req.RequestSupport
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -86,15 +87,15 @@ class TestUsersController @Inject() (
     saStubConnector:  SaStubConnector,
     desStubConnector: DesStubConnector,
     iaConnector:      IaConnector,
-    i18nSupport:      I18nSupport,
     views:            Views,
-    cc:               MessagesControllerComponents)(
+    cc:               MessagesControllerComponents,
+    requestSupport:   RequestSupport)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext
 ) extends FrontendController(cc) {
 
-  import i18nSupport._
+  import requestSupport._
 
   private val testUserForm: Form[TestUserForm] = Form[TestUserForm](
     mapping(

@@ -83,8 +83,8 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def getDirectDebitUnAuthorised: Action[AnyContent] = as.checkSession.async { implicit request =>
-    submissionService.getTtpSessionCarrier.map {
+  def getDirectDebitUnAuthorised: Action[AnyContent] = as.action.async { implicit request =>
+    submissionService.getTtpSubmission.map {
       case Some(ttpData: TTPSubmission) => Ok(views.direct_debit_unauthorised(isSignedIn))
       case _ =>
         Logger.warn("No TTPSubmission, redirecting to start page")
@@ -92,7 +92,7 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def submitDirectDebitConfirmation: Action[AnyContent] = as.checkSession { implicit request =>
+  def submitDirectDebitConfirmation: Action[AnyContent] = as.action { implicit request =>
     Redirect(ssttparrangement.routes.ArrangementController.submit())
   }
 
@@ -122,8 +122,8 @@ class DirectDebitController @Inject() (
    * bank details to see if they already exist. If it does, return existing bank details
    * otherwise return user entered bank details.
    */
-  private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit hc: HeaderCarrier) = {
-    submissionService.getTtpSessionCarrier.flatMap {
+  private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit request: Request[_]) = {
+    submissionService.getTtpSubmission.flatMap {
       _.fold(Future.successful(redirectToStartPage))(ttp => {
         val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
         val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))

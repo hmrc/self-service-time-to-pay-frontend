@@ -21,20 +21,24 @@ import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePut, HeaderCarrier}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay._
+
 import scala.concurrent.{ExecutionContext, Future}
 import modelsFormat._
+import play.api.mvc.Request
 
 /**
  * This one ignores header carrier and sets key explicitly with token value
  */
 class TokenService @Inject() (servicesConfig: ServicesConfig, httpClient: HttpClient)(implicit executionContext: ExecutionContext) {
 
+  import req.RequestSupport._
+
   private val delegate = new SessionCache(servicesConfig, httpClient)
 
-  def put(tokenData: TokenData)(implicit hc: HeaderCarrier): Future[Unit] =
+  def put(tokenData: TokenData)(implicit request: Request[_]): Future[Unit] =
     delegate.put(tokenData)
 
-  def getAndRemove(token: Token)(implicit hc: HeaderCarrier): Future[Option[TokenData]] =
+  def getAndRemove(token: Token)(implicit request: Request[_]): Future[Option[TokenData]] =
     delegate.getAndRemove(token)
 
   private class SessionCache(servicesConfig: ServicesConfig, httpClient: HttpClient) extends uk.gov.hmrc.http.cache.client.SessionCache {
@@ -49,14 +53,14 @@ class TokenService @Inject() (servicesConfig: ServicesConfig, httpClient: HttpCl
 
     override def http: CoreGet with CorePut with CoreDelete = httpClient
 
-    def put(tokenData: TokenData)(implicit hc: HeaderCarrier): Future[Unit] = cache[TokenData](
+    def put(tokenData: TokenData)(implicit request: Request[_]): Future[Unit] = cache[TokenData](
       defaultSource,
       s"$formId-${tokenData.token.v}",
       formId,
       tokenData
     ).map(_ => ())
 
-    def getAndRemove(token: Token)(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[Option[TokenData]] = for {
+    def getAndRemove(token: Token)(implicit request: Request[_], executionContext: ExecutionContext): Future[Option[TokenData]] = for {
       tokenData <- fetchAndGetEntry[TokenData](defaultSource, s"$formId-${token.v}", formId)
       _ <- delete(buildUri(defaultSource, s"$formId-${token.v}"))
     } yield tokenData

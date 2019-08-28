@@ -20,19 +20,23 @@ import com.google.inject.Singleton
 import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import play.api.mvc.Request
+import req.RequestSupport
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DesStubConnector @Inject() (
     httpClient:     HttpClient,
-    servicesConfig: ServicesConfig
+    servicesConfig: ServicesConfig,
+    requestSupport: RequestSupport
 )(implicit ec: ExecutionContext) {
 
-  def setReturns(tu: TestUser)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  import requestSupport._
+
+  def setReturns(tu: TestUser)(implicit request: Request[_]): Future[Unit] = {
 
     val predefinedResponse: JsValue = Json.obj(
       "status" -> tu.returnsResponseStatusCode,
@@ -50,7 +54,7 @@ class DesStubConnector @Inject() (
       }
   }
 
-  def setDebits(tu: TestUser)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  def setDebits(tu: TestUser)(implicit request: Request[_]): Future[Unit] = {
 
     val predefinedResponse: JsValue = Json.obj(
       "status" -> tu.debitsResponseStatusCode,

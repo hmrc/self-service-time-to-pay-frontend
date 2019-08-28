@@ -22,13 +22,13 @@ import java.time.temporal.ChronoUnit.DAYS
 
 import bankholidays.WorkingDaysService
 import javax.inject.Inject
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
 import CalculatorService._
+import play.api.mvc.Request
 
 class CalculatorService @Inject() (
     calculatorConnector: CalculatorConnector,
@@ -36,7 +36,7 @@ class CalculatorService @Inject() (
 
   //todo perhaps merge these methods and change back end so it only one call
   def getInstalmentsSchedule(sa: SelfAssessment, intialPayment: BigDecimal = BigDecimal(0))
-    (implicit hc: HeaderCarrier): Future[Map[Int, CalculatorPaymentSchedule]] = {
+    (implicit request: Request[_]): Future[Map[Int, CalculatorPaymentSchedule]] = {
     val input: List[(Int, CalculatorInput)] = getMonthRange(sa).map(month => {
       val calculatorInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, intialPayment, sa.debits)
       (month, validateCalculatorDates(calculatorInput, month, sa.debits))
@@ -45,7 +45,7 @@ class CalculatorService @Inject() (
     getCalculatorValues(input)
   }
 
-  def getInstalmentsScheduleUnAuth(debits: Seq[Debit])(implicit hc: HeaderCarrier): Future[Map[Int, CalculatorPaymentSchedule]] = {
+  def getInstalmentsScheduleUnAuth(debits: Seq[Debit])(implicit request: Request[_]): Future[Map[Int, CalculatorPaymentSchedule]] = {
 
     val input: List[(Int, CalculatorInput)] = (minimumMonthsAllowedTTP to maxAllowedMonthlyInstalments).map(month => {
       val caltInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, 0, debits)
@@ -54,7 +54,7 @@ class CalculatorService @Inject() (
     getCalculatorValues(input)
   }
 
-  private def getCalculatorValues(inputs: List[(Int, CalculatorInput)])(implicit hc: HeaderCarrier) = {
+  private def getCalculatorValues(inputs: List[(Int, CalculatorInput)])(implicit request: Request[_]) = {
     val futureSchedules: Seq[Future[(Int, CalculatorPaymentSchedule)]] = inputs.map {
       case (numberOfMonths, calcInput) =>
         calculatorConnector.calculatePaymentSchedule(calcInput).map(x => (numberOfMonths, x.head))

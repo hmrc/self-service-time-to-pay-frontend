@@ -20,24 +20,31 @@ import com.google.inject._
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status._
+import play.api.mvc.Request
 import ssttparrangement.SubmissionError
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class DirectDebitConnector @Inject() (servicesConfig: ServicesConfig, httpClient: HttpClient) {
+class DirectDebitConnector @Inject() (
+    servicesConfig: ServicesConfig,
+    httpClient:     HttpClient)(
+    implicit
+    ec: ExecutionContext
+) {
   type DDSubmissionResult = Either[SubmissionError, DirectDebitInstructionPaymentPlan]
+
+  import req.RequestSupport._
 
   val directDebitURL: String = "direct-debit"
   val serviceURL: String = servicesConfig.baseUrl("direct-debit")
 
-  def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DDSubmissionResult] = {
+  def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit request: Request[_]): Future[DDSubmissionResult] = {
     httpClient.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", paymentPlan).map {
       Result => Right(Result)
     }.recover {
@@ -61,7 +68,7 @@ class DirectDebitConnector @Inject() (servicesConfig: ServicesConfig, httpClient
   /**
    * Checks if the given bank details are valid by checking against the Bank Account Reputation Service via Direct Debit service
    */
-  def getBank(sortCode: String, accountNumber: String)(implicit hc: HeaderCarrier): Future[Option[BankDetails]] = {
+  def getBank(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[Option[BankDetails]] = {
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
     httpClient.GET[HttpResponse](s"$directDebitURL/$serviceURL/bank?$queryString").map {
       response => Some(response.json.as[BankDetails])
@@ -76,7 +83,7 @@ class DirectDebitConnector @Inject() (servicesConfig: ServicesConfig, httpClient
   /**
    * Retrieves stored bank details associated with a given saUtr
    */
-  def getBanks(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitBank] = {
+  def getBanks(saUtr: SaUtr)(implicit request: Request[_]): Future[DirectDebitBank] = {
     httpClient.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response => response }
       .recover {
         case e: uk.gov.hmrc.http.NotFoundException if e.message.contains("BP not found") => DirectDebitBank.none

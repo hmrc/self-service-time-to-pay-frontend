@@ -18,6 +18,8 @@ package testonly
 
 import com.google.inject.Singleton
 import javax.inject.Inject
+import play.api.mvc.Request
+import req.RequestSupport
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -27,12 +29,15 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IaConnector @Inject() (
     httpClient:     HttpClient,
-    servicesConfig: ServicesConfig
+    servicesConfig: ServicesConfig,
+    requestSupport: RequestSupport
 )(implicit ec: ExecutionContext) {
+
+  import requestSupport._
 
   private lazy val baseUrl: String = servicesConfig.baseUrl("ia")
 
-  def uploadUtr(utr: String)(implicit hc: HeaderCarrier): Future[Unit] =
+  def uploadUtr(utr: String)(implicit request: Request[_]): Future[Unit] =
     httpClient
       .POSTEmpty(baseUrl + s"/ia/upload/$utr")
       .map{

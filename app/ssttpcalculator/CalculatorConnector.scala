@@ -17,6 +17,7 @@
 package ssttpcalculator
 
 import com.google.inject._
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -27,13 +28,16 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import scala.concurrent.Future
 
 class CalculatorConnector @Inject() (servicesConfig: ServicesConfig, httpClient: HttpClient) {
+
+  import req.RequestSupport._
+
   val calculatorURL: String = servicesConfig.baseUrl("time-to-pay-calculator")
   val serviceURL: String = "time-to-pay-calculator/paymentschedule"
 
   /**
    * Send the calculator input information to the time-to-pay-calculator service and retrieve back a payment schedule
    */
-  def calculatePaymentSchedule(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[Seq[CalculatorPaymentSchedule]] = {
+  def calculatePaymentSchedule(liabilities: CalculatorInput)(implicit request: Request[_]): Future[Seq[CalculatorPaymentSchedule]] = {
     httpClient.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](s"$calculatorURL/$serviceURL", liabilities)
   }
 }

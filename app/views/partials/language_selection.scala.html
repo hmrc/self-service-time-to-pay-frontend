@@ -28,7 +28,7 @@
 
 @*//shamelessly copied from play-ui*@
 
-<p class="@if(customClass.isDefined) {@customClass.get}">
+<p class="@if(customClass.isDefined) {@customClass.get} pull-right">
 
 @Languages.availableLanguages.map { language: Language =>
   @if(messages.lang.code != language.code) {

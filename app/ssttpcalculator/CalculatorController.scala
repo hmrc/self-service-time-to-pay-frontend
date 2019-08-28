@@ -48,15 +48,15 @@ class CalculatorController @Inject() (
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
-  def getPaymentPlanCalculator: Action[AnyContent] = as.checkSession { implicit request =>
+  def getPaymentPlanCalculator: Action[AnyContent] = as.action { implicit request =>
     Ok(views.payment_plan_calculator(isSignedIn))
   }
 
-  def getAmountDue: Action[AnyContent] = as.checkSession { implicit request =>
+  def getAmountDue: Action[AnyContent] = as.action { implicit request =>
     Ok(views.amount_due(isSignedIn, CalculatorForm.createAmountDueForm()))
   }
 
-  def submitAmountDue: Action[AnyContent] = as.checkSession.async { implicit request =>
+  def submitAmountDue: Action[AnyContent] = as.action.async { implicit request =>
     CalculatorForm.createAmountDueForm().bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.amount_due(isSignedIn, formWithErrors))),
       amountDue => {
@@ -70,9 +70,9 @@ class CalculatorController @Inject() (
 
   }
 
-  def getCalculateInstalmentsUnAuth(): Action[AnyContent] = as.checkSession.async {
+  def getCalculateInstalmentsUnAuth(): Action[AnyContent] = as.action.async {
     implicit request =>
-      submissionService.getTtpSessionCarrier.flatMap {
+      submissionService.getTtpSubmission.flatMap {
         case Some(ttpData @ TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(Some(amountDue), _)), _)) =>
           calculatorService.getInstalmentsSchedule(SelfAssessment (debits = Seq(Debit(amount  = amountDue, dueDate = LocalDate.now()))), 0).map { monthsToSchedule =>
             Ok(views.calculate_instalments_form(CalculatorForm.createInstalmentForm(),
@@ -83,9 +83,9 @@ class CalculatorController @Inject() (
       }
   }
 
-  def submitCalculateInstalmentsUnAuth(): Action[AnyContent] = as.checkSession.async {
+  def submitCalculateInstalmentsUnAuth(): Action[AnyContent] = as.action.async {
     implicit request =>
-      submissionService.getTtpSessionCarrier.flatMap {
+      submissionService.getTtpSubmission.flatMap {
         case Some(ttpData @ TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(Some(amountDue), _)), _)) =>
           calculatorService.getInstalmentsScheduleUnAuth(debits = Seq(Debit(amount  = amountDue, dueDate = LocalDate.now()))).flatMap { monthsToSchedule =>
             CalculatorForm.createInstalmentForm().bindFromRequest().fold(
@@ -105,9 +105,9 @@ class CalculatorController @Inject() (
       }
   }
 
-  def getCheckCalculation: Action[AnyContent] = as.checkSession.async {
+  def getCheckCalculation: Action[AnyContent] = as.action.async {
     implicit request =>
-      submissionService.getTtpSessionCarrier.flatMap {
+      submissionService.getTtpSubmission.flatMap {
         case Some(ttpData @ TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(_, Some(schedule))), _)) =>
           Future.successful(Ok(views.check_calculation(schedule, isSignedIn)))
         case _ => Future.successful(redirectOnError)
@@ -115,7 +115,7 @@ class CalculatorController @Inject() (
   }
 
   def getTaxLiabilities: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.map {
+    submissionService.getTtpSubmission.map {
       case Some(_@ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
         Ok(views.tax_liabilities(sa.debits, isSignedIn))
       case _ => redirectOnError
@@ -123,7 +123,7 @@ class CalculatorController @Inject() (
   }
 
   def getPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.map {
+    submissionService.getTtpSubmission.map {
       case Some(TTPSubmission(_, _, _, tp, CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
         Ok(views.payment_today_question(CalculatorForm.payTodayForm, isSignedIn))
       case _ => redirectOnError
@@ -135,7 +135,7 @@ class CalculatorController @Inject() (
    * otherwise navigate to calculator page and set the initial payment to 0
    */
   def submitPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.flatMap[Result] {
+    submissionService.getTtpSubmission.flatMap[Result] {
       case Some(ttpData @ TTPSubmission(_, _, _, tp, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
         CalculatorForm.payTodayForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(views.payment_today_question(formWithErrors, isSignedIn))), {
@@ -152,7 +152,7 @@ class CalculatorController @Inject() (
   }
 
   def getPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.map {
+    submissionService.getTtpSubmission.map {
       case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
         if (paymentToday.equals(BigDecimal(0))) Ok(views.payment_today_form(form, isSignedIn))
@@ -164,7 +164,7 @@ class CalculatorController @Inject() (
   }
 
   def submitPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.flatMap[Result] {
+    submissionService.getTtpSubmission.flatMap[Result] {
       case Some(ttpSubmission @ TTPSubmission(_, _, _, _, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) =>
         CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(views.payment_today_form(formWithErrors, isSignedIn))),
@@ -182,7 +182,7 @@ class CalculatorController @Inject() (
 
   def getMonthlyPayment: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.putIsBPath(isBpath = true)
-    submissionService.getTtpSessionCarrier.flatMap[Result] {
+    submissionService.getTtpSubmission.flatMap[Result] {
       case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
         val form = CalculatorForm.createMonthlyAmountForm(
           lowerMonthlyPaymentBound(sa, calculatorData).toInt, upperMonthlyPaymentBound(sa, calculatorData).toInt)
@@ -206,7 +206,7 @@ class CalculatorController @Inject() (
   private def roundUpToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100) + 100
 
   def submitMonthlyPayment: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.flatMap {
+    submissionService.getTtpSubmission.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
         calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule =>
           CalculatorForm.createMonthlyAmountForm(
@@ -261,7 +261,7 @@ class CalculatorController @Inject() (
   }
 
   def getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.map {
+    submissionService.getTtpSubmission.map {
       case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
         Ok(views.payment_summary(debits, initialPayment))
       case _ =>
@@ -271,7 +271,7 @@ class CalculatorController @Inject() (
   }
 
   def getCalculateInstalmentsAB(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.flatMap {
+    submissionService.getTtpSubmission.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
         submissionService.getAmount.flatMap{
           case Some(amount) =>
@@ -294,7 +294,7 @@ class CalculatorController @Inject() (
   }
 
   def submitCalculateInstalmentsAB(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.flatMap {
+    submissionService.getTtpSubmission.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
         submissionService.getAmount.flatMap {
           case Some(amount) =>
@@ -327,7 +327,7 @@ class CalculatorController @Inject() (
    * - If schedule data is missing, update TTPSubmission
    */
   def getCalculateInstalments: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.flatMap {
+    submissionService.getTtpSubmission.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
         if (CalculatorService.getMaxMonthsAllowed(sa, LocalDate.now()) >= CalculatorService.minimumMonthsAllowedTTP) {
           calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
@@ -344,7 +344,7 @@ class CalculatorController @Inject() (
   }
 
   def submitCalculateInstalments(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSessionCarrier.flatMap {
+    submissionService.getTtpSubmission.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
         calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule =>
           CalculatorForm.createInstalmentForm().bindFromRequest().fold(

@@ -19,7 +19,8 @@ package ssttparrangement
 import com.google.inject.Inject
 import play.api.Logger
 import play.api.http.Status
-import uk.gov.hmrc.http._
+import play.api.mvc.Request
+import uk.gov.hmrc.http.{HttpException, HttpResponse, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
@@ -36,12 +37,14 @@ class ArrangementConnector @Inject() (
     ec: ExecutionContext
 ) {
 
+  import req.RequestSupport._
+
   type SubmissionResult = Either[SubmissionError, SubmissionSuccess]
 
   val arrangementURL: String = servicesConfig.baseUrl("time-to-pay-arrangement")
   val serviceURL: String = "ttparrangements"
 
-  def submitArrangements(ttpArrangement: TTPArrangement)(implicit hc: HeaderCarrier): Future[SubmissionResult] = {
+  def submitArrangements(ttpArrangement: TTPArrangement)(implicit request: Request[_]): Future[SubmissionResult] = {
     httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map { _ =>
       Right(SubmissionSuccess())
     }.recover {

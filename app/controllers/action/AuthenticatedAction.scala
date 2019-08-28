@@ -50,8 +50,9 @@ class AuthenticatedAction @Inject() (
     ec: ExecutionContext
 ) extends ActionRefiner[MessagesRequest, AuthenticatedRequest] {
 
+  import req.RequestSupport._
+
   override protected def refine[A](request: MessagesRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     implicit val r: Request[A] = request
     implicit val mr: MessagesRequest[A] = request
 

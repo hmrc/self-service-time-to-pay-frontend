@@ -21,10 +21,10 @@ import controllers.FrontendController
 import controllers.action.Actions
 import javax.inject._
 import play.api.mvc._
+import req.RequestSupport
 import sttpsubmission.SubmissionService
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
-import views.html.core._
 
 import scala.concurrent.ExecutionContext
 
@@ -32,19 +32,22 @@ class SelfServiceTimeToPayController @Inject() (
     mcc:               MessagesControllerComponents,
     submissionService: SubmissionService,
     as:                Actions,
-    views:             Views)(implicit appConfig: AppConfig,
-                              ec: ExecutionContext
+    views:             Views,
+    requestSupport:    RequestSupport)(implicit appConfig: AppConfig,
+                                       ec: ExecutionContext
 ) extends FrontendController(mcc) {
 
-  def start: Action[AnyContent] = as.checkSession.async { implicit request =>
-    submissionService.getTtpSessionCarrier.map { _ => Ok(views.service_start(isSignedIn, mcc.messagesApi)) }
+  import requestSupport._
+
+  def start: Action[AnyContent] = as.action { implicit request =>
+    Ok(views.service_start(isSignedIn, mcc.messagesApi))
   }
 
-  def submit: Action[AnyContent] = as.checkSession { implicit request =>
+  def submit: Action[AnyContent] = as.action { implicit request =>
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
-  def actionCallUsInEligibility: Action[AnyContent] = as.checkSession { implicit request =>
+  def actionCallUsInEligibility: Action[AnyContent] = as.action { implicit request =>
     Ok(views.call_us(isWelsh, loggedIn = isSignedIn))
   }
 
@@ -55,19 +58,19 @@ class SelfServiceTimeToPayController @Inject() (
   def getTtpCallUsSignInQuestion: Action[AnyContent] = actionCallUsInEligibility
   def getIaCallUse: Action[AnyContent] = actionCallUsInEligibility
 
-  def getDebtTooLarge: Action[AnyContent] = as.checkSession { implicit request =>
+  def getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
     Ok(views.debt_too_large(isSignedIn, isWelsh))
   }
 
-  def getYouNeedToFile: Action[AnyContent] = as.checkSession { implicit request =>
+  def getYouNeedToFile: Action[AnyContent] = as.action { implicit request =>
     Ok(views.you_need_to_file(isSignedIn))
   }
 
-  def getNotSaEnrolled: Action[AnyContent] = as.checkSession { implicit request =>
+  def getNotSaEnrolled: Action[AnyContent] = as.action { implicit request =>
     Ok(views.not_enrolled(isWelsh, isSignedIn))
   }
 
-  def signOut(continueUrl: Option[String]): Action[AnyContent] = as.checkSession.async { implicit request =>
+  def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action.async { implicit request =>
     submissionService.remove().map(_ => Redirect(appConfig.logoutUrl).withNewSession)
   }
 }

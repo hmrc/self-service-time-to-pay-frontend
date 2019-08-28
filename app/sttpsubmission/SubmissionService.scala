@@ -20,7 +20,8 @@ import controllers.ErrorHandler
 import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.{Reads, Writes}
-import play.api.mvc.{Result, Results}
+import play.api.mvc.{Request, Result, Results}
+import req.RequestSupport
 import sessioncache.SsttpSessionCache
 import token.TTPSessionId
 import uk.gov.hmrc.http.cache.client.CacheMap
@@ -34,41 +35,43 @@ import scala.concurrent.{ExecutionContext, Future}
 class SubmissionService @Inject() (
     sessionCache: SsttpSessionCache)(implicit ec: ExecutionContext) {
 
+  import RequestSupport._
+
   val sessionKey: String = "ttpSubmission"
 
-  def putTtpSessionCarrier(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], hc: HeaderCarrier): Future[CacheMap] = {
+  def putTtpSessionCarrier(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], request: Request[_]): Future[CacheMap] = {
     sessionCache.cache[TTPSubmission](sessionKey, body)
   }
 
-  def getTtpSessionCarrier(implicit hc: HeaderCarrier, reads: Reads[TTPSubmission]): Future[Option[TTPSubmission]] = {
+  def getTtpSubmission(implicit request: Request[_], reads: Reads[TTPSubmission]): Future[Option[TTPSubmission]] = {
     sessionCache.fetchAndGetEntry[TTPSubmission](sessionKey)
   }
 
-  def putAmount(amount: BigDecimal)(implicit writes: Writes[BigDecimal], hc: HeaderCarrier): Future[CacheMap] = {
+  def putAmount(amount: BigDecimal)(implicit writes: Writes[BigDecimal], request: Request[_]): Future[CacheMap] = {
     sessionCache.cache[BigDecimal]("amount", amount)
   }
 
-  def getAmount()(implicit hc: HeaderCarrier, reads: Reads[BigDecimal]): Future[Option[BigDecimal]] = {
+  def getAmount()(implicit request: Request[_], reads: Reads[BigDecimal]): Future[Option[BigDecimal]] = {
     sessionCache.fetchAndGetEntry[BigDecimal]("amount")
   }
 
-  def putIsBPath(isBpath: Boolean)(implicit writes: Writes[Boolean], hc: HeaderCarrier): Future[CacheMap] = {
+  def putIsBPath(isBpath: Boolean)(implicit writes: Writes[Boolean], request: Request[_]): Future[CacheMap] = {
     sessionCache.cache[Boolean]("isBPath", isBpath)
   }
 
-  def getIsBpath()(implicit hc: HeaderCarrier, reads: Reads[Boolean]): Future[Option[Boolean]] = {
+  def getIsBpath()(implicit request: Request[_], reads: Reads[Boolean]): Future[Option[Boolean]] = {
     sessionCache.fetchAndGetEntry[Boolean]("isBPath")
   }
 
-  def remove()(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def remove()(implicit request: Request[_]): Future[HttpResponse] = {
     sessionCache.remove()
   }
 
   /**
    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
    */
-  def authorizedForSsttp(block: TTPSubmission => Future[Result])(implicit hc: HeaderCarrier): Future[Result] = {
-    this.getTtpSessionCarrier.flatMap[Result] {
+  def authorizedForSsttp(block: TTPSubmission => Future[Result])(implicit request: Request[_]): Future[Result] = {
+    this.getTtpSubmission.flatMap[Result] {
       case Some(submission @ TTPSubmission(Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _, _)) =>
         block(submission)
       case _ =>
@@ -76,8 +79,8 @@ class SubmissionService @Inject() (
     }
   }
 
-  protected def updateOrCreateInCache(found: TTPSubmission => TTPSubmission, notFound: () => TTPSubmission)(implicit hc: HeaderCarrier): Future[CacheMap] = {
-    this.getTtpSessionCarrier.flatMap {
+  protected def updateOrCreateInCache(found: TTPSubmission => TTPSubmission, notFound: () => TTPSubmission)(implicit request: Request[_]): Future[CacheMap] = {
+    this.getTtpSubmission.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")
         this.putTtpSessionCarrier(found(ttpSubmission))

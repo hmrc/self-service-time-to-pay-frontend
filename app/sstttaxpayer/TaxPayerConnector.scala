@@ -18,6 +18,7 @@ package sstttaxpayer
 
 import com.google.inject._
 import play.api.Logger
+import play.api.mvc.Request
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -26,12 +27,13 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxPayerConnector @Inject() (servicesConfig: ServicesConfig, http: HttpClient) {
+class TaxPayerConnector @Inject() (servicesConfig: ServicesConfig, http: HttpClient)(implicit ec: ExecutionContext) {
 
+  import req.RequestSupport._
   val taxPayerURL: String = servicesConfig.baseUrl("time-to-pay-taxpayer")
   val serviceURL: String = "taxpayer"
 
-  def getTaxPayer(utr: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Taxpayer]] = {
+  def getTaxPayer(utr: String)(implicit request: Request[_]): Future[Option[Taxpayer]] = {
     http.GET[HttpResponse](s"$taxPayerURL/$serviceURL/$utr").map {
       response => Some(response.json.as[Taxpayer])
     }.recover {

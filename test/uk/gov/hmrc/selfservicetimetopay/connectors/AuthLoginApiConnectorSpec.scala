@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class AuthLoginApiConnectorSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val request: Request[_] = HeaderCarrier()
 
   private val httpClient: HttpClient = mock[HttpClient]
   val testConnector = new CalculatorConnector(

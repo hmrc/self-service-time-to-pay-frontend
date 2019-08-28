@@ -59,7 +59,7 @@ class InspectorController @Inject() (
   }
 
   def inspect() = Action.async { implicit request =>
-    val sessionCacheF = submissionService.getTtpSessionCarrier
+    val sessionCacheF = submissionService.getTtpSubmission
 
     for {
       maybeSubmission <- sessionCacheF

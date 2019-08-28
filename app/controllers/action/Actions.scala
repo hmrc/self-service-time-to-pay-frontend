@@ -22,7 +22,6 @@ import play.api.mvc._
 class Actions @Inject() (
     authenticatedAction:    AuthenticatedAction,
     authorisedSaUserAction: AuthorisedSaUserAction,
-    checkSessionAction:     CheckSessionAction,
     defaultActionBuilder:   DefaultActionBuilder,
     messagesActionBuilder:  MessagesActionBuilder
 ) {
@@ -30,5 +29,5 @@ class Actions @Inject() (
   def authorisedSaUser: ActionBuilder[AuthorisedSaUserRequest, AnyContent] =
     messagesActionBuilder andThen authenticatedAction andThen authorisedSaUserAction
 
-  def checkSession: ActionBuilder[MessagesRequest, AnyContent] = messagesActionBuilder andThen checkSessionAction
+  def action: ActionBuilder[MessagesRequest, AnyContent] = messagesActionBuilder
 }

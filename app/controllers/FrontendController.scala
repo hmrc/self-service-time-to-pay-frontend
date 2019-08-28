@@ -28,12 +28,12 @@ abstract class FrontendController(
   implicit def toFuture(r: Result): Future[Result] = Future.successful(r)
 
   //TODO: move it to some auth service
-  def isSignedIn(implicit hc: HeaderCarrier): Boolean = hc.authorization.isDefined
+  def isSignedIn(implicit request: Request[_]): Boolean = hc.authorization.isDefined
 
   //TODO: remove it from this place and investigate correctness of it's usages
   protected def redirectOnError: Result = ErrorHandler.redirectOnError
 
-  def isWelsh(implicit request: Request[_], hc: HeaderCarrier): Boolean = {
+  def isWelsh(implicit request: Request[_]): Boolean = {
     val currantLang: String = request.cookies.get("PLAY_LANG").fold("en")(cookie => cookie.value)
     if (currantLang == "cy") true else false
   }

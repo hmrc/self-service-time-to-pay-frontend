@@ -20,16 +20,24 @@ import com.google.inject.Singleton
 import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.mvc.Request
+import req.RequestSupport
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SaStubConnector @Inject() (httpClient: HttpClient, servicesConfig: ServicesConfig) {
+class SaStubConnector @Inject() (
+    httpClient:     HttpClient,
+    servicesConfig: ServicesConfig,
+    requestSupport: RequestSupport)(
+    implicit
+    ec: ExecutionContext) {
 
-  def setTaxpayerResponse(tu: TestUser)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  import requestSupport._
+
+  def setTaxpayerResponse(tu: TestUser)(implicit request: Request[_]): Future[Unit] = {
 
     val predefinedResponse: JsValue = Json.obj(
       "status" -> tu.saTaxpayerResponseStatusCode,

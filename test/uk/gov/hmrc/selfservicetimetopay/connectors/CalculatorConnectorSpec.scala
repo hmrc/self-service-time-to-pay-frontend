@@ -20,7 +20,10 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
+import play.api.mvc.Request
+import play.api.test.FakeRequest
 import ssttpcalculator.CalculatorConnector
+import testsupport.ItSpec
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -31,9 +34,9 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CalculatorConnectorSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
+class CalculatorConnectorSpec extends ItSpec {
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val request: Request[_] = FakeRequest()
 
   private val httpClient: HttpClient = mock[HttpClient]
   val testConnector = new CalculatorConnector(
