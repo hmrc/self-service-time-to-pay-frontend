@@ -31,10 +31,11 @@ import token.{TTPSessionId, TokenService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 class InspectorController @Inject() (
@@ -59,7 +60,9 @@ class InspectorController @Inject() (
   }
 
   def inspect() = Action.async { implicit request =>
-    val sessionCacheF = submissionService.getTtpSubmission
+    val sessionCacheF: Future[Option[TTPSubmission]] = submissionService.getTtpSubmission.recover{
+      case uk.gov.hmrc.http.cache.client.NoSessionException => None
+    }
 
     for {
       maybeSubmission <- sessionCacheF

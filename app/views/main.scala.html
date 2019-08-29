@@ -47,7 +47,7 @@
     <script src="@routes.Assets.at("javascripts/urBanner.js")" type="text/javascript"></script>
     @if(scriptElem.isDefined){@scriptElem}
 }
-@links = {@if(loggedIn){
+@links = {@if(req.RequestSupport.isLoggedIn){
     <li><a href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)">@Messages("ssttp.common.sign-out")</a></li>
 }else{
     @play.twirl.api.HtmlFormat.empty
@@ -70,7 +70,6 @@
     linksElem = Some(linksElems),
     googleAnalyticsCalls = googleAnalyticsCalls,
     noGetHelp = noGetHelp,
-    loggedIn = loggedIn,
     welshToggleEnabled = welshToggleEnabled,
     hasUserPanel = hasUserPanel,
     navTitle = navTitle

@@ -20,6 +20,7 @@ import config.AppConfig
 import controllers.FrontendController
 import controllers.action.Actions
 import javax.inject._
+import play.api.i18n.Messages
 import play.api.mvc._
 import req.RequestSupport
 import sttpsubmission.SubmissionService
@@ -40,6 +41,9 @@ class SelfServiceTimeToPayController @Inject() (
   import requestSupport._
 
   def start: Action[AnyContent] = as.action { implicit request =>
+    val x = messagesApi.preferred(request)
+    val m = implicitly[Messages]
+
     Ok(views.service_start(isSignedIn, mcc.messagesApi))
   }
 

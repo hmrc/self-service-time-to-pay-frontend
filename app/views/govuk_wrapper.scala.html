@@ -37,7 +37,6 @@
         linksElem: Option[Html] = None,
         googleAnalyticsCalls: Seq[String] = Seq.empty,
         noGetHelp: Boolean = false,
-        loggedIn: Boolean = false,
         welshToggleEnabled:Boolean = true,
         hasUserPanel: Boolean = false,
         navTitle: String = "ssttp.common.title")(
@@ -89,7 +88,14 @@
 
 @serviceInfo = {
 @viewsHelpers.serviceInfo(
-    betaBanner = beta_banner_with_user_panel(loggedIn, appConfig.betaFeedbackUrlAuth, appConfig.betaFeedbackUrlNoAuth, true, false, hasUserPanel = hasUserPanel),
+    betaBanner = beta_banner_with_user_panel(
+      req.RequestSupport.isLoggedIn,
+      appConfig.betaFeedbackUrlAuth,
+      appConfig.betaFeedbackUrlNoAuth,
+      true,
+      false,
+      hasUserPanel = hasUserPanel
+    ),
     includeGridWrapper = false,
     serviceInfoContent = Some(serviceInfoContent),
     includeHMRCBranding = false
