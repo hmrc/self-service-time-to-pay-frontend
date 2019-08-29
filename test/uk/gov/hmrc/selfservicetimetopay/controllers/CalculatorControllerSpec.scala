@@ -123,7 +123,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
     "submitCalculateInstalments Return 303 when there is a Sa in session" in {
       implicit val request: Request[_] = new HeaderCarrier
-      when(mockSessionCache.putTtpSessionCarrier(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(), any())(any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
@@ -136,7 +136,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
     "submitCalculateInstalments put the chosen months of instalments into the session" in {
       implicit val request: Request[_] = new HeaderCarrier
-      when(mockSessionCache.putTtpSessionCarrier(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(), any())(any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
       val result = controller.submitCalculateInstalments().apply(FakeRequest()
@@ -144,7 +144,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
         .withFormUrlEncodedBody("chosen-month" -> "3"))
       status(result) mustBe SEE_OTHER
       verify(mockSessionCache, times(1)).getTtpSubmission(any(), any())
-      verify(mockSessionCache, times(1)).putTtpSessionCarrier(any())(any(), any())
+      verify(mockSessionCache, times(1)).putTtpSubmission(any())(any(), any())
     }
 
     "Return BadRequest if the form value = total amount due" in {
@@ -317,13 +317,13 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
     "submitAmountDue should update the session with amount submitted" in {
       when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
-      when(mockSessionCache.putTtpSessionCarrier(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val request = FakeRequest().withSession(goodSession: _*)
       val response = controller.submitAmountDue().apply(request.withFormUrlEncodedBody("amount" -> "500"))
 
       status(response) mustBe SEE_OTHER
       ssttpcalculator.routes.CalculatorController.getCalculateInstalmentsUnAuth().url must endWith(redirectLocation(response).get)
-      verify(mockSessionCache, times(1)).putTtpSessionCarrier(any())(any(), any())
+      verify(mockSessionCache, times(1)).putTtpSubmission(any())(any(), any())
     }
 
     "getCalculateInstalmentsUnAuth should load the getCalculateInstalmentsUnAuth if amountDue is in the session" in {
@@ -351,7 +351,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(2)))))))
       when(mockCalculatorService.getInstalmentsScheduleUnAuth(any())(any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
-      when(mockSessionCache.putTtpSessionCarrier(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val request = FakeRequest().withSession(goodSession: _*)
       val response = controller.submitCalculateInstalmentsUnAuth().apply(request)
 
@@ -363,7 +363,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(2)))))))
       when(mockCalculatorService.getInstalmentsScheduleUnAuth(any())(any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
-      when(mockSessionCache.putTtpSessionCarrier(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val request = FakeRequest().withFormUrlEncodedBody("chosen-month" -> "2").withSession(goodSession: _*)
       val response = controller.submitCalculateInstalmentsUnAuth().apply(request)
 
@@ -391,7 +391,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
           Some(ttpSubmissionNLI.copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount  = 300.0, dueDate = LocalDate.now())))))
         )
       )
-      when(mockSessionCache.putTtpSessionCarrier(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val response = controller.submitPayTodayQuestion().apply(FakeRequest()
         .withFormUrlEncodedBody("paytoday" -> "false")
         .withSession(goodSession: _*))

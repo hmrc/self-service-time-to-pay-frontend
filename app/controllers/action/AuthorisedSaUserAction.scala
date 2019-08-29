@@ -33,15 +33,23 @@ class AuthorisedSaUserAction @Inject() (
 ) extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
-    if (request.maybeUtr.isEmpty && request.hasActiveSaEnrolment) Logger.error(s"User has no UTR]")
 
     val result =
       if (request.hasActiveSaEnrolment &&
         request.confidenceLevel >= ConfidenceLevel.L200 &&
         request.maybeUtr.isDefined)
         Right(new AuthorisedSaUserRequest[A](request, request.maybeUtr.get))
-      else
+      else {
+        Logger.info(
+          s"""
+           |Authorisation failed:
+           |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
+           |  [enrolments: ${request.enrolments}]
+           |  [utr: ${request.maybeUtr}]
+           |  [ConfidenceLevel: ${request.confidenceLevel}]
+           |  """.stripMargin)
         Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()))
+      }
     Future.successful(result)
 
   }

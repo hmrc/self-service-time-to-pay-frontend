@@ -144,7 +144,7 @@ class DirectDebitController @Inject() (
                               accountName   = Some(accName))
                 case Nil => bankDetails.copy(accountName = Some(accName))
               }
-              submissionService.putTtpSessionCarrier(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
+              submissionService.putTtpSubmission(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
                 _ => Redirect(toDDCreationPage)
               }
             }

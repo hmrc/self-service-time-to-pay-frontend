@@ -39,7 +39,7 @@ class SubmissionService @Inject() (
 
   val sessionKey: String = "ttpSubmission"
 
-  def putTtpSessionCarrier(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], request: Request[_]): Future[CacheMap] = {
+  def putTtpSubmission(body: TTPSubmission)(implicit writes: Writes[TTPSubmission], request: Request[_]): Future[CacheMap] = {
     sessionCache.cache[TTPSubmission](sessionKey, body)
   }
 
@@ -83,10 +83,10 @@ class SubmissionService @Inject() (
     this.getTtpSubmission.flatMap {
       case Some(ttpSubmission) =>
         Logger.info("TTP data found - merging record")
-        this.putTtpSessionCarrier(found(ttpSubmission))
+        this.putTtpSubmission(found(ttpSubmission))
       case None =>
         Logger.info("No TTP Submission data found in cache")
-        this.putTtpSessionCarrier(notFound())
+        this.putTtpSubmission(notFound())
     }
   }
 

@@ -26,14 +26,18 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EligibilityConnector @Inject() (httpClient: HttpClient, servicesConfig: ServicesConfig) {
+class EligibilityConnector @Inject() (
+    httpClient:     HttpClient,
+    servicesConfig: ServicesConfig)(
+    implicit
+    ec: ExecutionContext
+) {
 
   import req.RequestSupport._
 
-  val eligibilityURL: String = "time-to-pay-eligibility/eligibility"
-  val serviceURL: String = servicesConfig.baseUrl("time-to-pay-eligibility")
+  val baseUrl: String = servicesConfig.baseUrl("time-to-pay-eligibility")
 
-  def checkEligibility(eligibilityRequest: EligibilityRequest, utr: String)(implicit request: Request[_], ec: ExecutionContext): Future[EligibilityStatus] = {
-    httpClient.POST[EligibilityRequest, EligibilityStatus](s"$eligibilityURL/$serviceURL/$utr", eligibilityRequest)
+  def checkEligibility(eligibilityRequest: EligibilityRequest, utr: String)(implicit request: Request[_]): Future[EligibilityStatus] = {
+    httpClient.POST[EligibilityRequest, EligibilityStatus](s"$baseUrl/time-to-pay-eligibility/eligibility/$utr", eligibilityRequest)
   }
 }

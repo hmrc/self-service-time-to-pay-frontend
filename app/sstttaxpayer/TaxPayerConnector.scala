@@ -33,16 +33,7 @@ class TaxPayerConnector @Inject() (servicesConfig: ServicesConfig, http: HttpCli
   val taxPayerURL: String = servicesConfig.baseUrl("time-to-pay-taxpayer")
   val serviceURL: String = "taxpayer"
 
-  def getTaxPayer(utr: String)(implicit request: Request[_]): Future[Option[Taxpayer]] = {
-    http.GET[HttpResponse](s"$taxPayerURL/$serviceURL/$utr").map {
-      response => Some(response.json.as[Taxpayer])
-    }.recover {
-      case e: uk.gov.hmrc.http.NotFoundException =>
-        Logger.error("Taxpayer not found")
-        None
-      case e: Exception =>
-        Logger.error(e.getMessage)
-        throw new RuntimeException(e.getMessage)
-    }
+  def getTaxPayer(utr: String)(implicit request: Request[_]): Future[Taxpayer] = {
+    http.GET[Taxpayer](s"$taxPayerURL/$serviceURL/$utr")
   }
 }

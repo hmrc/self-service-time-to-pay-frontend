@@ -41,9 +41,6 @@ class SelfServiceTimeToPayController @Inject() (
   import requestSupport._
 
   def start: Action[AnyContent] = as.action { implicit request =>
-    val x = messagesApi.preferred(request)
-    val m = implicitly[Messages]
-
     Ok(views.service_start(isSignedIn, mcc.messagesApi))
   }
 

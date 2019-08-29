@@ -88,22 +88,14 @@ class ArrangementController @Inject() (
    * debits. If not, display misalignment page otherwise perform an eligibility check.
    */
   def determineEligibility: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    taxPayerConnector.getTaxPayer(request.utr).flatMap[Result] {
-      tp =>
-        tp.fold(ifNoTaxpayer)(taxPayer => {
-          val newSubmission = TTPSubmission(taxpayer = Some(taxPayer))
-          submissionService.putTtpSessionCarrier(newSubmission).flatMap { _ =>
-            eligibilityCheck(taxPayer, newSubmission, request.utr)
-          }
-        }
-        )
-    }
-  }
 
-  private lazy val ifNoTaxpayer: Future[Result] = {
-    val call = ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()
-    Logger.info(s"[Eligibility] There was no taxpayer, redirecting to $call")
-    Future.successful(Redirect(call))
+    for {
+      tp <- taxPayerConnector.getTaxPayer(request.utr)
+      newSubmission = TTPSubmission(taxpayer = Some(tp))
+      _ <- submissionService.putTtpSubmission(newSubmission)
+      check: Result <- eligibilityCheck(tp, newSubmission, request.utr)
+    } yield check
+
   }
 
   def getInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
@@ -138,7 +130,7 @@ class ArrangementController @Inject() (
               case ttp @ TTPSubmission(Some(schedule), _, _, _, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _) =>
                 changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
                   ttpSubmission =>
-                    submissionService.putTtpSessionCarrier(ttpSubmission).map {
+                    submissionService.putTtpSubmission(ttpSubmission).map {
                       _ => Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
                     }
                 }
@@ -185,14 +177,14 @@ class ArrangementController @Inject() (
     for {
       es <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer), utr)
       updatedSubmission = newSubmission.copy(eligibilityStatus = Option(es))
-      _ <- submissionService.putTtpSessionCarrier(updatedSubmission)
+      _ <- submissionService.putTtpSubmission(updatedSubmission)
       result <- checkSubmission(updatedSubmission)
     } yield result
   }
 
   def setDefaultCalculatorSchedule(newSubmission: TTPSubmission, debits: Seq[Debit])(implicit request: Request[_]): Future[CacheMap] = {
-    submissionService.putTtpSessionCarrier(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
-                                                                                               endDate   = LocalDate.now().plusMonths(2).minusDays(1), debits = debits)))
+    submissionService.putTtpSubmission(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
+                                                                                           endDate   = LocalDate.now().plusMonths(2).minusDays(1), debits = debits)))
   }
 
   private def checkSubmissionForCalculatorPage(taxpayer: Taxpayer, newSubmission: TTPSubmission)(implicit request: Request[_]): Future[Result] = {
@@ -246,7 +238,7 @@ class ArrangementController @Inject() (
               val result = for {
                 submissionResult <- arrangementConnector.submitArrangements(arrangement)
                 _ = auditService.sendSubmissionEvent(submission)
-                _ = submissionService.putTtpSessionCarrier(submission.copy(ddRef = Some(arrangement.directDebitReference)))
+                _ = submissionService.putTtpSubmission(submission.copy(ddRef = Some(arrangement.directDebitReference)))
               } yield submissionResult
 
               result.flatMap {

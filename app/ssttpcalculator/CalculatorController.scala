@@ -62,7 +62,7 @@ class CalculatorController @Inject() (
       amountDue => {
         //todo perhaps we dont need  a new one? this will whip the data from the auth journey is this ok ?User can just redo it?
         val dataWithAmount = TTPSubmission(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(amountDue.amount))))
-        submissionService.putTtpSessionCarrier(dataWithAmount).map { _ =>
+        submissionService.putTtpSubmission(dataWithAmount).map { _ =>
           Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalmentsUnAuth())
         }
       }
@@ -94,8 +94,8 @@ class CalculatorController @Inject() (
                                                                               monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalmentsUnAuth(), isSignedIn, false)))
               },
               validFormData => {
-                submissionService.putTtpSessionCarrier(ttpData.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(amountDue),
-                                                                                                                         Some(monthsToSchedule(validFormData.chosenMonths)))))).map { _ =>
+                submissionService.putTtpSubmission(ttpData.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(amountDue),
+                                                                                                                     Some(monthsToSchedule(validFormData.chosenMonths)))))).map { _ =>
                   Redirect(ssttpcalculator.routes.CalculatorController.getCheckCalculation())
                 }
               }
@@ -142,7 +142,7 @@ class CalculatorController @Inject() (
             case PayTodayQuestion(Some(true)) =>
               Future.successful(Redirect(ssttpcalculator.routes.CalculatorController.getPaymentToday()))
             case PayTodayQuestion(Some(false)) =>
-              submissionService.putTtpSessionCarrier(ttpData.copy(calculatorData = cd.copy(initialPayment = BigDecimal(0)))).map[Result] {
+              submissionService.putTtpSubmission(ttpData.copy(calculatorData = cd.copy(initialPayment = BigDecimal(0)))).map[Result] {
                 _ => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
               }
           }
@@ -169,7 +169,7 @@ class CalculatorController @Inject() (
         CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(views.payment_today_form(formWithErrors, isSignedIn))),
           validFormData => {
-            submissionService.putTtpSessionCarrier(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).map { _ =>
+            submissionService.putTtpSubmission(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).map { _ =>
               Redirect(ssttpcalculator.routes.CalculatorController.getPaymentSummary())
             }
           }
@@ -307,7 +307,7 @@ class CalculatorController @Inject() (
                       formWithErrors, getSurroundingSchedule(getClosestSchedule(amount, schedule.values.toList), schedule.values.toList, sa))))
                   },
                   validFormData => {
-                    submissionService.putTtpSessionCarrier(ttpData.copy(schedule = Some(schedule(validFormData.chosenMonths)))).map { _ =>
+                    submissionService.putTtpSubmission(ttpData.copy(schedule = Some(schedule(validFormData.chosenMonths)))).map { _ =>
                       Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
                     }
                   }
@@ -336,7 +336,7 @@ class CalculatorController @Inject() (
           }
         } else {
           //todo perhaps move these checks else where to eligbility service?
-          submissionService.putTtpSessionCarrier(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(eligible = false, Seq(TTPIsLessThenTwoMonths))))).map { _ => Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()) }
+          submissionService.putTtpSubmission(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(eligible = false, Seq(TTPIsLessThenTwoMonths))))).map { _ => Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()) }
         }
 
       case _ => Future.successful(redirectOnError)
@@ -353,7 +353,7 @@ class CalculatorController @Inject() (
                                                                             monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(), loggedIn = true)))
             },
             validFormData => {
-              submissionService.putTtpSessionCarrier(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.chosenMonths)))).map { _ =>
+              submissionService.putTtpSubmission(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.chosenMonths)))).map { _ =>
                 Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
               }
             }

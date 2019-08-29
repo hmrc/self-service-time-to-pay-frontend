@@ -37,8 +37,7 @@ final class AuthenticatedRequest[A](val request:         MessagesRequest[A],
                                     val maybeUtr:        Option[String]
 ) extends MessagesRequest[A](request, request.messagesApi) {
 
-  private val sa = core.Enrolment("IR-SA")
-  lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.contains(sa)
+  lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.exists(_.key == "IR-SA")
 }
 
 class AuthenticatedAction @Inject() (
