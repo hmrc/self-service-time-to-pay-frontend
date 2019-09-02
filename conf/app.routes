@@ -6,6 +6,20 @@
 GET         /                                                             ssttpeligibility.SelfServiceTimeToPayController.start()
 POST        /                                                             ssttpeligibility.SelfServiceTimeToPayController.submit()
 
+# eligibility
+GET         /arrangement/determine-eligibility                            ssttparrangement.ArrangementController.determineEligibility()
+
+GET         /eligibility/type-of-tax/call-us                              ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax()
+GET         /eligibility/existing-ttp/call-us                             ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsExistingTTP()
+GET         /eligibility/ia/call-us                                       ssttpeligibility.SelfServiceTimeToPayController.getIaCallUse()
+GET         /eligibility/sign-in-question/call-us                         ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()
+GET         /eligibility/debt-large/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getDebtTooLarge()
+GET         /calculator/instalments/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()
+GET         /eligibility/you-need-to-file                                 ssttpeligibility.SelfServiceTimeToPayController.getYouNeedToFile()
+GET         /eligibility/call-us                                          ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUs()
+GET         /eligibility/not-enrolled                                     ssttpeligibility.SelfServiceTimeToPayController.getNotSaEnrolled()
+
+
 # Calculator
 
 GET         /calculator/payment-summary                                   ssttpcalculator.CalculatorController.getPaymentSummary()
@@ -32,7 +46,6 @@ POST        /payment-plan-calculator/instalments                          ssttpc
 GET         /payment-plan-calculator/check-calculation                    ssttpcalculator.CalculatorController.getCheckCalculation()
 
 
-GET         /arrangement/determine-eligibility                            ssttparrangement.ArrangementController.determineEligibility()
 
 
 # Arrangement
@@ -50,16 +63,6 @@ GET         /arrangement/direct-debit-error                               ssttpd
 GET         /arrangement/direct-debit/unauthorized                        ssttpdirectdebit.DirectDebitController.getDirectDebitUnAuthorised()
 POST        /arrangement/submit                                           ssttparrangement.ArrangementController.submit()
 GET         /arrangement/summary                                          ssttparrangement.ArrangementController.applicationComplete()
-# Alternative pages # ineligible  Pages
-GET         /eligibility/type-of-tax/call-us                              ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax()
-GET         /eligibility/existing-ttp/call-us                             ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsExistingTTP()
-GET         /eligibility/ia/call-us                                       ssttpeligibility.SelfServiceTimeToPayController.getIaCallUse()
-GET         /eligibility/sign-in-question/call-us                         ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()
-GET         /eligibility/debt-large/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getDebtTooLarge()
-GET         /calculator/instalments/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()
-GET         /eligibility/you-need-to-file                                 ssttpeligibility.SelfServiceTimeToPayController.getYouNeedToFile()
-GET         /eligibility/call-us                                          ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUs()
-GET         /eligibility/not-enrolled                                     ssttpeligibility.SelfServiceTimeToPayController.getNotSaEnrolled()
 
 GET         /sign-out                                                     ssttpeligibility.SelfServiceTimeToPayController.signOut(continueUrl: Option[String])
 

@@ -26,7 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A],
                                        val utr:     String
-) extends MessagesRequest[A](request, request.messagesApi)
+) extends WrappedRequest[A](request)
 
 class AuthorisedSaUserAction @Inject() (
     cc: MessagesControllerComponents

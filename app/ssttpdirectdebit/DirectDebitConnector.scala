@@ -41,11 +41,10 @@ class DirectDebitConnector @Inject() (
 
   import req.RequestSupport._
 
-  val directDebitURL: String = "direct-debit"
-  val serviceURL: String = servicesConfig.baseUrl("direct-debit")
+  val baseUrl: String = servicesConfig.baseUrl("direct-debit")
 
   def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit request: Request[_]): Future[DDSubmissionResult] = {
-    httpClient.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", paymentPlan).map {
+    httpClient.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$baseUrl/direct-debit/$saUtr/instructions/payment-plan", paymentPlan).map {
       Result => Right(Result)
     }.recover {
       case e: Throwable => onError(e)
@@ -70,21 +69,14 @@ class DirectDebitConnector @Inject() (
    */
   def getBank(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[Option[BankDetails]] = {
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
-    httpClient.GET[HttpResponse](s"$directDebitURL/$serviceURL/bank?$queryString").map {
-      response => Some(response.json.as[BankDetails])
-    }.recover {
-      case e: uk.gov.hmrc.http.NotFoundException => None
-      case e: Exception =>
-        Logger.error(e.getMessage)
-        throw new RuntimeException("Direct debit returned unexpected response")
-    }
+    httpClient.GET[Option[BankDetails]](s"$baseUrl/direct-debit/bank?$queryString")
   }
 
   /**
    * Retrieves stored bank details associated with a given saUtr
    */
   def getBanks(saUtr: SaUtr)(implicit request: Request[_]): Future[DirectDebitBank] = {
-    httpClient.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response => response }
+    httpClient.GET[DirectDebitBank](s"$baseUrl/direct-debit/$saUtr/banks").map { response => response }
       .recover {
         case e: uk.gov.hmrc.http.NotFoundException if e.message.contains("BP not found") => DirectDebitBank.none
         case e: Exception =>

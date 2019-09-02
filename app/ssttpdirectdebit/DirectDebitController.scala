@@ -22,6 +22,7 @@ import controllers.action.Actions
 import javax.inject._
 import play.api.Logger
 import play.api.mvc._
+import req.RequestSupport
 import ssttpdirectdebit.DirectDebitForm._
 import sttpsubmission.SubmissionService
 import uk.gov.hmrc.domain.SaUtr
@@ -40,11 +41,14 @@ class DirectDebitController @Inject() (
     directDebitConnector: DirectDebitConnector,
     as:                   Actions,
     submissionService:    SubmissionService,
+    requestSupport:       RequestSupport,
     views:                Views)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext
 ) extends FrontendController(mcc) {
+
+  import requestSupport._
 
   def getDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
@@ -98,20 +102,31 @@ class DirectDebitController @Inject() (
 
   def submitDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp { submission =>
+
       directDebitForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(views.direct_debit_form(submission.calculatorData.debits,
+
                                                                                submission.schedule.get, formWithErrors))),
         validFormData => {
-          directDebitConnector.getBank(validFormData.sortCode,
-                                       validFormData.accountNumber.toString).flatMap {
+
+          for {
+            bankDetails <- directDebitConnector.getBank(validFormData.sortCode, validFormData.accountNumber.toString)
+            result <- bankDetails match {
               case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
               case None =>
-                Future.successful(BadRequest(views.direct_debit_form(submission.calculatorData.debits,
-                                                                     submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
-                    "accountNumber" -> validFormData.accountNumber, "sortCode" -> validFormData.sortCode)),
-                                                                     isBankError = true)
-                ))
+                Future.successful(BadRequest(views.direct_debit_form(
+                  submission.calculatorData.debits,
+                  submission.schedule.get,
+                  directDebitFormWithBankAccountError.copy(data = Map(
+                    "accountName" -> validFormData.accountName,
+                    "accountNumber" -> validFormData.accountNumber,
+                    "sortCode" -> validFormData.sortCode)
+                  ),
+                  isBankError = true
+                )))
             }
+          } yield result
+
         }
       )
     }
@@ -123,37 +138,39 @@ class DirectDebitController @Inject() (
    * otherwise return user entered bank details.
    */
   private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit request: Request[_]) = {
-    submissionService.getTtpSubmission.flatMap {
-      _.fold(Future.successful(redirectToStartPage))(ttp => {
-        val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
-        val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
+    submissionService.getTtpSubmission.flatMap { submission =>
 
-        directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
-          directDebitBank =>
-            {
-              val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
-                p.accountNumber.get.equalsIgnoreCase(bankDetails.accountNumber.get) && p.sortCode.get.equals(bankDetails.sortCode.get)
-              })
-              val bankDetailsToSave = instructions match {
-                case instruction :: _ =>
-                  val refNumber = instructions.filter(refNo => refNo.referenceNumber.isDefined).
-                    map(instruction => instruction.referenceNumber).min
-                  BankDetails(ddiRefNumber  = refNumber,
-                              accountNumber = instruction.accountNumber,
-                              sortCode      = instruction.sortCode,
-                              accountName   = Some(accName))
-                case Nil => bankDetails.copy(accountName = Some(accName))
-              }
-              submissionService.putTtpSubmission(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
-                _ => Redirect(toDDCreationPage)
-              }
+      submission
+        .fold(Future.successful(redirectToStartPage))(
+          ttp => {
+            val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
+            val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
+
+            directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
+              directDebitBank =>
+                {
+                  val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
+                    p.accountNumber.get.equalsIgnoreCase(bankDetails.accountNumber.get) && p.sortCode.get.equals(bankDetails.sortCode.get)
+                  })
+                  val bankDetailsToSave = instructions match {
+                    case instruction :: _ =>
+                      val refNumber = instructions.filter(refNo => refNo.referenceNumber.isDefined).
+                        map(instruction => instruction.referenceNumber).min
+                      BankDetails(ddiRefNumber  = refNumber,
+                                  accountNumber = instruction.accountNumber,
+                                  sortCode      = instruction.sortCode,
+                                  accountName   = Some(accName))
+                    case Nil => bankDetails.copy(accountName = Some(accName))
+                  }
+                  submissionService.putTtpSubmission(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
+                    _ => Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
+                  }
+                }
             }
-        }
-      })
+          })
     }
   }
 
   private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
 
-  private val toDDCreationPage = ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()
 }

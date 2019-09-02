@@ -24,6 +24,7 @@ import controllers.action.Actions
 import javax.inject._
 import play.api.Logger
 import play.api.mvc.{AnyContent, _}
+import req.RequestSupport
 import sttpsubmission.SubmissionService
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
@@ -38,11 +39,14 @@ class CalculatorController @Inject() (
     calculatorService: CalculatorService,
     as:                Actions,
     submissionService: SubmissionService,
+    requestSupport:    RequestSupport,
     views:             Views)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext
 ) extends FrontendController(mcc) {
+
+  import requestSupport._
 
   def submitSignIn: Action[AnyContent] = Action { implicit request =>
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())

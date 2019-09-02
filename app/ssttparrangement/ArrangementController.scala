@@ -27,6 +27,7 @@ import javax.inject._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
+import req.RequestSupport
 import ssttpcalculator.{CalculatorConnector, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityConnector
@@ -55,11 +56,14 @@ class ArrangementController @Inject() (
     auditService:         AuditService,
     submissionService:    SubmissionService,
     as:                   Actions,
+    requestSupport:       RequestSupport,
     views:                Views)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext
 ) extends FrontendController(mcc) {
+
+  import requestSupport._
 
   val cesa: String = "CESA"
   val paymentFrequency = "Calendar Monthly"

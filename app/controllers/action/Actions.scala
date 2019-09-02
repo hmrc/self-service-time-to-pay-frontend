@@ -22,12 +22,11 @@ import play.api.mvc._
 class Actions @Inject() (
     authenticatedAction:    AuthenticatedAction,
     authorisedSaUserAction: AuthorisedSaUserAction,
-    defaultActionBuilder:   DefaultActionBuilder,
-    messagesActionBuilder:  MessagesActionBuilder
+    defaultActionBuilder:   DefaultActionBuilder
 ) {
 
   def authorisedSaUser: ActionBuilder[AuthorisedSaUserRequest, AnyContent] =
-    messagesActionBuilder andThen authenticatedAction andThen authorisedSaUserAction
+    defaultActionBuilder andThen authenticatedAction andThen authorisedSaUserAction
 
-  def action: ActionBuilder[MessagesRequest, AnyContent] = messagesActionBuilder
+  def action: ActionBuilder[Request, AnyContent] = defaultActionBuilder
 }

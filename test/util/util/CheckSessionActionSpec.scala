@@ -32,7 +32,7 @@ class CheckSessionActionSpec extends PlaySpec with WithFakeApplication with Scal
 
   "CheckSessionAction filter" should {
     "return None if the session is ok " in {
-      val result = as.checkSession.invokeBlock(FakeRequest().withSession(goodSession: _*), (_: MessagesRequest[AnyContent]) => {
+      val result = as.checkSession.invokeBlock(FakeRequest().withSession(goodSession: _*), (_: Request[AnyContent]) => {
         Future.successful(ok)
       }).futureValue
 
@@ -40,14 +40,14 @@ class CheckSessionActionSpec extends PlaySpec with WithFakeApplication with Scal
     }
 
     "return a redirect if the session is not there and redirect to the start " in {
-      val result = as.checkSession.invokeBlock(FakeRequest().withSession(goodSession: _*), (_: MessagesRequest[AnyContent]) => {
+      val result = as.checkSession.invokeBlock(FakeRequest().withSession(goodSession: _*), (_: Request[AnyContent]) => {
         Future.successful(ok)
       }).futureValue
       result.header.status mustBe SEE_OTHER
       result.header.headers("location") mustBe ssttpeligibility.routes.SelfServiceTimeToPayController.start().url
     }
     "return a redirect if the session is not there and redirect to the start of the unauth journey if url contains payment-plan-calculator " in {
-      val result = as.checkSession.invokeBlock(FakeRequest().withSession(goodSession: _*), (_: MessagesRequest[AnyContent]) => {
+      val result = as.checkSession.invokeBlock(FakeRequest().withSession(goodSession: _*), (_: Request[AnyContent]) => {
         Future.successful(ok)
       }).futureValue
       result.header.status mustBe SEE_OTHER

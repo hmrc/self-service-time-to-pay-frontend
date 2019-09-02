@@ -31,11 +31,11 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-final class AuthenticatedRequest[A](val request:         MessagesRequest[A],
+final class AuthenticatedRequest[A](val request:         Request[A],
                                     val enrolments:      Enrolments,
                                     val confidenceLevel: ConfidenceLevel,
                                     val maybeUtr:        Option[String]
-) extends MessagesRequest[A](request, request.messagesApi) {
+) extends WrappedRequest[A](request) {
 
   lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.exists(_.key == "IR-SA")
 }
@@ -47,13 +47,12 @@ class AuthenticatedAction @Inject() (
     cc:           MessagesControllerComponents)(
     implicit
     ec: ExecutionContext
-) extends ActionRefiner[MessagesRequest, AuthenticatedRequest] {
+) extends ActionRefiner[Request, AuthenticatedRequest] {
 
   import req.RequestSupport._
 
-  override protected def refine[A](request: MessagesRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
+  override protected def refine[A](request: Request[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
     implicit val r: Request[A] = request
-    implicit val mr: MessagesRequest[A] = request
 
     af.authorised.retrieve(
       Retrievals.allEnrolments and Retrievals.confidenceLevel and Retrievals.saUtr
