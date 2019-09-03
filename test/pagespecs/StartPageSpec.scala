@@ -32,6 +32,12 @@ class StartPageSpec extends ItSpec {
     startPage.clickOnEnglishLink()
     startPage.assertPageIsDisplayed(Languages.English)
 
+    //AuthStub response
+    //GGStub page response
+
+//    startPage.clickOnStartNowButton()
+
+    //expect that wireMock GGStub is being displayed
   }
 
 }

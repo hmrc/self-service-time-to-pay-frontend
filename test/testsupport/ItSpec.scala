@@ -49,7 +49,9 @@ class ItSpec
       "microservice.services.time-to-pay-eligibility.port" -> WireMockSupport.port,
       "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
       "microservice.services.campaign-manager.port" -> WireMockSupport.port,
-      "microservice.services.ia.port" -> WireMockSupport.port
+      "microservice.services.ia.port" -> WireMockSupport.port,
+      "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}"
+
     )).build()
 
   def frozenTimeString: String = "2027-11-02T16:33:51.880"
