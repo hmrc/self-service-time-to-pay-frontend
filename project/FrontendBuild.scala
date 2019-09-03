@@ -39,7 +39,13 @@ private object AppDependencies {
     "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided" ,
     "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided" ,
     "com.softwaremill.macwire" %% "util" % "2.3.0" % "test",
-    "com.softwaremill.macwire" %% "proxy" % "2.3.0" % "test"
+    "com.softwaremill.macwire" %% "proxy" % "2.3.0" % "test",
+
+    "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
+    "org.seleniumhq.selenium" % "htmlunit-driver" % "2.35.1" % "test",
+    "net.sourceforge.htmlunit" % "htmlunit" % "2.35" % "test"
+
+
   )
 
   trait TestDependencies {
@@ -53,9 +59,10 @@ private object AppDependencies {
         "org.pegdown" % "pegdown" % "1.6.0" % scope,
         "org.jsoup" % "jsoup" % "1.8.3" % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-        "com.github.tomakehurst" % "wiremock" % "2.2.2" % scope,
+        "com.github.tomakehurst" % "wiremock-standalone" % "2.12.0" % "test",
+
         "org.mockito" % "mockito-core" % "1.10.19" % scope,
-        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope,
+        "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope,
         "org.typelevel" %% "cats-core" % "1.4.0"
       )
     }.test
