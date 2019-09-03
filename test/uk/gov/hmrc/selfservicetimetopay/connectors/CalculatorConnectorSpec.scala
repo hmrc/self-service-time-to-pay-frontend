@@ -34,7 +34,7 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CalculatorConnectorSpec extends ItSpec {
+class CalculatorConnectorSpec extends ItSpec with MockitoSugar {
 
   implicit val request: Request[_] = FakeRequest()
 
@@ -44,14 +44,14 @@ class CalculatorConnectorSpec extends ItSpec {
     httpClient     = httpClient
   )
 
-  "Calling submitLiabilities" should {
+  "Calling submitLiabilities" - {
     "return a payment schedule" in {
       val jsonResponse = Json.fromJson[Seq[CalculatorPaymentSchedule]](submitLiabilitiesResponseJSON).get
 
       when(httpClient.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))
+      val result = testConnector.calculatePaymentSchedule(submitDebitsRequest).futureValue
 
       result.size shouldBe 11
       result.head.initialPayment shouldBe BigDecimal("50")
@@ -63,7 +63,7 @@ class CalculatorConnectorSpec extends ItSpec {
       when(httpClient.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(Seq()))
 
-      val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))
+      val result = testConnector.calculatePaymentSchedule(submitDebitsRequest).futureValue
 
       result shouldBe Seq()
     }

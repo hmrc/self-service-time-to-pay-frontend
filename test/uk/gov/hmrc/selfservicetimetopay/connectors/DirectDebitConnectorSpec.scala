@@ -25,6 +25,8 @@ import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import ssttpdirectdebit.DirectDebitConnector
+import testsupport.ItSpec
+import testsupport.testdata.TdAll
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -36,10 +38,9 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DirectDebitConnectorSpec extends ConnectorSpec with GuiceOneServerPerSuite {
+class DirectDebitConnectorSpec extends ItSpec with ConnectorSpec {
 
-  implicit override lazy val app: Application = new GuiceApplicationBuilder().
-    disable[com.kenshoo.play.metrics.PlayModule].build()
+  implicit val request = TdAll.request
 
   val DirectDebitConnectorTest = new DirectDebitConnector(
     servicesConfig = mock[ServicesConfig],
@@ -54,7 +55,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with GuiceOneServerPerSuite
     httpClient     = httpClient
   )
 
-  "Calling getBanksList" should {
+  "Calling getBanksList" - {
     val validationURL = urlPathMatching("/direct-debit/.*/banks")
     val getRequest = get(validationURL)
 
@@ -81,7 +82,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with GuiceOneServerPerSuite
         )
       ))
 
-      val response = await(DirectDebitConnectorTest.getBanks(SaUtr("SAUTR")))
+      val response = DirectDebitConnectorTest.getBanks(SaUtr("SAUTR")).futureValue
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -100,7 +101,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with GuiceOneServerPerSuite
         )
       ))
 
-      val response = await(DirectDebitConnectorTest.getBanks(SaUtr("SAUTR")))
+      val response = DirectDebitConnectorTest.getBanks(SaUtr("SAUTR")).futureValue
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -121,7 +122,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with GuiceOneServerPerSuite
         )
       ))
 
-      val response = await(DirectDebitConnectorTest.getBanks(SaUtr("SAUTR")))
+      val response = DirectDebitConnectorTest.getBanks(SaUtr("SAUTR")).futureValue
 
       wmVerify(1, getRequestedFor(validationURL))
 
@@ -129,7 +130,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with GuiceOneServerPerSuite
     }
   }
 
-  "Calling createPaymentPlan" should {
+  "Calling createPaymentPlan " - {
     "return DirectDebitInstructionPaymentPlan" in {
       val jsonResponse = Json.fromJson[DirectDebitInstructionPaymentPlan](createPaymentPlanResponseJSON).get
 
@@ -138,7 +139,7 @@ class DirectDebitConnectorSpec extends ConnectorSpec with GuiceOneServerPerSuite
 
       val saUtr = SaUtr("test")
       val paymentPlanRequest = Json.fromJson[PaymentPlanRequest](createPaymentRequestJSON).get
-      val result = await(testConnector.createPaymentPlan(paymentPlanRequest, saUtr))
+      val result = testConnector.createPaymentPlan(paymentPlanRequest, saUtr).futureValue
 
       result.right.get.processingDate shouldBe "2001-12-17T09:30:47Z"
       result.right.get.directDebitInstruction.head.ddiReferenceNo shouldBe Some("ABCDabcd1234")

@@ -42,7 +42,9 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
     val controller = new SelfServiceTimeToPayController(
       mcc               = mcc,
       submissionService = mockSessionCache,
-      as                = mock[Actions]
+      as                = mock[Actions],
+      ???,
+      ???
     )
 
     "return 200 and display the service start page" in {

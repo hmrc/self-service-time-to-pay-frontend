@@ -23,6 +23,7 @@ import uk.gov.hmrc.selfservicetimetopay.controllers.PlayMessagesSpec
 import uk.gov.hmrc.selfservicetimetopay.resources._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.mock.MockitoSugar
+import testsupport.testdata.TdAll
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -36,6 +37,9 @@ class AuditServiceSpec extends PlayMessagesSpec with Eventually with ScalaFuture
 
   "AuditService" should {
     "send an audit " in {
+
+      implicit val request = TdAll.request
+
       AuditService.sendSubmissionEvent(ttpSubmissionWithBankDetails).futureValue
     }
   }

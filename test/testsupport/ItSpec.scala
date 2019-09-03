@@ -24,20 +24,16 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{FreeSpec, TestData}
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
+import pagespecs.pages.{BaseUrl, StartPage}
 import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
+import com.softwaremill.macwire._
 
 class ItSpec
   extends FreeSpec
   with GuiceOneServerPerTest
   with RichMatchers
   with WireMockSupport {
-
-  implicit lazy val webDriver: HtmlUnitDriver = {
-    val wd = new HtmlUnitDriver(true)
-    wd.setJavascriptEnabled(false)
-    wd
-  }
 
   implicit override val patienceConfig: PatienceConfig = PatienceConfig(timeout  = scaled(Span(3, Seconds)), interval = scaled(Span(500, Millis)))
 
@@ -67,4 +63,14 @@ class ItSpec
       Clock.fixed(fixedInstant, ZoneId.systemDefault)
     }
   }
+
+  implicit lazy val webDriver: HtmlUnitDriver = {
+    val wd = new HtmlUnitDriver(true)
+    wd.setJavascriptEnabled(false)
+    wd
+  }
+
+  lazy val baseUrl = BaseUrl(s"http://localhost:$port")
+  lazy val startPage = wire[StartPage]
+
 }

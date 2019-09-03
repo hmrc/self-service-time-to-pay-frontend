@@ -52,7 +52,9 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
       mcc                  = mcc,
       directDebitConnector = mockDDConnector,
       as                   = mock[Actions],
-      submissionService    = mockSessionCache
+      submissionService    = mockSessionCache,
+      ???,
+      ???
     )
 
     "successfully display the direct debit form page" in {

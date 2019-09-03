@@ -1,3 +1,4 @@
+import sbt.Keys.libraryDependencies
 import sbt._
 import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning
@@ -33,7 +34,12 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0",
     "com.typesafe.play" %% "play-json-joda" % "2.6.13",
 
-    "uk.gov.hmrc" %% "http-caching-client" % "8.4.0-play-26"
+    "uk.gov.hmrc" %% "http-caching-client" % "8.4.0-play-26",
+
+    "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided" ,
+    "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided" ,
+    "com.softwaremill.macwire" %% "util" % "2.3.0" % "test",
+    "com.softwaremill.macwire" %% "proxy" % "2.3.0" % "test"
   )
 
   trait TestDependencies {

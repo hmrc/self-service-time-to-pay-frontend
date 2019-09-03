@@ -69,7 +69,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     eligibilityConnector = mockEligibilityConnector,
     auditService         = auditService,
     submissionService    = mockSessionCache,
-    as                   = as
+    as                   = as,
+    ???,
+    ???
   )
 
   override protected def beforeEach(): Unit = {
@@ -90,9 +92,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect to 'you need to file' when sa debits are less than £32.00 for determine eligibility" in {
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val requiredSa = selfAssessment.get.copy(debits = Seq.empty)
-      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
+      when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(DebtIsInsignificant))))
 
-      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer.copy(selfAssessment = Some(requiredSa)))))
+      when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer.copy(selfAssessment = Some(requiredSa))))
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
@@ -108,9 +110,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
     "redirect to 'to ia' when the user is not on ia" in {
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(IsNotOnIa))))
+      when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(IsNotOnIa))))
 
-      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
+      when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer))
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
@@ -126,9 +128,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
     "redirect to 'over ten k' when the user is has depts over 10k" in {
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(TotalDebtIsTooHigh))))
+      when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(TotalDebtIsTooHigh))))
 
-      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
+      when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer))
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
@@ -145,9 +147,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect to 'you need to file' when the user has not filled " in {
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val requiredSa = selfAssessment.get.copy(debits = Seq.empty)
-      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(ReturnNeedsSubmitting))))
+      when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(ReturnNeedsSubmitting))))
 
-      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer.copy(selfAssessment = Some(requiredSa)))))
+      when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer.copy(selfAssessment = Some(requiredSa))))
       when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
@@ -165,8 +167,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to 'Tax Liabilities' when no amounts have been entered for determine eligibility" in {
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
-      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
+      when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer))
+      when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial))))
 
@@ -183,13 +185,13 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to 'call us page' when entered amounts and sa amounts are equal and user is ineligible for determine eligibility " in {
-      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer)))
+      when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer))
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
       when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(OldDebtIsTooHigh))))
+      when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(OldDebtIsTooHigh))))
 
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
@@ -203,7 +205,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to call us page when tax payer connector fails to retrieve data for determine eligibility" in {
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(None))
+      when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.failed(throw new Exception("Not found taxpayer")))
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
@@ -219,7 +221,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
     "send user to the change payment day page in" in {
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(None))
+      when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.failed(throw new Exception("Not found taxpayer")))
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
@@ -234,7 +236,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "send user to the Declartion page" in {
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(None))
+      when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.failed(new Exception("No taxpayer found")))
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
@@ -324,8 +326,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       implicit val hc = new HeaderCarrier
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = Seq.empty))
-      when(mockEligibilityConnector.checkEligibility(any(), any())(any(), any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
-      when(taxPayerConnector.getTaxPayer(any())(any(), any())).thenReturn(Future.successful(Some(taxPayer))) //121.20 debits
+      when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
+      when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer)) //121.20 debits
       when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
       when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
       when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))

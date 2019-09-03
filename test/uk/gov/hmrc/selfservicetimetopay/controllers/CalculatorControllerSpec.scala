@@ -27,17 +27,19 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import play.api.Application
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.api.test.Helpers._
 import play.api.test._
 import ssttpcalculator.{CalculatorController, CalculatorService}
 import sttpsubmission.SubmissionService
+import testsupport.testdata.TdAll
 import token.TokenService
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -55,7 +57,8 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     mcc               = mcc,
     calculatorService = mockCalculatorService,
     as                = mock[Actions],
-    submissionService = mockSessionCache
+    submissionService = mockSessionCache,
+    ???, ???
   )
 
   implicit val system: ActorSystem = ActorSystem("QuickStart")
@@ -70,7 +73,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
   "CalculatorControllerSpec" should {
     "getCalculateInstalments Return 303 when there is no Sa in session" in {
-      implicit val request: Request[_] = new HeaderCarrier
+      implicit val request = TdAll.request
 
       when(
         mockSessionCache.getTtpSubmission(any(), any())
@@ -87,7 +90,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
 
     "getCalculateInstalments Return 200 when there is a Sa in session" in {
-      implicit val request: Request[_] = new HeaderCarrier
+      implicit val request = TdAll.request
 
       when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(), any())(any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
@@ -110,7 +113,6 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
 
     "submitCalculateInstalments Return 400 when there is a Sa in session but nothing was posted" in {
-      implicit val request: Request[_] = new HeaderCarrier
 
       when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(), any())(any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
@@ -122,7 +124,6 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
 
     "submitCalculateInstalments Return 303 when there is a Sa in session" in {
-      implicit val request: Request[_] = new HeaderCarrier
       when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(), any())(any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
@@ -135,7 +136,6 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
 
     "submitCalculateInstalments put the chosen months of instalments into the session" in {
-      implicit val request: Request[_] = new HeaderCarrier
       when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(Some(ttpSubmission)))
       when(mockCalculatorService.getInstalmentsSchedule(any(), any())(any())).thenReturn(Future.successful(calculatorPaymentScheduleMap))
@@ -148,21 +148,19 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
 
     "Return BadRequest if the form value = total amount due" in {
-      implicit val request: Request[_] = new HeaderCarrier
       val submission = ttpSubmissionNLI
         .copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount  = BigDecimal("300.00"), dueDate = LocalDate.now()))))
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(submission)))
 
-      val result = requestWithCsrfToken(controller.submitPaymentToday(), "300.00")
+      implicit val result = requestWithCsrfToken(controller.submitPaymentToday(), "300.00")
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).getTtpSubmission(any(), any())
     }
 
     "Return BadRequest if the form value has more than 2 decimal places" in {
-      implicit val request: Request[_] = new HeaderCarrier
 
       val submission = ttpSubmissionNLI
         .copy(calculatorData = ttpSubmissionNLI.calculatorData.copy(debits = Seq(Debit(amount  = 300.0, dueDate = LocalDate.now()))))
@@ -170,14 +168,14 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(submission)))
 
-      val result = requestWithCsrfToken(controller.submitPaymentToday(), "299.999")
+      implicit val result = requestWithCsrfToken(controller.submitPaymentToday(), "299.999")
 
       status(result) mustBe BAD_REQUEST
       verify(mockSessionCache, times(1)).getTtpSubmission(any(), any())
     }
 
     "Return 303 for non-logged-in when TTPSubmission is missing for submitPaymentToday" in {
-      implicit val request: Request[_] = new HeaderCarrier
+      implicit val request = TdAll.request
 
       when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
       val result = controller.submitPaymentToday().apply(FakeRequest())
@@ -185,11 +183,10 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
 
     "Return the payment-today from for getPayTodayQuestion if there is an initial payment  already made" in {
-      implicit val request: Request[_] = new HeaderCarrier
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k.copy(calculatorData = CalculatorInput.initial.copy(initialPayment = BigDecimal(2))))))
-      val request = FakeRequest()
+      implicit val request = FakeRequest()
         .withSession(goodSession: _*)
       val result = controller.getPayTodayQuestion().apply(request)
 
@@ -197,7 +194,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
 
     "Return 303 for getPayTodayQuestion when TTPSubmission is missing" in {
-      implicit val request: Request[_] = new HeaderCarrier
+      implicit val request = TdAll.request
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
@@ -210,7 +207,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
 
     "Return 303 for submitPayTodayQuestion when there are no debits" in {
-      implicit val request: Request[_] = new HeaderCarrier
+      implicit val request = TdAll.request
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = Seq.empty)))))
@@ -223,12 +220,12 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
     }
 
     "Return 200 for submitPayTodayQuestion if there are debits and valid eligibility answers" in {
-      implicit val request: Request[_] = new HeaderCarrier
 
       when(mockSessionCache.getTtpSubmission(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIOver10k)))
-      val request = FakeRequest()
-        .withSession(goodSession: _*)
+
+      implicit val request = TdAll.request.withSession(goodSession: _*)
+
       val result = controller.getPayTodayQuestion().apply(request)
 
       status(result) mustBe OK

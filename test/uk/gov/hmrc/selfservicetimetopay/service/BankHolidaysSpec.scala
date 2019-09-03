@@ -16,9 +16,10 @@
 
 package uk.gov.hmrc.selfservicetimetopay.service
 
+import bankholidays.BankHolidays
 import org.joda.time.LocalDate
 import org.scalatest.Inspectors
-import uk.gov.hmrc.play.test.UnitSpec
+import testsupport.UnitSpec
 import uk.gov.hmrc.time.workingdays.BankHolidaySet
 
 class BankHolidaysSpec extends UnitSpec with Inspectors {
@@ -118,7 +119,7 @@ class BankHolidaysSpec extends UnitSpec with Inspectors {
 
   )
 
-  "BankHolidays" must {
+  "BankHolidays must" - {
     tests.foreach(row => {
       s"Check valid values - ${row._1} : ${row._2}" in {
         hols.events.filter(f => f.title == row._1 && f.date == LocalDate.parse(row._2)).size shouldBe 1

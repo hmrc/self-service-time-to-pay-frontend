@@ -21,13 +21,13 @@ import java.time.LocalDate.{of => d}
 
 import bankholidays.WorkingDaysService
 import org.scalatest.Inspectors
-import uk.gov.hmrc.play.test.UnitSpec
+import testsupport.UnitSpec
 
 class WorkingDaysServiceSpec extends UnitSpec with Inspectors {
 
   private case class Test(date: LocalDate, daysToAdd: Int, expected: LocalDate)
 
-  "addWorkingDays" must {
+  "addWorkingDays must" - {
 
     "skip over weekends as well as bank holidays" in {
 

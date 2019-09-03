@@ -21,10 +21,10 @@ import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import ssttpeligibility.EligibilityConnector
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import testsupport.ItSpec
+import testsupport.testdata.TdAll
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, ReturnNeedsSubmitting, SelfAssessment, TotalDebtIsTooHigh}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -32,9 +32,9 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
+class EligibilityConnectorSpec extends ItSpec with MockitoSugar {
 
-  implicit val request: Request[_] = HeaderCarrier()
+  implicit val request = TdAll.request
 
   private val httpClient: HttpClient = mock[HttpClient]
   val testConnector = new EligibilityConnector(
@@ -42,14 +42,14 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with WithFakeA
     servicesConfig = mock[ServicesConfig]
   )
 
-  "Calling checkEligibility" should {
+  "Calling checkEligibility" - {
     "return an eligible response" in {
       val jsonResponse = Json.fromJson[EligibilityStatus](checkEligibilityTrueResponse).get
 
       when(httpClient.POST[SelfAssessment, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = await(testConnector.checkEligibility(checkEligibilityTrueRequest, "1234567890"))
+      val result = testConnector.checkEligibility(checkEligibilityTrueRequest, "1234567890").futureValue
 
       result.eligible shouldBe true
     }
@@ -60,7 +60,7 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with WithFakeA
       when(httpClient.POST[SelfAssessment, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = await(testConnector.checkEligibility(checkEligibilityFalseRequest, "1234567890"))
+      val result = testConnector.checkEligibility(checkEligibilityFalseRequest, "1234567890").futureValue
 
       result.eligible shouldBe false
       result.reasons.contains(ReturnNeedsSubmitting) shouldBe true
@@ -71,8 +71,7 @@ class EligibilityConnectorSpec extends UnitSpec with MockitoSugar with WithFakeA
       when(httpClient.POST[SelfAssessment, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = await(testConnector.checkEligibility(checkEligibilityFalseRequest, "1234567890"))
-
+      val result = testConnector.checkEligibility(checkEligibilityFalseRequest, "1234567890").futureValue
       result.eligible shouldBe false
       result.reasons.contains(TotalDebtIsTooHigh) shouldBe true
     }

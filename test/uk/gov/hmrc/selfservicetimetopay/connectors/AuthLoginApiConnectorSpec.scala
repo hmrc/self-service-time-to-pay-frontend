@@ -21,10 +21,11 @@ import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
 import ssttpcalculator.CalculatorConnector
+import testsupport.{ItSpec, UnitSpec}
+import testsupport.testdata.TdAll
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorInput, CalculatorPaymentSchedule}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
@@ -32,9 +33,9 @@ import uk.gov.hmrc.selfservicetimetopay.resources._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AuthLoginApiConnectorSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
+class AuthLoginApiConnectorSpec extends ItSpec with MockitoSugar {
 
-  implicit val request: Request[_] = HeaderCarrier()
+  implicit val request = TdAll.request
 
   private val httpClient: HttpClient = mock[HttpClient]
   val testConnector = new CalculatorConnector(
@@ -42,14 +43,14 @@ class AuthLoginApiConnectorSpec extends UnitSpec with MockitoSugar with WithFake
     httpClient     = httpClient
   )
 
-  "Calling submitLiabilities test only endpoint" should {
+  "Calling submitLiabilities test only endpoint should" - {
     "return a payment schedule" in {
       val jsonResponse = Json.fromJson[Seq[CalculatorPaymentSchedule]](submitLiabilitiesResponseJSON).get
 
       when(httpClient.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))
+      val result = testConnector.calculatePaymentSchedule(submitDebitsRequest).futureValue
 
       result.size shouldBe 11
       result.head.initialPayment shouldBe BigDecimal("50")
@@ -61,7 +62,7 @@ class AuthLoginApiConnectorSpec extends UnitSpec with MockitoSugar with WithFake
       when(httpClient.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(Seq()))
 
-      val result = await(testConnector.calculatePaymentSchedule(submitDebitsRequest))
+      val result = testConnector.calculatePaymentSchedule(submitDebitsRequest).futureValue
 
       result shouldBe Seq()
     }

@@ -16,15 +16,13 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import org.scalatest.mock.MockitoSugar
-import org.scalatestplus.play.OneServerPerSuite
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
-import uk.gov.hmrc.play.test.UnitSpec
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import org.scalatest.mock.MockitoSugar
+import testsupport.ItSpec
 
-trait ConnectorSpec extends UnitSpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach with BeforeAndAfterAll {
+trait ConnectorSpec extends ItSpec with MockitoSugar {
 
   object WiremockHelper {
     val wiremockPort = 1234
@@ -35,7 +33,8 @@ trait ConnectorSpec extends UnitSpec with OneServerPerSuite with MockitoSugar wi
   import WiremockHelper._
 
   val wmConfig = wireMockConfig().port(wiremockPort)
-  val wireMockServer = new WireMockServer(wmConfig)
+
+  override val wireMockServer = new WireMockServer(wmConfig)
 
   override def beforeAll() = {
     wireMockServer.stop()

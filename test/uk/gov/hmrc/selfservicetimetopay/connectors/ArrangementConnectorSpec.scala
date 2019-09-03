@@ -18,36 +18,37 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import play.api.http.Status._
 import ssttparrangement.{ArrangementConnector, SubmissionError, SubmissionSuccess}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, Upstream4xxResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import testsupport.ItSpec
+import testsupport.testdata.TdAll
+import uk.gov.hmrc.http.{HttpResponse, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutures with WithFakeApplication {
+class ArrangementConnectorSpec extends ItSpec with MockitoSugar {
 
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+  implicit val request = TdAll.request
 
   private val httpClient: HttpClient = mock[HttpClient]
   val testConnector = new ArrangementConnector(
     servicesConfig = mock[ServicesConfig],
-    httpClient     = httpClient
+    httpClient     = httpClient,
+    ???
   )
 
-  "Calling submitArrangements" should {
+  "Calling submitArrangements" - {
     "return Right(SubmissionSuccess())" in {
       val response = HttpResponse(CREATED)
       when(httpClient.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any(), any())).thenReturn(Future(response))
 
-      val result = await(testConnector.submitArrangements(submitArrangementResponse))
+      val result = testConnector.submitArrangements(submitArrangementResponse).futureValue
 
       result shouldBe Right(SubmissionSuccess())
     }
@@ -56,7 +57,7 @@ class ArrangementConnectorSpec extends UnitSpec with MockitoSugar with ScalaFutu
       when(httpClient.POST[TTPArrangement, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future.failed(Upstream4xxResponse("Unauthorized", UNAUTHORIZED, UNAUTHORIZED, Map())))
 
-      val result = await(testConnector.submitArrangements(submitArrangementResponse))
+      val result = testConnector.submitArrangements(submitArrangementResponse).futureValue
 
       result shouldBe Left(SubmissionError(UNAUTHORIZED, "Unauthorized"))
     }
