@@ -22,12 +22,16 @@ import testsupport.ItSpec
 class StartPageSpec extends ItSpec {
 
   "display" in {
+
     startPage.open()
     startPage.assertPageIsDisplayed()
+
     startPage.clickOnWelshLink()
     startPage.assertPageIsDisplayed(Languages.Welsh)
+
     startPage.clickOnEnglishLink()
     startPage.assertPageIsDisplayed(Languages.English)
+
   }
 
 }

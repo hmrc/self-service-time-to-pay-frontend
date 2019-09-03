@@ -35,7 +35,9 @@ class ItSpec
   with RichMatchers
   with WireMockSupport {
 
-  implicit override val patienceConfig: PatienceConfig = PatienceConfig(timeout  = scaled(Span(3, Seconds)), interval = scaled(Span(500, Millis)))
+  implicit override val patienceConfig: PatienceConfig = PatienceConfig(
+    timeout  = scaled(Span(300, Millis)), interval = scaled(Span(14, Millis))
+  )
 
   //in tests use `app`
   override def newAppForTest(testData: TestData): Application = new GuiceApplicationBuilder()

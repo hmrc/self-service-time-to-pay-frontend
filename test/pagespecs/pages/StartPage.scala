@@ -23,19 +23,19 @@ import org.scalatest.Assertion
 import org.scalatest.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Page(baseUrl) {
+class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
 
-  override val path: String = "/"
+  override val path: String = "/pay-what-you-owe-in-instalments"
 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeader() shouldBe Expected.GlobalHeaderText()
-    readArticle() shouldBe Expected.ArticleText()
+    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readArticle().stripSpaces shouldBe Expected.ArticleText().stripSpaces
   }
 
-  def readArticle(): String = id("content").element.text
+  def readArticle(): String = xpath("//*[@id=\"content\"]/article").element.text
 
   def readGlobalHeader(): String = id("global-header").element.text
 
@@ -106,6 +106,19 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Page(ba
           |Dechrau nawr
         """.stripMargin
     }
+
+  }
+
+  implicit class StringOps(s: String) {
+    /**
+     * Transforms string so it's easier it to compare.
+     */
+    def stripSpaces(): String = s
+      .replaceAll("[^\\S\\r\\n]+", " ") //replace many consecutive white-spaces (but not new lines) with one space
+      .replaceAll("[\r\n]+", "\n") //replace many consecutive new lines with one new line
+      .split("\n").map(_.trim) //trim each line
+      .filterNot(_ == "") //remove any empty lines
+      .mkString("\n")
 
   }
 

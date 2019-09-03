@@ -19,20 +19,26 @@ package pagespecs.pages
 import java.io.{FileInputStream, FileOutputStream}
 
 import langswitch.{Language, Languages}
-import org.openqa.selenium.{OutputType, TakesScreenshot, WebDriver}
+import org.openqa.selenium.{By, OutputType, TakesScreenshot, WebDriver}
 import org.scalatest.Assertion
 import org.scalatest.selenium.WebBrowser
 import org.scalatest.time.{Millis, Span}
 import play.api.Logger
+import play.api.libs.json.Reads
 
 import scala.collection.immutable.List
 import scala.util.Random
 
 final case class BaseUrl(value: String)
 
-abstract class Page(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
+abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
   import WebBrowser._
   import testsupport.RichMatchers._
+
+  //we shadow what is in  testsupport.RichMatchers.patienceConfig
+  implicit val patienceConfig: PatienceConfig = PatienceConfig(
+    timeout  = scaled(Span(300, Millis)), interval = scaled(Span(14, Millis))
+  )
 
   def path: String
 
@@ -54,11 +60,15 @@ abstract class Page(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    * and dumps page screenshot
    * and fails assertion
    */
-  def probing[A](probingF: => A): A = eventually(probingF).withClue {
+  protected def probing[A](probingF: => A): A = eventually(probingF).withClue {
     val maybeDumpedFile = takeADump()
     s"""
        |${maybeDumpedFile.map(uri => s"Screenshot recorded in $uri").getOrElse("Sorry, no screenshot recorded")}
        |url was: ${webDriver.getCurrentUrl}
+       |
+       |page text was:
+       |${webDriver.findElement(By.tagName("body")).getText}
+       |
        |page source was:
        |${webDriver.getPageSource}
        |""".stripMargin
