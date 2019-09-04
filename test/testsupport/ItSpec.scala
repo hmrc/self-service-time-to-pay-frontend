@@ -24,7 +24,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{FreeSpec, TestData}
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
-import pagespecs.pages.{BaseUrl, StartPage}
+import pagespecs.pages.{BaseUrl, GgSignInPage, StartPage}
 import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import com.softwaremill.macwire._
@@ -50,7 +50,9 @@ class ItSpec
       "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
       "microservice.services.campaign-manager.port" -> WireMockSupport.port,
       "microservice.services.ia.port" -> WireMockSupport.port,
-      "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}"
+      "microservice.services.auth.port" -> WireMockSupport.port,
+      "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
+      "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}"
 
     )).build()
 
@@ -74,7 +76,8 @@ class ItSpec
     wd
   }
 
-  lazy val baseUrl = BaseUrl(s"http://localhost:$port")
-  lazy val startPage = wire[StartPage]
+  lazy val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$port")
+  lazy val startPage: StartPage = wire[StartPage]
+  lazy val ggSignInPage: GgSignInPage = wire[GgSignInPage]
 
 }

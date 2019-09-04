@@ -20,6 +20,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
+import pagespecs.pages.BaseUrl
 import play.api.Logger
 
 trait WireMockSupport extends BeforeAndAfterAll with BeforeAndAfterEach {
@@ -47,4 +48,5 @@ trait WireMockSupport extends BeforeAndAfterAll with BeforeAndAfterEach {
 
 object WireMockSupport {
   val port = 11111
+  val baseUrl = BaseUrl(s"http://localhost:${WireMockSupport.port}")
 }

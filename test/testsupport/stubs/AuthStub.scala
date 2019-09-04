@@ -29,6 +29,19 @@ import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.CryptoImplicits
 
 object AuthStub extends Matchers {
 
+  def unathorisedMissingSession(): StubMapping = {
+    stubFor(
+      post(urlPathEqualTo("/auth/authorise"))
+        .willReturn(
+          aResponse()
+            .withStatus(401)
+            .withHeader(
+              "WWW-Authenticate", """MDTP detail="MissingBearerToken""""
+            )
+            .withBody(
+              s"""{}""")))
+  }
+
   def serviceIsAvailable(): StubMapping = {
     stubFor(
       get(urlPathEqualTo("/auth/authority"))

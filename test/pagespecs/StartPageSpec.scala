@@ -18,6 +18,7 @@ package pagespecs
 
 import langswitch.Languages
 import testsupport.ItSpec
+import testsupport.stubs.{AuthStub, GgStub}
 
 class StartPageSpec extends ItSpec {
 
@@ -32,12 +33,12 @@ class StartPageSpec extends ItSpec {
     startPage.clickOnEnglishLink()
     startPage.assertPageIsDisplayed(Languages.English)
 
-    //AuthStub response
-    //GGStub page response
+    AuthStub.unathorisedMissingSession()
+    GgStub.signInPage(port)
 
-//    startPage.clickOnStartNowButton()
+    startPage.clickOnStartNowButton()
 
-    //expect that wireMock GGStub is being displayed
+    ggSignInPage.assertPageIsDisplayed()
   }
 
 }
