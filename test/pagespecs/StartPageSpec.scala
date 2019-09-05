@@ -17,10 +17,11 @@
 package pagespecs
 
 import langswitch.Languages
-import play.api.libs.json.{Json, Reads}
-import testsupport.ItSpec
+import play.api.libs.json.{Json, OFormat, Reads}
+import testsupport.{ItSpec, WireMockSupport}
 import testsupport.stubs.{AuthStub, GgStub, TaxpayerStub}
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments}
+import testsupport.testdata.TdAll
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,29 +32,6 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class StartPageSpec extends ItSpec {
-
-  "debugging auth stub - delete me later" in {
-    implicit val hc = HeaderCarrier(
-      authorization = Some(Authorization ("Bearer BXQ3/Treo4kQCZvVcCqKPmQujLmLPt2qDNrwaafDRtIVKKjiu+AryxfpbRla6/x8PpMwgG6JxmFNnd7rcszfSua3Zr3ntfNboHxXlAKAvV6YmYYxpJ3muvEfZfXy0dtwL0aVTK+H8QGpi3mqAytEQFIqXQGqNgQEQPE7S+0oLxn9KwIkeIPK/mMlBESjue4V")),
-      sessionId     = Some(SessionId("session-2d79a354-e1ce-4a5c-8b71-032111eef698"))
-    )
-    val json = Json.parse("""{"authorise":[],"retrieve":["allEnrolments","confidenceLevel","saUtr"]}""")
-
-    AuthStub.athorise()
-
-    val http = app.injector.instanceOf[HttpClient]
-    val serviceUrl = "http://localhost:8500"
-
-    type A = ~[~[Enrolments, ConfidenceLevel], Option[String]]
-    val retrivals: Retrieval[A] = Retrievals.allEnrolments and Retrievals.confidenceLevel and Retrievals.saUtr
-
-    val r = http.POST(s"$serviceUrl/auth/authorise", json).futureValue
-
-    println(Json.prettyPrint(r.json))
-
-    //    implicitly[Reads[~[~[Enrolments, ConfidenceLevel], Option[String]]]]
-    r.json.as[~[~[Enrolments, ConfidenceLevel], Option[String]]](retrivals.reads)
-  }
 
   "language" in {
 
@@ -77,10 +55,10 @@ class StartPageSpec extends ItSpec {
   }
 
   "eligible" in {
-    AuthStub.athorise()
+    AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
 
-    //    GgStub.signInPage(port)
+    GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
     taxLiabilitiesPage.assertPageIsDisplayed()

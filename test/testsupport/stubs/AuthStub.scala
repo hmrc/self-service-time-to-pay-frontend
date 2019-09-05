@@ -19,10 +19,11 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
-import play.api.libs.json.Json
+import play.api.libs.json._
 import testsupport.WireMockSupport
 import testsupport.testdata.TdAll
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
 
 object AuthStub extends Matchers {
 
@@ -36,24 +37,40 @@ object AuthStub extends Matchers {
               "WWW-Authenticate",
               """MDTP detail="MissingBearerToken""""
             )
-            .withBody(
-              s"""{}""")))
+            .withBody("")))
   }
 
-  def athorise(
-      utr:             String          = TdAll.utr,
-      confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,
-      enrolments:      List[Enrolment] = Nil //TODO: List(TdAll.saEnrolment)
+  /**
+   * Deines response for POST /auth/authorise
+   */
+  def authorise(
+      utr:             Option[String]          = Some(TdAll.utr),
+      confidenceLevel: Option[ConfidenceLevel] = Some(ConfidenceLevel.L200),
+      allEnrolments:   Option[Set[Enrolment]]  = Some(Set(TdAll.saEnrolment))
   ): StubMapping = {
 
-    val authoriseJsonBody = Json.obj(
-      "allEnrolments" -> enrolments,
-      "confidenceLevel" -> confidenceLevel,
-      "saUtr" -> utr
-    )
+    implicit val enrolmentFormat: OFormat[Enrolment] = {
+      implicit val f = Json.format[EnrolmentIdentifier]
+      Json.format[Enrolment]
+    }
+
+    val confidenceLevelJsonPart: JsObject = confidenceLevel.map(confidenceLevel =>
+      Json.obj("confidenceLevel" -> confidenceLevel)
+    ).getOrElse(Json.obj())
+
+    val saUtrJsonPart: JsObject = utr.map(utr =>
+      Json.obj("saUtr" -> utr)
+    ).getOrElse(Json.obj())
+
+    val allEnrolmentsJsonPart: JsObject = allEnrolments.map(enrolments => Json.obj(
+      "allEnrolments" -> enrolments
+    )).getOrElse(Json.obj())
+
+    val authoriseJsonBody = allEnrolmentsJsonPart ++ confidenceLevelJsonPart ++ saUtrJsonPart
 
     stubFor(
       post(urlPathEqualTo("/auth/authorise"))
+        //        .withRequestBody() //TODO make constraint on body
         .willReturn(
           aResponse()
             .withStatus(200)

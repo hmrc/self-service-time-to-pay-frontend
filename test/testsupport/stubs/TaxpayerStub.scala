@@ -20,72 +20,23 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
 import play.api.libs.json.Json
-import testsupport.WireMockSupport
 import testsupport.testdata.TdAll
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
 import uk.gov.hmrc.selfservicetimetopay.models.Taxpayer
 
 object TaxpayerStub extends Matchers {
 
-  def getTaxpayer(utr: String = TdAll.utr, returnedTaxpayer: Taxpayer = TdAll.taxpayer): StubMapping = {
+  def getTaxpayer(
+                   utr: String = TdAll.utr,
+                   returnedTaxpayer: Taxpayer = TdAll.taxpayer
+                 ): StubMapping = {
     import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
     stubFor(
-      post(urlPathEqualTo(s"/taxpayer/$utr"))
+      get(urlPathEqualTo(s"/taxpayer/$utr"))
         .willReturn(
           aResponse()
             .withStatus(200)
             .withBody(
               Json.prettyPrint(Json.toJson(returnedTaxpayer)))))
   }
-
-  def athorised(
-      utr:             String          = TdAll.utr,
-      confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,
-      enrolments:      List[Enrolment] = Nil //TODO List(TdAll.saEnrolment)
-  ): StubMapping = {
-
-    val authoriseJsonBody = Json.obj(
-      "allEnrolments" -> enrolments,
-      "confidenceLevel" -> confidenceLevel,
-      "saUtr" -> utr
-    )
-
-    stubFor(
-      post(urlPathEqualTo("/auth/authorise"))
-        .willReturn(
-          aResponse()
-            .withStatus(200)
-            .withBody(
-              Json.prettyPrint(authoriseJsonBody)
-            )))
-  }
-
-  def serviceIsAvailable(): StubMapping = {
-    stubFor(
-      get(urlPathEqualTo("/auth/authority"))
-        .willReturn(
-          aResponse()
-            .withStatus(200)
-            .withBody(
-              s"""
-       {
-         "uri": "http://wat.wat",
-         "userDetailsLink": "http://localhost:${WireMockSupport.port}/user-details"
-       }
-       """)))
-
-    stubFor(
-      get(urlPathEqualTo("/user-details"))
-        .willReturn(
-          aResponse()
-            .withStatus(200)
-            .withBody(
-              s"""
-       {
-         "name": "Bob McBobson"
-       }
-       """)))
-  }
-
 }
