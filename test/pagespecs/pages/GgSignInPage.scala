@@ -35,3 +35,4 @@ class GgSignInPage(implicit webDriver: WebDriver) extends BasePage(WireMockSuppo
     tagName("body").element.text shouldBe "Sign in using Government Gateway"
   }
 }
+

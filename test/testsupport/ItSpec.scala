@@ -24,7 +24,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{FreeSpec, TestData}
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
-import pagespecs.pages.{BaseUrl, GgSignInPage, StartPage}
+import pagespecs.pages.{BaseUrl, GgSignInPage, StartPage, TaxLiabilitiesPage}
 import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import com.softwaremill.macwire._
@@ -79,5 +79,6 @@ class ItSpec
   lazy val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$port")
   lazy val startPage: StartPage = wire[StartPage]
   lazy val ggSignInPage: GgSignInPage = wire[GgSignInPage]
+  lazy val taxLiabilitiesPage: TaxLiabilitiesPage = wire[TaxLiabilitiesPage]
 
 }

@@ -1,0 +1,16 @@
+{
+  "allEnrolments": [
+    {
+      "key": "IR-SA",
+      "identifiers": [
+        {
+          "key": "UTR",
+          "value": "6573196998"
+        }
+      ],
+      "state": "Activated"
+    }
+  ],
+  "confidenceLevel": 200,
+  "saUtr": "6573196998"
+}

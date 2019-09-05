@@ -32,12 +32,8 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion = probing {
     readPath() shouldBe path
     readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readArticle().stripSpaces shouldBe Expected.ArticleText().stripSpaces
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
   }
-
-  def readArticle(): String = xpath("//*[@id=\"content\"]/article").element.text
-
-  def readGlobalHeader(): String = id("global-header").element.text
 
   def clickOnStartNowButton(): Unit = {
     val button = xpath("//*[@id=\"start\"]/div/button")
@@ -64,15 +60,20 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
         """.stripMargin
     }
 
-    object ArticleText {
+    object MainText {
 
       def apply()(implicit language: Language): String = language match {
-        case English => articleTextEnglish
-        case Welsh   => articleTextWelsh
+        case English => mainTextEnglish
+        case Welsh   => mainTextWelsh
       }
 
-      private val articleTextEnglish =
-        """Set up a payment plan
+      private val mainTextEnglish =
+        """Help improve GOV.UK No Thanks
+          |Get involved in making government services better (opens in a new window)
+          |
+          |BETA	This is a new service – your feedback will help us to improve it. English | Cymraeg
+          |
+          |Set up a payment plan
           |A payment plan allows you to pay the tax you owe in instalments. The plan covers the amounts you need to pay now.
           |
           |We intend this as a one-off payment plan to give you extra support. You must keep up to date with your payments. If you do not, HMRC may ask you to pay the entire outstanding amount.
@@ -88,8 +89,12 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
           |Start now
         """.stripMargin
 
-      private val articleTextWelsh =
-        """
+      private val mainTextWelsh =
+        """Helpwch i wella GOV.UK Dim diolch
+          |Byddwch yn rhan o wneud gwasanaethau’r llywodraeth yn well (yn agor ffenestr newydd)
+          |
+          |BETA	Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella. English | Cymraeg
+          |
           |Trefnu cynllun talu
           |Mae cynllun talu yn eich galluogi i dalu’r dreth sydd arnoch fesul rhandaliad. Mae’r cynllun yn cwmpasu’r symiau y mae’n rhaid i chi eu talu nawr.
           |

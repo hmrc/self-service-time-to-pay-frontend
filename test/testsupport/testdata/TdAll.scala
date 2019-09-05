@@ -16,14 +16,105 @@
 
 package testsupport.testdata
 
-import langswitch.Languages
-import play.api.mvc.{AnyContentAsEmpty, Request}
+import java.time.LocalDate
+
+import play.api.libs.json.{Json, OWrites}
 import play.api.test.FakeRequest
+import testsupport.testdata.TdAll.Enrolment.Identifier
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
+import uk.gov.hmrc.selfservicetimetopay.models._
 
 /**
  * Test Data All
  */
 object TdAll {
+
+  val systemDate: LocalDate = "2019-10-04"
+
+  val debit1 = Debit(
+    originCode = "IN1",
+    amount     = 2500,
+    dueDate    = "2019-08-25",
+    interest   = None,
+    taxYearEnd = "2019-04-05"
+  )
+
+  val debit2 = Debit(
+    originCode = "IN2",
+    amount     = 2400,
+    dueDate    = "2019-08-25", //TODO: consult with analytics if this data is correct
+    interest   = None,
+    taxYearEnd = "2019-04-05"
+  )
+
+  val return1 = Return(
+    taxYearEnd   = "2019-04-05",
+    issuedDate   = "2018-02-15",
+    dueDate      = "2019-01-31",
+    receivedDate = None
+  )
+
+  val return2 = Return(
+    taxYearEnd   = "2018-04-05",
+    issuedDate   = "2017-02-15",
+    dueDate      = "2018-01-31",
+    receivedDate = "2018-03-09"
+  )
+
+  val communicationPreferences = CommunicationPreferences(
+    welshLanguageIndicator = false,
+    audioIndicator         = false,
+    largePrintIndicator    = false,
+    brailleIndicator       = false
+  )
+
+  val selfAssessment = SelfAssessment(
+    utr                      = utr,
+    communicationPreferences = communicationPreferences,
+    debits                   = List(debit1, debit2),
+    returns                  = List(return1, return2)
+  )
+
+  val taxpayer = Taxpayer(
+    customerName   = Some("Mr Ethan Johnson"),
+    addresses      = List(Address(
+      addressLine1 = "Big building",
+      addressLine2 = "Barington Road",
+      postcode     = "BN12 4XL"
+    )),
+    selfAssessment = selfAssessment
+  )
+
+  val utr = "6573196998"
+
+  case class Enrollment(
+      key:        String,
+      identifier: Identifier
+  )
+
+  object Enrolment {
+    case class Identifier(
+        key:   String,
+        value: String
+    )
+    object Identifier {
+      implicit val writes: OWrites[Identifier] = Json.writes[Identifier]
+    }
+
+    sealed trait State
+    case object Activated extends State
+    case object NotYetActivated extends State
+
+    object State {
+      implicit val writes: OWrites[State] = Json.writes[State]
+    }
+  }
+
+  case class Enrolments(
+      allEnrolments:   List[Enrollment],
+      confidenceLevel: Int,
+      saUtr:           String
+  )
 
   val email = "sau@hotmail.com"
 
@@ -47,5 +138,11 @@ object TdAll {
     .withTrueClientIp()
     .withTrueClientPort()
     .withDeviceId()
+
+  implicit def toSome[T](t: T): Option[T] = Some(t)
+
+  implicit def toLocalDate(s: String): LocalDate = LocalDate.parse(s)
+
+  implicit def toOptionLocalDate(s: String): Option[LocalDate] = Some(LocalDate.parse(s))
 
 }

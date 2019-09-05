@@ -56,14 +56,14 @@ class TestOnlyController @Inject() (
   }
 
   def taxpayerConfig(): Action[AnyContent] = Action.async { implicit request =>
-    val baseUrl = taxpayerConnector.taxPayerURL
+    val baseUrl = taxpayerConnector.taxPayerBaseUrl
     httpClient
       .GET[HttpResponse](s"$baseUrl/taxpayer/test-only/config")
       .map(r => Status(r.status)(r.json))
   }
 
   def taxpayerConnectorsConfig(): Action[AnyContent] = Action.async { implicit request =>
-    val baseUrl = taxpayerConnector.taxPayerURL
+    val baseUrl = taxpayerConnector.taxPayerBaseUrl
     httpClient
       .GET[HttpResponse](s"$baseUrl/taxpayer/test-only/connectors-config")
       .map(r => Status(r.status)(r.json))

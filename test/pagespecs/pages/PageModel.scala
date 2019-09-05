@@ -46,6 +46,13 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def open(): Unit = WebBrowser.goTo(s"${baseUrl.value}$path")
 
+  /**
+   * Reads the main content of the page
+   */
+  def readMain(): String = id("wrapper").element.text
+
+  def readGlobalHeader(): String = id("global-header").element.text
+
   def readPath(): String = {
     val url = new java.net.URL(webDriver.getCurrentUrl)
     url.getPath

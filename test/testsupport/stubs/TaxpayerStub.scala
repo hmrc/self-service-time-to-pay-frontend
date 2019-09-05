@@ -23,27 +23,26 @@ import play.api.libs.json.Json
 import testsupport.WireMockSupport
 import testsupport.testdata.TdAll
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
+import uk.gov.hmrc.selfservicetimetopay.models.Taxpayer
 
-object AuthStub extends Matchers {
+object TaxpayerStub extends Matchers {
 
-  def unathorisedMissingSession(): StubMapping = {
+  def getTaxpayer(utr: String = TdAll.utr, returnedTaxpayer: Taxpayer = TdAll.taxpayer): StubMapping = {
+    import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
+
     stubFor(
-      post(urlPathEqualTo("/auth/authorise"))
+      post(urlPathEqualTo(s"/taxpayer/$utr"))
         .willReturn(
           aResponse()
-            .withStatus(401)
-            .withHeader(
-              "WWW-Authenticate",
-              """MDTP detail="MissingBearerToken""""
-            )
+            .withStatus(200)
             .withBody(
-              s"""{}""")))
+              Json.prettyPrint(Json.toJson(returnedTaxpayer)))))
   }
 
-  def athorise(
+  def athorised(
       utr:             String          = TdAll.utr,
       confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,
-      enrolments:      List[Enrolment] = Nil //TODO: List(TdAll.saEnrolment)
+      enrolments:      List[Enrolment] = Nil //TODO List(TdAll.saEnrolment)
   ): StubMapping = {
 
     val authoriseJsonBody = Json.obj(

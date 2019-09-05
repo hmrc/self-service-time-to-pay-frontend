@@ -30,10 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxPayerConnector @Inject() (servicesConfig: ServicesConfig, http: HttpClient)(implicit ec: ExecutionContext) {
 
   import req.RequestSupport._
-  val taxPayerURL: String = servicesConfig.baseUrl("time-to-pay-taxpayer")
-  val serviceURL: String = "taxpayer"
+
+  val taxPayerBaseUrl: String = servicesConfig.baseUrl("time-to-pay-taxpayer")
 
   def getTaxPayer(utr: String)(implicit request: Request[_]): Future[Taxpayer] = {
-    http.GET[Taxpayer](s"$taxPayerURL/$serviceURL/$utr")
+    http.GET[Taxpayer](s"$taxPayerBaseUrl/taxpayer/$utr")
   }
 }
