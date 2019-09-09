@@ -18,10 +18,9 @@ package testsupport.testdata
 
 import java.time.LocalDate
 
-import play.api.libs.json.{Json, OWrites}
 import play.api.test.FakeRequest
-import testsupport.testdata.TdAll.Enrolment.Identifier
-import uk.gov.hmrc.selfservicetimetopay.models.{NotLoggedInJourneyInfo, _}
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import testsupport.JsonSyntax._
 
 /**
@@ -190,33 +189,16 @@ object TdAll {
        "hasOtherDebt": false
       }""".asJson
 
-  case class Enrollment(
-      key:        String,
-      identifier: Identifier
-  )
-
-  object Enrolment {
-    case class Identifier(
-        key:   String,
-        value: String
-    )
-    object Identifier {
-      implicit val writes: OWrites[Identifier] = Json.writes[Identifier]
-    }
-
-    sealed trait State
-    case object Activated extends State
-    case object NotYetActivated extends State
-
-    object State {
-      implicit val writes: OWrites[State] = Json.writes[State]
-    }
-  }
-
-  case class Enrolments(
-      allEnrolments:   List[Enrollment],
-      confidenceLevel: Int,
-      saUtr:           String
+  val saEnrolment = Enrolment(
+    key               = "IR-SA",
+    identifiers       = List(
+      EnrolmentIdentifier(
+        "UTR",
+        utr
+      )
+    ),
+    state             = "Activated",
+    delegatedAuthRule = None
   )
 
   val email = "sau@hotmail.com"
