@@ -84,7 +84,7 @@ package object modelsFormat {
   implicit val bankAccountResponseFormatter = Format(eitherReads[BankDetails, DirectDebitBank], eitherWrites[BankDetails, DirectDebitBank])
 
   //Eligibility formatters
-
+  //TODO make sure that function returns the correct Reason when case is ttpislessthentwomonths
   def parseFromString(jsonString: String): Option[Reason] = jsonString.trim.toLowerCase match {
     case "nodebt"                                 => Some(NoDebt)
     case "debtisinsignificant"                    => Some(DebtIsInsignificant)

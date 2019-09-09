@@ -21,8 +21,8 @@ import java.time.LocalDate
 import play.api.libs.json.{Json, OWrites}
 import play.api.test.FakeRequest
 import testsupport.testdata.TdAll.Enrolment.Identifier
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
-import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.models.{NotLoggedInJourneyInfo, _}
+import testsupport.JsonSyntax._
 
 /**
  * Test Data All
@@ -30,6 +30,8 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 object TdAll {
 
   val systemDate: LocalDate = "2019-10-04"
+
+  val utr = "6573196998"
 
   val debit1 = Debit(
     originCode = "IN1",
@@ -39,6 +41,15 @@ object TdAll {
     taxYearEnd = "2019-04-05"
   )
 
+  val debit1Json =
+    //language=Json
+    """{
+    "originCode": "IN1",
+     "amount": 2500,
+     "dueDate": "2019-08-25",
+     "taxYearEnd": "2019-04-05"
+    }""".asJson
+
   val debit2 = Debit(
     originCode = "IN2",
     amount     = 2400,
@@ -47,12 +58,29 @@ object TdAll {
     taxYearEnd = "2019-04-05"
   )
 
+  val debit2Json =
+    //language=Json
+    """{
+    "originCode": "IN2",
+     "amount": 2400,
+     "dueDate": "2019-08-25",
+     "taxYearEnd": "2019-04-05"
+    }""".asJson
+
   val return1 = Return(
     taxYearEnd   = "2019-04-05",
     issuedDate   = "2018-02-15",
     dueDate      = "2019-01-31",
     receivedDate = None
   )
+
+  val return1Json =
+    //language=Json
+    """{
+    "taxYearEnd": "2019-04-05",
+     "issuedDate": "2018-02-15",
+     "dueDate": "2019-01-31"
+    }""".asJson
 
   val return2 = Return(
     taxYearEnd   = "2018-04-05",
@@ -61,12 +89,30 @@ object TdAll {
     receivedDate = "2018-03-09"
   )
 
+  val return2Json =
+    //language=Json
+    """{
+     "taxYearEnd": "2018-04-05",
+     "issuedDate": "2017-02-15",
+     "dueDate": "2018-01-31",
+     "receivedDate": "2018-03-09"
+    }""".asJson
+
   val communicationPreferences = CommunicationPreferences(
     welshLanguageIndicator = false,
     audioIndicator         = false,
     largePrintIndicator    = false,
     brailleIndicator       = false
   )
+
+  val communicationPreferencesJson =
+    //language=Json
+    """{
+    "welshLanguageIndicator": false,
+     "audioIndicator": false,
+     "largePrintIndicator": false,
+     "brailleIndicator": false
+    }""".asJson
 
   val selfAssessment = SelfAssessment(
     utr                      = utr,
@@ -75,17 +121,74 @@ object TdAll {
     returns                  = List(return1, return2)
   )
 
+  val selfAssessmentJson =
+
+    s"""{
+    "utr": "${utr}",
+     "communicationPreferences":${communicationPreferencesJson},
+     "debits": [
+        ${debit1Json},
+        ${debit2Json}]
+     ,
+     "returns": [
+        ${return1Json},
+        ${return2Json}]
+
+    }""".asJson
+
+  val address = Address(
+    addressLine1 = "Big building",
+    addressLine2 = "Barington Road",
+    postcode     = "BN12 4XL"
+  )
+
+  val addressJson =
+    //language=Json
+    """
+    {
+     "addressLine1" : "Big building",
+     "addressLine2" : "Barington Road",
+     "postcode" : "BN12 4XL"
+    }
+  """.asJson
+
   val taxpayer = Taxpayer(
     customerName   = Some("Mr Ethan Johnson"),
-    addresses      = List(Address(
-      addressLine1 = "Big building",
-      addressLine2 = "Barington Road",
-      postcode     = "BN12 4XL"
-    )),
+    addresses      = List(address),
     selfAssessment = selfAssessment
   )
 
-  val utr = "6573196998"
+  val taxpayerJson =
+    s"""{
+     "customerName": "Mr Ethan Johnson",
+     "addresses": [${addressJson}],
+     "selfAssessment": ${selfAssessmentJson}
+    }""".asJson
+
+  val interest = Interest(
+    calculationDate = "2019-10-04",
+    amountAccrued   = 200: BigDecimal
+  )
+
+  val interestJson =
+    //language=Json
+    """
+    {
+     "calculationDate": "2019-10-04",
+     "amountAccrued": 200
+    }
+  """.asJson
+
+  val eligibilityTypeOfTax = EligibilityTypeOfTax(
+    hasSelfAssessmentDebt = false,
+    hasOtherDebt          = false)
+
+  val eligibilityTypeOfTaxJson =
+    //language=Json
+    """{
+      "hasSelfAssessmentDebt": false,
+       "hasOtherDebt": false
+      }""".asJson
 
   case class Enrollment(
       key:        String,
