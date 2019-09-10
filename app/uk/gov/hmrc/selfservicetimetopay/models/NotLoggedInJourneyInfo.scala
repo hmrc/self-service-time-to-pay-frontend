@@ -16,4 +16,14 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class NotLoggedInJourneyInfo(amountDue: Option[BigDecimal] = None, calculatorPaymentSchedule: Option[CalculatorPaymentSchedule] = None)
+import model.CalculatorPaymentSchedule
+import play.api.libs.json.{Json, OFormat}
+
+case class NotLoggedInJourneyInfo(
+    amountDue:                 Option[BigDecimal]                = None,
+    calculatorPaymentSchedule: Option[CalculatorPaymentSchedule] = None
+)
+
+object NotLoggedInJourneyInfo {
+  implicit val format: OFormat[NotLoggedInJourneyInfo] = Json.format[NotLoggedInJourneyInfo]
+}

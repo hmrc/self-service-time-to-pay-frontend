@@ -17,13 +17,13 @@
 package audit
 
 import javax.inject.{Inject, Singleton}
+import journey.Journey
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
 
 import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
@@ -33,7 +33,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
 
   import req.RequestSupport._
 
-  def sendSubmissionEvent(submission: TTPSubmission)(implicit request: Request[_]) = {
+  def sendSubmissionEvent(submission: Journey)(implicit request: Request[_]) = {
     val event = eventFor(submission)
     val result = auditConnector.sendExtendedEvent(event)
     result.onFailure {
@@ -43,7 +43,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
     result.map(_ => ())
   }
 
-  private def eventFor(submission: TTPSubmission)(implicit request: Request[_]) = {
+  private def eventFor(submission: Journey)(implicit request: Request[_]) = {
 
     //todo Find out whether the bank account check needs to be in the event, if they get this far this should be a successful check
     //at this stage all optional values should be present

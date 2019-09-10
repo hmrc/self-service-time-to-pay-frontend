@@ -28,6 +28,7 @@ import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
 import CalculatorService._
+import model.CalculatorPaymentSchedule
 import play.api.mvc.Request
 
 class CalculatorService @Inject() (

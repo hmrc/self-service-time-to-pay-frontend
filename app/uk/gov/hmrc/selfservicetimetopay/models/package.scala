@@ -19,16 +19,9 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.time.LocalDate
 
 import play.api.libs.json._
-import token.{TTPSessionId, Token, TokenData}
 import uk.gov.hmrc.selfservicetimetopay.models.{NotLoggedInJourneyInfo, _}
 
 package object modelsFormat {
-  implicit val localDateFormatter = new Format[LocalDate] {
-    override def reads(json: JsValue): JsResult[LocalDate] =
-      json.validate[String].map(LocalDate.parse)
-
-    override def writes(o: LocalDate): JsValue = Json.toJson(o.toString)
-  }
 
   implicit def eitherReads[A, B](implicit A: Reads[A], B: Reads[B]): Reads[Either[A, B]] =
     Reads[Either[A, B]] { json =>
@@ -46,41 +39,9 @@ package object modelsFormat {
       case Left(obj)  => A.writes(obj)
       case Right(obj) => B.writes(obj)
     }
-  implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
+
   //Front end formatters
-  implicit val eligibilityTypeOfTaxFormatter: Format[EligibilityTypeOfTax] = Json.format[EligibilityTypeOfTax]
 
-  //Tax payer formatters
-  implicit val addressFormatter: Format[Address] = Json.format[Address]
-  implicit val interestFormatter: Format[Interest] = Json.format[Interest]
-  implicit val communicationPreferencesFormatter: Format[CommunicationPreferences] = Json.format[CommunicationPreferences]
-  implicit val debitFormatter: Format[Debit] = Json.format[Debit]
-  implicit val returnsFormatter: Format[Return] = Json.format[Return]
-  implicit val selfAssessmentFormatter: Format[SelfAssessment] = Json.format[SelfAssessment]
-  implicit val taxPayerFormatter: Format[Taxpayer] = Json.format[Taxpayer]
-
-  //Calculator formatters
-
-  implicit val calculatorAmountsDueFormatter: Format[CalculatorAmountsDue] = Json.format[CalculatorAmountsDue]
-  implicit val calculatorDurationFormatter: Format[CalculatorDuration] = Json.format[CalculatorDuration]
-  implicit val calculatorPaymentScheduleInstalmentFormatter: Format[CalculatorPaymentScheduleInstalment] = Json.format[CalculatorPaymentScheduleInstalment]
-  implicit val calculatorPaymentScheduleFormatter: Format[CalculatorPaymentSchedule] = Json.format[CalculatorPaymentSchedule]
-  implicit val calculatorInputFormatter: Format[CalculatorInput] = Json.format[CalculatorInput]
-
-  //Arrangement formatters
-  implicit val arrangementDayOfMonthFormatter: Format[ArrangementDayOfMonth] = Json.format[ArrangementDayOfMonth]
-  implicit val arrangementDirectDebitFormatter: Format[ArrangementDirectDebit] = Json.format[ArrangementDirectDebit]
-  implicit val arrangementFormatter: Format[TTPArrangement] = Json.format[TTPArrangement]
-
-  //Direct debit formatters
-  implicit val directDebitInstructionFormatter: Format[DirectDebitInstruction] = Json.format[DirectDebitInstruction]
-  implicit val directDebitBanksFormatter: Format[DirectDebitBank] = Json.format[DirectDebitBank]
-  implicit val directDebitPaymentPlanFormatter: Format[DirectDebitPaymentPlan] = Json.format[DirectDebitPaymentPlan]
-  implicit val directDebitInstructionPaymentPlanFormatter: Format[DirectDebitInstructionPaymentPlan] = Json.format[DirectDebitInstructionPaymentPlan]
-  implicit val knownFactFormatter: Format[KnownFact] = Json.format[KnownFact]
-  implicit val paymentPlanFormatter: Format[PaymentPlan] = Json.format[PaymentPlan]
-  implicit val paymentPlanRequestFormatter: Format[PaymentPlanRequest] = Json.format[PaymentPlanRequest]
-  implicit val bankDetailsFormatter: Format[BankDetails] = Json.format[BankDetails]
   implicit val bankAccountResponseFormatter = Format(eitherReads[BankDetails, DirectDebitBank], eitherWrites[BankDetails, DirectDebitBank])
 
   //Eligibility formatters
@@ -96,27 +57,5 @@ package object modelsFormat {
     case _ =>
       None
   }
-
-  implicit val formatEligibilityReasons = new Format[Reason] {
-
-    override def writes(o: Reason): JsValue = JsString(o.toString)
-
-    override def reads(json: JsValue): JsResult[Reason] = json match {
-      case o: JsString => parseFromString(o.value).fold[JsResult[Reason]](JsError(s"Failed to parse $json as Reason"))(JsSuccess(_))
-      case _           => JsError(s"Failed to parse $json as Reason")
-    }
-  }
-
-  //Not Logged in journey formatters
-  implicit val notLoggedInJourneyInfoFormat: OFormat[NotLoggedInJourneyInfo] = Json.format[NotLoggedInJourneyInfo]
-
-  implicit val eligibilityStatusFormatter: Format[EligibilityStatus] = Json.format[EligibilityStatus]
-  implicit val eligibilityRequestFormatter: Format[EligibilityRequest] = Json.format[EligibilityRequest]
-  //Submission formatter
-  implicit val submissionFormatter: Format[TTPSubmission] = Json.format[TTPSubmission]
-
-  implicit val ttpSessionIdFormat: OFormat[TTPSessionId] = Json.format[TTPSessionId]
-  implicit val tokenFormat: OFormat[Token] = Json.format[Token]
-  implicit val tokenDataFormat: OFormat[TokenData] = Json.format[TokenData]
 
 }

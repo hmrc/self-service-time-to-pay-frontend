@@ -15,7 +15,8 @@
  *@
 
 @import partials._
-@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentSchedule}
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
+@import model.CalculatorPaymentSchedule
 
 @this(
   main: views.html.main,
@@ -32,7 +33,6 @@
   request: Request[_],
   appConfig: config.AppConfig
 )
-
 
 
 @main(

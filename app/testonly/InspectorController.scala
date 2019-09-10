@@ -19,24 +19,17 @@ package testonly
 import config.AppConfig
 import controllers.FrontendController
 import javax.inject.Inject
-import play.api.i18n.I18nSupport
+import journey.{Journey, JourneyService}
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{Action, MessagesControllerComponents}
+import play.api.mvc.MessagesControllerComponents
 import ssttpcalculator.CalculatorConnector
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityConnector
 import sstttaxpayer.TaxPayerConnector
-import sttpsubmission.SubmissionService
-import token.{TTPSessionId, TokenService}
-import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.control.NonFatal
 
 class InspectorController @Inject() (
     ddConnector:          DirectDebitConnector,
@@ -44,7 +37,7 @@ class InspectorController @Inject() (
     taxPayerConnector:    TaxPayerConnector,
     eligibilityConnector: EligibilityConnector,
     cc:                   MessagesControllerComponents,
-    submissionService:    SubmissionService,
+    submissionService:    JourneyService,
     views:                Views)(implicit appConfig: AppConfig,
                                  ec: ExecutionContext
 ) extends FrontendController(cc) {
@@ -53,14 +46,9 @@ class InspectorController @Inject() (
     redirectToInspectorView.withSession()
   }
 
-  def clearTtpSession() = Action { implicit request =>
-    redirectToInspectorView.withSession(
-      request.session - TTPSessionId.ttpSessionId
-    )
-  }
-
   def inspect() = Action.async { implicit request =>
-    val sessionCacheF: Future[Option[TTPSubmission]] = submissionService.getTtpSubmission.recover{
+
+    val sessionCacheF: Future[Option[Journey]] = submissionService.getJourney.map(Some(_)).recover {
       case uk.gov.hmrc.http.cache.client.NoSessionException => None
     }
 

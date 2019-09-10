@@ -14,17 +14,17 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, ArrangementDirectDebit, Debit}
+@import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, Debit}
 @import helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
 @import partials.{direct_debit_details,gaDoCheckout, currency}
 @import uk.gov.hmrc.play.config.AssetsConfig
+@import _root_.model._
 
 @this(
   viewsHelpers: views.ViewsHelpers,
   main: views.html.main
 )
-
 
 @(
   debits: Seq[Debit],

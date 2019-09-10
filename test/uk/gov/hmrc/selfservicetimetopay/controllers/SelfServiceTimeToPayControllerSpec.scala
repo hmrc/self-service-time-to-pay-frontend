@@ -22,7 +22,7 @@ import org.scalatest.mock.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import ssttpeligibility.SelfServiceTimeToPayController
-import sttpsubmission.SubmissionService
+import journey.JourneyService
 import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 import _root_.controllers.action._
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
-  val mockSessionCache: SubmissionService = mock[SubmissionService]
+  val mockSessionCache: JourneyService = mock[JourneyService]
   val mcc: MessagesControllerComponents = mock
   implicit val appConfig: AppConfig = mock[AppConfig]
 
@@ -48,7 +48,7 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
     )
 
     "return 200 and display the service start page" in {
-      when(mockSessionCache.getTtpSubmission(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+      when(mockSessionCache.getJourney(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
       val request = FakeRequest().withSession(goodSession: _*)
       val result = controller.start.apply(request)
 

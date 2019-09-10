@@ -31,13 +31,10 @@ abstract class FrontendController(
   def isSignedIn(implicit request: Request[_]): Boolean = hc.authorization.isDefined
 
   //TODO: remove it from this place and investigate correctness of it's usages
-  protected def redirectOnError: Result = ErrorHandler.redirectOnError
+  val redirectToStartPage: Result = ErrorHandler.redirectToStartPage
 
   def isWelsh(implicit request: Request[_]): Boolean = {
     val currantLang: String = request.cookies.get("PLAY_LANG").fold("en")(cookie => cookie.value)
     if (currantLang == "cy") true else false
   }
-
-  //TODO: verify whre it's used, named it correctly. There are few start pages
-  protected lazy val redirectToStartPage: Result = Results.Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
 }

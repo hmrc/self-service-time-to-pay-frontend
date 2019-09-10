@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package token
+package journey
 
-import java.util.UUID
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Format
+import reactivemongo.bson.BSONObjectID
 
-object TTPSessionId {
-  lazy val ttpSessionId: String = "ttpSessionId"
+final case class JourneyId(value: String)
 
-  def newTTPSession(): (String, String) = ttpSessionId -> s"ttp-session-${UUID.randomUUID}"
+object JourneyId {
+  implicit val format: Format[JourneyId] = implicitly[Format[String]].inmap(JourneyId(_), _.value)
+  def newJourneyId: JourneyId = JourneyId(BSONObjectID.generate.stringify)
 }
 
-case class TTPSessionId(v: String)

@@ -17,6 +17,7 @@
 package ssttpcalculator
 
 import com.google.inject._
+import model.CalculatorPaymentSchedule
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient

@@ -21,8 +21,9 @@ import enumformat.EnumFormat
 import langswitch.Languages.{English, Welsh}
 import play.api.i18n.{Lang, Messages}
 import play.api.libs.json.Format
-import play.api.mvc.PathBindable
+import play.api.mvc.{PathBindable, Request}
 import controllers.ValueClassBinder._
+
 import scala.collection.immutable
 
 sealed trait Language extends EnumEntry {

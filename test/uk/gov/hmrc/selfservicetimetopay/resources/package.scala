@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.time.LocalDate
 
 import cats.arrow.Strong
+import model.CalculatorPaymentSchedule
 import play.api.libs.json.{JsValue, Json, Reads}
 import token.TTPSessionId
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
@@ -82,21 +83,21 @@ package object resources {
   val calculatorPaymentScheduleMap = Map(2 -> calculatorPaymentSchedule, 3 -> calculatorPaymentSchedule,
     4 -> calculatorPaymentSchedule, 5 -> calculatorPaymentScheduleLessThenOnePayment)
 
-  val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule),
-                                                   Some(BankDetails(Some("012131"), Some("1234567890"), None, None, None, Some("0987654321"))), None,
-                                                   Some(taxPayer),
-                                                   CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)), Some(3), Some(EligibilityStatus(true, Seq.empty)))
+  val ttpSubmission: Journey = Journey(Some(calculatorPaymentSchedule),
+                                       Some(BankDetails(Some("012131"), Some("1234567890"), None, None, None, Some("0987654321"))), None,
+                                       Some(taxPayer),
+                                       CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)), Some(3), Some(EligibilityStatus(true, Seq.empty)))
 
-  val ttpSubmissionNoAmounts: TTPSubmission = TTPSubmission()
+  val ttpSubmissionNoAmounts: Journey = Journey()
 
   val calculatorAmountDue: Debit = Debit(amount  = BigDecimal(123.45), dueDate = LocalDate.now())
-  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(schedule       = Some(calculatorPaymentSchedule), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
+  val ttpSubmissionNLI: Journey = Journey(schedule       = Some(calculatorPaymentSchedule), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
 
-  val ttpSubmissionNLINoSchedule: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
-  val ttpSubmissionNLIEmpty: TTPSubmission = TTPSubmission()
+  val ttpSubmissionNLINoSchedule: Journey = Journey(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
+  val ttpSubmissionNLIEmpty: Journey = Journey()
 
   val calculatorAmountDueOver10k: Debit = Debit(amount  = BigDecimal(11293.22), dueDate = LocalDate.now())
-  val ttpSubmissionNLIOver10k: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDueOver10k)))
+  val ttpSubmissionNLIOver10k: Journey = Journey(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDueOver10k)))
 
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
   val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq(TotalDebtIsTooHigh))

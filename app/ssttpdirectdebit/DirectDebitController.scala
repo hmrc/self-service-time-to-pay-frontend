@@ -24,7 +24,7 @@ import play.api.Logger
 import play.api.mvc._
 import req.RequestSupport
 import ssttpdirectdebit.DirectDebitForm._
-import sttpsubmission.SubmissionService
+import journey.{Journey, JourneyService}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -40,7 +40,7 @@ class DirectDebitController @Inject() (
     mcc:                  MessagesControllerComponents,
     directDebitConnector: DirectDebitConnector,
     as:                   Actions,
-    submissionService:    SubmissionService,
+    submissionService:    JourneyService,
     requestSupport:       RequestSupport,
     views:                Views)(
     implicit
@@ -52,44 +52,44 @@ class DirectDebitController @Inject() (
 
   def getDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
-      case submission @ TTPSubmission(Some(schedule), _, _, Some(taxpayer), calcData, _, _, _, _, _) if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
+      case submission @ Journey(_, _, Some(schedule), _, _, Some(taxpayer), calcData, _, _, _, _, _) if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
         Future.successful(Ok(views.direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, isSignedIn)))
-      case _ => Future.successful(redirectOnError)
+      case _ => Future.successful(redirectToStartPage)
     }
   }
 
   def getDirectDebitAssistance: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
-      case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
+      case Journey(_, _, Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
-      case _ => Future.successful(redirectOnError)
+      case _ => Future.successful(redirectToStartPage)
     }
   }
 
   def getDirectDebitError: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
-      case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
+      case Journey(_, _, Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
-      case _ => Future.successful(redirectOnError)
+      case _ => Future.successful(redirectToStartPage)
     }
   }
 
   def getDirectDebitConfirmation: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
-      case TTPSubmission(_, _, Some(_), _, _, _, _, _, _, _) =>
+      case Journey(_, _, _, _, Some(_), _, _, _, _, _, _, _) =>
         Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()))
-      case submission @ TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _, _) =>
+      case submission @ Journey(_, _, Some(schedule), Some(_), _, _, _, _, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_confirmation(submission.calculatorData.debits,
                                                              schedule, submission.arrangementDirectDebit.get, isSignedIn)))
       case _ =>
         Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
-        Future.successful(redirectOnError)
+        Future.successful(redirectToStartPage)
     }
   }
 
   def getDirectDebitUnAuthorised: Action[AnyContent] = as.action.async { implicit request =>
-    submissionService.getTtpSubmission.map {
-      case Some(ttpData: TTPSubmission) => Ok(views.direct_debit_unauthorised(isSignedIn))
+    submissionService.getJourney.map {
+      case ttpData: Journey => Ok(views.direct_debit_unauthorised(isSignedIn))
       case _ =>
         Logger.warn("No TTPSubmission, redirecting to start page")
         Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.start)
@@ -138,36 +138,32 @@ class DirectDebitController @Inject() (
    * otherwise return user entered bank details.
    */
   private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit request: Request[_]) = {
-    submissionService.getTtpSubmission.flatMap { submission =>
+    submissionService.getJourney.flatMap { journey =>
 
-      submission
-        .fold(Future.successful(redirectToStartPage))(
-          ttp => {
-            val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
-            val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
+      val taxpayer = journey.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
+      val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
 
-            directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
-              directDebitBank =>
-                {
-                  val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
-                    p.accountNumber.get.equalsIgnoreCase(bankDetails.accountNumber.get) && p.sortCode.get.equals(bankDetails.sortCode.get)
-                  })
-                  val bankDetailsToSave = instructions match {
-                    case instruction :: _ =>
-                      val refNumber = instructions.filter(refNo => refNo.referenceNumber.isDefined).
-                        map(instruction => instruction.referenceNumber).min
-                      BankDetails(ddiRefNumber  = refNumber,
-                                  accountNumber = instruction.accountNumber,
-                                  sortCode      = instruction.sortCode,
-                                  accountName   = Some(accName))
-                    case Nil => bankDetails.copy(accountName = Some(accName))
-                  }
-                  submissionService.putTtpSubmission(ttp.copy(bankDetails = Some(bankDetailsToSave))).map {
-                    _ => Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
-                  }
-                }
+      directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
+        directDebitBank =>
+          {
+            val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
+              p.accountNumber.get.equalsIgnoreCase(bankDetails.accountNumber.get) && p.sortCode.get.equals(bankDetails.sortCode.get)
+            })
+            val bankDetailsToSave = instructions match {
+              case instruction :: _ =>
+                val refNumber = instructions.filter(refNo => refNo.referenceNumber.isDefined).
+                  map(instruction => instruction.referenceNumber).min
+                BankDetails(ddiRefNumber  = refNumber,
+                            accountNumber = instruction.accountNumber,
+                            sortCode      = instruction.sortCode,
+                            accountName   = Some(accName))
+              case Nil => bankDetails.copy(accountName = Some(accName))
             }
-          })
+            submissionService.saveJourney(journey.copy(bankDetails = Some(bankDetailsToSave))).map {
+              _ => Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
+            }
+          }
+      }
     }
   }
 

@@ -27,6 +27,7 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "play-ui" % "7.40.0-play-26",
     "uk.gov.hmrc" %% "bootstrap-play-26" % "0.41.0",
     "com.beachape" %% "enumeratum" % "1.5.13",
+    "uk.gov.hmrc" %% "simple-reactivemongo" % "7.20.0-play-26",
 
     "uk.gov.hmrc" %% "play-partials" %  "6.9.0-play-26",
     "uk.gov.hmrc" %% "domain" %  "5.2.0",

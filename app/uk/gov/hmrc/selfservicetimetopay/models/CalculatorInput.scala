@@ -18,6 +18,8 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
 
+import play.api.libs.json.{Format, Json}
+
 case class CalculatorInput(debits:           Seq[Debit]        = Seq.empty,
                            initialPayment:   BigDecimal        = BigDecimal(0),
                            startDate:        LocalDate,
@@ -27,6 +29,8 @@ case class CalculatorInput(debits:           Seq[Debit]        = Seq.empty,
 
 object CalculatorInput {
   val initial = CalculatorDef(2)
+
+  implicit val format: Format[CalculatorInput] = Json.format[CalculatorInput]
 }
 
 object CalculatorDef {

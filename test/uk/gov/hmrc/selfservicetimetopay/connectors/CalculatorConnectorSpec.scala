@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import model.CalculatorPaymentSchedule
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar

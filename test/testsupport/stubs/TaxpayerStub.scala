@@ -26,9 +26,9 @@ import uk.gov.hmrc.selfservicetimetopay.models.Taxpayer
 object TaxpayerStub extends Matchers {
 
   def getTaxpayer(
-                   utr: String = TdAll.utr,
-                   returnedTaxpayer: Taxpayer = TdAll.taxpayer
-                 ): StubMapping = {
+      utr:              String   = TdAll.utr,
+      returnedTaxpayer: Taxpayer = TdAll.taxpayer
+  ): StubMapping = {
     import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
     stubFor(

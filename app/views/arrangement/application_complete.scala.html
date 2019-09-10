@@ -14,16 +14,18 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.{Debit, CalculatorPaymentSchedule, ArrangementDirectDebit}
+@import uk.gov.hmrc.selfservicetimetopay.models.{Debit, ArrangementDirectDebit}
 @import partials._
 @import java.time.format.DateTimeFormatter
 @import java.time.LocalDate
 @import java.util.Locale
+@import _root_.model._
 
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers
 )
+
 
 @(
   debits: Seq[Debit],

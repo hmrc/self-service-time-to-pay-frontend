@@ -18,6 +18,8 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
 
+import play.api.libs.json.{Format, Json}
+
 //Direct-debit - input to createPaymentPlan
 case class PaymentPlanRequest(requestingService:      String,
                               submissionDateTime:     String,
@@ -26,18 +28,35 @@ case class PaymentPlanRequest(requestingService:      String,
                               paymentPlan:            PaymentPlan,
                               printFlag:              Boolean)
 
-case class KnownFact(service: String, value: String)
+object PaymentPlanRequest {
+  implicit val paymentPlanRequestFormatter: Format[PaymentPlanRequest] = Json.format[PaymentPlanRequest]
+}
 
-case class PaymentPlan(ppType:                    String,
-                       paymentReference:          String,
-                       hodService:                String,
-                       paymentCurrency:           String,
-                       initialPaymentAmount:      Option[String],
-                       initialPaymentStartDate:   Option[LocalDate],
-                       scheduledPaymentAmount:    String,
-                       scheduledPaymentStartDate: LocalDate,
-                       scheduledPaymentEndDate:   LocalDate,
-                       scheduledPaymentFrequency: String,
-                       balancingPaymentAmount:    String,
-                       balancingPaymentDate:      LocalDate,
-                       totalLiability:            String)
+case class KnownFact(
+    service: String,
+    value:   String
+)
+
+object KnownFact {
+  implicit val format: Format[KnownFact] = Json.format[KnownFact]
+}
+
+case class PaymentPlan(
+    ppType:                    String,
+    paymentReference:          String,
+    hodService:                String,
+    paymentCurrency:           String,
+    initialPaymentAmount:      Option[String],
+    initialPaymentStartDate:   Option[LocalDate],
+    scheduledPaymentAmount:    String,
+    scheduledPaymentStartDate: LocalDate,
+    scheduledPaymentEndDate:   LocalDate,
+    scheduledPaymentFrequency: String,
+    balancingPaymentAmount:    String,
+    balancingPaymentDate:      LocalDate,
+    totalLiability:            String
+)
+
+object PaymentPlan {
+  implicit val format: Format[PaymentPlan] = Json.format[PaymentPlan]
+}

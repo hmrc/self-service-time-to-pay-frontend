@@ -16,8 +16,14 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import play.api.libs.json.{Format, Json}
+
+case class DirectDebitBank(
+    processingDate:         String,
+    directDebitInstruction: Seq[DirectDebitInstruction]
+)
+
 object DirectDebitBank {
   val none = DirectDebitBank("", Seq.empty)
+  implicit val format: Format[DirectDebitBank] = Json.format[DirectDebitBank]
 }
-
-case class DirectDebitBank(processingDate: String, directDebitInstruction: Seq[DirectDebitInstruction])

@@ -33,12 +33,13 @@ import ssttpcalculator.{CalculatorConnector, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityConnector
 import sstttaxpayer.TaxPayerConnector
-import sttpsubmission.SubmissionService
+import journey.{Journey, JourneyService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -52,7 +53,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
   val taxPayerConnector: TaxPayerConnector = mock[TaxPayerConnector]
   val calculatorService: CalculatorService = mock[CalculatorService]
   val calculatorConnecter: CalculatorConnector = mock[CalculatorConnector]
-  val mockSessionCache: SubmissionService = mock[SubmissionService]
+  val mockSessionCache: JourneyService = mock[JourneyService]
   val mockEligibilityConnector: EligibilityConnector = mock[EligibilityConnector]
   val mockCacheMap: CacheMap = mock[CacheMap]
   val as: Actions = mock[Actions]
@@ -96,9 +97,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer.copy(selfAssessment = Some(requiredSa))))
 
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.saveJourney(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
           goodSession: _*
@@ -114,9 +115,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer))
 
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.saveJourney(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
           goodSession: _*
@@ -132,9 +133,9 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer))
 
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
-      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.saveJourney(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
           goodSession: _*
@@ -150,8 +151,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(ReturnNeedsSubmitting))))
 
       when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer.copy(selfAssessment = Some(requiredSa))))
-      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.saveJourney(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
       val response = controller.determineEligibility()
@@ -169,10 +170,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer))
       when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial))))
 
-      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.saveJourney(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
 
       val response = controller.determineEligibility().apply(FakeRequest()
         .withSession(
@@ -187,10 +188,10 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect to 'call us page' when entered amounts and sa amounts are equal and user is ineligible for determine eligibility " in {
       when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer))
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData = CalculatorInput.initial.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
-      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.saveJourney(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
       when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = false, Seq(OldDebtIsTooHigh))))
 
       val response = controller.determineEligibility().apply(FakeRequest()
@@ -207,7 +208,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.failed(throw new Exception("Not found taxpayer")))
 
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmissionNLIEmpty)))
 
       val response = controller.determineEligibility().apply(FakeRequest()
@@ -223,7 +224,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.failed(throw new Exception("Not found taxpayer")))
 
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
       val request = FakeRequest().withSession(
         goodSession: _*
@@ -238,7 +239,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.failed(new Exception("No taxpayer found")))
 
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
       val request = FakeRequest().withSession(
         goodSession: _*
@@ -254,7 +255,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       val requiredSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits))
 
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(requiredSubmission)))
 
       when(mockSessionCache.remove()(any())).thenReturn(Future.successful(mock[HttpResponse]))
@@ -271,7 +272,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
     "redirect to the start page when missing required data for the application complete page" in {
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(None))
 
       val response = controller.applicationComplete().apply(FakeRequest()
@@ -288,7 +289,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
 
       implicit val hc = new HeaderCarrier
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(Some(ttpSubmission)))
 
       when(ddConnector.createPaymentPlan(any(), any())(any())).thenReturn(Future.successful(Right(directDebitInstructionPaymentPlan)))
@@ -304,7 +305,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to start page if there is no data in the session cache" in {
-      when(mockSessionCache.getTtpSubmission(any(), any()))
+      when(mockSessionCache.getJourney(any(), any()))
         .thenReturn(Future.successful(None))
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val response = controller.submit().apply(FakeRequest().withSession(goodSession: _*)
@@ -313,8 +314,8 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
 
     "redirect to login if user not logged in" in {
-      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
-      when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(None))
+      when(mockSessionCache.saveJourney(any())(any(), any())).thenReturn(Future.successful(mock[CacheMap]))
+      when(mockSessionCache.getJourney(any(), any())).thenReturn(Future.successful(None))
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
       val response = controller.submit().apply(FakeRequest().withSession(goodSession: _*)
       )
@@ -325,12 +326,12 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     "redirect to getTaxLiabilities page if the not logged in user has not created any debits" in {
       implicit val hc = new HeaderCarrier
       //      when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-      val localTtpSubmission = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = Seq.empty))
+      val localJourney = ttpSubmission.copy(calculatorData = ttpSubmission.calculatorData.copy(debits = Seq.empty))
       when(mockEligibilityConnector.checkEligibility(any(), any())(any())).thenReturn(Future.successful(EligibilityStatus(eligible = true, Seq.empty)))
       when(taxPayerConnector.getTaxPayer(any())(any())).thenReturn(Future.successful(taxPayer)) //121.20 debits
-      when(mockSessionCache.getTtpSubmission(any(), any())).thenReturn(Future.successful(Some(localTtpSubmission)))
-      when(mockSessionCache.putTtpSubmission(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
-      when(mockCacheMap.getEntry(any())(any[Format[TTPSubmission]]())).thenReturn(Some(localTtpSubmission))
+      when(mockSessionCache.getJourney(any(), any())).thenReturn(Future.successful(Some(localJourney)))
+      when(mockSessionCache.saveJourney(any())(any(), any())).thenReturn(Future.successful(mockCacheMap))
+      when(mockCacheMap.getEntry(any())(any[Format[Journey]]())).thenReturn(Some(localJourney))
 
       val response = controller.determineEligibility().apply(FakeRequest().withSession(goodSession: _*)
       )

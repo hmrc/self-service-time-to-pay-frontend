@@ -16,9 +16,15 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import play.api.libs.json.{Format, Json}
+
 case class BankDetails(sortCode:      Option[String]  = None,
                        accountNumber: Option[String]  = None,
                        bankName:      Option[String]  = None,
                        bankAddress:   Option[Address] = None,
                        accountName:   Option[String]  = None,
                        ddiRefNumber:  Option[String]  = None)
+
+object BankDetails {
+  implicit val format: Format[BankDetails] = Json.format[BankDetails]
+}

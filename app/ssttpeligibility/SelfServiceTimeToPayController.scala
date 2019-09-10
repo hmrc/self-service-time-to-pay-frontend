@@ -23,7 +23,7 @@ import javax.inject._
 import play.api.i18n.Messages
 import play.api.mvc._
 import req.RequestSupport
-import sttpsubmission.SubmissionService
+import journey.JourneyService
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
 
@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext
 
 class SelfServiceTimeToPayController @Inject() (
     mcc:               MessagesControllerComponents,
-    submissionService: SubmissionService,
+    submissionService: JourneyService,
     as:                Actions,
     views:             Views,
     requestSupport:    RequestSupport)(implicit appConfig: AppConfig,
@@ -71,7 +71,7 @@ class SelfServiceTimeToPayController @Inject() (
     Ok(views.not_enrolled(isWelsh, isSignedIn))
   }
 
-  def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action.async { implicit request =>
-    submissionService.remove().map(_ => Redirect(appConfig.logoutUrl).withNewSession)
+  def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action { implicit request =>
+    Redirect(appConfig.logoutUrl).withNewSession
   }
 }

@@ -25,7 +25,8 @@ import javax.inject._
 import play.api.Logger
 import play.api.mvc.{AnyContent, _}
 import req.RequestSupport
-import sttpsubmission.SubmissionService
+import journey.{Journey, JourneyService}
+import model.CalculatorPaymentSchedule
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
@@ -38,7 +39,7 @@ class CalculatorController @Inject() (
     mcc:               MessagesControllerComponents,
     calculatorService: CalculatorService,
     as:                Actions,
-    submissionService: SubmissionService,
+    journeyService:    JourneyService,
     requestSupport:    RequestSupport,
     views:             Views)(
     implicit
@@ -65,8 +66,8 @@ class CalculatorController @Inject() (
       formWithErrors => Future.successful(BadRequest(views.amount_due(isSignedIn, formWithErrors))),
       amountDue => {
         //todo perhaps we dont need  a new one? this will whip the data from the auth journey is this ok ?User can just redo it?
-        val dataWithAmount = TTPSubmission(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(amountDue.amount))))
-        submissionService.putTtpSubmission(dataWithAmount).map { _ =>
+        val dataWithAmount = Journey.newJourney().copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(amountDue.amount))))
+        journeyService.saveJourney(dataWithAmount).map { _ =>
           Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalmentsUnAuth())
         }
       }
@@ -76,61 +77,61 @@ class CalculatorController @Inject() (
 
   def getCalculateInstalmentsUnAuth(): Action[AnyContent] = as.action.async {
     implicit request =>
-      submissionService.getTtpSubmission.flatMap {
-        case Some(ttpData @ TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(Some(amountDue), _)), _)) =>
+      journeyService.getJourney.flatMap {
+        case journey @ Journey(_, _, _, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(Some(amountDue), _)), _) =>
           calculatorService.getInstalmentsSchedule(SelfAssessment (debits = Seq(Debit(amount  = amountDue, dueDate = LocalDate.now()))), 0).map { monthsToSchedule =>
             Ok(views.calculate_instalments_form(CalculatorForm.createInstalmentForm(),
-                                                ttpData.lengthOfArrangement, monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalmentsUnAuth(), isSignedIn, false))
+                                                journey.lengthOfArrangement, monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalmentsUnAuth(), isSignedIn, false))
           }
 
-        case _ => Future.successful(redirectOnError)
+        case _ => Future.successful(redirectToStartPage)
       }
   }
 
   def submitCalculateInstalmentsUnAuth(): Action[AnyContent] = as.action.async {
     implicit request =>
-      submissionService.getTtpSubmission.flatMap {
-        case Some(ttpData @ TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(Some(amountDue), _)), _)) =>
+      journeyService.getJourney.flatMap {
+        case journey @ Journey(_, _, _, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(Some(amountDue), _)), _) =>
           calculatorService.getInstalmentsScheduleUnAuth(debits = Seq(Debit(amount  = amountDue, dueDate = LocalDate.now()))).flatMap { monthsToSchedule =>
             CalculatorForm.createInstalmentForm().bindFromRequest().fold(
               formWithErrors => {
-                Future.successful(BadRequest(views.calculate_instalments_form(formWithErrors, ttpData.lengthOfArrangement,
+                Future.successful(BadRequest(views.calculate_instalments_form(formWithErrors, journey.lengthOfArrangement,
                                                                               monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalmentsUnAuth(), isSignedIn, false)))
               },
               validFormData => {
-                submissionService.putTtpSubmission(ttpData.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(amountDue),
-                                                                                                                     Some(monthsToSchedule(validFormData.chosenMonths)))))).map { _ =>
+                journeyService.saveJourney(journey.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(amountDue),
+                                                                                                             Some(monthsToSchedule(validFormData.chosenMonths)))))).map { _ =>
                   Redirect(ssttpcalculator.routes.CalculatorController.getCheckCalculation())
                 }
               }
             )
           }
-        case _ => Future.successful(redirectOnError)
+        case _ => Future.successful(redirectToStartPage)
       }
   }
 
   def getCheckCalculation: Action[AnyContent] = as.action.async {
     implicit request =>
-      submissionService.getTtpSubmission.flatMap {
-        case Some(ttpData @ TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(_, Some(schedule))), _)) =>
+      journeyService.getJourney.flatMap {
+        case journey @ Journey(_, _, _, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(_, Some(schedule))), _) =>
           Future.successful(Ok(views.check_calculation(schedule, isSignedIn)))
-        case _ => Future.successful(redirectOnError)
+        case _ => Future.successful(redirectToStartPage)
       }
   }
 
   def getTaxLiabilities: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.map {
-      case Some(_@ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
+    journeyService.getJourney.map {
+      case _@ Journey(_, _, _, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
         Ok(views.tax_liabilities(sa.debits, isSignedIn))
-      case _ => redirectOnError
+      case _ => redirectToStartPage
     }
   }
 
   def getPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.map {
-      case Some(TTPSubmission(_, _, _, tp, CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
+    journeyService.getJourney.map {
+      case Journey(_, _, _, _, _, tp, CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _) if debits.nonEmpty =>
         Ok(views.payment_today_question(CalculatorForm.payTodayForm, isSignedIn))
-      case _ => redirectOnError
+      case _ => redirectToStartPage
     }
   }
 
@@ -139,55 +140,54 @@ class CalculatorController @Inject() (
    * otherwise navigate to calculator page and set the initial payment to 0
    */
   def submitPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.flatMap[Result] {
-      case Some(ttpData @ TTPSubmission(_, _, _, tp, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
+    journeyService.getJourney.flatMap[Result] {
+      case journey @ Journey(_, _, _, _, _, tp, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _) if debits.nonEmpty =>
         CalculatorForm.payTodayForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(views.payment_today_question(formWithErrors, isSignedIn))), {
             case PayTodayQuestion(Some(true)) =>
               Future.successful(Redirect(ssttpcalculator.routes.CalculatorController.getPaymentToday()))
             case PayTodayQuestion(Some(false)) =>
-              submissionService.putTtpSubmission(ttpData.copy(calculatorData = cd.copy(initialPayment = BigDecimal(0)))).map[Result] {
+              journeyService.saveJourney(journey.copy(calculatorData = cd.copy(initialPayment = BigDecimal(0)))).map[Result] {
                 _ => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
               }
           }
         )
-      case _ => Future.successful(redirectOnError)
+      case _ => Future.successful(redirectToStartPage)
     }
   }
 
   def getPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.map {
-      case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
+    journeyService.getJourney.map {
+      case Journey(_, _, _, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _, _, _) if debits.nonEmpty =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
         if (paymentToday.equals(BigDecimal(0))) Ok(views.payment_today_form(form, isSignedIn))
         else Ok(views.payment_today_form(form.fill(paymentToday), isSignedIn))
       case _ =>
         Logger.info("Missing required data for get payment today page")
-        redirectOnError
+        redirectToStartPage
     }
   }
 
   def submitPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.flatMap[Result] {
-      case Some(ttpSubmission @ TTPSubmission(_, _, _, _, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) =>
+    journeyService.getJourney.flatMap[Result] {
+      case ttpSubmission @ Journey(_, _, _, _, _, _, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _) =>
         CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(views.payment_today_form(formWithErrors, isSignedIn))),
           validFormData => {
-            submissionService.putTtpSubmission(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).map { _ =>
+            journeyService.saveJourney(ttpSubmission.copy(calculatorData = cd.copy(initialPayment = validFormData))).map { _ =>
               Redirect(ssttpcalculator.routes.CalculatorController.getPaymentSummary())
             }
           }
         )
       case _ =>
         Logger.info("No TTP Data match in submitPaymentToday")
-        Future.successful(redirectOnError)
+        Future.successful(redirectToStartPage)
     }
   }
 
   def getMonthlyPayment: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.putIsBPath(isBpath = true)
-    submissionService.getTtpSubmission.flatMap[Result] {
-      case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
+    journeyService.getJourney.flatMap[Result] {
+      case Journey(_, _, _, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _) =>
         val form = CalculatorForm.createMonthlyAmountForm(
           lowerMonthlyPaymentBound(sa, calculatorData).toInt, upperMonthlyPaymentBound(sa, calculatorData).toInt)
         Future.successful(Ok(views.monthly_amount(
@@ -195,7 +195,7 @@ class CalculatorController @Inject() (
         )))
       case _ =>
         Logger.info("No TTP Data match in getMonthlyPayment")
-        Future.successful(redirectOnError)
+        Future.successful(redirectToStartPage)
     }
   }
 
@@ -210,8 +210,9 @@ class CalculatorController @Inject() (
   private def roundUpToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100) + 100
 
   def submitMonthlyPayment: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.flatMap {
-      case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
+    journeyService.getJourney.flatMap {
+      case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _) =>
+
         calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule =>
           CalculatorForm.createMonthlyAmountForm(
             lowerMonthlyPaymentBound(sa, calculatorData).toInt, upperMonthlyPaymentBound(sa, calculatorData).toInt).bindFromRequest().fold(
@@ -221,13 +222,14 @@ class CalculatorController @Inject() (
                 )))
               },
               validFormData => {
-                submissionService.putAmount(validFormData.amount).map { _ =>
+
+                journeyService.saveJourney(journey.copy(maybeAmount = Some(validFormData.amount))).map { _ =>
                   Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalmentsAB())
                 }
               }
             )
         }
-      case _ => Future.successful(redirectOnError)
+      case _ => Future.successful(redirectToStartPage)
     }
   }
 
@@ -265,61 +267,54 @@ class CalculatorController @Inject() (
   }
 
   def getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.map {
-      case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
+    journeyService.getJourney.map {
+      case Journey(_, _, _, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _, _, _) if debits.nonEmpty =>
         Ok(views.payment_summary(debits, initialPayment))
       case _ =>
         Logger.info("Missing required data for what you owe review page")
-        redirectOnError
+        redirectToStartPage
     }
   }
 
   def getCalculateInstalmentsAB(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.flatMap {
-      case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
-        submissionService.getAmount.flatMap{
-          case Some(amount) =>
-            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { schedule =>
-              {
-                Ok(views.calculate_instalments_form_2(
-                  ssttpcalculator.routes.CalculatorController.submitCalculateInstalmentsAB(),
-                  CalculatorForm.createInstalmentForm(),
-                  getSurroundingSchedule(getClosestSchedule(amount, schedule.values.toList), schedule.values.toList, sa)))
-              }
-            }
-          case _ =>
-            Logger.info("Missing required data for what you owe review page")
-            Future.successful(redirectOnError)
+    journeyService.getJourney.flatMap {
+      case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _) =>
+        calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { schedule =>
+          {
+            Ok(views.calculate_instalments_form_2(
+              ssttpcalculator.routes.CalculatorController.submitCalculateInstalmentsAB(),
+              CalculatorForm.createInstalmentForm(),
+              getSurroundingSchedule(getClosestSchedule(journey.amount, schedule.values.toList), schedule.values.toList, sa)))
+          }
         }
+
       case _ =>
         Logger.info("Missing required data for what you owe review page")
-        Future.successful(redirectOnError)
+        Future.successful(redirectToStartPage)
     }
   }
 
   def submitCalculateInstalmentsAB(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.flatMap {
-      case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
-        submissionService.getAmount.flatMap {
-          case Some(amount) =>
-            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { schedule =>
-              {
-                CalculatorForm.createInstalmentForm().bindFromRequest().fold(
-                  formWithErrors => {
-                    Future.successful(BadRequest(views.calculate_instalments_form_2(
-                      ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
-                      formWithErrors, getSurroundingSchedule(getClosestSchedule(amount, schedule.values.toList), schedule.values.toList, sa))))
-                  },
-                  validFormData => {
-                    submissionService.putTtpSubmission(ttpData.copy(schedule = Some(schedule(validFormData.chosenMonths)))).map { _ =>
-                      Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
-                    }
-                  }
-                )
+    journeyService.getJourney.flatMap {
+      case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _) =>
+
+        calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { schedule =>
+          {
+            CalculatorForm.createInstalmentForm().bindFromRequest().fold(
+              formWithErrors => {
+                Future.successful(BadRequest(views.calculate_instalments_form_2(
+                  ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
+                  formWithErrors, getSurroundingSchedule(getClosestSchedule(journey.amount, schedule.values.toList), schedule.values.toList, sa))))
+              },
+              validFormData => {
+                journeyService.saveJourney(journey.copy(schedule = Some(schedule(validFormData.chosenMonths)))).map { _ =>
+                  Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
+                }
               }
-            }
-          case _ => Future.successful(redirectOnError)
+            )
+          }
         }
+
     }
   }
 
@@ -331,39 +326,39 @@ class CalculatorController @Inject() (
    * - If schedule data is missing, update TTPSubmission
    */
   def getCalculateInstalments: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.flatMap {
-      case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
+    journeyService.getJourney.flatMap {
+      case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _) =>
         if (CalculatorService.getMaxMonthsAllowed(sa, LocalDate.now()) >= CalculatorService.minimumMonthsAllowedTTP) {
           calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
             Ok(views.calculate_instalments_form(CalculatorForm.createInstalmentForm(),
-                                                ttpData.lengthOfArrangement, monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(), loggedIn = true))
+                                                journey.lengthOfArrangement, monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(), loggedIn = true))
           }
         } else {
           //todo perhaps move these checks else where to eligbility service?
-          submissionService.putTtpSubmission(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(eligible = false, Seq(TTPIsLessThenTwoMonths))))).map { _ => Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()) }
+          journeyService.saveJourney(journey.copy(eligibilityStatus = Some(EligibilityStatus(eligible = false, Seq(TTPIsLessThenTwoMonths))))).map { _ => Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()) }
         }
 
-      case _ => Future.successful(redirectOnError)
+      case _ => Future.successful(redirectToStartPage)
     }
   }
 
   def submitCalculateInstalments(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getTtpSubmission.flatMap {
-      case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
+    journeyService.getJourney.flatMap {
+      case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _) =>
         calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule =>
           CalculatorForm.createInstalmentForm().bindFromRequest().fold(
             formWithErrors => {
-              Future.successful(BadRequest(views.calculate_instalments_form(formWithErrors, ttpData.lengthOfArrangement,
+              Future.successful(BadRequest(views.calculate_instalments_form(formWithErrors, journey.lengthOfArrangement,
                                                                             monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(), loggedIn = true)))
             },
             validFormData => {
-              submissionService.putTtpSubmission(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.chosenMonths)))).map { _ =>
+              journeyService.saveJourney(journey.copy(schedule = Some(monthsToSchedule(validFormData.chosenMonths)))).map { _ =>
                 Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
               }
             }
           )
         }
-      case _ => Future.successful(redirectOnError)
+      case _ => Future.successful(redirectToStartPage)
     }
   }
 }

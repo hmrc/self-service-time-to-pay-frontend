@@ -27,7 +27,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import ssttpdirectdebit.{DirectDebitConnector, DirectDebitController}
-import sttpsubmission.SubmissionService
+import journey.JourneyService
 import token.TokenService
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.CacheMap
@@ -40,7 +40,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
   val mockDDConnector: DirectDebitConnector = mock[DirectDebitConnector]
 
-  val mockSessionCache: SubmissionService = mock[SubmissionService]
+  val mockSessionCache: JourneyService = mock[JourneyService]
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val mockSessionCache4TokensConnector: TokenService = mock[TokenService]
   val mcc: MessagesControllerComponents = mock
@@ -60,7 +60,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
     "successfully display the direct debit form page" in {
       running(app) {
 
-        when(mockSessionCache.getTtpSubmission(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
+        when(mockSessionCache.getJourney(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
           ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
         //        //when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
         when(mockSessionCache4TokensConnector.put(any())(any())).thenReturn(Future.successful(()))
@@ -81,7 +81,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
         when(mockDDConnector.getBank(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(None))
         //        //when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-        when(mockSessionCache.getTtpSubmission(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
+        when(mockSessionCache.getJourney(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission.copy(calculatorData =
           ttpSubmission.calculatorData.copy(debits = taxPayer.selfAssessment.get.debits)))))
 
         val request = FakeRequest()
@@ -101,8 +101,8 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
         //when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
-        when(mockSessionCache.getTtpSubmission(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-        when(mockSessionCache.putTtpSubmission(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+        when(mockSessionCache.getJourney(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+        when(mockSessionCache.saveJourney(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
         val request = FakeRequest()
           .withSession(goodSession: _*)
@@ -122,8 +122,8 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
         //when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
 
-        when(mockSessionCache.getTtpSubmission(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-        when(mockSessionCache.putTtpSubmission(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
+        when(mockSessionCache.getJourney(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+        when(mockSessionCache.saveJourney(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mock[CacheMap]))
 
         val request = FakeRequest()
           .withSession(goodSession: _*)
@@ -181,7 +181,7 @@ class DirectDebitControllerSpec extends PlayMessagesSpec with MockitoSugar {
     "successfully display the direct debit confirmation page" in {
       running(app) {
         //when(mockAuthConnector.currentAuthority(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(authorisedUser)))
-        when(mockSessionCache.getTtpSubmission(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
+        when(mockSessionCache.getJourney(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
         val request = FakeRequest()
           .withSession(goodSession: _*)
         implicit val messages = getMessages(request)

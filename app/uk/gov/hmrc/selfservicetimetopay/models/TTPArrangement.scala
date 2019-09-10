@@ -16,7 +16,17 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class TTPArrangement(paymentPlanReference: String,
-                          directDebitReference: String,
-                          taxpayer:             Taxpayer,
-                          schedule:             CalculatorPaymentSchedule)
+import model.CalculatorPaymentSchedule
+import play.api.libs.json.{Format, Json}
+
+case class TTPArrangement(
+    paymentPlanReference: String,
+    directDebitReference: String,
+    taxpayer:             Taxpayer,
+    schedule:             CalculatorPaymentSchedule
+)
+
+object TTPArrangement {
+  implicit val format: Format[TTPArrangement] = Json.format[TTPArrangement]
+
+}

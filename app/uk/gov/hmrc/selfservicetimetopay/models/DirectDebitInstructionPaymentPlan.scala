@@ -16,10 +16,21 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import play.api.libs.json.{Format, Json}
+
 //Direct-debit - Output from createPaymentPlan
 case class DirectDebitInstructionPaymentPlan(processingDate:         String,
                                              acknowledgementId:      String,
                                              directDebitInstruction: List[DirectDebitInstruction],
                                              paymentPlan:            List[DirectDebitPaymentPlan])
 
+object DirectDebitInstructionPaymentPlan {
+  implicit val format: Format[DirectDebitInstructionPaymentPlan] = Json.format[DirectDebitInstructionPaymentPlan]
+}
+
 case class DirectDebitPaymentPlan(ppReferenceNo: String)
+
+object DirectDebitPaymentPlan {
+
+  implicit val format: Format[DirectDebitPaymentPlan] = Json.format[DirectDebitPaymentPlan]
+}

@@ -16,4 +16,14 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class EligibilityTypeOfTax(hasSelfAssessmentDebt: Boolean = false, hasOtherDebt: Boolean = false)
+import play.api.libs.json.{Format, Json}
+
+case class EligibilityTypeOfTax(
+    hasSelfAssessmentDebt: Boolean = false,
+    hasOtherDebt:          Boolean = false
+)
+
+object EligibilityTypeOfTax {
+  implicit val format: Format[EligibilityTypeOfTax] = Json.format[EligibilityTypeOfTax]
+
+}

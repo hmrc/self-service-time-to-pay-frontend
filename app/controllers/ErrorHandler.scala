@@ -44,5 +44,5 @@ class ErrorHandler @Inject() (
 
 object ErrorHandler {
 
-  def redirectOnError: Result = Results.Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
+  def redirectToStartPage: Result = Results.Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
 }
