@@ -19,24 +19,20 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
+import timetopaycalculator.cor.model.{CalculatorInput, DebitInput}
 
-case class CalculatorInput(debits:           Seq[Debit]        = Seq.empty,
-                           initialPayment:   BigDecimal        = BigDecimal(0),
-                           startDate:        LocalDate,
-                           endDate:          LocalDate,
-                           firstPaymentDate: Option[LocalDate] = None,
-                           paymentFrequency: String            = "MONTHLY")
+object CalculatorInputSupport {
 
-object CalculatorInput {
-  val initial = CalculatorDef(2)
+  //TODO: get rid of it
+  val initial = {
+    val relativeEndDate = 2
+    CalculatorInput(
+      debits           = Nil,
+      initialPayment   = 0,
+      startDate        = LocalDate.now(),
+      endDate          = LocalDate.now().plusMonths(relativeEndDate).minusDays(1),
+      firstPaymentDate = None
+    )
+  }
 
-  implicit val format: Format[CalculatorInput] = Json.format[CalculatorInput]
-}
-
-object CalculatorDef {
-  def apply(relativeEndDate: Int): CalculatorInput = CalculatorInput(startDate = LocalDate.now(),
-                                                                     endDate   = LocalDate.now().plusMonths(relativeEndDate).minusDays(1))
-
-  def apply(startDate: LocalDate, relativeEndDate: Int): CalculatorInput = CalculatorInput(startDate = startDate,
-                                                                                           endDate   = startDate.plusMonths(relativeEndDate).minusDays(1))
 }

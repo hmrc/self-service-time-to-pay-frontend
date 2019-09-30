@@ -104,15 +104,6 @@ object TdAll {
     brailleIndicator       = false
   )
 
-  val communicationPreferencesJson =
-    //language=Json
-    """{
-    "welshLanguageIndicator": false,
-     "audioIndicator": false,
-     "largePrintIndicator": false,
-     "brailleIndicator": false
-    }""".asJson
-
   val selfAssessment = SelfAssessment(
     utr                      = utr,
     communicationPreferences = communicationPreferences,

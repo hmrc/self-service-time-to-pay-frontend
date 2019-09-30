@@ -14,11 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
-@(debits:Seq[Debit], smallFormat:Boolean = false)(implicit messages: play.api.i18n.Messages)
+@import timetopaytaxpayer.cor.model.Debit
 @import java.time.format.DateTimeFormatter
 @import partials.{currency, charge_code}
 @import java.util.Locale
+
+@(debits: Seq[Debit], smallFormat:Boolean = false)(implicit messages: play.api.i18n.Messages)
+
+
 @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
     <div class="@if(smallFormat){grid-layout--no-gutter}else{subsection ssttp-grid-layout-padding-above} grid-layout divider--bottom font-xsmall">
         <div class="grid-layout__column grid-layout__column--3-4"><strong>@Messages("ssttp.amounts_due.due")</strong></div>
@@ -29,10 +32,9 @@
         <div class="@if(smallFormat){grid-layout--no-gutter}else{subsection ssttp-grid-layout-padding-above} grid-layout font-xsmall divider--bottom">
             <div class="grid-layout__column grid-layout__column--3-4">
                 <div><span class="@if(smallFormat){font-xsmall}else{font-small}">@debit.dueDate.format(formatter)</span></div>
-                <small>@{debit.originCode match {
-                    case Some(code:String) => <span class="font-xsmall">{charge_code(code, debit.taxYearEnd)}</span>
-                    case _ =>
-                }}</small>
+                <small>
+                    <span class="font-xsmall">@charge_code(debit.originCode, debit.taxYearEnd)</span>
+                </small>
             </div>
             <div class="grid-layout__column grid-layout__column--1-4 align--middle">
                 <p><span class="@if(smallFormat){font-xsmall}else{font-small}">@currency(debit.amount)</span></p>

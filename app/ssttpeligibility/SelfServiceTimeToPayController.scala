@@ -17,7 +17,7 @@
 package ssttpeligibility
 
 import config.AppConfig
-import controllers.FrontendController
+import controllers.FrontendBaseController
 import controllers.action.Actions
 import javax.inject._
 import play.api.i18n.Messages
@@ -36,7 +36,7 @@ class SelfServiceTimeToPayController @Inject() (
     views:             Views,
     requestSupport:    RequestSupport)(implicit appConfig: AppConfig,
                                        ec: ExecutionContext
-) extends FrontendController(mcc) {
+) extends FrontendBaseController(mcc) {
 
   import requestSupport._
 

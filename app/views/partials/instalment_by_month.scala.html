@@ -30,9 +30,11 @@
  * limitations under the License.
  *@
 
-@import model.CalculatorPaymentSchedule
+@import timetopaycalculator.cor.model._
+@import _root_.model._
 @import partials.currency
-@(noOfMonths:Int,paymentSchedule:CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages)
+
+@(noOfMonths:Int,paymentSchedule:PaymentSchedule)(implicit messages: play.api.i18n.Messages)
 
 
     <div class="multiple-choice" data-target="@{noOfMonths}_id">

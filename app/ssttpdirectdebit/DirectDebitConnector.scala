@@ -22,7 +22,7 @@ import play.api.http.Status
 import play.api.http.Status._
 import play.api.mvc.Request
 import ssttparrangement.SubmissionError
-import uk.gov.hmrc.domain.SaUtr
+import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

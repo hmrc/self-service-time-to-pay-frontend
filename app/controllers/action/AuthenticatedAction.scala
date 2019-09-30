@@ -26,6 +26,7 @@ import uk.gov.hmrc.auth.core
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments, _}
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
@@ -34,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 final class AuthenticatedRequest[A](val request:         Request[A],
                                     val enrolments:      Enrolments,
                                     val confidenceLevel: ConfidenceLevel,
-                                    val maybeUtr:        Option[String]
+                                    val maybeUtr:        Option[SaUtr]
 ) extends WrappedRequest[A](request) {
 
   lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.exists(_.key == "IR-SA")
@@ -59,7 +60,7 @@ class AuthenticatedAction @Inject() (
     ).apply {
         case enrolments ~ confidenceLevel ~ utr =>
           Future.successful(
-            Right(new AuthenticatedRequest[A](request, enrolments, confidenceLevel, utr))
+            Right(new AuthenticatedRequest[A](request, enrolments, confidenceLevel, utr.map(SaUtr)))
           )
       }
       .recover {

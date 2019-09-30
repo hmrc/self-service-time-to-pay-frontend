@@ -65,6 +65,7 @@ trait MicroService {
       testGrouping in IntegrationTest := TestPhases.oneForkedJvmPerTest((definedTests in IntegrationTest).value),
       parallelExecution in IntegrationTest := false)
     .settings(resolvers ++= Seq(
+      "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/",
       Resolver.bintrayRepo("hmrc", "releases"),
       sbt.Resolver.jcenterRepo
     ))

@@ -17,15 +17,16 @@
 package testonly
 
 import config.AppConfig
-import controllers.FrontendController
+import controllers.FrontendBaseController
 import javax.inject.Inject
 import journey.{Journey, JourneyService}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.MessagesControllerComponents
+import req.RequestSupport
 import ssttpcalculator.CalculatorConnector
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityConnector
-import sstttaxpayer.TaxPayerConnector
+import timetopaytaxpayer.cor.TaxpayerConnector
 import uk.gov.hmrc.http.HeaderCarrier
 import views.Views
 
@@ -34,13 +35,16 @@ import scala.concurrent.{ExecutionContext, Future}
 class InspectorController @Inject() (
     ddConnector:          DirectDebitConnector,
     calculatorConnector:  CalculatorConnector,
-    taxPayerConnector:    TaxPayerConnector,
+    taxPayerConnector:    TaxpayerConnector,
     eligibilityConnector: EligibilityConnector,
     cc:                   MessagesControllerComponents,
     submissionService:    JourneyService,
-    views:                Views)(implicit appConfig: AppConfig,
-                                 ec: ExecutionContext
-) extends FrontendController(cc) {
+    views:                Views,
+    requestSupport:       RequestSupport)(implicit appConfig: AppConfig,
+                                          ec: ExecutionContext
+) extends FrontendBaseController(cc) {
+
+  import requestSupport._
 
   def clearPlaySession() = Action { implicit request =>
     redirectToInspectorView.withSession()
@@ -49,7 +53,7 @@ class InspectorController @Inject() (
   def inspect() = Action.async { implicit request =>
 
     val sessionCacheF: Future[Option[Journey]] = submissionService.getJourney.map(Some(_)).recover {
-      case uk.gov.hmrc.http.cache.client.NoSessionException => None
+      case e: RuntimeException => None
     }
 
     for {
@@ -59,17 +63,17 @@ class InspectorController @Inject() (
       request.session.data,
       List(
         "debitDate" -> maybeSubmission.flatMap(_.debitDate).json,
-        "taxpayer" -> maybeSubmission.flatMap(_.taxpayer).json,
+        "taxpayer" -> maybeSubmission.flatMap(_.maybeTaxpayer).json,
         "schedule" -> maybeSubmission.flatMap(_.schedule).json,
         "bankDetails" -> maybeSubmission.flatMap(_.bankDetails).json,
         "existingDDBanks" -> maybeSubmission.flatMap(_.existingDDBanks).json,
 
-        "calculatorData" -> maybeSubmission.map(_.calculatorData).json,
+        "calculatorData" -> maybeSubmission.map(_.maybeCalculatorData).json,
         "durationMonths" -> maybeSubmission.map(_.durationMonths).json,
-        "eligibilityStatus" -> maybeSubmission.map(_.eligibilityStatus).json
+        "eligibilityStatus" -> maybeSubmission.map(_.maybeEligibilityStatus).json
       ),
       "not supported - todo remove it",
-      implicitly[HeaderCarrier].headers
+      hc.headers
     ))
   }
 

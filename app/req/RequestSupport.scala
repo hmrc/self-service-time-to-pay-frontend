@@ -31,14 +31,14 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendHeaderCarrierProvider
  */
 class RequestSupport @Inject() (override val messagesApi: MessagesApi) extends I18nSupport {
 
-  implicit def hc(implicit request: Request[_]): HeaderCarrier = RequestSupport.hc
+  implicit def hc[A](implicit request: Request[A]): HeaderCarrier = RequestSupport.hc
   def lang(implicit messages: Messages): Lang = messages.lang
   def language(implicit messages: Messages): Language = Language()(messages)
 }
 
 object RequestSupport {
 
-  implicit def hc(implicit request: Request[_]): HeaderCarrier = HcProvider.headerCarrier
+  implicit def hc[A](implicit request: Request[A]): HeaderCarrier = HcProvider.headerCarrier
 
   /**
    * Naive way of checking if user is logged in. Use it in views only.
@@ -51,6 +51,6 @@ object RequestSupport {
    * If they refactor how hc is created our code will pick it up automatically.
    */
   private object HcProvider extends FrontendHeaderCarrierProvider {
-    def headerCarrier(implicit request: Request[_]): HeaderCarrier = hc(request)
+    def headerCarrier[A](implicit request: Request[A]): HeaderCarrier = hc(request)
   }
 }

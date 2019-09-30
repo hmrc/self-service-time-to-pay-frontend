@@ -1,9 +1,7 @@
 # self-service-time-to-pay-frontend
 
-[![Build Status](https://travis-ci.org/hmrc/self-service-time-to-pay-frontend.svg?branch=master)](https://travis-ci.org/hmrc/self-service-time-to-pay-frontend) [ ![Download](https://api.bintray.com/packages/hmrc/releases/self-service-time-to-pay-frontend/images/download.svg) ](https://bintray.com/hmrc/releases/self-service-time-to-pay-frontend/_latestVersion)
 
-Self Service Time To Pay Frontend 
-
+Tip: Connect to VPN in order to build it.
 
 ### About 
 Self Service Time To Pay Frontend is the frontend microservice for Pay What You Owe In Instalments.
@@ -17,25 +15,10 @@ The following diagram shows the overview of the SSTTP architecture.
     </p>
 </a>
 
-### Development Mode
-
-To view the UI **during development**,
-
-1. Start all the related services
-    ```bash
-    sm --start SSTTP -f
-    ```
-
-2. Run the micro-service from sbt, after stopping any already running SELF_SERVICE_TIME_TO_PAY_FRONTEND service
-    ```bash
-    sm --stop SELF_SERVICE_TIME_TO_PAY_FRONTEND
-    sbt "~run 9063"
-    ```
-    
-3. View in the browser
+1. View in the browser
  http://localhost:9063/pay-what-you-owe-in-instalments
 
-4. For debug purposes
+1. For debug purposes
   http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector
 
 

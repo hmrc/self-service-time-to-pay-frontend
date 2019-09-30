@@ -15,12 +15,16 @@
  *@
 
 @import partials.currency
-@import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth,Debit}
+@import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth}
+@import timetopaytaxpayer.cor.model.Debit
+@import timetopaycalculator.cor.model._
+@import _root_.model._
 @import partials._
 
-@import model.CalculatorPaymentSchedule
+
 @(
-        paymentSchedule:CalculatorPaymentSchedule)(implicit
+        paymentSchedule: PaymentSchedule)(
+        implicit
         messages: play.api.i18n.Messages,
         appConfig: config.AppConfig
 )

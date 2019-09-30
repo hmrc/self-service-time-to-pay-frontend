@@ -14,10 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, Debit}
+@import timetopaytaxpayer.cor.model.Debit
 @import partials.{direct_debit_fields, gaDoCheckout}
 @import helpers.forms.submit
-@import _root_.model._
+@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
+@import timetopaycalculator.cor.model._
+@import _root_.model.PaymentScheduleSupport._
 
 @this(
   main: views.html.main,
@@ -26,7 +28,7 @@
 
 @(
         debits: Seq[Debit],
-        schedule: CalculatorPaymentSchedule,
+        schedule: PaymentSchedule,
         ddForm: Form[ArrangementDirectDebit],
         isBankError: Boolean = false,
         loggedIn: Boolean = true)(implicit

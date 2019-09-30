@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfservicetimetopay.models
+package model
 
 import java.time.LocalDate
 
-import play.api.libs.json.{Format, Json}
+import timetopaycalculator.cor.model.PaymentSchedule
+import scala.language.implicitConversions
 
-final case class CalculatorPaymentScheduleInstalment(paymentDate: LocalDate, amount: BigDecimal)
+object PaymentScheduleSupport {
 
-object CalculatorPaymentScheduleInstalment {
-  implicit val format: Format[CalculatorPaymentScheduleInstalment] = Json.format[CalculatorPaymentScheduleInstalment]
 }
-

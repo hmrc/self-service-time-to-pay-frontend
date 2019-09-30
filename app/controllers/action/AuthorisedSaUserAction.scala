@@ -21,11 +21,12 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.domain.SaUtr
 
 import scala.concurrent.{ExecutionContext, Future}
 
 final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A],
-                                       val utr:     String
+                                       val utr:     SaUtr
 ) extends WrappedRequest[A](request)
 
 class AuthorisedSaUserAction @Inject() (

@@ -16,7 +16,8 @@
 
 @import partials._
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
-@import model.CalculatorPaymentSchedule
+@import timetopaycalculator.cor.model._
+@import _root_.model.PaymentScheduleSupport._
 
 @this(
   main: views.html.main,
@@ -26,7 +27,7 @@
 @(
   durationForm: Form[CalculatorDuration],
   currentChosenMonth: Int = 2,
-  monthsToSchedule: Map[Int, CalculatorPaymentSchedule],
+  monthsToSchedule: Map[Int, PaymentSchedule],
   redirectCall: Call, loggedIn: Boolean,
   isAuthJourney: Boolean = true)(implicit
   messages: play.api.i18n.Messages,
@@ -44,6 +45,7 @@
     <a class="link-back" onclick="back()" href="@if(isAuthJourney) {@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()} else {
         @ssttpcalculator.routes.CalculatorController.getAmountDue()
     }">@Messages("ssttp.calculator.form.back")</a>
+
     <fieldset>
         <legend>
             <h1 class="heading-large margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>

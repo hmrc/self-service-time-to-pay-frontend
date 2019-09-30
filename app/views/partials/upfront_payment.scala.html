@@ -14,10 +14,11 @@
  * limitations under the License.
  *@
 
-@import model._
+@import timetopaycalculator.cor.model._
+@import _root_.model.PaymentScheduleSupport._
 
 @(
-        paymentSchedule:CalculatorPaymentSchedule)(
+        paymentSchedule: PaymentSchedule)(
         implicit
         messages: play.api.i18n.Messages,
         appConfig: config.AppConfig

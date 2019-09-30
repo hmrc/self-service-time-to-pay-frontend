@@ -14,10 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import timetopaytaxpayer.cor.model.Taxpayer
 @import helpers.highlight
 @import partials.{what_you_owe, currency}
+@import timetopaytaxpayer.cor.model.Debit
 @import _root_.model._
+@import timetopaycalculator.cor.model._
 
 @this(
   main: views.html.main,
@@ -27,7 +29,7 @@
 
 @(
   debits:Seq[Debit],
-  schedule: CalculatorPaymentSchedule,
+  schedule: PaymentSchedule,
   loggedIn: Boolean = true,
   showErrorNotification: Boolean = false)(
   implicit

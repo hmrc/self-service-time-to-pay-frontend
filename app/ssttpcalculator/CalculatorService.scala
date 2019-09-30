@@ -22,45 +22,47 @@ import java.time.temporal.ChronoUnit.DAYS
 
 import bankholidays.WorkingDaysService
 import javax.inject.Inject
+import play.api.mvc.Request
+import ssttpcalculator.CalculatorService._
+import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, PaymentSchedule}
+import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
-import CalculatorService._
-import model.CalculatorPaymentSchedule
-import play.api.mvc.Request
 
 class CalculatorService @Inject() (
     calculatorConnector: CalculatorConnector,
     workingDays:         WorkingDaysService)(implicit ec: ExecutionContext) {
 
   //todo perhaps merge these methods and change back end so it only one call
-  def getInstalmentsSchedule(sa: SelfAssessment, intialPayment: BigDecimal = BigDecimal(0))
-    (implicit request: Request[_]): Future[Map[Int, CalculatorPaymentSchedule]] = {
-    val input: List[(Int, CalculatorInput)] = getMonthRange(sa).map(month => {
-      val calculatorInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, intialPayment, sa.debits)
-      (month, validateCalculatorDates(calculatorInput, month, sa.debits))
-    }).toList
+  //TODO why this method returns list of schedules by month? WTF?
+  def getInstalmentsSchedule(
+      sa:            SelfAssessmentDetails,
+      intialPayment: BigDecimal            = BigDecimal(0)
+  )(
+      implicit
+      request: Request[_]
+  ): Future[Map[Int, PaymentSchedule]] = {
+
+    val input: List[(Int, CalculatorInput)] =
+      getMonthRange(sa)
+        .map { monthNumber =>
+          val calculatorInput =
+            createCalculatorInput(monthNumber, LocalDate.now().getDayOfMonth, intialPayment, sa.debits.map(model.asDebitInput))
+          (monthNumber, validateCalculatorDates(calculatorInput, monthNumber, sa.debits.map(model.asDebitInput)))
+        }.toList
 
     getCalculatorValues(input)
   }
 
-  def getInstalmentsScheduleUnAuth(debits: Seq[Debit])(implicit request: Request[_]): Future[Map[Int, CalculatorPaymentSchedule]] = {
-
-    val input: List[(Int, CalculatorInput)] = (minimumMonthsAllowedTTP to maxAllowedMonthlyInstalments).map(month => {
-      val caltInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, 0, debits)
-      (month, validateCalculatorDates(caltInput, month, debits))
-    }).toList
-    getCalculatorValues(input)
-  }
-
-  private def getCalculatorValues(inputs: List[(Int, CalculatorInput)])(implicit request: Request[_]) = {
-    val futureSchedules: Seq[Future[(Int, CalculatorPaymentSchedule)]] = inputs.map {
+  private def getCalculatorValues(inputs: List[(Int, CalculatorInput)])(implicit request: Request[_]): Future[ListMap[Int, PaymentSchedule]] = {
+    val futureSchedules: Seq[Future[(Int, PaymentSchedule)]] = inputs.map {
       case (numberOfMonths, calcInput) =>
-        calculatorConnector.calculatePaymentSchedule(calcInput).map(x => (numberOfMonths, x.head))
+        calculatorConnector.calculatePaymentSchedule(calcInput).map(x => (numberOfMonths, x))
     }
-    val returnedValues: Future[Seq[(Int, CalculatorPaymentSchedule)]] = Future.sequence(futureSchedules)
+    val returnedValues: Future[Seq[(Int, PaymentSchedule)]] = Future.sequence(futureSchedules)
     returnedValues.map(a => ListMap(a.sortBy(_._1): _*))
   }
 
@@ -69,9 +71,16 @@ class CalculatorService @Inject() (
     case _               => date
   }
 
-  private def validateCalculatorDates(calculatorInput: CalculatorInput, numberOfMonths: Int, debits: Seq[Debit]): CalculatorInput = {
+  //TODO: describe in words 'why'  and `WHAT` it does!?
+  //why it takes CalcInput and DebitInputs !?
+  private def validateCalculatorDates(
+      calculatorInput: CalculatorInput,
+      numberOfMonths:  Int,
+      debits:          Seq[DebitInput]
+  ): CalculatorInput = {
     val workingDaysInAWeek = 5
     val firstPaymentDate: LocalDate = dayOfMonthCheck(workingDays.addWorkingDays(LocalDate.now(), workingDaysInAWeek))
+
     if (calculatorInput.initialPayment > 0) {
       if ((debits.map(_.amount).sum - calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
         calculatorInput.copy(startDate        = LocalDate.now,
@@ -84,10 +93,12 @@ class CalculatorService @Inject() (
                              endDate          = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
       }
     } else
-      calculatorInput.copy(startDate        = LocalDate.now(),
-                           firstPaymentDate = Some(firstPaymentDate),
-                           endDate          = calculatorInput.startDate.plusMonths(numberOfMonths),
-                           debits           = debits)
+      calculatorInput.copy(
+        debits           = debits,
+        startDate        = LocalDate.now(),
+        endDate          = calculatorInput.startDate.plusMonths(numberOfMonths),
+        firstPaymentDate = Some(firstPaymentDate)
+      )
   }
 }
 
@@ -112,7 +123,11 @@ object CalculatorService {
    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
    */
   //todo write test's I am too afraid to touch this !
-  def createCalculatorInput(durationMonths: Int, dayOfMonth: Int, initialPayment: BigDecimal = BigDecimal(0), debits: Seq[Debit]): CalculatorInput = {
+  def createCalculatorInput(
+      durationMonths: Int,
+      dayOfMonth:     Int,
+      initialPayment: BigDecimal      = BigDecimal(0),
+      debits:         Seq[DebitInput]): CalculatorInput = {
     val startDate = LocalDate.now()
 
     val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
@@ -134,7 +149,14 @@ object CalculatorService {
       else
         (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
     }
-    CalculatorInput(debits, initialPayment, startDate, lastPaymentDate, Some(firstPaymentDate))
+
+    CalculatorInput(
+      debits           = debits,
+      initialPayment   = initialPayment,
+      startDate        = startDate,
+      endDate          = lastPaymentDate,
+      firstPaymentDate = Some(firstPaymentDate)
+    )
   }
 
   val minimumMonthsAllowedTTP = 2
@@ -148,19 +170,19 @@ object CalculatorService {
     lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
   }
 
-  def getMonthRange(selfAssessment: SelfAssessment): Seq[Int] =
+  def getMonthRange(selfAssessment: SelfAssessmentDetails): Seq[Int] =
     minimumMonthsAllowedTTP to getMaxMonthsAllowed(selfAssessment, LocalDate.now())
 
   implicit def ordered[A <% Comparable[_ >: A]]: Ordering[A] = new Ordering[A] {
     def compare(x: A, y: A): Int = x compareTo y
   }
 
-  def getMaxMonthsAllowed(selfAssessment: SelfAssessment, todaysDate: LocalDate): Int = {
+  def getMaxMonthsAllowed(selfAssessment: SelfAssessmentDetails, todaysDate: LocalDate): Int = {
 
     calculateGapInMonths(selfAssessment, todaysDate)
   }
 
-  def getFutureReturn(returnedFiled: List[Return]): Option[LocalDate] = {
+  def getFutureReturn(returnedFiled: Seq[Return]): Option[LocalDate] = {
     val returnsDueDateFuture = returnedFiled.flatMap(_.dueDate.map(_.plusYears(1)))
     if (returnsDueDateFuture.isEmpty) None else Option(returnsDueDateFuture.max)
   }
@@ -171,9 +193,9 @@ object CalculatorService {
    b)    End of the calendar month before the due date of the next non-submitted SA return
    c)    12 months from the earliest due date of the amounts included in the TTP (*ignoring due dates for any amounts under £32)
     */
-  def calculateGapInMonths(selfAssessment: SelfAssessment, todayDate: LocalDate): Int = {
+  def calculateGapInMonths(selfAssessment: SelfAssessmentDetails, todayDate: LocalDate): Int = {
 
-    val nextSubmissionReturn: Option[LocalDate] = selfAssessment.returns.flatMap(getFutureReturn)
+    val nextSubmissionReturn: Option[LocalDate] = getFutureReturn(selfAssessment.returns)
 
     val yearAfterEarliestCurrantLiabilities: Option[LocalDate] =
       Option(selfAssessment.debits.filter(_.amount > 32).map(_.dueDate).min.plusYears(1))

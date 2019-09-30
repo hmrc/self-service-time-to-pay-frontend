@@ -15,15 +15,18 @@
  *@
 
 @import java.time.LocalDate
-@(code:String, yearEnding:Option[LocalDate])(implicit messages: play.api.i18n.Messages)
 @import java.time.format.DateTimeFormatter
 @import java.util.Locale
+
+@(
+  code:String,
+  yearEnding:LocalDate)(
+  implicit messages:
+  play.api.i18n.Messages
+)
+
 @defining("ssttp.common.charge-code.%s".format(code)) { message =>
   @if(Messages(message) != message) {
-      @{yearEnding match {
-          case Some(date:LocalDate) => Messages(message, yearEnding.get.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)))
-          case _ => Messages(message)
-      }}
+      @Messages(message, yearEnding.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)))
     }
 }
-

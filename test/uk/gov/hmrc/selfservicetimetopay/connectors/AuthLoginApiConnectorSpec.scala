@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import model.CalculatorPaymentSchedule
+import model.PaymentSchedule
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
@@ -46,9 +46,9 @@ class AuthLoginApiConnectorSpec extends ItSpec with MockitoSugar {
 
   "Calling submitLiabilities test only endpoint should" - {
     "return a payment schedule" in {
-      val jsonResponse = Json.fromJson[Seq[CalculatorPaymentSchedule]](submitLiabilitiesResponseJSON).get
+      val jsonResponse = Json.fromJson[Seq[PaymentSchedule]](submitLiabilitiesResponseJSON).get
 
-      when(httpClient.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
+      when(httpClient.POST[CalculatorInput, Seq[PaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
       val result = testConnector.calculatePaymentSchedule(submitDebitsRequest).futureValue
@@ -60,7 +60,7 @@ class AuthLoginApiConnectorSpec extends ItSpec with MockitoSugar {
     }
 
     "return no payment schedule" in {
-      when(httpClient.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
+      when(httpClient.POST[CalculatorInput, Seq[PaymentSchedule]](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(Seq()))
 
       val result = testConnector.calculatePaymentSchedule(submitDebitsRequest).futureValue

@@ -14,13 +14,21 @@
  * limitations under the License.
  *@
 
+@import _root_.timetopaycalculator.cor.model.PaymentSchedule
+@import _root_.model.PaymentScheduleSupport._
 @import model._
 
-@(schedule: CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages)
 @import java.time.format.DateTimeFormatter
 @import java.time.LocalDate
 @import partials.currency
 @import java.util.Locale
+
+
+@(
+  schedule: PaymentSchedule)(
+  implicit messages: play.api.i18n.Messages
+)
+
 
 @defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
 
@@ -40,6 +48,7 @@
     <h2>@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
 <table>
 <tbody>
+
 @schedule.instalments.map { instalment =>
     <tr>
        <td>

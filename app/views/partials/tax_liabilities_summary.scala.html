@@ -15,25 +15,25 @@
  *@
 
 @import partials.charge_code
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import timetopaytaxpayer.cor.model.Debit
 
 @(debits: Seq[Debit])(implicit messages: play.api.i18n.Messages, request: Request[_])
 <div class="panel panel-border-narrow panel-tabular-data">
     <div class="tabular-data__divider--full-width">
 
-    @debits.head.taxYearEnd.map { tye =>
-            <span class="tabular-data__heading">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-year-ending") @language.Dates.formatDate(tye)</span>
-        }
 
-            @debits.map { debit =>
-                <div class="tabular-data__entry border-bottom">
-                    <span class="tabular-data__heading tabular-data__heading--label">
-                        <h4 class="heading-small">@charge_code(debit.originCode.get, debit.taxYearEnd)</h4>
-                        <p>@(Messages("ssttp.calculator.self-assessment-account-summary-page.due-by"))  @language.Dates.formatDate(debit.dueDate)</p>
-                    </span>
-                    <div class="tabular-data__data-1"><span class="normal-text">@currency(debit.amount)</span></div>
-                </div>
+    <span class="tabular-data__heading">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-year-ending") @language.Dates.formatDate(debits.head.taxYearEnd)</span>
 
-            }
+
+    @debits.map { debit =>
+      <div class="tabular-data__entry border-bottom">
+          <span class="tabular-data__heading tabular-data__heading--label">
+              <h4 class="heading-small">@charge_code(debit.originCode, debit.taxYearEnd)</h4>
+              <p>@(Messages("ssttp.calculator.self-assessment-account-summary-page.due-by"))  @language.Dates.formatDate(debit.dueDate)</p>
+          </span>
+          <div class="tabular-data__data-1"><span class="normal-text">@partials.currency(debit.amount)</span></div>
+      </div>
+    }
+
     </div>
 </div>

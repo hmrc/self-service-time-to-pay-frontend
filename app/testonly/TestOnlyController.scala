@@ -17,25 +17,25 @@
 package testonly
 
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
-import controllers.FrontendController
+import controllers.FrontendBaseController
 import controllers.action.Actions
 import javax.inject._
-import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import sstttaxpayer.TaxPayerConnector
+import timetopaytaxpayer.cor.TaxpayerConnector
+import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.ExecutionContext
+import req.RequestSupport._
 
 class TestOnlyController @Inject() (
-    taxpayerConnector: TaxPayerConnector,
+    taxpayerConnector: TaxpayerConnector,
     as:                Actions,
     httpClient:        HttpClient,
     cc:                MessagesControllerComponents)(implicit ec: ExecutionContext)
-  extends FrontendController(cc) {
+  extends FrontendBaseController(cc) {
 
   def config(): Action[AnyContent] = Action { r =>
     val result: JsValue = Json.parse(
@@ -45,7 +45,7 @@ class TestOnlyController @Inject() (
   }
 
   def getTaxpayer(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    val utr = request.utr
+    val utr: SaUtr = model.asTaxpayersSaUtr(request.utr)
     val getTaxpayerF = taxpayerConnector.getTaxPayer(utr).map(Json.toJson(_)).recover{
       case e => Json.obj("exception" -> e.getMessage)
     }
@@ -53,20 +53,6 @@ class TestOnlyController @Inject() (
     for {
       taxpayer <- getTaxpayerF
     } yield Ok(taxpayer)
-  }
-
-  def taxpayerConfig(): Action[AnyContent] = Action.async { implicit request =>
-    val baseUrl = taxpayerConnector.taxPayerBaseUrl
-    httpClient
-      .GET[HttpResponse](s"$baseUrl/taxpayer/test-only/config")
-      .map(r => Status(r.status)(r.json))
-  }
-
-  def taxpayerConnectorsConfig(): Action[AnyContent] = Action.async { implicit request =>
-    val baseUrl = taxpayerConnector.taxPayerBaseUrl
-    httpClient
-      .GET[HttpResponse](s"$baseUrl/taxpayer/test-only/connectors-config")
-      .map(r => Status(r.status)(r.json))
   }
 
 }

@@ -44,10 +44,11 @@ class JourneyService @Inject() (
       .upsert(journey._id, journey)
       .checkResult
 
-  def getJourney()(implicit request: Request[_]): Future[Journey] =
-    journeyRepo
-      .findById(request.readJourneyId)
-      .map(_.getOrElse(throw new RuntimeException(s"Journey not found [${request.readJourneyId}]")))
+  def getJourney()(implicit request: Request[_]): Future[Journey] = for {
+    journeyId <- Future.successful(()).map(_ => request.readJourneyId)
+    maybeJourney <- journeyRepo.findById(journeyId)
+    journey = maybeJourney.getOrElse(throw new RuntimeException(s"Journey not found [$journeyId]"))
+  } yield journey
 
   /**
    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
@@ -56,7 +57,7 @@ class JourneyService @Inject() (
     for {
       journey <- getJourney()
       result <- journey match {
-        case submission @ Journey(_, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _, _) => block(submission)
+        case submission @ Journey(_, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _) => block(submission)
         case _ => Future.successful(ErrorHandler.redirectToStartPage)
       }
     } yield result

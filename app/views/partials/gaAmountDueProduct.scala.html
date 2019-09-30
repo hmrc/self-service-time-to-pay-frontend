@@ -14,15 +14,25 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import timetopaytaxpayer.cor.model.Debit
 @import config.AppConfig
-@(debit:Debit, position:Int)(implicit messages: play.api.i18n.Messages, appConfig: AppConfig)
-
 @import java.time.format.DateTimeFormatter
 @import java.util.Locale
 @import partials.charge_code
-@id = @{debit.originCode.getOrElse("USER_AMOUNT_DUE")}
-@name = @{debit.originCode.fold[String]("User Entered Amount Due"){ c => charge_code(c, debit.taxYearEnd).body.trim}}
+
+@(
+        debit:Debit,
+        position:Int)(
+        implicit
+        messages: play.api.i18n.Messages,
+        appConfig: AppConfig
+)
+
+
+@id = @{debit.originCode}
+
+@name = @{charge_code(debit.originCode, debit.taxYearEnd).body.trim}
+
 @dueDateDimension = {@appConfig.dueDateDimension}
 
 @defining(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)) { formatter =>

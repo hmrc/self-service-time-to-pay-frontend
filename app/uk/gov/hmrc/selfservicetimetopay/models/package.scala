@@ -16,10 +16,8 @@
 
 package uk.gov.hmrc.selfservicetimetopay
 
-import java.time.LocalDate
-
 import play.api.libs.json._
-import uk.gov.hmrc.selfservicetimetopay.models.{NotLoggedInJourneyInfo, _}
+import uk.gov.hmrc.selfservicetimetopay.models._
 
 package object modelsFormat {
 

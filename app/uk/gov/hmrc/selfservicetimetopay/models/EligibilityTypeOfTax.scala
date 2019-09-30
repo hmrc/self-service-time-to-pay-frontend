@@ -19,8 +19,8 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import play.api.libs.json.{Format, Json}
 
 case class EligibilityTypeOfTax(
-    hasSelfAssessmentDebt: Boolean = false,
-    hasOtherDebt:          Boolean = false
+    hasSelfAssessmentDetailsDebt: Boolean = false,
+    hasOtherDebt:                 Boolean = false
 )
 
 object EligibilityTypeOfTax {

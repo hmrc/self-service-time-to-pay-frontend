@@ -8,5 +8,3 @@ POST        /pay-what-you-owe-in-instalments/test-only/create-user-and-log-in   
 
 GET         /pay-what-you-owe-in-instalments/test-only/config                            @testonly.TestOnlyController.config()
 GET         /pay-what-you-owe-in-instalments/test-only/taxpayer-get                      @testonly.TestOnlyController.getTaxpayer()
-GET         /pay-what-you-owe-in-instalments/test-only/taxpayer-config                   @testonly.TestOnlyController.taxpayerConfig()
-GET         /pay-what-you-owe-in-instalments/test-only/taxpayer-connectors-config        @testonly.TestOnlyController.taxpayerConnectorsConfig()

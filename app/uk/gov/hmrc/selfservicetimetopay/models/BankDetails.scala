@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.json.{Format, Json}
+import timetopaytaxpayer.cor.model.Address
 
 case class BankDetails(sortCode:      Option[String]  = None,
                        accountNumber: Option[String]  = None,

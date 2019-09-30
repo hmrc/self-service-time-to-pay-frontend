@@ -29,7 +29,6 @@ GET         /calculator/payment-today                                     ssttpc
 POST        /calculator/payment-today                                     ssttpcalculator.CalculatorController.submitPaymentToday()
 GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getCalculateInstalments()
 POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitCalculateInstalments()
-POST        /calculator/sign-in                                           ssttpcalculator.CalculatorController.submitSignIn()
 GET         /calculator/tax-liabilities                                   ssttpcalculator.CalculatorController.getTaxLiabilities()
 
 GET         /calculator/monthly-payment-amount                            ssttpcalculator.CalculatorController.getMonthlyPayment()
@@ -37,16 +36,8 @@ POST        /calculator/monthly-payment-amount                            ssttpc
 GET         /calculator/instalments/ab                                    ssttpcalculator.CalculatorController.getCalculateInstalmentsAB()
 POST        /calculator/instalments/ab                                    ssttpcalculator.CalculatorController.submitCalculateInstalmentsAB()
 
-#  Not loggged in journey
-GET         /payment-plan-calculator/start                                ssttpcalculator.CalculatorController.getPaymentPlanCalculator()
+#not logged in
 GET         /payment-plan-calculator/enter-total-amount                   ssttpcalculator.CalculatorController.getAmountDue()
-POST        /payment-plan-calculator/enter-total-amount                   ssttpcalculator.CalculatorController.submitAmountDue()
-GET         /payment-plan-calculator/instalments                          ssttpcalculator.CalculatorController.getCalculateInstalmentsUnAuth()
-POST        /payment-plan-calculator/instalments                          ssttpcalculator.CalculatorController.submitCalculateInstalmentsUnAuth()
-GET         /payment-plan-calculator/check-calculation                    ssttpcalculator.CalculatorController.getCheckCalculation()
-
-
-
 
 # Arrangement
 POST        /arrangement                                                  ssttparrangement.ArrangementController.start()

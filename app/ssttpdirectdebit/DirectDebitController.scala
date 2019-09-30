@@ -17,7 +17,7 @@
 package ssttpdirectdebit
 
 import config.AppConfig
-import controllers.FrontendController
+import controllers.FrontendBaseController
 import controllers.action.Actions
 import javax.inject._
 import play.api.Logger
@@ -25,6 +25,8 @@ import play.api.mvc._
 import req.RequestSupport
 import ssttpdirectdebit.DirectDebitForm._
 import journey.{Journey, JourneyService}
+import timetopaytaxpayer.cor.model
+import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -46,21 +48,21 @@ class DirectDebitController @Inject() (
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext
-) extends FrontendController(mcc) {
+) extends FrontendBaseController(mcc) {
 
   import requestSupport._
 
   def getDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
-      case submission @ Journey(_, _, Some(schedule), _, _, Some(taxpayer), calcData, _, _, _, _, _) if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
-        Future.successful(Ok(views.direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, isSignedIn)))
+      case submission @ Journey(_, _, Some(schedule), _, _, Some(taxpayer), calcData, _, _, _, _) =>
+        Future.successful(Ok(views.direct_debit_form(submission.taxpayer.selfAssessment.debits, schedule, directDebitForm, isSignedIn)))
       case _ => Future.successful(redirectToStartPage)
     }
   }
 
   def getDirectDebitAssistance: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
-      case Journey(_, _, Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
+      case Journey(_, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
       case _ => Future.successful(redirectToStartPage)
     }
@@ -68,7 +70,7 @@ class DirectDebitController @Inject() (
 
   def getDirectDebitError: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
-      case Journey(_, _, Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
+      case Journey(_, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
       case _ => Future.successful(redirectToStartPage)
     }
@@ -76,10 +78,10 @@ class DirectDebitController @Inject() (
 
   def getDirectDebitConfirmation: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
-      case Journey(_, _, _, _, Some(_), _, _, _, _, _, _, _) =>
+      case Journey(_, _, _, _, Some(_), _, _, _, _, _, _) =>
         Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()))
-      case submission @ Journey(_, _, Some(schedule), Some(_), _, _, _, _, _, _, _, _) =>
-        Future.successful(Ok(views.direct_debit_confirmation(submission.calculatorData.debits,
+      case submission @ Journey(_, _, Some(schedule), Some(_), _, _, _, _, _, _, _) =>
+        Future.successful(Ok(views.direct_debit_confirmation(submission.taxpayer.selfAssessment.debits,
                                                              schedule, submission.arrangementDirectDebit.get, isSignedIn)))
       case _ =>
         Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
@@ -101,12 +103,12 @@ class DirectDebitController @Inject() (
   }
 
   def submitDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.authorizedForSsttp { submission =>
+    submissionService.authorizedForSsttp { submission: Journey =>
 
       directDebitForm.bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(views.direct_debit_form(submission.calculatorData.debits,
-
-                                                                               submission.schedule.get, formWithErrors))),
+        formWithErrors => Future.successful(BadRequest(
+          views.direct_debit_form(submission.taxpayer.selfAssessment.debits,
+                                  submission.schedule.get, formWithErrors))),
         validFormData => {
 
           for {
@@ -115,7 +117,7 @@ class DirectDebitController @Inject() (
               case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
               case None =>
                 Future.successful(BadRequest(views.direct_debit_form(
-                  submission.calculatorData.debits,
+                  submission.taxpayer.selfAssessment.debits,
                   submission.schedule.get,
                   directDebitFormWithBankAccountError.copy(data = Map(
                     "accountName" -> validFormData.accountName,
@@ -140,10 +142,10 @@ class DirectDebitController @Inject() (
   private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit request: Request[_]) = {
     submissionService.getJourney.flatMap { journey =>
 
-      val taxpayer = journey.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
-      val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
+      val taxpayer = journey.maybeTaxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
+      val utr = taxpayer.selfAssessment.utr
 
-      directDebitConnector.getBanks(SaUtr(sa.utr.get)).flatMap {
+      directDebitConnector.getBanks(utr).flatMap {
         directDebitBank =>
           {
             val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
@@ -166,7 +168,4 @@ class DirectDebitController @Inject() (
       }
     }
   }
-
-  private def areEqual(tpDebits: Seq[Debit], meDebits: Seq[Debit]) = tpDebits.map(_.amount).sum == meDebits.map(_.amount).sum
-
 }

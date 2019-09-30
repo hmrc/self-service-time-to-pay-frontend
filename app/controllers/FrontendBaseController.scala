@@ -16,22 +16,29 @@
 
 package controllers
 
-import play.api.mvc.{MessagesControllerComponents, Request, Result, Results}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.mvc._
 
 import scala.concurrent.Future
 
-abstract class FrontendController(
-    mcc: MessagesControllerComponents
-) extends uk.gov.hmrc.play.bootstrap.controller.FrontendController(mcc) {
+abstract class FrontendBaseController(cc: ControllerComponents)
+  extends BaseControllerHelpers {
 
-  implicit def toFuture(r: Result): Future[Result] = Future.successful(r)
+  import req.RequestSupport._
+
+  override val controllerComponents: ControllerComponents = cc
+
+  val Action = controllerComponents.actionBuilder
+
+  implicit def toFutureResult(result: Result): Future[Result] = Future.successful(result)
 
   //TODO: move it to some auth service
   def isSignedIn(implicit request: Request[_]): Boolean = hc.authorization.isDefined
 
-  //TODO: remove it from this place and investigate correctness of it's usages
-  val redirectToStartPage: Result = ErrorHandler.redirectToStartPage
+  def redirectToStartPage: Result = {
+    //Instead of silently redirecting users to start page on erronous situation now we throw exception
+    //so it is visible that application doesn't work!
+    throw new RuntimeException("Something went wrong. Inspect stack trace and fix bad code")
+  }
 
   def isWelsh(implicit request: Request[_]): Boolean = {
     val currantLang: String = request.cookies.get("PLAY_LANG").fold("en")(cookie => cookie.value)

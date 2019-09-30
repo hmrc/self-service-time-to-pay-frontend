@@ -29,7 +29,7 @@ object TestUserDebits {
              "originCode" : "IN1",
              "creationDate" : "2019-01-05"
            },
-           "relevantDueDate" : "2019-08-25",
+           "relevantDueDate" : "2019-11-25",
            "totalOutstanding" : 2500
          },{
            "taxYearEnd" : "2019-04-05",
@@ -37,7 +37,7 @@ object TestUserDebits {
              "originCode" : "IN2",
              "creationDate" : "2019-01-05"
            },
-           "relevantDueDate" : "2019-08-25",
+           "relevantDueDate" : "2019-11-25",
            "totalOutstanding" : 2500
          } ]
        }

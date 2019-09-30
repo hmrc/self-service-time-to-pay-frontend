@@ -16,14 +16,15 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import model.CalculatorPaymentSchedule
 import play.api.libs.json.{Format, Json}
+import timetopaycalculator.cor.model.PaymentSchedule
+import timetopaytaxpayer.cor.model.Taxpayer
 
 case class TTPArrangement(
     paymentPlanReference: String,
     directDebitReference: String,
     taxpayer:             Taxpayer,
-    schedule:             CalculatorPaymentSchedule
+    schedule:             PaymentSchedule
 )
 
 object TTPArrangement {

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import java.time.{Clock, ZoneOffset}
+
 import com.google.inject.{AbstractModule, Provides, Singleton}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 
@@ -26,5 +28,9 @@ class Module extends AbstractModule {
   def authorisedFunctions(ac: AuthConnector): AuthorisedFunctions = new AuthorisedFunctions {
     override def authConnector: AuthConnector = ac
   }
+
+  @Provides
+  @Singleton
+  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
 
 }

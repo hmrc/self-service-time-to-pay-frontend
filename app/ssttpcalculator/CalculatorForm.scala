@@ -19,13 +19,14 @@ package ssttpcalculator
 import play.api.data.Forms.{text, _}
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms, Mapping}
-import uk.gov.hmrc.selfservicetimetopay.models.CalculatorAmountDue.MaxCurrencyValue
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.util.Try
 import scala.util.control.Exception.catching
 
 object CalculatorForm {
+
+  val MaxCurrencyValue: BigDecimal = BigDecimal.exact("1e5")
 
   def tryToInt(input: String) = {
     catching(classOf[NumberFormatException]) opt input.toInt

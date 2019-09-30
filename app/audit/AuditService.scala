@@ -21,11 +21,12 @@ import journey.Journey
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Request
+import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 @Singleton()
@@ -33,7 +34,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
 
   import req.RequestSupport._
 
-  def sendSubmissionEvent(submission: Journey)(implicit request: Request[_]) = {
+  def sendSubmissionEvent(submission: Journey)(implicit request: Request[_]): Future[Unit] = {
     val event = eventFor(submission)
     val result = auditConnector.sendExtendedEvent(event)
     result.onFailure {
@@ -47,7 +48,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
 
     //todo Find out whether the bank account check needs to be in the event, if they get this far this should be a successful check
     //at this stage all optional values should be present
-    val utr: String = submission.taxpayer.get.selfAssessment.get.utr.get
+    val utr: SaUtr = submission.taxpayer.selfAssessment.utr
     val name: String = submission.bankDetails.map(_.accountName.get).get
     val accountNumber: String = submission.bankDetails.map(_.accountNumber.get).get
     val sortCode: String = submission.bankDetails.map(_.sortCode.get).get
@@ -60,7 +61,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
       auditType   = "directDebitSetup",
       tags        = hc.headers.toMap,
       detail      = Json.obj(
-        "utr" -> utr,
+        "utr" -> utr.value,
         "bankDetails" -> Json.obj(
           "name" -> name,
           "accountNumber" -> accountNumber,

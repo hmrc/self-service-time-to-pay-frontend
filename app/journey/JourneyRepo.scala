@@ -32,9 +32,12 @@ final class JourneyRepo @Inject() (
     config:                 ServicesConfig)(
     implicit
     ec: ExecutionContext)
-  extends Repo[Journey, JourneyId]("journey", reactiveMongoComponent) {
+  extends Repo[Journey, JourneyId](
+    "journey",
+    reactiveMongoComponent
+  ) {
 
-  private val ttl: Duration = config.getDuration("journey.ttl")
+  private lazy val ttl: Duration = config.getDuration("journey.ttl")
 
   override def indexes: Seq[Index] = Seq(
     Index(

@@ -32,7 +32,7 @@ import ssttparrangement.{ArrangementConnector, ArrangementController, Submission
 import ssttpcalculator.{CalculatorConnector, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityConnector
-import sstttaxpayer.TaxPayerConnector
+import sstttaxpayer.TaxpayerConnector
 import journey.{Journey, JourneyService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.CacheMap
@@ -50,7 +50,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
   val ddConnector: DirectDebitConnector = mock[DirectDebitConnector]
   val auditService: AuditService = mock[AuditService]
   val arrangementConnector: ArrangementConnector = mock[ArrangementConnector]
-  val taxPayerConnector: TaxPayerConnector = mock[TaxPayerConnector]
+  val taxPayerConnector: TaxpayerConnector = mock[TaxpayerConnector]
   val calculatorService: CalculatorService = mock[CalculatorService]
   val calculatorConnecter: CalculatorConnector = mock[CalculatorConnector]
   val mockSessionCache: JourneyService = mock[JourneyService]

@@ -25,7 +25,7 @@ import testsupport.ItSpec
 import testsupport.testdata.TdAll
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, ReturnNeedsSubmitting, SelfAssessment, TotalDebtIsTooHigh}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, ReturnNeedsSubmitting, SelfAssessmentDetails, TotalDebtIsTooHigh}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
@@ -46,7 +46,7 @@ class EligibilityConnectorSpec extends ItSpec with MockitoSugar {
     "return an eligible response" in {
       val jsonResponse = Json.fromJson[EligibilityStatus](checkEligibilityTrueResponse).get
 
-      when(httpClient.POST[SelfAssessment, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
+      when(httpClient.POST[SelfAssessmentDetails, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
       val result = testConnector.checkEligibility(checkEligibilityTrueRequest, "1234567890").futureValue
@@ -57,7 +57,7 @@ class EligibilityConnectorSpec extends ItSpec with MockitoSugar {
     "return an illegible response for turns needs failing" in {
       val jsonResponse = Json.fromJson[EligibilityStatus](checkEligibilityFalseResponseNotSubmitted).get
 
-      when(httpClient.POST[SelfAssessment, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
+      when(httpClient.POST[SelfAssessmentDetails, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
       val result = testConnector.checkEligibility(checkEligibilityFalseRequest, "1234567890").futureValue
@@ -68,7 +68,7 @@ class EligibilityConnectorSpec extends ItSpec with MockitoSugar {
     "return an illegible response" in {
       val jsonResponse = Json.fromJson[EligibilityStatus](checkEligibilityFalseResponse).get
 
-      when(httpClient.POST[SelfAssessment, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
+      when(httpClient.POST[SelfAssessmentDetails, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
       val result = testConnector.checkEligibility(checkEligibilityFalseRequest, "1234567890").futureValue

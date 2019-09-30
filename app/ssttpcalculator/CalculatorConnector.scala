@@ -17,14 +17,11 @@
 package ssttpcalculator
 
 import com.google.inject._
-import model.CalculatorPaymentSchedule
 import play.api.mvc.Request
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import uk.gov.hmrc.selfservicetimetopay.models._
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
 
@@ -32,13 +29,15 @@ class CalculatorConnector @Inject() (servicesConfig: ServicesConfig, httpClient:
 
   import req.RequestSupport._
 
-  val calculatorURL: String = servicesConfig.baseUrl("time-to-pay-calculator")
-  val serviceURL: String = "time-to-pay-calculator/paymentschedule"
-
+  val baseUrl: String = servicesConfig.baseUrl("time-to-pay-calculator")
   /**
    * Send the calculator input information to the time-to-pay-calculator service and retrieve back a payment schedule
    */
-  def calculatePaymentSchedule(liabilities: CalculatorInput)(implicit request: Request[_]): Future[Seq[CalculatorPaymentSchedule]] = {
-    httpClient.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](s"$calculatorURL/$serviceURL", liabilities)
+  def calculatePaymentSchedule(calcInput: CalculatorInput)(implicit request: Request[_]): Future[PaymentSchedule] = {
+    httpClient
+      .POST[CalculatorInput, PaymentSchedule](
+        s"$baseUrl/time-to-pay-calculator/paymentschedule",
+        calcInput
+      )
   }
 }

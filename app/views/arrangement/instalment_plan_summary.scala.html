@@ -19,13 +19,15 @@ Time To Pay Instalment Summary Pretty Print Page
 @param schedule CalculatorPaymentSchedule The results data to display
 *@
 
-@import uk.gov.hmrc.selfservicetimetopay.models.Debit
+@import timetopaytaxpayer.cor.model.Debit
 @import partials.gaDoCheckout
 @import helpers.{alert, message_list}
 @import helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
 @import partials._
 @import _root_.model._
+@import timetopaycalculator.cor.model._
+@import _root_.model.PaymentScheduleSupport._
 
 @this(
   main: views.html.main,
@@ -35,16 +37,13 @@ Time To Pay Instalment Summary Pretty Print Page
 @(
   debits:Seq[Debit],
   initialPayment:BigDecimal,
-  schedule: CalculatorPaymentSchedule,
+  schedule: PaymentSchedule,
   signedIn: Boolean = true)(
   implicit
   messages: play.api.i18n.Messages,
   request: Request[_],
   appConfig: config.AppConfig
 )
-
-
-
 
 
 @gaCheckoutCode = {
@@ -58,6 +57,7 @@ Time To Pay Instalment Summary Pretty Print Page
         paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
     )
 }
+
 @main(
         title = Messages("ssttp.arrangement.instalment-summary.title"),
         googleAnalyticsCalls = Seq(gaCheckoutCode.body.seq),

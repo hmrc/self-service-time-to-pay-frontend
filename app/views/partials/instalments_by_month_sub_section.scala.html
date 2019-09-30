@@ -14,15 +14,21 @@
  * limitations under the License.
  *@
 
-@import model.CalculatorPaymentSchedule
+@import timetopaycalculator.cor.model._
+@import _root_.model.PaymentScheduleSupport._
 @import partials.instalment_by_month
-@(monthsToSchedule: Map[Int, CalculatorPaymentSchedule])(implicit messages: play.api.i18n.Messages)
+
+@(
+  monthsToSchedule: Map[Int, PaymentSchedule])(
+  implicit
+  messages: play.api.i18n.Messages
+)
 
 <details class="margin-top-40 margin-bottom-30">
     <summary onclick="click"><span class="summary">@Messages("ssttp.calculator.results.month.greater-then-six.header")</span></summary>
     <div>
         <p>@Messages("ssttp.calculator.results.month.greater-then-six.intro")</p>
-        @monthsToSchedule.map { greaterThenSix:(Int,CalculatorPaymentSchedule) => @instalment_by_month(greaterThenSix._1, greaterThenSix._2)}
+        @monthsToSchedule.map { greaterThenSix:(Int,PaymentSchedule) => @instalment_by_month(greaterThenSix._1, greaterThenSix._2)}
     </div>
 </details>
 <script type="text/javascript">

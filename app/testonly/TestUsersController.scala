@@ -17,7 +17,7 @@
 package testonly
 
 import config.AppConfig
-import controllers.FrontendController
+import controllers.FrontendBaseController
 import javax.inject._
 import play.api.data.Forms._
 import play.api.data._
@@ -93,7 +93,7 @@ class TestUsersController @Inject() (
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext
-) extends FrontendController(cc) {
+) extends FrontendBaseController(cc) {
 
   import requestSupport._
 
