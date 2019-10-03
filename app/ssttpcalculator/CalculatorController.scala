@@ -77,10 +77,11 @@ class CalculatorController @Inject() (
               Future.successful(Redirect(ssttpcalculator.routes.CalculatorController.getPaymentToday()))
             case PayTodayQuestion(Some(false)) =>
               val newJourney = journey.copy(
-                maybeCalculatorData = Some(journey.calculatorInput.copy(initialPayment = BigDecimal(0)))
+                maybeCalculatorData = Some(CalculatorService.createCalculatorInput(0, LocalDate.now().getDayOfMonth, 0,
+                                                                                      journey.taxpayer.selfAssessment.debits.map(model.asDebitInput)))
               )
               journeyService.saveJourney(newJourney).map[Result] {
-                _ => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
+                _ => Redirect(ssttpcalculator.routes.CalculatorController.getMonthlyPayment())
               }
           }
         )
