@@ -55,7 +55,7 @@ class ArrangementController @Inject() (
     taxPayerConnector:    TaxpayerConnector,
     eligibilityConnector: EligibilityConnector,
     auditService:         AuditService,
-    submissionService:    JourneyService,
+    journeyService:       JourneyService,
     as:                   Actions,
     requestSupport:       RequestSupport,
     views:                Views,
@@ -72,9 +72,9 @@ class ArrangementController @Inject() (
   val paymentCurrency = "GBP"
 
   def start: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.getJourney.flatMap {
+    journeyService.getJourney.flatMap {
       case journey @ Journey(_, _, _, _, _, Some(taxpayer), _, _, _, _, _) =>
-        eligibilityCheck(taxpayer, journey, request.utr)
+        eligibilityCheck(journey, request.utr)
     }
   }
 
@@ -93,15 +93,15 @@ class ArrangementController @Inject() (
 
     for {
       tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
-      newSubmission: Journey = Journey.newJourney().copy(maybeTaxpayer = Some(tp))
-      _ <- submissionService.saveJourney(newSubmission)
-      check: Result <- eligibilityCheck(tp, newSubmission, request.utr)
-    } yield check
+      newJourney: Journey = Journey.newJourney().copy(maybeTaxpayer = Some(tp))
+      _ <- journeyService.saveJourney(newJourney)
+      result: Result <- eligibilityCheck(newJourney, request.utr)
+    } yield result.placeInSession(newJourney._id)
 
   }
 
   def getInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.authorizedForSsttp {
+    journeyService.authorizedForSsttp {
       case journey @ Journey(_, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, intialPayment, _, _, _)), _, _, _, _) =>
         Future.successful(Ok(views.instalment_plan_summary(
           journey.taxpayer.selfAssessment.debits,
@@ -113,19 +113,19 @@ class ArrangementController @Inject() (
   }
 
   def submitInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.authorizedForSsttp(_ => Future.successful(Redirect(ssttparrangement.routes.ArrangementController.getDeclaration())))
+    journeyService.authorizedForSsttp(_ => Future.successful(Redirect(ssttparrangement.routes.ArrangementController.getDeclaration())))
   }
 
   def getChangeSchedulePaymentDay: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.authorizedForSsttp(ttp => Future.successful(Ok(views.change_day(createDayOfForm(ttp)))))
+    journeyService.authorizedForSsttp(ttp => Future.successful(Ok(views.change_day(createDayOfForm(ttp)))))
   }
 
   def getDeclaration: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.authorizedForSsttp(ttp => Future.successful(Ok(views.declaration())))
+    journeyService.authorizedForSsttp(ttp => Future.successful(Ok(views.declaration())))
   }
 
   def submitChangeSchedulePaymentDay(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.authorizedForSsttp {
+    journeyService.authorizedForSsttp {
       submission =>
         ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
           formWithErrors => {
@@ -136,7 +136,7 @@ class ArrangementController @Inject() (
               case ttp @ Journey(_, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _) =>
                 changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
                   ttpSubmission =>
-                    submissionService.saveJourney(ttpSubmission).map {
+                    journeyService.saveJourney(ttpSubmission).map {
                       _ => Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
                     }
                 }
@@ -172,32 +172,27 @@ class ArrangementController @Inject() (
   }
 
   /**
-   * Call the eligibility service using the Taxpayer data and display the appropriate page based on the result
+   * Call the eligibility service using the Taxpayer data
+   * and display the appropriate page based on the result
    */
-  private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: Journey, utr: SaUtr)(implicit request: Request[_]): Future[Result] = {
+  private def eligibilityCheck(journey: Journey, utr: SaUtr)(implicit request: Request[_]): Future[Result] = {
     lazy val youNeedToFile = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile())
     lazy val notOnIa = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getIaCallUse())
     lazy val overTenThousandOwed = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge())
+    lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 
-      def checkSubmission(journey: Journey): Future[Result] = {
-
-        val eligibility = journey.eligibilityStatus
-
-        if (eligibility.eligible) {
-          checkSubmissionForCalculatorPage(taxpayer, journey)
-        } else {
-          if (eligibility.reasons.contains(IsNotOnIa)) notOnIa
-          else if (eligibility.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
-          else if (eligibility.reasons.contains(ReturnNeedsSubmitting) || eligibility.reasons.contains(DebtIsInsignificant)) youNeedToFile
-          else throw new RuntimeException(s"Case not implemented. It's a bug. See eligibility reasons. [$journey]")
-        }
-      }
     for {
-      es <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer), utr)
-      updatedSubmission = newSubmission.copy(maybeEligibilityStatus = Option(es))
-      _ <- submissionService.saveJourney(updatedSubmission)
-      result <- checkSubmission(updatedSubmission)
-    } yield result
+      es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), journey.taxpayer), utr)
+      newJourney = journey.copy(maybeEligibilityStatus = Option(es))
+      _ <- journeyService.saveJourney(newJourney)
+    } yield {
+
+      if (es.eligible) isEligible
+      else if (es.reasons.contains(IsNotOnIa)) notOnIa
+      else if (es.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
+      else if (es.reasons.contains(ReturnNeedsSubmitting) || es.reasons.contains(DebtIsInsignificant)) youNeedToFile
+      else throw new RuntimeException(s"Case not implemented. It's a bug. See eligibility reasons. [$journey]")
+    }
   }
 
   def setDefaultCalculatorSchedule(
@@ -222,30 +217,15 @@ class ArrangementController @Inject() (
     ???
   }
 
-  private def checkSubmissionForCalculatorPage(taxpayer: Taxpayer, newSubmission: Journey)(implicit request: Request[_]): Future[Result] = {
-
-    val gotoTaxLiabilities = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
-
-    newSubmission match {
-      case Journey(_, _, _, _, _, Some(Taxpayer(_, _, tpSA)), Some(calculatorInput), _, _, _, _) =>
-        //        setDefaultCalculatorSchedule(newSubmission, tpSA.debits.map(asDebitInput)).map(_ => gotoTaxLiabilities)
-        gotoTaxLiabilities
-
-      case _ =>
-        Logger.error("No match found for newSubmission in determineEligibility")
-        redirectToStartPage
-    }
-  }
-
   def submit(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    submissionService.authorizedForSsttp {
+    journeyService.authorizedForSsttp {
       ttp => arrangementSetUp(ttp)
     }
   }
 
   def applicationComplete(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
 
-    submissionService.authorizedForSsttp {
+    journeyService.authorizedForSsttp {
       submission =>
 
         val result = Ok(views.application_complete(
@@ -278,7 +258,7 @@ class ArrangementController @Inject() (
               val result = for {
                 submissionResult <- arrangementConnector.submitArrangements(arrangement)
                 _ = auditService.sendSubmissionEvent(submission)
-                _ = submissionService.saveJourney(submission.copy(ddRef = Some(arrangement.directDebitReference)))
+                _ = journeyService.saveJourney(submission.copy(ddRef = Some(arrangement.directDebitReference)))
               } yield submissionResult
 
               result.flatMap {

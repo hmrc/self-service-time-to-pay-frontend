@@ -25,7 +25,7 @@ object PlaySessionSupport {
 
   implicit class ResultOps(result: Result)(implicit request: RequestHeader) {
 
-    def placeInSession(journeyId: JourneyId): Result = result.withSession(journeyIdKey -> journeyId.value)
+    def placeInSession(journeyId: JourneyId): Result = result.addingToSession(journeyIdKey -> journeyId.value)
 
     def removeJourneyIdFromSession: Result = result.withSession(result.session - journeyIdKey)
   }

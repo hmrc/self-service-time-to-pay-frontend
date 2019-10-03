@@ -60,12 +60,8 @@ class CalculatorController @Inject() (
     }
   }
 
-  def getPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyService.getJourney.map {
-      case Journey(_, _, _, _, _, tp, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _) if debits.nonEmpty =>
-        Ok(views.payment_today_question(CalculatorForm.payTodayForm, isSignedIn))
-      case _ => redirectToStartPage
-    }
+  def getPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser{ implicit request =>
+    Ok(views.payment_today_question(CalculatorForm.payTodayForm, isSignedIn))
   }
 
   /**
@@ -74,7 +70,7 @@ class CalculatorController @Inject() (
    */
   def submitPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.getJourney.flatMap[Result] {
-      case journey @ Journey(_, _, _, _, _, tp, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _) if debits.nonEmpty =>
+      case journey @ Journey(_, _, _, _, _, tp, _, _, _, _, _) =>
         CalculatorForm.payTodayForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(views.payment_today_question(formWithErrors, isSignedIn))), {
             case PayTodayQuestion(Some(true)) =>
@@ -94,10 +90,14 @@ class CalculatorController @Inject() (
 
   def getPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.getJourney.map {
-      case Journey(_, _, _, _, _, _, Some(CalculatorInput(debits, paymentToday, _, _, _)), _, _, _, _) if debits.nonEmpty =>
+      case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, SelfAssessmentDetails(_, _, debits, _))), _, _, _, _, _) if debits.nonEmpty =>
+        val newJourney = journey.copy(maybeCalculatorData =
+          Some(CalculatorService.createCalculatorInput(0, LocalDate.now().getDayOfMonth, 0,
+                                                          debits.map(model.asDebitInput))))
+        journeyService.saveJourney(newJourney)
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
-        if (paymentToday.equals(BigDecimal(0))) Ok(views.payment_today_form(form, isSignedIn))
-        else Ok(views.payment_today_form(form.fill(paymentToday), isSignedIn))
+        if (newJourney.calculatorInput.initialPayment.equals(BigDecimal(0))) Ok(views.payment_today_form(form, isSignedIn))
+        else Ok(views.payment_today_form(form.fill(newJourney.calculatorInput.initialPayment), isSignedIn))
       case _ =>
         Logger.info("Missing required data for get payment today page")
         redirectToStartPage

@@ -69,7 +69,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     taxPayerConnector    = taxPayerConnector,
     eligibilityConnector = mockEligibilityConnector,
     auditService         = auditService,
-    submissionService    = mockSessionCache,
+    journeyService       = mockSessionCache,
     as                   = as,
     ???,
     ???
