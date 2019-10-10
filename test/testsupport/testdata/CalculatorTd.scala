@@ -16,9 +16,12 @@
 
 package testsupport.testdata
 
+import java.time.LocalDate
+
 import uk.gov.hmrc.selfservicetimetopay.models._
 import testsupport.testdata.TdAll._
 import testsupport.JsonSyntax._
+import timetopaycalculator.cor.model.{CalculatorInput, Instalment, PaymentSchedule}
 
 object CalculatorTd {
   val calculatorAmountsDue = new CalculatorAmountsDue(Seq(debit1, debit2))
@@ -36,7 +39,7 @@ object CalculatorTd {
     "chosenMonths": 4
     }""".asJson
 
-  val calculatorPaymentScheduleInstalment = new CalculatorPaymentScheduleInstalment("2019-08-25", 20000: BigDecimal)
+  val calculatorPaymentScheduleInstalment = new Instalment("2019-08-25", 20000: BigDecimal, 2:BigDecimal)
 
   val calculatorPaymentScheduleInstalmentJson =
     //language=Json
@@ -45,9 +48,9 @@ object CalculatorTd {
      "amount": 20000
     }""".asJson
 
-  val calculatorPaymentSchedule = new CalculatorPaymentSchedule(
-    startDate            = None,
-    endDate              = None,
+  val calculatorPaymentSchedule = new PaymentSchedule(
+    startDate            = LocalDate.of(2019: Int, 4: Int, 23: Int),
+    endDate              = LocalDate.of(2019: Int, 8: Int, 21: Int),
     initialPayment       = 200: BigDecimal,
     amountToPay          = 200: BigDecimal,
     instalmentBalance    = 200: BigDecimal,
@@ -70,8 +73,7 @@ object CalculatorTd {
     initialPayment   = 200: BigDecimal,
     startDate        = "2017-02-15",
     endDate          = "2018-01-31",
-    firstPaymentDate = None,
-    paymentFrequency = "MONTHLY")
+    firstPaymentDate = None)
 
   val calculatorInputJson =
     //language=Json
@@ -79,7 +81,6 @@ object CalculatorTd {
        "debits": [],
     "initialPayment" : 200,
      "startDate": "2017-02-15",
-     "endDate": "2018-01-31",
-     "paymentFrequency": "MONTHLY"
+     "endDate": "2018-01-31"
     }""".asJson
 }

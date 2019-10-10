@@ -27,7 +27,7 @@ import play.api.libs.json.Json
 import ssttpdirectdebit.DirectDebitConnector
 import testsupport.ItSpec
 import testsupport.testdata.TdAll
-import uk.gov.hmrc.domain.SaUtr
+import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

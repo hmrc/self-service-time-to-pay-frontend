@@ -63,5 +63,4 @@ class StartPageSpec extends ItSpec {
     startPage.clickOnStartNowButton()
     taxLiabilitiesPage.assertPageIsDisplayed()
   }
-
 }

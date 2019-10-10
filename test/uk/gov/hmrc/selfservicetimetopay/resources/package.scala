@@ -19,13 +19,13 @@ package uk.gov.hmrc.selfservicetimetopay
 import java.time.LocalDate
 
 import cats.arrow.Strong
-import model.CalculatorPaymentSchedule
+import journey.{Journey, JourneyId}
 import play.api.libs.json.{JsValue, Json, Reads}
-import token.TTPSessionId
+import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
+import timetopaytaxpayer.cor.model._
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentSchedule, _}
+import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.Future
@@ -52,14 +52,22 @@ package object resources {
     )
   }
 
-  val debit: Debit = Debit(Some("originCode"), BigDecimal(121.2), LocalDate.now(), Some(Interest(LocalDate.now(), BigDecimal(0))), Some(LocalDate.now().minusYears(1)))
-  val selfAssessment: Option[SelfAssessmentDetails] = Some(SelfAssessmentDetails(Some("utr"), None, List(debit), None))
-  val taxPayer: Taxpayer = Taxpayer(Some("Bob"), List(), selfAssessment)
-  val calculatorPaymentScheduleInstalment = Instalment(LocalDate.now(), BigDecimal(1234.22))
+  val communicationPreferences = new CommunicationPreferences(false, false, false, false)
+  val taxReturn = new Return(
+    LocalDate.of(2020: Int, 4: Int, 5: Int),
+    Some(LocalDate.of(2019: Int, 1: Int, 25: Int)),
+    Some(LocalDate.of(2019: Int, 9: Int, 25: Int)),
+    Some(LocalDate.of(2019: Int, 3: Int, 9: Int)))
+  val retruns: Seq[Return] = List(taxReturn)
 
-  val calculatorPaymentSchedule: CalculatorPaymentSchedule = CalculatorPaymentSchedule(
-    Some(LocalDate.parse("2001-01-01")),
-    Some(LocalDate.parse("2001-01-01")),
+  val debit: Debit = Debit("originCode", 121.2:Double, LocalDate.now(), Some(Interest(Some(LocalDate.now()), 0:Double)), LocalDate.now().minusYears(1))
+  val selfAssessment: SelfAssessmentDetails = SelfAssessmentDetails(SaUtr("12345678"), communicationPreferences, List(debit), retruns)
+  val taxPayer: Taxpayer = Taxpayer("Bob", List(), selfAssessment)
+  val calculatorPaymentScheduleInstalment = Instalment(LocalDate.now(), BigDecimal(1234.22), BigDecimal(0))
+
+  val calculatorPaymentSchedule: PaymentSchedule = PaymentSchedule(
+    LocalDate.parse("2001-01-01"),
+    LocalDate.parse("2001-01-01"),
     BigDecimal(1024.12),
     BigDecimal(20123.76),
     BigDecimal(1024.12),
@@ -68,9 +76,9 @@ package object resources {
     Seq(calculatorPaymentScheduleInstalment,
         calculatorPaymentScheduleInstalment)
   )
-  val calculatorPaymentScheduleLessThenOnePayment: CalculatorPaymentSchedule = CalculatorPaymentSchedule(
-    Some(LocalDate.parse("2001-01-01")),
-    Some(LocalDate.parse("2001-01-01")),
+  val calculatorPaymentScheduleLessThenOnePayment: PaymentSchedule = PaymentSchedule(
+    LocalDate.parse("2001-01-01"),
+    LocalDate.parse("2001-01-01"),
     BigDecimal(1024.12),
     BigDecimal(20123.76),
     BigDecimal(1024.12),
@@ -79,25 +87,29 @@ package object resources {
     Seq(calculatorPaymentScheduleInstalment,
         calculatorPaymentScheduleInstalment)
   )
-  val eventualSchedules: Future[Seq[CalculatorPaymentSchedule]] = Future.successful(Seq(calculatorPaymentSchedule))
+  val journeyId = JourneyId("12345A")
+  val eventualSchedules: Future[Seq[PaymentSchedule]] = Future.successful(Seq(calculatorPaymentSchedule))
   val calculatorPaymentScheduleMap = Map(2 -> calculatorPaymentSchedule, 3 -> calculatorPaymentSchedule,
     4 -> calculatorPaymentSchedule, 5 -> calculatorPaymentScheduleLessThenOnePayment)
 
-  val ttpSubmission: Journey = Journey(Some(calculatorPaymentSchedule),
+  val calculatorInput = new CalculatorInput(Seq(DebitInput(250, LocalDate.of(2019, 9, 25))), 0: BigDecimal, LocalDate.of(2019, 8, 12), LocalDate.of(2020, 4, 25), Some(LocalDate.of(2019, 9, 25)))
+
+  val ttpSubmission: Journey = Journey(journeyId, Some(123: Int), Some(calculatorPaymentSchedule),
                                        Some(BankDetails(Some("012131"), Some("1234567890"), None, None, None, Some("0987654321"))), None,
                                        Some(taxPayer),
-                                       CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)), Some(3), Some(EligibilityStatus(true, Seq.empty)))
+                                       Some(calculatorInput.copy(initialPayment = BigDecimal.valueOf(300))), 3: Int, Some(EligibilityStatus(true, Seq.empty)))
 
-  val ttpSubmissionNoAmounts: Journey = Journey()
+  val ttpSubmissionNoAmounts: Journey = Journey(journeyId)
 
-  val calculatorAmountDue: Debit = Debit(amount  = BigDecimal(123.45), dueDate = LocalDate.now())
-  val ttpSubmissionNLI: Journey = Journey(schedule       = Some(calculatorPaymentSchedule), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
+  val calculatorAmountDue: Debit = new Debit(originCode = "IN2", amount = 123.45:Double, dueDate = LocalDate.now(), interest = None, taxYearEnd = LocalDate.of(2020, 4, 5))
+  val debitInput = new DebitInput(amount = 123.45:Double, LocalDate.now())
+  val ttpSubmissionNLI: Journey = new Journey(_id                 = journeyId, schedule = Some(calculatorPaymentSchedule), maybeCalculatorData = Some(calculatorInput.copy(debits = Seq(debitInput))))
 
-  val ttpSubmissionNLINoSchedule: Journey = Journey(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
-  val ttpSubmissionNLIEmpty: Journey = Journey()
+  val ttpSubmissionNLINoSchedule: Journey = new Journey(journeyId, maybeCalculatorData = Some(calculatorInput.copy(debits = Seq(debitInput))))
+  val ttpSubmissionNLIEmpty: Journey = Journey(journeyId)
 
-  val calculatorAmountDueOver10k: Debit = Debit(amount  = BigDecimal(11293.22), dueDate = LocalDate.now())
-  val ttpSubmissionNLIOver10k: Journey = Journey(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDueOver10k)))
+  val calculatorAmountDueOver10k: Debit = new Debit(originCode = "IN2", amount = 11293.22:Double, dueDate = LocalDate.now(), interest = None, taxYearEnd = LocalDate.of(2020, 4, 5))
+  val ttpSubmissionNLIOver10k: Journey = Journey(_id                 = journeyId, maybeCalculatorData = Some(calculatorInput.copy(debits = Seq(debitInput))))
 
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)
   val eligibilityStatusDebtTooHigh: EligibilityStatus = EligibilityStatus(false, Seq(TotalDebtIsTooHigh))
@@ -150,16 +162,16 @@ package object resources {
     "paymentPlanReference",
     "directDebitReference",
     Taxpayer(
-      Some("Bob"),
+      "Bob",
       List(),
-      Some(SelfAssessmentDetails(
-        Some("utr"),
-        None,
+      SelfAssessmentDetails(
+        SaUtr("12345A"),
+        communicationPreferences,
         List(),
-        None))),
-    CalculatorPaymentSchedule(
-      Some(LocalDate.parse("2001-01-01")),
-      Some(LocalDate.parse("2001-01-01")),
+        retruns)),
+    PaymentSchedule(
+      LocalDate.parse("2001-01-01"),
+      LocalDate.parse("2001-01-01"),
       BigDecimal(1024.12),
       BigDecimal(20123.76),
       BigDecimal(1024.12),
@@ -167,7 +179,9 @@ package object resources {
       BigDecimal(20123.76),
       Seq(Instalment(
         LocalDate.now(),
-        BigDecimal(1234.22))
+        BigDecimal(1234.22),
+        BigDecimal(0)
+      )
       )
     )
   )
@@ -199,7 +213,4 @@ package object resources {
   val ttpSubmissionWithBankDetails = ttpSubmission.copy(bankDetails = Some(bankDetails))
   val directDebitBank = DirectDebitBank("", Seq.empty)
 
-  val goodSession = Seq(SessionKeys.userId -> "someUserId",
-    TTPSessionId.newTTPSession(),
-    "token" -> "1234")
 }

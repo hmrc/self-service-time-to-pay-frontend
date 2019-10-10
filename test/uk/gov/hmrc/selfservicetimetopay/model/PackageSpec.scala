@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/*
 package uk.gov.hmrc.selfservicetimetopay.model
 
 import java.time.LocalDate
@@ -175,3 +175,4 @@ class PackageSpec extends UnitSpec {
   }
 
 }
+*/

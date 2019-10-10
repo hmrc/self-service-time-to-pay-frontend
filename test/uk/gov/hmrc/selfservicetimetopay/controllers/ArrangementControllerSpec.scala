@@ -32,8 +32,9 @@ import ssttparrangement.{ArrangementConnector, ArrangementController, Submission
 import ssttpcalculator.{CalculatorConnector, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityConnector
-import sstttaxpayer.TaxpayerConnector
 import journey.{Journey, JourneyService}
+import timetopaycalculator.cor.model.CalculatorInput
+import timetopaytaxpayer.cor.TaxpayerConnector
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -71,6 +72,7 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     auditService         = auditService,
     journeyService       = mockSessionCache,
     as                   = as,
+    ???,
     ???,
     ???
   )
@@ -340,3 +342,4 @@ class ArrangementControllerSpec extends PlayMessagesSpec with MockitoSugar with 
     }
   }
 }
+

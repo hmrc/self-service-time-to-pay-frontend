@@ -23,9 +23,11 @@ import play.api.libs.json.Json
 import ssttpeligibility.EligibilityConnector
 import testsupport.ItSpec
 import testsupport.testdata.TdAll
+import timetopaytaxpayer.cor.model.SelfAssessmentDetails
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, ReturnNeedsSubmitting, SelfAssessmentDetails, TotalDebtIsTooHigh}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
@@ -49,7 +51,7 @@ class EligibilityConnectorSpec extends ItSpec with MockitoSugar {
       when(httpClient.POST[SelfAssessmentDetails, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = testConnector.checkEligibility(checkEligibilityTrueRequest, "1234567890").futureValue
+      val result = testConnector.checkEligibility(checkEligibilityTrueRequest, SaUtr("1234567890")).futureValue
 
       result.eligible shouldBe true
     }
@@ -60,7 +62,7 @@ class EligibilityConnectorSpec extends ItSpec with MockitoSugar {
       when(httpClient.POST[SelfAssessmentDetails, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = testConnector.checkEligibility(checkEligibilityFalseRequest, "1234567890").futureValue
+      val result = testConnector.checkEligibility(checkEligibilityFalseRequest, SaUtr("1234567890")).futureValue
 
       result.eligible shouldBe false
       result.reasons.contains(ReturnNeedsSubmitting) shouldBe true
@@ -71,7 +73,7 @@ class EligibilityConnectorSpec extends ItSpec with MockitoSugar {
       when(httpClient.POST[SelfAssessmentDetails, EligibilityStatus](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future(jsonResponse))
 
-      val result = testConnector.checkEligibility(checkEligibilityFalseRequest, "1234567890").futureValue
+      val result = testConnector.checkEligibility(checkEligibilityFalseRequest, SaUtr("1234567890")).futureValue
       result.eligible shouldBe false
       result.reasons.contains(TotalDebtIsTooHigh) shouldBe true
     }

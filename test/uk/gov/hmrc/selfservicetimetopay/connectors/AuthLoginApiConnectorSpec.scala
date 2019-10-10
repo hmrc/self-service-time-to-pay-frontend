@@ -16,19 +16,16 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
-import model.PaymentSchedule
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import ssttpcalculator.CalculatorConnector
-import testsupport.{ItSpec, UnitSpec}
+import testsupport.ItSpec
 import testsupport.testdata.TdAll
-import uk.gov.hmrc.http.HeaderCarrier
+import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.selfservicetimetopay.models.CalculatorInput
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -53,10 +50,10 @@ class AuthLoginApiConnectorSpec extends ItSpec with MockitoSugar {
 
       val result = testConnector.calculatePaymentSchedule(submitDebitsRequest).futureValue
 
-      result.size shouldBe 11
-      result.head.initialPayment shouldBe BigDecimal("50")
-      result.head.amountToPay shouldBe BigDecimal("5000")
-      result.last.instalments.size shouldBe 12
+      //result.size shouldBe 11
+      result.initialPayment shouldBe BigDecimal("50")
+      result.amountToPay shouldBe BigDecimal("5000")
+      result.instalments.size shouldBe 12
     }
 
     "return no payment schedule" in {

@@ -22,6 +22,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import testsupport.JsonSyntax._
+import timetopaytaxpayer.cor.model._
 
 /**
  * Test Data All
@@ -30,6 +31,7 @@ object TdAll {
 
   val systemDate: LocalDate = "2019-10-04"
 
+  val Sautr = SaUtr("6573196998")
   val utr = "6573196998"
 
   val debit1 = Debit(
@@ -104,8 +106,17 @@ object TdAll {
     brailleIndicator       = false
   )
 
-  val selfAssessment = SelfAssessment(
-    utr                      = utr,
+  val communicationPreferencesJson =
+    //language=Json
+    s"""{
+       "welshLanguageIndicator": false,
+       "audioIndicator": false,
+       "largePrintIndicator": false,
+       "brailleIndicator": false
+       }""".stripMargin
+
+  val selfAssessment = SelfAssessmentDetails(
+    utr                      = Sautr,
     communicationPreferences = communicationPreferences,
     debits                   = List(debit1, debit2),
     returns                  = List(return1, return2)
@@ -127,9 +138,12 @@ object TdAll {
     }""".asJson
 
   val address = Address(
-    addressLine1 = "Big building",
-    addressLine2 = "Barington Road",
-    postcode     = "BN12 4XL"
+    addressLine1 = Some("Big building"),
+    addressLine2 = Some("Barington Road"),
+    addressLine3 = None,
+    addressLine4 = None,
+    addressLine5 = None,
+    postcode     = Some("BN12 4XL")
   )
 
   val addressJson =
@@ -143,7 +157,7 @@ object TdAll {
   """.asJson
 
   val taxpayer = Taxpayer(
-    customerName   = Some("Mr Ethan Johnson"),
+    customerName   = "Mr Ethan Johnson",
     addresses      = List(address),
     selfAssessment = selfAssessment
   )
@@ -156,8 +170,8 @@ object TdAll {
     }""".asJson
 
   val interest = Interest(
-    calculationDate = "2019-10-04",
-    amountAccrued   = 200: BigDecimal
+    creationDate = Some("2019-10-04"),
+    amount       = 200: Double
   )
 
   val interestJson =
@@ -170,8 +184,8 @@ object TdAll {
   """.asJson
 
   val eligibilityTypeOfTax = EligibilityTypeOfTax(
-    hasSelfAssessmentDebt = false,
-    hasOtherDebt          = false)
+    hasSelfAssessmentDetailsDebt = false,
+    hasOtherDebt                 = false)
 
   val eligibilityTypeOfTaxJson =
     //language=Json

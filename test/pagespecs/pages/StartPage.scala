@@ -29,7 +29,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
 
   override val path: String = "/pay-what-you-owe-in-instalments"
 
-  def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion = probing {
+  def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion = probing{
     readPath() shouldBe path
     readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
@@ -71,7 +71,8 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
         """Help improve GOV.UK No Thanks
           |Get involved in making government services better (opens in a new window)
           |
-          |BETA	This is a new service – your feedback will help us to improve it. English | Cymraeg
+          |BETA	This is a new service – your feedback will help us to improve it.
+          |English | Cymraeg
           |
           |Set up a payment plan
           |A payment plan allows you to pay the tax you owe in instalments. The plan covers the amounts you need to pay now.
@@ -87,13 +88,15 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
           |have no other tax debts
           |have no other HMRC payment plans set up
           |Start now
+          |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
         """Helpwch i wella GOV.UK Dim diolch
           |Byddwch yn rhan o wneud gwasanaethau’r llywodraeth yn well (yn agor ffenestr newydd)
           |
-          |BETA	Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella. English | Cymraeg
+          |BETA	Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
+          |English | Cymraeg
           |
           |Trefnu cynllun talu
           |Mae cynllun talu yn eich galluogi i dalu’r dreth sydd arnoch fesul rhandaliad. Mae’r cynllun yn cwmpasu’r symiau y mae’n rhaid i chi eu talu nawr.
@@ -109,6 +112,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
           |nid oes gennych unrhyw ddyledion treth eraill
           |nid ydych wedi trefnu cynlluniau talu eraill â CThEM
           |Dechrau nawr
+          |Help gyda'r dudalen hon.
         """.stripMargin
     }
 

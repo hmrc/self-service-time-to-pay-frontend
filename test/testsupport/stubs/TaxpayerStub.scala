@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import testsupport.testdata.TdAll
-import uk.gov.hmrc.selfservicetimetopay.models.Taxpayer
+import timetopaytaxpayer.cor.model.Taxpayer
 
 object TaxpayerStub extends Matchers {
 
@@ -29,7 +29,6 @@ object TaxpayerStub extends Matchers {
       utr:              String   = TdAll.utr,
       returnedTaxpayer: Taxpayer = TdAll.taxpayer
   ): StubMapping = {
-    import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
     stubFor(
       get(urlPathEqualTo(s"/taxpayer/$utr"))
