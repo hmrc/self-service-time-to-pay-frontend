@@ -39,7 +39,7 @@ object CalculatorTd {
     "chosenMonths": 4
     }""".asJson
 
-  val calculatorPaymentScheduleInstalment = new Instalment("2019-08-25", 20000: BigDecimal, 2:BigDecimal)
+  val calculatorPaymentScheduleInstalment = new Instalment("2019-08-25", 20000: BigDecimal, 2: BigDecimal)
 
   val calculatorPaymentScheduleInstalmentJson =
     //language=Json

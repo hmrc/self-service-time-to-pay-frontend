@@ -28,5 +28,6 @@ trait PlayMessagesSpec extends PlaySpec with OneAppPerSuite {
 
   val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   val i18nSupport: I18nSupport = app.injector.instanceOf[I18nSupport]
+
   def getMessages(r: FakeRequest[_]): Messages = messagesApi.preferred(r)
 }

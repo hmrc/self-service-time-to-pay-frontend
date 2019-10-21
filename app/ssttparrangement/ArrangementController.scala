@@ -40,7 +40,6 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 import _root_.model._
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}

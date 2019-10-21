@@ -60,7 +60,7 @@ package object resources {
     Some(LocalDate.of(2019: Int, 3: Int, 9: Int)))
   val retruns: Seq[Return] = List(taxReturn)
 
-  val debit: Debit = Debit("originCode", 121.2:Double, LocalDate.now(), Some(Interest(Some(LocalDate.now()), 0:Double)), LocalDate.now().minusYears(1))
+  val debit: Debit = Debit("originCode", 121.2: Double, LocalDate.now(), Some(Interest(Some(LocalDate.now()), 0: Double)), LocalDate.now().minusYears(1))
   val selfAssessment: SelfAssessmentDetails = SelfAssessmentDetails(SaUtr("12345678"), communicationPreferences, List(debit), retruns)
   val taxPayer: Taxpayer = Taxpayer("Bob", List(), selfAssessment)
   val calculatorPaymentScheduleInstalment = Instalment(LocalDate.now(), BigDecimal(1234.22), BigDecimal(0))
@@ -101,14 +101,14 @@ package object resources {
 
   val ttpSubmissionNoAmounts: Journey = Journey(journeyId)
 
-  val calculatorAmountDue: Debit = new Debit(originCode = "IN2", amount = 123.45:Double, dueDate = LocalDate.now(), interest = None, taxYearEnd = LocalDate.of(2020, 4, 5))
-  val debitInput = new DebitInput(amount = 123.45:Double, LocalDate.now())
+  val calculatorAmountDue: Debit = new Debit(originCode = "IN2", amount = 123.45: Double, dueDate = LocalDate.now(), interest = None, taxYearEnd = LocalDate.of(2020, 4, 5))
+  val debitInput = new DebitInput(amount = 123.45: Double, LocalDate.now())
   val ttpSubmissionNLI: Journey = new Journey(_id                 = journeyId, schedule = Some(calculatorPaymentSchedule), maybeCalculatorData = Some(calculatorInput.copy(debits = Seq(debitInput))))
 
   val ttpSubmissionNLINoSchedule: Journey = new Journey(journeyId, maybeCalculatorData = Some(calculatorInput.copy(debits = Seq(debitInput))))
   val ttpSubmissionNLIEmpty: Journey = Journey(journeyId)
 
-  val calculatorAmountDueOver10k: Debit = new Debit(originCode = "IN2", amount = 11293.22:Double, dueDate = LocalDate.now(), interest = None, taxYearEnd = LocalDate.of(2020, 4, 5))
+  val calculatorAmountDueOver10k: Debit = new Debit(originCode = "IN2", amount = 11293.22: Double, dueDate = LocalDate.now(), interest = None, taxYearEnd = LocalDate.of(2020, 4, 5))
   val ttpSubmissionNLIOver10k: Journey = Journey(_id                 = journeyId, maybeCalculatorData = Some(calculatorInput.copy(debits = Seq(debitInput))))
 
   val eligibilityStatusOk: EligibilityStatus = EligibilityStatus(true, Seq.empty)

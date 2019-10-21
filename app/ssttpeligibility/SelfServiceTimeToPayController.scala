@@ -20,11 +20,9 @@ import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import javax.inject._
-import play.api.i18n.Messages
 import play.api.mvc._
 import req.RequestSupport
 import journey.JourneyService
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
 
 import scala.concurrent.ExecutionContext

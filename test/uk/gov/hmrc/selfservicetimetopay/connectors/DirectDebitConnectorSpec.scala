@@ -19,10 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.connectors
 import com.github.tomakehurst.wiremock.client.WireMock.{verify => wmVerify, _}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
 import play.api.http.Status
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import ssttpdirectdebit.DirectDebitConnector
 import testsupport.ItSpec
@@ -32,7 +29,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models._
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 
 import scala.concurrent.ExecutionContext.Implicits.global

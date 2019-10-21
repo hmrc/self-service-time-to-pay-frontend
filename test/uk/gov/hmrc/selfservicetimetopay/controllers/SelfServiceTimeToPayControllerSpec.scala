@@ -16,49 +16,61 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
-import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import ssttpeligibility.SelfServiceTimeToPayController
 import journey.JourneyService
-import uk.gov.hmrc.selfservicetimetopay._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 import _root_.controllers.action._
 import config.AppConfig
 import play.api.mvc.MessagesControllerComponents
+import req.RequestSupport
+import testsupport.testdata.TdAll
+import views.Views
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSugar {
 
-  val mockSessionCache: JourneyService = mock[JourneyService]
-  val mcc: MessagesControllerComponents = mock
   implicit val appConfig: AppConfig = mock[AppConfig]
+  implicit val request = TdAll.request
+
+  val mockSessionCache: JourneyService = mock[JourneyService]
+  val mockMessagesControllerComponents: MessagesControllerComponents = mock[MessagesControllerComponents]
+  val mockActions: Actions = mock[Actions]
+  val mockViews: Views = mock[Views]
+  val mockRequestSupport: RequestSupport = mock[RequestSupport]
+  val fakeRequest = FakeRequest().withSession(
+    ("_*", "_*")
+  )
 
   "SelfServiceTimeToPayController" should {
 
     val controller = new SelfServiceTimeToPayController(
-      mcc               = mcc,
+      mcc               = mockMessagesControllerComponents,
       submissionService = mockSessionCache,
-      as                = mock[Actions],
-      ???,
-      ???
+      as                = mockActions,
+      views             = mockViews,
+      requestSupport    = mockRequestSupport
     )
 
     "return 200 and display the service start page" in {
-      when(mockSessionCache.getJourney(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ttpSubmission)))
-      val request = FakeRequest().withSession(goodSession: _*)
-      val result = controller.start.apply(request)
+      when(mockSessionCache.getJourney()).thenReturn(Future.successful(ttpSubmission))
+
+      val result = controller.start.apply(fakeRequest)
 
       status(result) mustBe OK
 
-      contentAsString(result) must include(getMessages(request)("ssttp.common.title"))
+      contentAsString(result) must include(getMessages(fakeRequest)("ssttp.common.title"))
     }
 
     "submit redirect to the determine Eligibility" in {
-      val result = controller.submit.apply(FakeRequest().withSession(goodSession: _*))
+      val result = controller.submit.apply(FakeRequest().withSession(
+        ("_*", "_*")
+      ))
 
       status(result) mustBe SEE_OTHER
 
@@ -66,21 +78,21 @@ class SelfServiceTimeToPayControllerSpec extends PlayMessagesSpec with MockitoSu
     }
 
     "return 200 and display call us page successfully" in {
-      val request = FakeRequest().withSession(goodSession: _*)
-      val result = controller.getTtpCallUs.apply(request)
+
+      val result = controller.getTtpCallUs.apply(fakeRequest)
 
       status(result) mustBe OK
 
-      contentAsString(result) must include(getMessages(request)("ssttp.call-us.title"))
+      contentAsString(result) must include(getMessages(fakeRequest)("ssttp.call-us.title"))
     }
 
     "return 200 and display you need to file page successfully" in {
-      val request = FakeRequest().withSession(goodSession: _*)
-      val result = controller.getYouNeedToFile.apply(request)
+
+      val result = controller.getYouNeedToFile.apply(fakeRequest)
 
       status(result) mustBe OK
 
-      contentAsString(result) must include(getMessages(request)("ssttp.you-need-to-file.check-account"))
+      contentAsString(result) must include(getMessages(fakeRequest)("ssttp.you-need-to-file.check-account"))
     }
   }
 }

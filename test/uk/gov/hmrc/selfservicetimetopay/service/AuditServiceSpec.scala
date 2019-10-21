@@ -17,21 +17,18 @@
 package uk.gov.hmrc.selfservicetimetopay.service
 
 import audit.AuditService
-import org.scalatest.concurrent.Eventually
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.controllers.PlayMessagesSpec
 import uk.gov.hmrc.selfservicetimetopay.resources._
-import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.concurrent.{Eventually, ScalaFutures}
+import org.scalatest.mockito.MockitoSugar
 import testsupport.testdata.TdAll
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 import scala.concurrent.ExecutionContext.Implicits.global
 class AuditServiceSpec extends PlayMessagesSpec with Eventually with ScalaFutures with MockitoSugar {
 
-  val AuditService = new AuditService(
-    mock[AuditConnector]
-  )
+  val AuditService = app.injector.instanceOf[AuditService]
 
   implicit val headerCarrier = HeaderCarrier()
 
