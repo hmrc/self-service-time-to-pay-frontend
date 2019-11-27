@@ -19,7 +19,7 @@ package pagespecs
 import langswitch.Languages
 import play.api.libs.json.{Json, OFormat, Reads}
 import testsupport.{ItSpec, WireMockSupport}
-import testsupport.stubs.{AuthStub, GgStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxpayerStub}
 import testsupport.testdata.TdAll
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
@@ -57,10 +57,22 @@ class StartPageSpec extends ItSpec {
   "eligible" in {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
+    EligibilityStub.eligible()
 
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
     taxLiabilitiesPage.assertPageIsDisplayed()
+  }
+
+  "not eligible (debt too large)" in {
+    AuthStub.authorise()
+    TaxpayerStub.getTaxpayer()
+    EligibilityStub.ineligible()
+
+    startPage.open()
+    startPage.clickOnStartNowButton()
+    debtTooLargePage.assertPageIsDisplayed()
+
   }
 }

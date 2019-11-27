@@ -16,7 +16,8 @@
 
 package testsupport.testdata
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, ZoneId}
+import java.util.Calendar
 
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
@@ -37,9 +38,9 @@ object TdAll {
   val debit1 = Debit(
     originCode = "IN1",
     amount     = 2500,
-    dueDate    = "2019-08-25",
+    dueDate    = "2019-11-25",
     interest   = None,
-    taxYearEnd = "2019-04-05"
+    taxYearEnd = "2020-04-05"
   )
 
   val debit1Json =
@@ -47,16 +48,16 @@ object TdAll {
     """{
     "originCode": "IN1",
      "amount": 2500,
-     "dueDate": "2019-08-25",
-     "taxYearEnd": "2019-04-05"
+     "dueDate": "2019-11-25",
+     "taxYearEnd": "2020-04-05"
     }""".asJson
 
   val debit2 = Debit(
     originCode = "IN2",
     amount     = 2400,
-    dueDate    = "2019-08-25", //TODO: consult with analytics if this data is correct
+    dueDate    = "2019-11-25", //TODO: consult with analytics if this data is correct
     interest   = None,
-    taxYearEnd = "2019-04-05"
+    taxYearEnd = "2020-04-05"
   )
 
   val debit2Json =
@@ -64,23 +65,23 @@ object TdAll {
     """{
     "originCode": "IN2",
      "amount": 2400,
-     "dueDate": "2019-08-25",
-     "taxYearEnd": "2019-04-05"
+     "dueDate": "2019-11-25",
+     "taxYearEnd": "2020-04-05"
     }""".asJson
 
   val return1 = Return(
-    taxYearEnd   = "2019-04-05",
-    issuedDate   = "2018-02-15",
-    dueDate      = "2019-01-31",
+    taxYearEnd   = "2020-04-05",
+    issuedDate   = "2019-11-10",
+    dueDate      = "2019-08-15",
     receivedDate = None
   )
 
   val return1Json =
     //language=Json
     """{
-    "taxYearEnd": "2019-04-05",
-     "issuedDate": "2018-02-15",
-     "dueDate": "2019-01-31"
+    "taxYearEnd": "2020-04-05",
+     "issuedDate": "2019-11-10",
+     "dueDate": "2019-08-15"
     }""".asJson
 
   val return2 = Return(
@@ -191,8 +192,31 @@ object TdAll {
     //language=Json
     """{
       "hasSelfAssessmentDebt": false,
+      "hasSelfAssessmentDebt": false,
        "hasOtherDebt": false
       }""".asJson
+
+  val eligibilityStatus = EligibilityStatus(eligible = true, reasons = Seq())
+
+  val eligibilityStatusJson =
+    //language=Json
+    """
+    {
+     "eligible": true,
+     "reasons": []
+    }
+  """.asJson
+
+  val ineligibileStatus = EligibilityStatus(eligible = false, reasons = Seq(TotalDebtIsTooHigh))
+
+  val ineligibleStatusJson =
+    //language=Json
+    """
+    {
+     "eligible": false,
+     "reasons": ["TotalDebtIsTooHigh"]
+    }
+  """.asJson
 
   val saEnrolment = Enrolment(
     key               = "IR-SA",

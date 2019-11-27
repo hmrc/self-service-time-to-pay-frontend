@@ -26,12 +26,18 @@ import testsupport.RichMatchers._
 class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
-  override val path: String = "/calculator/tax-liabilities"
+
+  override val path: String = "/pay-what-you-owe-in-instalments/calculator/tax-liabilities"
 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    //  readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+  }
+
+  def clickOnStartNowButton(): Unit = {
+    val button = xpath("/html/body/main/div[2]/article/form/div/button")
+    click on button
   }
 
   object Expected {
@@ -45,12 +51,14 @@ class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
 
       private val globalHeaderTextEnglish =
         """GOV.UK
-          |Set up a payment plan Sign-out
+          |Set up a payment plan
+          |Sign-out
         """.stripMargin
 
       private val globalHeaderTextWelsh =
         """GOV.UK
-          |Trefnu cynllun talu Allgofnodi
+          |Trefnu cynllun talu
+          |Allgofnodi
         """.stripMargin
     }
 
@@ -62,21 +70,37 @@ class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
       }
 
       private val mainTextEnglish =
-        """BETA	This is a new service – your feedback will help us to improve it. English | Cymraeg
+        """BETA	This is a new service – your feedback will help us to improve it.
+          |English | Cymraeg
           |Back
           |Your Self Assessment account summary
-          |Total due £5,000.00
+          |Total due £4,900.00
           |Self Assessment breakdown
+          |For the tax year ending 5 April 2020
+          |First payment on account
+          |Your payment is due on 25 November 2019
+          |£2,500.00
+          |Second payment on account
+          |Your payment is due on 25 November 2019
+          |£2,400.00
           |Continue
           |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
-        """BETA	Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella. English | Cymraeg
+        """BETA	Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
+          |English | Cymraeg
           |Yn ôl
           |Crynodeb o’ch cyfrif Hunanasesiad
-          |Cyfanswm sy’n ddyledus £5,000.00
+          |Cyfanswm sy’n ddyledus £4,900.00
           |Dadansoddiad Hunanasesiad
+          |Ar gyfer y flwyddyn dreth a ddaeth i ben 5 April 2020
+          |Taliad cyntaf ar gyfrif
+          |Mae’ch taliad yn ddyledus ar 25 November 2019
+          |£2,500.00
+          |Ail daliad ar gyfrif
+          |Mae’ch taliad yn ddyledus ar 25 November 2019
+          |£2,400.00
           |Yn eich blaen
           |Help gyda'r dudalen hon.
         """.stripMargin

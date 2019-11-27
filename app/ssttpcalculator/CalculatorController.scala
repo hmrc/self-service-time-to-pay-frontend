@@ -16,7 +16,7 @@
 
 package ssttpcalculator
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 
 import config.AppConfig
 import controllers.FrontendBaseController
@@ -40,7 +40,8 @@ class CalculatorController @Inject() (
     as:                Actions,
     journeyService:    JourneyService,
     requestSupport:    RequestSupport,
-    views:             Views)(
+    views:             Views,
+    clock:             Clock)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext
@@ -77,8 +78,8 @@ class CalculatorController @Inject() (
               Future.successful(Redirect(ssttpcalculator.routes.CalculatorController.getPaymentToday()))
             case PayTodayQuestion(Some(false)) =>
               val newJourney = journey.copy(
-                maybeCalculatorData = Some(CalculatorService.createCalculatorInput(0, LocalDate.now().getDayOfMonth, 0,
-                                                                                      journey.taxpayer.selfAssessment.debits.map(model.asDebitInput)))
+                maybeCalculatorData = Some(CalculatorService.createCalculatorInput(0, LocalDate.now(clock).getDayOfMonth, 0,
+                                                                                      journey.taxpayer.selfAssessment.debits.map(model.asDebitInput), clock))
               )
               journeyService.saveJourney(newJourney).map[Result] {
                 _ => Redirect(ssttpcalculator.routes.CalculatorController.getMonthlyPayment())
@@ -93,8 +94,8 @@ class CalculatorController @Inject() (
     journeyService.getJourney.map {
       case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, SelfAssessmentDetails(_, _, debits, _))), _, _, _, _, _) if debits.nonEmpty =>
         val newJourney = journey.copy(maybeCalculatorData =
-          Some(CalculatorService.createCalculatorInput(0, LocalDate.now().getDayOfMonth, 0,
-                                                          debits.map(model.asDebitInput))))
+          Some(CalculatorService.createCalculatorInput(0, LocalDate.now(clock).getDayOfMonth, 0,
+                                                          debits.map(model.asDebitInput), clock)))
         journeyService.saveJourney(newJourney)
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
         if (newJourney.calculatorInput.initialPayment.equals(BigDecimal(0))) Ok(views.payment_today_form(form, isSignedIn))
@@ -141,8 +142,9 @@ class CalculatorController @Inject() (
   private def upperMonthlyPaymentBound(sa: SelfAssessmentDetails, calculatorData: CalculatorInput): String =
     roundUpToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / CalculatorService.minimumMonthsAllowedTTP).toString
 
-  private def lowerMonthlyPaymentBound(sa: SelfAssessmentDetails, calculatorData: CalculatorInput): String =
-    roundDownToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / CalculatorService.getMaxMonthsAllowed(sa, LocalDate.now())).toString
+  private def lowerMonthlyPaymentBound(sa: SelfAssessmentDetails, calculatorData: CalculatorInput): String = {
+    roundDownToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / CalculatorService.getMaxMonthsAllowed(sa, LocalDate.now(clock))).toString
+  }
 
   private def roundDownToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100)
 
@@ -181,7 +183,7 @@ class CalculatorController @Inject() (
     if (schedules.indexOf(closestSchedule) == 0)
       List(Some(closestSchedule), getElementNItemsAbove(1, closestSchedule, schedules), getElementNItemsAbove(2, closestSchedule, schedules))
         .flatten
-    else if (schedules.indexOf(closestSchedule) == CalculatorService.getMaxMonthsAllowed(sa, LocalDate.now()) - 2)
+    else if (schedules.indexOf(closestSchedule) == CalculatorService.getMaxMonthsAllowed(sa, LocalDate.now(clock)) - 2)
       List(getElementNItemsBelow(2, closestSchedule, schedules), getElementNItemsBelow(1, closestSchedule, schedules), Some(closestSchedule))
         .flatten
     else
@@ -267,7 +269,7 @@ class CalculatorController @Inject() (
   def getCalculateInstalments: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.getJourney.flatMap {
       case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, sa)), calculatorData, _, _, _, _) =>
-        if (CalculatorService.getMaxMonthsAllowed(sa, LocalDate.now()) >= CalculatorService.minimumMonthsAllowedTTP) {
+        if (CalculatorService.getMaxMonthsAllowed(sa, LocalDate.now(clock)) >= CalculatorService.minimumMonthsAllowedTTP) {
           calculatorService.getInstalmentsSchedule(sa, journey.calculatorInput.initialPayment).map { monthsToSchedule =>
             Ok(views.calculate_instalments_form(CalculatorForm.createInstalmentForm(),
                                                 journey.lengthOfArrangement, monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(), loggedIn = true))

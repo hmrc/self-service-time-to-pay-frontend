@@ -39,33 +39,56 @@ object CalculatorTd {
     "chosenMonths": 4
     }""".asJson
 
-  val calculatorPaymentScheduleInstalment = new Instalment("2019-08-25", 20000: BigDecimal, 2: BigDecimal)
+  val calculatorPaymentScheduleInstalment = new Instalment("2019-08-25", 300: BigDecimal, 2: BigDecimal)
 
   val calculatorPaymentScheduleInstalmentJson =
     //language=Json
     """{
       "paymentDate": "2019-08-25",
-     "amount": 20000
+      "amount": 300,
+      "interest": 2
+    }""".asJson
+
+  val calculatorPaymentScheduleInstalment2 = new Instalment("2019-08-25", 120: BigDecimal, 4: BigDecimal)
+
+  val calculatorPaymentScheduleInstalmentJson2 =
+    //language=Json
+    """{
+      "paymentDate": "2019-08-25",
+      "amount": 120,
+      "interest": 4
+    }""".asJson
+
+  val calculatorPaymentScheduleInstalment3 = new Instalment("2019-08-25", 250: BigDecimal, 3: BigDecimal)
+
+  val calculatorPaymentScheduleInstalmentJson3 =
+    //language=Json
+    """{
+      "paymentDate": "2019-08-25",
+      "amount": 250,
+      "interest": 3
     }""".asJson
 
   val calculatorPaymentSchedule = new PaymentSchedule(
     startDate            = LocalDate.of(2019: Int, 4: Int, 23: Int),
     endDate              = LocalDate.of(2019: Int, 8: Int, 21: Int),
-    initialPayment       = 200: BigDecimal,
-    amountToPay          = 200: BigDecimal,
+    initialPayment       = 123: BigDecimal,
+    amountToPay          = 2500: BigDecimal,
     instalmentBalance    = 200: BigDecimal,
     totalInterestCharged = 200: BigDecimal,
     totalPayable         = 200: BigDecimal,
-    instalments          = List(calculatorPaymentScheduleInstalment))
+    instalments          = List(calculatorPaymentScheduleInstalment, calculatorPaymentScheduleInstalment2, calculatorPaymentScheduleInstalment3))
 
   val calculatorPaymentScheduleJson =
     s"""{
-    "initialPayment" : 200,
-     "amountToPay" : 200,
+    "startDate" : "2019-04-23",
+    "endDate" : "2019-08-21",
+    "initialPayment" : 0,
+     "amountToPay" : 4000,
      "instalmentBalance" : 200,
      "totalInterestCharged" : 200,
      "totalPayable" : 200,
-     "instalments" : [${calculatorPaymentScheduleInstalmentJson}]
+     "instalments" : [${calculatorPaymentScheduleInstalmentJson}, ${calculatorPaymentScheduleInstalmentJson2}, ${calculatorPaymentScheduleInstalmentJson3}]
     }""".asJson
 
   val calculatorInput = new CalculatorInput(

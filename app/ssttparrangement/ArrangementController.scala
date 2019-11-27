@@ -159,7 +159,8 @@ class ArrangementController @Inject() (
       schedule.instalments.length,
       dayOfMonth,
       schedule.initialPayment,
-      debits
+      debits,
+      clock
     )
 
     calculatorConnector.calculatePaymentSchedule(input).map[Journey](paymentSchedule =>

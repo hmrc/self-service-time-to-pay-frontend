@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
+import java.time.Clock
+
 import akka.actor.ActorSystem
 import akka.stream._
 import config.AppConfig
@@ -55,13 +57,15 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
   val mockActions: Actions = mock[Actions]
   val mockViews: Views = mock[Views]
   val mockRequestSupport: RequestSupport = mock[RequestSupport]
+  val mockClock = mock[Clock]
   val controller: CalculatorController = new CalculatorController(
     mcc               = mockMessagesControllerComponents,
     calculatorService = mockCalculatorService,
     as                = mockActions,
     journeyService    = mockSessionCache,
     views             = mockViews,
-    requestSupport    = mockRequestSupport
+    requestSupport    = mockRequestSupport,
+    clock             = mockClock
   )
   val fakeRequest = FakeRequest()
 

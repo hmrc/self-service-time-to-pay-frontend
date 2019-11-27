@@ -16,7 +16,7 @@
 
 package ssttpcalculator
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
 
@@ -34,7 +34,8 @@ import scala.math.BigDecimal
 
 class CalculatorService @Inject() (
     calculatorConnector: CalculatorConnector,
-    workingDays:         WorkingDaysService)(implicit ec: ExecutionContext) {
+    workingDays:         WorkingDaysService,
+    clock:               Clock)(implicit ec: ExecutionContext) {
 
   //todo perhaps merge these methods and change back end so it only one call
   //TODO why this method returns list of schedules by month? WTF?
@@ -47,10 +48,10 @@ class CalculatorService @Inject() (
   ): Future[Map[Int, PaymentSchedule]] = {
 
     val input: List[(Int, CalculatorInput)] =
-      getMonthRange(sa)
+      getMonthRange(sa, clock)
         .map { monthNumber =>
           val calculatorInput =
-            createCalculatorInput(monthNumber, LocalDate.now().getDayOfMonth, intialPayment, sa.debits.map(model.asDebitInput))
+            createCalculatorInput(monthNumber, LocalDate.now(clock).getDayOfMonth, intialPayment, sa.debits.map(model.asDebitInput), clock)
           (monthNumber, validateCalculatorDates(calculatorInput, monthNumber, sa.debits.map(model.asDebitInput)))
         }.toList
 
@@ -79,23 +80,23 @@ class CalculatorService @Inject() (
       debits:          Seq[DebitInput]
   ): CalculatorInput = {
     val workingDaysInAWeek = 5
-    val firstPaymentDate: LocalDate = dayOfMonthCheck(workingDays.addWorkingDays(LocalDate.now(), workingDaysInAWeek))
+    val firstPaymentDate: LocalDate = dayOfMonthCheck(workingDays.addWorkingDays(LocalDate.now(clock), workingDaysInAWeek))
 
     if (calculatorInput.initialPayment > 0) {
       if ((debits.map(_.amount).sum - calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
-        calculatorInput.copy(startDate        = LocalDate.now,
+        calculatorInput.copy(startDate        = LocalDate.now(clock),
                              initialPayment   = BigDecimal(0),
                              firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
                              endDate          = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
       } else {
-        calculatorInput.copy(startDate        = LocalDate.now,
+        calculatorInput.copy(startDate        = LocalDate.now(clock),
                              firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
                              endDate          = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
       }
     } else
       calculatorInput.copy(
         debits           = debits,
-        startDate        = LocalDate.now(),
+        startDate        = LocalDate.now(clock),
         endDate          = calculatorInput.startDate.plusMonths(numberOfMonths),
         firstPaymentDate = Some(firstPaymentDate)
       )
@@ -127,8 +128,9 @@ object CalculatorService {
       durationMonths: Int,
       dayOfMonth:     Int,
       initialPayment: BigDecimal      = BigDecimal(0),
-      debits:         Seq[DebitInput]): CalculatorInput = {
-    val startDate = LocalDate.now()
+      debits:         Seq[DebitInput],
+      clock:          Clock): CalculatorInput = {
+    val startDate = LocalDate.now(clock)
 
     val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
     val daysInWeek = 7
@@ -170,8 +172,8 @@ object CalculatorService {
     lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
   }
 
-  def getMonthRange(selfAssessment: SelfAssessmentDetails): Seq[Int] =
-    minimumMonthsAllowedTTP to getMaxMonthsAllowed(selfAssessment, LocalDate.now())
+  def getMonthRange(selfAssessment: SelfAssessmentDetails, clock: Clock): Seq[Int] =
+    minimumMonthsAllowedTTP to getMaxMonthsAllowed(selfAssessment, LocalDate.now(clock))
 
   implicit def ordered[A <% Comparable[_ >: A]]: Ordering[A] = new Ordering[A] {
     def compare(x: A, y: A): Int = x compareTo y

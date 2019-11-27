@@ -16,12 +16,11 @@
 
 package pagespecs
 
-import langswitch.Languages
+import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxpayerStub}
 
-class TaxLiabilitiesPageSpec extends ItSpec {
-
+class PaymentTodayPageSpec extends ItSpec {
   def beginJourney = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
@@ -29,25 +28,42 @@ class TaxLiabilitiesPageSpec extends ItSpec {
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton
   }
 
-  "language" in {
-    beginJourney
-    taxLiabilitiesPage.assertPageIsDisplayed()
-
-    taxLiabilitiesPage.clickOnWelshLink()
-    taxLiabilitiesPage.assertPageIsDisplayed(Languages.Welsh)
-
-    taxLiabilitiesPage.clickOnEnglishLink()
-    taxLiabilitiesPage.assertPageIsDisplayed(Languages.English)
-  }
-
-  "continue to payment-today" in
+  "language" in
     {
       beginJourney
-      taxLiabilitiesPage.assertPageIsDisplayed()
-
-      taxLiabilitiesPage.clickOnStartNowButton
       paymentTodayQuestionPage.assertPageIsDisplayed
+
+      paymentTodayQuestionPage.clickOnWelshLink()
+      paymentTodayQuestionPage.assertPageIsDisplayed(Welsh)
+
+      paymentTodayQuestionPage.clickOnEnglishLink()
+      paymentTodayQuestionPage.assertPageIsDisplayed(English)
     }
+
+  "select yes and go to calculator payment-today" in
+    {
+      beginJourney
+      paymentTodayQuestionPage.assertPageIsDisplayed
+
+      paymentTodayQuestionPage.selectRadioButton(true)
+      paymentTodayQuestionPage.clickContinue
+
+      paymentTodayCalculatorPage.assertPageIsDisplayed
+    }
+
+  "select no and go to monthlyPaymentAmount" in
+    {
+      beginJourney
+      paymentTodayQuestionPage.assertPageIsDisplayed
+
+      paymentTodayQuestionPage.selectRadioButton(false)
+      paymentTodayQuestionPage.clickContinue
+
+      monthlyPaymentAmountPage.assertPageIsDisplayed
+    }
+
 }
+

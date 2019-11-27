@@ -24,7 +24,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{FreeSpec, TestData}
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
-import pagespecs.pages.{BaseUrl, GgSignInPage, StartPage, TaxLiabilitiesPage}
+import pagespecs.pages._
 import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import com.softwaremill.macwire._
@@ -56,7 +56,7 @@ class ItSpec
 
     )).build()
 
-  def frozenTimeString: String = "2027-11-02T16:33:51.880"
+  def frozenTimeString: String = "2019-11-25T16:33:51.880"
 
   lazy val overridingsModule: AbstractModule = new AbstractModule {
 
@@ -80,5 +80,13 @@ class ItSpec
   lazy val startPage: StartPage = wire[StartPage]
   lazy val ggSignInPage: GgSignInPage = wire[GgSignInPage]
   lazy val taxLiabilitiesPage: TaxLiabilitiesPage = wire[TaxLiabilitiesPage]
+  lazy val debtTooLargePage: DebtTooLargePage = wire[DebtTooLargePage]
+  lazy val paymentTodayQuestionPage: PaymentTodayQuestionPage = wire[PaymentTodayQuestionPage]
+  lazy val paymentTodayCalculatorPage: PaymentTodayCalculatorPage = wire[PaymentTodayCalculatorPage]
+  lazy val monthlyPaymentAmountPage: MonthlyPaymentAmountPage = wire[MonthlyPaymentAmountPage]
+  lazy val paymentSummaryPage: PaymentSummaryPage = wire[PaymentSummaryPage]
+  lazy val calculatorInstalmentsAbPage: CalculatorInstalmentsAbPage = wire[CalculatorInstalmentsAbPage]
+  lazy val instalmentSummarySelectDatePage: InstalmentSummarySelectDatePage = wire[InstalmentSummarySelectDatePage]
+  lazy val instalmentSummaryPage: InstalmentSummaryPage = wire[InstalmentSummaryPage]
 
 }

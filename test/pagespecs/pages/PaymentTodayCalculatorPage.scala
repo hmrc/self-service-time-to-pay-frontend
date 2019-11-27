@@ -20,57 +20,40 @@ import langswitch.Languages.{English, Welsh}
 import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
 import testsupport.RichMatchers._
+import org.scalatest.selenium.WebBrowser
 
-class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
 
-  override val path: String = "/pay-what-you-owe-in-instalments/calculator/payment-today-question"
+  override def path: String = "/pay-what-you-owe-in-instalments/calculator/payment-today"
 
-  def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion = probing {
+  override def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion = probing {
     readPath() shouldBe path
     //readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def selectRadioButton(yesOrNo: Boolean) =
-    {
-      val yesRadioButton = xpath("//*[@id=\"paytoday-true\"]")
-      val noRadioButton = xpath("//*[@id=\"paytoday-false\"]")
+  def assertErrorIsDisplayed: Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces shouldBe Expected.TextError().stripSpaces()
+  }
 
-      if (yesOrNo)
-        click on yesRadioButton
-      else
-        click on noRadioButton
+  def enterAmount(value: String) =
+    {
+      val amount = xpath("//*[@id=\"amount\"]")
+      click on amount
+      enter(value)
     }
 
   def clickContinue =
     {
-      val button = xpath("//*[@id=\"next\"]")
+      val button = xpath("//*[@id=\"content\"]/article/form/div/button")
       click on button
     }
 
   object Expected {
-
-    object GlobalHeaderText {
-
-      def apply()(implicit language: Language): String = language match {
-        case English => globalHeaderTextEnglish
-        case Welsh   => globalHeaderTextWelsh
-      }
-
-      private val globalHeaderTextEnglish =
-        """GOV.UK
-          |Set up a payment plan Sign-out
-        """.stripMargin
-
-      private val globalHeaderTextWelsh =
-        """GOV.UK
-          |Trefnu cynllun talu Allgofnodi
-        """.stripMargin
-    }
 
     object MainText {
 
@@ -78,36 +61,42 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         case English => mainTextEnglish
         case Welsh   => mainTextWelsh
       }
-
       private val mainTextEnglish =
-        """BETA	This is a new service – your feedback will help us to improve it.
+        """BETA This is a new service – your feedback will help us to improve it.
           |English | Cymraeg
           |Back
-          |Can you make an upfront payment?
-          |Making an upfront payment before you set up your plan means your monthly payments will be lower.
-          |unchecked
-          |Yes
-          |unchecked
-          |No
+          |How much can you pay upfront?
+          |£
           |Continue
           |Get help with this page.
-        """.stripMargin
+    """.stripMargin
 
       private val mainTextWelsh =
-        """BETA	Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
+        """BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
           |English | Cymraeg
           |Yn ôl
-          |A allwch wneud taliad ymlaen llaw?
-          |Bydd gwneud taliad ymlaen llaw cyn i chi drefnu’ch cynllun yn golygu y bydd eich taliadau misol yn is.
-          |unchecked
-          |Iawn
-          |unchecked
-          |Na
+          |Faint y gallwch ei dalu ymlaen llaw?
+          |£
           |Yn eich blaen
           |Help gyda'r dudalen hon.
         """.stripMargin
     }
 
+    object TextError {
+      def apply(): String = mainErrorEnglish
+      private val mainErrorEnglish =
+        """BETA This is a new service – your feedback will help us to improve it.
+          |English | Cymraeg
+          |Back
+          |Something you've entered isn't valid
+          |You need to enter an amount less than the amount you owe
+          |How much can you pay upfront?
+          |Enter the amount you want to pay upfront
+          |£
+          |Continue
+          |Get help with this page.
+        """.stripMargin
+    }
   }
 
   implicit class StringOps(s: String) {
@@ -122,4 +111,5 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       .mkString("\n")
 
   }
+
 }

@@ -22,8 +22,7 @@ import org.scalatest.Matchers
 import play.api.libs.json._
 import testsupport.WireMockSupport
 import testsupport.testdata.TdAll
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier}
 
 object AuthStub extends Matchers {
 

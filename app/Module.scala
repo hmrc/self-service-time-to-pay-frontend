@@ -18,6 +18,9 @@ import java.time.{Clock, ZoneOffset}
 
 import com.google.inject.{AbstractModule, Provides, Singleton}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
+import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 class Module extends AbstractModule {
 
@@ -28,6 +31,10 @@ class Module extends AbstractModule {
   def authorisedFunctions(ac: AuthConnector): AuthorisedFunctions = new AuthorisedFunctions {
     override def authConnector: AuthConnector = ac
   }
+
+  //    @Provides
+  //    @Singleton
+  //    def authConnector(httpClient: HttpClient, servicesConfig: ServicesConfig): AuthConnector = new DefaultAuthConnector(httpClient, servicesConfig)
 
   @Provides
   @Singleton
