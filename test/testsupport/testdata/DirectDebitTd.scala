@@ -23,8 +23,8 @@ import testsupport.testdata.TdAll._
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 object DirectDebitTd {
-  val sortCode = "12-09-98"
-  val accountNumber = "124365"
+  val sortCode = "12-34-56"
+  val accountNumber = "12345678"
   val accountName = "Mr John Campbell"
 
   val directDebitInstruction = new DirectDebitInstruction(
@@ -33,18 +33,20 @@ object DirectDebitTd {
     referenceNumber = Some("123456789"),
     creationDate    = Some("2019-04-05"),
     paperAuddisFlag = Some(true),
-    ddiRefNumber    = None,
-    ddiReferenceNo  = None,
+    ddiRefNumber    = Some("123ABC123"),
+    ddiReferenceNo  = Some("123ABC123"),
     accountName     = Some(accountName))
 
   val directDebitInstructionJson =
     //language=Json
     """{
-        "sortCode":"12-09-98",
-   "accountNumber":"124365",
+        "sortCode":"12-34-56",
+   "accountNumber":"12345678",
    "referenceNumber":"123456789",
    "creationDate": "2019-04-05",
    "paperAuddisFlag": true,
+   "ddiRefNumber": "123ABC123",
+   "ddiReferenceNo": "123ABC123",
    "accountName":"Mr John Campbell"
     }""".asJson
 

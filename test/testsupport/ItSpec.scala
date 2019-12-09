@@ -85,8 +85,12 @@ class ItSpec
   lazy val paymentTodayCalculatorPage: PaymentTodayCalculatorPage = wire[PaymentTodayCalculatorPage]
   lazy val monthlyPaymentAmountPage: MonthlyPaymentAmountPage = wire[MonthlyPaymentAmountPage]
   lazy val paymentSummaryPage: PaymentSummaryPage = wire[PaymentSummaryPage]
-  lazy val calculatorInstalmentsAbPage: CalculatorInstalmentsAbPage = wire[CalculatorInstalmentsAbPage]
+  lazy val calculatorInstalmentsPage: CalculatorInstalmentsPage = wire[CalculatorInstalmentsPage]
   lazy val instalmentSummarySelectDatePage: InstalmentSummarySelectDatePage = wire[InstalmentSummarySelectDatePage]
   lazy val instalmentSummaryPage: InstalmentSummaryPage = wire[InstalmentSummaryPage]
+  lazy val termsAndConditionsPage: TermsAndConditionsPage = wire[TermsAndConditionsPage]
+  lazy val directDebitPage: DirectDebitPage = wire[DirectDebitPage]
+  lazy val directDebitConfirmationPage: DirectDebitConfirmationPage = wire[DirectDebitConfirmationPage]
+  lazy val arrangementSummaryPage: ArrangementSummaryPage = wire[ArrangementSummaryPage]
 
 }

@@ -23,21 +23,21 @@ import org.scalatest.Assertion
 import org.scalatest.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-class CalculatorInstalmentsAbPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
 
-  override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments/ab"
+  override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
 
   override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing{
     readPath() shouldBe path
-    //  readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
   def assertPageIsDisplayed(checkState: String)(implicit lang: Language): Assertion = probing{
     readPath() shouldBe path
-    //  readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText(checkState).stripSpaces()
   }
 
@@ -54,6 +54,25 @@ class CalculatorInstalmentsAbPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
     }
 
   object Expected {
+
+    object GlobalHeaderText {
+
+      def apply()(implicit language: Language): String = language match {
+        case English => globalHeaderTextEnglish
+        case Welsh   => globalHeaderTextWelsh
+      }
+
+      private val globalHeaderTextEnglish =
+        """GOV.UK
+          |Set up a payment plan
+        """.stripMargin
+
+      private val globalHeaderTextWelsh =
+        """GOV.UK
+          |Trefnu cynllun talu
+        """.stripMargin
+    }
+
     object MainText {
       def apply(checkState: String = "unchecked")(implicit language: Language): String = language match {
         case English => mainTextEnglish(checkState)
@@ -136,18 +155,5 @@ class CalculatorInstalmentsAbPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |Help gyda'r dudalen hon.
         """.stripMargin
     }
-  }
-
-  implicit class StringOps(s: String) {
-    /**
-     * Transforms string so it's easier it to compare.
-     */
-    def stripSpaces(): String = s
-      .replaceAll("[^\\S\\r\\n]+", " ") //replace many consecutive white-spaces (but not new lines) with one space
-      .replaceAll("[\r\n]+", "\n") //replace many consecutive new lines with one new line
-      .split("\n").map(_.trim) //trim each line
-      .filterNot(_ == "") //remove any empty lines
-      .mkString("\n")
-
   }
 }

@@ -20,26 +20,17 @@ import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
-  import WebBrowser._
+  override def path: String = "/pay-what-you-owe-in-instalments/arrangement/summary"
 
-  override def path: String = "/pay-what-you-owe-in-instalments/calculator/payment-summary"
-
-  override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
+  override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing{
     readPath() shouldBe path
     readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
-
-  def clickContinue() =
-    {
-      val button = xpath("//*[@id=\"content\"]/article/a[2]")
-      click on button
-    }
 
   object Expected {
 
@@ -66,33 +57,38 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         case English => mainTextEnglish
         case Welsh   => mainTextWelsh
       }
+
       private val mainTextEnglish =
-        """BETA This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
-          |Payment summary
-          |Upfront payment
-          |Taken in 3 to 5 days' time
-          |£123.0
-          |Change Upfront payment
-          |Remaining amount to pay
-          |£4777.0
-          |Continue
+        """
+          |Help improve GOV.UK No Thanks
+          |Get involved in making government services better (opens in a new window)
+          |BETA This is a new service – your feedback will help us to improve it.
+          |Application successful
+          |Direct Debit mandate reference:
+          |123ABC123
+          |What happens next?
+          |We will send you a letter within 5 days to confirm your payment dates.
+          |First payment collected on: 25 August 2019
+          |If you need to change your payment plan
+          |Call the HMRC Helpline on 0300 322 7015.
+          |What did you think of this service? (takes 30 seconds)
           |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
-        """BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |Yn ôl
-          |Crynodeb o’r taliadau
-          |Taliad ymlaen llaw
-          |Wedi’i gymryd ymhen 3 i 5 diwrnod
-          |£123.0
-          |Newid Taliad ymlaen llaw
-          |Swm sy’n weddill i’w dalu
-          |£4777.0
-          |Yn eich blaen
+        """
+          |Helpwch i wella GOV.UK Dim diolch
+          |Byddwch yn rhan o wneud gwasanaethau’r llywodraeth yn well (yn agor ffenestr newydd)
+          |BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
+          |Cais yn llwyddiannus
+          |Cyfeirnod mandad Debyd Uniongyrchol:
+          |123ABC123
+          |Beth sy’n digwydd nesaf?
+          |Byddwn yn anfon llythyr atoch cyn pen 5 diwrnod i gadarnhau’ch dyddiadau talu.
+          |Cesglir y taliad cyntaf ar: 25 August 2019
+          |Os oes angen i chi newid eich cynllun talu
+          |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.
+          |Beth oedd eich barn am y gwasanaeth hwn? (mae’n cymryd 30 eiliad)
           |Help gyda'r dudalen hon.
         """.stripMargin
     }

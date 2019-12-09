@@ -27,14 +27,12 @@ GET         /calculator/payment-today-question                            ssttpc
 POST        /calculator/payment-today-question                            ssttpcalculator.CalculatorController.submitPayTodayQuestion()
 GET         /calculator/payment-today                                     ssttpcalculator.CalculatorController.getPaymentToday()
 POST        /calculator/payment-today                                     ssttpcalculator.CalculatorController.submitPaymentToday()
-GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getCalculateInstalments()
-POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitCalculateInstalments()
 GET         /calculator/tax-liabilities                                   ssttpcalculator.CalculatorController.getTaxLiabilities()
 
 GET         /calculator/monthly-payment-amount                            ssttpcalculator.CalculatorController.getMonthlyPayment()
 POST        /calculator/monthly-payment-amount                            ssttpcalculator.CalculatorController.submitMonthlyPayment()
-GET         /calculator/instalments/ab                                    ssttpcalculator.CalculatorController.getCalculateInstalmentsAB()
-POST        /calculator/instalments/ab                                    ssttpcalculator.CalculatorController.submitCalculateInstalmentsAB()
+GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getCalculateInstalments()
+POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitCalculateInstalments()
 
 #not logged in
 GET         /payment-plan-calculator/enter-total-amount                   ssttpcalculator.CalculatorController.getAmountDue()

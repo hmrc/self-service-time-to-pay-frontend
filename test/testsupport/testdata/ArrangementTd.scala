@@ -32,16 +32,16 @@ object ArrangementTd {
 
   val arrangementDirectDebit = new ArrangementDirectDebit(
     accountName   = "Mr John Campbell",
-    sortCode      = "21-09-89",
-    accountNumber = "097865"
+    sortCode      = "12-34-56",
+    accountNumber = "12345678"
   )
 
   val arrangementDirectDebitJson =
     //language=Json
     """{
     "accountName": "Mr John Campbell",
-     "sortCode": "21-09-89",
-     "accountNumber": "097865"
+     "sortCode": "12-34-56",
+     "accountNumber": "12345678"
     }""".asJson
 
   val tTPArrangement = new TTPArrangement(paymentPlanReference = "12345678",

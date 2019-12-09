@@ -19,8 +19,9 @@ package pagespecs
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs._
+import testsupport.testdata.DirectDebitTd
 
-class InstalmentSummaryPageSpec extends ItSpec {
+class ArrangementSummaryPageSpec extends ItSpec {
 
   def beginJourney =
     {
@@ -40,39 +41,39 @@ class InstalmentSummaryPageSpec extends ItSpec {
       calculatorInstalmentsPage.clickContinue
       instalmentSummarySelectDatePage.selectFirstOption
       instalmentSummarySelectDatePage.clickContinue
-    }
-
-  "language" in
-    {
-      beginJourney
-      instalmentSummaryPage.assertPageIsDisplayed
-
-      instalmentSummaryPage.clickOnWelshLink()
-      instalmentSummaryPage.assertPageIsDisplayed(Welsh)
-
-      instalmentSummaryPage.clickOnEnglishLink()
-      instalmentSummaryPage.assertPageIsDisplayed(English)
-    }
-
-  "change monthly instalments" in
-    {
-      beginJourney
-      instalmentSummaryPage.clickInstalmentsChange
-      calculatorInstalmentsPage.assertPageIsDisplayed
-    }
-
-  "change collection day" in
-    {
-      beginJourney
-      instalmentSummaryPage.clickCollectionDayChange
-      instalmentSummarySelectDatePage.assertPageIsDisplayed
-    }
-
-  "continue to the next page" in
-    {
-      beginJourney
       instalmentSummaryPage.clickContinue
-      termsAndConditionsPage.assertPageIsDisplayed
+      termsAndConditionsPage.clickContinue
+      directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+      DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+      DirectDebitStub.getBanks
+      directDebitPage.clickContinue
+      DirectDebitStub.postPaymentPlan
     }
+
+  def englishJourney =
+    {
+      directDebitConfirmationPage.clickContinue
+      ArrangementStub.arrangementSubmit
+    }
+
+  def welshJourney =
+    {
+      directDebitConfirmationPage.clickOnWelshLink()
+      directDebitConfirmationPage.clickContinue
+      ArrangementStub.arrangementSubmit
+    }
+
+  "language English" in
+    {
+      beginJourney
+      englishJourney
+      arrangementSummaryPage.assertPageIsDisplayed(English)
+    }
+
+  "language Welsh" in {
+    beginJourney
+    welshJourney
+    arrangementSummaryPage.assertPageIsDisplayed(Welsh)
+  }
 
 }

@@ -108,4 +108,17 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
         None
     }
   }
+
+  implicit class StringOps(s: String) {
+    /**
+     * Transforms string so it's easier it to compare.
+     */
+    def stripSpaces(): String = s
+      .replaceAll("[^\\S\\r\\n]+", " ") //replace many consecutive white-spaces (but not new lines) with one space
+      .replaceAll("[\r\n]+", "\n") //replace many consecutive new lines with one new line
+      .split("\n").map(_.trim) //trim each line
+      .filterNot(_ == "") //remove any empty lines
+      .mkString("\n")
+
+  }
 }

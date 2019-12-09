@@ -20,7 +20,7 @@ import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs._
 
-class InstalmentSummaryPageSpec extends ItSpec {
+class TermsAndConditionsPageSpec extends ItSpec {
 
   def beginJourney =
     {
@@ -40,39 +40,27 @@ class InstalmentSummaryPageSpec extends ItSpec {
       calculatorInstalmentsPage.clickContinue
       instalmentSummarySelectDatePage.selectFirstOption
       instalmentSummarySelectDatePage.clickContinue
+      instalmentSummaryPage.clickContinue
+
     }
 
   "language" in
     {
       beginJourney
-      instalmentSummaryPage.assertPageIsDisplayed
-
-      instalmentSummaryPage.clickOnWelshLink()
-      instalmentSummaryPage.assertPageIsDisplayed(Welsh)
-
-      instalmentSummaryPage.clickOnEnglishLink()
-      instalmentSummaryPage.assertPageIsDisplayed(English)
-    }
-
-  "change monthly instalments" in
-    {
-      beginJourney
-      instalmentSummaryPage.clickInstalmentsChange
-      calculatorInstalmentsPage.assertPageIsDisplayed
-    }
-
-  "change collection day" in
-    {
-      beginJourney
-      instalmentSummaryPage.clickCollectionDayChange
-      instalmentSummarySelectDatePage.assertPageIsDisplayed
-    }
-
-  "continue to the next page" in
-    {
-      beginJourney
-      instalmentSummaryPage.clickContinue
       termsAndConditionsPage.assertPageIsDisplayed
+
+      termsAndConditionsPage.clickOnWelshLink()
+      termsAndConditionsPage.assertPageIsDisplayed(Welsh)
+
+      termsAndConditionsPage.clickOnEnglishLink()
+      termsAndConditionsPage.assertPageIsDisplayed(English)
     }
 
+  "click continue" in
+    {
+      beginJourney
+      termsAndConditionsPage.clickContinue
+      directDebitPage.assertPageIsDisplayed
+
+    }
 }

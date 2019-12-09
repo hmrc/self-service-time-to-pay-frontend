@@ -158,14 +158,14 @@ object TdAll {
   """.asJson
 
   val taxpayer = Taxpayer(
-    customerName   = "Mr Ethan Johnson",
+    customerName   = "Mr John Campbell",
     addresses      = List(address),
     selfAssessment = selfAssessment
   )
 
   val taxpayerJson =
     s"""{
-     "customerName": "Mr Ethan Johnson",
+     "customerName": "Mr John Campbell",
      "addresses": [${addressJson}],
      "selfAssessment": ${selfAssessmentJson}
     }""".asJson

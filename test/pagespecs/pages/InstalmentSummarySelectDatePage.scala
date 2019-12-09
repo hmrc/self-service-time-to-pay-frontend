@@ -31,13 +31,13 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
   override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
-    //readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
   def assertPageIsDisplayed(checkState1: String, chechState2: String)(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
-    //readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText(checkState1, chechState2).stripSpaces()
   }
 
@@ -71,6 +71,25 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     }
 
   object Expected {
+
+    object GlobalHeaderText {
+
+      def apply()(implicit language: Language): String = language match {
+        case English => globalHeaderTextEnglish
+        case Welsh   => globalHeaderTextWelsh
+      }
+
+      private val globalHeaderTextEnglish =
+        """GOV.UK
+          |Set up a payment plan
+        """.stripMargin
+
+      private val globalHeaderTextWelsh =
+        """GOV.UK
+          |Trefnu cynllun talu
+        """.stripMargin
+    }
+
     object MainText {
       def apply(checkState1: String = "unchecked", checkState2: String = "unchecked")(implicit language: Language): String = language match {
         case English => mainTextEnglish(checkState1, checkState2: String)
@@ -127,18 +146,5 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
            |Get help with this page.
         """.stripMargin
     }
-  }
-
-  implicit class StringOps(s: String) {
-    /**
-     * Transforms string so it's easier it to compare.
-     */
-    def stripSpaces(): String = s
-      .replaceAll("[^\\S\\r\\n]+", " ") //replace many consecutive white-spaces (but not new lines) with one space
-      .replaceAll("[\r\n]+", "\n") //replace many consecutive new lines with one new line
-      .split("\n").map(_.trim) //trim each line
-      .filterNot(_ == "") //remove any empty lines
-      .mkString("\n")
-
   }
 }

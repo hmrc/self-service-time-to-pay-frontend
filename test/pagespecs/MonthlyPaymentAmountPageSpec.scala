@@ -66,6 +66,6 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
       monthlyPaymentAmountPage.clickContinue
-      calculatorInstalmentsAbPage.assertPageIsDisplayed
+      calculatorInstalmentsPage.assertPageIsDisplayed
     }
 }

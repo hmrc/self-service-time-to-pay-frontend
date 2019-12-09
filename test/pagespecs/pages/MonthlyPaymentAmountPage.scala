@@ -31,13 +31,13 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
-    //  readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
   }
 
   def assertPageIsDisplayedAltPath(difference: Int)(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
-    //  readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText(difference).stripSpaces
   }
 
@@ -60,6 +60,24 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     }
 
   object Expected {
+
+    object GlobalHeaderText {
+
+      def apply()(implicit language: Language): String = language match {
+        case English => globalHeaderTextEnglish
+        case Welsh   => globalHeaderTextWelsh
+      }
+
+      private val globalHeaderTextEnglish =
+        """GOV.UK
+          |Set up a payment plan
+        """.stripMargin
+
+      private val globalHeaderTextWelsh =
+        """GOV.UK
+          |Trefnu cynllun talu
+        """.stripMargin
+    }
 
     object MainText {
       def apply(increase: Int = 0)(implicit language: Language): String = language match {
@@ -108,17 +126,5 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
           |Get help with this page.
         """.stripMargin
     }
-  }
-  implicit class StringOps(s: String) {
-    /**
-     * Transforms string so it's easier it to compare.
-     */
-    def stripSpaces(): String = s
-      .replaceAll("[^\\S\\r\\n]+", " ") //replace many consecutive white-spaces (but not new lines) with one space
-      .replaceAll("[\r\n]+", "\n") //replace many consecutive new lines with one new line
-      .split("\n").map(_.trim) //trim each line
-      .filterNot(_ == "") //remove any empty lines
-      .mkString("\n")
-
   }
 }

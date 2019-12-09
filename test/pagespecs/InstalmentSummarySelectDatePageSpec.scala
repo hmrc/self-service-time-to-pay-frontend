@@ -36,8 +36,8 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
       monthlyPaymentAmountPage.clickContinue
-      calculatorInstalmentsAbPage.selectAnOption
-      calculatorInstalmentsAbPage.clickContinue
+      calculatorInstalmentsPage.selectAnOption
+      calculatorInstalmentsPage.clickContinue
     }
 
   "language" in

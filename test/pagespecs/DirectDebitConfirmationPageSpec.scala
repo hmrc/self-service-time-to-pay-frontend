@@ -19,8 +19,9 @@ package pagespecs
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs._
+import testsupport.testdata.DirectDebitTd
 
-class CalculatorInstalmentsAbPageSpec extends ItSpec {
+class DirectDebitConfirmationPageSpec extends ItSpec {
 
   def beginJourney =
     {
@@ -36,40 +37,48 @@ class CalculatorInstalmentsAbPageSpec extends ItSpec {
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
       monthlyPaymentAmountPage.clickContinue
+      calculatorInstalmentsPage.selectAnOption
+      calculatorInstalmentsPage.clickContinue
+      instalmentSummarySelectDatePage.selectFirstOption
+      instalmentSummarySelectDatePage.clickContinue
+      instalmentSummaryPage.clickContinue
+      termsAndConditionsPage.clickContinue
+      directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+      DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+      DirectDebitStub.getBanks
+      directDebitPage.clickContinue
     }
 
   "language" in
     {
       beginJourney
-      calculatorInstalmentsAbPage.assertPageIsDisplayed
+      directDebitConfirmationPage.assertPageIsDisplayed
 
-      calculatorInstalmentsAbPage.clickOnWelshLink()
-      calculatorInstalmentsAbPage.assertPageIsDisplayed(Welsh)
+      directDebitConfirmationPage.clickOnWelshLink()
+      directDebitConfirmationPage.assertPageIsDisplayed(Welsh)
 
-      calculatorInstalmentsAbPage.clickOnEnglishLink()
-      calculatorInstalmentsAbPage.assertPageIsDisplayed(English)
+      directDebitConfirmationPage.clickOnEnglishLink()
+      directDebitConfirmationPage.assertPageIsDisplayed(English)
     }
 
-  "select a radio button " in
+  "change sort code" in
+    {
+      beginJourney
+      directDebitConfirmationPage.clickChangeButton
+      directDebitPage.assertPageIsDisplayed
+    }
+
+  "click continue" in
     {
       beginJourney
 
-      calculatorInstalmentsAbPage.clickOnWelshLink()
-      calculatorInstalmentsAbPage.selectAnOption
-      calculatorInstalmentsAbPage.assertPageIsDisplayed("checked")(Welsh)
+      DirectDebitStub.postPaymentPlan
 
-      calculatorInstalmentsAbPage.clickOnEnglishLink()
-      calculatorInstalmentsAbPage.selectAnOption
-      calculatorInstalmentsAbPage.assertPageIsDisplayed("checked")(English)
+      directDebitConfirmationPage.clickContinue
 
+      ArrangementStub.arrangementSubmit
+
+      arrangementSummaryPage.assertPageIsDisplayed
     }
 
-  "select an option and continue" in
-    {
-      beginJourney
-      calculatorInstalmentsAbPage.selectAnOption
-      calculatorInstalmentsAbPage.assertPageIsDisplayed("checked")(English)
-      calculatorInstalmentsAbPage.clickContinue
-      instalmentSummarySelectDatePage.assertPageIsDisplayed
-    }
 }

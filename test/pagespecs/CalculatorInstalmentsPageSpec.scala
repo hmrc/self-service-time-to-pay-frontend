@@ -20,7 +20,7 @@ import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs._
 
-class InstalmentSummaryPageSpec extends ItSpec {
+class CalculatorInstalmentsPageSpec extends ItSpec {
 
   def beginJourney =
     {
@@ -36,43 +36,40 @@ class InstalmentSummaryPageSpec extends ItSpec {
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
       monthlyPaymentAmountPage.clickContinue
-      calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.clickContinue
-      instalmentSummarySelectDatePage.selectFirstOption
-      instalmentSummarySelectDatePage.clickContinue
     }
 
   "language" in
     {
       beginJourney
-      instalmentSummaryPage.assertPageIsDisplayed
-
-      instalmentSummaryPage.clickOnWelshLink()
-      instalmentSummaryPage.assertPageIsDisplayed(Welsh)
-
-      instalmentSummaryPage.clickOnEnglishLink()
-      instalmentSummaryPage.assertPageIsDisplayed(English)
-    }
-
-  "change monthly instalments" in
-    {
-      beginJourney
-      instalmentSummaryPage.clickInstalmentsChange
       calculatorInstalmentsPage.assertPageIsDisplayed
+
+      calculatorInstalmentsPage.clickOnWelshLink()
+      calculatorInstalmentsPage.assertPageIsDisplayed(Welsh)
+
+      calculatorInstalmentsPage.clickOnEnglishLink()
+      calculatorInstalmentsPage.assertPageIsDisplayed(English)
     }
 
-  "change collection day" in
+  "select a radio button " in
     {
       beginJourney
-      instalmentSummaryPage.clickCollectionDayChange
+
+      calculatorInstalmentsPage.clickOnWelshLink()
+      calculatorInstalmentsPage.selectAnOption
+      calculatorInstalmentsPage.assertPageIsDisplayed("checked")(Welsh)
+
+      calculatorInstalmentsPage.clickOnEnglishLink()
+      calculatorInstalmentsPage.selectAnOption
+      calculatorInstalmentsPage.assertPageIsDisplayed("checked")(English)
+
+    }
+
+  "select an option and continue" in
+    {
+      beginJourney
+      calculatorInstalmentsPage.selectAnOption
+      calculatorInstalmentsPage.assertPageIsDisplayed("checked")(English)
+      calculatorInstalmentsPage.clickContinue
       instalmentSummarySelectDatePage.assertPageIsDisplayed
     }
-
-  "continue to the next page" in
-    {
-      beginJourney
-      instalmentSummaryPage.clickContinue
-      termsAndConditionsPage.assertPageIsDisplayed
-    }
-
 }

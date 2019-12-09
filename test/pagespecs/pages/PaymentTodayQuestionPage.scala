@@ -31,7 +31,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion = probing {
     readPath() shouldBe path
-    //readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
   }
 
@@ -63,12 +63,12 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
       private val globalHeaderTextEnglish =
         """GOV.UK
-          |Set up a payment plan Sign-out
+          |Set up a payment plan
         """.stripMargin
 
       private val globalHeaderTextWelsh =
         """GOV.UK
-          |Trefnu cynllun talu Allgofnodi
+          |Trefnu cynllun talu
         """.stripMargin
     }
 
@@ -107,19 +107,6 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
           |Help gyda'r dudalen hon.
         """.stripMargin
     }
-
-  }
-
-  implicit class StringOps(s: String) {
-    /**
-     * Transforms string so it's easier it to compare.
-     */
-    def stripSpaces(): String = s
-      .replaceAll("[^\\S\\r\\n]+", " ") //replace many consecutive white-spaces (but not new lines) with one space
-      .replaceAll("[\r\n]+", "\n") //replace many consecutive new lines with one new line
-      .split("\n").map(_.trim) //trim each line
-      .filterNot(_ == "") //remove any empty lines
-      .mkString("\n")
 
   }
 }

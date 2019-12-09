@@ -165,7 +165,7 @@ class CalculatorController @Inject() (
               validFormData => {
 
                 journeyService.saveJourney(journey.copy(maybeAmount = Some(validFormData.amount))).map { _ =>
-                  Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalmentsAB())
+                  Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
                 }
               }
             )
@@ -217,13 +217,13 @@ class CalculatorController @Inject() (
     }
   }
 
-  def getCalculateInstalmentsAB(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def getCalculateInstalments(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.getJourney.flatMap {
       case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, sa)), calculatorData, _, _, _, _) =>
         calculatorService.getInstalmentsSchedule(sa, journey.calculatorInput.initialPayment).map { schedule =>
           {
             Ok(views.calculate_instalments_form_2(
-              ssttpcalculator.routes.CalculatorController.submitCalculateInstalmentsAB(),
+              ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
               CalculatorForm.createInstalmentForm(),
               getSurroundingSchedule(getClosestSchedule(journey.amount, schedule.values.toList), schedule.values.toList, sa)))
           }
@@ -235,7 +235,7 @@ class CalculatorController @Inject() (
     }
   }
 
-  def submitCalculateInstalmentsAB(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def submitCalculateInstalments(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     journeyService.getJourney.flatMap {
       case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, sa)), calculatorData, _, _, _, _) =>
 
@@ -256,50 +256,6 @@ class CalculatorController @Inject() (
           }
         }
 
-    }
-  }
-
-  /**
-   * Loads the calculator page. Several checks are performed:
-   * - Checks to see if the session data is out of date and updates calculations if so
-   * - If Taxpayer exists, load auth version of calculator
-   * - If user input debits are not empty, load the calculator (avoids direct navigation)
-   * - If schedule data is missing, update TTPSubmission
-   */
-  def getCalculateInstalments: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyService.getJourney.flatMap {
-      case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, sa)), calculatorData, _, _, _, _) =>
-        if (CalculatorService.getMaxMonthsAllowed(sa, LocalDate.now(clock)) >= CalculatorService.minimumMonthsAllowedTTP) {
-          calculatorService.getInstalmentsSchedule(sa, journey.calculatorInput.initialPayment).map { monthsToSchedule =>
-            Ok(views.calculate_instalments_form(CalculatorForm.createInstalmentForm(),
-                                                journey.lengthOfArrangement, monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(), loggedIn = true))
-          }
-        } else {
-          //todo perhaps move these checks else where to eligbility service?
-          journeyService.saveJourney(journey.copy(maybeEligibilityStatus = Some(EligibilityStatus(eligible = false, Seq(TTPIsLessThenTwoMonths))))).map { _ => Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()) }
-        }
-
-      case _ => Future.successful(redirectToStartPage)
-    }
-  }
-
-  def submitCalculateInstalments(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyService.getJourney.flatMap {
-      case journey @ Journey(_, _, _, _, _, Some(Taxpayer(_, _, sa)), calculatorData, _, _, _, _) =>
-        calculatorService.getInstalmentsSchedule(sa, journey.calculatorInput.initialPayment).flatMap { monthsToSchedule =>
-          CalculatorForm.createInstalmentForm().bindFromRequest().fold(
-            formWithErrors => {
-              Future.successful(BadRequest(views.calculate_instalments_form(formWithErrors, journey.lengthOfArrangement,
-                                                                            monthsToSchedule, ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(), loggedIn = true)))
-            },
-            validFormData => {
-              journeyService.saveJourney(journey.copy(schedule = Some(monthsToSchedule(validFormData.chosenMonths)))).map { _ =>
-                Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
-              }
-            }
-          )
-        }
-      case _ => Future.successful(redirectToStartPage)
     }
   }
 }

@@ -23,11 +23,11 @@ import org.scalatest.Assertion
 import org.scalatest.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
 
-  override def path: String = "/pay-what-you-owe-in-instalments/calculator/payment-summary"
+  override def path: String = "/pay-what-you-owe-in-instalments/arrangement/terms-and-conditions"
 
   override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
@@ -35,7 +35,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def clickContinue() =
+  def clickContinue =
     {
       val button = xpath("//*[@id=\"content\"]/article/a[2]")
       click on button
@@ -66,33 +66,41 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         case English => mainTextEnglish
         case Welsh   => mainTextWelsh
       }
+
       private val mainTextEnglish =
-        """BETA This is a new service – your feedback will help us to improve it.
+        """
+          |BETA This is a new service – your feedback will help us to improve it.
           |English | Cymraeg
           |Back
-          |Payment summary
-          |Upfront payment
-          |Taken in 3 to 5 days' time
-          |£123.0
-          |Change Upfront payment
-          |Remaining amount to pay
-          |£4777.0
-          |Continue
+          |Terms and conditions
+          |We can cancel this agreement if you:
+          |pay late or miss a payment
+          |pay another tax bill late
+          |do not submit your future tax returns on time
+          |If we cancel this agreement, you will need to pay the total amount you owe straight away.
+          |We can use any refunds you might get to pay off this debt.
+          |If your circumstances change and you can pay more or you can pay in full, you need to let us know.
+          |Declaration
+          |I agree to the terms and conditions of this payment plan. I confirm that this is the earliest I am able to settle this debt.
+          |Confirm and continue
           |Get help with this page.
         """.stripMargin
-
       private val mainTextWelsh =
-        """BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
+        """
+          |BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
           |English | Cymraeg
           |Yn ôl
-          |Crynodeb o’r taliadau
-          |Taliad ymlaen llaw
-          |Wedi’i gymryd ymhen 3 i 5 diwrnod
-          |£123.0
-          |Newid Taliad ymlaen llaw
-          |Swm sy’n weddill i’w dalu
-          |£4777.0
-          |Yn eich blaen
+          |Telerau ac amodau
+          |Gallwn ganslo’r cytundeb hwn os:
+          |ydych yn talu’n hwyr neu’n methu taliad
+          |ydych yn talu bil treth arall yn hwyr
+          |nad ydych yn cyflwyno’ch Ffurflenni Treth yn y dyfodol mewn pryd
+          |Os byddwn yn canslo’r cytundeb hwn, bydd yn rhaid i chi dalu’r cyfanswm sydd arnoch ar unwaith.
+          |Gallwn ddefnyddio unrhyw ad-daliadau y gallech eu cael i dalu’r ddyled hon yn ôl.
+          |Os bydd eich amgylchiadau’n newid, a gallwch dalu mwy neu gallwch dalu’n llawn, mae’n rhaid i chi roi gwybod i ni.
+          |Datganiad
+          |Cytunaf â thelerau ac amodau’r cynllun talu hwn. Cadarnhaf mai dyma’r cynharaf y gallaf setlo’r ddyled hon.
+          |Cadarnhau ac yn eich blaen
           |Help gyda'r dudalen hon.
         """.stripMargin
     }
