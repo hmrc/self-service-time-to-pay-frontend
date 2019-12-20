@@ -56,7 +56,6 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     {
       beginJourney
       instalmentSummarySelectDatePage.selectSecondOption
-      instalmentSummarySelectDatePage.assertPageIsDisplayed("unchecked", "checked")(English)
       instalmentSummarySelectDatePage.enterDay("123456")
       instalmentSummarySelectDatePage.clickContinue
       instalmentSummarySelectDatePage.assertErrorPageIsDisplayed
@@ -66,7 +65,7 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     {
       beginJourney
       instalmentSummarySelectDatePage.selectFirstOption
-      instalmentSummarySelectDatePage.assertPageIsDisplayed("checked", "unchecked")(English)
+      instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
       instalmentSummarySelectDatePage.clickContinue
       instalmentSummaryPage.assertPageIsDisplayed
     }
@@ -75,7 +74,6 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     {
       beginJourney
       instalmentSummarySelectDatePage.selectSecondOption
-      instalmentSummarySelectDatePage.assertPageIsDisplayed("unchecked", "checked")(English)
       instalmentSummarySelectDatePage.enterDay("12")
       instalmentSummarySelectDatePage.clickContinue
       instalmentSummaryPage.assertPageIsDisplayed

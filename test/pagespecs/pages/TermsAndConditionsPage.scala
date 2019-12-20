@@ -68,10 +68,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
       }
 
       private val mainTextEnglish =
-        """
-          |BETA This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+        """Back
           |Terms and conditions
           |We can cancel this agreement if you:
           |pay late or miss a payment
@@ -86,10 +83,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Get help with this page.
         """.stripMargin
       private val mainTextWelsh =
-        """
-          |BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |Yn ôl
+        """Yn ôl
           |Telerau ac amodau
           |Gallwn ganslo’r cytundeb hwn os:
           |ydych yn talu’n hwyr neu’n methu taliad

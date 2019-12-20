@@ -28,6 +28,8 @@ import pagespecs.pages._
 import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import com.softwaremill.macwire._
+import org.openqa.selenium.WebDriver
+import uk.gov.hmrc.webdriver.SingletonDriver
 
 class ItSpec
   extends FreeSpec
@@ -70,11 +72,26 @@ class ItSpec
     }
   }
 
-  implicit lazy val webDriver: HtmlUnitDriver = {
-    val wd = new HtmlUnitDriver(true)
-    wd.setJavascriptEnabled(false)
-    wd
+  ///*  implicit lazy val webDriver: HtmlUnitDriver = {
+  //    val wd = new HtmlUnitDriver(true)
+  //    wd.setJavascriptEnabled(false)
+  //    wd
+  //  }*/
+
+  implicit lazy val webDriver: WebDriver = {
+    System.setProperty("browser", "chrome")
+    SingletonDriver.getInstance()
   }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    webDriver.manage().deleteAllCookies()
+  }
+
+  //  override def afterAll(): Unit = {
+  //    super.afterAll()
+  //    webDriver.quit()
+  //  }
 
   lazy val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$port")
   lazy val startPage: StartPage = wire[StartPage]

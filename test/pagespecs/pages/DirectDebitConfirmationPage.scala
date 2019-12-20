@@ -73,18 +73,11 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
       }
 
       private val mainTextEnglish =
-        """
-          |BETA This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+        """Back
           |Check your Direct Debit details
-          |Account name
-          |Mr John Campbell
-          |Change
-          |Sort code
-          |12 - 34 - 56
-          |Account number
-          |12345678
+          |Account name Mr John Campbell Change
+          |Sort code 12 - 34 - 56
+          |Account number 12345678
           |You are covered by the Direct Debit Guarantee
           |The Direct Debit Guarantee
           |This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
@@ -96,18 +89,11 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |Get help with this page.
         """.stripMargin
       private val mainTextWelsh =
-        """
-          |BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |Yn ôl
+        """Yn ôl
           |Gwiriwch fanylion eich Debyd Uniongyrchol
-          |Enw’r cyfrif
-          |Mr John Campbell
-          |Newid
-          |Cod didoli
-          |12 - 34 - 56
-          |Rhif y cyfrif
-          |12345678
+          |Enw’r cyfrif Mr John Campbell Newid
+          |Cod didoli 12 - 34 - 56
+          |Rhif y cyfrif 12345678
           |Rydych wedi’ch gwarchod gan y Warant Debyd Uniongyrchol
           |Y Warant Debyd Uniongyrchol
           |Cynigir y Warant hon gan bob banc a chymdeithas adeiladu sy’n derbyn cyfarwyddiadau i dalu Debydau Uniongyrchol.

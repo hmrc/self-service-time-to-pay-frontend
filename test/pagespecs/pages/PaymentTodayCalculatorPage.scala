@@ -80,9 +80,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
         case Welsh   => mainTextWelsh
       }
       private val mainTextEnglish =
-        """BETA This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+        """Back
           |How much can you pay upfront?
           |£
           |Continue
@@ -90,9 +88,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
     """.stripMargin
 
       private val mainTextWelsh =
-        """BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |Yn ôl
+        """Yn ôl
           |Faint y gallwch ei dalu ymlaen llaw?
           |£
           |Yn eich blaen
@@ -103,9 +99,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
     object TextError {
       def apply(): String = mainErrorEnglish
       private val mainErrorEnglish =
-        """BETA This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+        """Back
           |Something you've entered isn't valid
           |You need to enter an amount less than the amount you owe
           |How much can you pay upfront?

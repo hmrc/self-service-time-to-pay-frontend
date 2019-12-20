@@ -86,9 +86,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       }
 
       private def mainTextEnglish(increase: Int) =
-        s"""BETA This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+        s"""Back
           |How much can you afford to pay each month?
           |Enter an amount between £${600 + increase} and £${2500 + increase}
           |£
@@ -97,9 +95,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         """.stripMargin
 
       private def mainTextWelsh(increase: Int) =
-        s"""BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |Yn ôl
+        s"""Yn ôl
           |Faint y gallwch fforddio ei dalu bob mis?
           |Nodwch swm sydd rhwng £${600 + increase}. a £${2500 + increase}
           |£
@@ -112,16 +108,13 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       def apply()(implicit value: String): String = errorText(value)
 
       private def errorText(value: String) =
-        s"""BETA This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+        s"""Back
           |Something you've entered isn't valid
           |Enter a figure between the given range
           |How much can you afford to pay each month?
           |Enter an amount between £600 and £2500
           |£
           |Enter a figure between the given range
-          |${value}
           |Continue
           |Get help with this page.
         """.stripMargin

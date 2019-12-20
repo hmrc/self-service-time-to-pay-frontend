@@ -22,7 +22,7 @@ import testsupport.stubs._
 
 class InstalmentSummaryPageSpec extends ItSpec {
 
-  def beginJourney =
+  def beginJourney() =
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()
@@ -44,14 +44,17 @@ class InstalmentSummaryPageSpec extends ItSpec {
 
   "language" in
     {
-      beginJourney
+      beginJourney()
+
       instalmentSummaryPage.assertPageIsDisplayed
 
       instalmentSummaryPage.clickOnWelshLink()
       instalmentSummaryPage.assertPageIsDisplayed(Welsh)
 
       instalmentSummaryPage.clickOnEnglishLink()
+
       instalmentSummaryPage.assertPageIsDisplayed(English)
+
     }
 
   "change monthly instalments" in

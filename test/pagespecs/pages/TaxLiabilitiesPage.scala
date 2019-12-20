@@ -68,9 +68,7 @@ class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
       }
 
       private val mainTextEnglish =
-        """BETA	This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+        """Back
           |Your Self Assessment account summary
           |Total due £4,900.00
           |Self Assessment breakdown
@@ -86,9 +84,7 @@ class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         """.stripMargin
 
       private val mainTextWelsh =
-        """BETA	Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |Yn ôl
+        """Yn ôl
           |Crynodeb o’ch cyfrif Hunanasesiad
           |Cyfanswm sy’n ddyledus £4,900.00
           |Dadansoddiad Hunanasesiad

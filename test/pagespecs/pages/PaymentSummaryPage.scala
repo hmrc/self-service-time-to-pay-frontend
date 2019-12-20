@@ -67,31 +67,23 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         case Welsh   => mainTextWelsh
       }
       private val mainTextEnglish =
-        """BETA This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+        """Back
           |Payment summary
           |Upfront payment
           |Taken in 3 to 5 days' time
-          |£123.0
-          |Change Upfront payment
-          |Remaining amount to pay
-          |£4777.0
+          |£123.0 Change
+          |Remaining amount to pay £4777.0
           |Continue
           |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
-        """BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |Yn ôl
+        """Yn ôl
           |Crynodeb o’r taliadau
           |Taliad ymlaen llaw
           |Wedi’i gymryd ymhen 3 i 5 diwrnod
-          |£123.0
-          |Newid Taliad ymlaen llaw
-          |Swm sy’n weddill i’w dalu
-          |£4777.0
+          |£123.0 Newid
+          |Swm sy’n weddill i’w dalu £4777.0
           |Yn eich blaen
           |Help gyda'r dudalen hon.
         """.stripMargin

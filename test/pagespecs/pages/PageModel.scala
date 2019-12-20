@@ -16,7 +16,8 @@
 
 package pagespecs.pages
 
-import java.io.{FileInputStream, FileOutputStream}
+import java.io.{File, FileInputStream, FileOutputStream}
+import java.nio.file.{Files, Paths}
 
 import langswitch.{Language, Languages}
 import org.openqa.selenium.{By, OutputType, TakesScreenshot, WebDriver}
@@ -49,7 +50,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
   /**
    * Reads the main content of the page
    */
-  def readMain(): String = id("wrapper").element.text
+  def readMain(): String = id("content").element.text
 
   def readGlobalHeader(): String = id("global-header").element.text
 
@@ -90,18 +91,25 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
     //original `capture to` relies on side effecting `targetDir`
     //this is safer implementation
     val targetDir = "target/ittests-screenshots"
-    val fileName = {
-      val addon = List.fill(5)(Random.nextPrintableChar()).mkString
+    val fileName: String = {
+      val addon = List.fill(5)(System.currentTimeMillis()).mkString
       s"${this.getClass.getSimpleName}-$addon.png"
     }
     webDriver match {
       case takesScreenshot: TakesScreenshot =>
-        val tmpFile = takesScreenshot.getScreenshotAs(OutputType.FILE)
-        val outFile = new java.io.File(targetDir, fileName)
-        new FileOutputStream(outFile)
+        val tmpFile: File = takesScreenshot.getScreenshotAs(OutputType.FILE)
+        //     Files.createDirectory(Paths.get("target", "ittests-screenshots"))
+        new File(targetDir).mkdirs()
+        val outFile = new java.io.File(s"$targetDir/$fileName")
+        val fileOutputStream = new FileOutputStream(outFile)
+        val inputStream = new FileInputStream(tmpFile)
+        fileOutputStream
           .getChannel
           .transferFrom(
-            new FileInputStream(tmpFile).getChannel, 0, Long.MaxValue)
+            inputStream.getChannel, 0, Long.MaxValue)
+        fileOutputStream.close()
+        inputStream.close()
+
         Some(outFile.toURI.toString)
       case _ =>
         Logger(getClass).warn(s"Could not take screen shot: $fileName")

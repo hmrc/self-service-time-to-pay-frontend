@@ -35,12 +35,6 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def assertPageIsDisplayed(checkState1: String, chechState2: String)(implicit lang: Language): Assertion = probing {
-    readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText(checkState1, chechState2).stripSpaces()
-  }
-
   def assertErrorPageIsDisplayed(): Assertion = probing {
     readPath() shouldBe path
     readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
@@ -91,37 +85,25 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     }
 
     object MainText {
-      def apply(checkState1: String = "unchecked", checkState2: String = "unchecked")(implicit language: Language): String = language match {
-        case English => mainTextEnglish(checkState1, checkState2: String)
-        case Welsh   => mainTextWelsh(checkState1, checkState2: String)
+      def apply()(implicit language: Language): String = language match {
+        case English => mainTextEnglish
+        case Welsh   => mainTextWelsh
       }
 
-      private def mainTextEnglish(checkState1: String, checkState2: String) =
-        s"""
-          |BETA This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+      private val mainTextEnglish =
+        s"""Back
           |Choose the day you want your monthly payments collected
-          |${checkState1}
           |28th or next working day
-          |${checkState2}
           |A different day
-          |Enter the day of the month
           |Continue
           |Get help with this page.
         """.stripMargin
 
-      private def mainTextWelsh(checkState1: String, checkState2: String) =
-        s"""
-          |BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |Yn ôl
+      private val mainTextWelsh =
+        s"""Yn ôl
           |Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
-          |${checkState1}
           |28ain diwrnod nesaf
-          |${checkState2}
           |Diwrnod gwahanol
-          |Ewch i mewn i ddiwrnod y mis
           |Yn eich blaen
           |Help gyda'r dudalen hon.
         """.stripMargin
@@ -131,17 +113,12 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
       def apply(): String = errorText
 
       private def errorText =
-        s"""BETA This is a new service – your feedback will help us to improve it.
-           |English | Cymraeg
-           |Back
+        s"""Back
            |Choose the day you want your monthly payments collected
            |There is a problem
            |Enter a number between 1 and 28
-           |unchecked
            |28th or next working day
-           |unchecked
            |A different day
-           |Enter the day of the month
            |Continue
            |Get help with this page.
         """.stripMargin

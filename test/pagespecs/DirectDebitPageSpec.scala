@@ -46,59 +46,54 @@ class DirectDebitPageSpec extends ItSpec {
       termsAndConditionsPage.clickContinue
     }
 
-  "language" in
-    {
-      beginJourney
-      directDebitPage.assertPageIsDisplayed
+  "language" in {
+    beginJourney
+    directDebitPage.assertPageIsDisplayed
 
-      directDebitPage.clickOnWelshLink()
-      directDebitPage.assertPageIsDisplayed(Welsh)
+    directDebitPage.clickOnWelshLink()
+    directDebitPage.assertPageIsDisplayed(Welsh)
 
-      directDebitPage.clickOnEnglishLink()
-      directDebitPage.assertPageIsDisplayed(English)
-    }
+    directDebitPage.clickOnEnglishLink()
+    directDebitPage.assertPageIsDisplayed(English)
+  }
 
-  "enter invalid Account Name " in
-    {
-      beginJourney
-      directDebitPage.fillOutForm("123ede23efr4efr4ew32ef3r4", DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-      directDebitPage.clickContinue
-      directDebitPage.assertErrorPageIsDisplayed(AccountName())
-    }
+  "enter invalid Account Name " in {
+    beginJourney
+    directDebitPage.fillOutForm("123ede23efr4efr4ew32ef3r4", DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    directDebitPage.clickContinue
+    directDebitPage.assertErrorPageIsDisplayed(AccountName())
+  }
 
-  "enter invalid Sort Code " in
-    {
-      beginJourney
-      directDebitPage.fillOutForm(DirectDebitTd.accountName, "fqe23fwef322few23r", DirectDebitTd.accountNumber)
-      directDebitPage.clickContinue
-      directDebitPage.assertErrorPageIsDisplayed(SortCode())
-    }
+  "enter invalid Sort Code " in {
+    beginJourney
+    directDebitPage.fillOutForm(DirectDebitTd.accountName, "fqe23fwef322few23r", DirectDebitTd.accountNumber)
+    directDebitPage.clickContinue
+    directDebitPage.assertErrorPageIsDisplayed(SortCode())
+  }
 
-  "enter invalid Account Number" in
-    {
-      beginJourney
-      directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, "24wrgedfbgt423twergdfb")
-      directDebitPage.clickContinue
-      directDebitPage.assertErrorPageIsDisplayed(AccountNumber())
-    }
+  "enter invalid Account Number" in {
+    beginJourney
+    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, "24wrgedfbgt423twergdfb")
+    directDebitPage.clickContinue
+    directDebitPage.assertErrorPageIsDisplayed(AccountNumber())
+  }
 
-  "enter invalid bank account " in
-    {
-      beginJourney
-      directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
-      directDebitPage.clickContinue
-      directDebitPage.assertErrorPageIsDisplayed(InvalidBankDetails())
+  "enter invalid bank account " in {
+    beginJourney
+    directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
+    directDebitPage.clickContinue
+    directDebitPage.assertErrorPageIsDisplayed(InvalidBankDetails())
 
-    }
+  }
 
-  "enter valid bank account " in
-    {
-      beginJourney
-      directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-      DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-      DirectDebitStub.getBanks
-      directDebitPage.clickContinue
-      directDebitConfirmationPage.assertPageIsDisplayed
+  "enter valid bank account " in {
+    beginJourney
+    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanks
+    directDebitPage.clickContinue
 
-    }
+    directDebitConfirmationPage.assertPageIsDisplayed
+
+  }
 }

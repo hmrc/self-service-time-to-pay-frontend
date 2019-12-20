@@ -35,12 +35,6 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def assertPageIsDisplayed(checkState: String)(implicit lang: Language): Assertion = probing{
-    readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText(checkState).stripSpaces()
-  }
-
   def selectAnOption =
     {
       val radioButton = xpath("/html/body/main/div[2]/article/form/div[1]/div[1]/input")
@@ -74,41 +68,17 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
     }
 
     object MainText {
-      def apply(checkState: String = "unchecked")(implicit language: Language): String = language match {
-        case English => mainTextEnglish(checkState)
-        case Welsh   => mainTextWelsh(checkState)
+      def apply()(implicit language: Language): String = language match {
+        case English => mainTextEnglish
+        case Welsh   => mainTextWelsh
       }
 
-      private def mainTextEnglish(checkState: String) =
-        s"""
-          |BETA This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+      private val mainTextEnglish =
+        s"""Back
           |How many months do you want to pay over?
-          |${checkState}
           |4 months at £300.00
-          |Total interest:
-          |Base rate + 2.5%
-          |£200.00
-          |added to the final payment
-          |Total paid:
-          |£200.00
-          |unchecked
           |4 months at £300.00
-          |Total interest:
-          |Base rate + 2.5%
-          |£200.00
-          |added to the final payment
-          |Total paid:
-          |£200.00
-          |unchecked
           |4 months at £300.00
-          |Total interest:
-          |Base rate + 2.5%
-          |£200.00
-          |added to the final payment
-          |Total paid:
-          |£200.00
           |How we calculate interest
           |We only charge interest on overdue amounts.
           |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
@@ -117,36 +87,12 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
           |Get help with this page.
         """.stripMargin
 
-      private def mainTextWelsh(checkState: String) =
-        s"""
-          |BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |Yn ôl
+      private val mainTextWelsh =
+        s"""Yn ôl
           |Dros sawl mis yr hoffech dalu?
-          |${checkState}
           |4 o fisoedd ar £300.00
-          |Cyfanswm y llog:
-          |Cyfradd sylfaenol + 2.5%
-          |£200.00
-          |wedi’i ychwanegu at y taliad terfynol
-          |Cyfanswm a dalwyd:
-          |£200.00
-          |unchecked
           |4 o fisoedd ar £300.00
-          |Cyfanswm y llog:
-          |Cyfradd sylfaenol + 2.5%
-          |£200.00
-          |wedi’i ychwanegu at y taliad terfynol
-          |Cyfanswm a dalwyd:
-          |£200.00
-          |unchecked
           |4 o fisoedd ar £300.00
-          |Cyfanswm y llog:
-          |Cyfradd sylfaenol + 2.5%
-          |£200.00
-          |wedi’i ychwanegu at y taliad terfynol
-          |Cyfanswm a dalwyd:
-          |£200.00
           |Sut rydym yn cyfrifo llog
           |Rydym yn codi llog ar symiau hwyr yn unig.
           |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.

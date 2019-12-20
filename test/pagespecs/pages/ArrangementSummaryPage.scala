@@ -59,13 +59,10 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
       }
 
       private val mainTextEnglish =
-        """
-          |Help improve GOV.UK No Thanks
-          |Get involved in making government services better (opens in a new window)
-          |BETA This is a new service – your feedback will help us to improve it.
-          |Application successful
+        """Application successful
           |Direct Debit mandate reference:
           |123ABC123
+          |Print your payment summary
           |What happens next?
           |We will send you a letter within 5 days to confirm your payment dates.
           |First payment collected on: 25 August 2019
@@ -76,13 +73,10 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
         """.stripMargin
 
       private val mainTextWelsh =
-        """
-          |Helpwch i wella GOV.UK Dim diolch
-          |Byddwch yn rhan o wneud gwasanaethau’r llywodraeth yn well (yn agor ffenestr newydd)
-          |BETA Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |Cais yn llwyddiannus
+        """Cais yn llwyddiannus
           |Cyfeirnod mandad Debyd Uniongyrchol:
           |123ABC123
+          |Argraffu crynodeb o’ch taliadau
           |Beth sy’n digwydd nesaf?
           |Byddwn yn anfon llythyr atoch cyn pen 5 diwrnod i gadarnhau’ch dyddiadau talu.
           |Cesglir y taliad cyntaf ar: 25 August 2019

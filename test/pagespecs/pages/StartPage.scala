@@ -68,13 +68,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
       }
 
       private val mainTextEnglish =
-        """Help improve GOV.UK No Thanks
-          |Get involved in making government services better (opens in a new window)
-          |
-          |BETA	This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |
-          |Set up a payment plan
+        """Set up a payment plan
           |A payment plan allows you to pay the tax you owe in instalments. The plan covers the amounts you need to pay now.
           |
           |We intend this as a one-off payment plan to give you extra support. You must keep up to date with your payments. If you do not, HMRC may ask you to pay the entire outstanding amount.
@@ -92,13 +86,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
         """.stripMargin
 
       private val mainTextWelsh =
-        """Helpwch i wella GOV.UK Dim diolch
-          |Byddwch yn rhan o wneud gwasanaethau’r llywodraeth yn well (yn agor ffenestr newydd)
-          |
-          |BETA	Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |
-          |Trefnu cynllun talu
+        """Trefnu cynllun talu
           |Mae cynllun talu yn eich galluogi i dalu’r dreth sydd arnoch fesul rhandaliad. Mae’r cynllun yn cwmpasu’r symiau y mae’n rhaid i chi eu talu nawr.
           |
           |Ein bwriad yw y bydd hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch, mae’n bosibl y bydd CThEM yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.

@@ -42,10 +42,9 @@ class ArrangementConnector @Inject() (
   type SubmissionResult = Either[SubmissionError, SubmissionSuccess]
 
   val arrangementURL: String = servicesConfig.baseUrl("time-to-pay-arrangement")
-  val serviceURL: String = "ttparrangements"
 
   def submitArrangements(ttpArrangement: TTPArrangement)(implicit request: Request[_]): Future[SubmissionResult] = {
-    httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map { _ =>
+    httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/ttparrangements", ttpArrangement).map { _ =>
       Right(SubmissionSuccess())
     }.recover {
       case e: Throwable => onError(e)

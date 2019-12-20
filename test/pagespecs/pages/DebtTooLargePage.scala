@@ -26,9 +26,7 @@ import testsupport.RichMatchers._
 class DebtTooLargePage(implicit webDriver: WebDriver) extends BasePage(WireMockSupport.baseUrl) {
 
   private val englishMainText =
-    """BETA This is a new service – your feedback will help us to improve it.
-      |English | Cymraeg
-      |Back
+    """Back
       |Please call us
       |To be eligible to set up a payment plan online the tax you owe must be £10,000 or less.
       |For further support you can contact the Business Support Service and speak to an adviser on 0300 200 3835.

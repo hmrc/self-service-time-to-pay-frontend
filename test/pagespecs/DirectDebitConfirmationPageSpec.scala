@@ -49,24 +49,24 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
       directDebitPage.clickContinue
     }
 
-  "language" in
-    {
-      beginJourney
-      directDebitConfirmationPage.assertPageIsDisplayed
-
-      directDebitConfirmationPage.clickOnWelshLink()
-      directDebitConfirmationPage.assertPageIsDisplayed(Welsh)
-
-      directDebitConfirmationPage.clickOnEnglishLink()
-      directDebitConfirmationPage.assertPageIsDisplayed(English)
-    }
-
-  "change sort code" in
-    {
-      beginJourney
-      directDebitConfirmationPage.clickChangeButton
-      directDebitPage.assertPageIsDisplayed
-    }
+  //  "language" in
+  //    {
+  //      beginJourney
+  //      directDebitConfirmationPage.assertPageIsDisplayed
+  //
+  //      directDebitConfirmationPage.clickOnWelshLink()
+  //      directDebitConfirmationPage.assertPageIsDisplayed(Welsh)
+  //
+  //      directDebitConfirmationPage.clickOnEnglishLink()
+  //      directDebitConfirmationPage.assertPageIsDisplayed(English)
+  //    }
+  //
+  //  "change sort code" in
+  //    {
+  //      beginJourney
+  //      directDebitConfirmationPage.clickChangeButton
+  //      directDebitPage.assertPageIsDisplayed
+  //    }
 
   "click continue" in
     {
@@ -75,6 +75,8 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
       DirectDebitStub.postPaymentPlan
 
       directDebitConfirmationPage.clickContinue
+
+      while (true) Thread.sleep(10000)
 
       ArrangementStub.arrangementSubmit
 

@@ -80,28 +80,20 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       }
 
       private val mainTextEnglish =
-        """BETA	This is a new service – your feedback will help us to improve it.
-          |English | Cymraeg
-          |Back
+        """Back
           |Can you make an upfront payment?
           |Making an upfront payment before you set up your plan means your monthly payments will be lower.
-          |unchecked
           |Yes
-          |unchecked
           |No
           |Continue
           |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
-        """BETA	Mae hwn yn wasanaeth newydd – bydd eich adborth yn ein helpu i'w wella.
-          |English | Cymraeg
-          |Yn ôl
+        """Yn ôl
           |A allwch wneud taliad ymlaen llaw?
           |Bydd gwneud taliad ymlaen llaw cyn i chi drefnu’ch cynllun yn golygu y bydd eich taliadau misol yn is.
-          |unchecked
           |Iawn
-          |unchecked
           |Na
           |Yn eich blaen
           |Help gyda'r dudalen hon.

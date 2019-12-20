@@ -50,25 +50,10 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage.assertPageIsDisplayed(English)
     }
 
-  "select a radio button " in
-    {
-      beginJourney
-
-      calculatorInstalmentsPage.clickOnWelshLink()
-      calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.assertPageIsDisplayed("checked")(Welsh)
-
-      calculatorInstalmentsPage.clickOnEnglishLink()
-      calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.assertPageIsDisplayed("checked")(English)
-
-    }
-
   "select an option and continue" in
     {
       beginJourney
       calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.assertPageIsDisplayed("checked")(English)
       calculatorInstalmentsPage.clickContinue
       instalmentSummarySelectDatePage.assertPageIsDisplayed
     }
