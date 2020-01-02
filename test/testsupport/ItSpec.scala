@@ -74,6 +74,7 @@ class ItSpec
 
   implicit lazy val webDriver: WebDriver = {
     System.setProperty("browser", "chrome")
+    System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     SingletonDriver.getInstance()
   }
 
