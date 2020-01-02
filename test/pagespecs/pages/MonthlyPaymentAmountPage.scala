@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       enter(value)
     }
 
-  def clickContinue =
+  def clickContinue() =
     {
       val button = xpath("//*[@id=\"monthlyPaymentForm\"]/div/button")
       click on button

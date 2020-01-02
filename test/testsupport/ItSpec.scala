@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,12 +72,6 @@ class ItSpec
     }
   }
 
-  ///*  implicit lazy val webDriver: HtmlUnitDriver = {
-  //    val wd = new HtmlUnitDriver(true)
-  //    wd.setJavascriptEnabled(false)
-  //    wd
-  //  }*/
-
   implicit lazy val webDriver: WebDriver = {
     System.setProperty("browser", "chrome")
     SingletonDriver.getInstance()
@@ -87,11 +81,6 @@ class ItSpec
     super.beforeEach()
     webDriver.manage().deleteAllCookies()
   }
-
-  //  override def afterAll(): Unit = {
-  //    super.afterAll()
-  //    webDriver.quit()
-  //  }
 
   lazy val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$port")
   lazy val startPage: StartPage = wire[StartPage]

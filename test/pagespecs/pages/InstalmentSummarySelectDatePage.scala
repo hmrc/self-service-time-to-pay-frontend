@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,19 +40,19 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
   }
 
-  def selectFirstOption =
+  def selectFirstOption() =
     {
       val firstOption = xpath("/html/body/main/div[2]/article/form/div/div[1]/input")
       click on firstOption
     }
 
-  def selectSecondOption =
+  def selectSecondOption() =
     {
       val secondOption = xpath("/html/body/main/div[2]/article/form/div/div[2]/input")
       click on secondOption
     }
 
-  def clickContinue = {
+  def clickContinue() = {
     val button = xpath("//*[@id=\"next\"]")
     click on button
   }

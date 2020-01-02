@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,12 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def clickChangeButton = {
+  def clickChangeButton() = {
     val button = xpath("/html/body/main/div[2]/article/div/dl[1]/div/dd[2]/a")
     click on button
   }
 
-  def clickContinue =
+  def clickContinue() =
     {
       val button = xpath("/html/body/main/div[2]/article/section/form/div/button")
       click on button

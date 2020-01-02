@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,37 +49,31 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
       directDebitPage.clickContinue
     }
 
-  //  "language" in
-  //    {
-  //      beginJourney
-  //      directDebitConfirmationPage.assertPageIsDisplayed
-  //
-  //      directDebitConfirmationPage.clickOnWelshLink()
-  //      directDebitConfirmationPage.assertPageIsDisplayed(Welsh)
-  //
-  //      directDebitConfirmationPage.clickOnEnglishLink()
-  //      directDebitConfirmationPage.assertPageIsDisplayed(English)
-  //    }
-  //
-  //  "change sort code" in
-  //    {
-  //      beginJourney
-  //      directDebitConfirmationPage.clickChangeButton
-  //      directDebitPage.assertPageIsDisplayed
-  //    }
+  "language" in
+    {
+      beginJourney
+      directDebitConfirmationPage.assertPageIsDisplayed
+
+      directDebitConfirmationPage.clickOnWelshLink()
+      directDebitConfirmationPage.assertPageIsDisplayed(Welsh)
+
+      directDebitConfirmationPage.clickOnEnglishLink()
+      directDebitConfirmationPage.assertPageIsDisplayed(English)
+    }
+
+  "change sort code" in
+    {
+      beginJourney
+      directDebitConfirmationPage.clickChangeButton
+      directDebitPage.assertPageIsDisplayed
+    }
 
   "click continue" in
     {
       beginJourney
-
       DirectDebitStub.postPaymentPlan
-
+      ArrangementStub.postTtpArrangement
       directDebitConfirmationPage.clickContinue
-
-      while (true) Thread.sleep(10000)
-
-      ArrangementStub.arrangementSubmit
-
       arrangementSummaryPage.assertPageIsDisplayed
     }
 

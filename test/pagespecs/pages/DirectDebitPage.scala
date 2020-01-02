@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
       enter(accountNumberInput)
     }
 
-  def clickContinue =
+  def clickContinue() =
     {
       val button = xpath("//*[@id=\"content\"]/article/form/div[2]/button")
       click on button

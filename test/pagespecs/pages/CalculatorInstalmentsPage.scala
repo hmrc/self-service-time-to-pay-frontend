@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,13 +35,13 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def selectAnOption =
+  def selectAnOption() =
     {
       val radioButton = xpath("/html/body/main/div[2]/article/form/div[1]/div[1]/input")
       click on radioButton
     }
 
-  def clickContinue =
+  def clickContinue() =
     {
       val button = xpath("//*[@id=\"next\"]")
       click on button

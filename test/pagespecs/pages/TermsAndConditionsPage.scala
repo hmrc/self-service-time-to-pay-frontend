@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def clickContinue =
+  def clickContinue() =
     {
       val button = xpath("//*[@id=\"content\"]/article/a[2]")
       click on button

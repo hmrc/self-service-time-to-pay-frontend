@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,31 +48,20 @@ class ArrangementSummaryPageSpec extends ItSpec {
       DirectDebitStub.getBanks
       directDebitPage.clickContinue
       DirectDebitStub.postPaymentPlan
-    }
-
-  def englishJourney =
-    {
-      directDebitConfirmationPage.clickContinue
-      ArrangementStub.arrangementSubmit
-    }
-
-  def welshJourney =
-    {
-      directDebitConfirmationPage.clickOnWelshLink()
-      directDebitConfirmationPage.clickContinue
-      ArrangementStub.arrangementSubmit
+      ArrangementStub.postTtpArrangement
     }
 
   "language English" in
     {
       beginJourney
-      englishJourney
+      directDebitConfirmationPage.clickContinue
       arrangementSummaryPage.assertPageIsDisplayed(English)
     }
 
   "language Welsh" in {
     beginJourney
-    welshJourney
+    directDebitConfirmationPage.clickOnWelshLink()
+    directDebitConfirmationPage.clickContinue
     arrangementSummaryPage.assertPageIsDisplayed(Welsh)
   }
 
