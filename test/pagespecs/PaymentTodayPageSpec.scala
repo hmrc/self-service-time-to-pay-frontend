@@ -21,7 +21,7 @@ import testsupport.ItSpec
 import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxpayerStub}
 
 class PaymentTodayPageSpec extends ItSpec {
-  def beginJourney = {
+  def beginJourney() = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     EligibilityStub.eligible()

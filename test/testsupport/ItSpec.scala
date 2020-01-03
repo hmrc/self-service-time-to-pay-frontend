@@ -93,10 +93,7 @@ class ItSpec
       case Some("true")  => true
       case Some("false") => false
       case Some(_)       => sys.error("'javascript' property must be 'true' or 'false'.")
-      case None => {
-        // logger.warn("'javascript' property not set, defaulting to true.")
-        true
-      }
+      case None          => true
     }
   }
 
@@ -104,9 +101,7 @@ class ItSpec
     case Some("chrome")          => chromeInstance
     case Some("chrome-headless") => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
     case Some("remote-chrome")   => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions)
-    //  case None => {
-    // chromeInstance()
-    //}
+    case None                    => chromeInstance()
   }
 
   def chromeInstance(): WebDriver =

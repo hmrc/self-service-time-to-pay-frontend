@@ -36,13 +36,13 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     readMain().stripSpaces shouldBe expected
   }
 
-  def clickInstalmentsChange =
+  def clickInstalmentsChange() =
     {
       val changeLink = xpath("//*[@id=\"id_payment\"]/dl/div[1]/dd[2]/a")
       click on changeLink
     }
 
-  def clickCollectionDayChange =
+  def clickCollectionDayChange() =
     {
       val changeLink = xpath("//*[@id=\"content\"]/article/table/tbody/tr/td[3]/a")
       click on changeLink

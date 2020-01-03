@@ -24,7 +24,7 @@ import testsupport.testdata.DirectDebitTd
 
 class DirectDebitPageSpec extends ItSpec {
 
-  def beginJourney =
+  def beginJourney() =
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()

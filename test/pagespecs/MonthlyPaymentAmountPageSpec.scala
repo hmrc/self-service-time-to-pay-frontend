@@ -24,7 +24,7 @@ import testsupport.stubs._
 
 class MonthlyPaymentAmountPageSpec extends ItSpec {
 
-  def beginJourney =
+  def beginJourney() =
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()

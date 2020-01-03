@@ -22,7 +22,7 @@ import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxpayerStub}
 
 class PaymentSummaryPageSpec extends ItSpec {
 
-  def beginJourney =
+  def beginJourney() =
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()

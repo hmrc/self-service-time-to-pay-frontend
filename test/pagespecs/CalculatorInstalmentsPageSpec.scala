@@ -22,7 +22,7 @@ import testsupport.stubs._
 
 class CalculatorInstalmentsPageSpec extends ItSpec {
 
-  def beginJourney =
+  def beginJourney() =
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()
