@@ -29,8 +29,7 @@ import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import com.softwaremill.macwire._
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.ChromeOptions
-import uk.gov.hmrc.webdriver.SingletonDriver
+import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import java.net.URL
 
 class ItSpec
@@ -98,17 +97,11 @@ class ItSpec
   }
 
   implicit lazy val webDriver: WebDriver = sys.props.get("browser").map(_.toLowerCase) match {
-    case Some("chrome")          => chromeInstance
+    case Some("chrome")          =>  new ChromeDriver(chromeOptions.addArguments("headless"))
     case Some("chrome-headless") => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
     case Some("remote-chrome")   => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions)
-    case None                    => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions)
+    case None                    =>  new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
   }
-
-  def chromeInstance(): WebDriver =
-    {
-      System.setProperty("browser", "chrome")
-      SingletonDriver.getInstance()
-    }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
