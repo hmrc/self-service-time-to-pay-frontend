@@ -101,7 +101,7 @@ class ItSpec
     case Some("chrome")          => chromeInstance
     case Some("chrome-headless") => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
     case Some("remote-chrome")   => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions)
-    case None                    => chromeInstance()
+    case None                    => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions)
   }
 
   def chromeInstance(): WebDriver =
