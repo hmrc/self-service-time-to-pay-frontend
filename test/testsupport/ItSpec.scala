@@ -20,16 +20,18 @@ import java.time.{Clock, LocalDateTime, ZoneId, ZoneOffset}
 
 import com.google.inject.{AbstractModule, Provides}
 import javax.inject.Singleton
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{FreeSpec, TestData}
+import org.openqa.selenium.remote.RemoteWebDriver
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
 import pagespecs.pages._
 import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import com.softwaremill.macwire._
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.chrome.ChromeOptions
 import uk.gov.hmrc.webdriver.SingletonDriver
+import java.net.URL
 
 class ItSpec
   extends FreeSpec
@@ -72,11 +74,46 @@ class ItSpec
     }
   }
 
-  implicit lazy val webDriver: WebDriver = {
-    System.setProperty("browser", "chrome")
-    System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
-    SingletonDriver.getInstance()
+  private val defaultSeleniumHubUrl: String = s"http://localhost:4444/wd/hub"
+
+  private def chromeOptions: ChromeOptions = {
+    val options = new ChromeOptions()
+    options.addArguments("test-type")
+    options.addArguments("--no-sandbox")
+    options.addArguments("start-maximized")
+    options.addArguments("disable-infobars")
+    options.setCapability("takesScreenshot", true)
+    options.setCapability("javascript.enabled", javascriptEnabled)
+
+    options
   }
+
+  private lazy val javascriptEnabled: Boolean = {
+    sys.props.get("javascript").map(_.toLowerCase) match {
+      case Some("true")  => true
+      case Some("false") => false
+      case Some(_)       => sys.error("'javascript' property must be 'true' or 'false'.")
+      case None => {
+        // logger.warn("'javascript' property not set, defaulting to true.")
+        true
+      }
+    }
+  }
+
+  implicit lazy val webDriver: WebDriver = sys.props.get("browser").map(_.toLowerCase) match {
+    case Some("chrome")          => chromeInstance
+    case Some("chrome-headless") => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
+    case Some("remote-chrome")   => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions)
+    //  case None => {
+    // chromeInstance()
+    //}
+  }
+
+  def chromeInstance(): WebDriver =
+    {
+      System.setProperty("browser", "chrome")
+      SingletonDriver.getInstance()
+    }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
