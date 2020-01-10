@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,11 +37,11 @@ trait TaxPayerConnector {
       response => Some(response.json.as[Taxpayer])
     }.recover {
       case e: uk.gov.hmrc.http.NotFoundException =>
-        Logger.error("Taxpayer not found")
+        Logger.error("Taxpayer not found", e)
         None
       case e: Exception =>
-        Logger.error(e.getMessage)
-        throw new RuntimeException(e.getMessage)
+        Logger.error(e.getMessage, e)
+        throw new RuntimeException(e)
     }
   }
 }
