@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
 import javax.inject._
 import play.api.Logger
+import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, Result, Results}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
@@ -175,13 +176,29 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
       }
 
     for {
-      es <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer), utr)
+      es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer), utr)
+      _ = log(taxpayer, es)
       updatedSubmission = newSubmission.copy(eligibilityStatus = Option(es))
       _ <- sessionCache.putTtpSessionCarrier(updatedSubmission)
       result <- checkSubmission(updatedSubmission)
     } yield result
   }
 
+  /**
+   * Logs non person identifiable data for debug purposes
+   */
+  def log(taxpayer: Taxpayer, eligibilityStatus: EligibilityStatus): Unit = {
+    import DLogFormats._
+    val jsonMeassge = Json.obj(
+      "eligibilityStatus" -> Json.toJson(eligibilityStatus),
+      "returns" -> Json.toJson(taxpayer.selfAssessment.flatMap(_.returns)),
+      "debits" -> Json.toJson(taxpayer.selfAssessment.map(_.debits))
+    )
+    val message = Json.prettyPrint(jsonMeassge)
+    dLogger.info(message)
+  }
+
+  private val dLogger = Logger("eligibility-logger")
   def setDefaultCalculatorSchedule(newSubmission: TTPSubmission, debits: Seq[Debit])(implicit hc: HeaderCarrier): Future[CacheMap] = {
     sessionCache.putTtpSessionCarrier(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
                                                                                           endDate   = LocalDate.now().plusMonths(2).minusDays(1), debits = debits)))
@@ -328,4 +345,10 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
       ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getMonthlyInstalmentDate))
     })
   }
+}
+
+object DLogFormats {
+  //  implicit val esWrites: OWrites[EligibilityStatus] = Json.writes[EligibilityStatus]
+  implicit val writesReturn = Json.format[Return]
+  implicit val writesDebit = Json.format[Debit]
 }
