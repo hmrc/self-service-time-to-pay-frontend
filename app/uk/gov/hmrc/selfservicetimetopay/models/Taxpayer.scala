@@ -27,7 +27,7 @@ case class Taxpayer(
   def obfuscate: Taxpayer = Taxpayer(
     customerName   = customerName.map(_ => "***"),
     addresses      = addresses.map(_.obfuscate),
-    selfAssessment = selfAssessment
+    selfAssessment = selfAssessment.map(_.obfuscate)
   )
 }
 
