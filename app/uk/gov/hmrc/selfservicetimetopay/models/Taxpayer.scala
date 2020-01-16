@@ -34,7 +34,15 @@ case class Taxpayer(
 case class SelfAssessment(utr:                      Option[String]                   = None,
                           communicationPreferences: Option[CommunicationPreferences] = None,
                           debits:                   Seq[Debit]                       = Seq.empty,
-                          returns:                  Option[List[Return]]             = None)
+                          returns:                  Option[List[Return]]             = None) {
+
+  def obfuscate: SelfAssessment = SelfAssessment(
+    utr = utr.map(x => x.take(4)+"***" ),
+    communicationPreferences = communicationPreferences,
+    debits = debits,
+    returns = returns
+  )
+}
 
 case class Address(addressLine1: Option[String] = None,
                    addressLine2: Option[String] = None,
