@@ -17,11 +17,13 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.LocalDate
-import javax.inject._
 
+import javax.inject._
 import play.api.Logger
+import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, _}
 import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm, MonthlyAmountForm}
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService
@@ -318,19 +320,25 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
    * - If schedule data is missing, update TTPSubmission
    */
   def getCalculateInstalmentsOld: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
+        JourneyLogger.info("getCalculateInstalmentsOld-1", ttpData)
         if (getMaxMonthsAllowed(sa, LocalDate.now()) >= minimumMonthsAllowedTTP) {
           calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
             Ok(calculate_instalments_form(CalculatorForm.createInstalmentForm(),
                                           ttpData.lengthOfArrangement, monthsToSchedule, routes.CalculatorController.submitCalculateInstalments(), loggedIn = true))
           }
         } else {
+          JourneyLogger.info("getCalculateInstalmentsOld-2", ttpData)
           //todo perhaps move these checks else where to eligbility service?
-          sessionCache.putTtpSessionCarrier(ttpData.copy(eligibilityStatus = Some(EligibilityStatus(eligible = false, Seq(TTPIsLessThenTwoMonths))))).map { _ => Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()) }
+          val newSubmission = ttpData.copy(eligibilityStatus = Some(EligibilityStatus(eligible = false, Seq(TTPIsLessThenTwoMonths))))
+          JourneyLogger.info("getCalculateInstalmentsOld-3", ttpData)
+          sessionCache.putTtpSessionCarrier(newSubmission).map { _ => Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()) }
         }
-
-      case _ => Future.successful(redirectOnError)
+      case ttpData =>
+        JourneyLogger.info("getCalculateInstalmentsOld-4-didn't-pattern-match", ttpData)
+        Future.successful(redirectOnError)
     }
   }
 

@@ -22,7 +22,14 @@ case class Taxpayer(
     customerName:   Option[String]         = None,
     addresses:      Seq[Address]           = Seq.empty,
     selfAssessment: Option[SelfAssessment] = None
-)
+) {
+
+  def obfuscate: Taxpayer = Taxpayer(
+    customerName   = customerName.map(_ => "***"),
+    addresses      = addresses.map(_.obfuscate),
+    selfAssessment = selfAssessment
+  )
+}
 
 case class SelfAssessment(utr:                      Option[String]                   = None,
                           communicationPreferences: Option[CommunicationPreferences] = None,
@@ -34,7 +41,17 @@ case class Address(addressLine1: Option[String] = None,
                    addressLine3: Option[String] = None,
                    addressLine4: Option[String] = None,
                    addressLine5: Option[String] = None,
-                   postcode:     Option[String] = None)
+                   postcode:     Option[String] = None) {
+
+  def obfuscate: Address = Address(
+    addressLine1 = addressLine1.map(_ => "***"),
+    addressLine2 = addressLine2.map(_ => "***"),
+    addressLine3 = addressLine3.map(_ => "***"),
+    addressLine4 = addressLine4.map(_ => "***"),
+    addressLine5 = addressLine5.map(_ => "***"),
+    postcode     = postcode.map(_ => "***")
+  )
+}
 
 case class CommunicationPreferences(welshLanguageIndicator: Boolean = false,
                                     audioIndicator:         Boolean = false,

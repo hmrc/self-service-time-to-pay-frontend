@@ -31,4 +31,18 @@ final case class TTPSubmission(schedule:               Option[CalculatorPaymentS
 
   def lengthOfArrangement: Int = schedule.map(_.instalments.length).getOrElse(2)
   def arrangementDirectDebit: Option[ArrangementDirectDebit] = bankDetails.map(f => ArrangementDirectDebit.from(f))
+
+  def obfuscate: TTPSubmission = TTPSubmission(
+    schedule               = schedule,
+    bankDetails            = bankDetails.map(_.obfuscate),
+    existingDDBanks        = existingDDBanks.map(_.obfuscate),
+    taxpayer               = taxpayer.map(_.obfuscate),
+    calculatorData         = calculatorData,
+    durationMonths         = durationMonths,
+    eligibilityStatus      = eligibilityStatus,
+    debitDate              = debitDate,
+    notLoggedInJourneyInfo = ???,
+    ddRef                  = ddRef.map(_ => "***")
+
+  )
 }

@@ -89,7 +89,6 @@ trait TimeToPayController extends FrontendController with Actions {
   def authorisedSaUser(body: AsyncPlayUserRequest): PlayAction[AnyContent] = Action.async { implicit request =>
     Try { provideSaRegime() } match {
       case Success(taxRegime) =>
-        println("hello")
         AuthorisedFor(taxRegime, timeToPayConfidenceLevel).async(body)(request)
       case Failure(e) =>
         Logger.warn("Redirecting to start page because there was no ttpSessionId", e)
