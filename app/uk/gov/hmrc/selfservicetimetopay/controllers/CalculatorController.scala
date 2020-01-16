@@ -289,6 +289,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
   def submitCalculateInstalments(): Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
+        JourneyLogger.info("submitCalculateInstalments-1", ttpData)
         sessionCache.getAmount.flatMap {
           case Some(amount) =>
             calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { schedule =>
@@ -307,8 +308,13 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
                 )
               }
             }
-          case _ => Future.successful(redirectOnError)
+          case _ =>
+            JourneyLogger.info("getCalculateInstalments-2-didn't-pattern-match-on-amount", ttpData)
+            Future.successful(redirectOnError)
         }
+      case ttpData =>
+        JourneyLogger.info("getCalculateInstalments-3-didn't-pattern-match", ttpData)
+        Future.successful(redirectOnError)
     }
   }
 
