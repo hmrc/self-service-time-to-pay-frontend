@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.selfservicetimetopay.auth.{Token, TokenData}
 import uk.gov.hmrc.selfservicetimetopay.connectors._
 import uk.gov.hmrc.selfservicetimetopay.forms.ArrangementForm
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.createCalculatorInput
@@ -92,6 +93,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
         tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion())))(taxPayer => {
           val newSubmission = TTPSubmission(taxpayer = Some(taxPayer))
           sessionCache.putTtpSessionCarrier(newSubmission).flatMap { _ =>
+
             eligibilityCheck(taxPayer, newSubmission, authContext.principal.accounts.sa.get.utr.utr)
           }
         }
@@ -177,28 +179,15 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
 
     for {
       es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer), utr)
-      _ = log(taxpayer, es)
+      _ = JourneyLogger.info("debits", Json.toJson(taxpayer.selfAssessment.map(_.debits)))
+      _ = JourneyLogger.info("returns", Json.toJson(taxpayer.selfAssessment.flatMap(_.returns)))
+      _ = JourneyLogger.info("eligibilityStatus", Json.toJson(es))
       updatedSubmission = newSubmission.copy(eligibilityStatus = Option(es))
       _ <- sessionCache.putTtpSessionCarrier(updatedSubmission)
       result <- checkSubmission(updatedSubmission)
     } yield result
   }
 
-  /**
-   * Logs non person identifiable data for debug purposes
-   */
-  def log(taxpayer: Taxpayer, eligibilityStatus: EligibilityStatus): Unit = {
-    import DLogFormats._
-    val jsonMeassge = Json.obj(
-      "eligibilityStatus" -> Json.toJson(eligibilityStatus),
-      "returns" -> Json.toJson(taxpayer.selfAssessment.flatMap(_.returns)),
-      "debits" -> Json.toJson(taxpayer.selfAssessment.map(_.debits))
-    )
-    val message = Json.prettyPrint(jsonMeassge)
-    dLogger.info(message)
-  }
-
-  private val dLogger = Logger("eligibility-logger")
   def setDefaultCalculatorSchedule(newSubmission: TTPSubmission, debits: Seq[Debit])(implicit hc: HeaderCarrier): Future[CacheMap] = {
     sessionCache.putTtpSessionCarrier(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
                                                                                           endDate   = LocalDate.now().plusMonths(2).minusDays(1), debits = debits)))
@@ -345,10 +334,4 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
       ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getMonthlyInstalmentDate))
     })
   }
-}
-
-object DLogFormats {
-  //  implicit val esWrites: OWrites[EligibilityStatus] = Json.writes[EligibilityStatus]
-  implicit val writesReturn = Json.format[Return]
-  implicit val writesDebit = Json.format[Debit]
 }

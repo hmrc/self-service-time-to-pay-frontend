@@ -20,4 +20,10 @@ object DirectDebitBank {
   val none = DirectDebitBank("", Seq.empty)
 }
 
-case class DirectDebitBank(processingDate: String, directDebitInstruction: Seq[DirectDebitInstruction])
+case class DirectDebitBank(processingDate: String, directDebitInstruction: Seq[DirectDebitInstruction]) {
+
+  def obfuscate: DirectDebitBank = DirectDebitBank(
+    processingDate         = processingDate,
+    directDebitInstruction = directDebitInstruction.map(_.obfuscate)
+  )
+}

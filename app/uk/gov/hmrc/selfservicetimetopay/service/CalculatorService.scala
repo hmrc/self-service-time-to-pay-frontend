@@ -34,12 +34,19 @@ class CalculatorService @Inject() (calculatorConnector: CalculatorConnector,
                                    workingDays:         WorkingDaysService) {
 
   //todo perhaps merge these methods and change back end so it only one call
-  def getInstalmentsSchedule(sa: SelfAssessment, intialPayment: BigDecimal = BigDecimal(0))
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
-    val input: List[(Int, CalculatorInput)] = getMonthRange(sa).map(month => {
+  def getInstalmentsSchedule(
+      sa:            SelfAssessment,
+      intialPayment: BigDecimal     = BigDecimal(0))(implicit hc: HeaderCarrier,
+                                                     ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
+
+    val months: Seq[Int] = getMonthRange(sa)
+
+    val input: List[(Int, CalculatorInput)] = months.map{ month: Int =>
       val calculatorInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, intialPayment, sa.debits)
-      (month, validateCalculatorDates(calculatorInput, month, sa.debits))
-    }).toList
+      val calculatorInputValidated = validateCalculatorDates(calculatorInput, month, sa.debits)
+
+      (month, calculatorInputValidated)
+    }.toList
 
     getCalculatorValues(input)
   }
@@ -174,7 +181,14 @@ object CalculatorService {
     val nextSubmissionReturn: Option[LocalDate] = selfAssessment.returns.flatMap(getFutureReturn)
 
     val yearAfterEarliestCurrantLiabilities: Option[LocalDate] =
-      Option(selfAssessment.debits.filter(_.amount > 32).map(_.dueDate).min.plusYears(1))
+      Option(
+        selfAssessment
+          .debits
+          .filter(_.amount > 32)
+          .map(_.dueDate)
+          .min
+          .plusYears(1)
+      )
 
     val differenceNextSubmissionReturn: Int = nextSubmissionReturn.map(sr =>
       monthDifference(todayDate, endOfMonthBeforeLastDay(sr))).getOrElse(maxAllowedMonthlyInstalments)

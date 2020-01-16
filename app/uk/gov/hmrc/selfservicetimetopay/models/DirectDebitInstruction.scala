@@ -27,4 +27,16 @@ case class DirectDebitInstruction(sortCode:        Option[String]    = None,
                                   paperAuddisFlag: Option[Boolean]   = Some(true),
                                   ddiRefNumber:    Option[String]    = None,
                                   ddiReferenceNo:  Option[String]    = None,
-                                  accountName:     Option[String]    = None)
+                                  accountName:     Option[String]    = None) {
+
+  def obfuscate: DirectDebitInstruction = DirectDebitInstruction(
+    sortCode        = sortCode.map(_ => "***"),
+    accountNumber   = accountNumber.map(_ => "***"),
+    referenceNumber = referenceNumber.map(_ => "***"),
+    creationDate    = creationDate,
+    paperAuddisFlag = paperAuddisFlag,
+    ddiRefNumber    = ddiRefNumber.map(_ => "***"),
+    ddiReferenceNo  = ddiReferenceNo.map(_ => "***"),
+    accountName     = accountName.map(_ => "***")
+  )
+}
