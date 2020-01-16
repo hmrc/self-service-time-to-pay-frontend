@@ -41,7 +41,7 @@ final case class TTPSubmission(schedule:               Option[CalculatorPaymentS
     durationMonths         = durationMonths,
     eligibilityStatus      = eligibilityStatus,
     debitDate              = debitDate,
-    notLoggedInJourneyInfo = ???,
+    notLoggedInJourneyInfo = notLoggedInJourneyInfo,
     ddRef                  = ddRef.map(_ => "***")
 
   )
