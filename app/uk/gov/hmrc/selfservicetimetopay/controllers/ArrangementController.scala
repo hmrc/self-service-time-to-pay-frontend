@@ -335,9 +335,3 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     })
   }
 }
-
-object DLogFormats {
-  //  implicit val esWrites: OWrites[EligibilityStatus] = Json.writes[EligibilityStatus]
-  implicit val writesReturn = Json.format[Return]
-  implicit val writesDebit = Json.format[Debit]
-}
