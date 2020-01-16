@@ -266,6 +266,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
   def getCalculateInstalments(): Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
+        JourneyLogger.info("getCalculateInstalments-1", ttpData)
         sessionCache.getAmount.flatMap{
           case Some(amount) =>
             calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { schedule =>
@@ -277,11 +278,11 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
               }
             }
           case _ =>
-            Logger.info("Missing required data for what you owe review page")
+            JourneyLogger.info("getCalculateInstalments-2 (Missing amount for what you owe review page)", ttpData)
             Future.successful(redirectOnError)
         }
-      case _ =>
-        Logger.info("Missing required data for what you owe review page")
+      case ttpData =>
+        JourneyLogger.info("getCalculateInstalments-3 (Missing required data for what you owe review page)", ttpData)
         Future.successful(redirectOnError)
     }
   }
