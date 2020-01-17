@@ -70,6 +70,9 @@ package object resources {
     Seq(calculatorPaymentScheduleInstalment,
         calculatorPaymentScheduleInstalment)
   )
+
+  val calculatorPaymentScheduleExt = CalculatorPaymentScheduleExt(2, calculatorPaymentSchedule)
+
   val calculatorPaymentScheduleLessThenOnePayment: CalculatorPaymentSchedule = CalculatorPaymentSchedule(
     Some(LocalDate.parse("2001-01-01")),
     Some(LocalDate.parse("2001-01-01")),
@@ -82,10 +85,11 @@ package object resources {
         calculatorPaymentScheduleInstalment)
   )
   val eventualSchedules: Future[Seq[CalculatorPaymentSchedule]] = Future.successful(Seq(calculatorPaymentSchedule))
-  val calculatorPaymentScheduleMap = Map(2 -> calculatorPaymentSchedule, 3 -> calculatorPaymentSchedule,
+  val calculatorPaymentScheduleMap: List[CalculatorPaymentScheduleExt] = Map(2 -> calculatorPaymentSchedule, 3 -> calculatorPaymentSchedule,
     4 -> calculatorPaymentSchedule, 5 -> calculatorPaymentScheduleLessThenOnePayment)
+    .toList.map(t => CalculatorPaymentScheduleExt(t._1, t._2))
 
-  val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentSchedule),
+  val ttpSubmission: TTPSubmission = TTPSubmission(Some(calculatorPaymentScheduleExt),
                                                    Some(BankDetails(Some("012131"), Some("1234567890"), None, None, None, Some("0987654321"))), None,
                                                    Some(taxPayer),
                                                    CalculatorInput.initial.copy(initialPayment = BigDecimal.valueOf(300)), Some(3), Some(EligibilityStatus(true, Seq.empty)))
@@ -93,7 +97,7 @@ package object resources {
   val ttpSubmissionNoAmounts: TTPSubmission = TTPSubmission()
 
   val calculatorAmountDue: Debit = Debit(amount  = BigDecimal(123.45), dueDate = LocalDate.now())
-  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(schedule       = Some(calculatorPaymentSchedule), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
+  val ttpSubmissionNLI: TTPSubmission = TTPSubmission(schedule       = Some(calculatorPaymentScheduleExt), calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
 
   val ttpSubmissionNLINoSchedule: TTPSubmission = TTPSubmission(calculatorData = CalculatorInput.initial.copy(debits = Seq(calculatorAmountDue)))
   val ttpSubmissionNLIEmpty: TTPSubmission = TTPSubmission()

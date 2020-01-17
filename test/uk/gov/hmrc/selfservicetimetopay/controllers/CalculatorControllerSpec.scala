@@ -20,7 +20,6 @@ import java.time.LocalDate
 
 import akka.actor.ActorSystem
 import akka.stream._
-import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -29,17 +28,16 @@ import play.api.Application
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers._
 import play.api.test._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.CacheMap
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.selfservicetimetopay.auth.{SaGovernmentGateway, TokenData}
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCache4TokensConnector, SessionCacheConnector}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.resources._
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService
+
 import scala.concurrent.Future
-import play.api.mvc.{Action, AnyContent}
-import play.api.Application
 
 class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -331,7 +329,7 @@ class CalculatorControllerSpec extends PlayMessagesSpec with MockitoSugar with B
 
     "getCheckCalculation should load the check calculation page if amountDue is in the session and the chosen shcedule is there" in {
       when(mockSessionCache.getTtpSessionCarrier(any(), any(), any()))
-        .thenReturn(Future.successful(Some(ttpSubmission.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(2), Some(calculatorPaymentSchedule)))))))
+        .thenReturn(Future.successful(Some(ttpSubmission.copy(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(2), Some(calculatorPaymentScheduleExt)))))))
       val request = FakeRequest().withSession(goodSession: _*)
       val response = controller.getCheckCalculation().apply(request)
 
