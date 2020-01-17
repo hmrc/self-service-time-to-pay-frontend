@@ -21,7 +21,7 @@ import java.time.LocalDate
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
 import uk.gov.hmrc.selfservicetimetopay.auth.{Token, TokenData}
-import uk.gov.hmrc.selfservicetimetopay.models.{NotLoggedInJourneyInfo, _}
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentScheduleExt, NotLoggedInJourneyInfo, _}
 import uk.gov.hmrc.selfservicetimetopay.util.TTPSessionId
 
 package object modelsFormat {
@@ -67,6 +67,7 @@ package object modelsFormat {
   implicit val calculatorDurationFormatter: Format[CalculatorDuration] = Json.format[CalculatorDuration]
   implicit val calculatorPaymentScheduleInstalmentFormatter: Format[CalculatorPaymentScheduleInstalment] = Json.format[CalculatorPaymentScheduleInstalment]
   implicit val calculatorPaymentScheduleFormatter: Format[CalculatorPaymentSchedule] = Json.format[CalculatorPaymentSchedule]
+  implicit val calculatorPaymentScheduleExtFormats: OFormat[CalculatorPaymentScheduleExt] = Json.format[CalculatorPaymentScheduleExt]
   implicit val calculatorInputFormatter: Format[CalculatorInput] = Json.format[CalculatorInput]
 
   //Arrangement formatters

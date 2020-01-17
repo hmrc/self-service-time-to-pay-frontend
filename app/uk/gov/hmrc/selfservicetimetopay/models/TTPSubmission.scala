@@ -18,18 +18,18 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
 
-final case class TTPSubmission(schedule:               Option[CalculatorPaymentSchedule] = None,
-                               bankDetails:            Option[BankDetails]               = None,
-                               existingDDBanks:        Option[DirectDebitBank]           = None,
-                               taxpayer:               Option[Taxpayer]                  = None,
-                               calculatorData:         CalculatorInput                   = CalculatorInput.initial,
-                               durationMonths:         Option[Int]                       = Some(2),
-                               eligibilityStatus:      Option[EligibilityStatus]         = None,
-                               debitDate:              Option[LocalDate]                 = None,
-                               notLoggedInJourneyInfo: Option[NotLoggedInJourneyInfo]    = None,
-                               ddRef:                  Option[String]                    = None) {
+final case class TTPSubmission(schedule:               Option[CalculatorPaymentScheduleExt] = None,
+                               bankDetails:            Option[BankDetails]                  = None,
+                               existingDDBanks:        Option[DirectDebitBank]              = None,
+                               taxpayer:               Option[Taxpayer]                     = None,
+                               calculatorData:         CalculatorInput                      = CalculatorInput.initial,
+                               durationMonths:         Option[Int]                          = Some(2),
+                               eligibilityStatus:      Option[EligibilityStatus]            = None,
+                               debitDate:              Option[LocalDate]                    = None,
+                               notLoggedInJourneyInfo: Option[NotLoggedInJourneyInfo]       = None,
+                               ddRef:                  Option[String]                       = None) {
 
-  def lengthOfArrangement: Int = schedule.map(_.instalments.length).getOrElse(2)
+  def lengthOfArrangement: Int = schedule.map(_.schedule.instalments.length).getOrElse(2)
   def arrangementDirectDebit: Option[ArrangementDirectDebit] = bankDetails.map(f => ArrangementDirectDebit.from(f))
 
   def obfuscate: TTPSubmission = TTPSubmission(

@@ -25,7 +25,7 @@ import org.scalatest.mock.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
-import uk.gov.hmrc.selfservicetimetopay.models.Return
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentScheduleExt, Return}
 import uk.gov.hmrc.selfservicetimetopay.resources.{selfAssessment, _}
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.getFutureReturn
 
@@ -50,17 +50,20 @@ class CalculatorServiceSpec extends UnitSpec with MockitoSugar with ScalaFutures
     "return the map sorted from lowest to highest" in {
       when(mockCalConnector.calculatePaymentSchedule(any())(any())).thenReturn(eventualSchedules)
       when(mockWorkingDaysService.addWorkingDays(any(), any())).thenReturn(LocalDate.now())
-      val result = calculatorService.getInstalmentsSchedule(selfAssessment.get).futureValue
-      result shouldBe Map(2 -> calculatorPaymentSchedule,
-        3 -> calculatorPaymentSchedule,
-        4 -> calculatorPaymentSchedule,
-        5 -> calculatorPaymentSchedule,
-        6 -> calculatorPaymentSchedule,
-        7 -> calculatorPaymentSchedule,
-        8 -> calculatorPaymentSchedule,
-        9 -> calculatorPaymentSchedule,
-        10 -> calculatorPaymentSchedule,
-        11 -> calculatorPaymentSchedule)
+      val result: List[CalculatorPaymentScheduleExt] = calculatorService.getInstalmentsSchedule(selfAssessment.get).futureValue
+      val expected = List(
+        CalculatorPaymentScheduleExt(2, calculatorPaymentSchedule),
+        CalculatorPaymentScheduleExt(3, calculatorPaymentSchedule),
+        CalculatorPaymentScheduleExt(4, calculatorPaymentSchedule),
+        CalculatorPaymentScheduleExt(5, calculatorPaymentSchedule),
+        CalculatorPaymentScheduleExt(6, calculatorPaymentSchedule),
+        CalculatorPaymentScheduleExt(7, calculatorPaymentSchedule),
+        CalculatorPaymentScheduleExt(8, calculatorPaymentSchedule),
+        CalculatorPaymentScheduleExt(9, calculatorPaymentSchedule),
+        CalculatorPaymentScheduleExt(10, calculatorPaymentSchedule),
+        CalculatorPaymentScheduleExt(11, calculatorPaymentSchedule)
+      )
+      result shouldBe expected
     }
   }
 }

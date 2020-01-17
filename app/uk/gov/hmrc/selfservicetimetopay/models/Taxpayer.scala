@@ -37,10 +37,10 @@ case class SelfAssessment(utr:                      Option[String]              
                           returns:                  Option[List[Return]]             = None) {
 
   def obfuscate: SelfAssessment = SelfAssessment(
-    utr = utr.map(x => x.take(4)+"***" ),
+    utr                      = utr.map(x => x.take(4) + "***"),
     communicationPreferences = communicationPreferences,
-    debits = debits,
-    returns = returns
+    debits                   = debits,
+    returns                  = returns
   )
 }
 

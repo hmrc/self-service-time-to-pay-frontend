@@ -18,11 +18,11 @@
 @import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.partials._
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentSchedule}
+@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentScheduleExt}
 
 @(durationForm: Form[CalculatorDuration],
     currentChosenMonth: Int = 2,
-    monthsToSchedule: Map[Int, CalculatorPaymentSchedule],
+    monthsToSchedule: List[CalculatorPaymentScheduleExt],
     redirectCall: Call, loggedIn: Boolean,
     isAuthJourney: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
@@ -49,10 +49,10 @@
             <div id="chosen-month">
 
                 @{
-                    monthsToSchedule.filter(month => month._1 < 7).map { lessThenSix => instalment_by_month(lessThenSix._1, lessThenSix._2) }
+                    monthsToSchedule.filter(schedule => schedule.months < 7).map { lessThenSixSchedule => instalment_by_month(lessThenSixSchedule) }
                 }
                 @{
-                    val greaterThenSix = monthsToSchedule.filter(month => month._1 >= 6)
+                    val greaterThenSix = monthsToSchedule.filter(schedule => schedule.months >= 6)
                     if(greaterThenSix.nonEmpty) {
                         instalments_by_month_sub_section(greaterThenSix)
                     }

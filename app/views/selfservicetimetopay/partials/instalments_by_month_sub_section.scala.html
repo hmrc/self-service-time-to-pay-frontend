@@ -15,14 +15,15 @@
  *@
 
 @import selfservicetimetopay.partials.instalment_by_month
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(monthsToSchedule: Map[Int, CalculatorPaymentSchedule])(implicit messages: play.api.i18n.Messages)
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentScheduleExt
+
+@(monthsToSchedule: List[CalculatorPaymentScheduleExt])(implicit messages: play.api.i18n.Messages)
 
 <details class="margin-top-40 margin-bottom-30">
     <summary onclick="click"><span class="summary">@Messages("ssttp.calculator.results.month.greater-then-six.header")</span></summary>
     <div>
         <p>@Messages("ssttp.calculator.results.month.greater-then-six.intro")</p>
-        @monthsToSchedule.map { greaterThenSix:(Int,CalculatorPaymentSchedule) => @instalment_by_month(greaterThenSix._1, greaterThenSix._2)}
+        @monthsToSchedule.map { greaterThenSix: CalculatorPaymentScheduleExt => @instalment_by_month(greaterThenSix)}
     </div>
 </details>
 <script type="text/javascript">

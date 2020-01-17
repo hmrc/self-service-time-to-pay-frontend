@@ -31,6 +31,7 @@ import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService._
 import views.html.selfservicetimetopay.calculator._
 import views.html.selfservicetimetopay.unauth._
 
+import scala.collection.immutable
 import scala.concurrent.Future
 
 class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesApi,
@@ -67,9 +68,9 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
     implicit request =>
       sessionCache.getTtpSessionCarrier.flatMap {
         case Some(ttpData @ TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(Some(amountDue), _)), _)) =>
-          calculatorService.getInstalmentsSchedule(SelfAssessment (debits = Seq(Debit(amount  = amountDue, dueDate = LocalDate.now()))), 0).map { monthsToSchedule =>
+          calculatorService.getInstalmentsSchedule(SelfAssessment (debits = Seq(Debit(amount  = amountDue, dueDate = LocalDate.now()))), 0).map { schedules: List[CalculatorPaymentScheduleExt] =>
             Ok(calculate_instalments_form(CalculatorForm.createInstalmentForm(),
-                                          ttpData.lengthOfArrangement, monthsToSchedule, routes.CalculatorController.submitCalculateInstalmentsUnAuth(), isSignedIn, false))
+                                          ttpData.lengthOfArrangement, schedules, routes.CalculatorController.submitCalculateInstalmentsUnAuth(), isSignedIn, false))
           }
 
         case _ => Future.successful(redirectOnError)
@@ -220,12 +221,12 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
     }
   }
 
-  def getClosestSchedule(num: BigDecimal, schedule: List[CalculatorPaymentSchedule]): CalculatorPaymentSchedule =
-    schedule.minBy(v => math.abs(v.getMonthlyInstalment.toInt - num.toInt))
+  def getClosestSchedule(amount: BigDecimal, schedules: List[CalculatorPaymentScheduleExt]): CalculatorPaymentScheduleExt =
+    schedules.minBy(v => math.abs(v.schedule.getMonthlyInstalment.toInt - amount.toInt))
 
-  def getSurroundingSchedule(closestSchedule: CalculatorPaymentSchedule,
-                             schedules:       List[CalculatorPaymentSchedule],
-                             sa:              SelfAssessment): List[CalculatorPaymentSchedule] = {
+  def getSurroundingSchedule(closestSchedule: CalculatorPaymentScheduleExt,
+                             schedules:       List[CalculatorPaymentScheduleExt],
+                             sa:              SelfAssessment): List[CalculatorPaymentScheduleExt] = {
     if (schedules.indexOf(closestSchedule) == 0)
       List(Some(closestSchedule), getElementNItemsAbove(1, closestSchedule, schedules), getElementNItemsAbove(2, closestSchedule, schedules))
         .flatten
@@ -269,12 +270,15 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
         JourneyLogger.info("getCalculateInstalments-1", ttpData)
         sessionCache.getAmount.flatMap{
           case Some(amount) =>
-            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { schedule =>
+            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { schedules: List[CalculatorPaymentScheduleExt] =>
               {
+                val closestSchedule: CalculatorPaymentScheduleExt = getClosestSchedule(amount, schedules)
+                val monthsToSchedule: List[CalculatorPaymentScheduleExt] = getSurroundingSchedule(closestSchedule, schedules, sa)
+
                 Ok(calculate_instalments_form_2(
                   routes.CalculatorController.submitCalculateInstalments(),
                   CalculatorForm.createInstalmentForm(),
-                  getSurroundingSchedule(getClosestSchedule(amount, schedule.values.toList), schedule.values.toList, sa)))
+                  monthsToSchedule))
               }
             }
           case _ =>
@@ -293,18 +297,22 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
         JourneyLogger.info("submitCalculateInstalments-1", ttpData)
         sessionCache.getAmount.flatMap {
           case Some(amount) =>
-            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { schedule =>
+            calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { schedules: List[CalculatorPaymentScheduleExt] =>
               {
                 CalculatorForm.createInstalmentForm().bindFromRequest().fold(
                   formWithErrors => {
                     Future.successful(BadRequest(calculate_instalments_form_2(
                       routes.CalculatorController.submitCalculateInstalments(),
-                      formWithErrors, getSurroundingSchedule(getClosestSchedule(amount, schedule.values.toList), schedule.values.toList, sa))))
+                      formWithErrors, getSurroundingSchedule(getClosestSchedule(amount, schedules), schedules, sa))))
                   },
                   validFormData => {
-                    sessionCache.putTtpSessionCarrier(ttpData.copy(schedule = Some(schedule(validFormData.chosenMonths)))).map { _ =>
-                      Redirect(routes.ArrangementController.getChangeSchedulePaymentDay())
-                    }
+                    sessionCache
+                      .putTtpSessionCarrier(
+                        ttpData.copy(
+                          schedule = schedules.find(_.months == validFormData.chosenMonths)
+                        )
+                      )
+                      .map(_ => Redirect(routes.ArrangementController.getChangeSchedulePaymentDay()))
                   }
                 )
               }
@@ -352,14 +360,14 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
   def submitCalculateInstalmentsOld(): Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
-        calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule =>
+        calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule: List[CalculatorPaymentScheduleExt] =>
           CalculatorForm.createInstalmentForm().bindFromRequest().fold(
             formWithErrors => {
               Future.successful(BadRequest(calculate_instalments_form(formWithErrors, ttpData.lengthOfArrangement,
                                                                       monthsToSchedule, routes.CalculatorController.submitCalculateInstalments(), loggedIn = true)))
             },
             validFormData => {
-              sessionCache.putTtpSessionCarrier(ttpData.copy(schedule = Some(monthsToSchedule(validFormData.chosenMonths)))).map { _ =>
+              sessionCache.putTtpSessionCarrier(ttpData.copy(schedule = monthsToSchedule.find(_.months == validFormData.chosenMonths))).map { _ =>
                 Redirect(routes.ArrangementController.getChangeSchedulePaymentDay())
               }
             }

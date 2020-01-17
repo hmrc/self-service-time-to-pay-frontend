@@ -104,7 +104,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   def getInstalmentSummary: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     authorizedForSsttp {
       case ttp @ TTPSubmission(Some(schedule), _, _, _, cd @ CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _, _, _) =>
-        Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule)))
+        Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule.schedule)))
       case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
     }
   }
@@ -146,13 +146,19 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   /**
    * Take the updated calculator input information and send it to the calculator service
    */
-  private def changeScheduleDay(ttpSubmission: TTPSubmission, schedule: CalculatorPaymentSchedule, debits: Seq[Debit], dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
+  private def changeScheduleDay(ttpSubmission: TTPSubmission, schedule: CalculatorPaymentScheduleExt, debits: Seq[Debit], dayOfMonth: Int)(implicit hc: HeaderCarrier): Future[TTPSubmission] = {
+    val months = schedule.schedule.instalments.length
     val input = createCalculatorInput(
-      schedule.instalments.length,
+      months,
       dayOfMonth,
-      schedule.initialPayment,
+      schedule.schedule.initialPayment,
       debits)
-    calculatorConnector.calculatePaymentSchedule(input).map[TTPSubmission](seqCalcInput => ttpSubmission.copy(schedule       = Option(seqCalcInput.head), calculatorData = input))
+    calculatorConnector.calculatePaymentSchedule(input)
+      .map(_.map(CalculatorPaymentScheduleExt(months, _)))
+      .map[TTPSubmission](seqCalcInput => ttpSubmission.copy(
+        schedule       = Option(seqCalcInput.head),
+        calculatorData = input
+      ))
   }
 
   /**
@@ -221,7 +227,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
           debits        = submission.taxpayer.get.selfAssessment.get.debits.sortBy(_.dueDate.toEpochDay()),
           transactionId = submission.taxpayer.get.selfAssessment.get.utr.get + LocalDateTime.now().toString,
           directDebit   = submission.arrangementDirectDebit.get,
-          schedule      = submission.schedule.get,
+          schedule      = submission.schedule.get.schedule,
           ddref         = submission.ddRef)
         ))
     }
@@ -289,11 +295,11 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     } yield {
       val knownFact = List(KnownFact(cesa, utr))
 
-      val initialPayment = if (schedule.initialPayment > BigDecimal.exact(0)) Some(schedule.initialPayment.toString()) else None
-      val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.startDate.get.plusWeeks(1)))
+      val initialPayment = if (schedule.schedule.initialPayment > BigDecimal.exact(0)) Some(schedule.schedule.initialPayment.toString()) else None
+      val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.schedule.startDate.get.plusWeeks(1)))
 
-      val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.last
-      val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.instalments.head
+      val lastInstalment: CalculatorPaymentScheduleInstalment = schedule.schedule.instalments.last
+      val firstInstalment: CalculatorPaymentScheduleInstalment = schedule.schedule.instalments.head
       val pp = PaymentPlan(ppType                    = "Time to Pay",
                            paymentReference          = s"${
           utr
@@ -308,7 +314,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
                            scheduledPaymentFrequency = paymentFrequency,
                            balancingPaymentAmount    = lastInstalment.amount.toString(),
                            balancingPaymentDate      = lastInstalment.paymentDate,
-                           totalLiability            = (schedule.instalments.map(_.amount).sum + schedule.initialPayment).toString())
+                           totalLiability            = (schedule.schedule.instalments.map(_.amount).sum + schedule.schedule.initialPayment).toString())
 
       PaymentPlanRequest("SSTTP", ZonedDateTime.now.format(DateTimeFormatter.ISO_INSTANT), knownFact, ddInstruction, pp, printFlag = true)
     }
@@ -326,12 +332,12 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
     val taxpayer = submission.taxpayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
     val schedule = submission.schedule.getOrElse(throw new RuntimeException("Schedule data not present"))
 
-    TTPArrangement(ppReference, ddReference, taxpayer, schedule)
+    TTPArrangement(ppReference, ddReference, taxpayer, schedule.schedule)
   }
 
   private def createDayOfForm(ttpSubmission: TTPSubmission) = {
-    ttpSubmission.schedule.fold(ArrangementForm.dayOfMonthForm)(p => {
-      ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getMonthlyInstalmentDate))
+    ttpSubmission.schedule.fold(ArrangementForm.dayOfMonthForm)((p: CalculatorPaymentScheduleExt) => {
+      ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.schedule.getMonthlyInstalmentDate))
     })
   }
 }

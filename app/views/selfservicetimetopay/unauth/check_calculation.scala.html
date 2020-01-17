@@ -16,8 +16,9 @@
 
 @import selfservicetimetopay.partials._
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@( schedule: CalculatorPaymentSchedule, loggedIn: Boolean)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentScheduleExt
+
+@(schedule: CalculatorPaymentScheduleExt, loggedIn: Boolean)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @selfservicetimetopay.main(
     title = Messages("ssttp.calculator.check-calculation.h1"),

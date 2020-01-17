@@ -69,7 +69,7 @@ trait DirectDebitConnector {
     }.recover {
       case e: uk.gov.hmrc.http.NotFoundException => None
       case e: Exception =>
-        Logger.error(e.getMessage)
+        Logger.error("Direct debit returned unexpected response", e)
         throw new RuntimeException("Direct debit returned unexpected response")
     }
   }

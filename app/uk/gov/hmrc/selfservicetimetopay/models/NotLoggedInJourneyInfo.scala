@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class NotLoggedInJourneyInfo(amountDue: Option[BigDecimal] = None, calculatorPaymentSchedule: Option[CalculatorPaymentSchedule] = None)
+case class NotLoggedInJourneyInfo(amountDue: Option[BigDecimal] = None, calculatorPaymentSchedule: Option[CalculatorPaymentScheduleExt] = None)
