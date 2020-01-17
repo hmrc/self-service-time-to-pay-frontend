@@ -16,11 +16,11 @@
 
 @import selfservicetimetopay.partials._
 @import uk.gov.hmrc.selfservicetimetopay.controllers.routes
-@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentSchedule}
+@import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, CalculatorPaymentScheduleExt}
 @import uk.gov.hmrc.play.views.html.helpers
 @import selfservicetimetopay.helpers.forms.submit
 
-@(redirectCall: Call, durationForm: Form[CalculatorDuration], monthsToSchedule:List[CalculatorPaymentSchedule])(implicit messages: play.api.i18n.Messages, request: Request[_])
+@(redirectCall: Call, durationForm: Form[CalculatorDuration], schedules:List[CalculatorPaymentScheduleExt])(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @selfservicetimetopay.main(
 title = Messages("ssttp.calculator.results.title")
@@ -35,7 +35,12 @@ title = Messages("ssttp.calculator.results.title")
 }
 @helpers.form(redirectCall, 'id -> "paymentTodayForm", 'class -> "group") {
  <div id="chosen-month">
-  @{monthsToSchedule.map{mts => instalment_by_month(mts.endDate.get.getMonthValue - mts.startDate.get.getMonthValue , mts)}}
+
+  @{
+    schedules.map{mts =>
+      instalment_by_month(mts)
+    }
+  }
  </div>
 
 <details>

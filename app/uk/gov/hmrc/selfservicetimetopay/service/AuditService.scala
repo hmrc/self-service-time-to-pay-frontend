@@ -45,9 +45,9 @@ class AuditService {
     val name: String = submission.bankDetails.map(_.accountName.get).get
     val accountNumber: String = submission.bankDetails.map(_.accountNumber.get).get
     val sortCode: String = submission.bankDetails.map(_.sortCode.get).get
-    val installment: String = submission.schedule.map(_.instalments).getClass.toString
-    val interestTotal: BigDecimal = submission.schedule.map(_.totalInterestCharged).get
-    val total: BigDecimal = submission.schedule.map(_.totalPayable).get
+    val installment: String = submission.schedule.map(_.schedule.instalments).getClass.toString
+    val interestTotal: BigDecimal = submission.schedule.map(_.schedule.totalInterestCharged).get
+    val total: BigDecimal = submission.schedule.map(_.schedule.totalPayable).get
 
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",

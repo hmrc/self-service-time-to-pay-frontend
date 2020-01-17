@@ -37,13 +37,13 @@ class CalculatorService @Inject() (calculatorConnector: CalculatorConnector,
   def getInstalmentsSchedule(
       sa:            SelfAssessment,
       intialPayment: BigDecimal     = BigDecimal(0))(implicit hc: HeaderCarrier,
-                                                     ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
+                                                     ec: ExecutionContext): Future[List[CalculatorPaymentScheduleExt]] = {
 
     val months: Seq[Int] = getMonthRange(sa)
 
     val input: List[(Int, CalculatorInput)] = months.map{ month: Int =>
-      val calculatorInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, intialPayment, sa.debits)
-      val calculatorInputValidated = validateCalculatorDates(calculatorInput, month, sa.debits)
+      val calculatorInput: CalculatorInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, intialPayment, sa.debits)
+      val calculatorInputValidated: CalculatorInput = validateCalculatorDates(calculatorInput, month, sa.debits)
 
       (month, calculatorInputValidated)
     }.toList
@@ -51,7 +51,7 @@ class CalculatorService @Inject() (calculatorConnector: CalculatorConnector,
     getCalculatorValues(input)
   }
 
-  def getInstalmentsScheduleUnAuth(debits: Seq[Debit])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, CalculatorPaymentSchedule]] = {
+  def getInstalmentsScheduleUnAuth(debits: Seq[Debit])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[List[CalculatorPaymentScheduleExt]] = {
 
     val input: List[(Int, CalculatorInput)] = (minimumMonthsAllowedTTP to maxAllowedMonthlyInstalments).map(month => {
       val caltInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, 0, debits)
@@ -61,12 +61,12 @@ class CalculatorService @Inject() (calculatorConnector: CalculatorConnector,
   }
 
   private def getCalculatorValues(inputs: List[(Int, CalculatorInput)])(implicit hc: HeaderCarrier, ec: ExecutionContext) = {
-    val futureSchedules: Seq[Future[(Int, CalculatorPaymentSchedule)]] = inputs.map {
+    val futureSchedules: List[Future[CalculatorPaymentScheduleExt]] = inputs.map {
       case (numberOfMonths, calcInput) =>
-        calculatorConnector.calculatePaymentSchedule(calcInput).map(x => (numberOfMonths, x.head))
+        calculatorConnector.calculatePaymentSchedule(calcInput)
+          .map(x => CalculatorPaymentScheduleExt(numberOfMonths, x.head))
     }
-    val returnedValues: Future[Seq[(Int, CalculatorPaymentSchedule)]] = Future.sequence(futureSchedules)
-    returnedValues.map(a => ListMap(a.sortBy(_._1): _*))
+    Future.sequence(futureSchedules)
   }
 
   private def dayOfMonthCheck(date: LocalDate): LocalDate = date.getDayOfMonth match {

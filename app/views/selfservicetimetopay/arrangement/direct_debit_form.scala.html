@@ -16,8 +16,8 @@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.Debit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(debits: Seq[Debit], schedule: CalculatorPaymentSchedule, ddForm: Form[ArrangementDirectDebit], isBankError: Boolean = false, loggedIn: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentScheduleExt
+@(debits: Seq[Debit], schedule: CalculatorPaymentScheduleExt, ddForm: Form[ArrangementDirectDebit], isBankError: Boolean = false, loggedIn: Boolean = true)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @import selfservicetimetopay.partials.{having_problems_sidebar, direct_debit_confirmation, direct_debit_fields, gaDoCheckout}
 @import selfservicetimetopay.helpers.{highlight, alert, message_list}
@@ -28,12 +28,12 @@
 @gaCheckoutCode = {
 @gaDoCheckout(debits = debits,
     step = 2,
-    revenue = schedule.totalPayable,
-    initialPayment = Some(schedule.initialPayment),
-    interest = schedule.totalInterestCharged,
-    duration = schedule.instalments.length,
-    regularPayment = schedule.instalments.head.amount,
-    paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
+    revenue = schedule.schedule.totalPayable,
+    initialPayment = Some(schedule.schedule.initialPayment),
+    interest = schedule.schedule.totalInterestCharged,
+    duration = schedule.schedule.instalments.length,
+    regularPayment = schedule.schedule.instalments.head.amount,
+    paymentDay = schedule.schedule.instalments.head.paymentDate.getDayOfMonth
 )
 }
 @selfservicetimetopay.main(

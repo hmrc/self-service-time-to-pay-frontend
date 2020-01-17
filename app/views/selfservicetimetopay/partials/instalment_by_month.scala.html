@@ -31,27 +31,27 @@
  *@
 
 @import selfservicetimetopay.partials.currency
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentSchedule
-@(noOfMonths:Int,paymentSchedule:CalculatorPaymentSchedule)(implicit messages: play.api.i18n.Messages)
+@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorPaymentScheduleExt
 
+@(schedule:CalculatorPaymentScheduleExt)(implicit messages: play.api.i18n.Messages)
 
-    <div class="multiple-choice" data-target="@{noOfMonths}_id">
-        <input id=@noOfMonths type="radio" name="chosen-month" value=@{if (noOfMonths < 0) 12 + noOfMonths else noOfMonths}>
-        <label for=@noOfMonths>@{if (noOfMonths < 0) 12 + noOfMonths else noOfMonths} @Messages("ssttp.calculator.results.month.option.1") <strong class="bold">@currency(paymentSchedule.instalments.head.amount)</strong></label>
+    <div class="multiple-choice" data-target="@{schedule.months}_id">
+        <input id=@{schedule.months} type="radio" name="chosen-month" value=@{if (schedule.months < 0) 12 + schedule.months else schedule.months}>
+        <label for=@{schedule.months}>@{if (schedule.months < 0) 12 + schedule.months else schedule.months} @Messages("ssttp.calculator.results.month.option.1") <strong class="bold">@currency(schedule.schedule.instalments.head.amount)</strong></label>
     </div>
 
-    <div class="panel js-hidden" id="@{noOfMonths}_id">
+    <div class="panel js-hidden" id="@{schedule.months}_id">
         <table>
             <thead>
                 <tr>
                     <th scope="col">@Messages("ssttp.calculator.results.month.option.table.total.interest")
                         <br><p>@Messages("ssttp.calculator.results.month.option.table.total.interest.base.rate")</p></th>
-                    <td class="numeric" scope="col"><p class="align-left">@currency(paymentSchedule.totalInterestCharged)
+                    <td class="numeric" scope="col"><p class="align-left">@currency(schedule.schedule.totalInterestCharged)
                         <br>@Messages("ssttp.calculator.results.month.option.table.total.interest.hint")</p></td>
                 </tr>
                 <tr>
                     <th  scope="col">@Messages("ssttp.calculator.results.month.option.table.total.paid")</th>
-                    <td class="numeric align-left" scope="col"><p class="align-left">@currency(paymentSchedule.totalPayable)</p></td>
+                    <td class="numeric align-left" scope="col"><p class="align-left">@currency(schedule.schedule.totalPayable)</p></td>
                 </tr>
             </thead>
         </table>
