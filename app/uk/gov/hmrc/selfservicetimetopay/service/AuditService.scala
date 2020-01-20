@@ -17,13 +17,13 @@
 package uk.gov.hmrc.selfservicetimetopay.service
 
 import javax.inject.Singleton
-
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext
 import uk.gov.hmrc.selfservicetimetopay.config.FrontendAuditConnector
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorPaymentScheduleInstalment, DirectDebitInstructionPaymentPlan, TTPSubmission}
 
 import scala.concurrent.ExecutionContext
@@ -34,6 +34,7 @@ class AuditService {
   def auditConnector = FrontendAuditConnector
 
   def sendSubmissionEvent(submission: TTPSubmission)(implicit headerCarrier: HeaderCarrier, executionContext: ExecutionContext) = {
+    JourneyLogger.info(s"Sending audit event for successful submission")
     auditConnector.sendExtendedEvent(eventFor(submission))
   }
 

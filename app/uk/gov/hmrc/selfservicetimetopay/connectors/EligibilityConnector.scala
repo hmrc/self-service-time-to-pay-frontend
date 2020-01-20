@@ -20,6 +20,7 @@ import com.google.inject._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpPost}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityRequest, EligibilityStatus}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
@@ -33,9 +34,15 @@ trait EligibilityConnector {
   val http: HttpPost
 
   def checkEligibility(eligibilityRequest: EligibilityRequest, utr: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EligibilityStatus] = {
-    http.POST[EligibilityRequest, EligibilityStatus](s"$eligibilityURL/$serviceURL/$utr", eligibilityRequest)
+    JourneyLogger.info("EligibilityConnector.checkEligibility")
+    http.POST[EligibilityRequest, EligibilityStatus](s"$eligibilityURL/$serviceURL/$utr", eligibilityRequest).recover {
+      case e =>
+        JourneyLogger.info(s"EligibilityConnector.checkEligibility: ERROR, $e")
+        throw e
+    }
   }
 }
+
 @Singleton
 class EligibilityConnectorImpl extends EligibilityConnector with ServicesConfig with DefaultRunModeAppNameConfig {
   val eligibilityURL: String = baseUrl("time-to-pay-eligibility")

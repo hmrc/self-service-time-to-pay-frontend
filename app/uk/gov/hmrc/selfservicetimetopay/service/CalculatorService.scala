@@ -42,6 +42,7 @@ class CalculatorService @Inject() (calculatorConnector: CalculatorConnector,
       sa:            SelfAssessment,
       intialPayment: BigDecimal     = BigDecimal(0))(implicit hc: HeaderCarrier,
                                                      ec: ExecutionContext): Future[List[CalculatorPaymentScheduleExt]] = {
+    JourneyLogger.info(s"CalculatorService.getInstalmentsSchedule...")
 
     val months: Seq[Int] = getMonthRange(sa)
 
@@ -56,7 +57,7 @@ class CalculatorService @Inject() (calculatorConnector: CalculatorConnector,
   }
 
   def getInstalmentsScheduleUnAuth(debits: Seq[Debit])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[List[CalculatorPaymentScheduleExt]] = {
-
+    JourneyLogger.info(s"CalculatorService.getInstalmentsScheduleUnAuth...")
     val input: List[(Int, CalculatorInput)] = (minimumMonthsAllowedTTP to maxAllowedMonthlyInstalments).map(month => {
       val caltInput = createCalculatorInput(month, LocalDate.now().getDayOfMonth, 0, debits)
       (month, validateCalculatorDates(caltInput, month, debits))
@@ -65,6 +66,7 @@ class CalculatorService @Inject() (calculatorConnector: CalculatorConnector,
   }
 
   private def getCalculatorValues(inputs: List[(Int, CalculatorInput)])(implicit hc: HeaderCarrier, ec: ExecutionContext) = {
+    JourneyLogger.info(s"CalculatorService.getCalculatorValues...")
     val futureSchedules: List[Future[CalculatorPaymentScheduleExt]] = inputs.map {
       case (numberOfMonths, calcInput) =>
         calculatorConnector.calculatePaymentSchedule(calcInput)
@@ -157,8 +159,11 @@ object CalculatorService {
     lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
   }
 
-  def getMonthRange(selfAssessment: SelfAssessment)(implicit hc: HeaderCarrier): Seq[Int] =
-    minimumMonthsAllowedTTP to getMaxMonthsAllowed(selfAssessment, LocalDate.now())
+  def getMonthRange(selfAssessment: SelfAssessment)(implicit hc: HeaderCarrier): Seq[Int] = {
+    val range = minimumMonthsAllowedTTP to getMaxMonthsAllowed(selfAssessment, LocalDate.now())
+    JourneyLogger.info(s"getMonthRange: [months=$range]")
+    range
+  }
 
   implicit def ordered[A <% Comparable[_ >: A]]: Ordering[A] = new Ordering[A] {
     def compare(x: A, y: A): Int = x compareTo y

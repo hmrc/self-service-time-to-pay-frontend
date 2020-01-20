@@ -25,6 +25,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
 import com.google.inject._
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import scala.concurrent.Future
 
@@ -41,10 +42,14 @@ trait ArrangementConnector {
   val http: HttpGet with HttpPost
 
   def submitArrangements(ttpArrangement: TTPArrangement)(implicit hc: HeaderCarrier): Future[SubmissionResult] = {
+    JourneyLogger.info(s"ArrangementConnector.submitArrangements")
+
     http.POST[TTPArrangement, HttpResponse](s"$arrangementURL/$serviceURL", ttpArrangement).map { _ =>
       Right(SubmissionSuccess())
     }.recover {
-      case e: Throwable => onError(e)
+      case e: Throwable =>
+        JourneyLogger.info(s"ArrangementConnector.submitArrangements: Error, $e")
+        onError(e)
     }
   }
 

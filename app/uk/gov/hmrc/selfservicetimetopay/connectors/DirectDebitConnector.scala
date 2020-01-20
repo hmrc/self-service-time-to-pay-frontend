@@ -25,6 +25,7 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
@@ -39,10 +40,13 @@ trait DirectDebitConnector {
   val http: HttpGet with HttpPost
 
   def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DDSubmissionResult] = {
+    JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan")
     http.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$directDebitURL/$serviceURL/$saUtr/instructions/payment-plan", paymentPlan).map {
       Result => Right(Result)
     }.recover {
-      case e: Throwable => onError(e)
+      case e: Throwable =>
+        JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan: Error, $e")
+        onError(e)
     }
   }
 
@@ -63,12 +67,14 @@ trait DirectDebitConnector {
    * Checks if the given bank details are valid by checking against the Bank Account Reputation Service via Direct Debit service
    */
   def getBank(sortCode: String, accountNumber: String)(implicit hc: HeaderCarrier): Future[Option[BankDetails]] = {
+    JourneyLogger.info(s"DirectDebitConnector.getBank")
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
     http.GET[HttpResponse](s"$directDebitURL/$serviceURL/bank?$queryString").map {
       response => Some(response.json.as[BankDetails])
     }.recover {
       case e: uk.gov.hmrc.http.NotFoundException => None
       case e: Exception =>
+        JourneyLogger.info(s"DirectDebitConnector.getBank: Error, $e")
         Logger.error("Direct debit returned unexpected response", e)
         throw new RuntimeException("Direct debit returned unexpected response")
     }
@@ -78,10 +84,12 @@ trait DirectDebitConnector {
    * Retrieves stored bank details associated with a given saUtr
    */
   def getBanks(saUtr: SaUtr)(implicit hc: HeaderCarrier): Future[DirectDebitBank] = {
+    JourneyLogger.info(s"DirectDebitConnector.getBanks")
     http.GET[DirectDebitBank](s"$directDebitURL/$serviceURL/$saUtr/banks").map { response => response }
       .recover {
         case e: uk.gov.hmrc.http.NotFoundException if e.message.contains("BP not found") => DirectDebitBank.none
         case e: Exception =>
+          JourneyLogger.info(s"DirectDebitConnector.getBanks: Error, $e")
           Logger.error(e.getMessage)
           throw new RuntimeException("GETBANKS threw unexpected error")
       }

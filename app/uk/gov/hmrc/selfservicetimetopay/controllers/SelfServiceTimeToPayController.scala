@@ -16,23 +16,30 @@
 
 package uk.gov.hmrc.selfservicetimetopay.controllers
 import javax.inject._
-
 import play.api.mvc._
 import uk.gov.hmrc.selfservicetimetopay.config.SsttpFrontendConfig
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
+import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.core._
 
 class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.MessagesApi) extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def start: Action[AnyContent] = Action.async { implicit request =>
-    sessionCache.getTtpSessionCarrier.map { _ => Ok(service_start(isSignedIn)) }
+    JourneyLogger.info(s"$request")
+    sessionCache.getTtpSessionCarrier.map { maybeTPSubmission: Option[TTPSubmission] =>
+      JourneyLogger.info(s"SelfServiceTimeToPayController.start: rendering view [isSignedIn=$isSignedIn]", maybeTPSubmission)
+      Ok(service_start(isSignedIn))
+    }
   }
 
   def submit: Action[AnyContent] = Action { implicit request =>
+    JourneyLogger.info(s"$request")
     Redirect(routes.ArrangementController.determineEligibility())
   }
 
   def actionCallUsInEligibility: Action[AnyContent] = Action { implicit request =>
+    JourneyLogger.info(s"$request")
     Ok(call_us(isWelsh, loggedIn = isSignedIn))
   }
 
@@ -44,18 +51,22 @@ class SelfServiceTimeToPayController @Inject() (val messagesApi: play.api.i18n.M
   def getIaCallUse: Action[AnyContent] = actionCallUsInEligibility
 
   def getDebtTooLarge: Action[AnyContent] = Action { implicit request =>
+    JourneyLogger.info(s"$request")
     Ok(debt_too_large(isSignedIn, isWelsh))
   }
 
   def getYouNeedToFile: Action[AnyContent] = Action { implicit request =>
+    JourneyLogger.info(s"$request")
     Ok(you_need_to_file(isSignedIn))
   }
 
   def getNotSaEnrolled: Action[AnyContent] = Action { implicit request =>
+    JourneyLogger.info(s"$request")
     Ok(not_enrolled(isWelsh, isSignedIn))
   }
 
   def signOut(continueUrl: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+    JourneyLogger.info(s"$request")
     sessionCache.remove().map(_ => Redirect(SsttpFrontendConfig.logoutUrl).withNewSession)
   }
 }

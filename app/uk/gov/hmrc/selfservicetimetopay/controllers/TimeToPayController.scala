@@ -31,6 +31,7 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.selfservicetimetopay.auth.{SaRegime, _}
 import uk.gov.hmrc.selfservicetimetopay.config._
 import uk.gov.hmrc.selfservicetimetopay.connectors.{SessionCache4TokensConnector, SessionCacheConnector => KeystoreConnector}
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, EligibilityTypeOfTax, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import uk.gov.hmrc.selfservicetimetopay.util.CheckSessionAction
@@ -81,7 +82,10 @@ trait TimeToPayController extends FrontendController with Actions {
 
   protected val validTypeOfTax = Some(EligibilityTypeOfTax(hasSelfAssessmentDebt = true))
 
-  protected def redirectOnError: Result = Redirect(routes.SelfServiceTimeToPayController.start())
+  protected def redirectOnError(implicit hc: HeaderCarrier): Result = {
+    JourneyLogger.info(s"${this.getClass.getSimpleName}: redirecting on error")
+    Redirect(routes.SelfServiceTimeToPayController.start())
+  }
   protected lazy val redirectToStartPage: Result = Results.Redirect(routes.SelfServiceTimeToPayController.start())
   private val timeToPayConfidenceLevel = new IdentityConfidencePredicate(ConfidenceLevel.L200,
                                                                          Future.successful(Redirect(routes.SelfServiceTimeToPayController.getNotSaEnrolled())))
@@ -99,11 +103,14 @@ trait TimeToPayController extends FrontendController with Actions {
   /**
    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
    */
-  def authorizedForSsttp(block: TTPSubmission => Future[Result])(implicit authContext: AuthContext, hc: HeaderCarrier): Future[Result] = {
+  def authorizedForSsttp(block: TTPSubmission => Future[Result])(implicit authContext: AuthContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+    JourneyLogger.info(s"${this.getClass.getSimpleName}: $request")
     sessionCache.getTtpSessionCarrier.flatMap[Result] {
       case Some(submission @ TTPSubmission(Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _, _)) =>
+        JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", submission)
         block(submission)
-      case _ =>
+      case maybeSubmission =>
+        JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp.authorizedForSsttp: redirect On Error", maybeSubmission)
         redirectOnError.successfulF
     }
   }
