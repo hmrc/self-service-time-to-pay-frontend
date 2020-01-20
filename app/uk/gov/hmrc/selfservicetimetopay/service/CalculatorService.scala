@@ -21,14 +21,18 @@ import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
 
 import javax.inject.Inject
+import play.api.Logger
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.CalculatorConnector
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService.{createCalculatorInput, getMonthRange, _}
 
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
+import scala.util.{Failure, Success, Try}
 
 class CalculatorService @Inject() (calculatorConnector: CalculatorConnector,
                                    workingDays:         WorkingDaysService) {
@@ -153,14 +157,14 @@ object CalculatorService {
     lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
   }
 
-  def getMonthRange(selfAssessment: SelfAssessment): Seq[Int] =
+  def getMonthRange(selfAssessment: SelfAssessment)(implicit hc: HeaderCarrier): Seq[Int] =
     minimumMonthsAllowedTTP to getMaxMonthsAllowed(selfAssessment, LocalDate.now())
 
   implicit def ordered[A <% Comparable[_ >: A]]: Ordering[A] = new Ordering[A] {
     def compare(x: A, y: A): Int = x compareTo y
   }
 
-  def getMaxMonthsAllowed(selfAssessment: SelfAssessment, todaysDate: LocalDate): Int = {
+  def getMaxMonthsAllowed(selfAssessment: SelfAssessment, todaysDate: LocalDate)(implicit hc: HeaderCarrier): Int = {
 
     calculateGapInMonths(selfAssessment, todaysDate)
   }
@@ -176,7 +180,7 @@ object CalculatorService {
    b)    End of the calendar month before the due date of the next non-submitted SA return
    c)    12 months from the earliest due date of the amounts included in the TTP (*ignoring due dates for any amounts under £32)
     */
-  def calculateGapInMonths(selfAssessment: SelfAssessment, todayDate: LocalDate): Int = {
+  def calculateGapInMonths(selfAssessment: SelfAssessment, todayDate: LocalDate)(implicit headerCarrier: HeaderCarrier): Int = Try{
 
     val nextSubmissionReturn: Option[LocalDate] = selfAssessment.returns.flatMap(getFutureReturn)
 
@@ -197,7 +201,25 @@ object CalculatorService {
       monthDifference(todayDate, el)).getOrElse(maxAllowedMonthlyInstalments)
 
     val smallestDifferance = List(differenceNextSubmissionReturn, differenceEarliestDueDate).min
-    if (smallestDifferance > maxAllowedMonthlyInstalments) maxAllowedMonthlyInstalments else smallestDifferance
+    val gap = if (smallestDifferance > maxAllowedMonthlyInstalments) maxAllowedMonthlyInstalments else smallestDifferance
+
+    JourneyLogger.info(
+      s"""
+         |gap in months = $gap
+         |todayDate = $todayDate
+         |nextSubmissionReturn = $nextSubmissionReturn
+         |differenceNextSubmissionReturn = $differenceNextSubmissionReturn
+         |differenceEarliestDueDate = $differenceEarliestDueDate
+         |smallestDifferance = $smallestDifferance
+         |""".stripMargin,
+      selfAssessment
+    )
+    gap
+  } match {
+    case Success(s) => s
+    case Failure(e) =>
+      Logger.error(s"calculateGapInMonths failed. [todayDate=$todayDate], selfAssessment:\n${Json.toJson(selfAssessment.obfuscate)}", e)
+      throw e
   }
 }
 

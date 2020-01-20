@@ -20,7 +20,7 @@ import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.logging.SessionId
-import uk.gov.hmrc.selfservicetimetopay.models.TTPSubmission
+import uk.gov.hmrc.selfservicetimetopay.models.{SelfAssessment, TTPSubmission}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 object JourneyLogger {
@@ -29,5 +29,6 @@ object JourneyLogger {
   def info(sessionId: SessionId, message: => String, data: JsValue): Unit = logger.info(s"$message [sessionId=${sessionId.value}]\n${Json.prettyPrint(data)}")
   def info(message: => String, data: JsValue)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(hc.sessionId.getOrElse(SessionId("NoSessionId")), message, data)
   def info(message: => String, tTPSubmission: TTPSubmission)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(tTPSubmission.obfuscate))
+  def info(message: => String, selfAssessment: SelfAssessment)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(selfAssessment.obfuscate))
   def info(message: => String, tTPSubmission: Option[TTPSubmission])(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(tTPSubmission.map(_.obfuscate)))
 }
