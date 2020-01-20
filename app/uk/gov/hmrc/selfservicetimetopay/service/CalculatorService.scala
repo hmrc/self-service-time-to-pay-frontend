@@ -218,6 +218,7 @@ object CalculatorService {
   } match {
     case Success(s) => s
     case Failure(e) =>
+      import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
       Logger.error(s"calculateGapInMonths failed. [todayDate=$todayDate], selfAssessment:\n${Json.toJson(selfAssessment.obfuscate)}", e)
       throw e
   }
