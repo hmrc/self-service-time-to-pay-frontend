@@ -52,13 +52,17 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   val paymentCurrency = "GBP"
 
   def start: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"ArrangementController.start: $request")
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttp @ TTPSubmission(_, _, _, Some(taxpayer), _, _, _, _, _, _)) => eligibilityCheck(taxpayer, ttp, authContext.principal.accounts.sa.get.utr.utr)
-      case _ => Future.successful(redirectOnError)
+      case maybeTtpSubmission =>
+        JourneyLogger.info(s"ArrangementController.start: redirect On Error", maybeTtpSubmission)
+        Future.successful(redirectOnError)
     }
   }
 
   def recoverTTPSession(token: String): Action[AnyContent] = Action.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.recoverTTPSession: $request")
     for {
       tokenData: TokenData <- sessionCache4TokensConnector
         .getAndRemove(Token(token))
@@ -69,6 +73,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
         Results.Redirect(routes.ArrangementController.determineEligibility())
       } else {
         Logger.logger.debug(s"Token expired: $tokenData")
+        JourneyLogger.info(s"ArrangementController.recoverTTPSession: redirectOnError")
         Redirect(routes.SelfServiceTimeToPayController.start())
       }
     } yield redirect.withSession(request.session + ttpSessionKV)
@@ -88,9 +93,14 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
    * debits. If not, display misalignment page otherwise perform an eligibility check.
    */
   def determineEligibility: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"ArrangementController.determineEligibility: $request")
+
     taxPayerConnector.getTaxPayer(authContext.principal.accounts.sa.get.utr.utr).flatMap[Result] {
       tp =>
-        tp.fold(Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion())))(taxPayer => {
+        tp.fold {
+          JourneyLogger.info(s"ArrangementController.determineEligibility: ERROR there is no taxpayer")
+          Future.successful(Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()))
+        }(taxPayer => {
           val newSubmission = TTPSubmission(taxpayer = Some(taxPayer))
           sessionCache.putTtpSessionCarrier(newSubmission).flatMap { _ =>
 
@@ -131,13 +141,16 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
           validFormData => {
             submission match {
               case ttp @ TTPSubmission(Some(schedule), _, _, _, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _) =>
+                JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
                 changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
                   ttpSubmission =>
                     sessionCache.putTtpSessionCarrier(ttpSubmission).map {
                       _ => Redirect(routes.ArrangementController.getInstalmentSummary())
                     }
                 }
-              case _ => Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
+              case _ =>
+                JourneyLogger.info(s"Problematic Submission, redirecting to ${routes.ArrangementController.determineEligibility()}")
+                Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
             }
           })
     }
@@ -165,6 +178,8 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
    * Call the eligibility service using the Taxpayer data and display the appropriate page based on the result
    */
   private def eligibilityCheck(taxpayer: Taxpayer, newSubmission: TTPSubmission, utr: String)(implicit hc: HeaderCarrier): Future[Result] = {
+    JourneyLogger.info(s"ArrangementController.eligibilityCheck")
+
     lazy val youNeedToFile = Redirect(routes.SelfServiceTimeToPayController.getYouNeedToFile()).successfulF
     lazy val notOnIa = Redirect(routes.SelfServiceTimeToPayController.getIaCallUse()).successfulF
     lazy val overTenThousandOwed = Redirect(routes.SelfServiceTimeToPayController.getDebtTooLarge()).successfulF
@@ -185,18 +200,18 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
 
     for {
       es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), taxpayer), utr)
-      _ = JourneyLogger.info("debits", Json.toJson(taxpayer.selfAssessment.map(_.debits)))
-      _ = JourneyLogger.info("returns", Json.toJson(taxpayer.selfAssessment.flatMap(_.returns)))
-      _ = JourneyLogger.info("eligibilityStatus", Json.toJson(es))
       updatedSubmission = newSubmission.copy(eligibilityStatus = Option(es))
       _ <- sessionCache.putTtpSessionCarrier(updatedSubmission)
+      _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${es.eligible}]", updatedSubmission)
       result <- checkSubmission(updatedSubmission)
     } yield result
   }
 
   def setDefaultCalculatorSchedule(newSubmission: TTPSubmission, debits: Seq[Debit])(implicit hc: HeaderCarrier): Future[CacheMap] = {
-    sessionCache.putTtpSessionCarrier(newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
-                                                                                          endDate   = LocalDate.now().plusMonths(2).minusDays(1), debits = debits)))
+    val updatedSubmission = newSubmission.copy(calculatorData = CalculatorInput(startDate = LocalDate.now(),
+                                                                                endDate   = LocalDate.now().plusMonths(2).minusDays(1), debits = debits))
+    JourneyLogger.info("ArrangementController.setDefaultCalculatorSchedule, updatedSubmission is", updatedSubmission)
+    sessionCache.putTtpSessionCarrier(updatedSubmission)
   }
 
   private def checkSubmissionForCalculatorPage(taxpayer: Taxpayer, newSubmission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
@@ -208,8 +223,9 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
 
         setDefaultCalculatorSchedule(newSubmission, tpSA.debits).map(_ => gotoTaxLiabilities)
 
-      case _ =>
+      case maybeSubmission =>
         Logger.error("No match found for newSubmission in determineEligibility")
+        JourneyLogger.info(s"ArrangementController.checkSubmissionForCalculatorPage: match error - redirect On Error", maybeSubmission)
         redirectOnError.successfulF
     }
   }
@@ -241,11 +257,16 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
    * complete page if we get an error response from DES passed back by the arrangement service.
    */
   private def arrangementSetUp(submission: TTPSubmission)(implicit hc: HeaderCarrier): Future[Result] = {
+    JourneyLogger.info("ArrangementController.arrangementSetUp: (create a DD and make an Arrangement)")
     submission.taxpayer match {
       case Some(Taxpayer(_, _, Some(SelfAssessment(Some(utr), _, _, _)))) =>
-        ddConnector.createPaymentPlan(checkExistingBankDetails(submission), SaUtr(utr)).flatMap[Result] {
-          _.fold(_ => Redirect(routes.DirectDebitController.getDirectDebitError()).successfulF,
+        ddConnector.createPaymentPlan(checkExistingBankDetails(submission), SaUtr(utr)).flatMap[Result] { dDSubmissionResult: ddConnector.DDSubmissionResult =>
+          dDSubmissionResult.fold(_ => {
+            JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup failed, redirecting to error page")
+            Redirect(routes.DirectDebitController.getDirectDebitError()).successfulF
+          },
             success => {
+              JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup succeeded, now creating arrangement")
               val arrangement = createArrangement(success, submission)
               val result = for {
                 submissionResult <- arrangementConnector.submitArrangements(arrangement)
@@ -254,15 +275,22 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
               } yield submissionResult
 
               result.flatMap {
-                _.fold(error => {
-                  Logger.error(s"Exception: ${error.code} + ${error.message}")
-                  applicationSuccessful
-                }, _ => applicationSuccessful)
+                submissionResult =>
+                  submissionResult.fold(error => {
+                    Logger.error(s"Exception: ${error.code} + ${error.message}")
+                    JourneyLogger.info(s"ArrangementController.arrangementSetUp: ZONK ERROR! Arrangement submission failed, $error but redirecting to $applicationSuccessful")
+                    applicationSuccessful
+                  }, _ => {
+                    JourneyLogger.info(s"ArrangementController.arrangementSetUp: Arrangement submission Succeeded!")
+                    applicationSuccessful
+                  }
+                  )
               }
             })
         }
       case _ =>
         Logger.error("Taxpayer or related data not present")
+        JourneyLogger.info("ArrangementController.arrangementSetUp: ERROR, Taxpayer or related data not present")
         Future.successful(Redirect(routes.SelfServiceTimeToPayController.getNotSaEnrolled()))
     }
   }
@@ -271,11 +299,14 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
    * Checks if the TTPSubmission data contains an existing direct debit reference number and either
    * passes this information to a payment plan constructor function or builds a new Direct Debit Instruction
    */
-  private def checkExistingBankDetails(submission: TTPSubmission): PaymentPlanRequest = {
+  private def checkExistingBankDetails(submission: TTPSubmission)(implicit hc: HeaderCarrier): PaymentPlanRequest = {
+    JourneyLogger.info("ArrangementController.checkExistingBankDetails")
     submission.bankDetails.get.ddiRefNumber match {
       case Some(refNo) =>
+        JourneyLogger.info("ArrangementController.checkExistingBankDetails - found bankDetails")
         paymentPlan(submission, DirectDebitInstruction(ddiRefNumber = Some(refNo)))
       case None =>
+        JourneyLogger.info("ArrangementController.checkExistingBankDetails - NOT found bankDetails")
         paymentPlan(submission, DirectDebitInstruction(
           sortCode      = submission.bankDetails.get.sortCode,
           accountNumber = submission.bankDetails.get.accountNumber,

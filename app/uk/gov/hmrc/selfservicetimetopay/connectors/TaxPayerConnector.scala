@@ -23,6 +23,7 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import com.google.inject._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSHttp}
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,13 +34,16 @@ trait TaxPayerConnector {
   val http: HttpGet
 
   def getTaxPayer(utr: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Taxpayer]] = {
+    JourneyLogger.info("TaxPayerConnector.getTaxPayer")
     http.GET[HttpResponse](s"$taxPayerURL/$serviceURL/$utr").map {
       response => Some(response.json.as[Taxpayer])
     }.recover {
       case e: uk.gov.hmrc.http.NotFoundException =>
+        JourneyLogger.info("TaxPayerConnector.getTaxPayer: taxpayer not found")
         Logger.error("Taxpayer not found", e)
         None
       case e: Exception =>
+        JourneyLogger.info(s"TaxPayerConnector.getTaxPayer: ERROR, $e")
         Logger.error(e.getMessage, e)
         throw new RuntimeException(e)
     }

@@ -30,5 +30,5 @@ object JourneyLogger {
   def info(message: => String, data: JsValue)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(hc.sessionId.getOrElse(SessionId("NoSessionId")), message, data)
   def info(message: => String, tTPSubmission: TTPSubmission)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(tTPSubmission.obfuscate))
   def info(message: => String, selfAssessment: SelfAssessment)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(selfAssessment.obfuscate))
-  def info(message: => String, tTPSubmission: Option[TTPSubmission])(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(tTPSubmission.map(_.obfuscate)))
+  def info(message: => String, tTPSubmission: Option[TTPSubmission] = None)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(tTPSubmission.map(_.obfuscate)))
 }

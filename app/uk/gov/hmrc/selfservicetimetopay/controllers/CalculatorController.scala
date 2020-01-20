@@ -34,26 +34,32 @@ import views.html.selfservicetimetopay.unauth._
 
 import scala.collection.immutable
 import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
 
 class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesApi,
                                       calculatorService: CalculatorService)
   extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def submitSignIn: Action[AnyContent] = Action.async { implicit request =>
+    JourneyLogger.info(s"CalculatorController.submitSignIn: $request")
     Future.successful(Redirect(routes.ArrangementController.determineEligibility()))
   }
 
   def getPaymentPlanCalculator: Action[AnyContent] = Action { implicit request =>
+    JourneyLogger.info(s"CalculatorController.getPaymentPlanCalculator: $request")
     Ok(payment_plan_calculator(isSignedIn))
   }
 
   def getAmountDue: Action[AnyContent] = Action { implicit request =>
+    JourneyLogger.info(s"CalculatorController.getAmountDue: $request")
     Ok(amount_due(isSignedIn, CalculatorForm.createAmountDueForm()))
   }
 
   def submitAmountDue: Action[AnyContent] = Action.async { implicit request =>
+    JourneyLogger.info(s"CalculatorController.submitAmountDue: $request")
     CalculatorForm.createAmountDueForm().bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(amount_due(isSignedIn, formWithErrors))),
+      formWithErrors =>
+        Future.successful(BadRequest(amount_due(isSignedIn, formWithErrors))),
       amountDue => {
         //todo perhaps we dont need  a new one? this will whip the data from the auth journey is this ok ?User can just redo it?
         val dataWithAmount = TTPSubmission(notLoggedInJourneyInfo = Some(NotLoggedInJourneyInfo(Some(amountDue.amount))))
@@ -67,6 +73,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
 
   def getCalculateInstalmentsUnAuth(): Action[AnyContent] = Action.async {
     implicit request =>
+      JourneyLogger.info(s"CalculatorController.getCalculateInstalmentsUnAuth: $request")
       sessionCache.getTtpSessionCarrier.flatMap {
         case Some(ttpData @ TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(Some(amountDue), _)), _)) =>
           calculatorService.getInstalmentsSchedule(SelfAssessment (debits = Seq(Debit(amount  = amountDue, dueDate = LocalDate.now()))), 0).map { schedules: List[CalculatorPaymentScheduleExt] =>
@@ -74,12 +81,15 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
                                           ttpData.lengthOfArrangement, schedules, routes.CalculatorController.submitCalculateInstalmentsUnAuth(), isSignedIn, false))
           }
 
-        case _ => Future.successful(redirectOnError)
+        case maybeSubmission =>
+          JourneyLogger.info(s"CalculatorController.getCalculateInstalmentsUnAuth - pattern match redirect on error", maybeSubmission)
+          Future.successful(redirectOnError)
       }
   }
 
   def submitCalculateInstalmentsUnAuth(): Action[AnyContent] = Action.async {
     implicit request =>
+      JourneyLogger.info(s"CalculatorController.submitCalculateInstalmentsUnAuth: $request")
       sessionCache.getTtpSessionCarrier.flatMap {
         case Some(ttpData @ TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(Some(amountDue), _)), _)) =>
           calculatorService.getInstalmentsScheduleUnAuth(debits = Seq(Debit(amount  = amountDue, dueDate = LocalDate.now()))).flatMap { monthsToSchedule =>
@@ -96,32 +106,43 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
               }
             )
           }
-        case _ => Future.successful(redirectOnError)
+        case maybeSubmission =>
+          JourneyLogger.info(s"CalculatorController.submitCalculateInstalmentsUnAuth: pattern match redirect on error", maybeSubmission)
+          Future.successful(redirectOnError)
       }
   }
 
   def getCheckCalculation: Action[AnyContent] = Action.async {
     implicit request =>
+      JourneyLogger.info(s"CalculatorController.getCheckCalculation: $request")
       sessionCache.getTtpSessionCarrier.flatMap {
         case Some(ttpData @ TTPSubmission(_, _, _, _, _, _, _, _, Some(NotLoggedInJourneyInfo(_, Some(schedule))), _)) =>
           Future.successful(Ok(check_calculation(schedule, isSignedIn)))
-        case _ => Future.successful(redirectOnError)
+        case maybeSubmission =>
+          JourneyLogger.info(s"CalculatorController.getCheckCalculation: pattern match redirect on error", maybeSubmission)
+          Future.successful(redirectOnError)
       }
   }
 
   def getTaxLiabilities: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+    JourneyLogger.info(s"CalculatorController.getTaxLiabilities: $request")
     sessionCache.getTtpSessionCarrier.map {
       case Some(_@ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
         Ok(tax_liabilities(sa.debits, isSignedIn))
-      case _ => redirectOnError
+      case maybeSubmission =>
+        JourneyLogger.info(s"CalculatorController.getTaxLiabilities: pattern match redirect on error", maybeSubmission)
+        redirectOnError
     }
   }
 
   def getPayTodayQuestion: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+    JourneyLogger.info(s"CalculatorController.getPayTodayQuestion: $request")
     sessionCache.getTtpSessionCarrier.map {
       case Some(TTPSubmission(_, _, _, tp, CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
         Ok(payment_today_question(CalculatorForm.payTodayForm, isSignedIn))
-      case _ => redirectOnError
+      case maybeSubmission =>
+        JourneyLogger.info(s"CalculatorController.getPayTodayQuestion: pattern match redirect on error", maybeSubmission)
+        redirectOnError
     }
   }
 
@@ -130,6 +151,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
    * otherwise navigate to calculator page and set the initial payment to 0
    */
   def submitPayTodayQuestion: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+    JourneyLogger.info(s"CalculatorController.submitPayTodayQuestion: $request")
     sessionCache.getTtpSessionCarrier.flatMap[Result] {
       case Some(ttpData @ TTPSubmission(_, _, _, tp, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
         CalculatorForm.payTodayForm.bindFromRequest().fold(
@@ -142,23 +164,27 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
               }
           }
         )
-      case _ => Future.successful(redirectOnError)
+      case maybeSubmission =>
+        JourneyLogger.info(s"CalculatorController.submitPayTodayQuestion: pattern match redirect on error", maybeSubmission)
+        Future.successful(redirectOnError)
     }
   }
 
   def getPaymentToday: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+    JourneyLogger.info(s"CalculatorController.getPaymentToday: $request")
     sessionCache.getTtpSessionCarrier.map {
       case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
         val form = CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum)
         if (paymentToday.equals(BigDecimal(0))) Ok(payment_today_form(form, isSignedIn))
         else Ok(payment_today_form(form.fill(paymentToday), isSignedIn))
-      case _ =>
-        Logger.info("Missing required data for get payment today page")
+      case maybeSubmission =>
+        JourneyLogger.info(s"CalculatorController.getPaymentToday: pattern match redirect on error", maybeSubmission)
         redirectOnError
     }
   }
 
   def submitPaymentToday: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+    JourneyLogger.info(s"CalculatorController.submitPaymentToday: $request")
     sessionCache.getTtpSessionCarrier.flatMap[Result] {
       case Some(ttpSubmission @ TTPSubmission(_, _, _, _, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) =>
         CalculatorForm.createPaymentTodayForm(debits.map(_.amount).sum).bindFromRequest().fold(
@@ -169,13 +195,14 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
             }
           }
         )
-      case _ =>
-        Logger.info("No TTP Data match in submitPaymentToday")
+      case maybeSubmission =>
+        JourneyLogger.info(s"CalculatorController.submitPaymentToday: pattern match redirect on error", maybeSubmission)
         Future.successful(redirectOnError)
     }
   }
 
   def getMonthlyPayment: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+    JourneyLogger.info(s"CalculatorController.getMonthlyPayment: $request")
     sessionCache.putIsBPath(isBpath = true)
     sessionCache.getTtpSessionCarrier.flatMap[Result] {
       case Some(TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
@@ -184,23 +211,42 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
         Future.successful(Ok(monthly_amount(
           form, upperMonthlyPaymentBound(sa, calculatorData), lowerMonthlyPaymentBound(sa, calculatorData), isSignedIn
         )))
-      case _ =>
-        Logger.info("No TTP Data match in getMonthlyPayment")
+      case maybeSubmission =>
+        JourneyLogger.info(s"CalculatorController.getMonthlyPayment: pattern match redirect on error", maybeSubmission)
         Future.successful(redirectOnError)
     }
   }
 
-  private def upperMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput): String =
-    roundUpToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / minimumMonthsAllowedTTP).toString
+  private def upperMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput)(implicit hc: HeaderCarrier): String = {
+    val result = Try(roundUpToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / minimumMonthsAllowedTTP).toString)
+    result match {
+      case Success(s) =>
+        JourneyLogger.info(s"CalculatorController.upperMonthlyPaymentBound: [$s]")
+        s
+      case Failure(e) =>
+        JourneyLogger.info(s"CalculatorController.upperMonthlyPaymentBound: ERROR - upperMonthlyPaymentBound - [$e]")
+        throw e
+    }
+  }
 
-  private def lowerMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput)(implicit hc: HeaderCarrier): String =
-    roundDownToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / getMaxMonthsAllowed(sa, LocalDate.now())).toString
+  private def lowerMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput)(implicit hc: HeaderCarrier): String = {
+    val result = Try(roundDownToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / getMaxMonthsAllowed(sa, LocalDate.now())).toString)
+    result match {
+      case Success(s) =>
+        JourneyLogger.info(s"CalculatorController.lowerMonthlyPaymentBound: [$s]")
+        s
+      case Failure(e) =>
+        JourneyLogger.info(s"CalculatorController.lowerMonthlyPaymentBound: ERROR [$e]")
+        throw e
+    }
+  }
 
   private def roundDownToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100)
 
   private def roundUpToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100) + 100
 
   def submitMonthlyPayment: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"CalculatorController.submitMonthlyPayment: $request")
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
         calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule =>
@@ -218,12 +264,22 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
               }
             )
         }
-      case _ => Future.successful(redirectOnError)
+      case maybeSubmission =>
+        JourneyLogger.info(s"CalculatorController.submitMonthlyPayment: pattern match redirect on error", maybeSubmission)
+        Future.successful(redirectOnError)
     }
   }
 
-  def getClosestSchedule(amount: BigDecimal, schedules: List[CalculatorPaymentScheduleExt]): CalculatorPaymentScheduleExt =
-    schedules.minBy(v => math.abs(v.schedule.getMonthlyInstalment.toInt - amount.toInt))
+  def getClosestSchedule(amount: BigDecimal, schedules: List[CalculatorPaymentScheduleExt])(implicit hc: HeaderCarrier): CalculatorPaymentScheduleExt = {
+    val result = Try(schedules.minBy(v => math.abs(v.schedule.getMonthlyInstalment.toInt - amount.toInt)))
+    result match {
+      case Success(s) =>
+        s
+      case Failure(e) =>
+        JourneyLogger.info(s"CalculatorController.getClosestSchedule: ERROR [$e]")
+        throw e
+    }
+  }
 
   def getSurroundingSchedule(closestSchedule: CalculatorPaymentScheduleExt,
                              schedules:       List[CalculatorPaymentScheduleExt],
@@ -256,19 +312,21 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
   }
 
   def getPaymentSummary: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+    JourneyLogger.info(s"CalculatorController.getPaymentSummary: $request")
     sessionCache.getTtpSessionCarrier.map {
       case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
         Ok(payment_summary(debits, initialPayment))
-      case _ =>
-        Logger.info("Missing required data for what you owe review page")
+      case maybeSubmission =>
+        JourneyLogger.info(s"CalculatorController.getPaymentSummary: pattern match redirect on error", maybeSubmission)
         redirectOnError
     }
   }
 
   def getCalculateInstalments(): Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+    JourneyLogger.info(s"CalculatorController.getCalculateInstalments: $request")
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
-        JourneyLogger.info("getCalculateInstalments-1", ttpData)
+        JourneyLogger.info("CalculatorController.getCalculateInstalments", ttpData)
         sessionCache.getAmount.flatMap{
           case Some(amount) =>
             calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { schedules: List[CalculatorPaymentScheduleExt] =>
@@ -283,19 +341,20 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
               }
             }
           case _ =>
-            JourneyLogger.info("getCalculateInstalments-2 (Missing amount for what you owe review page)", ttpData)
+            JourneyLogger.info("CalculatorController.getCalculateInstalments: amount not found - redirect on error", ttpData)
             Future.successful(redirectOnError)
         }
-      case ttpData =>
-        JourneyLogger.info("getCalculateInstalments-3 (Missing required data for what you owe review page)", ttpData)
+      case maybeSubmission =>
+        JourneyLogger.info("CalculatorController.getCalculateInstalment: pattern match redirect on error", maybeSubmission)
         Future.successful(redirectOnError)
     }
   }
 
   def submitCalculateInstalments(): Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"CalculatorController.submitCalculateInstalments: $request")
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
-        JourneyLogger.info("submitCalculateInstalments-1", ttpData)
+        JourneyLogger.info("CalculatorController.submitCalculateInstalments", ttpData)
         sessionCache.getAmount.flatMap {
           case Some(amount) =>
             calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { schedules: List[CalculatorPaymentScheduleExt] =>
@@ -319,11 +378,11 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
               }
             }
           case _ =>
-            JourneyLogger.info("getCalculateInstalments-2-didn't-pattern-match-on-amount", ttpData)
+            JourneyLogger.info("CalculatorController.submitCalculateInstalments: amount not found - redirect on error", ttpData)
             Future.successful(redirectOnError)
         }
-      case ttpData =>
-        JourneyLogger.info("getCalculateInstalments-3-didn't-pattern-match", ttpData)
+      case maybeSubmission =>
+        JourneyLogger.info("CalculatorController.submitCalculateInstalments: pattern match redirect on error", maybeSubmission)
         Future.successful(redirectOnError)
     }
   }
@@ -336,34 +395,35 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
    * - If schedule data is missing, update TTPSubmission
    */
   def getCalculateInstalmentsOld: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
-
+    JourneyLogger.info(s"CalculatorController.getCalculateInstalmentsOld $request")
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
-        JourneyLogger.info("getCalculateInstalmentsOld-1", ttpData)
+        JourneyLogger.info("CalculatorController.getCalculateInstalmentsOld: eligible", ttpData)
         if (getMaxMonthsAllowed(sa, LocalDate.now()) >= minimumMonthsAllowedTTP) {
           calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).map { monthsToSchedule =>
             Ok(calculate_instalments_form(CalculatorForm.createInstalmentForm(),
                                           ttpData.lengthOfArrangement, monthsToSchedule, routes.CalculatorController.submitCalculateInstalments(), loggedIn = true))
           }
         } else {
-          JourneyLogger.info("getCalculateInstalmentsOld-2", ttpData)
           //todo perhaps move these checks else where to eligbility service?
           val newSubmission = ttpData.copy(eligibilityStatus = Some(EligibilityStatus(eligible = false, Seq(TTPIsLessThenTwoMonths))))
-          JourneyLogger.info("getCalculateInstalmentsOld-3", ttpData)
+          JourneyLogger.info("CalculatorController.getCalculateInstalmentsOld: not eligible, redirecting to call us calc installments", ttpData)
           sessionCache.putTtpSessionCarrier(newSubmission).map { _ => Redirect(routes.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()) }
         }
-      case ttpData =>
-        JourneyLogger.info("getCalculateInstalmentsOld-4-didn't-pattern-match", ttpData)
+      case maybeSubmission =>
+        JourneyLogger.info("CalculatorController.getCalculateInstalmentsOld: pattern match redirect on error", maybeSubmission)
         Future.successful(redirectOnError)
     }
   }
 
   def submitCalculateInstalmentsOld(): Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"CalculatorController.submitCalculateInstalmentsOld: $request")
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
         calculatorService.getInstalmentsSchedule(sa, calculatorData.initialPayment).flatMap { monthsToSchedule: List[CalculatorPaymentScheduleExt] =>
           CalculatorForm.createInstalmentForm().bindFromRequest().fold(
             formWithErrors => {
+              JourneyLogger.info(s"CalculatorController.submitCalculateInstalmentsOld: form with errors")
               Future.successful(BadRequest(calculate_instalments_form(formWithErrors, ttpData.lengthOfArrangement,
                                                                       monthsToSchedule, routes.CalculatorController.submitCalculateInstalments(), loggedIn = true)))
             },
@@ -374,7 +434,9 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
             }
           )
         }
-      case _ => Future.successful(redirectOnError)
+      case maybeSubmission =>
+        JourneyLogger.info("CalculatorController.submitCalculateInstalmentsOld: pattern match redirect on error", maybeSubmission)
+        Future.successful(redirectOnError)
     }
   }
 }

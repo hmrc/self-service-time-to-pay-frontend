@@ -25,6 +25,7 @@ import uk.gov.hmrc.selfservicetimetopay.config.{DefaultRunModeAppNameConfig, WSH
 import scala.concurrent.Future
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import com.google.inject._
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 @ImplementedBy(classOf[CalculatorConnectorImpl])
 trait CalculatorConnector {
@@ -36,7 +37,12 @@ trait CalculatorConnector {
    * Send the calculator input information to the time-to-pay-calculator service and retrieve back a payment schedule
    */
   def calculatePaymentSchedule(liabilities: CalculatorInput)(implicit hc: HeaderCarrier): Future[Seq[CalculatorPaymentSchedule]] = {
-    http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](s"$calculatorURL/$serviceURL", liabilities)
+    JourneyLogger.info(s"CalculatorConnector.calculatePaymentSchedule")
+    http.POST[CalculatorInput, Seq[CalculatorPaymentSchedule]](s"$calculatorURL/$serviceURL", liabilities).recover{
+      case e =>
+        JourneyLogger.info(s"CalculatorConnector.calculatePaymentSchedule: ERROR, $e")
+        throw e
+    }
   }
 }
 

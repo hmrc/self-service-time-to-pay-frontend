@@ -23,6 +23,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.connectors.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.forms.DirectDebitForm._
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.html.selfservicetimetopay.arrangement._
@@ -35,54 +36,74 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   extends TimeToPayController with play.api.i18n.I18nSupport {
 
   def getDirectDebit: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")
     authorizedForSsttp {
       case submission @ TTPSubmission(Some(schedule), _, _, Some(taxpayer), calcData, _, _, _, _, _) if areEqual(taxpayer.selfAssessment.get.debits, calcData.debits) =>
         Future.successful(Ok(direct_debit_form(submission.calculatorData.debits, schedule, directDebitForm, isSignedIn)))
-      case _ => Future.successful(redirectOnError)
+      case maybeSubmission =>
+        JourneyLogger.info("DirectDebitController.getDirectDebit: pattern match redirect on error", maybeSubmission)
+        Future.successful(redirectOnError)
     }
   }
 
   def getDirectDebitAssistance: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"DirectDebitController.getDirectDebitAssistance: $request")
     authorizedForSsttp {
       case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
         Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
-      case _ => Future.successful(redirectOnError)
+      case maybeSubmission =>
+        JourneyLogger.info("DirectDebitController.getDirectDebitAssistance: pattern match redirect on error", maybeSubmission)
+        Future.successful(redirectOnError)
     }
   }
 
   def getDirectDebitError: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"DirectDebitController.getDirectDebitError: $request")
+
     authorizedForSsttp {
       case TTPSubmission(Some(schedule), _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _) =>
         Future.successful(Ok(direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
-      case _ => Future.successful(redirectOnError)
+      case maybeSubmission =>
+        JourneyLogger.info("DirectDebitController.getDirectDebitError - redirect on error", maybeSubmission)
+        Future.successful(redirectOnError)
     }
   }
 
   def getDirectDebitConfirmation: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"DirectDebitController.getDirectDebitConfirmation: $request")
+
     authorizedForSsttp {
       case TTPSubmission(_, _, Some(_), _, _, _, _, _, _, _) =>
         Future.successful(Redirect(routes.DirectDebitController.getDirectDebit()))
       case submission @ TTPSubmission(Some(schedule), Some(_), _, _, _, _, _, _, _, _) =>
         Future.successful(Ok(direct_debit_confirmation(submission.calculatorData.debits,
                                                        schedule, submission.arrangementDirectDebit.get, isSignedIn)))
-      case _ =>
+      case maybeSubmission =>
         Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
+        JourneyLogger.info("DirectDebitController.getDirectDebitConfirmation - redirect on error", maybeSubmission)
         Future.successful(redirectOnError)
     }
   }
 
   def getDirectDebitUnAuthorised: Action[AnyContent] = Action.async { implicit request =>
+    JourneyLogger.info(s"DirectDebitController.getDirectDebitUnAuthorised: $request")
+
     sessionCache.getTtpSessionCarrier.map {
       case Some(ttpData: TTPSubmission) => Ok(direct_debit_unauthorised(isSignedIn))
-      case _                            => Ok(service_start(isSignedIn))
+      case _ =>
+        JourneyLogger.info("DirectDebitController.getDirectDebitUnAuthorised - no TTPSubmission")
+        Ok(service_start(isSignedIn))
     }
   }
 
   def submitDirectDebitConfirmation: Action[AnyContent] = Action { implicit request =>
+    JourneyLogger.info(s"DirectDebitController.submitDirectDebitConfirmation: $request")
     Redirect(routes.ArrangementController.submit())
   }
 
   def submitDirectDebit: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"DirectDebitController.submitDirectDebit: $request")
+
     authorizedForSsttp { submission =>
       directDebitForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
@@ -92,6 +113,7 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
                                        validFormData.accountNumber.toString).flatMap {
               case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
               case None =>
+                JourneyLogger.info("DirectDebitController.submitDirectDebit - no bank details")
                 Future.successful(BadRequest(direct_debit_form(submission.calculatorData.debits,
                                                                submission.schedule.get, directDebitFormWithBankAccountError.copy(data = Map("accountName" -> validFormData.accountName,
                     "accountNumber" -> validFormData.accountNumber, "sortCode" -> validFormData.sortCode)),
@@ -110,7 +132,10 @@ class DirectDebitController @Inject() (val messagesApi: play.api.i18n.MessagesAp
    */
   private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit hc: HeaderCarrier) = {
     sessionCache.getTtpSessionCarrier.flatMap {
-      _.fold(Future.successful(redirectToStartPage))(ttp => {
+      _.fold{
+        JourneyLogger.info("DirectDebitController.checkBankDetails: ERROR, no submission - redirect on error")
+        Future.successful(redirectToStartPage)
+      }(ttp => {
         val taxpayer = ttp.taxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
         val sa = taxpayer.selfAssessment.getOrElse(throw new RuntimeException("No self assessment"))
 
