@@ -20,11 +20,13 @@ import java.time.{LocalDate, Month}
 
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.PlaySpec
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.models.{Debit, Interest, Return, SelfAssessment}
 import uk.gov.hmrc.selfservicetimetopay.service.CalculatorService._
 class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
 
   import java.time.format.DateTimeFormatter
+  implicit val hc = HeaderCarrier()
 
   val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 

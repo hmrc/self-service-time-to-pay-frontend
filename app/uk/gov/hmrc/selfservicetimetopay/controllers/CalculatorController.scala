@@ -22,6 +22,7 @@ import javax.inject._
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, _}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.forms.{CalculatorForm, MonthlyAmountForm}
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -192,7 +193,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
   private def upperMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput): String =
     roundUpToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / minimumMonthsAllowedTTP).toString
 
-  private def lowerMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput): String =
+  private def lowerMonthlyPaymentBound(sa: SelfAssessment, calculatorData: CalculatorInput)(implicit hc: HeaderCarrier): String =
     roundDownToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / getMaxMonthsAllowed(sa, LocalDate.now())).toString
 
   private def roundDownToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100)
@@ -226,7 +227,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
 
   def getSurroundingSchedule(closestSchedule: CalculatorPaymentScheduleExt,
                              schedules:       List[CalculatorPaymentScheduleExt],
-                             sa:              SelfAssessment): List[CalculatorPaymentScheduleExt] = {
+                             sa:              SelfAssessment)(implicit hc: HeaderCarrier): List[CalculatorPaymentScheduleExt] = {
     if (schedules.indexOf(closestSchedule) == 0)
       List(Some(closestSchedule), getElementNItemsAbove(1, closestSchedule, schedules), getElementNItemsAbove(2, closestSchedule, schedules))
         .flatten
