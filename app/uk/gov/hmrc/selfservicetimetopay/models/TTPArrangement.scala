@@ -19,4 +19,12 @@ package uk.gov.hmrc.selfservicetimetopay.models
 case class TTPArrangement(paymentPlanReference: String,
                           directDebitReference: String,
                           taxpayer:             Taxpayer,
-                          schedule:             CalculatorPaymentSchedule)
+                          schedule:             CalculatorPaymentSchedule) {
+
+  def obfuscate = TTPArrangement(
+    paymentPlanReference = paymentPlanReference,
+    directDebitReference = directDebitReference,
+    taxpayer = taxpayer.obfuscate,
+    schedule = schedule
+  )
+}
