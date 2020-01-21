@@ -25,7 +25,7 @@ case class Taxpayer(
 ) {
 
   def obfuscate: Taxpayer = Taxpayer(
-    customerName   = customerName.map(_ => "***"),
+    customerName   = customerName.map(_.replaceAll("[A-Za-z]", "x")),
     addresses      = addresses.map(_.obfuscate),
     selfAssessment = selfAssessment.map(_.obfuscate)
   )
@@ -52,12 +52,12 @@ case class Address(addressLine1: Option[String] = None,
                    postcode:     Option[String] = None) {
 
   def obfuscate: Address = Address(
-    addressLine1 = addressLine1.map(_ => "***"),
-    addressLine2 = addressLine2.map(_ => "***"),
-    addressLine3 = addressLine3.map(_ => "***"),
-    addressLine4 = addressLine4.map(_ => "***"),
-    addressLine5 = addressLine5.map(_ => "***"),
-    postcode     = postcode.map(_ => "***")
+    addressLine1 = addressLine1.map(_.replaceAll("[A-Za-z]", "x")),
+    addressLine2 = addressLine2.map(_.replaceAll("[A-Za-z]", "x")),
+    addressLine3 = addressLine3.map(_.replaceAll("[A-Za-z]", "x")),
+    addressLine4 = addressLine4.map(_.replaceAll("[A-Za-z]", "x")),
+    addressLine5 = addressLine5.map(_.replaceAll("[A-Za-z]", "x")),
+    postcode     = postcode.map(_.replaceAll("[A-Za-z]", "x"))
   )
 }
 
