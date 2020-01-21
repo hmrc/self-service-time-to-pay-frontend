@@ -48,7 +48,7 @@ trait ArrangementConnector {
       Right(SubmissionSuccess())
     }.recover {
       case e: Throwable =>
-        JourneyLogger.info(s"ArrangementConnector.submitArrangements: Error, $e")
+        JourneyLogger.info(s"ArrangementConnector.submitArrangements: Error, $e", ttpArrangement)
         onError(e)
     }
   }
