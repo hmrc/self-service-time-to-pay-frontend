@@ -124,7 +124,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
       }
   }
 
-  def getTaxLiabilities: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+  def getTaxLiabilities: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request  =>
     JourneyLogger.info(s"CalculatorController.getTaxLiabilities: $request")
     sessionCache.getTtpSessionCarrier.map {
       case Some(_@ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
@@ -135,7 +135,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
     }
   }
 
-  def getPayTodayQuestion: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+  def getPayTodayQuestion: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     JourneyLogger.info(s"CalculatorController.getPayTodayQuestion: $request")
     sessionCache.getTtpSessionCarrier.map {
       case Some(TTPSubmission(_, _, _, tp, CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
@@ -150,7 +150,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
    * Checks the response for the pay today question. If yes navigate to payment today page
    * otherwise navigate to calculator page and set the initial payment to 0
    */
-  def submitPayTodayQuestion: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+  def submitPayTodayQuestion: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     JourneyLogger.info(s"CalculatorController.submitPayTodayQuestion: $request")
     sessionCache.getTtpSessionCarrier.flatMap[Result] {
       case Some(ttpData @ TTPSubmission(_, _, _, tp, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
@@ -170,7 +170,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
     }
   }
 
-  def getPaymentToday: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+  def getPaymentToday: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     JourneyLogger.info(s"CalculatorController.getPaymentToday: $request")
     sessionCache.getTtpSessionCarrier.map {
       case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, paymentToday, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
@@ -183,7 +183,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
     }
   }
 
-  def submitPaymentToday: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+  def submitPaymentToday: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     JourneyLogger.info(s"CalculatorController.submitPaymentToday: $request")
     sessionCache.getTtpSessionCarrier.flatMap[Result] {
       case Some(ttpSubmission @ TTPSubmission(_, _, _, _, cd @ CalculatorInput(debits, _, _, _, _, _), _, _, _, _, _)) =>
@@ -201,7 +201,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
     }
   }
 
-  def getMonthlyPayment: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+  def getMonthlyPayment: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     JourneyLogger.info(s"CalculatorController.getMonthlyPayment: $request")
     sessionCache.putIsBPath(isBpath = true)
     sessionCache.getTtpSessionCarrier.flatMap[Result] {
@@ -311,7 +311,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
     }
   }
 
-  def getPaymentSummary: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+  def getPaymentSummary: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     JourneyLogger.info(s"CalculatorController.getPaymentSummary: $request")
     sessionCache.getTtpSessionCarrier.map {
       case Some(TTPSubmission(_, _, _, _, CalculatorInput(debits, initialPayment, _, _, _, _), _, _, _, _, _)) if debits.nonEmpty =>
@@ -322,8 +322,8 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
     }
   }
 
-  def getCalculateInstalments(): Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
-    JourneyLogger.info(s"CalculatorController.getCalculateInstalments: $request")
+  def getCalculateInstalments(): Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"CalculatorController.getCalculateInstalments: ${request}")
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
         JourneyLogger.info("CalculatorController.getCalculateInstalments", ttpData)
@@ -394,7 +394,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
    * - If user input debits are not empty, load the calculator (avoids direct navigation)
    * - If schedule data is missing, update TTPSubmission
    */
-  def getCalculateInstalmentsOld: Action[AnyContent] = authorisedSaUser { implicit request => implicit authContext =>
+  def getCalculateInstalmentsOld: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     JourneyLogger.info(s"CalculatorController.getCalculateInstalmentsOld $request")
     sessionCache.getTtpSessionCarrier.flatMap {
       case Some(ttpData @ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), calculatorData, _, _, _, _, _)) =>
