@@ -47,12 +47,12 @@ class TaxPayerConnectorSpec extends UnitSpec with MockitoSugar with ServicesConf
   "calling getTaxPayer" should {
 
     "return a valid taxpayer" in {
-      val taxPayerResponse = Json.fromJson[Taxpayer](taxPayerJson).get
+      val taxPayerWithFixedReturns = Json.fromJson[Taxpayer](taxPayerWithFixedReturnsJson).get
       val httpResponse = HttpResponse(201, Some(taxPayerJson))
       when(testConnector.http.GET[HttpResponse]("time-to-pay-taxpayer/taxpayer/testUTR")).thenReturn(httpResponse)
 
       val result = await(testConnector.getTaxPayer("testUTR"))
-      assert(result.contains(taxPayerResponse))
+      assert(result.contains(taxPayerWithFixedReturns))
     }
 
   }
