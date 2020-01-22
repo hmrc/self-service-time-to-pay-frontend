@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import java.time.{Clock, LocalDate, LocalDateTime, ZonedDateTime}
 
 import javax.inject._
 import play.api.Logger
@@ -94,7 +94,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
    */
   def determineEligibility: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     JourneyLogger.info(s"ArrangementController.determineEligibility: $request")
-
+    implicit val clock: Clock = Clock.systemDefaultZone()
     taxPayerConnector.getTaxPayer(authContext.principal.accounts.sa.get.utr.utr).flatMap[Result] {
       tp =>
         tp.fold {

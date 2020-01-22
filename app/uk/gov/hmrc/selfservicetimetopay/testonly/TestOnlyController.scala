@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.selfservicetimetopay.testonly
 
+import java.time.Clock
+
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 import javax.inject._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,6 +41,7 @@ class TestOnlyController @Inject() (val messagesApi: MessagesApi, taxpayerConnec
   }
 
   def getTaxpayer(): PlayAction[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    implicit val clock: Clock = Clock.systemDefaultZone()
     val utr = authContext.principal.accounts.sa.get.utr.utr
     val getTaxpayerF = taxpayerConnector.getTaxPayer(utr).map{
       case Some(t) => Json.toJson(t)

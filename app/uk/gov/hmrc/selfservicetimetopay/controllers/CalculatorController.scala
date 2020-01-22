@@ -124,7 +124,7 @@ class CalculatorController @Inject() (val messagesApi:   play.api.i18n.MessagesA
       }
   }
 
-  def getTaxLiabilities: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request  =>
+  def getTaxLiabilities: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     JourneyLogger.info(s"CalculatorController.getTaxLiabilities: $request")
     sessionCache.getTtpSessionCarrier.map {
       case Some(_@ TTPSubmission(_, _, _, Some(Taxpayer(_, _, Some(sa))), _, _, _, _, _, _)) =>
