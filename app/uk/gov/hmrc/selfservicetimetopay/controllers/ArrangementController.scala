@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.controllers
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import java.time.{Clock, LocalDate, LocalDateTime, ZonedDateTime}
 
 import javax.inject._
 import play.api.Logger
@@ -94,7 +94,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
    */
   def determineEligibility: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
     JourneyLogger.info(s"ArrangementController.determineEligibility: $request")
-
+    implicit val clock: Clock = Clock.systemDefaultZone()
     taxPayerConnector.getTaxPayer(authContext.principal.accounts.sa.get.utr.utr).flatMap[Result] {
       tp =>
         tp.fold {
@@ -112,6 +112,7 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   }
 
   def getInstalmentSummary: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"ArrangementController.getInstalmentSummary: $request")
     authorizedForSsttp {
       case ttp @ TTPSubmission(Some(schedule), _, _, _, cd @ CalculatorInput(debits, intialPayment, _, _, _, _), _, _, _, _, _) =>
         Future.successful(Ok(instalment_plan_summary(debits, intialPayment, schedule.schedule)))
@@ -120,18 +121,22 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   }
 
   def submitInstalmentSummary: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"ArrangementController.submitInstalmentSummary: $request")
     authorizedForSsttp(_ => Future.successful(Redirect(routes.ArrangementController.getDeclaration())))
   }
 
   def getChangeSchedulePaymentDay: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"ArrangementController.getChangeSchedulePaymentDay: $request")
     authorizedForSsttp(ttp => Future.successful(Ok(change_day(createDayOfForm(ttp)))))
   }
 
   def getDeclaration: Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"ArrangementController.getDeclaration: $request")
     authorizedForSsttp(ttp => Future.successful(Ok(declaration())))
   }
 
   def submitChangeSchedulePaymentDay(): Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"ArrangementController.submitChangeSchedulePaymentDay: $request")
     authorizedForSsttp {
       submission =>
         ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
@@ -231,12 +236,14 @@ class ArrangementController @Inject() (val messagesApi: play.api.i18n.MessagesAp
   }
 
   def submit(): Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"ArrangementController.submit: $request")
     authorizedForSsttp {
       ttp => arrangementSetUp(ttp)
     }
   }
 
   def applicationComplete(): Action[AnyContent] = authorisedSaUser { implicit authContext => implicit request =>
+    JourneyLogger.info(s"ArrangementController.applicationComplete: $request")
     authorizedForSsttp {
       submission =>
         sessionCache.remove().map(_ => Ok(application_complete(

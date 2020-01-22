@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 
 case class Taxpayer(
     customerName:   Option[String]         = None,
     addresses:      Seq[Address]           = Seq.empty,
     selfAssessment: Option[SelfAssessment] = None
 ) {
+
+  def fixReturns(implicit clock: Clock): Taxpayer = copy(selfAssessment = selfAssessment.map(_.fixReturns))
 
   def obfuscate: Taxpayer = Taxpayer(
     customerName   = customerName.map(_.replaceAll("[A-Za-z]", "x")),
@@ -35,6 +37,12 @@ case class SelfAssessment(utr:                      Option[String]              
                           communicationPreferences: Option[CommunicationPreferences] = None,
                           debits:                   Seq[Debit]                       = Seq.empty,
                           returns:                  Option[List[Return]]             = None) {
+
+  /**
+   * Removes older than 5 years returns.
+   * @return
+   */
+  def fixReturns(implicit clock: Clock): SelfAssessment = copy(returns = returns.map(_.filter(_.taxYearEnd.isAfter(LocalDate.now(clock).minusYears(5)))))
 
   def obfuscate: SelfAssessment = SelfAssessment(
     utr                      = utr.map(x => x.take(4) + "***"),

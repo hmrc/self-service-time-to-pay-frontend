@@ -32,12 +32,6 @@
     },
     "returns": [
       {
-        "taxYearEnd": "2000-04-05",
-        "issuedDate": "2001-01-23",
-        "dueDate": "2001-04-30",
-        "receivedDate": "2001-04-10"
-      },
-      {
         "taxYearEnd": "2001-04-05",
         "issuedDate": "2001-04-06",
         "dueDate": "2002-01-31",

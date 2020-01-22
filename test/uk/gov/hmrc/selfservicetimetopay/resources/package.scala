@@ -35,6 +35,7 @@ import scala.io.Source
 
 package object resources {
   val taxPayerJson = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/taxPayer.json")
+  val taxPayerWithFixedReturnsJson = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/taxPayerWithFixedReturns.json")
   val getBanksResponseJSON = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/GetBanksResponse.json")
   val createPaymentPlanResponseJSON = validateAndReturn[JsValue]("test/uk/gov/hmrc/selfservicetimetopay/resources/GetDirectDebitInstructionPaymentPlanResponse.json")
   val submitArrangementResponse: TTPArrangement = validateAndReturn[TTPArrangement]("test/uk/gov/hmrc/selfservicetimetopay/resources/GetArrangementResponse.json")

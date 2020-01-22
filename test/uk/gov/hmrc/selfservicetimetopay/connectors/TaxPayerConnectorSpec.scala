@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import java.time.format.DateTimeFormatter
+import java.time.{Clock, LocalDateTime, ZoneId}
+
 import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 import play.api.libs.json.Json
@@ -33,6 +36,8 @@ class TaxPayerConnectorSpec extends UnitSpec with MockitoSugar with ServicesConf
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
+  implicit val clock: Clock = Clock.fixed(LocalDateTime.parse("2006-01-22T16:28:55.185", DateTimeFormatter.ISO_DATE_TIME).atZone(ZoneId.of("Europe/London")).toInstant, ZoneId.of("UTC"))
+
   object testConnector extends TaxPayerConnector {
     val taxPayerURL = "time-to-pay-taxpayer"
     val http: WSHttp = mock[WSHttp]
@@ -42,14 +47,21 @@ class TaxPayerConnectorSpec extends UnitSpec with MockitoSugar with ServicesConf
   "calling getTaxPayer" should {
 
     "return a valid taxpayer" in {
-      val taxPayerResponse = Json.fromJson[Taxpayer](taxPayerJson).get
+      val taxPayerWithFixedReturns = Json.fromJson[Taxpayer](taxPayerWithFixedReturnsJson).get
       val httpResponse = HttpResponse(201, Some(taxPayerJson))
       when(testConnector.http.GET[HttpResponse]("time-to-pay-taxpayer/taxpayer/testUTR")).thenReturn(httpResponse)
 
       val result = await(testConnector.getTaxPayer("testUTR"))
-      assert(result.contains(taxPayerResponse))
+      assert(result.contains(taxPayerWithFixedReturns))
     }
 
   }
 
+  "getTaxpayer fixes returns" in {
+
+    val taxPayer = Json.fromJson[Taxpayer](taxPayerJson).get
+    val taxPayerWithFixedReturns = Json.fromJson[Taxpayer](taxPayerWithFixedReturnsJson).get
+
+    taxPayer.fixReturns shouldBe taxPayerWithFixedReturns
+  }
 }

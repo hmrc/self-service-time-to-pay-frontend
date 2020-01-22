@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.selfservicetimetopay.connectors
 
+import java.time.Clock
+
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
 import uk.gov.hmrc.selfservicetimetopay.models.Taxpayer
@@ -33,10 +35,12 @@ trait TaxPayerConnector {
   val serviceURL: String
   val http: HttpGet
 
-  def getTaxPayer(utr: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Taxpayer]] = {
+  def getTaxPayer(utr: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Option[Taxpayer]] = {
     JourneyLogger.info("TaxPayerConnector.getTaxPayer")
     http.GET[HttpResponse](s"$taxPayerURL/$serviceURL/$utr").map {
-      response => Some(response.json.as[Taxpayer])
+      response =>
+        val taxpayer = response.json.as[Taxpayer].fixReturns
+        Some(taxpayer)
     }.recover {
       case e: uk.gov.hmrc.http.NotFoundException =>
         JourneyLogger.info("TaxPayerConnector.getTaxPayer: taxpayer not found")
