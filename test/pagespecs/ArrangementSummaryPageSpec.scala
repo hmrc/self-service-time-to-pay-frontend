@@ -31,37 +31,37 @@ class ArrangementSummaryPageSpec extends ItSpec {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton
+      taxLiabilitiesPage.clickOnStartNowButton()
       paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue
+      paymentTodayQuestionPage.clickContinue()
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue
-      calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.clickContinue
-      instalmentSummarySelectDatePage.selectFirstOption
-      instalmentSummarySelectDatePage.clickContinue
-      instalmentSummaryPage.clickContinue
-      termsAndConditionsPage.clickContinue
+      monthlyPaymentAmountPage.clickContinue()
+      calculatorInstalmentsPage.selectAnOption()
+      calculatorInstalmentsPage.clickContinue()
+      instalmentSummarySelectDatePage.selectFirstOption()
+      instalmentSummarySelectDatePage.clickContinue()
+      instalmentSummaryPage.clickContinue()
+      termsAndConditionsPage.clickContinue()
       directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
       DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
       DirectDebitStub.getBanks
-      directDebitPage.clickContinue
+      directDebitPage.clickContinue()
       DirectDebitStub.postPaymentPlan
       ArrangementStub.postTtpArrangement
     }
 
   "language English" in
     {
-      beginJourney
-      directDebitConfirmationPage.clickContinue
+      beginJourney()
+      directDebitConfirmationPage.clickContinue()
       arrangementSummaryPage.assertPageIsDisplayed(English)
     }
 
   "language Welsh" in {
-    beginJourney
+    beginJourney()
     directDebitConfirmationPage.clickOnWelshLink()
-    directDebitConfirmationPage.clickContinue
+    directDebitConfirmationPage.clickContinue()
     arrangementSummaryPage.assertPageIsDisplayed(Welsh)
   }
 

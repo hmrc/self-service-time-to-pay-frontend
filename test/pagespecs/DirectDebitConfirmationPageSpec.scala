@@ -31,27 +31,27 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton
+      taxLiabilitiesPage.clickOnStartNowButton()
       paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue
+      paymentTodayQuestionPage.clickContinue()
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue
-      calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.clickContinue
-      instalmentSummarySelectDatePage.selectFirstOption
-      instalmentSummarySelectDatePage.clickContinue
-      instalmentSummaryPage.clickContinue
-      termsAndConditionsPage.clickContinue
+      monthlyPaymentAmountPage.clickContinue()
+      calculatorInstalmentsPage.selectAnOption()
+      calculatorInstalmentsPage.clickContinue()
+      instalmentSummarySelectDatePage.selectFirstOption()
+      instalmentSummarySelectDatePage.clickContinue()
+      instalmentSummaryPage.clickContinue()
+      termsAndConditionsPage.clickContinue()
       directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
       DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
       DirectDebitStub.getBanks
-      directDebitPage.clickContinue
+      directDebitPage.clickContinue()
     }
 
   "language" in
     {
-      beginJourney
+      beginJourney()
       directDebitConfirmationPage.assertPageIsDisplayed
 
       directDebitConfirmationPage.clickOnWelshLink()
@@ -63,17 +63,17 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
 
   "change sort code" in
     {
-      beginJourney
+      beginJourney()
       directDebitConfirmationPage.clickChangeButton
       directDebitPage.assertPageIsDisplayed
     }
 
   "click continue" in
     {
-      beginJourney
+      beginJourney()
       DirectDebitStub.postPaymentPlan
       ArrangementStub.postTtpArrangement
-      directDebitConfirmationPage.clickContinue
+      directDebitConfirmationPage.clickContinue()
       arrangementSummaryPage.assertPageIsDisplayed
     }
 

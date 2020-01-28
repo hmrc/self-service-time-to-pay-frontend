@@ -30,20 +30,17 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton
+      taxLiabilitiesPage.clickOnStartNowButton()
       paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue
+      paymentTodayQuestionPage.clickContinue()
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue
+      monthlyPaymentAmountPage.clickContinue()
     }
 
   "language" in
     {
-      beginJourney
-
-      var conditionX = true
-      while (conditionX) Thread.sleep(1000)
+      beginJourney()
 
       calculatorInstalmentsPage.assertPageIsDisplayed
 
@@ -54,11 +51,11 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage.assertPageIsDisplayed(English)
     }
 
-  //  "select an option and continue" in
-  //    {
-  //      beginJourney
-  //      calculatorInstalmentsPage.selectAnOption
-  //      calculatorInstalmentsPage.clickContinue
-  //      instalmentSummarySelectDatePage.assertPageIsDisplayed
-  //    }
+  "select an option and continue" in
+    {
+      beginJourney()
+      calculatorInstalmentsPage.selectAnOption()
+      calculatorInstalmentsPage.clickContinue()
+      instalmentSummarySelectDatePage.assertPageIsDisplayed
+    }
 }

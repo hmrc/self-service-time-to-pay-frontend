@@ -30,19 +30,19 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton
+      taxLiabilitiesPage.clickOnStartNowButton()
       paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue
+      paymentTodayQuestionPage.clickContinue()
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue
-      calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.clickContinue
+      monthlyPaymentAmountPage.clickContinue()
+      calculatorInstalmentsPage.selectAnOption()
+      calculatorInstalmentsPage.clickContinue()
     }
 
   "language" in
     {
-      beginJourney
+      beginJourney()
       instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
 
       instalmentSummarySelectDatePage.clickOnWelshLink()
@@ -54,30 +54,28 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
 
   "enter an invalid day" in
     {
-      beginJourney
+      beginJourney()
       instalmentSummarySelectDatePage.selectSecondOption
       instalmentSummarySelectDatePage.enterDay("123456")
-      instalmentSummarySelectDatePage.clickContinue
+      instalmentSummarySelectDatePage.clickContinue()
       instalmentSummarySelectDatePage.assertErrorPageIsDisplayed
     }
 
   "choose 28th or next working day and continue" in
     {
-      beginJourney
-      instalmentSummarySelectDatePage.selectFirstOption
+      beginJourney()
       instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
-      instalmentSummarySelectDatePage.clickContinue
+      instalmentSummarySelectDatePage.selectFirstOption()
+      instalmentSummarySelectDatePage.clickContinue()
       instalmentSummaryPage.assertPageIsDisplayed
     }
 
-  "chooes A diffrent day and continue" in
+  "choose a different day and continue" in
     {
-      beginJourney
+      beginJourney()
       instalmentSummarySelectDatePage.selectSecondOption
       instalmentSummarySelectDatePage.enterDay("12")
-      instalmentSummarySelectDatePage.clickContinue
+      instalmentSummarySelectDatePage.clickContinue()
       instalmentSummaryPage.assertPageIsDisplayed
-
     }
-
 }

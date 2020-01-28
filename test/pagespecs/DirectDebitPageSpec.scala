@@ -32,22 +32,22 @@ class DirectDebitPageSpec extends ItSpec {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton
+      taxLiabilitiesPage.clickOnStartNowButton()
       paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue
+      paymentTodayQuestionPage.clickContinue()
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue
-      calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.clickContinue
-      instalmentSummarySelectDatePage.selectFirstOption
-      instalmentSummarySelectDatePage.clickContinue
-      instalmentSummaryPage.clickContinue
-      termsAndConditionsPage.clickContinue
+      monthlyPaymentAmountPage.clickContinue()
+      calculatorInstalmentsPage.selectAnOption()
+      calculatorInstalmentsPage.clickContinue()
+      instalmentSummarySelectDatePage.selectFirstOption()
+      instalmentSummarySelectDatePage.clickContinue()
+      instalmentSummaryPage.clickContinue()
+      termsAndConditionsPage.clickContinue()
     }
 
   "language" in {
-    beginJourney
+    beginJourney()
     directDebitPage.assertPageIsDisplayed
 
     directDebitPage.clickOnWelshLink()
@@ -58,40 +58,40 @@ class DirectDebitPageSpec extends ItSpec {
   }
 
   "enter invalid Account Name " in {
-    beginJourney
+    beginJourney()
     directDebitPage.fillOutForm("123ede23efr4efr4ew32ef3r4", DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    directDebitPage.clickContinue
+    directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(AccountName())
   }
 
   "enter invalid Sort Code " in {
-    beginJourney
+    beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, "fqe23fwef322few23r", DirectDebitTd.accountNumber)
-    directDebitPage.clickContinue
+    directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(SortCode())
   }
 
   "enter invalid Account Number" in {
-    beginJourney
+    beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, "24wrgedfbgt423twergdfb")
-    directDebitPage.clickContinue
+    directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(AccountNumber())
   }
 
   "enter invalid bank account " in {
-    beginJourney
+    beginJourney()
     directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
-    directDebitPage.clickContinue
+    directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(InvalidBankDetails())
 
   }
 
   "enter valid bank account " in {
-    beginJourney
+    beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBanks
-    directDebitPage.clickContinue
+    directDebitPage.clickContinue()
     directDebitConfirmationPage.assertPageIsDisplayed
   }
 }

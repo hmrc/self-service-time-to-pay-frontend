@@ -32,8 +32,7 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
     readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val expected = Expected.MainText().stripSpaces()
-    readMain().stripSpaces shouldBe expected
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
   def clickInstalmentsChange() =
@@ -85,7 +84,8 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
           |Check your payment schedule details
           |Monthly instalments
           |Collected over 3 months
-          |£300.00 Change
+          |£300.00
+          |Change Monthly instalments
           |Total interest
           |Added to final payment
           |£200.00
@@ -102,7 +102,8 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
           |Gwiriwch fanylion eich amserlen talu
           |Rhandaliadau misol
           |Wedi’u casglu dros 3 o fisoedd
-          |£300.00 Newid
+          |£300.00
+          |Newid Rhandaliadau misol
           |Cyfanswm y llog
           |Wedi’i ychwanegu at y taliad terfynol
           |£200.00

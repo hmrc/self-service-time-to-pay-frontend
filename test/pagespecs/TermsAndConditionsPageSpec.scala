@@ -30,23 +30,23 @@ class TermsAndConditionsPageSpec extends ItSpec {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton
+      taxLiabilitiesPage.clickOnStartNowButton()
       paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue
+      paymentTodayQuestionPage.clickContinue()
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue
-      calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.clickContinue
-      instalmentSummarySelectDatePage.selectFirstOption
-      instalmentSummarySelectDatePage.clickContinue
-      instalmentSummaryPage.clickContinue
+      monthlyPaymentAmountPage.clickContinue()
+      calculatorInstalmentsPage.selectAnOption()
+      calculatorInstalmentsPage.clickContinue()
+      instalmentSummarySelectDatePage.selectFirstOption()
+      instalmentSummarySelectDatePage.clickContinue()
+      instalmentSummaryPage.clickContinue()
 
     }
 
   "language" in
     {
-      beginJourney
+      beginJourney()
       termsAndConditionsPage.assertPageIsDisplayed
 
       termsAndConditionsPage.clickOnWelshLink()
@@ -58,8 +58,8 @@ class TermsAndConditionsPageSpec extends ItSpec {
 
   "click continue" in
     {
-      beginJourney
-      termsAndConditionsPage.clickContinue
+      beginJourney()
+      termsAndConditionsPage.clickContinue()
       directDebitPage.assertPageIsDisplayed
 
     }

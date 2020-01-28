@@ -21,6 +21,7 @@ import testsupport.ItSpec
 import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxpayerStub}
 
 class PaymentTodayPageSpec extends ItSpec {
+
   def beginJourney() = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
@@ -28,12 +29,12 @@ class PaymentTodayPageSpec extends ItSpec {
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
-    taxLiabilitiesPage.clickOnStartNowButton
+    taxLiabilitiesPage.clickOnStartNowButton()
   }
 
   "language" in
     {
-      beginJourney
+      beginJourney()
       paymentTodayQuestionPage.assertPageIsDisplayed
 
       paymentTodayQuestionPage.clickOnWelshLink()
@@ -45,22 +46,22 @@ class PaymentTodayPageSpec extends ItSpec {
 
   "select yes and go to calculator payment-today" in
     {
-      beginJourney
+      beginJourney()
       paymentTodayQuestionPage.assertPageIsDisplayed
 
       paymentTodayQuestionPage.selectRadioButton(true)
-      paymentTodayQuestionPage.clickContinue
+      paymentTodayQuestionPage.clickContinue()
 
       paymentTodayCalculatorPage.assertPageIsDisplayed
     }
 
   "select no and go to monthlyPaymentAmount" in
     {
-      beginJourney
+      beginJourney()
       paymentTodayQuestionPage.assertPageIsDisplayed
 
       paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue
+      paymentTodayQuestionPage.clickContinue()
 
       monthlyPaymentAmountPage.assertPageIsDisplayed
     }

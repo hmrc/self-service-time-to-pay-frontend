@@ -28,14 +28,14 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
-    taxLiabilitiesPage.clickOnStartNowButton
+    taxLiabilitiesPage.clickOnStartNowButton()
     paymentTodayQuestionPage.selectRadioButton(true)
-    paymentTodayQuestionPage.clickContinue
+    paymentTodayQuestionPage.clickContinue()
   }
 
   "language" in
     {
-      beginJourney
+      beginJourney()
       paymentTodayCalculatorPage.assertPageIsDisplayed
 
       paymentTodayCalculatorPage.clickOnWelshLink()
@@ -47,17 +47,17 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
 
   "not valid amount" in
     {
-      beginJourney
+      beginJourney()
       paymentTodayCalculatorPage.enterAmount("99999")
-      paymentTodayCalculatorPage.clickContinue
+      paymentTodayCalculatorPage.clickContinue()
       paymentTodayCalculatorPage.assertErrorIsDisplayed
     }
 
   "valid amount and continue" in
     {
-      beginJourney
+      beginJourney()
       paymentTodayCalculatorPage.enterAmount("123")
-      paymentTodayCalculatorPage.clickContinue
+      paymentTodayCalculatorPage.clickContinue()
       paymentSummaryPage.assertPageIsDisplayed
     }
 

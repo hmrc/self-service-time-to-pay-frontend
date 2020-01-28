@@ -47,14 +47,17 @@ object BasePage {
 }
 
 abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
-  import WebBrowser._
-  import testsupport.RichMatchers._
+  val richMatchers = new testsupport.RichMatchers {
 
-  //we shadow what is in  testsupport.RichMatchers.
-  // patienceConfig
-  implicit val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Second))
-  )
+    //we shadow what is in  testsupport.RichMatchers.
+    // patienceConfig
+    override val patienceConfig: PatienceConfig = PatienceConfig(
+      timeout  = scaled(Span(2, Seconds)),
+      interval = scaled(Span(150, Millis))
+    )
+  }
+  import richMatchers._
+  import WebBrowser._
 
   def path: String
 
@@ -84,14 +87,14 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    * and fails assertion
    */
   protected def probing[A](probingF: => A): A = eventually(probingF).withClue {
-    val maybeDumpedFile = takeADump()
+    //    val maybeDumpedFile = takeADump()
+    //       |>>>page source was:
+    //       |${webDriver.getPageSource}
+    //       |>>>${maybeDumpedFile.map(uri => s"Screenshot recorded in $uri").getOrElse("Sorry, no screenshot recorded")}
+
     s"""
-       |>>>page source was:
-       |${webDriver.getPageSource}
-       |
        |>>>page text was:
        |${webDriver.findElement(By.tagName("body")).getText}
-       |>>>${maybeDumpedFile.map(uri => s"Screenshot recorded in $uri").getOrElse("Sorry, no screenshot recorded")}
        |>>>url was: ${webDriver.getCurrentUrl}
        |""".stripMargin
   }

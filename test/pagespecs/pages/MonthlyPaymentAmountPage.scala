@@ -107,13 +107,12 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
       private def errorText(value: String) =
         s"""Back
-          |Something you've entered isn't valid
-          |Enter a figure between the given range
-          |How much can you afford to pay each month?
-          |Enter an amount between £600 and £2500
-          |£
-          |Enter a figure between the given range
-          |Continue
+           |Something you've entered isn't valid
+           |Enter a figure between the given range
+           |How much can you afford to pay each month?
+           |Enter an amount between £600 and £2500
+           |£ Enter a figure between the given range 1
+           |Continue
         """.stripMargin
     }
   }

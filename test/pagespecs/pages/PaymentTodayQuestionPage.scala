@@ -83,8 +83,8 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         """Back
           |Can you make an upfront payment?
           |Making an upfront payment before you set up your plan means your monthly payments will be lower.
-          |Yes
-          |No
+          |unchecked Yes
+          |unchecked No
           |Continue
         """.stripMargin
 
@@ -92,8 +92,8 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         """Yn ôl
           |A allwch wneud taliad ymlaen llaw?
           |Bydd gwneud taliad ymlaen llaw cyn i chi drefnu’ch cynllun yn golygu y bydd eich taliadau misol yn is.
-          |Iawn
-          |Na
+          |unchecked Iawn
+          |unchecked Na
           |Yn eich blaen
         """.stripMargin
     }

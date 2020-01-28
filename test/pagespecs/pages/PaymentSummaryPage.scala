@@ -71,8 +71,10 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
           |Payment summary
           |Upfront payment
           |Taken in 3 to 5 days' time
-          |£123.0 Change
-          |Remaining amount to pay £4777.0
+          |£123.0
+          |Change Upfront payment
+          |Remaining amount to pay
+          |£4777.0
           |Continue
         """.stripMargin
 
@@ -81,8 +83,10 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
           |Crynodeb o’r taliadau
           |Taliad ymlaen llaw
           |Wedi’i gymryd ymhen 3 i 5 diwrnod
-          |£123.0 Newid
-          |Swm sy’n weddill i’w dalu £4777.0
+          |£123.0
+          |Newid Taliad ymlaen llaw
+          |Swm sy’n weddill i’w dalu
+          |£4777.0
           |Yn eich blaen
         """.stripMargin
     }

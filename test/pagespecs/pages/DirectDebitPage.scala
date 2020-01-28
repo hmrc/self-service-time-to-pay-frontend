@@ -86,6 +86,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
       private val mainTextEnglish =
         """Back
           |Enter account details to set up a Direct Debit
+          |Enter your banking details
           |Account name
           |Sort code
           |Account number
@@ -98,6 +99,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
       private val mainTextWelsh =
         """Yn ôl
           |Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol
+          |Enter your banking details
           |Enw’r cyfrif
           |Cod didoli
           |Rhif y cyfrif

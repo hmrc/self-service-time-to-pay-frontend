@@ -75,28 +75,64 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
       private val mainTextEnglish =
         s"""Back
-          |How many months do you want to pay over?
-          |4 months at £300.00
-          |4 months at £300.00
-          |4 months at £300.00
-          |How we calculate interest
-          |We only charge interest on overdue amounts.
-          |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
-          |If the interest rate changes during your plan, your monthly payments will not change. If we need to, we'll settle the difference at the end of the plan.
-          |Continue
+           |How many months do you want to pay over?
+           |unchecked 4 months at £300.00
+           |Total interest:
+           |Base rate + 2.5%
+           |£200.00
+           |added to the final payment
+           |Total paid:
+           |£200.00
+           |unchecked 4 months at £300.00
+           |Total interest:
+           |Base rate + 2.5%
+           |£200.00
+           |added to the final payment
+           |Total paid:
+           |£200.00
+           |unchecked 4 months at £300.00
+           |Total interest:
+           |Base rate + 2.5%
+           |£200.00
+           |added to the final payment
+           |Total paid:
+           |£200.00
+           |How we calculate interest
+           |We only charge interest on overdue amounts.
+           |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
+           |If the interest rate changes during your plan, your monthly payments will not change. If we need to, we'll settle the difference at the end of the plan.
+           |Continue
         """.stripMargin
 
       private val mainTextWelsh =
         s"""Yn ôl
-          |Dros sawl mis yr hoffech dalu?
-          |4 o fisoedd ar £300.00
-          |4 o fisoedd ar £300.00
-          |4 o fisoedd ar £300.00
-          |Sut rydym yn cyfrifo llog
-          |Rydym yn codi llog ar symiau hwyr yn unig.
-          |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
-          |Os bydd y gyfradd llog yn newid yn ystod eich cynllun, ni fydd eich taliadau misol yn newid. Os bydd angen, byddwn yn setlo’r gwahaniaeth ar ddiwedd y cynllun.
-          |Yn eich blaen
+           |Dros sawl mis yr hoffech dalu?
+           |unchecked 4 o fisoedd ar £300.00
+           |Cyfanswm y llog:
+           |Cyfradd sylfaenol + 2.5%
+           |£200.00
+           |wedi’i ychwanegu at y taliad terfynol
+           |Cyfanswm a dalwyd:
+           |£200.00
+           |unchecked 4 o fisoedd ar £300.00
+           |Cyfanswm y llog:
+           |Cyfradd sylfaenol + 2.5%
+           |£200.00
+           |wedi’i ychwanegu at y taliad terfynol
+           |Cyfanswm a dalwyd:
+           |£200.00
+           |unchecked 4 o fisoedd ar £300.00
+           |Cyfanswm y llog:
+           |Cyfradd sylfaenol + 2.5%
+           |£200.00
+           |wedi’i ychwanegu at y taliad terfynol
+           |Cyfanswm a dalwyd:
+           |£200.00
+           |Sut rydym yn cyfrifo llog
+           |Rydym yn codi llog ar symiau hwyr yn unig.
+           |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
+           |Os bydd y gyfradd llog yn newid yn ystod eich cynllun, ni fydd eich taliadau misol yn newid. Os bydd angen, byddwn yn setlo’r gwahaniaeth ar ddiwedd y cynllun.
+           |Yn eich blaen
         """.stripMargin
     }
   }

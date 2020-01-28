@@ -30,16 +30,16 @@ class InstalmentSummaryPageSpec extends ItSpec {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton
+      taxLiabilitiesPage.clickOnStartNowButton()
       paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue
+      paymentTodayQuestionPage.clickContinue()
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue
-      calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.clickContinue
-      instalmentSummarySelectDatePage.selectFirstOption
-      instalmentSummarySelectDatePage.clickContinue
+      monthlyPaymentAmountPage.clickContinue()
+      calculatorInstalmentsPage.selectAnOption()
+      calculatorInstalmentsPage.clickContinue()
+      instalmentSummarySelectDatePage.selectFirstOption()
+      instalmentSummarySelectDatePage.clickContinue()
     }
 
   "language" in
@@ -59,22 +59,22 @@ class InstalmentSummaryPageSpec extends ItSpec {
 
   "change monthly instalments" in
     {
-      beginJourney
+      beginJourney()
       instalmentSummaryPage.clickInstalmentsChange
       calculatorInstalmentsPage.assertPageIsDisplayed
     }
 
   "change collection day" in
     {
-      beginJourney
+      beginJourney()
       instalmentSummaryPage.clickCollectionDayChange
       instalmentSummarySelectDatePage.assertPageIsDisplayed
     }
 
   "continue to the next page" in
     {
-      beginJourney
-      instalmentSummaryPage.clickContinue
+      beginJourney()
+      instalmentSummaryPage.clickContinue()
       termsAndConditionsPage.assertPageIsDisplayed
     }
 

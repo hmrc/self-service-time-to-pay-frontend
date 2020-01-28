@@ -92,18 +92,20 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
       private val mainTextEnglish =
         s"""Back
-          |Choose the day you want your monthly payments collected
-          |28th or next working day
-          |A different day
-          |Continue
+           |Choose the day you want your monthly payments collected
+           |unchecked 28th or next working day
+           |unchecked A different day
+           |Enter the day of the month
+           |Continue
         """.stripMargin
 
       private val mainTextWelsh =
         s"""Yn ôl
-          |Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
-          |28ain diwrnod nesaf
-          |Diwrnod gwahanol
-          |Yn eich blaen
+           |Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
+           |unchecked 28ain diwrnod nesaf
+           |unchecked Diwrnod gwahanol
+           |Ewch i mewn i ddiwrnod y mis
+           |Yn eich blaen
         """.stripMargin
 
     }
@@ -115,10 +117,10 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
            |Choose the day you want your monthly payments collected
            |There is a problem
            |Enter a number between 1 and 28
-           |28th or next working day
-           |A different day
+           |unchecked 28th or next working day
+           |unchecked A different day
+           |Enter the day of the month
            |Continue
-           |Get help with this page.
         """.stripMargin
     }
   }

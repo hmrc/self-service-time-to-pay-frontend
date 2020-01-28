@@ -32,14 +32,14 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton
+      taxLiabilitiesPage.clickOnStartNowButton()
       paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue
+      paymentTodayQuestionPage.clickContinue()
     }
 
   "language" in
     {
-      beginJourney
+      beginJourney()
       monthlyPaymentAmountPage.assertPageIsDisplayed
 
       monthlyPaymentAmountPage.clickOnWelshLink()
@@ -52,20 +52,20 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
   "invalid entry" in
     {
       val value = "1"
-      beginJourney
+      beginJourney()
       monthlyPaymentAmountPage.enterAmout(value)
       CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue
+      monthlyPaymentAmountPage.clickContinue()
       monthlyPaymentAmountPage.assertErrorPageIsDisplayed(value)
 
     }
 
   "valid entry and continue" in
     {
-      beginJourney
+      beginJourney()
       monthlyPaymentAmountPage.enterAmout("2450")
       CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue
+      monthlyPaymentAmountPage.clickContinue()
       calculatorInstalmentsPage.assertPageIsDisplayed
     }
 }

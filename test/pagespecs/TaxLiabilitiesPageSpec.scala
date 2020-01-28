@@ -32,7 +32,7 @@ class TaxLiabilitiesPageSpec extends ItSpec {
   }
 
   "language" in {
-    beginJourney
+    beginJourney()
     taxLiabilitiesPage.assertPageIsDisplayed()
 
     taxLiabilitiesPage.clickOnWelshLink()
@@ -44,10 +44,10 @@ class TaxLiabilitiesPageSpec extends ItSpec {
 
   "continue to payment-today" in
     {
-      beginJourney
+      beginJourney()
       taxLiabilitiesPage.assertPageIsDisplayed()
 
-      taxLiabilitiesPage.clickOnStartNowButton
+      taxLiabilitiesPage.clickOnStartNowButton()
       paymentTodayQuestionPage.assertPageIsDisplayed
     }
 }
