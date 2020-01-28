@@ -26,7 +26,7 @@ import langswitch.{Language, Languages}
 import org.openqa.selenium.{By, OutputType, TakesScreenshot, WebDriver}
 import org.scalatest.Assertion
 import org.scalatest.selenium.WebBrowser
-import org.scalatest.time.{Millis, Second, Span}
+import org.scalatest.time.{Millis, Second, Seconds, Span}
 import play.api.Logger
 import play.api.libs.json.Reads
 
