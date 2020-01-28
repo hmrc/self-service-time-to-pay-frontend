@@ -43,7 +43,7 @@ class ItSpec
   with WireMockSupport {
 
   implicit override val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(300, Millis)), interval = scaled(Span(3, Millis))
+    timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds))
   )
 
   //in tests use `app`

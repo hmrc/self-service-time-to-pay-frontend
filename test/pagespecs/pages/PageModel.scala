@@ -26,7 +26,7 @@ import langswitch.{Language, Languages}
 import org.openqa.selenium.{By, OutputType, TakesScreenshot, WebDriver}
 import org.scalatest.Assertion
 import org.scalatest.selenium.WebBrowser
-import org.scalatest.time.{Millis, Span}
+import org.scalatest.time.{Millis, Second, Span}
 import play.api.Logger
 import play.api.libs.json.Reads
 
@@ -50,9 +50,10 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
   import WebBrowser._
   import testsupport.RichMatchers._
 
-  //we shadow what is in  testsupport.RichMatchers.patienceConfig
+  //we shadow what is in  testsupport.RichMatchers.
+  // patienceConfig
   implicit val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(300, Millis)), interval = scaled(Span(14, Millis))
+    timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Second))
   )
 
   def path: String

@@ -23,22 +23,22 @@ private object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     ws,
-    "uk.gov.hmrc" %% "govuk-template" % "5.26.0-play-26",
-    "uk.gov.hmrc" %% "play-ui" % "7.40.0-play-26",
-    "uk.gov.hmrc" %% "bootstrap-play-26" % "0.41.0",
+    "uk.gov.hmrc" %% "govuk-template" % "5.48.0-play-26",
+    "uk.gov.hmrc" %% "play-ui" % "8.7.0-play-26",
+    "uk.gov.hmrc" %% "bootstrap-play-26" % "1.3.0",
     "com.beachape" %% "enumeratum" % "1.5.13",
-    "uk.gov.hmrc" %% "simple-reactivemongo" % "7.20.0-play-26",
+    "uk.gov.hmrc" %% "simple-reactivemongo" % "7.22.0-play-26",
 
     "uk.gov.hmrc" %% "time-to-pay-taxpayer-cor" % "[0.23.0,)",
     "uk.gov.hmrc" %% "time-to-pay-calculator-cor" % "[0.35.0,)",
 
     "uk.gov.hmrc" %% "play-partials" %  "6.9.0-play-26",
-    "uk.gov.hmrc" %% "domain" %  "5.2.0",
+    "uk.gov.hmrc" %% "domain" %  "5.3.0",
     "uk.gov.hmrc" %% "time" % "3.1.0",
     "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0",
     "com.typesafe.play" %% "play-json-joda" % "2.6.13",
 
-    "uk.gov.hmrc" %% "http-caching-client" % "8.4.0-play-26",
+    "uk.gov.hmrc" %% "http-caching-client" % "9.0.0-play-26",
 
     "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided" ,
     "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided" ,
@@ -46,7 +46,7 @@ private object AppDependencies {
     "com.softwaremill.macwire" %% "proxy" % "2.3.0" % "test",
 
     "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
-    "org.seleniumhq.selenium" % "htmlunit-driver" % "2.35.1" % "test",
+    "org.seleniumhq.selenium" % "htmlunit-driver" % "2.36.0" % "test",
     "net.sourceforge.htmlunit" % "htmlunit" % "2.35" % "test"
 
 
