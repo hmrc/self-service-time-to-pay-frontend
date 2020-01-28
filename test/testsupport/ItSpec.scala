@@ -77,43 +77,11 @@ class ItSpec
     }
   }
 
-  private val defaultSeleniumHubUrl: String = s"http://localhost:4444/wd/hub"
-
-  private def chromeOptions: ChromeOptions = {
-    val options = new ChromeOptions()
-    options.addArguments("test-type")
-    options.addArguments("--no-sandbox")
-    options.addArguments("start-maximized")
-    options.addArguments("disable-infobars")
-    options.setCapability("takesScreenshot", true)
-    options.setCapability("javascript.enabled", javascriptEnabled)
-
-    options
+  implicit lazy val webDriver: HtmlUnitDriver = {
+    val wd = new HtmlUnitDriver(true)
+    wd.setJavascriptEnabled(false)
+    wd
   }
-
-  private lazy val javascriptEnabled: Boolean = {
-    sys.props.get("javascript").map(_.toLowerCase) match {
-      case Some("true")  => true
-      case Some("false") => false
-      case Some(_)       => sys.error("'javascript' property must be 'true' or 'false'.")
-      case None          => true
-    }
-  }
-
-  //  System.setProperty("browser", "chrome-headless")
-  //  System.setProperty("webdriver.chrome.driver", "/dbox/bin/chrome-webdriver/chromedriver")
-  //
-  //  implicit lazy val webDriver: WebDriver = sys.props.get("browser").map(_.toLowerCase) match {
-  //    case Some("chrome")          => new ChromeDriver(chromeOptions)
-  //    //    case Some("chrome")          => new ChromeDriver(chromeOptions.addArguments("headless"))
-  //    case Some("chrome-headless") => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
-  //    case Some("remote-chrome")   => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions)
-  //    case None                    => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
-  //  }
-  //
-
-  implicit val webDriver: HtmlUnitDriver = new HtmlUnitDriver(true)
-  webDriver.setJavascriptEnabled(false)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

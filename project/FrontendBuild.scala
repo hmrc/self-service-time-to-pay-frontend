@@ -47,7 +47,6 @@ private object AppDependencies {
 
     "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
     "org.seleniumhq.selenium" % "htmlunit-driver" % "2.35.1" % "test",
-    "uk.gov.hmrc" %% "webdriver-factory" % "0.7.0" % "test",
     "net.sourceforge.htmlunit" % "htmlunit" % "2.35" % "test"
 
 
