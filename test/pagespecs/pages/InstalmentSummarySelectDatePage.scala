@@ -96,7 +96,6 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
           |28th or next working day
           |A different day
           |Continue
-          |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
@@ -105,7 +104,6 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
           |28ain diwrnod nesaf
           |Diwrnod gwahanol
           |Yn eich blaen
-          |Help gyda'r dudalen hon.
         """.stripMargin
 
     }

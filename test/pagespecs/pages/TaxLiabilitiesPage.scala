@@ -80,7 +80,6 @@ class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
           |Your payment is due on 25 November 2019
           |£2,400.00
           |Continue
-          |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
@@ -96,7 +95,6 @@ class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
           |Mae’ch taliad yn ddyledus ar 25 November 2019
           |£2,400.00
           |Yn eich blaen
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
 

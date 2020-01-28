@@ -59,9 +59,6 @@
     margin:0;
     display: inline-block;
 }
-.visually-hidden{
-    display: None;
-}
 
 .container {
     float:left;
@@ -131,7 +128,6 @@ input.accountName{
 }
 .pull-right{
     float:right;
-    font-weight: underline;
 }
 .banner-panel--hide{
     display: none;

@@ -86,7 +86,6 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
           |Yes
           |No
           |Continue
-          |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
@@ -96,7 +95,6 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
           |Iawn
           |Na
           |Yn eich blaen
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
 

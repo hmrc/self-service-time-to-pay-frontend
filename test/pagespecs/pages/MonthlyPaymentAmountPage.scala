@@ -91,7 +91,6 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
           |Enter an amount between £${600 + increase} and £${2500 + increase}
           |£
           |Continue
-          |Get help with this page.
         """.stripMargin
 
       private def mainTextWelsh(increase: Int) =
@@ -100,7 +99,6 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
           |Nodwch swm sydd rhwng £${600 + increase}. a £${2500 + increase}
           |£
           |Yn eich blaen
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
 
@@ -116,7 +114,6 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
           |£
           |Enter a figure between the given range
           |Continue
-          |Get help with this page.
         """.stripMargin
     }
   }

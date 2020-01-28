@@ -93,7 +93,6 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders
           |Continue
-          |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
@@ -106,7 +105,6 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |rydych wedi’ch enwi’n ddeiliad y cyfrif ar gyfer y cyfrif hwn
           |rydych yn gallu sefydlu Debydau Uniongyrchol heb ganiatâd deiliaid eraill y cyfrif
           |Yn eich blaen
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
 
@@ -131,7 +129,6 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders
           |Continue
-          |Get help with this page.
       """.stripMargin
 
       private val sortCodeErrorText =
@@ -147,7 +144,6 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders
           |Continue
-          |Get help with this page.
         """.stripMargin
 
       private val accountNumberErrorText =
@@ -163,7 +159,6 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders
           |Continue
-          |Get help with this page.
         """.stripMargin
 
       private val invalidBankDetailsErrorText =
@@ -178,7 +173,6 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders
           |Continue
-          |Get help with this page.
         """.stripMargin
     }
   }

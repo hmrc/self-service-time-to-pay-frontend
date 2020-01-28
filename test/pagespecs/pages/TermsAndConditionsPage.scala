@@ -80,7 +80,6 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Declaration
           |I agree to the terms and conditions of this payment plan. I confirm that this is the earliest I am able to settle this debt.
           |Confirm and continue
-          |Get help with this page.
         """.stripMargin
       private val mainTextWelsh =
         """Yn ôl
@@ -95,7 +94,6 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Datganiad
           |Cytunaf â thelerau ac amodau’r cynllun talu hwn. Cadarnhaf mai dyma’r cynharaf y gallaf setlo’r ddyled hon.
           |Cadarnhau ac yn eich blaen
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
   }

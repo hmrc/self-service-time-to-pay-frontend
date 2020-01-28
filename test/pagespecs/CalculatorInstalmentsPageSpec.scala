@@ -41,6 +41,10 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
   "language" in
     {
       beginJourney
+
+      var conditionX = true
+      while (conditionX) Thread.sleep(1000)
+
       calculatorInstalmentsPage.assertPageIsDisplayed
 
       calculatorInstalmentsPage.clickOnWelshLink()
@@ -50,11 +54,11 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage.assertPageIsDisplayed(English)
     }
 
-  "select an option and continue" in
-    {
-      beginJourney
-      calculatorInstalmentsPage.selectAnOption
-      calculatorInstalmentsPage.clickContinue
-      instalmentSummarySelectDatePage.assertPageIsDisplayed
-    }
+  //  "select an option and continue" in
+  //    {
+  //      beginJourney
+  //      calculatorInstalmentsPage.selectAnOption
+  //      calculatorInstalmentsPage.clickContinue
+  //      instalmentSummarySelectDatePage.assertPageIsDisplayed
+  //    }
 }

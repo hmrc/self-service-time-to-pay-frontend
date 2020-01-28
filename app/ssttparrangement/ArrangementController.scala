@@ -182,7 +182,7 @@ class ArrangementController @Inject() (
     lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 
     for {
-      es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(), journey.taxpayer), utr)
+      es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(clock), journey.taxpayer), utr)
       newJourney = journey.copy(maybeEligibilityStatus = Option(es))
       _ <- journeyService.saveJourney(newJourney)
     } yield {
@@ -191,7 +191,7 @@ class ArrangementController @Inject() (
       else if (es.reasons.contains(IsNotOnIa)) notOnIa
       else if (es.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
       else if (es.reasons.contains(ReturnNeedsSubmitting) || es.reasons.contains(DebtIsInsignificant)) youNeedToFile
-      else throw new RuntimeException(s"Case not implemented. It's a bug. See eligibility reasons. [$journey]")
+      else throw new RuntimeException(s"Case not implemented. It's a bug. [${journey.maybeEligibilityStatus}]. [$journey]")
     }
   }
 
@@ -351,4 +351,35 @@ class ArrangementController @Inject() (
       ArrangementForm.dayOfMonthForm.fill(ArrangementDayOfMonth(p.getMonthlyInstalmentDate))
     })
   }
+}
+
+case class TaxYear(year: Int) {
+
+  val endDate = LocalDate.of(year, 4, 5)
+  val startDate = endDate.minusYears(1)
+
+  val fileDealine = LocalDate.of(year + 1, 1, 31)
+  val paymentDeadlineIN1 = fileDealine //you pay for $year (because you have prepaid in $year - 1, this should be less
+  val paymentDeadlineIN2 = paymentDeadlineIN1.plusMonths(6) //prepayment for $year + 1
+}
+
+//case class Debt(
+//  taxYear: Int,
+//
+//)
+
+object TaxYearApp {
+
+  val now = LocalDate.of(2020, 5, 15)
+
+  val returns = List(
+    TaxYear(2020),
+    TaxYear(2019)
+  )
+
+  //  val debts = List(
+  //    debt
+  //  )
+
+  //  require(now.isAfter(returns.map(_.endDate).max))
 }

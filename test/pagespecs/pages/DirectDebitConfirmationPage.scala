@@ -86,7 +86,6 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |If you receive a refund you are not entitled to, you must pay it back when HM Revenue & Customs asks you to.
           |You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please also notify us.
           |Continue
-          |Get help with this page.
         """.stripMargin
       private val mainTextWelsh =
         """Yn ôl
@@ -102,7 +101,6 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |Os cewch ad-daliad nad oes gennych hawl iddo, rhaid i chi ei dalu’n ôl pan fydd Cyllid a Thollau EM yn gofyn i chi wneud hynny.
           |Gallwch ganslo Debyd Uniongyrchol ar unrhyw adeg drwy gysylltu â’ch banc neu gymdeithas adeiladu. Efallai y bydd angen cadarnhad ysgrifenedig. Rhowch wybod i ninnau hefyd.
           |Yn eich blaen
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
   }

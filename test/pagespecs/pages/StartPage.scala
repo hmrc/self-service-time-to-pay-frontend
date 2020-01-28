@@ -82,7 +82,6 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
           |have no other tax debts
           |have no other HMRC payment plans set up
           |Start now
-          |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
@@ -100,7 +99,6 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
           |nid oes gennych unrhyw ddyledion treth eraill
           |nid ydych wedi trefnu cynlluniau talu eraill â CThEM
           |Dechrau nawr
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
 

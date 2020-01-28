@@ -95,7 +95,6 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
           |Monthly instalment collection date
           |25 or next working day Change
           |Continue
-          |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
@@ -113,7 +112,6 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
           |Dyddiad casglu rhandaliadau misol
           |25 neu’r diwrnod gwaith nesaf Newid
           |Yn eich blaen
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
 

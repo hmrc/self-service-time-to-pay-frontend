@@ -84,7 +84,6 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
           |How much can you pay upfront?
           |£
           |Continue
-          |Get help with this page.
     """.stripMargin
 
       private val mainTextWelsh =
@@ -92,7 +91,6 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
           |Faint y gallwch ei dalu ymlaen llaw?
           |£
           |Yn eich blaen
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
 
@@ -106,7 +104,6 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
           |Enter the amount you want to pay upfront
           |£
           |Continue
-          |Get help with this page.
         """.stripMargin
     }
   }

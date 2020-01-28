@@ -32,6 +32,10 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import java.net.URL
 
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
+
+import scala.util.Random
+
 class ItSpec
   extends FreeSpec
   with GuiceOneServerPerTest
@@ -39,7 +43,7 @@ class ItSpec
   with WireMockSupport {
 
   implicit override val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(300, Millis)), interval = scaled(Span(14, Millis))
+    timeout  = scaled(Span(300, Millis)), interval = scaled(Span(3, Millis))
   )
 
   //in tests use `app`
@@ -55,8 +59,8 @@ class ItSpec
       "microservice.services.ia.port" -> WireMockSupport.port,
       "microservice.services.auth.port" -> WireMockSupport.port,
       "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
-      "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}"
-
+      "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}",
+      "assets.url" -> "" //so the PageSpecs don't inferf with service manager
     )).build()
 
   def frozenTimeString: String = "2019-11-25T16:33:51.880"
@@ -96,12 +100,20 @@ class ItSpec
     }
   }
 
-  implicit lazy val webDriver: WebDriver = sys.props.get("browser").map(_.toLowerCase) match {
-    case Some("chrome")          =>  new ChromeDriver(chromeOptions.addArguments("headless"))
-    case Some("chrome-headless") => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
-    case Some("remote-chrome")   => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions)
-    case None                    =>  new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
-  }
+  //  System.setProperty("browser", "chrome-headless")
+  //  System.setProperty("webdriver.chrome.driver", "/dbox/bin/chrome-webdriver/chromedriver")
+  //
+  //  implicit lazy val webDriver: WebDriver = sys.props.get("browser").map(_.toLowerCase) match {
+  //    case Some("chrome")          => new ChromeDriver(chromeOptions)
+  //    //    case Some("chrome")          => new ChromeDriver(chromeOptions.addArguments("headless"))
+  //    case Some("chrome-headless") => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
+  //    case Some("remote-chrome")   => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions)
+  //    case None                    => new RemoteWebDriver(new URL(defaultSeleniumHubUrl), chromeOptions.addArguments("headless"))
+  //  }
+  //
+
+  implicit val webDriver: HtmlUnitDriver = new HtmlUnitDriver(true)
+  webDriver.setJavascriptEnabled(false)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

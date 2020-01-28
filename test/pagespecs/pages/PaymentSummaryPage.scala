@@ -74,7 +74,6 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
           |£123.0 Change
           |Remaining amount to pay £4777.0
           |Continue
-          |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
@@ -85,7 +84,6 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
           |£123.0 Newid
           |Swm sy’n weddill i’w dalu £4777.0
           |Yn eich blaen
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
   }

@@ -73,6 +73,5 @@ class StartPageSpec extends ItSpec {
     startPage.open()
     startPage.clickOnStartNowButton()
     debtTooLargePage.assertPageIsDisplayed()
-
   }
 }

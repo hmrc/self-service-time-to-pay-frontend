@@ -88,7 +88,11 @@ object CalculatorTd {
      "instalmentBalance" : 200,
      "totalInterestCharged" : 200,
      "totalPayable" : 200,
-     "instalments" : [${calculatorPaymentScheduleInstalmentJson}, ${calculatorPaymentScheduleInstalmentJson2}, ${calculatorPaymentScheduleInstalmentJson3}]
+     "instalments" : [
+        ${calculatorPaymentScheduleInstalmentJson},
+        ${calculatorPaymentScheduleInstalmentJson2},
+        ${calculatorPaymentScheduleInstalmentJson3}
+      ]
     }""".asJson
 
   val calculatorInput = new CalculatorInput(

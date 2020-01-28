@@ -69,7 +69,6 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |If you need to change your payment plan
           |Call the HMRC Helpline on 0300 322 7015.
           |What did you think of this service? (takes 30 seconds)
-          |Get help with this page.
         """.stripMargin
 
       private val mainTextWelsh =
@@ -83,7 +82,6 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Os oes angen i chi newid eich cynllun talu
           |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.
           |Beth oedd eich barn am y gwasanaeth hwn? (mae’n cymryd 30 eiliad)
-          |Help gyda'r dudalen hon.
         """.stripMargin
     }
   }
