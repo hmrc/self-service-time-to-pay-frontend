@@ -29,10 +29,13 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/terms-and-conditions"
 
-  override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
+  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
+    val content = readMain().stripSpaces
+    Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
+      content should include(expectedLine)
+    )
   }
 
   def clickContinue() =

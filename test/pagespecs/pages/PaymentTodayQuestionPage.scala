@@ -29,7 +29,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   override val path: String = "/pay-what-you-owe-in-instalments/calculator/payment-today-question"
 
-  def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion = probing {
+  def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces

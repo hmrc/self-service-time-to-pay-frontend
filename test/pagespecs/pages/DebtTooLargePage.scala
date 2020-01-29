@@ -28,7 +28,7 @@ class DebtTooLargePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends 
 
   override def path: String = "/pay-what-you-owe-in-instalments/eligibility/debt-large/call-us"
 
-  override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
+  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces

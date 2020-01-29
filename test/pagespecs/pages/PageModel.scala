@@ -61,7 +61,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def path: String
 
-  def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion
+  def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit
 
   def open(): Unit = WebBrowser.goTo(s"${baseUrl.value}$path")
 

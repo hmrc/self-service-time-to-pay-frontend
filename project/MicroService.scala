@@ -49,7 +49,7 @@ trait MicroService {
       scalaVersion := "2.11.11",
       libraryDependencies ++= appDependencies,
       parallelExecution in Test := false,
-      fork in Test := false,
+      fork in Test := true,
       evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
       routesImport ++= Seq(
         "langswitch.Language"
