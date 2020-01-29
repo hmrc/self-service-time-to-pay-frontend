@@ -20,7 +20,7 @@ import langswitch.Languages.{English, Welsh}
 import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
+import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
 class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -31,7 +31,7 @@ class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
   }
 
@@ -49,15 +49,9 @@ class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish =
-        """GOV.UK
-          |Set up a payment plan
-        """.stripMargin
+      private val globalHeaderTextEnglish = """Set up a payment plan"""
 
-      private val globalHeaderTextWelsh =
-        """GOV.UK
-          |Trefnu cynllun talu
-        """.stripMargin
+      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
 
     object MainText {

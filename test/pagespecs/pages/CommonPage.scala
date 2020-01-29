@@ -20,7 +20,7 @@ import java.io.{FileInputStream, FileOutputStream}
 
 import org.openqa.selenium.{By, OutputType, TakesScreenshot, WebDriver}
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
+import org.scalatestplus.selenium.WebBrowser
 import play.api.Logger
 import testsupport.RichMatchers
 

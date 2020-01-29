@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import langswitch.{Language, Languages}
 import org.openqa.selenium.{By, OutputType, TakesScreenshot, WebDriver}
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
+import org.scalatestplus.selenium.WebBrowser
 import org.scalatest.time.{Millis, Second, Seconds, Span}
 import play.api.Logger
 import play.api.libs.json.Reads
@@ -70,7 +70,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    */
   def readMain(): String = xpath("""//*[@id="content"]/article""").element.text
 
-  def readGlobalHeader(): String = id("global-header").element.text
+  def readGlobalHeaderText(): String = id("proposition-menu").element.text
 
   def readPath(): String = {
     val url = new java.net.URL(webDriver.getCurrentUrl)

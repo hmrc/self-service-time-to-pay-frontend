@@ -20,7 +20,7 @@ import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
+import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
 class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -31,27 +31,24 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
   override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def clickInstalmentsChange() =
-    {
-      val changeLink = xpath("//*[@id=\"id_payment\"]/dl/div[1]/dd[2]/a")
-      click on changeLink
-    }
+  def clickInstalmentsChange() = {
+    val changeLink = xpath("//*[@id=\"id_payment\"]/dl/div[1]/dd[2]/a")
+    click on changeLink
+  }
 
-  def clickCollectionDayChange() =
-    {
-      val changeLink = xpath("//*[@id=\"content\"]/article/table/tbody/tr/td[3]/a")
-      click on changeLink
-    }
+  def clickCollectionDayChange() = {
+    val changeLink = xpath("//*[@id=\"content\"]/article/table/tbody/tr/td[3]/a")
+    click on changeLink
+  }
 
-  def clickContinue() =
-    {
-      val button = xpath("//*[@id=\"content\"]/article/form/div/button")
-      click on button
-    }
+  def clickContinue() = {
+    val button = xpath("//*[@id=\"content\"]/article/form/div/button")
+    click on button
+  }
 
   object Expected {
 
@@ -62,15 +59,9 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish =
-        """GOV.UK
-          |Set up a payment plan
-        """.stripMargin
+      private val globalHeaderTextEnglish = """Set up a payment plan"""
 
-      private val globalHeaderTextWelsh =
-        """GOV.UK
-          |Trefnu cynllun talu
-        """.stripMargin
+      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
 
     object MainText {
@@ -117,4 +108,5 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
 
   }
+
 }

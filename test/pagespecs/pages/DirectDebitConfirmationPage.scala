@@ -20,7 +20,7 @@ import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
+import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
 class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -31,7 +31,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
 
   override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
@@ -40,11 +40,10 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
     click on button
   }
 
-  def clickContinue() =
-    {
-      val button = xpath("/html/body/main/div[2]/article/section/form/div/button")
-      click on button
-    }
+  def clickContinue() = {
+    val button = xpath("/html/body/main/div[2]/article/section/form/div/button")
+    click on button
+  }
 
   object Expected {
 
@@ -55,15 +54,9 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish =
-        """GOV.UK
-          |Set up a payment plan
-        """.stripMargin
+      private val globalHeaderTextEnglish = """Set up a payment plan"""
 
-      private val globalHeaderTextWelsh =
-        """GOV.UK
-          |Trefnu cynllun talu
-        """.stripMargin
+      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
 
     object MainText {
@@ -111,5 +104,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |Yn eich blaen
         """.stripMargin
     }
+
   }
+
 }

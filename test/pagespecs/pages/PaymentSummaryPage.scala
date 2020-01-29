@@ -20,7 +20,7 @@ import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
+import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
 class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -31,15 +31,14 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
 
   override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def clickContinue() =
-    {
-      val button = xpath("//*[@id=\"content\"]/article/a[2]")
-      click on button
-    }
+  def clickContinue() = {
+    val button = xpath("//*[@id=\"content\"]/article/a[2]")
+    click on button
+  }
 
   object Expected {
 
@@ -50,15 +49,8 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish =
-        """GOV.UK
-          |Set up a payment plan
-        """.stripMargin
-
-      private val globalHeaderTextWelsh =
-        """GOV.UK
-          |Trefnu cynllun talu
-        """.stripMargin
+      private val globalHeaderTextEnglish = """Set up a payment plan"""
+      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
 
     object MainText {
@@ -66,6 +58,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         case English => mainTextEnglish
         case Welsh   => mainTextWelsh
       }
+
       private val mainTextEnglish =
         """Back
           |Payment summary
@@ -90,5 +83,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
           |Yn eich blaen
         """.stripMargin
     }
+
   }
+
 }

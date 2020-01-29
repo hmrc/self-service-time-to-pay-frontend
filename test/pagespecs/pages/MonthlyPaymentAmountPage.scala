@@ -20,7 +20,7 @@ import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
+import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
 class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -31,13 +31,13 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
   }
 
   def assertPageIsDisplayedAltPath(difference: Int)(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText(difference).stripSpaces
   }
 
@@ -46,18 +46,16 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
   }
 
-  def enterAmout(value: String) =
-    {
-      val amountField = xpath("//*[@id=\"amount\"]")
-      click on amountField
-      enter(value)
-    }
+  def enterAmout(value: String) = {
+    val amountField = xpath("//*[@id=\"amount\"]")
+    click on amountField
+    enter(value)
+  }
 
-  def clickContinue() =
-    {
-      val button = xpath("//*[@id=\"monthlyPaymentForm\"]/div/button")
-      click on button
-    }
+  def clickContinue() = {
+    val button = xpath("//*[@id=\"monthlyPaymentForm\"]/div/button")
+    click on button
+  }
 
   object Expected {
 
@@ -68,15 +66,9 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish =
-        """GOV.UK
-          |Set up a payment plan
-        """.stripMargin
+      private val globalHeaderTextEnglish = """Set up a payment plan"""
 
-      private val globalHeaderTextWelsh =
-        """GOV.UK
-          |Trefnu cynllun talu
-        """.stripMargin
+      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
 
     object MainText {
@@ -87,18 +79,18 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
       private def mainTextEnglish(increase: Int) =
         s"""Back
-          |How much can you afford to pay each month?
-          |Enter an amount between £${600 + increase} and £${2500 + increase}
-          |£
-          |Continue
+           |How much can you afford to pay each month?
+           |Enter an amount between £${600 + increase} and £${2500 + increase}
+           |£
+           |Continue
         """.stripMargin
 
       private def mainTextWelsh(increase: Int) =
         s"""Yn ôl
-          |Faint y gallwch fforddio ei dalu bob mis?
-          |Nodwch swm sydd rhwng £${600 + increase}. a £${2500 + increase}
-          |£
-          |Yn eich blaen
+           |Faint y gallwch fforddio ei dalu bob mis?
+           |Nodwch swm sydd rhwng £${600 + increase}. a £${2500 + increase}
+           |£
+           |Yn eich blaen
         """.stripMargin
     }
 
@@ -115,5 +107,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
            |Continue
         """.stripMargin
     }
+
   }
+
 }

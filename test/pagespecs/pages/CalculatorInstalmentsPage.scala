@@ -20,7 +20,7 @@ import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
+import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
 class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -29,23 +29,21 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
 
-  override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing{
+  override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def selectAnOption() =
-    {
-      val radioButton = xpath("/html/body/main/div[2]/article/form/div[1]/div[1]/input")
-      click on radioButton
-    }
+  def selectAnOption() = {
+    val radioButton = xpath("/html/body/main/div[2]/article/form/div[1]/div[1]/input")
+    click on radioButton
+  }
 
-  def clickContinue() =
-    {
-      val button = xpath("//*[@id=\"next\"]")
-      click on button
-    }
+  def clickContinue() = {
+    val button = xpath("//*[@id=\"next\"]")
+    click on button
+  }
 
   object Expected {
 
@@ -56,15 +54,9 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish =
-        """GOV.UK
-          |Set up a payment plan
-        """.stripMargin
+      private val globalHeaderTextEnglish = """Set up a payment plan"""
 
-      private val globalHeaderTextWelsh =
-        """GOV.UK
-          |Trefnu cynllun talu
-        """.stripMargin
+      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
 
     object MainText {
@@ -135,5 +127,7 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
            |Yn eich blaen
         """.stripMargin
     }
+
   }
+
 }

@@ -20,7 +20,7 @@ import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
+import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
 class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -31,7 +31,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
   override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
@@ -40,29 +40,26 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
   }
 
-  def selectFirstOption() =
-    {
-      val firstOption = xpath("/html/body/main/div[2]/article/form/div/div[1]/input")
-      click on firstOption
-    }
+  def selectFirstOption() = {
+    val firstOption = xpath("/html/body/main/div[2]/article/form/div/div[1]/input")
+    click on firstOption
+  }
 
-  def selectSecondOption() =
-    {
-      val secondOption = xpath("/html/body/main/div[2]/article/form/div/div[2]/input")
-      click on secondOption
-    }
+  def selectSecondOption() = {
+    val secondOption = xpath("/html/body/main/div[2]/article/form/div/div[2]/input")
+    click on secondOption
+  }
 
   def clickContinue() = {
     val button = xpath("//*[@id=\"next\"]")
     click on button
   }
 
-  def enterDay(day: String) =
-    {
-      val dayField = xpath("/html/body/main/div[2]/article/form/div/div[3]/input")
-      click on dayField
-      enter(day)
-    }
+  def enterDay(day: String) = {
+    val dayField = xpath("/html/body/main/div[2]/article/form/div/div[3]/input")
+    click on dayField
+    enter(day)
+  }
 
   object Expected {
 
@@ -73,15 +70,9 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish =
-        """GOV.UK
-          |Set up a payment plan
-        """.stripMargin
+      private val globalHeaderTextEnglish = """Set up a payment plan"""
 
-      private val globalHeaderTextWelsh =
-        """GOV.UK
-          |Trefnu cynllun talu
-        """.stripMargin
+      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
 
     object MainText {
@@ -109,6 +100,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
         """.stripMargin
 
     }
+
     object ErrorText {
       def apply(): String = errorText
 
@@ -123,5 +115,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
            |Continue
         """.stripMargin
     }
+
   }
+
 }

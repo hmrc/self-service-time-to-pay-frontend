@@ -26,7 +26,7 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "govuk-template" % "5.48.0-play-26",
     "uk.gov.hmrc" %% "play-ui" % "8.7.0-play-26",
     "uk.gov.hmrc" %% "bootstrap-play-26" % "1.3.0",
-    "com.beachape" %% "enumeratum" % "1.5.13",
+    "com.beachape" %% "enumeratum" % "1.5.15",
     "uk.gov.hmrc" %% "simple-reactivemongo" % "7.22.0-play-26",
 
     "uk.gov.hmrc" %% "time-to-pay-taxpayer-cor" % "[0.23.0,)",
@@ -40,14 +40,14 @@ private object AppDependencies {
 
     "uk.gov.hmrc" %% "http-caching-client" % "9.0.0-play-26",
 
-    "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided" ,
-    "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided" ,
-    "com.softwaremill.macwire" %% "util" % "2.3.0" % "test",
-    "com.softwaremill.macwire" %% "proxy" % "2.3.0" % "test",
+    "com.softwaremill.macwire" %% "macros" % "2.3.3" % "provided" ,
+    "com.softwaremill.macwire" %% "macrosakka" % "2.3.3" % "provided" ,
+    "com.softwaremill.macwire" %% "util" % "2.3.3" % "test",
+    "com.softwaremill.macwire" %% "proxy" % "2.3.3" % "test",
 
     "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
     "org.seleniumhq.selenium" % "htmlunit-driver" % "2.36.0" % "test",
-    "net.sourceforge.htmlunit" % "htmlunit" % "2.35" % "test"
+    "net.sourceforge.htmlunit" % "htmlunit" % "2.37.0" % "test"
 
 
   )
@@ -61,13 +61,10 @@ private object AppDependencies {
     def apply(): Seq[ModuleID] = new TestDependencies {
       override lazy val test: Seq[ModuleID] = Seq(
         "org.pegdown" % "pegdown" % "1.6.0" % scope,
-        "org.jsoup" % "jsoup" % "1.8.3" % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
         "com.github.tomakehurst" % "wiremock-standalone" % "2.12.0" % "test",
-
-        "org.mockito" % "mockito-core" % "1.10.19" % scope,
-        "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope,
-        "org.typelevel" %% "cats-core" % "1.4.0"
+        "org.scalatest" %% "scalatest" % "3.0.8" % "test",
+        "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope
       )
     }.test
   }

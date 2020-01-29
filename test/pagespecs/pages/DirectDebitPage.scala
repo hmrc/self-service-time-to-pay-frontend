@@ -20,42 +20,39 @@ import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
-import org.scalatest.selenium.WebBrowser
 import testsupport._
 import testsupport.RichMatchers._
 
 class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
-  import WebBrowser._
+  import org.scalatestplus.selenium.WebBrowser._
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/direct-debit"
 
-  override def assertPageIsDisplayed(implicit lang: Language): Assertion = probing {
+  override def assertPageIsDisplayed(implicit lang: Language): Assertion = eventually {
     readPath() shouldBe path
-    readGlobalHeader().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
   }
 
-  def assertErrorPageIsDisplayed(implicit field: ErrorCase): Assertion = probing {
+  def assertErrorPageIsDisplayed(implicit field: ErrorCase): Assertion = eventually {
     readPath() shouldBe path
     readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
   }
 
-  def fillOutForm(accountNameInput: String, sortCodeInput: String, accountNumberInput: String) =
-    {
-      click on xpath("//*[@id=\"accountName\"]")
-      enter(accountNameInput)
-      click on xpath("//*[@id=\"sortCode\"]")
-      enter(sortCodeInput)
-      click on xpath("//*[@id=\"accountNumber\"]")
-      enter(accountNumberInput)
-    }
+  def fillOutForm(accountNameInput: String, sortCodeInput: String, accountNumberInput: String) = {
+    click on xpath("//*[@id=\"accountName\"]")
+    enter(accountNameInput)
+    click on xpath("//*[@id=\"sortCode\"]")
+    enter(sortCodeInput)
+    click on xpath("//*[@id=\"accountNumber\"]")
+    enter(accountNumberInput)
+  }
 
-  def clickContinue() =
-    {
-      val button = xpath("//*[@id=\"content\"]/article/form/div[2]/button")
-      click on button
-    }
+  def clickContinue() = {
+    val button = xpath("//*[@id=\"content\"]/article/form/div[2]/button")
+    click on button
+  }
 
   object Expected {
 
@@ -66,15 +63,9 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish =
-        """GOV.UK
-        |Set up a payment plan
-      """.stripMargin
+      private val globalHeaderTextEnglish = """Set up a payment plan"""
 
-      private val globalHeaderTextWelsh =
-        """GOV.UK
-        |Trefnu cynllun talu
-      """.stripMargin
+      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
 
     object MainText {
@@ -178,5 +169,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Continue
         """.stripMargin
     }
+
   }
+
 }
