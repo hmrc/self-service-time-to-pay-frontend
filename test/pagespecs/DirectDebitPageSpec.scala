@@ -57,7 +57,7 @@ class DirectDebitPageSpec extends ItSpec {
     directDebitPage.assertPageIsDisplayed(English)
   }
 
-  "enter invalid Account Name " in {
+  "enter invalid Account Name" in {
     beginJourney()
     directDebitPage.fillOutForm("123ede23efr4efr4ew32ef3r4", DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()

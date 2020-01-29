@@ -123,10 +123,10 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Something you’ve entered isn’t valid
           |Check your account name is correct
           |Enter account details to set up a Direct Debit
-          |Account name
-          |Check your account name is correct
-          |Sort code
-          |Account number
+          |Enter your banking details
+          |Account name Check your account name is correct 123ede23efr4efr4ew32ef3r4
+          |Sort code 12-34-56
+          |Account number 12345678
           |To continue you must be:
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders
@@ -138,10 +138,10 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Something you’ve entered isn’t valid
           |Sort code must be a 6 digit number
           |Enter account details to set up a Direct Debit
-          |Account name
-          |Sort code
-          |Sort code must be a 6 digit number
-          |Account number
+          |Enter your banking details
+          |Account name Mr John Campbell
+          |Sort code Sort code must be a 6 digit number fqe23fwef322few23r
+          |Account number 12345678
           |To continue you must be:
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders
@@ -153,10 +153,10 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Something you’ve entered isn’t valid
           |Account number must be an 8 digit number
           |Enter account details to set up a Direct Debit
-          |Account name
-          |Sort code
-          |Account number
-          |Account number must be an 8 digit number
+          |Enter your banking details
+          |Account name Mr John Campbell
+          |Sort code 12-34-56
+          |Account number Account number must be an 8 digit number 24wrgedf
           |To continue you must be:
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders
@@ -168,9 +168,10 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |This isn't a valid bank account
           |Re-enter your bank details
           |Enter account details to set up a Direct Debit
-          |Account name
-          |Sort code
-          |Account number
+          |Enter your banking details
+          |Account name Mr John Campbell
+          |Sort code 123456
+          |Account number 12345678
           |To continue you must be:
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders
