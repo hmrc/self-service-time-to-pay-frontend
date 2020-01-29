@@ -229,27 +229,27 @@ ssttp.arrangement.change_day.payment-day.out-of-range = Enter a number between 1
 ssttp.arrangement.change_day.payment-day.continue = Continue
 ssttp.arrangement.change_day.payment-day.change.take-payment-on = Change Day
 
-ssttp.arrangement.instalment-summary.title = Check your payment schedule details
-ssttp.arrangement.instalment-summary.up-front-payment = Upfront payment
-ssttp.arrangement.instalment-summary.up-front-payment.hint = Taken in 3 to 5 days' time
+ssttp.arrangement.instalment-summary.title = Check your payment plan
+ssttp.arrangement.instalment-summary.up-front-payment = Upfront payment taken within 5 days
 ssttp.arrangement.instalment-summary.up-front-payment.change = Change
 ssttp.arrangement.instalment-summary-table.title = Your payment plan
 ssttp.arrangement.instalment-summary-table.monthly-instalments = Monthly instalments
-ssttp.arrangement.instalment-summary-table.total-interest-hint = Collected over {0} months
+ssttp.arrangement.instalment-summary-table.total-interest-hint = including interest of {0} added to the final payment
 ssttp.arrangement.instalment-summary-table.monthly-instalments-change = Change
 ssttp.arrangement.instalment-summary-table.total-interest = Total interest
 ssttp.arrangement.instalment-summary-table.hint = Added to final payment
-ssttp.arrangement.instalment-summary.payment-date.title = Monthly instalment collection date
+ssttp.arrangement.instalment-summary.payment-date.title = Payments collected on
 ssttp.arrangement.instalment-summary.payment-date.ending = or next working day
 ssttp.arrangement.instalment-summary.payment-date.change = Change
 ssttp.arrangement.instalment-summary.schedule.final-payment-interest = Interest added to final payment
+
 
 ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Print payment summary
 ssttp.arrangement.print-summary.schedule.payment-plan.h2 = Your payment plan
 ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment = Total repayment
 ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment.hint = Including interest
 
-ssttp.arrangement.instalment-summary-table.total-repayment = Total repayment
+ssttp.arrangement.instalment-summary-table.total-repayment = Total to pay
 ssttp.arrangement.instalment-summary-table.total-repayment-hint = Including interest
 ssttp.arrangement.instalment-summary.submit = Continue
 

@@ -32,6 +32,18 @@ final case class CalculatorPaymentSchedule(startDate:            Option[LocalDat
   def getMonthlyInstalment: BigDecimal = instalments.head.amount
   def getMonthlyInstalmentDate: Int = instalments.head.paymentDate.getDayOfMonth
   def initialPaymentScheduleDate: LocalDate = instalments.map(_.paymentDate).min
+  def getUpFrontPayment: BigDecimal = initialPayment
+  def getMonthlyDateFormatted: String = {
+    val date = getMonthlyInstalmentDate.toString
+    val postfix = {
+      if (date == "11" || date == "12" || date == "13") "th"
+      else if (date.endsWith("1")) "st"
+      else if (date.endsWith("2")) "nd"
+      else if (date.endsWith("3")) "rd"
+      else "th"
+    }
+    s"$date$postfix"
+  }
 }
 
 case class CalculatorPaymentScheduleExt(
@@ -39,4 +51,6 @@ case class CalculatorPaymentScheduleExt(
     schedule: CalculatorPaymentSchedule
 )
 
-final case class CalculatorPaymentScheduleInstalment(paymentDate: LocalDate, amount: BigDecimal)
+final case class CalculatorPaymentScheduleInstalment(paymentDate: LocalDate, amount: BigDecimal) {
+  def getDateInReadableFormat: String = s"${paymentDate.getMonth} ${paymentDate.getYear.toString}".toLowerCase.capitalize
+}
