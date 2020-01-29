@@ -23,21 +23,35 @@
 @if(paymentSchedule.initialPayment > 0){@upfront_payment(paymentSchedule)}
 <div id="id_payment" class="margin-top-40">
     <dl class="app-check-your-answers app-check-your-answers--long">
-            <div class="app-check-your-answers__contents">
-              <dt class="app-check-your-answers__question no_bottom_line">
+            @*monthly instalments (rtotal number*@
+        <div class="app-check-your-answers__contents">
+              <dt class="app-check-your-answers__question">
                 @Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")
                 <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint",paymentSchedule.instalments.length)</p>
               </dt>
-              <dd class="app-check-your-answers__answer no_bottom_line">
+              <dd class="app-check-your-answers__answer">
                 @currency(paymentSchedule.getMonthlyInstalment)
               </dd>
 
-              <dd class="app-check-your-answers__change no_bottom_line" onclick="change()">
-
+              <dd class="app-check-your-answers__change" onclick="change()">
                   <a href="@routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
                 </dd>
             </div>
 
+        @*collected on date*@
+    <div class="app-check-your-answers__contents">
+        <dt class="app-check-your-answers__question">
+            @Messages("ssttp.arrangement.instalment-summary.payment-date.title")
+        </dt>
+        <dd class="app-check-your-answers__answer">
+        @paymentSchedule.getMonthlyInstalmentDate @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")
+        </dd>
+        <dd class="app-check-your-answers__change">
+            <td><a href="@routes.ArrangementController.getChangeSchedulePaymentDay()">@Messages("ssttp.arrangement.instalment-summary.payment-date.change")</a></td>
+                </dd>
+    </div>
+
+        @*total interest*@
             <div class="app-check-your-answers__contents">
               <dt class="app-check-your-answers__question no_bottom_line">
                 @Messages("ssttp.arrangement.instalment-summary-table.total-interest")
@@ -51,6 +65,8 @@
                 </dd>
             </div>
 
+        @*total repayment*@
+
             <div class="app-check-your-answers__contents">
               <dt class="app-check-your-answers__question">
                 @Messages("ssttp.arrangement.instalment-summary-table.total-repayment")
@@ -61,7 +77,7 @@
               </dd>
               <dd class="app-check-your-answers__change">
 
-                </dd> 
+                </dd>
             </div>
     </dl>
 
