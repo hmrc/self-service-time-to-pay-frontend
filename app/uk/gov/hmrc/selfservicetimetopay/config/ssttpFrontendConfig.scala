@@ -38,7 +38,7 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig with DefaultRun
 
   private val contactFrontendBaseUrl = getConfString("contact-frontend.url", "")
   private val contactFormServiceIdentifier = "self-service-time-to-pay"
-  private lazy val feedbackSurveyFrontend = getConfString("feedback-survey-frontend.url", "")
+  private lazy val feedbackSurvey = getConfString("feedback-survey.url", "")
 
   override lazy val assetsPrefix = loadConfig("assets.url") + loadConfig("assets.version")
   override lazy val analyticsToken = loadConfig("google-analytics.token")
@@ -54,7 +54,7 @@ object SsttpFrontendConfig extends AppConfig with ServicesConfig with DefaultRun
   lazy val loginCallbackBaseUrl = getConfString("auth.login-callback.base-url", "")
   lazy val loginCallbackPath = getConfString("auth.login-callback.path", "")
   lazy val loginCallBackFullPath = s"$loginCallbackBaseUrl$loginCallbackPath"
-  lazy val logoutUrl: String = s"$feedbackSurveyFrontend"
+  lazy val logoutUrl: String = s"$feedbackSurvey"
 
   // GA enhanced e-commerce custom vars
   lazy val initialPaymentMetric = getConfString("google-analytics.initialPaymentMetric", "metric7")
