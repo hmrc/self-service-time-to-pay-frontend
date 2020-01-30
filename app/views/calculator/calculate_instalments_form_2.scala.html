@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import timetopaycalculator.cor.model._
 @import _root_.model.PaymentScheduleSupport._
+@import ssttpcalculator.CalculatorPaymentScheduleExt
 
 @import helpers.forms.submit
 
@@ -29,13 +30,12 @@
 @(
         redirectCall: Call,
         durationForm: Form[CalculatorDuration],
-        monthsToSchedule: List[PaymentSchedule])(
+        schedules: List[CalculatorPaymentScheduleExt])(
         implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
 )
-
 
 @main(
 title = Messages("ssttp.calculator.results.title")
@@ -51,7 +51,11 @@ title = Messages("ssttp.calculator.results.title")
 
 @viewsHelpers.form(redirectCall, 'id -> "paymentTodayForm", 'class -> "group") {
  <div id="chosen-month">
-  @{monthsToSchedule.map{mts => instalment_by_month(mts.endDate.getMonthValue - mts.startDate.getMonthValue , mts)}}
+ @{
+   schedules.map{mts =>
+     instalment_by_month(mts)
+   }
+ }
  </div>
 
 <details>

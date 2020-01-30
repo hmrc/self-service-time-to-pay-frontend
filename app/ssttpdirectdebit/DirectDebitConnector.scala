@@ -33,11 +33,11 @@ import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectDebitConnector @Inject() (
-                                       servicesConfig: ServicesConfig,
-                                       httpClient:     HttpClient)(
-                                       implicit
-                                       ec: ExecutionContext
-                                     ) {
+    servicesConfig: ServicesConfig,
+    httpClient:     HttpClient)(
+    implicit
+    ec: ExecutionContext
+) {
   type DDSubmissionResult = Either[SubmissionError, DirectDebitInstructionPaymentPlan]
 
   import req.RequestSupport._
@@ -76,12 +76,12 @@ class DirectDebitConnector @Inject() (
     JourneyLogger.info(s"DirectDebitConnector.getBank")
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
     httpClient.GET[Option[BankDetails]](s"$baseUrl/direct-debit/bank?$queryString")
-    .recover {
-      case e: Exception =>
-        JourneyLogger.info(s"DirectDebitConnector.getBank: Error, $e")
-        Logger.error("Direct debit returned unexpected response", e)
-        throw new RuntimeException("Direct debit returned unexpected response")
-    }
+      .recover {
+        case e: Exception =>
+          JourneyLogger.info(s"DirectDebitConnector.getBank: Error, $e")
+          Logger.error("Direct debit returned unexpected response", e)
+          throw new RuntimeException("Direct debit returned unexpected response")
+      }
   }
 
   /**
@@ -92,11 +92,11 @@ class DirectDebitConnector @Inject() (
 
     httpClient.GET[DirectDebitBank](s"$baseUrl/direct-debit/${saUtr.value}/banks").map { response => response }
       .recover {
-      case e: Exception =>
-        JourneyLogger.info(s"DirectDebitConnector.getBanks: Error, $e")
-        Logger.error(e.getMessage)
-        throw new RuntimeException("GETBANKS threw unexpected error")
-    }
+        case e: Exception =>
+          JourneyLogger.info(s"DirectDebitConnector.getBanks: Error, $e")
+          Logger.error(e.getMessage)
+          throw new RuntimeException("GETBANKS threw unexpected error")
+      }
   }
 
   private def onError(ex: Throwable) = {

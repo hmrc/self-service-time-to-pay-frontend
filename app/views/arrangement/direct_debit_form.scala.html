@@ -1,5 +1,5 @@
 @*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import timetopaycalculator.cor.model._
 @import _root_.model.PaymentScheduleSupport._
+@import ssttpcalculator.CalculatorPaymentScheduleExt
 
 @this(
   main: views.html.main,
@@ -28,7 +29,7 @@
 
 @(
         debits: Seq[Debit],
-        schedule: PaymentSchedule,
+        schedule: CalculatorPaymentScheduleExt,
         ddForm: Form[ArrangementDirectDebit],
         isBankError: Boolean = false,
         loggedIn: Boolean = true)(implicit

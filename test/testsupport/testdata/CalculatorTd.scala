@@ -18,6 +18,7 @@ package testsupport.testdata
 
 import java.time.LocalDate
 
+import ssttpcalculator.CalculatorPaymentScheduleExt
 import uk.gov.hmrc.selfservicetimetopay.models._
 import testsupport.testdata.TdAll._
 import testsupport.JsonSyntax._
@@ -78,6 +79,11 @@ object CalculatorTd {
     totalInterestCharged = 200: BigDecimal,
     totalPayable         = 200: BigDecimal,
     instalments          = List(calculatorPaymentScheduleInstalment, calculatorPaymentScheduleInstalment2, calculatorPaymentScheduleInstalment3))
+
+  val calculatorPaymentScheduleExt = CalculatorPaymentScheduleExt(
+    months   = 2,
+    schedule = calculatorPaymentSchedule
+  )
 
   val calculatorPaymentScheduleJson =
     s"""{

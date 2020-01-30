@@ -34,9 +34,6 @@ POST        /calculator/monthly-payment-amount                            ssttpc
 GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getCalculateInstalments()
 POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitCalculateInstalments()
 
-#not logged in
-GET         /payment-plan-calculator/enter-total-amount                   ssttpcalculator.CalculatorController.getAmountDue()
-
 # Arrangement
 POST        /arrangement                                                  ssttparrangement.ArrangementController.start()
 GET         /arrangement/terms-and-conditions                             ssttparrangement.ArrangementController.getDeclaration()

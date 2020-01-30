@@ -29,6 +29,7 @@ import timetopaytaxpayer.cor.model
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
@@ -53,18 +54,26 @@ class DirectDebitController @Inject() (
   import requestSupport._
 
   def getDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")
+
     submissionService.authorizedForSsttp {
       case submission @ Journey(_, _, Some(schedule), _, _, Some(taxpayer), calcData, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_form(submission.taxpayer.selfAssessment.debits, schedule, directDebitForm, isSignedIn)))
-      case _ => Future.successful(redirectToStartPage)
+      case maybeSubmission =>
+        JourneyLogger.info("DirectDebitController.getDirectDebit: pattern match redirect on error", maybeSubmission)
+        Future.successful(redirectOnError)
     }
   }
 
   def getDirectDebitAssistance: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"DirectDebitController.getDirectDebitAssistance: $request")
+
     submissionService.authorizedForSsttp {
       case Journey(_, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
-      case _ => Future.successful(redirectToStartPage)
+      case maybeSubmission =>
+        JourneyLogger.info("DirectDebitController.getDirectDebitAssistance: pattern match redirect on error", maybeSubmission)
+        Future.successful(redirectOnError)
     }
   }
 
@@ -72,37 +81,47 @@ class DirectDebitController @Inject() (
     submissionService.authorizedForSsttp {
       case Journey(_, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
-      case _ => Future.successful(redirectToStartPage)
+      case maybeSubmission =>
+        JourneyLogger.info("DirectDebitController.getDirectDebitError - redirect on error", maybeSubmission)
+        Future.successful(redirectOnError)
     }
   }
 
   def getDirectDebitConfirmation: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"DirectDebitController.getDirectDebitConfirmation: $request")
+
     submissionService.authorizedForSsttp {
       case Journey(_, _, _, _, Some(_), _, _, _, _, _, _) =>
         Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()))
       case submission @ Journey(_, _, Some(schedule), Some(_), _, _, _, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_confirmation(submission.taxpayer.selfAssessment.debits,
                                                              schedule, submission.arrangementDirectDebit.get, isSignedIn)))
-      case _ =>
+      case maybeSubmission =>
         Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
-        Future.successful(redirectToStartPage)
+        JourneyLogger.info("DirectDebitController.getDirectDebitConfirmation - redirect on error", maybeSubmission)
+        Future.successful(redirectOnError)
     }
   }
 
+  //TODO: probably not used
   def getDirectDebitUnAuthorised: Action[AnyContent] = as.action.async { implicit request =>
+    JourneyLogger.info(s"DirectDebitController.getDirectDebitUnAuthorised: $request")
+
     submissionService.getJourney.map {
       case ttpData: Journey => Ok(views.direct_debit_unauthorised(isSignedIn))
       case _ =>
-        Logger.warn("No TTPSubmission, redirecting to start page")
+        JourneyLogger.info("DirectDebitController.getDirectDebitUnAuthorised - no TTPSubmission")
         Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.start)
     }
   }
 
   def submitDirectDebitConfirmation: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"DirectDebitController.submitDirectDebitConfirmation: $request")
     Redirect(ssttparrangement.routes.ArrangementController.submit())
   }
 
   def submitDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"DirectDebitController.submitDirectDebit: $request")
     submissionService.authorizedForSsttp { submission: Journey =>
 
       directDebitForm.bindFromRequest().fold(

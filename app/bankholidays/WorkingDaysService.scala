@@ -16,7 +16,7 @@
 
 package bankholidays
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 
 import javax.inject.{Inject, Singleton}
 import org.joda.time
@@ -28,12 +28,12 @@ class WorkingDaysService @Inject() () {
 
   implicit val hols: BankHolidaySet = BankHolidays()
 
-  def addWorkingDays(date: LocalDate, days: Int): LocalDate = {
+  def addWorkingDays(date: LocalDate, days: Int)(implicit clock: Clock): LocalDate = {
     val joda = turnJavaTimeToJoda(date)
     val jodaLocalDate: time.LocalDate = joda.plusWorkingDays(days)
 
     LocalDate
-      .now()
+      .now(clock)
       .withYear(jodaLocalDate.getYear)
       .withDayOfMonth(jodaLocalDate.getDayOfMonth)
       .withMonth(jodaLocalDate.getMonthOfYear)

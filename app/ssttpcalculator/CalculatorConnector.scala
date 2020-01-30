@@ -22,6 +22,7 @@ import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import scala.concurrent.Future
 
@@ -34,10 +35,17 @@ class CalculatorConnector @Inject() (servicesConfig: ServicesConfig, httpClient:
    * Send the calculator input information to the time-to-pay-calculator service and retrieve back a payment schedule
    */
   def calculatePaymentSchedule(calcInput: CalculatorInput)(implicit request: Request[_]): Future[PaymentSchedule] = {
+    JourneyLogger.info(s"CalculatorConnector.calculatePaymentSchedule")
+
     httpClient
       .POST[CalculatorInput, PaymentSchedule](
         s"$baseUrl/time-to-pay-calculator/paymentschedule",
         calcInput
       )
+      .recover{
+        case e =>
+          JourneyLogger.info(s"CalculatorConnector.calculatePaymentSchedule: ERROR, $e")
+          throw e
+      }
   }
 }

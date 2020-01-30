@@ -17,7 +17,7 @@
 package testsupport.testdata
 
 import journey.{Journey, JourneyId}
-import testsupport.testdata.CalculatorTd.{calculatorInput, calculatorPaymentSchedule}
+import testsupport.testdata.CalculatorTd.{calculatorInput, calculatorPaymentScheduleExt}
 import testsupport.testdata.DirectDebitTd._
 import testsupport.testdata.TdAll._
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, NoDebt}
@@ -34,7 +34,7 @@ object JourneyTd {
   val journey = new Journey(
     _id                    = journeyId,
     maybeAmount            = Some(200: BigDecimal),
-    schedule               = Some(calculatorPaymentSchedule),
+    schedule               = Some(calculatorPaymentScheduleExt),
     bankDetails            = Some(bankDetails),
     existingDDBanks        = Some(directDebitBank),
     maybeTaxpayer          = Some(taxpayer),

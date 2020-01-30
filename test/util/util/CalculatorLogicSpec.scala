@@ -20,8 +20,8 @@ import java.time.{LocalDate, Month}
 
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.PlaySpec
-import uk.gov.hmrc.selfservicetimetopay.models.{Debit, Interest, Return, SelfAssessmentDetails}
 import ssttpcalculator.CalculatorService._
+import timetopaytaxpayer.cor.model.{CommunicationPreferences, Debit, Interest, Return, SaUtr, SelfAssessmentDetails}
 import uk.gov.hmrc.http.HeaderCarrier
 
 class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
@@ -32,7 +32,17 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
   val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
   def makeDebit(des: String, taxYear: String, value: BigDecimal, dueDate: String, interest: Option[BigDecimal] = None): Debit = {
-    Debit(originCode = Some(des), value, LocalDate.parse(dueDate, formatter), Some(Interest(LocalDate.now(), interest.getOrElse(0))), Some(LocalDate.parse(taxYear, formatter)))
+    Debit(
+      originCode = des,
+      amount     = value,
+      dueDate    = LocalDate.parse(dueDate, formatter),
+      interest   = Some(Interest(
+        Some(LocalDate.now()),
+        interest.getOrElse(BigDecimal(0)))
+      ),
+      taxYearEnd = LocalDate.parse(taxYear, formatter)
+
+    )
   }
 
   private val testStartDate = LocalDate.of(2017, Month.JANUARY, 2)
@@ -40,8 +50,13 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
   val testReturn2017 = Return(LocalDate.of(2017, Month.APRIL, 5), None, Some(LocalDate.of(2018, Month.JANUARY, 31)), None)
 
   val testReturn2018 = Return(LocalDate.of(2018, Month.APRIL, 5), None, None, None)
-  private val testReturns = Some(List(testReturn2016))
-  val sa = SelfAssessmentDetails().copy(returns = testReturns)
+  private val testReturns = List(testReturn2016)
+  val sa = SelfAssessmentDetails(
+    utr                      = SaUtr("123456789"),
+    communicationPreferences = CommunicationPreferences(true, true, true, true),
+    debits                   = Nil,
+    returns                  = testReturns
+  )
   //Note the calculatorLOgic is not responceable for determining eligiblity
   val scenariosBasedAroundJanuaryDuedate = Table(
     ("todayDate", "self assessment", "expected answer"),
@@ -74,19 +89,19 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
   val scenariosBasedAroundEarlyFilers = Table(
     ("todayDate", "self assessment", "expected answer"),
     //Customer 15
-    (testStartDate.withMonth(7).withDayOfMonth(1), sa.copy(debits  = List(makeDebit("POA2", "2016-04-05", 5000, "2017-07-31")), returns = Some(List(testReturn2016, testReturn2017))), 11),
+    (testStartDate.withMonth(7).withDayOfMonth(1), sa.copy(debits  = List(makeDebit("POA2", "2016-04-05", 5000, "2017-07-31")), returns = List(testReturn2016, testReturn2017)), 11),
     //Customer 16
     (testStartDate.withMonth(7).withDayOfMonth(1), sa.copy(debits  = List(makeDebit("POA2", "2016-04-05", 5000, "2017-07-31"),
-                                                                          makeDebit("BCD", "2017-04-05", 2000, "2018-01-18")), returns = Some(List(testReturn2016, testReturn2017))), 11),
+                                                                          makeDebit("BCD", "2017-04-05", 2000, "2018-01-18")), returns = List(testReturn2016, testReturn2017)), 11),
     //Customer 17
     (testStartDate.withMonth(7).withDayOfMonth(1), sa.copy(debits  = List(makeDebit("POA2", "2016-04-05", 5000, "2017-07-31"),
                                                                           makeDebit("BCD", "2017-04-05", 2000, "2018-01-31"),
                                                                           makeDebit("POA1", "2017-04-05", 1000, "2018-01-31"),
-                                                                          makeDebit("POA2", "2017-04-05", 1000, "2018-01-31")), returns = Some(List(testReturn2016, testReturn2017))), 11),
+                                                                          makeDebit("POA2", "2017-04-05", 1000, "2018-01-31")), returns = List(testReturn2016, testReturn2017)), 11),
     //Customer 19
     (testStartDate.withMonth(5).withDayOfMonth(1), sa.copy(debits  = List(makeDebit("BCD", "2017-04-05", 1000, "2018-01-31"),
                                                                           makeDebit("POA1", "2017-04-05", 2000, "2018-01-31"),
-                                                                          makeDebit("POA2", "2017-04-05", 3000, "2018-01-31")), returns = Some(List(testReturn2016, testReturn2017))), 11)
+                                                                          makeDebit("POA2", "2017-04-05", 3000, "2018-01-31")), returns = List(testReturn2016, testReturn2017)), 11)
 
   )
   val scenariosBasedAroundLateFilers = Table(
@@ -94,28 +109,27 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
     //Customer 20
     //todo I am assuming the old charges will not appear in des?
     (testStartDate.withMonth(7).withDayOfMonth(1), sa.copy(debits  = List(makeDebit("BCD", "2017-04-05", 0, "2017-07-31"),
-                                                                          makeDebit("Late payment penalty", "2015-04-05", 1000, "2017-04-28")), returns = Some(List(testReturn2016, testReturn2017))), 11),
+                                                                          makeDebit("Late payment penalty", "2015-04-05", 1000, "2017-04-28")), returns = List(testReturn2016, testReturn2017)), 11),
     //Customer 21
     //todo will the Late payment penalty appear as two paymeant
     (testStartDate.withMonth(4).withDayOfMonth(20), sa.copy(debits  = List(makeDebit("BCD", "2017-04-05", 0, "2017-07-31"),
                                                                            makeDebit("Late payment penalty", "2016-04-05", 1000, "2017-04-28"),
-                                                                           makeDebit("POA2", "2016-04-05", 5000, "2017-07-17")), returns = Some(List(testReturn2016, testReturn2017))), 11),
+                                                                           makeDebit("POA2", "2016-04-05", 5000, "2017-07-17")), returns = List(testReturn2016, testReturn2017)), 11),
     //Customer 22
-    (testStartDate.withMonth(3).withDayOfMonth(20), sa.copy(debits  = List(makeDebit("Late payment penalty", "2016-04-05", 100, "2017-03-25")), returns = Some(List(testReturn2016, testReturn2017))), 11),
+    (testStartDate.withMonth(3).withDayOfMonth(20), sa.copy(debits  = List(makeDebit("Late payment penalty", "2016-04-05", 100, "2017-03-25")), returns = List(testReturn2016, testReturn2017)), 11),
     //Customer 24
     (testStartDate.withMonth(3).withDayOfMonth(20), sa.copy(debits  = List(makeDebit("POA2", "2016-04-05", 3000, "2017-07-31"),
-                                                                           makeDebit("Late payment penalty", "2016-04-05", 100, "2017-03-17")), returns = Some(List(testReturn2016, testReturn2017))), 11),
+                                                                           makeDebit("Late payment penalty", "2016-04-05", 100, "2017-03-17")), returns = List(testReturn2016, testReturn2017)), 11),
     //Customer 25
     (testStartDate.withMonth(11).withDayOfMonth(20), sa.copy(debits  = List(makeDebit("Late payment penalty", "2016-04-05", 100, "2016-12-16"),
                                                                             makeDebit("BCD", "2016-04-05", 50, "2017-01-31"),
                                                                             makeDebit("POA1", "2016-04-05", 1100, "2017-01-31"),
-                                                                            makeDebit("POA2", "2016-04-05", 1100, "2017-01-31")), returns = Some(List(testReturn2016, testReturn2017))), 11)
+                                                                            makeDebit("POA2", "2016-04-05", 1100, "2017-01-31")), returns = List(testReturn2016, testReturn2017)), 11)
   )
   val scenariosBasedCustom = Table(("todayDate", "self assessment", "expected answer"),
     (testStartDate.withMonth(12).withDayOfMonth(18), sa.copy(debits  = List(makeDebit("IN1", "2018-04-05", 30, "2018-01-31"),
-                                                                            makeDebit("IN2", "2018-04-05", 500, "2018-07-31")), returns = Some(List(testReturn2017.copy(
-      receivedDate = Some(LocalDate.of(2017, Month.NOVEMBER, 24))
-    ), testReturn2018))), 11))
+                                                                            makeDebit("IN2", "2018-04-05", 500, "2018-07-31")), returns = List(testReturn2017.copy(
+      receivedDate = Some(LocalDate.of(2017, Month.NOVEMBER, 24))), testReturn2018)), 11))
 
   //todo ask ela about 11 13 15
   "CalculatorLogic" should {

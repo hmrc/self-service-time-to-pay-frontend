@@ -22,6 +22,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityRequest, EligibilityStatus}
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
@@ -39,6 +40,12 @@ class EligibilityConnector @Inject() (
   val baseUrl: String = servicesConfig.baseUrl("time-to-pay-eligibility")
 
   def checkEligibility(eligibilityRequest: EligibilityRequest, utr: SaUtr)(implicit request: Request[_]): Future[EligibilityStatus] = {
-    httpClient.POST[EligibilityRequest, EligibilityStatus](s"$baseUrl/time-to-pay-eligibility/eligibility/${utr.value}", eligibilityRequest)
+    JourneyLogger.info("EligibilityConnector.checkEligibility")
+
+    httpClient.POST[EligibilityRequest, EligibilityStatus](s"$baseUrl/time-to-pay-eligibility/eligibility/${utr.value}", eligibilityRequest).recover {
+      case e =>
+        JourneyLogger.info(s"EligibilityConnector.checkEligibility: ERROR, $e")
+        throw e
+    }
   }
 }

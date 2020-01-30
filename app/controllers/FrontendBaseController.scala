@@ -17,6 +17,7 @@
 package controllers
 
 import play.api.mvc._
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import scala.concurrent.Future
 
@@ -34,9 +35,10 @@ abstract class FrontendBaseController(cc: ControllerComponents)
   //TODO: move it to some auth service
   def isSignedIn(implicit request: Request[_]): Boolean = hc.authorization.isDefined
 
-  def redirectToStartPage: Result = {
+  def redirectOnError(implicit request: Request[_]): Result = {
     //Instead of silently redirecting users to start page on erronous situation now we throw exception
     //so it is visible that application doesn't work!
+    JourneyLogger.info(s"${this.getClass.getSimpleName}: redirecting on error")
     throw new RuntimeException("Something went wrong. Inspect stack trace and fix bad code")
   }
 

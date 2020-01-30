@@ -24,6 +24,7 @@ import play.api.mvc.{Request, RequestHeader, Result, Session}
 import req.RequestSupport
 import sessioncache.SsttpSessionCache
 import uk.gov.hmrc.http.cache.client.CacheMap
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.EligibilityStatus
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,11 +55,17 @@ class JourneyService @Inject() (
    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
    */
   def authorizedForSsttp(block: Journey => Future[Result])(implicit request: Request[_]): Future[Result] = {
+    JourneyLogger.info(s"${this.getClass.getSimpleName}: $request")
+
     for {
       journey <- getJourney()
       result <- journey match {
-        case submission @ Journey(_, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _) => block(submission)
-        case _ => Future.successful(ErrorHandler.redirectToStartPage)
+        case submission @ Journey(_, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _) =>
+          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", submission)
+          block(submission)
+        case maybeSubmission =>
+          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp.authorizedForSsttp: redirect On Error", maybeSubmission)
+          Future.successful(ErrorHandler.redirectToStartPage)
       }
     } yield result
   }

@@ -27,17 +27,16 @@ import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrangementConnector @Inject() (
-                                       servicesConfig: ServicesConfig,
-                                       httpClient:     HttpClient,
-                                       views:          Views)(
-                                       implicit
-                                       ec: ExecutionContext
-                                     ) {
+    servicesConfig: ServicesConfig,
+    httpClient:     HttpClient,
+    views:          Views)(
+    implicit
+    ec: ExecutionContext
+) {
 
   import req.RequestSupport._
 

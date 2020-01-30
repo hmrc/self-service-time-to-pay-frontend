@@ -20,16 +20,16 @@
 @import timetopaytaxpayer.cor.model.Debit
 @import _root_.model._
 @import timetopaycalculator.cor.model._
+@import ssttpcalculator.CalculatorPaymentScheduleExt
 
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers
 )
 
-
 @(
   debits:Seq[Debit],
-  schedule: PaymentSchedule,
+  schedule: CalculatorPaymentScheduleExt,
   loggedIn: Boolean = true,
   showErrorNotification: Boolean = false)(
   implicit

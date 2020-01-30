@@ -23,6 +23,7 @@ import javax.inject._
 import play.api.mvc._
 import req.RequestSupport
 import journey.JourneyService
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import views.Views
 
 import scala.concurrent.ExecutionContext
@@ -39,14 +40,17 @@ class SelfServiceTimeToPayController @Inject() (
   import requestSupport._
 
   def start: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
     Ok(views.service_start(isSignedIn, mcc.messagesApi))
   }
 
   def submit: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
   def actionCallUsInEligibility: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
     Ok(views.call_us(isWelsh, loggedIn = isSignedIn))
   }
 
@@ -58,18 +62,22 @@ class SelfServiceTimeToPayController @Inject() (
   def getIaCallUse: Action[AnyContent] = actionCallUsInEligibility
 
   def getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
     Ok(views.debt_too_large(isSignedIn, isWelsh))
   }
 
   def getYouNeedToFile: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
     Ok(views.you_need_to_file(isSignedIn))
   }
 
   def getNotSaEnrolled: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
     Ok(views.not_enrolled(isWelsh, isSignedIn))
   }
 
   def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
     Redirect(appConfig.logoutUrl).withNewSession
   }
 }
