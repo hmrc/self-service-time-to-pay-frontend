@@ -81,7 +81,7 @@ final case class Debit(originCode: Option[String]    = None,
                        interest:   Option[Interest]  = None,
                        taxYearEnd: Option[LocalDate] = None) {
 
-  def dueByYear: Int = dueDate.getYear
+  def dueByYear(offset: Int = 0): String = (dueDate.getYear - offset).toString
   def dueByMonth: Int = dueDate.getMonthValue
   def dueByDay: Int = dueDate.getDayOfMonth
 }

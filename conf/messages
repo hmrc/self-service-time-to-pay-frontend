@@ -1,5 +1,5 @@
 #common
-ssttp.common.title = Set up a payment plan
+ssttp.common.title = Set up a Self Assessment payment plan
 ssttp.common.currency.symbol = £
 ssttp.common.print = Print
 ssttp.common.sign-out = Sign-out
@@ -67,13 +67,12 @@ ssttp.sidebar.having_problems.title = Having problems?
 ssttp.sidebar.having_problems.intro = If you’re having problems or need extra help you can call us for assistance.
 
 #landing
-ssttp.landing.title = Set up a payment plan
+ssttp.landing.title = Set up a Self Assessment payment plan
 
-ssttp.landing.intro = A payment plan allows you to pay the tax you owe in instalments. The plan covers the amounts you need to pay now.
-ssttp.landing.alert = We intend this as a one-off payment plan to give you extra support. You must keep up to date with your payments. If you do not, HMRC may ask you to pay the entire outstanding amount.
+ssttp.landing.intro = A payment plan allows you to pay your tax charges over a number of months. The plan covers the amounts you need to pay now and your next payment amount.
+ssttp.landing.alert = HMRC intend this as a one-off payment plan to give you extra support. You must keep up to date with your payments. If you do not, HMRC may ask you to pay the entire outstanding amount.
 ssttp.landing.before-you-start = Before you start
-ssttp.landing.before-you-start.p.1 = This payment plan is for Self Assessment tax only.
-ssttp.landing.before-you-start.p.2 = To be eligible to set up an online payment plan you need to:
+ssttp.landing.before-you-start.p.1 = To be eligible to set up an online payment plan you need to:
 ssttp.landing.before-you-start.list.1 = owe £10,000 or less
 ssttp.landing.before-you-start.list.2 = have no other tax debts
 ssttp.landing.before-you-start.list.3 = have no other HMRC payment plans set up
@@ -90,12 +89,12 @@ ssttp.calculator.form.payment_summary.amount.remaining = Remaining amount to pay
 ssttp.calculator.form.payment_summary.continue = Continue
 
 
-ssttp.calculator.self-assessment-account-summary-page.title = Your Self Assessment account summary
+ssttp.calculator.self-assessment-account-summary-page.title = Your Self Assessment tax bill is
 ssttp.calculator.self-assessment-account-summary-page.amount = Amount
 ssttp.calculator.self-assessment-account-summary-page.total-due = Total due
-ssttp.calculator.self-assessment-account-summary-page.tax-year-ending = For the tax year ending
-ssttp.calculator.self-assessment-account-summary-page.tax-account-details = Self Assessment breakdown
-ssttp.calculator.self-assessment-account-summary-page.due-by = Your payment is due on
+ssttp.calculator.self-assessment-account-summary-page.tax-account-details = Self Assessment statement
+ssttp.calculator.self-assessment-account-summary-page.due = Due
+ssttp.calculator.self-assessment-account-summary-page.for-tax-year = for tax year {0} to {1}
 ssttp.calculator.self-assessment-account-summary-page.button-continue = Continue
 ssttp.calculator.self-assessment-account-summary-page.button-back = Back
 
@@ -114,7 +113,7 @@ ssttp.calculator.form.payment_today_question.required = Select ''yes'' if you wa
 ssttp.calculator.form.payment_today_question.yes_label = Yes
 ssttp.calculator.form.payment_today_question.no_label = No
 
-ssttp.calculatorform.payment_today_question.why_pay_today.info = Making an upfront payment before you set up your plan means your monthly payments will be lower.
+ssttp.calculatorform.payment_today_question.why_pay_today.info = Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account in 3 to 5 days.
 ssttp.calculator.payment_today_question.button-continue = Continue
 ssttp.calculator.payment_today_question.button-back = Back
 
@@ -223,7 +222,7 @@ ssttp.you-need-to-file.check-account.link = Go to your tax account
 ssttp.you-need-to-file.check-account = to file your Self Assessment tax return.
 
 
-ssttp.arrangement.change_day.title = Choose the day you want your monthly payments collected
+ssttp.arrangement.change_day.title = Which day do you want to pay each month?
 ssttp.arrangement.change_day.payment-day.required = Please enter a value
 ssttp.arrangement.change_day.payment-day.out-of-range = Enter a number between 1 and 28
 ssttp.arrangement.change_day.payment-day.continue = Continue
@@ -233,7 +232,7 @@ ssttp.arrangement.instalment-summary.title = Check your payment plan
 ssttp.arrangement.instalment-summary.up-front-payment = Upfront payment taken within 5 days
 ssttp.arrangement.instalment-summary.up-front-payment.change = Change
 ssttp.arrangement.instalment-summary-table.title = Your payment plan
-ssttp.arrangement.instalment-summary-table.monthly-instalments = Monthly instalments
+ssttp.arrangement.instalment-summary-table.monthly-instalments = Monthly payments
 ssttp.arrangement.instalment-summary-table.total-interest-hint = including interest of {0} added to the final payment
 ssttp.arrangement.instalment-summary-table.monthly-instalments-change = Change
 ssttp.arrangement.instalment-summary-table.total-interest = Total interest
@@ -260,10 +259,10 @@ ssttp.arrangement.declaration.cancel-if.1 = pay late or miss a payment
 ssttp.arrangement.declaration.cancel-if.2 = pay another tax bill late
 ssttp.arrangement.declaration.cancel-if.3 = do not submit your future tax returns on time
 ssttp.arrangement.declaration.warning.p1 = If we cancel this agreement, you will need to pay the total amount you owe straight away.
-ssttp.arrangement.declaration.warning.p2 = We can use any refunds you might get to pay off this debt.
+ssttp.arrangement.declaration.warning.p2 = We can use any refunds you might get to pay off your tax charges.
 ssttp.arrangement.declaration.warning.p3 = If your circumstances change and you can pay more or you can pay in full, you need to let us know.
 ssttp.arrangement.declaration.agreement.h1 = Declaration
-ssttp.arrangement.declaration.agreement.p1 = I agree to the terms and conditions of this payment plan. I confirm that this is the earliest I am able to settle this debt.
+ssttp.arrangement.declaration.agreement.p1 = I confirm this is the earliest I am able to settle this debt and agree to the terms and conditions.
 ssttp.arrangement.declaration.agreement.confirm = Confirm and continue
 
 
@@ -279,7 +278,7 @@ ssttp.arrangement.direct-debit.form.title = Enter account details to set up a Di
 ssttp.arrangement.direct-debit.form.confirmed = Confirm Direct Debit agreement
 ssttp.arrangement.direct-debit.form.submit = Continue
 ssttp.arrangement.direct-debit.form.back = Back
-ssttp.direct-debit.form.accountName = Account name
+ssttp.direct-debit.form.accountName = Name on the account
 ssttp.direct-debit.form.sortCode = Sort code
 ssttp.direct-debit.form.accountNumber = Account number
 ssttp.direct-debit.form.sortCode.hint = Example: 000000
@@ -351,8 +350,8 @@ ssttp.arrangement.complete.title = Application successful
 ssttp.arrangement.complete.ddref = Direct Debit mandate reference:
 ssttp.arrangement.complete.print-label = Print your payment summary
 ssttp.arrangement.complete.next = What happens next?
-ssttp.arrangement.complete.summary = We will send you a letter within 5 days to confirm your payment dates.
-ssttp.arrangement.complete.first-payment = First payment collected on:
+ssttp.arrangement.complete.summary = HMRC will send you a letter within 5 days with your payment dates.
+ssttp.arrangement.complete.first-payment = Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on {0}.
 ssttp.arrangement.complete.feedback = What did you think of this service?
 ssttp.arrangement.complete.help.h2 = If you need to change your payment plan
 ssttp.arrangement.complete.help.p1 = Call the HMRC Helpline on 0300 322 7015.
@@ -393,4 +392,4 @@ ssttp.monthly.amount.out-of-bounds = Enter a figure between the given range
 
 ssttp.arrangement.changeday.default = 28th or next working day
 ssttp.arrangement.changeday.different = A different day
-ssttp.arrangement.changeday.enter.date = Enter the day of the month
+ssttp.arrangement.changeday.enter.date = Enter a day between 1 and 28
