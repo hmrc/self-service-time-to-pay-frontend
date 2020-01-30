@@ -1,0 +1,5 @@
+package ssttpcalculator
+
+class PaymentScheduleExt {
+
+}

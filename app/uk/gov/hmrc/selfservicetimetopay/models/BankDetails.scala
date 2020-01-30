@@ -24,7 +24,17 @@ case class BankDetails(sortCode:      Option[String]  = None,
                        bankName:      Option[String]  = None,
                        bankAddress:   Option[Address] = None,
                        accountName:   Option[String]  = None,
-                       ddiRefNumber:  Option[String]  = None)
+                       ddiRefNumber:  Option[String]  = None){
+
+  def obfuscate: BankDetails = BankDetails(
+    sortCode      = sortCode.map(_ => "***"),
+    accountNumber = accountNumber.map(_ => "***"),
+    bankName      = bankName.map(_ => "***"),
+    bankAddress   = bankAddress.map(_.obfuscate),
+    accountName   = accountName.map(_ => "***"),
+    ddiRefNumber  = ddiRefNumber.map(_ => "***")
+  )
+}
 
 object BankDetails {
   implicit val format: Format[BankDetails] = Json.format[BankDetails]

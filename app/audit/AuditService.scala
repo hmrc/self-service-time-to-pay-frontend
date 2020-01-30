@@ -25,6 +25,7 @@ import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
@@ -35,6 +36,8 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
   import req.RequestSupport._
 
   def sendSubmissionEvent(submission: Journey)(implicit request: Request[_]): Future[Unit] = {
+    JourneyLogger.info(s"Sending audit event for successful submission")
+
     val event = eventFor(submission)
     val result = auditConnector.sendExtendedEvent(event)
     result.onFailure {

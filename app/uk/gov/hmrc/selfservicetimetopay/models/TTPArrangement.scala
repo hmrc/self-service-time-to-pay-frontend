@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,15 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import play.api.libs.json.{Format, Json}
-import timetopaycalculator.cor.model.PaymentSchedule
-import timetopaytaxpayer.cor.model.Taxpayer
+case class TTPArrangement(paymentPlanReference: String,
+                          directDebitReference: String,
+                          taxpayer:             Taxpayer,
+                          schedule:             CalculatorPaymentSchedule) {
 
-case class TTPArrangement(
-    paymentPlanReference: String,
-    directDebitReference: String,
-    taxpayer:             Taxpayer,
-    schedule:             PaymentSchedule
-)
-
-object TTPArrangement {
-  implicit val format: Format[TTPArrangement] = Json.format[TTPArrangement]
-
+  def obfuscate = TTPArrangement(
+    paymentPlanReference = paymentPlanReference,
+    directDebitReference = directDebitReference,
+    taxpayer = taxpayer.obfuscate,
+    schedule = schedule
+  )
 }

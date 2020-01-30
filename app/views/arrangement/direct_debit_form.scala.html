@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,12 +41,12 @@
 @gaCheckoutCode = {
 @gaDoCheckout(debits = debits,
     step = 2,
-    revenue = schedule.totalPayable,
-    initialPayment = Some(schedule.initialPayment),
-    interest = schedule.totalInterestCharged,
-    duration = schedule.instalments.length,
-    regularPayment = schedule.instalments.head.amount,
-    paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
+    revenue = schedule.schedule.totalPayable,
+    initialPayment = Some(schedule.schedule.initialPayment),
+    interest = schedule.schedule.totalInterestCharged,
+    duration = schedule.schedule.instalments.length,
+    regularPayment = schedule.schedule.instalments.head.amount,
+    paymentDay = schedule.schedule.instalments.head.paymentDate.getDayOfMonth
 )
 }
 @main(

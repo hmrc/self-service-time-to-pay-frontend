@@ -26,17 +26,18 @@ import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectDebitConnector @Inject() (
-    servicesConfig: ServicesConfig,
-    httpClient:     HttpClient)(
-    implicit
-    ec: ExecutionContext
-) {
+                                       servicesConfig: ServicesConfig,
+                                       httpClient:     HttpClient)(
+                                       implicit
+                                       ec: ExecutionContext
+                                     ) {
   type DDSubmissionResult = Either[SubmissionError, DirectDebitInstructionPaymentPlan]
 
   import req.RequestSupport._
@@ -44,10 +45,14 @@ class DirectDebitConnector @Inject() (
   val baseUrl: String = servicesConfig.baseUrl("direct-debit")
 
   def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit request: Request[_]): Future[DDSubmissionResult] = {
+    JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan")
+
     httpClient.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$baseUrl/direct-debit/${saUtr.value}/instructions/payment-plan", paymentPlan).map {
       Result => Right(Result)
     }.recover {
-      case e: Throwable => onError(e)
+      case e: Throwable =>
+        JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan: Error, $e")
+        onError(e)
     }
   }
 
@@ -68,21 +73,30 @@ class DirectDebitConnector @Inject() (
    * Checks if the given bank details are valid by checking against the Bank Account Reputation Service via Direct Debit service
    */
   def getBank(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[Option[BankDetails]] = {
+    JourneyLogger.info(s"DirectDebitConnector.getBank")
     val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
     httpClient.GET[Option[BankDetails]](s"$baseUrl/direct-debit/bank?$queryString")
+    .recover {
+      case e: Exception =>
+        JourneyLogger.info(s"DirectDebitConnector.getBank: Error, $e")
+        Logger.error("Direct debit returned unexpected response", e)
+        throw new RuntimeException("Direct debit returned unexpected response")
+    }
   }
 
   /**
    * Retrieves stored bank details associated with a given saUtr
    */
   def getBanks(saUtr: SaUtr)(implicit request: Request[_]): Future[DirectDebitBank] = {
+    JourneyLogger.info(s"DirectDebitConnector.getBanks")
+
     httpClient.GET[DirectDebitBank](s"$baseUrl/direct-debit/${saUtr.value}/banks").map { response => response }
       .recover {
-        case e: uk.gov.hmrc.http.NotFoundException if e.message.contains("BP not found") => DirectDebitBank.none
-        case e: Exception =>
-          Logger.error(e.getMessage)
-          throw new RuntimeException("GETBANKS threw unexpected error")
-      }
+      case e: Exception =>
+        JourneyLogger.info(s"DirectDebitConnector.getBanks: Error, $e")
+        Logger.error(e.getMessage)
+        throw new RuntimeException("GETBANKS threw unexpected error")
+    }
   }
 
   private def onError(ex: Throwable) = {

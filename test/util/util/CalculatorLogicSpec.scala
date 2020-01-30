@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/*
 package util.util
 
 import java.time.{LocalDate, Month}
@@ -22,12 +21,13 @@ import java.time.{LocalDate, Month}
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.PlaySpec
 import uk.gov.hmrc.selfservicetimetopay.models.{Debit, Interest, Return, SelfAssessmentDetails}
-
 import ssttpcalculator.CalculatorService._
+import uk.gov.hmrc.http.HeaderCarrier
 
 class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
 
   import java.time.format.DateTimeFormatter
+  implicit val hc = HeaderCarrier()
 
   val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
@@ -166,4 +166,3 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
     }
   }
 }
-*/ 

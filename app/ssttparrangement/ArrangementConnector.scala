@@ -23,19 +23,21 @@ import play.api.mvc.Request
 import uk.gov.hmrc.http.{HttpException, HttpResponse, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ArrangementConnector @Inject() (
-    servicesConfig: ServicesConfig,
-    httpClient:     HttpClient,
-    views:          Views)(
-    implicit
-    ec: ExecutionContext
-) {
+                                       servicesConfig: ServicesConfig,
+                                       httpClient:     HttpClient,
+                                       views:          Views)(
+                                       implicit
+                                       ec: ExecutionContext
+                                     ) {
 
   import req.RequestSupport._
 
@@ -44,10 +46,14 @@ class ArrangementConnector @Inject() (
   val arrangementURL: String = servicesConfig.baseUrl("time-to-pay-arrangement")
 
   def submitArrangements(ttpArrangement: TTPArrangement)(implicit request: Request[_]): Future[SubmissionResult] = {
+    JourneyLogger.info(s"ArrangementConnector.submitArrangements")
+
     httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/ttparrangements", ttpArrangement).map { _ =>
       Right(SubmissionSuccess()) //todo OPS-3930
     }.recover {
-      case e: Throwable => onError(e)
+      case e: Throwable =>
+        JourneyLogger.info(s"ArrangementConnector.submitArrangements: Error, $e", ttpArrangement)
+        onError(e)
     }
   }
 
