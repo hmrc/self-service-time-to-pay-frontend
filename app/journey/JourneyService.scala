@@ -18,27 +18,22 @@ package journey
 
 import controllers.ErrorHandler
 import javax.inject.Inject
-import play.api.Logger
-import play.api.libs.json.{Format, Json}
-import play.api.mvc.{Request, RequestHeader, Result, Session}
+import play.api.mvc.{Request, Result}
 import req.RequestSupport
-import sessioncache.SsttpSessionCache
-import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.EligibilityStatus
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyService @Inject() (
-    sessionCache: SsttpSessionCache,
     journeyRepo:  JourneyRepo)(
     implicit
     ec: ExecutionContext
 ) {
 
   import RequestSupport._
-  import repo.RepoResultChecker._
   import playsession.PlaySessionSupport._
+  import repo.RepoResultChecker._
 
   def saveJourney(journey: Journey)(implicit request: Request[_]): Future[Unit] =
     journeyRepo

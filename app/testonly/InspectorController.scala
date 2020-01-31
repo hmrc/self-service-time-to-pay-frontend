@@ -33,14 +33,14 @@ import views.Views
 import scala.concurrent.{ExecutionContext, Future}
 
 class InspectorController @Inject() (
-    ddConnector:          DirectDebitConnector,
-    calculatorConnector:  CalculatorConnector,
-    taxPayerConnector:    TaxpayerConnector,
-    eligibilityConnector: EligibilityConnector,
-    cc:                   MessagesControllerComponents,
-    submissionService:    JourneyService,
-    views:                Views,
-    requestSupport:       RequestSupport)(implicit appConfig: AppConfig,
+                                      ddConnector:          DirectDebitConnector,
+                                      calculatorConnector:  CalculatorConnector,
+                                      taxPayerConnector:    TaxpayerConnector,
+                                      eligibilityConnector: EligibilityConnector,
+                                      cc:                   MessagesControllerComponents,
+                                      journeyService:    JourneyService,
+                                      views:                Views,
+                                      requestSupport:       RequestSupport)(implicit appConfig: AppConfig,
                                           ec: ExecutionContext
 ) extends FrontendBaseController(cc) {
 
@@ -52,25 +52,24 @@ class InspectorController @Inject() (
 
   def inspect() = Action.async { implicit request =>
 
-    val sessionCacheF: Future[Option[Journey]] = submissionService.getJourney.map(Some(_)).recover {
+    val maybeJourneyF: Future[Option[Journey]] = journeyService.getJourney.map(Some(_)).recover {
       case e: RuntimeException => None
     }
 
     for {
-      maybeSubmission <- sessionCacheF
-
+      maybeJourney <- maybeJourneyF
     } yield Ok(views.inspector(
       request.session.data,
       List(
-        "debitDate" -> maybeSubmission.flatMap(_.debitDate).json,
-        "taxpayer" -> maybeSubmission.flatMap(_.maybeTaxpayer).json,
-        "schedule" -> maybeSubmission.flatMap(_.schedule).json,
-        "bankDetails" -> maybeSubmission.flatMap(_.bankDetails).json,
-        "existingDDBanks" -> maybeSubmission.flatMap(_.existingDDBanks).json,
+        "debitDate" -> maybeJourney.flatMap(_.debitDate).json,
+        "taxpayer" -> maybeJourney.flatMap(_.maybeTaxpayer).json,
+        "schedule" -> maybeJourney.flatMap(_.schedule).json,
+        "bankDetails" -> maybeJourney.flatMap(_.bankDetails).json,
+        "existingDDBanks" -> maybeJourney.flatMap(_.existingDDBanks).json,
 
-        "calculatorData" -> maybeSubmission.map(_.maybeCalculatorData).json,
-        "durationMonths" -> maybeSubmission.map(_.durationMonths).json,
-        "eligibilityStatus" -> maybeSubmission.map(_.maybeEligibilityStatus).json
+        "calculatorData" -> maybeJourney.map(_.maybeCalculatorData).json,
+        "durationMonths" -> maybeJourney.map(_.durationMonths).json,
+        "eligibilityStatus" -> maybeJourney.map(_.maybeEligibilityStatus).json
       ),
       "not supported - todo remove it",
       hc.headers
