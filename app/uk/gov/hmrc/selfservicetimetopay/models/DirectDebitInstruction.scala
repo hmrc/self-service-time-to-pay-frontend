@@ -22,7 +22,7 @@ import play.api.libs.json.{Format, Json}
 
 //Direct-debit - getBanks response
 //Direct-debit - part of input to createPaymentPlan
-case class DirectDebitInstruction(
+final case class DirectDebitInstruction(
     sortCode:        Option[String]    = None,
     accountNumber:   Option[String]    = None,
     referenceNumber: Option[String]    = None,

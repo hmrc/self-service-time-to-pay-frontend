@@ -19,7 +19,7 @@ package config
 import com.google.inject.Inject
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-case class ViewConfig(
+final case class ViewConfig(
     appName:        String,
     assetsPrefix:   String,
     analyticsToken: String,

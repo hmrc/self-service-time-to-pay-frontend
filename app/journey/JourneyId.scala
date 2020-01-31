@@ -24,6 +24,6 @@ final case class JourneyId(value: String)
 
 object JourneyId {
   implicit val format: Format[JourneyId] = implicitly[Format[String]].inmap(JourneyId(_), _.value)
-  def newJourneyId: JourneyId = JourneyId(BSONObjectID.generate.stringify)
+  def newJourneyId(): JourneyId = JourneyId(BSONObjectID.generate.stringify)
 }
 

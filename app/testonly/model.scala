@@ -21,7 +21,7 @@ import play.api.libs.json.JsValue
 
 import scala.util.Random
 
-case class TestUser(
+final case class TestUser(
     utr:                          Utr,
     hasSAEnrolment:               Boolean,
     isOnIA:                       Boolean,
@@ -57,7 +57,7 @@ object TestUser {
 
 }
 
-case class AffinityGroup(v: String)
+final case class AffinityGroup(v: String)
 
 object AffinityGroup {
   val individual = AffinityGroup("Individual")
@@ -68,22 +68,22 @@ object AffinityGroup {
 /**
  * The same as CredId
  */
-case class AuthorityId(v: String)
+final case class AuthorityId(v: String)
 
 object AuthorityId {
   def random = AuthorityId(s"authId-${Math.abs(Random.nextLong() % 1000)}") //length must be < 25 characters (dunno why...)
 }
 
-case class AuthorityUri(v: String)
+final case class AuthorityUri(v: String)
 
-case class GatewayToken(v: String)
+final case class GatewayToken(v: String)
 
 /**
  * The same as bearer token
  */
-case class AuthToken(v: String)
+final case class AuthToken(v: String)
 
-case class Utr(v: String)
+final case class Utr(v: String)
 
 object Utr {
   def random(): Utr = Utr("1234512345".map(_ => nextDigitChar()))

@@ -40,7 +40,7 @@ object Reason {
 
 }
 
-case class EligibilityStatus(
+final case class EligibilityStatus(
     eligible: Boolean,
     reasons:  Seq[Reason]
 )

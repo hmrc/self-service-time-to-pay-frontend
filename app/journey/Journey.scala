@@ -63,5 +63,5 @@ final case class Journey(
 object Journey {
   implicit val format: OFormat[Journey] = Json.format[Journey]
 
-  def newJourney(): Journey = Journey(_id = JourneyId.newJourneyId)
+  def newJourney(): Journey = Journey(_id = JourneyId.newJourneyId())
 }

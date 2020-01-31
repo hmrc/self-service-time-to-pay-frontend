@@ -16,5 +16,5 @@
 
 package ssttparrangement
 
-case class SubmissionError(code: Int, message: String)
+final case class SubmissionError(code: Int, message: String)
 

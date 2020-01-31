@@ -30,7 +30,7 @@ import views.Views
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-case class TestUserForm(
+final case class TestUserForm(
     utr:                          Option[String],
     returnsJson:                  String,
     returnsResponseStatusCode:    String,

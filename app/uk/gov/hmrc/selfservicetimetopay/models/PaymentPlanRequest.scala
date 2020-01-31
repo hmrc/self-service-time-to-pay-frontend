@@ -21,18 +21,18 @@ import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
 
 //Direct-debit - input to createPaymentPlan
-case class PaymentPlanRequest(requestingService:      String,
-                              submissionDateTime:     String,
-                              knownFact:              List[KnownFact],
-                              directDebitInstruction: DirectDebitInstruction,
-                              paymentPlan:            PaymentPlan,
-                              printFlag:              Boolean)
+final case class PaymentPlanRequest(requestingService:      String,
+                                    submissionDateTime:     String,
+                                    knownFact:              List[KnownFact],
+                                    directDebitInstruction: DirectDebitInstruction,
+                                    paymentPlan:            PaymentPlan,
+                                    printFlag:              Boolean)
 
 object PaymentPlanRequest {
   implicit val paymentPlanRequestFormatter: Format[PaymentPlanRequest] = Json.format[PaymentPlanRequest]
 }
 
-case class KnownFact(
+final case class KnownFact(
     service: String,
     value:   String
 )
@@ -41,7 +41,7 @@ object KnownFact {
   implicit val format: Format[KnownFact] = Json.format[KnownFact]
 }
 
-case class PaymentPlan(
+final case class PaymentPlan(
     ppType:                    String,
     paymentReference:          String,
     hodService:                String,

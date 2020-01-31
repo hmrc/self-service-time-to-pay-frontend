@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.json.{Format, Json}
 
-case class DirectDebitBank(
+final case class DirectDebitBank(
     processingDate:         String,
     directDebitInstruction: Seq[DirectDebitInstruction]
 ) {

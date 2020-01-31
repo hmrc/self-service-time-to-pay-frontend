@@ -18,7 +18,7 @@ package ssttpcalculator
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
-case class CalculatorPaymentTodayForm(amount: BigDecimal)
+final case class CalculatorPaymentTodayForm(amount: BigDecimal)
 
 object CalculatorPaymentTodayForm {
   def apply(str: String): CalculatorPaymentTodayForm = {

@@ -26,7 +26,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.EligibilityStatus
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyService @Inject() (
-    journeyRepo:  JourneyRepo)(
+    journeyRepo: JourneyRepo)(
     implicit
     ec: ExecutionContext
 ) {

@@ -20,10 +20,10 @@ import play.api.libs.json.{Json, OFormat}
 import timetopaycalculator.cor.model.PaymentSchedule
 import timetopaytaxpayer.cor.model.Taxpayer
 
-case class TTPArrangement(paymentPlanReference: String,
-                          directDebitReference: String,
-                          taxpayer:             Taxpayer,
-                          schedule:             PaymentSchedule) {
+final case class TTPArrangement(paymentPlanReference: String,
+                                directDebitReference: String,
+                                taxpayer:             Taxpayer,
+                                schedule:             PaymentSchedule) {
 
   def obfuscate = TTPArrangement(
     paymentPlanReference = paymentPlanReference,

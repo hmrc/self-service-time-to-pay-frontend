@@ -18,9 +18,9 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.json.{Format, Json}
 
-case class ArrangementDirectDebit(accountName:   String,
-                                  sortCode:      String,
-                                  accountNumber: String
+final case class ArrangementDirectDebit(accountName:   String,
+                                        sortCode:      String,
+                                        accountNumber: String
 ) {
   def formatSortCode: String = sortCode.grouped(2).foldLeft("")((subset, total) => subset + " - " + total).drop(3)
 }

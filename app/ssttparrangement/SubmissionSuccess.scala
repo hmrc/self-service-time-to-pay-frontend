@@ -16,4 +16,4 @@
 
 package ssttparrangement
 
-case class SubmissionSuccess()
+final case class SubmissionSuccess()

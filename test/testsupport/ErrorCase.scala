@@ -18,7 +18,7 @@ package testsupport
 
 abstract class ErrorCase
 
-case class AccountName() extends ErrorCase
-case class SortCode() extends ErrorCase
-case class AccountNumber() extends ErrorCase
-case class InvalidBankDetails() extends ErrorCase
+final case class AccountName() extends ErrorCase
+final case class SortCode() extends ErrorCase
+final case class AccountNumber() extends ErrorCase
+final case class InvalidBankDetails() extends ErrorCase

@@ -21,7 +21,7 @@ import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
 import timetopaytaxpayer.cor.model.Taxpayer
 
-case class EligibilityRequest(
+final case class EligibilityRequest(
     dateOfEligibilityCheck: LocalDate,
     taxpayer:               Taxpayer
 )

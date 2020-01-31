@@ -64,7 +64,7 @@ case object ServerSso extends PossibleSso {
   override val value = "server"
 }
 
-case class Link(
+final case class Link(
     url:            String,
     value:          Option[String],
     id:             Option[String]              = None,
@@ -106,7 +106,7 @@ object Link {
 
   def attr(name: String, value: String): String = s""" $name="${escape(value)}""""
 
-  case class PreconfiguredLink(sso: PossibleSso, target: Target) {
+  final case class PreconfiguredLink(sso: PossibleSso, target: Target) {
     def apply(
         url:            String,
         value:          Option[String],

@@ -33,14 +33,14 @@ import views.Views
 import scala.concurrent.{ExecutionContext, Future}
 
 class InspectorController @Inject() (
-                                      ddConnector:          DirectDebitConnector,
-                                      calculatorConnector:  CalculatorConnector,
-                                      taxPayerConnector:    TaxpayerConnector,
-                                      eligibilityConnector: EligibilityConnector,
-                                      cc:                   MessagesControllerComponents,
-                                      journeyService:    JourneyService,
-                                      views:                Views,
-                                      requestSupport:       RequestSupport)(implicit appConfig: AppConfig,
+    ddConnector:          DirectDebitConnector,
+    calculatorConnector:  CalculatorConnector,
+    taxPayerConnector:    TaxpayerConnector,
+    eligibilityConnector: EligibilityConnector,
+    cc:                   MessagesControllerComponents,
+    journeyService:       JourneyService,
+    views:                Views,
+    requestSupport:       RequestSupport)(implicit appConfig: AppConfig,
                                           ec: ExecutionContext
 ) extends FrontendBaseController(cc) {
 
