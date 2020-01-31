@@ -32,12 +32,7 @@ class Module extends AbstractModule {
     override def authConnector: AuthConnector = ac
   }
 
-  //    @Provides
-  //    @Singleton
-  //    def authConnector(httpClient: HttpClient, servicesConfig: ServicesConfig): AuthConnector = new DefaultAuthConnector(httpClient, servicesConfig)
-
   @Provides
   @Singleton
   def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
 }

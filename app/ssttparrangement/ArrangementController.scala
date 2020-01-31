@@ -104,6 +104,7 @@ class ArrangementController @Inject() (
   }
 
   def getInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.getInstalmentSummary: $request")
     journeyService.authorizedForSsttp {
       case journey @ Journey(_, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, intialPayment, _, _, _)), _, _, _, _) =>
         Future.successful(Ok(views.instalment_plan_summary(
@@ -116,18 +117,22 @@ class ArrangementController @Inject() (
   }
 
   def submitInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.submitInstalmentSummary: $request")
     journeyService.authorizedForSsttp(_ => Future.successful(Redirect(ssttparrangement.routes.ArrangementController.getDeclaration())))
   }
 
   def getChangeSchedulePaymentDay: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.getChangeSchedulePaymentDay: $request")
     journeyService.authorizedForSsttp(ttp => Future.successful(Ok(views.change_day(createDayOfForm(ttp)))))
   }
 
   def getDeclaration: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.getDeclaration: $request")
     journeyService.authorizedForSsttp(ttp => Future.successful(Ok(views.declaration())))
   }
 
   def submitChangeSchedulePaymentDay(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.submitChangeSchedulePaymentDay: $request")
     journeyService.authorizedForSsttp {
       submission =>
         ArrangementForm.dayOfMonthForm.bindFromRequest().fold(
@@ -212,12 +217,14 @@ class ArrangementController @Inject() (
   }
 
   def submit(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.submit: $request")
     journeyService.authorizedForSsttp {
       ttp => arrangementSetUp(ttp)
     }
   }
 
   def applicationComplete(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.applicationComplete: $request")
 
     journeyService.authorizedForSsttp {
       submission =>
