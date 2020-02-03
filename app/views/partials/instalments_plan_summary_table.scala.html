@@ -32,61 +32,80 @@
 @if(paymentSchedule.initialPayment > 0){@upfront_payment(paymentSchedule)}
 
 <div id="id_payment" class="margin-top-40">
-    <dl class="app-check-your-answers app-check-your-answers--long">
-            <div class="app-check-your-answers__contents">
-              <dt class="app-check-your-answers__question no_bottom_line">
-                @Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")
-                <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint",paymentSchedule.instalments.length)</p>
-              </dt>
-              <dd class="app-check-your-answers__answer no_bottom_line">
-                @currency(paymentSchedule.getMonthlyInstalment)
-              </dd>
+  <dl class="app-check-your-answers app-check-your-answers--long">
+    @*upfront payment*@
+    <div class="app-check-your-answers__contents">
+      <dt class="app-check-your-answers__question">
+      @Messages("ssttp.arrangement.instalment-summary.up-front-payment")
+      </dt>
+      <dd class="app-check-your-answers__answer">
+      @currency(paymentSchedule.getUpFrontPayment)
+      </dd>
+      <dd class="app-check-your-answers__change" onclick="change()">
+        <a href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
+      </dd>
+    </div>
 
-              <dd class="app-check-your-answers__change no_bottom_line" onclick="change()">
+    @*collected on date*@
+    <div class="app-check-your-answers__contents">
+      <dt class="app-check-your-answers__question">
+      @Messages("ssttp.arrangement.instalment-summary.payment-date.title")
+      </dt>
+      <dd class="app-check-your-answers__answer">
+        @paymentSchedule.getMonthlyDateFormatted @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")
+      </dd>
+      <dd class="app-check-your-answers__change">
+        <td><a href="@ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()">@Messages("ssttp.arrangement.instalment-summary.payment-date.change")</a></td>
+      </dd>
+    </div>
 
-                  <a href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
-                </dd>
-            </div>
+    @*monthly instalments (total number)*@
+    <div class="app-check-your-answers__contents">
+      <dt class="app-check-your-answers__question">
+        @Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")
+        <p>@{
+          paymentSchedule.instalments.map { instalment => <p>{instalment.getDateInReadableFormat}</p> }
+        }</p>
+        <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint", currency(paymentSchedule.totalInterestCharged))</p>
+      </dt>
+      <dd class="app-check-your-answers__answer">
+        <br>
+        <p>@{
+          paymentSchedule.instalments.map { instalment => <p>{currency(instalment.amount)}</p> }
+        }</p>
+      </dd>
 
-            <div class="app-check-your-answers__contents">
-              <dt class="app-check-your-answers__question no_bottom_line">
-                @Messages("ssttp.arrangement.instalment-summary-table.total-interest")
-                <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.hint")</p>
-              </dt>
-              <dd class="app-check-your-answers__answer no_bottom_line">
-                @currency(paymentSchedule.totalInterestCharged)
-              </dd>
-              <dd class="app-check-your-answers__change no_bottom_line">
+      <dd class="app-check-your-answers__change">
 
-                </dd>
-            </div>
+        <a href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
+      </dd>
+    </div>
 
-            <div class="app-check-your-answers__contents">
-              <dt class="app-check-your-answers__question">
-                @Messages("ssttp.arrangement.instalment-summary-table.total-repayment")
-                <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.total-repayment-hint")</p>
-              </dt>
-              <dd class="app-check-your-answers__answer">
-                @currency(paymentSchedule.totalPayable)
-              </dd>
-              <dd class="app-check-your-answers__change">
-
-                </dd> 
-            </div>
-    </dl>
+    @*total repayment*@
+    <div class="app-check-your-answers__contents">
+      <dt class="app-check-your-answers__question">
+      @Messages("ssttp.arrangement.instalment-summary-table.total-repayment")
+      </dt>
+      <dd class="app-check-your-answers__answer">
+      @currency(paymentSchedule.totalPayable)
+      </dd>
+      <dd class="app-check-your-answers__change">
+      </dd>
+    </div>
+  </dl>
 
 </div>
 
 <script type="text/javascript">
-function change() {
-    window['optimizely'] = window['optimizely'] || [];
-    window['optimizely'].push({
-        type: "event",
-        eventName: "change-btn",
-        tags: {
-           revenue: 0, // Optional in cents as integer (500 == $5.00)
-           value: 0.00 // Optional as float
-         }
-    });
-}
+        function change() {
+          window['optimizely'] = window['optimizely'] || [];
+          window['optimizely'].push({
+            type: "event",
+            eventName: "change-btn",
+            tags: {
+              revenue: 0, // Optional in cents as integer (500 == $5.00)
+              value: 0.00 // Optional as float
+            }
+          });
+        }
 </script>

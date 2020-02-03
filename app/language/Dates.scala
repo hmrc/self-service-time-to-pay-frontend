@@ -25,4 +25,22 @@ object Dates {
 
   def formatDate(date: LocalDate): String = `format d MMMM y`.format(date)
 
+  def getMonthlyDateFormatted(localDate: LocalDate): String = {
+    val date = localDate.getDayOfMonth.toString
+    val postfix = {
+      if (date == "11" || date == "12" || date == "13") "th"
+      else if (date.endsWith("1")) "st"
+      else if (date.endsWith("2")) "nd"
+      else if (date.endsWith("3")) "rd"
+      else "th"
+    }
+    s"$date$postfix"
+  }
+
+  def wholeDate(localDate: LocalDate): String = {
+    val day = getMonthlyDateFormatted(localDate)
+    val month = localDate.getMonth.toString.toLowerCase.capitalize
+    val year = localDate.getYear
+    s"$day $month $year"
+  }
 }
