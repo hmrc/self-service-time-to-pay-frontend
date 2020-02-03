@@ -17,7 +17,7 @@
 import java.time.LocalDate
 
 import timetopaytaxpayer.cor.model.Debit
-import timetopaycalculator.cor.model.{DebitInput, PaymentSchedule}
+import timetopaycalculator.cor.model.{DebitInput, Instalment, PaymentSchedule}
 import uk.gov.hmrc.domain.SaUtr
 
 package object model {
@@ -30,9 +30,30 @@ package object model {
   def asTaxpayersSaUtr(saUtr: SaUtr): timetopaytaxpayer.cor.model.SaUtr =
     timetopaytaxpayer.cor.model.SaUtr(saUtr.value)
 
-  implicit def paymentScheduleOps(ps: PaymentSchedule) = new {
+  implicit class PaymentScheduleExt(val ps: PaymentSchedule) extends AnyVal {
     def getMonthlyInstalment: BigDecimal = ps.instalments.head.amount
     def getMonthlyInstalmentDate: Int = ps.instalments.head.paymentDate.getDayOfMonth
     def initialPaymentScheduleDate: LocalDate = ps.instalments.map(_.paymentDate).minBy(_.toEpochDay)
+    def getUpFrontPayment: BigDecimal = ps.initialPayment
+    //TODO: Welsh
+    def getMonthlyDateFormatted: String = {
+      val date = getMonthlyInstalmentDate.toString
+      val postfix = {
+        if (date == "11" || date == "12" || date == "13") "th"
+        else if (date.endsWith("1")) "st"
+        else if (date.endsWith("2")) "nd"
+        else if (date.endsWith("3")) "rd"
+        else "th"
+      }
+      s"$date$postfix"
+    }
+  }
+
+  implicit class InstalmentExt(val v: Instalment) extends AnyVal {
+    def getDateInReadableFormat: String = s"${v.paymentDate.getMonth} ${v.paymentDate.getYear.toString}".toLowerCase.capitalize
+  }
+
+  implicit class DebitExt(val v: Debit) extends AnyVal {
+    def dueByYear(offset: Int = 0): Int = v.dueDate.getYear - offset
   }
 }
