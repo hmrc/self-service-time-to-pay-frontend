@@ -16,6 +16,9 @@
 
 import java.time.LocalDate
 
+import langswitch.Language
+import language.Dates
+import play.api.i18n.Messages
 import timetopaytaxpayer.cor.model.Debit
 import timetopaycalculator.cor.model.{DebitInput, Instalment, PaymentSchedule}
 import uk.gov.hmrc.domain.SaUtr
@@ -35,18 +38,7 @@ package object model {
     def getMonthlyInstalmentDate: Int = ps.instalments.head.paymentDate.getDayOfMonth
     def initialPaymentScheduleDate: LocalDate = ps.instalments.map(_.paymentDate).minBy(_.toEpochDay)
     def getUpFrontPayment: BigDecimal = ps.initialPayment
-    //TODO: Welsh
-    def getMonthlyDateFormatted: String = {
-      val date = getMonthlyInstalmentDate.toString
-      val postfix = {
-        if (date == "11" || date == "12" || date == "13") "th"
-        else if (date.endsWith("1")) "st"
-        else if (date.endsWith("2")) "nd"
-        else if (date.endsWith("3")) "rd"
-        else "th"
-      }
-      s"$date$postfix"
-    }
+    def getMonthlyDateFormatted(implicit messages: Messages): String = Dates.getMonthlyDateFormatted(ps.instalments.head.paymentDate)
   }
 
   implicit class InstalmentExt(val v: Instalment) extends AnyVal {
