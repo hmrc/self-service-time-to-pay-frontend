@@ -37,13 +37,16 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
 import scala.util.{Failure, Success, Try}
 import req.RequestSupport._
+import times.ClockProvider
 
 class CalculatorService @Inject() (
     calculatorConnector: CalculatorConnector,
-    workingDays:         WorkingDaysService)(
+    workingDays:         WorkingDaysService,
+    clockProvider:       ClockProvider)(
     implicit
-    ec:    ExecutionContext,
-    clock: Clock) {
+    ec: ExecutionContext) {
+
+  import clockProvider._
 
   //todo perhaps merge these methods and change back end so it only one call
   //TODO why this method returns list of schedules by month? WTF?
@@ -60,7 +63,7 @@ class CalculatorService @Inject() (
     val months: Seq[Int] = getMonthRange(sa)
 
     val input: List[(Int, CalculatorInput)] = months.map{ month: Int =>
-      val calculatorInput: CalculatorInput = createCalculatorInput(month, LocalDate.now(clock).getDayOfMonth, intialPayment, sa.debits.map(model.asDebitInput))
+      val calculatorInput: CalculatorInput = createCalculatorInput(month, LocalDate.now(clockProvider.getClock).getDayOfMonth, intialPayment, sa.debits.map(model.asDebitInput))
       val calculatorInputValidated: CalculatorInput = validateCalculatorDates(calculatorInput, month, sa.debits.map(model.asDebitInput))
 
       (month, calculatorInputValidated)
@@ -90,25 +93,25 @@ class CalculatorService @Inject() (
       calculatorInput: CalculatorInput,
       numberOfMonths:  Int,
       debits:          Seq[DebitInput]
-  ): CalculatorInput = {
+  )(implicit request: Request[_]): CalculatorInput = {
     val workingDaysInAWeek = 5
-    val firstPaymentDate: LocalDate = dayOfMonthCheck(workingDays.addWorkingDays(LocalDate.now(clock), workingDaysInAWeek))
+    val firstPaymentDate: LocalDate = dayOfMonthCheck(workingDays.addWorkingDays(clockProvider.nowDate(), workingDaysInAWeek))
 
     if (calculatorInput.initialPayment > 0) {
       if ((debits.map(_.amount).sum - calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
-        calculatorInput.copy(startDate        = LocalDate.now(clock),
+        calculatorInput.copy(startDate        = clockProvider.nowDate(),
                              initialPayment   = BigDecimal(0),
                              firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
                              endDate          = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
       } else {
-        calculatorInput.copy(startDate        = LocalDate.now(clock),
+        calculatorInput.copy(startDate        = clockProvider.nowDate(),
                              firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
                              endDate          = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
       }
     } else
       calculatorInput.copy(
         debits           = debits,
-        startDate        = LocalDate.now(clock),
+        startDate        = clockProvider.nowDate(),
         endDate          = calculatorInput.startDate.plusMonths(numberOfMonths),
         firstPaymentDate = Some(firstPaymentDate)
       )

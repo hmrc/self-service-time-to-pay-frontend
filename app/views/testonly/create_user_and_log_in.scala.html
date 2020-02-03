@@ -49,6 +49,15 @@
 
         <div class="grid-layout__column grid-layout__column--1-2 ssttp-grid-layout-payment-today">
             <p>
+                <h2>Frozen Date</h2>
+                <span class="flush--ends form-field--hint">YYYY-MM-DD</span>
+                @textinput(field = dataForm("todays-date"),
+                    'label -> "todays-date",
+                    '_inputClass -> "input--cleared"
+                )
+            </p>
+
+            <p>
                 <h2>Continue URL</h2>
                 <span class="flush--ends form-field--hint"></span>
                 @textinput(field = dataForm("continue-url"),

@@ -16,6 +16,8 @@
 
 package testonly
 
+import java.time.{LocalDate, LocalTime}
+
 import config.AppConfig
 import controllers.FrontendBaseController
 import javax.inject._
@@ -26,6 +28,7 @@ import play.api.mvc._
 import play.api.i18n.I18nSupport
 import req.RequestSupport
 import views.Views
+import playsession.PlaySessionSupport._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -43,7 +46,8 @@ final case class TestUserForm(
     debitsResponseStatusCode:     String,
     saTaxpayer:                   String,
     saTaxpayerResponseStatusCode: String,
-    continueUrl:                  Option[String]
+    continueUrl:                  Option[String],
+    frozenDate:                   Option[String]
 ) {
 
   def asTestUser: TestUser = TestUser(
@@ -59,7 +63,8 @@ final case class TestUserForm(
     debitsResponseStatusCode     = debitsResponseStatusCode.toInt,
     saTaxpayer                   = Json.parse(saTaxpayer),
     saTaxpayerResponseStatusCode = saTaxpayerResponseStatusCode.toInt,
-    continueUrl                  = continueUrl
+    continueUrl                  = continueUrl,
+    frozenDate                   = frozenDate.map(LocalDate.parse)
   )
 }
 
@@ -78,7 +83,8 @@ object TestUserForm {
     debitsResponseStatusCode     = "200",
     saTaxpayer                   = Json.prettyPrint(TestUserSaTaxpayer.buildTaxpayer()),
     saTaxpayerResponseStatusCode = "200",
-    continueUrl                  = None
+    continueUrl                  = None,
+    frozenDate                   = None
   )
 }
 
@@ -121,7 +127,10 @@ class TestUsersController @Inject() (
       "sa-taxpayer-status-code" -> text
         .verifying("'sa-taxpayer-status-code' status code must not be empty", !_.isEmpty)
         .verifying("'sa-taxpayer-status-code' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100),
-      "continue-url" -> optional(text)
+      "continue-url" -> optional(text),
+      "todays-date" ->
+        optional(text)
+        .verifying("Invalid date [YYYY-MM-DD]", x => Try(x.map(LocalDate.parse(_))).isSuccess)
     )(TestUserForm.apply)(TestUserForm.unapply)
   )
 
@@ -152,9 +161,12 @@ class TestUsersController @Inject() (
       _ <- if (tu.isOnIA) iaConnector.uploadUtr(tu.utr.v) else Future.successful(())
       newSession = Session(loginSession.data)
       url = tu.continueUrl.getOrElse(routes.InspectorController.inspect().url)
-    } yield Redirect(url).withSession(newSession)
+      maybeFrozenLocalDateTime = tu.frozenDate.map(_.atTime(LocalTime.now()))
+    } yield {
+      Redirect(url)
+        .withSession(newSession)
+        .placeInSessionIfPresent(maybeFrozenLocalDateTime)
+    }
     result
   }
-
-  private lazy val redirectToSessionView = Redirect(routes.InspectorController.inspect())
 }

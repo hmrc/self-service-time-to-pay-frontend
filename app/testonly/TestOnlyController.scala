@@ -34,8 +34,7 @@ class TestOnlyController @Inject() (
     taxpayerConnector: TaxpayerConnector,
     as:                Actions,
     httpClient:        HttpClient,
-    cc:                MessagesControllerComponents)(implicit ec: ExecutionContext)
-  extends FrontendBaseController(cc) {
+    cc:                MessagesControllerComponents)(implicit ec: ExecutionContext) extends FrontendBaseController(cc) {
 
   def config(): Action[AnyContent] = Action { r =>
     val result: JsValue = Json.parse(

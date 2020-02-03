@@ -41,8 +41,8 @@ final class JourneyRepo @Inject() (
 
   override def indexes: Seq[Index] = Seq(
     Index(
-      key     = Seq("lastModified" -> IndexType.Ascending),
-      name    = Some("lastModifiedTime"),
+      key     = Seq("createdOn" -> IndexType.Ascending),
+      name    = Some("createdOnTime"),
       options = BSONDocument("expireAfterSeconds" -> ttl.toSeconds)
     )
   )

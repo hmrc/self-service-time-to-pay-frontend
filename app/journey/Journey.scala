@@ -16,7 +16,7 @@
 
 package journey
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate, LocalDateTime}
 
 import play.api.libs.json.{Json, OFormat}
 import ssttpcalculator.CalculatorPaymentScheduleExt
@@ -26,6 +26,7 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 
 final case class Journey(
     _id:                    JourneyId,
+    createdOn:              LocalDateTime,
     maybeAmount:            Option[BigDecimal]                   = None,
     schedule:               Option[CalculatorPaymentScheduleExt] = None,
     bankDetails:            Option[BankDetails]                  = None,
@@ -35,7 +36,8 @@ final case class Journey(
     durationMonths:         Int                                  = 2,
     maybeEligibilityStatus: Option[EligibilityStatus]            = None,
     debitDate:              Option[LocalDate]                    = None,
-    ddRef:                  Option[String]                       = None) {
+    ddRef:                  Option[String]                       = None
+) {
 
   def amount: BigDecimal = maybeAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [${this}]"))
   def taxpayer: Taxpayer = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [${this}]"))
@@ -47,6 +49,7 @@ final case class Journey(
 
   def obfuscate: Journey = Journey(
     _id                    = _id,
+    createdOn              = createdOn,
     maybeAmount            = maybeAmount,
     schedule               = schedule,
     bankDetails            = bankDetails.map(_.obfuscate),
@@ -63,5 +66,5 @@ final case class Journey(
 object Journey {
   implicit val format: OFormat[Journey] = Json.format[Journey]
 
-  def newJourney(): Journey = Journey(_id = JourneyId.newJourneyId())
+  def newJourney(implicit clock: Clock): Journey = Journey(_id       = JourneyId.newJourneyId(), createdOn = LocalDateTime.now(clock))
 }

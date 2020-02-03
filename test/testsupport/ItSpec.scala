@@ -33,6 +33,7 @@ import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import java.net.URL
 
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import times.ClockProvider
 
 import scala.util.Random
 
@@ -71,9 +72,11 @@ class ItSpec
 
     @Provides
     @Singleton
-    def clock: Clock = {
-      val fixedInstant = LocalDateTime.parse(frozenTimeString).toInstant(ZoneOffset.UTC)
-      Clock.fixed(fixedInstant, ZoneId.systemDefault)
+    def clockProvider: ClockProvider = new ClockProvider {
+      override val defaultClock: Clock = {
+        val fixedInstant = LocalDateTime.parse(frozenTimeString).toInstant(ZoneOffset.UTC)
+        Clock.fixed(fixedInstant, ZoneId.systemDefault)
+      }
     }
   }
 

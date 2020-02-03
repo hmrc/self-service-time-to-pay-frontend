@@ -40,6 +40,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 import _root_.model._
+import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import scala.concurrent.Future.successful
@@ -58,14 +59,14 @@ class ArrangementController @Inject() (
     journeyService:       JourneyService,
     as:                   Actions,
     requestSupport:       RequestSupport,
-    views:                Views)(
+    views:                Views,
+    clockProvider:        ClockProvider)(
     implicit
     appConfig: AppConfig,
-    ec:        ExecutionContext,
-    clock:     Clock
-) extends FrontendBaseController(mcc) {
+    ec:        ExecutionContext) extends FrontendBaseController(mcc) {
 
   import requestSupport._
+  import clockProvider._
 
   val cesa: String = "CESA"
   val paymentFrequency = "Calendar Monthly"
@@ -75,7 +76,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.start: $request")
 
     journeyService.getJourney.flatMap {
-      case journey @ Journey(_, _, _, _, _, Some(taxpayer), _, _, _, _, _) =>
+      case journey @ Journey(_, _, _, _, _, _, Some(taxpayer), _, _, _, _, _) =>
         eligibilityCheck(journey, request.utr)
     }
   }
@@ -96,7 +97,7 @@ class ArrangementController @Inject() (
 
     for {
       tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
-      newJourney: Journey = Journey.newJourney().copy(maybeTaxpayer = Some(tp))
+      newJourney: Journey = Journey.newJourney.copy(maybeTaxpayer = Some(tp))
       _ <- journeyService.saveJourney(newJourney)
       result: Result <- eligibilityCheck(newJourney, request.utr)
     } yield result.placeInSession(newJourney._id)
@@ -106,7 +107,7 @@ class ArrangementController @Inject() (
   def getInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.getInstalmentSummary: $request")
     journeyService.authorizedForSsttp {
-      case journey @ Journey(_, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, intialPayment, _, _, _)), _, _, _, _) =>
+      case journey @ Journey(_, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, intialPayment, _, _, _)), _, _, _, _) =>
         Future.successful(Ok(views.instalment_plan_summary(
           journey.taxpayer.selfAssessment.debits,
           intialPayment,
@@ -141,7 +142,7 @@ class ArrangementController @Inject() (
           },
           validFormData => {
             submission match {
-              case ttp @ Journey(_, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _) =>
+              case ttp @ Journey(_, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _) =>
                 JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
                 changeScheduleDay(submission, schedule.schedule, debits, validFormData.dayOfMonth).flatMap {
                   ttpSubmission =>
@@ -199,8 +200,8 @@ class ArrangementController @Inject() (
     lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 
     for {
-      es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(clock), journey.taxpayer), utr)
-      newJourney = journey.copy(maybeEligibilityStatus = Option(es))
+      es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer), utr)
+      newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(es))
       _ <- journeyService.saveJourney(newJourney)
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${es.eligible}]", newJourney)
     } yield {
@@ -231,12 +232,11 @@ class ArrangementController @Inject() (
 
         val result = Ok(views.application_complete(
           debits        = submission.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
-          transactionId = submission.taxpayer.selfAssessment.utr + LocalDateTime.now(clock).toString,
+          transactionId = submission.taxpayer.selfAssessment.utr + LocalDateTime.now(clockProvider.getClock).toString,
           directDebit   = submission.arrangementDirectDebit.get,
           schedule      = submission.schedule.get.schedule,
           ddref         = submission.ddRef
         ))
-          .removeJourneyIdFromSession //TODO: if user refreshes the page the content is lost
 
         Future.successful(result)
     }

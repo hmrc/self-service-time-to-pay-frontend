@@ -16,18 +16,25 @@
 
 package playsession
 
+import java.time.{Clock, LocalDate, LocalDateTime, LocalTime, ZoneId, ZoneOffset}
+
 import journey.JourneyId
 import play.api.libs.json.Format
 import play.api.mvc.{Request, RequestHeader, Result}
 
 object PlaySessionSupport {
   private val journeyIdKey = "journeyId"
+  private val frozenDateTimeKey: String = "frozenDateTime"
 
   implicit class ResultOps(result: Result)(implicit request: RequestHeader) {
 
     def placeInSession(journeyId: JourneyId): Result = result.addingToSession(journeyIdKey -> journeyId.value)
 
-    def removeJourneyIdFromSession: Result = result.withSession(result.session - journeyIdKey)
+    def placeInSessionIfPresent(frozenDateTime: Option[LocalDateTime]): Result = {
+      frozenDateTime
+        .map(frozenDateTime => result.addingToSession(frozenDateTimeKey -> frozenDateTime.toString))
+        .getOrElse(result)
+    }
   }
 
   implicit class RequestOps(request: Request[_]) {
@@ -38,5 +45,14 @@ object PlaySessionSupport {
       .map(JourneyId.apply)
       .getOrElse(throw new RuntimeException(s"'$journeyIdKey' Not found in the play session"))
 
+    def readFrozenClock(): Option[Clock] = request
+      .session
+      .get(frozenDateTimeKey)
+      .map(toFrozenClock)
+
+    private def toFrozenClock(frozenDateTimeString: String) = {
+      val fixedInstant = LocalDateTime.parse(frozenDateTimeString).toInstant(ZoneOffset.UTC)
+      Clock.fixed(fixedInstant, ZoneId.systemDefault)
+    }
   }
 }

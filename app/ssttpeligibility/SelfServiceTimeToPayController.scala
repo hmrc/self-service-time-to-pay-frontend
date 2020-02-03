@@ -23,6 +23,7 @@ import javax.inject._
 import play.api.mvc._
 import req.RequestSupport
 import journey.JourneyService
+import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import views.Views
 
@@ -33,11 +34,13 @@ class SelfServiceTimeToPayController @Inject() (
     submissionService: JourneyService,
     as:                Actions,
     views:             Views,
-    requestSupport:    RequestSupport)(implicit appConfig: AppConfig,
-                                       ec: ExecutionContext
+    requestSupport:    RequestSupport,
+    clockProvider:     ClockProvider)(implicit appConfig: AppConfig,
+                                      ec: ExecutionContext
 ) extends FrontendBaseController(mcc) {
 
   import requestSupport._
+  import clockProvider._
 
   def start: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")

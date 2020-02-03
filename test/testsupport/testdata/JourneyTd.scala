@@ -16,6 +16,8 @@
 
 package testsupport.testdata
 
+import java.time.LocalDateTime
+
 import journey.{Journey, JourneyId}
 import testsupport.testdata.CalculatorTd.{calculatorInput, calculatorPaymentScheduleExt}
 import testsupport.testdata.DirectDebitTd._
@@ -33,6 +35,7 @@ object JourneyTd {
 
   val journey = new Journey(
     _id                    = journeyId,
+    createdOn              = LocalDateTime.parse("2019-11-25T16:33:51.880"),
     maybeAmount            = Some(200: BigDecimal),
     schedule               = Some(calculatorPaymentScheduleExt),
     bankDetails            = Some(bankDetails),

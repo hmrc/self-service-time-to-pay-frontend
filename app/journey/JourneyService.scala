@@ -55,7 +55,7 @@ class JourneyService @Inject() (
     for {
       journey <- getJourney()
       result <- journey match {
-        case submission @ Journey(_, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _) =>
+        case submission @ Journey(_, _, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _) =>
           JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", submission)
           block(submission)
         case maybeSubmission =>

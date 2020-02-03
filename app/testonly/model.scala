@@ -16,6 +16,8 @@
 
 package testonly
 
+import java.time.LocalDate
+
 import play.api.http.Status
 import play.api.libs.json.JsValue
 
@@ -26,7 +28,7 @@ final case class TestUser(
     hasSAEnrolment:               Boolean,
     isOnIA:                       Boolean,
     authorityId:                  AuthorityId,
-    affinityGroup:                AffinityGroup  = AffinityGroup.individual,
+    affinityGroup:                AffinityGroup     = AffinityGroup.individual,
     confidenceLevel:              Int,
     returns:                      JsValue,
     returnsResponseStatusCode:    Int,
@@ -34,7 +36,8 @@ final case class TestUser(
     debitsResponseStatusCode:     Int,
     saTaxpayer:                   JsValue,
     saTaxpayerResponseStatusCode: Int,
-    continueUrl:                  Option[String]
+    continueUrl:                  Option[String],
+    frozenDate:                   Option[LocalDate]
 )
 
 object TestUser {
@@ -52,7 +55,8 @@ object TestUser {
     debitsResponseStatusCode     = Status.OK,
     saTaxpayer                   = TestUserSaTaxpayer.buildTaxpayer(),
     saTaxpayerResponseStatusCode = Status.OK,
-    continueUrl                  = None
+    continueUrl                  = None,
+    frozenDate                   = None
   )
 
 }
