@@ -1,12 +1,10 @@
 ->          /                                                                            prod.Routes
 
 
-GET         /pay-what-you-owe-in-instalments/test-only/inspector                         @uk.gov.hmrc.selfservicetimetopay.testonly.InspectorController.inspect()
-GET         /pay-what-you-owe-in-instalments/test-only/clear-play-session                @uk.gov.hmrc.selfservicetimetopay.testonly.InspectorController.clearPlaySession()
-GET         /pay-what-you-owe-in-instalments/test-only/create-user-and-log-in            @uk.gov.hmrc.selfservicetimetopay.testonly.TestUsersController.testUsers()
-POST        /pay-what-you-owe-in-instalments/test-only/create-user-and-log-in            @uk.gov.hmrc.selfservicetimetopay.testonly.TestUsersController.logIn()
+GET         /pay-what-you-owe-in-instalments/test-only/inspector                         @testonly.InspectorController.inspect()
+GET         /pay-what-you-owe-in-instalments/test-only/clear-play-session                @testonly.InspectorController.clearPlaySession()
+GET         /pay-what-you-owe-in-instalments/test-only/create-user-and-log-in            @testonly.TestUsersController.testUsers()
+POST        /pay-what-you-owe-in-instalments/test-only/create-user-and-log-in            @testonly.TestUsersController.logIn()
 
-GET         /pay-what-you-owe-in-instalments/test-only/config                            @uk.gov.hmrc.selfservicetimetopay.testonly.TestOnlyController.config()
-GET         /pay-what-you-owe-in-instalments/test-only/taxpayer-get                      @uk.gov.hmrc.selfservicetimetopay.testonly.TestOnlyController.getTaxpayer()
-GET         /pay-what-you-owe-in-instalments/test-only/taxpayer-config                   @uk.gov.hmrc.selfservicetimetopay.testonly.TestOnlyController.taxpayerConfig()
-GET         /pay-what-you-owe-in-instalments/test-only/taxpayer-connectors-config        @uk.gov.hmrc.selfservicetimetopay.testonly.TestOnlyController.taxpayerConnectorsConfig()
+GET         /pay-what-you-owe-in-instalments/test-only/config                            @testonly.TestOnlyController.config()
+GET         /pay-what-you-owe-in-instalments/test-only/taxpayer-get                      @testonly.TestOnlyController.getTaxpayer()

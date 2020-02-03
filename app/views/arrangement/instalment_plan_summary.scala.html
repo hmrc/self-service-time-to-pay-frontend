@@ -1,0 +1,79 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@*
+Time To Pay Instalment Summary Pretty Print Page
+@param schedule CalculatorPaymentSchedule The results data to display
+*@
+
+@import timetopaytaxpayer.cor.model.Debit
+@import partials.gaDoCheckout
+@import helpers.{alert, message_list}
+@import helpers.forms.submit
+@import uk.gov.hmrc.play.views.html.helpers
+@import partials._
+@import _root_.model._
+@import timetopaycalculator.cor.model._
+@import _root_.model.PaymentScheduleSupport._
+
+@this(
+  main: views.html.main,
+  viewsHelpers: views.ViewsHelpers
+)
+
+@(
+  debits:Seq[Debit],
+  initialPayment:BigDecimal,
+  schedule: PaymentSchedule,
+  signedIn: Boolean = true)(
+  implicit
+  messages: play.api.i18n.Messages,
+  request: Request[_],
+  appConfig: config.AppConfig
+)
+
+
+@gaCheckoutCode = {
+    @gaDoCheckout(debits = debits,
+        step = 1,
+        revenue = schedule.totalPayable,
+        initialPayment = Some(schedule.initialPayment),
+        interest = schedule.totalInterestCharged,
+        duration = schedule.instalments.length,
+        regularPayment = schedule.instalments.head.amount,
+        paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
+    )
+}
+
+@main(
+        title = Messages("ssttp.arrangement.instalment-summary.title"),
+        googleAnalyticsCalls = Seq(gaCheckoutCode.body.seq),
+        loggedIn = signedIn
+    ) {
+       <a class="link-back" href="@ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()">@Messages("ssttp.calculator.form.back")</a>
+
+        <h1 class="heading-large">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
+
+        @instalments_plan_summary_table(schedule)
+    <div></div>
+        @monthly_instalments_date(schedule.getMonthlyInstalmentDate)
+
+            @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitInstalmentSummary()) {
+                @submit() {
+                    @Messages("ssttp.arrangement.instalment-summary.submit")
+                }
+      }
+    }

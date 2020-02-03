@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class PayTodayQuestion(payToday: Option[Boolean])
+final case class PayTodayQuestion(payToday: Option[Boolean])

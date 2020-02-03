@@ -1,0 +1,78 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helpers.forms.submit
+@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
+
+@this(
+  main: views.html.main,
+  viewsHelpers: views.ViewsHelpers
+)
+
+@(
+  dayForm: Form[ArrangementDayOfMonth])(
+  implicit
+  messages: play.api.i18n.Messages,
+  request: Request[_],
+  appConfig: config.AppConfig
+)
+
+
+@main(
+    title = Messages("ssttp.arrangement.change_day.title"),
+    loggedIn = true
+){
+    <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a>
+    <h1>@Messages("ssttp.arrangement.change_day.title")</h1>
+    @if(dayForm.hasErrors) {
+    @viewsHelpers.errorSummary(Messages("ssttp.calculator.results.error.title"), dayForm)
+    }
+
+    @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm", 'class -> "group") {
+<div class="form-group">
+        <div class="multiple-choice">
+            <input id="default" type="radio" name="dayOfMonth" value=28 onclick="uncheck(`other`)">
+             <label for="default">@Messages("ssttp.arrangement.changeday.default")</label>
+        </div>
+
+        <div class="multiple-choice " data-target= customDate>
+            <input id="other" type="radio" name="other" onclick="uncheck(`default`)">
+            <label for="other">@Messages("ssttp.arrangement.changeday.different")</label>
+        </div>
+
+
+        <div id="customDate" class="panel panel-border-narrow js-hidden form-group">
+            <label for="dayInput" >@Messages("ssttp.arrangement.changeday.enter.date")</label>
+            <br>
+            <input type="text" class="form-control-1-4" id="dayInput" name="dayOfMonth">
+        </div>
+</div>
+        <fieldset>
+            <div class="form-group">
+                <button id="next" type="submit" class="button" >@Messages("ssttp.arrangement.change_day.payment-day.continue")</button>
+            </div>
+        </fieldset>
+    }
+
+}
+
+<script>
+    function uncheck(id){
+        document.getElementById(id).checked = false
+
+        if(id=="other"){document.getElementById("customDate").style.display = "none"} else {document.getElementById("customDate").style.display = "block"}
+    }
+</script>

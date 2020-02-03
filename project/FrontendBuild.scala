@@ -1,3 +1,4 @@
+import sbt.Keys.libraryDependencies
 import sbt._
 import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning
@@ -22,13 +23,33 @@ private object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     ws,
-    "uk.gov.hmrc" %% "frontend-bootstrap" %  "12.4.0",
-    "uk.gov.hmrc" %% "play-partials" %  "6.5.0",
-    "uk.gov.hmrc" %% "domain" %  "5.2.0",
-    "uk.gov.hmrc" %% "http-caching-client" %  "8.0.0",
+    "uk.gov.hmrc" %% "govuk-template" % "5.48.0-play-26",
+    "uk.gov.hmrc" %% "play-ui" % "8.7.0-play-26",
+    "uk.gov.hmrc" %% "bootstrap-play-26" % "1.3.0",
+    "com.beachape" %% "enumeratum" % "1.5.15",
+    "uk.gov.hmrc" %% "simple-reactivemongo" % "7.22.0-play-26",
+
+    "uk.gov.hmrc" %% "time-to-pay-taxpayer-cor" % "[0.27.0,)",
+    "uk.gov.hmrc" %% "time-to-pay-calculator-cor" % "[0.35.0,)",
+
+    "uk.gov.hmrc" %% "play-partials" %  "6.9.0-play-26",
+    "uk.gov.hmrc" %% "domain" %  "5.3.0",
     "uk.gov.hmrc" %% "time" % "3.1.0",
-    "uk.gov.hmrc" %% "play-language" % "3.4.0",
-    "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0"
+    "uk.gov.hmrc" %% "play-conditional-form-mapping" % "0.2.0",
+    "com.typesafe.play" %% "play-json-joda" % "2.6.13",
+
+    "uk.gov.hmrc" %% "http-caching-client" % "9.0.0-play-26",
+
+    "com.softwaremill.macwire" %% "macros" % "2.3.3" % "provided" ,
+    "com.softwaremill.macwire" %% "macrosakka" % "2.3.3" % "provided" ,
+    "com.softwaremill.macwire" %% "util" % "2.3.3" % "test",
+    "com.softwaremill.macwire" %% "proxy" % "2.3.3" % "test",
+
+    "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
+    "org.seleniumhq.selenium" % "htmlunit-driver" % "2.36.0" % "test",
+    "net.sourceforge.htmlunit" % "htmlunit" % "2.37.0" % "test"
+
+
   )
 
   trait TestDependencies {
@@ -39,14 +60,11 @@ private object AppDependencies {
   object Test {
     def apply(): Seq[ModuleID] = new TestDependencies {
       override lazy val test: Seq[ModuleID] = Seq(
-        "uk.gov.hmrc" %% "hmrctest" %  "3.0.0",
         "org.pegdown" % "pegdown" % "1.6.0" % scope,
-        "org.jsoup" % "jsoup" % "1.8.3" % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-        "com.github.tomakehurst" % "wiremock" % "2.2.2" % scope,
-        "org.mockito" % "mockito-core" % "1.10.19" % scope,
-        "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope,
-        "org.typelevel" %% "cats-core" % "1.4.0"
+        "com.github.tomakehurst" % "wiremock-standalone" % "2.12.0" % "test",
+        "org.scalatest" %% "scalatest" % "3.0.8" % "test",
+        "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope
       )
     }.test
   }

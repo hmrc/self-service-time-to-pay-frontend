@@ -25,8 +25,8 @@ trait MicroService {
     import scoverage.ScoverageKeys
     Seq(
       // Semicolon-separated list of regexs matching classes to exclude
-      ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;.*AuthService.*;app.Routes.*;prod.*;testOnlyDoNotUseInProd.*;models\\.data\\..*;views.html.*;uk.gov.hmrc.BuildInfo;app.*;prod.*;config.*;uk.gov.hmrc.selfservicetimetopay.auth.*;uk.gov.hmrc.selfservicetimetopay.testonly.*;uk.gov.hmrc.selfservicetimetopay.models",
-      ScoverageKeys.coverageMinimum := 90,
+      ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;.*AuthService.*;app.Routes.*;prod.*;testOnlyDoNotUseInProd.*;models\\.data\\..*;views.html.*;uk.gov.hmrc.BuildInfo;app.*;prod.*;config.*;uk.gov.hmrc.selfservicetimetopay.auth.*;testonly.testonly.*;uk.gov.hmrc.selfservicetimetopay.models",
+      ScoverageKeys.coverageMinimum := 50,
       ScoverageKeys.coverageFailOnMinimum := false,
       ScoverageKeys.coverageHighlighting := true
     )
@@ -46,15 +46,13 @@ trait MicroService {
     .settings(defaultSettings(): _*)
     .settings(
       targetJvm := "jvm-1.8",
-      routesGenerator := StaticRoutesGenerator,
       scalaVersion := "2.11.11",
       libraryDependencies ++= appDependencies,
       parallelExecution in Test := false,
-      fork in Test := false,
+      fork in Test := true,
       evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
       routesImport ++= Seq(
-        "uk.gov.hmrc.selfservicetimetopay.auth.Token",
-        "uk.gov.hmrc.selfservicetimetopay.auth.Token._"
+        "langswitch.Language"
       )
     )
     .settings(scalariformSettings: _*)
@@ -67,6 +65,7 @@ trait MicroService {
       testGrouping in IntegrationTest := TestPhases.oneForkedJvmPerTest((definedTests in IntegrationTest).value),
       parallelExecution in IntegrationTest := false)
     .settings(resolvers ++= Seq(
+      "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/",
       Resolver.bintrayRepo("hmrc", "releases"),
       sbt.Resolver.jcenterRepo
     ))

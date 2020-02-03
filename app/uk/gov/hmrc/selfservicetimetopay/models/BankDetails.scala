@@ -16,12 +16,15 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class BankDetails(sortCode:      Option[String]  = None,
-                       accountNumber: Option[String]  = None,
-                       bankName:      Option[String]  = None,
-                       bankAddress:   Option[Address] = None,
-                       accountName:   Option[String]  = None,
-                       ddiRefNumber:  Option[String]  = None) {
+import play.api.libs.json.{Format, Json}
+import timetopaytaxpayer.cor.model.Address
+
+final case class BankDetails(sortCode:      Option[String]  = None,
+                             accountNumber: Option[String]  = None,
+                             bankName:      Option[String]  = None,
+                             bankAddress:   Option[Address] = None,
+                             accountName:   Option[String]  = None,
+                             ddiRefNumber:  Option[String]  = None) {
 
   def obfuscate: BankDetails = BankDetails(
     sortCode      = sortCode.map(_ => "***"),
@@ -31,4 +34,8 @@ case class BankDetails(sortCode:      Option[String]  = None,
     accountName   = accountName.map(_ => "***"),
     ddiRefNumber  = ddiRefNumber.map(_ => "***")
   )
+}
+
+object BankDetails {
+  implicit val format: Format[BankDetails] = Json.format[BankDetails]
 }

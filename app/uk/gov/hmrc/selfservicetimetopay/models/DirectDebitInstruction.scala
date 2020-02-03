@@ -18,16 +18,20 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
 
+import play.api.libs.json.{Format, Json}
+
 //Direct-debit - getBanks response
 //Direct-debit - part of input to createPaymentPlan
-case class DirectDebitInstruction(sortCode:        Option[String]    = None,
-                                  accountNumber:   Option[String]    = None,
-                                  referenceNumber: Option[String]    = None,
-                                  creationDate:    Option[LocalDate] = None,
-                                  paperAuddisFlag: Option[Boolean]   = Some(true),
-                                  ddiRefNumber:    Option[String]    = None,
-                                  ddiReferenceNo:  Option[String]    = None,
-                                  accountName:     Option[String]    = None) {
+final case class DirectDebitInstruction(
+    sortCode:        Option[String]    = None,
+    accountNumber:   Option[String]    = None,
+    referenceNumber: Option[String]    = None,
+    creationDate:    Option[LocalDate] = None,
+    paperAuddisFlag: Option[Boolean]   = Some(true),
+    ddiRefNumber:    Option[String]    = None,
+    ddiReferenceNo:  Option[String]    = None,
+    accountName:     Option[String]    = None
+) {
 
   def obfuscate: DirectDebitInstruction = DirectDebitInstruction(
     sortCode        = sortCode.map(_ => "***"),
@@ -39,4 +43,8 @@ case class DirectDebitInstruction(sortCode:        Option[String]    = None,
     ddiReferenceNo  = ddiReferenceNo.map(_ => "***"),
     accountName     = accountName.map(_ => "***")
   )
+}
+
+object DirectDebitInstruction {
+  implicit val format: Format[DirectDebitInstruction] = Json.format[DirectDebitInstruction]
 }

@@ -18,4 +18,14 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import java.time.LocalDate
 
-case class EligibilityRequest(dateOfEligibilityCheck: LocalDate, taxpayer: Taxpayer)
+import play.api.libs.json.{Format, Json}
+import timetopaytaxpayer.cor.model.Taxpayer
+
+final case class EligibilityRequest(
+    dateOfEligibilityCheck: LocalDate,
+    taxpayer:               Taxpayer
+)
+
+object EligibilityRequest {
+  implicit val format: Format[EligibilityRequest] = Json.format[EligibilityRequest]
+}

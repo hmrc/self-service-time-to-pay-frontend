@@ -1,0 +1,29 @@
+Upgrading play to 2.6
+
+* Filter
+    //We want to replace SessionTimeoutFilter with SessionTimeoutFilterWrapper
+    //which omits application of this filter for 'TestUsersController.logIn()' functionality.
+    val t = defaultFrontendFilters.map {
+      case s: SessionTimeoutFilter => new SessionTimeoutFilterWrapper(s)
+      case x                       => x
+    }
+
+
+* pawelilze AppConfig
+
+
+* removed that logic, is it ok?
+
+*
+  //TODO: move it to some auth service (from FrontendController)
+  def isSignedIn(implicit request: Request[_]): Boolean = hc.authorization.isDefined
+
+* clean the specs
+* provide proper ItSpec with wiremock responses
+
+* verify that start page displays proper content, you changed the messages_list.scala.view
+owe £10,000 or less
+have no other tax debts
+have no other HMRC payment plans set up
+
+remove messagesApi from messages_list, why messages use default language ????: 'messagesApi.messages("default")'

@@ -1,0 +1,91 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import timetopaytaxpayer.cor.model.Debit
+@import partials.{direct_debit_fields, gaDoCheckout}
+@import helpers.forms.submit
+@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
+@import timetopaycalculator.cor.model._
+@import _root_.model.PaymentScheduleSupport._
+@import ssttpcalculator.CalculatorPaymentScheduleExt
+
+@this(
+  main: views.html.main,
+  viewsHelpers: views.ViewsHelpers
+)
+
+@(
+        debits: Seq[Debit],
+        schedule: CalculatorPaymentScheduleExt,
+        ddForm: Form[ArrangementDirectDebit],
+        isBankError: Boolean = false,
+        loggedIn: Boolean = true)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
+
+@gaCheckoutCode = {
+@gaDoCheckout(debits = debits,
+    step = 2,
+    revenue = schedule.schedule.totalPayable,
+    initialPayment = Some(schedule.schedule.initialPayment),
+    interest = schedule.schedule.totalInterestCharged,
+    duration = schedule.schedule.instalments.length,
+    regularPayment = schedule.schedule.instalments.head.amount,
+    paymentDay = schedule.schedule.instalments.head.paymentDate.getDayOfMonth
+)
+}
+@main(
+    title = Messages("ssttp.arrangement.direct-debit.form.title"),
+    loggedIn = loggedIn,
+    sidebarLinks =  None,
+    googleAnalyticsCalls = if(ddForm.hasErrors) {
+        Seq.empty
+    } else {
+        Seq(gaCheckoutCode.body)
+    }
+) {
+    <a class="link-back" href="@ssttparrangement.routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.direct-debit.form.back")</a>
+    @if(ddForm.hasErrors) {
+        @if(isBankError) {
+            @viewsHelpers.errorSummary(Messages("ssttp.direct-debit.form.bank-not-found-heading"), ddForm)
+        } else {
+            @viewsHelpers.errorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm)
+        }
+    }
+        <h1 class="heading-large">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
+       @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.submitDirectDebit()) {
+
+        <fieldset class="form-field-group">
+            <legend><span class="visually-hidden">Enter your banking details</span></legend>
+            @direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode"), ddForm("accountNumber"))
+        </fieldset>
+
+        <div class="panel panel-border-wide">
+            <p>@Messages("ssttp.direct-debit.form.message.title")</p>
+            <ul class="list list-bullet">
+                <li>@Messages("ssttp.direct-debit.form.message.named.account")</li>
+                <li>@Messages("ssttp.direct-debit.form.message.permission")</li>
+            </ul>
+        </div>
+        @submit() {
+            @Messages("ssttp.arrangement.direct-debit.form.submit")
+        }
+    }
+}
+

@@ -16,10 +16,14 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class TTPArrangement(paymentPlanReference: String,
-                          directDebitReference: String,
-                          taxpayer:             Taxpayer,
-                          schedule:             CalculatorPaymentSchedule) {
+import play.api.libs.json.{Json, OFormat}
+import timetopaycalculator.cor.model.PaymentSchedule
+import timetopaytaxpayer.cor.model.Taxpayer
+
+final case class TTPArrangement(paymentPlanReference: String,
+                                directDebitReference: String,
+                                taxpayer:             Taxpayer,
+                                schedule:             PaymentSchedule) {
 
   def obfuscate = TTPArrangement(
     paymentPlanReference = paymentPlanReference,
@@ -27,4 +31,8 @@ case class TTPArrangement(paymentPlanReference: String,
     taxpayer             = taxpayer.obfuscate,
     schedule             = schedule
   )
+}
+
+object TTPArrangement {
+  implicit val formats: OFormat[TTPArrangement] = Json.format[TTPArrangement]
 }

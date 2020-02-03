@@ -1,9 +1,0 @@
-{
-  "sortCode": "123456",
-  "accountNumber": "12345678",
-  "bankName": "Bank",
-  "bankAddress": {
-    "addressLine1": "",
-    "postcode": ""
-  }
-}

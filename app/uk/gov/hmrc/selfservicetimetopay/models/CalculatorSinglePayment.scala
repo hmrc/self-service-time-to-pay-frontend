@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
-case class CalculatorSinglePayment(amount: BigDecimal)
+final case class CalculatorSinglePayment(amount: BigDecimal)
 
 object CalculatorSinglePayment {
   def apply(str: String): CalculatorSinglePayment = {

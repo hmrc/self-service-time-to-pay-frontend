@@ -1,0 +1,207 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.testonly.TestUserForm
+@import views.html.helpers.forms._
+
+@this(
+  main: views.html.main,
+  viewsHelpers: views.ViewsHelpers
+)
+
+@(
+        dataForm: Form[TestUserForm])(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
+
+@main(
+    title = "User's related and session data"
+) {
+
+    <header>
+        <h1>Define your test user</h1>
+        <p>This is `test-only` endpoint for testing purposes.</p>
+    </header>
+
+    @viewsHelpers.form(_root_.testonly.routes.TestUsersController.logIn(), 'class -> "group") {
+        @if(dataForm.hasErrors) {
+            @viewsHelpers.errorSummary("Fix errors", dataForm)
+        }
+        @button('type -> "submit") {
+            create user and log in
+        }
+
+        <div class="grid-layout__column grid-layout__column--1-2 ssttp-grid-layout-payment-today">
+            <p>
+                <h2>Frozen Date</h2>
+                <span class="flush--ends form-field--hint">YYYY-MM-DD</span>
+                @textinput(field = dataForm("todays-date"),
+                    'label -> "todays-date",
+                    '_inputClass -> "input--cleared"
+                )
+            </p>
+
+            <p>
+                <h2>Continue URL</h2>
+                <span class="flush--ends form-field--hint"></span>
+                @textinput(field = dataForm("continue-url"),
+                    'label -> "continue-url",
+                    '_inputClass -> "input--cleared"
+                )
+            </p>
+
+
+          <p>
+                <h2>CredId</h2>
+                <span class="flush--ends form-field--hint">This is known as well as <em>AuthoriyId</em>. Put here any random string or leave empty for random value.</span>
+                @textinput(field = dataForm("authority-id"),
+                    'label -> "authority-id",
+                    '_maxlength -> "10",
+                    '_inputClass -> "input--cleared"
+                )
+            </p>
+
+            <p>
+                <h2>Affinity Group</h2>
+                <span class="flush--ends form-field--hint"></span>
+            @viewsHelpers.inputRadioGroup(dataForm("affinity-group"), Seq(
+                    "Individual" -> "Individual",
+                    "Organisation" -> "Organisation",
+                    "Agent" -> "Agent"
+                ),
+                    '_label -> Html("label"),
+                    '_modifierClass -> "multiple-choice inline",
+                    '_groupClass -> "form-field",
+                    '_labelClass -> "block-label block-label--inline"
+                )
+
+            </p>
+            <p>
+        <h2>Put in ia</h2>
+            <span class="flush--ends form-field--hint"></span>
+            @viewsHelpers.inputRadioGroup(dataForm("isOnIA"), Seq(
+                "true" -> "Yes",
+                "false" -> "No"
+            ),
+                '_label -> Html("label"),
+                '_modifierClass -> "multiple-choice inline",
+                '_groupClass -> "form-field",
+                '_labelClass -> "block-label block-label--inline"
+            )
+
+            </p>
+
+            <p>
+                <h2>Does the user have SA enrolment</h2>
+                <span class="flush--ends form-field--hint">If <em>No</em> then below setup will be ignored</span>
+
+            @viewsHelpers.inputRadioGroup(dataForm("has-sa-enrolment"), Seq(
+                    "true" -> "Yes",
+                    "false" -> "No"
+                ),
+                    '_label -> Html("label"),
+                    '_modifierClass -> "multiple-choice inline",
+                    '_groupClass -> "form-field",
+                    '_labelClass -> "block-label block-label--inline"
+                )
+            </p>
+            <p>
+         <h2>Has over 200 confidence Level</h2>
+            <span class="flush--ends form-field--hint"></span>
+            @viewsHelpers.inputRadioGroup(dataForm("over200"), Seq(
+                "true" -> "Yes",
+                "false" -> "No"
+            ),
+                '_label -> Html("label"),
+                '_modifierClass -> "multiple-choice inline",
+                '_groupClass -> "form-field",
+                '_labelClass -> "block-label block-label--inline"
+            )
+            </p>
+
+            <p>
+                <h2>UTR</h2>
+                <span class="flush--ends form-field--hint">10 digits or leave blank for random UTR</span>
+                @textinput(field = dataForm("utr"),
+                    'label -> "UTR",
+                    '_maxlength -> "10",
+                    '_inputClass -> "input--cleared"
+                )
+            </p>
+
+            <p>
+                <h2>Returns</h2>
+                <span class="flush--ends form-field--hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/returns</em>. Read DES API Tracker for more details.</span>
+                @textinput(field = dataForm("returns-status-code"),
+                    'label -> "returns http status code",
+                    '_maxlength -> "3",
+                    '_inputClass -> "input--cleared"
+                )
+                <label for="returns-response-body">returns json response</label>
+                <textarea
+                        class="@{if(dataForm("returns-response-body") hasErrors) "error-field form-field--error" else ""}"
+                        rows="20"
+                        style="width: 100%; height: auto"
+                        name="returns-response-body"
+                id=returns-response-body>@dataForm("returns-response-body").value.getOrElse("")</textarea>
+            </p>
+            <p>
+                <h2>Debits</h2>
+                <span class="flush--ends form-field--hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/debits</em>. Read DES API Tracker for more details.</span>
+                @textinput(field = dataForm("debits-status-code"),
+                    'label -> "debits http status code",
+                    '_maxlength -> "3",
+                    '_inputClass -> "input--cleared"
+                )
+                <label for="debits-response-body">debits json response</label>
+                <textarea
+                        class="@{if(dataForm("debits-response-body") hasErrors) "error-field form-field--error" else ""}"
+                        rows="20"
+                        style="width: 100%; height: auto"
+                        name="debits-response-body"
+                id=debits-response-body>@dataForm("debits-response-body").value.getOrElse("")</textarea>
+            </p>
+
+          <p>
+            <h2>Taxpayer definition in SA</h2>
+            <span class="flush--ends form-field--hint">Define response in SA-STUB for <em>GET /sa/individual/:saUtr/designatory-details/taxpayer</em>. Read SA docs for more details.</span>
+            @textinput(field = dataForm("sa-taxpayer-status-code"),
+              'label -> "sa taxpayer http status code",
+              '_maxlength -> "3",
+              '_inputClass -> "input--cleared"
+            )
+            <label for="sa-taxpayer-response-body">Taxpayer definition in SA json response</label>
+            <textarea
+            class="@{if(dataForm("sa-taxpayer-response-body") hasErrors) "error-field form-field--error" else ""}"
+            rows="20"
+            style="width: 100%; height: auto"
+            name="sa-taxpayer-response-body"
+            id=sa-taxpayer-response-body>@dataForm("sa-taxpayer-response-body").value.getOrElse("")</textarea>
+          </p>
+
+            @button('type -> "submit") {
+                create user and log in
+            }
+        </div>
+
+    }
+
+
+}
+

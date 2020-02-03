@@ -1,0 +1,167 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@this(
+  main: views.html.main,
+  viewsHelpers: views.ViewsHelpers
+)
+
+@(
+        playSession: Map[String, String],
+        cache: List[(String, String)],
+        authority: String,
+        hcHeaders: Seq[(String, String)])(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
+<script>
+</script>
+@main(
+    title = "User's related and session data"
+) {
+
+    <header>
+        <h1>Inspector</h1>
+        <p>This is `test-only` endpoint for debug purposes.</p>
+    </header>
+
+    <p>
+        <h2>Quick links</h2>
+        <ul>
+            <li><a class="link" href="@_root_.testonly.routes.InspectorController.clearPlaySession()">clear play session</a></li>
+            <li><a class="link" href="@_root_.testonly.routes.TestUsersController.testUsers()">create user and log in</a></li>
+            <li><a class="link" href="@_root_.testonly.routes.TestOnlyController.config()">show config of 'frontend' microservice</a></li>
+            <li><a class="link" href="@_root_.testonly.routes.TestOnlyController.getTaxpayer()">show taxpayer</a></li>
+        </ul>
+    </p>
+
+    <p>
+        <h2>Pages</h2>
+        <ul>
+
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.start()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.start().path()}</a></li>
+
+            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPaymentSummary()">@{ssttpcalculator.routes.CalculatorController.getPaymentSummary().path()}</a></li>
+            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@{ssttpcalculator.routes.CalculatorController.getPayTodayQuestion().path()}</a></li>
+            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">@{ssttpcalculator.routes.CalculatorController.getPaymentToday().path()}</a></li>
+            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getTaxLiabilities()">@{ssttpcalculator.routes.CalculatorController.getTaxLiabilities().path()}</a></li>
+            <li><a class="link" href="@ssttparrangement.routes.ArrangementController.determineEligibility()>@{ssttparrangement.routes.ArrangementController.determineEligibility().path()}</a></li>
+
+            <li><a class="link" href="@ssttparrangement.routes.ArrangementController.getInstalmentSummary()">@{ssttparrangement.routes.ArrangementController.getInstalmentSummary().path()} </a></li>
+            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebit().path()}</a></li>
+            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation().path()}</a></li>
+            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance().path()}</a></li>
+            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError().path()}</a></li>
+            <li><a class="link" href="@ssttparrangement.routes.ArrangementController.applicationComplete()">@{ssttparrangement.routes.ArrangementController.applicationComplete().path()}</a></li>
+
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)">@{ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).path()}</a></li>
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile().path()}</a></li>
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs().path()}</a></li>
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled().path()}</a></li>
+            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge().path()}</a></li>
+        </ul>
+    </p>
+
+    <p>
+        <h2>Cache from Key Store</h2>
+        <table>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+
+            @cache.map { item =>
+                <tr>
+                    <td style="vertical-align: top">@item._1</td>
+                    <td style="word-break: break-all">
+                        <pre style="border: none">@item._2</pre>
+                    </td>
+                </tr>
+            }
+        </table>
+    </p>
+
+    <p>
+        <h2>Authority</h2>
+        <pre style="border: none; font-size: 15px">@{authority}</pre>
+    </p>
+
+
+    <p>
+        <h2>Play Session (decoded `mdtp` cookie) </h2>
+        <table>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+
+            @playSession.map { item =>
+                <tr>
+                    <td style="vertical-align: top">@item._1</td>
+                    <td style="word-break: break-all">
+                        <code style="border: none">@item._2</code>
+                    </td>
+                </tr>
+            }
+        </table>
+    </p>
+
+
+    <p>
+        <h2>Cookies</h2>
+        <table>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+
+            @request.cookies.toList.map { item =>
+                <tr>
+                    <td style="vertical-align: top">@{
+                        item.name
+                    }</td>
+                    <td style="word-break: break-all">
+                        <code style="border: none">@{
+                            item.value
+                        }</code>
+                    </td>
+                </tr>
+            }
+        </table>
+    </p>
+
+    <p>
+        <h2>Header Carrier content</h2>
+        <table>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+
+            @hcHeaders.map { item =>
+                <tr>
+                    <td style="vertical-align: top">@item._1</td>
+                    <td style="word-break: break-all">
+                        <pre style="border: none">@item._2</pre>
+                    </td>
+                </tr>
+            }
+        </table>
+    </p>
+}
+

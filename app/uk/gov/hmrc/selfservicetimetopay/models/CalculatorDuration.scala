@@ -16,4 +16,11 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-case class CalculatorDuration(chosenMonths: Int)
+import play.api.libs.json.{Format, Json}
+
+final case class CalculatorDuration(chosenMonths: Int)
+
+object CalculatorDuration {
+  implicit val format: Format[CalculatorDuration] = Json.format[CalculatorDuration]
+
+}

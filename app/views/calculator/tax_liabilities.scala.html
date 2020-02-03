@@ -1,0 +1,58 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helpers.forms.submit
+@import timetopaytaxpayer.cor.model.Debit
+@import partials._
+@import java.time.format.DateTimeFormatter
+@import java.util.Locale
+
+@import timetopaytaxpayer.cor.model.Taxpayer
+
+@this(
+  main: views.html.main,
+  viewsHelpers: views.ViewsHelpers
+)
+
+@(
+  debits: Seq[Debit],
+  loggedIn: Boolean = false)(implicit
+  messages: play.api.i18n.Messages,
+  request: Request[_],
+  appConfig: config.AppConfig
+)
+
+@main(
+    title = Messages("ssttp.calculator.self-assessment-account-summary-page.title"),
+    loggedIn = loggedIn
+) {
+    <a class="link-back" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.calculator.self-assessment-account-summary-page.button-back")</a>
+
+        <h1 class="heading-large">@Messages("ssttp.calculator.self-assessment-account-summary-page.title")</h1>
+
+        <h2 class="heading-medium">@Messages("ssttp.calculator.self-assessment-account-summary-page.total-due") @currency(debits.map(_.amount).sum)</h2>
+
+        <details>
+            <summary><span class="summary">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-account-details")</span></summary>
+            @tax_liabilities_summary(debits)
+        </details>
+        <p>
+        @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()) {
+            @submit() {
+                @Messages("ssttp.calculator.self-assessment-account-summary-page.button-continue")
+            }
+        }</p>
+    }
