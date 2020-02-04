@@ -97,8 +97,12 @@ class DirectDebitController @Inject() (
       case Journey(_, _, _, _, _, Some(_), _, _, _, _, _, _) =>
         Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()))
       case submission @ Journey(_, _, _, Some(schedule), Some(_), _, _, _, _, _, _, _) =>
-        Future.successful(Ok(views.direct_debit_confirmation(submission.taxpayer.selfAssessment.debits,
-                                                             schedule, submission.arrangementDirectDebit.get, isSignedIn)))
+        Future.successful(Ok(views.direct_debit_confirmation(
+          debits      = submission.taxpayer.selfAssessment.debits,
+          schedule    = schedule,
+          directDebit = submission.arrangementDirectDebit.get,
+          loggedIn    = isSignedIn
+        )))
       case maybeSubmission =>
         Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
         JourneyLogger.info("DirectDebitController.getDirectDebitConfirmation - redirect on error", maybeSubmission)

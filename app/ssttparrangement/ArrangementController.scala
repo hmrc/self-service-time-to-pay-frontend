@@ -119,7 +119,7 @@ class ArrangementController @Inject() (
 
   def submitInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.submitInstalmentSummary: $request")
-    journeyService.authorizedForSsttp(_ => Future.successful(Redirect(ssttparrangement.routes.ArrangementController.getDeclaration())))
+    journeyService.authorizedForSsttp(_ => Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())))
   }
 
   def getChangeSchedulePaymentDay: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
@@ -238,7 +238,7 @@ class ArrangementController @Inject() (
           ddref         = submission.ddRef
         ))
 
-        Future.successful(result)
+        Future.successful(result.clearSsttpSession())
     }
   }
 
@@ -249,22 +249,22 @@ class ArrangementController @Inject() (
    * As the arrangement details are persisted in a database, the user is directed to the application
    * complete page if we get an error response from DES passed back by the arrangement service.
    */
-  private def arrangementSetUp(submission: Journey)(implicit request: Request[_]): Future[Result] = {
+  private def arrangementSetUp(journey: Journey)(implicit request: Request[_]): Future[Result] = {
     JourneyLogger.info("ArrangementController.arrangementSetUp: (create a DD and make an Arrangement)")
-    submission.maybeTaxpayer match {
+    journey.maybeTaxpayer match {
       case Some(Taxpayer(_, _, SelfAssessmentDetails(utr, _, _, _))) =>
-        ddConnector.createPaymentPlan(checkExistingBankDetails(submission), utr).flatMap[Result] {
+        ddConnector.createPaymentPlan(checkExistingBankDetails(journey), utr).flatMap[Result] {
           _.fold(_ => {
             JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup failed, redirecting to error page")
             Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError())
           },
             success => {
               JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup succeeded, now creating arrangement")
-              val arrangement = createArrangement(success, submission)
+              val arrangement = createArrangement(success, journey)
               val result = for {
                 submissionResult <- arrangementConnector.submitArrangements(arrangement)
-                _ = auditService.sendSubmissionEvent(submission)
-                _ = journeyService.saveJourney(submission.copy(ddRef = Some(arrangement.directDebitReference)))
+                _ = auditService.sendSubmissionEvent(journey)
+                _ = journeyService.saveJourney(journey.copy(ddRef = Some(arrangement.directDebitReference)))
               } yield submissionResult
 
               result.flatMap {
