@@ -19,10 +19,33 @@ package language
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import play.api.i18n.Messages
+import req.RequestSupport
+
 object Dates {
 
   val `format d MMMM y` = DateTimeFormatter.ofPattern("d MMMM y")
 
   def formatDate(date: LocalDate): String = `format d MMMM y`.format(date)
 
+  def getMonthlyDateFormatted(localDate: LocalDate)(implicit messages: Messages): String = RequestSupport.language(messages) match {
+    //TODO: Welsh
+    case _ =>
+      val date = localDate.getDayOfMonth.toString
+      val postfix = {
+        if (date == "11" || date == "12" || date == "13") "th"
+        else if (date.endsWith("1")) "st"
+        else if (date.endsWith("2")) "nd"
+        else if (date.endsWith("3")) "rd"
+        else "th"
+      }
+      s"$date$postfix"
+  }
+
+  def wholeDate(localDate: LocalDate)(implicit messages: Messages): String = {
+    val day = getMonthlyDateFormatted(localDate)
+    val month = localDate.getMonth.toString.toLowerCase.capitalize
+    val year = localDate.getYear
+    s"$day $month $year"
+  }
 }

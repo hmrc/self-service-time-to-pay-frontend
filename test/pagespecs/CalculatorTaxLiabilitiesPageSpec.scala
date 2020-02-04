@@ -20,7 +20,7 @@ import langswitch.Languages
 import testsupport.ItSpec
 import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxpayerStub}
 
-class TaxLiabilitiesPageSpec extends ItSpec {
+class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
 
   def beginJourney() = {
     AuthStub.authorise()

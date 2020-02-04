@@ -49,7 +49,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish = """Set up a payment plan"""
+      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
 
       private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
@@ -62,14 +62,12 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
       }
 
       private val mainTextEnglish =
-        """Set up a payment plan
-          |A payment plan allows you to pay the tax you owe in instalments. The plan covers the amounts you need to pay now.
+        """Set up a Self Assessment payment plan
+          |A payment plan allows you to pay your tax charges over a number of months. The plan covers the amounts you need to pay now and your next payment amount.
           |
-          |We intend this as a one-off payment plan to give you extra support. You must keep up to date with your payments. If you do not, HMRC may ask you to pay the entire outstanding amount.
+          |HMRC intend this as a one-off payment plan to give you extra support. You must keep up to date with your payments. If you do not, HMRC may ask you to pay the entire outstanding amount.
           |
           |Before you start
-          |This payment plan is for Self Assessment tax only.
-          |
           |To be eligible to set up an online payment plan you need to:
           |
           |owe £10,000 or less
@@ -86,8 +84,6 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
           |
           |Cyn i chi ddechrau
           |Mae’r cynllun talu hwn ar gyfer treth Hunanasesiad yn unig.
-          |
-          |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid bod y canlynol yn wir:
           |
           |mae arnoch £10,000 neu lai
           |nid oes gennych unrhyw ddyledion treth eraill

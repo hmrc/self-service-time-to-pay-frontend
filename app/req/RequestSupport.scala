@@ -33,10 +33,11 @@ class RequestSupport @Inject() (override val messagesApi: MessagesApi) extends I
 
   implicit def hc[A](implicit request: Request[A]): HeaderCarrier = RequestSupport.hc
   def lang(implicit messages: Messages): Lang = messages.lang
-  def language(implicit messages: Messages): Language = Language()(messages)
 }
 
 object RequestSupport {
+
+  implicit def language(implicit messages: Messages): Language = Language()(messages)
 
   implicit def hc[A](implicit request: Request[A]): HeaderCarrier = HcProvider.headerCarrier
 

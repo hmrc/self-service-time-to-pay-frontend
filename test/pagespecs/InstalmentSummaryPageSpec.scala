@@ -22,60 +22,60 @@ import testsupport.stubs._
 
 class InstalmentSummaryPageSpec extends ItSpec {
 
-  def beginJourney() =
-    {
-      AuthStub.authorise()
-      TaxpayerStub.getTaxpayer()
-      EligibilityStub.eligible()
-      GgStub.signInPage(port)
-      startPage.open()
-      startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton()
-      paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue()
-      monthlyPaymentAmountPage.enterAmout("2450")
-      CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue()
-      calculatorInstalmentsPage.selectAnOption()
-      calculatorInstalmentsPage.clickContinue()
-      instalmentSummarySelectDatePage.selectFirstOption()
-      instalmentSummarySelectDatePage.clickContinue()
-    }
+  def beginJourney() = {
+    AuthStub.authorise()
+    TaxpayerStub.getTaxpayer()
+    EligibilityStub.eligible()
+    GgStub.signInPage(port)
+    startPage.open()
+    startPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton()
+    paymentTodayQuestionPage.selectRadioButton(false)
+    paymentTodayQuestionPage.clickContinue()
+    monthlyPaymentAmountPage.enterAmout("2450")
+    CalculatorStub.generateSchedule
+    monthlyPaymentAmountPage.clickContinue()
+    calculatorInstalmentsPage.selectAnOption()
+    calculatorInstalmentsPage.clickContinue()
+    instalmentSummarySelectDatePage.selectFirstOption()
+    instalmentSummarySelectDatePage.clickContinue()
+  }
 
-  "language" in
-    {
-      beginJourney()
+  "language" in {
+    beginJourney()
 
-      instalmentSummaryPage.assertPageIsDisplayed
+    instalmentSummaryPage.assertPageIsDisplayed
 
-      instalmentSummaryPage.clickOnWelshLink()
-      instalmentSummaryPage.assertPageIsDisplayed(Welsh)
+    instalmentSummaryPage.clickOnWelshLink()
+    instalmentSummaryPage.assertPageIsDisplayed(Welsh)
 
-      instalmentSummaryPage.clickOnEnglishLink()
+    instalmentSummaryPage.clickOnEnglishLink()
 
-      instalmentSummaryPage.assertPageIsDisplayed(English)
+    instalmentSummaryPage.assertPageIsDisplayed(English)
+  }
 
-    }
+  "change monthly instalments" in {
+    beginJourney()
+    instalmentSummaryPage.clickInstalmentsChange()
+    calculatorInstalmentsPage.assertPageIsDisplayed
+  }
 
-  "change monthly instalments" in
-    {
-      beginJourney()
-      instalmentSummaryPage.clickInstalmentsChange
-      calculatorInstalmentsPage.assertPageIsDisplayed
-    }
+  "change collection day" in {
+    beginJourney()
+    instalmentSummaryPage.clickCollectionDayChange()
+    instalmentSummarySelectDatePage.assertPageIsDisplayed
+  }
 
-  "change collection day" in
-    {
-      beginJourney()
-      instalmentSummaryPage.clickCollectionDayChange
-      instalmentSummarySelectDatePage.assertPageIsDisplayed
-    }
+  "change upfront payment" in {
+    beginJourney()
+    instalmentSummaryPage.clickUpfrontPaymentChange()
+    paymentTodayQuestionPage.assertPageIsDisplayed
+  }
 
-  "continue to the next page" in
-    {
-      beginJourney()
-      instalmentSummaryPage.clickContinue()
-      termsAndConditionsPage.assertPageIsDisplayed
-    }
+  "continue to the next page" in {
+    beginJourney()
+    instalmentSummaryPage.clickContinue()
+    termsAndConditionsPage.assertPageIsDisplayed
+  }
 
 }

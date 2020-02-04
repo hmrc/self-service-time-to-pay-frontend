@@ -23,7 +23,7 @@ import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
 
@@ -49,7 +49,7 @@ class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish = """Set up a payment plan"""
+      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
 
       private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
@@ -63,30 +63,30 @@ class TaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
 
       private val mainTextEnglish =
         """Back
-          |Your Self Assessment account summary
-          |Total due £4,900.00
-          |Self Assessment breakdown
-          |For the tax year ending 5 April 2020
-          |First payment on account
-          |Your payment is due on 25 November 2019
+          |Your Self Assessment tax bill is £4,900.00
+          |Self Assessment statement
+          |Due 25th November 2019
+          |First payment on account for tax year 2018 to 2019
+          |
           |£2,500.00
-          |Second payment on account
-          |Your payment is due on 25 November 2019
+          |Due 25th November 2019
+          |Second payment on account for tax year 2018 to 2019
+          |
           |£2,400.00
           |Continue
         """.stripMargin
 
       private val mainTextWelsh =
         """Yn ôl
-          |Crynodeb o’ch cyfrif Hunanasesiad
-          |Cyfanswm sy’n ddyledus £4,900.00
+          |Crynodeb o’ch cyfrif Hunanasesiad £4,900.00
           |Dadansoddiad Hunanasesiad
-          |Ar gyfer y flwyddyn dreth a ddaeth i ben 5 April 2020
-          |Taliad cyntaf ar gyfrif
-          |Mae’ch taliad yn ddyledus ar 25 November 2019
+          |Due 25th November 2019
+          |Taliad cyntaf ar gyfrif for tax year 2018 to 2019
+          |
           |£2,500.00
-          |Ail daliad ar gyfrif
-          |Mae’ch taliad yn ddyledus ar 25 November 2019
+          |Due 25th November 2019
+          |Ail daliad ar gyfrif for tax year 2018 to 2019
+          |
           |£2,400.00
           |Yn eich blaen
         """.stripMargin
