@@ -297,7 +297,6 @@ ssttp.arrangement.complete.ddref = Cyfeirnod mandad Debyd Uniongyrchol:
 ssttp.arrangement.complete.print-label = Argraffu crynodeb o’ch taliadau
 ssttp.arrangement.complete.next = Beth sy’n digwydd nesaf?
 ssttp.arrangement.complete.summary = Byddwn yn anfon llythyr atoch cyn pen 5 diwrnod i gadarnhau’ch dyddiadau talu.
-ssttp.arrangement.complete.first-payment = Cesglir y taliad cyntaf ar:
 ssttp.arrangement.complete.feedback = Beth oedd eich barn am y gwasanaeth hwn?
 ssttp.arrangement.complete.help.h2 = Os oes angen i chi newid eich cynllun talu
 ssttp.arrangement.complete.help.p1 = Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.

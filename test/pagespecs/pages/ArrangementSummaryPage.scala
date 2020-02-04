@@ -44,7 +44,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish = """Set up a payment plan"""
+      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
 
       private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
@@ -61,8 +61,8 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |123ABC123
           |Print your payment summary
           |What happens next?
-          |We will send you a letter within 5 days to confirm your payment dates.
-          |First payment collected on: 25 August 2019
+          |HMRC will send you a letter within 5 days with your payment dates.
+          |Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on 25th August 2019.
           |If you need to change your payment plan
           |Call the HMRC Helpline on 0300 322 7015.
           |What did you think of this service? (takes 30 seconds)
@@ -75,7 +75,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Argraffu crynodeb o’ch taliadau
           |Beth sy’n digwydd nesaf?
           |Byddwn yn anfon llythyr atoch cyn pen 5 diwrnod i gadarnhau’ch dyddiadau talu.
-          |Cesglir y taliad cyntaf ar: 25 August 2019
+          |Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on 25th August 2019.
           |Os oes angen i chi newid eich cynllun talu
           |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.
           |Beth oedd eich barn am y gwasanaeth hwn? (mae’n cymryd 30 eiliad)

@@ -83,12 +83,7 @@
     <br>
     <h2>@Messages("ssttp.arrangement.complete.next")</h2>
     <p>@Messages("ssttp.arrangement.complete.summary")</p>
-    <p>@Messages("ssttp.arrangement.complete.first-payment")
-      @language.Dates.formatDate(schedule.initialPaymentScheduleDate)
-    </p>
     <p>@Messages("ssttp.arrangement.complete.first-payment", language.Dates.wholeDate(schedule.initialPaymentScheduleDate))</p>
-
-
 
     <h2>@Messages("ssttp.arrangement.complete.help.h2")</h2>
     <p>@Messages("ssttp.arrangement.complete.help.p1")</p>

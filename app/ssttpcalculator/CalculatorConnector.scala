@@ -17,6 +17,7 @@
 package ssttpcalculator
 
 import com.google.inject._
+import play.api.libs.json.Json
 import play.api.mvc.Request
 import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -44,7 +45,7 @@ class CalculatorConnector @Inject() (servicesConfig: ServicesConfig, httpClient:
       )
       .recover{
         case e =>
-          JourneyLogger.info(s"CalculatorConnector.calculatePaymentSchedule: ERROR, $e")
+          JourneyLogger.info(s"CalculatorConnector.calculatePaymentSchedule: ERROR, $e, input was:\n${Json.toJson(calcInput)}")
           throw e
       }
   }

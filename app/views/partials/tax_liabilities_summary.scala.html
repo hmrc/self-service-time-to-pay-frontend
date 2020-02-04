@@ -26,7 +26,7 @@
         <div class="tabular-data__entry border-bottom">
           <span class="tabular-data__heading tabular-data__heading--label">
             <h4 class="heading-small">@(Messages("ssttp.calculator.self-assessment-account-summary-page.due")) @{language.Dates.wholeDate(debit.dueDate)}</h4>
-            <p>@charge_code(debit.originCode, debit.taxYearEnd) @Messages("ssttp.calculator.self-assessment-account-summary-page.for-tax-year", debit.dueByYear(1), debit.dueByYear()) </p>
+            <p>@charge_code(debit.originCode, debit.taxYearEnd) @Messages("ssttp.calculator.self-assessment-account-summary-page.for-tax-year", debit.dueByYear(1).toString, debit.dueByYear().toString) </p>
           </span>
           <div class="tabular-data__data-1"><span class="normal-text">@partials.currency(debit.amount)</span></div>
         </div>

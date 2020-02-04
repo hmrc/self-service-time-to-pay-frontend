@@ -53,7 +53,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish = """Set up a payment plan"""
+      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
 
       private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
@@ -68,28 +68,38 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
         """Back
           |Terms and conditions
           |We can cancel this agreement if you:
+          |
           |pay late or miss a payment
           |pay another tax bill late
           |do not submit your future tax returns on time
           |If we cancel this agreement, you will need to pay the total amount you owe straight away.
-          |We can use any refunds you might get to pay off this debt.
+          |
+          |We can use any refunds you might get to pay off your tax charges.
+          |
           |If your circumstances change and you can pay more or you can pay in full, you need to let us know.
+          |
           |Declaration
-          |I agree to the terms and conditions of this payment plan. I confirm that this is the earliest I am able to settle this debt.
+          |I confirm this is the earliest I am able to settle this debt and agree to the terms and conditions.
+          |
           |Confirm and continue
         """.stripMargin
       private val mainTextWelsh =
         """Yn ôl
           |Telerau ac amodau
           |Gallwn ganslo’r cytundeb hwn os:
+          |
           |ydych yn talu’n hwyr neu’n methu taliad
           |ydych yn talu bil treth arall yn hwyr
           |nad ydych yn cyflwyno’ch Ffurflenni Treth yn y dyfodol mewn pryd
           |Os byddwn yn canslo’r cytundeb hwn, bydd yn rhaid i chi dalu’r cyfanswm sydd arnoch ar unwaith.
+          |
           |Gallwn ddefnyddio unrhyw ad-daliadau y gallech eu cael i dalu’r ddyled hon yn ôl.
+          |
           |Os bydd eich amgylchiadau’n newid, a gallwch dalu mwy neu gallwch dalu’n llawn, mae’n rhaid i chi roi gwybod i ni.
+          |
           |Datganiad
           |Cytunaf â thelerau ac amodau’r cynllun talu hwn. Cadarnhaf mai dyma’r cynharaf y gallaf setlo’r ddyled hon.
+          |
           |Cadarnhau ac yn eich blaen
         """.stripMargin
     }

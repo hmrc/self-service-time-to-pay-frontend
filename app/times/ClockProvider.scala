@@ -30,8 +30,8 @@ class ClockProvider {
     request.readFrozenClock.getOrElse(defaultClock)
   }
 
-  def now()(implicit request: Request[_]): LocalDateTime = LocalDateTime.now()
-  def nowDate()(implicit request: Request[_]): LocalDate = LocalDate.now()
+  def now()(implicit request: Request[_]): LocalDateTime = LocalDateTime.now(getClock)
+  def nowDate()(implicit request: Request[_]): LocalDate = LocalDate.now(getClock)
 
   protected val defaultClock: Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
 

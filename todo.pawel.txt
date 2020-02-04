@@ -27,3 +27,40 @@ have no other tax debts
 have no other HMRC payment plans set up
 
 remove messagesApi from messages_list, why messages use default language ????: 'messagesApi.messages("default")'
+
+
+2019-11-25
+{
+  "returns" : [ {
+    "taxYearEnd" : "2020-04-05",
+    "dueDate" : "2019-08-15",
+    "issueDate" : "2019-11-10"
+  }, {
+    "taxYearEnd" : "2018-04-05",
+    "dueDate" : "2018-01-31",
+    "issueDate" : "2017-02-15",
+    "receivedDate" : "2018-03-09"
+  } ]
+}
+{
+  "debits" : [ {
+    "taxYearEnd" : "2020-04-05",
+    "charge" : {
+      "originCode" : "IN1",
+      "creationDate" : "2019-11-25"
+    },
+    "relevantDueDate" : "2019-11-25",
+    "totalOutstanding" : 2500
+  }, {
+    "taxYearEnd" : "2020-04-05",
+    "charge" : {
+      "originCode" : "IN2",
+      "creationDate" : "2019-01-05"
+    },
+    "relevantDueDate" : "2019-11-25",
+    "totalOutstanding" : 2400
+  } ]
+}
+
+
+
