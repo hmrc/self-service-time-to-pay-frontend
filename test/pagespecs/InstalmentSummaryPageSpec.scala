@@ -75,7 +75,7 @@ class InstalmentSummaryPageSpec extends ItSpec {
   "continue to the next page" in {
     beginJourney()
     instalmentSummaryPage.clickContinue()
-    termsAndConditionsPage.assertPageIsDisplayed
+    directDebitPage.assertPageIsDisplayed
   }
 
 }

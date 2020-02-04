@@ -19,6 +19,7 @@ package pagespecs
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs._
+import testsupport.testdata.DirectDebitTd
 
 class TermsAndConditionsPageSpec extends ItSpec {
 
@@ -41,7 +42,12 @@ class TermsAndConditionsPageSpec extends ItSpec {
       instalmentSummarySelectDatePage.selectFirstOption()
       instalmentSummarySelectDatePage.clickContinue()
       instalmentSummaryPage.clickContinue()
-
+      directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+      DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+      DirectDebitStub.getBanks
+      directDebitPage.clickContinue()
+      directDebitConfirmationPage.assertPageIsDisplayed
+      directDebitConfirmationPage.clickContinue()
     }
 
   "language" in
@@ -59,8 +65,10 @@ class TermsAndConditionsPageSpec extends ItSpec {
   "click continue" in
     {
       beginJourney()
+      DirectDebitStub.postPaymentPlan
+      ArrangementStub.postTtpArrangement
       termsAndConditionsPage.clickContinue()
-      directDebitPage.assertPageIsDisplayed
+      arrangementSummaryPage.assertPageIsDisplayed
 
     }
 }

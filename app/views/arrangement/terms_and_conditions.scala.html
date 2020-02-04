@@ -51,7 +51,7 @@
     <p>@Messages("ssttp.arrangement.declaration.agreement.p1")</p>
 
     @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submit(), 'class -> "group") {
-      @submit() {
+      @submit('id -> "continue_button") {
         @Messages("ssttp.arrangement.declaration.agreement.confirm")
       }
     }

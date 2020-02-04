@@ -48,8 +48,6 @@ object ErrorHandler {
   import req.RequestSupport._
 
   def technicalDifficulties(journey: Journey)(implicit request: Request[_]): Result = {
-    //Instead of silently redirecting users to start page on erronous situation now we throw exception
-    //so it is visible that application doesn't work!
     JourneyLogger.info(s"${this.getClass.getSimpleName}: redirecting on error", journey)
     throw new RuntimeException("Something went wrong. Inspect stack trace and fix bad code")
   }

@@ -43,7 +43,6 @@ class DirectDebitPageSpec extends ItSpec {
       instalmentSummarySelectDatePage.selectFirstOption()
       instalmentSummarySelectDatePage.clickContinue()
       instalmentSummaryPage.clickContinue()
-      termsAndConditionsPage.clickContinue()
     }
 
   "language" in {

@@ -40,7 +40,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
 
   def clickContinue() =
     {
-      val button = xpath("//*[@id=\"content\"]/article/a[2]")
+      val button = id("continue_button")
       click on button
     }
 
