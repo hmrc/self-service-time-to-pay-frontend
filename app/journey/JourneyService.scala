@@ -18,7 +18,7 @@ package journey
 
 import controllers.ErrorHandler
 import javax.inject.Inject
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{Request, Result, Results}
 import req.RequestSupport
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.EligibilityStatus
@@ -55,12 +55,17 @@ class JourneyService @Inject() (
     for {
       journey <- getJourney()
       result <- journey match {
-        case submission @ Journey(_, _, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _) =>
+        case submission @ Journey(_, Statuses.InProgress, _, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _) =>
           JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", submission)
           block(submission)
-        case maybeSubmission =>
-          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp.authorizedForSsttp: redirect On Error", maybeSubmission)
-          Future.successful(ErrorHandler.redirectToStartPage)
+
+        case journey @ Journey(_, Statuses.FinishedApplicationSuccessful, _, _, _, _, _, _, _, _, _, _, _) =>
+          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", journey)
+          Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
+
+        case journey =>
+          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp.authorizedForSsttp: redirect On Error", journey)
+          Future.successful(ErrorHandler.technicalDifficulties(journey))
       }
     } yield result
   }

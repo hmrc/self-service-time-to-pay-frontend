@@ -78,11 +78,8 @@
                     <p class="font-xsmall">@Messages("ssttp.direct-debit.guarantee.list.5")</p>
             </div>
         </details>
-        @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submit(), 'class -> "group") {
-            @submit() {
-                @Messages("ssttp.arrangement.direct-debit.confirmation.confirm-payment")
-            }
-        }
+
+      <a id="continue_button" class="button" href="@ssttparrangement.routes.ArrangementController.getTermsAndConditions()">@Messages("ssttp.arrangement.direct-debit.form.submit")</a>
 
     </section>
 }

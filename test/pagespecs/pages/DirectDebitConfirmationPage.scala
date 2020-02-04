@@ -44,7 +44,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
   }
 
   def clickContinue() = {
-    val button = xpath("/html/body/main/div[2]/article/section/form/div/button")
+    val button = id("continue_button")
     click on button
   }
 

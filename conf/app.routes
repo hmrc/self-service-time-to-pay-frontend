@@ -36,7 +36,7 @@ POST        /calculator/instalments                                       ssttpc
 
 # Arrangement
 POST        /arrangement                                                  ssttparrangement.ArrangementController.start()
-GET         /arrangement/terms-and-conditions                             ssttparrangement.ArrangementController.getDeclaration()
+GET         /arrangement/terms-and-conditions                             ssttparrangement.ArrangementController.getTermsAndConditions()
 GET         /arrangement/instalment-summary                               ssttparrangement.ArrangementController.getInstalmentSummary()
 POST        /arrangement/instalment-summary                               ssttparrangement.ArrangementController.submitInstalmentSummary()
 GET         /arrangement/instalment-summary/select-date                   ssttparrangement.ArrangementController.getChangeSchedulePaymentDay()

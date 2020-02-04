@@ -41,11 +41,11 @@ class ArrangementSummaryPageSpec extends ItSpec {
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()
     instalmentSummaryPage.clickContinue()
-    termsAndConditionsPage.clickContinue()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBanks
     directDebitPage.clickContinue()
+    termsAndConditionsPage.clickContinue()
     DirectDebitStub.postPaymentPlan
     ArrangementStub.postTtpArrangement
   }

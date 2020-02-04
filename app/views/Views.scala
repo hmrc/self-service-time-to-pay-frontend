@@ -34,7 +34,7 @@ class Views @Inject() (
     val instalment_plan_summary:   views.html.arrangement.instalment_plan_summary,
     val direct_debit_form:         views.html.arrangement.direct_debit_form,
     val direct_debit_unauthorised: views.html.arrangement.direct_debit_unauthorised,
-    val declaration:               views.html.arrangement.declaration,
+    val terms_and_conditions:      views.html.arrangement.terms_and_conditions,
     val inspector:                 views.html.testonly.inspector,
     val not_enrolled:              views.html.core.not_enrolled,
     val debt_too_large:            views.html.core.debt_too_large,

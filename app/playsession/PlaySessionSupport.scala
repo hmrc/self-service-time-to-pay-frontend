@@ -23,8 +23,8 @@ import play.api.libs.json.Format
 import play.api.mvc.{Request, RequestHeader, Result}
 
 object PlaySessionSupport {
-  private val journeyIdKey = "journeyId"
-  private val frozenDateTimeKey: String = "frozenDateTime"
+  private val journeyIdKey = "ssttp.journeyId"
+  private val frozenDateTimeKey: String = "ssttp.frozenDateTime"
 
   implicit class ResultOps(result: Result)(implicit request: RequestHeader) {
 

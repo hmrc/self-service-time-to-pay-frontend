@@ -42,11 +42,12 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
       instalmentSummarySelectDatePage.selectFirstOption()
       instalmentSummarySelectDatePage.clickContinue()
       instalmentSummaryPage.clickContinue()
-      termsAndConditionsPage.clickContinue()
       directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
       DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
       DirectDebitStub.getBanks
       directDebitPage.clickContinue()
+      directDebitConfirmationPage.assertPageIsDisplayed
+
     }
 
   "language" in
@@ -74,7 +75,7 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
       DirectDebitStub.postPaymentPlan
       ArrangementStub.postTtpArrangement
       directDebitConfirmationPage.clickContinue()
-      arrangementSummaryPage.assertPageIsDisplayed
+      termsAndConditionsPage.assertPageIsDisplayed
     }
 
 }

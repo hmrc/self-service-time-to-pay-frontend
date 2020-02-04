@@ -24,7 +24,7 @@ import play.api.Logger
 import play.api.mvc._
 import req.RequestSupport
 import ssttpdirectdebit.DirectDebitForm._
-import journey.{Journey, JourneyService}
+import journey.{Journey, JourneyService, Statuses}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
@@ -60,11 +60,11 @@ class DirectDebitController @Inject() (
     JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")
 
     submissionService.authorizedForSsttp {
-      case submission @ Journey(_, _, _, Some(schedule), _, _, Some(taxpayer), calcData, _, _, _, _) =>
-        Future.successful(Ok(views.direct_debit_form(submission.taxpayer.selfAssessment.debits, schedule, directDebitForm, isSignedIn)))
-      case maybeSubmission =>
-        JourneyLogger.info("DirectDebitController.getDirectDebit: pattern match redirect on error", maybeSubmission)
-        Future.successful(redirectOnError)
+      case journey @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(taxpayer), calcData, _, _, _, _) =>
+        Future.successful(Ok(views.direct_debit_form(journey.taxpayer.selfAssessment.debits, schedule, directDebitForm, isSignedIn)))
+      case journey =>
+        JourneyLogger.info("DirectDebitController.getDirectDebit: pattern match redirect on error", journey)
+        Future.successful(technicalDifficulties(journey))
     }
   }
 
@@ -72,21 +72,21 @@ class DirectDebitController @Inject() (
     JourneyLogger.info(s"DirectDebitController.getDirectDebitAssistance: $request")
 
     submissionService.authorizedForSsttp {
-      case Journey(_, _, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
+      case Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
-      case maybeSubmission =>
-        JourneyLogger.info("DirectDebitController.getDirectDebitAssistance: pattern match redirect on error", maybeSubmission)
-        Future.successful(redirectOnError)
+      case journey =>
+        JourneyLogger.info("DirectDebitController.getDirectDebitAssistance: pattern match redirect on error", journey)
+        Future.successful(technicalDifficulties(journey))
     }
   }
 
   def getDirectDebitError: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
-      case Journey(_, _, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
+      case Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
         Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
-      case maybeSubmission =>
-        JourneyLogger.info("DirectDebitController.getDirectDebitError - redirect on error", maybeSubmission)
-        Future.successful(redirectOnError)
+      case journey =>
+        JourneyLogger.info("DirectDebitController.getDirectDebitError - redirect on error", journey)
+        Future.successful(technicalDifficulties(journey))
     }
   }
 
@@ -94,15 +94,19 @@ class DirectDebitController @Inject() (
     JourneyLogger.info(s"DirectDebitController.getDirectDebitConfirmation: $request")
 
     submissionService.authorizedForSsttp {
-      case Journey(_, _, _, _, _, Some(_), _, _, _, _, _, _) =>
+      case Journey(_, Statuses.InProgress, _, _, _, _, Some(_), _, _, _, _, _, _) =>
         Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()))
-      case submission @ Journey(_, _, _, Some(schedule), Some(_), _, _, _, _, _, _, _) =>
-        Future.successful(Ok(views.direct_debit_confirmation(submission.taxpayer.selfAssessment.debits,
-                                                             schedule, submission.arrangementDirectDebit.get, isSignedIn)))
-      case maybeSubmission =>
+      case submission @ Journey(_, Statuses.InProgress, _, _, Some(schedule), Some(_), _, _, _, _, _, _, _) =>
+        Future.successful(Ok(views.direct_debit_confirmation(
+          debits      = submission.taxpayer.selfAssessment.debits,
+          schedule    = schedule,
+          directDebit = submission.arrangementDirectDebit.get,
+          loggedIn    = isSignedIn
+        )))
+      case journey =>
         Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
-        JourneyLogger.info("DirectDebitController.getDirectDebitConfirmation - redirect on error", maybeSubmission)
-        Future.successful(redirectOnError)
+        JourneyLogger.info("DirectDebitController.getDirectDebitConfirmation - redirect on error", journey)
+        Future.successful(technicalDifficulties(journey))
     }
   }
 
