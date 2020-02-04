@@ -35,10 +35,6 @@ object PlaySessionSupport {
         .map(frozenDateTime => result.addingToSession(frozenDateTimeKey -> frozenDateTime.toString))
         .getOrElse(result)
     }
-
-    def clearSsttpSession(): Result = {
-      result.removingFromSession(journeyIdKey, frozenDateTimeKey)
-    }
   }
 
   implicit class RequestOps(request: Request[_]) {

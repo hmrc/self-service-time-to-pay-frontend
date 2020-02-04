@@ -21,10 +21,10 @@ import java.time.{Clock, LocalDate, LocalDateTime, ZonedDateTime}
 
 import audit.AuditService
 import config.AppConfig
-import controllers.FrontendBaseController
+import controllers.{ErrorHandler, FrontendBaseController}
 import controllers.action.{Actions, AuthorisedSaUserRequest}
 import javax.inject._
-import journey.{Journey, JourneyService}
+import journey.{Journey, JourneyService, Statuses}
 import model.asTaxpayersSaUtr
 import play.api.Logger
 import play.api.mvc._
@@ -76,7 +76,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.start: $request")
 
     journeyService.getJourney.flatMap {
-      case journey @ Journey(_, _, _, _, _, _, Some(taxpayer), _, _, _, _, _) =>
+      case journey @ Journey(_, Statuses.InProgress, _, _, _, _, _, Some(taxpayer), _, _, _, _, _) =>
         eligibilityCheck(journey, request.utr)
     }
   }
@@ -107,7 +107,7 @@ class ArrangementController @Inject() (
   def getInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.getInstalmentSummary: $request")
     journeyService.authorizedForSsttp {
-      case journey @ Journey(_, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, intialPayment, _, _, _)), _, _, _, _) =>
+      case journey @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, intialPayment, _, _, _)), _, _, _, _) =>
         Future.successful(Ok(views.instalment_plan_summary(
           journey.taxpayer.selfAssessment.debits,
           intialPayment,
@@ -127,9 +127,9 @@ class ArrangementController @Inject() (
     journeyService.authorizedForSsttp(ttp => Future.successful(Ok(views.change_day(createDayOfForm(ttp)))))
   }
 
-  def getDeclaration: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def getTermsAndConditions: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.getDeclaration: $request")
-    journeyService.authorizedForSsttp(ttp => Future.successful(Ok(views.declaration())))
+    journeyService.authorizedForSsttp(ttp => Future.successful(Ok(views.terms_and_conditions())))
   }
 
   def submitChangeSchedulePaymentDay(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
@@ -142,7 +142,7 @@ class ArrangementController @Inject() (
           },
           validFormData => {
             submission match {
-              case ttp @ Journey(_, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _) =>
+              case ttp @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _) =>
                 JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
                 changeScheduleDay(submission, schedule.schedule, debits, validFormData.dayOfMonth).flatMap {
                   ttpSubmission =>
@@ -227,18 +227,21 @@ class ArrangementController @Inject() (
   def applicationComplete(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.applicationComplete: $request")
 
-    journeyService.authorizedForSsttp {
-      submission =>
+    for {
+      journey <- journeyService.getJourney()
+    } yield {
 
-        val result = Ok(views.application_complete(
-          debits        = submission.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
-          transactionId = submission.taxpayer.selfAssessment.utr + LocalDateTime.now(clockProvider.getClock).toString,
-          directDebit   = submission.arrangementDirectDebit.get,
-          schedule      = submission.schedule.get.schedule,
-          ddref         = submission.ddRef
+      if (journey.status == Statuses.FinishedApplicationSuccessful) {
+        Ok(views.application_complete(
+          debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
+          transactionId = journey.taxpayer.selfAssessment.utr + LocalDateTime.now(clockProvider.getClock).toString,
+          directDebit   = journey.arrangementDirectDebit.get,
+          schedule      = journey.schedule.get.schedule,
+          ddref         = journey.ddRef
         ))
-
-        Future.successful(result.clearSsttpSession())
+      } else {
+        ErrorHandler.technicalDifficulties(journey)
+      }
     }
   }
 
@@ -264,7 +267,12 @@ class ArrangementController @Inject() (
               val result = for {
                 submissionResult <- arrangementConnector.submitArrangements(arrangement)
                 _ = auditService.sendSubmissionEvent(journey)
-                _ = journeyService.saveJourney(journey.copy(ddRef = Some(arrangement.directDebitReference)))
+                newJourney = journey
+                  .copy(
+                    ddRef  = Some(arrangement.directDebitReference),
+                    status = Statuses.FinishedApplicationSuccessful
+                  )
+                _ = journeyService.saveJourney(newJourney)
               } yield submissionResult
 
               result.flatMap {

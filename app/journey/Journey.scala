@@ -18,14 +18,37 @@ package journey
 
 import java.time.{Clock, LocalDate, LocalDateTime}
 
-import play.api.libs.json.{Json, OFormat}
+import controllers.ValueClassBinder.valueClassBinder
+import enumeratum.{Enum, EnumEntry}
+import enumformat.EnumFormat
+import langswitch.Languages.findValues
+import play.api.i18n.{Lang, Messages}
+import play.api.libs.json.{Format, Json, OFormat}
+import play.api.mvc.PathBindable
 import ssttpcalculator.CalculatorPaymentScheduleExt
 import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
 import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.models._
 
+import scala.collection.immutable
+
+sealed trait Status extends EnumEntry
+
+object Status {
+  implicit val format: Format[Status] = EnumFormat(Statuses)
+}
+
+object Statuses extends Enum[Status] {
+
+  case object InProgress extends Status
+  case object FinishedApplicationSuccessful extends Status
+
+  override def values: immutable.IndexedSeq[Status] = findValues
+}
+
 final case class Journey(
     _id:                    JourneyId,
+    status:                 Status                               = Statuses.InProgress,
     createdOn:              LocalDateTime,
     maybeAmount:            Option[BigDecimal]                   = None,
     schedule:               Option[CalculatorPaymentScheduleExt] = None,

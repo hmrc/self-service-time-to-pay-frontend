@@ -18,10 +18,12 @@ package controllers
 
 import config.{AppConfig, ViewConfig}
 import javax.inject.{Inject, Singleton}
+import journey.Journey
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Request, Result, Results}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 @Singleton
 class ErrorHandler @Inject() (
@@ -43,6 +45,13 @@ class ErrorHandler @Inject() (
 }
 
 object ErrorHandler {
+  import req.RequestSupport._
 
-  def redirectToStartPage: Result = Results.Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
+  def technicalDifficulties(journey: Journey)(implicit request: Request[_]): Result = {
+    //Instead of silently redirecting users to start page on erronous situation now we throw exception
+    //so it is visible that application doesn't work!
+    JourneyLogger.info(s"${this.getClass.getSimpleName}: redirecting on error", journey)
+    throw new RuntimeException("Something went wrong. Inspect stack trace and fix bad code")
+  }
+
 }
