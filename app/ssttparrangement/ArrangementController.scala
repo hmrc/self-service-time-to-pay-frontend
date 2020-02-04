@@ -171,10 +171,10 @@ class ArrangementController @Inject() (
 
     val months = schedule.instalments.length
     val input: CalculatorInput = CalculatorService.createCalculatorInput(
-      months,
-      dayOfMonth,
-      schedule.initialPayment,
-      debits
+      durationMonths = months,
+      dayOfMonth     = dayOfMonth,
+      initialPayment = schedule.initialPayment,
+      debits         = debits
     )
 
     calculatorConnector.calculatePaymentSchedule(input)

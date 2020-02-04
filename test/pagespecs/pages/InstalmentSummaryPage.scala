@@ -39,17 +39,19 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   }
 
   def clickInstalmentsChange() = {
-    val changeLink = xpath("//*[@id=\"id_payment\"]/dl/div[1]/dd[2]/a")
+    val changeLink = xpath("""//*[@id="id_payment"]/dl/div[3]/dd[2]/a""")
     click on changeLink
   }
-
   def clickCollectionDayChange() = {
-    val changeLink = xpath("//*[@id=\"content\"]/article/table/tbody/tr/td[3]/a")
+    val changeLink = xpath("""//*[@id="id_payment"]/dl/div[2]/dd[2]/a""")
     click on changeLink
   }
-
   def clickContinue() = {
     val button = xpath("//*[@id=\"content\"]/article/form/div/button")
+    click on button
+  }
+  def clickUpfrontPaymentChange() = {
+    val button = xpath("""//*[@id="id_payment"]/dl/div[1]/dd[2]/a""")
     click on button
   }
 
@@ -62,7 +64,7 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish = """Set up a payment plan"""
+      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
 
       private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
@@ -75,37 +77,47 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
       private val mainTextEnglish =
         """Back
-          |Check your payment schedule details
-          |Monthly instalments
-          |Collected over 3 months
+          |Check your payment plan
+          |Upfront payment taken within 5 days
+          |£0.00
+          |Change Monthly payments
+          |Payments collected on
+          |25th or next working day
+          |Change
+          |Monthly payments
+          |August 2019
+          |August 2019
+          |August 2019
+          |including interest of £200.00 added to the final payment
           |£300.00
-          |Change Monthly instalments
-          |Total interest
-          |Added to final payment
+          |£120.00
+          |£250.00
+          |Change Monthly payments
+          |Total to pay
           |£200.00
-          |Total repayment
-          |Including interest
-          |£200.00
-          |Monthly instalment collection date
-          |25 or next working day Change
           |Continue
         """.stripMargin
 
       private val mainTextWelsh =
         """Yn ôl
           |Gwiriwch fanylion eich amserlen talu
-          |Rhandaliadau misol
-          |Wedi’u casglu dros 3 o fisoedd
-          |£300.00
+          |Taliad ymlaen llaw
+          |£0.00
           |Newid Rhandaliadau misol
-          |Cyfanswm y llog
-          |Wedi’i ychwanegu at y taliad terfynol
-          |£200.00
-          |Cyfanswm yr ad-daliad
-          |Gan gynnwys llog
-          |£200.00
           |Dyddiad casglu rhandaliadau misol
-          |25 neu’r diwrnod gwaith nesaf Newid
+          |25th neu’r diwrnod gwaith nesaf
+          |Newid
+          |Rhandaliadau misol
+          |August 2019
+          |August 2019
+          |August 2019
+          |Wedi’u casglu dros £200.00 o fisoedd
+          |£300.00
+          |£120.00
+          |£250.00
+          |Newid Rhandaliadau misol
+          |Cyfanswm yr ad-daliad
+          |£200.00
           |Yn eich blaen
         """.stripMargin
     }

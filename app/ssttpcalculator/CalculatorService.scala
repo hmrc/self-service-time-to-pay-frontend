@@ -63,7 +63,12 @@ class CalculatorService @Inject() (
     val months: Seq[Int] = getMonthRange(sa)
 
     val input: List[(Int, CalculatorInput)] = months.map{ month: Int =>
-      val calculatorInput: CalculatorInput = createCalculatorInput(month, LocalDate.now(clockProvider.getClock).getDayOfMonth, intialPayment, sa.debits.map(model.asDebitInput))
+      val calculatorInput: CalculatorInput = createCalculatorInput(
+        durationMonths = month,
+        dayOfMonth     = LocalDate.now(clockProvider.getClock).getDayOfMonth,
+        initialPayment = intialPayment,
+        debits         = sa.debits.map(model.asDebitInput)
+      )
       val calculatorInputValidated: CalculatorInput = validateCalculatorDates(calculatorInput, month, sa.debits.map(model.asDebitInput))
 
       (month, calculatorInputValidated)

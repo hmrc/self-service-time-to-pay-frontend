@@ -25,78 +25,75 @@
 @import _root_.model.PaymentScheduleSupport._
 
 @this(
-  main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+        main: views.html.main,
+        viewsHelpers: views.ViewsHelpers
 )
 
 
 @(
-  debits: Seq[Debit],
-  transactionId: String,
-  directDebit: ArrangementDirectDebit,
-  schedule: PaymentSchedule,
-  ddref: Option[String])(
-  implicit
-  messages: play.api.i18n.Messages,
-  request: Request[_],
-  appConfig: config.AppConfig
+        debits: Seq[Debit],
+        transactionId: String,
+        directDebit: ArrangementDirectDebit,
+        schedule: PaymentSchedule,
+        ddref: Option[String])(
+        implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
 )
 
-    @gaCheckoutCode = {
-    @gaDoTransaction(debits = debits,
-        id = transactionId,
-        revenue = schedule.totalPayable,
-        initialPayment = Some(schedule.initialPayment),
-        interest = schedule.totalInterestCharged,
-        duration = schedule.instalments.length,
-        regularPayment = schedule.instalments.head.amount,
-        step = 4,
-        paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
-    )
-    }
+@gaCheckoutCode = {
+@gaDoTransaction(debits = debits,
+  id = transactionId,
+  revenue = schedule.totalPayable,
+  initialPayment = Some(schedule.initialPayment),
+  interest = schedule.totalInterestCharged,
+  duration = schedule.instalments.length,
+  regularPayment = schedule.instalments.head.amount,
+  step = 4,
+  paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
+)
+}
 <div class="no_print">
 @main(
-    title = Messages("ssttp.arrangement.complete.title"),
-    loggedIn = true,
-    sidebarLinks = None,
-    googleAnalyticsCalls = Seq(gaCheckoutCode.body),
-    welshToggleEnabled = false,
-    hasUserPanel = true
+  title = Messages("ssttp.arrangement.complete.title"),
+  loggedIn = true,
+  sidebarLinks = None,
+  googleAnalyticsCalls = Seq(gaCheckoutCode.body),
+  welshToggleEnabled = false,
+  hasUserPanel = true
 ) {
 
 
 
-    <div class="transaction-banner--complete removeBottom">
-        <div class="transaction-banner__heading" role="banner">
+  <div class="transaction-banner--complete removeBottom">
+    <div class="transaction-banner__heading" role="banner">
 
-            <h1 class="govuk-panel__title">@Messages("ssttp.arrangement.complete.title")</h1>
-            <div class="govuk-panel__body">
-                @ddref.map { _ =>
-                @Messages("ssttp.arrangement.complete.ddref")<br/><strong>@ddref.get</strong>
-                }
-            </div>
-        </div>
+      <h1 class="govuk-panel__title">@Messages("ssttp.arrangement.complete.title")</h1>
+      <div class="govuk-panel__body">
+      @ddref.map { _ =>
+        @Messages("ssttp.arrangement.complete.ddref")<br/><strong>@ddref.get</strong>
+      }
+      </div>
     </div>
-    <section class="section divider--bottom">
-        <a href="javascript:window.print()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.print-label")</a>
-        <br>
-        <br>
-        <h2>@Messages("ssttp.arrangement.complete.next")</h2>
-        <p>@Messages("ssttp.arrangement.complete.summary")</p>
-        <p>@Messages("ssttp.arrangement.complete.first-payment")
-            @language.Dates.formatDate(schedule.initialPaymentScheduleDate)
-        </p>
+  </div>
+  <section class="section divider--bottom">
+    <a href="javascript:window.print()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.print-label")</a>
+    <br>
+    <br>
+    <h2>@Messages("ssttp.arrangement.complete.next")</h2>
+    <p>@Messages("ssttp.arrangement.complete.summary")</p>
+    <p>@Messages("ssttp.arrangement.complete.first-payment", language.Dates.wholeDate(schedule.initialPaymentScheduleDate))</p>
+
+    <h2>@Messages("ssttp.arrangement.complete.help.h2")</h2>
+    <p>@Messages("ssttp.arrangement.complete.help.p1")</p>
 
 
-        <h2>@Messages("ssttp.arrangement.complete.help.h2")</h2>
-        <p>@Messages("ssttp.arrangement.complete.help.p1")</p>
-
-
-        <span><a href="https://www.tax.service.gov.uk/feedback-survey?origin=PWYOII">@Messages("ssttp.arrangement.complete.feedback")</a> @Messages("ssttp.arrangement.complete.help.p2")</span>
-    </section>
+    <span><a href="@appConfig.feedbackSurveyUrl">@Messages("ssttp.arrangement.complete.feedback")</a> @Messages("ssttp.arrangement.complete.help.p2")</span>
+  </section>
 }
 </div>
 <div class="js-visible printable">
-    @print_payment_schedule(schedule)
+@print_payment_schedule(schedule)
 </div>
 

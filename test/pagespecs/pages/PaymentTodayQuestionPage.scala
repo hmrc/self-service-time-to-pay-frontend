@@ -61,7 +61,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish = """Set up a payment plan"""
+      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
 
       private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
@@ -76,7 +76,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       private val mainTextEnglish =
         """Back
           |Can you make an upfront payment?
-          |Making an upfront payment before you set up your plan means your monthly payments will be lower.
+          |Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account in 3 to 5 days.
           |unchecked Yes
           |unchecked No
           |Continue

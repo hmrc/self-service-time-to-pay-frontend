@@ -67,7 +67,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish = """Set up a payment plan"""
+      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
 
       private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
@@ -82,10 +82,11 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         """Back
           |Enter account details to set up a Direct Debit
           |Enter your banking details
-          |Account name
+          |Name on the account
           |Sort code
           |Account number
           |To continue you must be:
+          |
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders
           |Continue
@@ -119,7 +120,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Check your account name is correct
           |Enter account details to set up a Direct Debit
           |Enter your banking details
-          |Account name Check your account name is correct 123ede23efr4efr4ew32ef3r4
+          |Name on the account Check your account name is correct 123ede23efr4efr4ew32ef3r4
           |Sort code 12-34-56
           |Account number 12345678
           |To continue you must be:
@@ -134,7 +135,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Sort code must be a 6 digit number
           |Enter account details to set up a Direct Debit
           |Enter your banking details
-          |Account name Mr John Campbell
+          |Name on the account Mr John Campbell
           |Sort code Sort code must be a 6 digit number fqe23fwef322few23r
           |Account number 12345678
           |To continue you must be:
@@ -149,7 +150,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Account number must be an 8 digit number
           |Enter account details to set up a Direct Debit
           |Enter your banking details
-          |Account name Mr John Campbell
+          |Name on the account Mr John Campbell
           |Sort code 12-34-56
           |Account number Account number must be an 8 digit number 24wrgedf
           |To continue you must be:
@@ -164,7 +165,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Re-enter your bank details
           |Enter account details to set up a Direct Debit
           |Enter your banking details
-          |Account name Mr John Campbell
+          |Name on the account Mr John Campbell
           |Sort code 123456
           |Account number 12345678
           |To continue you must be:

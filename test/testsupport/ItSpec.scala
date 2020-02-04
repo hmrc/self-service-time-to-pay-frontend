@@ -94,7 +94,7 @@ class ItSpec
   lazy val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$port")
   lazy val startPage: StartPage = wire[StartPage]
   lazy val ggSignInPage: GgSignInPage = wire[GgSignInPage]
-  lazy val taxLiabilitiesPage: TaxLiabilitiesPage = wire[TaxLiabilitiesPage]
+  lazy val taxLiabilitiesPage: CalculatorTaxLiabilitiesPage = wire[CalculatorTaxLiabilitiesPage]
   lazy val debtTooLargePage: DebtTooLargePage = wire[DebtTooLargePage]
   lazy val paymentTodayQuestionPage: PaymentTodayQuestionPage = wire[PaymentTodayQuestionPage]
   lazy val paymentTodayCalculatorPage: PaymentTodayCalculatorPage = wire[PaymentTodayCalculatorPage]

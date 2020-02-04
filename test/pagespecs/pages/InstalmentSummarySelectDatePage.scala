@@ -73,7 +73,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
         case Welsh   => globalHeaderTextWelsh
       }
 
-      private val globalHeaderTextEnglish = """Set up a payment plan"""
+      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
 
       private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
     }
@@ -86,10 +86,10 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
       private val mainTextEnglish =
         s"""Back
-           |Choose the day you want your monthly payments collected
+           |Which day do you want to pay each month?
            |unchecked 28th or next working day
            |unchecked A different day
-           |Enter the day of the month
+           |Enter a day between 1 and 28
            |Continue
         """.stripMargin
 
@@ -109,12 +109,12 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
       private def errorText =
         s"""Back
-           |Choose the day you want your monthly payments collected
+           |Which day do you want to pay each month?
            |There is a problem
            |Enter a number between 1 and 28
            |unchecked 28th or next working day
            |unchecked A different day
-           |Enter the day of the month
+           |Enter a day between 1 and 28
            |Continue
         """.stripMargin
     }

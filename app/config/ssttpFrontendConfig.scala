@@ -25,7 +25,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
   private val contactFrontendBaseUrl = servicesConfig.getConfString("contact-frontend.url", "")
   private val contactFormServiceIdentifier = "self-service-time-to-pay"
-  private lazy val feedbackSurveyFrontend = servicesConfig.getConfString("feedback-survey-frontend.url", "")
+  val feedbackSurveyUrl = servicesConfig.getConfString("feedback-survey.url", "")
 
   lazy val assetsPrefix = servicesConfig.getString("assets.url") + servicesConfig.getString("assets.version")
   lazy val analyticsToken = servicesConfig.getString("google-analytics.token")
@@ -41,7 +41,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val loginCallbackBaseUrl = servicesConfig.getConfString("auth.login-callback.base-url", "")
   lazy val loginCallbackPath = servicesConfig.getConfString("auth.login-callback.path", "")
   lazy val loginCallBackFullPath = s"$loginCallbackBaseUrl$loginCallbackPath"
-  lazy val logoutUrl: String = s"$feedbackSurveyFrontend"
+  lazy val logoutUrl: String = s"$feedbackSurveyUrl"
 
   // GA enhanced e-commerce custom vars
   lazy val initialPaymentMetric = servicesConfig.getConfString("google-analytics.initialPaymentMetric", "metric7")
