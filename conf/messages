@@ -2,7 +2,7 @@
 ssttp.common.title = Set up a Self Assessment payment plan
 ssttp.common.currency.symbol = £
 ssttp.common.print = Print
-ssttp.common.sign-out = Sign-out
+ssttp.common.sign-out = Sign out
 
 
 ssttp.payment-plan-calculator.title = Self Assessment payment plan calculator

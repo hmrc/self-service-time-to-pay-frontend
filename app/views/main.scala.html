@@ -48,7 +48,7 @@
     @if(scriptElem.isDefined){@scriptElem}
 }
 @links = {@if(req.RequestSupport.isLoggedIn){
-    <li><a href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)">@Messages("ssttp.common.sign-out")</a></li>
+    <li><a href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(Some(appConfig.feedbackSurveyUrl))">@Messages("ssttp.common.sign-out")</a></li>
 }else{
     @play.twirl.api.HtmlFormat.empty
 }}
