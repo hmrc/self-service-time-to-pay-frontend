@@ -21,8 +21,8 @@ import play.api.libs.json._
 import play.api.mvc.ControllerComponents
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import eligibility.connector.IaService
-import eligibility.model._
 import eligibility.service.EligibilityService
+import uk.gov.hmrc.selfservicetimetopay.models.EligibilityRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

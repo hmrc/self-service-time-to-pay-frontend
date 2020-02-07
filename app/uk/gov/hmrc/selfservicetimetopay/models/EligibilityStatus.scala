@@ -37,7 +37,6 @@ object Reason {
       case _           => JsError(s"Failed to parse $json as Reason")
     }
   }
-
 }
 
 final case class EligibilityStatus(

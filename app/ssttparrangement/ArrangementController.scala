@@ -99,6 +99,7 @@ class ArrangementController @Inject() (
       tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
       newJourney: Journey = Journey.newJourney.copy(maybeTaxpayer = Some(tp))
       _ <- journeyService.saveJourney(newJourney)
+      //TODO here is where it starts
       result: Result <- eligibilityCheck(newJourney, request.utr)
     } yield result.placeInSession(newJourney._id)
 
