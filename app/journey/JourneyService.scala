@@ -24,6 +24,7 @@ import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.EligibilityStatus
 
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.play.http.logging.Mdc
 
 class JourneyService @Inject() (
     journeyRepo: JourneyRepo)(
@@ -35,16 +36,19 @@ class JourneyService @Inject() (
   import playsession.PlaySessionSupport._
   import repo.RepoResultChecker._
 
-  def saveJourney(journey: Journey)(implicit request: Request[_]): Future[Unit] =
+  def saveJourney(journey: Journey)(implicit request: Request[_]): Future[Unit] = Mdc.preservingMdc {
     journeyRepo
       .upsert(journey._id, journey)
       .checkResult
+  }
 
-  def getJourney()(implicit request: Request[_]): Future[Journey] = for {
-    journeyId <- Future.successful(()).map(_ => request.readJourneyId)
-    maybeJourney <- journeyRepo.findById(journeyId)
-    journey = maybeJourney.getOrElse(throw new RuntimeException(s"Journey not found [$journeyId]"))
-  } yield journey
+  def getJourney()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
+    for {
+      journeyId <- Future.successful(()).map(_ => request.readJourneyId)
+      maybeJourney <- journeyRepo.findById(journeyId)
+      journey = maybeJourney.getOrElse(throw new RuntimeException(s"Journey not found [$journeyId]"))
+    } yield journey
+  }
 
   /**
    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
