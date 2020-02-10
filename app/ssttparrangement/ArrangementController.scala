@@ -40,6 +40,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 import _root_.model._
+import eligibility.service.EligibilityService
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
@@ -200,9 +201,12 @@ class ArrangementController @Inject() (
     lazy val overTenThousandOwed = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge())
     lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 
+    //TODO here we need to check ia for the boolean below for now we use a polaceholder lel
+    val er: EligibilityStatus = EligibilityService.determineEligibility(EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer), true)
     for {
       es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer), utr)
-      newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(es))
+
+      newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(er))
       _ <- journeyService.saveJourney(newJourney)
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${es.eligible}]", newJourney)
     } yield {
