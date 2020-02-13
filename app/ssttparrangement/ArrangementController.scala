@@ -197,6 +197,7 @@ class ArrangementController @Inject() (
     lazy val youNeedToFile = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile())
     lazy val notOnIa = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getIaCallUse())
     lazy val overTenThousandOwed = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge())
+    lazy val notEligible = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs())
     lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 
     for {
@@ -207,6 +208,7 @@ class ArrangementController @Inject() (
     } yield {
 
       if (es.eligible) isEligible
+      else if (es.reasons.contains(NoDebt)) notEligible
       else if (es.reasons.contains(IsNotOnIa)) notOnIa
       else if (es.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
       else if (es.reasons.contains(ReturnNeedsSubmitting) || es.reasons.contains(DebtIsInsignificant)) youNeedToFile
