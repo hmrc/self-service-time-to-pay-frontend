@@ -32,7 +32,6 @@ import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttpcalculator.{CalculatorConnector, CalculatorPaymentScheduleExt, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
-import ssttpeligibility.EligibilityConnector
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, ReturnsAndDebits, TaxpayerDetails}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
@@ -57,7 +56,6 @@ class ArrangementController @Inject() (
     calculatorService:    CalculatorService,
     calculatorConnector:  CalculatorConnector,
     taxPayerConnector:    TaxpayerConnector,
-    eligibilityConnector: EligibilityConnector,
     auditService:         AuditService,
     journeyService:       JourneyService,
     as:                   Actions,
