@@ -27,7 +27,7 @@ import play.api.libs.json.{Format, Json, OFormat}
 import play.api.mvc.PathBindable
 import ssttpcalculator.CalculatorPaymentScheduleExt
 import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
-import timetopaytaxpayer.cor.model.Taxpayer
+import timetopaytaxpayer.cor.model.{Taxpayer, TaxpayerDetails}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.collection.immutable
@@ -47,19 +47,19 @@ object Statuses extends Enum[Status] {
 }
 
 final case class Journey(
-    _id:                    JourneyId,
-    status:                 Status                               = Statuses.InProgress,
-    createdOn:              LocalDateTime,
-    maybeAmount:            Option[BigDecimal]                   = None,
-    schedule:               Option[CalculatorPaymentScheduleExt] = None,
-    bankDetails:            Option[BankDetails]                  = None,
-    existingDDBanks:        Option[DirectDebitBank]              = None,
-    maybeTaxpayer:          Option[Taxpayer]                     = None,
-    maybeCalculatorData:    Option[CalculatorInput]              = None,
-    durationMonths:         Int                                  = 2,
-    maybeEligibilityStatus: Option[EligibilityStatus]            = None,
-    debitDate:              Option[LocalDate]                    = None,
-    ddRef:                  Option[String]                       = None
+                          _id:                    JourneyId,
+                          status:                 Status                               = Statuses.InProgress,
+                          createdOn:              LocalDateTime,
+                          maybeAmount:            Option[BigDecimal]                   = None,
+                          schedule:               Option[CalculatorPaymentScheduleExt] = None,
+                          bankDetails:            Option[BankDetails]                  = None,
+                          existingDDBanks:        Option[DirectDebitBank]              = None,
+                          maybeTaxpayer:          Option[TaxpayerDetails]                     = None,
+                          maybeCalculatorData:    Option[CalculatorInput]              = None,
+                          durationMonths:         Int                                  = 2,
+                          maybeEligibilityStatus: Option[EligibilityStatus]            = None,
+                          debitDate:              Option[LocalDate]                    = None,
+                          ddRef:                  Option[String]                       = None
 ) {
 
   def amount: BigDecimal = maybeAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [${this}]"))

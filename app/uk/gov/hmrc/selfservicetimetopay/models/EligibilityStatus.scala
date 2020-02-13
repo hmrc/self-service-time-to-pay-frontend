@@ -16,9 +16,6 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import play.api.libs.json._
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat.parseFromString
-
 sealed abstract class Reason(val name: String)
 case object NoDebt extends Reason("NoDebt")
 case object DebtIsInsignificant extends Reason("DebtIsInsignificant")
@@ -29,14 +26,6 @@ case object ReturnNeedsSubmitting extends Reason("ReturnNeedsSubmitting")
 case object IsNotOnIa extends Reason("IsNotOnIa")
 
 object Reason {
-
-  implicit val formatEligibilityReasons = new Format[Reason] {
-    override def writes(o: Reason): JsValue = JsString(o.toString)
-    override def reads(json: JsValue): JsResult[Reason] = json match {
-      case o: JsString => parseFromString(o.value).fold[JsResult[Reason]](JsError(s"Failed to parse $json as Reason"))(JsSuccess(_))
-      case _           => JsError(s"Failed to parse $json as Reason")
-    }
-  }
 }
 
 final case class EligibilityStatus(
@@ -45,5 +34,4 @@ final case class EligibilityStatus(
 )
 
 object EligibilityStatus {
-  implicit val format: Format[EligibilityStatus] = Json.format[EligibilityStatus]
 }

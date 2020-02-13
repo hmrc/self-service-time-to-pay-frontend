@@ -19,11 +19,12 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
-import timetopaytaxpayer.cor.model.Taxpayer
+import timetopaytaxpayer.cor.model.{ReturnsAndDebits, TaxpayerDetails}
 
 final case class EligibilityRequest(
     dateOfEligibilityCheck: LocalDate,
-    taxpayer:               Taxpayer
+    taxpayerDetails:        TaxpayerDetails,
+    returnsAndDebits: ReturnsAndDebits
 )
 
 object EligibilityRequest {

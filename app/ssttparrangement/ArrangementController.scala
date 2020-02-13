@@ -34,15 +34,17 @@ import ssttpcalculator.{CalculatorConnector, CalculatorPaymentScheduleExt, Calcu
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityConnector
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
-import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
+import timetopaytaxpayer.cor.model.{CommunicationPreferences, ReturnsAndDebits, TaxpayerDetails}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
-import uk.gov.hmrc.domain.SaUtr
+//import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 import _root_.model._
 import eligibility.service.EligibilityService
+import eligibility.connector.IaService
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
+import timetopaytaxpayer.cor.model.SaUtr
 
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
@@ -61,7 +63,8 @@ class ArrangementController @Inject() (
     as:                   Actions,
     requestSupport:       RequestSupport,
     views:                Views,
-    clockProvider:        ClockProvider)(
+    clockProvider:        ClockProvider,
+    iaService: IaService)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext) extends FrontendBaseController(mcc) {
@@ -97,7 +100,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.determineEligibility: $request")
 
     for {
-      tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
+      tp: model.TaxpayerDetails <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
       newJourney: Journey = Journey.newJourney.copy(maybeTaxpayer = Some(tp))
       _ <- journeyService.saveJourney(newJourney)
       //TODO here is where it starts
@@ -195,28 +198,34 @@ class ArrangementController @Inject() (
    */
   private def eligibilityCheck(journey: Journey, utr: SaUtr)(implicit request: Request[_]): Future[Result] = {
     JourneyLogger.info(s"ArrangementController.eligibilityCheck")
-
     lazy val youNeedToFile = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile())
     lazy val notOnIa = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getIaCallUse())
     lazy val overTenThousandOwed = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge())
     lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 
-    //TODO here we need to check ia for the boolean below for now we use a polaceholder lel
-    val er: EligibilityStatus = EligibilityService.determineEligibility(EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer), true)
+    //TODO replace this with the real version not sure where it comes from
+    //All of this shiz below needs altering
+    val now = LocalDate.now(clockProvider.getClock)
+    val communicationPreferences = CommunicationPreferences(false, false, false, false)
+    val taxpayerDetails = TaxpayerDetails(SaUtr("xx"), "test", Seq.empty,
+      communicationPreferences)
+    val returnsAndDebits = ReturnsAndDebits(Seq.empty, Seq.empty)
+    val dummyEligibilityRequest: EligibilityRequest =
+      EligibilityRequest(now, taxpayerDetails, returnsAndDebits)
+
     for {
-      es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer), utr)
-
-      newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(er))
+      onIa <- iaService.checkIaUtr(utr.value)
+      eligibilityStatus = EligibilityService.determineEligibility(dummyEligibilityRequest, onIa)
+      newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
-      _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${es.eligible}]", newJourney)
+      _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
     } yield {
-
-      if (es.eligible) isEligible
-      else if (es.reasons.contains(IsNotOnIa)) notOnIa
-      else if (es.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
-      else if (es.reasons.contains(ReturnNeedsSubmitting) || es.reasons.contains(DebtIsInsignificant)) youNeedToFile
+      if (eligibilityStatus.eligible) isEligible
+      else if (eligibilityStatus.reasons.contains(IsNotOnIa)) notOnIa
+      else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
+      else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant)) youNeedToFile
       else {
-        JourneyLogger.info(s"ArrangementController.eligibilityCheck ERROR - [eligible=${es.eligible}]. Case not implemented. It's a bug.", newJourney)
+        JourneyLogger.info(s"ArrangementController.eligibilityCheck ERROR - [eligible=${eligibilityStatus.eligible}]. Case not implemented. It's a bug.", newJourney)
         throw new RuntimeException(s"Case not implemented. It's a bug. [${journey.maybeEligibilityStatus}]. [$journey]")
       }
     }

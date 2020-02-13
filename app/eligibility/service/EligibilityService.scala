@@ -18,7 +18,7 @@ package eligibility.service
 
 import java.time.{LocalDate, MonthDay}
 
-import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails}
+import timetopaytaxpayer.cor.model.{Debit, Return, ReturnsAndDebits, TaxpayerDetails}
 import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, EligibilityRequest, EligibilityStatus, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
 /**
@@ -40,10 +40,10 @@ object EligibilityService {
 
   def determineEligibility(eligibilityRequest: EligibilityRequest, onIa: Boolean): EligibilityStatus = {
     val today: LocalDate = eligibilityRequest.dateOfEligibilityCheck
-    val selfAssessmentDetails: SelfAssessmentDetails = eligibilityRequest.taxpayer.selfAssessment
-
+    val returnsAndDebits: ReturnsAndDebits = eligibilityRequest.returnsAndDebits
     val isOnIa: List[Reason] = if (onIa) Nil else List(IsNotOnIa)
-    val reasons = (checkReturnsUpToDate(selfAssessmentDetails.returns, today) ++ checkDebits(selfAssessmentDetails, today) ++ isOnIa)
+
+    val reasons = (checkReturnsUpToDate(returnsAndDebits.returns, today) ++ checkDebits(returnsAndDebits, today) ++ isOnIa)
     reasons match {
       case Nil => EligibilityStatus(true, Seq.empty)
       case _   => EligibilityStatus(false, reasons)
@@ -100,12 +100,12 @@ object EligibilityService {
     (debit.interest.map(i => i.amount).getOrElse(BigDecimal(0)) + debit.amount).doubleValue()
   }
   //TODO refactor this hell
-  def checkDebits(selfAssessmentDetails: SelfAssessmentDetails, today: LocalDate): List[Reason] = {
+  def checkDebits(returnsAndDebits: ReturnsAndDebits, today: LocalDate): List[Reason] = {
     val chargeStartDay: LocalDate = today.minusDays(1)
     val chargeEndDay: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
     val reasons: List[Reason] = Nil
 
-    val (liabilities, overdue) = selfAssessmentDetails.debits.partition(_.dueDate.isAfter(chargeStartDay))
+    val (liabilities, overdue) = returnsAndDebits.debits.partition(_.dueDate.isAfter(chargeStartDay))
     val debts = overdue.filterNot(_.dueDate.isAfter(chargeEndDay))
 
     val totalOverdue = overdue.map(o => getTotalForDebit(o)).sum
