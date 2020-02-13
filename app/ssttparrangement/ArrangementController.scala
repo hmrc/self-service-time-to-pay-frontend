@@ -79,7 +79,7 @@ class ArrangementController @Inject() (
 
     journeyService.getJourney.flatMap {
       case journey @ Journey(_, Statuses.InProgress, _, _, _, _, _, Some(taxpayer), _, _, _, _, _) =>
-        eligibilityCheck(journey, request.utr)
+        eligibilityCheck(journey, request.utr.utr)
     }
   }
 
@@ -98,11 +98,11 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.determineEligibility: $request")
 
     for {
-      tp: model.TaxpayerDetails <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
-      newJourney: Journey = Journey.newJourney.copy(maybeTaxpayer = Some(tp))
+      returnsAndDebits: ReturnsAndDebits <- taxPayerConnector.getReturnsAndDebits(asTaxpayersSaUtr(request.utr))
+      newJourney: Journey = Journey.newJourney.copy(maybeTaxpayer = Some(returnsAndDebits))
       _ <- journeyService.saveJourney(newJourney)
       //TODO here is where it starts
-      result: Result <- eligibilityCheck(newJourney, request.utr)
+      result: Result <- eligibilityCheck(newJourney, request.utr.utr)
     } yield result.placeInSession(newJourney._id)
 
   }
@@ -194,7 +194,7 @@ class ArrangementController @Inject() (
    * Call the eligibility service using the Taxpayer data
    * and display the appropriate page based on the result
    */
-  private def eligibilityCheck(journey: Journey, utr: SaUtr)(implicit request: Request[_]): Future[Result] = {
+  private def eligibilityCheck(journey: Journey, utr: String)(implicit request: Request[_]): Future[Result] = {
     JourneyLogger.info(s"ArrangementController.eligibilityCheck")
     lazy val youNeedToFile = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile())
     lazy val notOnIa = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getIaCallUse())
@@ -212,7 +212,7 @@ class ArrangementController @Inject() (
       EligibilityRequest(now, taxpayerDetails, returnsAndDebits)
 
     for {
-      onIa <- iaService.checkIaUtr(utr.value)
+      onIa <- iaService.checkIaUtr(utr)
       eligibilityStatus = EligibilityService.determineEligibility(dummyEligibilityRequest, onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
