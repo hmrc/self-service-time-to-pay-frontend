@@ -33,9 +33,8 @@ import req.RequestSupport
 import ssttpcalculator.{CalculatorConnector, CalculatorPaymentScheduleExt, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
-import timetopaytaxpayer.cor.model.{CommunicationPreferences, ReturnsAndDebits, TaxpayerDetails}
-import timetopaytaxpayer.cor.{TaxpayerConnector, model}
-//import uk.gov.hmrc.domain.SaUtr
+import timetopaytaxpayer.cor.model.{ReturnsAndDebits, TaxpayerDetails}
+import timetopaytaxpayer.cor.TaxpayerConnector
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 import _root_.model._
@@ -99,23 +98,23 @@ class ArrangementController @Inject() (
 
     for {
       returnsAndDebits: ReturnsAndDebits <- taxPayerConnector.getReturnsAndDebits(asTaxpayersSaUtr(request.utr))
-      newJourney: Journey = Journey.newJourney.copy(maybeTaxpayer = Some(returnsAndDebits))
+      newJourney: Journey = Journey.newJourney.copy()
       _ <- journeyService.saveJourney(newJourney)
       //TODO here is where it starts
       result: Result <- eligibilityCheck(newJourney, request.utr.utr)
     } yield result.placeInSession(newJourney._id)
-
   }
 
   def getInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.getInstalmentSummary: $request")
+
     journeyService.authorizedForSsttp {
-      case journey @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, intialPayment, _, _, _)), _, _, _, _) =>
-        Future.successful(Ok(views.instalment_plan_summary(
-          journey.taxpayer.selfAssessment.debits,
-          intialPayment,
-          schedule.schedule
-        )))
+      case journey @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(_, initialPayment, _, _, _)), _, _, _, _) =>
+        for {
+          returnsAndDebits <- taxPayerConnector.getReturnsAndDebits(journey.taxpayer.utr)
+          view = views.instalment_plan_summary(returnsAndDebits.debits, initialPayment, schedule.schedule)
+        }
+          yield Ok(view)
       case _ => Future.successful(Redirect(ssttparrangement.routes.ArrangementController.determineEligibility()))
     }
   }
@@ -201,15 +200,16 @@ class ArrangementController @Inject() (
     lazy val overTenThousandOwed = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge())
     lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 
+    //TODO some more placeholders
+    val taxPayerDetails: TaxpayerDetails = journey.maybeTaxpayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
+    val returnsAndDebitsFuture = taxPayerConnector.getReturnsAndDebits(SaUtr(utr))
+
     //TODO replace this with the real version not sure where it comes from
     //All of this shiz below needs altering
     val now = LocalDate.now(clockProvider.getClock)
-    val communicationPreferences = CommunicationPreferences(false, false, false, false)
-    val taxpayerDetails = TaxpayerDetails(SaUtr("xx"), "test", Seq.empty,
-      communicationPreferences)
-    val returnsAndDebits = ReturnsAndDebits(Seq.empty, Seq.empty)
+    //maybe bang this inside the for loop
     val dummyEligibilityRequest: EligibilityRequest =
-      EligibilityRequest(now, taxpayerDetails, returnsAndDebits)
+      EligibilityRequest(now, taxPayerDetails, returnsAndDebitsFuture)
 
     for {
       onIa <- iaService.checkIaUtr(utr)
@@ -241,17 +241,21 @@ class ArrangementController @Inject() (
 
     for {
       journey <- journeyService.getJourney()
+      futureReturnsAndDebits = taxPayerConnector.getReturnsAndDebits(SaUtr(journey.taxpayer.utr.value))
+      returnsAndDebits <- futureReturnsAndDebits
+      sortedDebits = returnsAndDebits.debits.sortBy(_.dueDate.toEpochDay())
+      view = views.application_complete(
+        debits        = sortedDebits,
+        transactionId = journey.taxpayer.utr + LocalDateTime.now(clockProvider.getClock).toString,
+        directDebit   = journey.arrangementDirectDebit.get,
+        schedule      = journey.schedule.get.schedule,
+        ddref         = journey.ddRef
+      )
     } yield {
-
-      if (journey.status == Statuses.FinishedApplicationSuccessful) {
-        Ok(views.application_complete(
-          debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
-          transactionId = journey.taxpayer.selfAssessment.utr + LocalDateTime.now(clockProvider.getClock).toString,
-          directDebit   = journey.arrangementDirectDebit.get,
-          schedule      = journey.schedule.get.schedule,
-          ddref         = journey.ddRef
-        ))
-      } else {
+      if(journey.status == Statuses.FinishedApplicationSuccessful){
+        Ok(view)
+      }
+      else{
         ErrorHandler.technicalDifficulties(journey)
       }
     }
@@ -267,7 +271,7 @@ class ArrangementController @Inject() (
   private def arrangementSetUp(journey: Journey)(implicit request: Request[_]): Future[Result] = {
     JourneyLogger.info("ArrangementController.arrangementSetUp: (create a DD and make an Arrangement)")
     journey.maybeTaxpayer match {
-      case Some(Taxpayer(_, _, SelfAssessmentDetails(utr, _, _, _))) =>
+      case Some(TaxpayerDetails(_, _, ReturnsAndDebits(utr, _, _, _))) =>
         ddConnector.createPaymentPlan(checkExistingBankDetails(journey), utr).flatMap[Result] {
           _.fold(_ => {
             JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup failed, redirecting to error page")
@@ -336,7 +340,7 @@ class ArrangementController @Inject() (
       taxPayer <- submission.maybeTaxpayer
 
     } yield {
-      val knownFact = List(KnownFact(cesa, taxPayer.selfAssessment.utr.value))
+      val knownFact = List(KnownFact(cesa, taxPayer.utr.value))
 
       val initialPayment = if (schedule.schedule.initialPayment > BigDecimal.exact(0)) Some(schedule.schedule.initialPayment.toString()) else None
       val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.schedule.startDate.plusWeeks(1)))
@@ -346,7 +350,7 @@ class ArrangementController @Inject() (
 
       val pp = PaymentPlan(ppType                    = "Time to Pay",
                            paymentReference          = s"${
-          taxPayer.selfAssessment.utr.value
+          taxPayer.utr.value
         }K",
                            hodService                = cesa,
                            paymentCurrency           = paymentCurrency,
