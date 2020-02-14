@@ -18,7 +18,7 @@ package eligibility.service
 
 import java.time.{LocalDate, MonthDay}
 
-import timetopaytaxpayer.cor.model.{Debit, Return, ReturnsAndDebits, TaxpayerDetails}
+import timetopaytaxpayer.cor.model.{Debit, Return, ReturnsAndDebits}
 import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, EligibilityRequest, EligibilityStatus, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
 /**

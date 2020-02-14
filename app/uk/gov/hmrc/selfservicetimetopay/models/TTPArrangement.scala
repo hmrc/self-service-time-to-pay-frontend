@@ -22,13 +22,13 @@ import timetopaytaxpayer.cor.model.TaxpayerDetails
 
 final case class TTPArrangement(paymentPlanReference: String,
                                 directDebitReference: String,
-                                taxpayerDetails:             TaxpayerDetails,
+                                taxpayerDetails:      TaxpayerDetails,
                                 schedule:             PaymentSchedule) {
 
   def obfuscate = TTPArrangement(
     paymentPlanReference = paymentPlanReference,
     directDebitReference = directDebitReference,
-    taxpayerDetails             = taxpayerDetails .obfuscate,
+    taxpayerDetails      = taxpayerDetails.obfuscate,
     schedule             = schedule
   )
 }

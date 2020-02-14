@@ -22,7 +22,6 @@ import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -51,7 +50,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
 
     //todo Find out whether the bank account check needs to be in the event, if they get this far this should be a successful check
     //at this stage all optional values should be present
-    val utr: SaUtr = submission.taxpayer.selfAssessment.utr
+    val utr: SaUtr = submission.taxpayer.utr
     val name: String = submission.bankDetails.map(_.accountName.get).get
     val accountNumber: String = submission.bankDetails.map(_.accountNumber.get).get
     val sortCode: String = submission.bankDetails.map(_.sortCode.get).get

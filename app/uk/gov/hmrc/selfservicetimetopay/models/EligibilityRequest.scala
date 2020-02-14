@@ -26,7 +26,7 @@ import scala.concurrent.Future
 final case class EligibilityRequest(
     dateOfEligibilityCheck: LocalDate,
     taxpayerDetails:        TaxpayerDetails,
-    returnsAndDebits: Future[ReturnsAndDebits]
+    returnsAndDebits:       ReturnsAndDebits
 )
 
 object EligibilityRequest {

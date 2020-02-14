@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import play.api.libs.json.{Format, Json}
+
 sealed abstract class Reason(val name: String)
 case object NoDebt extends Reason("NoDebt")
 case object DebtIsInsignificant extends Reason("DebtIsInsignificant")
@@ -34,4 +36,5 @@ final case class EligibilityStatus(
 )
 
 object EligibilityStatus {
+  implicit val format: Format[EligibilityStatus] = Json.format[EligibilityStatus]
 }
