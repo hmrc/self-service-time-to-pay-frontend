@@ -40,7 +40,7 @@ object AuthStub extends Matchers {
   }
 
   /**
-   * Deines response for POST /auth/authorise
+   * Defines response for POST /auth/authorise
    */
   def authorise(
       utr:             Option[String]          = Some(TdAll.utr),

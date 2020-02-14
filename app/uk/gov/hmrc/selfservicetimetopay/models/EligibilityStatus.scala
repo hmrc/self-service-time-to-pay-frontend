@@ -27,6 +27,7 @@ case object TotalDebtIsTooHigh extends Reason("TotalDebtIsTooHigh")
 case object TTPIsLessThenTwoMonths extends Reason("TTPIsLessThenTwoMonths")
 case object ReturnNeedsSubmitting extends Reason("ReturnNeedsSubmitting")
 case object IsNotOnIa extends Reason("IsNotOnIa")
+case object NotSaEnrolled extends Reason("NotEnrolled")
 
 object Reason {
 

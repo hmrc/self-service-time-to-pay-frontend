@@ -19,6 +19,7 @@ package testsupport.testdata
 import java.time.{LocalDate, LocalDateTime, ZoneId}
 import java.util.Calendar
 
+import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -184,19 +185,7 @@ object TdAll {
     }
   """.asJson
 
-  val eligibilityTypeOfTax = EligibilityTypeOfTax(
-    hasSelfAssessmentDetailsDebt = false,
-    hasOtherDebt                 = false)
 
-  val eligibilityTypeOfTaxJson =
-    //language=Json
-    """{
-      "hasSelfAssessmentDebt": false,
-      "hasSelfAssessmentDebt": false,
-       "hasOtherDebt": false
-      }""".asJson
-
-  val eligibilityStatus = EligibilityStatus(eligible = true, reasons = Seq())
 
   val eligibilityStatusJson =
     //language=Json
@@ -207,16 +196,23 @@ object TdAll {
     }
   """.asJson
 
-  val ineligibileStatus = EligibilityStatus(eligible = false, reasons = Seq(TotalDebtIsTooHigh))
-
-  val ineligibleStatusJson =
-    //language=Json
-    """
+  def ineligibleStatus(reasons: Seq[Reason]): JsObject =
+  s"""
     {
      "eligible": false,
-     "reasons": ["TotalDebtIsTooHigh"]
+     "reasons": ["${convertReasonsToString(reasons)}"]
     }
   """.asJson
+
+  val noDebits: JsObject = ineligibleStatus(Seq(NoDebt))
+  val debtTooSmall: JsObject = ineligibleStatus(Seq(DebtIsInsignificant))
+  val oldDebtTooHigh: JsObject = ineligibleStatus(Seq(OldDebtIsTooHigh))
+  val totalDebtIsTooHigh: JsObject = ineligibleStatus(Seq(TotalDebtIsTooHigh))
+  val arrangementTooShort: JsObject = ineligibleStatus(Seq(TTPIsLessThenTwoMonths))
+  val returnNotSubmitted: JsObject = ineligibleStatus(Seq(ReturnNeedsSubmitting))
+  val notOnIa: JsObject = ineligibleStatus(Seq(IsNotOnIa))
+
+  def convertReasonsToString(r: Seq[Reason]): String = r.mkString(",")
 
   val saEnrolment = Enrolment(
     key               = "IR-SA",
@@ -229,6 +225,8 @@ object TdAll {
     state             = "Activated",
     delegatedAuthRule = None
   )
+
+
 
   val email = "sau@hotmail.com"
 

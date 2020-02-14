@@ -95,7 +95,6 @@ class ItSpec
   lazy val startPage: StartPage = wire[StartPage]
   lazy val ggSignInPage: GgSignInPage = wire[GgSignInPage]
   lazy val taxLiabilitiesPage: CalculatorTaxLiabilitiesPage = wire[CalculatorTaxLiabilitiesPage]
-  lazy val debtTooLargePage: DebtTooLargePage = wire[DebtTooLargePage]
   lazy val paymentTodayQuestionPage: PaymentTodayQuestionPage = wire[PaymentTodayQuestionPage]
   lazy val paymentTodayCalculatorPage: PaymentTodayCalculatorPage = wire[PaymentTodayCalculatorPage]
   lazy val monthlyPaymentAmountPage: MonthlyPaymentAmountPage = wire[MonthlyPaymentAmountPage]
@@ -107,5 +106,12 @@ class ItSpec
   lazy val directDebitPage: DirectDebitPage = wire[DirectDebitPage]
   lazy val directDebitConfirmationPage: DirectDebitConfirmationPage = wire[DirectDebitConfirmationPage]
   lazy val arrangementSummaryPage: ArrangementSummaryPage = wire[ArrangementSummaryPage]
+
+  // not eligible pages
+  lazy val debtTooLargePage: DebtTooLargePage = wire[DebtTooLargePage]
+  lazy val notOnIaPage: NotOnIaPage = wire[NotOnIaPage]
+  lazy val generalCallUsPage: GeneralCallUsPage = wire[GeneralCallUsPage]
+  lazy val needToFilePage: NeedToFilePage = wire[NeedToFilePage]
+  lazy val notEnrolledPage: NotEnrolledPage = wire[NotEnrolledPage]
 
 }

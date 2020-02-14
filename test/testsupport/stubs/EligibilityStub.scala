@@ -19,7 +19,7 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, stubFor, urlPathEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import testsupport.testdata.TdAll
 
 object EligibilityStub extends Matchers {
@@ -33,12 +33,12 @@ object EligibilityStub extends Matchers {
             .withBody(Json.prettyPrint(TdAll.eligibilityStatusJson))))
   }
 
-  def ineligible(utr: String = TdAll.utr): StubMapping = {
+  def ineligible(utr: String = TdAll.utr, reasonJson: JsObject = TdAll.totalDebtIsTooHigh): StubMapping = {
     stubFor(
       post(urlPathEqualTo(s"/time-to-pay-eligibility/eligibility/$utr"))
         .willReturn(
           aResponse()
             .withStatus(200)
-            .withBody(Json.prettyPrint(TdAll.ineligibleStatusJson))))
+            .withBody(Json.prettyPrint(reasonJson))))
   }
 }
