@@ -17,7 +17,7 @@
 package ssttparrangement
 
 import java.time.format.DateTimeFormatter
-import java.time.{Clock, LocalDate, LocalDateTime, ZonedDateTime}
+import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
 import audit.AuditService
 import config.AppConfig
@@ -25,7 +25,6 @@ import controllers.{ErrorHandler, FrontendBaseController}
 import controllers.action.{Actions, AuthorisedSaUserRequest}
 import javax.inject._
 import journey.{Journey, JourneyService, Statuses}
-import model.asTaxpayersSaUtr
 import play.api.Logger
 import play.api.mvc._
 import playsession.PlaySessionSupport._
@@ -33,7 +32,7 @@ import req.RequestSupport
 import ssttpcalculator.{CalculatorConnector, CalculatorPaymentScheduleExt, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
-import timetopaytaxpayer.cor.model.{ReturnsAndDebits, TaxpayerDetails}
+import timetopaytaxpayer.cor.model.TaxpayerDetails
 import timetopaytaxpayer.cor.TaxpayerConnector
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
@@ -110,7 +109,7 @@ class ArrangementController @Inject() (
       case journey @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(_, initialPayment, _, _, _)), _, _, _, _) =>
         taxPayerConnector.getReturnsAndDebits(journey.taxpayer.utr)
           .map(returnsAndDebits =>
-        Ok(views.instalment_plan_summary(returnsAndDebits.debits, initialPayment, schedule.schedule)))
+            Ok(views.instalment_plan_summary(returnsAndDebits.debits, initialPayment, schedule.schedule)))
       case _ => Future.successful(Redirect(ssttparrangement.routes.ArrangementController.determineEligibility()))
     }
   }

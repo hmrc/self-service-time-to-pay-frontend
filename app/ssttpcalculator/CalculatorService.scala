@@ -26,13 +26,11 @@ import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import ssttpcalculator.CalculatorService._
-import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, PaymentSchedule}
-import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails}
+import timetopaycalculator.cor.model.{CalculatorInput, DebitInput}
+import timetopaytaxpayer.cor.model.{Return, ReturnsAndDebits}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
-import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
 import scala.util.{Failure, Success, Try}
@@ -51,8 +49,9 @@ class CalculatorService @Inject() (
   //todo perhaps merge these methods and change back end so it only one call
   //TODO why this method returns list of schedules by month? WTF?
   def getInstalmentsSchedule(
-      sa:            SelfAssessmentDetails,
-      intialPayment: BigDecimal            = BigDecimal(0)
+      //sa:            SelfAssessmentDetails,
+      returnsAndDebits: ReturnsAndDebits,
+      intialPayment:    BigDecimal       = BigDecimal(0)
   )(
       implicit
       request: Request[_]
@@ -60,16 +59,16 @@ class CalculatorService @Inject() (
 
     JourneyLogger.info(s"CalculatorService.getInstalmentsSchedule...")
 
-    val months: Seq[Int] = getMonthRange(sa)
+    val months: Seq[Int] = getMonthRange(returnsAndDebits)
 
     val input: List[(Int, CalculatorInput)] = months.map{ month: Int =>
       val calculatorInput: CalculatorInput = createCalculatorInput(
         durationMonths = month,
         dayOfMonth     = LocalDate.now(clockProvider.getClock).getDayOfMonth,
         initialPayment = intialPayment,
-        debits         = sa.debits.map(model.asDebitInput)
+        debits         = returnsAndDebits.debits.map(model.asDebitInput)
       )
-      val calculatorInputValidated: CalculatorInput = validateCalculatorDates(calculatorInput, month, sa.debits.map(model.asDebitInput))
+      val calculatorInputValidated: CalculatorInput = validateCalculatorDates(calculatorInput, month, returnsAndDebits.debits.map(model.asDebitInput))
 
       (month, calculatorInputValidated)
     }.toList
@@ -192,8 +191,8 @@ object CalculatorService {
     lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
   }
 
-  def getMonthRange(selfAssessment: SelfAssessmentDetails)(implicit request: Request[_], clock: Clock): Seq[Int] = {
-    val range = minimumMonthsAllowedTTP to getMaxMonthsAllowed(selfAssessment, LocalDate.now(clock))
+  def getMonthRange(returnsAndDebits: ReturnsAndDebits)(implicit request: Request[_], clock: Clock): Seq[Int] = {
+    val range = minimumMonthsAllowedTTP to getMaxMonthsAllowed(returnsAndDebits, LocalDate.now(clock))
     JourneyLogger.info(s"getMonthRange: [months=$range]")
     range
   }
@@ -202,9 +201,9 @@ object CalculatorService {
     def compare(x: A, y: A): Int = x compareTo y
   }
 
-  def getMaxMonthsAllowed(selfAssessment: SelfAssessmentDetails, todaysDate: LocalDate)(implicit request: Request[_]): Int = {
+  def getMaxMonthsAllowed(returnsAndDebits: ReturnsAndDebits, todaysDate: LocalDate)(implicit request: Request[_]): Int = {
 
-    calculateGapInMonths(selfAssessment, todaysDate)
+    calculateGapInMonths(returnsAndDebits, todaysDate)
   }
 
   def getFutureReturn(returnedFiled: Seq[Return]): Option[LocalDate] = {
@@ -218,13 +217,13 @@ object CalculatorService {
    b)    End of the calendar month before the due date of the next non-submitted SA return
    c)    12 months from the earliest due date of the amounts included in the TTP (*ignoring due dates for any amounts under £32)
     */
-  def calculateGapInMonths(selfAssessment: SelfAssessmentDetails, todayDate: LocalDate)(implicit headerCarrier: HeaderCarrier): Int = Try{
+  def calculateGapInMonths(returnsAndDebits: ReturnsAndDebits, todayDate: LocalDate)(implicit headerCarrier: HeaderCarrier): Int = Try{
 
-    val nextSubmissionReturn: Option[LocalDate] = getFutureReturn(selfAssessment.returns)
+    val nextSubmissionReturn: Option[LocalDate] = getFutureReturn(returnsAndDebits.returns)
 
     val yearAfterEarliestCurrantLiabilities: Option[LocalDate] =
       Option(
-        selfAssessment
+        returnsAndDebits
           .debits
           .filter(_.amount > 32)
           .map(_.dueDate)
@@ -250,14 +249,13 @@ object CalculatorService {
          |differenceEarliestDueDate = $differenceEarliestDueDate
          |smallestDifferance = $smallestDifferance
          |""".stripMargin,
-      selfAssessment
+      returnsAndDebits
     )
     gap
   } match {
     case Success(s) => s
     case Failure(e) =>
-      import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
-      Logger.error(s"calculateGapInMonths failed. [todayDate=$todayDate], selfAssessment:\n${Json.toJson(selfAssessment.obfuscate)}", e)
+      Logger.error(s"calculateGapInMonths failed. [todayDate=$todayDate], selfAssessment:\n${Json.toJson(returnsAndDebits.obfuscate)}", e)
       throw e
   }
 }
