@@ -84,18 +84,22 @@ class CalculatorController @Inject() (
     JourneyLogger.info(s"CalculatorController.submitPayTodayQuestion: $request")
 
     journeyService.getJourney.flatMap[Result] {
-      case journey @ Journey(_, Statuses.InProgress, _, _, _, _, _, tp, _, _, _, _, _) =>
+      case journey @ Journey(_, Statuses.InProgress, _, _, _, _, _, _, _, _, _, _, _) =>
         CalculatorForm.payTodayForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(views.payment_today_question(formWithErrors, isSignedIn))), {
             case PayTodayQuestion(Some(true)) =>
               Future.successful(Redirect(ssttpcalculator.routes.CalculatorController.getPaymentToday()))
             case PayTodayQuestion(Some(false)) =>
-              val newJourney = journey.copy(
-                maybeCalculatorData = Some(CalculatorService.createCalculatorInput(0, LocalDate.now(clockProvider.getClock).getDayOfMonth, 0,
-                                                                                      //journey.taxpayer.selfAssessment.debits.map(model.asDebitInput)))
-                                                                                      taxpayerConnector.getReturnsAndDebits(journey.taxpayer.utr).map(x => x.debits.map(model.asDebitInput)))))
-              journeyService.saveJourney(newJourney).map[Result] {
-                _ => Redirect(ssttpcalculator.routes.CalculatorController.getMonthlyPayment())
+
+                taxpayerConnector.getReturnsAndDebits(journey.taxpayer.utr).flatMap {
+                returnsAndDebits =>
+                  val debits = returnsAndDebits.debits.map(d => model.asDebitInput(d))
+                  val newJourney = journey.copy(maybeCalculatorData =
+                    Some(CalculatorService.createCalculatorInput(0, LocalDate.now(clockProvider.getClock).getDayOfMonth, 0, debits)))
+
+                  journeyService.saveJourney(newJourney).map[Result] {
+                    _ => Redirect(ssttpcalculator.routes.CalculatorController.getMonthlyPayment())
+                  }
               }
           }
         )
