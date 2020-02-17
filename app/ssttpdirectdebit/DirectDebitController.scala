@@ -26,16 +26,11 @@ import req.RequestSupport
 import ssttpdirectdebit.DirectDebitForm._
 import journey.{Journey, JourneyService, Statuses}
 import times.ClockProvider
-import timetopaytaxpayer.cor.model
-import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
-import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.HeaderCarrier
+import timetopaytaxpayer.cor.TaxpayerConnector
+import timetopaytaxpayer.cor.model.TaxpayerDetails
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
-import views.html.arrangement._
-import views.html.core.service_start
 
 import scala.collection.immutable.::
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,21 +42,23 @@ class DirectDebitController @Inject() (
     submissionService:    JourneyService,
     requestSupport:       RequestSupport,
     views:                Views,
-    clockProvider:        ClockProvider)(
+    clockProvider:        ClockProvider,
+    taxpayerConnector:    TaxpayerConnector)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext
 ) extends FrontendBaseController(mcc) {
 
   import requestSupport._
-  import clockProvider._
 
   def getDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")
 
     submissionService.authorizedForSsttp {
-      case journey @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(taxpayer), calcData, _, _, _, _) =>
-        Future.successful(Ok(views.direct_debit_form(journey.taxpayer.selfAssessment.debits, schedule, directDebitForm, isSignedIn)))
+      case journey @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(TaxpayerDetails(_, _, _, _)), _, _, _, _, _) =>
+        taxpayerConnector.getReturnsAndDebits(journey.taxpayer.utr).flatMap { returnsAndDebits =>
+          Future.successful(Ok(views.direct_debit_form(returnsAndDebits.debits, schedule, directDebitForm, isSignedIn)))
+        }
       case journey =>
         JourneyLogger.info("DirectDebitController.getDirectDebit: pattern match redirect on error", journey)
         Future.successful(technicalDifficulties(journey))
@@ -72,8 +69,11 @@ class DirectDebitController @Inject() (
     JourneyLogger.info(s"DirectDebitController.getDirectDebitAssistance: $request")
 
     submissionService.authorizedForSsttp {
-      case Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
-        Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
+      case journey @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(TaxpayerDetails(_, _, _, _)), _, _, _, _, _) =>
+        taxpayerConnector.getReturnsAndDebits(journey.taxpayer.utr).flatMap {
+          returnsAndDebits =>
+            Future.successful(Ok(views.direct_debit_assistance(returnsAndDebits.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
+        }
       case journey =>
         JourneyLogger.info("DirectDebitController.getDirectDebitAssistance: pattern match redirect on error", journey)
         Future.successful(technicalDifficulties(journey))
@@ -82,8 +82,11 @@ class DirectDebitController @Inject() (
 
   def getDirectDebitError: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
-      case Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
-        Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
+      case journey @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(TaxpayerDetails(_, _, _, _)), _, _, _, _, _) =>
+        taxpayerConnector.getReturnsAndDebits(journey.taxpayer.utr).flatMap {
+          returnsAndDebits =>
+            Future.successful(Ok(views.direct_debit_assistance(returnsAndDebits.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
+        }
       case journey =>
         JourneyLogger.info("DirectDebitController.getDirectDebitError - redirect on error", journey)
         Future.successful(technicalDifficulties(journey))
@@ -97,12 +100,17 @@ class DirectDebitController @Inject() (
       case Journey(_, Statuses.InProgress, _, _, _, _, Some(_), _, _, _, _, _, _) =>
         Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()))
       case submission @ Journey(_, Statuses.InProgress, _, _, Some(schedule), Some(_), _, _, _, _, _, _, _) =>
-        Future.successful(Ok(views.direct_debit_confirmation(
-          debits      = submission.taxpayer.selfAssessment.debits,
-          schedule    = schedule,
-          directDebit = submission.arrangementDirectDebit.get,
-          loggedIn    = isSignedIn
-        )))
+
+        taxpayerConnector.getReturnsAndDebits(submission.taxpayer.utr).flatMap {
+          returnsAndDebits =>
+            Future.successful(Ok(views.direct_debit_confirmation(
+              debits      = returnsAndDebits.debits,
+              schedule    = schedule,
+              directDebit = submission.arrangementDirectDebit.get,
+              loggedIn    = isSignedIn
+            )))
+        }
+
       case journey =>
         Logger.error(s"Bank details missing from cache on Direct Debit Confirmation page")
         JourneyLogger.info("DirectDebitController.getDirectDebitConfirmation - redirect on error", journey)
@@ -131,32 +139,36 @@ class DirectDebitController @Inject() (
     JourneyLogger.info(s"DirectDebitController.submitDirectDebit: $request")
     submissionService.authorizedForSsttp { submission: Journey =>
 
-      directDebitForm.bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(
-          views.direct_debit_form(submission.taxpayer.selfAssessment.debits,
-                                  submission.schedule.get, formWithErrors))),
-        validFormData => {
+      taxpayerConnector.getReturnsAndDebits(submission.taxpayer.utr).flatMap {
+        returnsAndDebits =>
+          directDebitForm.bindFromRequest().fold(
+            formWithErrors => Future.successful(BadRequest(
+              views.direct_debit_form(returnsAndDebits.debits,
+                                      submission.schedule.get, formWithErrors))),
+            validFormData => {
 
-          for {
-            bankDetails <- directDebitConnector.getBank(validFormData.sortCode, validFormData.accountNumber.toString)
-            result <- bankDetails match {
-              case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
-              case None =>
-                Future.successful(BadRequest(views.direct_debit_form(
-                  submission.taxpayer.selfAssessment.debits,
-                  submission.schedule.get,
-                  directDebitFormWithBankAccountError.copy(data = Map(
-                    "accountName" -> validFormData.accountName,
-                    "accountNumber" -> validFormData.accountNumber,
-                    "sortCode" -> validFormData.sortCode)
-                  ),
-                  isBankError = true
-                )))
+              for {
+                bankDetails <- directDebitConnector.getBank(validFormData.sortCode, validFormData.accountNumber.toString)
+                result <- bankDetails match {
+                  case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
+                  case None =>
+                    Future.successful(BadRequest(views.direct_debit_form(
+                      returnsAndDebits.debits,
+                      submission.schedule.get,
+                      directDebitFormWithBankAccountError.copy(data = Map(
+                        "accountName" -> validFormData.accountName,
+                        "accountNumber" -> validFormData.accountNumber,
+                        "sortCode" -> validFormData.sortCode)
+                      ),
+                      isBankError = true
+                    )))
+                }
+              } yield result
+
             }
-          } yield result
+          )
+      }
 
-        }
-      )
     }
   }
 
@@ -169,7 +181,7 @@ class DirectDebitController @Inject() (
     submissionService.getJourney.flatMap { journey =>
 
       val taxpayer = journey.maybeTaxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
-      val utr = taxpayer.selfAssessment.utr
+      val utr = taxpayer.utr
 
       directDebitConnector.getBanks(utr).flatMap {
         directDebitBank =>

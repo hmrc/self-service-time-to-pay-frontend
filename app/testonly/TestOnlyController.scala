@@ -20,18 +20,18 @@ import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import javax.inject._
+import journey.{Journey, JourneyService}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import timetopaytaxpayer.cor.TaxpayerConnector
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.ExecutionContext
-import req.RequestSupport._
 
 class TestOnlyController @Inject() (
     taxpayerConnector: TaxpayerConnector,
+    journeyService:    JourneyService,
     as:                Actions,
     httpClient:        HttpClient,
     cc:                MessagesControllerComponents)(implicit ec: ExecutionContext) extends FrontendBaseController(cc) {
@@ -42,17 +42,18 @@ class TestOnlyController @Inject() (
     )
     Results.Ok(result)
   }
-
-  def getTaxpayer(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    val utr: SaUtr = model.asTaxpayersSaUtr(request.utr)
-
-    val getTaxpayerF = taxpayerConnector.getTaxPayer(utr).map(Json.toJson(_)).recover{
-      case e => Json.obj("exception" -> e.getMessage)
-    }
-
-    for {
-      taxpayer <- getTaxpayerF
-    } yield Ok(taxpayer)
-  }
+  //TODO work out what this test is meant to do and how to replicate it with the new func
+  //TODO use journeyservice to get the taxpayer then go from there...
+  //  def getTaxpayer(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  //    val utr: SaUtr = model.asTaxpayersSaUtr(request.utr)
+  //
+  //    val getTaxpayerF = taxpayerConnector.getTaxPayer(utr).map(Json.toJson(_)).recover{
+  //      case e => Json.obj("exception" -> e.getMessage)
+  //    }
+  //
+  //    for {
+  //      taxpayer <- getTaxpayerF
+  //    } yield Ok(taxpayer)
+  //  }
 
 }
