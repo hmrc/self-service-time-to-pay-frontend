@@ -22,9 +22,13 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IaService @Inject() (http: HttpClient, config: IaConfig) {
-  val iaUrl: String = config.baseUrl
-  val enableCheck = config.enableIACheck
+//class IaService @Inject() (http: HttpClient, config: IaConfig) {
+class IaService @Inject() (http: HttpClient) {
+  //TODO sort these out proper in the config or whatever
+  //  val iaUrl: String = config.baseUrl
+  //  val enableCheck = config.enableIACheck
+  val iaUrl: String = "http://localhost:8100"
+  val enableCheck = true
 
   def checkIaUtr(utr: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Boolean] = {
     if (enableCheck) {

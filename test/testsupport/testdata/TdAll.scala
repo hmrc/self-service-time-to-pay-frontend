@@ -179,7 +179,7 @@ object TdAll {
   val taxpayerDetailsJson =
     s"""{
      "utr": ${utr},
-     "customerName": ${customerName},
+     "customerName": "Mr Marshall Mathers",
      "addresses": [${addressJson}],
      "communicationPreferences": ${communicationPreferencesJson}
     }""".asJson

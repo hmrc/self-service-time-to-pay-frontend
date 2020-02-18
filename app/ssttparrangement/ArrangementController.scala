@@ -195,13 +195,12 @@ class ArrangementController @Inject() (
     lazy val overTenThousandOwed = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge())
     lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 
-    val taxPayerDetails: TaxpayerDetails = journey.maybeTaxpayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
-    //TODO maybe bang this inside the for loop
-
     for {
+      //TODO the link called below needs to work. So, have to check it, as far as whether the service is running firstly,
+      // and secondly whether the service has been updated in whichever environ it is hitting
+      // for now trial with a dummy but could light up everywhere as this method is called lrc
       returnsAndDebits <- taxPayerConnector.getReturnsAndDebits(SaUtr(utr))
-      //TODO replace this with the real version not sure where it comes from
-      dummyEligibilityRequest = EligibilityRequest(LocalDate.now(clockProvider.getClock), taxPayerDetails, returnsAndDebits)
+      dummyEligibilityRequest = EligibilityRequest(LocalDate.now(clockProvider.getClock), returnsAndDebits)
       onIa <- iaService.checkIaUtr(utr)
       eligibilityStatus = EligibilityService.determineEligibility(dummyEligibilityRequest, onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
