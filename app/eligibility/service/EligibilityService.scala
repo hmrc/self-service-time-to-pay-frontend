@@ -34,7 +34,7 @@ object EligibilityService {
 
   val insignificantDebtUpperLimit = 32
   val maximumDebtForSelfServe = 10000
-  val numberOfDaysAfterDueDateForDebtToBeConsideredOld = 30
+  val numberOfDaysAfterDueDateForDebtToBeConsideredOld = 60
   val returnHistoryYearsRequired = 4
   val taxYearEndDay: MonthDay = MonthDay.of(4, 5)
 

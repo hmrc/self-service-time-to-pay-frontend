@@ -91,7 +91,7 @@ class CalculatorController @Inject() (
               Future.successful(Redirect(ssttpcalculator.routes.CalculatorController.getPaymentToday()))
             case PayTodayQuestion(Some(false)) =>
 
-                taxpayerConnector.getReturnsAndDebits(journey.taxpayer.utr).flatMap {
+              taxpayerConnector.getReturnsAndDebits(journey.taxpayer.utr).flatMap {
                 returnsAndDebits =>
                   val debits = returnsAndDebits.debits.map(d => model.asDebitInput(d))
                   val newJourney = journey.copy(maybeCalculatorData =
