@@ -21,13 +21,13 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import testsupport.testdata.TdAll
-import timetopaytaxpayer.cor.model.Taxpayer
+import timetopaytaxpayer.cor.model.TaxpayerDetails
 
 object TaxpayerStub extends Matchers {
 
   def getTaxpayer(
-      utr:              String   = TdAll.utr,
-      returnedTaxpayer: Taxpayer = TdAll.taxpayer
+      utr:              String          = TdAll.utr,
+      returnedTaxpayer: TaxpayerDetails = TdAll.taxpayerDetails
   ): StubMapping = {
 
     stubFor(

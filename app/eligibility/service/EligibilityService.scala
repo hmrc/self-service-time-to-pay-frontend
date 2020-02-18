@@ -46,7 +46,7 @@ object EligibilityService {
     val reasons = (checkReturnsUpToDate(returnsAndDebits.returns, today) ++ checkDebits(returnsAndDebits, today) ++ isOnIa)
     reasons match {
       case Nil => EligibilityStatus(true, Seq.empty)
-      case _   => EligibilityStatus(false, reasons)
+      case _   => EligibilityStatus(false, reasons.map(r => r.name))
     }
   }
 

@@ -46,14 +46,14 @@ object ArrangementTd {
 
   val tTPArrangement = new TTPArrangement(paymentPlanReference = "12345678",
                                           directDebitReference = "87654321",
-                                          taxpayer             = taxpayer,
+                                          taxpayerDetails      = taxpayerDetails,
                                           schedule             = calculatorPaymentSchedule)
 
   val tTPArrangementJson =
     s"""{
     "paymentPlanReference": "12345678",
      "directDebitReference": "87654321",
-     "taxpayer": ${taxpayerJson},
+     "taxpayer": ${taxpayerDetailsJson},
      "schedule": ${calculatorPaymentScheduleJson}
     }""".asJson
 

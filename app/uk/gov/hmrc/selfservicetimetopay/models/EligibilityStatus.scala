@@ -32,7 +32,7 @@ object Reason {
 
 final case class EligibilityStatus(
     eligible: Boolean,
-    reasons:  Seq[Reason]
+    reasons:  Seq[String]
 )
 
 object EligibilityStatus {

@@ -16,8 +16,7 @@
 
 package testsupport.testdata
 
-import java.time.{LocalDate, LocalDateTime, ZoneId}
-import java.util.Calendar
+import java.time.LocalDate
 
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
@@ -29,6 +28,8 @@ import timetopaytaxpayer.cor.model._
  * Test Data All
  */
 object TdAll {
+
+  val customerName: String = "Mr Marshall Mathers"
 
   val systemDate: LocalDate = "2019-10-04"
 
@@ -116,18 +117,31 @@ object TdAll {
        "brailleIndicator": false
        }""".stripMargin
 
-  val selfAssessment = SelfAssessmentDetails(
-    utr                      = Sautr,
-    communicationPreferences = communicationPreferences,
-    debits                   = List(debit1, debit2),
-    returns                  = List(return1, return2)
-  )
+  //  val selfAssessment = SelfAssessmentDetails(
+  //    utr                      = Sautr,
+  //    communicationPreferences = communicationPreferences,
+  //    debits                   = List(debit1, debit2),
+  //    returns                  = List(return1, return2)
+  //  )
 
-  val selfAssessmentJson =
+  //val selfAssessmentJson =
+  //s"""{
+  //    "utr": "${utr}",
+  //     "communicationPreferences":${communicationPreferencesJson},
+  //     "debits": [
+  //        ${debit1Json},
+  //        ${debit2Json}]
+  //     ,
+  //     "returns": [
+  //        ${return1Json},
+  //        ${return2Json}]
+  //
+  //    }""".asJson
 
+  val returnsAndDebits = ReturnsAndDebits(Seq(debit1, debit2), Seq(return1, return2))
+
+  val returnsAndDebitsJson =
     s"""{
-    "utr": "${utr}",
-     "communicationPreferences":${communicationPreferencesJson},
      "debits": [
         ${debit1Json},
         ${debit2Json}]
@@ -135,7 +149,6 @@ object TdAll {
      "returns": [
         ${return1Json},
         ${return2Json}]
-
     }""".asJson
 
   val address = Address(
@@ -157,18 +170,32 @@ object TdAll {
     }
   """.asJson
 
-  val taxpayer = Taxpayer(
-    customerName   = "Mr John Campbell",
-    addresses      = List(address),
-    selfAssessment = selfAssessment
-  )
+  val taxpayerDetails = TaxpayerDetails(
+    utr                      = SaUtr(utr),
+    customerName             = customerName,
+    addresses                = Seq(address),
+    communicationPreferences = communicationPreferences)
 
-  val taxpayerJson =
+  val taxpayerDetailsJson =
     s"""{
-     "customerName": "Mr John Campbell",
+     "utr": ${utr},
+     "customerName": ${customerName},
      "addresses": [${addressJson}],
-     "selfAssessment": ${selfAssessmentJson}
+     "communicationPreferences": ${communicationPreferencesJson}
     }""".asJson
+
+  //  val taxpayer = Taxpayer(
+  //    customerName   = "Mr John Campbell",
+  //    addresses      = List(address),
+  //    selfAssessment = selfAssessment
+  //  )
+
+  //  val taxpayerJson =
+  //    s"""{
+  //     "customerName": "Mr John Campbell",
+  //     "addresses": [${addressJson}],
+  //     "selfAssessment": ${selfAssessmentJson}
+  //    }""".asJson
 
   val interest = Interest(
     creationDate = Some("2019-10-04"),
@@ -207,7 +234,7 @@ object TdAll {
     }
   """.asJson
 
-  val ineligibileStatus = EligibilityStatus(eligible = false, reasons = Seq(TotalDebtIsTooHigh))
+  val ineligibileStatus = EligibilityStatus(eligible = false, reasons = Seq(TotalDebtIsTooHigh.name))
 
   val ineligibleStatusJson =
     //language=Json

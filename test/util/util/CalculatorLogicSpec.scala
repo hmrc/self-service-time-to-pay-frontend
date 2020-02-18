@@ -21,7 +21,7 @@ import java.time.{LocalDate, Month}
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.PlaySpec
 import ssttpcalculator.CalculatorService._
-import timetopaytaxpayer.cor.model.{CommunicationPreferences, Debit, Interest, Return, SaUtr, SelfAssessmentDetails}
+import timetopaytaxpayer.cor.model.{Debit, Interest, Return, ReturnsAndDebits}
 import uk.gov.hmrc.http.HeaderCarrier
 
 class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
@@ -51,11 +51,11 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
 
   val testReturn2018 = Return(LocalDate.of(2018, Month.APRIL, 5), None, None, None)
   private val testReturns = List(testReturn2016)
-  val sa = SelfAssessmentDetails(
-    utr                      = SaUtr("123456789"),
-    communicationPreferences = CommunicationPreferences(true, true, true, true),
-    debits                   = Nil,
-    returns                  = testReturns
+  val sa = ReturnsAndDebits(
+    //    utr                      = SaUtr("123456789"),
+    //    communicationPreferences = CommunicationPreferences(true, true, true, true),
+    debits  = Nil,
+    returns = testReturns
   )
   //Note the calculatorLOgic is not responceable for determining eligiblity
   val scenariosBasedAroundJanuaryDuedate = Table(
@@ -133,9 +133,9 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
 
   //todo ask ela about 11 13 15
   "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundJanuaryDuedate) { (startDate: LocalDate, selfA: SelfAssessmentDetails, answer: Int) =>
-      s"scenarios Based Around January Due date return the correct number of months($answer) for start date : $startDate and SelfAssessmentDetails $selfA" in {
-        val result: Int = calculateGapInMonths(selfA, startDate)
+    TableDrivenPropertyChecks.forAll(scenariosBasedAroundJanuaryDuedate) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
+      s"scenarios Based Around January Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
+        val result: Int = calculateGapInMonths(returnsAndDebits, startDate)
         assert(result == answer)
 
       }
@@ -143,27 +143,27 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
   }
 
   "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundJulyDuedate) { (startDate: LocalDate, selfA: SelfAssessmentDetails, answer: Int) =>
-      s"scenarios Based Around July Due date return the correct number of months($answer) for start date : $startDate and SelfAssessmentDetails $selfA" in {
-        val result: Int = calculateGapInMonths(selfA, startDate)
+    TableDrivenPropertyChecks.forAll(scenariosBasedAroundJulyDuedate) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
+      s"scenarios Based Around July Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
+        val result: Int = calculateGapInMonths(returnsAndDebits, startDate)
         assert(result == answer)
 
       }
     }
   }
   "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundEarlyFilers) { (startDate: LocalDate, selfA: SelfAssessmentDetails, answer: Int) =>
-      s"scenarios Based Around Early Filers Due date return the correct number of months($answer) for start date : $startDate and SelfAssessmentDetails $selfA" in {
-        val result: Int = calculateGapInMonths(selfA, startDate)
+    TableDrivenPropertyChecks.forAll(scenariosBasedAroundEarlyFilers) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
+      s"scenarios Based Around Early Filers Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
+        val result: Int = calculateGapInMonths(returnsAndDebits, startDate)
         assert(result == answer)
 
       }
     }
   }
   "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundEarlyFilers) { (startDate: LocalDate, selfA: SelfAssessmentDetails, answer: Int) =>
-      s"scenarios Based Around Late Filers Due date return the correct number of months($answer) for start date : $startDate and SelfAssessmentDetails $selfA" in {
-        val result: Int = calculateGapInMonths(selfA, startDate)
+    TableDrivenPropertyChecks.forAll(scenariosBasedAroundEarlyFilers) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
+      s"scenarios Based Around Late Filers Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
+        val result: Int = calculateGapInMonths(returnsAndDebits, startDate)
         assert(result == answer)
 
       }
@@ -171,9 +171,9 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
   }
 
   "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedCustom) { (startDate: LocalDate, selfA: SelfAssessmentDetails, answer: Int) =>
-      s"scenarios Based Around Custom the correct number of months($answer) for start date : $startDate and SelfAssessmentDetails $selfA" in {
-        val result: Int = calculateGapInMonths(selfA, startDate)
+    TableDrivenPropertyChecks.forAll(scenariosBasedCustom) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
+      s"scenarios Based Around Custom the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
+        val result: Int = calculateGapInMonths(returnsAndDebits, startDate)
         assert(result == answer)
 
       }

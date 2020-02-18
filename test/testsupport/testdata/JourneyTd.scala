@@ -28,7 +28,7 @@ object JourneyTd {
 
   val eligibilityStatus = EligibilityStatus(
     eligible = true,
-    reasons  = List(NoDebt)
+    reasons  = List(NoDebt.name)
   )
 
   val journeyId = new JourneyId("12345A")
@@ -40,7 +40,7 @@ object JourneyTd {
     schedule               = Some(calculatorPaymentScheduleExt),
     bankDetails            = Some(bankDetails),
     existingDDBanks        = Some(directDebitBank),
-    maybeTaxpayer          = Some(taxpayer),
+    maybeTaxpayer          = Some(taxpayerDetails),
     maybeCalculatorData    = Some(calculatorInput),
     durationMonths         = 2: Int,
     maybeEligibilityStatus = Some(eligibilityStatus),
