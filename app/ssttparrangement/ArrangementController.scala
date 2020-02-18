@@ -206,7 +206,6 @@ class ArrangementController @Inject() (
       _ <- journeyService.saveJourney(newJourney)
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${es.eligible}]", newJourney)
     } yield {
-      JourneyLogger.info("I AM THE RESONS!!!!!!!!!!!" + es.reasons)
       if (es.eligible) isEligible
       else if (es.reasons.contains(DebtTooOld) || es.reasons.contains(OldDebtIsTooHigh)) notEligible
       else if (es.reasons.contains(NoDebt) || es.reasons.contains(TTPIsLessThenTwoMonths)) notEligible
@@ -215,7 +214,7 @@ class ArrangementController @Inject() (
       else if (es.reasons.contains(ReturnNeedsSubmitting) || es.reasons.contains(DebtIsInsignificant)) youNeedToFile
       else {
         JourneyLogger.info(s"ArrangementController.eligibilityCheck ERROR - [eligible=${es.eligible}]. Case not implemented. It's a bug.", newJourney)
-        throw new RuntimeException(s"Case not implemented tESTSTS. It's a bug. [${journey.maybeEligibilityStatus}]. [$journey]")
+        throw new RuntimeException(s"Case not implemented. It's a bug in the eligibility reasons. [${journey.maybeEligibilityStatus}]. [$journey]")
       }
     }
   }
