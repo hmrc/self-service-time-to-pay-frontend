@@ -17,12 +17,13 @@
 package journey
 
 import java.time.{Clock, LocalDate, LocalDateTime}
+
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import play.api.libs.json.{Format, Json, OFormat}
 import ssttpcalculator.CalculatorPaymentScheduleExt
 import timetopaycalculator.cor.model.CalculatorInput
-import timetopaytaxpayer.cor.model.TaxpayerDetails
+import timetopaytaxpayer.cor.model.{Address, CommunicationPreferences, SaUtr, TaxpayerDetails}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.collection.immutable
@@ -58,7 +59,9 @@ final case class Journey(
 ) {
 
   def amount: BigDecimal = maybeAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [${this}]"))
-  def taxpayer: TaxpayerDetails = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [${this}]"))
+  //TODO restore this
+  def taxpayer: TaxpayerDetails = TaxpayerDetails(SaUtr("6573196998"), "Mr Marshall Mathers", addresses = Seq(Address(Some("xxxx"))), CommunicationPreferences(true, true, true, true))
+  //def taxpayer: TaxpayerDetails = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [${this}]"))
   def calculatorInput: CalculatorInput = maybeCalculatorData.getOrElse(throw new RuntimeException(s"Expected 'CalculatorData' to be there but was not found. [${_id}] [${this}]"))
   def eligibilityStatus: EligibilityStatus = maybeEligibilityStatus.getOrElse(throw new RuntimeException(s"Expected 'EligibilityStatus' to be there but was not found. [${_id}] [${this}]"))
 

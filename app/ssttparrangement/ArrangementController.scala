@@ -71,6 +71,7 @@ class ArrangementController @Inject() (
   val paymentFrequency = "Calendar Monthly"
   val paymentCurrency = "GBP"
 
+  //TODO delete this
   def getDummyRnD: Future[ReturnsAndDebits] = {
     val debit1 = Debit("XXX", BigDecimal(1), LocalDate.now(), None, LocalDate.now())
     val debit2 = Debit("XXX", BigDecimal(1), LocalDate.now(), None, LocalDate.now())
@@ -115,8 +116,7 @@ class ArrangementController @Inject() (
 
     journeyService.authorizedForSsttp {
       case journey @ Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(_, initialPayment, _, _, _)), _, _, _, _) =>
-        //taxPayerConnector.getReturnsAndDebits(journey.taxpayer.utr)
-        getDummyRnD
+        taxPayerConnector.getReturnsAndDebits(journey.taxpayer.utr)
           .map(returnsAndDebits =>
             Ok(views.instalment_plan_summary(returnsAndDebits.debits, initialPayment, schedule.schedule)))
       case _ => Future.successful(Redirect(ssttparrangement.routes.ArrangementController.determineEligibility()))
@@ -208,19 +208,20 @@ class ArrangementController @Inject() (
       //TODO the link called below needs to work. So, have to check it, as far as whether the service is running firstly,
       // and secondly whether the service has been updated in whichever environ it is hitting
       // for now trial with a dummy but could light up everywhere as this method is called lrc
-      //returnsAndDebits <- taxPayerConnector.getReturnsAndDebits(SaUtr(utr))
-      returnsAndDebits <- getDummyRnD
+      returnsAndDebits <- taxPayerConnector.getReturnsAndDebits(SaUtr(utr))
       eligibilityRequest = EligibilityRequest(LocalDate.now(clockProvider.getClock), returnsAndDebits)
       //TODO undo this dummy too
-      //onIa <- iaService.checkIaUtr(utr)
+      onIa <- iaService.checkIaUtr(utr)
       //TODO change the boolean back to onIa
-      eligibilityStatus = EligibilityService.determineEligibility(eligibilityRequest, true)
+      eligibilityStatus = EligibilityService.determineEligibility(eligibilityRequest, onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
     } yield {
-      if (eligibilityStatus.eligible) isEligible
-      else if (eligibilityStatus.reasons.contains(IsNotOnIa.name)) notOnIa
+      if (eligibilityStatus.eligible) {
+        println("******ELIGIBILITY CHECK RAN AND PASSED **********")
+        isEligible
+      } else if (eligibilityStatus.reasons.contains(IsNotOnIa.name)) notOnIa
       else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh.name)) overTenThousandOwed
       else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting.name) || eligibilityStatus.reasons.contains(DebtIsInsignificant.name)) youNeedToFile
       else {
@@ -242,8 +243,7 @@ class ArrangementController @Inject() (
 
     for {
       journey <- journeyService.getJourney()
-      //returnsAndDebits <- taxPayerConnector.getReturnsAndDebits(SaUtr(journey.taxpayer.utr.value))
-      returnsAndDebits <- getDummyRnD
+      returnsAndDebits <- taxPayerConnector.getReturnsAndDebits(SaUtr(journey.taxpayer.utr.value))
     } yield {
       val view = views.application_complete(
         debits        = returnsAndDebits.debits.sortBy(_.dueDate.toEpochDay()),

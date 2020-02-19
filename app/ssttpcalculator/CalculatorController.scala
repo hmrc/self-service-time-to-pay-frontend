@@ -59,13 +59,13 @@ class CalculatorController @Inject() (
     JourneyLogger.info(s"CalculatorController.getTaxLiabilities: $request")
 
     journeyService.getJourney.flatMap {
-      case _@ Journey(_, Statuses.InProgress, _, _, _, _, _, Some(TaxpayerDetails(saUtr: SaUtr, _, _, _)), _, _, _, _, _) =>
-        taxpayerConnector.getReturnsAndDebits(saUtr).map { returnsAndDebits =>
+      case journey @ Journey(_, Statuses.InProgress, _, _, _, _, _, _, _, _, _, _, _) =>
+        taxpayerConnector.getReturnsAndDebits(journey.taxpayer.utr).map { returnsAndDebits =>
           val debits = returnsAndDebits.debits
           val view = views.tax_liabilities(debits, isSignedIn)
           Ok(view)
         }
-      case journey =>
+      case journey: Journey =>
         JourneyLogger.info(s"CalculatorController.getTaxLiabilities: pattern match redirect on error", journey)
         Future successful technicalDifficulties(journey)
     }

@@ -105,12 +105,19 @@ object EligibilityService {
     val chargeEndDay: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
     val reasons: List[Reason] = Nil
 
-    val (liabilities, overdue) = returnsAndDebits.debits.partition(_.dueDate.isAfter(chargeStartDay))
-    val debts = overdue.filterNot(_.dueDate.isAfter(chargeEndDay))
+    returnsAndDebits.debits.map(x => println(s"debit due date =" + x.dueDate))
 
+    val (liabilities, overdue) = returnsAndDebits.debits.partition(_.dueDate.isAfter(chargeStartDay))
+
+    println(s"****LIABILITIES**** = $liabilities")
+    println(s"****OVERDUE**** = $overdue")
+    val debts = overdue.filterNot(_.dueDate.isAfter(chargeEndDay))
+    println(s"****DEBTS**** = $debts")
     val totalOverdue = overdue.map(o => getTotalForDebit(o)).sum
     val totalDebt = debts.map(d => getTotalForDebit(d)).sum
     val totalEverything = totalOverdue + liabilities.map(l => getTotalForDebit(l)).sum
+
+    println(s"****TOTAL EVERYTHING**** = $totalEverything")
 
     if (totalEverything == 0) NoDebt :: Nil
     else {
