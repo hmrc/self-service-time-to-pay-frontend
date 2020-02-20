@@ -75,7 +75,6 @@ object EligibilityService {
 
   def checkReturnForYear(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
     returns.find(_.taxYearEnd == taxYearEnd) match {
-      //case Some(r) if r.issuedDate(today) && !r.received(today) => Some(ReturnNeedsSubmitting(taxYearEnd.getYear))
       //TODO confirm this is how it should function seems a lickle bit weird
       //The issued date needs to be the same as today or earlier
       //The received date needs to be not the same as today or earlier
@@ -95,36 +94,32 @@ object EligibilityService {
       .map(x => returnDateForCalendarYear(x))
       .flatMap(y => checkReturnForYear(y, returns, today)).toList
   }
+
   //TODO check func
   def getTotalForDebit(debit: Debit): Double = {
     (debit.interest.map(i => i.amount).getOrElse(BigDecimal(0)) + debit.amount).doubleValue()
   }
-  //TODO refactor this hell
+
+  //TODO should be fine now but keep an eye on it if any drama comes
   def checkDebits(returnsAndDebits: ReturnsAndDebits, today: LocalDate): List[Reason] = {
     val chargeStartDay: LocalDate = today.minusDays(1)
-    val chargeEndDay: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
-    val reasons: List[Reason] = Nil
+    val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
 
-    returnsAndDebits.debits.map(x => println(s"debit due date =" + x.dueDate))
+    val (futureDebts, currentAndOldDebts) = returnsAndDebits.debits.partition(_.dueDate.isAfter(chargeStartDay))
+    val oldDebt = currentAndOldDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
+    val totalFutureDebt = futureDebts.map(f => getTotalForDebit(f)).sum
+    val totalCurrentAndOldDebt = currentAndOldDebts.map(d => getTotalForDebit(d)).sum
+    val totalOldDebt = oldDebt.map(o => getTotalForDebit(o)).sum
+    val totalDebt = totalCurrentAndOldDebt + totalFutureDebt
 
-    val (liabilities, overdue) = returnsAndDebits.debits.partition(_.dueDate.isAfter(chargeStartDay))
+    val reasons: List[Reason] = List.empty
 
-    println(s"****LIABILITIES**** = $liabilities")
-    println(s"****OVERDUE**** = $overdue")
-    val debts = overdue.filterNot(_.dueDate.isAfter(chargeEndDay))
-    println(s"****DEBTS**** = $debts")
-    val totalOverdue = overdue.map(o => getTotalForDebit(o)).sum
-    val totalDebt = debts.map(d => getTotalForDebit(d)).sum
-    val totalEverything = totalOverdue + liabilities.map(l => getTotalForDebit(l)).sum
-
-    println(s"****TOTAL EVERYTHING**** = $totalEverything")
-
-    if (totalEverything == 0) NoDebt :: Nil
+    if (totalDebt == 0) NoDebt :: reasons
     else {
-      val reason1 = if (totalDebt > insignificantDebtUpperLimit) OldDebtIsTooHigh :: reasons else reasons
-      val reason2 = if (totalEverything < insignificantDebtUpperLimit) DebtIsInsignificant :: reason1 else reason1
-      val reason3 = if (totalEverything >= maximumDebtForSelfServe) TotalDebtIsTooHigh :: reason2 else reason2
-      reason3
+      if (totalOldDebt > insignificantDebtUpperLimit) OldDebtIsTooHigh :: reasons
+      if (totalDebt < insignificantDebtUpperLimit) DebtIsInsignificant :: reasons
+      if (totalDebt >= maximumDebtForSelfServe) TotalDebtIsTooHigh :: reasons
+      reasons
     }
   }
 
