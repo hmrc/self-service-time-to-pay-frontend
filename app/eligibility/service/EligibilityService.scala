@@ -39,21 +39,78 @@ object EligibilityService {
   val taxYearEndDay: MonthDay = MonthDay.of(4, 5)
 
   def determineEligibility(eligibilityRequest: EligibilityRequest, onIa: Boolean): EligibilityStatus = {
-    val today: LocalDate = eligibilityRequest.dateOfEligibilityCheck
     val returnsAndDebits: ReturnsAndDebits = eligibilityRequest.returnsAndDebits
     val isOnIa: List[Reason] = if (onIa) Nil else List(IsNotOnIa)
 
-    val reasons = (checkReturnsUpToDate(returnsAndDebits.returns, today) ++ checkDebits(returnsAndDebits, today) ++ isOnIa)
+    val reasons = (checkReturnsUpToDate(returnsAndDebits.returns, eligibilityRequest.dateOfEligibilityCheck)
+      ++ checkDebits(returnsAndDebits.debits, eligibilityRequest.dateOfEligibilityCheck) ++ isOnIa)
     reasons match {
       case Nil => EligibilityStatus(true, Seq.empty)
       case _   => EligibilityStatus(false, reasons.map(r => r.name))
     }
   }
 
+  //Validates if a user has submitted their
+  //returns for the required period and returns any years that require returns submitting if any
+  def checkReturnsUpToDate(returns: Seq[Return], today: LocalDate): List[Reason] = {
+    val currentTaxYearEndDate: LocalDate = taxYearEndDateForCalendarYear(today)
+
+    (0 to returnHistoryYearsRequired).reverse
+      .map(currentTaxYearEndDate.getYear - _)
+      .map(x => returnDateForCalendarYear(x))
+      .flatMap(y => checkReturnForYear(y, returns, today)).toList
+  }
+
   def checkIssuedAndReceivedDate(issuedDate: Option[LocalDate], receivedDate: Option[LocalDate], today: LocalDate): Boolean = {
     isDateTodayOrEarlier(today, issuedDate)
     isDateAfterNow(today, receivedDate)
   }
+
+  def checkReturnForYear(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
+    returns.find(_.taxYearEnd == taxYearEnd) match {
+      //The issued date needs to be the same as today or earlier
+      //The received date needs to be not the same as today or earlier
+      case Some(aReturn) if checkIssuedAndReceivedDate(aReturn.issuedDate, aReturn.receivedDate, today) => Some(ReturnNeedsSubmitting)
+      case _ => None
+    }
+  }
+
+  // Terminology:
+  // Debt - any money owed that is 30 days or more overdue
+  // Charge - any money owed that less than 30 days overdue
+  // Liability - any money that is not yet due
+  def checkDebits(debits: Seq[Debit], today: LocalDate): List[Reason] = {
+    val chargeStartDay: LocalDate = today.minusDays(1)
+    val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
+
+    val (liabilities, chargesAndDebts) = debits.partition(_.dueDate.isAfter(chargeStartDay))
+    val debt = chargesAndDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
+    val totalLiabilities = liabilities.map(l => getTotalForDebit(l)).sum
+    val totalChargesAndDebt = chargesAndDebts.map(d => getTotalForDebit(d)).sum
+    val totalDebt = debt.map(d => getTotalForDebit(d)).sum
+    val totalOwed = totalChargesAndDebt + totalLiabilities
+
+    val reasons: List[Reason] = List.empty
+
+    if (totalOwed == 0) NoDebt :: reasons
+    else {
+      if (totalDebt > insignificantDebtUpperLimit) OldDebtIsTooHigh :: reasons
+      if (totalOwed < insignificantDebtUpperLimit) DebtIsInsignificant :: reasons
+      if (totalOwed >= maximumDebtForSelfServe) TotalDebtIsTooHigh :: reasons
+      reasons
+    }
+  }
+
+  def getTotalForDebit(debit: Debit): Double = {
+    (debit.interest.map(i => i.amount).getOrElse(BigDecimal(0)) + debit.amount).doubleValue()
+  }
+
+  private def taxYearEndDateForCalendarYear(today: LocalDate): LocalDate = {
+    val currentCalendarYearsReturnDate = returnDateForCalendarYear(today.getYear)
+    if (today.isAfter(currentCalendarYearsReturnDate)) returnDateForCalendarYear(today.getYear + 1) else currentCalendarYearsReturnDate
+  }
+
+  private def returnDateForCalendarYear(year: Int) = LocalDate.of(year, taxYearEndDay.getMonthValue, taxYearEndDay.getDayOfMonth)
 
   def isDateTodayOrEarlier(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
     dateOption match {
@@ -72,125 +129,4 @@ object EligibilityService {
       case _ => false
     }
   }
-
-  def checkReturnForYear(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
-    returns.find(_.taxYearEnd == taxYearEnd) match {
-      //TODO confirm this is how it should function seems a lickle bit weird
-      //The issued date needs to be the same as today or earlier
-      //The received date needs to be not the same as today or earlier
-
-      case Some(aReturn) if checkIssuedAndReceivedDate(aReturn.issuedDate, aReturn.receivedDate, today) => Some(ReturnNeedsSubmitting)
-      case _ => None
-    }
-  }
-
-  //Validates if a user has submitted their
-  //returns for the required period and returns any years that require returns submitting if any
-  def checkReturnsUpToDate(returns: Seq[Return], today: LocalDate): List[Reason] = {
-    val currentTaxYearEndDate: LocalDate = taxYearEndDateForCalendarYear(today)
-
-    (0 to returnHistoryYearsRequired).reverse
-      .map(currentTaxYearEndDate.getYear - _)
-      .map(x => returnDateForCalendarYear(x))
-      .flatMap(y => checkReturnForYear(y, returns, today)).toList
-  }
-
-  //TODO check func
-  def getTotalForDebit(debit: Debit): Double = {
-    (debit.interest.map(i => i.amount).getOrElse(BigDecimal(0)) + debit.amount).doubleValue()
-  }
-
-  //TODO should be fine now but keep an eye on it if any drama comes
-  // Terminology:
-  // Debt - any money owed that is 30 days or more overdue
-  // Charge - any money owed that less than 30 days overdue
-  // Liability - any money that is not yet due
-  def checkDebits(returnsAndDebits: ReturnsAndDebits, today: LocalDate): List[Reason] = {
-    val chargeStartDay: LocalDate = today.minusDays(1)
-    val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
-
-    val (liabilities, chargesAndDebts) = returnsAndDebits.debits.partition(_.dueDate.isAfter(chargeStartDay))
-    val debt = chargesAndDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
-    val totalLiabilities = liabilities.map(l => getTotalForDebit(l)).sum
-    val totalChargesAndDebt = chargesAndDebts.map(d => getTotalForDebit(d)).sum
-    val totalDebt = debt.map(d => getTotalForDebit(d)).sum
-    val totalOwed = totalChargesAndDebt + totalLiabilities
-
-    val reasons: List[Reason] = List.empty
-
-    if (totalOwed == 0) NoDebt :: reasons
-    else {
-      if (totalDebt > insignificantDebtUpperLimit) OldDebtIsTooHigh :: reasons
-      if (totalOwed < insignificantDebtUpperLimit) DebtIsInsignificant :: reasons
-      if (totalOwed >= maximumDebtForSelfServe) TotalDebtIsTooHigh :: reasons
-      reasons
-    }
-  }
-
-  private def taxYearEndDateForCalendarYear(today: LocalDate): LocalDate = {
-    val currentCalendarYearsReturnDate = returnDateForCalendarYear(today.getYear)
-    if (today.isAfter(currentCalendarYearsReturnDate)) returnDateForCalendarYear(today.getYear + 1) else currentCalendarYearsReturnDate
-  }
-
-  private def returnDateForCalendarYear(year: Int) = LocalDate.of(year, taxYearEndDay.getMonthValue, taxYearEndDay.getDayOfMonth)
-
-  //________________________________________
-
-  //  def determineEligibilityOLD(eligibilityRequest: EligibilityRequest, onIa: Boolean): EligibilityResult = {
-  //    val today: LocalDate = eligibilityRequest.dateOfEligibilityCheck
-  //
-  //    val selfAssessmentDetails = eligibilityRequest.taxpayer.selfAssessment
-  //
-  //    val chargeStartDay: LocalDate = today.minusDays(1)
-  //    val chargeEndDay: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
-  //
-  //      def checkReturnForYear(taxYearEnd: LocalDate): Option[Reason] = {
-  //        selfAssessmentDetails.returns.find(_.taxYearEnd == taxYearEnd) match {
-  //          //case Some(r) if r.issuedDate(today) && !r.received(today) => Some(ReturnNeedsSubmitting(taxYearEnd.getYear))
-  //          //TODO confirm this is how it should function seems a lickle bit weird
-  //            //The issued date needs to be the same as today or earlier
-  //          //The received date needs to be not the same as today or earlier
-  //
-  //          case Some(r) if checkIssuedAndReceivedDate(r.issuedDate, r.receivedDate) => Some(ReturnNeedsSubmitting(taxYearEnd.getYear))
-  //          case _ => None
-  //        }
-  //      }
-  //
-  //      //Validates if a user has submitted their
-  //      //returns for the required period and returns any years that require returns submitting if any
-  //      def checkReturnsUpToDate(): List[Reason] = {
-  //        (0 to returnHistoryYearsRequired).reverse
-  //          .map(currentTaxYearEndDate.getYear - _)
-  //          .map(x => returnDateForCalendarYear(x))
-  //          .flatMap(y => checkReturnForYear(y)).toList
-  //      }
-  //
-  //      //Checks a user's debits whether their amounts are over 10k
-  //      //or are over 30 days old and returns reasons for ineligibility if any
-  //      def checkDebits(): List[Reason] = {
-  //        val reasons: List[Reason] = Nil
-  //
-  //        val (liabilities, overdue) = selfAssessmentDetails.debits.getOrElse(Seq.empty) partition (_.dueDate.isAfter(chargeStartDay))
-  //        val debts = overdue.filterNot(_.dueDate.isAfter(chargeEndDay))
-  //
-  //        val totalOverdue = overdue.map(_.total).sum
-  //        val totalDebt = debts.map(_.total).sum
-  //        val totalEverything = totalOverdue + liabilities.map(_.total).sum
-  //
-  //        if (totalEverything == 0) NoDebt :: Nil
-  //        else {
-  //          val reason1 = if (totalDebt > insignificantDebtUpperLimit) OldDebtIsTooHigh :: reasons else reasons
-  //          val reason2 = if (totalEverything < insignificantDebtUpperLimit) DebtIsInsignificant :: reason1 else reason1
-  //          val reason3 = if (totalEverything >= maximumDebtForSelfServe) TotalDebtIsTooHigh :: reason2 else reason2
-  //          reason3
-  //        }
-  //      }
-  //
-  //    val isOnIa: List[Reason] = if (onIa) Nil else List(IsNotOnIa)
-  //    val reasons = checkReturnsUpToDate() ++ checkDebits() ++ isOnIa
-  //    reasons match {
-  //      case Nil => Eligible
-  //      case _   => Ineligible(reasons)
-  //    }
-  //  }
 }
