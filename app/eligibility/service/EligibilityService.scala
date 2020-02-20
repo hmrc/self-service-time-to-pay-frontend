@@ -101,24 +101,28 @@ object EligibilityService {
   }
 
   //TODO should be fine now but keep an eye on it if any drama comes
+  // Terminology:
+  // Debt - any money owed that is 30 days or more overdue
+  // Charge - any money owed that less than 30 days overdue
+  // Liability - any money that is not yet due
   def checkDebits(returnsAndDebits: ReturnsAndDebits, today: LocalDate): List[Reason] = {
     val chargeStartDay: LocalDate = today.minusDays(1)
     val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
 
-    val (futureDebts, currentAndOldDebts) = returnsAndDebits.debits.partition(_.dueDate.isAfter(chargeStartDay))
-    val oldDebt = currentAndOldDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
-    val totalFutureDebt = futureDebts.map(f => getTotalForDebit(f)).sum
-    val totalCurrentAndOldDebt = currentAndOldDebts.map(d => getTotalForDebit(d)).sum
-    val totalOldDebt = oldDebt.map(o => getTotalForDebit(o)).sum
-    val totalDebt = totalCurrentAndOldDebt + totalFutureDebt
+    val (liabilities, chargesAndDebts) = returnsAndDebits.debits.partition(_.dueDate.isAfter(chargeStartDay))
+    val debt = chargesAndDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
+    val totalLiabilities = liabilities.map(l => getTotalForDebit(l)).sum
+    val totalChargesAndDebt = chargesAndDebts.map(d => getTotalForDebit(d)).sum
+    val totalDebt = debt.map(d => getTotalForDebit(d)).sum
+    val totalOwed = totalChargesAndDebt + totalLiabilities
 
     val reasons: List[Reason] = List.empty
 
-    if (totalDebt == 0) NoDebt :: reasons
+    if (totalOwed == 0) NoDebt :: reasons
     else {
-      if (totalOldDebt > insignificantDebtUpperLimit) OldDebtIsTooHigh :: reasons
-      if (totalDebt < insignificantDebtUpperLimit) DebtIsInsignificant :: reasons
-      if (totalDebt >= maximumDebtForSelfServe) TotalDebtIsTooHigh :: reasons
+      if (totalDebt > insignificantDebtUpperLimit) OldDebtIsTooHigh :: reasons
+      if (totalOwed < insignificantDebtUpperLimit) DebtIsInsignificant :: reasons
+      if (totalOwed >= maximumDebtForSelfServe) TotalDebtIsTooHigh :: reasons
       reasons
     }
   }

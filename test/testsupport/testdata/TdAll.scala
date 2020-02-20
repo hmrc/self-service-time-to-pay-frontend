@@ -29,11 +29,8 @@ import timetopaytaxpayer.cor.model._
  */
 object TdAll {
 
-  val customerName: String = "Mr Marshall Mathers"
-
   val systemDate: LocalDate = "2019-10-04"
-
-  val Sautr = SaUtr("6573196998")
+  val saUtr = SaUtr("6573196998")
   val utr = "6573196998"
 
   val debit1 = Debit(
@@ -172,7 +169,7 @@ object TdAll {
 
   val taxpayerDetails = TaxpayerDetails(
     utr                      = SaUtr(utr),
-    customerName             = customerName,
+    customerName             = "Mr Marshall Mathers",
     addresses                = Seq(address),
     communicationPreferences = communicationPreferences)
 

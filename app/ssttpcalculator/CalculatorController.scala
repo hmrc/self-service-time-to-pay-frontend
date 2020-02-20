@@ -217,7 +217,6 @@ class CalculatorController @Inject() (
                 )))
               },
               validFormData => {
-
                 journeyService.saveJourney(journey.copy(maybeAmount = Some(validFormData.amount))).map { _ =>
                   Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
                 }

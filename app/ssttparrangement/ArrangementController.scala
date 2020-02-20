@@ -210,7 +210,6 @@ class ArrangementController @Inject() (
       // for now trial with a dummy but could light up everywhere as this method is called lrc
       returnsAndDebits <- taxPayerConnector.getReturnsAndDebits(SaUtr(utr))
       eligibilityRequest = EligibilityRequest(LocalDate.now(clockProvider.getClock), returnsAndDebits)
-      //TODO undo this dummy too
       onIa <- iaService.checkIaUtr(utr)
       //TODO change the boolean back to onIa
       eligibilityStatus = EligibilityService.determineEligibility(eligibilityRequest, onIa)
@@ -219,7 +218,6 @@ class ArrangementController @Inject() (
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
     } yield {
       if (eligibilityStatus.eligible) {
-        println("******ELIGIBILITY CHECK RAN AND PASSED **********")
         isEligible
       } else if (eligibilityStatus.reasons.contains(IsNotOnIa.name)) notOnIa
       else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh.name)) overTenThousandOwed
