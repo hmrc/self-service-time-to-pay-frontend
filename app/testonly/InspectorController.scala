@@ -25,23 +25,20 @@ import play.api.mvc.MessagesControllerComponents
 import req.RequestSupport
 import ssttpcalculator.CalculatorConnector
 import ssttpdirectdebit.DirectDebitConnector
-import ssttpeligibility.EligibilityConnector
 import timetopaytaxpayer.cor.TaxpayerConnector
-import uk.gov.hmrc.http.HeaderCarrier
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class InspectorController @Inject() (
-    ddConnector:          DirectDebitConnector,
-    calculatorConnector:  CalculatorConnector,
-    taxPayerConnector:    TaxpayerConnector,
-    eligibilityConnector: EligibilityConnector,
-    cc:                   MessagesControllerComponents,
-    journeyService:       JourneyService,
-    views:                Views,
-    requestSupport:       RequestSupport)(implicit appConfig: AppConfig,
-                                          ec: ExecutionContext
+    ddConnector:         DirectDebitConnector,
+    calculatorConnector: CalculatorConnector,
+    taxPayerConnector:   TaxpayerConnector,
+    cc:                  MessagesControllerComponents,
+    journeyService:      JourneyService,
+    views:               Views,
+    requestSupport:      RequestSupport)(implicit appConfig: AppConfig,
+                                         ec: ExecutionContext
 ) extends FrontendBaseController(cc) {
 
   import requestSupport._
