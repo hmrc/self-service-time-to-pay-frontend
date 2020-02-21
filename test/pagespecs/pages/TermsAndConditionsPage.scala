@@ -78,8 +78,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |
           |If your circumstances change and you can pay more or you can pay in full, you need to let us know.
           |
-          |Declaration
-          |I confirm this is the earliest I am able to settle this debt and agree to the terms and conditions.
+          |By continuing, you confirm that this is the earliest you can settle the charges and agree to the terms and conditions.
           |
           |Confirm and continue
         """.stripMargin
