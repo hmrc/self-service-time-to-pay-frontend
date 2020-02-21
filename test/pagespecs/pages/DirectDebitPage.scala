@@ -88,7 +88,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |To continue you must be:
           |
           |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders
+          |able to set up Direct Debits without permission from the other account holders, if there are any
           |Continue
         """.stripMargin
 

@@ -296,7 +296,7 @@ ssttp.direct-debit.form.error.accountNumber.not-valid = Account number must be a
 ssttp.direct-debit.form.single-account-holder.required = Please select an option
 ssttp.direct-debit.form.message.title = To continue you must be:
 ssttp.direct-debit.form.message.named.account = a named account holder for this account
-ssttp.direct-debit.form.message.permission = able to set up Direct Debits without permission from the other account holders
+ssttp.direct-debit.form.message.permission = able to set up Direct Debits without permission from the other account holders, if there are any
 
 ssttp.direct-debit.guarantee.title = The Direct Debit Guarantee
 ssttp.direct-debit.guarantee.list.1 = This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
