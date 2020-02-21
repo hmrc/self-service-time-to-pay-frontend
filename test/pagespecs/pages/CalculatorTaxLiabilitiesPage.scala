@@ -65,11 +65,11 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
         """Back
           |Your Self Assessment tax bill is £4,900.00
           |Self Assessment statement
-          |Due 25th November 2019
+          |Due 25 November 2019
           |First payment on account for tax year 2018 to 2019
           |
           |£2,500.00
-          |Due 25th November 2019
+          |Due 25 November 2019
           |Second payment on account for tax year 2018 to 2019
           |
           |£2,400.00
@@ -80,11 +80,11 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
         """Yn ôl
           |Crynodeb o’ch cyfrif Hunanasesiad £4,900.00
           |Dadansoddiad Hunanasesiad
-          |Due 25th November 2019
+          |Due 25 November 2019
           |Taliad cyntaf ar gyfrif for tax year 2018 to 2019
           |
           |£2,500.00
-          |Due 25th November 2019
+          |Due 25 November 2019
           |Ail daliad ar gyfrif for tax year 2018 to 2019
           |
           |£2,400.00

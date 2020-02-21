@@ -207,7 +207,7 @@ ssttp.call-us.likely-to-ask.l1 = what you''ve done to try to pay the bill
 ssttp.call-us.likely-to-ask.l2 = if you can pay some of the bill now
 ssttp.call-us.opening-times.heading = Our opening times are:
 ssttp.call-us.opening-times.l1 = Monday to Friday: 8am to 8pm
-ssttp.call-us.opening-times.l2 = Saturday and Sunday: 8am to 4pm
+ssttp.call-us.opening-times.l2 = Saturday: 8am to 4pm
 
 ssttp.direct-debit.unauthorized.title = If more then one person is required to authorise a Direct Debit
 ssttp.direct-debit.unauthorized.intro.p1 = If more then one sigature is required to authorise the Direct Debit on this account, you will need to
@@ -262,7 +262,7 @@ ssttp.arrangement.declaration.warning.p1 = If we cancel this agreement, you will
 ssttp.arrangement.declaration.warning.p2 = We can use any refunds you might get to pay off your tax charges.
 ssttp.arrangement.declaration.warning.p3 = If your circumstances change and you can pay more or you can pay in full, you need to let us know.
 ssttp.arrangement.declaration.agreement.h1 = Declaration
-ssttp.arrangement.declaration.agreement.p1 = I confirm this is the earliest I am able to settle this debt and agree to the terms and conditions.
+ssttp.arrangement.declaration.agreement.p1 = By continuing, you confirm that this is the earliest you can settle the charges and agree to the terms and conditions.
 ssttp.arrangement.declaration.agreement.confirm = Confirm and continue
 
 
@@ -296,7 +296,7 @@ ssttp.direct-debit.form.error.accountNumber.not-valid = Account number must be a
 ssttp.direct-debit.form.single-account-holder.required = Please select an option
 ssttp.direct-debit.form.message.title = To continue you must be:
 ssttp.direct-debit.form.message.named.account = a named account holder for this account
-ssttp.direct-debit.form.message.permission = able to set up Direct Debits without permission from the other account holders
+ssttp.direct-debit.form.message.permission = able to set up Direct Debits without permission from the other account holders, if there are any
 
 ssttp.direct-debit.guarantee.title = The Direct Debit Guarantee
 ssttp.direct-debit.guarantee.list.1 = This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
@@ -382,7 +382,7 @@ ssttp.over-ten-thosand.likely.to.ask.l1 = what you''ve done to try to pay the bi
 ssttp.over-ten-thosand.likely.to.ask.l2 = if you can pay some of the bill now
 ssttp.over-ten-thosand.opening.hours.h1 = Our opening times are:
 ssttp.over-ten-thosand.opening.hours.l1 = Monday to Friday: 8am to 8pm
-ssttp.over-ten-thosand.opening.hours.l2 = Saturday and Sunday: 8am to 4pm
+ssttp.over-ten-thosand.opening.hours.l2 = Saturday: 8am to 4pm
 
 ssttp.monthy.amount.title = How much can you afford to pay each month?
 ssttp.monthly.amount.hint = Enter an amount between £{0} and £{1}

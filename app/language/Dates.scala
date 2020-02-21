@@ -48,4 +48,8 @@ object Dates {
     val year = localDate.getYear
     s"$day $month $year"
   }
+
+  def dateWithoutCardinals(localDate: LocalDate)(implicit messages: Messages): String = {
+    s"${localDate.getDayOfMonth} ${localDate.getMonth.toString.toLowerCase.capitalize} ${localDate.getYear}"
+  }
 }
