@@ -101,6 +101,7 @@ class ArrangementController @Inject() (
    * Lastly, a check is performed to see if the user input debits match the Taxpayer
    * debits. If not, display misalignment page otherwise perform an eligibility check.
    */
+  //TODO seems like this or the call in the func above could be redundant
   def determineEligibility: Action[AnyContent] = as.authorisedSaUser.async { implicit request: AuthorisedSaUserRequest[AnyContent] =>
     JourneyLogger.info(s"ArrangementController.determineEligibility: $request")
     val newJourney = Journey.newJourney.copy()

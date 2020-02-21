@@ -61,11 +61,6 @@ object EligibilityService {
       .flatMap(y => checkReturnForYear(y, returns, today)).toList
   }
 
-  def checkIssuedAndReceivedDate(issuedDate: Option[LocalDate], receivedDate: Option[LocalDate], today: LocalDate): Boolean = {
-    isDateTodayOrEarlier(today, issuedDate)
-    isDateAfterNow(today, receivedDate)
-  }
-
   def checkReturnForYear(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
     returns.find(_.taxYearEnd == taxYearEnd) match {
       //The issued date needs to be the same as today or earlier
@@ -73,6 +68,10 @@ object EligibilityService {
       case Some(aReturn) if checkIssuedAndReceivedDate(aReturn.issuedDate, aReturn.receivedDate, today) => Some(ReturnNeedsSubmitting)
       case _ => None
     }
+  }
+
+  def checkIssuedAndReceivedDate(issuedDate: Option[LocalDate], receivedDate: Option[LocalDate], today: LocalDate): Boolean = {
+    isDateTodayOrEarlier(today, issuedDate) && isDateAfterNow(today, receivedDate)
   }
 
   // Terminology:
@@ -117,7 +116,7 @@ object EligibilityService {
       case Some(date: LocalDate) =>
         if (date.isBefore(today) || date.isEqual(today)) true
         else false
-      case _ => false
+      case _ => throw new RuntimeException("Date Missing For Eligibility Check")
     }
   }
 
@@ -126,7 +125,7 @@ object EligibilityService {
       case Some(date: LocalDate) =>
         if (date.isAfter(today)) true
         else false
-      case _ => false
+      case _ => throw new RuntimeException("Date Missing For Eligibility Check")
     }
   }
 }
