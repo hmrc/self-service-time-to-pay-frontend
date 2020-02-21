@@ -185,8 +185,6 @@ object TdAll {
     }
   """.asJson
 
-
-
   val eligibilityStatusJson =
     //language=Json
     """
@@ -197,7 +195,7 @@ object TdAll {
   """.asJson
 
   def ineligibleStatus(reasons: Seq[Reason]): JsObject =
-  s"""
+    s"""
     {
      "eligible": false,
      "reasons": ["${convertReasonsToString(reasons)}"]
@@ -225,8 +223,6 @@ object TdAll {
     state             = "Activated",
     delegatedAuthRule = None
   )
-
-
 
   val email = "sau@hotmail.com"
 

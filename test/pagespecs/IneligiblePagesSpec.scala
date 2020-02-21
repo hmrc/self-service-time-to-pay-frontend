@@ -27,19 +27,19 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
 
   /**
-    * spec to test all of the ineligible pages
-    *
-    * Ineligible reasons:
-    * - No debits
-    * - Not on IA
-    * - No sa enrolment (not enrolled)
-    * - Confidence level < 200
-    * - Not submitted return (Current year)
-    * - Previous Tax Returns Not Submitted
-    * - Total amount > £10k
-    * - Old debt < £32
-    * - debt less than £32
-    */
+   * spec to test all of the ineligible pages
+   *
+   * Ineligible reasons:
+   * - No debits
+   * - Not on IA
+   * - No sa enrolment (not enrolled)
+   * - Confidence level < 200
+   * - Not submitted return (Current year)
+   * - Previous Tax Returns Not Submitted
+   * - Total amount > £10k
+   * - Old debt < £32
+   * - debt less than £32
+   */
 
   val listOfIneligibleReasons: TableFor4[String, JsObject, String, BasePage] = Table(
     ("reason", "jsObject", "pageAsString", "page"),
