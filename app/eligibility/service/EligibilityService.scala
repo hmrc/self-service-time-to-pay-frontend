@@ -110,13 +110,15 @@ object EligibilityService {
   }
 
   private def returnDateForCalendarYear(year: Int) = LocalDate.of(year, taxYearEndDay.getMonthValue, taxYearEndDay.getDayOfMonth)
-
+  //TODO restore the exceptions
   def isDateTodayOrEarlier(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
     dateOption match {
       case Some(date: LocalDate) =>
         if (date.isBefore(today) || date.isEqual(today)) true
         else false
-      case _ => throw new RuntimeException("Date Missing For Eligibility Check")
+      case _ =>
+        false
+      //throw new RuntimeException("Date Missing For Eligibility Check")
     }
   }
 
@@ -125,7 +127,9 @@ object EligibilityService {
       case Some(date: LocalDate) =>
         if (date.isAfter(today)) true
         else false
-      case _ => throw new RuntimeException("Date Missing For Eligibility Check")
+      case _ =>
+        false
+      //throw new RuntimeException("Date Missing For Eligibility Check")
     }
   }
 }

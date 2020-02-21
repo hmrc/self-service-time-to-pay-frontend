@@ -60,8 +60,14 @@ final case class Journey(
 
   def amount: BigDecimal = maybeAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [${this}]"))
   //TODO restore this
-  def taxpayer: TaxpayerDetails = TaxpayerDetails(SaUtr("6573196998"), "Mr Marshall Mathers", addresses = Seq(Address(Some("xxxx"))), CommunicationPreferences(true, true, true, true))
-  //def taxpayer: TaxpayerDetails = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [${this}]"))
+  //def taxpayer: TaxpayerDetails = TaxpayerDetails(SaUtr("6573196998"), "Mr Marshall Mathers", addresses = Seq(Address(Some("xxxx"))), CommunicationPreferences(true, true, true, true))
+  def taxpayer: TaxpayerDetails = {
+    println("*******************")
+    println("**** ATTEMPTED TO GET TAXPAYER****")
+    println("*******************")
+    maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [${this}]"))
+
+  }
   def calculatorInput: CalculatorInput = maybeCalculatorData.getOrElse(throw new RuntimeException(s"Expected 'CalculatorData' to be there but was not found. [${_id}] [${this}]"))
   def eligibilityStatus: EligibilityStatus = maybeEligibilityStatus.getOrElse(throw new RuntimeException(s"Expected 'EligibilityStatus' to be there but was not found. [${_id}] [${this}]"))
 
