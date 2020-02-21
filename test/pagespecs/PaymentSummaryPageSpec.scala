@@ -37,6 +37,7 @@ class PaymentSummaryPageSpec extends ItSpec {
       paymentTodayCalculatorPage.clickContinue()
     }
 
+
   "language" in
     {
       beginJourney()
