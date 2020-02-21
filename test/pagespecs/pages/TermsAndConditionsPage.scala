@@ -96,7 +96,6 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |
           |Os bydd eich amgylchiadau’n newid, a gallwch dalu mwy neu gallwch dalu’n llawn, mae’n rhaid i chi roi gwybod i ni.
           |
-          |Datganiad
           |Cytunaf â thelerau ac amodau’r cynllun talu hwn. Cadarnhaf mai dyma’r cynharaf y gallaf setlo’r ddyled hon.
           |
           |Cadarnhau ac yn eich blaen
