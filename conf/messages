@@ -207,7 +207,7 @@ ssttp.call-us.likely-to-ask.l1 = what you''ve done to try to pay the bill
 ssttp.call-us.likely-to-ask.l2 = if you can pay some of the bill now
 ssttp.call-us.opening-times.heading = Our opening times are:
 ssttp.call-us.opening-times.l1 = Monday to Friday: 8am to 8pm
-ssttp.call-us.opening-times.l2 = Saturday and Sunday: 8am to 4pm
+ssttp.call-us.opening-times.l2 = Saturday: 8am to 4pm
 
 ssttp.direct-debit.unauthorized.title = If more then one person is required to authorise a Direct Debit
 ssttp.direct-debit.unauthorized.intro.p1 = If more then one sigature is required to authorise the Direct Debit on this account, you will need to
@@ -382,7 +382,7 @@ ssttp.over-ten-thosand.likely.to.ask.l1 = what you''ve done to try to pay the bi
 ssttp.over-ten-thosand.likely.to.ask.l2 = if you can pay some of the bill now
 ssttp.over-ten-thosand.opening.hours.h1 = Our opening times are:
 ssttp.over-ten-thosand.opening.hours.l1 = Monday to Friday: 8am to 8pm
-ssttp.over-ten-thosand.opening.hours.l2 = Saturday and Sunday: 8am to 4pm
+ssttp.over-ten-thosand.opening.hours.l2 = Saturday: 8am to 4pm
 
 ssttp.monthy.amount.title = How much can you afford to pay each month?
 ssttp.monthly.amount.hint = Enter an amount between £{0} and £{1}

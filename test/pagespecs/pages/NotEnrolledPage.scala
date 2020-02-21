@@ -67,7 +67,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |if you can pay some of the bill now
           |Our opening times are:
           |Monday to Friday: 8am to 8pm
-          |Saturday and Sunday: 8am to 4pm"""
+          |Saturday: 8am to 4pm"""
           .stripMargin
 
       private val mainTextWelsh =
