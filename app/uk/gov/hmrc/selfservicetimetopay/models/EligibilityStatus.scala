@@ -29,6 +29,7 @@ case object ReturnNeedsSubmitting extends Reason("ReturnNeedsSubmitting")
 case object IsNotOnIa extends Reason("IsNotOnIa")
 case object NotSaEnrolled extends Reason("NotEnrolled")
 case object DebtTooOld extends Reason("DebtTooOld")
+case object NoDueDate extends Reason("NoDueDate")
 
 object Reason {
 

@@ -21,7 +21,7 @@ import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import testsupport.RichMatchers._
 
-class NeedToFilePage (baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   override def path: String = "/pay-what-you-owe-in-instalments/eligibility/you-need-to-file"
 

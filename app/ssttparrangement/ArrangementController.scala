@@ -207,8 +207,12 @@ class ArrangementController @Inject() (
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${es.eligible}]", newJourney)
     } yield {
       if (es.eligible) isEligible
-      else if (es.reasons.contains(DebtTooOld) || es.reasons.contains(OldDebtIsTooHigh)) notEligible
-      else if (es.reasons.contains(NoDebt) || es.reasons.contains(TTPIsLessThenTwoMonths)) notEligible
+      else if (es.reasons.contains(DebtTooOld) ||
+        es.reasons.contains(OldDebtIsTooHigh) ||
+        es.reasons.contains(NoDueDate) ||
+        es.reasons.contains(NoDebt) ||
+        es.reasons.contains(TTPIsLessThenTwoMonths) ||
+        es.reasons.contains(NoDueDate)) notEligible
       else if (es.reasons.contains(IsNotOnIa)) notOnIa
       else if (es.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
       else if (es.reasons.contains(ReturnNeedsSubmitting) || es.reasons.contains(DebtIsInsignificant)) youNeedToFile
