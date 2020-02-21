@@ -27,7 +27,7 @@ class IaService @Inject() (http: HttpClient) {
   //TODO sort these out proper in the config or whatever
   //  val iaUrl: String = config.baseUrl
   //  val enableCheck = config.enableIACheck
-  val iaUrl: String = "http://localhost:8100"
+  val iaUrl: String = "http://localhost:8051"
   val enableCheck = true
 
   def checkIaUtr(utr: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Boolean] = {

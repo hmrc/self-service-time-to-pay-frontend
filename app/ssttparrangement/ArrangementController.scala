@@ -211,9 +211,9 @@ class ArrangementController @Inject() (
       // for now trial with a dummy but could light up everywhere as this method is called lrc
       returnsAndDebits <- taxPayerConnector.getReturnsAndDebits(SaUtr(utr))
       eligibilityRequest = EligibilityRequest(LocalDate.now(clockProvider.getClock), returnsAndDebits)
-      //onIa <- iaService.checkIaUtr(utr)
+      onIa <- iaService.checkIaUtr(utr)
       //TODO change the boolean back to onIa
-      eligibilityStatus = EligibilityService.determineEligibility(eligibilityRequest, true)
+      eligibilityStatus = EligibilityService.determineEligibility(eligibilityRequest, onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
