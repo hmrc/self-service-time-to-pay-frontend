@@ -243,7 +243,7 @@ ssttp.arrangement.instalment-summary.payment-date.change = Change
 ssttp.arrangement.instalment-summary.schedule.final-payment-interest = Interest added to final payment
 
 
-ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Print payment summary
+ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Payment summary
 ssttp.arrangement.print-summary.schedule.payment-plan.h2 = Your payment plan
 ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment = Total repayment
 ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment.hint = Including interest

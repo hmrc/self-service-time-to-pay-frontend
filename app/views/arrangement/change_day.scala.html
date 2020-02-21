@@ -36,7 +36,7 @@
     loggedIn = true
 ){
     <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a>
-    <h1>@Messages("ssttp.arrangement.change_day.title")</h1>
+    <h1 class="heading-xlarge">@Messages("ssttp.arrangement.change_day.title")</h1>
     @if(dayForm.hasErrors) {
     @viewsHelpers.errorSummary(Messages("ssttp.calculator.results.error.title"), dayForm)
     }
