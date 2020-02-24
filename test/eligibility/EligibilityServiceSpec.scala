@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package eligibility
 
 import java.time.LocalDate
@@ -23,13 +24,14 @@ import ssttpeligibility.EligibilityService
 import timetopaytaxpayer.cor.model.{Address, CommunicationPreferences, Debit, Interest, Return, SaUtr, SelfAssessmentDetails, Taxpayer}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
-class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with Matchers  {
+class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with Matchers {
 
   val Eligible = EligibilityStatus(true, Seq.empty)
   def Ineligible(reasons: Seq[Reason]): EligibilityStatus = {
     EligibilityStatus(false, reasons)
   }
   val OptionalNow = Some(LocalDate.now())
+  val taxYearEnd2020 = LocalDate.of(2020, 4, 5)
   val completedReturnThisYear =
     Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)), receivedDate = Some(LocalDate.of(2016, 2, 10)))
 
@@ -164,9 +166,9 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "SA Return not yet submitted by customer" in {
       val debits = List(
-        Debit(amount  = 1000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 7, 31))
+        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
       val returns = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5))) :: Nil
@@ -178,13 +180,13 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "SA Return submitted in future by customer" in {
       val debits = List(
-        Debit(amount  = 1000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 7, 31))
+        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
       val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-        receivedDate = Some(LocalDate.of(2016, 2, 1))) :: Nil
+                           receivedDate = Some(LocalDate.of(2016, 2, 1))) :: Nil
 
       val todaysDate = LocalDate.of(2016, 1, 31)
 
@@ -193,13 +195,13 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "Return submitted, total amount > £10k" in {
       val debits = List(
-        Debit(amount  = 5000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 10000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 10000, dueDate = LocalDate.of(2017, 7, 31))
+        Debit(amount     = 5000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 10000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 10000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
       val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-        receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
+                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
 
       val todaysDate = LocalDate.of(2016, 12, 31)
 
@@ -208,14 +210,13 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "Return submitted, debt > £32 is older than 29 days" in {
       val debits = List(
-        Debit(amount  = 2000, dueDate = LocalDate.of(2016, 7, 31)),
-        Debit(amount  = 1000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 7, 31))
-      )
+        Debit(amount     = 2000, dueDate = LocalDate.of(2016, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020))
 
       val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-        receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
+                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
 
       val todaysDate = LocalDate.of(2016, 12, 31)
 
@@ -224,14 +225,14 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "Return submitted, old debt < £32, total amount < £10k" in {
       val debits = List(
-        Debit(amount   = 0, dueDate = LocalDate.of(2016, 6, 10), interest = Some(Interest(LocalDate.now, 25))),
-        Debit(amount  = 1000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 7, 31))
+        Debit(amount     = 0, dueDate = LocalDate.of(2016, 6, 10), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
       val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-        receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
+                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
 
       val todaysDate = LocalDate.of(2016, 12, 31)
 
@@ -240,17 +241,17 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "Return submitted, old returns overdue" in {
       val debits = List(
-        Debit(amount  = 1000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 7, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 1, 31))
+        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
       val returns = List(
         Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-          receivedDate = Some(LocalDate.of(2016, 12, 10))),
+               receivedDate = Some(LocalDate.of(2016, 12, 10))),
         Return(taxYearEnd   = LocalDate.of(2015, 4, 5), issuedDate = Some(LocalDate.of(2014, 4, 5)),
-          receivedDate = None))
+               receivedDate = None))
 
       val todaysDate = LocalDate.of(2016, 12, 31)
 
@@ -259,13 +260,13 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "Return submitted, total amount <£10k" in {
       val debits = List(
-        Debit(amount  = 1000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 7, 31))
+        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
       val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-        receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
+                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
 
       val todaysDate = LocalDate.of(2017, 2, 4)
 
@@ -274,13 +275,13 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "Return submitted, total amount >£10k with future liability" in {
       val debits = List(
-        Debit(amount  = 3000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 6000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 6000, dueDate = LocalDate.of(2017, 7, 31))
+        Debit(amount     = 3000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 6000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 6000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
       val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-        receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
+                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
 
       val todaysDate = LocalDate.of(2017, 2, 4)
 
@@ -289,15 +290,15 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "Return submitted, old debts > £32" in {
       val debits = List(
-        Debit(amount  = 1000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 1, 31)),
-        Debit(amount  = 2000, dueDate = LocalDate.of(2017, 7, 31)),
-        Debit(amount   = 0, dueDate = LocalDate.of(2016, 1, 31), interest = Some(Interest(LocalDate.now, 25))),
-        Debit(amount   = 0, dueDate = LocalDate.of(2016, 1, 31), interest = Some(Interest(LocalDate.now, 40)))
+        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 0, dueDate = LocalDate.of(2016, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount     = 0, dueDate = LocalDate.of(2016, 1, 31), interest = Some(Interest(Some(LocalDate.now), 40)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
       val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-        receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
+                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
 
       val todaysDate = LocalDate.of(2016, 12, 31)
 
@@ -306,11 +307,11 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "Return submitted, total liability > £32" in {
       val debits = List(
-        Debit(amount  = 30, dueDate = LocalDate.of(2017, 7, 31))
+        Debit(amount     = 30, dueDate = LocalDate.of(2017, 7, 31), interest = None, originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
       val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-        receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
+                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
 
       val todaysDate = LocalDate.of(2017, 7, 10)
 
@@ -319,11 +320,11 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "Return submitted, utr not on ia " in {
       val debits = List(
-        Debit(amount  = 500, dueDate = LocalDate.of(2017, 7, 31))
+        Debit(amount     = 500, dueDate = LocalDate.of(2017, 7, 31), interest = None, originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
       val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-        receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
+                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
 
       val todaysDate = LocalDate.of(2017, 7, 10)
 
@@ -345,11 +346,11 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
     debit(amount, currentDate.minusDays(60), interest = interest)
 
   def debit(amount: Double, dueDate: LocalDate, interest: Option[Interest] = None) = {
-    Debit(amount   = amount, dueDate = dueDate, interest = interest)
+    Debit(amount     = amount, dueDate = dueDate, interest = interest, originCode = "IN1", taxYearEnd = taxYearEnd2020)
   }
 
   def filedReturn(year: Int) = Return(taxYearEnd   = LocalDate.of(year, 4, 5), issuedDate = Some(LocalDate.of(year - 1, 3, 6)),
-    receivedDate = Some(LocalDate.of(year, 12, 10)))
+                                      receivedDate = Some(LocalDate.of(year, 12, 10)))
 
   def unissuedReturn(year: Int) = Return(taxYearEnd = LocalDate.of(year, 4, 5))
 
@@ -366,7 +367,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
   }
 
   private def createTaxpayer(debits: Seq[Debit], returns: Seq[Return]) = {
-    Taxpayer(selfAssessment = SelfAssessmentDetails(debits  = debits, returns = returns, communicationPreferences = CommunicationPreferences(true, true, true, true), utr = SaUtr("6573196998")), customerName = "Mr Eric Biddle", addresses = Seq(address))
+    Taxpayer(selfAssessment = SelfAssessmentDetails(debits                   = debits, returns = returns, communicationPreferences = CommunicationPreferences(true, true, true, true), utr = SaUtr("6573196998")), customerName = "Mr Eric Biddle", addresses = Seq(address))
   }
 }
 
