@@ -44,7 +44,7 @@
 
     <h1 class="heading-xlarge">@Messages("ssttp.monthy.amount.title")</h1>
 
-    <p>@Messages("ssttp.monthly.amount.hint", lowerBound, upperBound)</p>
+    <p>@Messages("ssttp.monthly.amount.hint", currency(lowerBound.toDouble), currency(upperBound.toDouble))</p>
 
     @viewsHelpers.form(action = ssttpcalculator.routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group"){
         @viewsHelpers.input(
