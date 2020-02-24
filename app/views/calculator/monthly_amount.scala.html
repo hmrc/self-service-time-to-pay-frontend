@@ -16,6 +16,7 @@
 
 @import helpers.forms.submit
 @import ssttpcalculator.MonthlyAmountForm
+@import partials.currency
 
 @this(
   main: views.html.main,
@@ -38,10 +39,10 @@
     <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
 
     @if(dataForm.hasErrors){
-    @viewsHelpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
+        @viewsHelpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
     }
 
-    <h1 class="heading-xlarge">@Messages("ssttp.monthy.amount.title")</h1>
+    <h1>@Messages("ssttp.monthy.amount.title")</h1>
 
     <p>@Messages("ssttp.monthly.amount.hint", lowerBound, upperBound)</p>
 
@@ -51,6 +52,6 @@
             '_inputClass -> "form-control-1-4",
             '_label -> "£"
         )
-    @submit(){@Messages("ssttp.calculator.form.continue")}
+        @submit(){@Messages("ssttp.calculator.form.continue")}
     }
 }

@@ -116,7 +116,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
       private val accountNameErrorText =
         """Back
-          |Something you’ve entered isn’t valid
+          |There is a problem
           |Check your account name is correct
           |Enter account details to set up a Direct Debit
           |Enter your banking details
@@ -131,7 +131,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
       private val sortCodeErrorText =
         """Back
-          |Something you’ve entered isn’t valid
+          |There is a problem
           |Sort code must be a 6 digit number
           |Enter account details to set up a Direct Debit
           |Enter your banking details
@@ -146,7 +146,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
       private val accountNumberErrorText =
         """Back
-          |Something you’ve entered isn’t valid
+          |There is a problem
           |Account number must be an 8 digit number
           |Enter account details to set up a Direct Debit
           |Enter your banking details

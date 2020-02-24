@@ -22,6 +22,7 @@
 @import java.time.LocalDate
 @import partials.currency
 @import java.util.Locale
+@import language.Dates._
 
 
 @(
@@ -74,7 +75,7 @@
 
 <tr>
     <td><p class="bold">@Messages("ssttp.arrangement.instalment-summary.payment-date.title")</p></td>
-    <td>@schedule.getMonthlyInstalmentDate @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")</td>
+    <td>@getMonthlyDateFormatted(schedule.ps.instalments.head.paymentDate) @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")</td>
 </tr>
 </tbody>
 </table>

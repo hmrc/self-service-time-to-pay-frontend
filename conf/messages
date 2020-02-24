@@ -99,7 +99,7 @@ ssttp.calculator.self-assessment-account-summary-page.button-continue = Continue
 ssttp.calculator.self-assessment-account-summary-page.button-back = Back
 
 ssttp.calculator.form.payment_today.title = How much can you pay upfront?
-ssttp.calculator.form.payment_today.error.summary.title = Something you''ve entered isn''t valid
+ssttp.calculator.form.payment_today.error.summary.title = There is a problem
 ssttp.calculator.form.payment_today.amount.less-than-owed = You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required = Enter the amount you want to pay upfront
 ssttp.calculator.form.payment_today.amount.required.min = The amount must be more than £0.00
@@ -108,7 +108,7 @@ ssttp.calculator.form.payment_today.amount.less-than-maxval = Total amounts must
 
 ssttp.calculator.form.payment_today_question.title = Can you make an upfront payment?
 ssttp.calculator.form.payment_today_question.error.summary.title = Can you make an upfront payment?
-ssttp.calculator.form.payment_today_question.required.title = You haven''t selected an option
+ssttp.calculator.form.payment_today_question.required.title = There is a problem
 ssttp.calculator.form.payment_today_question.required = Select ''yes'' if you want to make an upfront payment
 ssttp.calculator.form.payment_today_question.yes_label = Yes
 ssttp.calculator.form.payment_today_question.no_label = No
@@ -172,7 +172,7 @@ ssttp.calculator.check-calculation.how-we-calculate-interest = How we calculate 
 ssttp.calculator.check-calculation.how-we-calculate-interest.p1 = We only charge interest on overdue amounts.
 ssttp.calculator.check-calculation.how-we-calculate-interest.p2 = We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
 ssttp.calculator.check-calculation.how-we-calculate-interest.p3 = If the interest rate changes during your plan, your monthly payments will not change. If we need to, we''ll settle the difference at the end of the plan.
-ssttp.calculator.check-calculation.cant-afford = I can''t afford the minimum payment
+ssttp.calculator.check-calculation.cant-afford = I cannot afford the minimum payment
 ssttp.calculator.check-calculation.cant-afford.p1 = You may still be able to set up a payment plan over the phone, but you are not eligible for an online payment plan.
 ssttp.calculator.check-calculation.cant-afford.p2.1 = We recommend you speak to an adviser on
 ssttp.calculator.check-calculation.cant-afford.p2.2 = 0300 200 3835
@@ -262,7 +262,7 @@ ssttp.arrangement.declaration.warning.p1 = If we cancel this agreement, you will
 ssttp.arrangement.declaration.warning.p2 = We can use any refunds you might get to pay off your tax charges.
 ssttp.arrangement.declaration.warning.p3 = If your circumstances change and you can pay more or you can pay in full, you need to let us know.
 ssttp.arrangement.declaration.agreement.h1 = Declaration
-ssttp.arrangement.declaration.agreement.p1 = By continuing, you confirm that this is the earliest you can settle the charges and agree to the terms and conditions.
+ssttp.arrangement.declaration.agreement.p1 = By continuing, you confirm this is the earliest you can settle the charges and you agree to the terms and conditions.
 ssttp.arrangement.declaration.agreement.confirm = Confirm and continue
 
 
@@ -314,7 +314,7 @@ ssttp.direct-debit.monthly = Monthly
 ssttp.direct-debit.initial-payment = (initial payment)
 ssttp.direct-debit.final-payment = (final payment)
 
-ssttp.arrangement.direct-debit.form.error.summary.title = Something you’ve entered isn’t valid
+ssttp.arrangement.direct-debit.form.error.summary.title = There is a problem
 ssttp.arrangement.direct-debit.confirmation.title = Check your Direct Debit details
 ssttp.arrangement.direct-debit.confirmation.total-payment = Total payment will be:
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary = You are covered by the Direct Debit Guarantee
@@ -346,9 +346,9 @@ ssttp.beta.banner.help = Help improve GOV.UK
 ssttp.beta.banner.no.thanks = No Thanks
 ssttp.beta.banner.p1 = Get involved in making government services better (opens in a new window)
 
-ssttp.arrangement.complete.title = Application successful
-ssttp.arrangement.complete.ddref = Direct Debit mandate reference:
-ssttp.arrangement.complete.print-label = Print your payment summary
+ssttp.arrangement.complete.title = Your payment plan is set up
+ssttp.arrangement.complete.ddref = Your Direct Debit mandate reference:
+ssttp.arrangement.complete.print-label = Print your payment plan
 ssttp.arrangement.complete.next = What happens next?
 ssttp.arrangement.complete.summary = HMRC will send you a letter within 5 days with your payment dates.
 ssttp.arrangement.complete.first-payment = Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on {0}.
