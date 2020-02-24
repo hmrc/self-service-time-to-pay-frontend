@@ -56,10 +56,10 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
       }
 
       private val mainTextEnglish =
-        """Application successful
-          |Direct Debit mandate reference:
+        """Your payment plan is set up
+          |Your Direct Debit mandate reference:
           |123ABC123
-          |Print your payment summary
+          |Print your payment plan
           |What happens next?
           |HMRC will send you a letter within 5 days with your payment dates.
           |Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on 25th August 2019.

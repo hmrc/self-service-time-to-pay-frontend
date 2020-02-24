@@ -95,7 +95,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
       def apply(): String = mainErrorEnglish
       private val mainErrorEnglish =
         """Back
-          |Something you've entered isn't valid
+          |There is a problem
           |You need to enter an amount less than the amount you owe
           |How much can you pay upfront?
           |Enter the amount you want to pay upfront £
