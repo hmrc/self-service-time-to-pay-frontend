@@ -49,25 +49,26 @@ object EligibilityService {
     }
   }
 
-  def checkReturnsUpToDate(returns: Seq[Return], today: LocalDate): List[Reason] = {
+  private def checkReturnsUpToDate(returns: Seq[Return], today: LocalDate): List[Reason] = {
     val currentTaxYearEndDate: LocalDate = taxYearEndDateForCalendarYear(today)
 
     (0 to returnHistoryYearsRequired).reverse
       .map(currentTaxYearEndDate.getYear - _)
-      .map(x => returnDateForCalendarYear(x))
-      .flatMap(y => checkReturnForYear(y, returns, today)).toList
+      .map(year => returnDateForCalendarYear(year))
+      .flatMap(returnDateForYear => checkReturnForYear(returnDateForYear, returns, today)).toList
   }
 
-  def checkReturnForYear(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
+  private def checkReturnForYear(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
     returns.find(_.taxYearEnd == taxYearEnd) match {
-      //The issued date needs to be the same as today or earlier
-      //The received date needs to be not the same as today or earlier
+      //To return true and return a reason for ineligibility the following needs to occur:
+      //The issued date needs to be today or earlier
+      //The received date needs to be after today
       case Some(aReturn) if checkIssuedAndReceivedDate(aReturn.issuedDate, aReturn.receivedDate, today) => Some(ReturnNeedsSubmitting)
       case _ => None
     }
   }
 
-  def checkIssuedAndReceivedDate(issuedDate: Option[LocalDate], receivedDate: Option[LocalDate], today: LocalDate): Boolean = {
+  private def checkIssuedAndReceivedDate(issuedDate: Option[LocalDate], receivedDate: Option[LocalDate], today: LocalDate): Boolean = {
     isDateTodayOrEarlier(today, issuedDate) && isDateAfterNow(today, receivedDate)
   }
 
@@ -75,7 +76,7 @@ object EligibilityService {
   // Debt - any money owed that is 30 days or more overdue
   // Charge - any money owed that less than 30 days overdue
   // Liability - any money that is not yet due
-  def checkDebits(debits: Seq[Debit], today: LocalDate): List[Reason] = {
+  private def checkDebits(debits: Seq[Debit], today: LocalDate): List[Reason] = {
     val chargeStartDay: LocalDate = today.minusDays(1)
     val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
 
@@ -87,19 +88,31 @@ object EligibilityService {
     val totalDebt = debt.map(d => getTotalForDebit(d)).sum
     val totalOwed = totalChargesAndDebt + totalLiabilities
 
-    //TODO maybe refactor below if there is a better way of doing it...
-    val reasons: List[Reason] = List.empty
-
-    if (totalOwed == 0) NoDebt :: Nil
+    if (totalOwed == 0) List(NoDebt)
     else {
-      val reason1 = if (totalDebt > insignificantDebtUpperLimit) OldDebtIsTooHigh :: reasons else reasons
-      val reason2 = if (totalOwed < insignificantDebtUpperLimit) DebtIsInsignificant :: reason1 else reason1
-      val reason3 = if (totalOwed >= maximumDebtForSelfServe) TotalDebtIsTooHigh :: reason2 else reason2
-      reason3
+      runDebtChecks(totalDebt, totalOwed)
     }
   }
+  private def runDebtChecks(totalDebt: Double, totalOwed: Double): List[Reason] = {
+    checkIfOldDebtIsTooHigh(totalDebt) ++ checkIfDebtIsInsignificant(totalOwed) ++ checkIfTotalDebtIsTooHigh(totalOwed)
+  }
 
-  def getTotalForDebit(debit: Debit): Double = {
+  private def checkIfOldDebtIsTooHigh(totalDebt: Double): List[Reason] = {
+     if(totalDebt > insignificantDebtUpperLimit) List(OldDebtIsTooHigh)
+     else Nil
+  }
+
+  private def checkIfDebtIsInsignificant(totalOwed: Double): List[Reason] = {
+    if(totalOwed < insignificantDebtUpperLimit) List(DebtIsInsignificant)
+    else Nil
+  }
+
+  private def checkIfTotalDebtIsTooHigh(totalOwed: Double): List[Reason] = {
+    if(totalOwed >= maximumDebtForSelfServe) List(TotalDebtIsTooHigh)
+    else Nil
+  }
+
+  private def getTotalForDebit(debit: Debit): Double = {
     (debit.interest.map(i => i.amount).getOrElse(BigDecimal(0)) + debit.amount).doubleValue()
   }
 
@@ -110,7 +123,7 @@ object EligibilityService {
 
   private def returnDateForCalendarYear(year: Int) = LocalDate.of(year, taxYearEndDay.getMonthValue, taxYearEndDay.getDayOfMonth)
 
-  def isDateTodayOrEarlier(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
+  private def isDateTodayOrEarlier(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
     dateOption match {
       case Some(date: LocalDate) =>
         if (date.isBefore(today) || date.isEqual(today)) true
@@ -120,7 +133,7 @@ object EligibilityService {
     }
   }
 
-  def isDateAfterNow(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
+  private def isDateAfterNow(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
     dateOption match {
       case Some(date: LocalDate) =>
         if (date.isAfter(today)) true
