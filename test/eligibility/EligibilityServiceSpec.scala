@@ -45,7 +45,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
     }
 
     """grant eligibility if all returns for last four years are filed but five years ago a return remains unfiled
-      |and all amounts owed are liabilities""".stripMargin in {
+          |and all amounts owed are liabilities""".stripMargin in {
       val returns = lastFourCalendarYears.map(filedReturn) :+ unFiledReturn(2011)
       val debts = Seq(charge(200))
 
@@ -53,7 +53,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
     }
 
     """not grant eligibility if all returns are filed except the most recent which is still outstanding but not overdue
-      |and all amounts owed are liabilities""".stripMargin in {
+          |and all amounts owed are liabilities""".stripMargin in {
       val returns = lastThreeCalendarYears.map(filedReturn) :+ outstandingReturnThisYear
       val debts = Seq(charge(200, afterTaxYearStart))
 
@@ -61,7 +61,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
     }
 
     """not grant eligibility if a return in the last four years has been issued and is overdue
-      |and all amounts owed are liabilities""".stripMargin in {
+          |and all amounts owed are liabilities""".stripMargin in {
       val debts = Seq(charge(200))
 
       val returns = replaceYearWith(lastFourCalendarYears.map(filedReturn), 2013, unFiledReturn(2013))
@@ -74,7 +74,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
     }
 
     """grant eligibility if all returns issued have been filed in last four years
-      |and all amounts owed are liabilities""".stripMargin in {
+          |and all amounts owed are liabilities""".stripMargin in {
       val debts = Seq(charge(200))
       EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debts, Nil)), true) shouldBe Eligible
 
@@ -171,7 +171,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
         Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
-      val returns = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5))) :: Nil
+      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)), receivedDate = Some(LocalDate.of(2016, 2, 1))) :: Nil
 
       val todaysDate = LocalDate.of(2016, 1, 31)
 

@@ -81,19 +81,21 @@ object EligibilityService {
 
     val (liabilities, chargesAndDebts) = debits.partition(_.dueDate.isAfter(chargeStartDay))
     val debt = chargesAndDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
+
     val totalLiabilities = liabilities.map(l => getTotalForDebit(l)).sum
     val totalChargesAndDebt = chargesAndDebts.map(d => getTotalForDebit(d)).sum
     val totalDebt = debt.map(d => getTotalForDebit(d)).sum
     val totalOwed = totalChargesAndDebt + totalLiabilities
 
+    //TODO maybe refactor below if there is a better way of doing it...
     val reasons: List[Reason] = List.empty
 
-    if (totalOwed == 0) NoDebt :: reasons
+    if (totalOwed == 0) NoDebt :: Nil
     else {
-      if (totalDebt > insignificantDebtUpperLimit) OldDebtIsTooHigh :: reasons
-      if (totalOwed < insignificantDebtUpperLimit) DebtIsInsignificant :: reasons
-      if (totalOwed >= maximumDebtForSelfServe) TotalDebtIsTooHigh :: reasons
-      reasons
+      val reason1 = if (totalDebt > insignificantDebtUpperLimit) OldDebtIsTooHigh :: reasons else reasons
+      val reason2 = if (totalOwed < insignificantDebtUpperLimit) DebtIsInsignificant :: reason1 else reason1
+      val reason3 = if (totalOwed >= maximumDebtForSelfServe) TotalDebtIsTooHigh :: reason2 else reason2
+      reason3
     }
   }
 
