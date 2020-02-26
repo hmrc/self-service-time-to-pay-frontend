@@ -63,7 +63,7 @@ object EligibilityService {
       //To return true and return a reason for ineligibility the following needs to occur:
       //The issued date needs to be today or earlier
       //The received date needs to be after today or not exist which means we haven't received the return yet
-      case Some(taxReturn) if isDateTodayOrEarlier(today, taxReturn.issuedDate) && isDateAfterNow(today, taxReturn.receivedDate) => Some(ReturnNeedsSubmitting)
+      case Some(taxReturn) if isDateTodayOrEarlier(today, taxReturn.issuedDate) && isDateAfterTodayOrNonExistent(today, taxReturn.receivedDate) => Some(ReturnNeedsSubmitting)
       case _ => None
     }
   }
@@ -130,7 +130,7 @@ object EligibilityService {
     }
   }
 
-  private def isDateAfterNow(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
+  private def isDateAfterTodayOrNonExistent(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
     dateOption match {
       case Some(date: LocalDate) =>
         if (date.isAfter(today)) true
