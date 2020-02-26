@@ -62,14 +62,10 @@ object EligibilityService {
     returns.find(_.taxYearEnd == taxYearEnd) match {
       //To return true and return a reason for ineligibility the following needs to occur:
       //The issued date needs to be today or earlier
-      //The received date needs to be after today
-      case Some(aReturn) if checkIssuedAndReceivedDate(aReturn.issuedDate, aReturn.receivedDate, today) => Some(ReturnNeedsSubmitting)
+      //The received date needs to be after today or not exist which means we haven't received the return yet
+      case Some(taxReturn) if isDateTodayOrEarlier(today, taxReturn.issuedDate) && isDateAfterNow(today, taxReturn.receivedDate) => Some(ReturnNeedsSubmitting)
       case _ => None
     }
-  }
-
-  private def checkIssuedAndReceivedDate(issuedDate: Option[LocalDate], receivedDate: Option[LocalDate], today: LocalDate): Boolean = {
-    isDateTodayOrEarlier(today, issuedDate) && isDateAfterNow(today, receivedDate)
   }
 
   // Terminology:
@@ -84,7 +80,7 @@ object EligibilityService {
     val debt = chargesAndDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
 
     val totalLiabilities = liabilities.map(l => getTotalForDebit(l)).sum
-    val totalChargesAndDebt = chargesAndDebts.map(d => getTotalForDebit(d)).sum
+    val totalChargesAndDebt = chargesAndDebts.map(cd => getTotalForDebit(cd)).sum
     val totalDebt = debt.map(d => getTotalForDebit(d)).sum
     val totalOwed = totalChargesAndDebt + totalLiabilities
 
@@ -93,22 +89,23 @@ object EligibilityService {
       runDebtChecks(totalDebt, totalOwed)
     }
   }
+
   private def runDebtChecks(totalDebt: Double, totalOwed: Double): List[Reason] = {
     checkIfOldDebtIsTooHigh(totalDebt) ++ checkIfDebtIsInsignificant(totalOwed) ++ checkIfTotalDebtIsTooHigh(totalOwed)
   }
 
   private def checkIfOldDebtIsTooHigh(totalDebt: Double): List[Reason] = {
-     if(totalDebt > insignificantDebtUpperLimit) List(OldDebtIsTooHigh)
-     else Nil
+    if (totalDebt > insignificantDebtUpperLimit) List(OldDebtIsTooHigh)
+    else Nil
   }
 
   private def checkIfDebtIsInsignificant(totalOwed: Double): List[Reason] = {
-    if(totalOwed < insignificantDebtUpperLimit) List(DebtIsInsignificant)
+    if (totalOwed < insignificantDebtUpperLimit) List(DebtIsInsignificant)
     else Nil
   }
 
   private def checkIfTotalDebtIsTooHigh(totalOwed: Double): List[Reason] = {
-    if(totalOwed >= maximumDebtForSelfServe) List(TotalDebtIsTooHigh)
+    if (totalOwed >= maximumDebtForSelfServe) List(TotalDebtIsTooHigh)
     else Nil
   }
 
@@ -139,7 +136,7 @@ object EligibilityService {
         if (date.isAfter(today)) true
         else false
       case _ =>
-        false
+        true
     }
   }
 }

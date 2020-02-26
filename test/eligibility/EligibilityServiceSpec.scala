@@ -142,8 +142,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
       val debitsWithCharge = Seq(debt(32.01), charge(9967.99))
       val debitsWithLiabilities = Seq(debt(32.01), liability(9967.99))
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debitsWithCharge, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh, OldDebtIsTooHigh))
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debitsWithLiabilities, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh, OldDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debitsWithCharge, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh, TotalDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debitsWithLiabilities, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh, TotalDebtIsTooHigh))
     }
 
     "not grant eligibility if all returns are filed and liabilities total over £10k" in {
