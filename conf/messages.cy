@@ -332,7 +332,7 @@ ssttp.over-ten-thosand.opening.hours.l2 =
 error.required = Mae''r maes hwn yn ofynnol
 
 ssttp.monthy.amount.title = Faint y gallwch fforddio ei dalu bob mis?
-ssttp.monthly.amount.hint = Nodwch swm sydd rhwng £{0}.  a   £{1}
+ssttp.monthly.amount.hint = Nodwch swm sydd rhwng {0} a {1}
 ssttp.monthly.amount.negative = Rhowch swm sy'n fwy na sero
 ssttp.monthly.amount.numbers-only = Rhowch rifau yn unig
 ssttp.monthly.amount.out-of-bounds = Rhowch ffigur rhwng yr ystod benodol

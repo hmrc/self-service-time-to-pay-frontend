@@ -77,10 +77,12 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         case Welsh   => mainTextWelsh(increase)
       }
 
+      private def format(value: Double) = value.formatted("%,1.2f")
+
       private def mainTextEnglish(increase: Int) =
         s"""Back
            |How much can you afford to pay each month?
-           |Enter an amount between £${600 + increase} and £${2500 + increase}
+           |Enter an amount between £${format(600.00 + increase)} and £${format(2500.00 + increase)}
            |£
            |Continue
         """.stripMargin
@@ -88,7 +90,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       private def mainTextWelsh(increase: Int) =
         s"""Yn ôl
            |Faint y gallwch fforddio ei dalu bob mis?
-           |Nodwch swm sydd rhwng £${600 + increase}. a £${2500 + increase}
+           |Nodwch swm sydd rhwng £${format(600.00 + increase)} a £${format(2500.00 + increase)}
            |£
            |Yn eich blaen
         """.stripMargin
@@ -102,7 +104,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
            |Something you've entered isn't valid
            |Enter a figure between the given range
            |How much can you afford to pay each month?
-           |Enter an amount between £600 and £2500
+           |Enter an amount between £600.00 and £2,500.00
            |£ Enter a figure between the given range 1
            |Continue
         """.stripMargin

@@ -57,7 +57,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
       val returns = lastThreeCalendarYears.map(filedReturn) :+ outstandingReturnThisYear
       val debts = Seq(charge(200, afterTaxYearStart))
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(afterTaxYearStart, createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(afterTaxYearStart,
+        createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
     }
 
     """not grant eligibility if a return in the last four years has been issued and is overdue
@@ -89,7 +90,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
       val returns = lastThreeCalendarYears.map(filedReturn) :+ overdueReturnThisYear
       val debts = Seq(charge(200, afterTaxYearStart))
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(afterTaxYearStart, createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(afterTaxYearStart,
+        createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
     }
 
     "not grant eligibility if all returns are filed and charges total less than £32" in {
@@ -125,7 +127,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
       val returns = lastFourCalendarYears.map(filedReturn)
       val debts = Seq(debt(32.01))
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
+        createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh))
     }
 
     "grant eligibility if all returns are filed and debt over 29 days is £32 and charges or liabilities are £9967.99" in {
@@ -142,15 +145,18 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
       val debitsWithCharge = Seq(debt(32.01), charge(9967.99))
       val debitsWithLiabilities = Seq(debt(32.01), liability(9967.99))
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debitsWithCharge, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh, TotalDebtIsTooHigh))
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debitsWithLiabilities, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh, TotalDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
+        createTaxpayer(debitsWithCharge, returns)), onIa = true) shouldBe Ineligible(List(OldDebtIsTooHigh, TotalDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
+        createTaxpayer(debitsWithLiabilities, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh, TotalDebtIsTooHigh))
     }
 
     "not grant eligibility if all returns are filed and liabilities total over £10k" in {
       val returns = lastFourCalendarYears.map(filedReturn)
       val debits = Seq(liability(10000.01))
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
+        createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
     }
 
     "consider interest as debt for its rules" in {
@@ -159,23 +165,31 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
       val debitsUnder10k = Seq(charge(9000, interest = Some(Interest(OptionalNow, 999.99))))
       val debits10k = Seq(charge(9000, interest = Some(Interest(OptionalNow, 1000))))
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debitsOver10k, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debits10k, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debitsUnder10k, returns)), true) shouldBe Eligible
+      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
+        createTaxpayer(debitsOver10k, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
+        createTaxpayer(debits10k, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
+        createTaxpayer(debitsUnder10k, returns)), true) shouldBe Eligible
     }
 
     "SA Return not yet submitted by customer" in {
       val debits = List(
-        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
+        Debit(amount = 1000, dueDate = LocalDate.of(2017, 1, 31),
+          interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount = 2000, dueDate = LocalDate.of(2017, 1, 31),
+          interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
+        Debit(amount = 2000, dueDate = LocalDate.of(2017, 7, 31),
+          interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
       )
 
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)), receivedDate = Some(LocalDate.of(2016, 2, 1))) :: Nil
+      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5),
+        issuedDate = Some(LocalDate.of(2015, 4, 5)), receivedDate = Some(LocalDate.of(2016, 2, 1))) :: Nil
 
       val todaysDate = LocalDate.of(2016, 1, 31)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
     }
 
     "SA Return submitted in future by customer" in {
@@ -190,7 +204,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
       val todaysDate = LocalDate.of(2016, 1, 31)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
     }
 
     "Return submitted, total amount > £10k" in {
@@ -205,7 +220,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
       val todaysDate = LocalDate.of(2016, 12, 31)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
     }
 
     "Return submitted, debt > £32 is older than 29 days" in {
@@ -220,7 +236,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
       val todaysDate = LocalDate.of(2016, 12, 31)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh))
     }
 
     "Return submitted, old debt < £32, total amount < £10k" in {
@@ -236,7 +253,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
       val todaysDate = LocalDate.of(2016, 12, 31)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), true) shouldBe Eligible
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), true) shouldBe Eligible
     }
 
     "Return submitted, old returns overdue" in {
@@ -255,7 +273,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
       val todaysDate = LocalDate.of(2016, 12, 31)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
     }
 
     "Return submitted, total amount <£10k" in {
@@ -270,7 +289,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
       val todaysDate = LocalDate.of(2017, 2, 4)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), true) shouldBe Eligible
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), true) shouldBe Eligible
     }
 
     "Return submitted, total amount >£10k with future liability" in {
@@ -285,7 +305,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
       val todaysDate = LocalDate.of(2017, 2, 4)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
     }
 
     "Return submitted, old debts > £32" in {
@@ -302,7 +323,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
       val todaysDate = LocalDate.of(2016, 12, 31)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh))
     }
 
     "Return submitted, total liability > £32" in {
@@ -315,7 +337,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
       val todaysDate = LocalDate.of(2017, 7, 10)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(DebtIsInsignificant))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(DebtIsInsignificant))
     }
 
     "Return submitted, utr not on ia " in {
@@ -328,7 +351,8 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
       val todaysDate = LocalDate.of(2017, 7, 10)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate, createTaxpayer(debits, returns)), false) shouldBe Ineligible(List(IsNotOnIa))
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+        createTaxpayer(debits, returns)), false) shouldBe Ineligible(List(IsNotOnIa))
     }
   }
   val outstandingReturnThisYear = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)))
@@ -367,7 +391,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
   }
 
   private def createTaxpayer(debits: Seq[Debit], returns: Seq[Return]) = {
-    Taxpayer(selfAssessment = SelfAssessmentDetails(debits                   = debits, returns = returns, communicationPreferences = CommunicationPreferences(true, true, true, true), utr = SaUtr("6573196998")), customerName = "Mr Eric Biddle", addresses = Seq(address))
+    Taxpayer(selfAssessment = SelfAssessmentDetails(debits = debits, returns = returns, communicationPreferences = CommunicationPreferences(true, true, true, true), utr = SaUtr("6573196998")), customerName = "Mr Eric Biddle", addresses = Seq(address))
   }
 }
 
