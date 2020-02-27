@@ -26,14 +26,14 @@ class ArrangementSummaryPageSpec extends ItSpec {
   def beginJourney() = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    EligibilityStub.eligible()
+    //EligibilityStub.eligible()
     GgStub.signInPage(port)
 
     startPage.open()
     startPage.clickOnStartNowButton()
 
     //TODO it's here...
-    //taxLiabilitiesPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton()
 
     //TODO but also below?? guess it must break the journey
     // so maybe have missed or now need an extra step..
