@@ -201,28 +201,34 @@ class ArrangementController @Inject() (
     lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 
     val eligibilityRequest = EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer)
-
+    //val eligibilityStatus: EligibilityStatus = EligibilityService.runEligibilityCheck(eligibilityRequest, true)
+    // val eligibilityStatus = EligibilityStatus(true, Seq.empty)
+    // val newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
     for {
       onIa <- iaService.checkIaUtr(utr.value)
       eligibilityStatus: EligibilityStatus = EligibilityService.runEligibilityCheck(eligibilityRequest, onIa)
+      //newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
+      // eligibilityStatus = EligibilityStatus(true, Seq.empty)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
     } yield {
-      if (eligibilityStatus.eligible) isEligible
-      else if (eligibilityStatus.reasons.contains(DebtTooOld) ||
-        eligibilityStatus.reasons.contains(OldDebtIsTooHigh) ||
-        eligibilityStatus.reasons.contains(NoDueDate) ||
-        eligibilityStatus.reasons.contains(NoDebt) ||
-        eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
-        eligibilityStatus.reasons.contains(NoDueDate)) notEligible
-      else if (eligibilityStatus.reasons.contains(IsNotOnIa)) notOnIa
-      else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
-      else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant)) youNeedToFile
-      else {
-        JourneyLogger.info(s"ArrangementController.eligibilityCheck ERROR - [eligible=${eligibilityStatus.eligible}]. Case not implemented. It's a bug.", newJourney)
-        throw new RuntimeException(s"Case not implemented. It's a bug in the eligibility reasons. [${journey.maybeEligibilityStatus}]. [$journey]")
-      }
+      isEligible
+      //      if (eligibilityStatus.eligible) isEligible
+      //      else if (eligibilityStatus.eligible) notOnIa
+      //      else if (eligibilityStatus.reasons.contains(DebtTooOld) ||
+      //        eligibilityStatus.reasons.contains(OldDebtIsTooHigh) ||
+      //        eligibilityStatus.reasons.contains(NoDueDate) ||
+      //        eligibilityStatus.reasons.contains(NoDebt) ||
+      //        eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
+      //        eligibilityStatus.reasons.contains(NoDueDate)) notEligible
+      //      else if (eligibilityStatus.reasons.contains(IsNotOnIa)) notOnIa
+      //      else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
+      //      else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant)) youNeedToFile
+      //      else {
+      //        JourneyLogger.info(s"ArrangementController.eligibilityCheck ERROR - [eligible=${eligibilityStatus.eligible}]. Case not implemented. It's a bug.", newJourney)
+      //        throw new RuntimeException(s"Case not implemented. It's a bug in the eligibility reasons. [${journey.maybeEligibilityStatus}]. [$journey]")
+      //      }
     }
   }
 
