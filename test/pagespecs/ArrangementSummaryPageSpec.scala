@@ -27,8 +27,8 @@ class ArrangementSummaryPageSpec extends ItSpec {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     //TODO don't think the below is needed
-    //EligibilityStub.eligible()
-    //GgStub.signInPage(port)
+    EligibilityStub.eligible()
+    GgStub.signInPage(port)
 
     startPage.open
     startPage.assertPageIsDisplayed
@@ -43,24 +43,24 @@ class ArrangementSummaryPageSpec extends ItSpec {
     //TODO but also below?? guess it must break the journey
     // so maybe have missed or now need an extra step..
     paymentTodayQuestionPage.selectRadioButton(false)
-    paymentTodayQuestionPage.clickContinue()
+    paymentTodayQuestionPage.clickContinue
     monthlyPaymentAmountPage.enterAmout("2450")
     CalculatorStub.generateSchedule
-    monthlyPaymentAmountPage.clickContinue()
-    calculatorInstalmentsPage.selectAnOption()
-    calculatorInstalmentsPage.clickContinue()
+    monthlyPaymentAmountPage.clickContinue
+    calculatorInstalmentsPage.selectAnOption
+    calculatorInstalmentsPage.clickContinue
     //TODO breaks here
-   // instalmentSummarySelectDatePage.assertPageIsDisplayed
-    //   instalmentSummarySelectDatePage.selectFirstOption()
-    //    instalmentSummarySelectDatePage.clickContinue()
-    //    instalmentSummaryPage.clickContinue()
-    //    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    //    DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    //    DirectDebitStub.getBanks
-    //    directDebitPage.clickContinue()
-    //    termsAndConditionsPage.clickContinue()
-    //    DirectDebitStub.postPaymentPlan
-    //    ArrangementStub.postTtpArrangement
+    instalmentSummarySelectDatePage.assertPageIsDisplayed
+    instalmentSummarySelectDatePage.selectFirstOption()
+    instalmentSummarySelectDatePage.clickContinue()
+    instalmentSummaryPage.clickContinue()
+    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanks
+    directDebitPage.clickContinue()
+    termsAndConditionsPage.clickContinue()
+    DirectDebitStub.postPaymentPlan
+    ArrangementStub.postTtpArrangement
   }
 
   "language English" in {
