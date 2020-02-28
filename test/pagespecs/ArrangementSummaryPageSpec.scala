@@ -38,7 +38,7 @@ class ArrangementSummaryPageSpec extends ItSpec {
     taxLiabilitiesPage.clickOnStartNowButton
 
     //TODO it's here...
-    //taxLiabilitiesPage.assertPageIsDisplayed
+    taxLiabilitiesPage.assertPageIsDisplayed
 
     //TODO but also below?? guess it must break the journey
     // so maybe have missed or now need an extra step..
@@ -65,15 +65,15 @@ class ArrangementSummaryPageSpec extends ItSpec {
 
   "language English" in {
     beginJourney()
-    //directDebitConfirmationPage.clickContinue()
-    //arrangementSummaryPage.assertPageIsDisplayed(English)
+    directDebitConfirmationPage.clickContinue()
+    arrangementSummaryPage.assertPageIsDisplayed(English)
   }
 
-  //  "language Welsh" in {
-  //    beginJourney()
-  //    directDebitConfirmationPage.clickOnWelshLink()
-  //    directDebitConfirmationPage.clickContinue()
-  //    arrangementSummaryPage.assertPageIsDisplayed(Welsh)
-  //  }
+  "language Welsh" in {
+    beginJourney()
+    directDebitConfirmationPage.clickOnWelshLink()
+    directDebitConfirmationPage.clickContinue()
+    arrangementSummaryPage.assertPageIsDisplayed(Welsh)
+  }
 
 }
