@@ -25,13 +25,23 @@ import timetopaytaxpayer.cor.model.Taxpayer
 
 object TaxpayerStub extends Matchers {
 
+  def getTaxpayer(): StubMapping = {
+
+    stubFor(
+      get(urlPathEqualTo(s"/taxpayer/${TdAll.utr}"))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody(
+              Json.prettyPrint(Json.toJson(TdAll.taxpayer)))))
+  }
+
   def getTaxpayer(
-      utr:              String   = TdAll.utr,
       returnedTaxpayer: Taxpayer = TdAll.taxpayer
   ): StubMapping = {
 
     stubFor(
-      get(urlPathEqualTo(s"/taxpayer/$utr"))
+      get(urlPathEqualTo(s"/taxpayer/${TdAll.utr}"))
         .willReturn(
           aResponse()
             .withStatus(200)

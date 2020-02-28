@@ -24,6 +24,8 @@ import testsupport.stubs._
 import testsupport.testdata.TdAll
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import testsupport.testdata.EligibilityTaxpayerVariationsTd
+import timetopaytaxpayer.cor.model.Taxpayer
+import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
 
@@ -42,22 +44,24 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
    * - debt less than £32
    */
 
-  val listOfIneligibleReasons: TableFor4[String, JsObject, String, BasePage] = Table(
-    ("reason", "jsObject", "pageAsString", "page"),
-    ("no debts", TdAll.noDebits, "general call us page", generalCallUsPage)//,
-   // ("not on IA", TdAll.notOnIa, "not on ia page", notOnIaPage),
-   // ("current year return not submitted", TdAll.returnNotSubmitted, "you need to file", needToFilePage),
-   // ("debt more than £10k", TdAll.totalDebtIsTooHigh, "debt too large", debtTooLargePage),
-   // ("debt less than £32", TdAll.debtTooSmall, "debt too small", needToFilePage)
+  val listOfIneligibleReasons: TableFor4[String, Reason, String, BasePage] = Table(
+    ("reason", "reasonObject", "pageAsString", "page"),
+    ("no debts", NoDebt, "general call us page", generalCallUsPage),
+  // ("not on IA", IsNotOnIa, "not on ia page", notOnIaPage),
+   ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
+   ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
+   ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage)
   )
 
-  def beginJourney(ineligibleReason: JsObject): Unit = {
+  def beginJourney(ineligibleReason: Reason): Unit = {
     AuthStub.authorise()
     //TODO need to make it get a taxpayer with that ineligble reason and this should be the fix
     //need to make it use the right taxpayer each time...
     //will require some kind of mechanism
     //TaxpayerStub.getTaxpayer()
-    TaxpayerStub.getTaxpayer(utr = String, EligibilityTaxpayerVariationsTd.zeroDebtTaxpayer)
+    //TODO rename the below method
+    TaxpayerStub.getTaxpayer(TaxPayerForEligibilityStub.keyMapping(ineligibleReason))
+
     //EligibilityStub.ineligible(reasonJson = ineligibleReason)
     GgStub.signInPage(port)
     startPage.open()
@@ -65,9 +69,9 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
   }
 
   "Ineligible pages displayed correctly - ssttp eligibility" - {
-    TableDrivenPropertyChecks.forAll(listOfIneligibleReasons) { (reason, json, pageAsString, page) =>
+    TableDrivenPropertyChecks.forAll(listOfIneligibleReasons) { (reason, reasonObject, pageAsString, page) =>
       s"$pageAsString should be displayed when user has ineligible reason: [$reason]" in {
-        beginJourney(json)
+        beginJourney(reasonObject)
         page.assertPageIsDisplayed
       }
     }
@@ -93,5 +97,4 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
       notEnrolledPage.assertPageIsDisplayed
     }
   }
-
 }

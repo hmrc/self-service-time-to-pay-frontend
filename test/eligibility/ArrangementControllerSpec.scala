@@ -37,9 +37,9 @@ class ArrangementControllerSpec extends WordSpecLike with GuiceOneAppPerSuite wi
   }
 
   "your mum" should {
-        "return Not Eligible when given a NoDebt ineligibility status" in {
-          testMethod(EligibilityStatus(false, Seq(NoDebt))) shouldBe "Not Eligible"
-        }
+    "return Not Eligible when given a NoDebt ineligibility status" in {
+      testMethod(EligibilityStatus(false, Seq(NoDebt))) shouldBe "Not Eligible"
+    }
 
     "return Not Eligible when given a NoDebt ineligibility status1" in {
       testMethod(EligibilityStatus(false, List(NoDebt, ReturnNeedsSubmitting))) shouldBe "Not Eligible"
@@ -61,6 +61,5 @@ class ArrangementControllerSpec extends WordSpecLike with GuiceOneAppPerSuite wi
       testMethod(EligibilityStatus(false, Seq(IsNotOnIa))) shouldBe "NotOnIa"
     }
   }
-
 
 }
