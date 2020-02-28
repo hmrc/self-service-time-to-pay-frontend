@@ -40,24 +40,6 @@ object EligibilityService {
   def runEligibilityCheck(eligibilityRequest: EligibilityRequest, onIa: Boolean): EligibilityStatus = {
     val selfAssessmentDetails: SelfAssessmentDetails = eligibilityRequest.taxpayer.selfAssessment
     val isOnIa: List[Reason] = if (onIa) Nil else List(IsNotOnIa)
-    val reasons = checkReturnsUpToDate(selfAssessmentDetails.returns, eligibilityRequest.dateOfEligibilityCheck) ++ checkDebits(selfAssessmentDetails.debits, eligibilityRequest.dateOfEligibilityCheck) ++ isOnIa
-    //TODO issue is here?
-    //the false paths seem to hate it
-    // must not agree with the routing...
-    //check jakes changes havent fucked it
-    //play around with routing make sure is correct see if can fix one test at a time by forcing the route
-    reasons match {
-      case Nil => EligibilityStatus(true, Nil)
-      //          case _   => EligibilityStatus(false, reasons.map(r => r))
-      case _   => EligibilityStatus(false, reasons)
-    }
-    //EligibilityStatus(false, List(IsNotOnIa))
-    //EligibilityStatus(true, Seq.empty)
-  }
-
-  def runEligibilityCheckX(eligibilityRequest: EligibilityRequest, onIa: Boolean): EligibilityStatus = {
-    val selfAssessmentDetails: SelfAssessmentDetails = eligibilityRequest.taxpayer.selfAssessment
-    val isOnIa: List[Reason] = if (onIa) Nil else List(IsNotOnIa)
 
     val reasons = (checkReturnsUpToDate(selfAssessmentDetails.returns, eligibilityRequest.dateOfEligibilityCheck)
       ++ checkDebits(selfAssessmentDetails.debits, eligibilityRequest.dateOfEligibilityCheck) ++ isOnIa)
@@ -69,7 +51,9 @@ object EligibilityService {
 
   private def checkReturnsUpToDate(returns: Seq[Return], today: LocalDate): List[Reason] = {
     val currentTaxYearEndDate: LocalDate = taxYearEndDateForCalendarYear(today)
-
+    //TODO maybe refactor as quite hard to read
+    //This is a bit complex but basically it just looks at the last *returnHistoryYearsRequired* years of tax returns
+    //And checks to see if they have all been filed
     (0 to returnHistoryYearsRequired).reverse
       .map(currentTaxYearEndDate.getYear - _)
       .map(year => returnDateForCalendarYear(year))
@@ -78,8 +62,8 @@ object EligibilityService {
 
   private def checkReturnForYear(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
     returns.find(_.taxYearEnd == taxYearEnd) match {
-      //To return true and return a reason for ineligibility the following needs to occur:
-      //The issued date needs to be today or earlier
+      //To match and return a reason for ineligibility the following needs to be true:
+      //The issued date needs to be today or earlier, which means we have informed them
       //The received date needs to be after today or not exist which means we haven't received the return yet
       case Some(taxReturn) if isDateTodayOrEarlier(today, taxReturn.issuedDate) && isDateAfterTodayOrNonExistent(today, taxReturn.receivedDate) => Some(ReturnNeedsSubmitting)
       case _ => None
@@ -101,7 +85,7 @@ object EligibilityService {
     val totalChargesAndDebt = chargesAndDebts.map(cd => getTotalForDebit(cd)).sum
     val totalDebt = debt.map(d => getTotalForDebit(d)).sum
     val totalOwed = totalChargesAndDebt + totalLiabilities
-
+    //TODO can maybe improve this with refactoring as may not be possible to get all of the reasons below in one list...
     if (totalOwed == 0) List(NoDebt)
     else {
       runDebtChecks(totalDebt, totalOwed)
@@ -118,8 +102,7 @@ object EligibilityService {
   }
 
   private def checkIfDebtIsInsignificant(totalOwed: Double): List[Reason] = {
-    //No point giving insignificant and no debt for same case
-    if (totalOwed < insignificantDebtUpperLimit && totalOwed > 0) List(DebtIsInsignificant)
+    if (totalOwed < insignificantDebtUpperLimit) List(DebtIsInsignificant)
     else Nil
   }
 

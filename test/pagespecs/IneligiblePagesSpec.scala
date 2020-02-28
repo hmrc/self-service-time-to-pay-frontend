@@ -23,6 +23,7 @@ import testsupport.ItSpec
 import testsupport.stubs._
 import testsupport.testdata.TdAll
 import uk.gov.hmrc.auth.core.ConfidenceLevel
+import testsupport.testdata.EligibilityTaxpayerVariationsTd
 
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
 
@@ -53,7 +54,10 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
   def beginJourney(ineligibleReason: JsObject): Unit = {
     AuthStub.authorise()
     //TODO need to make it get a taxpayer with that ineligble reason and this should be the fix
-    TaxpayerStub.getTaxpayer()
+    //need to make it use the right taxpayer each time...
+    //will require some kind of mechanism
+    //TaxpayerStub.getTaxpayer()
+    TaxpayerStub.getTaxpayer(utr = String, EligibilityTaxpayerVariationsTd.zeroDebtTaxpayer)
     //EligibilityStub.ineligible(reasonJson = ineligibleReason)
     GgStub.signInPage(port)
     startPage.open()
