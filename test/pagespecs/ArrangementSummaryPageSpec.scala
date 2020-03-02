@@ -26,22 +26,18 @@ class ArrangementSummaryPageSpec extends ItSpec {
   def beginJourney() = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
+    EligibilityStub.eligible()
     GgStub.signInPage(port)
-    startPage.open
-    startPage.assertPageIsDisplayed
-    startPage.clickOnStartNowButton
-    taxLiabilitiesPage.open
-    taxLiabilitiesPage.assertPageIsDisplayed
-    taxLiabilitiesPage.clickOnStartNowButton
-    taxLiabilitiesPage.assertPageIsDisplayed
+    startPage.open()
+    startPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton()
     paymentTodayQuestionPage.selectRadioButton(false)
-    paymentTodayQuestionPage.clickContinue
+    paymentTodayQuestionPage.clickContinue()
     monthlyPaymentAmountPage.enterAmout("2450")
     CalculatorStub.generateSchedule
-    monthlyPaymentAmountPage.clickContinue
-    calculatorInstalmentsPage.selectAnOption
-    calculatorInstalmentsPage.clickContinue
-    instalmentSummarySelectDatePage.assertPageIsDisplayed
+    monthlyPaymentAmountPage.clickContinue()
+    calculatorInstalmentsPage.selectAnOption()
+    calculatorInstalmentsPage.clickContinue()
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()
     instalmentSummaryPage.clickContinue()
