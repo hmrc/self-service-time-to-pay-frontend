@@ -35,7 +35,6 @@ import ssttpdirectdebit.DirectDebitConnector
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 import _root_.model._
@@ -191,7 +190,6 @@ class ArrangementController @Inject() (
    * Call the eligibility service using the Taxpayer data
    * and display the appropriate page based on the result
    */
-  //private def eligibilityCheck(journey: Journey, utr: SaUtr)(implicit request: Request[_]): Future[Result] = {
   private def eligibilityCheck(journey: Journey)(implicit request: Request[_]): Future[Result] = {
     JourneyLogger.info(s"ArrangementController.eligibilityCheck")
 
@@ -204,7 +202,6 @@ class ArrangementController @Inject() (
     val eligibilityRequest = EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer)
 
     for {
-      //TODO be mindful the line below changed and need to make sure functionality is still the same if it breaks look ehre first
       onIa <- iaService.checkIaUtr(journey.taxpayer.selfAssessment.utr.value)
       eligibilityStatus: EligibilityStatus = EligibilityService.runEligibilityCheck(eligibilityRequest, onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))

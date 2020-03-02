@@ -18,7 +18,7 @@ package eligibility
 
 import org.scalatest.{Matchers, WordSpecLike}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, DebtTooOld, EligibilityStatus, IsNotOnIa, NoDebt, NoDueDate, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TTPIsLessThenTwoMonths, TotalDebtIsTooHigh}
+import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, DebtTooOld, EligibilityStatus, IsNotOnIa, NoDebt, NoDueDate, OldDebtIsTooHigh, ReturnNeedsSubmitting, TTPIsLessThenTwoMonths, TotalDebtIsTooHigh}
 
 class ArrangementControllerSpec extends WordSpecLike with GuiceOneAppPerSuite with Matchers {
 

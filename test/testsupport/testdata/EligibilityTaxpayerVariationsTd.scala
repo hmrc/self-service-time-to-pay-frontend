@@ -30,7 +30,7 @@ object EligibilityTaxpayerVariationsTd {
                                          Some("Milky Way Galaxy"), Some("BN11 1XX"))
 
   def initDebit(originCode: String, amount: Double, dueDate: LocalDate): Debit = Debit(originCode, BigDecimal(amount), dueDate,
-    zeroInterestOption, dummyTaxYearEnd)
+                                                                                       zeroInterestOption, dummyTaxYearEnd)
 
   def initEligibleDebit(): Debit = initDebit("IN1", 33, dummyCurrentDate)
 

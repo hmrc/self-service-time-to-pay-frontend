@@ -51,9 +51,8 @@ object EligibilityService {
 
   private def checkReturnsUpToDate(returns: Seq[Return], today: LocalDate): List[Reason] = {
     val currentTaxYearEndDate: LocalDate = taxYearEndDateForCalendarYear(today)
-    //TODO maybe refactor as quite hard to read
     //This is a bit complex but basically it just looks at the last *returnHistoryYearsRequired* years of tax returns
-    //And checks to see if they have all been filed
+    //and checks to see if they have all been filed
     (0 to returnHistoryYearsRequired).reverse
       .map(currentTaxYearEndDate.getYear - _)
       .map(year => returnDateForCalendarYear(year))
@@ -85,7 +84,7 @@ object EligibilityService {
     val totalChargesAndDebt = chargesAndDebts.map(cd => getTotalForDebit(cd)).sum
     val totalDebt = debt.map(d => getTotalForDebit(d)).sum
     val totalOwed = totalChargesAndDebt + totalLiabilities
-    //TODO can maybe improve this with refactoring as may not be possible to get all of the reasons below in one list...
+
     if (totalOwed == 0) List(NoDebt)
     else {
       runDebtChecks(totalDebt, totalOwed)

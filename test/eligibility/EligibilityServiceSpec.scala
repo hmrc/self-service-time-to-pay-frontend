@@ -30,7 +30,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
   def Ineligible(reasons: Seq[Reason]): EligibilityStatus = {
     EligibilityStatus(false, reasons)
   }
-  val OptionalNow = Some(LocalDate.now())
+  val optionalNow = Some(LocalDate.now())
   val taxYearEnd2020 = LocalDate.of(2020, 4, 5)
   val completedReturnThisYear =
     Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)), receivedDate = Some(LocalDate.of(2016, 2, 10)))
@@ -161,9 +161,9 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
 
     "consider interest as debt for its rules" in {
       val returns = lastFourCalendarYears.map(filedReturn)
-      val debitsOver10k = Seq(charge(9000, interest = Some(Interest(OptionalNow, 1000.01))))
-      val debitsUnder10k = Seq(charge(9000, interest = Some(Interest(OptionalNow, 999.99))))
-      val debits10k = Seq(charge(9000, interest = Some(Interest(OptionalNow, 1000))))
+      val debitsOver10k = Seq(charge(9000, interest = Some(Interest(optionalNow, 1000.01))))
+      val debitsUnder10k = Seq(charge(9000, interest = Some(Interest(optionalNow, 999.99))))
+      val debits10k = Seq(charge(9000, interest = Some(Interest(optionalNow, 1000))))
 
       EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
                                                                 createTaxpayer(debitsOver10k, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
@@ -355,6 +355,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
                                                                 createTaxpayer(debits, returns)), false) shouldBe Ineligible(List(IsNotOnIa))
     }
   }
+
   val outstandingReturnThisYear = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)))
   val overdueReturnThisYear = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)))
   val lastThreeCalendarYears: Seq[Int] = Seq(2013, 2014, 2015)

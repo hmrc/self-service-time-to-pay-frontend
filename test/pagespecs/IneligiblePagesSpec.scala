@@ -65,7 +65,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
 
   def beginJourney(ineligibleReason: Reason): Unit = {
     AuthStub.authorise()
-    TaxpayerStub.getTaxpayer(getIneligibleTaxpayerModel(ineligibleReason))
+    TaxpayerStub.getTaxpayer(ineligibleReason)
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
