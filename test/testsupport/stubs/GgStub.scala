@@ -16,8 +16,6 @@
 
 package testsupport.stubs
 
-import java.net.URLEncoder
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers

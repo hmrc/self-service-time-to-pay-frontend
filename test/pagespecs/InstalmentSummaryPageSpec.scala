@@ -25,7 +25,6 @@ class InstalmentSummaryPageSpec extends ItSpec {
   def beginJourney() = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    EligibilityStub.eligible()
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()

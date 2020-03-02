@@ -16,15 +16,11 @@
 
 package pagespecs
 
-import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor2, TableFor3, TableFor4}
+import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor4}
 import pagespecs.pages.BasePage
-import play.api.libs.json.JsObject
 import testsupport.ItSpec
 import testsupport.stubs._
-import testsupport.testdata.TdAll
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import testsupport.testdata.EligibilityTaxpayerVariationsTd
-import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
@@ -77,7 +73,6 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     "show not-enrolled page for confidence level < 200" in {
       AuthStub.authorise(confidenceLevel = Some(ConfidenceLevel.L100))
       TaxpayerStub.getTaxpayer()
-      EligibilityStub.eligible()
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
@@ -86,7 +81,6 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     "show not-enrolled page no sa enrolments" in {
       AuthStub.authorise(allEnrolments = Some(Set()))
       TaxpayerStub.getTaxpayer()
-      EligibilityStub.eligible()
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()

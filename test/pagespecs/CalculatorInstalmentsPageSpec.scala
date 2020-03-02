@@ -26,7 +26,6 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()
-      EligibilityStub.eligible()
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()

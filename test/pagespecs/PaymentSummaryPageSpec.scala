@@ -18,7 +18,7 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
-import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, GgStub, TaxpayerStub}
 
 class PaymentSummaryPageSpec extends ItSpec {
 
@@ -26,7 +26,6 @@ class PaymentSummaryPageSpec extends ItSpec {
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()
-      EligibilityStub.eligible()
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()

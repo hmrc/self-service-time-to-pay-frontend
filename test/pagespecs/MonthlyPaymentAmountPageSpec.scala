@@ -28,8 +28,6 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()
-      //TODO delete all these calls
-      EligibilityStub.eligible()
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
