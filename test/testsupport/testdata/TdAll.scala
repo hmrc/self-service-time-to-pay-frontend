@@ -70,11 +70,19 @@ object TdAll {
      "taxYearEnd": "2020-04-05"
     }""".asJson
 
+  //  val return1 = Return(
+  //    taxYearEnd   = "2020-04-05",
+  //    issuedDate   = "2019-11-10",
+  //    dueDate      = "2019-08-15",
+  //    receivedDate = None
+  //
+  //  )
+
   val return1 = Return(
     taxYearEnd   = "2020-04-05",
     issuedDate   = "2019-11-10",
     dueDate      = "2019-08-15",
-    receivedDate = None
+    receivedDate = "2019-03-09"
 
   )
 
@@ -123,6 +131,7 @@ object TdAll {
     communicationPreferences = communicationPreferences,
     debits                   = List(debit1, debit2),
     returns                  = List(return1, return2)
+  //returns = Seq.empty
   )
 
   val selfAssessmentJson =

@@ -19,7 +19,7 @@ package pagespecs
 import langswitch.Languages
 import play.api.libs.json.{Json, OFormat, Reads}
 import testsupport.{ItSpec, WireMockSupport}
-import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxPayerForEligibilityStub, TaxpayerStub}
 import testsupport.testdata.TdAll
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.logging.{Authorization, SessionId}
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.selfservicetimetopay.models.TotalDebtIsTooHigh
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -67,9 +68,7 @@ class StartPageSpec extends ItSpec {
 
   "not eligible (debt too large)" in {
     AuthStub.authorise()
-    TaxpayerStub.getTaxpayer()
-    EligibilityStub.ineligible()
-
+    TaxpayerStub.getTaxpayer(TaxPayerForEligibilityStub.ineligibilityReasonToIneligibleTaxpayerMockMapping(TotalDebtIsTooHigh))
     startPage.open()
     startPage.clickOnStartNowButton()
     debtTooLargePage.assertPageIsDisplayed()

@@ -58,9 +58,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     //TODO rename the below method
     // also probs needs to have this functionality automatically as part of the call to getTaxpayer without specifying the params...?
     TaxpayerStub.getTaxpayer(TaxPayerForEligibilityStub.ineligibilityReasonToIneligibleTaxpayerMockMapping(ineligibleReason))
-    //TODO need to call an IA stub
-    if (ineligibleReason == IsNotOnIa) IaServiceStub.checkIaUtr(false)
-    else IaServiceStub.checkIaUtr(true)
+    //TODO need to call an IA stub?
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
