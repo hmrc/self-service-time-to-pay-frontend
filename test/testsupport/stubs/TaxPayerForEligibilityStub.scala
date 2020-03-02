@@ -27,8 +27,8 @@ import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, 
 object TaxPayerForEligibilityStub extends Matchers {
 
   def getTaxpayer(
-                   returnedTaxpayer: Taxpayer
-                 ): StubMapping = {
+      returnedTaxpayer: Taxpayer
+  ): StubMapping = {
 
     stubFor(
       get(urlPathEqualTo(s"/taxpayer/${TdAll.utr}"))
@@ -39,15 +39,15 @@ object TaxPayerForEligibilityStub extends Matchers {
               Json.prettyPrint(Json.toJson(returnedTaxpayer)))))
   }
 
-  def keyMapping(reason: Reason) : Taxpayer = {
+  def keyMapping(reason: Reason): Taxpayer = {
     reason match {
-      case NoDebt => EligibilityTaxpayerVariationsTd.zeroDebtTaxpayer
-      case DebtIsInsignificant => EligibilityTaxpayerVariationsTd.insignificantDebtTaxpayer
-      case OldDebtIsTooHigh => EligibilityTaxpayerVariationsTd.oldDebtIsTooHighTaxpayer
-      case TotalDebtIsTooHigh => EligibilityTaxpayerVariationsTd.totalDebtIsTooHighTaxpayer
+      case NoDebt                => EligibilityTaxpayerVariationsTd.zeroDebtTaxpayer
+      case DebtIsInsignificant   => EligibilityTaxpayerVariationsTd.insignificantDebtTaxpayer
+      case OldDebtIsTooHigh      => EligibilityTaxpayerVariationsTd.oldDebtIsTooHighTaxpayer
+      case TotalDebtIsTooHigh    => EligibilityTaxpayerVariationsTd.totalDebtIsTooHighTaxpayer
       case ReturnNeedsSubmitting => EligibilityTaxpayerVariationsTd.returnNeedsSubmittingTaxpayer
-      case IsNotOnIa => TdAll.taxpayer //TODO work this out...
-      case _ => TdAll.taxpayer
+      case IsNotOnIa             => TdAll.taxpayer //TODO work this out...
+      case _                     => TdAll.taxpayer
     }
   }
 }

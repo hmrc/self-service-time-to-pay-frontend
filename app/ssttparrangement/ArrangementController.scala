@@ -199,25 +199,18 @@ class ArrangementController @Inject() (
     lazy val overTenThousandOwed = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge())
     lazy val notEligible = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs())
     lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
-    ///pay-what-you-owe-in-instalments/eligibility/ia/call-us
-    //println("XXXXX " + ssttpeligibility.routes.SelfServiceTimeToPayController.getIaCallUse().url)
 
     val eligibilityRequest = EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer)
-    //val eligibilityStatus: EligibilityStatus = EligibilityService.runEligibilityCheck(eligibilityRequest, true)
-    // val eligibilityStatus = EligibilityStatus(true, Seq.empty)
-    // val newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
+
     for {
       onIa <- iaService.checkIaUtr(utr.value)
       eligibilityStatus: EligibilityStatus = EligibilityService.runEligibilityCheck(eligibilityRequest, onIa)
-      //newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
-      // eligibilityStatus = EligibilityStatus(true, Seq.empty)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
     } yield {
       //isEligible
       if (eligibilityStatus.eligible) isEligible
-      //else if (eligibilityStatus.reasons.contains(NoDebt)
       else if (eligibilityStatus.reasons.contains(DebtTooOld) ||
         eligibilityStatus.reasons.contains(OldDebtIsTooHigh) ||
         eligibilityStatus.reasons.contains(NoDebt) ||

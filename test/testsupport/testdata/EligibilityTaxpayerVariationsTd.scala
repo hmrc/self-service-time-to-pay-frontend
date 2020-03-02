@@ -29,21 +29,20 @@ object EligibilityTaxpayerVariationsTd {
   val taxpayerAddress: Address = Address(Some("Golden Throne"), Some("Himalayan Mountains"), Some("Holy Terra"), Some("Segmentum Solar"),
                                          Some("Milky Way Galaxy"), Some("BN11 1XX"))
 
-  def initTaxpayer(selfAssessmentDetails: SelfAssessmentDetails): Taxpayer = Taxpayer(taxpayerName, Seq(taxpayerAddress), selfAssessmentDetails)
-
-  def initSelfAssessmentDetails(debits: Seq[Debit], returns: Seq[Return]) = SelfAssessmentDetails(TdAll.Sautr, TdAll.communicationPreferences, debits, returns)
+  def initSelfAssessmentDetails(debits: Seq[Debit], returns: Seq[Return]): SelfAssessmentDetails = SelfAssessmentDetails(TdAll.Sautr, TdAll.communicationPreferences, debits, returns)
 
   def initDebit(originCode: String, amount: Double, dueDate: LocalDate): Debit = Debit(originCode, BigDecimal(amount), dueDate,
                                                                                        zeroInterestOption, dummyTaxYearEnd)
 
-  val zeroDebtTaxpayer: Taxpayer = initTaxpayer(initSelfAssessmentDetails(Seq.empty, Seq.empty))
+  def initTaxpayer(debits: Seq[Debit], returns: Seq[Return]): Taxpayer = Taxpayer(taxpayerName, Seq(taxpayerAddress), initSelfAssessmentDetails(debits, returns))
 
-  val insignificantDebtTaxpayer: Taxpayer = initTaxpayer(initSelfAssessmentDetails(Seq(initDebit("IN1", 32, dummyCurrentDate)), Seq.empty))
+  val zeroDebtTaxpayer: Taxpayer = initTaxpayer(Seq.empty, Seq.empty)
 
-  val oldDebtIsTooHighTaxpayer: Taxpayer = initTaxpayer(initSelfAssessmentDetails(Seq(initDebit("IN1", 33, dummy60DaysAgo)), Seq.empty))
+  val insignificantDebtTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 31, dummyCurrentDate)), Seq.empty)
 
-  val totalDebtIsTooHighTaxpayer: Taxpayer = initTaxpayer(initSelfAssessmentDetails(Seq(initDebit("IN1", 10000, dummyCurrentDate)), Seq.empty))
+  val oldDebtIsTooHighTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 32, dummy60DaysAgo)), Seq.empty)
 
-  val returnNeedsSubmittingTaxpayer: Taxpayer = initTaxpayer(initSelfAssessmentDetails(Seq.empty, Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None))))
+  val totalDebtIsTooHighTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 10000, dummyCurrentDate)), Seq.empty)
 
+  val returnNeedsSubmittingTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 33, dummyCurrentDate)), Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None)))
 }

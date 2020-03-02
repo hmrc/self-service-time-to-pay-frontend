@@ -47,22 +47,17 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
   val listOfIneligibleReasons: TableFor4[String, Reason, String, BasePage] = Table(
     ("reason", "reasonObject", "pageAsString", "page"),
     ("no debts", NoDebt, "general call us page", generalCallUsPage),
-  // ("not on IA", IsNotOnIa, "not on ia page", notOnIaPage),
-   ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
-   ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
-   ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage)
+    ("not on IA", IsNotOnIa, "not on ia page", notOnIaPage),
+    ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
+    ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
+    ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage)
   )
 
   def beginJourney(ineligibleReason: Reason): Unit = {
     AuthStub.authorise()
-    //TODO need to make it get a taxpayer with that ineligble reason and this should be the fix
-    //need to make it use the right taxpayer each time...
-    //will require some kind of mechanism
-    //TaxpayerStub.getTaxpayer()
     //TODO rename the below method
     TaxpayerStub.getTaxpayer(TaxPayerForEligibilityStub.keyMapping(ineligibleReason))
-
-    //EligibilityStub.ineligible(reasonJson = ineligibleReason)
+    //TODO need to call an IA stub
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
