@@ -26,22 +26,14 @@ class ArrangementSummaryPageSpec extends ItSpec {
   def beginJourney() = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    //TODO don't think the below is needed
-    EligibilityStub.eligible()
     GgStub.signInPage(port)
-
     startPage.open
     startPage.assertPageIsDisplayed
     startPage.clickOnStartNowButton
     taxLiabilitiesPage.open
     taxLiabilitiesPage.assertPageIsDisplayed
     taxLiabilitiesPage.clickOnStartNowButton
-
-    //TODO it's here...
     taxLiabilitiesPage.assertPageIsDisplayed
-
-    //TODO but also below?? guess it must break the journey
-    // so maybe have missed or now need an extra step..
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue
     monthlyPaymentAmountPage.enterAmout("2450")
@@ -49,7 +41,6 @@ class ArrangementSummaryPageSpec extends ItSpec {
     monthlyPaymentAmountPage.clickContinue
     calculatorInstalmentsPage.selectAnOption
     calculatorInstalmentsPage.clickContinue
-    //TODO breaks here
     instalmentSummarySelectDatePage.assertPageIsDisplayed
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()

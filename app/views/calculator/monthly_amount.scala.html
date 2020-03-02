@@ -16,41 +16,43 @@
 
 @import helpers.forms.submit
 @import ssttpcalculator.MonthlyAmountForm
+@import partials.currency
 
 @this(
-  main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+main: views.html.main,
+viewsHelpers: views.ViewsHelpers
 )
 
 @(
-  dataForm: Form[MonthlyAmountForm],
-  upperBound: String,
-  lowerBound: String)(implicit
-  messages: play.api.i18n.Messages,
-  request: Request[_],
-  appConfig: config.AppConfig
+dataForm: Form[MonthlyAmountForm],
+upperBound: String,
+lowerBound: String)(implicit
+messages: play.api.i18n.Messages,
+request: Request[_],
+appConfig: config.AppConfig
 )
 
 @main(
-    title = Messages("ssttp.monthy.amount.title")
+title = Messages("ssttp.monthy.amount.title")
 ){
 
-    <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
+<a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
 
-    @if(dataForm.hasErrors){
-    @viewsHelpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
-    }
-
-    <h1 class="heading-xlarge">@Messages("ssttp.monthy.amount.title")</h1>
-
-    <p>@Messages("ssttp.monthly.amount.hint", lowerBound, upperBound)</p>
-
-    @viewsHelpers.form(action = ssttpcalculator.routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group"){
-        @viewsHelpers.input(
-            dataForm("amount"),
-            '_inputClass -> "form-control-1-4",
-            '_label -> "£"
-        )
-    @submit(){@Messages("ssttp.calculator.form.continue")}
-    }
+@if(dataForm.hasErrors){
+@viewsHelpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
 }
+
+<h1 class="heading-xlarge">@Messages("ssttp.monthy.amount.title")</h1>
+
+<p>@Messages("ssttp.monthly.amount.hint", currency(lowerBound.toDouble), currency(upperBound.toDouble))</p>
+
+@viewsHelpers.form(action = ssttpcalculator.routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group"){
+@viewsHelpers.input(
+dataForm("amount"),
+'_inputClass -> "form-control-1-4",
+'_label -> "£"
+)
+@submit(){@Messages("ssttp.calculator.form.continue")}
+}
+}
+

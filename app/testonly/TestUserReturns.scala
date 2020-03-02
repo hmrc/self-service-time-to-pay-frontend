@@ -61,24 +61,13 @@ object TestUserReturns {
   val sample2: JsValue = Json.parse(
     s"""
       {
-        "returns": [
-          {
-            "taxYearEnd":   "2016-04-05",
-            "dueDate":      "2017-01-31",
-            "receivedDate": "2016-09-09"
-          },
-          {
-            "taxYearEnd":   "2015-04-05",
-            "dueDate":      "2016-01-31",
-            "receivedDate": "2017-09-09"
-          },
-          {
-            "taxYearEnd":   "2015-04-05",
-            "dueDate":      "2016-01-31",
-            "receivedDate": "2015-09-09"
-          }
-        ]
-      }
+  "returns" : [{
+        "taxYearEnd" : "2020-04-05",
+        "issuedDate" : "2019-01-06",
+        "dueDate" : "2020-01-31",
+        "receivedDate" : "2020-01-20"
+      }]
+}
     """)
 
 }
