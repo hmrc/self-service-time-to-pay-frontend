@@ -22,7 +22,6 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//class IaService @Inject() (http: HttpClient, config: IaConfig) {
 class IaService @Inject() (http: HttpClient) {
   //TODO sort these out proper in the config or whatever
   //  val iaUrl: String = config.baseUrl
@@ -37,7 +36,7 @@ class IaService @Inject() (http: HttpClient) {
         case 204 => false
       })
     } else {
-      Future.successful(true)
+      Future.successful(false)
     }
   }
 }

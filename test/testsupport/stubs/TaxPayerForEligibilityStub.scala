@@ -25,7 +25,7 @@ import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
 object TaxPayerForEligibilityStub extends Matchers {
-
+  //TODO probs should get the below via the above call
   def getTaxpayer(
       returnedTaxpayer: Taxpayer
   ): StubMapping = {
@@ -39,14 +39,14 @@ object TaxPayerForEligibilityStub extends Matchers {
               Json.prettyPrint(Json.toJson(returnedTaxpayer)))))
   }
 
-  def keyMapping(reason: Reason): Taxpayer = {
+  def ineligibilityReasonToIneligibleTaxpayerMockMapping(reason: Reason): Taxpayer = {
     reason match {
       case NoDebt                => EligibilityTaxpayerVariationsTd.zeroDebtTaxpayer
       case DebtIsInsignificant   => EligibilityTaxpayerVariationsTd.insignificantDebtTaxpayer
       case OldDebtIsTooHigh      => EligibilityTaxpayerVariationsTd.oldDebtIsTooHighTaxpayer
       case TotalDebtIsTooHigh    => EligibilityTaxpayerVariationsTd.totalDebtIsTooHighTaxpayer
       case ReturnNeedsSubmitting => EligibilityTaxpayerVariationsTd.returnNeedsSubmittingTaxpayer
-      case IsNotOnIa             => TdAll.taxpayer //TODO work this out...
+      case IsNotOnIa             => EligibilityTaxpayerVariationsTd.notOnIaTaxpayer
       case _                     => TdAll.taxpayer
     }
   }

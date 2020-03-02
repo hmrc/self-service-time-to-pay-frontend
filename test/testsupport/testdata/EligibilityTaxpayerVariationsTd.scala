@@ -18,7 +18,7 @@ package testsupport.testdata
 
 import java.time.LocalDate
 
-import timetopaytaxpayer.cor.model.{Address, Debit, Interest, Return, SelfAssessmentDetails, Taxpayer}
+import timetopaytaxpayer.cor.model.{Address, Debit, Interest, Return, SaUtr, SelfAssessmentDetails, Taxpayer}
 
 object EligibilityTaxpayerVariationsTd {
   val dummyCurrentDate: LocalDate = LocalDate.of(2019, 11, 1)
@@ -30,11 +30,14 @@ object EligibilityTaxpayerVariationsTd {
                                          Some("Milky Way Galaxy"), Some("BN11 1XX"))
 
   def initSelfAssessmentDetails(debits: Seq[Debit], returns: Seq[Return]): SelfAssessmentDetails = SelfAssessmentDetails(TdAll.Sautr, TdAll.communicationPreferences, debits, returns)
-
+  def initSelfAssessmentDetailsWithErroneousUtr(debits: Seq[Debit], returns: Seq[Return]): SelfAssessmentDetails = SelfAssessmentDetails(SaUtr("XXXXXXXXXX"), TdAll.communicationPreferences, debits, returns)
   def initDebit(originCode: String, amount: Double, dueDate: LocalDate): Debit = Debit(originCode, BigDecimal(amount), dueDate,
                                                                                        zeroInterestOption, dummyTaxYearEnd)
+  def initEligibleDebit(): Debit = initDebit("IN1", 33, dummyCurrentDate)
 
   def initTaxpayer(debits: Seq[Debit], returns: Seq[Return]): Taxpayer = Taxpayer(taxpayerName, Seq(taxpayerAddress), initSelfAssessmentDetails(debits, returns))
+
+  def initTaxpayerWithErroneousUtr(debits: Seq[Debit], returns: Seq[Return]): Taxpayer = Taxpayer(taxpayerName, Seq(taxpayerAddress), initSelfAssessmentDetailsWithErroneousUtr(debits, returns))
 
   val zeroDebtTaxpayer: Taxpayer = initTaxpayer(Seq.empty, Seq.empty)
 
@@ -44,5 +47,7 @@ object EligibilityTaxpayerVariationsTd {
 
   val totalDebtIsTooHighTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 10000, dummyCurrentDate)), Seq.empty)
 
-  val returnNeedsSubmittingTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 33, dummyCurrentDate)), Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None)))
+  val returnNeedsSubmittingTaxpayer: Taxpayer = initTaxpayer(Seq(initEligibleDebit), Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None)))
+
+  val notOnIaTaxpayer: Taxpayer = initTaxpayerWithErroneousUtr(Seq(initEligibleDebit), Seq.empty)
 }

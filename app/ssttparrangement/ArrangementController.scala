@@ -77,7 +77,7 @@ class ArrangementController @Inject() (
 
     journeyService.getJourney.flatMap {
       case journey @ Journey(_, Statuses.InProgress, _, _, _, _, _, Some(taxpayer), _, _, _, _, _) =>
-        eligibilityCheck(journey, request.utr)
+        eligibilityCheck(journey)
     }
   }
 
@@ -99,7 +99,7 @@ class ArrangementController @Inject() (
       tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
       newJourney: Journey = Journey.newJourney.copy(maybeTaxpayer = Some(tp))
       _ <- journeyService.saveJourney(newJourney)
-      result: Result <- eligibilityCheck(newJourney, request.utr)
+      result: Result <- eligibilityCheck(newJourney)
     } yield result.placeInSession(newJourney._id)
 
   }
@@ -191,7 +191,8 @@ class ArrangementController @Inject() (
    * Call the eligibility service using the Taxpayer data
    * and display the appropriate page based on the result
    */
-  private def eligibilityCheck(journey: Journey, utr: SaUtr)(implicit request: Request[_]): Future[Result] = {
+  //private def eligibilityCheck(journey: Journey, utr: SaUtr)(implicit request: Request[_]): Future[Result] = {
+  private def eligibilityCheck(journey: Journey)(implicit request: Request[_]): Future[Result] = {
     JourneyLogger.info(s"ArrangementController.eligibilityCheck")
 
     lazy val youNeedToFile = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile())
@@ -203,13 +204,13 @@ class ArrangementController @Inject() (
     val eligibilityRequest = EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer)
 
     for {
-      onIa <- iaService.checkIaUtr(utr.value)
+      //TODO be mindful the line below changed and need to make sure functionality is still the same if it breaks look ehre first
+      onIa <- iaService.checkIaUtr(journey.taxpayer.selfAssessment.utr.value)
       eligibilityStatus: EligibilityStatus = EligibilityService.runEligibilityCheck(eligibilityRequest, onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
     } yield {
-      //isEligible
       if (eligibilityStatus.eligible) isEligible
       else if (eligibilityStatus.reasons.contains(DebtTooOld) ||
         eligibilityStatus.reasons.contains(OldDebtIsTooHigh) ||
