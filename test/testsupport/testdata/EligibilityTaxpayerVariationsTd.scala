@@ -29,11 +29,14 @@ object EligibilityTaxpayerVariationsTd {
   val taxpayerAddress: Address = Address(Some("Golden Throne"), Some("Himalayan Mountains"), Some("Holy Terra"), Some("Segmentum Solar"),
                                          Some("Milky Way Galaxy"), Some("BN11 1XX"))
 
-  def initSelfAssessmentDetails(debits: Seq[Debit], returns: Seq[Return]): SelfAssessmentDetails = SelfAssessmentDetails(TdAll.Sautr, TdAll.communicationPreferences, debits, returns)
-  def initSelfAssessmentDetailsWithErroneousUtr(debits: Seq[Debit], returns: Seq[Return]): SelfAssessmentDetails = SelfAssessmentDetails(SaUtr("XXXXXXXXXX"), TdAll.communicationPreferences, debits, returns)
   def initDebit(originCode: String, amount: Double, dueDate: LocalDate): Debit = Debit(originCode, BigDecimal(amount), dueDate,
-                                                                                       zeroInterestOption, dummyTaxYearEnd)
+    zeroInterestOption, dummyTaxYearEnd)
+
   def initEligibleDebit(): Debit = initDebit("IN1", 33, dummyCurrentDate)
+
+  def initSelfAssessmentDetails(debits: Seq[Debit], returns: Seq[Return]): SelfAssessmentDetails = SelfAssessmentDetails(TdAll.Sautr, TdAll.communicationPreferences, debits, returns)
+
+  def initSelfAssessmentDetailsWithErroneousUtr(debits: Seq[Debit], returns: Seq[Return]): SelfAssessmentDetails = SelfAssessmentDetails(SaUtr("XXXXXXXXXX"), TdAll.communicationPreferences, debits, returns)
 
   def initTaxpayer(debits: Seq[Debit], returns: Seq[Return]): Taxpayer = Taxpayer(taxpayerName, Seq(taxpayerAddress), initSelfAssessmentDetails(debits, returns))
 

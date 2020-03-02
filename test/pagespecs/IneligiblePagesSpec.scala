@@ -20,8 +20,10 @@ import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor4}
 import pagespecs.pages.BasePage
 import testsupport.ItSpec
 import testsupport.stubs._
+import testsupport.testdata.{EligibilityTaxpayerVariationsTd, TdAll}
+import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
+import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
 
@@ -49,12 +51,21 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage)
   )
 
+  def getIneligibleTaxpayerModel(reason: Reason): Taxpayer = {
+    reason match {
+      case NoDebt                => EligibilityTaxpayerVariationsTd.zeroDebtTaxpayer
+      case DebtIsInsignificant   => EligibilityTaxpayerVariationsTd.insignificantDebtTaxpayer
+      case OldDebtIsTooHigh      => EligibilityTaxpayerVariationsTd.oldDebtIsTooHighTaxpayer
+      case TotalDebtIsTooHigh    => EligibilityTaxpayerVariationsTd.totalDebtIsTooHighTaxpayer
+      case ReturnNeedsSubmitting => EligibilityTaxpayerVariationsTd.returnNeedsSubmittingTaxpayer
+      case IsNotOnIa             => EligibilityTaxpayerVariationsTd.notOnIaTaxpayer
+      case _                     => TdAll.taxpayer
+    }
+  }
+
   def beginJourney(ineligibleReason: Reason): Unit = {
     AuthStub.authorise()
-    //TODO rename the below method
-    // also probs needs to have this functionality automatically as part of the call to getTaxpayer without specifying the params...?
-    TaxpayerStub.getTaxpayer(TaxPayerForEligibilityStub.ineligibilityReasonToIneligibleTaxpayerMockMapping(ineligibleReason))
-    //TODO need to call an IA stub?
+    TaxpayerStub.getTaxpayer(getIneligibleTaxpayerModel(ineligibleReason))
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
@@ -87,4 +98,5 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
       notEnrolledPage.assertPageIsDisplayed
     }
   }
+
 }

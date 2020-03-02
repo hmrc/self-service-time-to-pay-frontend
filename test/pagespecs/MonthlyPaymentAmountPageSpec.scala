@@ -16,8 +16,6 @@
 
 package pagespecs
 
-import java.time.{Clock, LocalDateTime}
-
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs._

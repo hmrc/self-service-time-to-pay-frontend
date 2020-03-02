@@ -20,21 +20,11 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
 import play.api.libs.json.Json
-import testsupport.testdata.TdAll
+import testsupport.testdata.{EligibilityTaxpayerVariationsTd, TdAll}
 import timetopaytaxpayer.cor.model.Taxpayer
+import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
 object TaxpayerStub extends Matchers {
-
-  def getTaxpayer(): StubMapping = {
-
-    stubFor(
-      get(urlPathEqualTo(s"/taxpayer/${TdAll.utr}"))
-        .willReturn(
-          aResponse()
-            .withStatus(200)
-            .withBody(
-              Json.prettyPrint(Json.toJson(TdAll.taxpayer)))))
-  }
 
   def getTaxpayer(
       returnedTaxpayer: Taxpayer = TdAll.taxpayer
