@@ -88,7 +88,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |To continue you must be:
           |
           |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders
+          |able to set up Direct Debits without permission from the other account holders, if there are any
           |Continue
         """.stripMargin
 
@@ -116,7 +116,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
       private val accountNameErrorText =
         """Back
-          |Something you’ve entered isn’t valid
+          |There is a problem
           |Check your account name is correct
           |Enter account details to set up a Direct Debit
           |Enter your banking details
@@ -125,13 +125,13 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Account number 12345678
           |To continue you must be:
           |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders
+          |able to set up Direct Debits without permission from the other account holders, if there are any
           |Continue
       """.stripMargin
 
       private val sortCodeErrorText =
         """Back
-          |Something you’ve entered isn’t valid
+          |There is a problem
           |Sort code must be a 6 digit number
           |Enter account details to set up a Direct Debit
           |Enter your banking details
@@ -140,13 +140,13 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Account number 12345678
           |To continue you must be:
           |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders
+          |able to set up Direct Debits without permission from the other account holders, if there are any
           |Continue
         """.stripMargin
 
       private val accountNumberErrorText =
         """Back
-          |Something you’ve entered isn’t valid
+          |There is a problem
           |Account number must be an 8 digit number
           |Enter account details to set up a Direct Debit
           |Enter your banking details
@@ -155,7 +155,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Account number Account number must be an 8 digit number 24wrgedf
           |To continue you must be:
           |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders
+          |able to set up Direct Debits without permission from the other account holders, if there are any
           |Continue
         """.stripMargin
 
@@ -170,7 +170,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Account number 12345678
           |To continue you must be:
           |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders
+          |able to set up Direct Debits without permission from the other account holders, if there are any
           |Continue
         """.stripMargin
     }
