@@ -21,7 +21,6 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import testsupport.testdata.{DirectDebitTd, TdAll}
-import uk.gov.hmrc.domain.SaUtr
 
 object DirectDebitStub extends Matchers {
 

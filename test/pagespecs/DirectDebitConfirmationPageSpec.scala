@@ -27,7 +27,7 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()
-      EligibilityStub.eligible()
+      IaStub.successfulIaCheck
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()

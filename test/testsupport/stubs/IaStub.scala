@@ -16,29 +16,28 @@
 
 package testsupport.stubs
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, stubFor, urlPathEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
-import play.api.libs.json.{JsObject, Json}
 import testsupport.testdata.TdAll
 
-object EligibilityStub extends Matchers {
+object IaStub extends Matchers {
 
-  def eligible(utr: String = TdAll.utr): StubMapping = {
+  def successfulIaCheck: StubMapping = {
     stubFor(
-      post(urlPathEqualTo(s"/time-to-pay-eligibility/eligibility/$utr"))
+      get(urlPathEqualTo(s"/ia/${TdAll.utr}"))
         .willReturn(
           aResponse()
             .withStatus(200)
-            .withBody(Json.prettyPrint(TdAll.eligibilityStatusJson))))
+        ))
   }
 
-  def ineligible(utr: String = TdAll.utr, reasonJson: JsObject = TdAll.totalDebtIsTooHigh): StubMapping = {
+  def failedIaCheck: StubMapping = {
     stubFor(
-      post(urlPathEqualTo(s"/time-to-pay-eligibility/eligibility/$utr"))
+      get(urlPathEqualTo(s"/ia/${TdAll.utr}"))
         .willReturn(
           aResponse()
-            .withStatus(200)
-            .withBody(Json.prettyPrint(reasonJson))))
+            .withStatus(204)
+        ))
   }
 }
