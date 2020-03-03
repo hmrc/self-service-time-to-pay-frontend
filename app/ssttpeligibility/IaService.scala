@@ -18,20 +18,19 @@ package ssttpeligibility
 
 import javax.inject.Inject
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IaService @Inject() (http: HttpClient) {
-  //TODO sort these out proper in the config or whatever
-  //  val iaUrl: String = config.baseUrl
-  //  val enableCheck = config.enableIACheck
-  val iaUrl: String = "http://localhost:8051"
+class IaService @Inject() (http:           HttpClient,
+                           servicesConfig: ServicesConfig) {
+  private lazy val baseUrl: String = servicesConfig.baseUrl("ia")
   val enableCheck = true
 
   def checkIaUtr(utr: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Boolean] = {
     if (enableCheck) {
-      http.GET(iaUrl + s"/ia/$utr").map(res => res.status match {
+      http.GET(baseUrl + s"/ia/$utr").map(res => res.status match {
         case 200 => true
         case 204 => false
       })

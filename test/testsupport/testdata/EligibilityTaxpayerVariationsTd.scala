@@ -46,11 +46,11 @@ object EligibilityTaxpayerVariationsTd {
 
   val insignificantDebtTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 31, dummyCurrentDate)), Seq.empty)
 
-  val oldDebtIsTooHighTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 32, dummy60DaysAgo)), Seq.empty)
+  val oldDebtIsTooHighTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 33, dummy60DaysAgo)), Seq.empty)
 
   val totalDebtIsTooHighTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 10000, dummyCurrentDate)), Seq.empty)
 
   val returnNeedsSubmittingTaxpayer: Taxpayer = initTaxpayer(Seq(initEligibleDebit), Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None)))
 
-  val notOnIaTaxpayer: Taxpayer = initTaxpayerWithErroneousUtr(Seq(initEligibleDebit), Seq.empty)
+  val notOnIaTaxpayer: Taxpayer = initTaxpayer(Seq(initEligibleDebit), Seq.empty)
 }

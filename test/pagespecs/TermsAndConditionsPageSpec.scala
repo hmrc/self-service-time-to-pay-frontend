@@ -27,6 +27,7 @@ class TermsAndConditionsPageSpec extends ItSpec {
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()
+      IaStub.successfulIaCheck
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()

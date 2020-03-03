@@ -20,8 +20,6 @@ import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor4}
 import pagespecs.pages.BasePage
 import testsupport.ItSpec
 import testsupport.stubs._
-import testsupport.testdata.{EligibilityTaxpayerVariationsTd, TdAll}
-import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
@@ -48,24 +46,15 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     ("not on IA", IsNotOnIa, "not on ia page", notOnIaPage),
     ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
     ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
-    ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage)
+    ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage),
+    ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", generalCallUsPage)
   )
-
-  def getIneligibleTaxpayerModel(reason: Reason): Taxpayer = {
-    reason match {
-      case NoDebt                => EligibilityTaxpayerVariationsTd.zeroDebtTaxpayer
-      case DebtIsInsignificant   => EligibilityTaxpayerVariationsTd.insignificantDebtTaxpayer
-      case OldDebtIsTooHigh      => EligibilityTaxpayerVariationsTd.oldDebtIsTooHighTaxpayer
-      case TotalDebtIsTooHigh    => EligibilityTaxpayerVariationsTd.totalDebtIsTooHighTaxpayer
-      case ReturnNeedsSubmitting => EligibilityTaxpayerVariationsTd.returnNeedsSubmittingTaxpayer
-      case IsNotOnIa             => EligibilityTaxpayerVariationsTd.notOnIaTaxpayer
-      case _                     => TdAll.taxpayer
-    }
-  }
 
   def beginJourney(ineligibleReason: Reason): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer(ineligibleReason)
+    if (ineligibleReason == IsNotOnIa) IaStub.failedIaCheck
+    else IaStub.successfulIaCheck
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
