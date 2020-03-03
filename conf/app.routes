@@ -57,3 +57,5 @@ GET         /assets/*file                                                 contro
 
 GET         /language/:language                                           @langswitch.LanguageSwitchController.switchToLanguage(language: Language)
 
+GET        /accessibility-statement                                       ssttpaccessibility.AccessibilityController.getAccessibilityStatement()
+
