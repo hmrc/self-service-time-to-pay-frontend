@@ -394,14 +394,19 @@ ssttp.arrangement.changeday.default = 28th or next working day
 ssttp.arrangement.changeday.different = A different day
 ssttp.arrangement.changeday.enter.date = Enter a day between 1 and 28
 
-#accessiblitystatement
+
+#Utility
+ full-stop = .
+
+#accessibilitystatement
  accessibility-statement.title = Accessibility Statement
  accessibility-statement-h1 = Accessibility statement for set up a Self Assessment payment plan
- accessibility-statement-p1 = This accessibility statement explains how accessible this service is, what to do if you have difficulty using it, and how to report accessibility problems with the service.
+ accessibility-statement-p1 = This accessibility statement explains how accessible this service is, what to do if you have difficulty using it and how to report accessibility problems with the service.
  accessibility-statement-p2a = This service is part of the wider GOV.UK website. There is a separate
  accessibility-statement-a1 =  accessibility statement
  accessibility-statement-p2b = for the main GOV.UK website.
- accessibility-statement-p3 = This statement only contains information about this service, which is available at www.tax.service.gov.uk/pay-what-you-owe-in-instalments
+ accessibility-statement-p3a = This statement only contains information about
+ accessibility-statement-p3b = this service
  accessibility-statement-h2 = Using this service
  accessibility-statement-p4 = This service allows you to set up a payment plan to pay overdue Self Assessment tax charges in instalments, if you are eligible.
  accessibility-statement-p5 = This service is run by HM Revenue and Customs (HMRC). We want as many people as possible to be able to use this service. This means you should be able to:
@@ -416,14 +421,14 @@ ssttp.arrangement.changeday.enter.date = Enter a day between 1 and 28
  accessibility-statement-p7b = has advice on making your device easier to use if you have a disability.
  accessibility-statement-h3 = How accessible this service is
  accessibility-statement-p8 = This service is partially compliant with the
- accessibility-statement-a3 = Web Content Accessibility Guidelines version 2.1 AA standard.
+ accessibility-statement-a3 = Web Content Accessibility Guidelines version 2.1 AA standard
  accessibility-statement-p9 = Some people may find parts of this service difficult to use:
  accessibility-statement-l2-item1 = •	some error messages are not descriptive enough for people with visual impairments- but are compatible with common assistive technology tools
  accessibility-statement-l2-item2 = •	some headings are not consistent
  accessibility-statement-l2-item3 = •	elements which are missing their labels- using a screen reader to read back the entire page will provide all the information needed
  accessibility-statement-h4 = Reporting accessibility problems with this service
  accessibility-statement-p10 = We are always looking to improve the accessibility of this service. If you find any problems that are not listed on this page or think we are not meeting accessibility requirements, report the
- accessibility-statement-a4 = accessibility problem.
+ accessibility-statement-a4 = accessibility problem
  accessibility-statement-h5 = What to do if you are not happy with how we respond to your complaint
  accessibility-statement-p11a = The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 (the ‘accessibility regulations’). If you are not happy with how we respond to your complaint,
  accessibility-statement-a5 = contact the Equality Advisory and Support Service (EASS)

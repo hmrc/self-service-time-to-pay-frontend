@@ -25,15 +25,15 @@
 )
 
 @(
-        signedIn: Boolean = false)(implicit
+        signedIn: Boolean = false
+)(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
 )
 
 @main(
-    title = Messages("ssttp.arrangement.declaration.h1"),
-    loggedIn = signedIn
+    title = Messages("ssttp.arrangement.declaration.h1")
 ) {
    <a class="link-back" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()">@Messages("ssttp.arrangement.declaration.back")</a>
 
