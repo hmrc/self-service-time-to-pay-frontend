@@ -47,7 +47,6 @@ class AccessibilityController @Inject() (
 
   def getAccessibilityStatement(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AccessibilityController.getAccessibilityStatement: $request")
-    Future.successful(Ok(views.terms_and_conditions()))
-    //Ok(views.accessibility_statement)
+    Future.successful(Ok(views.accessibility_statement()))
   }
 }
