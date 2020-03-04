@@ -24,7 +24,8 @@ main: views.html.main,
 viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit
+@(
+signedIn: Boolean = false)(implicit
 messages: play.api.i18n.Messages,
 request: Request[_],
 appConfig: config.AppConfig
