@@ -14,33 +14,28 @@
  * limitations under the License.
  */
 
-package testonly
+package ssttpeligibility
 
-import com.google.inject.Singleton
 import javax.inject.Inject
-import play.api.mvc.Request
-import req.RequestSupport
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class IaConnector @Inject() (
-    httpClient:     HttpClient,
-    servicesConfig: ServicesConfig,
-    requestSupport: RequestSupport
-)(implicit ec: ExecutionContext) {
-
-  import requestSupport._
-
+class IaService @Inject() (http:           HttpClient,
+                           servicesConfig: ServicesConfig) {
   private lazy val baseUrl: String = servicesConfig.baseUrl("ia")
+  val enableCheck = true
 
-  def uploadUtr(utr: String)(implicit request: Request[_]): Future[Unit] =
-    httpClient
-      .POSTEmpty(baseUrl + s"/ia/upload/$utr")
-      .map{
-        r =>
-          if (r.status != 200) throw new RuntimeException(s"Could not upload utr into Ia")
-      }
+  def checkIaUtr(utr: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Boolean] = {
+    if (enableCheck) {
+      http.GET(baseUrl + s"/ia/$utr").map(res => res.status match {
+        case 200 => true
+        case 204 => false
+      })
+    } else {
+      Future.successful(false)
+    }
+  }
 }

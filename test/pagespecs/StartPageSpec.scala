@@ -17,19 +17,9 @@
 package pagespecs
 
 import langswitch.Languages
-import play.api.libs.json.{Json, OFormat, Reads}
-import testsupport.{ItSpec, WireMockSupport}
-import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxpayerStub}
-import testsupport.testdata.TdAll
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.logging.{Authorization, SessionId}
-import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
-
-import scala.concurrent.ExecutionContext.Implicits.global
+import testsupport.ItSpec
+import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
+import uk.gov.hmrc.selfservicetimetopay.models.TotalDebtIsTooHigh
 
 class StartPageSpec extends ItSpec {
 
@@ -57,7 +47,7 @@ class StartPageSpec extends ItSpec {
   "eligible" in {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    EligibilityStub.eligible()
+    IaStub.successfulIaCheck
 
     GgStub.signInPage(port)
     startPage.open()
@@ -67,8 +57,8 @@ class StartPageSpec extends ItSpec {
 
   "not eligible (debt too large)" in {
     AuthStub.authorise()
-    TaxpayerStub.getTaxpayer()
-    EligibilityStub.ineligible()
+    TaxpayerStub.getTaxpayer(TotalDebtIsTooHigh)
+    IaStub.successfulIaCheck
 
     startPage.open()
     startPage.clickOnStartNowButton()

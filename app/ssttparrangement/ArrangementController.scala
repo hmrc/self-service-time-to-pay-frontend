@@ -17,7 +17,7 @@
 package ssttparrangement
 
 import java.time.format.DateTimeFormatter
-import java.time.{Clock, LocalDate, LocalDateTime, ZonedDateTime}
+import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 
 import audit.AuditService
 import config.AppConfig
@@ -32,14 +32,13 @@ import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttpcalculator.{CalculatorConnector, CalculatorPaymentScheduleExt, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
-import ssttpeligibility.EligibilityConnector
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 import _root_.model._
+import ssttpeligibility.{EligibilityService, IaService}
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
@@ -54,13 +53,13 @@ class ArrangementController @Inject() (
     calculatorService:    CalculatorService,
     calculatorConnector:  CalculatorConnector,
     taxPayerConnector:    TaxpayerConnector,
-    eligibilityConnector: EligibilityConnector,
     auditService:         AuditService,
     journeyService:       JourneyService,
     as:                   Actions,
     requestSupport:       RequestSupport,
     views:                Views,
-    clockProvider:        ClockProvider)(
+    clockProvider:        ClockProvider,
+    iaService:            IaService)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext) extends FrontendBaseController(mcc) {
@@ -77,7 +76,7 @@ class ArrangementController @Inject() (
 
     journeyService.getJourney.flatMap {
       case journey @ Journey(_, Statuses.InProgress, _, _, _, _, _, Some(taxpayer), _, _, _, _, _) =>
-        eligibilityCheck(journey, request.utr)
+        eligibilityCheck(journey)
     }
   }
 
@@ -99,7 +98,7 @@ class ArrangementController @Inject() (
       tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
       newJourney: Journey = Journey.newJourney.copy(maybeTaxpayer = Some(tp))
       _ <- journeyService.saveJourney(newJourney)
-      result: Result <- eligibilityCheck(newJourney, request.utr)
+      result: Result <- eligibilityCheck(newJourney)
     } yield result.placeInSession(newJourney._id)
 
   }
@@ -191,7 +190,7 @@ class ArrangementController @Inject() (
    * Call the eligibility service using the Taxpayer data
    * and display the appropriate page based on the result
    */
-  private def eligibilityCheck(journey: Journey, utr: SaUtr)(implicit request: Request[_]): Future[Result] = {
+  private def eligibilityCheck(journey: Journey)(implicit request: Request[_]): Future[Result] = {
     JourneyLogger.info(s"ArrangementController.eligibilityCheck")
 
     lazy val youNeedToFile = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile())
@@ -200,24 +199,26 @@ class ArrangementController @Inject() (
     lazy val notEligible = Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs())
     lazy val isEligible = Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 
+    val eligibilityRequest = EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer)
+
     for {
-      es: EligibilityStatus <- eligibilityConnector.checkEligibility(EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer), utr)
-      newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(es))
+      onIa <- iaService.checkIaUtr(journey.taxpayer.selfAssessment.utr.value)
+      eligibilityStatus: EligibilityStatus = EligibilityService.runEligibilityCheck(eligibilityRequest, onIa)
+      newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
-      _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${es.eligible}]", newJourney)
+      _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
     } yield {
-      if (es.eligible) isEligible
-      else if (es.reasons.contains(DebtTooOld) ||
-        es.reasons.contains(OldDebtIsTooHigh) ||
-        es.reasons.contains(NoDueDate) ||
-        es.reasons.contains(NoDebt) ||
-        es.reasons.contains(TTPIsLessThenTwoMonths) ||
-        es.reasons.contains(NoDueDate)) notEligible
-      else if (es.reasons.contains(IsNotOnIa)) notOnIa
-      else if (es.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
-      else if (es.reasons.contains(ReturnNeedsSubmitting) || es.reasons.contains(DebtIsInsignificant)) youNeedToFile
+      if (eligibilityStatus.eligible) isEligible
+      else if (eligibilityStatus.reasons.contains(DebtTooOld) ||
+        eligibilityStatus.reasons.contains(OldDebtIsTooHigh) ||
+        eligibilityStatus.reasons.contains(NoDebt) ||
+        eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
+        eligibilityStatus.reasons.contains(NoDueDate)) notEligible
+      else if (eligibilityStatus.reasons.contains(IsNotOnIa)) notOnIa
+      else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
+      else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant)) youNeedToFile
       else {
-        JourneyLogger.info(s"ArrangementController.eligibilityCheck ERROR - [eligible=${es.eligible}]. Case not implemented. It's a bug.", newJourney)
+        JourneyLogger.info(s"ArrangementController.eligibilityCheck ERROR - [eligible=${eligibilityStatus.eligible}]. Case not implemented. It's a bug.", newJourney)
         throw new RuntimeException(s"Case not implemented. It's a bug in the eligibility reasons. [${journey.maybeEligibilityStatus}]. [$journey]")
       }
     }

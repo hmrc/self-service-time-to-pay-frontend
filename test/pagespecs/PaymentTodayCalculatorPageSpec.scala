@@ -18,13 +18,13 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
-import testsupport.stubs.{AuthStub, EligibilityStub, GgStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, IaStub, GgStub, TaxpayerStub}
 
 class PaymentTodayCalculatorPageSpec extends ItSpec {
   def beginJourney() = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
-    EligibilityStub.eligible()
+    IaStub.successfulIaCheck
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()

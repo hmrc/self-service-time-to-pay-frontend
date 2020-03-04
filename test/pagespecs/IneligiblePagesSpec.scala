@@ -16,13 +16,12 @@
 
 package pagespecs
 
-import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor2, TableFor3, TableFor4}
+import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor4}
 import pagespecs.pages.BasePage
-import play.api.libs.json.JsObject
 import testsupport.ItSpec
 import testsupport.stubs._
-import testsupport.testdata.TdAll
 import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
 
@@ -41,28 +40,30 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
    * - debt less than £32
    */
 
-  val listOfIneligibleReasons: TableFor4[String, JsObject, String, BasePage] = Table(
-    ("reason", "jsObject", "pageAsString", "page"),
-    ("no debts", TdAll.noDebits, "general call us page", generalCallUsPage),
-    ("not on IA", TdAll.notOnIa, "not on ia page", notOnIaPage),
-    ("current year return not submitted", TdAll.returnNotSubmitted, "you need to file", needToFilePage),
-    ("debt more than £10k", TdAll.totalDebtIsTooHigh, "debt too large", debtTooLargePage),
-    ("debt less than £32", TdAll.debtTooSmall, "debt too small", needToFilePage)
+  val listOfIneligibleReasons: TableFor4[String, Reason, String, BasePage] = Table(
+    ("reason", "reasonObject", "pageAsString", "page"),
+    ("no debts", NoDebt, "general call us page", generalCallUsPage),
+    ("not on IA", IsNotOnIa, "not on ia page", notOnIaPage),
+    ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
+    ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
+    ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage),
+    ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", generalCallUsPage)
   )
 
-  def beginJourney(ineligibleReason: JsObject): Unit = {
+  def beginJourney(ineligibleReason: Reason): Unit = {
     AuthStub.authorise()
-    TaxpayerStub.getTaxpayer()
-    EligibilityStub.ineligible(reasonJson = ineligibleReason)
+    TaxpayerStub.getTaxpayer(ineligibleReason)
+    if (ineligibleReason == IsNotOnIa) IaStub.failedIaCheck
+    else IaStub.successfulIaCheck
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
   }
 
   "Ineligible pages displayed correctly - ssttp eligibility" - {
-    TableDrivenPropertyChecks.forAll(listOfIneligibleReasons) { (reason, json, pageAsString, page) =>
+    TableDrivenPropertyChecks.forAll(listOfIneligibleReasons) { (reason, reasonObject, pageAsString, page) =>
       s"$pageAsString should be displayed when user has ineligible reason: [$reason]" in {
-        beginJourney(json)
+        beginJourney(reasonObject)
         page.assertPageIsDisplayed
       }
     }
@@ -72,7 +73,6 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     "show not-enrolled page for confidence level < 200" in {
       AuthStub.authorise(confidenceLevel = Some(ConfidenceLevel.L100))
       TaxpayerStub.getTaxpayer()
-      EligibilityStub.eligible()
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
@@ -81,12 +81,10 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     "show not-enrolled page no sa enrolments" in {
       AuthStub.authorise(allEnrolments = Some(Set()))
       TaxpayerStub.getTaxpayer()
-      EligibilityStub.eligible()
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
       notEnrolledPage.assertPageIsDisplayed
     }
   }
-
 }

@@ -30,11 +30,8 @@ import timetopaytaxpayer.cor.model._
  * Test Data All
  */
 object TdAll {
-
-  val systemDate: LocalDate = "2019-10-04"
-
-  val Sautr = SaUtr("6573196998")
   val utr = "6573196998"
+  val Sautr = SaUtr(utr)
 
   val debit1 = Debit(
     originCode = "IN1",
@@ -74,7 +71,7 @@ object TdAll {
     taxYearEnd   = "2020-04-05",
     issuedDate   = "2019-11-10",
     dueDate      = "2019-08-15",
-    receivedDate = None
+    receivedDate = "2019-03-09"
   )
 
   val return1Json =
@@ -82,7 +79,8 @@ object TdAll {
     """{
     "taxYearEnd": "2020-04-05",
      "issuedDate": "2019-11-10",
-     "dueDate": "2019-08-15"
+     "dueDate": "2019-08-15",
+     "receivedDate": "2018-03-09"
     }""".asJson
 
   val return2 = Return(
@@ -93,7 +91,6 @@ object TdAll {
   )
 
   val return2Json =
-    //language=Json
     """{
      "taxYearEnd": "2018-04-05",
      "issuedDate": "2017-02-15",
