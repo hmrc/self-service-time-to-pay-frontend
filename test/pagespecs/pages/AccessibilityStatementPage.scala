@@ -80,9 +80,9 @@ class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
           |How accessible this service is
           |This service is partially compliant with the Web Content Accessibility Guidelines version 2.1 AA standard.
           |Some people may find parts of this service difficult to use:
-          |•	some error messages are not descriptive enough for people with visual impairments- but are compatible with common assistive technology tools
+          |•	some error messages are not descriptive enough for people with visual impairments - but are compatible with common assistive technology tools
           |•	some headings are not consistent
-          |•	elements which are missing their labels- using a screen reader to read back the entire page will provide all the information needed
+          |•	elements which are missing their labels - using a screen reader to read back the entire page will provide all the information needed
           |Reporting accessibility problems with this service
           |We are always looking to improve the accessibility of this service. If you find any problems that are not listed on this page or think we are not meeting accessibility requirements, report the accessibility problem.
           |What to do if you are not happy with how we respond to your complaint
