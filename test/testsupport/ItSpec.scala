@@ -19,23 +19,16 @@ package testsupport
 import java.time.{Clock, LocalDateTime, ZoneId, ZoneOffset}
 
 import com.google.inject.{AbstractModule, Provides}
+import com.softwaremill.macwire._
 import javax.inject.Singleton
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{FreeSpec, TestData}
-import org.openqa.selenium.remote.RemoteWebDriver
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
 import pagespecs.pages._
 import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
-import com.softwaremill.macwire._
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
-import java.net.URL
-
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import times.ClockProvider
-
-import scala.util.Random
 
 class ItSpec
   extends FreeSpec
@@ -47,22 +40,23 @@ class ItSpec
     timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds))
   )
 
+  protected def configMap: Map[String, Any] = Map(
+    "microservice.services.direct-debit.port" -> WireMockSupport.port,
+    "microservice.services.time-to-pay-calculator.port" -> WireMockSupport.port,
+    "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
+    "microservice.services.time-to-pay-eligibility.port" -> WireMockSupport.port,
+    "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
+    "microservice.services.campaign-manager.port" -> WireMockSupport.port,
+    "microservice.services.ia.port" -> WireMockSupport.port,
+    "microservice.services.auth.port" -> WireMockSupport.port,
+    "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
+    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}")
+
   //in tests use `app`
   override def newAppForTest(testData: TestData): Application = new GuiceApplicationBuilder()
     .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
-    .configure(Map[String, Any](
-      "microservice.services.direct-debit.port" -> WireMockSupport.port,
-      "microservice.services.time-to-pay-calculator.port" -> WireMockSupport.port,
-      "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
-      "microservice.services.time-to-pay-eligibility.port" -> WireMockSupport.port,
-      "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
-      "microservice.services.campaign-manager.port" -> WireMockSupport.port,
-      "microservice.services.ia.port" -> WireMockSupport.port,
-      "microservice.services.auth.port" -> WireMockSupport.port,
-      "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
-      "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}",
-      "assets.url" -> "" //so the PageSpecs don't inferf with service manager
-    )).build()
+    .configure(configMap)
+    .build()
 
   def frozenTimeString: String = "2019-11-25T16:33:51.880"
 

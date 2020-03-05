@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs._
@@ -23,7 +24,7 @@ import testsupport.testdata.DirectDebitTd
 
 class ArrangementSummaryPageSpec extends ItSpec {
 
-  def beginJourney() = {
+  def beginJourney(): StubMapping = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -43,7 +44,7 @@ class ArrangementSummaryPageSpec extends ItSpec {
     instalmentSummaryPage.clickContinue()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.getBanks
+    DirectDebitStub.getBanksIsSuccessful
     directDebitPage.clickContinue()
     termsAndConditionsPage.clickContinue()
     DirectDebitStub.postPaymentPlan
