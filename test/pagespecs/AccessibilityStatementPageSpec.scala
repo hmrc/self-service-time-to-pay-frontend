@@ -18,7 +18,6 @@ package pagespecs
 
 import testsupport.ItSpec
 import testsupport.stubs._
-import testsupport.testdata.DirectDebitTd
 
 class AccessibilityStatementPageSpec extends ItSpec {
 
@@ -26,7 +25,7 @@ class AccessibilityStatementPageSpec extends ItSpec {
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()
-      EligibilityStub.eligible()
+      IaStub.successfulIaCheck
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
