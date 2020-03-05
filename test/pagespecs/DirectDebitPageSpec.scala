@@ -20,30 +20,29 @@ import langswitch.Languages.{English, Welsh}
 import testsupport.{AccountName, ItSpec}
 import testsupport._
 import testsupport.stubs._
-import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.{DirectDebitTd, TdAll}
 
-class DirectDebitPageSpec extends ItSpec {
+abstract class DirectDebitPageSpec extends ItSpec {
 
-  def beginJourney() =
-    {
-      AuthStub.authorise()
-      TaxpayerStub.getTaxpayer()
-      IaStub.successfulIaCheck
-      GgStub.signInPage(port)
-      startPage.open()
-      startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton()
-      paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue()
-      monthlyPaymentAmountPage.enterAmout("2450")
-      CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue()
-      calculatorInstalmentsPage.selectAnOption()
-      calculatorInstalmentsPage.clickContinue()
-      instalmentSummarySelectDatePage.selectFirstOption()
-      instalmentSummarySelectDatePage.clickContinue()
-      instalmentSummaryPage.clickContinue()
-    }
+  def beginJourney(): Unit = {
+    AuthStub.authorise()
+    TaxpayerStub.getTaxpayer()
+    IaStub.successfulIaCheck
+    GgStub.signInPage(port)
+    startPage.open()
+    startPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton()
+    paymentTodayQuestionPage.selectRadioButton(false)
+    paymentTodayQuestionPage.clickContinue()
+    monthlyPaymentAmountPage.enterAmout("2450")
+    CalculatorStub.generateSchedule
+    monthlyPaymentAmountPage.clickContinue()
+    calculatorInstalmentsPage.selectAnOption()
+    calculatorInstalmentsPage.clickContinue()
+    instalmentSummarySelectDatePage.selectFirstOption()
+    instalmentSummarySelectDatePage.clickContinue()
+    instalmentSummaryPage.clickContinue()
+  }
 
   "language" in {
     beginJourney()
@@ -89,7 +88,34 @@ class DirectDebitPageSpec extends ItSpec {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.getBanks
+    DirectDebitStub.getBanksIsSuccessful
+    directDebitPage.clickContinue()
+    directDebitConfirmationPage.assertPageIsDisplayed
+  }
+}
+
+class DirectDebitPageNotToleratingBPNotFoundSpec extends DirectDebitPageSpec {
+  "enter valid bank account given business partner not found fails" in {
+    beginJourney()
+    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanksReturns404BPNotFound(TdAll.Sautr)
+    directDebitPage.clickContinue()
+
+    intercept[Exception] {
+      directDebitConfirmationPage.assertPageIsDisplayed
+    }
+  }
+}
+
+class DirectDebitPageToleratingBPNotFoundSpec extends DirectDebitPageSpec {
+  override protected def configMap: Map[String, Any] = super.configMap + ("microservice.tolerate-bp-not-found" -> true)
+
+  "enter valid bank account given business partner not found succeeds" in {
+    beginJourney()
+    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanksReturns404BPNotFound(TdAll.Sautr)
     directDebitPage.clickContinue()
     directDebitConfirmationPage.assertPageIsDisplayed
   }

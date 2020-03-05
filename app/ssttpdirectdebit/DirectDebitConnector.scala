@@ -19,16 +19,14 @@ package ssttpdirectdebit
 import com.google.inject._
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status._
 import play.api.mvc.Request
 import ssttparrangement.SubmissionError
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,6 +42,8 @@ class DirectDebitConnector @Inject() (
 
   val baseUrl: String = servicesConfig.baseUrl("direct-debit")
 
+  def tolerateBPNotFound = servicesConfig.getBoolean("microservice.tolerate-bp-not-found")
+
   def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit request: Request[_]): Future[DDSubmissionResult] = {
     JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan")
 
@@ -53,19 +53,6 @@ class DirectDebitConnector @Inject() (
       case e: Throwable =>
         JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan: Error, $e")
         onError(e)
-    }
-  }
-
-  trait BankAccountHttpReads extends HttpReads[Either[BankDetails, DirectDebitBank]] with HttpErrorFunctions
-
-  implicit val readValidateOrRetrieveAccounts: BankAccountHttpReads = new BankAccountHttpReads {
-    override def read(method: String, url: String, response: HttpResponse): Either[BankDetails, DirectDebitBank] = response.status match {
-      case OK => Left(response.json.as[BankDetails])
-      case NOT_FOUND if response.body.contains("BP not found") => Right(DirectDebitBank.none)
-      case NOT_FOUND => Right(response.json.as[DirectDebitBank])
-      case _ => handleResponse(method, url)(response) match {
-        case _ => Right(DirectDebitBank.none)
-      }
     }
   }
 
@@ -92,7 +79,11 @@ class DirectDebitConnector @Inject() (
 
     httpClient.GET[DirectDebitBank](s"$baseUrl/direct-debit/${saUtr.value}/banks").map { response => response }
       .recover {
-        case e: Exception =>
+        case e: NotFoundException if tolerateBPNotFound && e.message.contains("BP not found") =>
+          JourneyLogger.info("DirectDebitConnector.getBanks: BP not found")
+          Logger.warn(e.getMessage)
+          DirectDebitBank.none
+        case e: RuntimeException =>
           JourneyLogger.info(s"DirectDebitConnector.getBanks: Error, $e")
           Logger.error(e.getMessage)
           throw new RuntimeException("GETBANKS threw unexpected error")
