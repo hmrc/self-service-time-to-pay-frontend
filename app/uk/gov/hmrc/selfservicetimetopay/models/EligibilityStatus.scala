@@ -27,6 +27,7 @@ case object OldDebtIsTooHigh extends Reason("OldDebtIsTooHigh")
 case object TotalDebtIsTooHigh extends Reason("TotalDebtIsTooHigh")
 case object ReturnNeedsSubmitting extends Reason("ReturnNeedsSubmitting")
 case object IsNotOnIa extends Reason("IsNotOnIa")
+case object DebitHasNoRelevantDueDate extends Reason("DebitHasNoRelevantDueDate")
 //TODO the ones below are unused for now and apparently always have been
 case object TTPIsLessThenTwoMonths extends Reason("TTPIsLessThenTwoMonths")
 case object NotSaEnrolled extends Reason("NotEnrolled")

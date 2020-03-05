@@ -40,6 +40,12 @@ object EligibilityService {
   def runEligibilityCheck(eligibilityRequest: EligibilityRequest, onIa: Boolean): EligibilityStatus = {
     val selfAssessmentDetails: SelfAssessmentDetails = eligibilityRequest.taxpayer.selfAssessment
     val isOnIa: List[Reason] = if (onIa) Nil else List(IsNotOnIa)
+    //TODO this needs to do something along these lines but need to alter the model to make relevant due date an option
+    // may also have to ensure that the JSON reading/writing can handle it
+    val debitHasNoRelevantDueDate: Seq[Debit] = eligibilityRequest.taxpayer.selfAssessment.debits
+    val filteredList = debitHasNoRelevantDueDate.filter(x => x.dueDate == None)
+    if(filteredList.nonEmpty) Nil  //TODO this should be a list with the reason in it call it below
+
 
     val reasons = (checkReturnsUpToDate(selfAssessmentDetails.returns, eligibilityRequest.dateOfEligibilityCheck)
       ++ checkDebits(selfAssessmentDetails.debits, eligibilityRequest.dateOfEligibilityCheck) ++ isOnIa)
