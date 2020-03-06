@@ -29,7 +29,7 @@ object EligibilityTaxpayerVariationsTd {
   val taxpayerAddress: Address = Address(Some("Golden Throne"), Some("Himalayan Mountains"), Some("Holy Terra"), Some("Segmentum Solar"),
                                          Some("Milky Way Galaxy"), Some("BN11 1XX"))
 
-  def initDebit(originCode: String, amount: Double, dueDate: LocalDate): Debit = Debit(originCode, BigDecimal(amount), dueDate,
+  def initDebit(originCode: String, amount: Double, dueDate: LocalDate): Debit = Debit(originCode, BigDecimal(amount), Some(dueDate),
                                                                                        zeroInterestOption, dummyTaxYearEnd)
 
   def initEligibleDebit(): Debit = initDebit("IN1", 33, dummyCurrentDate)

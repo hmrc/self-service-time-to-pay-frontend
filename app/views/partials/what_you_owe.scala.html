@@ -31,7 +31,7 @@
         @if(smallFormat && !debits.head.equals(debit)){<br>}
         <div class="@if(smallFormat){grid-layout--no-gutter}else{subsection ssttp-grid-layout-padding-above} grid-layout font-xsmall divider--bottom">
             <div class="grid-layout__column grid-layout__column--3-4">
-                <div><span class="@if(smallFormat){font-xsmall}else{font-small}">@debit.dueDate.format(formatter)</span></div>
+                <div><span class="@if(smallFormat){font-xsmall}else{font-small}">@debit.getDueDate.format(formatter)</span></div>
                 <small>
                     <span class="font-xsmall">@charge_code(debit.originCode, debit.taxYearEnd)</span>
                 </small>

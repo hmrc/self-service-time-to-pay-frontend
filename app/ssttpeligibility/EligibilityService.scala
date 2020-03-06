@@ -74,17 +74,14 @@ object EligibilityService {
   // Charge - any money owed that less than 30 days overdue
   // Liability - any money that is not yet due
   private def checkDebits(debits: Seq[Debit], today: LocalDate): List[Reason] = {
-    //TODO this needs to do something along these lines but need to alter the model to make relevant due date an option
-    // may also have to ensure that the JSON reading/writing can handle it
     //If there are any debits without a relevantDueDate then we stop here
-    val debitsWithNoRelevantDueDate: Seq[Debit] = debits.filter(nextDebit => nextDebit.dueDate == None)
-    if (debitsWithNoRelevantDueDate.nonEmpty) List(DebitHasNoRelevantDueDate)
+    if (!debits.forall(_.dueDate.isDefined)) List(DebitHasNoRelevantDueDate)
 
     val chargeStartDay: LocalDate = today.minusDays(1)
     val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
 
-    val (liabilities, chargesAndDebts) = debits.partition(_.dueDate.isAfter(chargeStartDay))
-    val debt = chargesAndDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
+    val (liabilities, chargesAndDebts) = debits.partition(_.getDueDate.isAfter(chargeStartDay))
+    val debt = chargesAndDebts.filterNot(_.getDueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
 
     val totalLiabilities = liabilities.map(l => getTotalForDebit(l)).sum
     val totalChargesAndDebt = chargesAndDebts.map(cd => getTotalForDebit(cd)).sum

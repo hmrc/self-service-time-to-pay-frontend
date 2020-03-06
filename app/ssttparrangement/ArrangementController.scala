@@ -241,7 +241,7 @@ class ArrangementController @Inject() (
 
       if (journey.status == Statuses.FinishedApplicationSuccessful) {
         Ok(views.application_complete(
-          debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
+          debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.getDueDate().toEpochDay()),
           transactionId = journey.taxpayer.selfAssessment.utr + LocalDateTime.now(clockProvider.getClock).toString,
           directDebit   = journey.arrangementDirectDebit.get,
           schedule      = journey.schedule.get.schedule,

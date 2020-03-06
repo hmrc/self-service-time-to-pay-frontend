@@ -362,15 +362,15 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
   val lastFourCalendarYears: Seq[Int] = Seq(2012, 2013, 2014, 2015)
 
   def liability(amount: Double, currentDate: LocalDate = beforeTaxYearStart, interest: Option[Interest] = None) =
-    debit(amount, currentDate.plusDays(1), interest = interest)
+    debit(amount, Some(currentDate.plusDays(1)), interest = interest)
 
   def charge(amount: Double, currentDate: LocalDate = beforeTaxYearStart, interest: Option[Interest] = None) =
-    debit(amount, currentDate.minusDays(29), interest = interest)
+    debit(amount, Some(currentDate.minusDays(29)), interest = interest)
 
   def debt(amount: Double, currentDate: LocalDate = beforeTaxYearStart, interest: Option[Interest] = None) =
-    debit(amount, currentDate.minusDays(60), interest = interest)
+    debit(amount, Some(currentDate.minusDays(60)), interest = interest)
 
-  def debit(amount: Double, dueDate: LocalDate, interest: Option[Interest] = None) = {
+  def debit(amount: Double, dueDate: Option[LocalDate], interest: Option[Interest] = None) = {
     Debit(amount     = amount, dueDate = dueDate, interest = interest, originCode = "IN1", taxYearEnd = taxYearEnd2020)
   }
 
