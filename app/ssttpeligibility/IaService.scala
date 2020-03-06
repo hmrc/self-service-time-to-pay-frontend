@@ -26,7 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IaService @Inject() (http:           HttpClient,
                            servicesConfig: ServicesConfig) {
   private lazy val baseUrl: String = servicesConfig.baseUrl("ia")
-  val enableCheck = true
+  val enableCheck = false
 
   def checkIaUtr(utr: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Boolean] = {
     if (enableCheck) {
@@ -35,7 +35,7 @@ class IaService @Inject() (http:           HttpClient,
         case 204 => false
       })
     } else {
-      Future.successful(false)
+      Future.successful(true)
     }
   }
 }
