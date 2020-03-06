@@ -22,7 +22,7 @@ import org.scalatest.Matchers
 import play.api.libs.json.Json
 import testsupport.testdata.{EligibilityTaxpayerVariationsTd, TdAll}
 import timetopaytaxpayer.cor.model.Taxpayer
-import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
+import uk.gov.hmrc.selfservicetimetopay.models.{DebitHasNoRelevantDueDate, DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
 object TaxpayerStub extends Matchers {
 
@@ -50,13 +50,14 @@ object TaxpayerStub extends Matchers {
 
   def getIneligibleTaxpayerModel(reason: Reason): Taxpayer = {
     reason match {
-      case NoDebt                => EligibilityTaxpayerVariationsTd.zeroDebtTaxpayer
-      case DebtIsInsignificant   => EligibilityTaxpayerVariationsTd.insignificantDebtTaxpayer
-      case OldDebtIsTooHigh      => EligibilityTaxpayerVariationsTd.oldDebtIsTooHighTaxpayer
-      case TotalDebtIsTooHigh    => EligibilityTaxpayerVariationsTd.totalDebtIsTooHighTaxpayer
-      case ReturnNeedsSubmitting => EligibilityTaxpayerVariationsTd.returnNeedsSubmittingTaxpayer
-      case IsNotOnIa             => EligibilityTaxpayerVariationsTd.notOnIaTaxpayer
-      case _                     => TdAll.taxpayer
+      case NoDebt                    => EligibilityTaxpayerVariationsTd.zeroDebtTaxpayer
+      case DebtIsInsignificant       => EligibilityTaxpayerVariationsTd.insignificantDebtTaxpayer
+      case OldDebtIsTooHigh          => EligibilityTaxpayerVariationsTd.oldDebtIsTooHighTaxpayer
+      case TotalDebtIsTooHigh        => EligibilityTaxpayerVariationsTd.totalDebtIsTooHighTaxpayer
+      case ReturnNeedsSubmitting     => EligibilityTaxpayerVariationsTd.returnNeedsSubmittingTaxpayer
+      case IsNotOnIa                 => EligibilityTaxpayerVariationsTd.notOnIaTaxpayer
+      case DebitHasNoRelevantDueDate => EligibilityTaxpayerVariationsTd.debitHasNoDueDateTaxpayer
+      case _                         => TdAll.taxpayer
     }
   }
 }

@@ -21,7 +21,7 @@ import pagespecs.pages.BasePage
 import testsupport.ItSpec
 import testsupport.stubs._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
+import uk.gov.hmrc.selfservicetimetopay.models.{DebitHasNoRelevantDueDate, DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
 
@@ -47,7 +47,8 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
     ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
     ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage),
-    ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", generalCallUsPage)
+    ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", generalCallUsPage),
+    ("no relevantDueDate present", DebitHasNoRelevantDueDate, "debit has no due date", generalCallUsPage)
   )
 
   def beginJourney(ineligibleReason: Reason): Unit = {

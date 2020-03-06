@@ -33,6 +33,7 @@ class IaService @Inject() (http:           HttpClient,
       http.GET(baseUrl + s"/ia/$utr").map(res => res.status match {
         case 200 => true
         case 204 => false
+        case _   => throw new RuntimeException("IA Service Failed To Respond As Expected")
       })
     } else {
       Future.successful(true)

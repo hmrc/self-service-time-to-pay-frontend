@@ -32,6 +32,9 @@ object EligibilityTaxpayerVariationsTd {
   def initDebit(originCode: String, amount: Double, dueDate: LocalDate): Debit = Debit(originCode, BigDecimal(amount), Some(dueDate),
                                                                                        zeroInterestOption, dummyTaxYearEnd)
 
+  def initNoDueDateDebitButOtherwiseEligibleDebit: Debit = Debit("IN1", BigDecimal(33), None,
+                                                                        zeroInterestOption, dummyTaxYearEnd)
+
   def initEligibleDebit(): Debit = initDebit("IN1", 33, dummyCurrentDate)
 
   def initSelfAssessmentDetails(debits: Seq[Debit], returns: Seq[Return]): SelfAssessmentDetails = SelfAssessmentDetails(TdAll.Sautr, TdAll.communicationPreferences, debits, returns)
@@ -53,4 +56,6 @@ object EligibilityTaxpayerVariationsTd {
   val returnNeedsSubmittingTaxpayer: Taxpayer = initTaxpayer(Seq(initEligibleDebit), Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None)))
 
   val notOnIaTaxpayer: Taxpayer = initTaxpayer(Seq(initEligibleDebit), Seq.empty)
+
+  val debitHasNoDueDateTaxpayer: Taxpayer = initTaxpayer(Seq(initNoDueDateDebitButOtherwiseEligibleDebit), Seq.empty)
 }

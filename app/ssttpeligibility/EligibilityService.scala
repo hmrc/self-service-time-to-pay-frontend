@@ -75,22 +75,24 @@ object EligibilityService {
   // Liability - any money that is not yet due
   private def checkDebits(debits: Seq[Debit], today: LocalDate): List[Reason] = {
     //If there are any debits without a relevantDueDate then we stop here
-    if (!debits.forall(_.dueDate.isDefined)) List(DebitHasNoRelevantDueDate)
+    if (!debits.forall(_.dueDate.isDefined)) {
+      List(DebitHasNoRelevantDueDate)
+    } else {
+      val chargeStartDay: LocalDate = today.minusDays(1)
+      val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
 
-    val chargeStartDay: LocalDate = today.minusDays(1)
-    val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
+      val (liabilities, chargesAndDebts) = debits.partition(_.getDueDate.isAfter(chargeStartDay))
+      val debt = chargesAndDebts.filterNot(_.getDueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
 
-    val (liabilities, chargesAndDebts) = debits.partition(_.getDueDate.isAfter(chargeStartDay))
-    val debt = chargesAndDebts.filterNot(_.getDueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
+      val totalLiabilities = liabilities.map(l => getTotalForDebit(l)).sum
+      val totalChargesAndDebt = chargesAndDebts.map(cd => getTotalForDebit(cd)).sum
+      val totalDebt = debt.map(d => getTotalForDebit(d)).sum
+      val totalOwed = totalChargesAndDebt + totalLiabilities
 
-    val totalLiabilities = liabilities.map(l => getTotalForDebit(l)).sum
-    val totalChargesAndDebt = chargesAndDebts.map(cd => getTotalForDebit(cd)).sum
-    val totalDebt = debt.map(d => getTotalForDebit(d)).sum
-    val totalOwed = totalChargesAndDebt + totalLiabilities
-
-    if (totalOwed == 0) List(NoDebt)
-    else {
-      runDebtChecks(totalDebt, totalOwed)
+      if (totalOwed == 0) List(NoDebt)
+      else {
+        runDebtChecks(totalDebt, totalOwed)
+      }
     }
   }
 
