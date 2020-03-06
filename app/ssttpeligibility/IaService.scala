@@ -26,8 +26,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class IaService @Inject() (http:           HttpClient,
                            servicesConfig: ServicesConfig) {
   private lazy val baseUrl: String = servicesConfig.baseUrl("ia")
-  val enableCheck = true
 
+  val enableCheck = false
+
+  // IA is not turned on -> everyone is allowed to use the service, always return true until we need to call the ia microservice
   def checkIaUtr(utr: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Boolean] = {
     if (enableCheck) {
       http.GET(baseUrl + s"/ia/$utr").map(res => res.status match {
@@ -35,7 +37,7 @@ class IaService @Inject() (http:           HttpClient,
         case 204 => false
       })
     } else {
-      Future.successful(false)
+      Future.successful(true)
     }
   }
 }
