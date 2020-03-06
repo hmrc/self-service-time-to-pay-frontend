@@ -43,7 +43,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
   val listOfIneligibleReasons: TableFor4[String, Reason, String, BasePage] = Table(
     ("reason", "reasonObject", "pageAsString", "page"),
     ("no debts", NoDebt, "general call us page", generalCallUsPage),
-    ("not on IA", IsNotOnIa, "not on ia page", notOnIaPage),
+    //    ("not on IA", IsNotOnIa, "not on ia page", notOnIaPage),
     ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
     ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
     ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage),
