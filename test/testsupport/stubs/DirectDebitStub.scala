@@ -19,8 +19,9 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
-import play.api.libs.json.Json
+import play.api.libs.json.Json.prettyPrint
 import testsupport.testdata.{DirectDebitTd, TdAll}
+import timetopaytaxpayer.cor.model.SaUtr
 
 object DirectDebitStub extends Matchers {
 
@@ -36,19 +37,36 @@ object DirectDebitStub extends Matchers {
         .willReturn(
           aResponse()
             .withStatus(200)
-            .withBody(
-              Json.prettyPrint(DirectDebitTd.bankDetailsJson))))
+            .withBody(prettyPrint(DirectDebitTd.bankDetailsJson))))
 
-  def getBanks: StubMapping =
+  def getBanksIsSuccessful: StubMapping =
     stubFor(
-
       get(urlPathEqualTo(s"/direct-debit/${TdAll.utr}/banks"))
         .willReturn(
           aResponse()
             .withStatus(200)
-            .withBody (Json.prettyPrint(DirectDebitTd.directDebitBankJson))
+            .withBody(prettyPrint(DirectDebitTd.directDebitBankJson))
         )
+    )
 
+  def getBanksReturns404BPNotFound(utr: SaUtr): StubMapping =
+    stubFor(
+      get(urlPathEqualTo(s"/direct-debit/${utr.value}/banks"))
+        .willReturn(
+          aResponse()
+            .withStatus(404)
+            .withBody("""{ reason: "BP not found", "reasonCode": "002" }""")
+        )
+    )
+
+  def getBanksReturns404(utr: SaUtr): StubMapping =
+    stubFor(
+      get(urlPathEqualTo(s"/direct-debit/${utr.value}/banks"))
+        .willReturn(
+          aResponse()
+            .withStatus(404)
+            .withBody("""{ reason: "some reason", "reasonCode": "some code" }""")
+        )
     )
 
   def postPaymentPlan: StubMapping =
@@ -57,9 +75,8 @@ object DirectDebitStub extends Matchers {
         .willReturn(
           aResponse()
             .withStatus(200)
-            .withBody(Json.prettyPrint(DirectDebitTd.directDebitInstructionPaymentPlanJson))
+            .withBody(prettyPrint(DirectDebitTd.directDebitInstructionPaymentPlanJson))
         )
     )
-
 }
 

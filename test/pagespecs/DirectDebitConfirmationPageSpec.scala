@@ -23,7 +23,7 @@ import testsupport.testdata.DirectDebitTd
 
 class DirectDebitConfirmationPageSpec extends ItSpec {
 
-  def beginJourney() =
+  def beginJourney(): Unit =
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()
@@ -44,7 +44,7 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
       instalmentSummaryPage.clickContinue()
       directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
       DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-      DirectDebitStub.getBanks
+      DirectDebitStub.getBanksIsSuccessful
       directDebitPage.clickContinue()
       directDebitConfirmationPage.assertPageIsDisplayed
 
@@ -65,7 +65,7 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
   "change sort code" in
     {
       beginJourney()
-      directDebitConfirmationPage.clickChangeButton
+      directDebitConfirmationPage.clickChangeButton()
       directDebitPage.assertPageIsDisplayed
     }
 

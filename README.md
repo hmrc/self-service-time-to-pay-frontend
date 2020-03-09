@@ -1,7 +1,7 @@
 # self-service-time-to-pay-frontend
 
 
-Tip: Connect to VPN in order to build it.
+Tip: Connect to VPN in order to build it.  
 
 ### About 
 Self Service Time To Pay Frontend is the frontend microservice for Pay What You Owe In Instalments.

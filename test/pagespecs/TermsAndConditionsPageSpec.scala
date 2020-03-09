@@ -23,7 +23,7 @@ import testsupport.testdata.DirectDebitTd
 
 class TermsAndConditionsPageSpec extends ItSpec {
 
-  def beginJourney() =
+  def beginJourney(): Unit =
     {
       AuthStub.authorise()
       TaxpayerStub.getTaxpayer()
@@ -44,7 +44,7 @@ class TermsAndConditionsPageSpec extends ItSpec {
       instalmentSummaryPage.clickContinue()
       directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
       DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-      DirectDebitStub.getBanks
+      DirectDebitStub.getBanksIsSuccessful
       directDebitPage.clickContinue()
       directDebitConfirmationPage.assertPageIsDisplayed
       directDebitConfirmationPage.clickContinue()
