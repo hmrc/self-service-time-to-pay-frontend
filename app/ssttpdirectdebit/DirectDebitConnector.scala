@@ -42,8 +42,6 @@ class DirectDebitConnector @Inject() (
 
   val baseUrl: String = servicesConfig.baseUrl("direct-debit")
 
-  def tolerateBPNotFound = servicesConfig.getBoolean("microservice.tolerate-bp-not-found")
-
   def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit request: Request[_]): Future[DDSubmissionResult] = {
     JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan")
 
@@ -79,7 +77,7 @@ class DirectDebitConnector @Inject() (
 
     httpClient.GET[DirectDebitBank](s"$baseUrl/direct-debit/${saUtr.value}/banks").map { response => response }
       .recover {
-        case e: NotFoundException if tolerateBPNotFound && e.message.contains("BP not found") =>
+        case e: NotFoundException if e.message.contains("BP not found") =>
           JourneyLogger.info("DirectDebitConnector.getBanks: BP not found")
           Logger.warn(e.getMessage)
           DirectDebitBank.none

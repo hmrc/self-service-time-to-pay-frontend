@@ -26,7 +26,7 @@ import testsupport.testdata.TdAll
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitBank, DirectDebitInstruction}
 
-abstract class DirectDebitConnectorSpec extends ItSpec {
+class DirectDebitConnectorSpec extends ItSpec {
   private def injector: Injector = app.injector
 
   protected def connector: DirectDebitConnector = injector.instanceOf[DirectDebitConnector]
@@ -54,10 +54,6 @@ abstract class DirectDebitConnectorSpec extends ItSpec {
       connector.getBanks(TdAll.Sautr)(FakeRequest()).futureValue
     }.getCause.isInstanceOf[NotFoundException] shouldBe true
   }
-}
-
-class DirectDebitConnectorToleratingBPNotFoundSpec extends DirectDebitConnectorSpec {
-  override protected def configMap: Map[String, Any] = super.configMap + ("microservice.tolerate-bp-not-found" -> true)
 
   "getBanks should tolerate a 404 BP Not Found error" in {
     DirectDebitStub.getBanksReturns404BPNotFound(TdAll.Sautr)
@@ -66,12 +62,3 @@ class DirectDebitConnectorToleratingBPNotFoundSpec extends DirectDebitConnectorS
   }
 }
 
-class DirectDebitConnectorNotToleratingBPNotFoundSpec extends DirectDebitConnectorSpec {
-  "getBanks should not tolerate a 404 BP Not Found error" in {
-    DirectDebitStub.getBanksReturns404BPNotFound(TdAll.Sautr)
-
-    intercept[Exception] {
-      connector.getBanks(TdAll.Sautr)(FakeRequest()).futureValue
-    }.getCause.isInstanceOf[NotFoundException] shouldBe true
-  }
-}

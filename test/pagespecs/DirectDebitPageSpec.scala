@@ -22,7 +22,7 @@ import testsupport._
 import testsupport.stubs._
 import testsupport.testdata.{DirectDebitTd, TdAll}
 
-abstract class DirectDebitPageSpec extends ItSpec {
+class DirectDebitPageSpec extends ItSpec {
 
   def beginJourney(): Unit = {
     AuthStub.authorise()
@@ -92,24 +92,6 @@ abstract class DirectDebitPageSpec extends ItSpec {
     directDebitPage.clickContinue()
     directDebitConfirmationPage.assertPageIsDisplayed
   }
-}
-
-class DirectDebitPageNotToleratingBPNotFoundSpec extends DirectDebitPageSpec {
-  "enter valid bank account given business partner not found fails" in {
-    beginJourney()
-    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.getBanksReturns404BPNotFound(TdAll.Sautr)
-    directDebitPage.clickContinue()
-
-    intercept[Exception] {
-      directDebitConfirmationPage.assertPageIsDisplayed
-    }
-  }
-}
-
-class DirectDebitPageToleratingBPNotFoundSpec extends DirectDebitPageSpec {
-  override protected def configMap: Map[String, Any] = super.configMap + ("microservice.tolerate-bp-not-found" -> true)
 
   "enter valid bank account given business partner not found succeeds" in {
     beginJourney()
