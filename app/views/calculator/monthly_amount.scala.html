@@ -47,11 +47,18 @@
     <p>@Messages("ssttp.monthly.amount.hint", currency(lowerBound.toDouble), currency(upperBound.toDouble))</p>
 
     @viewsHelpers.form(action = ssttpcalculator.routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group"){
-        @viewsHelpers.input(
-            dataForm("amount"),
-            '_inputClass -> "form-control-1-4",
-            '_label -> "£"
-        )
+
+<label for="amount" class="@if(dataForm.hasErrors){form-field--error}">
+    @if(dataForm.hasErrors){
+    <span class="error-notification" role="tooltip" data-journey="search-page:error:amount">
+          @Messages("ssttp.monthly.amount.numbers-only")
+        </span>
+    }
+    <span>
+      £
+      </span>
+    <input type="text" class="form-control-1-4" name="amount" id="amount" value="" aria-invalid="true">
+</label>
         @submit(){@Messages("ssttp.calculator.form.continue")}
     }
 }
