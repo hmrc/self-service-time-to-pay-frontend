@@ -430,6 +430,10 @@ h1.govuk-panel__title {
     font-weight: bold;
 }
 
+.transaction-banner--complete {
+    background-color: #00703c;
+}
+
 .multiple-choice [type=radio]:focus + label::before {
     border-width: 4px;
     box-sizing: border-box;
