@@ -429,3 +429,7 @@ h1.govuk-panel__title {
 .govuk-panel__body strong {
     font-weight: bold;
 }
+
+.transaction-banner--complete {
+    background-color: #00703c;
+}
