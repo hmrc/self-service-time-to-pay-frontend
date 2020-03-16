@@ -105,7 +105,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
            |Enter a figure between the given range
            |How much can you afford to pay each month?
            |Enter an amount between £600.00 and £2,500.00
-           |£ Enter a figure between the given range 1
+           |Enter numbers only £
            |Continue
         """.stripMargin
     }

@@ -17,7 +17,7 @@
 package ssttpeligibility
 
 import javax.inject.Inject
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -32,7 +32,7 @@ class IaService @Inject() (http:           HttpClient,
   // IA is not turned on -> everyone is allowed to use the service, always return true until we need to call the ia microservice
   def checkIaUtr(utr: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Boolean] = {
     if (enableCheck) {
-      http.GET(baseUrl + s"/ia/$utr").map(res => res.status match {
+      http.GET[HttpResponse](baseUrl + s"/ia/$utr").map(res => res.status match {
         case 200 => true
         case 204 => false
       })
