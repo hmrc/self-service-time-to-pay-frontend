@@ -98,7 +98,8 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
           |There is a problem
           |You need to enter an amount less than the amount you owe
           |How much can you pay upfront?
-          |Enter the amount you want to pay upfront £
+          |Enter the amount you want to pay upfront
+          |£
           |Continue
         """.stripMargin
     }

@@ -55,10 +55,10 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
   "enter an invalid day" in
     {
       beginJourney()
-      instalmentSummarySelectDatePage.selectSecondOption
+      instalmentSummarySelectDatePage.selectSecondOption()
       instalmentSummarySelectDatePage.enterDay("123456")
       instalmentSummarySelectDatePage.clickContinue()
-      instalmentSummarySelectDatePage.assertErrorPageIsDisplayed
+      instalmentSummarySelectDatePage.assertErrorPageIsDisplayed()
     }
 
   "choose 28th or next working day and continue" in
@@ -73,7 +73,7 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
   "choose a different day and continue" in
     {
       beginJourney()
-      instalmentSummarySelectDatePage.selectSecondOption
+      instalmentSummarySelectDatePage.selectSecondOption()
       instalmentSummarySelectDatePage.enterDay("12")
       instalmentSummarySelectDatePage.clickContinue()
       instalmentSummaryPage.assertPageIsDisplayed

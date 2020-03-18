@@ -32,7 +32,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
@@ -87,8 +87,10 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
       private val mainTextEnglish =
         s"""Back
            |Which day do you want to pay each month?
-           |unchecked 28th or next working day
-           |unchecked A different day
+           |unchecked
+           |28th or next working day
+           |unchecked
+           |A different day
            |Enter a day between 1 and 28
            |Continue
         """.stripMargin
@@ -96,8 +98,10 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
       private val mainTextWelsh =
         s"""Yn ôl
            |Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
-           |unchecked 28ain diwrnod nesaf
-           |unchecked Diwrnod gwahanol
+           |unchecked
+           |28ain diwrnod nesaf
+           |unchecked
+           |Diwrnod gwahanol
            |Ewch i mewn i ddiwrnod y mis
            |Yn eich blaen
         """.stripMargin
@@ -112,8 +116,10 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
            |Which day do you want to pay each month?
            |There is a problem
            |Enter a number between 1 and 28
-           |unchecked 28th or next working day
-           |unchecked A different day
+           |unchecked
+           |28th or next working day
+           |unchecked
+           |A different day
            |Enter a day between 1 and 28
            |Continue
         """.stripMargin

@@ -77,8 +77,10 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         """Back
           |Can you make an upfront payment?
           |Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account in 3 to 5 days.
-          |unchecked Yes
-          |unchecked No
+          |unchecked
+          |Yes
+          |unchecked
+          |No
           |Continue
         """.stripMargin
 
@@ -86,8 +88,10 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         """Yn ôl
           |A allwch wneud taliad ymlaen llaw?
           |Bydd gwneud taliad ymlaen llaw cyn i chi drefnu’ch cynllun yn golygu y bydd eich taliadau misol yn is.
-          |unchecked Iawn
-          |unchecked Na
+          |unchecked
+          |Iawn
+          |unchecked
+          |Na
           |Yn eich blaen
         """.stripMargin
     }
