@@ -73,5 +73,9 @@
         </div>
     </dl>
 
-    <a class="button" href="@ssttpcalculator.routes.CalculatorController.getMonthlyPayment()">@Messages("ssttp.calculator.form.payment_summary.continue")</a>
+    @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getMonthlyPayment()) {
+        @submit() {
+            @Messages("ssttp.calculator.form.payment_summary.continue")
+        }
+    }
 }

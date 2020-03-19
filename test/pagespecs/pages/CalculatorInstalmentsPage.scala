@@ -71,21 +71,24 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
       private val mainTextEnglish =
         s"""Back
            |How many months do you want to pay over?
-           |unchecked 4 months at £300.00
+           |unchecked
+           |4 months at £300.00
            |Total interest:
            |Base rate + 2.5%
            |£200.00
            |added to the final payment
            |Total paid:
            |£200.00
-           |unchecked 4 months at £300.00
+           |unchecked
+           |4 months at £300.00
            |Total interest:
            |Base rate + 2.5%
            |£200.00
            |added to the final payment
            |Total paid:
            |£200.00
-           |unchecked 4 months at £300.00
+           |unchecked
+           |4 months at £300.00
            |Total interest:
            |Base rate + 2.5%
            |£200.00
@@ -102,21 +105,24 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
       private val mainTextWelsh =
         s"""Yn ôl
            |Dros sawl mis yr hoffech dalu?
-           |unchecked 4 o fisoedd ar £300.00
+           |unchecked
+           |4 o fisoedd ar £300.00
            |Cyfanswm y llog:
            |Cyfradd sylfaenol + 2.5%
            |£200.00
            |wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:
            |£200.00
-           |unchecked 4 o fisoedd ar £300.00
+           |unchecked
+           |4 o fisoedd ar £300.00
            |Cyfanswm y llog:
            |Cyfradd sylfaenol + 2.5%
            |£200.00
            |wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:
            |£200.00
-           |unchecked 4 o fisoedd ar £300.00
+           |unchecked
+           |4 o fisoedd ar £300.00
            |Cyfanswm y llog:
            |Cyfradd sylfaenol + 2.5%
            |£200.00
