@@ -326,7 +326,7 @@ ssttp.over-ten-thosand.likely.to.ask.h1 = Rydym yn debygol o ofyn:
 ssttp.over-ten-thosand.likely.to.ask.l1 = beth rydych wedi’i wneud i geisio talu’r bil
 ssttp.over-ten-thosand.likely.to.ask.l2 = a allwch dalu rhywfaint o’r bil nawr
 ssttp.over-ten-thosand.opening.hours.h1 = Ein horiau agor yw:
-ssttp.over-ten-thosand.opening.hours.l1 = Dydd Llun i ddydd Gwener: 08:30 – 17:00
+ssttp.over-ten-thosand.opening.hours.l1 = Dydd Llun i ddydd Gwener: 08:30 – 16:00
 ssttp.over-ten-thosand.opening.hours.l2 =
 
 error.required = Mae''r maes hwn yn ofynnol
