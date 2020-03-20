@@ -206,7 +206,7 @@ ssttp.call-us.likely-to-ask.heading = We''re likely to ask:
 ssttp.call-us.likely-to-ask.l1 = what you''ve done to try to pay the bill
 ssttp.call-us.likely-to-ask.l2 = if you can pay some of the bill now
 ssttp.call-us.opening-times.heading = Our opening times are:
-ssttp.call-us.opening-times.l1 = Monday to Friday: 8am to 8pm
+ssttp.call-us.opening-times.l1 = Monday to Friday: 8am to 4pm
 ssttp.call-us.opening-times.l2 = Saturday: 8am to 4pm
 
 ssttp.direct-debit.unauthorized.title = If more then one person is required to authorise a Direct Debit
