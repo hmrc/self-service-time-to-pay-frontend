@@ -291,8 +291,8 @@ input.accountName{
 }
 
 .app-check-your-answers__change {
-    text-align: right;
-    position: absolute;
+  /*  text-align: right;
+    position: absolute;*/
     top: 0;
     right: 0;
 }
@@ -452,4 +452,10 @@ h1.govuk-panel__title {
     zoom: 1;
     filter: alpha(opacity=0);
     opacity: 0;
+}
+
+.no_borderline{
+    display: table-cell;
+    border-bottom: 0px solid #bfc1c3;
+    padding: 0.63158em 1.05263em 0.47368em 0;
 }

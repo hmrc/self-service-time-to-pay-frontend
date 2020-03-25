@@ -59,25 +59,32 @@
 
     @*monthly instalments (total number)*@
     <div class="app-check-your-answers__contents">
-      <dt class="app-check-your-answers__question">
+      <dt class="app-check-your-answers__question no_borderline">
         @Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")
-        <p>@{
-          paymentSchedule.instalments.map { instalment => <p>{instalment.getDateInReadableFormat}</p> }
-        }</p>
-        <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint", currency(paymentSchedule.totalInterestCharged))</p>
       </dt>
-      <dd class="app-check-your-answers__answer">
-        <br>
-        <p>@{
-          paymentSchedule.instalments.map { instalment => <p>{currency(instalment.amount)}</p> }
-        }</p>
+      <dd class="app-check-your-answers__answer no_borderline"">
       </dd>
-
-      <dd class="app-check-your-answers__change">
-
+      <dd class="app-check-your-answers__change no_borderline"">
         <a href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
       </dd>
     </div>
+    @{
+      paymentSchedule.instalments.map { instalment => <div class="app-check-your-answers__contents">
+      <dt class="app-check-your-answers__question no_borderline">{instalment.getDateInReadableFormat}</dt>
+      <dd class="app-check-your-answers__answer no_borderline">{currency(instalment.amount)}</dd>
+      <dd class="app-check-your-answers__change no_borderline"></dd></div>}
+      }
+      <div class="app-check-your-answers__contents">
+          <dt class="app-check-your-answers__question no_borderline">
+              <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint", currency(paymentSchedule.totalInterestCharged))</p>
+              <br>
+          </dt>
+          <dd class="app-check-your-answers__answer no_borderline">
+          </dd>
+
+          <dd class="app-check-your-answers__change no_borderline">
+          </dd>
+      </div>
 
     @*total repayment*@
     <div class="app-check-your-answers__contents">
