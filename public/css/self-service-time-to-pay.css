@@ -453,7 +453,6 @@ h1.govuk-panel__title {
     filter: alpha(opacity=0);
     opacity: 0;
 }
-
 .no_borderline{
     display: table-cell;
     border-bottom: 0px solid #bfc1c3;
