@@ -455,7 +455,5 @@ h1.govuk-panel__title {
 }
 
 .no_borderline{
-    display: table-cell;
     border-bottom: 0px solid #bfc1c3;
-    padding: 0.63158em 1.05263em 0.47368em 0;
 }
