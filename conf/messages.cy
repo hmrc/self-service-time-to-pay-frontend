@@ -340,3 +340,7 @@ ssttp.monthly.amount.out-of-bounds = Rhowch ffigur rhwng yr ystod benodol
 ssttp.arrangement.changeday.default = 28ain diwrnod nesaf
 ssttp.arrangement.changeday.different = Diwrnod gwahanol
 ssttp.arrangement.changeday.enter.date = Ewch i mewn i ddiwrnod y mis
+
+ssttp.arrangement.instalment-summary-table.upfront.payments.link-title = Newid eich taliadau ymlaen llaw
+ssttp.arrangement.instalment-summary.payment-date.change.link-title = Newid dyddiad eich taliad
+ssttp.arrangement.instalment-summary-table.monthly-instalments.link-title = Newid eich taliadau misol

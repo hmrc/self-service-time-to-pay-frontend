@@ -434,12 +434,6 @@ h1.govuk-panel__title {
     background-color: #00703c;
 }
 
-.multiple-choice [type=radio]:focus + label::before {
-    border-width: 4px;
-    box-sizing: border-box;
-    top: 2px;
-    left: 2px;
-}
 .multiple-choice [type=radio]+label::after {
     content: "";
     border: 9px solid;
@@ -453,7 +447,6 @@ h1.govuk-panel__title {
     filter: alpha(opacity=0);
     opacity: 0;
 }
-
 .no_borderline{
 
     border-bottom: 0px solid #bfc1c3;
