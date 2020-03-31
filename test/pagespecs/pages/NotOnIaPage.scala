@@ -53,8 +53,7 @@ class NotOnIaPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BaseP
       }
 
       private val mainTextEnglish =
-        """Back
-          |Please call us
+        """Please call us
           |You are not eligible to set up a payment plan online.
           |
           |For further support you can contact the Business Support Service and speak to an adviser on 0300 200 3835.
@@ -70,9 +69,7 @@ class NotOnIaPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BaseP
           .stripMargin
 
       private val mainTextWelsh =
-        """
-          |Yn ôl
-          |Ffoniwch ni
+        """Ffoniwch ni
           |Nid ydych yn gymwys i drefnu cynllun talu ar-lein.
           |
           |Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar 0300 200 1900.

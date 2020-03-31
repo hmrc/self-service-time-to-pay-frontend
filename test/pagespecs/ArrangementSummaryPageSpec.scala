@@ -34,7 +34,7 @@ class ArrangementSummaryPageSpec extends ItSpec {
     taxLiabilitiesPage.clickOnStartNowButton()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
-    monthlyPaymentAmountPage.enterAmout("2450")
+    monthlyPaymentAmountPage.enterAmount("2450")
     CalculatorStub.generateSchedule
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.selectAnOption()
@@ -63,5 +63,4 @@ class ArrangementSummaryPageSpec extends ItSpec {
     directDebitConfirmationPage.clickContinue()
     arrangementSummaryPage.assertPageIsDisplayed(Welsh)
   }
-
 }

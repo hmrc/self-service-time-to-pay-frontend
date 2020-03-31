@@ -32,7 +32,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
   override def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
@@ -43,18 +43,16 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
     readMain().stripSpaces shouldBe Expected.TextError().stripSpaces()
   }
 
-  def enterAmount(value: String) =
-    {
-      val amount = xpath("//*[@id=\"amount\"]")
-      click on amount
-      enter(value)
-    }
+  def enterAmount(value: String): Unit = {
+    val amount = xpath("//*[@id=\"amount\"]")
+    click on amount
+    enter(value)
+  }
 
-  def clickContinue() =
-    {
-      val button = xpath("//*[@id=\"content\"]/article/form/div/button")
-      click on button
-    }
+  def clickContinue(): Unit = {
+    val button = xpath("//*[@id=\"content\"]/article/form/div/button")
+    click on button
+  }
 
   object Expected {
 
@@ -77,25 +75,21 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
         case Welsh   => mainTextWelsh
       }
       private val mainTextEnglish =
-        """Back
-          |How much can you pay upfront?
+        """How much can you pay upfront?
           |£
           |Continue
-    """.stripMargin
+        """.stripMargin
 
       private val mainTextWelsh =
-        """Yn ôl
-          |Faint y gallwch ei dalu ymlaen llaw?
+        """Faint y gallwch ei dalu ymlaen llaw?
           |£
           |Yn eich blaen
         """.stripMargin
     }
 
     object TextError {
-      def apply(): String = mainErrorEnglish
-      private val mainErrorEnglish =
-        """Back
-          |There is a problem
+      def apply(): String =
+        """There is a problem
           |You need to enter an amount less than the amount you owe
           |How much can you pay upfront?
           |Enter the amount you want to pay upfront £

@@ -33,10 +33,9 @@
 )
 
 @main(
-    title = Messages("ssttp.arrangement.declaration.h1")
+    title = Messages("ssttp.arrangement.declaration.h1"),
+    backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
 ) {
-   <a class="link-back" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()">@Messages("ssttp.arrangement.declaration.back")</a>
-
     <h1 class="heading-xlarge">@Messages("ssttp.arrangement.declaration.h1")</h1>
     <p>@Messages("ssttp.arrangement.declaration.cancel-if")</p>
     <ul class="bullets">

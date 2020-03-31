@@ -46,13 +46,13 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
   }
 
-  def enterAmout(value: String) = {
+  def enterAmount(value: String): Unit = {
     val amountField = xpath("//*[@id=\"amount\"]")
     click on amountField
     enter(value)
   }
 
-  def clickContinue() = {
+  def clickContinue(): Unit = {
     val button = xpath("//*[@id=\"monthlyPaymentForm\"]/div/button")
     click on button
   }
@@ -80,16 +80,14 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       private def format(value: Double) = value.formatted("%,1.2f")
 
       private def mainTextEnglish(increase: Int) =
-        s"""Back
-           |How much can you afford to pay each month?
+        s"""How much can you afford to pay each month?
            |Enter an amount between £${format(600.00 + increase)} and £${format(2500.00 + increase)}
            |£
            |Continue
         """.stripMargin
 
       private def mainTextWelsh(increase: Int) =
-        s"""Yn ôl
-           |Faint y gallwch fforddio ei dalu bob mis?
+        s"""Faint y gallwch fforddio ei dalu bob mis?
            |Nodwch swm sydd rhwng £${format(600.00 + increase)} a £${format(2500.00 + increase)}
            |£
            |Yn eich blaen
@@ -100,8 +98,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       def apply()(implicit value: String): String = errorText(value)
 
       private def errorText(value: String) =
-        s"""Back
-           |There is a problem
+        s"""There is a problem
            |Enter a figure between the given range
            |How much can you afford to pay each month?
            |Enter an amount between £600.00 and £2,500.00

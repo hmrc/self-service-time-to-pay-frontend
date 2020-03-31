@@ -20,8 +20,8 @@ import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor4}
 import pagespecs.pages.BasePage
 import testsupport.ItSpec
 import testsupport.stubs._
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.selfservicetimetopay.models.{DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L100
+import uk.gov.hmrc.selfservicetimetopay.models._
 
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
 
@@ -65,13 +65,14 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
       s"$pageAsString should be displayed when user has ineligible reason: [$reason]" in {
         beginJourney(reasonObject)
         page.assertPageIsDisplayed
+        page.backButtonHref shouldBe None
       }
     }
   }
 
   "authorisation based eligibility" - {
     "show not-enrolled page for confidence level < 200" in {
-      AuthStub.authorise(confidenceLevel = Some(ConfidenceLevel.L100))
+      AuthStub.authorise(confidenceLevel = Some(L100))
       TaxpayerStub.getTaxpayer()
       GgStub.signInPage(port)
       startPage.open()

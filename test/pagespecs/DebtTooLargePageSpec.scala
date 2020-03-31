@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import langswitch.Languages
+import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 
 class DebtTooLargePageSpec extends ItSpec {
@@ -27,9 +27,14 @@ class DebtTooLargePageSpec extends ItSpec {
     debtTooLargePage.assertPageIsDisplayed()
 
     debtTooLargePage.clickOnWelshLink()
-    debtTooLargePage.assertPageIsDisplayed(Languages.Welsh)
+    debtTooLargePage.assertPageIsDisplayed(Welsh)
 
     debtTooLargePage.clickOnEnglishLink()
-    debtTooLargePage.assertPageIsDisplayed(Languages.English)
+    debtTooLargePage.assertPageIsDisplayed(English)
+  }
+
+  "back button" in {
+    debtTooLargePage.open()
+    debtTooLargePage.backButtonHref shouldBe None
   }
 }

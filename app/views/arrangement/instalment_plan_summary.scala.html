@@ -59,12 +59,11 @@ Time To Pay Instalment Summary Pretty Print Page
 }
 
 @main(
-        title = Messages("ssttp.arrangement.instalment-summary.title"),
-        googleAnalyticsCalls = Seq(gaCheckoutCode.body.seq),
-        loggedIn = signedIn
+    title = Messages("ssttp.arrangement.instalment-summary.title"),
+    googleAnalyticsCalls = Seq(gaCheckoutCode.body.seq),
+    loggedIn = signedIn,
+    backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
     ) {
-       <a class="link-back" href="@ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()">@Messages("ssttp.calculator.form.back")</a>
-
         <h1 class="heading-xlarge">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
 
         @instalments_plan_summary_table(schedule)

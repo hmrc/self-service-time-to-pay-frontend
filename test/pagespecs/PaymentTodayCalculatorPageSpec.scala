@@ -21,7 +21,7 @@ import testsupport.ItSpec
 import testsupport.stubs.{AuthStub, IaStub, GgStub, TaxpayerStub}
 
 class PaymentTodayCalculatorPageSpec extends ItSpec {
-  def beginJourney() = {
+  def beginJourney(): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -33,32 +33,33 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
     paymentTodayQuestionPage.clickContinue()
   }
 
-  "language" in
-    {
-      beginJourney()
-      paymentTodayCalculatorPage.assertPageIsDisplayed
+  "language" in {
+    beginJourney()
+    paymentTodayCalculatorPage.assertPageIsDisplayed
 
-      paymentTodayCalculatorPage.clickOnWelshLink()
-      paymentTodayCalculatorPage.assertPageIsDisplayed(Welsh)
+    paymentTodayCalculatorPage.clickOnWelshLink()
+    paymentTodayCalculatorPage.assertPageIsDisplayed(Welsh)
 
-      paymentTodayCalculatorPage.clickOnEnglishLink()
-      paymentTodayCalculatorPage.assertPageIsDisplayed(English)
-    }
+    paymentTodayCalculatorPage.clickOnEnglishLink()
+    paymentTodayCalculatorPage.assertPageIsDisplayed(English)
+  }
 
-  "not valid amount" in
-    {
-      beginJourney()
-      paymentTodayCalculatorPage.enterAmount("99999")
-      paymentTodayCalculatorPage.clickContinue()
-      paymentTodayCalculatorPage.assertErrorIsDisplayed
-    }
+  "back button" in {
+    beginJourney()
+    paymentTodayCalculatorPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()}")
+  }
 
-  "valid amount and continue" in
-    {
-      beginJourney()
-      paymentTodayCalculatorPage.enterAmount("123")
-      paymentTodayCalculatorPage.clickContinue()
-      paymentSummaryPage.assertPageIsDisplayed
-    }
+  "not valid amount" in {
+    beginJourney()
+    paymentTodayCalculatorPage.enterAmount("99999")
+    paymentTodayCalculatorPage.clickContinue()
+    paymentTodayCalculatorPage.assertErrorIsDisplayed
+  }
 
+  "valid amount and continue" in {
+    beginJourney()
+    paymentTodayCalculatorPage.enterAmount("123")
+    paymentTodayCalculatorPage.clickContinue()
+    paymentSummaryPage.assertPageIsDisplayed
+  }
 }

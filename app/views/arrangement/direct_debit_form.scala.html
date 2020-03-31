@@ -58,9 +58,9 @@
         Seq.empty
     } else {
         Seq(gaCheckoutCode.body)
-    }
+    },
+    backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
 ) {
-    <a class="link-back" href="@ssttparrangement.routes.ArrangementController.getInstalmentSummary()">@Messages("ssttp.arrangement.direct-debit.form.back")</a>
     @if(ddForm.hasErrors) {
         @if(isBankError) {
             @viewsHelpers.errorSummary(Messages("ssttp.direct-debit.form.bank-not-found-heading"), ddForm)

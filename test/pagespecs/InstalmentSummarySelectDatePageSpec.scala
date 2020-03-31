@@ -22,60 +22,60 @@ import testsupport.stubs._
 
 class InstalmentSummarySelectDatePageSpec extends ItSpec {
 
-  def beginJourney() =
-    {
-      AuthStub.authorise()
-      TaxpayerStub.getTaxpayer()
-      IaStub.successfulIaCheck
-      GgStub.signInPage(port)
-      startPage.open()
-      startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton()
-      paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue()
-      monthlyPaymentAmountPage.enterAmout("2450")
-      CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue()
-      calculatorInstalmentsPage.selectAnOption()
-      calculatorInstalmentsPage.clickContinue()
-    }
+  def beginJourney(): Unit = {
+    AuthStub.authorise()
+    TaxpayerStub.getTaxpayer()
+    IaStub.successfulIaCheck
+    GgStub.signInPage(port)
+    startPage.open()
+    startPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton()
+    paymentTodayQuestionPage.selectRadioButton(false)
+    paymentTodayQuestionPage.clickContinue()
+    monthlyPaymentAmountPage.enterAmount("2450")
+    CalculatorStub.generateSchedule
+    monthlyPaymentAmountPage.clickContinue()
+    calculatorInstalmentsPage.selectAnOption()
+    calculatorInstalmentsPage.clickContinue()
+  }
 
-  "language" in
-    {
-      beginJourney()
-      instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
+  "language" in {
+    beginJourney()
+    instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
 
-      instalmentSummarySelectDatePage.clickOnWelshLink()
-      instalmentSummarySelectDatePage.assertPageIsDisplayed(Welsh)
+    instalmentSummarySelectDatePage.clickOnWelshLink()
+    instalmentSummarySelectDatePage.assertPageIsDisplayed(Welsh)
 
-      instalmentSummarySelectDatePage.clickOnEnglishLink()
-      instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
-    }
+    instalmentSummarySelectDatePage.clickOnEnglishLink()
+    instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
+  }
 
-  "enter an invalid day" in
-    {
-      beginJourney()
-      instalmentSummarySelectDatePage.selectSecondOption
-      instalmentSummarySelectDatePage.enterDay("123456")
-      instalmentSummarySelectDatePage.clickContinue()
-      instalmentSummarySelectDatePage.assertErrorPageIsDisplayed
-    }
+  "back button" in {
+    beginJourney()
+    instalmentSummarySelectDatePage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getCalculateInstalments()}")
+  }
 
-  "choose 28th or next working day and continue" in
-    {
-      beginJourney()
-      instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
-      instalmentSummarySelectDatePage.selectFirstOption()
-      instalmentSummarySelectDatePage.clickContinue()
-      instalmentSummaryPage.assertPageIsDisplayed
-    }
+  "enter an invalid day" in {
+    beginJourney()
+    instalmentSummarySelectDatePage.selectSecondOption()
+    instalmentSummarySelectDatePage.enterDay("""123456""")
+    instalmentSummarySelectDatePage.clickContinue()
+    instalmentSummarySelectDatePage.assertErrorPageIsDisplayed()
+  }
 
-  "choose a different day and continue" in
-    {
-      beginJourney()
-      instalmentSummarySelectDatePage.selectSecondOption
-      instalmentSummarySelectDatePage.enterDay("12")
-      instalmentSummarySelectDatePage.clickContinue()
-      instalmentSummaryPage.assertPageIsDisplayed
-    }
+  "choose 28th or next working day and continue" in {
+    beginJourney()
+    instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
+    instalmentSummarySelectDatePage.selectFirstOption()
+    instalmentSummarySelectDatePage.clickContinue()
+    instalmentSummaryPage.assertPageIsDisplayed
+  }
+
+  "choose a different day and continue" in {
+    beginJourney()
+    instalmentSummarySelectDatePage.selectSecondOption()
+    instalmentSummarySelectDatePage.enterDay("12")
+    instalmentSummarySelectDatePage.clickContinue()
+    instalmentSummaryPage.assertPageIsDisplayed
+  }
 }

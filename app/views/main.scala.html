@@ -32,7 +32,8 @@
         loggedIn:Boolean = false,
         welshToggleEnabled:Boolean = true,
         hasUserPanel: Boolean = false,
-        navTitle: String = "ssttp.common.title"
+        navTitle: String = "ssttp.common.title",
+        backButtonUrl: Option[play.api.mvc.Call] = None
 )(
         mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
@@ -72,5 +73,6 @@
     noGetHelp = noGetHelp,
     welshToggleEnabled = welshToggleEnabled,
     hasUserPanel = hasUserPanel,
-    navTitle = navTitle
+    navTitle = navTitle,
+    backButtonUrl = backButtonUrl
 )

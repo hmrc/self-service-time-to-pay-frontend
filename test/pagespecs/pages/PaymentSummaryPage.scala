@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
-import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
@@ -32,13 +31,13 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
   }
 
-  def clickContinue() = {
+  def clickContinue(): Unit = {
     val button = xpath("//*[@id=\"content\"]/article/form/div/button")
     click on button
   }
@@ -63,8 +62,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
       }
 
       private val mainTextEnglish =
-        """Back
-          |Payment summary
+        """Payment summary
           |Upfront payment
           |Taken in 3 to 5 days' time
           |£123.00
@@ -75,8 +73,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         """.stripMargin
 
       private val mainTextWelsh =
-        """Yn ôl
-          |Crynodeb o’r taliadau
+        """Crynodeb o’r taliadau
           |Taliad ymlaen llaw
           |Wedi’i gymryd ymhen 3 i 5 diwrnod
           |£123.00

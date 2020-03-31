@@ -23,52 +23,53 @@ import testsupport.testdata.DirectDebitTd
 
 class TermsAndConditionsPageSpec extends ItSpec {
 
-  def beginJourney(): Unit =
-    {
-      AuthStub.authorise()
-      TaxpayerStub.getTaxpayer()
-      IaStub.successfulIaCheck
-      GgStub.signInPage(port)
-      startPage.open()
-      startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton()
-      paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue()
-      monthlyPaymentAmountPage.enterAmout("2450")
-      CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue()
-      calculatorInstalmentsPage.selectAnOption()
-      calculatorInstalmentsPage.clickContinue()
-      instalmentSummarySelectDatePage.selectFirstOption()
-      instalmentSummarySelectDatePage.clickContinue()
-      instalmentSummaryPage.clickContinue()
-      directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-      DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-      DirectDebitStub.getBanksIsSuccessful
-      directDebitPage.clickContinue()
-      directDebitConfirmationPage.assertPageIsDisplayed
-      directDebitConfirmationPage.clickContinue()
-    }
+  def beginJourney(): Unit = {
+    AuthStub.authorise()
+    TaxpayerStub.getTaxpayer()
+    IaStub.successfulIaCheck
+    GgStub.signInPage(port)
+    startPage.open()
+    startPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton()
+    paymentTodayQuestionPage.selectRadioButton(false)
+    paymentTodayQuestionPage.clickContinue()
+    monthlyPaymentAmountPage.enterAmount("2450")
+    CalculatorStub.generateSchedule
+    monthlyPaymentAmountPage.clickContinue()
+    calculatorInstalmentsPage.selectAnOption()
+    calculatorInstalmentsPage.clickContinue()
+    instalmentSummarySelectDatePage.selectFirstOption()
+    instalmentSummarySelectDatePage.clickContinue()
+    instalmentSummaryPage.clickContinue()
+    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanksIsSuccessful
+    directDebitPage.clickContinue()
+    directDebitConfirmationPage.assertPageIsDisplayed
+    directDebitConfirmationPage.clickContinue()
+  }
 
-  "language" in
-    {
-      beginJourney()
-      termsAndConditionsPage.assertPageIsDisplayed
+  "language" in {
+    beginJourney()
+    termsAndConditionsPage.assertPageIsDisplayed
 
-      termsAndConditionsPage.clickOnWelshLink()
-      termsAndConditionsPage.assertPageIsDisplayed(Welsh)
+    termsAndConditionsPage.clickOnWelshLink()
+    termsAndConditionsPage.assertPageIsDisplayed(Welsh)
 
-      termsAndConditionsPage.clickOnEnglishLink()
-      termsAndConditionsPage.assertPageIsDisplayed(English)
-    }
+    termsAndConditionsPage.clickOnEnglishLink()
+    termsAndConditionsPage.assertPageIsDisplayed(English)
+  }
 
-  "click continue" in
-    {
-      beginJourney()
-      DirectDebitStub.postPaymentPlan
-      ArrangementStub.postTtpArrangement
-      termsAndConditionsPage.clickContinue()
-      arrangementSummaryPage.assertPageIsDisplayed
+  "back button" in {
+    beginJourney()
+    termsAndConditionsPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
+  }
 
-    }
+  "click continue" in {
+    beginJourney()
+    DirectDebitStub.postPaymentPlan
+    ArrangementStub.postTtpArrangement
+    termsAndConditionsPage.clickContinue()
+    arrangementSummaryPage.assertPageIsDisplayed
+  }
 }

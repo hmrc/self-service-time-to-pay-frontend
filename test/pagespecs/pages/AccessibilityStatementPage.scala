@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.Language
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
-import org.scalatestplus.selenium.WebBrowser.{linkText, window}
 import testsupport.RichMatchers._
 
 class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -30,7 +29,7 @@ class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )

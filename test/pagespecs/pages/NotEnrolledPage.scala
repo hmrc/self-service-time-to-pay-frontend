@@ -53,8 +53,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
       }
 
       private val mainTextEnglish =
-        """Back
-          |Please call us
+        """Please call us
           |You may still be able to set up a payment plan over the phone, but you are not eligible for an online payment plan.
           |
           |We recommend you speak to an adviser on 0300 200 3835 at the Business Support Service to talk about your payment options.
@@ -70,9 +69,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           .stripMargin
 
       private val mainTextWelsh =
-        """
-          |Yn ôl
-          |Ffoniwch ni
+        """Ffoniwch ni
           |Efallai y gallwch drefnu cynllun talu dros y ffôn, ond nid ydych yn gymwys i gael cynllun talu ar-lein.
           |
           |Rydym yn argymell eich bod yn siarad ag ymgynghorydd ar 0300 200 1900 yng Ngwasanaeth Cwsmeriaid Cymraeg CThEM i drafod eich opsiynau talu.

@@ -22,40 +22,42 @@ import testsupport.stubs._
 
 class CalculatorInstalmentsPageSpec extends ItSpec {
 
-  def beginJourney() =
-    {
-      AuthStub.authorise()
-      TaxpayerStub.getTaxpayer()
-      IaStub.successfulIaCheck
-      GgStub.signInPage(port)
-      startPage.open()
-      startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton()
-      paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue()
-      monthlyPaymentAmountPage.enterAmout("2450")
-      CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue()
-    }
+  def beginJourney(): Unit = {
+    AuthStub.authorise()
+    TaxpayerStub.getTaxpayer()
+    IaStub.successfulIaCheck
+    GgStub.signInPage(port)
+    startPage.open()
+    startPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton()
+    paymentTodayQuestionPage.selectRadioButton(false)
+    paymentTodayQuestionPage.clickContinue()
+    monthlyPaymentAmountPage.enterAmount("2450")
+    CalculatorStub.generateSchedule
+    monthlyPaymentAmountPage.clickContinue()
+  }
 
-  "language" in
-    {
-      beginJourney()
+  "language" in {
+    beginJourney()
 
-      calculatorInstalmentsPage.assertPageIsDisplayed
+    calculatorInstalmentsPage.assertPageIsDisplayed
 
-      calculatorInstalmentsPage.clickOnWelshLink()
-      calculatorInstalmentsPage.assertPageIsDisplayed(Welsh)
+    calculatorInstalmentsPage.clickOnWelshLink()
+    calculatorInstalmentsPage.assertPageIsDisplayed(Welsh)
 
-      calculatorInstalmentsPage.clickOnEnglishLink()
-      calculatorInstalmentsPage.assertPageIsDisplayed(English)
-    }
+    calculatorInstalmentsPage.clickOnEnglishLink()
+    calculatorInstalmentsPage.assertPageIsDisplayed(English)
+  }
 
-  "select an option and continue" in
-    {
-      beginJourney()
-      calculatorInstalmentsPage.selectAnOption()
-      calculatorInstalmentsPage.clickContinue()
-      instalmentSummarySelectDatePage.assertPageIsDisplayed
-    }
+  "back button" in {
+    beginJourney()
+    calculatorInstalmentsPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getMonthlyPayment()}")
+  }
+
+  "select an option and continue" in {
+    beginJourney()
+    calculatorInstalmentsPage.selectAnOption()
+    calculatorInstalmentsPage.clickContinue()
+    instalmentSummarySelectDatePage.assertPageIsDisplayed
+  }
 }
