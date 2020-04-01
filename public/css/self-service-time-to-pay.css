@@ -451,3 +451,7 @@ h1.govuk-panel__title {
 
     border-bottom: 0px solid #bfc1c3;
 }
+
+.panel-tabular-data {
+    color: #0b0c0c;
+}
