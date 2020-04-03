@@ -16,42 +16,39 @@
 
 package testonly
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
+import play.api.libs.json.Json.parse
 
 object TestUserDebits {
-
-  val sample1: JsValue = Json.parse(
-    s"""
-       {
-  "debits" : [ {
-    "taxYearEnd" : "2019-04-05",
-    "charge" : {
-      "originCode" : "BCD",
-      "creationDate" : "2020-01-01"
-    },
-    "relevantDueDate" : "2020-01-31",
-    "totalOutstanding" : 1012.55
-  },
-{
-    "taxYearEnd" : "2020-04-01",
-    "charge" : {
-      "originCode" : "IN1",
-      "creationDate" : "2020-01-01"
-    },
-    "relevantDueDate" : "2020-01-31",
-    "totalOutstanding" : 1000
-  },
-{
-    "taxYearEnd" : "2020-04-05",
-    "charge" : {
-      "originCode" : "IN2",
-      "creationDate" : "2020-01-31"
-    },
-    "relevantDueDate" : "2020-07-31",
-    "totalOutstanding" : 1000
-  }
-]
-}
-    """)
-
+  val sample1: JsValue = parse(
+    """{
+        "debits" : [ {
+        "taxYearEnd" : "2019-04-05",
+        "charge" : {
+          "originCode" : "BCD",
+          "creationDate" : "2020-01-01"
+        },
+        "relevantDueDate" : "2020-01-31",
+        "totalOutstanding" : 1012.55
+      },
+      {
+        "taxYearEnd" : "2020-04-01",
+        "charge" : {
+          "originCode" : "IN1",
+          "creationDate" : "2020-01-01"
+        },
+        "relevantDueDate" : "2020-01-31",
+        "totalOutstanding" : 1000
+      },
+      {
+        "taxYearEnd" : "2020-04-05",
+        "charge" : {
+          "originCode" : "IN2",
+          "creationDate" : "2020-01-31"
+        },
+        "relevantDueDate" : "2020-07-31",
+        "totalOutstanding" : 1000
+      }
+      ]
+    }""")
 }
