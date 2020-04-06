@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
-import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
@@ -32,18 +31,18 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
   }
 
-  def selectAnOption() = {
+  def selectAnOption(): Unit = {
     val radioButton = xpath("/html/body/main/div[2]/article/form/div[1]/div[1]/input")
     click on radioButton
   }
 
-  def clickContinue() = {
+  def clickContinue(): Unit = {
     val button = xpath("//*[@id=\"next\"]")
     click on button
   }
@@ -69,8 +68,7 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
       }
 
       private val mainTextEnglish =
-        s"""Back
-           |How many months do you want to pay over?
+        s"""How many months do you want to pay over?
            |unchecked 4 months at £300.00
            |Total interest:
            |Base rate + 2.5%
@@ -100,8 +98,7 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
         """.stripMargin
 
       private val mainTextWelsh =
-        s"""Yn ôl
-           |Dros sawl mis yr hoffech dalu?
+        s"""Dros sawl mis yr hoffech dalu?
            |unchecked 4 o fisoedd ar £300.00
            |Cyfanswm y llog:
            |Cyfradd sylfaenol + 2.5%

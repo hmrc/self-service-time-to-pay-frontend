@@ -37,10 +37,8 @@
 
 @main(
     title = Messages("ssttp.calculator.form.payment_summary.title"),
-    loggedIn = true
-) {
-    <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
-
+    loggedIn = true,
+    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPaymentToday())) {
     <h1 class="heading-xlarge">@Messages("ssttp.calculator.form.payment_summary.title")</h1>
 
     <dl class="app-check-your-answers app-check-your-answers--long margin-bottom-20">

@@ -34,7 +34,7 @@ class DirectDebitPageSpec extends ItSpec {
     taxLiabilitiesPage.clickOnStartNowButton()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
-    monthlyPaymentAmountPage.enterAmout("2450")
+    monthlyPaymentAmountPage.enterAmount("2450")
     CalculatorStub.generateSchedule
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.selectAnOption()
@@ -53,6 +53,11 @@ class DirectDebitPageSpec extends ItSpec {
 
     directDebitPage.clickOnEnglishLink()
     directDebitPage.assertPageIsDisplayed(English)
+  }
+
+  "back button" in {
+    beginJourney()
+    directDebitPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttparrangement.routes.ArrangementController.getInstalmentSummary()}")
   }
 
   "enter invalid Account Name" in {

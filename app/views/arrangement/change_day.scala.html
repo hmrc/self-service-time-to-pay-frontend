@@ -33,9 +33,9 @@
 
 @main(
     title = Messages("ssttp.arrangement.change_day.title"),
-    loggedIn = true
+    loggedIn = true,
+    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
 ){
-    <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">@Messages("ssttp.calculator.form.back")</a>
     <h1 class="heading-xlarge">@Messages("ssttp.arrangement.change_day.title")</h1>
     @if(dayForm.hasErrors) {
     @viewsHelpers.errorSummary(Messages("ssttp.calculator.results.error.title"), dayForm)

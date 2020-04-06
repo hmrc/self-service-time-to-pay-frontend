@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
-import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
@@ -32,17 +31,16 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
   }
 
-  def clickContinue() =
-    {
-      val button = id("continue_button")
-      click on button
-    }
+  def clickContinue(): Unit = {
+    val button = id("continue_button")
+    click on button
+  }
 
   object Expected {
 
@@ -65,8 +63,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
       }
 
       private val mainTextEnglish =
-        """Back
-          |Terms and conditions
+        """Terms and conditions
           |We can cancel this agreement if you:
           |
           |pay late or miss a payment
@@ -83,8 +80,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Confirm and continue
         """.stripMargin
       private val mainTextWelsh =
-        """Yn ôl
-          |Telerau ac amodau
+        """Telerau ac amodau
           |Gallwn ganslo’r cytundeb hwn os:
           |
           |ydych yn talu’n hwyr neu’n methu taliad

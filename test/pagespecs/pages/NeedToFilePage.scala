@@ -53,8 +53,7 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
       }
 
       private val mainTextEnglish =
-        """Back
-          |File your return to use this service
+        """File your return to use this service
           |To be eligible to set up a payment plan online you need to have filed your Self Assessment tax return. Once you have done this, you can return to the service.
           |
           |Go to your tax account to file your Self Assessment tax return.
@@ -62,8 +61,7 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
           .stripMargin
 
       private val mainTextWelsh =
-        """
-          |Ffoniwch ni
+        """Ffoniwch ni
           |Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn
           |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid eich bod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
           |

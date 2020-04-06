@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import langswitch.Languages
+import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
 import uk.gov.hmrc.selfservicetimetopay.models.TotalDebtIsTooHigh
@@ -29,11 +29,15 @@ class StartPageSpec extends ItSpec {
     startPage.assertPageIsDisplayed()
 
     startPage.clickOnWelshLink()
-    startPage.assertPageIsDisplayed(Languages.Welsh)
+    startPage.assertPageIsDisplayed(Welsh)
 
     startPage.clickOnEnglishLink()
-    startPage.assertPageIsDisplayed(Languages.English)
+    startPage.assertPageIsDisplayed(English)
+  }
 
+  "back button" in {
+    startPage.open()
+    startPage.backButtonHref shouldBe None
   }
 
   "unuthorised - missing bearer token (user not logged in)" in {

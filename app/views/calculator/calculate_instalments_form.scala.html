@@ -38,10 +38,9 @@
 )
 
 @main(
-title = Messages("ssttp.calculator.results.title")
+    title = Messages("ssttp.calculator.results.title"),
+    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getMonthlyPayment)
 ) {
-
-<a class="link-back" onclick="back()" href="@ssttpcalculator.routes.CalculatorController.getMonthlyPayment">@Messages("ssttp.calculator.form.back")</a>
 
 <h1 class="heading-xlarge margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
 

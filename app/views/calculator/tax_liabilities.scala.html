@@ -37,20 +37,19 @@
 
 @main(
     title = Messages("ssttp.calculator.self-assessment-account-summary-page.title"),
-    loggedIn = loggedIn
+    loggedIn = loggedIn,
+    backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
 ) {
-    <a class="link-back" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.start()">@Messages("ssttp.calculator.self-assessment-account-summary-page.button-back")</a>
+    <h1 class="heading-xlarge">@Messages("ssttp.calculator.self-assessment-account-summary-page.title") @currency(debits.map(_.amount).sum)</h1>
 
-        <h1 class="heading-xlarge">@Messages("ssttp.calculator.self-assessment-account-summary-page.title") @currency(debits.map(_.amount).sum)</h1>
-
-        <details>
-            <summary><span class="summary">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-account-details")</span></summary>
-            @tax_liabilities_summary(debits)
-        </details>
-        <p>
-        @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()) {
-            @submit() {
-                @Messages("ssttp.calculator.self-assessment-account-summary-page.button-continue")
-            }
-        }</p>
-    }
+    <details>
+        <summary><span class="summary">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-account-details")</span></summary>
+        @tax_liabilities_summary(debits)
+    </details>
+    <p>
+    @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()) {
+        @submit() {
+            @Messages("ssttp.calculator.self-assessment-account-summary-page.button-continue")
+        }
+    }</p>
+}

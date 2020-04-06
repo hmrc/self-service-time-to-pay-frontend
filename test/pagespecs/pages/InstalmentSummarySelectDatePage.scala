@@ -32,7 +32,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
@@ -43,22 +43,22 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
   }
 
-  def selectFirstOption() = {
+  def selectFirstOption(): Unit = {
     val firstOption = xpath("/html/body/main/div[2]/article/form/div/div[1]/input")
     click on firstOption
   }
 
-  def selectSecondOption() = {
+  def selectSecondOption(): Unit = {
     val secondOption = xpath("/html/body/main/div[2]/article/form/div/div[2]/input")
     click on secondOption
   }
 
-  def clickContinue() = {
+  def clickContinue(): Unit = {
     val button = xpath("//*[@id=\"next\"]")
     click on button
   }
 
-  def enterDay(day: String) = {
+  def enterDay(day: String): Unit = {
     val dayField = xpath("/html/body/main/div[2]/article/form/div/div[3]/input")
     click on dayField
     enter(day)
@@ -85,8 +85,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
       }
 
       private val mainTextEnglish =
-        s"""Back
-           |Which day do you want to pay each month?
+        s"""Which day do you want to pay each month?
            |unchecked 28th or next working day
            |unchecked A different day
            |Enter a day between 1 and 28
@@ -94,8 +93,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
         """.stripMargin
 
       private val mainTextWelsh =
-        s"""Yn ôl
-           |Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
+        s"""Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
            |unchecked 28ain diwrnod nesaf
            |unchecked Diwrnod gwahanol
            |Ewch i mewn i ddiwrnod y mis
@@ -108,8 +106,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
       def apply(): String = errorText
 
       private def errorText =
-        s"""Back
-           |Which day do you want to pay each month?
+        s"""Which day do you want to pay each month?
            |There is a problem
            |Enter a number between 1 and 28
            |unchecked 28th or next working day

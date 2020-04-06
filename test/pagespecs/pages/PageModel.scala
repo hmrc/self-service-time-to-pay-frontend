@@ -17,47 +17,42 @@
 package pagespecs.pages
 
 import java.io.{File, FileInputStream, FileOutputStream}
-import java.nio.file.{Files, Paths}
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime.now
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.util.concurrent.atomic.AtomicInteger
 
 import langswitch.{Language, Languages}
-import org.openqa.selenium.{By, OutputType, TakesScreenshot, WebDriver}
-import org.scalatest.Assertion
+import org.openqa.selenium.OutputType.FILE
+import org.openqa.selenium.{By, TakesScreenshot, WebDriver}
+import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.selenium.WebBrowser
-import org.scalatest.time.{Millis, Second, Seconds, Span}
 import play.api.Logger
-import play.api.libs.json.Reads
-
-import scala.collection.immutable.List
-import scala.util.Random
+import testsupport.RichMatchers
 
 final case class BaseUrl(value: String)
 
 object BasePage {
-  val time = LocalDateTime.now()
+  private val time = now()
   private val seq = new AtomicInteger(0)
   def nextSeq(): Int = seq.getAndIncrement()
 
-  val dumpTargetDir = {
-    val addon: String = BasePage.time.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+  val dumpTargetDir: String = {
+    val addon: String = BasePage.time.format(ISO_LOCAL_DATE_TIME)
     s"target/ittests-screenshots-$addon"
   }
 }
 
 abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
-  val richMatchers = new testsupport.RichMatchers {
+  val richMatchers: RichMatchers = new testsupport.RichMatchers {
 
-    //we shadow what is in  testsupport.RichMatchers.
-    // patienceConfig
+    //we shadow what is in testsupport.RichMatchers.patienceConfig
     override val patienceConfig: PatienceConfig = PatienceConfig(
       timeout  = scaled(Span(2, Seconds)),
       interval = scaled(Span(150, Millis))
     )
   }
-  import richMatchers._
   import WebBrowser._
+  import richMatchers._
 
   def path: String
 
@@ -72,10 +67,9 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def readGlobalHeaderText(): String = id("proposition-menu").element.text
 
-  def readPath(): String = {
-    val url = new java.net.URL(webDriver.getCurrentUrl)
-    url.getPath
-  }
+  def backButtonHref: Option[String] = find(IdQuery("back-link")).fold(Option.empty[String])(e => e.attribute("href"))
+
+  def readPath(): String = new java.net.URL(webDriver.getCurrentUrl).getPath
 
   def clickOnEnglishLink(): Unit = click on linkText("English")
   def clickOnWelshLink(): Unit = click on linkText("Cymraeg")
@@ -87,11 +81,6 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    * and fails assertion
    */
   protected def probing[A](probingF: => A): A = eventually(probingF).withClue {
-    //    val maybeDumpedFile = takeADump()
-    //       |>>>page source was:
-    //       |${webDriver.getPageSource}
-    //       |>>>${maybeDumpedFile.map(uri => s"Screenshot recorded in $uri").getOrElse("Sorry, no screenshot recorded")}
-
     s"""
        |>>>page text was:
        |${webDriver.findElement(By.tagName("body")).getText}
@@ -109,8 +98,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
     val fileName: String = s"${this.getClass.getSimpleName}-${BasePage.nextSeq()}.png"
     webDriver match {
       case takesScreenshot: TakesScreenshot =>
-        val tmpFile: File = takesScreenshot.getScreenshotAs(OutputType.FILE)
-        //     Files.createDirectory(Paths.get("target", "ittests-screenshots"))
+        val tmpFile: File = takesScreenshot.getScreenshotAs(FILE)
         new File(BasePage.dumpTargetDir).mkdirs()
         val outFile = new java.io.File(s"${BasePage.dumpTargetDir}/$fileName")
         val fileOutputStream = new FileOutputStream(outFile)

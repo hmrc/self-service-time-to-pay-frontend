@@ -3,6 +3,7 @@ ssttp.common.title = Trefnu cynllun talu
 ssttp.common.currency.symbol = £
 ssttp.common.print = Argraffu
 ssttp.common.sign-out = Allgofnodi
+ssttp.common.back = Yn ôl
 
 ssttp.common.charge-code.ASST = Asesiad refeniw
 ssttp.common.charge-code.BCC = Credyd cost mantoli
@@ -93,7 +94,6 @@ ssttp.calculator.self-assessment-account-summary-page.tax-year-ending = Ar gyfer
 ssttp.calculator.self-assessment-account-summary-page.tax-account-details = Dadansoddiad Hunanasesiad
 ssttp.calculator.self-assessment-account-summary-page.due-by = Mae’ch taliad yn ddyledus ar
 ssttp.calculator.self-assessment-account-summary-page.button-continue = Yn eich blaen
-ssttp.calculator.self-assessment-account-summary-page.button-back = Yn ôl
 
 ssttp.calculator.form.payment_today.title = Faint y gallwch ei dalu ymlaen llaw?
 ssttp.calculator.form.payment_today.error.summary.title = Rydych wedi nodi rhywbeth annilys
@@ -112,7 +112,6 @@ ssttp.calculator.form.payment_today_question.no_label = Na
 
 ssttp.calculatorform.payment_today_question.why_pay_today.info = Bydd gwneud taliad ymlaen llaw cyn i chi drefnu’ch cynllun yn golygu y bydd eich taliadau misol yn is.
 ssttp.calculator.payment_today_question.button-continue = Yn eich blaen
-ssttp.calculator.payment_today_question.button-back = Yn ôl
 
 ssttp.calculator.form.duration.months.required = Nodwch nifer dilys o fisoedd
 ssttp.calculator.form.duration.months.greater-than = Rhaid i’r nifer o fisoedd fod yn 2 neu fwy
@@ -121,7 +120,6 @@ ssttp.calculator.form.duration.months.less-than = Rhaid i’r nifer o fisoedd fo
 ssttp.calculator.form.payment_today.update = Diweddaru
 
 ssttp.calculator.form.continue = Yn eich blaen
-ssttp.calculator.form.back = Yn ôl
 
 ssttp.calculator.results.title = Dros sawl mis yr hoffech dalu?
 ssttp.calculator.results.month.instalments = Rhandaliadau
@@ -139,7 +137,6 @@ ssttp.calculator.results.month.required = Dewiswch gynllun talu
 ssttp.calculator.results.month.greater-then-six.header = A oes angen cynllun talu hirach arnoch?
 ssttp.calculator.results.month.greater-then-six.intro = Bydd y gyfradd llog a’r ad-daliad cyffredinol yn uwch pan fyddwch yn dewis cynllun talu hirach.
 
-ssttp.call-us.back = Yn ôl
 ssttp.call-us.title = Ffoniwch ni
 ssttp.call-us.intro = Nid ydych yn gymwys i drefnu cynllun talu ar-lein.
 ssttp.call-us.p1 = Nid ydych yn gymwys i drefnu cynllun talu ar-lein.
@@ -161,13 +158,11 @@ ssttp.direct-debit.unauthorized.intro.p2 = Bydd angen i chi ddychwelyd y ffurfle
 ssttp.direct-debit.unauthorized.button = Yn ôl i’r manylion banc
 
 ssttp.you-need-to-file.title = Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn
-ssttp.you-need-to-file.form.back = Yn ôl
 ssttp.you-need-to-file.intro = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid eich bod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
 ssttp.you-need-to-file.check-account.link = Ewch i’ch cyfrif treth
 ssttp.you-need-to-file.check-account = i gyflwyno’ch Ffurflen Dreth Hunanasesiad.
 
 
-ssttp.arrangement.change_day.day = Yn ôl
 ssttp.arrangement.change_day.title = Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
 ssttp.arrangement.change_day.payment-day.required = Nodwch werth
 ssttp.arrangement.change_day.payment-day.out-of-range = Nodwch rif rhwng 1 a 28
@@ -198,7 +193,6 @@ ssttp.arrangement.instalment-summary-table.total-repayment = Cyfanswm yr ad-dali
 ssttp.arrangement.instalment-summary-table.total-repayment-hint = Gan gynnwys llog
 ssttp.arrangement.instalment-summary.submit = Yn eich blaen
 
-ssttp.arrangement.declaration.back = Yn ôl
 ssttp.arrangement.declaration.h1 = Telerau ac amodau
 ssttp.arrangement.declaration.cancel-if = Gallwn ganslo’r cytundeb hwn os:
 ssttp.arrangement.declaration.cancel-if.1 = ydych yn talu’n hwyr neu’n methu taliad
@@ -223,7 +217,6 @@ ssttp.direct-debit-assistance.complete.total = Cyfanswm:
 ssttp.arrangement.direct-debit.form.title = Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol
 ssttp.arrangement.direct-debit.form.confirmed = Cadarnhau cytundeb y Debyd Uniongyrchol
 ssttp.arrangement.direct-debit.form.submit = Yn eich blaen
-ssttp.arrangement.direct-debit.form.back = Yn ôl
 ssttp.direct-debit.form.accountName = Enw’r cyfrif
 ssttp.direct-debit.form.sortCode = Cod didoli
 ssttp.direct-debit.form.accountNumber = Rhif y cyfrif
@@ -285,7 +278,6 @@ ssttp.arrangement.direct-debit.assistance.title = Ffoniwch am gymorth gyda Debyd
 ssttp.arrangement.direct-debit.assistance.total.hint = gan gynnwys llog
 ssttp.arrangement.direct-debit.assistance.alert = Methodd eich Debyd Uniongyrchol â chael ei gyflwyno.
 ssttp.arrangement.direct-debit.assistance.alert.1 = Rydym yn cael anawsterau yn cyflwyno’ch cyfarwyddyd Debyd Uniongyrchol. Ffoniwch ni i gwblhau’ch cais.
-ssttp.arrangement.direct-debit.assistance.back = Yn ôl
 
 #Beta Banner
 ssttp.beta.banner.help = Helpwch i wella GOV.UK
@@ -303,7 +295,6 @@ ssttp.arrangement.complete.help.p1 = Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM
 ssttp.arrangement.complete.help.p2 = (mae’n cymryd 30 eiliad)
 
 #Service unavailable you do not have an sa enrollment page
-ssttp.not.enrolled.back = Yn ôl
 ssttp.not.enrolled.title = Mae’n rhaid eich bod wedi’ch ymrestru i fwrw golwg ar eich cyfrif Hunanasesiad
 ssttp.not.enrolled.intro = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid eich bod wedi’ch ymrestru i gyflwyno’ch Ffurflen Dreth Hunanasesiad.
 ssttp.not.enrolled.tax-account-link = Ymrestrwch i fwrw golwg ar eich cyfrif treth Hunanasesiad

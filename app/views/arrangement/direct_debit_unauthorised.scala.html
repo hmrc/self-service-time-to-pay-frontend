@@ -31,9 +31,9 @@
 
 @main(
     title = Messages("ssttp.direct-debit.unauthorized.title"),
-    loggedIn = loggedIn
+    loggedIn = loggedIn,
+    backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
 ){
-    <a class="link-back" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a>
     <header class="page-header text">
         <h1>@Messages("ssttp.direct-debit.unauthorized.title")</h1>
     </header>

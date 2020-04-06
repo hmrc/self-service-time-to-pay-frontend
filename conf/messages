@@ -3,6 +3,7 @@ ssttp.common.title = Set up a Self Assessment payment plan
 ssttp.common.currency.symbol = £
 ssttp.common.print = Print
 ssttp.common.sign-out = Sign out
+ssttp.common.back = Back
 
 
 ssttp.payment-plan-calculator.title = Self Assessment payment plan calculator
@@ -96,7 +97,6 @@ ssttp.calculator.self-assessment-account-summary-page.tax-account-details = Self
 ssttp.calculator.self-assessment-account-summary-page.due = Due
 ssttp.calculator.self-assessment-account-summary-page.for-tax-year = for tax year {0} to {1}
 ssttp.calculator.self-assessment-account-summary-page.button-continue = Continue
-ssttp.calculator.self-assessment-account-summary-page.button-back = Back
 
 ssttp.calculator.form.payment_today.title = How much can you pay upfront?
 ssttp.calculator.form.payment_today.error.summary.title = There is a problem
@@ -115,7 +115,6 @@ ssttp.calculator.form.payment_today_question.no_label = No
 
 ssttp.calculatorform.payment_today_question.why_pay_today.info = Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account in 3 to 5 days.
 ssttp.calculator.payment_today_question.button-continue = Continue
-ssttp.calculator.payment_today_question.button-back = Back
 
 ssttp.calculator.form.duration.months.required = Enter a valid number of months
 ssttp.calculator.form.duration.months.greater-than = Number of months must be 2 or more
@@ -124,7 +123,6 @@ ssttp.calculator.form.duration.months.less-than = Number of months must be fewer
 ssttp.calculator.form.payment_today.update = Update
 
 ssttp.calculator.form.continue = Continue
-ssttp.calculator.form.back = Back
 
 ssttp.calculator.results.title = How many months do you want to pay over?
 ssttp.calculator.results.month.instalments = Instalments
@@ -143,13 +141,11 @@ ssttp.calculator.results.month.greater-then-six.header = Need a longer payment p
 ssttp.calculator.results.month.greater-then-six.intro = The interest rate and overall repayment will be higher when you choose a longer payment plan.
 
 # not logged in
-ssttp.calculator.payment-plan-calculator.start.back = Back
 ssttp.calculator.payment-plan-calculator.start.title = Payment plan calculator
 ssttp.calculator.payment-plan-calculator.start.p1 = If you are concerned you cannot pay your Self Assessment tax bill, you may be able to set up a payment plan to pay in instalments.
 ssttp.calculator.payment-plan-calculator.start.p2 = Use our payment plan calculator to find out how much your monthly instalments might be.
 ssttp.calculator.payment-plan-calculator.start.button = Start now
 
-ssttp.calculator.amount-due.start.back = Back
 ssttp.calculator.amount-due.start.title = How much do you owe?
 ssttp.calculator.amount-due.start.what-to-include = What to include
 ssttp.calculator.amount-due.start.what-to-include.b1 = Balancing payment
@@ -159,7 +155,6 @@ ssttp.calculator.amount-due.start.what-to-include.b4 = Penalties or added intere
 ssttp.calculator.amount-due.start.continue = Continue
 
 
-ssttp.calculator.check-calculation.back = Back
 ssttp.calculator.check-calculation.h1 = Your estimated instalment calculation
 ssttp.calculator.check-calculation.table.total.due = Total calculated tax
 ssttp.calculator.check-calculation.table.total.due.change = Change
@@ -193,7 +188,6 @@ ssttp.calculator.form.amount-due.required.min = The amount must be more than £3
 ssttp.calculator.form.amount-due.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less than £100,000.00
 
-ssttp.call-us.back = Back
 ssttp.call-us.title = Please call us
 ssttp.call-us.intro = You are not eligible to set up a payment plan online.
 ssttp.call-us.p1 = You are not eligible to set up a payment plan online.
@@ -216,7 +210,6 @@ ssttp.direct-debit.unauthorized.intro.p2 = You will need to return the form to H
 ssttp.direct-debit.unauthorized.button = Back to bank details
 
 ssttp.you-need-to-file.title = File your return to use this service
-ssttp.you-need-to-file.form.back = Back
 ssttp.you-need-to-file.intro = To be eligible to set up a payment plan online you need to have filed your Self Assessment tax return. Once you have done this, you can return to the service.
 ssttp.you-need-to-file.check-account.link = Go to your tax account
 ssttp.you-need-to-file.check-account = to file your Self Assessment tax return.
@@ -255,7 +248,6 @@ ssttp.arrangement.instalment-summary-table.total-repayment = Total to pay
 ssttp.arrangement.instalment-summary-table.total-repayment-hint = Including interest
 ssttp.arrangement.instalment-summary.submit = Continue
 
-ssttp.arrangement.declaration.back = Back
 ssttp.arrangement.declaration.h1 = Terms and conditions
 ssttp.arrangement.declaration.cancel-if = We can cancel this agreement if you:
 ssttp.arrangement.declaration.cancel-if.1 = pay late or miss a payment
@@ -280,7 +272,6 @@ ssttp.direct-debit-assistance.complete.total = Total:
 ssttp.arrangement.direct-debit.form.title = Enter account details to set up a Direct Debit
 ssttp.arrangement.direct-debit.form.confirmed = Confirm Direct Debit agreement
 ssttp.arrangement.direct-debit.form.submit = Continue
-ssttp.arrangement.direct-debit.form.back = Back
 ssttp.direct-debit.form.accountName = Name on the account
 ssttp.direct-debit.form.sortCode = Sort code
 ssttp.direct-debit.form.accountNumber = Account number
@@ -342,7 +333,6 @@ ssttp.arrangement.direct-debit.assistance.title = Call for Direct Debit Assistan
 ssttp.arrangement.direct-debit.assistance.total.hint = including interest
 ssttp.arrangement.direct-debit.assistance.alert = Direct Debit submission failed.
 ssttp.arrangement.direct-debit.assistance.alert.1 = We’re having problems submitting your Direct Debit instruction. Please call us to complete your application.
-ssttp.arrangement.direct-debit.assistance.back = Back
 
 #Beta Banner
 ssttp.beta.banner.help = Help improve GOV.UK
@@ -361,7 +351,6 @@ ssttp.arrangement.complete.help.p1 = Call the HMRC Helpline on 0300 322 7015.
 ssttp.arrangement.complete.help.p2 = (takes 30 seconds)
 
 #Service unavailable you do not have an sa enrollment page
-ssttp.not.enrolled.back = Back
 ssttp.not.enrolled.title = You must be enrolled to view your Self Assessment account
 ssttp.not.enrolled.intro = To be eligible to set up a payment plan online you must be enrolled to file your Self Assessment tax return.
 ssttp.not.enrolled.tax-account-link = Enrol to view your Self Assessment tax account

@@ -33,7 +33,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
 
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
@@ -44,7 +44,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
   }
 
-  def fillOutForm(accountNameInput: String, sortCodeInput: String, accountNumberInput: String) = {
+  def fillOutForm(accountNameInput: String, sortCodeInput: String, accountNumberInput: String): Unit = {
     click on xpath("//*[@id=\"accountName\"]")
     enter(accountNameInput)
     click on xpath("//*[@id=\"sortCode\"]")
@@ -53,7 +53,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     enter(accountNumberInput)
   }
 
-  def clickContinue() = {
+  def clickContinue(): Unit = {
     val button = xpath("//*[@id=\"content\"]/article/form/div[2]/button")
     click on button
   }
@@ -79,8 +79,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
       }
 
       private val mainTextEnglish =
-        """Back
-          |Enter account details to set up a Direct Debit
+        """Enter account details to set up a Direct Debit
           |Enter your banking details
           |Name on the account
           |Sort code
@@ -93,8 +92,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         """.stripMargin
 
       private val mainTextWelsh =
-        """Yn ôl
-          |Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol
+        """Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol
           |Enter your banking details
           |Enw’r cyfrif
           |Cod didoli
@@ -115,8 +113,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
       }
 
       private val accountNameErrorText =
-        """Back
-          |There is a problem
+        """There is a problem
           |Check your account name is correct
           |Enter account details to set up a Direct Debit
           |Enter your banking details
@@ -130,8 +127,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
       """.stripMargin
 
       private val sortCodeErrorText =
-        """Back
-          |There is a problem
+        """There is a problem
           |Sort code must be a 6 digit number
           |Enter account details to set up a Direct Debit
           |Enter your banking details
@@ -145,8 +141,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         """.stripMargin
 
       private val accountNumberErrorText =
-        """Back
-          |There is a problem
+        """There is a problem
           |Account number must be an 8 digit number
           |Enter account details to set up a Direct Debit
           |Enter your banking details
@@ -160,8 +155,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         """.stripMargin
 
       private val invalidBankDetailsErrorText =
-        """Back
-          |This isn't a valid bank account
+        """This isn't a valid bank account
           |Re-enter your bank details
           |Enter account details to set up a Direct Debit
           |Enter your banking details

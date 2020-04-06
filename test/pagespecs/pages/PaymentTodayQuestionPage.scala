@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.Languages.{English, Welsh}
 import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
-import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
@@ -35,22 +34,18 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
   }
 
-  def selectRadioButton(yesOrNo: Boolean) =
-    {
-      val yesRadioButton = xpath("//*[@id=\"paytoday-true\"]")
-      val noRadioButton = xpath("//*[@id=\"paytoday-false\"]")
+  def selectRadioButton(yesOrNo: Boolean): Unit = {
+    val yesRadioButton = xpath("//*[@id=\"paytoday-true\"]")
+    val noRadioButton = xpath("//*[@id=\"paytoday-false\"]")
 
-      if (yesOrNo)
-        click on yesRadioButton
-      else
-        click on noRadioButton
-    }
+    if (yesOrNo) click on yesRadioButton
+    else click on noRadioButton
+  }
 
-  def clickContinue() =
-    {
-      val button = xpath("//*[@id=\"next\"]")
-      click on button
-    }
+  def clickContinue(): Unit = {
+    val button = xpath("//*[@id=\"next\"]")
+    click on button
+  }
 
   object Expected {
 
@@ -74,8 +69,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       }
 
       private val mainTextEnglish =
-        """Back
-          |Can you make an upfront payment?
+        """Can you make an upfront payment?
           |Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account in 3 to 5 days.
           |unchecked Yes
           |unchecked No
@@ -83,8 +77,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         """.stripMargin
 
       private val mainTextWelsh =
-        """Yn ôl
-          |A allwch wneud taliad ymlaen llaw?
+        """A allwch wneud taliad ymlaen llaw?
           |Bydd gwneud taliad ymlaen llaw cyn i chi drefnu’ch cynllun yn golygu y bydd eich taliadau misol yn is.
           |unchecked Iawn
           |unchecked Na

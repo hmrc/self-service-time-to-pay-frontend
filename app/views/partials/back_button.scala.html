@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,27 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package pagespecs
+@import langswitch.Link
+@import langswitch.Language
+@import langswitch.Languages
 
-import testsupport.ItSpec
-import testsupport.stubs._
 
-class AccessibilityStatementPageSpec extends ItSpec {
-
-  def beginJourney(): Unit = {
-    AuthStub.authorise()
-    TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
-    GgStub.signInPage(port)
-    startPage.open()
-    startPage.clickOnStartNowButton()
-  }
-
-  "check link and content are correct" in {
-    beginJourney()
-    accessibilityStatementPage.clickOnAccessibilityStatementLink()
-    accessibilityStatementPage.assertPageIsDisplayed
-  }
-}
+@(backButtonUrl: play.api.mvc.Call)(implicit messages: Messages)
+<div class="pull-left">
+ @Link.toInternalPage(
+  id      = Some("back-link"),
+  url     = s"$backButtonUrl",
+  value   = Some(messages("ssttp.common.back"))).toHtml
+</div>

@@ -33,11 +33,9 @@
 )
 
 @main(
-    title = Messages("ssttp.monthy.amount.title")
+    title = Messages("ssttp.monthy.amount.title"),
+    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
 ){
-
-    <a class="link-back" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@Messages("ssttp.calculator.form.back")</a>
-
     @if(dataForm.hasErrors){
         @viewsHelpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
     }

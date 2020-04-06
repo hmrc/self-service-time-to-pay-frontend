@@ -18,44 +18,45 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
-import testsupport.stubs.{AuthStub, IaStub, GgStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
 
 class PaymentSummaryPageSpec extends ItSpec {
 
-  def beginJourney()() =
-    {
-      AuthStub.authorise()
-      TaxpayerStub.getTaxpayer()
-      IaStub.successfulIaCheck
-      GgStub.signInPage(port)
-      startPage.open()
-      startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton()
-      paymentTodayQuestionPage.selectRadioButton(true)
-      paymentTodayQuestionPage.clickContinue()
-      paymentTodayCalculatorPage.enterAmount("123")
-      paymentTodayCalculatorPage.clickContinue()
-    }
+  def beginJourney(): Unit = {
+    AuthStub.authorise()
+    TaxpayerStub.getTaxpayer()
+    IaStub.successfulIaCheck
+    GgStub.signInPage(port)
+    startPage.open()
+    startPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton()
+    paymentTodayQuestionPage.selectRadioButton(true)
+    paymentTodayQuestionPage.clickContinue()
+    paymentTodayCalculatorPage.enterAmount("123")
+    paymentTodayCalculatorPage.clickContinue()
+  }
 
-  "language" in
-    {
-      beginJourney()
-      paymentSummaryPage.assertPageIsDisplayed
+  "language" in {
+    beginJourney()
+    paymentSummaryPage.assertPageIsDisplayed
 
-      paymentSummaryPage.clickOnWelshLink()
-      paymentSummaryPage.assertPageIsDisplayed(Welsh)
+    paymentSummaryPage.clickOnWelshLink()
+    paymentSummaryPage.assertPageIsDisplayed(Welsh)
 
-      paymentSummaryPage.clickOnEnglishLink()
-      paymentSummaryPage.assertPageIsDisplayed(English)
-    }
+    paymentSummaryPage.clickOnEnglishLink()
+    paymentSummaryPage.assertPageIsDisplayed(English)
+  }
 
-  "continue to monthly payment amount" in
-    {
-      beginJourney()
-      paymentSummaryPage.assertPageIsDisplayed
+  "back button" in {
+    beginJourney()
+    paymentSummaryPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getPaymentToday()}")
+  }
 
-      paymentSummaryPage.clickContinue()
-      monthlyPaymentAmountPage.assertPageIsDisplayedAltPath(-100: Int)
-    }
+  "continue to monthly payment amount" in {
+    beginJourney()
+    paymentSummaryPage.assertPageIsDisplayed
 
+    paymentSummaryPage.clickContinue()
+    monthlyPaymentAmountPage.assertPageIsDisplayedAltPath(-100: Int)
+  }
 }

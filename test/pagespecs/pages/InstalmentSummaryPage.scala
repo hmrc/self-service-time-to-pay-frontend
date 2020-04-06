@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
-import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
@@ -32,25 +31,28 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
   }
 
-  def clickInstalmentsChange() = {
+  def clickInstalmentsChange(): Unit = {
     val changeLink = xpath("""//*[@id="id_payment"]/dl/div[3]/dd[2]/a""")
     click on changeLink
   }
-  def clickCollectionDayChange() = {
+
+  def clickCollectionDayChange(): Unit = {
     val changeLink = xpath("""//*[@id="id_payment"]/dl/div[2]/dd[2]/a""")
     click on changeLink
   }
-  def clickContinue() = {
+
+  def clickContinue(): Unit = {
     val button = xpath("//*[@id=\"content\"]/article/form/div/button")
     click on button
   }
-  def clickUpfrontPaymentChange() = {
+
+  def clickUpfrontPaymentChange(): Unit = {
     val button = xpath("""//*[@id="id_payment"]/dl/div[1]/dd[2]/a""")
     click on button
   }
@@ -76,8 +78,7 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
       }
 
       private val mainTextEnglish =
-        """Back
-          |Check your payment plan
+        """Check your payment plan
           |Upfront payment taken within 5 days
           |£0.00
           |Change Monthly payments
@@ -99,8 +100,7 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         """.stripMargin
 
       private val mainTextWelsh =
-        """Yn ôl
-          |Gwiriwch fanylion eich amserlen talu
+        """Gwiriwch fanylion eich amserlen talu
           |Taliad ymlaen llaw
           |£0.00
           |Newid Rhandaliadau misol

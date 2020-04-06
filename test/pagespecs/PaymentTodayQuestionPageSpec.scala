@@ -18,9 +18,9 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
-import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, IaStub, GgStub, TaxpayerStub}
 
-class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
+class PaymentTodayQuestionPageSpec extends ItSpec {
 
   def beginJourney(): Unit = {
     AuthStub.authorise()
@@ -29,29 +29,43 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton()
   }
 
   "language" in {
     beginJourney()
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertPageIsDisplayed
 
-    taxLiabilitiesPage.clickOnWelshLink()
-    taxLiabilitiesPage.assertPageIsDisplayed(Welsh)
+    paymentTodayQuestionPage.clickOnWelshLink()
+    paymentTodayQuestionPage.assertPageIsDisplayed(Welsh)
 
-    taxLiabilitiesPage.clickOnEnglishLink()
-    taxLiabilitiesPage.assertPageIsDisplayed(English)
+    paymentTodayQuestionPage.clickOnEnglishLink()
+    paymentTodayQuestionPage.assertPageIsDisplayed(English)
   }
 
   "back button" in {
     beginJourney()
-    taxLiabilitiesPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpeligibility.routes.SelfServiceTimeToPayController.start()}")
+    paymentTodayQuestionPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getTaxLiabilities()}")
   }
 
-  "continue to payment-today" in {
+  "select yes and go to calculator payment-today" in {
     beginJourney()
-    taxLiabilitiesPage.assertPageIsDisplayed()
-
-    taxLiabilitiesPage.clickOnStartNowButton()
     paymentTodayQuestionPage.assertPageIsDisplayed
+
+    paymentTodayQuestionPage.selectRadioButton(true)
+    paymentTodayQuestionPage.clickContinue()
+
+    paymentTodayCalculatorPage.assertPageIsDisplayed
+  }
+
+  "select no and go to monthlyPaymentAmount" in {
+    beginJourney()
+    paymentTodayQuestionPage.assertPageIsDisplayed
+
+    paymentTodayQuestionPage.selectRadioButton(false)
+    paymentTodayQuestionPage.clickContinue()
+
+    monthlyPaymentAmountPage.assertPageIsDisplayed
   }
 }
+

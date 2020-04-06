@@ -16,56 +16,54 @@
 
 package pagespecs
 
-import java.time.{Clock, LocalDateTime}
-
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs._
 
 class MonthlyPaymentAmountPageSpec extends ItSpec {
 
-  def beginJourney() =
-    {
-      AuthStub.authorise()
-      TaxpayerStub.getTaxpayer()
-      IaStub.successfulIaCheck
-      GgStub.signInPage(port)
-      startPage.open()
-      startPage.clickOnStartNowButton()
-      taxLiabilitiesPage.clickOnStartNowButton()
-      paymentTodayQuestionPage.selectRadioButton(false)
-      paymentTodayQuestionPage.clickContinue()
-    }
+  def beginJourney(): Unit = {
+    AuthStub.authorise()
+    TaxpayerStub.getTaxpayer()
+    IaStub.successfulIaCheck
+    GgStub.signInPage(port)
+    startPage.open()
+    startPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnStartNowButton()
+    paymentTodayQuestionPage.selectRadioButton(false)
+    paymentTodayQuestionPage.clickContinue()
+  }
 
-  "language" in
-    {
-      beginJourney()
-      monthlyPaymentAmountPage.assertPageIsDisplayed
+  "language" in {
+    beginJourney()
+    monthlyPaymentAmountPage.assertPageIsDisplayed
 
-      monthlyPaymentAmountPage.clickOnWelshLink()
-      monthlyPaymentAmountPage.assertPageIsDisplayed(Welsh)
+    monthlyPaymentAmountPage.clickOnWelshLink()
+    monthlyPaymentAmountPage.assertPageIsDisplayed(Welsh)
 
-      monthlyPaymentAmountPage.clickOnEnglishLink()
-      monthlyPaymentAmountPage.assertPageIsDisplayed(English)
-    }
+    monthlyPaymentAmountPage.clickOnEnglishLink()
+    monthlyPaymentAmountPage.assertPageIsDisplayed(English)
+  }
 
-  "invalid entry" in
-    {
-      val value = "1"
-      beginJourney()
-      monthlyPaymentAmountPage.enterAmout(value)
-      CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue()
-      monthlyPaymentAmountPage.assertErrorPageIsDisplayed(value)
+  "back button" in {
+    beginJourney()
+    monthlyPaymentAmountPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()}")
+  }
 
-    }
+  "invalid entry" in {
+    val value = "1"
+    beginJourney()
+    monthlyPaymentAmountPage.enterAmount(value)
+    CalculatorStub.generateSchedule
+    monthlyPaymentAmountPage.clickContinue()
+    monthlyPaymentAmountPage.assertErrorPageIsDisplayed(value)
+  }
 
-  "valid entry and continue" in
-    {
-      beginJourney()
-      monthlyPaymentAmountPage.enterAmout("2450")
-      CalculatorStub.generateSchedule
-      monthlyPaymentAmountPage.clickContinue()
-      calculatorInstalmentsPage.assertPageIsDisplayed
-    }
+  "valid entry and continue" in {
+    beginJourney()
+    monthlyPaymentAmountPage.enterAmount("2450")
+    CalculatorStub.generateSchedule
+    monthlyPaymentAmountPage.clickContinue()
+    calculatorInstalmentsPage.assertPageIsDisplayed
+  }
 }

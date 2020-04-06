@@ -25,10 +25,10 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.json.Json
 import play.api.mvc._
-import play.api.i18n.I18nSupport
-import req.RequestSupport
-import views.Views
 import playsession.PlaySessionSupport._
+import req.RequestSupport
+import uk.gov.hmrc.auth.core.ConfidenceLevel.{L100, L200}
+import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -56,7 +56,7 @@ final case class TestUserForm(
     isOnIA                       = isOnIA,
     authorityId                  = authorityId.map(AuthorityId.apply).getOrElse(AuthorityId.random),
     affinityGroup                = AffinityGroup(affinityGroup),
-    confidenceLevel              = if (hasOverTwoHundred) 200 else 100,
+    confidenceLevel              = if (hasOverTwoHundred) L200.level else L100.level,
     returns                      = Json.parse(returnsJson),
     returnsResponseStatusCode    = returnsResponseStatusCode.toInt,
     debits                       = Json.parse(debitsJson),
@@ -84,7 +84,7 @@ object TestUserForm {
     saTaxpayer                   = Json.prettyPrint(TestUserSaTaxpayer.buildTaxpayer()),
     saTaxpayerResponseStatusCode = "200",
     continueUrl                  = None,
-    frozenDate                   = None
+    frozenDate                   = Some("2020-02-05")
   )
 }
 

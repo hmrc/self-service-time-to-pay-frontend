@@ -39,11 +39,8 @@
         noGetHelp: Boolean = false,
         welshToggleEnabled:Boolean = true,
         hasUserPanel: Boolean = false,
-        navTitle: String = "ssttp.common.title")(
-        implicit
-        request: Request[_],
-        messages: play.api.i18n.Messages
-)
+        navTitle: String = "ssttp.common.title",
+        backButtonUrl: Option[play.api.mvc.Call] = None)(implicit request: Request[_], messages: play.api.i18n.Messages)
 
 
 @import partials.{beta_banner_with_user_panel, google_analytics_js}
@@ -93,14 +90,17 @@
       req.RequestSupport.isLoggedIn,
       appConfig.betaFeedbackUrlAuth,
       appConfig.betaFeedbackUrlNoAuth,
-      true,
-      false,
       hasUserPanel = hasUserPanel
     ),
     includeGridWrapper = false,
     serviceInfoContent = Some(serviceInfoContent),
     includeHMRCBranding = false
 )
+
+    @if(backButtonUrl.isDefined) {
+        @partials.back_button(backButtonUrl.get)
+    }
+
     @if(welshToggleEnabled) {
         @partials.language_selection()
     }
@@ -111,6 +111,7 @@
     @viewsHelpers.mainContentHeader(contentHeader = contentHeader.get)
 }
 }
+
 
 @getHelpForm = {
 @if(noGetHelp) {

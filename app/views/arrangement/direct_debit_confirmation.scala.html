@@ -55,10 +55,9 @@
 @main(
     title = Messages("ssttp.arrangement.direct-debit.confirmation.title"),
     googleAnalyticsCalls = Seq(gaCheckoutCode.body),
-    loggedIn = loggedIn
+    loggedIn = loggedIn,
+    backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
 ) {
-    <a class="link-back" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.calculator.form.back")</a>
-
     <h1 class="heading-xlarge">@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
 
     @direct_debit_details(directDebit)

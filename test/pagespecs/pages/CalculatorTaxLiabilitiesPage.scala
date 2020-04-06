@@ -61,8 +61,7 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
       }
 
       private val mainTextEnglish =
-        """Back
-          |Your Self Assessment tax bill is £4,900.00
+        """Your Self Assessment tax bill is £4,900.00
           |Self Assessment statement
           |Due 25 November 2019
           |First payment on account for tax year 2018 to 2019
@@ -76,8 +75,7 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
         """.stripMargin
 
       private val mainTextWelsh =
-        """Yn ôl
-          |Crynodeb o’ch cyfrif Hunanasesiad £4,900.00
+        """Crynodeb o’ch cyfrif Hunanasesiad £4,900.00
           |Dadansoddiad Hunanasesiad
           |Due 25 November 2019
           |Taliad cyntaf ar gyfrif for tax year 2018 to 2019

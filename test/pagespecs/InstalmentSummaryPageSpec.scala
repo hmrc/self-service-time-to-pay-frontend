@@ -22,7 +22,7 @@ import testsupport.stubs._
 
 class InstalmentSummaryPageSpec extends ItSpec {
 
-  def beginJourney() = {
+  def beginJourney(): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -32,7 +32,7 @@ class InstalmentSummaryPageSpec extends ItSpec {
     taxLiabilitiesPage.clickOnStartNowButton()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
-    monthlyPaymentAmountPage.enterAmout("2450")
+    monthlyPaymentAmountPage.enterAmount("2450")
     CalculatorStub.generateSchedule
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.selectAnOption()
@@ -52,6 +52,11 @@ class InstalmentSummaryPageSpec extends ItSpec {
     instalmentSummaryPage.clickOnEnglishLink()
 
     instalmentSummaryPage.assertPageIsDisplayed(English)
+  }
+
+  "back button" in {
+    beginJourney()
+    instalmentSummaryPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()}")
   }
 
   "change monthly instalments" in {

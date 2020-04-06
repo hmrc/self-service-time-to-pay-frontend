@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
-import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
@@ -32,18 +31,18 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
   }
 
-  def clickChangeButton() = {
+  def clickChangeButton(): Unit = {
     val button = xpath("/html/body/main/div[2]/article/div/dl[1]/div/dd[2]/a")
     click on button
   }
 
-  def clickContinue() = {
+  def clickContinue(): Unit = {
     val button = id("continue_button")
     click on button
   }
@@ -69,8 +68,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
       }
 
       private val mainTextEnglish =
-        """Back
-          |Check your Direct Debit details
+        """Check your Direct Debit details
           |Account name
           |Mr John Campbell
           |Change
@@ -88,8 +86,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |Continue
         """.stripMargin
       private val mainTextWelsh =
-        """Yn ôl
-          |Gwiriwch fanylion eich Debyd Uniongyrchol
+        """Gwiriwch fanylion eich Debyd Uniongyrchol
           |Enw’r cyfrif
           |Mr John Campbell
           |Newid
