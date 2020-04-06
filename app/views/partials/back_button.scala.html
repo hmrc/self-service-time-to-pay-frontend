@@ -20,9 +20,9 @@
 
 
 @(backButtonUrl: play.api.mvc.Call)(implicit messages: Messages)
-<p>
+<div class="pull-left">
  @Link.toInternalPage(
-  id      = Some("back"),
+  id      = Some("back-link"),
   url     = s"$backButtonUrl",
   value   = Some(messages("ssttp.common.back"))).toHtml
-</p>
+</div>

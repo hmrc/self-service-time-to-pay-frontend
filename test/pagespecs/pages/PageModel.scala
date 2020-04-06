@@ -67,7 +67,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def readGlobalHeaderText(): String = id("proposition-menu").element.text
 
-  def backButtonHref: Option[String] = find(IdQuery("back")).fold(Option.empty[String])(e => e.attribute("href"))
+  def backButtonHref: Option[String] = find(IdQuery("back-link")).fold(Option.empty[String])(e => e.attribute("href"))
 
   def readPath(): String = new java.net.URL(webDriver.getCurrentUrl).getPath
 
