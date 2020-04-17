@@ -38,9 +38,17 @@ class AuthorisedSaUserAction @Inject() (
     val result =
       if (request.hasActiveSaEnrolment &&
         request.confidenceLevel >= ConfidenceLevel.L200 &&
-        request.maybeUtr.isDefined)
+        request.maybeUtr.isDefined) {
+
+        // START diagnostics for OPS-4481 - remove if that ticket is done
+        if (request.hasActivatedSaEnrolment)
+          Logger.info(s"utr [${request.maybeUtr}] has an activated sa enrolment.")
+        else
+          Logger.warn(s"utr [${request.maybeUtr}] does not have an activated sa enrolment.")
+        // END diagnostics for OPS-4481 - remove if that ticket is done
+
         Right(new AuthorisedSaUserRequest[A](request, request.maybeUtr.get))
-      else {
+      } else {
         Logger.info(
           s"""
            |Authorisation failed:
