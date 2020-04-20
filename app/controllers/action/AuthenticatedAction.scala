@@ -16,19 +16,16 @@
 
 package controllers.action
 
+import _root_.controllers.UnhappyPathResponses
 import com.google.inject.Inject
 import config.ViewConfig
-import _root_.controllers.UnhappyPathResponses
 import play.api.Logger
 import play.api.mvc.Results._
 import play.api.mvc._
-import uk.gov.hmrc.auth.core
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments, _}
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,6 +36,10 @@ final class AuthenticatedRequest[A](val request:         Request[A],
 ) extends WrappedRequest[A](request) {
 
   lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.exists(_.key == "IR-SA")
+
+  // START diagnostics for OPS-4481 - remove if that ticket is done
+  lazy val hasActivatedSaEnrolment: Boolean = enrolments.enrolments.exists(e => e.key == "IR-SA" && e.isActivated)
+  // END diagnostics for OPS-4481 - remove if that ticket is done
 }
 
 class AuthenticatedAction @Inject() (
