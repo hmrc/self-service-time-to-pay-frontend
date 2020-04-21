@@ -27,13 +27,7 @@ object DirectDebitStub extends Matchers {
 
   def getBank(port: Int, sortCode: String, accountNumber: String): StubMapping =
     stubFor(
-      get(urlPathEqualTo(s"/direct-debit/bank"))
-        .withQueryParam("sortCode", equalTo(
-          sortCode.replace("-", "")
-        ))
-        .withQueryParam("accountNumber", equalTo(
-          accountNumber
-        ))
+      post(urlPathEqualTo(s"/direct-debit/bank")).withRequestBody(equalToJson("{\"sortCode\":\"123456\", \"accountNumber\":\"12345678\"}"))
         .willReturn(
           aResponse()
             .withStatus(200)

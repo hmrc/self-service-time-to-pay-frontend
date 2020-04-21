@@ -59,8 +59,8 @@ class DirectDebitConnector @Inject() (
    */
   def getBank(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[Option[BankDetails]] = {
     JourneyLogger.info(s"DirectDebitConnector.getBank")
-    val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
-    httpClient.GET[Option[BankDetails]](s"$baseUrl/direct-debit/bank?$queryString")
+    val bankDetailsRequest = BankDetailsRequest(sortCode, accountNumber)
+    httpClient.POST[Option[BankDetailsRequest], Option[BankDetails]](s"$baseUrl/direct-debit/bank", Some(bankDetailsRequest))
       .recover {
         case e: Exception =>
           JourneyLogger.info(s"DirectDebitConnector.getBank: Error, $e")

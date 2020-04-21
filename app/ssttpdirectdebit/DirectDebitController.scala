@@ -138,6 +138,7 @@ class DirectDebitController @Inject() (
         validFormData => {
 
           for {
+            //TODO this should just be validate bank and return a boolean
             bankDetails <- directDebitConnector.getBank(validFormData.sortCode, validFormData.accountNumber.toString)
             result <- bankDetails match {
               case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
