@@ -34,12 +34,7 @@ final class AuthenticatedRequest[A](val request:         Request[A],
                                     val confidenceLevel: ConfidenceLevel,
                                     val maybeUtr:        Option[SaUtr]
 ) extends WrappedRequest[A](request) {
-
-  lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.exists(_.key == "IR-SA")
-
-  // START diagnostics for OPS-4481 - remove if that ticket is done
-  lazy val hasActivatedSaEnrolment: Boolean = enrolments.enrolments.exists(e => e.key == "IR-SA" && e.isActivated)
-  // END diagnostics for OPS-4481 - remove if that ticket is done
+  lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.exists(e => e.key == "IR-SA" && e.isActivated)
 }
 
 class AuthenticatedAction @Inject() (

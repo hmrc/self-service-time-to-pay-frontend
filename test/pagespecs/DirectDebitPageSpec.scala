@@ -17,10 +17,10 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import testsupport.{AccountName, ItSpec}
-import testsupport._
 import testsupport.stubs._
-import testsupport.testdata.{DirectDebitTd, TdAll}
+import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.TdAll.saUtr
+import testsupport.{AccountName, ItSpec, _}
 
 class DirectDebitPageSpec extends ItSpec {
 
@@ -102,7 +102,7 @@ class DirectDebitPageSpec extends ItSpec {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.getBanksReturns404BPNotFound(TdAll.Sautr)
+    DirectDebitStub.getBanksReturns404BPNotFound(saUtr)
     directDebitPage.clickContinue()
     directDebitConfirmationPage.assertPageIsDisplayed
   }

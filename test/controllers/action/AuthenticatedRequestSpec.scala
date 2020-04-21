@@ -17,37 +17,42 @@
 package controllers.action
 
 import org.scalatest.WordSpec
+import play.api.test.FakeRequest
 import testsupport.RichMatchers
-import testsupport.testdata.TdAll
+import testsupport.testdata.TdAll.{saEnrolment, unactivatedSaEnrolment}
+import testsupport.testdata.TdRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.Enrolments
 
-// test for diagnostics for OPS-4481 - remove if that ticket is done
 class AuthenticatedRequestSpec extends WordSpec with RichMatchers {
-  "hasActivatedSaEnrolment" should {
+  import TdRequest._
+
+  private val request = FakeRequest()
+    .withSessionId()
+    .withLangEnglish()
+    .withAuthToken()
+    .withAkamaiReputationHeader()
+    .withRequestId()
+    .withSessionId()
+    .withTrueClientIp()
+    .withTrueClientPort()
+    .withDeviceId()
+
+  "hasActiveSaEnrolment" should {
     "return true" when {
       "the SA enrolment exists and is activated" in {
-        val request =
-          new AuthenticatedRequest(
-            TdAll.request, Enrolments(Set(Enrolment("IR-SA", Seq.empty, "Activated", None))), L200, None)
-
-        request.hasActivatedSaEnrolment shouldBe true
+        new AuthenticatedRequest(request, Enrolments(Set(saEnrolment)), L200, None).hasActiveSaEnrolment shouldBe true
       }
     }
 
     "return false" when {
       "the SA enrolment exists and is not activated" in {
-        val request =
-          new AuthenticatedRequest(
-            TdAll.request, Enrolments(Set(Enrolment("IR-SA", Seq.empty, "Not Activated", None))), L200, None)
-
-        request.hasActivatedSaEnrolment shouldBe false
+        new AuthenticatedRequest(
+          request, Enrolments(Set(unactivatedSaEnrolment)), L200, None).hasActiveSaEnrolment shouldBe false
       }
 
       "the SA enrolment does not exist" in {
-        val request = new AuthenticatedRequest(TdAll.request, Enrolments(Set.empty), L200, None)
-
-        request.hasActivatedSaEnrolment shouldBe false
+        new AuthenticatedRequest(request, Enrolments(Set.empty), L200, None).hasActiveSaEnrolment shouldBe false
       }
     }
   }

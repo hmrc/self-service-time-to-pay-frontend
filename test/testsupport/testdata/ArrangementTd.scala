@@ -15,46 +15,54 @@
  */
 
 package testsupport.testdata
-import TdAll._
-import CalculatorTd._
+
+import play.api.libs.json.JsObject
 import testsupport.JsonSyntax._
-import uk.gov.hmrc.selfservicetimetopay.models._
+import testsupport.testdata.CalculatorTd._
+import testsupport.testdata.TdAll._
 
 object ArrangementTd {
-
-  val arrangementDayOfMonth = new ArrangementDayOfMonth(dayOfMonth = 4)
-
-  val arrangementDayOfMonthJson =
-    //language=Json
-    """{
-     "dayOfMonth": 4
-     }""".asJson
-
-  val arrangementDirectDebit = new ArrangementDirectDebit(
-    accountName   = "Mr John Campbell",
-    sortCode      = "12-34-56",
-    accountNumber = "12345678"
-  )
-
-  val arrangementDirectDebitJson =
-    //language=Json
-    """{
-    "accountName": "Mr John Campbell",
-     "sortCode": "12-34-56",
-     "accountNumber": "12345678"
-    }""".asJson
-
-  val tTPArrangement = new TTPArrangement(paymentPlanReference = "12345678",
-                                          directDebitReference = "87654321",
-                                          taxpayer             = taxpayer,
-                                          schedule             = calculatorPaymentSchedule)
-
-  val tTPArrangementJson =
+  val tTPArrangementJson: JsObject =
     s"""{
-    "paymentPlanReference": "12345678",
-     "directDebitReference": "87654321",
-     "taxpayer": ${taxpayerJson},
-     "schedule": ${calculatorPaymentScheduleJson}
-    }""".asJson
-
+          "paymentPlanReference": "12345678",
+          "directDebitReference": "87654321",
+          "taxpayer": {
+            "customerName": "Mr John Campbell",
+            "addresses": [
+              {
+               "addressLine1" : "Big building",
+               "addressLine2" : "Barington Road",
+               "postcode" : "BN12 4XL"
+              }
+            ],
+            "selfAssessment": {
+              "utr": "$utr",
+              "communicationPreferences": {
+                 "welshLanguageIndicator": false,
+                 "audioIndicator": false,
+                 "largePrintIndicator": false,
+                 "brailleIndicator": false
+              },
+              "debits": [
+                $debit1Json,
+                $debit2Json
+              ],
+              "returns": [
+                {
+                  "taxYearEnd": "2020-04-05",
+                  "issuedDate": "2019-11-10",
+                  "dueDate": "2019-08-15",
+                  "receivedDate": "2018-03-09"
+                },
+                {
+                  "taxYearEnd": "2018-04-05",
+                  "issuedDate": "2017-02-15",
+                  "dueDate": "2018-01-31",
+                  "receivedDate": "2018-03-09"
+                }
+              ]
+            }
+          },
+          "schedule": $calculatorPaymentScheduleJson
+        }""".asJson
 }

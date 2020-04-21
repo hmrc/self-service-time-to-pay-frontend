@@ -20,6 +20,7 @@ import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor4}
 import pagespecs.pages.BasePage
 import testsupport.ItSpec
 import testsupport.stubs._
+import testsupport.testdata.TdAll.unactivatedSaEnrolment
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L100
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -81,6 +82,14 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     }
     "show not-enrolled page no sa enrolments" in {
       AuthStub.authorise(allEnrolments = Some(Set()))
+      TaxpayerStub.getTaxpayer()
+      GgStub.signInPage(port)
+      startPage.open()
+      startPage.clickOnStartNowButton()
+      notEnrolledPage.assertPageIsDisplayed
+    }
+    "show not-enrolled page when the user has no activated sa enrolments" in {
+      AuthStub.authorise(allEnrolments = Some(Set(unactivatedSaEnrolment)))
       TaxpayerStub.getTaxpayer()
       GgStub.signInPage(port)
       startPage.open()

@@ -22,19 +22,19 @@ import play.api.inject.Injector
 import play.api.test.FakeRequest
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub
-import testsupport.testdata.TdAll
+import testsupport.testdata.TdAll.saUtr
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitBank, DirectDebitInstruction}
 
 class DirectDebitConnectorSpec extends ItSpec {
   private def injector: Injector = app.injector
 
-  protected def connector: DirectDebitConnector = injector.instanceOf[DirectDebitConnector]
+  private def connector: DirectDebitConnector = injector.instanceOf[DirectDebitConnector]
 
   "getBanks should return a DirectDebitBank" in {
     DirectDebitStub.getBanksIsSuccessful
 
-    connector.getBanks(TdAll.Sautr)(FakeRequest()).futureValue shouldBe
+    connector.getBanks(saUtr)(FakeRequest()).futureValue shouldBe
       DirectDebitBank(
         "2019-04-05",
         List(DirectDebitInstruction(
@@ -48,17 +48,17 @@ class DirectDebitConnectorSpec extends ItSpec {
   }
 
   "getBanks should not tolerate a general 404" in {
-    DirectDebitStub.getBanksReturns404(TdAll.Sautr)
+    DirectDebitStub.getBanksReturns404(saUtr)
 
     intercept[Exception] {
-      connector.getBanks(TdAll.Sautr)(FakeRequest()).futureValue
+      connector.getBanks(saUtr)(FakeRequest()).futureValue
     }.getCause.isInstanceOf[NotFoundException] shouldBe true
   }
 
   "getBanks should tolerate a 404 BP Not Found error" in {
-    DirectDebitStub.getBanksReturns404BPNotFound(TdAll.Sautr)
+    DirectDebitStub.getBanksReturns404BPNotFound(saUtr)
 
-    connector.getBanks(TdAll.Sautr)(FakeRequest()).futureValue shouldBe DirectDebitBank.none
+    connector.getBanks(saUtr)(FakeRequest()).futureValue shouldBe DirectDebitBank.none
   }
 }
 

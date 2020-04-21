@@ -20,48 +20,33 @@ import com.google.inject.Inject
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
 import uk.gov.hmrc.domain.SaUtr
 
 import scala.concurrent.{ExecutionContext, Future}
 
-final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A],
-                                       val utr:     SaUtr
-) extends WrappedRequest[A](request)
+final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val utr: SaUtr)
+  extends WrappedRequest[A](request)
 
-class AuthorisedSaUserAction @Inject() (
-    cc: MessagesControllerComponents
-) extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
+class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
+  extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
 
-  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
-
-    val result =
-      if (request.hasActiveSaEnrolment &&
-        request.confidenceLevel >= ConfidenceLevel.L200 &&
-        request.maybeUtr.isDefined) {
-
-        // START diagnostics for OPS-4481 - remove if that ticket is done
-        if (request.hasActivatedSaEnrolment)
-          Logger.info(s"utr [${request.maybeUtr}] has an activated sa enrolment.")
-        else
-          Logger.warn(s"utr [${request.maybeUtr}] does not have an activated sa enrolment.")
-        // END diagnostics for OPS-4481 - remove if that ticket is done
-
+  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] =
+    Future.successful(
+      if (request.hasActiveSaEnrolment && request.confidenceLevel >= L200 && request.maybeUtr.isDefined)
         Right(new AuthorisedSaUserRequest[A](request, request.maybeUtr.get))
-      } else {
+      else {
         Logger.info(
           s"""
-           |Authorisation failed:
-           |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
-           |  [enrolments: ${request.enrolments}]
-           |  [utr: ${request.maybeUtr}]
-           |  [ConfidenceLevel: ${request.confidenceLevel}]
-           |  """.stripMargin)
+             |Authorisation failed:
+             |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
+             |  [enrolments: ${request.enrolments}]
+             |  [utr: ${request.maybeUtr}]
+             |  [ConfidenceLevel: ${request.confidenceLevel}]
+             |  """.stripMargin)
         Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()))
       }
-    Future.successful(result)
-
-  }
+    )
 
   override protected def executionContext: ExecutionContext = cc.executionContext
 }
