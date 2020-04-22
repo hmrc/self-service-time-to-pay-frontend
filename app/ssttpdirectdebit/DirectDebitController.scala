@@ -137,26 +137,19 @@ class DirectDebitController @Inject() (
                                   submission.schedule.get, formWithErrors))),
         validFormData => {
 
-          for {
-            //TODO this should just be validate bank and return a boolean
-            // refactor this so we use a boolean and these issues will go away
-            bankDetails <- directDebitConnector.getBank(validFormData.sortCode, validFormData.accountNumber.toString)
-            result <- bankDetails match {
-              case true => checkBankDetails(sortCode      = validFormData.sortCode, accountNumber = validFormData.accountNumber, validFormData.accountName)
-              case false =>
-                Future.successful(BadRequest(views.direct_debit_form(
-                  submission.taxpayer.selfAssessment.debits,
-                  submission.schedule.get,
-                  directDebitFormWithBankAccountError.copy(data = Map(
-                    "accountName" -> validFormData.accountName,
-                    "accountNumber" -> validFormData.accountNumber,
-                    "sortCode" -> validFormData.sortCode)
-                  ),
-                  isBankError = true
-                )))
-            }
-          } yield result
-
+          directDebitConnector.validateBank(validFormData.sortCode, validFormData.accountNumber.toString).flatMap { isValid =>
+            if (isValid) checkBankDetails(sortCode = validFormData.sortCode, accountNumber = validFormData.accountNumber, validFormData.accountName)
+            else
+              Future.successful(BadRequest(views.direct_debit_form(
+              submission.taxpayer.selfAssessment.debits,
+              submission.schedule.get,
+              directDebitFormWithBankAccountError.copy(data = Map(
+                "accountName" -> validFormData.accountName,
+                "accountNumber" -> validFormData.accountNumber,
+                "sortCode" -> validFormData.sortCode)
+              ),
+              isBankError = true)))
+          }
         }
       )
     }

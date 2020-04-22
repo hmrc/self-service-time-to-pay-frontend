@@ -57,7 +57,7 @@ class DirectDebitConnector @Inject() (
   /**
    * Checks if the given bank details are valid by checking against the Bank Account Reputation Service via Direct Debit service
    */
-  def getBank(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[Boolean] = {
+  def validateBank(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[Boolean] = {
     JourneyLogger.info(s"DirectDebitConnector.validateBank")
     val bankDetailsRequest = BankDetailsRequest(sortCode, accountNumber)
     httpClient.POST[BankDetailsRequest, Boolean](s"$baseUrl/direct-debit/bank", bankDetailsRequest)
