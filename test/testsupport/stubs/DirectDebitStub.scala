@@ -25,7 +25,7 @@ import timetopaytaxpayer.cor.model.SaUtr
 
 object DirectDebitStub extends Matchers {
 
-  def getBank(port: Int, sortCode: String, accountNumber: String): StubMapping =
+  def validateBank(port: Int, sortCode: String, accountNumber: String): StubMapping =
     stubFor(
       post(urlPathEqualTo(s"/direct-debit/bank")).withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
         .willReturn(
@@ -35,7 +35,7 @@ object DirectDebitStub extends Matchers {
         )
     )
 
-  def getBankFail(port: Int, sortCode: String, accountNumber: String): StubMapping =
+  def validateBankFail(port: Int, sortCode: String, accountNumber: String): StubMapping =
     stubFor(
       post(urlPathEqualTo(s"/direct-debit/bank")).withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
         .willReturn(

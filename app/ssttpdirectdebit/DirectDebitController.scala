@@ -138,17 +138,17 @@ class DirectDebitController @Inject() (
         validFormData => {
 
           directDebitConnector.validateBank(validFormData.sortCode, validFormData.accountNumber.toString).flatMap { isValid =>
-            if (isValid) checkBankDetails(sortCode = validFormData.sortCode, accountNumber = validFormData.accountNumber, validFormData.accountName)
+            if (isValid) checkBankDetails(sortCode      = validFormData.sortCode, accountNumber = validFormData.accountNumber, validFormData.accountName)
             else
               Future.successful(BadRequest(views.direct_debit_form(
-              submission.taxpayer.selfAssessment.debits,
-              submission.schedule.get,
-              directDebitFormWithBankAccountError.copy(data = Map(
-                "accountName" -> validFormData.accountName,
-                "accountNumber" -> validFormData.accountNumber,
-                "sortCode" -> validFormData.sortCode)
-              ),
-              isBankError = true)))
+                submission.taxpayer.selfAssessment.debits,
+                submission.schedule.get,
+                directDebitFormWithBankAccountError.copy(data = Map(
+                  "accountName" -> validFormData.accountName,
+                  "accountNumber" -> validFormData.accountNumber,
+                  "sortCode" -> validFormData.sortCode)
+                ),
+                isBankError = true)))
           }
         }
       )

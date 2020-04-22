@@ -42,7 +42,7 @@ class TermsAndConditionsPageSpec extends ItSpec {
     instalmentSummarySelectDatePage.clickContinue()
     instalmentSummaryPage.clickContinue()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.getBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.validateBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBanksIsSuccessful
     directDebitPage.clickContinue()
     directDebitConfirmationPage.assertPageIsDisplayed

@@ -63,7 +63,7 @@ class DirectDebitConnector @Inject() (
     httpClient.POST[BankDetailsRequest, Boolean](s"$baseUrl/direct-debit/bank", bankDetailsRequest)
       .recover {
         case e: Exception =>
-          JourneyLogger.info(s"DirectDebitConnector.getBank: Error, $e")
+          JourneyLogger.info(s"DirectDebitConnector.validateBank: Error, $e")
           Logger.error("Direct debit returned unexpected response", e)
           throw new RuntimeException("Direct debit returned unexpected response")
       }
