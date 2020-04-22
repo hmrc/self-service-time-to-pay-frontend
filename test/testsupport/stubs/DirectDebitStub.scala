@@ -27,11 +27,23 @@ object DirectDebitStub extends Matchers {
 
   def getBank(port: Int, sortCode: String, accountNumber: String): StubMapping =
     stubFor(
-      post(urlPathEqualTo(s"/direct-debit/bank")).withRequestBody(equalToJson("{\"sortCode\":\"123456\", \"accountNumber\":\"12345678\"}"))
+      post(urlPathEqualTo(s"/direct-debit/bank")).withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
         .willReturn(
           aResponse()
             .withStatus(200)
-            .withBody(prettyPrint(DirectDebitTd.bankDetailsJson))))
+            .withBody("true")
+        )
+    )
+
+  def getBankFail(port: Int, sortCode: String, accountNumber: String): StubMapping =
+    stubFor(
+      post(urlPathEqualTo(s"/direct-debit/bank")).withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody("false")
+        )
+    )
 
   def getBanksIsSuccessful: StubMapping =
     stubFor(

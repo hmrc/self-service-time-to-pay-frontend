@@ -139,10 +139,11 @@ class DirectDebitController @Inject() (
 
           for {
             //TODO this should just be validate bank and return a boolean
+            // refactor this so we use a boolean and these issues will go away
             bankDetails <- directDebitConnector.getBank(validFormData.sortCode, validFormData.accountNumber.toString)
             result <- bankDetails match {
-              case Some(bankDetails) => checkBankDetails(bankDetails, validFormData.accountName)
-              case None =>
+              case true => checkBankDetails(sortCode      = validFormData.sortCode, accountNumber = validFormData.accountNumber, validFormData.accountName)
+              case false =>
                 Future.successful(BadRequest(views.direct_debit_form(
                   submission.taxpayer.selfAssessment.debits,
                   submission.schedule.get,
@@ -166,7 +167,7 @@ class DirectDebitController @Inject() (
    * bank details to see if they already exist. If it does, return existing bank details
    * otherwise return user entered bank details.
    */
-  private def checkBankDetails(bankDetails: BankDetails, accName: String)(implicit request: Request[_]) = {
+  private def checkBankDetails(sortCode: String, accountNumber: String, accName: String)(implicit request: Request[_]) = {
     submissionService.getJourney.flatMap { journey =>
 
       val taxpayer = journey.maybeTaxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
@@ -176,7 +177,7 @@ class DirectDebitController @Inject() (
         directDebitBank =>
           {
             val instructions: Seq[DirectDebitInstruction] = directDebitBank.directDebitInstruction.filter(p => {
-              p.accountNumber.get.equalsIgnoreCase(bankDetails.accountNumber.get) && p.sortCode.get.equals(bankDetails.sortCode.get)
+              p.accountNumber.get.equalsIgnoreCase(accountNumber) && p.sortCode.get.equals(sortCode)
             })
             val bankDetailsToSave = instructions match {
               case instruction :: _ =>
@@ -186,7 +187,7 @@ class DirectDebitController @Inject() (
                             accountNumber = instruction.accountNumber,
                             sortCode      = instruction.sortCode,
                             accountName   = Some(accName))
-              case Nil => bankDetails.copy(accountName = Some(accName))
+              case Nil => BankDetails(sortCode      = Some(sortCode), accountNumber = Some(accountNumber), accountName = Some(accName))
             }
             submissionService.saveJourney(journey.copy(bankDetails = Some(bankDetailsToSave))).map {
               _ => Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())

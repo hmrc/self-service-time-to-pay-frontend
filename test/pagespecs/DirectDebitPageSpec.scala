@@ -84,10 +84,14 @@ class DirectDebitPageSpec extends ItSpec {
   "enter invalid bank account " in {
     beginJourney()
     directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
+    DirectDebitStub.getBankFail(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(InvalidBankDetails())
 
   }
+  val sortCode = "12-34-56"
+  val accountNumber = "12345678"
+  val accountName = "Mr John Campbell"
 
   "enter valid bank account " in {
     beginJourney()
