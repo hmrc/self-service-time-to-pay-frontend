@@ -27,7 +27,7 @@ object DirectDebitStub extends Matchers {
 
   def validateBank(port: Int, sortCode: String, accountNumber: String): StubMapping =
     stubFor(
-      post(urlPathEqualTo(s"/direct-debit/bank")).withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
+      post(urlPathEqualTo(s"/direct-debit/validate-bank-account")).withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
         .willReturn(
           aResponse()
             .withStatus(200)
@@ -37,7 +37,7 @@ object DirectDebitStub extends Matchers {
 
   def validateBankFail(port: Int, sortCode: String, accountNumber: String): StubMapping =
     stubFor(
-      post(urlPathEqualTo(s"/direct-debit/bank")).withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
+      post(urlPathEqualTo(s"/direct-debit/validate-bank-account")).withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
         .willReturn(
           aResponse()
             .withStatus(200)

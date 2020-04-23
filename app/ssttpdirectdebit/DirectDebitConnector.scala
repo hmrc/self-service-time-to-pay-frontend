@@ -60,7 +60,7 @@ class DirectDebitConnector @Inject() (
   def validateBank(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[Boolean] = {
     JourneyLogger.info(s"DirectDebitConnector.validateBank")
     val bankDetailsRequest = BankDetailsRequest(sortCode, accountNumber)
-    httpClient.POST[BankDetailsRequest, Boolean](s"$baseUrl/direct-debit/bank", bankDetailsRequest)
+    httpClient.POST[BankDetailsRequest, Boolean](s"$baseUrl/direct-debit/validate-bank-account", bankDetailsRequest)
       .recover {
         case e: Exception =>
           JourneyLogger.info(s"DirectDebitConnector.validateBank: Error, $e")

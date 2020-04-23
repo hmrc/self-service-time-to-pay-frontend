@@ -137,7 +137,7 @@ class DirectDebitController @Inject() (
                                   submission.schedule.get, formWithErrors))),
         validFormData => {
 
-          directDebitConnector.validateBank(validFormData.sortCode, validFormData.accountNumber.toString).flatMap { isValid =>
+          directDebitConnector.validateBank(validFormData.sortCode, validFormData.accountNumber).flatMap { isValid =>
             if (isValid) checkBankDetails(sortCode      = validFormData.sortCode, accountNumber = validFormData.accountNumber, validFormData.accountName)
             else
               Future.successful(BadRequest(views.direct_debit_form(
