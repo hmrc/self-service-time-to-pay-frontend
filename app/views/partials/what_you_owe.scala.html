@@ -16,7 +16,6 @@
 
 @import timetopaytaxpayer.cor.model.Debit
 @import java.time.format.DateTimeFormatter
-@import partials.{currency, charge_code}
 @import java.util.Locale
 
 @(debits: Seq[Debit], smallFormat:Boolean = false)(implicit messages: play.api.i18n.Messages)
@@ -33,11 +32,11 @@
             <div class="grid-layout__column grid-layout__column--3-4">
                 <div><span class="@if(smallFormat){font-xsmall}else{font-small}">@debit.dueDate.format(formatter)</span></div>
                 <small>
-                    <span class="font-xsmall">@charge_code(debit.originCode, debit.taxYearEnd)</span>
+                    <span class="font-xsmall">@partials.charge_code(debit.originCode, debit.taxYearEnd)</span>
                 </small>
             </div>
             <div class="grid-layout__column grid-layout__column--1-4 align--middle">
-                <p><span class="@if(smallFormat){font-xsmall}else{font-small}">@currency(debit.amount)</span></p>
+                <p><span class="@if(smallFormat){font-xsmall}else{font-small}">@partials.currency(debit.amount)</span></p>
             </div>
         </div>
     }

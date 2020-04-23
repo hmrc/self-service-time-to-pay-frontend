@@ -20,28 +20,17 @@ import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import javax.inject.Inject
-import journey.JourneyService
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpdirectdebit.DirectDebitConnector
-import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AccessibilityController @Inject() (
-    mcc:                  MessagesControllerComponents,
-    directDebitConnector: DirectDebitConnector,
-    as:                   Actions,
-    submissionService:    JourneyService,
-    requestSupport:       RequestSupport,
-    views:                Views,
-    clockProvider:        ClockProvider)(
+    mcc: MessagesControllerComponents, as: Actions, requestSupport: RequestSupport, views: Views)(
     implicit
-    appConfig: AppConfig,
-    ec:        ExecutionContext
-) extends FrontendBaseController(mcc) {
+    appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(mcc) {
 
   import requestSupport._
 

@@ -19,9 +19,9 @@ package testsupport.testdata
 import java.time.LocalDate
 
 import play.api.libs.json.JsObject
-import testsupport.JsonSyntax._
 import timetopaytaxpayer.cor.model._
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
+import testsupport.JsonSyntax._
 
 /**
  * Test Data All

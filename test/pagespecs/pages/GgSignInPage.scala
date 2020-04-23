@@ -16,10 +16,8 @@
 
 package pagespecs.pages
 
-import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import langswitch.Language
 import org.openqa.selenium.WebDriver
-import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 import testsupport.WireMockSupport
@@ -33,6 +31,7 @@ class GgSignInPage(implicit webDriver: WebDriver) extends BasePage(WireMockSuppo
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing{
     readPath() shouldBe path
     tagName("body").element.text shouldBe "Sign in using Government Gateway"
+    ()
   }
 }
 

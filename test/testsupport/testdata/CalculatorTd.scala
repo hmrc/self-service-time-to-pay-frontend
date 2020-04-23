@@ -19,10 +19,10 @@ package testsupport.testdata
 import java.time.LocalDate
 
 import ssttpcalculator.CalculatorPaymentScheduleExt
-import uk.gov.hmrc.selfservicetimetopay.models._
-import testsupport.testdata.TdAll._
 import testsupport.JsonSyntax._
+import testsupport.testdata.TdAll._
 import timetopaycalculator.cor.model.{CalculatorInput, Instalment, PaymentSchedule}
+import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorAmountsDue, CalculatorDuration}
 
 object CalculatorTd {
   val calculatorAmountsDue = new CalculatorAmountsDue(Seq(debit1, debit2))

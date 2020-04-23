@@ -22,7 +22,6 @@ import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger

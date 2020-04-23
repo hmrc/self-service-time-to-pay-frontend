@@ -16,52 +16,40 @@
 
 package testonly
 
-import java.util.UUID
+import java.util.UUID.randomUUID
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import org.joda.time.DateTime
 import play.api.http.HeaderNames
 import play.api.libs.json.{Json, _}
-import play.api.mvc.Session
+import play.api.mvc.{Request, Session}
+import times.ClockProvider
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LoginService @Inject() (
-    httpClient:     HttpClient,
-    servicesConfig: ServicesConfig
-)(implicit ec: ExecutionContext) {
+class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesConfig, clockProvider: ClockProvider)
+  (implicit ec: ExecutionContext) {
 
-  def logIn(tu: TestUser): Future[Session] = for {
+  def logIn(tu: TestUser)(implicit request: Request[_]): Future[Session] = for {
     (at, au, gt) <- callAuthLoginApi(tu)
   } yield buildSession(au, at, gt, tu)
 
-  private def buildSession(
-      authorityUri: AuthorityUri,
-      authToken:    AuthToken,
-      gatewayToken: GatewayToken,
-      tu:           TestUser
-  ) = {
+  private def buildSession(authorityUri: AuthorityUri, authToken: AuthToken, gatewayToken: GatewayToken, user: TestUser)
+    (implicit request: Request[_]) =
     Session(Map(
-      SessionKeys.sessionId -> s"session-${UUID.randomUUID}",
-      SessionKeys.authProvider -> "GGW",
+      SessionKeys.sessionId -> s"session-$randomUUID",
       SessionKeys.userId -> authorityUri.v,
       SessionKeys.authToken -> authToken.v,
-      SessionKeys.lastRequestTimestamp -> DateTime.now.getMillis.toString,
-      SessionKeys.token -> gatewayToken.v,
-      SessionKeys.affinityGroup -> tu.affinityGroup.v,
-      SessionKeys.name -> tu.authorityId.v
-    ))
-  }
+      SessionKeys.lastRequestTimestamp -> clockProvider.getClock.millis().toString))
 
   private lazy val authLoginApiUrl = servicesConfig.baseUrl("auth-login-api")
 
   private def callAuthLoginApi(tu: TestUser): Future[(AuthToken, AuthorityUri, GatewayToken)] = {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val requestBody = loginJson(tu)
     httpClient.POST(s"$authLoginApiUrl/government-gateway/session/login", requestBody).map(r =>
@@ -80,7 +68,6 @@ class LoginService @Inject() (
   }
 
   private def loginJson(tu: TestUser): JsObject = {
-
     val saEnrolment = Json.obj(
       "key" -> "IR-SA",
       "identifiers" -> Json.arr(
@@ -95,7 +82,6 @@ class LoginService @Inject() (
     val enrolments = if (tu.hasSAEnrolment) Json.arr(saEnrolment) else Json.arr()
 
     Json.obj(
-
       "credId" -> tu.authorityId.v,
       "affinityGroup" -> tu.affinityGroup.v,
       "confidenceLevel" -> tu.confidenceLevel,
@@ -113,5 +99,4 @@ class LoginService @Inject() (
     def replace(node: Symbol, newValue: String): JsObject = j.transform((__ \ node).json.put(JsString(newValue))).get
     def replace(node: Symbol, newValue: Int): JsObject = j.transform((__ \ node).json.put(JsNumber(newValue))).get
   }
-
 }

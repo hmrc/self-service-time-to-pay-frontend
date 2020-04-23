@@ -18,7 +18,6 @@
 @import config.AppConfig
 @import java.time.format.DateTimeFormatter
 @import java.util.Locale
-@import partials.charge_code
 
 @(
         debit:Debit,
@@ -31,7 +30,7 @@
 
 @id = @{debit.originCode}
 
-@name = @{charge_code(debit.originCode, debit.taxYearEnd).body.trim}
+@name = @{partials.charge_code(debit.originCode, debit.taxYearEnd).body.trim}
 
 @dueDateDimension = {@appConfig.dueDateDimension}
 

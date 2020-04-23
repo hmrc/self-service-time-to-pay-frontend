@@ -20,22 +20,17 @@ import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import javax.inject._
+import journey.{Journey, JourneyService, Statuses}
 import play.api.Logger
 import play.api.mvc._
 import req.RequestSupport
 import ssttpdirectdebit.DirectDebitForm._
-import journey.{Journey, JourneyService, Statuses}
 import times.ClockProvider
-import timetopaytaxpayer.cor.model
-import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
-import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.HeaderCarrier
+import timetopaytaxpayer.cor.model.Taxpayer
+import uk.gov.hmrc.play.config.AssetsConfig
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
-import uk.gov.hmrc.selfservicetimetopay.modelsFormat._
 import views.Views
-import views.html.arrangement._
-import views.html.core.service_start
 
 import scala.collection.immutable.::
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,12 +44,12 @@ class DirectDebitController @Inject() (
     views:                Views,
     clockProvider:        ClockProvider)(
     implicit
-    appConfig: AppConfig,
-    ec:        ExecutionContext
+    appConfig:    AppConfig,
+    ec:           ExecutionContext,
+    assetsConfig: AssetsConfig
 ) extends FrontendBaseController(mcc) {
 
   import requestSupport._
-  import clockProvider._
 
   def getDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")

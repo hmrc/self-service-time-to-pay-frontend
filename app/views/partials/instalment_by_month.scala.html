@@ -32,7 +32,6 @@
 
 @import timetopaycalculator.cor.model._
 @import _root_.model._
-@import partials.currency
 @import ssttpcalculator.CalculatorPaymentScheduleExt
 
 @(schedule: CalculatorPaymentScheduleExt)(implicit messages: play.api.i18n.Messages)
@@ -48,12 +47,12 @@
       <tr>
         <th scope="col">@Messages("ssttp.calculator.results.month.option.table.total.interest")
           <br><p>@Messages("ssttp.calculator.results.month.option.table.total.interest.base.rate")</p></th>
-        <td class="numeric" scope="col"><p class="align-left">@currency(schedule.schedule.totalInterestCharged)
+        <td class="numeric" scope="col"><p class="align-left">@partials.currency(schedule.schedule.totalInterestCharged)
           <br>@Messages("ssttp.calculator.results.month.option.table.total.interest.hint")</p></td>
       </tr>
       <tr>
         <th  scope="col">@Messages("ssttp.calculator.results.month.option.table.total.paid")</th>
-        <td class="numeric align-left" scope="col"><p class="align-left">@currency(schedule.schedule.totalPayable)</p></td>
+        <td class="numeric align-left" scope="col"><p class="align-left">@partials.currency(schedule.schedule.totalPayable)</p></td>
       </tr>
     </thead>
   </table>
