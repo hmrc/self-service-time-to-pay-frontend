@@ -57,13 +57,13 @@ class DirectDebitConnector @Inject() (
   /**
    * Checks if the given bank details are valid by checking against the Bank Account Reputation Service via Direct Debit service
    */
-  def getBank(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[Option[BankDetails]] = {
-    JourneyLogger.info(s"DirectDebitConnector.getBank")
-    val queryString = s"sortCode=$sortCode&accountNumber=$accountNumber"
-    httpClient.GET[Option[BankDetails]](s"$baseUrl/direct-debit/bank?$queryString")
+  def validateBank(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[Boolean] = {
+    JourneyLogger.info(s"DirectDebitConnector.validateBank")
+    val bankDetailsRequest = BankDetailsRequest(sortCode, accountNumber)
+    httpClient.POST[BankDetailsRequest, Boolean](s"$baseUrl/direct-debit/validate-bank-account", bankDetailsRequest)
       .recover {
         case e: Exception =>
-          JourneyLogger.info(s"DirectDebitConnector.getBank: Error, $e")
+          JourneyLogger.info(s"DirectDebitConnector.validateBank: Error, $e")
           Logger.error("Direct debit returned unexpected response", e)
           throw new RuntimeException("Direct debit returned unexpected response")
       }
