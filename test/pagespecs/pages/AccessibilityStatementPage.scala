@@ -43,6 +43,7 @@ class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
     val nextTab = windowHandles.iterator().next()
 
     switch to window(nextTab)
+    ()
   }
 
   object Expected {

@@ -16,15 +16,14 @@
 
 package controllers.action
 
-import org.scalatest.WordSpec
+import org.scalatest.{Matchers, WordSpec}
 import play.api.test.FakeRequest
-import testsupport.RichMatchers
 import testsupport.testdata.TdAll.{saEnrolment, unactivatedSaEnrolment}
 import testsupport.testdata.TdRequest
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
 import uk.gov.hmrc.auth.core.Enrolments
 
-class AuthenticatedRequestSpec extends WordSpec with RichMatchers {
+class AuthenticatedRequestSpec extends WordSpec with Matchers {
   import TdRequest._
 
   private val request = FakeRequest()

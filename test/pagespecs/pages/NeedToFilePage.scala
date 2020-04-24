@@ -29,6 +29,7 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+    ()
   }
 
   object Expected {

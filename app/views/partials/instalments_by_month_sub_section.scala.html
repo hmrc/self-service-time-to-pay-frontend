@@ -16,7 +16,6 @@
 
 @import timetopaycalculator.cor.model._
 @import _root_.model.PaymentScheduleSupport._
-@import partials.instalment_by_month
 @import ssttpcalculator.CalculatorPaymentScheduleExt
 
 @(
@@ -29,7 +28,7 @@
   <summary onclick="click"><span class="summary">@Messages("ssttp.calculator.results.month.greater-then-six.header")</span></summary>
   <div>
     <p>@Messages("ssttp.calculator.results.month.greater-then-six.intro")</p>
-    @monthsToSchedule.map { greaterThenSix: CalculatorPaymentScheduleExt => @instalment_by_month(greaterThenSix)}
+    @monthsToSchedule.map { greaterThenSix: CalculatorPaymentScheduleExt => @partials.instalment_by_month(greaterThenSix)}
   </div>
 </details>
 <script type="text/javascript">

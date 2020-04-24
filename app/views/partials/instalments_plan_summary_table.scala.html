@@ -14,12 +14,10 @@
  * limitations under the License.
  *@
 
-@import partials.currency
 @import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth}
 @import timetopaytaxpayer.cor.model.Debit
 @import timetopaycalculator.cor.model._
 @import _root_.model._
-@import partials._
 @import model._
 
 @(
@@ -37,7 +35,7 @@
       @Messages("ssttp.arrangement.instalment-summary.up-front-payment")
       </dt>
       <dd class="app-check-your-answers__answer">
-      @currency(paymentSchedule.getUpFrontPayment)
+      @partials.currency(paymentSchedule.getUpFrontPayment)
       </dd>
       <dd class="app-check-your-answers__change _action" onclick="change()">
         <a href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()" title='@Messages("ssttp.arrangement.instalment-summary-table.upfront.payments.link-title")'>@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
@@ -71,12 +69,12 @@
     @{
       paymentSchedule.instalments.map { instalment => <div class="app-check-your-answers__contents">
       <dt class="app-check-your-answers__question no_borderline">{instalment.getDateInReadableFormat}</dt>
-      <dd class="app-check-your-answers__answer no_borderline">{currency(instalment.amount)}</dd>
+      <dd class="app-check-your-answers__answer no_borderline">{partials.currency(instalment.amount)}</dd>
       <dd class="app-check-your-answers__change no_borderline"></dd></div>}
       }
       <div class="app-check-your-answers__contents">
           <dt class="app-check-your-answers__question no_borderline">
-              <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint", currency(paymentSchedule.totalInterestCharged))</p>
+              <p class="small">@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint", partials.currency(paymentSchedule.totalInterestCharged))</p>
               <br>
           </dt>
           <dd class="app-check-your-answers__answer no_borderline">
@@ -92,7 +90,7 @@
       @Messages("ssttp.arrangement.instalment-summary-table.total-repayment")
       </dt>
       <dd class="app-check-your-answers__answer">
-      @currency(paymentSchedule.totalPayable)
+      @partials.currency(paymentSchedule.totalPayable)
       </dd>
       <dd class="app-check-your-answers__change">
       </dd>

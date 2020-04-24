@@ -43,6 +43,7 @@ abstract class CommonPage(implicit webDriver: WebDriver) extends RichMatchers wi
   final def assertCommonContentIsDisplayed(): Unit = probing {
     readFooterText().text shouldBe expectedFooterTextEnglish
     readGetHelpElement().value.text shouldBe "Get help with this page."
+    ()
   }
 
   def readGetHelpElement(): Option[Element] = id("get-help-action").findElement

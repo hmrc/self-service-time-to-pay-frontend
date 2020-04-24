@@ -17,6 +17,7 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
+import org.scalatest.Ignore
 import testsupport.ItSpec
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
 

@@ -22,12 +22,11 @@ import play.api.mvc.Request
 import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class CalculatorConnector @Inject() (servicesConfig: ServicesConfig, httpClient: HttpClient) {
+class CalculatorConnector @Inject() (servicesConfig: ServicesConfig, httpClient: HttpClient)(implicit ec: ExecutionContext) {
 
   import req.RequestSupport._
 

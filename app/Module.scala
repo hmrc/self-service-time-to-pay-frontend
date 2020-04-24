@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, LocalDateTime, ZoneId, ZoneOffset}
-
 import com.google.inject.{AbstractModule, Provides, Singleton}
-import play.api.mvc.Request
 import times.ClockProvider
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
-import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 class Module extends AbstractModule {
-
   def configure(): Unit = ()
 
   @Provides
@@ -37,6 +30,5 @@ class Module extends AbstractModule {
   @Provides
   @Singleton
   def clockProvider(): ClockProvider = new ClockProvider
-
 }
 

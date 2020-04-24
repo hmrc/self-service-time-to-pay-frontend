@@ -15,7 +15,6 @@
  *@
 
 @import timetopaytaxpayer.cor.model.Taxpayer
-@import partials.gaAmountDueProduct
 @import java.time.LocalDate
 @import timetopaytaxpayer.cor.model.Debit
 
@@ -38,7 +37,7 @@
 @regularPaymentMetric = {@appConfig.regularPaymentMetric}
 @monthlyDueDateMetric = {@appConfig.monthlyDueDateMetric}
 
-@Html(debits.zipWithIndex.map(a => gaAmountDueProduct(a._1, a._2)).seq.mkString)
+@Html(debits.zipWithIndex.map(a => partials.gaAmountDueProduct(a._1, a._2)).seq.mkString)
 
 ga('ec:setAction','checkout',
     { 'step': @step,

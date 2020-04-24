@@ -20,7 +20,6 @@
 
 @import java.time.format.DateTimeFormatter
 @import java.time.LocalDate
-@import partials.currency
 @import java.util.Locale
 @import language.Dates._
 
@@ -45,7 +44,7 @@
             <tr>
                 <td><div class="bold">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</div>
                     <p class="small">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p></td>
-                <td>@currency(schedule.initialPayment)</td>
+                <td>@partials.currency(schedule.initialPayment)</td>
             </tr>
         }
         </tbody>
@@ -59,18 +58,18 @@
                 <td>
                     <div><strong class="bold">@instalment.paymentDate.format(formatter)</strong></div>
                     @if(instalment == schedule.instalments.last) {
-                        @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest", currency(schedule.totalInterestCharged))
+                        @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest", partials.currency(schedule.totalInterestCharged))
 
                     }
                 </td>
-                <td> @currency(instalment.amount)
+                <td> @partials.currency(instalment.amount)
                 </td>
             </tr>
         }
 }
 <tr>
     <td><strong class="bold">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment")</strong></td>
-    <td>@currency(schedule.totalPayable)</td>
+    <td>@partials.currency(schedule.totalPayable)</td>
 </tr>
 
 <tr>

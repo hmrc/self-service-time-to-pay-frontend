@@ -16,8 +16,7 @@
 
 package bankholidays
 
-import org.joda.time.LocalTime
-import play.api.libs.json.{Format, Json, OFormat, Reads}
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.time.workingdays.{BankHoliday, BankHolidaySet}
 import util.ResourceReader
 
