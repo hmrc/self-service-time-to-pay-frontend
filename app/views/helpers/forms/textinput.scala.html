@@ -14,22 +14,23 @@
  * limitations under the License.
  *@
 
-@(field: Field, args: (Symbol, Any)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
+@(field: Field, args: (Symbol, Any)*)(implicit messages:play.api.i18n.Messages, lang: Lang = Lang("en"))
 @import helpers.forms.fieldErrors
 @import helpers.labelWrap
 @import views.html.helper.FieldElements
+
 @argsMap = @{ args.toMap }
-@elements = @{ new FieldElements(field.id, field, null, argsMap, messages) }
-@value = @{ field.value match { case Some(x) => x case None => "" case x => x }}
+@elements = @{ FieldElements(field.id, field, Html(""), argsMap, messages) }
+@value = @{ field.value.getOrElse("") }
 @wrapperClass = @{
-    var w = Seq("form-field") ++ argsMap.getOrElse('_modifierClass, "").asInstanceOf[String].split(" ")
-    w = if (field.hasErrors) w :+ "form-field--error" else w
-    w.mkString(" ")
+    val wrapperClasses = Seq("form-field") ++ argsMap.getOrElse('_modifierClass, "").toString.split(" ")
+
+    (if (field.hasErrors) wrapperClasses :+ "form-field--error" else wrapperClasses).mkString(" ")
 }
 @inputClass = @{
-    var c:String = argsMap.getOrElse('_inputClass, "").asInstanceOf[String]
-    c = if(field.hasErrors) c + " error-field" else c
-    c.trim
+    val classes:String = argsMap.getOrElse('_inputClass, "").toString
+
+    (if(field.hasErrors) classes + " error-field" else classes).trim
 }
 <div@if(wrapperClass.nonEmpty){ class="@wrapperClass"}>
     @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_modifierClass -> argsMap.get('_labelClass)){
@@ -48,7 +49,10 @@
         />
         @if(elements.args.get('datalist).isDefined) {
             <datalist id="@{elements.field.name}_datalist">
-                @elements.args.get('datalist).get.asInstanceOf[Seq[String]].map { v:String => <option value="@v"/>
+                @{
+                    elements.args('datalist) match {
+                        case t:Traversable[_] => t.foreach( v => <option value="@v"/> )
+                    }
                 }
             </datalist>
         }

@@ -31,22 +31,27 @@ final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val
 class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
   extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
 
-  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] =
-    Future.successful(
-      if (request.hasActiveSaEnrolment && request.confidenceLevel >= L200 && request.maybeUtr.isDefined)
-        Right(new AuthorisedSaUserRequest[A](request, request.maybeUtr.get))
-      else {
+  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
+      def notEnrolled: Either[Result, AuthorisedSaUserRequest[A]] = {
         Logger.info(
           s"""
-             |Authorisation failed:
-             |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
-             |  [enrolments: ${request.enrolments}]
-             |  [utr: ${request.maybeUtr}]
-             |  [ConfidenceLevel: ${request.confidenceLevel}]
-             |  """.stripMargin)
+           |Authorisation failed:
+           |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
+           |  [enrolments: ${request.enrolments}]
+           |  [utr: ${request.maybeUtr}]
+           |  [ConfidenceLevel: ${request.confidenceLevel}]
+           |  """.stripMargin)
         Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()))
       }
+
+    Future.successful(
+      request.maybeUtr.fold(notEnrolled) { utr =>
+        if (request.hasActiveSaEnrolment && request.confidenceLevel >= L200)
+          Right(new AuthorisedSaUserRequest[A](request, utr))
+        else notEnrolled
+      }
     )
+  }
 
   override protected def executionContext: ExecutionContext = cc.executionContext
 }

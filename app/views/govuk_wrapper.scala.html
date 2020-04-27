@@ -30,7 +30,7 @@
         bodyClasses: Option[String] = None,
         navLinks: Option[Html] = None,
         sidebar: Html = HtmlFormat.empty,
-        contentHeader: Option[Html] = None,
+        maybeContentHeader: Option[Html] = None,
         mainContent: Html = HtmlFormat.empty,
         serviceInfoContent: Html = HtmlFormat.empty,
         scriptElem: Option[Html] = None,
@@ -40,7 +40,7 @@
         welshToggleEnabled:Boolean = true,
         hasUserPanel: Boolean = false,
         navTitle: String = "ssttp.common.title",
-        backButtonUrl: Option[play.api.mvc.Call] = None)(implicit request: Request[_], messages: play.api.i18n.Messages)
+        maybeBackButtonUrl: Option[play.api.mvc.Call] = None)(implicit request: Request[_], messages: play.api.i18n.Messages)
 
 
 @import partials.{beta_banner_with_user_panel, google_analytics_js}
@@ -97,8 +97,8 @@
     includeHMRCBranding = false
 )
 
-    @if(backButtonUrl.isDefined) {
-        @partials.back_button(backButtonUrl.get)
+    @maybeBackButtonUrl.map{ backButtonUrl =>
+        @partials.back_button(backButtonUrl)
     }
 
     @if(welshToggleEnabled) {
@@ -107,9 +107,9 @@
 }
 
 @mainContentHeader = {
-@if(contentHeader.isDefined) {
-    @viewsHelpers.mainContentHeader(contentHeader = contentHeader.get)
-}
+    @maybeContentHeader.map { contentHeader =>
+        @viewsHelpers.mainContentHeader(contentHeader)
+    }
 }
 
 

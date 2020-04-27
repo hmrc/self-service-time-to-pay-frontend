@@ -30,14 +30,13 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     unmanagedResourceDirectories in Compile += baseDirectory.value / "public"
   )
-//  .settings(WartRemoverSettings.wartRemoverError)
-//  .settings(WartRemoverSettings.wartRemoverWarning)
-//  .settings(wartremoverErrors in(Test, compile) --= Seq(Wart.Any, Wart.Equals, Wart.Null, Wart.NonUnitStatements, Wart.PublicInference))
-//  .settings(wartremoverExcluded ++=
-//    routes.in(Compile).value ++
-//      (baseDirectory.value / "it").get ++
-//      (baseDirectory.value / "test").get ++
-//      Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
+  .settings(WartRemoverSettings.wartRemoverError)
+  .settings(WartRemoverSettings.wartRemoverWarning)
+  .settings(wartremoverExcluded ++=
+    routes.in(Compile).value ++
+      (baseDirectory.value / "it").get ++
+      (baseDirectory.value / "test").get ++
+      Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
   .settings(ScalariformSettings())
   .settings(
     unmanagedSourceDirectories in Test := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common")

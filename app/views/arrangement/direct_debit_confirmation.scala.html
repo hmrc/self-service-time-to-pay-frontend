@@ -48,8 +48,8 @@
     initialPayment = Some(schedule.schedule.initialPayment),
     interest = schedule.schedule.totalInterestCharged,
     duration = schedule.schedule.instalments.length,
-    regularPayment = schedule.schedule.instalments.head.amount,
-    paymentDay = schedule.schedule.instalments.head.paymentDate.getDayOfMonth
+    regularPayment = schedule.schedule.firstInstallment.amount,
+    paymentDay = schedule.schedule.firstInstallment.paymentDate.getDayOfMonth
 )
 }
 

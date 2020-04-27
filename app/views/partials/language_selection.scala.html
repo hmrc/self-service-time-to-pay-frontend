@@ -17,20 +17,15 @@
 @import langswitch.Link
 @import langswitch.Language
 @import langswitch.Languages
+@import langswitch.Languages.availableLanguages
 
-
-@(
-  customClass: Option[String] = None,
-  appName: Option[String] = None)(
-  implicit
-  messages: Messages
-)
+@(maybeCustomClass: Option[String] = None, appName: Option[String] = None)(implicit messages: Messages)
 
 @*//shamelessly copied from play-ui*@
 
-<p class="@if(customClass.isDefined) {@customClass.get} pull-right">
+<p class="@maybeCustomClass.getOrElse("") pull-right">
 
-@Languages.availableLanguages.map { language: Language =>
+@availableLanguages.zipWithIndex.map { case (language, index) =>
   @if(messages.lang.code != language.code) {
     @Link.toInternalPage(
       id      = Some(s"${language.code}-switch"),
@@ -41,7 +36,7 @@
   } else {
     @language.label
   }
-  @if(language != Languages.availableLanguages.last) {
+  @if(index + 1 < availableLanguages.size) {
     @Html(" | ")
   }
 }

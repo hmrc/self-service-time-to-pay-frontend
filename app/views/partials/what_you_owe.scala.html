@@ -26,8 +26,8 @@
         <div class="grid-layout__column grid-layout__column--3-4"><strong>@Messages("ssttp.amounts_due.due")</strong></div>
         <div class="grid-layout__column grid-layout__column--1-4"><strong>@Messages("ssttp.amounts_due.amount")</strong></div>
     </div>
-    @debits.map { debit =>
-        @if(smallFormat && !debits.head.equals(debit)){<br>}
+    @debits.zipWithIndex.map { case (debit, index) =>
+        @if(smallFormat && index != 0){<br>}
         <div class="@if(smallFormat){grid-layout--no-gutter}else{subsection ssttp-grid-layout-padding-above} grid-layout font-xsmall divider--bottom">
             <div class="grid-layout__column grid-layout__column--3-4">
                 <div><span class="@if(smallFormat){font-xsmall}else{font-small}">@debit.dueDate.format(formatter)</span></div>
