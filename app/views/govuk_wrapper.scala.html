@@ -43,7 +43,7 @@
         backButtonUrl: Option[play.api.mvc.Call] = None)(implicit request: Request[_], messages: play.api.i18n.Messages)
 
 
-@import partials.{beta_banner_with_user_panel, google_analytics_js}
+@import partials.{google_analytics_js}
 
 
 @head = {
@@ -86,12 +86,7 @@
 
 @serviceInfo = {
 @viewsHelpers.serviceInfo(
-    betaBanner = beta_banner_with_user_panel(
-      req.RequestSupport.isLoggedIn,
-      appConfig.betaFeedbackUrlAuth,
-      appConfig.betaFeedbackUrlNoAuth,
-      hasUserPanel = hasUserPanel
-    ),
+    betaBanner = HtmlFormat.empty,
     includeGridWrapper = false,
     serviceInfoContent = Some(serviceInfoContent),
     includeHMRCBranding = false
