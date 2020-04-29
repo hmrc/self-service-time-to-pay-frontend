@@ -68,7 +68,7 @@ class DirectDebitController @Inject() (
 
     submissionService.authorizedForSsttp {
       case Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
-        Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
+        Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.getDueDate.toEpochDay()), schedule, isSignedIn)))
       case journey =>
         JourneyLogger.info("DirectDebitController.getDirectDebitAssistance: pattern match redirect on error", journey)
         Future.successful(technicalDifficulties(journey))
@@ -78,7 +78,7 @@ class DirectDebitController @Inject() (
   def getDirectDebitError: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
       case Journey(_, Statuses.InProgress, _, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
-        Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.dueDate.toEpochDay()), schedule, true, isSignedIn)))
+        Future.successful(Ok(views.direct_debit_assistance(sa.debits.sortBy(_.getDueDate.toEpochDay()), schedule, true, isSignedIn)))
       case journey =>
         JourneyLogger.info("DirectDebitController.getDirectDebitError - redirect on error", journey)
         Future.successful(technicalDifficulties(journey))

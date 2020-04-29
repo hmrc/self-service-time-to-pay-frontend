@@ -35,7 +35,7 @@ class CalculatorLogicSpec extends PlaySpec with TableDrivenPropertyChecks {
     Debit(
       originCode = des,
       amount     = value,
-      dueDate    = LocalDate.parse(dueDate, formatter),
+      dueDate    = Some(LocalDate.parse(dueDate, formatter)),
       interest   = Some(Interest(
         Some(LocalDate.now()),
         interest.getOrElse(BigDecimal(0)))

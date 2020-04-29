@@ -27,7 +27,7 @@ package object model {
 
   def asDebitInput(debit: Debit): DebitInput = DebitInput(
     debit.amount,
-    debit.dueDate
+    debit.getDueDate
   )
 
   def asTaxpayersSaUtr(saUtr: SaUtr): timetopaytaxpayer.cor.model.SaUtr =
@@ -46,6 +46,6 @@ package object model {
   }
 
   implicit class DebitExt(val v: Debit) extends AnyVal {
-    def dueByYear(offset: Int = 0): Int = v.dueDate.getYear - offset
+    def dueByYear(offset: Int = 0): Int = v.getDueDate.getYear - offset
   }
 }

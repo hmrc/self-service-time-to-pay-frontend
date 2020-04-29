@@ -227,7 +227,7 @@ object CalculatorService {
         selfAssessment
           .debits
           .filter(_.amount > 32)
-          .map(_.dueDate)
+          .map(_.getDueDate())
           .min
           .plusYears(1)
       )

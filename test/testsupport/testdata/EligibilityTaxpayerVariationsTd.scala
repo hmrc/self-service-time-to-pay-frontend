@@ -29,7 +29,7 @@ object EligibilityTaxpayerVariationsTd {
   private val eligibleDebits = Seq(debit(33, dummyCurrentDate))
 
   private def debit(amount: Double, dueDate: LocalDate) =
-    Debit("IN1", BigDecimal(amount), dueDate, Some(Interest(Some(dummyCurrentDate), BigDecimal(0))), dummyTaxYearEnd)
+    Debit("IN1", BigDecimal(amount), Some(dueDate), Some(Interest(Some(dummyCurrentDate), BigDecimal(0))), dummyTaxYearEnd)
 
   private def taxpayer(debits: Seq[Debit], returns: Seq[Return] = Seq.empty) =
     Taxpayer(

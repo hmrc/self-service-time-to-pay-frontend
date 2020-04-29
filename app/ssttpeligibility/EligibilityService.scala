@@ -77,8 +77,8 @@ object EligibilityService {
     val chargeStartDay: LocalDate = today.minusDays(1)
     val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
 
-    val (liabilities, chargesAndDebts) = debits.partition(_.dueDate.isAfter(chargeStartDay))
-    val debt = chargesAndDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
+    val (liabilities, chargesAndDebts) = debits.partition(_.getDueDate.isAfter(chargeStartDay))
+    val debt = chargesAndDebts.filterNot(_.getDueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
 
     val totalLiabilities = liabilities.map(l => getTotalForDebit(l)).sum
     val totalChargesAndDebt = chargesAndDebts.map(cd => getTotalForDebit(cd)).sum
