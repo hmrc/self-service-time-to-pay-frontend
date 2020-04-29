@@ -17,23 +17,47 @@
 package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.UrlPathPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
-import play.api.http.Status
-import play.api.libs.json.Json.{prettyPrint, toJson}
-import testsupport.testdata.EligibilityTaxpayerVariationsTd._
-import testsupport.testdata.TdAll.{taxpayer, utr}
-import uk.gov.hmrc.selfservicetimetopay.models._
+import play.api.libs.json.Json
+import testsupport.testdata.{EligibilityTaxpayerVariationsTd, TdAll}
+import timetopaytaxpayer.cor.model.Taxpayer
+import uk.gov.hmrc.selfservicetimetopay.models.{DebitHasNoRelevantDueDate, DebtIsInsignificant, IsNotOnIa, NoDebt, OldDebtIsTooHigh, Reason, ReturnNeedsSubmitting, TotalDebtIsTooHigh}
 
-object TaxpayerStub extends Matchers with Status {
-  private val url: UrlPathPattern = urlPathEqualTo(s"/taxpayer/$utr")
+object TaxpayerStub extends Matchers {
 
-  def getTaxpayer(): StubMapping =
-    stubFor(get(url).willReturn(aResponse().withStatus(OK).withBody(prettyPrint(toJson(taxpayer)))))
+  def getTaxpayer(): StubMapping = {
 
-  def getTaxpayer(reason: Reason): StubMapping =
-    stubFor(get(url).willReturn(aResponse()
-      .withStatus(OK)
-      .withBody(prettyPrint(toJson(getIneligibleTaxpayerModel(reason))))))
+    stubFor(
+      get(urlPathEqualTo(s"/taxpayer/${TdAll.utr}"))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody(
+              Json.prettyPrint(Json.toJson(TdAll.taxpayer)))))
+  }
+
+  def getTaxpayer(reason: Reason): StubMapping = {
+
+    stubFor(
+      get(urlPathEqualTo(s"/taxpayer/${TdAll.utr}"))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody(
+              Json.prettyPrint(Json.toJson(getIneligibleTaxpayerModel(reason))))))
+  }
+
+  def getIneligibleTaxpayerModel(reason: Reason): Taxpayer = {
+    reason match {
+      case NoDebt                    => EligibilityTaxpayerVariationsTd.zeroDebtTaxpayer
+      case DebtIsInsignificant       => EligibilityTaxpayerVariationsTd.insignificantDebtTaxpayer
+      case OldDebtIsTooHigh          => EligibilityTaxpayerVariationsTd.oldDebtIsTooHighTaxpayer
+      case TotalDebtIsTooHigh        => EligibilityTaxpayerVariationsTd.totalDebtIsTooHighTaxpayer
+      case ReturnNeedsSubmitting     => EligibilityTaxpayerVariationsTd.returnNeedsSubmittingTaxpayer
+      case IsNotOnIa                 => EligibilityTaxpayerVariationsTd.notOnIaTaxpayer
+      case DebitHasNoRelevantDueDate => EligibilityTaxpayerVariationsTd.debitHasNoDueDateTaxpayer
+      case _                         => TdAll.taxpayer
+    }
+  }
 }

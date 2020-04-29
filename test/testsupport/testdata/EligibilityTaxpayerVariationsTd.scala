@@ -18,41 +18,44 @@ package testsupport.testdata
 
 import java.time.LocalDate
 
-import testsupport.testdata.TdAll.{communicationPreferences, saUtr}
-import timetopaytaxpayer.cor.model._
-import uk.gov.hmrc.selfservicetimetopay.models._
+import timetopaytaxpayer.cor.model.{Address, Debit, Interest, Return, SaUtr, SelfAssessmentDetails, Taxpayer}
 
 object EligibilityTaxpayerVariationsTd {
-  private val dummyCurrentDate = LocalDate.of(2019, 11, 1)
-  private val dummyTaxYearEnd = LocalDate.of(2020, 4, 5)
-  private val dummy60DaysAgo = dummyCurrentDate.minusDays(60)
-  private val eligibleDebits = Seq(debit(33, dummyCurrentDate))
+  val dummyCurrentDate: LocalDate = LocalDate.of(2019, 11, 1)
+  val dummyTaxYearEnd: LocalDate = LocalDate.of(2020, 4, 5)
+  val dummy60DaysAgo: LocalDate = dummyCurrentDate.minusDays(60)
+  val zeroInterestOption: Option[Interest] = Some(Interest(Some(dummyCurrentDate), BigDecimal(0)))
+  val taxpayerName: String = "Topper Harley"
+  val taxpayerAddress: Address = Address(Some("Golden Throne"), Some("Himalayan Mountains"), Some("Holy Terra"), Some("Segmentum Solar"),
+                                         Some("Milky Way Galaxy"), Some("BN11 1XX"))
 
-  private def debit(amount: Double, dueDate: LocalDate) =
-    Debit("IN1", BigDecimal(amount), Some(dueDate), Some(Interest(Some(dummyCurrentDate), BigDecimal(0))), dummyTaxYearEnd)
+  def initDebit(originCode: String, amount: Double, dueDate: LocalDate): Debit = Debit(originCode, BigDecimal(amount), Some(dueDate),
+                                                                                       zeroInterestOption, dummyTaxYearEnd)
 
-  private def taxpayer(debits: Seq[Debit], returns: Seq[Return] = Seq.empty) =
-    Taxpayer(
-      "The Emperor Of Mankind",
-      Seq(Address(
-        Some("Golden Throne"),
-        Some("Himalayan Mountains"),
-        Some("Holy Terra"),
-        Some("Segmentum Solar"),
-        Some("Milky Way Galaxy"),
-        Some("BN11 1XX"))),
-      SelfAssessmentDetails(saUtr, communicationPreferences, debits, returns))
+  def initNoDueDateDebitButOtherwiseEligibleDebit: Debit = Debit("IN1", BigDecimal(33), None,
+                                                                        zeroInterestOption, dummyTaxYearEnd)
 
-  def getIneligibleTaxpayerModel(reason: Reason): Taxpayer = {
-    reason match {
-      case NoDebt              => taxpayer(Seq.empty)
-      case DebtIsInsignificant => taxpayer(Seq(debit(31, dummyCurrentDate)))
-      case OldDebtIsTooHigh    => taxpayer(Seq(debit(33, dummy60DaysAgo)))
-      case TotalDebtIsTooHigh  => taxpayer(Seq(debit(10000, dummyCurrentDate)))
-      case ReturnNeedsSubmitting =>
-        taxpayer(eligibleDebits, Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None)))
-      case IsNotOnIa => taxpayer(eligibleDebits)
-      case _         => TdAll.taxpayer
-    }
-  }
+  def initEligibleDebit(): Debit = initDebit("IN1", 33, dummyCurrentDate)
+
+  def initSelfAssessmentDetails(debits: Seq[Debit], returns: Seq[Return]): SelfAssessmentDetails = SelfAssessmentDetails(TdAll.saUtr, TdAll.communicationPreferences, debits, returns)
+
+  def initSelfAssessmentDetailsWithErroneousUtr(debits: Seq[Debit], returns: Seq[Return]): SelfAssessmentDetails = SelfAssessmentDetails(SaUtr("XXXXXXXXXX"), TdAll.communicationPreferences, debits, returns)
+
+  def initTaxpayer(debits: Seq[Debit], returns: Seq[Return]): Taxpayer = Taxpayer(taxpayerName, Seq(taxpayerAddress), initSelfAssessmentDetails(debits, returns))
+
+  def initTaxpayerWithErroneousUtr(debits: Seq[Debit], returns: Seq[Return]): Taxpayer = Taxpayer(taxpayerName, Seq(taxpayerAddress), initSelfAssessmentDetailsWithErroneousUtr(debits, returns))
+
+  val zeroDebtTaxpayer: Taxpayer = initTaxpayer(Seq.empty, Seq.empty)
+
+  val insignificantDebtTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 31, dummyCurrentDate)), Seq.empty)
+
+  val oldDebtIsTooHighTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 33, dummy60DaysAgo)), Seq.empty)
+
+  val totalDebtIsTooHighTaxpayer: Taxpayer = initTaxpayer(Seq(initDebit("IN1", 10000, dummyCurrentDate)), Seq.empty)
+
+  val returnNeedsSubmittingTaxpayer: Taxpayer = initTaxpayer(Seq(initEligibleDebit), Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None)))
+
+  val notOnIaTaxpayer: Taxpayer = initTaxpayer(Seq(initEligibleDebit), Seq.empty)
+
+  val debitHasNoDueDateTaxpayer: Taxpayer = initTaxpayer(Seq(initNoDueDateDebitButOtherwiseEligibleDebit), Seq.empty)
 }

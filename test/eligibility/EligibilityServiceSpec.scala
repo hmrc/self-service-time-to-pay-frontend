@@ -357,6 +357,19 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
       EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
                                                                 createTaxpayer(debits, returns)), false) shouldBe Ineligible(List(IsNotOnIa))
     }
+
+    "Fully eligible except no relevantDueDate for a single debit" in {
+      val debits = Seq(
+        Debit(amount     = 500, dueDate = None, interest = None, originCode = "IN1", taxYearEnd = taxYearEnd2020), Debit(amount     = 500, dueDate = Some(LocalDate.of(2017, 7, 31)), interest = None, originCode = "IN1", taxYearEnd = taxYearEnd2020)
+      )
+      val returns = Seq(Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
+                               receivedDate = Some(LocalDate.of(2016, 12, 10))))
+
+      val todaysDate = LocalDate.of(2017, 7, 10)
+
+      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
+                                                                createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(DebitHasNoRelevantDueDate))
+    }
   }
 
   val outstandingReturnThisYear = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)))

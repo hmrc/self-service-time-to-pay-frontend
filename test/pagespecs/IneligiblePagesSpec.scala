@@ -39,6 +39,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
    * - Total amount > £10k
    * - Old debt < £32
    * - debt less than £32
+   * - debit has no due date
    */
 
   val listOfIneligibleReasons: TableFor4[String, Reason, String, BasePage] = Table(
@@ -48,7 +49,8 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
     ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
     ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage),
-    ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", generalCallUsPage)
+    ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", generalCallUsPage),
+    ("no relevantDueDate present", DebitHasNoRelevantDueDate, "debit has no due date", generalCallUsPage)
   )
 
   def beginJourney(ineligibleReason: Reason): Unit = {

@@ -213,7 +213,7 @@ class ArrangementController @Inject() (
         eligibilityStatus.reasons.contains(OldDebtIsTooHigh) ||
         eligibilityStatus.reasons.contains(NoDebt) ||
         eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
-        eligibilityStatus.reasons.contains(NoDueDate)) notEligible
+        eligibilityStatus.reasons.contains(DebitHasNoRelevantDueDate)) notEligible
       else if (eligibilityStatus.reasons.contains(IsNotOnIa)) notOnIa
       else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh)) overTenThousandOwed
       else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant)) youNeedToFile
