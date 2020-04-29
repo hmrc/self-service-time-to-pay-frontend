@@ -34,9 +34,10 @@ class TermsAndConditionsPageSpec extends ItSpec {
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
     monthlyPaymentAmountPage.enterAmount("2450")
-    CalculatorStub.generateSchedule
+    CalculatorStub.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.selectAnOption()
+    CalculatorStub.generateSchedules(paymentDayOfMonth      = 27, firstPaymentDayOfMonth = 28)
     calculatorInstalmentsPage.clickContinue()
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()

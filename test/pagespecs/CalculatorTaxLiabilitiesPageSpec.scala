@@ -17,7 +17,6 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import org.scalatest.Ignore
 import testsupport.ItSpec
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
 
@@ -34,7 +33,7 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
 
   "language" in {
     beginJourney()
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertPageIsDisplayed
 
     taxLiabilitiesPage.clickOnWelshLink()
     taxLiabilitiesPage.assertPageIsDisplayed(Welsh)
@@ -50,7 +49,7 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
 
   "continue to payment-today" in {
     beginJourney()
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertPageIsDisplayed
 
     taxLiabilitiesPage.clickOnStartNowButton()
     paymentTodayQuestionPage.assertPageIsDisplayed

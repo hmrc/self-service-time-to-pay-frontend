@@ -54,7 +54,7 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
     val value = "1"
     beginJourney()
     monthlyPaymentAmountPage.enterAmount(value)
-    CalculatorStub.generateSchedule
+    CalculatorStub.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
     monthlyPaymentAmountPage.assertErrorPageIsDisplayed(value)
   }
@@ -62,7 +62,7 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
   "valid entry and continue" in {
     beginJourney()
     monthlyPaymentAmountPage.enterAmount("2450")
-    CalculatorStub.generateSchedule
+    CalculatorStub.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.assertPageIsDisplayed
   }

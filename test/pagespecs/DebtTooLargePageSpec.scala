@@ -24,7 +24,7 @@ class DebtTooLargePageSpec extends ItSpec {
   "language" in {
 
     debtTooLargePage.open()
-    debtTooLargePage.assertPageIsDisplayed()
+    debtTooLargePage.assertPageIsDisplayed
 
     debtTooLargePage.clickOnWelshLink()
     debtTooLargePage.assertPageIsDisplayed(Welsh)

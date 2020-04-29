@@ -16,11 +16,28 @@
 
 package model
 
+import java.time.LocalDate
+
 import org.scalatest.{Matchers, WordSpec}
-import testsupport.testdata.CalculatorTd._
+import testsupport.testdata.TdAll._
+import timetopaycalculator.cor.model.{Instalment, PaymentSchedule}
 
 class PaymentScheduleExtSpec extends WordSpec with Matchers {
-  private val firstInstalment = calculatorPaymentScheduleInstalment
+  private val calculatorPaymentSchedule = new PaymentSchedule(
+    startDate            = LocalDate.of(2019: Int, 4: Int, 23: Int),
+    endDate              = LocalDate.of(2019: Int, 8: Int, 21: Int),
+    initialPayment       = 123: BigDecimal,
+    amountToPay          = 2500: BigDecimal,
+    instalmentBalance    = 200: BigDecimal,
+    totalInterestCharged = 200: BigDecimal,
+    totalPayable         = 200: BigDecimal,
+    instalments          =
+      List(
+        new Instalment("2019-08-25", 300: BigDecimal, 2: BigDecimal),
+        new Instalment("2019-08-25", 120: BigDecimal, 4: BigDecimal),
+        new Instalment("2019-08-25", 250: BigDecimal, 3: BigDecimal)))
+
+  private val firstInstalment = new Instalment("2019-08-25", 300: BigDecimal, 2: BigDecimal)
   private val middleInstalment = firstInstalment.copy(paymentDate = firstInstalment.paymentDate.plusMonths(1))
   private val lastInstalment = firstInstalment.copy(paymentDate = firstInstalment.paymentDate.plusMonths(2))
 

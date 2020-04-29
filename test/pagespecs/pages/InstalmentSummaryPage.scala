@@ -22,7 +22,7 @@ import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
 
@@ -32,7 +32,7 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     val content = readMain().stripSpaces()
-    Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
+    Expected.MainText(paymentDayOfMonth).stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
   }
@@ -72,56 +72,60 @@ class InstalmentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
 
     object MainText {
-      def apply(increase: Int = 0)(implicit language: Language): String = language match {
-        case English => mainTextEnglish
-        case Welsh   => mainTextWelsh
+      def apply(paymentDayOfMonth: String)(implicit language: Language): String = language match {
+        case English => mainTextEnglish(paymentDayOfMonth)
+        case Welsh   => mainTextWelsh(paymentDayOfMonth)
       }
 
-      private val mainTextEnglish =
-        """Check your payment plan
+      private def mainTextEnglish(paymentDayOfMonth: String) =
+        s"""Check your payment plan
           |Upfront payment taken within 5 days
           |£0.00
           |Change Monthly payments
           |Payments collected on
-          |25th or next working day
+          |$paymentDayOfMonth or next working day
           |Change
           |Monthly payments
-          |August 2019
-          |August 2019
-          |August 2019
+          |December 2019
+          |£1,633.00
+          |January 2020
+          |£1,633.00
+          |February 2020
+          |1,834.00
           |including interest of £200.00 added to the final payment
-          |£300.00
-          |£120.00
-          |£250.00
           |Change Monthly payments
           |Total to pay
-          |£200.00
+          |£5,100.00
           |Continue
         """.stripMargin
 
-      private val mainTextWelsh =
-        """Gwiriwch fanylion eich amserlen talu
+      private def mainTextWelsh(paymentDayOfMonth: String) =
+        s"""Gwiriwch fanylion eich amserlen talu
           |Taliad ymlaen llaw
           |£0.00
           |Newid Rhandaliadau misol
           |Dyddiad casglu rhandaliadau misol
-          |25th neu’r diwrnod gwaith nesaf
+          |$paymentDayOfMonth neu’r diwrnod gwaith nesaf
           |Newid
           |Rhandaliadau misol
-          |August 2019
-          |August 2019
-          |August 2019
+          |December 2019
+          |£1,633.00
+          |January 2020
+          |£1,633.00
+          |February 2020
+          |1,834.00
           |Wedi’u casglu dros £200.00 o fisoedd
-          |£300.00
-          |£120.00
-          |£250.00
           |Newid Rhandaliadau misol
           |Cyfanswm yr ad-daliad
-          |£200.00
+          |£5,100.00
           |Yn eich blaen
         """.stripMargin
     }
-
   }
-
 }
+
+class InstalmentSummaryPageForPaymentDayOfMonth27th(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
+  extends InstalmentSummaryPage(baseUrl, "27th")(webDriver)
+
+class InstalmentSummaryPageForPaymentDayOfMonth11th(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
+  extends InstalmentSummaryPage(baseUrl, "11th")(webDriver)
