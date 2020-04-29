@@ -131,7 +131,7 @@ class DirectDebitController @Inject() (
         formWithErrors => Future.successful(BadRequest(
           views.direct_debit_form(
             submission.taxpayer.selfAssessment.debits,
-            submission.schedule.getOrElse(throw new RuntimeException(s"schedule not found on submission [$submission]")),
+            submission.schedule,
             formWithErrors))),
         validFormData => {
           directDebitConnector.validateBank(validFormData.sortCode, validFormData.accountNumber).flatMap { isValid =>
@@ -140,7 +140,7 @@ class DirectDebitController @Inject() (
             else
               Future.successful(BadRequest(views.direct_debit_form(
                 submission.taxpayer.selfAssessment.debits,
-                submission.schedule.getOrElse(throw new RuntimeException(s"schedule not found on submission [$submission]")),
+                submission.schedule,
                 directDebitFormWithBankAccountError.copy(data = Map(
                   "accountName" -> validFormData.accountName,
                   "accountNumber" -> validFormData.accountNumber,
@@ -168,7 +168,7 @@ class DirectDebitController @Inject() (
       directDebitConnector.getBanks(utr).flatMap { directDebitBank =>
         val bankDetails = DirectDebitUtils.bankDetails(sortCode, accountNumber, accountName, directDebitBank)
 
-        submissionService.saveJourney(journey.copy(bankDetails = Some(bankDetails))).map {
+        submissionService.saveJourney(journey.copy(maybeBankDetails = Some(bankDetails))).map {
           _ => Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
         }
       }

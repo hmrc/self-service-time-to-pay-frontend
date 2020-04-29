@@ -21,7 +21,6 @@ import journey.Journey
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Request
-import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -46,43 +45,22 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
     result.map(_ => ())
   }
 
-  private def eventFor(submission: Journey)(implicit request: Request[_]) = {
-
-    //todo Find out whether the bank account check needs to be in the event, if they get this far this should be a successful check
-    //at this stage all optional values should be present
-    val utr: SaUtr = submission.taxpayer.selfAssessment.utr
-
-    val bankDetails =
-      submission.bankDetails.getOrElse(throw new RuntimeException(s"bank details missing on submission $submission"))
-    val name: String =
-      bankDetails.accountName.getOrElse(throw new RuntimeException(s"account name missing on submission $submission"))
-    val accountNumber: String =
-      bankDetails.accountNumber.getOrElse(throw new RuntimeException(s"account number missing on submission $submission"))
-    val sortCode: String =
-      bankDetails.sortCode.getOrElse(throw new RuntimeException(s"sort code missing on submission $submission"))
-
-    val schedule =
-      submission.schedule.getOrElse(throw new RuntimeException(s"schedule missing on submission $submission"))
-    val installment: String = schedule.schedule.instalments.getClass.toString
-    val interestTotal: BigDecimal = schedule.schedule.totalInterestCharged
-    val total: BigDecimal = schedule.schedule.totalPayable
-
+  private def eventFor(journey: Journey)(implicit request: Request[_]) =
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
       auditType   = "directDebitSetup",
       tags        = hc.headers.toMap,
       detail      = Json.obj(
-        "utr" -> utr.value,
+        "utr" -> journey.taxpayer.selfAssessment.utr.value,
         "bankDetails" -> Json.obj(
-          "name" -> name,
-          "accountNumber" -> accountNumber,
-          "sortCode" -> sortCode
+          "name" -> journey.bankDetails.accountName,
+          "accountNumber" -> journey.bankDetails.accountNumber,
+          "sortCode" -> journey.bankDetails.sortCode
         ),
         "installments" -> Json.obj(
-          "installment" -> installment,
-          "interestTotal" -> interestTotal,
-          "total" -> total)
+          "installment" -> journey.schedule.schedule.instalments.getClass.toString,
+          "interestTotal" -> journey.schedule.schedule.totalInterestCharged,
+          "total" -> journey.schedule.schedule.totalPayable)
       )
     )
-  }
 }

@@ -38,13 +38,13 @@ class DirectDebitConnectorSpec extends ItSpec {
       DirectDebitBank(
         "2019-04-05",
         List(DirectDebitInstruction(
-          Some("12-34-56"),
-          Some("12345678"),
+          sortCode      = "12-34-56",
+          accountNumber = "12345678",
+          accountName   = "Mr John Campbell",
           Some("123456789"),
           Some(LocalDate.of(2019, 4, 5)),
           Some(true), Some("123ABC123"),
-          Some("123ABC123"),
-          Some("Mr John Campbell"))))
+          Some("123ABC123"))))
   }
 
   "getBanks should not tolerate a general 404" in {

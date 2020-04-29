@@ -19,20 +19,21 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import play.api.libs.json.{Format, Json}
 import timetopaytaxpayer.cor.model.Address
 
-final case class BankDetails(sortCode:      Option[String]  = None,
-                             accountNumber: Option[String]  = None,
-                             bankName:      Option[String]  = None,
-                             bankAddress:   Option[Address] = None,
-                             accountName:   Option[String]  = None,
-                             ddiRefNumber:  Option[String]  = None) {
+final case class BankDetails(
+    sortCode:          String,
+    accountNumber:     String,
+    accountName:       String,
+    maybeBankName:     Option[String]  = None,
+    maybeBankAddress:  Option[Address] = None,
+    maybeDDIRefNumber: Option[String]  = None) {
 
   def obfuscate: BankDetails = BankDetails(
-    sortCode      = sortCode.map(_ => "***"),
-    accountNumber = accountNumber.map(_ => "***"),
-    bankName      = bankName.map(_ => "***"),
-    bankAddress   = bankAddress.map(_.obfuscate),
-    accountName   = accountName.map(_ => "***"),
-    ddiRefNumber  = ddiRefNumber.map(_ => "***")
+    sortCode          = "***",
+    accountNumber     = "***",
+    accountName       = "***",
+    maybeBankName     = maybeBankName.map(_ => "***"),
+    maybeBankAddress  = maybeBankAddress.map(_.obfuscate),
+    maybeDDIRefNumber = maybeDDIRefNumber.map(_ => "***")
   )
 }
 

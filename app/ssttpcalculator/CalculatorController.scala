@@ -306,7 +306,7 @@ class CalculatorController @Inject() (
                     formWithErrors,
                     getSurroundingSchedule(getClosestSchedule(journey.amount, schedules), schedules, sa)))),
             validFormData =>
-              journeyService.saveJourney(journey.copy(schedule = schedules.find(_.months == validFormData.chosenMonths))).map { _ =>
+              journeyService.saveJourney(journey.copy(maybeSchedule = schedules.find(_.months == validFormData.chosenMonths))).map { _ =>
                 Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
               }
           )
