@@ -24,20 +24,16 @@ import scala.util.control.Exception._
 
 object ArrangementForm {
 
-  val dayOfMonthForm = {
-      def tryToInt(input: String) = {
-        catching(classOf[NumberFormatException]) opt input.toInt
-      }
-      def isInt(input: String) = {
-        tryToInt(input).nonEmpty
-      }
+  val dayOfMonthForm: Form[ArrangementDayOfMonth] = {
+      def isInt(input: String): Boolean = (catching(classOf[NumberFormatException]) opt input.toInt).nonEmpty
+
     Form(mapping(
       "dayOfMonth" -> text
-        .verifying("ssttp.arrangement.change_day.payment-day.required", { i: String => (i != null) && i.nonEmpty })
+        .verifying("ssttp.arrangement.change_day.payment-day.required", { i: String => i.nonEmpty })
         .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
         .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt >= 1)) })
         .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt <= 28)) })
-    )(dayOfMonth => ArrangementDayOfMonth(tryToInt(dayOfMonth).get))(data => Some(data.dayOfMonth.toString))
+    )(dayOfMonth => ArrangementDayOfMonth(dayOfMonth.toInt))(data => Some(data.dayOfMonth.toString))
     )
   }
 }

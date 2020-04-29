@@ -53,8 +53,8 @@ Time To Pay Instalment Summary Pretty Print Page
         initialPayment = Some(schedule.initialPayment),
         interest = schedule.totalInterestCharged,
         duration = schedule.instalments.length,
-        regularPayment = schedule.instalments.head.amount,
-        paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
+        regularPayment = schedule.firstInstallment.amount,
+        paymentDay = schedule.firstInstallment.paymentDate.getDayOfMonth
     )
 }
 

@@ -35,7 +35,7 @@ case object NoDueDate extends Reason("NoDueDate")
 
 object Reason {
 
-  implicit val formatEligibilityReasons = new Format[Reason] {
+  implicit val formatEligibilityReasons: Format[Reason] = new Format[Reason] {
     override def writes(o: Reason): JsValue = JsString(o.toString)
     override def reads(json: JsValue): JsResult[Reason] = json match {
       case o: JsString => parseFromString(o.value).fold[JsResult[Reason]](JsError(s"Failed to parse $json as Reason"))(JsSuccess(_))

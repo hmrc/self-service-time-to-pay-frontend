@@ -1,39 +1,38 @@
 import sbt.Compile
 import sbt.Keys.compile
-import wartremover.{Wart, wartremoverErrors, wartremoverWarnings}
+import wartremover.Wart._
+import wartremover.{wartremoverErrors, wartremoverWarnings}
 
 object  WartRemoverSettings {
 
   lazy val wartRemoverWarning = {
     val warningWarts = Seq(
-      Wart.JavaSerializable,
-      Wart.AsInstanceOf,
-      Wart.IsInstanceOf,
-      Wart.Any
+      JavaSerializable,
+      AsInstanceOf
     )
     wartremoverWarnings in(Compile, compile) ++= warningWarts
   }
   lazy val wartRemoverError = {
-    // Error
     val errorWarts = Seq(
-      Wart.ArrayEquals,
-      Wart.AnyVal,
-      Wart.EitherProjectionPartial,
-      Wart.Enumeration,
-      Wart.ExplicitImplicitTypes,
-      Wart.FinalVal,
-      Wart.JavaConversions,
-      Wart.JavaSerializable,
-      Wart.LeakingSealed,
-      Wart.MutableDataStructures,
-      Wart.Null,
-      Wart.OptionPartial,
-      Wart.Recursion,
-      Wart.Return,
-      Wart.TraversableOps,
-      Wart.TryPartial,
-      Wart.Var,
-      Wart.While)
+      ArrayEquals,
+      AnyVal,
+      EitherProjectionPartial,
+      Enumeration,
+      ExplicitImplicitTypes,
+      FinalVal,
+      JavaConversions,
+      JavaSerializable,
+      LeakingSealed,
+      MutableDataStructures,
+      Null,
+      OptionPartial,
+      Recursion,
+      Return,
+      TraversableOps,
+      TryPartial,
+      Var,
+      While
+    )
 
     wartremoverErrors in(Compile, compile) ++= errorWarts
   }

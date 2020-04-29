@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
 
+//TODO are these all really optional? How can one have a direct debit instruction without an account or sort code?
 //Direct-debit - getBanks response
 //Direct-debit - part of input to createPaymentPlan
 final case class DirectDebitInstruction(

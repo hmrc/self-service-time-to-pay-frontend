@@ -16,11 +16,10 @@
 
 import java.time.LocalDate
 
-import langswitch.Language
 import language.Dates
 import play.api.i18n.Messages
-import timetopaytaxpayer.cor.model.Debit
 import timetopaycalculator.cor.model.{DebitInput, Instalment, PaymentSchedule}
+import timetopaytaxpayer.cor.model.Debit
 import uk.gov.hmrc.domain.SaUtr
 
 package object model {
@@ -34,11 +33,23 @@ package object model {
     timetopaytaxpayer.cor.model.SaUtr(saUtr.value)
 
   implicit class PaymentScheduleExt(val ps: PaymentSchedule) extends AnyVal {
-    def getMonthlyInstalment: BigDecimal = ps.instalments.head.amount
-    def getMonthlyInstalmentDate: Int = ps.instalments.head.paymentDate.getDayOfMonth
-    def initialPaymentScheduleDate: LocalDate = ps.instalments.map(_.paymentDate).minBy(_.toEpochDay)
+    def firstInstallment: Instalment =
+      ps.instalments.reduceOption(first).getOrElse(throw new RuntimeException(s"No installments for [$ps]"))
+
+    def lastInstallment: Instalment =
+      ps.instalments.reduceOption(last).getOrElse(throw new RuntimeException(s"No installments for [$ps]"))
+
+    private def first(earliest: Instalment, next: Instalment) =
+      if (next.paymentDate.toEpochDay < earliest.paymentDate.toEpochDay) next else earliest
+
+    private def last(latest: Instalment, next: Instalment) =
+      if (next.paymentDate.toEpochDay > latest.paymentDate.toEpochDay) next else latest
+
+    def getMonthlyInstalment: BigDecimal = firstInstallment.amount
+    def getMonthlyInstalmentDate: Int = firstInstallment.paymentDate.getDayOfMonth
+    def initialPaymentScheduleDate: LocalDate = firstInstallment.paymentDate
     def getUpFrontPayment: BigDecimal = ps.initialPayment
-    def getMonthlyDateFormatted(implicit messages: Messages): String = Dates.getMonthlyDateFormatted(ps.instalments.head.paymentDate)
+    def getMonthlyDateFormatted(implicit messages: Messages): String = Dates.getMonthlyDateFormatted(firstInstallment.paymentDate)
   }
 
   implicit class InstalmentExt(val v: Instalment) extends AnyVal {

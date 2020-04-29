@@ -53,13 +53,12 @@
     <table>
         <tbody>
 
-        @schedule.instalments.map { instalment =>
+        @schedule.instalments.zipWithIndex.map { case (instalment, index) =>
             <tr>
                 <td>
                     <div><strong class="bold">@instalment.paymentDate.format(formatter)</strong></div>
-                    @if(instalment == schedule.instalments.last) {
+                    @if(index + 1 == schedule.instalments.size) {
                         @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest", partials.currency(schedule.totalInterestCharged))
-
                     }
                 </td>
                 <td> @partials.currency(instalment.amount)
@@ -74,7 +73,7 @@
 
 <tr>
     <td><p class="bold">@Messages("ssttp.arrangement.instalment-summary.payment-date.title")</p></td>
-    <td>@getMonthlyDateFormatted(schedule.ps.instalments.head.paymentDate) @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")</td>
+    <td>@getMonthlyDateFormatted(schedule.ps.firstInstallment.paymentDate) @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")</td>
 </tr>
 </tbody>
 </table>
