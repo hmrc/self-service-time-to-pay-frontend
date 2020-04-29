@@ -279,11 +279,6 @@ ssttp.arrangement.direct-debit.assistance.total.hint = gan gynnwys llog
 ssttp.arrangement.direct-debit.assistance.alert = Methodd eich Debyd Uniongyrchol â chael ei gyflwyno.
 ssttp.arrangement.direct-debit.assistance.alert.1 = Rydym yn cael anawsterau yn cyflwyno’ch cyfarwyddyd Debyd Uniongyrchol. Ffoniwch ni i gwblhau’ch cais.
 
-#Beta Banner
-ssttp.beta.banner.help = Helpwch i wella GOV.UK
-ssttp.beta.banner.no.thanks = Dim diolch
-ssttp.beta.banner.p1 = Byddwch yn rhan o wneud gwasanaethau’r llywodraeth yn well (yn agor ffenestr newydd)
-
 ssttp.arrangement.complete.title = Cais yn llwyddiannus
 ssttp.arrangement.complete.ddref = Cyfeirnod mandad Debyd Uniongyrchol:
 ssttp.arrangement.complete.print-label = Argraffu crynodeb o’ch taliadau
