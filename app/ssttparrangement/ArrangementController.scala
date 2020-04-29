@@ -310,34 +310,34 @@ class ArrangementController @Inject() (
    * Checks if the TTPSubmission data contains an existing direct debit reference number and either
    * passes this information to a payment plan constructor function or builds a new Direct Debit Instruction
    */
-  private def checkExistingBankDetails(submission: Journey)(implicit request: Request[_]) = {
+  private def checkExistingBankDetails(journey: Journey)(implicit request: Request[_]) = {
     JourneyLogger.info("ArrangementController.checkExistingBankDetails")
 
     paymentPlan(
-      submission,
+      journey,
       DirectDebitInstruction(
-        sortCode      = submission.bankDetails.sortCode,
-        accountNumber = submission.bankDetails.accountNumber,
-        accountName   = submission.bankDetails.accountNumber,
-        ddiRefNumber  = submission.bankDetails.maybeDDIRefNumber))
+        sortCode      = journey.bankDetails.sortCode,
+        accountNumber = journey.bankDetails.accountNumber,
+        accountName   = journey.bankDetails.accountNumber,
+        ddiRefNumber  = journey.bankDetails.maybeDDIRefNumber))
   }
 
   /**
    * Builds and returns a payment plan
    */
-  private def paymentPlan(submission: Journey, ddInstruction: DirectDebitInstruction): PaymentPlanRequest = {
-    val knownFact = List(KnownFact(cesa, submission.taxpayer.selfAssessment.utr.value))
+  private def paymentPlan(journey: Journey, ddInstruction: DirectDebitInstruction): PaymentPlanRequest = {
+    val knownFact = List(KnownFact(cesa, journey.taxpayer.selfAssessment.utr.value))
 
-    val initialPayment = if (submission.schedule.schedule.initialPayment > exact(0)) Some(submission.schedule.schedule.initialPayment.toString()) else None
-    val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(submission.schedule.schedule.startDate.plusWeeks(1)))
+    val initialPayment = if (journey.schedule.schedule.initialPayment > exact(0)) Some(journey.schedule.schedule.initialPayment.toString()) else None
+    val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(journey.schedule.schedule.startDate.plusWeeks(1)))
 
-    val lastInstalment: Instalment = submission.schedule.schedule.lastInstallment
-    val firstInstalment: Instalment = submission.schedule.schedule.firstInstallment
+    val lastInstalment: Instalment = journey.schedule.schedule.lastInstallment
+    val firstInstalment: Instalment = journey.schedule.schedule.firstInstallment
 
-    val totalLiability = submission.schedule.schedule.instalments.map(_.amount).sum + submission.schedule.schedule.initialPayment
+    val totalLiability = journey.schedule.schedule.instalments.map(_.amount).sum + journey.schedule.schedule.initialPayment
 
     val pp = PaymentPlan(ppType                    = "Time to Pay",
-                         paymentReference          = s"${submission.taxpayer.selfAssessment.utr.value}K",
+                         paymentReference          = s"${journey.taxpayer.selfAssessment.utr.value}K",
                          hodService                = cesa,
                          paymentCurrency           = paymentCurrency,
                          initialPaymentAmount      = initialPayment,
@@ -356,8 +356,7 @@ class ArrangementController @Inject() (
   /**
    * Builds and returns a TTPArrangement
    */
-  private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
-                                submission:    Journey): TTPArrangement = {
+  private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan, journey: Journey): TTPArrangement = {
     val ppReference =
       ddInstruction.paymentPlan.headOption.getOrElse(
         throw new RuntimeException(s"No payment plans for [$ddInstruction]")).ppReferenceNo
@@ -367,14 +366,14 @@ class ArrangementController @Inject() (
         .headOption.getOrElse(throw new RuntimeException(s"No direct debit instructions for [$ddInstruction]"))
         .ddiReferenceNo.getOrElse(throw new RuntimeException("ddReference not available"))
 
-    val taxpayer = submission.taxpayer
-    val schedule = submission.schedule
+    val taxpayer = journey.taxpayer
+    val schedule = journey.schedule
 
     TTPArrangement(ppReference, ddReference, taxpayer, schedule.schedule)
   }
 
-  private def createDayOfForm(ttpSubmission: Journey) =
-    ttpSubmission.maybeSchedule.fold(dayOfMonthForm)((p: CalculatorPaymentScheduleExt) => {
+  private def createDayOfForm(journey: Journey) =
+    journey.maybeSchedule.fold(dayOfMonthForm)((p: CalculatorPaymentScheduleExt) => {
       dayOfMonthForm.fill(ArrangementDayOfMonth(p.schedule.getMonthlyInstalmentDate))
     })
 }
