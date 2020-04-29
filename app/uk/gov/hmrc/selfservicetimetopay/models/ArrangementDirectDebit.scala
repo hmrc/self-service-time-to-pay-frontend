@@ -18,10 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.json.{Format, Json}
 
-final case class ArrangementDirectDebit(accountName:   String,
-                                        sortCode:      String,
-                                        accountNumber: String
-) {
+final case class ArrangementDirectDebit(accountName: String, sortCode: String, accountNumber: String) {
   def formatSortCode: String = sortCode.grouped(2).foldLeft("")((subset, total) => subset + " - " + total).drop(3)
 }
 
@@ -32,11 +29,8 @@ object ArrangementDirectDebit {
     .replaceAll(" ", "")
     .trim
 
-  def from(
-      bankDetails: BankDetails): ArrangementDirectDebit = ArrangementDirectDebit(bankDetails.accountName.getOrElse(""),
-                                                                                 bankDetails.sortCode.map(cleanSortCode).getOrElse(""),
-                                                                                 bankDetails.accountNumber.getOrElse("")
-  )
+  def from(bankDetails: BankDetails): ArrangementDirectDebit =
+    ArrangementDirectDebit(bankDetails.accountName, cleanSortCode(bankDetails.sortCode), bankDetails.accountNumber)
 
   implicit val format: Format[ArrangementDirectDebit] = Json.format[ArrangementDirectDebit]
 

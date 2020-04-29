@@ -21,7 +21,7 @@ import controllers.FrontendBaseController
 import javax.inject.Inject
 import journey.{Journey, JourneyService}
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttpcalculator.CalculatorConnector
 import ssttpdirectdebit.DirectDebitConnector
@@ -37,18 +37,15 @@ class InspectorController @Inject() (
     cc:                  MessagesControllerComponents,
     journeyService:      JourneyService,
     views:               Views,
-    requestSupport:      RequestSupport)(implicit appConfig: AppConfig,
-                                         ec: ExecutionContext
-) extends FrontendBaseController(cc) {
+    requestSupport:      RequestSupport)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(cc) {
 
   import requestSupport._
 
-  def clearPlaySession() = Action { implicit request =>
-    redirectToInspectorView.withSession()
+  def clearPlaySession(): Action[AnyContent] = Action { implicit request =>
+    Redirect(routes.InspectorController.inspect()).withSession()
   }
 
-  def inspect() = Action.async { implicit request =>
-
+  def inspect(): Action[AnyContent] = Action.async { implicit request =>
     val maybeJourneyF: Future[Option[Journey]] = journeyService.getJourney.map(Some(_)).recover {
       case e: RuntimeException => None
     }
@@ -60,8 +57,8 @@ class InspectorController @Inject() (
       List(
         "debitDate" -> maybeJourney.flatMap(_.debitDate).json,
         "taxpayer" -> maybeJourney.flatMap(_.maybeTaxpayer).json,
-        "schedule" -> maybeJourney.flatMap(_.schedule).json,
-        "bankDetails" -> maybeJourney.flatMap(_.bankDetails).json,
+        "schedule" -> maybeJourney.flatMap(_.maybeSchedule).json,
+        "bankDetails" -> maybeJourney.flatMap(_.maybeBankDetails).json,
         "existingDDBanks" -> maybeJourney.flatMap(_.existingDDBanks).json,
 
         "calculatorData" -> maybeJourney.map(_.maybeCalculatorData).json,
@@ -72,8 +69,6 @@ class InspectorController @Inject() (
       hc.headers
     ))
   }
-
-  lazy val redirectToInspectorView = Redirect(routes.InspectorController.inspect())
 
   implicit class JsonOps[A: Writes](a: A) {
     def json: String = Json.prettyPrint(Json.toJson(a))

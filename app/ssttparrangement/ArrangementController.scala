@@ -181,7 +181,7 @@ class ArrangementController @Inject() (
       .map(CalculatorPaymentScheduleExt(months, _))
       .map[Journey](paymentSchedule =>
         journey.copy(
-          schedule            = Some(paymentSchedule),
+          maybeSchedule       = Some(paymentSchedule),
           maybeCalculatorData = Some(input)
         )
       )
@@ -243,14 +243,12 @@ class ArrangementController @Inject() (
         val directDebit =
           journey.arrangementDirectDebit.getOrElse(
             throw new RuntimeException(s"arrangementDirectDebit not found for journey [$journey]"))
-        val schedule =
-          journey.schedule.getOrElse(throw new RuntimeException(s"schedule not found for journey [$journey]"))
 
         Ok(views.application_complete(
           debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
           transactionId = journey.taxpayer.selfAssessment.utr + LocalDateTime.now(clockProvider.getClock).toString,
           directDebit,
-          schedule.schedule,
+          journey.schedule.schedule,
           journey.ddRef
         ))
       } else technicalDifficulties(journey)
@@ -312,64 +310,53 @@ class ArrangementController @Inject() (
    * Checks if the TTPSubmission data contains an existing direct debit reference number and either
    * passes this information to a payment plan constructor function or builds a new Direct Debit Instruction
    */
-  private def checkExistingBankDetails(submission: Journey)(implicit request: Request[_]) = {
+  private def checkExistingBankDetails(journey: Journey)(implicit request: Request[_]) = {
     JourneyLogger.info("ArrangementController.checkExistingBankDetails")
 
-    val bankDetails =
-      submission.bankDetails.getOrElse(throw new RuntimeException(s"bankDetails not found on submission [$submission]"))
-
-    bankDetails.ddiRefNumber match {
-      case Some(refNo) =>
-        JourneyLogger.info("ArrangementController.checkExistingBankDetails - found bankDetails")
-        paymentPlan(submission, DirectDebitInstruction(ddiRefNumber = Some(refNo)))
-      case None =>
-        JourneyLogger.info("ArrangementController.checkExistingBankDetails - NOT found bankDetails")
-        paymentPlan(
-          submission, DirectDebitInstruction(bankDetails.sortCode, bankDetails.accountNumber, bankDetails.accountName))
-    }
+    paymentPlan(
+      journey,
+      DirectDebitInstruction(
+        sortCode      = journey.bankDetails.sortCode,
+        accountNumber = journey.bankDetails.accountNumber,
+        accountName   = journey.bankDetails.accountNumber,
+        ddiRefNumber  = journey.bankDetails.maybeDDIRefNumber))
   }
 
   /**
    * Builds and returns a payment plan
    */
-  private def paymentPlan(submission: Journey, ddInstruction: DirectDebitInstruction): PaymentPlanRequest = {
-    val paymentPlanRequest = for {
-      schedule <- submission.schedule
-      taxPayer <- submission.maybeTaxpayer
-    } yield {
-      val knownFact = List(KnownFact(cesa, taxPayer.selfAssessment.utr.value))
+  private def paymentPlan(journey: Journey, ddInstruction: DirectDebitInstruction): PaymentPlanRequest = {
+    val knownFact = List(KnownFact(cesa, journey.taxpayer.selfAssessment.utr.value))
 
-      val initialPayment = if (schedule.schedule.initialPayment > exact(0)) Some(schedule.schedule.initialPayment.toString()) else None
-      val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.schedule.startDate.plusWeeks(1)))
+    val initialPayment = if (journey.schedule.schedule.initialPayment > exact(0)) Some(journey.schedule.schedule.initialPayment.toString()) else None
+    val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(journey.schedule.schedule.startDate.plusWeeks(1)))
 
-      val lastInstalment: Instalment = schedule.schedule.lastInstallment
-      val firstInstalment: Instalment = schedule.schedule.firstInstallment
+    val lastInstalment: Instalment = journey.schedule.schedule.lastInstallment
+    val firstInstalment: Instalment = journey.schedule.schedule.firstInstallment
 
-      val pp = PaymentPlan(ppType                    = "Time to Pay",
-                           paymentReference          = s"${taxPayer.selfAssessment.utr.value}K",
-                           hodService                = cesa,
-                           paymentCurrency           = paymentCurrency,
-                           initialPaymentAmount      = initialPayment,
-                           initialPaymentStartDate   = initialStartDate,
-                           scheduledPaymentAmount    = firstInstalment.amount.toString(),
-                           scheduledPaymentStartDate = firstInstalment.paymentDate,
-                           scheduledPaymentEndDate   = lastInstalment.paymentDate,
-                           scheduledPaymentFrequency = paymentFrequency,
-                           balancingPaymentAmount    = lastInstalment.amount.toString(),
-                           balancingPaymentDate      = lastInstalment.paymentDate,
-                           totalLiability            = (schedule.schedule.instalments.map(_.amount).sum + schedule.schedule.initialPayment).toString())
+    val totalLiability = journey.schedule.schedule.instalments.map(_.amount).sum + journey.schedule.schedule.initialPayment
 
-      PaymentPlanRequest("SSTTP", ZonedDateTime.now.format(ISO_INSTANT), knownFact, ddInstruction, pp, printFlag = true)
-    }
+    val pp = PaymentPlan(ppType                    = "Time to Pay",
+                         paymentReference          = s"${journey.taxpayer.selfAssessment.utr.value}K",
+                         hodService                = cesa,
+                         paymentCurrency           = paymentCurrency,
+                         initialPaymentAmount      = initialPayment,
+                         initialPaymentStartDate   = initialStartDate,
+                         scheduledPaymentAmount    = firstInstalment.amount.toString(),
+                         scheduledPaymentStartDate = firstInstalment.paymentDate,
+                         scheduledPaymentEndDate   = lastInstalment.paymentDate,
+                         scheduledPaymentFrequency = paymentFrequency,
+                         balancingPaymentAmount    = lastInstalment.amount.toString(),
+                         balancingPaymentDate      = lastInstalment.paymentDate,
+                         totalLiability            = totalLiability.toString())
 
-    paymentPlanRequest.getOrElse(throw new RuntimeException(s"PaymentPlanRequest creation failed - TTPSubmission: $submission"))
+    PaymentPlanRequest("SSTTP", ZonedDateTime.now.format(ISO_INSTANT), knownFact, ddInstruction, pp, printFlag = true)
   }
 
   /**
    * Builds and returns a TTPArrangement
    */
-  private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan,
-                                submission:    Journey): TTPArrangement = {
+  private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan, journey: Journey): TTPArrangement = {
     val ppReference =
       ddInstruction.paymentPlan.headOption.getOrElse(
         throw new RuntimeException(s"No payment plans for [$ddInstruction]")).ppReferenceNo
@@ -379,16 +366,14 @@ class ArrangementController @Inject() (
         .headOption.getOrElse(throw new RuntimeException(s"No direct debit instructions for [$ddInstruction]"))
         .ddiReferenceNo.getOrElse(throw new RuntimeException("ddReference not available"))
 
-    val taxpayer = submission.maybeTaxpayer.getOrElse(throw new RuntimeException("Taxpayer data not present"))
-    val schedule = submission.schedule.getOrElse(throw new RuntimeException("Schedule data not present"))
+    val taxpayer = journey.taxpayer
+    val schedule = journey.schedule
 
     TTPArrangement(ppReference, ddReference, taxpayer, schedule.schedule)
   }
 
-  private def createDayOfForm(ttpSubmission: Journey) = {
-
-    ttpSubmission.schedule.fold(dayOfMonthForm)((p: CalculatorPaymentScheduleExt) => {
+  private def createDayOfForm(journey: Journey) =
+    journey.maybeSchedule.fold(dayOfMonthForm)((p: CalculatorPaymentScheduleExt) => {
       dayOfMonthForm.fill(ArrangementDayOfMonth(p.schedule.getMonthlyInstalmentDate))
     })
-  }
 }

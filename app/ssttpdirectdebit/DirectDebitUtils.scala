@@ -21,7 +21,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, Di
 object DirectDebitUtils {
   def bankDetails(sortCode: String, accountNumber: String, accountName: String, directDebitBank: DirectDebitBank): BankDetails = {
     val instructions = directDebitBank.directDebitInstruction.filter { p =>
-      p.accountNumber.fold(false)(_.equalsIgnoreCase(accountNumber)) && p.sortCode.fold(false)(_.equals(sortCode))
+      p.accountNumber.equalsIgnoreCase(accountNumber) && p.sortCode.equals(sortCode)
     }
 
       def minReferenceNumber(a: DirectDebitInstruction, b: DirectDebitInstruction): DirectDebitInstruction =
@@ -34,12 +34,12 @@ object DirectDebitUtils {
 
     instructions
       .reduceOption(minReferenceNumber)
-      .fold(BankDetails(Some(sortCode), Some(accountNumber), accountName = Some(accountName))) { instruction =>
+      .fold(BankDetails(sortCode, accountNumber, accountName)) { instruction =>
         BankDetails(
           instruction.sortCode,
           instruction.accountNumber,
-          accountName  = Some(accountName),
-          ddiRefNumber = instruction.referenceNumber
+          accountName,
+          maybeDDIRefNumber = instruction.referenceNumber
         )
       }
   }
