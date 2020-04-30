@@ -222,7 +222,7 @@ object CalculatorService {
       selfAssessment
         .debits
         .filter(_.amount > 32)
-        .map(_.getDueDate().plusYears(1))
+        .map(_.getDueDate.plusYears(1))
         .reduceOption(min)
 
     val differenceNextSubmissionReturn: Int = nextSubmissionReturn.map(sr =>
