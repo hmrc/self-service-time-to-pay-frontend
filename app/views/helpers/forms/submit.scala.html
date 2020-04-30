@@ -20,11 +20,11 @@
 
 @argsMap = @{ args.toMap }
 @defining({
-    var a = argsMap.filterNot(entry => entry._1.name.startsWith("_")) + ('type -> "submit")
-    if (argsMap.get('_buttonClass).isDefined) {
-        a = a + ('_modifierClass -> argsMap.get('_buttonClass).get)
-    }
-    a.toVector
+    val arguments = argsMap.filterNot(entry => entry._1.name.startsWith("_")) + ('type -> "submit")
+
+    argsMap.get('_buttonClass).fold(arguments) { buttonClass =>
+        arguments + ('_modifierClass -> buttonClass)
+    }.toVector
 }) { buttonArgs =>
 <div class="form-group margin-top-30 form-field--submit@if(argsMap.get('_modifierClass).isDefined){ @argsMap.get('_modifierClass)}">
     @formsButton(buttonArgs: _*)(content)

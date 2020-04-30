@@ -23,25 +23,25 @@ import play.api.libs.json.{Format, Json}
 //Direct-debit - getBanks response
 //Direct-debit - part of input to createPaymentPlan
 final case class DirectDebitInstruction(
-    sortCode:        Option[String]    = None,
-    accountNumber:   Option[String]    = None,
+    sortCode:        String,
+    accountNumber:   String,
+    accountName:     String,
     referenceNumber: Option[String]    = None,
     creationDate:    Option[LocalDate] = None,
     paperAuddisFlag: Option[Boolean]   = Some(true),
     ddiRefNumber:    Option[String]    = None,
-    ddiReferenceNo:  Option[String]    = None,
-    accountName:     Option[String]    = None
+    ddiReferenceNo:  Option[String]    = None
 ) {
 
   def obfuscate: DirectDebitInstruction = DirectDebitInstruction(
-    sortCode        = sortCode.map(_ => "***"),
-    accountNumber   = accountNumber.map(_ => "***"),
+    sortCode        = "***",
+    accountNumber   = "***",
+    accountName     = "***",
     referenceNumber = referenceNumber.map(_ => "***"),
     creationDate    = creationDate,
     paperAuddisFlag = paperAuddisFlag,
     ddiRefNumber    = ddiRefNumber.map(_ => "***"),
-    ddiReferenceNo  = ddiReferenceNo.map(_ => "***"),
-    accountName     = accountName.map(_ => "***")
+    ddiReferenceNo  = ddiReferenceNo.map(_ => "***")
   )
 }
 

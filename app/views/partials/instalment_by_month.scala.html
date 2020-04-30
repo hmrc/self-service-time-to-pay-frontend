@@ -38,7 +38,7 @@
 
 <div class="multiple-choice" data-target="@{schedule.months}_id">
   <input id=@{schedule.months} type="radio" name="chosen-month" value=@{if (schedule.months < 0) 12 + schedule.months else schedule.months}>
-  <label for=@{schedule.months}>@{if (schedule.months < 0) 12 + schedule.months else schedule.months} @Messages("ssttp.calculator.results.month.option.1") <strong class="bold">@currency(schedule.schedule.instalments.head.amount)</strong></label>
+  <label for=@{schedule.months}>@{if (schedule.months < 0) 12 + schedule.months else schedule.months} @Messages("ssttp.calculator.results.month.option.1") <strong class="bold">@currency(schedule.schedule.firstInstallment.amount)</strong></label>
 </div>
 
 <div class="panel js-hidden" id="@{schedule.months}_id">

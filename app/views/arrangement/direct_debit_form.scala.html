@@ -19,6 +19,7 @@
 @import helpers.forms.submit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import timetopaycalculator.cor.model._
+@import _root_.model._
 @import _root_.model.PaymentScheduleSupport._
 @import ssttpcalculator.CalculatorPaymentScheduleExt
 
@@ -46,14 +47,14 @@
     initialPayment = Some(schedule.schedule.initialPayment),
     interest = schedule.schedule.totalInterestCharged,
     duration = schedule.schedule.instalments.length,
-    regularPayment = schedule.schedule.instalments.head.amount,
-    paymentDay = schedule.schedule.instalments.head.paymentDate.getDayOfMonth
+    regularPayment = schedule.schedule.firstInstallment.amount,
+    paymentDay = schedule.schedule.firstInstallment.paymentDate.getDayOfMonth
 )
 }
 @main(
     title = Messages("ssttp.arrangement.direct-debit.form.title"),
     loggedIn = loggedIn,
-    sidebarLinks =  None,
+    maybeSidebarLinks =  None,
     googleAnalyticsCalls = if(ddForm.hasErrors) {
         Seq.empty
     } else {

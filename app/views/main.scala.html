@@ -21,7 +21,7 @@
 )
 
 @(title: String,
-        sidebarLinks: Option[Html] = None,
+        maybeSidebarLinks: Option[Html] = None,
         contentHeader: Option[Html] = None,
         bodyClasses: Option[String] = None,
         mainClass: Option[String] = None,
@@ -38,8 +38,8 @@
         mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @sidebar = {
-    @if(sidebarLinks.isDefined) {
-        @viewsHelpers.sidebar(sidebarLinks.get, Some("sidebar"))
+    @maybeSidebarLinks.map { sidebarLinks =>
+        @viewsHelpers.sidebar(sidebarLinks, Some("sidebar"))
     }
 }
 
@@ -65,7 +65,7 @@
     bodyClasses = bodyClasses,
     navLinks = Option(links),
     sidebar = sidebar,
-    contentHeader = contentHeader,
+    maybeContentHeader = contentHeader,
     mainContent = viewsHelpers.article(mainContent),
     scriptElem = Some(scriptElems),
     linksElem = Some(linksElems),
@@ -74,5 +74,5 @@
     welshToggleEnabled = welshToggleEnabled,
     hasUserPanel = hasUserPanel,
     navTitle = navTitle,
-    backButtonUrl = backButtonUrl
+    maybeBackButtonUrl = backButtonUrl
 )

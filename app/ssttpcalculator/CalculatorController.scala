@@ -206,6 +206,27 @@ class CalculatorController @Inject() (
     }
   }
 
+  //  TODO work out what these functions and CalculatorPaymentScheduleExt are for and then refactor to make that clearer
+  //  Ideally we would have tests of the controller functions that use these methods so that we could refactor and show no regression
+  //  But it is hard to write tests because the intention is obscure.
+  //  To remove the wart do something like this:
+  //  def getClosestSchedule(amount: BigDecimal, schedules: Seq[CalculatorPaymentScheduleExt])
+  //    (implicit hc: HeaderCarrier): CalculatorPaymentScheduleExt = {
+  //
+  //    def difference(schedule: CalculatorPaymentScheduleExt) =
+  //      math.abs(schedule.schedule.getMonthlyInstalment.toInt - amount.toInt)
+  //
+  //    def closest(min: CalculatorPaymentScheduleExt, next: CalculatorPaymentScheduleExt) =
+  //      if (difference(next) < difference(min)) next else min
+  //
+  //    Try(schedules.reduceOption(closest).getOrElse(throw new RuntimeException(s"No schedules for [$schedules]"))) match {
+  //      case Success(s) => s
+  //      case Failure(e) =>
+  //        JourneyLogger.info(s"CalculatorController.getClosestSchedule: ERROR [$e]")
+  //        throw e
+  //    }
+  //  }
+  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
   def getClosestSchedule(amount: BigDecimal, schedules: List[CalculatorPaymentScheduleExt])(implicit hc: HeaderCarrier): CalculatorPaymentScheduleExt =
     Try(schedules.minBy(v => math.abs(v.schedule.getMonthlyInstalment.toInt - amount.toInt))) match {
       case Success(s) =>
@@ -237,6 +258,7 @@ class CalculatorController @Inject() (
       case -1 => None
       case m  => Some(list(m - n))
     }
+  //TODO work out what these functions and CalculatorPaymentScheduleExt are for and then refactor to make that clearer
 
   def getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getPaymentSummary: $request")
@@ -284,7 +306,7 @@ class CalculatorController @Inject() (
                     formWithErrors,
                     getSurroundingSchedule(getClosestSchedule(journey.amount, schedules), schedules, sa)))),
             validFormData =>
-              journeyService.saveJourney(journey.copy(schedule = schedules.find(_.months == validFormData.chosenMonths))).map { _ =>
+              journeyService.saveJourney(journey.copy(maybeSchedule = schedules.find(_.months == validFormData.chosenMonths))).map { _ =>
                 Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
               }
           )

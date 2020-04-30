@@ -14,20 +14,18 @@
  * limitations under the License.
  *@
 
-@(dataForm:Form[_], fieldName: String, args:(Symbol, Any)*)(content: Html)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
-    @import play.api.i18n._
-    @import views.html.helper._
-    @import scala.collection.mutable.ListBuffer
+@import play.api.i18n._
+@import views.html.helper._
+@import scala.collection.mutable.ListBuffer
+
+@(dataForm:Form[_], fieldName: String, args:(Symbol, Any)*)(content: Html)(implicit messages: Messages, lang: Lang = Lang("en"))
     @argsMap = @{args.toMap}
     @clss = @{
-        var c:Seq[String] = Seq("")
-        if(argsMap.contains('_modifierClass)) {
-            c = c ++ Seq(argsMap.getOrElse('_modifierClass, "").asInstanceOf[String])
-        }
-        if(dataForm.error(fieldName).nonEmpty){
-            c = c ++ Seq("form-field-group--error")
-        }
-        Html(c.mkString(" class=\"", "", "\""))
+        val modifierClass = argsMap.get('_modifierClass).fold(Seq.empty[String])(modifierClass => Seq(modifierClass.toString))
+        val errors = dataForm.error(fieldName).fold(Seq.empty[String])(_ => Seq("form-field-group--error"))
+        val classes = Seq("") ++ modifierClass ++ errors
+
+        Html(classes.mkString(" class=\"", "", "\""))
     }
     <a name="@fieldName"></a>
     <fieldset @clss @toHtmlArgs(argsMap.filterNot(entry => entry._1.name.startsWith("_")))>

@@ -34,7 +34,6 @@ final case class ViewConfig(
 
   //  val reportAProblemPartialUrl = s"$frontendBaseUrl/contact/problem_reports_ajax?service=$appName"
   //  val reportAProblemNonJSUrl = s"$frontendBaseUrl/contact/problem_reports_nonjs?service=$appName"
-  //  val feedbackUrl = s"$frontendBaseUrl/contact/beta-feedback-unauthenticated?service=$appName"
 
   val loginUrl = companyAuthUrl + signInPath
 

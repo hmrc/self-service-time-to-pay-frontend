@@ -21,7 +21,6 @@ import journey.Journey
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Request
-import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -46,34 +45,22 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
     result.map(_ => ())
   }
 
-  private def eventFor(submission: Journey)(implicit request: Request[_]) = {
-
-    //todo Find out whether the bank account check needs to be in the event, if they get this far this should be a successful check
-    //at this stage all optional values should be present
-    val utr: SaUtr = submission.taxpayer.selfAssessment.utr
-    val name: String = submission.bankDetails.map(_.accountName.get).get
-    val accountNumber: String = submission.bankDetails.map(_.accountNumber.get).get
-    val sortCode: String = submission.bankDetails.map(_.sortCode.get).get
-    val installment: String = submission.schedule.map(_.schedule.instalments).getClass.toString
-    val interestTotal: BigDecimal = submission.schedule.map(_.schedule.totalInterestCharged).get
-    val total: BigDecimal = submission.schedule.map(_.schedule.totalPayable).get
-
+  private def eventFor(journey: Journey)(implicit request: Request[_]) =
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
       auditType   = "directDebitSetup",
       tags        = hc.headers.toMap,
       detail      = Json.obj(
-        "utr" -> utr.value,
+        "utr" -> journey.taxpayer.selfAssessment.utr.value,
         "bankDetails" -> Json.obj(
-          "name" -> name,
-          "accountNumber" -> accountNumber,
-          "sortCode" -> sortCode
+          "name" -> journey.bankDetails.accountName,
+          "accountNumber" -> journey.bankDetails.accountNumber,
+          "sortCode" -> journey.bankDetails.sortCode
         ),
         "installments" -> Json.obj(
-          "installment" -> installment,
-          "interestTotal" -> interestTotal,
-          "total" -> total)
+          "installment" -> journey.schedule.schedule.instalments.getClass.toString,
+          "interestTotal" -> journey.schedule.schedule.totalInterestCharged,
+          "total" -> journey.schedule.schedule.totalPayable)
       )
     )
-  }
 }

@@ -41,10 +41,6 @@ object RequestSupport {
 
   implicit def hc[A](implicit request: Request[A]): HeaderCarrier = HcProvider.headerCarrier
 
-  /**
-   * Naive way of checking if user is logged in. Use it in views only.
-   * For more real check see [[auth.AuthService]]
-   */
   def isLoggedIn(implicit request: Request[_]): Boolean = request.session.get(SessionKeys.authToken).isDefined
 
   /**

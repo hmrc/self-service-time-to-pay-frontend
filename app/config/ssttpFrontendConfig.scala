@@ -32,8 +32,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val analyticsHost = servicesConfig.getString("google-analytics.host")
   lazy val reportAProblemPartialUrl = s"$contactFrontendBaseUrl/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl = s"$contactFrontendBaseUrl/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUrlNoAuth = s"$contactFrontendBaseUrl/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUrlAuth = s"$contactFrontendBaseUrl/contact/beta-feedback?service=$contactFormServiceIdentifier"
   lazy val reportAccessibilityProblemUrl = s"$contactFrontendBaseUrl/contact/accessibility?service=$contactFormServiceIdentifier"
 
   private lazy val companyAuthFrontend = servicesConfig.getConfString("company-auth.url", throw new RuntimeException("Company auth url required"))

@@ -24,18 +24,13 @@
 @import _root_.timetopaycalculator.cor.model.PaymentSchedule
 @import _root_.model.PaymentScheduleSupport._
 
-@this(
-        main: views.html.main,
-        viewsHelpers: views.ViewsHelpers
-)
-
-
+@this(main: views.html.main, viewsHelpers: views.ViewsHelpers)
 @(
         debits: Seq[Debit],
         transactionId: String,
         directDebit: ArrangementDirectDebit,
         schedule: PaymentSchedule,
-        ddref: Option[String])(
+        maybeDirectDebitReference: Option[String])(
         implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
@@ -49,30 +44,27 @@
   initialPayment = Some(schedule.initialPayment),
   interest = schedule.totalInterestCharged,
   duration = schedule.instalments.length,
-  regularPayment = schedule.instalments.head.amount,
+  regularPayment = schedule.firstInstallment.amount,
   step = 4,
-  paymentDay = schedule.instalments.head.paymentDate.getDayOfMonth
+  paymentDay = schedule.firstInstallment.paymentDate.getDayOfMonth
 )
 }
 <div class="no_print">
 @main(
   title = Messages("ssttp.arrangement.complete.title"),
   loggedIn = true,
-  sidebarLinks = None,
+  maybeSidebarLinks = None,
   googleAnalyticsCalls = Seq(gaCheckoutCode.body),
   welshToggleEnabled = false,
   hasUserPanel = true
 ) {
-
-
-
   <div class="transaction-banner--complete removeBottom">
     <div class="transaction-banner__heading" role="banner">
 
       <h1 class="govuk-panel__title">@Messages("ssttp.arrangement.complete.title")</h1>
       <div class="govuk-panel__body">
-      @ddref.map { _ =>
-        @Messages("ssttp.arrangement.complete.ddref")<br/><strong>@ddref.get</strong>
+      @maybeDirectDebitReference.map { directDebitReference =>
+        @Messages("ssttp.arrangement.complete.ddref")<br/><strong>@directDebitReference</strong>
       }
       </div>
     </div>
@@ -94,6 +86,6 @@
 }
 </div>
 <div class="js-visible printable">
-@print_payment_schedule(schedule, ddref)
+@print_payment_schedule(schedule, maybeDirectDebitReference)
 </div>
 

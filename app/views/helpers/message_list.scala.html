@@ -15,7 +15,7 @@
  *@
 
 @(
-        modifierClass: Option[String],
+        maybeModifierClass: Option[String],
         messagePrefix: String,
         messagesApi: play.api.i18n.MessagesApi,
         args: (Symbol, String)*)(implicit
@@ -24,10 +24,10 @@
 
 @argsMap = @{ args.toMap }
 
-<ul @if(modifierClass.isDefined){ class="@modifierClass.get"}>
+<ul @maybeModifierClass.map{ modifierClass => class="@modifierClass"}>
 
   @for(message <- messagesApi.messages("default").filterKeys(_.startsWith(messagePrefix)).keys.toSeq.sorted) {
-      <li@if(argsMap.get('_itemClass).isDefined){ class="@argsMap.get('_itemClass)"}>@Messages(message)</li>
+      <li@argsMap.get('_itemClass).map{itemClass => class="@itemClass"}>@Messages(message)</li>
   }
 
 </ul>

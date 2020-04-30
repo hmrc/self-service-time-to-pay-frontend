@@ -86,7 +86,7 @@
           <strong>@schedule.schedule.instalments.length</strong> @Messages("ssttp.direct-debit-assistance.monthly-instalments")
         </div>
         <div class="grid-layout__column grid-layout__column--1-2">
-          <strong>@currency(schedule.schedule.instalments.head.amount)</strong>
+          <strong>@currency(schedule.schedule.firstInstallment.amount)</strong>
         </div>
       </div>
       <div class="subsection grid-layout divider--bottom">

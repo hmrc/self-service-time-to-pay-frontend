@@ -19,14 +19,13 @@
 @{
     val argsMap = args.toMap
     val theField = argsMap.getOrElse('_field, "")
-    var errors:Seq[(String, String)] = Seq.empty
-    var id = if(theField.isEmpty) argsMap.getOrElse('_id, theForm.toString) else theField
-    if (theField.isEmpty && theForm.hasGlobalErrors) {
-        errors = errors ++ theForm.globalErrors.map { e:FormError => (id, e.message)}
-    }
-    else if (theForm.error(theField).nonEmpty) {
-        errors = errors ++ theForm.errors(theField).map { e:FormError => (e.key, e.message)}
-    }
+    val id = if(theField.isEmpty) argsMap.getOrElse('_id, theForm.toString) else theField
+
+    val errors:Seq[(String, String)] =
+        if (theField.isEmpty && theForm.hasGlobalErrors) theForm.globalErrors.map { e:FormError => (id, e.message) }
+        else if (theForm.error(theField).nonEmpty) theForm.errors(theField).map { e:FormError => (e.key, e.message) }
+        else Seq.empty
+
     if (errors.nonEmpty) {
         errorList(errors.map { case (k,m) => (k, Messages(m) )}, '_formId -> id)
     }
