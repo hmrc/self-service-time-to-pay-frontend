@@ -43,8 +43,7 @@ class CalculatorControllerSpec extends ItSpec {
     val paymentSchedules = Range(twoMonths, sevenMonths).inclusive.map { duration =>
       CalculatorPaymentScheduleExt(
         duration,
-        connector.calculatePaymentSchedule(calculatorInput(startDate.plus(duration, MONTHS), 2))
-        (FakeRequest()).futureValue)
+        connector.calculatePaymentSchedule(calculatorInput(startDate.plus(duration, MONTHS), 2)) (FakeRequest()).futureValue)
     }.toList
 
     confirm(whenUserPrefersMonthlyPayment(1), closestActualPayment = 700, duration = sevenMonths)
@@ -59,11 +58,11 @@ class CalculatorControllerSpec extends ItSpec {
     confirm(whenUserPrefersMonthlyPayment(2041), closestActualPayment = 1633, duration = threeMonths)
     confirm(whenUserPrefersMonthlyPayment(2042), closestActualPayment = 2450, duration = twoMonths)
 
-    def confirm(schedule: CalculatorPaymentScheduleExt, closestActualPayment: BigDecimal, duration: Int): Any = {
-      schedule.schedule.firstInstallment.amount shouldBe closestActualPayment
-      schedule.months shouldBe duration
-    }
+      def confirm(schedule: CalculatorPaymentScheduleExt, closestActualPayment: BigDecimal, duration: Int): Any = {
+        schedule.schedule.firstInstallment.amount shouldBe closestActualPayment
+        schedule.months shouldBe duration
+      }
 
-    def whenUserPrefersMonthlyPayment(amount: Int) = controller.getClosestSchedule(amount, paymentSchedules)
+      def whenUserPrefersMonthlyPayment(amount: Int) = controller.getClosestSchedule(amount, paymentSchedules)
   }
 }
