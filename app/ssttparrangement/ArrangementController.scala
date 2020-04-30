@@ -318,7 +318,7 @@ class ArrangementController @Inject() (
       DirectDebitInstruction(
         sortCode      = journey.bankDetails.sortCode,
         accountNumber = journey.bankDetails.accountNumber,
-        accountName   = Some(journey.bankDetails.accountNumber),
+        accountName   = Some(journey.bankDetails.accountName),
         ddiRefNumber  = journey.bankDetails.maybeDDIRefNumber))
   }
 
