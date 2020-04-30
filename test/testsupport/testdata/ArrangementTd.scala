@@ -18,10 +18,49 @@ package testsupport.testdata
 
 import play.api.libs.json.JsObject
 import testsupport.JsonSyntax._
-import testsupport.testdata.CalculatorTd._
 import testsupport.testdata.TdAll._
 
 object ArrangementTd {
+  private val calculatorPaymentScheduleInstalmentJson =
+    //language=Json
+    """{
+      "paymentDate": "2019-08-25",
+      "amount": 300,
+      "interest": 2
+    }""".asJson
+
+  private val calculatorPaymentScheduleInstalmentJson2 =
+    //language=Json
+    """{
+      "paymentDate": "2019-08-25",
+      "amount": 120,
+      "interest": 4
+    }""".asJson
+
+  private val calculatorPaymentScheduleInstalmentJson3 =
+    //language=Json
+    """{
+      "paymentDate": "2019-08-25",
+      "amount": 250,
+      "interest": 3
+    }""".asJson
+
+  private val calculatorPaymentScheduleJson: JsObject =
+    s"""{
+          "startDate" : "2019-04-23",
+          "endDate" : "2019-08-21",
+          "initialPayment" : 0,
+           "amountToPay" : 4000,
+           "instalmentBalance" : 200,
+           "totalInterestCharged" : 200,
+           "totalPayable" : 200,
+           "instalments" : [
+              $calculatorPaymentScheduleInstalmentJson,
+              $calculatorPaymentScheduleInstalmentJson2,
+              $calculatorPaymentScheduleInstalmentJson3
+            ]
+        }""".asJson
+
   val tTPArrangementJson: JsObject =
     s"""{
           "paymentPlanReference": "12345678",

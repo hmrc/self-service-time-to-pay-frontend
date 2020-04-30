@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
-import org.scalatest.Assertion
 import testsupport.RichMatchers._
 
 class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -29,7 +28,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val content = readMain().stripSpaces
+    val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
@@ -62,7 +61,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Print your payment plan
           |What happens next?
           |HMRC will send you a letter within 5 days with your payment dates.
-          |Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on 25th August 2019.
+          |Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on 27th December 2019.
           |If you need to change your payment plan
           |Call the HMRC Helpline on 0300 322 7015.
           |What did you think of this service? (takes 30 seconds)
@@ -75,7 +74,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Argraffu crynodeb o’ch taliadau
           |Beth sy’n digwydd nesaf?
           |Byddwn yn anfon llythyr atoch cyn pen 5 diwrnod i gadarnhau’ch dyddiadau talu.
-          |Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on 25th August 2019.
+          |Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on 27th December 2019.
           |Os oes angen i chi newid eich cynllun talu
           |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.
           |Beth oedd eich barn am y gwasanaeth hwn? (mae’n cymryd 30 eiliad)

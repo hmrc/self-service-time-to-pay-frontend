@@ -33,7 +33,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
     monthlyPaymentAmountPage.enterAmount("2450")
-    CalculatorStub.generateSchedule
+    CalculatorStub.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
   }
 

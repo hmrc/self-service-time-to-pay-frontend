@@ -33,7 +33,7 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
     monthlyPaymentAmountPage.enterAmount("2450")
-    CalculatorStub.generateSchedule
+    CalculatorStub.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.selectAnOption()
     calculatorInstalmentsPage.clickContinue()
@@ -65,6 +65,7 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
 
   "choose 28th or next working day and continue" in {
     beginJourney()
+    CalculatorStub.generateSchedules(paymentDayOfMonth      = 27, firstPaymentDayOfMonth = 28)
     instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()
@@ -73,9 +74,10 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
 
   "choose a different day and continue" in {
     beginJourney()
+    CalculatorStub.generateSchedules(paymentDayOfMonth      = 11, firstPaymentDayOfMonth = 12)
     instalmentSummarySelectDatePage.selectSecondOption()
     instalmentSummarySelectDatePage.enterDay("12")
     instalmentSummarySelectDatePage.clickContinue()
-    instalmentSummaryPage.assertPageIsDisplayed
+    instalmentSummaryPageForPaymentDayOfMonth11th.assertPageIsDisplayed
   }
 }

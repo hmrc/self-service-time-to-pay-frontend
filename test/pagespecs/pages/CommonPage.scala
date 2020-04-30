@@ -38,7 +38,7 @@ abstract class CommonPage(implicit webDriver: WebDriver) extends RichMatchers wi
   /**
    * Test routing which verifies that the page has been rendered properly.
    */
-  def assertPageIsDisplayed(): Assertion
+  def assertPageIsDisplayed: Assertion
 
   final def assertCommonContentIsDisplayed(): Unit = probing {
     readFooterText().text shouldBe expectedFooterTextEnglish

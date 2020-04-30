@@ -26,7 +26,7 @@ class StartPageSpec extends ItSpec {
   "language" in {
 
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertPageIsDisplayed
 
     startPage.clickOnWelshLink()
     startPage.assertPageIsDisplayed(Welsh)
@@ -45,7 +45,7 @@ class StartPageSpec extends ItSpec {
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
-    ggSignInPage.assertPageIsDisplayed()
+    ggSignInPage.assertPageIsDisplayed
   }
 
   "eligible" in {
@@ -56,7 +56,7 @@ class StartPageSpec extends ItSpec {
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertPageIsDisplayed
   }
 
   "not eligible (debt too large)" in {
@@ -66,6 +66,6 @@ class StartPageSpec extends ItSpec {
 
     startPage.open()
     startPage.clickOnStartNowButton()
-    debtTooLargePage.assertPageIsDisplayed()
+    debtTooLargePage.assertPageIsDisplayed
   }
 }
