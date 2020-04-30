@@ -25,7 +25,7 @@ import play.api.libs.json.{Format, Json}
 final case class DirectDebitInstruction(
     sortCode:        String,
     accountNumber:   String,
-    accountName:     String,
+    accountName:     Option[String],
     referenceNumber: Option[String]    = None,
     creationDate:    Option[LocalDate] = None,
     paperAuddisFlag: Option[Boolean]   = Some(true),
@@ -36,7 +36,7 @@ final case class DirectDebitInstruction(
   def obfuscate: DirectDebitInstruction = DirectDebitInstruction(
     sortCode        = "***",
     accountNumber   = "***",
-    accountName     = "***",
+    accountName     = Some("***"),
     referenceNumber = referenceNumber.map(_ => "***"),
     creationDate    = creationDate,
     paperAuddisFlag = paperAuddisFlag,
