@@ -29,15 +29,15 @@ class DirectDebitUtilsSpec extends WordSpec with Matchers {
   private val userSpecifiedBankDetails = BankDetails(sortCode, accountNumber, accountName)
 
   private val instructionForAnotherAccount =
-    DirectDebitInstruction(sortCode      = sortCode, accountNumber = "other account", accountName = Some(accountName))
+    DirectDebitInstruction(sortCode      = Some(sortCode), accountNumber = Some("other account"), accountName = Some(accountName))
   private val instructionForAnotherSortCode =
-    DirectDebitInstruction(sortCode      = "other sort code", accountNumber = accountNumber, accountName = Some(accountName))
+    DirectDebitInstruction(sortCode      = Some("other sort code"), accountNumber = Some(accountNumber), accountName = Some(accountName))
 
   private val referenceNumber1 = Some("reference number 1")
 
   private val matchingDirectDebitInstruction =
     DirectDebitInstruction(
-      sortCode        = sortCode, accountNumber = accountNumber, accountName = Some(accountName), referenceNumber = referenceNumber1)
+      sortCode        = Some(sortCode), accountNumber = Some(accountNumber), accountName = Some(accountName), referenceNumber = referenceNumber1)
 
   private val expectedBankDetails = BankDetails(sortCode, accountNumber, accountName, maybeDDIRefNumber = referenceNumber1)
 

@@ -38,8 +38,8 @@ class DirectDebitConnectorSpec extends ItSpec {
       DirectDebitBank(
         "2019-04-05",
         List(DirectDebitInstruction(
-          sortCode      = "12-34-56",
-          accountNumber = "12345678",
+          sortCode      = Some("12-34-56"),
+          accountNumber = Some("12345678"),
           accountName   = Some("Mr John Campbell"),
           Some("123456789"),
           Some(LocalDate.of(2019, 4, 5)),
