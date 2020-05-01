@@ -17,7 +17,6 @@
 @import partials._
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import timetopaycalculator.cor.model._
-@import ssttpcalculator.CalculatorPaymentScheduleExt
 
 @import helpers.forms.submit
 
@@ -29,7 +28,7 @@
 @(
         redirectCall: Call,
         durationForm: Form[CalculatorDuration],
-        schedules: List[CalculatorPaymentScheduleExt])(
+        schedules: List[PaymentSchedule])(
         implicit
         messages: play.api.i18n.Messages,
         request: Request[_],

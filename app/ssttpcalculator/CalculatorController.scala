@@ -30,7 +30,7 @@ import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createInstalmentForm, createMonthlyAmountForm, createPaymentTodayForm, payTodayForm}
 import ssttpcalculator.CalculatorService.{createCalculatorInput, getMaxMonthsAllowed, minimumMonthsAllowedTTP}
 import times.ClockProvider
-import timetopaycalculator.cor.model.CalculatorInput
+import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -210,14 +210,10 @@ class CalculatorController @Inject() (
   //  Ideally we would have tests of the controller functions that use these methods so that we could refactor and show no regression
   //  But it is hard to write tests because the intention is obscure.
 
-  def getClosestSchedule(amount: BigDecimal, schedules: Seq[CalculatorPaymentScheduleExt])
-    (implicit hc: HeaderCarrier): CalculatorPaymentScheduleExt = {
+  def getClosestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule])(implicit hc: HeaderCarrier): PaymentSchedule = {
+      def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
 
-      def difference(schedule: CalculatorPaymentScheduleExt) =
-        math.abs(schedule.schedule.getMonthlyInstalment.toInt - amount.toInt)
-
-      def closest(min: CalculatorPaymentScheduleExt, next: CalculatorPaymentScheduleExt) =
-        if (difference(next) < difference(min)) next else min
+      def closest(min: PaymentSchedule, next: PaymentSchedule) = if (difference(next) < difference(min)) next else min
 
     Try(schedules.reduceOption(closest).getOrElse(throw new RuntimeException(s"No schedules for [$schedules]"))) match {
       case Success(s) => s
@@ -227,9 +223,8 @@ class CalculatorController @Inject() (
     }
   }
 
-  def getSurroundingSchedule(
-      closestSchedule: CalculatorPaymentScheduleExt, schedules: List[CalculatorPaymentScheduleExt], sa: SelfAssessmentDetails)
-    (implicit request: Request[_]): List[CalculatorPaymentScheduleExt] = {
+  def getSurroundingSchedule(closestSchedule: PaymentSchedule, schedules: List[PaymentSchedule], sa: SelfAssessmentDetails)
+    (implicit request: Request[_]): List[PaymentSchedule] = {
     if (schedules.indexOf(closestSchedule) == 0)
       List(Some(closestSchedule), getElementNItemsAbove(1, closestSchedule, schedules), getElementNItemsAbove(2, closestSchedule, schedules))
     else if (schedules.indexOf(closestSchedule) == getMaxMonthsAllowed(sa, LocalDate.now(clockProvider.getClock)) - 2)
@@ -268,8 +263,8 @@ class CalculatorController @Inject() (
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
         JourneyLogger.info("CalculatorController.getCalculateInstalments", journey)
         calculatorService.getInstalmentsSchedule(sa, journey.calculatorInput.initialPayment).map { schedule =>
-          val closestSchedule: CalculatorPaymentScheduleExt = getClosestSchedule(journey.amount, schedule)
-          val monthsToSchedule: List[CalculatorPaymentScheduleExt] = getSurroundingSchedule(closestSchedule, schedule, sa)
+          val closestSchedule = getClosestSchedule(journey.amount, schedule)
+          val monthsToSchedule = getSurroundingSchedule(closestSchedule, schedule, sa)
 
           Ok(views.calculate_instalments_form(
             routes.CalculatorController.submitCalculateInstalments(), createInstalmentForm(), monthsToSchedule))
@@ -287,7 +282,7 @@ class CalculatorController @Inject() (
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _) =>
         JourneyLogger.info("CalculatorController.submitCalculateInstalments", journey)
 
-        calculatorService.getInstalmentsSchedule(sa, journey.calculatorInput.initialPayment).flatMap { schedules: List[CalculatorPaymentScheduleExt] =>
+        calculatorService.getInstalmentsSchedule(sa, journey.calculatorInput.initialPayment).flatMap { schedules: List[PaymentSchedule] =>
           createInstalmentForm().bindFromRequest().fold(
             formWithErrors =>
               Future.successful(
@@ -297,7 +292,7 @@ class CalculatorController @Inject() (
                     formWithErrors,
                     getSurroundingSchedule(getClosestSchedule(journey.amount, schedules), schedules, sa)))),
             validFormData =>
-              journeyService.saveJourney(journey.copy(maybeSchedule = schedules.find(_.months == validFormData.chosenMonths))).map { _ =>
+              journeyService.saveJourney(journey.copy(maybeSchedule = schedules.find(_.durationInMonths == validFormData.chosenMonths))).map { _ =>
                 Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
               }
           )

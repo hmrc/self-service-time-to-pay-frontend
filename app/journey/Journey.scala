@@ -20,9 +20,9 @@ import java.time.{Clock, LocalDate, LocalDateTime}
 
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
+import journey.Statuses.InProgress
 import play.api.libs.json.{Format, Json, OFormat}
-import ssttpcalculator.CalculatorPaymentScheduleExt
-import timetopaycalculator.cor.model.CalculatorInput
+import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
 import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -44,18 +44,18 @@ object Statuses extends Enum[Status] {
 
 final case class Journey(
     _id:                    JourneyId,
-    status:                 Status                               = Statuses.InProgress,
+    status:                 Status                    = InProgress,
     createdOn:              LocalDateTime,
-    maybeAmount:            Option[BigDecimal]                   = None,
-    maybeSchedule:          Option[CalculatorPaymentScheduleExt] = None,
-    maybeBankDetails:       Option[BankDetails]                  = None,
-    existingDDBanks:        Option[DirectDebitBank]              = None,
-    maybeTaxpayer:          Option[Taxpayer]                     = None,
-    maybeCalculatorData:    Option[CalculatorInput]              = None,
-    durationMonths:         Int                                  = 2,
-    maybeEligibilityStatus: Option[EligibilityStatus]            = None,
-    debitDate:              Option[LocalDate]                    = None,
-    ddRef:                  Option[String]                       = None
+    maybeAmount:            Option[BigDecimal]        = None,
+    maybeSchedule:          Option[PaymentSchedule]   = None,
+    maybeBankDetails:       Option[BankDetails]       = None,
+    existingDDBanks:        Option[DirectDebitBank]   = None,
+    maybeTaxpayer:          Option[Taxpayer]          = None,
+    maybeCalculatorData:    Option[CalculatorInput]   = None,
+    durationMonths:         Int                       = 2,
+    maybeEligibilityStatus: Option[EligibilityStatus] = None,
+    debitDate:              Option[LocalDate]         = None,
+    ddRef:                  Option[String]            = None
 ) {
 
   def amount: BigDecimal = maybeAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [${this}]"))
@@ -67,13 +67,13 @@ final case class Journey(
   def eligibilityStatus: EligibilityStatus =
     maybeEligibilityStatus.getOrElse(throw new RuntimeException(s"Expected 'EligibilityStatus' to be there but was not found. [${_id}] [${this}]"))
 
-  def lengthOfArrangement: Int = maybeSchedule.map(_.schedule.instalments.length).getOrElse(2)
+  def lengthOfArrangement: Int = maybeSchedule.map(_.instalments.length).getOrElse(2)
   def arrangementDirectDebit: Option[ArrangementDirectDebit] = maybeBankDetails.map(f => ArrangementDirectDebit.from(f))
 
   def bankDetails: BankDetails =
     maybeBankDetails.getOrElse(throw new RuntimeException(s"bank details missing on submission [${_id}]"))
 
-  def schedule: CalculatorPaymentScheduleExt =
+  def schedule: PaymentSchedule =
     maybeSchedule.getOrElse(throw new RuntimeException(s"schedule missing on submission [${_id}]"))
 
   def obfuscate: Journey = Journey(

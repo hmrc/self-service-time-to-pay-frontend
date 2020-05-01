@@ -58,9 +58,9 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
           "sortCode" -> journey.bankDetails.sortCode
         ),
         "installments" -> Json.obj(
-          "installment" -> journey.schedule.schedule.instalments.getClass.toString,
-          "interestTotal" -> journey.schedule.schedule.totalInterestCharged,
-          "total" -> journey.schedule.schedule.totalPayable)
+          "installment" -> journey.schedule.instalments.getClass.toString,
+          "interestTotal" -> journey.schedule.totalInterestCharged,
+          "total" -> journey.schedule.totalPayable)
       )
     )
 }

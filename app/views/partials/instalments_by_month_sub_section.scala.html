@@ -15,19 +15,14 @@
  *@
 
 @import timetopaycalculator.cor.model._
-@import ssttpcalculator.CalculatorPaymentScheduleExt
 
-@(
-        monthsToSchedule: List[CalculatorPaymentScheduleExt])(
-        implicit
-        messages: play.api.i18n.Messages
-)
+@(monthsToSchedule: List[PaymentSchedule])(implicit messages: play.api.i18n.Messages)
 
 <details class="margin-top-40 margin-bottom-30">
   <summary onclick="click"><span class="summary">@Messages("ssttp.calculator.results.month.greater-then-six.header")</span></summary>
   <div>
     <p>@Messages("ssttp.calculator.results.month.greater-then-six.intro")</p>
-    @monthsToSchedule.map { greaterThenSix: CalculatorPaymentScheduleExt => @partials.instalment_by_month(greaterThenSix)}
+    @monthsToSchedule.map { greaterThenSix: PaymentSchedule => @partials.instalment_by_month(greaterThenSix)}
   </div>
 </details>
 <script type="text/javascript">

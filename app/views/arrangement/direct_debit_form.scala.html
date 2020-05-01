@@ -19,8 +19,7 @@
 @import helpers.forms.submit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import timetopaycalculator.cor.model._
-@import _root_.model._
-@import ssttpcalculator.CalculatorPaymentScheduleExt
+@import model._
 
 @this(
   main: views.html.main,
@@ -29,7 +28,7 @@
 
 @(
         debits: Seq[Debit],
-        schedule: CalculatorPaymentScheduleExt,
+        schedule: PaymentSchedule,
         ddForm: Form[ArrangementDirectDebit],
         isBankError: Boolean = false,
         loggedIn: Boolean = true)(implicit
@@ -42,12 +41,12 @@
 @gaCheckoutCode = {
 @gaDoCheckout(debits = debits,
     step = 2,
-    revenue = schedule.schedule.totalPayable,
-    initialPayment = Some(schedule.schedule.initialPayment),
-    interest = schedule.schedule.totalInterestCharged,
-    duration = schedule.schedule.instalments.length,
-    regularPayment = schedule.schedule.firstInstallment.amount,
-    paymentDay = schedule.schedule.firstInstallment.paymentDate.getDayOfMonth
+    revenue = schedule.totalPayable,
+    initialPayment = Some(schedule.initialPayment),
+    interest = schedule.totalInterestCharged,
+    duration = schedule.instalments.length,
+    regularPayment = schedule.firstInstallment.amount,
+    paymentDay = schedule.firstInstallment.paymentDate.getDayOfMonth
 )
 }
 @main(

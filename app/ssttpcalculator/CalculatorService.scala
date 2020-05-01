@@ -28,7 +28,7 @@ import play.api.mvc.Request
 import req.RequestSupport._
 import ssttpcalculator.CalculatorService._
 import times.ClockProvider
-import timetopaycalculator.cor.model.{CalculatorInput, DebitInput}
+import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{Return, SelfAssessmentDetails}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -49,35 +49,31 @@ class CalculatorService @Inject() (
   //todo perhaps merge these methods and change back end so it only one call
   //TODO why this method returns list of schedules by month? WTF?
   def getInstalmentsSchedule(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0))
-    (implicit request: Request[_]): Future[List[CalculatorPaymentScheduleExt]] = {
+    (implicit request: Request[_]): Future[List[PaymentSchedule]] = {
 
     JourneyLogger.info(s"CalculatorService.getInstalmentsSchedule...")
 
     val months: Seq[Int] = getMonthRange(sa)
 
-    val input: List[(Int, CalculatorInput)] = months.map { month: Int =>
+    val calculatorInputs = months.map { month: Int =>
       val calculatorInput: CalculatorInput = createCalculatorInput(
         durationMonths = month,
         dayOfMonth     = LocalDate.now(clockProvider.getClock).getDayOfMonth,
         initialPayment = initialPayment,
         debits         = sa.debits.map(model.asDebitInput)
       )
-      val calculatorInputValidated: CalculatorInput = validateCalculatorDates(calculatorInput, month, sa.debits.map(model.asDebitInput))
-
-      (month, calculatorInputValidated)
+      validateCalculatorDates(calculatorInput, month, sa.debits.map(model.asDebitInput))
     }.toList
 
-    getCalculatorValues(input)
+    getCalculatorValues(calculatorInputs)
   }
 
-  private def getCalculatorValues(inputs: List[(Int, CalculatorInput)])(implicit request: Request[_]) = {
+  private def getCalculatorValues(calculatorInputs: List[CalculatorInput])(implicit request: Request[_]) = {
     JourneyLogger.info(s"CalculatorService.getCalculatorValues...")
-    val futureSchedules: List[Future[CalculatorPaymentScheduleExt]] = inputs.map {
-      case (numberOfMonths, calcInput) =>
-        calculatorConnector.calculatePaymentSchedule(calcInput)
-          .map(x => CalculatorPaymentScheduleExt(numberOfMonths, x))
-    }
-    Future.sequence(futureSchedules)
+
+    Future.sequence(calculatorInputs.map { calculatorInput =>
+      calculatorConnector.calculatePaymentSchedule(calculatorInput)
+    })
   }
 
   private def dayOfMonthCheck(date: LocalDate): LocalDate = date.getDayOfMonth match {
