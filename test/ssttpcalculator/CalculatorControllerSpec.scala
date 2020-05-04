@@ -38,11 +38,12 @@ class CalculatorControllerSpec extends ItSpec {
   private lazy val connector = app.injector.instanceOf[CalculatorConnector]
   private lazy val controller = app.injector.instanceOf[CalculatorController]
 
-  "getClosestSchedule returns the schedule with monthly payments nearest to the user's preferred amount" in {
+  "closestSchedule returns the schedule with monthly payments nearest to the user's preferred amount" in {
     generateSchedules()
 
-    val paymentSchedules = Range(twoMonths, sevenMonths).inclusive.map { duration =>
-      connector.calculatePaymentSchedule(calculatorInput(startDate.plus(duration, MONTHS), 2))(FakeRequest()).futureValue
+    val paymentSchedules: List[PaymentSchedule] = Range(twoMonths, sevenMonths).inclusive.map { duration =>
+      connector.calculatePaymentSchedule(calculatorInput(
+        startDate.plus(duration, MONTHS), 2))(FakeRequest()).futureValue
     }.toList
 
     confirm(whenUserPrefersMonthlyPayment(1), closestActualPayment = 700, duration = sevenMonths)
@@ -57,11 +58,11 @@ class CalculatorControllerSpec extends ItSpec {
     confirm(whenUserPrefersMonthlyPayment(2041), closestActualPayment = 1633, duration = threeMonths)
     confirm(whenUserPrefersMonthlyPayment(2042), closestActualPayment = 2450, duration = twoMonths)
 
-      def confirm(schedule: PaymentSchedule, closestActualPayment: BigDecimal, duration: Int): Any = {
+      def confirm(schedule: PaymentSchedule, closestActualPayment: BigDecimal, duration: Int) = {
         schedule.firstInstallment.amount shouldBe closestActualPayment
         schedule.durationInMonths shouldBe duration
       }
 
-      def whenUserPrefersMonthlyPayment(amount: Int) = controller.getClosestSchedule(amount, paymentSchedules)
+      def whenUserPrefersMonthlyPayment(amount: Int) = controller.closestSchedule(amount, paymentSchedules)
   }
 }
