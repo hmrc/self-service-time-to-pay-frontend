@@ -25,6 +25,14 @@ import play.api.libs.json.Json.{prettyPrint, stringify, toJson}
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
 
 object CalculatorStub extends Status {
+  val eightMonthScheduleRegularPaymentAmount = 637
+  val sevenMonthScheduleRegularPaymentAmount = 700
+  val sixMonthScheduleRegularPaymentAmount = 816
+  val fiveMonthScheduleRegularPaymentAmount = 980
+  val fourMonthScheduleRegularPaymentAmount = 1225
+  val threeMonthScheduleRegularPaymentAmount = 1633
+  val twoMonthScheduleRegularPaymentAmount = 2450
+
   private val thisYear = 2019
   private val nextYear = 2020
 
@@ -59,32 +67,40 @@ object CalculatorStub extends Status {
     val julyPaymentDate = paymentDate(july)
 
     generateSchedule(
-      paymentSchedule(List(firstPaymentDate), finalInstalment = januaryPaymentDate),
+      paymentSchedule(List(firstPaymentDate), twoMonthScheduleRegularPaymentAmount, finalInstalment = januaryPaymentDate),
       firstPaymentDayOfMonth)
     generateSchedule(
-      paymentSchedule(List(firstPaymentDate, januaryPaymentDate), finalInstalment = februaryPaymentDate),
+      paymentSchedule(
+        List(firstPaymentDate, januaryPaymentDate), threeMonthScheduleRegularPaymentAmount, finalInstalment = februaryPaymentDate),
       firstPaymentDayOfMonth)
     generateSchedule(
-      paymentSchedule(List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate), finalInstalment = marchPaymentDate),
+      paymentSchedule(
+        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate),
+        fourMonthScheduleRegularPaymentAmount,
+        finalInstalment = marchPaymentDate),
       firstPaymentDayOfMonth)
     generateSchedule(
       paymentSchedule(
         List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate),
+        fiveMonthScheduleRegularPaymentAmount,
         finalInstalment = aprilPaymentDate),
       firstPaymentDayOfMonth)
     generateSchedule(
       paymentSchedule(
         List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate, aprilPaymentDate),
+        sixMonthScheduleRegularPaymentAmount,
         finalInstalment = mayPaymentDate),
       firstPaymentDayOfMonth)
     generateSchedule(
       paymentSchedule(
         List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate, aprilPaymentDate, mayPaymentDate),
+        sevenMonthScheduleRegularPaymentAmount,
         finalInstalment = junePaymentDate),
       firstPaymentDayOfMonth)
     generateSchedule(
       paymentSchedule(
         List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate, aprilPaymentDate, mayPaymentDate, junePaymentDate),
+        eightMonthScheduleRegularPaymentAmount,
         finalInstalment = julyPaymentDate),
       firstPaymentDayOfMonth)
   }
@@ -107,8 +123,7 @@ object CalculatorStub extends Status {
       endDate,
       Some(LocalDate.of(thisYear, december, firstPaymentDayOfMonth)))
 
-  private def paymentSchedule(regularInstalments: List[LocalDate], finalInstalment: LocalDate) = {
-    val regularPayment = totalDebt / (regularInstalments.size + 1)
+  private def paymentSchedule(regularInstalments: List[LocalDate], regularPayment: Int, finalInstalment: LocalDate) = {
     val finalPayment = totalDebt - (regularPayment * regularInstalments.size)
     val regularInstallments = regularInstalments.map(paymentDate => Instalment(paymentDate, regularPayment, 0))
     val finalInstallment = Instalment(finalInstalment, finalPayment + totalInterest, totalInterest)

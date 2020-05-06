@@ -206,10 +206,6 @@ class CalculatorController @Inject() (
     }
   }
 
-  //  TODO work out what these functions and CalculatorPaymentScheduleExt are for and then refactor to make that clearer
-  //  Ideally we would have tests of the controller functions that use these methods so that we could refactor and show no regression
-  //  But it is hard to write tests because the intention is obscure.
-
   def closestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule])(implicit hc: HeaderCarrier): PaymentSchedule = {
       def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
 
@@ -225,26 +221,29 @@ class CalculatorController @Inject() (
 
   def closestSchedules(closestSchedule: PaymentSchedule, schedules: List[PaymentSchedule], sa: SelfAssessmentDetails)
     (implicit request: Request[_]): List[PaymentSchedule] = {
+    val closestScheduleIndex = schedules.indexOf(closestSchedule)
 
-      def scheduleMonthsLater(n: Int): Option[PaymentSchedule] = schedules.indexOf(closestSchedule) match {
-        case -1 => None
-        case m  => Some(schedules(m + n))
-      }
+    def scheduleMonthsLater(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
+      case -1 => None
+      case i if i + n >= schedules.size => None
+      case m => Some(schedules(m + n))
+    }
 
-      def scheduleMonthsBefore(n: Int): Option[PaymentSchedule] = schedules.indexOf(closestSchedule) match {
-        case -1 => None
-        case m  => Some(schedules(m - n))
-      }
+    def scheduleMonthsBefore(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
+      case -1 => None
+      case i if i - n < 0 => None
+      case m => Some(schedules(m - n))
+    }
 
-    if (schedules.indexOf(closestSchedule) == 0)
+    if (closestScheduleIndex == 0)
       List(Some(closestSchedule), scheduleMonthsLater(1), scheduleMonthsLater(2))
-    else if (schedules.indexOf(closestSchedule) == maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock)) - 2)
+    else if (closestScheduleIndex == schedules.size - 1)
+      List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
+    else if (closestScheduleIndex == maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock)) - 2)
       List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
     else
       List(scheduleMonthsBefore(1), Some(closestSchedule), scheduleMonthsLater(1))
   }.flatten
-
-  //TODO work out what these functions and CalculatorPaymentScheduleExt are for and then refactor to make that clearer
 
   def getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getPaymentSummary: $request")
