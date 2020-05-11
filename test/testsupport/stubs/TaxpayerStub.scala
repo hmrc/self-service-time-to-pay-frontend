@@ -23,16 +23,16 @@ import org.scalatest.Matchers
 import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, toJson}
 import testsupport.testdata.EligibilityTaxpayerVariationsTd._
-import testsupport.testdata.TdAll.{taxpayer, utr}
+import testsupport.testdata.TdAll.{returnsAndDebits, utr}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 object TaxpayerStub extends Matchers with Status {
-  private val url: UrlPathPattern = urlPathEqualTo(s"/taxpayer/$utr")
+  private val url: UrlPathPattern = urlPathEqualTo(s"/taxpayer/returns-and-debits/$utr")
 
-  def getTaxpayer(): StubMapping =
-    stubFor(get(url).willReturn(aResponse().withStatus(OK).withBody(prettyPrint(toJson(taxpayer)))))
+  def getReturnsAndDebits(): StubMapping =
+    stubFor(get(url).willReturn(aResponse().withStatus(OK).withBody(prettyPrint(toJson(returnsAndDebits)))))
 
-  def getTaxpayer(reason: Reason): StubMapping =
+  def getReturnsAndDebits(reason: Reason): StubMapping =
     stubFor(get(url).willReturn(aResponse()
       .withStatus(OK)
       .withBody(prettyPrint(toJson(getIneligibleTaxpayerModel(reason))))))

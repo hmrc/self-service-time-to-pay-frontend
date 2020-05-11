@@ -18,7 +18,6 @@ package testsupport.testdata
 
 import java.time.LocalDate
 
-import testsupport.testdata.TdAll.{communicationPreferences, saUtr}
 import timetopaytaxpayer.cor.model._
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -31,28 +30,19 @@ object EligibilityTaxpayerVariationsTd {
   private def debit(amount: Double, dueDate: LocalDate) =
     Debit("IN1", BigDecimal(amount), dueDate, Some(Interest(Some(dummyCurrentDate), BigDecimal(0))), dummyTaxYearEnd)
 
-  private def taxpayer(debits: Seq[Debit], returns: Seq[Return] = Seq.empty) =
-    Taxpayer(
-      "The Emperor Of Mankind",
-      Seq(Address(
-        Some("Golden Throne"),
-        Some("Himalayan Mountains"),
-        Some("Holy Terra"),
-        Some("Segmentum Solar"),
-        Some("Milky Way Galaxy"),
-        Some("BN11 1XX"))),
-      SelfAssessmentDetails(saUtr, communicationPreferences, debits, returns))
+  private def returnsAndDebits(debits: Seq[Debit] = Seq.empty, returns: Seq[Return] = Seq.empty) =
+    ReturnsAndDebits(debits, returns)
 
-  def getIneligibleTaxpayerModel(reason: Reason): Taxpayer = {
+  def getIneligibleTaxpayerModel(reason: Reason): ReturnsAndDebits = {
     reason match {
-      case NoDebt              => taxpayer(Seq.empty)
-      case DebtIsInsignificant => taxpayer(Seq(debit(31, dummyCurrentDate)))
-      case OldDebtIsTooHigh    => taxpayer(Seq(debit(33, dummy60DaysAgo)))
-      case TotalDebtIsTooHigh  => taxpayer(Seq(debit(10000, dummyCurrentDate)))
+      case NoDebt              => returnsAndDebits(Seq.empty)
+      case DebtIsInsignificant => returnsAndDebits(Seq(debit(31, dummyCurrentDate)))
+      case OldDebtIsTooHigh    => returnsAndDebits(Seq(debit(33, dummy60DaysAgo)))
+      case TotalDebtIsTooHigh  => returnsAndDebits(Seq(debit(10000, dummyCurrentDate)))
       case ReturnNeedsSubmitting =>
-        taxpayer(eligibleDebits, Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None)))
-      case IsNotOnIa => taxpayer(eligibleDebits)
-      case _         => TdAll.taxpayer
+        returnsAndDebits(eligibleDebits, Seq(Return(dummyTaxYearEnd, Some(dummy60DaysAgo), Some(dummyCurrentDate), None)))
+      case IsNotOnIa => returnsAndDebits(eligibleDebits)
+      case _         => TdAll.returnsAndDebits
     }
   }
 }

@@ -23,7 +23,7 @@ import enumformat.EnumFormat
 import play.api.libs.json.{Format, Json, OFormat}
 import ssttpcalculator.CalculatorPaymentScheduleExt
 import timetopaycalculator.cor.model.CalculatorInput
-import timetopaytaxpayer.cor.model.Taxpayer
+import timetopaytaxpayer.cor.model.ReturnsAndDebits
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.collection.immutable
@@ -50,16 +50,18 @@ final case class Journey(
     maybeSchedule:          Option[CalculatorPaymentScheduleExt] = None,
     maybeBankDetails:       Option[BankDetails]                  = None,
     existingDDBanks:        Option[DirectDebitBank]              = None,
-    maybeTaxpayer:          Option[Taxpayer]                     = None,
+    maybeReturnsAndDebits:  Option[ReturnsAndDebits]             = None,
     maybeCalculatorData:    Option[CalculatorInput]              = None,
     durationMonths:         Int                                  = 2,
     maybeEligibilityStatus: Option[EligibilityStatus]            = None,
     debitDate:              Option[LocalDate]                    = None,
-    ddRef:                  Option[String]                       = None
+    ddRef:                  Option[String]                       = None,
+    //TODO maybe make this SaUtr not String
+    maybeSaUtr: Option[String] = None
 ) {
 
   def amount: BigDecimal = maybeAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [${this}]"))
-  def taxpayer: Taxpayer = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [${this}]"))
+  def returnsAndDebits: ReturnsAndDebits = maybeReturnsAndDebits.getOrElse(throw new RuntimeException(s"Expected 'ReturnsAndDebits' to be there but was not found. [${_id}] [${this}]"))
 
   def calculatorInput: CalculatorInput =
     maybeCalculatorData.getOrElse(throw new RuntimeException(s"Expected 'CalculatorData' to be there but was not found. [${_id}] [${this}]"))
@@ -76,6 +78,8 @@ final case class Journey(
   def schedule: CalculatorPaymentScheduleExt =
     maybeSchedule.getOrElse(throw new RuntimeException(s"schedule missing on submission [${_id}]"))
 
+  def saUtr: String = maybeSaUtr.getOrElse(throw new RuntimeException(s"saUtr missing on submission [${_id}]"))
+
   def obfuscate: Journey = Journey(
     _id                    = _id,
     createdOn              = createdOn,
@@ -83,12 +87,13 @@ final case class Journey(
     maybeSchedule          = maybeSchedule,
     maybeBankDetails       = maybeBankDetails.map(_.obfuscate),
     existingDDBanks        = existingDDBanks.map(_.obfuscate),
-    maybeTaxpayer          = maybeTaxpayer.map(_.obfuscate),
+    maybeReturnsAndDebits  = maybeReturnsAndDebits.map(_.obfuscate),
     maybeCalculatorData    = maybeCalculatorData,
     durationMonths         = durationMonths,
     maybeEligibilityStatus = maybeEligibilityStatus,
     debitDate              = debitDate,
-    ddRef                  = ddRef.map(_ => "***")
+    ddRef                  = ddRef.map(_ => "***"),
+    maybeSaUtr             = maybeSaUtr.map(_ => "***")
   )
 }
 

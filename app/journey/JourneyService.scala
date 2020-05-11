@@ -59,11 +59,11 @@ class JourneyService @Inject() (
     for {
       journey <- getJourney()
       result <- journey match {
-        case submission @ Journey(_, Statuses.InProgress, _, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _) =>
+        case submission @ Journey(_, Statuses.InProgress, _, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _, _) =>
           JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", submission)
           block(submission)
 
-        case journey @ Journey(_, Statuses.FinishedApplicationSuccessful, _, _, _, _, _, _, _, _, _, _, _) =>
+        case journey @ Journey(_, Statuses.FinishedApplicationSuccessful, _, _, _, _, _, _, _, _, _, _, _, _) =>
           JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", journey)
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
