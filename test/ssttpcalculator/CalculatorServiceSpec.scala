@@ -16,200 +16,458 @@
 
 package ssttpcalculator
 
-import java.time.LocalDate
-import java.time.LocalDate.now
-import java.time.Month.{APRIL, JANUARY, NOVEMBER}
-import java.time.format.DateTimeFormatter
+import java.time.{Clock, LocalDate, LocalDateTime}
+import java.time.ZoneId.systemDefault
+import java.time.ZoneOffset.UTC
 
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatestplus.play.PlaySpec
-import ssttpcalculator.CalculatorService._
-import timetopaytaxpayer.cor.model._
-import uk.gov.hmrc.http.HeaderCarrier
+import org.scalatest.{Matchers, WordSpec}
+import ssttpcalculator.CalculatorService.createCalculatorInput
+import timetopaycalculator.cor.model.{CalculatorInput, DebitInput}
 
-class CalculatorServiceSpec extends PlaySpec with TableDrivenPropertyChecks {
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+class CalculatorServiceSpec extends WordSpec with Matchers {
+  private val year = 2020
 
-  private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+  private val may = 5
+  private val june = 6
+  private val july = 7
+  private val august = 8
 
-  private def debit(des: String, taxYear: String, value: BigDecimal, dueDate: String, interest: Option[BigDecimal] = None) =
-    Debit(
-      originCode = des,
-      amount     = value,
-      dueDate    = LocalDate.parse(dueDate, formatter),
-      interest   = Some(Interest(Some(now()), interest.getOrElse(BigDecimal(0)))),
-      taxYearEnd = LocalDate.parse(taxYear, formatter))
+  private val _1st = 1
+  private val _2nd = 2
+  private val _3rd = 3
+  private val _4th = 4
+  private val _15th = 15
+  private val _20th = 20
+  private val _21st = 21
+  private val _22nd = 22
+  private val _23rd = 23
+  private val _27th = 27
+  private val _28th = 28
+  private val _29th = 29
+  private val _30th = 30
+  private val _31st = 31
 
-  private val startDate = LocalDate.of(2017, JANUARY, 2)
+  private def date(month: Int, day: Int): LocalDate = LocalDate.of(year, month, day)
+  private def may(day: Int): LocalDate = date(may, day)
+  private def june(day: Int): LocalDate = date(june, day)
+  private def july(day: Int): LocalDate = date(july, day)
+  private def august(day: Int): LocalDate = date(august, day)
 
-  private val return2016 =
-    Return(LocalDate.of(2016, APRIL, 5), None, Some(LocalDate.of(2017, JANUARY, 31)), None)
-  private val return2017 =
-    Return(LocalDate.of(2017, APRIL, 5), None, Some(LocalDate.of(2018, JANUARY, 31)), None)
-  private val return2018 = Return(LocalDate.of(2018, APRIL, 5), None, None, None)
+  private val may21st = may(_21st)
+  private val may22nd = may(_22nd)
+  private val may27th = may(_27th)
+  private val may28th = may(_28th)
+  private val may31st = may(_31st)
+  private val june1st = june(_1st)
+  private val june3rd = june(_3rd)
+  private val june4th = june(_4th)
+  private val june20th = june(_20th)
+  private val june21st = june(_21st)
+  private val june22nd = june(_22nd)
+  private val june27th = june(_27th)
+  private val june28th = june(_28th)
+  private val june30th = june(_30th)
+  private val july1st = july(_1st)
+  private val july2nd = july(_2nd)
+  private val july3rd = july(_3rd)
+  private val july4th = july(_4th)
+  private val july20th = july(_20th)
+  private val july21st = july(_21st)
+  private val july27th = july(_27th)
+  private val july31st = july(_31st)
+  private val august2nd = august(_2nd)
+  private val august3rd = august(_3rd)
 
-  private val communicationPreferences = CommunicationPreferences(
-    welshLanguageIndicator = true, audioIndicator = true, largePrintIndicator = true, brailleIndicator = true)
+  private val zeroDuration = 0
+  private val oneMonthDuration = 1
 
-  private val returnsAndDebits = ReturnsAndDebits(Nil, List(return2016))
+  private val debt = 500
+  private val debits = Seq(DebitInput(debt, july31st))
+  private val noInitialPayment = BigDecimal(0)
+  private val initialPayment = BigDecimal(1)
 
-  //Note the calculator logic is not responsible for determining eligibility
-  private val scenariosBasedAroundJanuaryDuedate = Table(
-    ("todayDate", "self assessment", "expected answer"),
-    //Customer 1
-    (startDate, returnsAndDebits.copy(debits = List(
-      debit("BCD", "2016-04-05", 1000, "2017-01-31"),
-      debit("POA1", "2016-04-05", 2000, "2017-01-31"),
-      debit("POA2", "2016-04-05", 2000, "2017-01-31"))), 11),
+  private def clockForMay(dayInMay: Int) = {
+    val formattedDay = dayInMay.formatted("%02d")
+    val currentDateTime = LocalDateTime.parse(s"$year-05-${formattedDay}T00:00:00.880").toInstant(UTC)
+    Clock.fixed(currentDateTime, systemDefault)
+  }
 
-    //Customer 2
-    (startDate.withMonth(2).withDayOfMonth(14), returnsAndDebits.copy(debits = List(
-      debit("BCD", "2016-04-05", 1000, "2017-01-31"),
-      debit("POA1", "2016-04-05", 3000, "2017-01-31", Some(40)),
-      debit("POA2", "2016-04-05", 3000, "2017-07-31"))), 10),
+  "createCalculatorInput with zero duration and no initial payment" should {
+    "return a payment schedule request" when {
+      "the required day of the month and the current date are the 1st" in {
+        val clock = clockForMay(_1st)
 
-    // Customer 4
-    (startDate.withMonth(1).withDayOfMonth(10), returnsAndDebits.copy(debits = List(
-      debit("BCD", "2016-04-05", 1000, "2017-01-31"),
-      debit("POA1", "2016-04-05", 3000, "2017-01-31", Some(40)),
-      debit("POA2", "2016-04-05", 3000, "2017-07-31"),
-      debit("Unpaid interest from previous arrangement", "2016-04-05", 28, "2016-01-31"))), 11)
-  )
+        createCalculatorInput(zeroDuration, _1st, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = may31st, firstPaymentDate = Some(june1st))
+      }
 
-  private val scenariosBasedAroundJulyDuedate = Table(
-    ("todayDate", "self assessment", "expected answer"),
-    //Customer 9
-    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(debits = List(
-      debit("POA2", "2016-04-05", 5000, "2017-07-31"))), 5),
-    //Customer 10
-    (startDate.withMonth(8).withDayOfMonth(14), returnsAndDebits.copy(debits = List(
-      debit("POA2", "2016-04-05", 3000, "2017-07-31", Some(20)))), 4),
-    //Customer 11
-    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(debits = List(
-      debit("POA2", "2016-04-05", 3000, "2017-07-31"),
-      debit("Interest from previous arrangement", "2015-04-05", 28, "2016-01-31"))), 5),
-    //Customer 13
-    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(debits = List(
-      debit("POA2", "2016-04-05", 3000, "2017-07-31"))), 5))
+      "the required day of the month is 20 days after the current date" in {
+        val clock = clockForMay(_1st)
 
-  private val scenariosBasedAroundEarlyFilers = Table(
-    ("todayDate", "self assessment", "expected answer"),
-    //Customer 15
-    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(
-      debits  = List(debit("POA2", "2016-04-05", 5000, "2017-07-31")),
-      returns = List(return2016, return2017)), 11),
-    //Customer 16
-    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(
-      debits  = List(
-        debit("POA2", "2016-04-05", 5000, "2017-07-31"),
-        debit("BCD", "2017-04-05", 2000, "2018-01-18")),
-      returns = List(return2016, return2017)), 11),
-    //Customer 17
-    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(
-      debits  = List(
-        debit("POA2", "2016-04-05", 5000, "2017-07-31"),
-        debit("BCD", "2017-04-05", 2000, "2018-01-31"),
-        debit("POA1", "2017-04-05", 1000, "2018-01-31"),
-        debit("POA2", "2017-04-05", 1000, "2018-01-31")),
-      returns = List(return2016, return2017)), 11),
-    //Customer 19
-    (startDate.withMonth(5).withDayOfMonth(1), returnsAndDebits.copy(
-      debits  = List(
-        debit("BCD", "2017-04-05", 1000, "2018-01-31"),
-        debit("POA1", "2017-04-05", 2000, "2018-01-31"),
-        debit("POA2", "2017-04-05", 3000, "2018-01-31")),
-      returns = List(return2016, return2017)), 11)
-  )
+        createCalculatorInput(zeroDuration, _21st, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june20th, firstPaymentDate = Some(june21st))
+      }
 
-  private val scenariosBasedAroundLateFilers = Table(
-    ("todayDate", "self assessment", "expected answer"),
-    //Customer 20
-    //todo I am assuming the old charges will not appear in des?
-    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(
-      debits  = List(
-        debit("BCD", "2017-04-05", 0, "2017-07-31"),
-        debit("Late payment penalty", "2015-04-05", 1000, "2017-04-28")),
-      returns = List(return2016, return2017)), 11),
-    //Customer 21
-    //todo will the Late payment penalty appear as two paymeant
-    (startDate.withMonth(4).withDayOfMonth(20), returnsAndDebits.copy(
-      debits  = List(
-        debit("BCD", "2017-04-05", 0, "2017-07-31"),
-        debit("Late payment penalty", "2016-04-05", 1000, "2017-04-28"),
-        debit("POA2", "2016-04-05", 5000, "2017-07-17")),
-      returns = List(return2016, return2017)), 11),
-    //Customer 22
-    (startDate.withMonth(3).withDayOfMonth(20), returnsAndDebits.copy(
-      debits  = List(
-        debit("Late payment penalty", "2016-04-05", 100, "2017-03-25")),
-      returns = List(return2016, return2017)), 11),
-    //Customer 24
-    (startDate.withMonth(3).withDayOfMonth(20), returnsAndDebits.copy(
-      debits  = List(
-        debit("POA2", "2016-04-05", 3000, "2017-07-31"),
-        debit("Late payment penalty", "2016-04-05", 100, "2017-03-17")),
-      returns = List(return2016, return2017)), 11),
-    //Customer 25
-    (startDate.withMonth(11).withDayOfMonth(20), returnsAndDebits.copy(
-      debits  = List(
-        debit("Late payment penalty", "2016-04-05", 100, "2016-12-16"),
-        debit("BCD", "2016-04-05", 50, "2017-01-31"),
-        debit("POA1", "2016-04-05", 1100, "2017-01-31"),
-        debit("POA2", "2016-04-05", 1100, "2017-01-31")),
-      returns = List(return2016, return2017)), 11)
-  )
+      "the required day of the month is more than 20 days after the current date" in {
+        val clock = clockForMay(_1st)
 
-  private val scenariosBasedCustom = Table(
-    ("todayDate", "self assessment", "expected answer"),
-    (startDate.withMonth(12).withDayOfMonth(18), returnsAndDebits.copy(
-      debits  = List(
-        debit("IN1", "2018-04-05", 30, "2018-01-31"),
-        debit("IN2", "2018-04-05", 500, "2018-07-31")),
-      returns = List(return2017.copy(receivedDate = Some(LocalDate.of(2017, NOVEMBER, 24))), return2018)), 11))
+        createCalculatorInput(zeroDuration, _22nd, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = may21st, firstPaymentDate = Some(may22nd))
+      }
 
-  //todo ask ela about 11 13 15
-  "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundJanuaryDuedate) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
-      s"scenarios Based Around January Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
-        val result: Int = maximumDurationInMonths(returnsAndDebits, startDate)
-        assert(result == answer)
+      "the required day of the month and the current date are the 28th" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(zeroDuration, _28th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = june27th, firstPaymentDate = Some(june28th))
+      }
+
+      "the required day of the month and the current date are the 29th" in {
+        val clock = clockForMay(_29th)
+
+        createCalculatorInput(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = june30th, firstPaymentDate = Some(july1st))
+      }
+
+      "the required day of the month is the 28th which is in less than seven days time" in {
+        val clock = clockForMay(_22nd)
+
+        createCalculatorInput(zeroDuration, _28th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = june27th, firstPaymentDate = Some(june28th))
+      }
+
+      "the required day of the month is the 29th which is in less than seven days time" in {
+        val clock = clockForMay(_23rd)
+
+        createCalculatorInput(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = may31st, firstPaymentDate = Some(june1st))
+      }
+
+      "the required day of the month is the 28th which is in seven days time" in {
+        val clock = clockForMay(_21st)
+
+        createCalculatorInput(zeroDuration, _28th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = may27th, firstPaymentDate = Some(may28th))
+      }
+
+      "the required day of the month is the 29th which is in seven days time" in {
+        val clock = clockForMay(_22nd)
+
+        createCalculatorInput(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = may31st, firstPaymentDate = Some(june1st))
+      }
+
+      "the required day of the month is less than seven days from the current date and in the same month" in {
+        val clock = clockForMay(_15th)
+
+        createCalculatorInput(zeroDuration, _21st, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = june20th, firstPaymentDate = Some(june21st))
+      }
+
+      "the required day of the month is less than seven days from the current date and in the next month" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(zeroDuration, _3rd, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = july2nd, firstPaymentDate = Some(july3rd))
+      }
+
+      "the required day of the month is seven days or more from the current date in the same month" in {
+        val clock = clockForMay(_15th)
+
+        createCalculatorInput(zeroDuration, _22nd, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = may21st, firstPaymentDate = Some(may22nd))
+      }
+
+      "the required day of the month is seven days or more from the current date in the next month" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(zeroDuration, _4th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = june3rd, firstPaymentDate = Some(june4th))
       }
     }
   }
 
-  "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundJulyDuedate) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
-      s"scenarios Based Around July Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
-        val result: Int = maximumDurationInMonths(returnsAndDebits, startDate)
-        assert(result == answer)
+  "createCalculatorInput with a duration of one month and no initial payment" should {
+    "return a payment schedule request" when {
+      "the required day of the month and the current date are the 1st" in {
+        val clock = clockForMay(_1st)
 
+        createCalculatorInput(oneMonthDuration, _1st, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = june30th, firstPaymentDate = Some(june1st))
+      }
+
+      "the required day of the month is 20 days after the current date" in {
+        val clock = clockForMay(_1st)
+
+        createCalculatorInput(oneMonthDuration, _21st, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july20th, firstPaymentDate = Some(june21st))
+      }
+
+      "the required day of the month is more than 20 days after the current date" in {
+        val clock = clockForMay(_1st)
+
+        createCalculatorInput(oneMonthDuration, _22nd, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june21st, firstPaymentDate = Some(may22nd))
+      }
+
+      "the required day of the month and the current date are the 28th" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = july27th, firstPaymentDate = Some(june28th))
+      }
+
+      "the required day of the month and the current date are the 29th" in {
+        val clock = clockForMay(_29th)
+
+        createCalculatorInput(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = july31st, firstPaymentDate = Some(july1st))
+      }
+
+      "the required day of the month is the 28th which is in less than seven days time" in {
+        val clock = clockForMay(_22nd)
+
+        createCalculatorInput(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = july27th, firstPaymentDate = Some(june28th))
+      }
+
+      "the required day of the month is the 29th which is in less than seven days time" in {
+        val clock = clockForMay(_23rd)
+
+        createCalculatorInput(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = june30th, firstPaymentDate = Some(june1st))
+      }
+
+      "the required day of the month is the 28th which is in seven days time" in {
+        val clock = clockForMay(_21st)
+
+        createCalculatorInput(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = june27th, firstPaymentDate = Some(may28th))
+      }
+
+      "the required day of the month is the 29th which is in seven days time" in {
+        val clock = clockForMay(_22nd)
+
+        createCalculatorInput(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = june30th, firstPaymentDate = Some(june1st))
+      }
+
+      "the required day of the month is less than seven days from the current date and in the same month" in {
+        val clock = clockForMay(_15th)
+
+        createCalculatorInput(oneMonthDuration, _21st, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = july20th, firstPaymentDate = Some(june21st))
+      }
+
+      "the required day of the month is less than seven days from the current date and in the next month" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(oneMonthDuration, _3rd, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = august2nd, firstPaymentDate = Some(july3rd))
+      }
+
+      "the required day of the month is seven days or more from the current date in the same month" in {
+        val clock = clockForMay(_15th)
+
+        createCalculatorInput(oneMonthDuration, _22nd, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = june21st, firstPaymentDate = Some(may22nd))
+      }
+
+      "the required day of the month is seven days or more from the current date in the next month" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(oneMonthDuration, _4th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, noInitialPayment, startDate = LocalDate.now(clock), endDate = july3rd, firstPaymentDate = Some(june4th))
       }
     }
   }
 
-  "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundEarlyFilers) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
-      s"scenarios Based Around Early Filers Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
-        val result: Int = maximumDurationInMonths(returnsAndDebits, startDate)
-        assert(result == answer)
+  "createCalculatorInput with zero duration and an initial payment" should {
+    "return a payment schedule request" when {
+      "the required day of the month and the current date are the 1st" in {
+        val clock = clockForMay(_1st)
+
+        createCalculatorInput(zeroDuration, _1st, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = may31st, firstPaymentDate = Some(june1st))
+      }
+
+      "the required day of the month is 20 days after the current date" in {
+        val clock = clockForMay(_1st)
+
+        createCalculatorInput(zeroDuration, _21st, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june20th, firstPaymentDate = Some(june21st))
+      }
+
+      "the required day of the month is more than 20 days after the current date" in {
+        val clock = clockForMay(_1st)
+
+        createCalculatorInput(zeroDuration, _22nd, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = may21st, firstPaymentDate = Some(may22nd))
+      }
+
+      "the required day of the month and the current date are the 28th" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(zeroDuration, _28th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june27th, firstPaymentDate = Some(june28th))
+      }
+
+      "the required day of the month and the current date are the 29th" in {
+        val clock = clockForMay(_29th)
+
+        createCalculatorInput(zeroDuration, _29th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june30th, firstPaymentDate = Some(july1st))
+      }
+
+      "the required day of the month is the 28th which is in less than seven days time" in {
+        val clock = clockForMay(_22nd)
+
+        createCalculatorInput(zeroDuration, _28th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june27th, firstPaymentDate = Some(june28th))
+      }
+
+      "the required day of the month is the 29th which is in less than seven days time" in {
+        val clock = clockForMay(_23rd)
+
+        createCalculatorInput(zeroDuration, _29th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june30th, firstPaymentDate = Some(july1st))
+      }
+
+      "the required day of the month is the 28th which is in seven days time" in {
+        val clock = clockForMay(_21st)
+
+        createCalculatorInput(zeroDuration, _28th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june27th, firstPaymentDate = Some(june28th))
+      }
+
+      "the required day of the month is the 29th which is in seven days time" in {
+        val clock = clockForMay(_22nd)
+
+        createCalculatorInput(zeroDuration, _29th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june30th, firstPaymentDate = Some(july1st))
+      }
+
+      "the required day of the month is less than seven days from the current date and in the same month" in {
+        val clock = clockForMay(_15th)
+
+        createCalculatorInput(zeroDuration, _21st, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june20th, firstPaymentDate = Some(june21st))
+      }
+
+      "the required day of the month is less than seven days from the current date and in the next month" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(zeroDuration, _3rd, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july2nd, firstPaymentDate = Some(july3rd))
+      }
+
+      "the required day of the month is seven days or more from the current date in the same month" in {
+        val clock = clockForMay(_15th)
+
+        createCalculatorInput(zeroDuration, _22nd, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june21st, firstPaymentDate = Some(june22nd))
+      }
+
+      "the required day of the month is seven days or more from the current date in the next month" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(zeroDuration, _4th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july3rd, firstPaymentDate = Some(july4th))
       }
     }
   }
 
-  "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundEarlyFilers) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
-      s"scenarios Based Around Late Filers Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
-        val result: Int = maximumDurationInMonths(returnsAndDebits, startDate)
-        assert(result == answer)
-      }
-    }
-  }
+  "createCalculatorInput with a months duration and an initial payment" should {
+    "return a payment schedule request" when {
+      "the required day of the month and the current date are the 1st" in {
+        val clock = clockForMay(_1st)
 
-  "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedCustom) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
-      s"scenarios Based Around Custom the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
-        val result: Int = maximumDurationInMonths(returnsAndDebits, startDate)
-        assert(result == answer)
+        createCalculatorInput(oneMonthDuration, _1st, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june30th, firstPaymentDate = Some(june1st))
+      }
+
+      "the required day of the month is 20 days after the current date" in {
+        val clock = clockForMay(_1st)
+
+        createCalculatorInput(oneMonthDuration, _21st, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july20th, firstPaymentDate = Some(june21st))
+      }
+
+      "the required day of the month is more than 20 days after the current date" in {
+        val clock = clockForMay(_1st)
+
+        createCalculatorInput(oneMonthDuration, _22nd, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = june21st, firstPaymentDate = Some(may22nd))
+      }
+
+      "the required day of the month and the current date are the 28th" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(oneMonthDuration, _28th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july27th, firstPaymentDate = Some(june28th))
+      }
+
+      "the required day of the month and the current date are the 29th" in {
+        val clock = clockForMay(_29th)
+
+        createCalculatorInput(oneMonthDuration, _29th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july31st, firstPaymentDate = Some(july1st))
+      }
+
+      "the required day of the month is the 28th which is in less than seven days time" in {
+        val clock = clockForMay(_22nd)
+
+        createCalculatorInput(oneMonthDuration, _28th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july27th, firstPaymentDate = Some(june28th))
+      }
+
+      "the required day of the month is the 29th which is in less than seven days time" in {
+        val clock = clockForMay(_23rd)
+
+        createCalculatorInput(oneMonthDuration, _29th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july31st, firstPaymentDate = Some(july1st))
+      }
+
+      "the required day of the month is the 28th which is in seven days time" in {
+        val clock = clockForMay(_21st)
+
+        createCalculatorInput(oneMonthDuration, _28th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july27th, firstPaymentDate = Some(june28th))
+      }
+
+      "the required day of the month is the 29th which is in seven days time" in {
+        val clock = clockForMay(_22nd)
+
+        createCalculatorInput(oneMonthDuration, _29th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july31st, firstPaymentDate = Some(july1st))
+      }
+
+      "the required day of the month is less than seven days from the current date and in the same month" in {
+        val clock = clockForMay(_15th)
+
+        createCalculatorInput(oneMonthDuration, _21st, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july20th, firstPaymentDate = Some(june21st))
+      }
+
+      "the required day of the month is less than seven days from the current date and in the next month" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(oneMonthDuration, _3rd, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = august2nd, firstPaymentDate = Some(july3rd))
+      }
+
+      "the required day of the month is seven days or more from the current date in the same month" in {
+        val clock = clockForMay(_15th)
+
+        createCalculatorInput(oneMonthDuration, _22nd, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = july21st, firstPaymentDate = Some(june22nd))
+      }
+
+      "the required day of the month is seven days or more from the current date in the next month" in {
+        val clock = clockForMay(_28th)
+
+        createCalculatorInput(oneMonthDuration, _4th, initialPayment, debits)(clock) shouldBe CalculatorInput(
+          debits, initialPayment, startDate = LocalDate.now(clock), endDate = august3rd, firstPaymentDate = Some(july4th))
       }
     }
   }

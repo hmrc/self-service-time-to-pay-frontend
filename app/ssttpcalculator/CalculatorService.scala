@@ -28,7 +28,7 @@ import req.RequestSupport._
 import ssttpcalculator.CalculatorService._
 import times.ClockProvider
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, PaymentSchedule}
-import timetopaytaxpayer.cor.model.{ReturnsAndDebits, SelfAssessmentDetails}
+import timetopaytaxpayer.cor.model.ReturnsAndDebits
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
