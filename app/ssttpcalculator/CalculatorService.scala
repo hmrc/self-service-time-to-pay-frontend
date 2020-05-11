@@ -46,7 +46,6 @@ class CalculatorService @Inject() (
   import clockProvider._
 
   //todo perhaps merge these methods and change back end so it only one call
-  //TODO why this method returns list of schedules by month? WTF?
   def getInstalmentsSchedule(returnsAndDebits: ReturnsAndDebits, initialPayment: BigDecimal = BigDecimal(0))
     (implicit request: Request[_]): Future[List[PaymentSchedule]] = {
 
@@ -54,14 +53,13 @@ class CalculatorService @Inject() (
 
     val months: Seq[Int] = getMonthRange(returnsAndDebits)
 
-    val calculatorInputs = months.map { month: Int =>
-      val calculatorInput: CalculatorInput = createCalculatorInput(
-        durationMonths = month,
-        dayOfMonth     = LocalDate.now(clockProvider.getClock).getDayOfMonth,
-        initialPayment = initialPayment,
-        debits         = returnsAndDebits.debits.map(model.asDebitInput)
-      )
-      validateCalculatorDates(calculatorInput, month, returnsAndDebits.debits.map(model.asDebitInput))
+    val calculatorInputs = months.map { durationInMonths =>
+      val debits = returnsAndDebits.debits.map(model.asDebitInput)
+
+      val paymentScheduleRequest =
+        calculatorInput(durationInMonths, LocalDate.now(clockProvider.getClock).getDayOfMonth, initialPayment, debits)
+
+      validateCalculatorDates(paymentScheduleRequest, durationInMonths, debits)
     }.toList
 
     getCalculatorValues(calculatorInputs)
@@ -112,14 +110,8 @@ class CalculatorService @Inject() (
 }
 
 object CalculatorService {
-  /**
-   * Applies the 7 and 14 day rules for the calculator page, using today's date.
-   * See the function createCalculatorInput in Arrangement Controller for further information
-   */
-  private def checkDayOfMonth(dayOfMonth: Int): Int = dayOfMonth match {
-    case day if day > 28 => 1
-    case _               => dayOfMonth
-  }
+  def payTodayRequest(debits: Seq[DebitInput])(implicit clock: Clock) =
+    calculatorInput(0, LocalDate.now(clock).getDayOfMonth, 0, debits)
 
   /**
    * As the user can change which day of the month they wish to make their payments, then a recalculation
@@ -131,42 +123,48 @@ object CalculatorService {
    * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
    */
-  //todo write test's I am too afraid to touch this !
-  def createCalculatorInput(
-      durationMonths: Int,
-      dayOfMonth:     Int,
-      initialPayment: BigDecimal      = BigDecimal(0),
-      debits:         Seq[DebitInput])(implicit clock: Clock): CalculatorInput = {
+  def calculatorInput(durationInMonths: Int, preferredPaymentDayOfMonth: Int, initialPayment: BigDecimal, debits: Seq[DebitInput])
+    (implicit clock: Clock): CalculatorInput = {
+
+    val oneWeek = 7
+    val twoWeeks = oneWeek * 2
 
     val startDate = LocalDate.now(clock)
+    val startDatePlusOneWeek = startDate.plusWeeks(1)
 
-    val initialDate = startDate.withDayOfMonth(checkDayOfMonth(dayOfMonth))
-    val daysInWeek = 7
-    val (firstPaymentDate: LocalDate, lastPaymentDate: LocalDate) = if (initialPayment.equals(BigDecimal(0))) {
-      if (DAYS.between(startDate, initialDate) < daysInWeek && DAYS.between(startDate, initialDate.plusMonths(1)) < daysInWeek)
-        (initialDate.plusMonths(2), initialDate.plusMonths(durationMonths + 2).minusDays(1))
-      else if (DAYS.between(startDate, initialDate) < 7)
-        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
-      else
-        (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
-    } else {
-      if (initialDate.isBefore(startDate.plusWeeks(1)) && DAYS.between(startDate.plusWeeks(1), initialDate.plusMonths(1)) < 14)
-        (initialDate.plusMonths(2), initialDate.plusMonths(durationMonths + 2).minusDays(1))
-      else if (initialDate.isBefore(startDate.plusWeeks(1)))
-        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
-      else if (DAYS.between(startDate.plusWeeks(1), initialDate) < 14)
-        (initialDate.plusMonths(1), initialDate.plusMonths(durationMonths + 1).minusDays(1))
-      else
-        (initialDate, initialDate.plusMonths(durationMonths).minusDays(1))
-    }
+    val bestMatchingPaymentDayOfMonth = if (preferredPaymentDayOfMonth > 28) 1 else preferredPaymentDayOfMonth
+    val defaultPaymentDate = startDate.withDayOfMonth(bestMatchingPaymentDayOfMonth)
+    val defaultPaymentDatePlusOneMonth = defaultPaymentDate.plusMonths(1)
+    val defaultPaymentDatePlusTwoMonths = defaultPaymentDate.plusMonths(2)
 
-    CalculatorInput(
-      debits           = debits,
-      initialPayment   = initialPayment,
-      startDate        = startDate,
-      endDate          = lastPaymentDate,
-      firstPaymentDate = Some(firstPaymentDate)
-    )
+    val defaultEndDate = defaultPaymentDate.plusMonths(durationInMonths)
+    val defaultEndDatePlusOneMonth = defaultEndDate.plusMonths(1)
+    val defaultEndDatePlusTwoMonths = defaultEndDate.plusMonths(2)
+
+    val (firstPaymentDate: LocalDate, endDate: LocalDate) =
+      if (initialPayment.equals(BigDecimal(0))) {
+        val daysBetweenStartAndPaymentDates = DAYS.between(startDate, defaultPaymentDate)
+
+        if (daysBetweenStartAndPaymentDates < oneWeek && DAYS.between(startDate, defaultPaymentDatePlusOneMonth) < oneWeek)
+          (defaultPaymentDatePlusTwoMonths, defaultEndDatePlusTwoMonths)
+        else if (daysBetweenStartAndPaymentDates < oneWeek)
+          (defaultPaymentDatePlusOneMonth, defaultEndDatePlusOneMonth)
+        else
+          (defaultPaymentDate, defaultEndDate)
+      } else {
+        val paymentDateWithinAWeekOfStartDate = defaultPaymentDate.isBefore(startDatePlusOneWeek)
+
+        if (paymentDateWithinAWeekOfStartDate && DAYS.between(startDatePlusOneWeek, defaultPaymentDatePlusOneMonth) < twoWeeks)
+          (defaultPaymentDatePlusTwoMonths, defaultEndDatePlusTwoMonths)
+        else if (paymentDateWithinAWeekOfStartDate)
+          (defaultPaymentDatePlusOneMonth, defaultEndDatePlusOneMonth)
+        else if (DAYS.between(startDatePlusOneWeek, defaultPaymentDate) < twoWeeks)
+          (defaultPaymentDatePlusOneMonth, defaultEndDatePlusOneMonth)
+        else
+          (defaultPaymentDate, defaultEndDate)
+      }
+
+    CalculatorInput(debits, initialPayment, startDate, endDate.minusDays(1), Some(firstPaymentDate))
   }
 
   val minimumMonthsAllowedTTP = 2
