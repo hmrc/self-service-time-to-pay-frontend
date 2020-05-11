@@ -55,7 +55,7 @@ class CalculatorController @Inject() (
   def getTaxLiabilities: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getTaxLiabilities: $request")
     journeyService.getJourney.map {
-      case _@ Journey(_, InProgress, _, _, _, _, _, Some(ReturnsAndDebits(debits, returns)), _, _, _, _, _, _) =>
+      case _@ Journey(_, InProgress, _, _, _, _, _, Some(ReturnsAndDebits(debits, _)), _, _, _, _, _, _) =>
         Ok(views.tax_liabilities(debits, isSignedIn))
       case journey =>
         JourneyLogger.info(s"CalculatorController.getTaxLiabilities: pattern match redirect on error", journey)
