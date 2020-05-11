@@ -19,10 +19,9 @@
 @import uk.gov.hmrc.play.views.html.helpers
 @import partials.{direct_debit_details,gaDoCheckout, currency}
 @import uk.gov.hmrc.play.config.AssetsConfig
-@import _root_.model._
+@import model._
 @import timetopaytaxpayer.cor.model._
 @import timetopaycalculator.cor.model._
-@import ssttpcalculator.CalculatorPaymentScheduleExt
 
 @this(
   viewsHelpers: views.ViewsHelpers,
@@ -31,7 +30,7 @@
 
 @(
   debits: Seq[Debit],
-  schedule: CalculatorPaymentScheduleExt,
+  schedule: PaymentSchedule,
   directDebit: ArrangementDirectDebit,
   loggedIn: Boolean = false)(
   implicit
@@ -44,12 +43,12 @@
 @gaCheckoutCode = {
 @gaDoCheckout(debits = debits,
     step = 3,
-    revenue = schedule.schedule.totalPayable,
-    initialPayment = Some(schedule.schedule.initialPayment),
-    interest = schedule.schedule.totalInterestCharged,
-    duration = schedule.schedule.instalments.length,
-    regularPayment = schedule.schedule.firstInstallment.amount,
-    paymentDay = schedule.schedule.firstInstallment.paymentDate.getDayOfMonth
+    revenue = schedule.totalPayable,
+    initialPayment = Some(schedule.initialPayment),
+    interest = schedule.totalInterestCharged,
+    duration = schedule.instalments.length,
+    regularPayment = schedule.firstInstallment.amount,
+    paymentDay = schedule.firstInstallment.paymentDate.getDayOfMonth
 )
 }
 

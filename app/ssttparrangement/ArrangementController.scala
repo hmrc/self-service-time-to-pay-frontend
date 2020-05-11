@@ -32,7 +32,7 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttpcalculator.{CalculatorConnector, CalculatorPaymentScheduleExt, CalculatorService}
+import ssttpcalculator.{CalculatorConnector, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityService.runEligibilityCheck
 import ssttpeligibility.IaService
@@ -111,7 +111,7 @@ class ArrangementController @Inject() (
         Future.successful(Ok(views.instalment_plan_summary(
           journey.taxpayer.selfAssessment.debits,
           initialPayment,
-          schedule.schedule
+          schedule
         )))
       case _ => Future.successful(Redirect(ssttparrangement.routes.ArrangementController.determineEligibility()))
     }
@@ -144,7 +144,7 @@ class ArrangementController @Inject() (
             submission match {
               case _@ Journey(_, InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _) =>
                 JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
-                changeScheduleDay(submission, schedule.schedule, debits, validFormData.dayOfMonth).flatMap {
+                changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
                   ttpSubmission =>
                     journeyService.saveJourney(ttpSubmission).map {
                       _ => Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
@@ -178,7 +178,6 @@ class ArrangementController @Inject() (
     )
 
     calculatorConnector.calculatePaymentSchedule(input)
-      .map(CalculatorPaymentScheduleExt(months, _))
       .map[Journey](paymentSchedule =>
         journey.copy(
           maybeSchedule       = Some(paymentSchedule),
@@ -248,7 +247,7 @@ class ArrangementController @Inject() (
           debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
           transactionId = journey.taxpayer.selfAssessment.utr + LocalDateTime.now(clockProvider.getClock).toString,
           directDebit,
-          journey.schedule.schedule,
+          journey.schedule,
           journey.ddRef
         ))
       } else technicalDifficulties(journey)
@@ -328,13 +327,13 @@ class ArrangementController @Inject() (
   private def paymentPlan(journey: Journey, ddInstruction: DirectDebitInstruction): PaymentPlanRequest = {
     val knownFact = List(KnownFact(cesa, journey.taxpayer.selfAssessment.utr.value))
 
-    val initialPayment = if (journey.schedule.schedule.initialPayment > exact(0)) Some(journey.schedule.schedule.initialPayment.toString()) else None
-    val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(journey.schedule.schedule.startDate.plusWeeks(1)))
+    val initialPayment = if (journey.schedule.initialPayment > exact(0)) Some(journey.schedule.initialPayment.toString()) else None
+    val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(journey.schedule.startDate.plusWeeks(1)))
 
-    val lastInstalment: Instalment = journey.schedule.schedule.lastInstallment
-    val firstInstalment: Instalment = journey.schedule.schedule.firstInstallment
+    val lastInstalment: Instalment = journey.schedule.lastInstallment
+    val firstInstalment: Instalment = journey.schedule.firstInstallment
 
-    val totalLiability = journey.schedule.schedule.instalments.map(_.amount).sum + journey.schedule.schedule.initialPayment
+    val totalLiability = journey.schedule.instalments.map(_.amount).sum + journey.schedule.initialPayment
 
     val pp = PaymentPlan(ppType                    = "Time to Pay",
                          paymentReference          = s"${journey.taxpayer.selfAssessment.utr.value}K",
@@ -369,11 +368,11 @@ class ArrangementController @Inject() (
     val taxpayer = journey.taxpayer
     val schedule = journey.schedule
 
-    TTPArrangement(ppReference, ddReference, taxpayer, schedule.schedule)
+    TTPArrangement(ppReference, ddReference, taxpayer, schedule)
   }
 
   private def createDayOfForm(journey: Journey) =
-    journey.maybeSchedule.fold(dayOfMonthForm)((p: CalculatorPaymentScheduleExt) => {
-      dayOfMonthForm.fill(ArrangementDayOfMonth(p.schedule.getMonthlyInstalmentDate))
+    journey.maybeSchedule.fold(dayOfMonthForm)((p: PaymentSchedule) => {
+      dayOfMonthForm.fill(ArrangementDayOfMonth(p.getMonthlyInstalmentDate))
     })
 }

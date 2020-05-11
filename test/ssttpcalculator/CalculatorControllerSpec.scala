@@ -16,12 +16,17 @@
 
 package ssttpcalculator
 
+import java.time.LocalDate
+import java.time.Month.APRIL
 import java.time.temporal.ChronoUnit.MONTHS
 
 import model._
 import play.api.test.FakeRequest
 import testsupport.ItSpec
-import testsupport.stubs.CalculatorStub.{calculatorInput, generateSchedules, startDate}
+import testsupport.stubs.CalculatorStub._
+import testsupport.testdata.TdAll.saUtr
+import timetopaycalculator.cor.model.PaymentSchedule
+import timetopaytaxpayer.cor.model.{CommunicationPreferences, Return, SelfAssessmentDetails}
 import uk.gov.hmrc.http.HeaderCarrier
 
 class CalculatorControllerSpec extends ItSpec {
@@ -34,35 +39,67 @@ class CalculatorControllerSpec extends ItSpec {
   private val sixMonths = 6
   private val sevenMonths = 7
 
-  private lazy val connector = app.injector.instanceOf[CalculatorConnector]
-  private lazy val controller = app.injector.instanceOf[CalculatorController]
-
-  "getClosestSchedule returns the schedule with monthly payments nearest to the user's preferred amount" in {
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     generateSchedules()
+    ()
+  }
 
-    val paymentSchedules = Range(twoMonths, sevenMonths).inclusive.map { duration =>
-      CalculatorPaymentScheduleExt(
-        duration,
-        connector.calculatePaymentSchedule(calculatorInput(startDate.plus(duration, MONTHS), 2)) (FakeRequest()).futureValue)
+  trait SetUp {
+    lazy val connector: CalculatorConnector = app.injector.instanceOf[CalculatorConnector]
+    lazy val controller: CalculatorController = app.injector.instanceOf[CalculatorController]
+
+    lazy val paymentSchedules: List[PaymentSchedule] = Range(twoMonths, sevenMonths).inclusive.map { duration =>
+      connector.calculatePaymentSchedule(calculatorInput(
+        startDate.plus(duration, MONTHS), 2))(FakeRequest()).futureValue
     }.toList
+  }
 
-    confirm(whenUserPrefersMonthlyPayment(1), closestActualPayment = 700, duration = sevenMonths)
-    confirm(whenUserPrefersMonthlyPayment(757), closestActualPayment = 700, duration = sevenMonths)
-    confirm(whenUserPrefersMonthlyPayment(758), closestActualPayment = 816, duration = sixMonths)
-    confirm(whenUserPrefersMonthlyPayment(897), closestActualPayment = 816, duration = sixMonths)
-    confirm(whenUserPrefersMonthlyPayment(898), closestActualPayment = 980, duration = fiveMonths)
-    confirm(whenUserPrefersMonthlyPayment(1102), closestActualPayment = 980, duration = fiveMonths)
-    confirm(whenUserPrefersMonthlyPayment(1103), closestActualPayment = 1225, duration = fourMonths)
-    confirm(whenUserPrefersMonthlyPayment(1428), closestActualPayment = 1225, duration = fourMonths)
-    confirm(whenUserPrefersMonthlyPayment(1429), closestActualPayment = 1633, duration = threeMonths)
-    confirm(whenUserPrefersMonthlyPayment(2041), closestActualPayment = 1633, duration = threeMonths)
-    confirm(whenUserPrefersMonthlyPayment(2042), closestActualPayment = 2450, duration = twoMonths)
+  "closestSchedule returns the schedule with monthly payments nearest to the user's preferred amount" in new SetUp {
+    confirm(whenUserPrefersMonthlyPayment(1), closestActualPayment = sevenMonthScheduleRegularPaymentAmount, duration = sevenMonths)
+    confirm(whenUserPrefersMonthlyPayment(757), closestActualPayment = sevenMonthScheduleRegularPaymentAmount, duration = sevenMonths)
+    confirm(whenUserPrefersMonthlyPayment(758), closestActualPayment = sixMonthScheduleRegularPaymentAmount, duration = sixMonths)
+    confirm(whenUserPrefersMonthlyPayment(897), closestActualPayment = sixMonthScheduleRegularPaymentAmount, duration = sixMonths)
+    confirm(whenUserPrefersMonthlyPayment(898), closestActualPayment = fiveMonthScheduleRegularPaymentAmount, duration = fiveMonths)
+    confirm(whenUserPrefersMonthlyPayment(1102), closestActualPayment = fiveMonthScheduleRegularPaymentAmount, duration = fiveMonths)
+    confirm(whenUserPrefersMonthlyPayment(1103), closestActualPayment = fourMonthScheduleRegularPaymentAmount, duration = fourMonths)
+    confirm(whenUserPrefersMonthlyPayment(1428), closestActualPayment = fourMonthScheduleRegularPaymentAmount, duration = fourMonths)
+    confirm(whenUserPrefersMonthlyPayment(1429), closestActualPayment = threeMonthScheduleRegularPaymentAmount, duration = threeMonths)
+    confirm(whenUserPrefersMonthlyPayment(2041), closestActualPayment = threeMonthScheduleRegularPaymentAmount, duration = threeMonths)
+    confirm(whenUserPrefersMonthlyPayment(2042), closestActualPayment = twoMonthScheduleRegularPaymentAmount, duration = twoMonths)
 
-      def confirm(schedule: CalculatorPaymentScheduleExt, closestActualPayment: BigDecimal, duration: Int): Any = {
-        schedule.schedule.firstInstallment.amount shouldBe closestActualPayment
-        schedule.months shouldBe duration
-      }
+    private def confirm(schedule: PaymentSchedule, closestActualPayment: BigDecimal, duration: Int) = {
+      schedule.firstInstallment.amount shouldBe closestActualPayment
+      schedule.durationInMonths shouldBe duration
+    }
 
-      def whenUserPrefersMonthlyPayment(amount: Int) = controller.getClosestSchedule(amount, paymentSchedules)
+    private def whenUserPrefersMonthlyPayment(amount: Int) = controller.closestSchedule(amount, paymentSchedules)
+  }
+
+  "closestSchedules returns the closest schedule with the next closest 2 schedules if present" in new SetUp {
+    private val taxReturnDate = LocalDate.of(2020, APRIL, 5)
+    private val testReturns = List(Return(taxReturnDate, None, Some(taxReturnDate), None))
+    private val communicationPreferences = CommunicationPreferences(
+      welshLanguageIndicator = true, audioIndicator = true, largePrintIndicator = true, brailleIndicator = true)
+    private val selfAssessmentDetails = SelfAssessmentDetails(saUtr, communicationPreferences, Nil, testReturns)
+
+    private val twoMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == twoMonthScheduleRegularPaymentAmount).head
+    private val threeMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == threeMonthScheduleRegularPaymentAmount).head
+    private val fourMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == fourMonthScheduleRegularPaymentAmount).head
+    private val fiveMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == fiveMonthScheduleRegularPaymentAmount).head
+    private val sixMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == sixMonthScheduleRegularPaymentAmount).head
+    private val sevenMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == sevenMonthScheduleRegularPaymentAmount).head
+
+    private val closestSchedulesToTwoMonthSchedule =
+      controller.closestSchedules(twoMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+    closestSchedulesToTwoMonthSchedule shouldBe Set(twoMonthSchedule, threeMonthSchedule, fourMonthSchedule)
+
+    private val closestSchedulesToSixMonthSchedule =
+      controller.closestSchedules(sixMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+    closestSchedulesToSixMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
+
+    private val closestSchedulesToSevenMonthSchedule =
+      controller.closestSchedules(sevenMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+    closestSchedulesToSevenMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
   }
 }

@@ -45,6 +45,7 @@ package object model {
     private def last(latest: Instalment, next: Instalment) =
       if (next.paymentDate.toEpochDay > latest.paymentDate.toEpochDay) next else latest
 
+    def durationInMonths: Int = ps.instalments.size
     def getMonthlyInstalment: BigDecimal = firstInstallment.amount
     def getMonthlyInstalmentDate: Int = firstInstallment.paymentDate.getDayOfMonth
     def initialPaymentScheduleDate: LocalDate = firstInstallment.paymentDate

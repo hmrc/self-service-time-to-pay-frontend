@@ -18,9 +18,8 @@
 @import helpers.highlight
 @import partials.{what_you_owe, currency}
 @import timetopaytaxpayer.cor.model.Debit
-@import _root_.model._
+@import model._
 @import timetopaycalculator.cor.model._
-@import ssttpcalculator.CalculatorPaymentScheduleExt
 
 @this(
   main: views.html.main,
@@ -29,7 +28,7 @@
 
 @(
   debits:Seq[Debit],
-  schedule: CalculatorPaymentScheduleExt,
+  schedule: PaymentSchedule,
   loggedIn: Boolean = true,
   showErrorNotification: Boolean = false)(
   implicit
@@ -68,7 +67,7 @@
       @what_you_owe(debits)
       <div class="subsection grid-layout divider--bottom font-xsmall">
         <div class="grid-layout__column grid-layout__column--3-4"><p><strong>@Messages("ssttp.direct-debit-assistance.complete.total")</strong></p></div>
-        <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@currency(schedule.schedule.amountToPay)</strong></p></div>
+        <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@currency(schedule.amountToPay)</strong></p></div>
       </div>
 
       <h2>The instalments you chose</h2>
@@ -77,16 +76,16 @@
         @Messages("ssttp.direct-debit-assistance.initial-payment-of")
         </div>
         <div class="grid-layout__column grid-layout__column--1-2">
-          <strong> @currency(schedule.schedule.initialPayment)</strong>
+          <strong> @currency(schedule.initialPayment)</strong>
           <div class="form-hint form-hint--small">@Messages("ssttp.direct-debit-assistance.initial-payment.hint", 5)</div>
         </div>
       </div>
       <div class="subsection grid-layout">
         <div class="grid-layout__column grid-layout__column--1-2">
-          <strong>@schedule.schedule.instalments.length</strong> @Messages("ssttp.direct-debit-assistance.monthly-instalments")
+          <strong>@schedule.instalments.length</strong> @Messages("ssttp.direct-debit-assistance.monthly-instalments")
         </div>
         <div class="grid-layout__column grid-layout__column--1-2">
-          <strong>@currency(schedule.schedule.firstInstallment.amount)</strong>
+          <strong>@currency(schedule.firstInstallment.amount)</strong>
         </div>
       </div>
       <div class="subsection grid-layout divider--bottom">
@@ -94,7 +93,7 @@
         @Messages("ssttp.arrangement.instalment-summary.total-interest")
         </div>
         <div class="grid-layout__column grid-layout__column--1-2">
-          <strong>@currency(schedule.schedule.totalInterestCharged)</strong>
+          <strong>@currency(schedule.totalInterestCharged)</strong>
           <div class="form-hint form-hint--small">@Messages("ssttp.direct-debit-assistance.interest-added-to-final")</div>
         </div>
       </div>
@@ -103,7 +102,7 @@
         @Messages("ssttp.direct-debit-assistance.total-repayment")
         </div>
         <div class="grid-layout__column grid-layout__column--1-2">
-          <strong>@currency(schedule.schedule.totalPayable)</strong>
+          <strong>@currency(schedule.totalPayable)</strong>
           <div class="form-hint form-hint--small">@Messages("ssttp.arrangement.direct-debit.assistance.total.hint")</div>
         </div>
       </div>
