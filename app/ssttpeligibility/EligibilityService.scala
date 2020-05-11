@@ -18,7 +18,7 @@ package ssttpeligibility
 
 import java.time.{LocalDate, MonthDay}
 
-import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails}
+import timetopaytaxpayer.cor.model.{Debit, Return, ReturnsAndDebits}
 import uk.gov.hmrc.selfservicetimetopay.models._
 /**
  * Determines if a tax payer is eligible for self service.
@@ -38,11 +38,11 @@ object EligibilityService {
   val taxYearEndDay: MonthDay = MonthDay.of(4, 5)
 
   def runEligibilityCheck(eligibilityRequest: EligibilityRequest, onIa: Boolean): EligibilityStatus = {
-    val selfAssessmentDetails: SelfAssessmentDetails = eligibilityRequest.taxpayer.selfAssessment
+    val returnsAndDebits: ReturnsAndDebits = eligibilityRequest.returnsAndDebits
     val isOnIa: List[Reason] = if (onIa) Nil else List(IsNotOnIa)
 
-    val reasons = (checkReturnsUpToDate(selfAssessmentDetails.returns, eligibilityRequest.dateOfEligibilityCheck)
-      ++ checkDebits(selfAssessmentDetails.debits, eligibilityRequest.dateOfEligibilityCheck) ++ isOnIa)
+    val reasons = (checkReturnsUpToDate(returnsAndDebits.returns, eligibilityRequest.dateOfEligibilityCheck)
+      ++ checkDebits(returnsAndDebits.debits, eligibilityRequest.dateOfEligibilityCheck) ++ isOnIa)
     reasons match {
       case Nil => EligibilityStatus(true, Seq.empty)
       case _   => EligibilityStatus(false, reasons.map(r => r))

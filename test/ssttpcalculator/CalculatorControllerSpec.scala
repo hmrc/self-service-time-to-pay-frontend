@@ -26,7 +26,7 @@ import testsupport.ItSpec
 import testsupport.stubs.CalculatorStub._
 import testsupport.testdata.TdAll.saUtr
 import timetopaycalculator.cor.model.PaymentSchedule
-import timetopaytaxpayer.cor.model.{CommunicationPreferences, Return, SelfAssessmentDetails}
+import timetopaytaxpayer.cor.model.{CommunicationPreferences, Return, ReturnsAndDebits, SelfAssessmentDetails}
 import uk.gov.hmrc.http.HeaderCarrier
 
 class CalculatorControllerSpec extends ItSpec {
@@ -81,7 +81,7 @@ class CalculatorControllerSpec extends ItSpec {
     private val testReturns = List(Return(taxReturnDate, None, Some(taxReturnDate), None))
     private val communicationPreferences = CommunicationPreferences(
       welshLanguageIndicator = true, audioIndicator = true, largePrintIndicator = true, brailleIndicator = true)
-    private val selfAssessmentDetails = SelfAssessmentDetails(saUtr, communicationPreferences, Nil, testReturns)
+    private val returnsAndDebits = ReturnsAndDebits(Nil, testReturns)
 
     private val twoMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == twoMonthScheduleRegularPaymentAmount).head
     private val threeMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == threeMonthScheduleRegularPaymentAmount).head
@@ -91,15 +91,15 @@ class CalculatorControllerSpec extends ItSpec {
     private val sevenMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == sevenMonthScheduleRegularPaymentAmount).head
 
     private val closestSchedulesToTwoMonthSchedule =
-      controller.closestSchedules(twoMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+      controller.closestSchedules(twoMonthSchedule, paymentSchedules, returnsAndDebits)(FakeRequest()).toSet
     closestSchedulesToTwoMonthSchedule shouldBe Set(twoMonthSchedule, threeMonthSchedule, fourMonthSchedule)
 
     private val closestSchedulesToSixMonthSchedule =
-      controller.closestSchedules(sixMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+      controller.closestSchedules(sixMonthSchedule, paymentSchedules, returnsAndDebits)(FakeRequest()).toSet
     closestSchedulesToSixMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
 
     private val closestSchedulesToSevenMonthSchedule =
-      controller.closestSchedules(sevenMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+      controller.closestSchedules(sevenMonthSchedule, paymentSchedules, returnsAndDebits)(FakeRequest()).toSet
     closestSchedulesToSevenMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
   }
 }
