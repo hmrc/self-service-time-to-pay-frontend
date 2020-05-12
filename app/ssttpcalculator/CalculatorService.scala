@@ -19,7 +19,7 @@ package ssttpcalculator
 import java.time.temporal.ChronoUnit.{DAYS, MONTHS}
 import java.time.{Clock, LocalDate}
 
-import bankholidays.WorkingDaysService
+import bankholidays.WorkingDaysService.addWorkingDays
 import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.Json.toJson
@@ -38,7 +38,6 @@ import scala.util.{Failure, Success, Try}
 
 class CalculatorService @Inject() (
     calculatorConnector: CalculatorConnector,
-    workingDays:         WorkingDaysService,
     clockProvider:       ClockProvider)(
     implicit
     ec: ExecutionContext) {
@@ -52,14 +51,10 @@ class CalculatorService @Inject() (
     JourneyLogger.info(s"CalculatorService.getInstalmentsSchedule...")
 
     val months: Seq[Int] = getMonthRange(returnsAndDebits)
+    val debits = returnsAndDebits.debits.map(model.asDebitInput)
 
     val calculatorInputs = months.map { durationInMonths =>
-      val debits = returnsAndDebits.debits.map(model.asDebitInput)
-
-      val paymentScheduleRequest =
-        calculatorInput(durationInMonths, LocalDate.now(clockProvider.getClock).getDayOfMonth, initialPayment, debits)
-
-      validateCalculatorDates(paymentScheduleRequest, durationInMonths, debits)
+      instalmentsScheduleRequest(debits, initialPayment, durationInMonths)
     }.toList
 
     getCalculatorValues(calculatorInputs)
@@ -72,46 +67,54 @@ class CalculatorService @Inject() (
       calculatorConnector.calculatePaymentSchedule(calculatorInput)
     })
   }
+}
 
-  private def dayOfMonthCheck(date: LocalDate): LocalDate = date.getDayOfMonth match {
+object CalculatorService {
+  def firstDayOfNextMonthIfAfterTheTwentyEighth(date: LocalDate): LocalDate = date.getDayOfMonth match {
     case day if day > 28 => date.withDayOfMonth(1).plusMonths(1)
     case _               => date
   }
 
+  def payTodayRequest(debits: Seq[DebitInput])(implicit clock: Clock): CalculatorInput =
+    calculatorInput(0, LocalDate.now(clock).getDayOfMonth, 0, debits)
+
+  def instalmentsScheduleRequest(debits: Seq[DebitInput], initialPayment: BigDecimal, durationInMonths: Int)
+    (implicit clock: Clock): CalculatorInput = {
+    val paymentScheduleRequest =
+      calculatorInput(durationInMonths, LocalDate.now(clock).getDayOfMonth, initialPayment, debits)
+
+    validateCalculatorDates(paymentScheduleRequest, durationInMonths, debits)
+  }
+
   //TODO: describe in words 'why'  and `WHAT` it does!?
   //why it takes CalcInput and DebitInputs !?
-  private def validateCalculatorDates(
-      calculatorInput: CalculatorInput,
-      numberOfMonths:  Int,
-      debits:          Seq[DebitInput]
-  )(implicit request: Request[_]): CalculatorInput = {
+  private def validateCalculatorDates(calculatorInput: CalculatorInput, durationInMonths: Int, debits: Seq[DebitInput])
+    (implicit clock: Clock): CalculatorInput = {
+
+    val startDate = LocalDate.now(clock)
     val workingDaysInAWeek = 5
-    val firstPaymentDate: LocalDate = dayOfMonthCheck(workingDays.addWorkingDays(clockProvider.nowDate(), workingDaysInAWeek))
+    val firstPaymentDate: LocalDate =
+      firstDayOfNextMonthIfAfterTheTwentyEighth(addWorkingDays(startDate, workingDaysInAWeek))
 
     if (calculatorInput.initialPayment > 0) {
       if ((debits.map(_.amount).sum - calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
-        calculatorInput.copy(startDate        = clockProvider.nowDate(),
+        calculatorInput.copy(startDate        = startDate,
                              initialPayment   = BigDecimal(0),
-                             firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
-                             endDate          = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
+                             firstPaymentDate = Some(firstDayOfNextMonthIfAfterTheTwentyEighth(firstPaymentDate.plusMonths(1))),
+                             endDate          = calculatorInput.startDate.plusMonths(durationInMonths + 1))
       } else {
-        calculatorInput.copy(startDate        = clockProvider.nowDate(),
-                             firstPaymentDate = Some(dayOfMonthCheck(firstPaymentDate.plusMonths(1))),
-                             endDate          = calculatorInput.startDate.plusMonths(numberOfMonths + 1))
+        calculatorInput.copy(startDate        = startDate,
+                             firstPaymentDate = Some(firstDayOfNextMonthIfAfterTheTwentyEighth(firstPaymentDate.plusMonths(1))),
+                             endDate          = calculatorInput.startDate.plusMonths(durationInMonths + 1))
       }
     } else
       calculatorInput.copy(
         debits           = debits,
-        startDate        = clockProvider.nowDate(),
-        endDate          = calculatorInput.startDate.plusMonths(numberOfMonths),
+        startDate        = startDate,
+        endDate          = calculatorInput.startDate.plusMonths(durationInMonths),
         firstPaymentDate = Some(firstPaymentDate)
       )
   }
-}
-
-object CalculatorService {
-  def payTodayRequest(debits: Seq[DebitInput])(implicit clock: Clock) =
-    calculatorInput(0, LocalDate.now(clock).getDayOfMonth, 0, debits)
 
   /**
    * As the user can change which day of the month they wish to make their payments, then a recalculation
