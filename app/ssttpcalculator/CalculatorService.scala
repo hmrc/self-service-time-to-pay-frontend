@@ -16,6 +16,7 @@
 
 package ssttpcalculator
 
+import java.time.LocalDate.now
 import java.time.temporal.ChronoUnit.{DAYS, MONTHS}
 import java.time.{Clock, LocalDate}
 
@@ -36,83 +37,78 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal
 import scala.util.{Failure, Success, Try}
 
-class CalculatorService @Inject() (
-    calculatorConnector: CalculatorConnector,
-    clockProvider:       ClockProvider)(
-    implicit
-    ec: ExecutionContext) {
+class CalculatorService @Inject() (calculatorConnector: CalculatorConnector, clockProvider: ClockProvider)
+  (implicit ec: ExecutionContext) {
 
   import clockProvider._
 
   //todo perhaps merge these methods and change back end so it only one call
-  def getInstalmentsSchedule(returnsAndDebits: ReturnsAndDebits, initialPayment: BigDecimal = BigDecimal(0))
+  def availablePaymentSchedules(returnsAndDebits: ReturnsAndDebits, initialPayment: BigDecimal = BigDecimal(0))
     (implicit request: Request[_]): Future[List[PaymentSchedule]] = {
 
-    JourneyLogger.info(s"CalculatorService.getInstalmentsSchedule...")
+    JourneyLogger.info(s"CalculatorService.availableInstallmentSchedules...")
 
-    val months: Seq[Int] = getMonthRange(returnsAndDebits)
+    val rangeOfAvailableScheduleDurationsInMonths =
+      minimumMonthsAllowedTTP to maximumDurationInMonths(returnsAndDebits, LocalDate.now(clockProvider.getClock))
+
     val debits = returnsAndDebits.debits.map(model.asDebitInput)
 
-    val calculatorInputs = months.map { durationInMonths =>
-      instalmentsScheduleRequest(debits, initialPayment, durationInMonths)
-    }.toList
-
-    getCalculatorValues(calculatorInputs)
-  }
-
-  private def getCalculatorValues(calculatorInputs: List[CalculatorInput])(implicit request: Request[_]) = {
-    JourneyLogger.info(s"CalculatorService.getCalculatorValues...")
-
-    Future.sequence(calculatorInputs.map { calculatorInput =>
-      calculatorConnector.calculatePaymentSchedule(calculatorInput)
-    })
+    Future.sequence(
+      rangeOfAvailableScheduleDurationsInMonths.map { durationInMonths =>
+        calculatorConnector.calculatePaymentSchedule(paymentScheduleRequest(debits, initialPayment, durationInMonths))
+      }.toList
+    )
   }
 }
 
 object CalculatorService {
-  def firstDayOfNextMonthIfAfterTheTwentyEighth(date: LocalDate): LocalDate = date.getDayOfMonth match {
-    case day if day > 28 => date.withDayOfMonth(1).plusMonths(1)
-    case _               => date
-  }
+  private val latestValidPaymentDayOfMonth = 28
 
   def payTodayRequest(debits: Seq[DebitInput])(implicit clock: Clock): CalculatorInput =
-    calculatorInput(0, LocalDate.now(clock).getDayOfMonth, 0, debits)
+    changeScheduleRequest(0, now(clock).getDayOfMonth, 0, debits)
 
-  def instalmentsScheduleRequest(debits: Seq[DebitInput], initialPayment: BigDecimal, durationInMonths: Int)
-    (implicit clock: Clock): CalculatorInput = {
-    val paymentScheduleRequest =
-      calculatorInput(durationInMonths, LocalDate.now(clock).getDayOfMonth, initialPayment, debits)
-
-    validateCalculatorDates(paymentScheduleRequest, durationInMonths, debits)
-  }
-
-  //TODO: describe in words 'why'  and `WHAT` it does!?
-  //why it takes CalcInput and DebitInputs !?
-  private def validateCalculatorDates(calculatorInput: CalculatorInput, durationInMonths: Int, debits: Seq[DebitInput])
+  def paymentScheduleRequest(debits: Seq[DebitInput], initialPayment: BigDecimal, durationInMonths: Int)
     (implicit clock: Clock): CalculatorInput = {
 
-    val startDate = LocalDate.now(clock)
+    val noInitialPayment = BigDecimal(0)
     val workingDaysInAWeek = 5
-    val firstPaymentDate: LocalDate =
-      firstDayOfNextMonthIfAfterTheTwentyEighth(addWorkingDays(startDate, workingDaysInAWeek))
 
-    if (calculatorInput.initialPayment > 0) {
-      if ((debits.map(_.amount).sum - calculatorInput.initialPayment) < BigDecimal.exact("32.00")) {
-        calculatorInput.copy(startDate        = startDate,
-                             initialPayment   = BigDecimal(0),
-                             firstPaymentDate = Some(firstDayOfNextMonthIfAfterTheTwentyEighth(firstPaymentDate.plusMonths(1))),
-                             endDate          = calculatorInput.startDate.plusMonths(durationInMonths + 1))
+    val currentDate = now(clock)
+    val endDate = currentDate.plusMonths(durationInMonths)
+    val possibleFirstPaymentDate = addWorkingDays(currentDate, workingDaysInAWeek)
+
+    val firstPaymentDate: LocalDate =
+      if (possibleFirstPaymentDate.getDayOfMonth > latestValidPaymentDayOfMonth)
+        possibleFirstPaymentDate.withDayOfMonth(1).plusMonths(1)
+      else
+        possibleFirstPaymentDate
+
+    if (initialPayment > 0) {
+      val deferredEndDate = endDate.plusMonths(1)
+      val deferredFirstPaymentDate = firstPaymentDate.plusMonths(1)
+
+      if ((debits.map(_.amount).sum - initialPayment) < BigDecimal.exact("32.00")) {
+        CalculatorInput(
+          startDate        = currentDate,
+          initialPayment   = noInitialPayment,
+          firstPaymentDate = Some(deferredFirstPaymentDate),
+          endDate          = deferredEndDate,
+          debits           = debits)
       } else {
-        calculatorInput.copy(startDate        = startDate,
-                             firstPaymentDate = Some(firstDayOfNextMonthIfAfterTheTwentyEighth(firstPaymentDate.plusMonths(1))),
-                             endDate          = calculatorInput.startDate.plusMonths(durationInMonths + 1))
+        CalculatorInput(
+          startDate        = currentDate,
+          initialPayment   = initialPayment,
+          firstPaymentDate = Some(deferredFirstPaymentDate),
+          endDate          = deferredEndDate,
+          debits           = debits)
       }
     } else
-      calculatorInput.copy(
-        debits           = debits,
-        startDate        = startDate,
-        endDate          = calculatorInput.startDate.plusMonths(durationInMonths),
-        firstPaymentDate = Some(firstPaymentDate)
+      CalculatorInput(
+        startDate        = currentDate,
+        initialPayment   = noInitialPayment,
+        endDate          = endDate,
+        firstPaymentDate = Some(firstPaymentDate),
+        debits           = debits
       )
   }
 
@@ -126,16 +122,17 @@ object CalculatorService {
    * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
    */
-  def calculatorInput(durationInMonths: Int, preferredPaymentDayOfMonth: Int, initialPayment: BigDecimal, debits: Seq[DebitInput])
+  def changeScheduleRequest(
+      durationInMonths: Int, preferredPaymentDayOfMonth: Int, initialPayment: BigDecimal, debits: Seq[DebitInput])
     (implicit clock: Clock): CalculatorInput = {
 
     val oneWeek = 7
     val twoWeeks = oneWeek * 2
 
-    val startDate = LocalDate.now(clock)
+    val startDate = now(clock)
     val startDatePlusOneWeek = startDate.plusWeeks(1)
 
-    val bestMatchingPaymentDayOfMonth = if (preferredPaymentDayOfMonth > 28) 1 else preferredPaymentDayOfMonth
+    val bestMatchingPaymentDayOfMonth = if (preferredPaymentDayOfMonth > latestValidPaymentDayOfMonth) 1 else preferredPaymentDayOfMonth
     val defaultPaymentDate = startDate.withDayOfMonth(bestMatchingPaymentDayOfMonth)
     val defaultPaymentDatePlusOneMonth = defaultPaymentDate.plusMonths(1)
     val defaultPaymentDatePlusTwoMonths = defaultPaymentDate.plusMonths(2)
@@ -171,12 +168,6 @@ object CalculatorService {
   }
 
   val minimumMonthsAllowedTTP = 2
-
-  def getMonthRange(returnsAndDebits: ReturnsAndDebits)(implicit request: Request[_], clock: Clock): Seq[Int] = {
-    val range = minimumMonthsAllowedTTP to maximumDurationInMonths(returnsAndDebits, LocalDate.now(clock))
-    JourneyLogger.info(s"getMonthRange: [months=$range]")
-    range
-  }
 
   implicit def ordered[A](implicit ev$1: A => Comparable[_ >: A]): Ordering[A] = new Ordering[A] {
     def compare(x: A, y: A): Int = x compareTo y

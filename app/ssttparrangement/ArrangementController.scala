@@ -32,7 +32,7 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttpcalculator.CalculatorService.calculatorInput
+import ssttpcalculator.CalculatorService.changeScheduleRequest
 import ssttpcalculator.{CalculatorConnector, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityService.runEligibilityCheck
@@ -171,13 +171,15 @@ class ArrangementController @Inject() (
   )(implicit request: Request[_]): Future[Journey] = {
 
     val durationInMonths = schedule.instalments.length
-    val paymentScheduleRequest = calculatorInput(durationInMonths, dayOfMonth, schedule.initialPayment, debits)
 
-    calculatorConnector.calculatePaymentSchedule(paymentScheduleRequest)
+    val changeRequest =
+      changeScheduleRequest(durationInMonths, dayOfMonth, schedule.initialPayment, debits)(clockProvider.getClock)
+
+    calculatorConnector.calculatePaymentSchedule(changeRequest)
       .map[Journey](paymentSchedule =>
         journey.copy(
           maybeSchedule       = Some(paymentSchedule),
-          maybeCalculatorData = Some(paymentScheduleRequest)
+          maybeCalculatorData = Some(changeRequest)
         )
       )
   }
