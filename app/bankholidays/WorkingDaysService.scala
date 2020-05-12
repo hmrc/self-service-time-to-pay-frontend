@@ -18,15 +18,13 @@ package bankholidays
 
 import java.time.{Clock, LocalDate}
 
-import javax.inject.{Inject, Singleton}
 import org.joda.time
 import uk.gov.hmrc.time.workingdays._
 
 import scala.language.postfixOps
-@Singleton
-class WorkingDaysService @Inject() () {
 
-  implicit val hols: BankHolidaySet = BankHolidays()
+object WorkingDaysService {
+  private implicit lazy val bankHolidays: BankHolidaySet = BankHolidays()
 
   def addWorkingDays(date: LocalDate, days: Int)(implicit clock: Clock): LocalDate = {
     val joda = turnJavaTimeToJoda(date)

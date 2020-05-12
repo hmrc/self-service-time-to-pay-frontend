@@ -28,7 +28,7 @@ import model._
 import play.api.mvc.{AnyContent, _}
 import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createInstalmentForm, createMonthlyAmountForm, createPaymentTodayForm, payTodayForm}
-import ssttpcalculator.CalculatorService.{createCalculatorInput, maximumDurationInMonths, minimumMonthsAllowedTTP}
+import ssttpcalculator.CalculatorService.{maximumDurationInMonths, minimumMonthsAllowedTTP, payTodayRequest}
 import times.ClockProvider
 import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
 import timetopaytaxpayer.cor.model.ReturnsAndDebits
@@ -84,11 +84,7 @@ class CalculatorController @Inject() (
             case PayTodayQuestion(Some(false)) =>
               val newJourney =
                 journey.copy(maybeCalculatorData =
-                  Some(createCalculatorInput(
-                    0,
-                    LocalDate.now(clockProvider.getClock).getDayOfMonth,
-                    0,
-                    journey.returnsAndDebits.debits.map(model.asDebitInput))))
+                  Some(payTodayRequest(journey.returnsAndDebits.debits.map(model.asDebitInput))))
               journeyService.saveJourney(newJourney).map[Result] {
                 _ => Redirect(ssttpcalculator.routes.CalculatorController.getMonthlyPayment())
               }
@@ -104,10 +100,7 @@ class CalculatorController @Inject() (
     JourneyLogger.info(s"CalculatorController.getPaymentToday: $request")
     journeyService.getJourney.map {
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(ReturnsAndDebits(debits, _)), _, _, _, _, _, _) if debits.nonEmpty =>
-        val newJourney =
-          journey.copy(maybeCalculatorData =
-            Some(createCalculatorInput(
-              0, LocalDate.now(clockProvider.getClock).getDayOfMonth, 0, debits.map(model.asDebitInput))))
+        val newJourney = journey.copy(maybeCalculatorData = Some(payTodayRequest(debits.map(model.asDebitInput))))
         journeyService.saveJourney(newJourney)
 
         val form = createPaymentTodayForm(debits.map(_.amount).sum)
@@ -185,7 +178,7 @@ class CalculatorController @Inject() (
     journeyService.getJourney.flatMap {
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(returnsAndDebits), _, _, _, _, _, _) =>
 
-        calculatorService.getInstalmentsSchedule(returnsAndDebits, journey.calculatorInput.initialPayment).flatMap { _ =>
+        calculatorService.availablePaymentSchedules(returnsAndDebits, journey.calculatorInput.initialPayment).flatMap { _ =>
           createMonthlyAmountForm(
             lowerMonthlyPaymentBound(returnsAndDebits, journey.calculatorInput).toInt, upperMonthlyPaymentBound(returnsAndDebits, journey.calculatorInput).toInt).bindFromRequest().fold(
               formWithErrors => {
@@ -263,7 +256,7 @@ class CalculatorController @Inject() (
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(returnsAndDebits), _, _, _, _, _, _) =>
         JourneyLogger.info("CalculatorController.getCalculateInstalments", journey)
 
-        calculatorService.getInstalmentsSchedule(returnsAndDebits, journey.calculatorInput.initialPayment).map { schedule =>
+        calculatorService.availablePaymentSchedules(returnsAndDebits, journey.calculatorInput.initialPayment).map { schedule =>
           Ok(views.calculate_instalments_form(
             routes.CalculatorController.submitCalculateInstalments(),
             createInstalmentForm(),
@@ -282,7 +275,7 @@ class CalculatorController @Inject() (
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(returnsAndDebits), _, _, _, _, _, _) =>
         JourneyLogger.info("CalculatorController.submitCalculateInstalments", journey)
 
-        calculatorService.getInstalmentsSchedule(returnsAndDebits, journey.calculatorInput.initialPayment).flatMap { schedules: List[PaymentSchedule] =>
+        calculatorService.availablePaymentSchedules(returnsAndDebits, journey.calculatorInput.initialPayment).flatMap { schedules: List[PaymentSchedule] =>
           createInstalmentForm().bindFromRequest().fold(
             formWithErrors =>
               Future.successful(

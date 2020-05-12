@@ -24,9 +24,8 @@ import model._
 import play.api.test.FakeRequest
 import testsupport.ItSpec
 import testsupport.stubs.CalculatorStub._
-import testsupport.testdata.TdAll.saUtr
 import timetopaycalculator.cor.model.PaymentSchedule
-import timetopaytaxpayer.cor.model.{CommunicationPreferences, Return, ReturnsAndDebits, SelfAssessmentDetails}
+import timetopaytaxpayer.cor.model.{Return, ReturnsAndDebits}
 import uk.gov.hmrc.http.HeaderCarrier
 
 class CalculatorControllerSpec extends ItSpec {
@@ -79,8 +78,6 @@ class CalculatorControllerSpec extends ItSpec {
   "closestSchedules returns the closest schedule with the next closest 2 schedules if present" in new SetUp {
     private val taxReturnDate = LocalDate.of(2020, APRIL, 5)
     private val testReturns = List(Return(taxReturnDate, None, Some(taxReturnDate), None))
-    private val communicationPreferences = CommunicationPreferences(
-      welshLanguageIndicator = true, audioIndicator = true, largePrintIndicator = true, brailleIndicator = true)
     private val returnsAndDebits = ReturnsAndDebits(Nil, testReturns)
 
     private val twoMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == twoMonthScheduleRegularPaymentAmount).head

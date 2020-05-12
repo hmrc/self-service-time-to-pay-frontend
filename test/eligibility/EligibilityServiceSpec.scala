@@ -21,7 +21,7 @@ import java.time.LocalDate
 import org.scalatest.{Matchers, WordSpecLike}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import ssttpeligibility.EligibilityService
-import timetopaytaxpayer.cor.model.{Address, CommunicationPreferences, Debit, Interest, Return, SaUtr, SelfAssessmentDetails, ReturnsAndDebits}
+import timetopaytaxpayer.cor.model._
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with Matchers {
