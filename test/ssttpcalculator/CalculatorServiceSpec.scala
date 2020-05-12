@@ -51,25 +51,25 @@ class CalculatorServiceSpec extends PlaySpec with TableDrivenPropertyChecks {
   private val communicationPreferences = CommunicationPreferences(
     welshLanguageIndicator = true, audioIndicator = true, largePrintIndicator = true, brailleIndicator = true)
 
-  private val sa = SelfAssessmentDetails(SaUtr("123456789"), communicationPreferences, Nil, List(return2016))
+  private val returnsAndDebits = ReturnsAndDebits(Nil, List(return2016))
 
   //Note the calculator logic is not responsible for determining eligibility
   private val scenariosBasedAroundJanuaryDuedate = Table(
     ("todayDate", "self assessment", "expected answer"),
     //Customer 1
-    (startDate, sa.copy(debits = List(
+    (startDate, returnsAndDebits.copy(debits = List(
       debit("BCD", "2016-04-05", 1000, "2017-01-31"),
       debit("POA1", "2016-04-05", 2000, "2017-01-31"),
       debit("POA2", "2016-04-05", 2000, "2017-01-31"))), 11),
 
     //Customer 2
-    (startDate.withMonth(2).withDayOfMonth(14), sa.copy(debits = List(
+    (startDate.withMonth(2).withDayOfMonth(14), returnsAndDebits.copy(debits = List(
       debit("BCD", "2016-04-05", 1000, "2017-01-31"),
       debit("POA1", "2016-04-05", 3000, "2017-01-31", Some(40)),
       debit("POA2", "2016-04-05", 3000, "2017-07-31"))), 10),
 
     // Customer 4
-    (startDate.withMonth(1).withDayOfMonth(10), sa.copy(debits = List(
+    (startDate.withMonth(1).withDayOfMonth(10), returnsAndDebits.copy(debits = List(
       debit("BCD", "2016-04-05", 1000, "2017-01-31"),
       debit("POA1", "2016-04-05", 3000, "2017-01-31", Some(40)),
       debit("POA2", "2016-04-05", 3000, "2017-07-31"),
@@ -79,33 +79,33 @@ class CalculatorServiceSpec extends PlaySpec with TableDrivenPropertyChecks {
   private val scenariosBasedAroundJulyDuedate = Table(
     ("todayDate", "self assessment", "expected answer"),
     //Customer 9
-    (startDate.withMonth(7).withDayOfMonth(1), sa.copy(debits = List(
+    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(debits = List(
       debit("POA2", "2016-04-05", 5000, "2017-07-31"))), 5),
     //Customer 10
-    (startDate.withMonth(8).withDayOfMonth(14), sa.copy(debits = List(
+    (startDate.withMonth(8).withDayOfMonth(14), returnsAndDebits.copy(debits = List(
       debit("POA2", "2016-04-05", 3000, "2017-07-31", Some(20)))), 4),
     //Customer 11
-    (startDate.withMonth(7).withDayOfMonth(1), sa.copy(debits = List(
+    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(debits = List(
       debit("POA2", "2016-04-05", 3000, "2017-07-31"),
       debit("Interest from previous arrangement", "2015-04-05", 28, "2016-01-31"))), 5),
     //Customer 13
-    (startDate.withMonth(7).withDayOfMonth(1), sa.copy(debits = List(
+    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(debits = List(
       debit("POA2", "2016-04-05", 3000, "2017-07-31"))), 5))
 
   private val scenariosBasedAroundEarlyFilers = Table(
     ("todayDate", "self assessment", "expected answer"),
     //Customer 15
-    (startDate.withMonth(7).withDayOfMonth(1), sa.copy(
+    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(
       debits  = List(debit("POA2", "2016-04-05", 5000, "2017-07-31")),
       returns = List(return2016, return2017)), 11),
     //Customer 16
-    (startDate.withMonth(7).withDayOfMonth(1), sa.copy(
+    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(
       debits  = List(
         debit("POA2", "2016-04-05", 5000, "2017-07-31"),
         debit("BCD", "2017-04-05", 2000, "2018-01-18")),
       returns = List(return2016, return2017)), 11),
     //Customer 17
-    (startDate.withMonth(7).withDayOfMonth(1), sa.copy(
+    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(
       debits  = List(
         debit("POA2", "2016-04-05", 5000, "2017-07-31"),
         debit("BCD", "2017-04-05", 2000, "2018-01-31"),
@@ -113,7 +113,7 @@ class CalculatorServiceSpec extends PlaySpec with TableDrivenPropertyChecks {
         debit("POA2", "2017-04-05", 1000, "2018-01-31")),
       returns = List(return2016, return2017)), 11),
     //Customer 19
-    (startDate.withMonth(5).withDayOfMonth(1), sa.copy(
+    (startDate.withMonth(5).withDayOfMonth(1), returnsAndDebits.copy(
       debits  = List(
         debit("BCD", "2017-04-05", 1000, "2018-01-31"),
         debit("POA1", "2017-04-05", 2000, "2018-01-31"),
@@ -125,32 +125,32 @@ class CalculatorServiceSpec extends PlaySpec with TableDrivenPropertyChecks {
     ("todayDate", "self assessment", "expected answer"),
     //Customer 20
     //todo I am assuming the old charges will not appear in des?
-    (startDate.withMonth(7).withDayOfMonth(1), sa.copy(
+    (startDate.withMonth(7).withDayOfMonth(1), returnsAndDebits.copy(
       debits  = List(
         debit("BCD", "2017-04-05", 0, "2017-07-31"),
         debit("Late payment penalty", "2015-04-05", 1000, "2017-04-28")),
       returns = List(return2016, return2017)), 11),
     //Customer 21
     //todo will the Late payment penalty appear as two paymeant
-    (startDate.withMonth(4).withDayOfMonth(20), sa.copy(
+    (startDate.withMonth(4).withDayOfMonth(20), returnsAndDebits.copy(
       debits  = List(
         debit("BCD", "2017-04-05", 0, "2017-07-31"),
         debit("Late payment penalty", "2016-04-05", 1000, "2017-04-28"),
         debit("POA2", "2016-04-05", 5000, "2017-07-17")),
       returns = List(return2016, return2017)), 11),
     //Customer 22
-    (startDate.withMonth(3).withDayOfMonth(20), sa.copy(
+    (startDate.withMonth(3).withDayOfMonth(20), returnsAndDebits.copy(
       debits  = List(
         debit("Late payment penalty", "2016-04-05", 100, "2017-03-25")),
       returns = List(return2016, return2017)), 11),
     //Customer 24
-    (startDate.withMonth(3).withDayOfMonth(20), sa.copy(
+    (startDate.withMonth(3).withDayOfMonth(20), returnsAndDebits.copy(
       debits  = List(
         debit("POA2", "2016-04-05", 3000, "2017-07-31"),
         debit("Late payment penalty", "2016-04-05", 100, "2017-03-17")),
       returns = List(return2016, return2017)), 11),
     //Customer 25
-    (startDate.withMonth(11).withDayOfMonth(20), sa.copy(
+    (startDate.withMonth(11).withDayOfMonth(20), returnsAndDebits.copy(
       debits  = List(
         debit("Late payment penalty", "2016-04-05", 100, "2016-12-16"),
         debit("BCD", "2016-04-05", 50, "2017-01-31"),
@@ -161,7 +161,7 @@ class CalculatorServiceSpec extends PlaySpec with TableDrivenPropertyChecks {
 
   private val scenariosBasedCustom = Table(
     ("todayDate", "self assessment", "expected answer"),
-    (startDate.withMonth(12).withDayOfMonth(18), sa.copy(
+    (startDate.withMonth(12).withDayOfMonth(18), returnsAndDebits.copy(
       debits  = List(
         debit("IN1", "2018-04-05", 30, "2018-01-31"),
         debit("IN2", "2018-04-05", 500, "2018-07-31")),
@@ -169,18 +169,18 @@ class CalculatorServiceSpec extends PlaySpec with TableDrivenPropertyChecks {
 
   //todo ask ela about 11 13 15
   "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundJanuaryDuedate) { (startDate: LocalDate, selfA: SelfAssessmentDetails, answer: Int) =>
-      s"scenarios Based Around January Due date return the correct number of months($answer) for start date : $startDate and SelfAssessmentDetails $selfA" in {
-        val result: Int = maximumDurationInMonths(selfA, startDate)
+    TableDrivenPropertyChecks.forAll(scenariosBasedAroundJanuaryDuedate) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
+      s"scenarios Based Around January Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
+        val result: Int = maximumDurationInMonths(returnsAndDebits, startDate)
         assert(result == answer)
       }
     }
   }
 
   "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundJulyDuedate) { (startDate: LocalDate, selfA: SelfAssessmentDetails, answer: Int) =>
-      s"scenarios Based Around July Due date return the correct number of months($answer) for start date : $startDate and SelfAssessmentDetails $selfA" in {
-        val result: Int = maximumDurationInMonths(selfA, startDate)
+    TableDrivenPropertyChecks.forAll(scenariosBasedAroundJulyDuedate) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
+      s"scenarios Based Around July Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
+        val result: Int = maximumDurationInMonths(returnsAndDebits, startDate)
         assert(result == answer)
 
       }
@@ -188,27 +188,27 @@ class CalculatorServiceSpec extends PlaySpec with TableDrivenPropertyChecks {
   }
 
   "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundEarlyFilers) { (startDate: LocalDate, selfA: SelfAssessmentDetails, answer: Int) =>
-      s"scenarios Based Around Early Filers Due date return the correct number of months($answer) for start date : $startDate and SelfAssessmentDetails $selfA" in {
-        val result: Int = maximumDurationInMonths(selfA, startDate)
+    TableDrivenPropertyChecks.forAll(scenariosBasedAroundEarlyFilers) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
+      s"scenarios Based Around Early Filers Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
+        val result: Int = maximumDurationInMonths(returnsAndDebits, startDate)
         assert(result == answer)
       }
     }
   }
 
   "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedAroundEarlyFilers) { (startDate: LocalDate, selfA: SelfAssessmentDetails, answer: Int) =>
-      s"scenarios Based Around Late Filers Due date return the correct number of months($answer) for start date : $startDate and SelfAssessmentDetails $selfA" in {
-        val result: Int = maximumDurationInMonths(selfA, startDate)
+    TableDrivenPropertyChecks.forAll(scenariosBasedAroundEarlyFilers) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
+      s"scenarios Based Around Late Filers Due date return the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
+        val result: Int = maximumDurationInMonths(returnsAndDebits, startDate)
         assert(result == answer)
       }
     }
   }
 
   "CalculatorLogic" should {
-    TableDrivenPropertyChecks.forAll(scenariosBasedCustom) { (startDate: LocalDate, selfA: SelfAssessmentDetails, answer: Int) =>
-      s"scenarios Based Around Custom the correct number of months($answer) for start date : $startDate and SelfAssessmentDetails $selfA" in {
-        val result: Int = maximumDurationInMonths(selfA, startDate)
+    TableDrivenPropertyChecks.forAll(scenariosBasedCustom) { (startDate: LocalDate, returnsAndDebits: ReturnsAndDebits, answer: Int) =>
+      s"scenarios Based Around Custom the correct number of months($answer) for start date : $startDate and ReturnsAndDebits $returnsAndDebits" in {
+        val result: Int = maximumDurationInMonths(returnsAndDebits, startDate)
         assert(result == answer)
       }
     }

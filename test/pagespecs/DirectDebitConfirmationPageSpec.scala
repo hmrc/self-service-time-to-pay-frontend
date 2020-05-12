@@ -25,7 +25,7 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
 
   def beginJourney(): Unit = {
     AuthStub.authorise()
-    TaxpayerStub.getTaxpayer()
+    TaxpayerStub.getReturnsAndDebits()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     startPage.open()

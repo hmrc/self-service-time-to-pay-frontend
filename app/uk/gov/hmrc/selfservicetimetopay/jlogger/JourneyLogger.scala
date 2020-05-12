@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.jlogger
 import journey.Journey
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import timetopaytaxpayer.cor.model.SelfAssessmentDetails
+import timetopaytaxpayer.cor.model.ReturnsAndDebits
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.logging.SessionId
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
@@ -30,7 +30,7 @@ object JourneyLogger {
   def info(sessionId: SessionId, message: => String, data: JsValue): Unit = logger.info(s"$message [sessionId=${sessionId.value}]\n${Json.prettyPrint(data)}")
   def info(message: => String, data: JsValue)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(hc.sessionId.getOrElse(SessionId("NoSessionId")), message, data)
   def info(message: => String, journey: Journey)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(journey.obfuscate))
-  def info(message: => String, selfAssessment: SelfAssessmentDetails)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(selfAssessment.obfuscate))
+  def info(message: => String, returnsAndDebits: ReturnsAndDebits)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(returnsAndDebits.obfuscate))
   def info(message: => String, journey: Option[Journey] = None)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(journey.map(_.obfuscate)))
   def info(message: => String, arrangement: TTPArrangement)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(arrangement.obfuscate))
 }
