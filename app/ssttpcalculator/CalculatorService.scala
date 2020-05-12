@@ -46,7 +46,7 @@ class CalculatorService @Inject() (calculatorConnector: CalculatorConnector, clo
   def availablePaymentSchedules(returnsAndDebits: ReturnsAndDebits, initialPayment: BigDecimal = BigDecimal(0))
     (implicit request: Request[_]): Future[List[PaymentSchedule]] = {
 
-    JourneyLogger.info(s"CalculatorService.availableInstallmentSchedules...")
+    JourneyLogger.info(s"CalculatorService.availablePaymentSchedules...")
 
     val rangeOfAvailableScheduleDurationsInMonths =
       minimumMonthsAllowedTTP to maximumDurationInMonths(returnsAndDebits, LocalDate.now(clockProvider.getClock))
