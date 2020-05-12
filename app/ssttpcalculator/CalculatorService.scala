@@ -42,7 +42,6 @@ class CalculatorService @Inject() (calculatorConnector: CalculatorConnector, clo
 
   import clockProvider._
 
-  //todo perhaps merge these methods and change back end so it only one call
   def availablePaymentSchedules(returnsAndDebits: ReturnsAndDebits, initialPayment: BigDecimal = BigDecimal(0))
     (implicit request: Request[_]): Future[List[PaymentSchedule]] = {
 
