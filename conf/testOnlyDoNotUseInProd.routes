@@ -7,4 +7,4 @@ GET         /pay-what-you-owe-in-instalments/test-only/create-user-and-log-in   
 POST        /pay-what-you-owe-in-instalments/test-only/create-user-and-log-in            testonly.TestUsersController.logIn()
 
 GET         /pay-what-you-owe-in-instalments/test-only/config                            testonly.TestOnlyController.config()
-GET         /pay-what-you-owe-in-instalments/test-only/taxpayer-get                      testonly.TestOnlyController.getReturnsAndDebits()
+GET         /pay-what-you-owe-in-instalments/test-only/taxpayer-get                      testonly.TestOnlyController.getTaxpayer()

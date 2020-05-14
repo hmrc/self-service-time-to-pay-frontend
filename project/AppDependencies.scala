@@ -10,7 +10,7 @@ object AppDependencies {
     "com.beachape" %% "enumeratum" % "1.5.15",
     "uk.gov.hmrc" %% "simple-reactivemongo" % "7.22.0-play-26",
 
-    "uk.gov.hmrc" %% "time-to-pay-taxpayer-cor" % "[0.30.0,)",
+    "uk.gov.hmrc" %% "time-to-pay-taxpayer-cor" % "[0.29.0]",
     "uk.gov.hmrc" %% "time-to-pay-calculator-cor" % "[0.35.0,)",
 
     "uk.gov.hmrc" %% "domain" %  "5.3.0",

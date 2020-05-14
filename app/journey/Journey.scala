@@ -23,7 +23,7 @@ import enumformat.EnumFormat
 import journey.Statuses.InProgress
 import play.api.libs.json.{Format, Json, OFormat}
 import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
-import timetopaytaxpayer.cor.model.ReturnsAndDebits
+import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.collection.immutable
@@ -50,7 +50,7 @@ final case class Journey(
     maybeSchedule:          Option[PaymentSchedule]   = None,
     maybeBankDetails:       Option[BankDetails]       = None,
     existingDDBanks:        Option[DirectDebitBank]   = None,
-    maybeReturnsAndDebits:  Option[ReturnsAndDebits]  = None,
+    maybeTaxpayer:          Option[Taxpayer]          = None,
     maybeCalculatorData:    Option[CalculatorInput]   = None,
     durationMonths:         Int                       = 2,
     maybeEligibilityStatus: Option[EligibilityStatus] = None,
@@ -60,7 +60,7 @@ final case class Journey(
 ) {
 
   def amount: BigDecimal = maybeAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [${this}]"))
-  def returnsAndDebits: ReturnsAndDebits = maybeReturnsAndDebits.getOrElse(throw new RuntimeException(s"Expected 'ReturnsAndDebits' to be there but was not found. [${_id}] [${this}]"))
+  def taxpayer: Taxpayer = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [${this}]"))
 
   def calculatorInput: CalculatorInput =
     maybeCalculatorData.getOrElse(throw new RuntimeException(s"Expected 'CalculatorData' to be there but was not found. [${_id}] [${this}]"))
@@ -86,7 +86,7 @@ final case class Journey(
     maybeSchedule          = maybeSchedule,
     maybeBankDetails       = maybeBankDetails.map(_.obfuscate),
     existingDDBanks        = existingDDBanks.map(_.obfuscate),
-    maybeReturnsAndDebits  = maybeReturnsAndDebits.map(_.obfuscate),
+    maybeTaxpayer          = maybeTaxpayer.map(_.obfuscate),
     maybeCalculatorData    = maybeCalculatorData,
     durationMonths         = durationMonths,
     maybeEligibilityStatus = maybeEligibilityStatus,

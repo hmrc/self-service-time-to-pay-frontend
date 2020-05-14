@@ -51,7 +51,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
       auditType   = "directDebitSetup",
       tags        = hc.headers.toMap,
       detail      = Json.obj(
-        "utr" -> journey.saUtr,
+        "utr" -> journey.taxpayer.selfAssessment.utr.value,
         "bankDetails" -> Json.obj(
           "name" -> journey.bankDetails.accountName,
           "accountNumber" -> journey.bankDetails.accountNumber,
