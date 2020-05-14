@@ -35,7 +35,8 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     readPath() shouldBe path
     title() shouldBe expectedTitle()
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+    ()
   }
 
   def selectRadioButton(yesOrNo: Boolean): Unit = {

@@ -35,7 +35,8 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
     readPath() shouldBe path
     title() shouldBe expectedTitle()
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+    ()
   }
 
   def clickOnStartNowButton(): Unit = {

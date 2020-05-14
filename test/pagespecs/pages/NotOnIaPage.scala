@@ -32,7 +32,8 @@ class NotOnIaPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BaseP
     readPath() shouldBe path
     title() shouldBe expectedTitle()
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+    ()
   }
 
   object Expected {
