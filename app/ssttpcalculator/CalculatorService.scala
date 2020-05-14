@@ -29,7 +29,7 @@ import req.RequestSupport._
 import ssttpcalculator.CalculatorService._
 import times.ClockProvider
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, PaymentSchedule}
-import timetopaytaxpayer.cor.model.ReturnsAndDebits
+import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
@@ -42,15 +42,15 @@ class CalculatorService @Inject() (calculatorConnector: CalculatorConnector, clo
 
   import clockProvider._
 
-  def availablePaymentSchedules(returnsAndDebits: ReturnsAndDebits, initialPayment: BigDecimal = BigDecimal(0))
+  def availablePaymentSchedules(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0))
     (implicit request: Request[_]): Future[List[PaymentSchedule]] = {
 
     JourneyLogger.info(s"CalculatorService.availablePaymentSchedules...")
 
     val rangeOfAvailableScheduleDurationsInMonths =
-      minimumMonthsAllowedTTP to maximumDurationInMonths(returnsAndDebits, LocalDate.now(clockProvider.getClock))
+      minimumMonthsAllowedTTP to maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock))
 
-    val debits = returnsAndDebits.debits.map(model.asDebitInput)
+    val debits = sa.debits.map(model.asDebitInput)
 
     Future.sequence(
       rangeOfAvailableScheduleDurationsInMonths.map { durationInMonths =>
@@ -178,7 +178,7 @@ object CalculatorService {
    b)    End of the calendar month before the due date of the next non-submitted SA return
    c)    12 months from the earliest due date of the amounts included in the TTP (*ignoring due dates for any amounts under £32)
     */
-  def maximumDurationInMonths(returnsAndDebits: ReturnsAndDebits, today: LocalDate)(implicit hc: HeaderCarrier): Int = Try {
+  def maximumDurationInMonths(sa: SelfAssessmentDetails, today: LocalDate)(implicit hc: HeaderCarrier): Int = Try {
       def max(date1: LocalDate, date2: LocalDate) = if (math.Ordering[LocalDate].gt(date1, date2)) date1 else date2
       def min(date1: LocalDate, date2: LocalDate) = if (math.Ordering[LocalDate].lt(date1, date2)) date1 else date2
       def monthsBetween(date1: LocalDate, date2: LocalDate) = MONTHS.between(date1, date2).toInt
@@ -188,8 +188,8 @@ object CalculatorService {
         lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
       }
 
-    val maybeSubmissionDate = returnsAndDebits.returns.flatMap(_.dueDate.map(_.plusYears(1))).reduceOption(max)
-    val maybeDueDate = returnsAndDebits.debits.filter(_.amount > 32).map(_.dueDate.plusYears(1)).reduceOption(min)
+    val maybeSubmissionDate = sa.returns.flatMap(_.dueDate.map(_.plusYears(1))).reduceOption(max)
+    val maybeDueDate = sa.debits.filter(_.amount > 32).map(_.dueDate.plusYears(1)).reduceOption(min)
 
     val maximumAllowedDurationInMonths = 11
 
@@ -214,14 +214,14 @@ object CalculatorService {
          |maximumDurationInMonthsBasedOnSubmissionDate = $maximumDurationInMonthsBasedOnSubmissionDate
          |maximumDurationInMonthsBasedOnDueDate = $maximumDurationInMonthsBasedOnDueDate
          |""".stripMargin,
-      returnsAndDebits
+      sa
     )
 
     maximumDurationInMonths
   } match {
     case Success(s) => s
     case Failure(e) =>
-      Logger.error(s"calculateGapInMonths failed. [todayDate=$today], selfAssessment:\n${toJson(returnsAndDebits.obfuscate)}", e)
+      Logger.error(s"calculateGapInMonths failed. [todayDate=$today], selfAssessment:\n${toJson(sa.obfuscate)}", e)
       throw e
   }
 }

@@ -67,12 +67,17 @@ object TdAll {
     addressLine5 = None,
     postcode     = Some("BN12 4XL"))
 
-  val returnsAndDebits =
-    ReturnsAndDebits(
-      List(debit1, debit2),
-      List(
-        Return(taxYearEnd, issuedDate = "2019-11-10", dueDate = "2019-08-15", receivedDate = "2019-03-09"),
-        Return(taxYearEnd   = "2018-04-05", issuedDate = "2017-02-15", dueDate = "2018-01-31", receivedDate = "2018-03-09")))
+  val taxpayer =
+    Taxpayer(
+      "Mr John Campbell",
+      List(address),
+      SelfAssessmentDetails(
+        saUtr,
+        communicationPreferences,
+        List(debit1, debit2),
+        List(
+          Return(taxYearEnd, issuedDate = "2019-11-10", dueDate = "2019-08-15", receivedDate = "2019-03-09"),
+          Return(taxYearEnd   = "2018-04-05", issuedDate = "2017-02-15", dueDate = "2018-01-31", receivedDate = "2018-03-09"))))
 
   val saEnrolment = Enrolment(
     key               = "IR-SA", identifiers = List(EnrolmentIdentifier("UTR", utr)), state = "Activated", delegatedAuthRule = None)

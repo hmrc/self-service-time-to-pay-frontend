@@ -18,17 +18,17 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.json.{Json, OFormat}
 import timetopaycalculator.cor.model.PaymentSchedule
-import timetopaytaxpayer.cor.model.ReturnsAndDebits
+import timetopaytaxpayer.cor.model.Taxpayer
 
 final case class TTPArrangement(paymentPlanReference: String,
                                 directDebitReference: String,
-                                returnsAndDebits:     ReturnsAndDebits,
+                                taxpayer:             Taxpayer,
                                 schedule:             PaymentSchedule) {
 
   def obfuscate = TTPArrangement(
     paymentPlanReference = paymentPlanReference,
     directDebitReference = directDebitReference,
-    returnsAndDebits     = returnsAndDebits.obfuscate,
+    taxpayer             = taxpayer.obfuscate,
     schedule             = schedule
   )
 }

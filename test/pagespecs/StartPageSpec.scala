@@ -50,7 +50,7 @@ class StartPageSpec extends ItSpec {
 
   "eligible" in {
     AuthStub.authorise()
-    TaxpayerStub.getReturnsAndDebits()
+    TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
 
     GgStub.signInPage(port)
@@ -61,7 +61,7 @@ class StartPageSpec extends ItSpec {
 
   "not eligible (debt too large)" in {
     AuthStub.authorise()
-    TaxpayerStub.getReturnsAndDebits(TotalDebtIsTooHigh)
+    TaxpayerStub.getTaxpayer(TotalDebtIsTooHigh)
     IaStub.successfulIaCheck
 
     startPage.open()

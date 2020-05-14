@@ -42,10 +42,10 @@ class DirectDebitConnector @Inject() (
 
   val baseUrl: String = servicesConfig.baseUrl("direct-debit")
 
-  def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: String)(implicit request: Request[_]): Future[DDSubmissionResult] = {
+  def createPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit request: Request[_]): Future[DDSubmissionResult] = {
     JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan")
 
-    httpClient.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$baseUrl/direct-debit/${saUtr}/instructions/payment-plan", paymentPlan).map {
+    httpClient.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$baseUrl/direct-debit/${saUtr.value}/instructions/payment-plan", paymentPlan).map {
       Result => Right(Result)
     }.recover {
       case e: Throwable =>

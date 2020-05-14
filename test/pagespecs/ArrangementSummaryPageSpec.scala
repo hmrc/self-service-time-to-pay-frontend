@@ -26,7 +26,7 @@ class ArrangementSummaryPageSpec extends ItSpec {
 
   def beginJourney(): StubMapping = {
     AuthStub.authorise()
-    TaxpayerStub.getReturnsAndDebits()
+    TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     startPage.open()

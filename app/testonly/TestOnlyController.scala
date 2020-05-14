@@ -43,14 +43,14 @@ class TestOnlyController @Inject() (
     Results.Ok(result)
   }
 
-  def getReturnsAndDebits(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def getTaxpayer(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     val utr: SaUtr = model.asTaxpayersSaUtr(request.utr)
-    val getReturnsAndDebitsF = taxpayerConnector.getReturnsAndDebits(utr).map(Json.toJson(_)).recover{
+    val getTaxpayerF = taxpayerConnector.getTaxPayer(utr).map(Json.toJson(_)).recover{
       case e => Json.obj("exception" -> e.getMessage)
     }
 
     for {
-      taxpayer <- getReturnsAndDebitsF
+      taxpayer <- getTaxpayerF
     } yield Ok(taxpayer)
   }
 

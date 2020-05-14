@@ -23,7 +23,7 @@ class AccessibilityStatementPageSpec extends ItSpec {
 
   def beginJourney(): Unit = {
     AuthStub.authorise()
-    TaxpayerStub.getReturnsAndDebits()
+    TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     startPage.open()

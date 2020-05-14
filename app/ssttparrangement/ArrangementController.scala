@@ -39,7 +39,7 @@ import ssttpeligibility.EligibilityService.runEligibilityCheck
 import ssttpeligibility.IaService
 import times.ClockProvider
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
-import timetopaytaxpayer.cor.model.ReturnsAndDebits
+import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -97,8 +97,8 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.determineEligibility: $request")
 
     for {
-      returnsAndDebits: model.ReturnsAndDebits <- taxPayerConnector.getReturnsAndDebits(asTaxpayersSaUtr(request.utr))
-      newJourney: Journey = Journey.newJourney.copy(maybeReturnsAndDebits = Some(returnsAndDebits), maybeSaUtr = Some(request.utr.value))
+      tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
+      newJourney: Journey = Journey.newJourney.copy(maybeTaxpayer = Some(tp))
       _ <- journeyService.saveJourney(newJourney)
       result: Result <- eligibilityCheck(newJourney)
     } yield result.placeInSession(newJourney._id)
@@ -110,7 +110,7 @@ class ArrangementController @Inject() (
     journeyService.authorizedForSsttp {
       case journey @ Journey(_, InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(_, initialPayment, _, _, _)), _, _, _, _, _) =>
         Future.successful(Ok(views.instalment_plan_summary(
-          journey.returnsAndDebits.debits,
+          journey.taxpayer.selfAssessment.debits,
           initialPayment,
           schedule
         )))
@@ -213,8 +213,8 @@ class ArrangementController @Inject() (
         }
 
     for {
-      onIa <- iaService.checkIaUtr(journey.saUtr)
-      eligibilityStatus = runEligibilityCheck(EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.returnsAndDebits), onIa)
+      onIa <- iaService.checkIaUtr(journey.taxpayer.selfAssessment.utr.value)
+      eligibilityStatus = runEligibilityCheck(EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer), onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
       _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
@@ -242,8 +242,8 @@ class ArrangementController @Inject() (
             throw new RuntimeException(s"arrangementDirectDebit not found for journey [$journey]"))
 
         Ok(views.application_complete(
-          debits        = journey.returnsAndDebits.debits.sortBy(_.dueDate.toEpochDay()),
-          transactionId = journey.saUtr + LocalDateTime.now(clockProvider.getClock).toString,
+          debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
+          transactionId = journey.taxpayer.selfAssessment.utr + LocalDateTime.now(clockProvider.getClock).toString,
           directDebit,
           journey.schedule,
           journey.ddRef
@@ -261,9 +261,9 @@ class ArrangementController @Inject() (
    */
   private def arrangementSetUp(journey: Journey)(implicit request: Request[_]): Future[Result] = {
     JourneyLogger.info("ArrangementController.arrangementSetUp: (create a DD and make an Arrangement)")
-    journey.maybeReturnsAndDebits match {
-      case Some(ReturnsAndDebits(_, _)) =>
-        ddConnector.createPaymentPlan(checkExistingBankDetails(journey), journey.saUtr).flatMap[Result] {
+    journey.maybeTaxpayer match {
+      case Some(Taxpayer(_, _, SelfAssessmentDetails(utr, _, _, _))) =>
+        ddConnector.createPaymentPlan(checkExistingBankDetails(journey), utr).flatMap[Result] {
           _.fold(_ => {
             JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup failed, redirecting to error page")
             Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError())
@@ -323,7 +323,7 @@ class ArrangementController @Inject() (
    * Builds and returns a payment plan
    */
   private def paymentPlan(journey: Journey, ddInstruction: DirectDebitInstruction): PaymentPlanRequest = {
-    val knownFact = List(KnownFact(cesa, journey.saUtr))
+    val knownFact = List(KnownFact(cesa, journey.taxpayer.selfAssessment.utr.value))
 
     val initialPayment = if (journey.schedule.initialPayment > exact(0)) Some(journey.schedule.initialPayment.toString()) else None
     val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(journey.schedule.startDate.plusWeeks(1)))
@@ -334,7 +334,7 @@ class ArrangementController @Inject() (
     val totalLiability = journey.schedule.instalments.map(_.amount).sum + journey.schedule.initialPayment
 
     val pp = PaymentPlan(ppType                    = "Time to Pay",
-                         paymentReference          = s"${journey.saUtr}K",
+                         paymentReference          = s"${journey.taxpayer.selfAssessment.utr.value}K",
                          hodService                = cesa,
                          paymentCurrency           = paymentCurrency,
                          initialPaymentAmount      = initialPayment,
@@ -363,10 +363,10 @@ class ArrangementController @Inject() (
         .headOption.getOrElse(throw new RuntimeException(s"No direct debit instructions for [$ddInstruction]"))
         .ddiReferenceNo.getOrElse(throw new RuntimeException("ddReference not available"))
 
-    val returnsAndDebits = journey.returnsAndDebits
+    val taxpayer = journey.taxpayer
     val schedule = journey.schedule
 
-    TTPArrangement(ppReference, ddReference, returnsAndDebits, schedule)
+    TTPArrangement(ppReference, ddReference, taxpayer, schedule)
   }
 
   private def createDayOfForm(journey: Journey) =
