@@ -35,12 +35,11 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
   override def assertPageIsDisplayed(implicit lang: Language): Unit = eventually {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-
+    title() shouldBe expectedTitle()
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
-    title() shouldBe expectedTitle()
   }
 
   def assertErrorPageIsDisplayed(implicit field: ErrorCase): Assertion = eventually {

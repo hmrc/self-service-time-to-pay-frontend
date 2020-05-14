@@ -33,9 +33,9 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
+    title() shouldBe expectedTitle()
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
-    title() shouldBe expectedTitle()
   }
 
   def selectRadioButton(yesOrNo: Boolean): Unit = {

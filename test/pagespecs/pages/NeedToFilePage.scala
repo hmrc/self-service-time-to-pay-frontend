@@ -30,9 +30,9 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
+    title() shouldBe expectedTitle()
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
-    title() shouldBe expectedTitle()
   }
 
   object Expected {

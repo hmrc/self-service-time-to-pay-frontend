@@ -34,9 +34,9 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
+    title() shouldBe expectedTitle()
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
-    title() shouldBe expectedTitle()
   }
 
   def assertPageIsDisplayedAltPath(difference: Int)(implicit lang: Language = English): Assertion = probing {
