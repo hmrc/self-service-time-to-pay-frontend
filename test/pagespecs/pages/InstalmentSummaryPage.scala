@@ -33,7 +33,7 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    title() shouldBe expectedTitle()
+    title() shouldBe expectedTitle(lang)
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     val content = readMain().stripSpaces()
     Expected.MainText(paymentDayOfMonth).stripSpaces().split("\n").foreach(expectedLine =>

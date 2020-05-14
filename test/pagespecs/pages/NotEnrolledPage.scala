@@ -30,7 +30,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    title() shouldBe expectedTitle()
+    title() shouldBe expectedTitle(lang)
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
     ()

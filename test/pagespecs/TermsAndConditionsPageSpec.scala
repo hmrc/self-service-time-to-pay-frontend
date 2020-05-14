@@ -71,6 +71,6 @@ class TermsAndConditionsPageSpec extends ItSpec {
     DirectDebitStub.postPaymentPlan
     ArrangementStub.postTtpArrangement
     termsAndConditionsPage.clickContinue()
-    arrangementSummaryPage.assertPageIsDisplayed
+    arrangementSummaryPage.assertPageIsDisplayed(English)
   }
 }

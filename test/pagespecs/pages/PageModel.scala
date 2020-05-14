@@ -61,8 +61,10 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def expectedTitle(implicit lang: Language = Languages.English): String = lang match {
     case Languages.English => s"$headingEnglish - Set up a Self Assessment payment plan - GOV.UK"
-    case Languages.Welsh => s"$headingWelsh - Trefnu cynllun talu - GOV.UK"
+    case Languages.Welsh   => s"$headingWelsh - Trefnu cynllun talu - GOV.UK"
   }
+
+  def findXpath = xpath("//*[@id=\"content\"]/article/section/a")
 
   def title(): String = pageTitle
 

@@ -34,7 +34,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
 
   override def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
-    title() shouldBe expectedTitle()
+    title() shouldBe expectedTitle(lang)
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
@@ -96,7 +96,8 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
         """There is a problem
           |You need to enter an amount less than the amount you owe
           |How much can you pay upfront?
-          |Enter the amount you want to pay upfront £
+          |Enter the amount you want to pay upfront
+          |£
           |Continue
         """.stripMargin
     }

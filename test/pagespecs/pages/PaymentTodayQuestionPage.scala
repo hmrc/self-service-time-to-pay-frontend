@@ -33,7 +33,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
-    title() shouldBe expectedTitle()
+    title() shouldBe expectedTitle(lang)
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
     ()
@@ -76,16 +76,20 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       private val mainTextEnglish =
         """Can you make an upfront payment?
           |Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account in 3 to 5 days.
-          |unchecked Yes
-          |unchecked No
+          |unchecked
+          |Yes
+          |unchecked
+          |No
           |Continue
         """.stripMargin
 
       private val mainTextWelsh =
         """A allwch wneud taliad ymlaen llaw?
           |Bydd gwneud taliad ymlaen llaw cyn i chi drefnu’ch cynllun yn golygu y bydd eich taliadau misol yn is.
-          |unchecked Iawn
-          |unchecked Na
+          |unchecked
+          |Iawn
+          |unchecked
+          |Na
           |Yn eich blaen
         """.stripMargin
     }

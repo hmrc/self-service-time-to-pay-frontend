@@ -33,7 +33,7 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    title() shouldBe expectedTitle()
+    title() shouldBe expectedTitle(lang)
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
@@ -73,21 +73,24 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
       private val mainTextEnglish =
         s"""How many months do you want to pay over?
-           |unchecked 2 months at £2,450.00
+           |unchecked
+           |2 months at £2,450.00
            |Total interest:
            |Base rate + 2.5%
            |£200.00
            |added to the final payment
            |Total paid:
            |£200.00
-           |unchecked 3 months at £1,633.00
+           |unchecked
+           |3 months at £1,633.00
            |Total interest:
            |Base rate + 2.5%
            |£200.00
            |added to the final payment
            |Total paid:
            |£200.00
-           |unchecked 4 months at £1,225.00
+           |unchecked
+           |4 months at £1,225.00
            |Total interest:
            |Base rate + 2.5%
            |£200.00
@@ -103,21 +106,24 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
       private val mainTextWelsh =
         s"""Dros sawl mis yr hoffech dalu?
-           |unchecked 2 o fisoedd ar £2,450.00
+           |unchecked
+           |2 o fisoedd ar £2,450.00
            |Cyfanswm y llog:
            |Cyfradd sylfaenol + 2.5%
            |£200.00
            |wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:
            |£200.00
-           |unchecked 3 o fisoedd ar £1,633.00
+           |unchecked
+           |3 o fisoedd ar £1,633.00
            |Cyfanswm y llog:
            |Cyfradd sylfaenol + 2.5%
            |£200.00
            |wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:
            |£200.00
-           |unchecked 4 o fisoedd ar £1,225.00
+           |unchecked
+           |4 o fisoedd ar £1,225.00
            |Cyfanswm y llog:
            |Cyfradd sylfaenol + 2.5%
            |£200.00

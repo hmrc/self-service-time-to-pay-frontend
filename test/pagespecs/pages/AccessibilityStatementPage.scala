@@ -26,12 +26,12 @@ class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
 
   override def path: String = "/pay-what-you-owe-in-instalments/accessibility-statement"
 
-  val headingEnglish: String = "Accessibility statement for set up a Self Assessment payment plan"
+  val headingEnglish: String = "Accessibility Statement"
   val headingWelsh: String = "don't care"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    title() shouldBe expectedTitle()
+    title() shouldBe expectedTitle(lang)
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>

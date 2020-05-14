@@ -30,7 +30,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    title() shouldBe expectedTitle()
+    title() shouldBe expectedTitle(lang)
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
@@ -62,7 +62,6 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
         """Your payment plan is set up
           |Your Direct Debit mandate reference:
           |123ABC123
-          |Print your payment plan
           |What happens next?
           |HMRC will send you a letter within 5 days with your payment dates.
           |Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on 27th December 2019.
@@ -75,7 +74,6 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
         """Cais yn llwyddiannus
           |Cyfeirnod mandad Debyd Uniongyrchol:
           |123ABC123
-          |Argraffu crynodeb o’ch taliadau
           |Beth sy’n digwydd nesaf?
           |Byddwn yn anfon llythyr atoch cyn pen 5 diwrnod i gadarnhau’ch dyddiadau talu.
           |Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on 27th December 2019.
