@@ -26,7 +26,7 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
   override def path: String = "/pay-what-you-owe-in-instalments/eligibility/you-need-to-file"
 
   val headingEnglish: String = "File your return to use this service"
-  val headingWelsh: String = "Ffoniwch ni"
+  val headingWelsh: String = "Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
@@ -66,8 +66,7 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
           .stripMargin
 
       private val mainTextWelsh =
-        """Ffoniwch ni
-          |Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn
+        """Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn
           |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid eich bod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
           |
           |Ewch i’ch cyfrif treth i gyflwyno’ch Ffurflen Dreth Hunanasesiad.
