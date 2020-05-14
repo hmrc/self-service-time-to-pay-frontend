@@ -90,7 +90,7 @@ ssttp.calculator.form.payment_summary.amount.remaining = Remaining amount to pay
 ssttp.calculator.form.payment_summary.continue = Continue
 
 
-ssttp.calculator.self-assessment-account-summary-page.title = Your Self Assessment tax bill is
+ssttp.calculator.self-assessment-account-summary-page.title = Your Self Assessment tax bill is {0}
 ssttp.calculator.self-assessment-account-summary-page.amount = Amount
 ssttp.calculator.self-assessment-account-summary-page.total-due = Total due
 ssttp.calculator.self-assessment-account-summary-page.tax-account-details = Self Assessment statement

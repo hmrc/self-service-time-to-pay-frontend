@@ -28,6 +28,9 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/instalment-summary"
 
+  val headingEnglish: String = "Check your payment plan"
+  val headingWelsh: String = "Gwiriwch fanylion eich amserlen talu"
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
@@ -35,6 +38,7 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
     Expected.MainText(paymentDayOfMonth).stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+    title() shouldBe expectedTitle()
   }
 
   def clickInstalmentsChange(): Unit = {

@@ -28,11 +28,14 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
 
   override val path: String = "/pay-what-you-owe-in-instalments"
 
+  val headingEnglish: String = "Set up a Self Assessment payment plan"
+  val headingWelsh: String = "Trefnu cynllun talu"
+
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
-    ()
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
+    title() shouldBe expectedTitle()
   }
 
   def clickOnStartNowButton(): Unit = {

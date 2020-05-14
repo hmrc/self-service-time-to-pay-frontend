@@ -56,6 +56,16 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def path: String
 
+  def headingEnglish: String
+  def headingWelsh: String
+
+  def expectedTitle(implicit lang: Language = Languages.English): String = lang match {
+    case Languages.English => s"$headingEnglish - Set up a Self Assessment payment plan - GOV.UK"
+    case Languages.Welsh => s"$headingWelsh - Trefnu cynllun talu - GOV.UK"
+  }
+
+  def title(): String = pageTitle
+
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit
 
   def open(): Unit = WebBrowser.goTo(s"${baseUrl.value}$path")

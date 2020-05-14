@@ -28,11 +28,14 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   override val path: String = "/pay-what-you-owe-in-instalments/calculator/payment-today-question"
 
+  val headingEnglish: String = "Can you make an upfront payment?"
+  val headingWelsh: String = "A allwch wneud taliad ymlaen llaw?"
+
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
-    ()
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
+    title() shouldBe expectedTitle()
   }
 
   def selectRadioButton(yesOrNo: Boolean): Unit = {

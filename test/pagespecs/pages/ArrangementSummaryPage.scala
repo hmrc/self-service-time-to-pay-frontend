@@ -25,6 +25,9 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/summary"
 
+  val headingEnglish = "Your payment plan is set up"
+  val headingWelsh: String = "Cais yn llwyddiannus"
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
@@ -32,6 +35,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+    title() shouldBe expectedTitle()
   }
 
   object Expected {

@@ -29,6 +29,9 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/instalment-summary/select-date"
 
+  val headingEnglish: String = "Which day do you want to pay each month?"
+  val headingWelsh: String = "Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu"
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
@@ -36,6 +39,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+    title() shouldBe expectedTitle()
   }
 
   def assertErrorPageIsDisplayed(): Assertion = probing {

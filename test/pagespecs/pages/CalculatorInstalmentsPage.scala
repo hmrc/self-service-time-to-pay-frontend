@@ -28,6 +28,9 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
 
+  val headingEnglish: String = "How many months do you want to pay over?"
+  val headingWelsh: String = "Dros sawl mis yr hoffech dalu?"
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
@@ -35,6 +38,7 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+    title() shouldBe expectedTitle()
   }
 
   def selectAnOption(): Unit = {

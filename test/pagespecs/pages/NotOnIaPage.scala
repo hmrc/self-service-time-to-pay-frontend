@@ -25,11 +25,14 @@ class NotOnIaPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BaseP
 
   override def path: String = "/pay-what-you-owe-in-instalments/eligibility/ia/call-us"
 
+  val headingEnglish: String = "Please call us"
+  val headingWelsh: String = "Ffoniwch ni"
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
-    ()
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
+    title() shouldBe expectedTitle()
   }
 
   object Expected {

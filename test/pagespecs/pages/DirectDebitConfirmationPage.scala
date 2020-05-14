@@ -28,6 +28,9 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/direct-debit-confirmation"
 
+  val headingEnglish: String = "Check your Direct Debit details"
+  val headingWelsh: String = "Gwiriwch fanylion eich Debyd Uniongyrchol"
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
@@ -35,6 +38,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+    title() shouldBe expectedTitle()
   }
 
   def clickChangeButton(): Unit = {
@@ -85,6 +89,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please also notify us.
           |Continue
         """.stripMargin
+
       private val mainTextWelsh =
         """Gwiriwch fanylion eich Debyd Uniongyrchol
           |Enw’r cyfrif

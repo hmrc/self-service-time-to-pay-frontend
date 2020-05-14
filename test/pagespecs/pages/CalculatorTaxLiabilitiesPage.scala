@@ -28,11 +28,14 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
 
   override val path: String = "/pay-what-you-owe-in-instalments/calculator/tax-liabilities"
 
+  val headingEnglish: String = "Your Self Assessment tax bill is £4,900.00"
+  val headingWelsh: String = "Crynodeb o’ch cyfrif Hunanasesiad £4,900.00"
+
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
-    ()
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
+    title() shouldBe expectedTitle()
   }
 
   def clickOnStartNowButton(): Unit = {

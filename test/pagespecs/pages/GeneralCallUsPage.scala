@@ -25,11 +25,14 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
 
   override def path: String = "/pay-what-you-owe-in-instalments/eligibility/call-us"
 
+  val headingEnglish: String = "Please call us"
+  val headingWelsh: String = "Nid ydych yn gymwys i drefnu cynllun talu ar-lein."
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
-    ()
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
+    title() shouldBe expectedTitle()
   }
 
   object Expected {

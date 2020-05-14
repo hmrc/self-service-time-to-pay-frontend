@@ -28,6 +28,9 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/terms-and-conditions"
 
+  val headingEnglish: String = "Terms and conditions"
+  val headingWelsh: String = "Telerau ac amodau"
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
@@ -35,6 +38,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+    title() shouldBe expectedTitle()
   }
 
   def clickContinue(): Unit = {

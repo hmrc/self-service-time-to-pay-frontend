@@ -25,11 +25,14 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
 
   override def path: String = "/pay-what-you-owe-in-instalments/eligibility/you-need-to-file"
 
+  val headingEnglish: String = "File your return to use this service"
+  val headingWelsh: String = "Ffoniwch ni"
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
-    ()
+    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces()
+    title() shouldBe expectedTitle()
   }
 
   object Expected {

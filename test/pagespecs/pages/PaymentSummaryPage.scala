@@ -28,6 +28,9 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
 
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/payment-summary"
 
+  val headingEnglish: String = "Payment summary"
+  val headingWelsh: String = "Crynodeb o’r taliadau"
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
@@ -35,6 +38,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+    title() shouldBe expectedTitle()
   }
 
   def clickContinue(): Unit = {

@@ -29,6 +29,9 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/direct-debit"
 
+  val headingEnglish: String = "Enter account details to set up a Direct Debit"
+  val headingWelsh: String = "Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol"
+
   override def assertPageIsDisplayed(implicit lang: Language): Unit = eventually {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
@@ -37,6 +40,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+    title() shouldBe expectedTitle()
   }
 
   def assertErrorPageIsDisplayed(implicit field: ErrorCase): Assertion = eventually {
