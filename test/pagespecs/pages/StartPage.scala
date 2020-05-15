@@ -37,7 +37,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
-    pageTitle shouldBe expectedHeading(expectedHeadingContent(lang), lang)
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     ()
   }
 
