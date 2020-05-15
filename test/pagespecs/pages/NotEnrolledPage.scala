@@ -16,9 +16,10 @@
 
 package pagespecs.pages
 
-import langswitch.Language
+import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
+import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
 
 class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -29,7 +30,13 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     ()
+  }
+
+  def expectedHeadingContent(language: Language): String = language match {
+    case Languages.English => "Please call us"
+    case Languages.Welsh => "Ffoniwch ni"
   }
 
   object Expected {

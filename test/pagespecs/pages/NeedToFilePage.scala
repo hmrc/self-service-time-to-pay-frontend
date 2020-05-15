@@ -16,9 +16,10 @@
 
 package pagespecs.pages
 
-import langswitch.Language
+import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
+import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
 
 class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -29,7 +30,13 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     ()
+  }
+
+  def expectedHeadingContent(language: Language): String = language match {
+    case Languages.English => "File your return to use this service"
+    case Languages.Welsh => "Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn"
   }
 
   object Expected {
@@ -62,8 +69,7 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
           .stripMargin
 
       private val mainTextWelsh =
-        """Ffoniwch ni
-          |Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn
+        """Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn
           |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid eich bod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
           |
           |Ewch i’ch cyfrif treth i gyflwyno’ch Ffurflen Dreth Hunanasesiad.

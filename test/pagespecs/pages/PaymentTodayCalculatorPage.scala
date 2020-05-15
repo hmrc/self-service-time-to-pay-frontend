@@ -32,10 +32,16 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
   override def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+  }
+
+  def expectedHeadingContent(language: Language): String = language match {
+    case Languages.English => "How much can you pay upfront?"
+    case Languages.Welsh => "Faint y gallwch ei dalu ymlaen llaw?"
   }
 
   def assertErrorIsDisplayed: Assertion = probing {

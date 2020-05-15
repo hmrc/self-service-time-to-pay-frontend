@@ -16,7 +16,7 @@
 
 package pagespecs.pages
 
-import langswitch.Language
+import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
@@ -31,10 +31,16 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+  }
+
+  def expectedHeadingContent(language: Language): String = language match {
+    case Languages.English => "Payment summary"
+    case Languages.Welsh => "Crynodeb o’r taliadau"
   }
 
   def clickContinue(): Unit = {
