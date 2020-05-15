@@ -47,6 +47,7 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
     click on button
   }
 
+
   object Expected {
 
     object GlobalHeaderText {
