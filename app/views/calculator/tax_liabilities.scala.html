@@ -38,7 +38,7 @@
     loggedIn = loggedIn,
     backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
 ) {
-    <h1 class="heading-xlarge">@Messages("ssttp.calculator.self-assessment-account-summary-page.title") @currency(debits.map(_.amount).sum)</h1>
+    <h1 class="heading-xlarge">@Messages("ssttp.calculator.self-assessment-account-summary-page.title", currency(debits.map(_.amount).sum))</h1>
 
     <details>
         <summary><span class="summary">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-account-details")</span></summary>
