@@ -16,7 +16,7 @@
 
 package pagespecs.pages
 
-import langswitch.Language
+import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
@@ -32,9 +32,15 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     val content = readMain().stripSpaces()
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+  }
+
+  def expectedHeadingContent(language: Language): String = language match {
+    case Languages.English => "How many months do you want to pay over?"
+    case Languages.Welsh => "Dros sawl mis yr hoffech dalu?"
   }
 
   def selectAnOption(): Unit = {
