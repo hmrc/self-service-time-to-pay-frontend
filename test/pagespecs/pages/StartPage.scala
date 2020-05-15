@@ -28,10 +28,16 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
 
   override val path: String = "/pay-what-you-owe-in-instalments"
 
+  def expectedHeadingContent(language: Language): String = language match {
+    case Languages.English => "Set up a Self Assessment payment plan"
+    case Languages.Welsh => "Trefnu cynllun talu"
+  }
+
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     ()
   }
 

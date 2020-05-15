@@ -16,9 +16,10 @@
 
 package pagespecs.pages
 
-import langswitch.Language
+import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
+import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
 
 class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -28,10 +29,16 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+  }
+
+  def expectedHeadingContent(language: Language): String = language match {
+    case Languages.English => "Your payment plan is set up"
+    case Languages.Welsh => "Cais yn llwyddiannus"
   }
 
   object Expected {

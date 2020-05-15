@@ -16,7 +16,7 @@
 
 package pagespecs.pages
 
-import langswitch.Language
+import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
@@ -32,11 +32,16 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
   override def assertPageIsDisplayed(implicit lang: Language): Unit = eventually {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
+  }
+
+  def expectedHeadingContent(language: Language): String = language match {
+    case Languages.English => "Enter account details to set up a Direct Debit"
+    case Languages.Welsh => "Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol"
   }
 
   def assertErrorPageIsDisplayed(implicit field: ErrorCase): Assertion = eventually {

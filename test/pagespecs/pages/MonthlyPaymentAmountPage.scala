@@ -16,7 +16,7 @@
 
 package pagespecs.pages
 
-import langswitch.Language
+import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
@@ -33,7 +33,13 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     ()
+  }
+
+  def expectedHeadingContent(language: Language): String = language match {
+    case Languages.English => "How much can you afford to pay each month?"
+    case Languages.Welsh => "Faint y gallwch fforddio ei dalu bob mis?"
   }
 
   def assertPageIsDisplayedAltPath(difference: Int)(implicit lang: Language = English): Assertion = probing {

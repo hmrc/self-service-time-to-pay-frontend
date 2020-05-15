@@ -32,7 +32,13 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     ()
+  }
+
+  def expectedHeadingContent(language: Language): String = language match {
+    case Languages.English => "Can you make an upfront payment?"
+    case Languages.Welsh => "A allwch wneud taliad ymlaen llaw?"
   }
 
   def selectRadioButton(yesOrNo: Boolean): Unit = {

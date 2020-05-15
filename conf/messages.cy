@@ -87,7 +87,7 @@ ssttp.calculator.form.payment_summary.amount.remaining = Swm sy’n weddill i’
 ssttp.calculator.form.payment_summary.continue = Yn eich blaen
 
 
-ssttp.calculator.self-assessment-account-summary-page.title = Crynodeb o’ch cyfrif Hunanasesiad
+ssttp.calculator.self-assessment-account-summary-page.title = Crynodeb o’ch cyfrif Hunanasesiad {0}
 ssttp.calculator.self-assessment-account-summary-page.amount = Swm
 ssttp.calculator.self-assessment-account-summary-page.total-due = Cyfanswm sy’n ddyledus
 ssttp.calculator.self-assessment-account-summary-page.tax-year-ending = Ar gyfer y flwyddyn dreth a ddaeth i ben
