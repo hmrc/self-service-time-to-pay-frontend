@@ -34,7 +34,7 @@
 )
 
 @main(
-    title = Messages("ssttp.calculator.self-assessment-account-summary-page.title"),
+    title = Messages("ssttp.calculator.self-assessment-account-summary-page.title", currency(debits.map(_.amount).sum)),
     loggedIn = loggedIn,
     backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
 ) {
