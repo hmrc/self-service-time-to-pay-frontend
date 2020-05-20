@@ -455,3 +455,49 @@ h1.govuk-panel__title {
 .panel-tabular-data {
     color: #0b0c0c;
 }
+
+input:focus,
+textarea:focus,
+select:focus,
+#global-header input:focus {
+    outline-color: #fd0;
+}
+
+a:focus,
+.error-summary .error-summary-list a:focus,
+details summary:focus {
+    outline: 3px solid transparent;
+    color: #0b0c0c;
+    background-color: #fd0;
+    -webkit-box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+    box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+    text-decoration: none;
+}
+
+.page-nav__link:focus,
+.js-enabled .add-focus,
+.modal-dialog__content:focus,
+.button:focus,
+details summary:focus,
+.error-summary:focus,
+.timeout-dialog:focus {
+    outline-color: #ffdd00;
+}
+
+.multiple-choice [type=radio]:focus + label::before {
+    -webkit-box-shadow: 0 0 0 4px #ffdd00;
+    box-shadow: 0 0 0 4px #ffdd00;
+}
+
+.multiple-choice [type=checkbox]:focus + label::before {
+    -webkit-box-shadow: 0 0 0 3px #ffdd00;
+    box-shadow: 0 0 0 3px #ffdd00
+}
+
+.account-menu__link:focus,
+.is-smaller .account-menu__link--home:focus,
+.is-smaller .account-menu__link--menu:focus,
+.is-smaller .account-menu__link--home.account-menu__link--active:focus,
+.is-smaller .account-menu__link--menu.account-menu__link--active:focus {
+    border-bottom-color: #ffdd00;
+}
