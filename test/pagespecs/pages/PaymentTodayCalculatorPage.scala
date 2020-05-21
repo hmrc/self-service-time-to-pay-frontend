@@ -41,7 +41,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "How much can you pay upfront?"
-    case Languages.Welsh => "Faint y gallwch ei dalu ymlaen llaw?"
+    case Languages.Welsh   => "Faint y gallwch ei dalu ymlaen llaw?"
   }
 
   def assertErrorIsDisplayed: Assertion = probing {

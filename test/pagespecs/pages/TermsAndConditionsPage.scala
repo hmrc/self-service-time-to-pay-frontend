@@ -40,7 +40,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Terms and conditions"
-    case Languages.Welsh => "Telerau ac amodau"
+    case Languages.Welsh   => "Telerau ac amodau"
   }
 
   def clickContinue(): Unit = {

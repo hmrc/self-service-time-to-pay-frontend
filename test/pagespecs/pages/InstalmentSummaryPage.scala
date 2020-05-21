@@ -40,7 +40,7 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Check your payment plan"
-    case Languages.Welsh => "Gwiriwch fanylion eich amserlen talu"
+    case Languages.Welsh   => "Gwiriwch fanylion eich amserlen talu"
   }
 
   def clickInstalmentsChange(): Unit = {

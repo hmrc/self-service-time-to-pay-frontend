@@ -39,7 +39,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "How much can you afford to pay each month?"
-    case Languages.Welsh => "Faint y gallwch fforddio ei dalu bob mis?"
+    case Languages.Welsh   => "Faint y gallwch fforddio ei dalu bob mis?"
   }
 
   def assertPageIsDisplayedAltPath(difference: Int)(implicit lang: Language = English): Assertion = probing {

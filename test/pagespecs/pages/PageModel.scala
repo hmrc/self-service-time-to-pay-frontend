@@ -62,7 +62,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def expectedTitle(heading: String, lang: Language): String = lang match {
     case Languages.English => s"$heading - Set up a Self Assessment payment plan - GOV.UK"
-    case Languages.Welsh => s"$heading - Trefnu cynllun talu - GOV.UK"
+    case Languages.Welsh   => s"$heading - Trefnu cynllun talu - GOV.UK"
   }
 
   /**

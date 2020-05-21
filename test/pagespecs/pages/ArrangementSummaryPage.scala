@@ -38,7 +38,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Your payment plan is set up"
-    case Languages.Welsh => "Cais yn llwyddiannus"
+    case Languages.Welsh   => "Cais yn llwyddiannus"
   }
 
   object Expected {
