@@ -40,11 +40,11 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "How many months do you want to pay over?"
-    case Languages.Welsh => "Dros sawl mis yr hoffech dalu?"
+    case Languages.Welsh   => "Dros sawl mis yr hoffech dalu?"
   }
 
   def selectAnOption(): Unit = {
-    val radioButton = xpath("/html/body/main/div[2]/article/form/div[1]/div[1]/input")
+    val radioButton = xpath("/html/body/main/div[2]/article/form/fieldset/div/div[1]/input")
     click on radioButton
   }
 

@@ -38,7 +38,7 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Your Self Assessment tax bill is £4,900.00"
-    case Languages.Welsh => "Crynodeb o’ch cyfrif Hunanasesiad £4,900.00"
+    case Languages.Welsh   => "Crynodeb o’ch cyfrif Hunanasesiad £4,900.00"
   }
 
   def clickOnStartNowButton(): Unit = {

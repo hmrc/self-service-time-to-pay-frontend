@@ -40,7 +40,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Payment summary"
-    case Languages.Welsh => "Crynodeb o’r taliadau"
+    case Languages.Welsh   => "Crynodeb o’r taliadau"
   }
 
   def clickContinue(): Unit = {
