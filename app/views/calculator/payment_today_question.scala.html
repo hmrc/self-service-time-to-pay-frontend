@@ -42,6 +42,7 @@
     @if(dataForm.hasErrors){
         @viewsHelpers.errorSummary(Messages("ssttp.calculator.form.payment_today_question.required.title"),dataForm)
     }
+<fieldset class="form-field-group">
     <legend>
         <h1 class="heading-xlarge">@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
     </legend>
@@ -53,12 +54,14 @@
                 "true" -> Messages("ssttp.calculator.form.payment_today_question.yes_label"),
                 "false" -> Messages("ssttp.calculator.form.payment_today_question.no_label")
         ), '_label -> Html(Messages("ssttp.eligibility.form.existing_ttp.question")),
-            '_labelClass -> "block-label block-label--inline")
+            '_labelClass -> "block-label block-label--inline",
+            '_legend -> Html(Messages("ssttp.calculator.form.payment_today_question.title")),
+            '_legendClass -> "visually-hidden")
 <br>
 <div class="form-group">
     <button id="next" type="submit" class="button" onclick="continue()">@Messages("ssttp.calculator.payment_today_question.button-continue")</button>
 </div>
-
+</fieldset>
     }
 
 <script type="text/javascript">
