@@ -90,14 +90,14 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       private def mainTextEnglish(increase: Int) =
         s"""How much can you afford to pay each month?
            |Enter an amount between £${format(600.00 + increase)} and £${format(2500.00 + increase)}
-           |£ How much can you pay upfront in Pound Sterling
+           |£ How much can you pay monthly in Pound Sterling
            |Continue
         """.stripMargin
 
       private def mainTextWelsh(increase: Int) =
         s"""Faint y gallwch fforddio ei dalu bob mis?
            |Nodwch swm sydd rhwng £${format(600.00 + increase)} a £${format(2500.00 + increase)}
-           |£ How much can you pay upfront in Pound Sterling
+           |£ How much can you pay monthly in Pound Sterling
            |Yn eich blaen
         """.stripMargin
     }
@@ -110,7 +110,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
            |Enter a figure between the given range
            |How much can you afford to pay each month?
            |Enter an amount between £600.00 and £2,500.00
-           |Enter numbers only £ How much can you pay upfront in Pound Sterling
+           |Enter numbers only £ How much can you pay monthly in Pound Sterling
            |Continue
         """.stripMargin
     }
