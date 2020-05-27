@@ -40,21 +40,24 @@
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getMonthlyPayment)
 ) {
 
-<h1 class="heading-xlarge margin-bottom-30">@Messages("ssttp.calculator.results.title")</h1>
 
 @if(durationForm.hasErrors) {
   @viewsHelpers.errorSummary(Messages("ssttp.calculator.results.error.title"), durationForm)
 }
 
 @viewsHelpers.form(redirectCall, 'id -> "paymentTodayForm", 'class -> "group") {
- <div id="chosen-month">
- @{
-   schedules.map{mts =>
-     instalment_by_month(mts)
-   }
- }
- </div>
-
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+            <h1 class="govuk-fieldset__heading">@Messages("ssttp.calculator.results.title")</h1>
+        </legend>
+             <div id="chosen-month">
+             @{
+               schedules.map{mts =>
+                 instalment_by_month(mts)
+               }
+             }
+             </div>
+    </fieldset>
 <details>
  <summary><span class="summary">@Messages("ssttp.calculator.results.section.title")</span></summary>
  <div class="panel panel-border-narrow">
