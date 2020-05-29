@@ -30,7 +30,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Set up a Self Assessment payment plan"
-    case Languages.Welsh => "Trefnu cynllun talu"
+    case Languages.Welsh   => "Trefnu cynllun talu"
   }
 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {

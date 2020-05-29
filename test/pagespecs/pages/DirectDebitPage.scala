@@ -41,7 +41,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Enter account details to set up a Direct Debit"
-    case Languages.Welsh => "Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol"
+    case Languages.Welsh   => "Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol"
   }
 
   def assertErrorPageIsDisplayed(implicit field: ErrorCase): Assertion = eventually {

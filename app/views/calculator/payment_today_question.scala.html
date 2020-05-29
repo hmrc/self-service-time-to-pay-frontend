@@ -44,8 +44,6 @@
     }
 
    <h1 class="heading-xlarge">@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
-
-
     <p>@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
     @viewsHelpers.form(action = ssttpcalculator.routes.CalculatorController.submitPayTodayQuestion(),
         'id -> "paytoday",'class -> "form-group inline"){
@@ -60,7 +58,6 @@
 <div class="form-group">
     <button id="next" type="submit" class="button" onclick="continue()">@Messages("ssttp.calculator.payment_today_question.button-continue")</button>
 </div>
-
     }
 
 <script type="text/javascript">

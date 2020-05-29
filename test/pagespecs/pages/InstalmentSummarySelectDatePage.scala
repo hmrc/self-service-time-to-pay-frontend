@@ -41,7 +41,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Which day do you want to pay each month?"
-    case Languages.Welsh => "Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu"
+    case Languages.Welsh   => "Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu"
   }
 
   def assertErrorPageIsDisplayed(): Assertion = probing {

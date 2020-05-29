@@ -36,7 +36,7 @@ class NotOnIaPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BaseP
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Please call us"
-    case Languages.Welsh => "Ffoniwch ni"
+    case Languages.Welsh   => "Ffoniwch ni"
   }
 
   object Expected {

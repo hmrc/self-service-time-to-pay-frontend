@@ -40,7 +40,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Check your Direct Debit details"
-    case Languages.Welsh => "Gwiriwch fanylion eich Debyd Uniongyrchol"
+    case Languages.Welsh   => "Gwiriwch fanylion eich Debyd Uniongyrchol"
   }
 
   def clickChangeButton(): Unit = {

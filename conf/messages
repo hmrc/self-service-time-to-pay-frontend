@@ -379,6 +379,9 @@ ssttp.monthly.amount.out-of-bounds = Enter a figure between the given range
 ssttp.upfront.amount.pound.sign.description=How much can you pay upfront in Pound Sterling
 ssttp.monthly.amount.pound.sign.description=How much can you pay monthly in Pound Sterling
 
+ssttp.monthly.amount.pound.sign.description=How much can you pay monthly in Pound Sterling
+ssttp.upfront.amount.pound.sign.description=How much can you pay upfront in Pound Sterling
+
 ssttp.arrangement.changeday.default = 28th or next working day
 ssttp.arrangement.changeday.different = A different day
 ssttp.arrangement.changeday.enter.date = Enter a day between 1 and 28
