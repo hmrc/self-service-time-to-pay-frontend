@@ -75,7 +75,7 @@ object TestUserForm {
     returnsJson                  = Json.prettyPrint(TestUserReturns.sample1),
     returnsResponseStatusCode    = "200",
     hasSAEnrolment               = true,
-    isOnIA                       = true,
+    isOnIA                       = false,
     authorityId                  = None,
     affinityGroup                = AffinityGroup.individual.v,
     hasOverTwoHundred            = true,
