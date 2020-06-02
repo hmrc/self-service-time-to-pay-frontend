@@ -67,7 +67,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
       val debts = Seq(charge(200, afterTaxYearStart))
 
       EligibilityService.runEligibilityCheck(EligibilityRequest(afterTaxYearStart,
-                                                                createTaxpayer(debts, returns)), true) shouldBe Eligible
+                                                                createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
     }
 
     """not grant eligibility if all returns are filed except the most recent which is still outstanding and has a missing due date
@@ -375,7 +375,7 @@ class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with 
   }
 
   val outstandingReturnThisYearButNotOverdue = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)), dueDate = Some(LocalDate.of(2017, 7, 11)))
-  val outstandingReturnThisYearAndOverdue = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)), dueDate = Some(LocalDate.of(2017, 7, 1)))
+  val outstandingReturnThisYearAndOverdue = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)), dueDate = Some(LocalDate.of(2016, 2, 1)))
   val outstandingReturnThisYearWithMissingDueDate = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)), dueDate = None)
   val overdueReturnThisYear = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)))
   val lastThreeCalendarYears: Seq[Int] = Seq(2013, 2014, 2015)
