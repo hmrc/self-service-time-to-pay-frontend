@@ -56,14 +56,16 @@ object EligibilityService {
     (0 to returnHistoryYearsRequired).reverse
       .map(currentTaxYearEndDate.getYear - _)
       .map(year => returnDateForCalendarYear(year))
-      .flatMap(returnDateForYear => checkReturnForYear(returnDateForYear, returns, today)).toList
+      .flatMap(returnDateForYear => checkReturnHasBeenReceived(returnDateForYear, returns, today)).toList
   }
 
-  private def checkReturnForYear(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
+  private def checkReturnHasBeenReceived(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
     returns.find(_.taxYearEnd == taxYearEnd) match {
       //To match and return a reason for ineligibility the following needs to be true:
       //The issued date needs to be today or earlier, which means we have informed them
       //The received date needs to be after today or not exist which means we haven't received the return yet
+      //If it is the most recent return which could have a due date that has not yet expired, they should be eligible and thus pass this check
+      case Some(taxReturn) if isDatePresentAndAfterToday(today, taxReturn.dueDate) => None
       case Some(taxReturn) if isDateTodayOrEarlier(today, taxReturn.issuedDate) && isDateAfterTodayOrNonExistent(today, taxReturn.receivedDate) => Some(ReturnNeedsSubmitting)
       case _ => None
     }
@@ -138,6 +140,16 @@ object EligibilityService {
         else false
       case _ =>
         true
+    }
+  }
+
+  private def isDatePresentAndAfterToday(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
+    dateOption match {
+      case Some(date: LocalDate) =>
+        if (date.isAfter(today)) true
+        else false
+      case _ =>
+        false
     }
   }
 }
