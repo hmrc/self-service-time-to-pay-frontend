@@ -56,10 +56,10 @@ object EligibilityService {
     (0 to returnHistoryYearsRequired).reverse
       .map(currentTaxYearEndDate.getYear - _)
       .map(year => returnDateForCalendarYear(year))
-      .flatMap(returnDateForYear => checkReturnHasBeenReceived(returnDateForYear, returns, today)).toList
+      .flatMap(returnDateForYear => checkReturn(returnDateForYear, returns, today)).toList
   }
 
-  private def checkReturnHasBeenReceived(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
+  private def checkReturn(taxYearEnd: LocalDate, returns: Seq[Return], today: LocalDate): Option[Reason] = {
     returns.find(_.taxYearEnd == taxYearEnd) match {
       //To match and return a reason for ineligibility the following needs to be true:
       //The issued date needs to be today or earlier, which means we have informed them
