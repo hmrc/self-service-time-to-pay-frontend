@@ -77,10 +77,6 @@ class DirectDebitConnector @Inject() (
 
     httpClient.GET[DirectDebitBank](s"$baseUrl/direct-debit/${saUtr.value}/banks").map { response => response }
       .recover {
-        case e: NotFoundException if e.message.contains("BP not found") =>
-          JourneyLogger.info("DirectDebitConnector.getBanks: BP not found")
-          Logger.warn(e.getMessage)
-          DirectDebitBank.none
         case e: RuntimeException =>
           JourneyLogger.info(s"DirectDebitConnector.getBanks: Error, $e")
           Logger.error(e.getMessage)
