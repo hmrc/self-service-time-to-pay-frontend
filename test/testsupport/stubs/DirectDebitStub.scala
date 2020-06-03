@@ -19,28 +19,32 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
+import play.api.http.Status
 import play.api.libs.json.Json.prettyPrint
+import testsupport.testdata.DirectDebitTd.{bpNotFound, directDebitBankJson}
 import testsupport.testdata.{DirectDebitTd, TdAll}
 import timetopaytaxpayer.cor.model.SaUtr
 
-object DirectDebitStub extends Matchers {
+object DirectDebitStub extends Matchers with Status {
 
   def validateBank(port: Int, sortCode: String, accountNumber: String): StubMapping =
     stubFor(
-      post(urlPathEqualTo(s"/direct-debit/validate-bank-account")).withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
+      post(urlPathEqualTo(s"/direct-debit/validate-bank-account"))
+        .withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
         .willReturn(
           aResponse()
-            .withStatus(200)
+            .withStatus(OK)
             .withBody("true")
         )
     )
 
   def validateBankFail(port: Int, sortCode: String, accountNumber: String): StubMapping =
     stubFor(
-      post(urlPathEqualTo(s"/direct-debit/validate-bank-account")).withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
+      post(urlPathEqualTo(s"/direct-debit/validate-bank-account"))
+        .withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
         .willReturn(
           aResponse()
-            .withStatus(200)
+            .withStatus(OK)
             .withBody("false")
         )
     )
@@ -50,27 +54,27 @@ object DirectDebitStub extends Matchers {
       get(urlPathEqualTo(s"/direct-debit/${TdAll.utr}/banks"))
         .willReturn(
           aResponse()
-            .withStatus(200)
-            .withBody(prettyPrint(DirectDebitTd.directDebitBankJson))
+            .withStatus(OK)
+            .withBody(prettyPrint(directDebitBankJson))
         )
     )
 
-  def getBanksReturns404BPNotFound(utr: SaUtr): StubMapping =
+  def getBanksBPNotFound(utr: SaUtr): StubMapping =
     stubFor(
       get(urlPathEqualTo(s"/direct-debit/${utr.value}/banks"))
         .willReturn(
           aResponse()
-            .withStatus(404)
-            .withBody("""{ reason: "BP not found", "reasonCode": "002" }""")
+            .withStatus(OK)
+            .withBody(prettyPrint(bpNotFound))
         )
     )
 
-  def getBanksReturns404(utr: SaUtr): StubMapping =
+  def getBanksNotFound(utr: SaUtr): StubMapping =
     stubFor(
       get(urlPathEqualTo(s"/direct-debit/${utr.value}/banks"))
         .willReturn(
           aResponse()
-            .withStatus(404)
+            .withStatus(NOT_FOUND)
             .withBody("""{ reason: "some reason", "reasonCode": "some code" }""")
         )
     )
@@ -80,7 +84,7 @@ object DirectDebitStub extends Matchers {
       post(s"/direct-debit/${TdAll.utr}/instructions/payment-plan")
         .willReturn(
           aResponse()
-            .withStatus(200)
+            .withStatus(OK)
             .withBody(prettyPrint(DirectDebitTd.directDebitInstructionPaymentPlanJson))
         )
     )

@@ -18,11 +18,7 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.json.{Format, Json}
 
-final case class DirectDebitBank(
-    processingDate:         String,
-    directDebitInstruction: Seq[DirectDebitInstruction]
-) {
-
+final case class DirectDebitBank(processingDate: String, directDebitInstruction: Seq[DirectDebitInstruction]) {
   def obfuscate: DirectDebitBank = DirectDebitBank(
     processingDate         = processingDate,
     directDebitInstruction = directDebitInstruction.map(_.obfuscate)
@@ -30,6 +26,5 @@ final case class DirectDebitBank(
 }
 
 object DirectDebitBank {
-  val none = DirectDebitBank("", Seq.empty)
   implicit val format: Format[DirectDebitBank] = Json.format[DirectDebitBank]
 }

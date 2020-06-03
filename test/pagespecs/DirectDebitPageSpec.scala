@@ -107,7 +107,7 @@ class DirectDebitPageSpec extends ItSpec {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.validateBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.getBanksReturns404BPNotFound(saUtr)
+    DirectDebitStub.getBanksBPNotFound(saUtr)
     directDebitPage.clickContinue()
     directDebitConfirmationPage.assertPageIsDisplayed
   }

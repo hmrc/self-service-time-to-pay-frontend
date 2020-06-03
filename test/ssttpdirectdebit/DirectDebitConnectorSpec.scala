@@ -47,18 +47,18 @@ class DirectDebitConnectorSpec extends ItSpec {
           Some("123ABC123"))))
   }
 
-  "getBanks should not tolerate a general 404" in {
-    DirectDebitStub.getBanksReturns404(saUtr)
+  "getBanks should not tolerate a 404" in {
+    DirectDebitStub.getBanksNotFound(saUtr)
 
     intercept[Exception] {
       connector.getBanks(saUtr)(FakeRequest()).futureValue
     }.getCause.isInstanceOf[NotFoundException] shouldBe true
   }
 
-  "getBanks should tolerate a 404 BP Not Found error" in {
-    DirectDebitStub.getBanksReturns404BPNotFound(saUtr)
+  "getBanks should tolerate a BP Not Found payload" in {
+    DirectDebitStub.getBanksBPNotFound(saUtr)
 
-    connector.getBanks(saUtr)(FakeRequest()).futureValue shouldBe DirectDebitBank.none
+    connector.getBanks(saUtr)(FakeRequest()).futureValue shouldBe DirectDebitBank("", Seq.empty)
   }
 }
 

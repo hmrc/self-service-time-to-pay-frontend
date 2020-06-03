@@ -45,6 +45,15 @@ object DirectDebitTd {
       }
     """.asJson
 
+  val bpNotFound: JsObject =
+    //language=Json
+    s"""
+      {
+        "processingDate": "",
+        "directDebitInstruction":[]
+      }
+    """.asJson
+
   val directDebitInstructionPaymentPlanJson: JsObject =
     s"""{
           "processingDate": "Data to process",
