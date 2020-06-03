@@ -144,12 +144,6 @@ object EligibilityService {
   }
 
   private def isDatePresentAndAfterToday(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
-    dateOption match {
-      case Some(date: LocalDate) =>
-        if (date.isAfter(today)) true
-        else false
-      case _ =>
-        false
-    }
+    dateOption.exists(_.isAfter(today))
   }
 }
