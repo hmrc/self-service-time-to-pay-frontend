@@ -17,7 +17,10 @@
 package ssttpdirectdebit
 
 import org.scalatest.{Matchers, WordSpec}
+import play.api.test.FakeHeaders
 import ssttpdirectdebit.DirectDebitUtils.bankDetails
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, DirectDebitInstruction}
 
 class DirectDebitUtilsSpec extends WordSpec with Matchers {
@@ -40,6 +43,8 @@ class DirectDebitUtilsSpec extends WordSpec with Matchers {
       sortCode        = Some(sortCode), accountNumber = Some(accountNumber), accountName = Some(accountName), referenceNumber = referenceNumber1)
 
   private val expectedBankDetails = BankDetails(sortCode, accountNumber, accountName, maybeDDIRefNumber = referenceNumber1)
+
+  private implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(FakeHeaders(), None)
 
   "bankDetails" should {
     "return the user-specified bank details" when {
@@ -78,7 +83,7 @@ class DirectDebitUtilsSpec extends WordSpec with Matchers {
       }
     }
 
-    "return the matching bank details with the minimum refernce number" when {
+    "return the matching bank details with the minimum reference number" when {
       "multiple direct debit instructions are provided which match the specified account number and sort code" in {
         val directDebits =
           DirectDebitBank(
