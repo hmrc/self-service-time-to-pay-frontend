@@ -16,13 +16,20 @@
 
 package ssttpdirectdebit
 
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitBank, DirectDebitInstruction}
 
 object DirectDebitUtils {
-  def bankDetails(sortCode: String, accountNumber: String, accountName: String, directDebitBank: DirectDebitBank): BankDetails = {
+  def bankDetails(sortCode: String, accountNumber: String, accountName: String, directDebitBank: DirectDebitBank)
+    (implicit hc: HeaderCarrier): BankDetails = {
     val instructions = directDebitBank.directDebitInstruction.filter { p =>
       p.accountNumber.getOrElse("").equalsIgnoreCase(accountNumber) && p.sortCode.getOrElse("").equals(sortCode)
     }
+
+    val referenceNumbersMatchingBankDetails = instructions.map(_.referenceNumber)
+
+    JourneyLogger.info(s"DirectDebitUtils.bankDetails: referenceNumbersMatchingBankDetails [$referenceNumbersMatchingBankDetails]")
 
       def minReferenceNumber(a: DirectDebitInstruction, b: DirectDebitInstruction): DirectDebitInstruction =
         (a.referenceNumber, b.referenceNumber) match {
@@ -34,17 +41,19 @@ object DirectDebitUtils {
 
     val userSuppliedBankDetails = BankDetails(sortCode, accountNumber, accountName)
 
-    instructions
-      .reduceOption(minReferenceNumber)
-      .fold(userSuppliedBankDetails) {
-        case instruction @ DirectDebitInstruction(Some(foundSortCode), Some(foundAccountNumber), _, _, _, _, _, _) =>
-          BankDetails(
-            foundSortCode,
-            foundAccountNumber,
-            accountName,
-            maybeDDIRefNumber = instruction.referenceNumber
-          )
-        case _ => userSuppliedBankDetails
-      }
+    val maybeMinReferenceNumber = instructions.reduceOption(minReferenceNumber)
+
+    JourneyLogger.info(s"DirectDebitUtils.bankDetails: maybeMinReferenceNumber [$maybeMinReferenceNumber]")
+
+    maybeMinReferenceNumber.fold(userSuppliedBankDetails) {
+      case instruction @ DirectDebitInstruction(Some(foundSortCode), Some(foundAccountNumber), _, _, _, _, _, _) =>
+        BankDetails(
+          foundSortCode,
+          foundAccountNumber,
+          accountName,
+          maybeDDIRefNumber = instruction.referenceNumber
+        )
+      case _ => userSuppliedBankDetails
+    }
   }
 }
