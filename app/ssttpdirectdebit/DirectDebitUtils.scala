@@ -41,11 +41,12 @@ object DirectDebitUtils {
 
     val userSuppliedBankDetails = BankDetails(sortCode, accountNumber, accountName)
 
-    val maybeMinReferenceNumber = instructions.reduceOption(minReferenceNumber)
+    val maybeFilteredDDI = instructions.reduceOption(minReferenceNumber)
+    val maybeMinReferenceNumber = maybeFilteredDDI.fold(Option.empty[String])(_.referenceNumber)
 
-    JourneyLogger.info(s"DirectDebitUtils.bankDetails: maybeMinReferenceNumber [$maybeMinReferenceNumber]")
+    JourneyLogger.info(s"DirectDebitUtils.bankDetails: maybeMinReferenceNumber [${maybeMinReferenceNumber}]")
 
-    maybeMinReferenceNumber.fold(userSuppliedBankDetails) {
+    maybeFilteredDDI.fold(userSuppliedBankDetails) {
       case instruction @ DirectDebitInstruction(Some(foundSortCode), Some(foundAccountNumber), _, _, _, _, _, _) =>
         BankDetails(
           foundSortCode,
