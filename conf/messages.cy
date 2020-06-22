@@ -330,3 +330,6 @@ ssttp.arrangement.changeday.enter.date = Ewch i mewn i ddiwrnod y mis
 ssttp.arrangement.instalment-summary-table.upfront.payments.link-title = Newid eich taliadau ymlaen llaw
 ssttp.arrangement.instalment-summary.payment-date.change.link-title = Newid dyddiad eich taliad
 ssttp.arrangement.instalment-summary-table.monthly-instalments.link-title = Newid eich taliadau misol
+
+#accessibilitystatement
+accessibility-statement.link = Datganiad hygyrchedd

@@ -17,7 +17,7 @@
 package pagespecs.pages
 
 import langswitch.Language
-import org.openqa.selenium.WebDriver
+import org.openqa.selenium.{By, WebDriver}
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
@@ -29,22 +29,16 @@ class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+
+    webDriver.findElement(By.linkText("accessibility problem")).getAttribute("target") shouldBe "_blank"
+
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
       content should include(expectedLine)
     )
   }
 
-  def clickOnAccessibilityStatementLink(): Unit = {
-    click on linkText("Accessibility")
-    val windowHandles = webDriver.getWindowHandles
-    //Get rid of the current one
-    windowHandles.remove(webDriver.getWindowHandle)
-    val nextTab = windowHandles.iterator().next()
-
-    switch to window(nextTab)
-    ()
-  }
+  def clickOnAccessibilityStatementLink(): Unit = click on linkText("Accessibility statement")
 
   object Expected {
 
