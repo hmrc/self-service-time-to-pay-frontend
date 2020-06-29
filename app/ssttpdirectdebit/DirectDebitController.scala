@@ -37,16 +37,15 @@ import scala.concurrent.{ExecutionContext, Future}
 class DirectDebitController @Inject() (
     mcc:                  MessagesControllerComponents,
     directDebitConnector: DirectDebitConnector,
-    as:                   Actions,
+    actions:              Actions,
     submissionService:    JourneyService,
     requestSupport:       RequestSupport,
-    views:                Views)
-  (implicit appConfig: AppConfig, ec: ExecutionContext, assetsConfig: AssetsConfig)
+    views:                Views)(implicit appConfig: AppConfig, ec: ExecutionContext, assetsConfig: AssetsConfig)
   extends FrontendBaseController(mcc) {
 
   import requestSupport._
 
-  def getDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def getDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")
 
     submissionService.authorizedForSsttp {
@@ -58,7 +57,7 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def getDirectDebitAssistance: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def getDirectDebitAssistance: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"DirectDebitController.getDirectDebitAssistance: $request")
 
     submissionService.authorizedForSsttp {
@@ -70,7 +69,7 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def getDirectDebitError: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def getDirectDebitError: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     submissionService.authorizedForSsttp {
       case Journey(_, InProgress, _, _, Some(schedule), _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _, _) =>
         Future.successful(
@@ -82,7 +81,7 @@ class DirectDebitController @Inject() (
     }
   }
 
-  def getDirectDebitConfirmation: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def getDirectDebitConfirmation: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"DirectDebitController.getDirectDebitConfirmation: $request")
 
     submissionService.authorizedForSsttp {
@@ -102,25 +101,9 @@ class DirectDebitController @Inject() (
     }
   }
 
-  //TODO: probably not used
-  def getDirectDebitUnAuthorised: Action[AnyContent] = as.action.async { implicit request =>
-    JourneyLogger.info(s"DirectDebitController.getDirectDebitUnAuthorised: $request")
-
-    submissionService.getJourney.map {
-      case _: Journey => Ok(views.direct_debit_unauthorised(isSignedIn))
-      case _ =>
-        JourneyLogger.info("DirectDebitController.getDirectDebitUnAuthorised - no TTPSubmission")
-        Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
-    }
-  }
-
-  def submitDirectDebitConfirmation: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"DirectDebitController.submitDirectDebitConfirmation: $request")
-    Redirect(ssttparrangement.routes.ArrangementController.submit())
-  }
-
-  def submitDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def submitDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"DirectDebitController.submitDirectDebit: $request")
+
     submissionService.authorizedForSsttp { journey =>
       directDebitForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(
