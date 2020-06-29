@@ -26,10 +26,10 @@ import play.api.Logger
 import play.api.mvc._
 import req.RequestSupport
 import ssttpdirectdebit.DirectDebitForm._
-import times.ClockProvider
 import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.play.config.AssetsConfig
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
+import uk.gov.hmrc.selfservicetimetopay.models.BankDetails
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,13 +40,9 @@ class DirectDebitController @Inject() (
     as:                   Actions,
     submissionService:    JourneyService,
     requestSupport:       RequestSupport,
-    views:                Views,
-    clockProvider:        ClockProvider)(
-    implicit
-    appConfig:    AppConfig,
-    ec:           ExecutionContext,
-    assetsConfig: AssetsConfig
-) extends FrontendBaseController(mcc) {
+    views:                Views)
+  (implicit appConfig: AppConfig, ec: ExecutionContext, assetsConfig: AssetsConfig)
+  extends FrontendBaseController(mcc) {
 
   import requestSupport._
 
@@ -125,22 +121,25 @@ class DirectDebitController @Inject() (
 
   def submitDirectDebit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"DirectDebitController.submitDirectDebit: $request")
-    submissionService.authorizedForSsttp { submission: Journey =>
-
+    submissionService.authorizedForSsttp { journey =>
       directDebitForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(
           views.direct_debit_form(
-            submission.taxpayer.selfAssessment.debits,
-            submission.schedule,
+            journey.taxpayer.selfAssessment.debits,
+            journey.schedule,
             formWithErrors))),
         validFormData => {
-          directDebitConnector.validateBank(validFormData.sortCode, validFormData.accountNumber).flatMap { isValid =>
-            if (isValid)
-              checkBankDetails(validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)
+          directDebitConnector.validateBank(validFormData.sortCode, validFormData.accountNumber).flatMap { valid =>
+            if (valid)
+              submissionService.saveJourney(
+                journey.copy(maybeBankDetails = Some(BankDetails(validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
+              ).map { _ =>
+                  Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
+                }
             else
               Future.successful(BadRequest(views.direct_debit_form(
-                submission.taxpayer.selfAssessment.debits,
-                submission.schedule,
+                journey.taxpayer.selfAssessment.debits,
+                journey.schedule,
                 directDebitFormWithBankAccountError.copy(data = Map(
                   "accountName" -> validFormData.accountName,
                   "accountNumber" -> validFormData.accountNumber,
@@ -150,29 +149,6 @@ class DirectDebitController @Inject() (
           }
         }
       )
-    }
-  }
-
-  /**
-   * Using saUtr, gets a list of banks associated with the user. Checks the user entered
-   * bank details to see if they already exist. If it does, return existing bank details
-   * otherwise return user entered bank details.
-   */
-  private[ssttpdirectdebit] def checkBankDetails(sortCode: String, accountNumber: String, accountName: String)
-    (implicit request: Request[_]) = {
-
-    submissionService.getJourney.flatMap { journey =>
-
-      val taxpayer = journey.maybeTaxpayer.getOrElse(throw new RuntimeException("No taxpayer"))
-      val utr = taxpayer.selfAssessment.utr
-
-      directDebitConnector.getBanks(utr).flatMap { directDebitBank =>
-        val bankDetails = DirectDebitUtils.bankDetails(sortCode, accountNumber, accountName, directDebitBank)
-
-        submissionService.saveJourney(journey.copy(maybeBankDetails = Some(bankDetails))).map {
-          _ => Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
-        }
-      }
     }
   }
 }
