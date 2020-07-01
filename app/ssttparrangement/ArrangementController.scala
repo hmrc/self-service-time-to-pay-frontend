@@ -17,7 +17,7 @@
 package ssttparrangement
 
 import java.time.format.DateTimeFormatter.ISO_INSTANT
-import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import java.time.{LocalDate, ZonedDateTime}
 
 import _root_.model._
 import audit.AuditService
@@ -32,15 +32,16 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
+import ssttpcalculator.CalculatorConnector
 import ssttpcalculator.CalculatorService.changeScheduleRequest
-import ssttpcalculator.{CalculatorConnector, CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
-import ssttpeligibility.EligibilityService.runEligibilityCheck
+import ssttpeligibility.EligibilityService.checkEligibility
 import ssttpeligibility.IaService
 import times.ClockProvider
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
@@ -53,7 +54,6 @@ class ArrangementController @Inject() (
     mcc:                  MessagesControllerComponents,
     ddConnector:          DirectDebitConnector,
     arrangementConnector: ArrangementConnector,
-    calculatorService:    CalculatorService,
     calculatorConnector:  CalculatorConnector,
     taxPayerConnector:    TaxpayerConnector,
     auditService:         AuditService,
@@ -62,7 +62,8 @@ class ArrangementController @Inject() (
     requestSupport:       RequestSupport,
     views:                Views,
     clockProvider:        ClockProvider,
-    iaService:            IaService)(
+    iaService:            IaService,
+    directDebitConnector: DirectDebitConnector)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext) extends FrontendBaseController(mcc) {
@@ -191,38 +192,45 @@ class ArrangementController @Inject() (
   private def eligibilityCheck(journey: Journey)(implicit request: Request[_]): Future[Result] = {
     JourneyLogger.info(s"ArrangementController.eligibilityCheck")
 
-      def ineligibleStatusCall(eligibilityStatus: EligibilityStatus, newJourney: Journey) =
-        if (eligibilityStatus.reasons.contains(DebtTooOld) ||
-          eligibilityStatus.reasons.contains(OldDebtIsTooHigh) ||
-          eligibilityStatus.reasons.contains(NoDebt) ||
-          eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
-          eligibilityStatus.reasons.contains(NoDueDate))
-          ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()
-        else if (eligibilityStatus.reasons.contains(IsNotOnIa))
-          ssttpeligibility.routes.SelfServiceTimeToPayController.getIaCallUse()
-        else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
-          ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()
-        else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant))
-          ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile()
-        else {
-          JourneyLogger.info(
-            s"ArrangementController.eligibilityCheck ERROR - [eligible=${eligibilityStatus.eligible}]. " +
-              s"Case not implemented. It's a bug.", newJourney)
-          throw new RuntimeException(
-            s"Case not implemented. It's a bug in the eligibility reasons. [${journey.maybeEligibilityStatus}]. [$journey]")
-        }
+    val taxpayer = journey.taxpayer
+    val utr = taxpayer.selfAssessment.utr
 
     for {
-      onIa <- iaService.checkIaUtr(journey.taxpayer.selfAssessment.utr.value)
-      eligibilityStatus = runEligibilityCheck(EligibilityRequest(LocalDate.now(clockProvider.getClock), journey.taxpayer), onIa)
+      onIa <- iaService.checkIaUtr(utr.value)
+      directDebits <- directDebitConnector.getBanks(utr)
+      eligibilityStatus = checkEligibility(clockProvider.nowDate, taxpayer, directDebits, onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
-      _ = JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
     } yield {
+      JourneyLogger.info(s"ArrangementController.eligibilityCheck [eligible=${eligibilityStatus.eligible}]", newJourney)
+
       if (eligibilityStatus.eligible) Redirect(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
-      else Redirect(ineligibleStatusCall(eligibilityStatus, newJourney))
+      else Redirect(ineligibleStatusRedirect(eligibilityStatus, newJourney))
     }
   }
+
+  //TODO improve this under OPS-4941
+  private def ineligibleStatusRedirect(eligibilityStatus: EligibilityStatus, newJourney: Journey)(implicit hc: HeaderCarrier) =
+    if (eligibilityStatus.reasons.contains(DebtTooOld) ||
+      eligibilityStatus.reasons.contains(OldDebtIsTooHigh) ||
+      eligibilityStatus.reasons.contains(NoDebt) ||
+      eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
+      eligibilityStatus.reasons.contains(DirectDebitCreatedWithinTheLastYear) ||
+      eligibilityStatus.reasons.contains(NoDueDate))
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()
+    else if (eligibilityStatus.reasons.contains(IsNotOnIa))
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getIaCallUse()
+    else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()
+    else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant))
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile()
+    else {
+      JourneyLogger.info(
+        s"ArrangementController.eligibilityCheck ERROR - [eligible=${eligibilityStatus.eligible}]. " +
+          s"Case not implemented. It's a bug.", newJourney)
+      throw new RuntimeException(
+        s"Case not implemented. It's a bug in the eligibility reasons. [${newJourney.maybeEligibilityStatus}]. [$newJourney]")
+    }
 
   def submit(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.submit: $request")
@@ -243,7 +251,7 @@ class ArrangementController @Inject() (
 
         Ok(views.application_complete(
           debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
-          transactionId = journey.taxpayer.selfAssessment.utr + LocalDateTime.now(clockProvider.getClock).toString,
+          transactionId = journey.taxpayer.selfAssessment.utr + clockProvider.now.toString,
           directDebit,
           journey.schedule,
           journey.ddRef

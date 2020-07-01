@@ -18,8 +18,9 @@ package ssttpeligibility
 
 import java.time.{LocalDate, MonthDay}
 
-import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails}
+import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
 import uk.gov.hmrc.selfservicetimetopay.models._
+
 /**
  * Determines if a tax payer is eligible for self service.
  *
@@ -28,25 +29,35 @@ import uk.gov.hmrc.selfservicetimetopay.models._
  * Charge - any money owed that less than 30 days overdue
  * Liability - any money that is not yet due
  */
-
 object EligibilityService {
-
   val insignificantDebtUpperLimit = 32
   val maximumDebtForSelfServe = 10000
   val numberOfDaysAfterDueDateForDebtToBeConsideredOld = 60
   val returnHistoryYearsRequired = 4
   val taxYearEndDay: MonthDay = MonthDay.of(4, 5)
 
-  def runEligibilityCheck(eligibilityRequest: EligibilityRequest, onIa: Boolean): EligibilityStatus = {
-    val selfAssessmentDetails: SelfAssessmentDetails = eligibilityRequest.taxpayer.selfAssessment
+  def checkEligibility(dateOfEligibilityCheck: LocalDate, taxpayer: Taxpayer, directDebits: DirectDebitInstructions, onIa: Boolean): EligibilityStatus = {
+    val selfAssessmentDetails: SelfAssessmentDetails = taxpayer.selfAssessment
     val isOnIa: List[Reason] = if (onIa) Nil else List(IsNotOnIa)
 
-    val reasons = (checkReturnsUpToDate(selfAssessmentDetails.returns, eligibilityRequest.dateOfEligibilityCheck)
-      ++ checkDebits(selfAssessmentDetails.debits, eligibilityRequest.dateOfEligibilityCheck) ++ isOnIa)
+    val reasons =
+      checkReturnsUpToDate(selfAssessmentDetails.returns, dateOfEligibilityCheck) ++
+        checkDebits(selfAssessmentDetails.debits, dateOfEligibilityCheck) ++
+        isOnIa ++
+        hasDirectDebitsCreatedWithinTheLastYear(dateOfEligibilityCheck, directDebits)
+
     reasons match {
-      case Nil => EligibilityStatus(true, Seq.empty)
-      case _   => EligibilityStatus(false, reasons.map(r => r))
+      case Nil => EligibilityStatus(Seq.empty)
+      case _   => EligibilityStatus(reasons.map(r => r))
     }
+  }
+
+  private def hasDirectDebitsCreatedWithinTheLastYear(date: LocalDate, directDebits: DirectDebitInstructions): Seq[Reason] = {
+    val directDebitsCreatedWithinTheLastYear =
+      directDebits.directDebitInstruction.exists(ddi =>
+        ddi.creationDate.getOrElse(date).isAfter(date.minusYears(1)))
+
+    if (directDebitsCreatedWithinTheLastYear) Seq(DirectDebitCreatedWithinTheLastYear) else Seq.empty
   }
 
   private def checkReturnsUpToDate(returns: Seq[Return], today: LocalDate): List[Reason] = {
@@ -66,7 +77,8 @@ object EligibilityService {
       //The received date needs to be after today or not exist which means we haven't received the return yet
       //If it is the most recent return which could have a due date that has not yet expired, they should be eligible and thus pass this check
       case Some(taxReturn) if isDatePresentAndAfterToday(today, taxReturn.dueDate) => None
-      case Some(taxReturn) if isDateTodayOrEarlier(today, taxReturn.issuedDate) && isDateAfterTodayOrNonExistent(today, taxReturn.receivedDate) => Some(ReturnNeedsSubmitting)
+      case Some(taxReturn) if isDateTodayOrEarlier(today, taxReturn.issuedDate) && isDateAfterTodayOrNonExistent(today, taxReturn.receivedDate) =>
+        Some(ReturnNeedsSubmitting)
       case _ => None
     }
   }
@@ -87,63 +99,40 @@ object EligibilityService {
     val totalDebt = debt.map(d => getTotalForDebit(d)).sum
     val totalOwed = totalChargesAndDebt + totalLiabilities
 
-    if (totalOwed == 0) List(NoDebt)
-    else {
-      runDebtChecks(totalDebt, totalOwed)
-    }
+    if (totalOwed == 0) List(NoDebt) else runDebtChecks(totalDebt, totalOwed)
   }
 
-  private def runDebtChecks(totalDebt: Double, totalOwed: Double): List[Reason] = {
+  private def runDebtChecks(totalDebt: Double, totalOwed: Double) =
     checkIfOldDebtIsTooHigh(totalDebt) ++ checkIfDebtIsInsignificant(totalOwed) ++ checkIfTotalDebtIsTooHigh(totalOwed)
-  }
 
-  private def checkIfOldDebtIsTooHigh(totalDebt: Double): List[Reason] = {
-    if (totalDebt > insignificantDebtUpperLimit) List(OldDebtIsTooHigh)
-    else Nil
-  }
+  private def checkIfOldDebtIsTooHigh(totalDebt: Double) =
+    if (totalDebt > insignificantDebtUpperLimit) List(OldDebtIsTooHigh) else Nil
 
-  private def checkIfDebtIsInsignificant(totalOwed: Double): List[Reason] = {
-    if (totalOwed < insignificantDebtUpperLimit) List(DebtIsInsignificant)
-    else Nil
-  }
+  private def checkIfDebtIsInsignificant(totalOwed: Double) =
+    if (totalOwed < insignificantDebtUpperLimit) List(DebtIsInsignificant) else Nil
 
-  private def checkIfTotalDebtIsTooHigh(totalOwed: Double): List[Reason] = {
-    if (totalOwed >= maximumDebtForSelfServe) List(TotalDebtIsTooHigh)
-    else Nil
-  }
+  private def checkIfTotalDebtIsTooHigh(totalOwed: Double) =
+    if (totalOwed >= maximumDebtForSelfServe) List(TotalDebtIsTooHigh) else Nil
 
-  private def getTotalForDebit(debit: Debit): Double = {
+  private def getTotalForDebit(debit: Debit) =
     (debit.interest.map(i => i.amount).getOrElse(BigDecimal(0)) + debit.amount).doubleValue()
-  }
 
-  private def taxYearEndDateForCalendarYear(today: LocalDate): LocalDate = {
+  private def taxYearEndDateForCalendarYear(today: LocalDate) = {
     val currentCalendarYearsReturnDate = returnDateForCalendarYear(today.getYear)
     if (today.isAfter(currentCalendarYearsReturnDate)) returnDateForCalendarYear(today.getYear + 1) else currentCalendarYearsReturnDate
   }
 
   private def returnDateForCalendarYear(year: Int) = LocalDate.of(year, taxYearEndDay.getMonthValue, taxYearEndDay.getDayOfMonth)
 
-  private def isDateTodayOrEarlier(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
-    dateOption match {
-      case Some(date: LocalDate) =>
-        if (date.isBefore(today) || date.isEqual(today)) true
-        else false
-      case _ =>
-        false
-    }
+  private def isDateTodayOrEarlier(today: LocalDate, dateOption: Option[LocalDate]) = dateOption match {
+    case Some(date: LocalDate) => date.isBefore(today) || date.isEqual(today)
+    case _                     => false
   }
 
-  private def isDateAfterTodayOrNonExistent(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
-    dateOption match {
-      case Some(date: LocalDate) =>
-        if (date.isAfter(today)) true
-        else false
-      case _ =>
-        true
-    }
+  private def isDateAfterTodayOrNonExistent(today: LocalDate, maybeDate: Option[LocalDate]) = maybeDate match {
+    case Some(date: LocalDate) => date.isAfter(today)
+    case _                     => true
   }
 
-  private def isDatePresentAndAfterToday(today: LocalDate, dateOption: Option[LocalDate]): Boolean = {
-    dateOption.exists(_.isAfter(today))
-  }
+  private def isDatePresentAndAfterToday(today: LocalDate, maybeDate: Option[LocalDate]) = maybeDate.exists(_.isAfter(today))
 }

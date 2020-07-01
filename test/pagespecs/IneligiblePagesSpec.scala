@@ -19,13 +19,13 @@ package pagespecs
 import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor4}
 import pagespecs.pages.BasePage
 import testsupport.ItSpec
+import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.TdAll.unactivatedSaEnrolment
+import testsupport.testdata.TdAll.{aYearAgo, almostAYearAgo, unactivatedSaEnrolment}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L100
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
-
   /**
    * spec to test all of the ineligible pages
    *
@@ -40,7 +40,6 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
    * - Old debt < £32
    * - debt less than £32
    */
-
   val listOfIneligibleReasons: TableFor4[String, Reason, String, BasePage] = Table(
     ("reason", "reasonObject", "pageAsString", "page"),
     ("no debts", NoDebt, "general call us page", generalCallUsPage),
@@ -48,7 +47,8 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     ("current year return not submitted", ReturnNeedsSubmitting, "you need to file", needToFilePage),
     ("debt more than £10k", TotalDebtIsTooHigh, "debt too large", debtTooLargePage),
     ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage),
-    ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", generalCallUsPage)
+    ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", generalCallUsPage),
+    ("direct debit(s) created within the last 12 months", DirectDebitCreatedWithinTheLastYear, "general call us page", generalCallUsPage)
   )
 
   def beginJourney(ineligibleReason: Reason): Unit = {
@@ -57,8 +57,10 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     if (ineligibleReason == IsNotOnIa) IaStub.failedIaCheck
     else IaStub.successfulIaCheck
     GgStub.signInPage(port)
+    getBanksIsSuccessful(if (ineligibleReason == DirectDebitCreatedWithinTheLastYear) almostAYearAgo else aYearAgo)
     startPage.open()
     startPage.clickOnStartNowButton()
+    ()
   }
 
   "Ineligible pages displayed correctly - ssttp eligibility" - {

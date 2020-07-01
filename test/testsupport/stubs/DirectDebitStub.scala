@@ -22,6 +22,7 @@ import org.scalatest.Matchers
 import play.api.http.Status
 import play.api.libs.json.Json.prettyPrint
 import testsupport.testdata.DirectDebitTd.{bpNotFound, directDebitBankJson}
+import testsupport.testdata.TdAll.aYearAgo
 import testsupport.testdata.{DirectDebitTd, TdAll}
 import timetopaytaxpayer.cor.model.SaUtr
 
@@ -49,13 +50,13 @@ object DirectDebitStub extends Matchers with Status {
         )
     )
 
-  def getBanksIsSuccessful: StubMapping =
+  def getBanksIsSuccessful(creationDate: String = aYearAgo): StubMapping =
     stubFor(
       get(urlPathEqualTo(s"/direct-debit/${TdAll.utr}/banks"))
         .willReturn(
           aResponse()
             .withStatus(OK)
-            .withBody(prettyPrint(directDebitBankJson))
+            .withBody(prettyPrint(directDebitBankJson(creationDate)))
         )
     )
 

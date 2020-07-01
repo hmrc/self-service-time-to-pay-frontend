@@ -27,14 +27,15 @@ case object OldDebtIsTooHigh extends Reason("OldDebtIsTooHigh")
 case object TotalDebtIsTooHigh extends Reason("TotalDebtIsTooHigh")
 case object ReturnNeedsSubmitting extends Reason("ReturnNeedsSubmitting")
 case object IsNotOnIa extends Reason("IsNotOnIa")
-//TODO the ones below are unused for now and apparently always have been
+case object DirectDebitCreatedWithinTheLastYear extends Reason("DirectDebitCreatedWithinTheLastYear")
+
+//TODO under OPS-4941 the ones below are unused for now and apparently always have been
 case object TTPIsLessThenTwoMonths extends Reason("TTPIsLessThenTwoMonths")
 case object NotSaEnrolled extends Reason("NotEnrolled")
 case object DebtTooOld extends Reason("DebtTooOld")
 case object NoDueDate extends Reason("NoDueDate")
 
 object Reason {
-
   implicit val formatEligibilityReasons: Format[Reason] = new Format[Reason] {
     override def writes(o: Reason): JsValue = JsString(o.toString)
     override def reads(json: JsValue): JsResult[Reason] = json match {
@@ -42,14 +43,14 @@ object Reason {
       case _           => JsError(s"Failed to parse $json as Reason")
     }
   }
-
 }
 
-final case class EligibilityStatus(
-    eligible: Boolean,
-    reasons:  Seq[Reason]
-)
+final case class EligibilityStatus(reasons: Seq[Reason]) {
+  val eligible: Boolean = reasons.isEmpty
+}
 
 object EligibilityStatus {
+  val Eligible: EligibilityStatus = EligibilityStatus(Seq.empty)
+
   implicit val format: Format[EligibilityStatus] = Json.format[EligibilityStatus]
 }
