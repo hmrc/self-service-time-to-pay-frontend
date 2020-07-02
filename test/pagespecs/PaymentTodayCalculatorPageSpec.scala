@@ -18,6 +18,7 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
+import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
 
 class PaymentTodayCalculatorPageSpec extends ItSpec {
@@ -26,6 +27,7 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
+    getBanksIsSuccessful()
     startPage.open()
     startPage.clickOnStartNowButton()
     taxLiabilitiesPage.clickOnStartNowButton()

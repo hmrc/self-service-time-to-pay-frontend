@@ -19,399 +19,193 @@ package eligibility
 import java.time.LocalDate
 
 import org.scalatest.{Matchers, WordSpecLike}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import ssttpeligibility.EligibilityService
+import ssttpeligibility.EligibilityService.checkEligibility
+import testsupport.DateSupport
 import timetopaytaxpayer.cor.model._
-import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.hmrc.selfservicetimetopay.models.EligibilityStatus.Eligible
+import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitInstruction, _}
 
-class EligibilityServiceSpec extends WordSpecLike with GuiceOneAppPerSuite with Matchers {
+class EligibilityServiceSpec extends WordSpecLike with Matchers with DateSupport {
+  private val today = LocalDate.parse("2020-03-30")
+  private val yesterday = today.minusDays(1)
+  private val tomorrow = today.plusDays(1)
+  private val aYearAgo = today.minusYears(1)
+  private val almostAYearAgo = aYearAgo.plusDays(1)
 
-  val Eligible = EligibilityStatus(true, Seq.empty)
-  def Ineligible(reasons: Seq[Reason]): EligibilityStatus = {
-    EligibilityStatus(false, reasons)
-  }
-  val optionalNow = Some(LocalDate.now())
-  val taxYearEnd2020 = LocalDate.of(2020, 4, 5)
-  val completedReturnThisYear =
-    Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)), receivedDate = Some(LocalDate.of(2016, 2, 10)))
+  private val origin = "IN1"
 
-  "eligibility service" should {
+  private val onePence = 0.01
+  private val debtLimit = 10000
+  private val significantDebtAmount = 32.00
+  private val insignificantDebtAmount = significantDebtAmount - onePence
 
-    "grant eligibility if all returns are filed and all amounts owed are liabilities" in {
-      val returns = lastFourCalendarYears.map(filedReturn)
-      val debts = Seq(charge(200))
+  private val numberOfDaysBeforeADebtIsOld = 60
+  private val oldDebtDate = today.minusDays(numberOfDaysBeforeADebtIsOld)
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debts, returns)), true) shouldBe Eligible
+  private val last4TaxYears: Seq[Int] = Seq(_2016, _2017, _2018, _2019)
+  private val filedReturns = last4TaxYears.map(filedReturn)
+  private val missingReturns = Seq(filedReturns.head.copy(receivedDate = None)) ++ filedReturns.tail
+  private val filedNotDueReturn = filedReturn(_2020).copy(dueDate      = Some(tomorrow), receivedDate = Some(today))
+  private val overdueReturn = filedReturn(_2020).copy(dueDate      = Some(yesterday), receivedDate = None)
+
+  private val eligibleDebit = debit(significantDebtAmount)
+
+  private val eligibleDirectDebitInstruction = DirectDebitInstruction(
+    sortCode      = Some("sortCode"),
+    accountNumber = Some("accountNumber"),
+    accountName   = Some("accountName"),
+    creationDate  = Some(aYearAgo))
+
+  private val directDebitCreatedWithinTheLastYear = eligibleDirectDebitInstruction.copy(creationDate = Some(almostAYearAgo))
+
+  private val acceptableOldDebt = eligibleDebit.copy(amount  = significantDebtAmount, dueDate = oldDebtDate)
+  private val oldDebtThatIsTooHigh = acceptableOldDebt.copy(amount = significantDebtAmount + onePence)
+  private val noDebts = Seq.empty[Debit]
+
+  "checkEligibility" should {
+    "return eligible" when {
+      "all criteria are met" in {
+        eligibility() shouldBe Eligible
+      }
+
+      "the user has no direct debits created within the last year" in {
+        eligibility(directDebits = directDebitInstructions(Seq.empty)) shouldBe Eligible
+
+        eligibility(directDebits =
+          directDebitInstructions(Seq(
+            eligibleDirectDebitInstruction,
+            eligibleDirectDebitInstruction.copy(sortCode = Some("sortCode2"))))) shouldBe Eligible
+      }
+
+      "the user has significant debt" in {
+        eligibility(debits = Seq(debit(significantDebtAmount))) shouldBe Eligible
+        eligibility(debits = Seq(debit(insignificantDebtAmount), debit(onePence))) shouldBe Eligible
+      }
+
+      "an otherwise eligible user has old debt which is not too high" in {
+        eligibility(debits = Seq(acceptableOldDebt)) shouldBe Eligible
+      }
+
+      "the user has debt which will become too high when it is older" in {
+        eligibility(
+          debits = Seq(oldDebtThatIsTooHigh.copy(dueDate = oldDebtDate.plusDays(1)))) shouldBe Eligible
+      }
+
+      "the user has total debt which is not too high" in {
+        eligibility(debits = Seq(debit(amount = debtLimit - onePence))) shouldBe Eligible
+      }
+
+      "the user has filed all due of filed tax returns" in {
+        eligibility(returns = filedReturns) shouldBe Eligible
+        eligibility(returns = Seq(filedReturns.head)) shouldBe Eligible
+      }
+
+      "the user has filed tax returns which are not yet due" in {
+        eligibility(returns = filedReturns ++ Seq(filedNotDueReturn)) shouldBe Eligible
+      }
     }
 
-    """grant eligibility if all returns for last four years are filed but five years ago a return remains unfiled
-      |and all amounts owed are liabilities""".stripMargin in {
-      val returns = lastFourCalendarYears.map(filedReturn) :+ unFiledReturn(2011)
-      val debts = Seq(charge(200))
+    "return ineligible" when {
+      "an otherwise eligible user is not on IA" in {
+        eligibility(onIa = false) shouldBe EligibilityStatus(Seq(IsNotOnIa))
+      }
 
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debts, returns)), true) shouldBe Eligible
+      "an otherwise eligible user has direct debits created within the last year" in {
+        val ineligible = EligibilityStatus(Seq(DirectDebitCreatedWithinTheLastYear))
+
+        eligibility(directDebits = directDebitInstructions(Seq(directDebitCreatedWithinTheLastYear))) shouldBe ineligible
+
+        eligibility(directDebits =
+          directDebitInstructions(Seq(eligibleDirectDebitInstruction, directDebitCreatedWithinTheLastYear))) shouldBe ineligible
+
+        eligibility(directDebits =
+          directDebitInstructions(Seq(
+            directDebitCreatedWithinTheLastYear,
+            directDebitCreatedWithinTheLastYear.copy(sortCode = Some("sortCode2"))))) shouldBe ineligible
+      }
+
+      "an otherwise eligible user has no debt" in {
+        eligibility(debits = noDebts) shouldBe EligibilityStatus(Seq(NoDebt))
+      }
+
+      "an otherwise eligible user has insignificant debt" in {
+        val debtIsInsignificant = EligibilityStatus(Seq(DebtIsInsignificant))
+
+        eligibility(debits = Seq(debit(insignificantDebtAmount))) shouldBe debtIsInsignificant
+        eligibility(debits = Seq(debitWithInterest(insignificantDebtAmount - onePence, onePence))) shouldBe debtIsInsignificant
+        eligibility(debits = Seq(debit(insignificantDebtAmount - onePence), debit(onePence))) shouldBe debtIsInsignificant
+      }
+
+      "an otherwise eligible user has old debt which is too high" in {
+        eligibility(debits = Seq(oldDebtThatIsTooHigh)) shouldBe EligibilityStatus(Seq(OldDebtIsTooHigh))
+      }
+
+      "an otherwise eligible user has total debt which is too high" in {
+        val totalDebtTooHigh: EligibilityStatus = EligibilityStatus(Seq(TotalDebtIsTooHigh))
+
+        eligibility(debits = Seq(debit(amount = debtLimit))) shouldBe totalDebtTooHigh
+        eligibility(debits = Seq(debit(amount = debtLimit - onePence), debit(amount = onePence))) shouldBe totalDebtTooHigh
+        eligibility(debits = Seq(debitWithInterest(amount   = debtLimit - onePence, interest = onePence))) shouldBe totalDebtTooHigh
+      }
+
+      "an otherwise eligible user has tax returns that are overdue" in {
+        eligibility(returns = missingReturns) shouldBe EligibilityStatus(Seq(ReturnNeedsSubmitting))
+        eligibility(returns = filedReturns ++ Seq(overdueReturn)) shouldBe EligibilityStatus(Seq(ReturnNeedsSubmitting))
+      }
     }
 
-    """grant eligibility if all returns are filed except the most recent which is still outstanding but not overdue
-      |and all amounts owed are liabilities""".stripMargin in {
-      val returns = lastThreeCalendarYears.map(filedReturn) :+ outstandingReturnThisYearButNotOverdue
-      val debts = Seq(charge(200, afterTaxYearStart))
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(afterTaxYearStart,
-                                                                createTaxpayer(debts, returns)), true) shouldBe Eligible
-    }
-
-    """not grant eligibility if all returns are filed except the most recent which is still outstanding AND overdue
-      |and all amounts owed are liabilities""".stripMargin in {
-      val returns = lastThreeCalendarYears.map(filedReturn) :+ outstandingReturnThisYearAndOverdue
-      val debts = Seq(charge(200, afterTaxYearStart))
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(afterTaxYearStart,
-                                                                createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
-    }
-
-    """not grant eligibility if all returns are filed except the most recent which is still outstanding and has a missing due date
-      |and all amounts owed are liabilities""".stripMargin in {
-      val returns = lastThreeCalendarYears.map(filedReturn) :+ outstandingReturnThisYearWithMissingDueDate
-      val debts = Seq(charge(200, afterTaxYearStart))
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(afterTaxYearStart,
-                                                                createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
-    }
-
-    """not grant eligibility if a return in the last four years has been issued and is overdue
-      |and all amounts owed are liabilities""".stripMargin in {
-      val debts = Seq(charge(200))
-
-      val returns = replaceYearWith(lastFourCalendarYears.map(filedReturn), 2013, unFiledReturn(2013))
-      val result = EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debts, returns)), true)
-      result shouldBe Ineligible(List(ReturnNeedsSubmitting))
-
-      val returns2 = replaceYearWith(lastFourCalendarYears.map(filedReturn), 2015, unFiledReturn(2015))
-      val result2 = EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debts, returns2)), true)
-      result2 shouldBe Ineligible(List(ReturnNeedsSubmitting))
-    }
-
-    """grant eligibility if all returns issued have been filed in last four years
-      |and all amounts owed are liabilities""".stripMargin in {
-      val debts = Seq(charge(200))
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debts, Nil)), true) shouldBe Eligible
-
-      val returns2 = lastFourCalendarYears.map(unissuedReturn)
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debts, returns2)), true) shouldBe Eligible
-
-      val returns3 = replaceYearWith(lastFourCalendarYears.map(filedReturn), 2012, unissuedReturn(2012))
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debts, returns3)), true) shouldBe Eligible
-    }
-
-    "not grant eligibility if this years return is overdue and all amounts owed are liabilities" in {
-      val returns = lastThreeCalendarYears.map(filedReturn) :+ overdueReturnThisYear
-      val debts = Seq(charge(200, afterTaxYearStart))
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(afterTaxYearStart,
-                                                                createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
-    }
-
-    "not grant eligibility if all returns are filed and charges total less than £32" in {
-      val returns = lastFourCalendarYears.map(filedReturn)
-      val singleDebtLessThan32Pounds = Seq(charge(11))
-      val combinedDebtsLessThan32Pounds = Seq(charge(10), charge(21))
-
-      val result1 = EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(singleDebtLessThan32Pounds, returns)), true)
-      result1 shouldBe Ineligible(List(DebtIsInsignificant))
-      val result2 = EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(combinedDebtsLessThan32Pounds, returns)), true)
-      result2 shouldBe Ineligible(List(DebtIsInsignificant))
-    }
-
-    "not grant eligibility if all returns are filed and charges total over £10k" in {
-      val returns = lastFourCalendarYears.map(filedReturn)
-      val singleDebtOver1000Pounds = Seq(charge(10000.01))
-      val combinedDebtOver1000Pounds = Seq(charge(2000), charge(9000))
-
-      val result = EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(singleDebtOver1000Pounds, returns)), true)
-      result shouldBe Ineligible(List(TotalDebtIsTooHigh))
-
-      val result2 = EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(combinedDebtOver1000Pounds, returns)), true)
-      result2 shouldBe Ineligible(List(TotalDebtIsTooHigh))
-    }
-
-    "not grant eligibility if all returns are filed and no debts are owed" in {
-      val returns = lastFourCalendarYears.map(filedReturn)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(Nil, returns)), true) shouldBe Ineligible(List(NoDebt))
-    }
-
-    "not grant eligibility if all returns are filed and debt over 59 days is over £32" in {
-      val returns = lastFourCalendarYears.map(filedReturn)
-      val debts = Seq(debt(32.01))
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
-                                                                createTaxpayer(debts, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh))
-    }
-
-    "grant eligibility if all returns are filed and debt over 29 days is £32 and charges or liabilities are £9967.99" in {
-      val returns = lastFourCalendarYears.map(filedReturn)
-      val debitsWithCharge = Seq(debt(32.00), charge(9967.99))
-      val debitsWithLiabilities = Seq(debt(32.00), liability(9967.99))
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debitsWithCharge, returns)), true) shouldBe Eligible
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart, createTaxpayer(debitsWithLiabilities, returns)), true) shouldBe Eligible
-    }
-
-    "not grant eligibility if all returns are filed and debt over 59 days is £32.01 and charges or liabilities are £9967.99" in {
-      val returns = lastFourCalendarYears.map(filedReturn)
-      val debitsWithCharge = Seq(debt(32.01), charge(9967.99))
-      val debitsWithLiabilities = Seq(debt(32.01), liability(9967.99))
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
-                                                                createTaxpayer(debitsWithCharge, returns)), onIa = true) shouldBe Ineligible(List(OldDebtIsTooHigh, TotalDebtIsTooHigh))
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
-                                                                createTaxpayer(debitsWithLiabilities, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh, TotalDebtIsTooHigh))
-    }
-
-    "not grant eligibility if all returns are filed and liabilities total over £10k" in {
-      val returns = lastFourCalendarYears.map(filedReturn)
-      val debits = Seq(liability(10000.01))
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
-    }
-
-    "consider interest as debt for its rules" in {
-      val returns = lastFourCalendarYears.map(filedReturn)
-      val debitsOver10k = Seq(charge(9000, interest = Some(Interest(optionalNow, 1000.01))))
-      val debitsUnder10k = Seq(charge(9000, interest = Some(Interest(optionalNow, 999.99))))
-      val debits10k = Seq(charge(9000, interest = Some(Interest(optionalNow, 1000))))
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
-                                                                createTaxpayer(debitsOver10k, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
-                                                                createTaxpayer(debits10k, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
-      EligibilityService.runEligibilityCheck(EligibilityRequest(beforeTaxYearStart,
-                                                                createTaxpayer(debitsUnder10k, returns)), true) shouldBe Eligible
-    }
-
-    "SA Return not yet submitted by customer" in {
-      val debits = List(
-        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31),
-              interest   = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31),
-              interest   = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31),
-              interest   = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
-      )
-
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5),
-                           issuedDate   = Some(LocalDate.of(2015, 4, 5)), receivedDate = Some(LocalDate.of(2016, 2, 1))) :: Nil
-
-      val todaysDate = LocalDate.of(2016, 1, 31)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
-    }
-
-    "SA Return submitted in future by customer" in {
-      val debits = List(
-        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
-      )
-
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-                           receivedDate = Some(LocalDate.of(2016, 2, 1))) :: Nil
-
-      val todaysDate = LocalDate.of(2016, 1, 31)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
-    }
-
-    "Return submitted, total amount > £10k" in {
-      val debits = List(
-        Debit(amount     = 5000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 10000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 10000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
-      )
-
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
-
-      val todaysDate = LocalDate.of(2016, 12, 31)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
-    }
-
-    "Return submitted, debt > £32 is older than 29 days" in {
-      val debits = List(
-        Debit(amount     = 2000, dueDate = LocalDate.of(2016, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020))
-
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
-
-      val todaysDate = LocalDate.of(2016, 12, 31)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh))
-    }
-
-    "Return submitted, old debt < £32, total amount < £10k" in {
-      val debits = List(
-        Debit(amount     = 0, dueDate = LocalDate.of(2016, 6, 10), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
-      )
-
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
-
-      val todaysDate = LocalDate.of(2016, 12, 31)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Eligible
-    }
-
-    "Return submitted, old returns overdue" in {
-      val debits = List(
-        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
-      )
-
-      val returns = List(
-        Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-               receivedDate = Some(LocalDate.of(2016, 12, 10))),
-        Return(taxYearEnd   = LocalDate.of(2015, 4, 5), issuedDate = Some(LocalDate.of(2014, 4, 5)),
-               receivedDate = None))
-
-      val todaysDate = LocalDate.of(2016, 12, 31)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(ReturnNeedsSubmitting))
-    }
-
-    "Return submitted, total amount <£10k" in {
-      val debits = List(
-        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
-      )
-
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
-
-      val todaysDate = LocalDate.of(2017, 2, 4)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Eligible
-    }
-
-    "Return submitted, total amount >£10k with future liability" in {
-      val debits = List(
-        Debit(amount     = 3000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 6000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 6000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
-      )
-
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
-
-      val todaysDate = LocalDate.of(2017, 2, 4)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(TotalDebtIsTooHigh))
-    }
-
-    "Return submitted, old debts > £32" in {
-      val debits = List(
-        Debit(amount     = 1000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 2000, dueDate = LocalDate.of(2017, 7, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 0, dueDate = LocalDate.of(2016, 1, 31), interest = Some(Interest(Some(LocalDate.now), 25)), originCode = "IN1", taxYearEnd = taxYearEnd2020),
-        Debit(amount     = 0, dueDate = LocalDate.of(2016, 1, 31), interest = Some(Interest(Some(LocalDate.now), 40)), originCode = "IN1", taxYearEnd = taxYearEnd2020)
-      )
-
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
-
-      val todaysDate = LocalDate.of(2016, 12, 31)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(OldDebtIsTooHigh))
-    }
-
-    "Return submitted, total liability > £32" in {
-      val debits = List(
-        Debit(amount     = 30, dueDate = LocalDate.of(2017, 7, 31), interest = None, originCode = "IN1", taxYearEnd = taxYearEnd2020)
-      )
-
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
-
-      val todaysDate = LocalDate.of(2017, 7, 10)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), true) shouldBe Ineligible(List(DebtIsInsignificant))
-    }
-
-    "Return submitted, utr not on ia " in {
-      val debits = List(
-        Debit(amount     = 500, dueDate = LocalDate.of(2017, 7, 31), interest = None, originCode = "IN1", taxYearEnd = taxYearEnd2020)
-      )
-
-      val returns = Return(taxYearEnd   = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 4, 5)),
-                           receivedDate = Some(LocalDate.of(2016, 12, 10))) :: Nil
-
-      val todaysDate = LocalDate.of(2017, 7, 10)
-
-      EligibilityService.runEligibilityCheck(EligibilityRequest(todaysDate,
-                                                                createTaxpayer(debits, returns)), false) shouldBe Ineligible(List(IsNotOnIa))
+    "return all ineligibility reasons" in {
+      eligibility(
+        debits       = noDebts,
+        returns      = missingReturns,
+        directDebits = directDebitInstructions(Seq(directDebitCreatedWithinTheLastYear)),
+        onIa         = false
+      ).reasons.toSet shouldBe Set(ReturnNeedsSubmitting, NoDebt, IsNotOnIa, DirectDebitCreatedWithinTheLastYear)
     }
   }
 
-  val outstandingReturnThisYearButNotOverdue = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)), dueDate = Some(LocalDate.of(2017, 7, 11)))
-  val outstandingReturnThisYearAndOverdue = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)), dueDate = Some(LocalDate.of(2016, 2, 1)))
-  val outstandingReturnThisYearWithMissingDueDate = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)), dueDate = None)
-  val overdueReturnThisYear = Return(taxYearEnd = LocalDate.of(2016, 4, 5), issuedDate = Some(LocalDate.of(2015, 3, 6)))
-  val lastThreeCalendarYears: Seq[Int] = Seq(2013, 2014, 2015)
-  val lastFourCalendarYears: Seq[Int] = Seq(2012, 2013, 2014, 2015)
+  private def eligibility(debits:       Seq[Debit]              = Seq(eligibleDebit),
+                          returns:      Seq[Return]             = filedReturns,
+                          directDebits: DirectDebitInstructions = directDebitInstructions(Seq(eligibleDirectDebitInstruction)),
+                          onIa:         Boolean                 = true) =
+    checkEligibility(today, taxpayer(debits, returns), directDebits, onIa)
 
-  def liability(amount: Double, currentDate: LocalDate = beforeTaxYearStart, interest: Option[Interest] = None) =
-    debit(amount, currentDate.plusDays(1), interest = interest)
+  private def debit(amount: Double) = Debit(
+    amount     = amount,
+    dueDate    = secondSAPaymentDate(_2020),
+    interest   = Some(Interest(Some(yesterday), 0)),
+    originCode = origin,
+    taxYearEnd = taxYearEnd(_2020))
 
-  def charge(amount: Double, currentDate: LocalDate = beforeTaxYearStart, interest: Option[Interest] = None) =
-    debit(amount, currentDate.minusDays(29), interest = interest)
+  private def debitWithInterest(amount: Double, interest: Double) = Debit(
+    amount     = amount,
+    dueDate    = secondSAPaymentDate(_2020),
+    interest   = Some(Interest(Some(yesterday), interest)),
+    originCode = origin,
+    taxYearEnd = taxYearEnd(_2020))
 
-  def debt(amount: Double, currentDate: LocalDate = beforeTaxYearStart, interest: Option[Interest] = None) =
-    debit(amount, currentDate.minusDays(60), interest = interest)
+  private def directDebitInstructions(directDebitInstructions: Seq[DirectDebitInstruction]) =
+    DirectDebitInstructions(directDebitInstructions)
 
-  def debit(amount: Double, dueDate: LocalDate, interest: Option[Interest] = None) = {
-    Debit(amount     = amount, dueDate = dueDate, interest = interest, originCode = "IN1", taxYearEnd = taxYearEnd2020)
-  }
+  private def filedReturnIssueDate(year: Int) = Some(LocalDate.of(year - 1, march, _6th))
 
-  def filedReturn(year: Int) = Return(taxYearEnd   = LocalDate.of(year, 4, 5), issuedDate = Some(LocalDate.of(year - 1, 3, 6)),
-                                      receivedDate = Some(LocalDate.of(year, 12, 10)))
+  private def filedReturn(year: Int) = Return(
+    taxYearEnd   = taxYearEnd(year),
+    issuedDate   = filedReturnIssueDate(year),
+    receivedDate = Some(LocalDate.of(year, december, _10th)))
 
-  def unissuedReturn(year: Int) = Return(taxYearEnd = LocalDate.of(year, 4, 5))
+  private def secondSAPaymentDate(year: Int) = LocalDate.of(year, july, _31st)
 
-  def unFiledReturn(year: Int) = Return(taxYearEnd = LocalDate.of(year, 4, 5), issuedDate = Some(LocalDate.of(year - 1, 3, 6)))
-
-  def beforeTaxYearStart = LocalDate.of(2016, 2, 2)
-
-  def afterTaxYearStart = LocalDate.of(2016, 9, 2)
-
-  def replaceYearWith(returns: Seq[Return], year: Int, `return`: Return): Seq[Return] = returns.map(r => if (r.taxYearEnd.getYear == year) `return` else r)
-
-  def address(): Address = {
-    Address(Some("1 Donut Street"), Some("Balaxian Waystation"), Some("Algaranius Cluster"), Some("Becolian Sector"), Some("Andromeda Galaxy"), Some("BN1 1AA"))
-  }
-
-  private def createTaxpayer(debits: Seq[Debit], returns: Seq[Return]) = {
-    Taxpayer(selfAssessment = SelfAssessmentDetails(debits                   = debits, returns = returns, communicationPreferences = CommunicationPreferences(true, true, true, true), utr = SaUtr("6573196998")), customerName = "Mr Eric Biddle", addresses = Seq(address))
-  }
+  private def taxpayer(debits: Seq[Debit], returns: Seq[Return]) =
+    Taxpayer(
+      selfAssessment =
+        SelfAssessmentDetails(
+          debits                   = debits,
+          returns                  = returns,
+          communicationPreferences =
+            CommunicationPreferences(
+              welshLanguageIndicator = true, audioIndicator = true, largePrintIndicator = true, brailleIndicator = true),
+          utr                      = SaUtr("6573196998")),
+      customerName   = "Mr Eric Biddle",
+      addresses      = Seq(Address(Some("1 Donut Street"), Some("BN1 1AA"))))
 }

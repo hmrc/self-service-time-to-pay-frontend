@@ -16,21 +16,17 @@
 
 package journey
 
-import controllers.ErrorHandler
+import controllers.ErrorHandler.technicalDifficulties
 import javax.inject.Inject
+import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.mvc.{Request, Result, Results}
 import req.RequestSupport
+import uk.gov.hmrc.play.http.logging.Mdc
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
-import uk.gov.hmrc.selfservicetimetopay.models.EligibilityStatus
 
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.play.http.logging.Mdc
 
-class JourneyService @Inject() (
-    journeyRepo: JourneyRepo)(
-    implicit
-    ec: ExecutionContext
-) {
+class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) {
 
   import RequestSupport._
   import playsession.PlaySessionSupport._
@@ -59,19 +55,18 @@ class JourneyService @Inject() (
     for {
       journey <- getJourney()
       result <- journey match {
-        case submission @ Journey(_, Statuses.InProgress, _, _, Some(_), _, _, Some(_), _, _, Some(EligibilityStatus(true, _)), _, _, _) =>
+        case submission @ Journey(_, InProgress, _, _, Some(_), _, _, Some(_), _, _, Some(eligibility), _, _, _) if eligibility.eligible =>
           JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", submission)
           block(submission)
 
-        case journey @ Journey(_, Statuses.FinishedApplicationSuccessful, _, _, _, _, _, _, _, _, _, _, _, _) =>
+        case journey @ Journey(_, FinishedApplicationSuccessful, _, _, _, _, _, _, _, _, _, _, _, _) =>
           JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", journey)
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
         case journey =>
           JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp.authorizedForSsttp: redirect On Error", journey)
-          Future.successful(ErrorHandler.technicalDifficulties(journey))
+          Future.successful(technicalDifficulties(journey))
       }
     } yield result
   }
-
 }

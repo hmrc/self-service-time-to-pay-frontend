@@ -40,8 +40,8 @@ package object modelsFormat {
 
   //Front end formatters
 
-  implicit val bankAccountResponseFormatter: Format[Either[BankDetails, DirectDebitBank]] =
-    Format(eitherReads[BankDetails, DirectDebitBank], eitherWrites[BankDetails, DirectDebitBank])
+  implicit val bankAccountResponseFormatter: Format[Either[BankDetails, DirectDebitInstructions]] =
+    Format(eitherReads[BankDetails, DirectDebitInstructions], eitherWrites[BankDetails, DirectDebitInstructions])
 
   //Eligibility formatters
   //TODO make sure that function returns the correct Reason when case is ttpislessthentwomonths

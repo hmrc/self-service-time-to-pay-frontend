@@ -17,6 +17,7 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
+import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.DirectDebitTd
 import testsupport.testdata.TdAll.saUtr
@@ -29,6 +30,7 @@ class DirectDebitPageSpec extends ItSpec {
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
+    getBanksIsSuccessful()
     startPage.open()
     startPage.clickOnStartNowButton()
     taxLiabilitiesPage.clickOnStartNowButton()
@@ -98,7 +100,7 @@ class DirectDebitPageSpec extends ItSpec {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.validateBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.getBanksIsSuccessful
+    getBanksIsSuccessful()
     directDebitPage.clickContinue()
     directDebitConfirmationPage.assertPageIsDisplayed
   }

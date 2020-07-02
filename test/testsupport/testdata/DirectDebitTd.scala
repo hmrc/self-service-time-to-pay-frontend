@@ -18,30 +18,30 @@ package testsupport.testdata
 
 import play.api.libs.json.JsObject
 import testsupport.JsonSyntax._
+import testsupport.testdata.TdAll.aYearAgo
 
 object DirectDebitTd {
   val sortCode = "12-34-56"
   val accountNumber = "12345678"
   val accountName = "Mr John Campbell"
 
-  private val directDebitInstructionJson =
-    //language=Json
-    """{
+  private def directDebitInstructionJson(creationDate: String) =
+    s"""{
           "sortCode":"12-34-56",
           "accountNumber":"12345678",
           "referenceNumber":"123456789",
-          "creationDate": "2019-04-05",
+          "creationDate": "$creationDate",
           "paperAuddisFlag": true,
           "ddiRefNumber": "123ABC123",
           "ddiReferenceNo": "123ABC123",
           "accountName":"Mr John Campbell"
         }""".asJson
 
-  val directDebitBankJson: JsObject =
+  def directDebitBankJson(createdDate: String = "2020-04-05"): JsObject =
     s"""
       {
         "processingDate": "2019-04-05",
-        "directDebitInstruction":[$directDebitInstructionJson]
+        "directDebitInstruction":[${directDebitInstructionJson(createdDate)}]
       }
     """.asJson
 
@@ -58,7 +58,7 @@ object DirectDebitTd {
     s"""{
           "processingDate": "Data to process",
           "acknowledgementId": "123456543",
-          "directDebitInstruction": [$directDebitInstructionJson],
+          "directDebitInstruction": [${directDebitInstructionJson(aYearAgo)}],
           "paymentPlan":[
             {
               "ppReferenceNo": "1234567"

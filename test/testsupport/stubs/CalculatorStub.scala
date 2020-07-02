@@ -22,9 +22,10 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, stringify, toJson}
+import testsupport.DateSupport
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
 
-object CalculatorStub extends Status {
+object CalculatorStub extends Status with DateSupport {
   val eightMonthScheduleRegularPaymentAmount = 637
   val sevenMonthScheduleRegularPaymentAmount = 700
   val sixMonthScheduleRegularPaymentAmount = 816
@@ -33,20 +34,10 @@ object CalculatorStub extends Status {
   val threeMonthScheduleRegularPaymentAmount = 1633
   val twoMonthScheduleRegularPaymentAmount = 2450
 
-  private val thisYear = 2019
-  private val nextYear = 2020
+  private val thisYear = _2019
+  private val nextYear = _2020
 
-  private val november = 11
-  private val december = 12
-  private val january = 1
-  private val february = 2
-  private val march = 3
-  private val april = 4
-  private val may = 5
-  private val june = 6
-  private val july = 7
-
-  val startDate: LocalDate = LocalDate.of(thisYear, november, 25)
+  val startDate: LocalDate = LocalDate.of(thisYear, november, _25th)
 
   private val debit1Value = 2500
   private val debit2Value = 2400
@@ -54,7 +45,7 @@ object CalculatorStub extends Status {
   private val initialPayment = 0
   private val totalInterest = 200
 
-  def generateSchedules(paymentDayOfMonth: Int = 25, firstPaymentDayOfMonth: Int = 2): StubMapping = {
+  def generateSchedules(paymentDayOfMonth: Int = _25th, firstPaymentDayOfMonth: Int = _2nd): StubMapping = {
       def paymentDate(month: Int) = LocalDate.of(nextYear, month, paymentDayOfMonth)
 
     val firstPaymentDate = LocalDate.of(thisYear, december, paymentDayOfMonth)

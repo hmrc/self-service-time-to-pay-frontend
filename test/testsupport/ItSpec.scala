@@ -16,7 +16,8 @@
 
 package testsupport
 
-import java.time.{Clock, LocalDateTime, ZoneId, ZoneOffset}
+import java.time.ZoneOffset.UTC
+import java.time.{Clock, LocalDateTime, ZoneId}
 
 import com.google.inject.{AbstractModule, Provides}
 import com.softwaremill.macwire._
@@ -28,6 +29,7 @@ import org.scalatestplus.play.guice.GuiceOneServerPerTest
 import pagespecs.pages._
 import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
+import testsupport.testdata.TdAll.frozenDateString
 import times.ClockProvider
 
 class ItSpec
@@ -36,9 +38,8 @@ class ItSpec
   with RichMatchers
   with WireMockSupport {
 
-  implicit override val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds))
-  )
+  implicit override val patienceConfig: PatienceConfig =
+    PatienceConfig(timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds)))
 
   protected def configMap: Map[String, Any] = Map(
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
@@ -54,21 +55,20 @@ class ItSpec
 
   //in tests use `app`
   override def newAppForTest(testData: TestData): Application = new GuiceApplicationBuilder()
-    .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
+    .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
     .configure(configMap)
     .build()
 
-  def frozenTimeString: String = "2019-11-25T16:33:51.880"
+  val frozenTimeString: String = s"${frozenDateString}T16:33:51.880"
 
-  lazy val overridingsModule: AbstractModule = new AbstractModule {
-
+  lazy val module: AbstractModule = new AbstractModule {
     override def configure(): Unit = ()
 
     @Provides
     @Singleton
     def clockProvider: ClockProvider = new ClockProvider {
       override val defaultClock: Clock = {
-        val fixedInstant = LocalDateTime.parse(frozenTimeString).toInstant(ZoneOffset.UTC)
+        val fixedInstant = LocalDateTime.parse(frozenTimeString).toInstant(UTC)
         Clock.fixed(fixedInstant, ZoneId.systemDefault)
       }
     }
@@ -111,5 +111,4 @@ class ItSpec
   lazy val generalCallUsPage: GeneralCallUsPage = wire[GeneralCallUsPage]
   lazy val needToFilePage: NeedToFilePage = wire[NeedToFilePage]
   lazy val notEnrolledPage: NotEnrolledPage = wire[NotEnrolledPage]
-
 }

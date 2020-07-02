@@ -18,13 +18,12 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
+import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
 import uk.gov.hmrc.selfservicetimetopay.models.TotalDebtIsTooHigh
 
 class StartPageSpec extends ItSpec {
-
   "language" in {
-
     startPage.open()
     startPage.assertPageIsDisplayed
 
@@ -40,7 +39,7 @@ class StartPageSpec extends ItSpec {
     startPage.backButtonHref shouldBe None
   }
 
-  "unuthorised - missing bearer token (user not logged in)" in {
+  "unauthorised - missing bearer token (user not logged in)" in {
     AuthStub.unathorisedMissingSession()
     GgStub.signInPage(port)
     startPage.open()
@@ -52,8 +51,9 @@ class StartPageSpec extends ItSpec {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
-
     GgStub.signInPage(port)
+    getBanksIsSuccessful()
+
     startPage.open()
     startPage.clickOnStartNowButton()
     taxLiabilitiesPage.assertPageIsDisplayed
@@ -63,6 +63,7 @@ class StartPageSpec extends ItSpec {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer(TotalDebtIsTooHigh)
     IaStub.successfulIaCheck
+    getBanksIsSuccessful()
 
     startPage.open()
     startPage.clickOnStartNowButton()

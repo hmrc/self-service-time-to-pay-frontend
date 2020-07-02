@@ -22,40 +22,13 @@ import java.time.ZoneOffset.UTC
 
 import org.scalatest.{Matchers, WordSpec}
 import ssttpcalculator.CalculatorService._
+import testsupport.DateSupport
 import timetopaycalculator.cor.model.{CalculatorInput, DebitInput}
 
 import scala.math.BigDecimal
 
-class CalculatorServiceSpec extends WordSpec with Matchers {
-  private val year = 2020
-
-  private val may = 5
-  private val june = 6
-  private val july = 7
-  private val august = 8
-
-  private val _1st = 1
-  private val _2nd = 2
-  private val _3rd = 3
-  private val _4th = 4
-  private val _5th = 5
-  private val _7th = 7
-  private val _8th = 8
-  private val _11th = 11
-  private val _15th = 15
-  private val _18th = 18
-  private val _20th = 20
-  private val _21st = 21
-  private val _22nd = 22
-  private val _23rd = 23
-  private val _25th = 25
-  private val _27th = 27
-  private val _28th = 28
-  private val _29th = 29
-  private val _30th = 30
-  private val _31st = 31
-
-  private def date(month: Int, day: Int): LocalDate = LocalDate.of(year, month, day)
+class CalculatorServiceSpec extends WordSpec with Matchers with DateSupport {
+  private def date(month: Int, day: Int): LocalDate = LocalDate.of(_2020, month, day)
   private def may(day: Int): LocalDate = date(may, day)
   private def june(day: Int): LocalDate = date(june, day)
   private def july(day: Int): LocalDate = date(july, day)
@@ -74,7 +47,7 @@ class CalculatorServiceSpec extends WordSpec with Matchers {
 
   private def clockForMay(dayInMay: Int) = {
     val formattedDay = dayInMay.formatted("%02d")
-    val currentDateTime = LocalDateTime.parse(s"$year-05-${formattedDay}T00:00:00.880").toInstant(UTC)
+    val currentDateTime = LocalDateTime.parse(s"${_2020}-05-${formattedDay}T00:00:00.880").toInstant(UTC)
     Clock.fixed(currentDateTime, systemDefault)
   }
 

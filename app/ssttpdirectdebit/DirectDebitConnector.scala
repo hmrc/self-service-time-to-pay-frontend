@@ -72,10 +72,10 @@ class DirectDebitConnector @Inject() (
   /**
    * Retrieves stored bank details associated with a given saUtr
    */
-  def getBanks(saUtr: SaUtr)(implicit request: Request[_]): Future[DirectDebitBank] = {
+  def getBanks(saUtr: SaUtr)(implicit request: Request[_]): Future[DirectDebitInstructions] = {
     JourneyLogger.info(s"DirectDebitConnector.getBanks")
 
-    httpClient.GET[DirectDebitBank](s"$baseUrl/direct-debit/${saUtr.value}/banks").map { response => response }
+    httpClient.GET[DirectDebitInstructions](s"$baseUrl/direct-debit/${saUtr.value}/banks").map { response => response }
       .recover {
         case e: RuntimeException =>
           JourneyLogger.info(s"DirectDebitConnector.getBanks: Error, $e")

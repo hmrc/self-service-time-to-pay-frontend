@@ -28,14 +28,18 @@ import testsupport.JsonSyntax._
  */
 object TdAll {
   val utr = "6573196998"
-  val saUtr = SaUtr(utr)
+  val saUtr: SaUtr = SaUtr(utr)
+
+  val frozenDateString: String = "2019-11-25"
+  val aYearAgo: String = "2018-11-25"
+  val almostAYearAgo: String = "2018-11-26"
 
   private val debit1Amount = 2500
   private val debit2Amount = 2400
   private val taxYearEnd = "2020-04-05"
   private val dueDate = "2019-11-25"
 
-  val debit1 = Debit(originCode = "IN1", debit1Amount, dueDate, interest = None, taxYearEnd)
+  val debit1: Debit = Debit(originCode = "IN1", debit1Amount, dueDate, interest = None, taxYearEnd)
 
   val debit1Json: JsObject =
     s"""{
@@ -46,7 +50,7 @@ object TdAll {
         }""".asJson
 
   //TODO: consult with analytics if this data is correct
-  val debit2 = Debit(originCode = "IN2", amount = debit2Amount, dueDate, interest = None, taxYearEnd)
+  val debit2: Debit = Debit(originCode = "IN2", amount = debit2Amount, dueDate, interest = None, taxYearEnd)
 
   val debit2Json: JsObject =
     s"""{
@@ -56,10 +60,10 @@ object TdAll {
           "taxYearEnd": "$taxYearEnd"
         }""".asJson
 
-  val communicationPreferences = CommunicationPreferences(
+  val communicationPreferences: CommunicationPreferences = CommunicationPreferences(
     welshLanguageIndicator = false, audioIndicator = false, largePrintIndicator = false, brailleIndicator = false)
 
-  val address = Address(
+  val address: Address = Address(
     addressLine1 = Some("Big building"),
     addressLine2 = Some("Barington Road"),
     addressLine3 = None,
@@ -67,7 +71,7 @@ object TdAll {
     addressLine5 = None,
     postcode     = Some("BN12 4XL"))
 
-  val taxpayer =
+  val taxpayer: Taxpayer =
     Taxpayer(
       "Mr John Campbell",
       List(address),
@@ -79,8 +83,8 @@ object TdAll {
           Return(taxYearEnd, issuedDate = "2019-11-10", dueDate = "2019-08-15", receivedDate = "2019-03-09"),
           Return(taxYearEnd   = "2018-04-05", issuedDate = "2017-02-15", dueDate = "2018-01-31", receivedDate = "2018-03-09"))))
 
-  val saEnrolment = Enrolment(
-    key               = "IR-SA", identifiers = List(EnrolmentIdentifier("UTR", utr)), state = "Activated", delegatedAuthRule = None)
+  val saEnrolment: Enrolment =
+    Enrolment(key               = "IR-SA", identifiers = List(EnrolmentIdentifier("UTR", utr)), state = "Activated", delegatedAuthRule = None)
 
   val unactivatedSaEnrolment: Enrolment = saEnrolment.copy(state = "Not Activated")
 

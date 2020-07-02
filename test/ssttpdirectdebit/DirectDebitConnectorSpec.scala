@@ -22,9 +22,10 @@ import play.api.inject.Injector
 import play.api.test.FakeRequest
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub
+import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.testdata.TdAll.saUtr
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitBank, DirectDebitInstruction}
+import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitInstruction, DirectDebitInstructions}
 
 class DirectDebitConnectorSpec extends ItSpec {
   private def injector: Injector = app.injector
@@ -32,17 +33,16 @@ class DirectDebitConnectorSpec extends ItSpec {
   private def connector: DirectDebitConnector = injector.instanceOf[DirectDebitConnector]
 
   "getBanks should return a DirectDebitBank" in {
-    DirectDebitStub.getBanksIsSuccessful
+    getBanksIsSuccessful()
 
     connector.getBanks(saUtr)(FakeRequest()).futureValue shouldBe
-      DirectDebitBank(
-        "2019-04-05",
+      DirectDebitInstructions(
         List(DirectDebitInstruction(
           sortCode      = Some("12-34-56"),
           accountNumber = Some("12345678"),
           accountName   = Some("Mr John Campbell"),
           Some("123456789"),
-          Some(LocalDate.of(2019, 4, 5)),
+          Some(LocalDate.of(2018, 11, 25)),
           Some(true), Some("123ABC123"),
           Some("123ABC123"))))
   }
@@ -58,7 +58,7 @@ class DirectDebitConnectorSpec extends ItSpec {
   "getBanks should tolerate a BP Not Found payload" in {
     DirectDebitStub.getBanksBPNotFound(saUtr)
 
-    connector.getBanks(saUtr)(FakeRequest()).futureValue shouldBe DirectDebitBank("", Seq.empty)
+    connector.getBanks(saUtr)(FakeRequest()).futureValue shouldBe DirectDebitInstructions(Seq.empty)
   }
 }
 

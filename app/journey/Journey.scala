@@ -44,19 +44,19 @@ object Statuses extends Enum[Status] {
 
 final case class Journey(
     _id:                    JourneyId,
-    status:                 Status                    = InProgress,
+    status:                 Status                          = InProgress,
     createdOn:              LocalDateTime,
-    maybeAmount:            Option[BigDecimal]        = None,
-    maybeSchedule:          Option[PaymentSchedule]   = None,
-    maybeBankDetails:       Option[BankDetails]       = None,
-    existingDDBanks:        Option[DirectDebitBank]   = None,
-    maybeTaxpayer:          Option[Taxpayer]          = None,
-    maybeCalculatorData:    Option[CalculatorInput]   = None,
-    durationMonths:         Int                       = 2,
-    maybeEligibilityStatus: Option[EligibilityStatus] = None,
-    debitDate:              Option[LocalDate]         = None,
-    ddRef:                  Option[String]            = None,
-    maybeSaUtr:             Option[String]            = None
+    maybeAmount:            Option[BigDecimal]              = None,
+    maybeSchedule:          Option[PaymentSchedule]         = None,
+    maybeBankDetails:       Option[BankDetails]             = None,
+    existingDDBanks:        Option[DirectDebitInstructions] = None,
+    maybeTaxpayer:          Option[Taxpayer]                = None,
+    maybeCalculatorData:    Option[CalculatorInput]         = None,
+    durationMonths:         Int                             = 2,
+    maybeEligibilityStatus: Option[EligibilityStatus]       = None,
+    debitDate:              Option[LocalDate]               = None,
+    ddRef:                  Option[String]                  = None,
+    maybeSaUtr:             Option[String]                  = None
 ) {
 
   def amount: BigDecimal = maybeAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [${this}]"))
