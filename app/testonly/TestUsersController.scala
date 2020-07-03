@@ -96,7 +96,6 @@ class TestUsersController @Inject() (
     saStubConnector:      SaStubConnector,
     desStubConnector:     DesStubConnector,
     iaConnector:          IaConnector,
-    directDebitConnector: DirectDebitConnector,
     views:                Views,
     cc:                   MessagesControllerComponents,
     requestSupport:       RequestSupport)(
