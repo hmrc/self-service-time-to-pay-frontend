@@ -79,10 +79,11 @@ class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
       "state" -> "Activated"
     )
 
-    val enrolments = if (tu.hasSAEnrolment) Json.arr(saEnrolment) else Json.arr()
+    val enrolments: JsArray = if (tu.hasSAEnrolment) Json.arr(saEnrolment) else Json.arr()
+    val credId: String = if (tu.hasExistingDirectDebit) "192837465" else tu.authorityId.v
 
     Json.obj(
-      "credId" -> tu.authorityId.v,
+      "credId" -> credId,
       "affinityGroup" -> tu.affinityGroup.v,
       "confidenceLevel" -> tu.confidenceLevel,
       "credentialStrength" -> "weak",
@@ -97,6 +98,8 @@ class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
 
   private implicit class JsonReplaceOp(j: JsObject) {
     def replace(node: Symbol, newValue: String): JsObject = j.transform((__ \ node).json.put(JsString(newValue))).get
+
     def replace(node: Symbol, newValue: Int): JsObject = j.transform((__ \ node).json.put(JsNumber(newValue))).get
   }
+
 }
