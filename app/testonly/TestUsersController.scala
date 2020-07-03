@@ -92,13 +92,13 @@ object TestUserForm {
 }
 
 class TestUsersController @Inject() (
-    loginService:         LoginService,
-    saStubConnector:      SaStubConnector,
-    desStubConnector:     DesStubConnector,
-    iaConnector:          IaConnector,
-    views:                Views,
-    cc:                   MessagesControllerComponents,
-    requestSupport:       RequestSupport)(
+    loginService:     LoginService,
+    saStubConnector:  SaStubConnector,
+    desStubConnector: DesStubConnector,
+    iaConnector:      IaConnector,
+    views:            Views,
+    cc:               MessagesControllerComponents,
+    requestSupport:   RequestSupport)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext
