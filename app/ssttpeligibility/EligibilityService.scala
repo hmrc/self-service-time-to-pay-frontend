@@ -40,16 +40,11 @@ object EligibilityService {
     val selfAssessmentDetails: SelfAssessmentDetails = taxpayer.selfAssessment
     val isOnIa: List[Reason] = if (onIa) Nil else List(IsNotOnIa)
 
-    val reasons =
+    EligibilityStatus(
       checkReturnsUpToDate(selfAssessmentDetails.returns, dateOfEligibilityCheck) ++
         checkDebits(selfAssessmentDetails.debits, dateOfEligibilityCheck) ++
         isOnIa ++
-        hasDirectDebitsCreatedWithinTheLastYear(dateOfEligibilityCheck, directDebits)
-
-    reasons match {
-      case Nil => EligibilityStatus(Seq.empty)
-      case _   => EligibilityStatus(reasons.map(r => r))
-    }
+        hasDirectDebitsCreatedWithinTheLastYear(dateOfEligibilityCheck, directDebits))
   }
 
   private def hasDirectDebitsCreatedWithinTheLastYear(date: LocalDate, directDebits: DirectDebitInstructions): Seq[Reason] = {
