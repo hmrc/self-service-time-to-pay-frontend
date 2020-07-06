@@ -47,7 +47,8 @@ final case class TestUserForm(
     saTaxpayer:                   String,
     saTaxpayerResponseStatusCode: String,
     continueUrl:                  Option[String],
-    frozenDate:                   Option[String]
+    frozenDate:                   Option[String],
+    hasExistingDirectDebit:       Boolean
 ) {
 
   def asTestUser: TestUser = TestUser(
@@ -64,7 +65,8 @@ final case class TestUserForm(
     saTaxpayer                   = Json.parse(saTaxpayer),
     saTaxpayerResponseStatusCode = saTaxpayerResponseStatusCode.toInt,
     continueUrl                  = continueUrl,
-    frozenDate                   = frozenDate.map(LocalDate.parse)
+    frozenDate                   = frozenDate.map(LocalDate.parse),
+    hasExistingDirectDebit       = hasExistingDirectDebit
   )
 }
 
@@ -84,7 +86,8 @@ object TestUserForm {
     saTaxpayer                   = Json.prettyPrint(TestUserSaTaxpayer.buildTaxpayer()),
     saTaxpayerResponseStatusCode = "200",
     continueUrl                  = None,
-    frozenDate                   = Some("2020-02-05")
+    frozenDate                   = Some("2020-02-05"),
+    hasExistingDirectDebit       = false
   )
 }
 
@@ -130,7 +133,8 @@ class TestUsersController @Inject() (
       "continue-url" -> optional(text),
       "todays-date" ->
         optional(text)
-        .verifying("Invalid date [YYYY-MM-DD]", x => Try(x.map(LocalDate.parse(_))).isSuccess)
+        .verifying("Invalid date [YYYY-MM-DD]", x => Try(x.map(LocalDate.parse(_))).isSuccess),
+      "hasExistingDirectDebit" -> boolean
     )(TestUserForm.apply)(TestUserForm.unapply)
   )
 
@@ -140,11 +144,8 @@ class TestUsersController @Inject() (
 
   def logIn(): Action[AnyContent] = Action.async { implicit request =>
     testUserForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(
-        BadRequest(views.create_user_and_log_in(formWithErrors))
-      ),
-      tu =>
-        logIn(tu.asTestUser)
+      formWithErrors => Future.successful(BadRequest(views.create_user_and_log_in(formWithErrors))),
+      tu => logIn(tu.asTestUser)
     )
   }
 

@@ -37,12 +37,13 @@ final case class TestUser(
     saTaxpayer:                   JsValue,
     saTaxpayerResponseStatusCode: Int,
     continueUrl:                  Option[String],
-    frozenDate:                   Option[LocalDate]
+    frozenDate:                   Option[LocalDate],
+    hasExistingDirectDebit:       Boolean
 )
 
 object TestUser {
 
-  def exemplary() = TestUser(
+  def exemplary(): TestUser = TestUser(
     utr                          = Utr.random(),
     hasSAEnrolment               = true,
     isOnIA                       = true,
@@ -56,7 +57,8 @@ object TestUser {
     saTaxpayer                   = TestUserSaTaxpayer.buildTaxpayer(),
     saTaxpayerResponseStatusCode = Status.OK,
     continueUrl                  = None,
-    frozenDate                   = None
+    frozenDate                   = None,
+    hasExistingDirectDebit       = false
   )
 
 }
@@ -64,9 +66,9 @@ object TestUser {
 final case class AffinityGroup(v: String)
 
 object AffinityGroup {
-  val individual = AffinityGroup("Individual")
-  val organisation = AffinityGroup("Organisation")
-  val agent = AffinityGroup("Agent")
+  val individual: AffinityGroup = AffinityGroup("Individual")
+  val organisation: AffinityGroup = AffinityGroup("Organisation")
+  val agent: AffinityGroup = AffinityGroup("Agent")
 }
 
 /**
@@ -75,7 +77,7 @@ object AffinityGroup {
 final case class AuthorityId(v: String)
 
 object AuthorityId {
-  def random = AuthorityId(s"authId-${Math.abs(Random.nextLong() % 1000)}") //length must be < 25 characters (dunno why...)
+  def random: AuthorityId = AuthorityId(s"authId-${Math.abs(Random.nextLong() % 1000)}") //length must be < 25 characters (dunno why...)
 }
 
 final case class AuthorityUri(v: String)
