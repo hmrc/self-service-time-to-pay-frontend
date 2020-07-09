@@ -395,4 +395,4 @@ ssttp.arrangement.instalment-summary-table.monthly-instalments.link-title = Newi
  accessibility-statement-a9 =  Ganolfan Hygyrchedd Digidol (Digital Accessibility Centre)
  accessibility-statement-p27b = . Profwyd y gwasanaeth llawn gan CThEM, ac roedd y gwaith o brofi’r gwasanaeth yn cynnwys defnyddwyr anabl.
  accessibility-statement-p28 = Paratowyd y dudalen hon ar 26 Chwefror 2020. Cafodd ei diweddaru ddiwethaf ar 26 Mehefin 2020.
-accessibility-statement-welsh-addition-1 = Mae gan
+ accessibility-statement-welsh-addition-1 = Mae gan
