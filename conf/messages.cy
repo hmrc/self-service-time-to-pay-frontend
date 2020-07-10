@@ -350,6 +350,7 @@ ssttp.arrangement.instalment-summary-table.monthly-instalments.link-title = Newi
  accessibility-statement-l1-item4 = •	mynd o ddechrau’r gwasanaeth i’r diwedd gan ddefnyddio meddalwedd adnabod lleferydd
  accessibility-statement-l1-item5 = •	gwrando ar y gwasanaeth gan ddefnyddio darllenydd sgrin (gan gynnwys y fersiynau diweddaraf o JAWS, NVDA a VoiceOver)
  accessibility-statement-p6 = Rydym hefyd wedi sicrhau bod y testun a ddefnyddir yn y gwasanaeth mor syml â phosibl i’w ddeall.
+ accessibility-statement-welsh-addition-1 = Mae gan
  accessibility-statement-a2 = AbilityNet
  accessibility-statement-p7 = gyngor ar wneud eich dyfais yn haws i’w defnyddio os oes gennych anabledd.
  accessibility-statement-h3 = Pa mor hygyrch yw’r gwasanaeth hwn
@@ -395,4 +396,4 @@ ssttp.arrangement.instalment-summary-table.monthly-instalments.link-title = Newi
  accessibility-statement-a9 =  Ganolfan Hygyrchedd Digidol (Digital Accessibility Centre)
  accessibility-statement-p27b = . Profwyd y gwasanaeth llawn gan CThEM, ac roedd y gwaith o brofi’r gwasanaeth yn cynnwys defnyddwyr anabl.
  accessibility-statement-p28 = Paratowyd y dudalen hon ar 26 Chwefror 2020. Cafodd ei diweddaru ddiwethaf ar 26 Mehefin 2020.
- accessibility-statement-welsh-addition-1 = Mae gan
+
