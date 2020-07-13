@@ -30,7 +30,7 @@ class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
 
-    webDriver.findElement(By.linkText("accessibility problem")).getAttribute("target") shouldBe "_blank"
+    webDriver.findElement(By.linkText("accessibility problem (opens in a new tab)")).getAttribute("target") shouldBe "_blank"
 
     val content = readMain().stripSpaces()
     Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
@@ -78,7 +78,7 @@ class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
           |•	some headings are not consistent
           |•	elements which are missing their labels - using a screen reader to read back the entire page will provide all the information needed
           |Reporting accessibility problems with this service
-          |We are always looking to improve the accessibility of this service. If you find any problems that are not listed on this page or think we are not meeting accessibility requirements, report the accessibility problem.
+          |We are always looking to improve the accessibility of this service. If you find any problems that are not listed on this page or think we are not meeting accessibility requirements, report the accessibility problem (opens in a new tab).
           |What to do if you are not happy with how we respond to your complaint
           |The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 (the ‘accessibility regulations’). If you are not happy with how we respond to your complaint, contact the Equality Advisory and Support Service (EASS), or the Equality Commission for Northern Ireland (ECNI) if you live in Northern Ireland.
           |Contacting us by phone or getting a visit from us in person
