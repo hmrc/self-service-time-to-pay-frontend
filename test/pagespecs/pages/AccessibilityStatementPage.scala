@@ -64,19 +64,19 @@ class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
           |Using this service
           |This service allows you to set up a payment plan to pay overdue Self Assessment tax charges in instalments, if you are eligible.
           |This service is run by HM Revenue and Customs (HMRC). We want as many people as possible to be able to use this service. This means you should be able to:
-          |•	change colours, contrast levels and fonts
-          |•	zoom in up to 300% without the text spilling off the screen
-          |•	get from the start of the service to the end using just a keyboard
-          |•	get from the start of the service to the end using speech recognition software
-          |•	listen to the service using a screen reader (including the most recent versions of JAWS, NVDA and VoiceOver)
+          |change colours, contrast levels and fonts
+          |zoom in up to 300% without the text spilling off the screen
+          |get from the start of the service to the end using just a keyboard
+          |get from the start of the service to the end using speech recognition software
+          |listen to the service using a screen reader (including the most recent versions of JAWS, NVDA and VoiceOver)
           |We have also made the text in the service as simple as possible to understand.
           |AbilityNet has advice on making your device easier to use if you have a disability.
           |How accessible this service is
           |This service is partially compliant with the Web Content Accessibility Guidelines version 2.1 AA standard.
           |Some people may find parts of this service difficult to use:
-          |•	some error messages are not descriptive enough for people with visual impairments - but are compatible with common assistive technology tools
-          |•	some headings are not consistent
-          |•	elements which are missing their labels - using a screen reader to read back the entire page will provide all the information needed
+          |some error messages are not descriptive enough for people with visual impairments - but are compatible with common assistive technology tools
+          |some headings are not consistent
+          |elements which are missing their labels - using a screen reader to read back the entire page will provide all the information needed
           |Reporting accessibility problems with this service
           |We are always looking to improve the accessibility of this service. If you find any problems that are not listed on this page or think we are not meeting accessibility requirements, report the accessibility problem (opens in a new tab).
           |What to do if you are not happy with how we respond to your complaint
