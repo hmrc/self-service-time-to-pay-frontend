@@ -24,13 +24,15 @@ viewsHelpers: views.ViewsHelpers
 )
 
 @(
-signedIn: Boolean = false)(implicit
+loggedIn: Boolean = false,
+messagesApi: play.api.i18n.MessagesApi)(implicit
 messages: play.api.i18n.Messages,
 request: Request[_],
 appConfig: config.AppConfig
 )
 
 @main(
+loggedIn = loggedIn,
 contentHeader = None,
 bodyClasses = Some("full-width"),
 navTitle = Messages("accessibility-statement.title"),
@@ -48,23 +50,17 @@ welshToggleEnabled = true
     <h2>@Messages("accessibility-statement-h2")</h2>
     <p>@Messages("accessibility-statement-p4")</p>
     <p>@Messages("accessibility-statement-p5")</p>
-    <ul>
-        <li>@Messages("accessibility-statement-l1-item1")</li>
-        <li>@Messages("accessibility-statement-l1-item2")</li>
-        <li>@Messages("accessibility-statement-l1-item3")</li>
-        <li>@Messages("accessibility-statement-l1-item4")</li>
-        <li>@Messages("accessibility-statement-l1-item5")</li>
-    </ul>
+    <p class="subsection">
+        @message_list(Some("bullets"), "accessibility-statement.l1.", messagesApi)
+    </p>
     <p>@Messages("accessibility-statement-p6")</p>
     <p>@Messages("accessibility-statement-welsh-addition-1")<a href="https://mcmw.abilitynet.org.uk/" target="_blank"> @Messages("accessibility-statement-a2")</a> @Messages("accessibility-statement-p7")</p>
     <h2>@Messages("accessibility-statement-h3")</h2>
     <p>@Messages("accessibility-statement-p8") <a href="https://www.w3.org/TR/WCAG21/" target="_blank">@Messages("accessibility-statement-a3")</a>@Messages("full-stop")</p>
     <p>@Messages("accessibility-statement-p9")</p>
-    <ul>
-        <li>@Messages("accessibility-statement-l2-item1")</li>
-        <li>@Messages("accessibility-statement-l2-item2")</li>
-        <li>@Messages("accessibility-statement-l2-item3")</li>
-    </ul>
+    <p class="subsection">
+        @message_list(Some("bullets"), "accessibility-statement.l2.", messagesApi)
+    </p>
     <h2>@Messages("accessibility-statement-h4")</h2>
     <p>@Messages("accessibility-statement-p10") <a href=@appConfig.reportAccessibilityProblemUrl target="_blank">@Messages("accessibility-statement-a4")</a>@Messages("full-stop")</p>
     <h2>@Messages("accessibility-statement-h5")</h2>
