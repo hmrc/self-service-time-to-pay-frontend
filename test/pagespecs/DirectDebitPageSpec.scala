@@ -19,7 +19,7 @@ package pagespecs
 import langswitch.Languages.{English, Welsh}
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.{CalculatorDataGenerator, DirectDebitTd}
 import testsupport.testdata.TdAll.saUtr
 import testsupport.{AccountName, ItSpec, _}
 
@@ -37,11 +37,9 @@ class DirectDebitPageSpec extends ItSpec {
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
     monthlyPaymentAmountPage.enterAmount("2450")
-    CalculatorStub.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.selectAnOption()
     calculatorInstalmentsPage.clickContinue()
-    CalculatorStub.generateSchedules(paymentDayOfMonth      = 27, firstPaymentDayOfMonth = 28)
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()
     instalmentSummaryPage.clickContinue()

@@ -20,6 +20,7 @@ import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
+import testsupport.testdata.CalculatorDataGenerator
 
 class InstalmentSummarySelectDatePageSpec extends ItSpec {
 
@@ -35,7 +36,6 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
     monthlyPaymentAmountPage.enterAmount("2450")
-    CalculatorStub.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.selectAnOption()
     calculatorInstalmentsPage.clickContinue()
@@ -67,18 +67,19 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
 
   "choose 28th or next working day and continue" in {
     beginJourney()
-    CalculatorStub.generateSchedules(paymentDayOfMonth      = 27, firstPaymentDayOfMonth = 28)
+    CalculatorDataGenerator.generateSchedules(paymentDayOfMonth      = 27, firstPaymentDayOfMonth = 28)
     instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
     instalmentSummarySelectDatePage.selectFirstOption()
+    instalmentSummarySelectDatePage.enterDay("28")
     instalmentSummarySelectDatePage.clickContinue()
     instalmentSummaryPage.assertPageIsDisplayed
   }
 
   "choose a different day and continue" in {
     beginJourney()
-    CalculatorStub.generateSchedules(paymentDayOfMonth      = 11, firstPaymentDayOfMonth = 12)
+    CalculatorDataGenerator.generateSchedules(paymentDayOfMonth      = 11, firstPaymentDayOfMonth = 12)
     instalmentSummarySelectDatePage.selectSecondOption()
-    instalmentSummarySelectDatePage.enterDay("12")
+    instalmentSummarySelectDatePage.enterDay("11")
     instalmentSummarySelectDatePage.clickContinue()
     instalmentSummaryPageForPaymentDayOfMonth11th.assertPageIsDisplayed
   }

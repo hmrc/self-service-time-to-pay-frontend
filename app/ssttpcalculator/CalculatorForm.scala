@@ -19,7 +19,7 @@ package ssttpcalculator
 import play.api.data.Forms.{text, _}
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms, Mapping}
-import uk.gov.hmrc.selfservicetimetopay.models._
+import _root_.uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.util.Try
 

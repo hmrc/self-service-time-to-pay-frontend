@@ -75,27 +75,27 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
       private val mainTextEnglish =
         s"""How many months do you want to pay over?
-           |unchecked 2 months at £2,450.00
-           |Total interest:
-           |Base rate + 2.5%
-           |£200.00
-           |added to the final payment
-           |Total paid:
-           |£200.00
-           |unchecked 3 months at £1,633.00
-           |Total interest:
-           |Base rate + 2.5%
-           |£200.00
-           |added to the final payment
-           |Total paid:
-           |£200.00
            |unchecked 4 months at £1,225.00
            |Total interest:
            |Base rate + 2.5%
-           |£200.00
+           |£10.25
            |added to the final payment
            |Total paid:
-           |£5,100.00
+           |£4,910.25
+           |unchecked 3 months at £1,633.33
+           |Total interest:
+           |Base rate + 2.5%
+           |£17.02
+           |added to the final payment
+           |Total paid:
+           |£4,917.02
+           |unchecked 4 months at £1,225.00
+           |Total interest:
+           |Base rate + 2.5%
+           |£23.56
+           |added to the final payment
+           |Total paid:
+           |£4,923.56
            |How we calculate interest
            |We only charge interest on overdue amounts.
            |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
@@ -105,27 +105,27 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
       private val mainTextWelsh =
         s"""Dros sawl mis yr hoffech dalu?
-           |unchecked 2 o fisoedd ar £2,450.00
-           |Cyfanswm y llog:
-           |Cyfradd sylfaenol + 2.5%
-           |£200.00
-           |wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:
-           |£200.00
-           |unchecked 3 o fisoedd ar £1,633.00
-           |Cyfanswm y llog:
-           |Cyfradd sylfaenol + 2.5%
-           |£200.00
-           |wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:
-           |£200.00
            |unchecked 4 o fisoedd ar £1,225.00
            |Cyfanswm y llog:
            |Cyfradd sylfaenol + 2.5%
-           |£200.00
+           |£10.25
            |wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:
-           |£5,100.00
+           |£4,910.25
+           |unchecked 3 o fisoedd ar £1,633.33
+           |Cyfanswm y llog:
+           |Cyfradd sylfaenol + 2.5%
+           |£17.02
+           |wedi’i ychwanegu at y taliad terfynol
+           |Cyfanswm a dalwyd:
+           |£4,917.02
+           |unchecked 4 o fisoedd ar £1,225.00
+           |Cyfanswm y llog:
+           |Cyfradd sylfaenol + 2.5%
+           |£23.56
+           |wedi’i ychwanegu at y taliad terfynol
+           |Cyfanswm a dalwyd:
+           |£4,923.56
            |Sut rydym yn cyfrifo llog
            |Rydym yn codi llog ar symiau hwyr yn unig.
            |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
@@ -133,7 +133,5 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
            |Yn eich blaen
         """.stripMargin
     }
-
   }
-
 }

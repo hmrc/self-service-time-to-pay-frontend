@@ -18,7 +18,7 @@ import java.time.LocalDate
 
 import language.Dates
 import play.api.i18n.Messages
-import timetopaycalculator.cor.model.{DebitInput, Instalment, PaymentSchedule}
+import ssttpcalculator.model.{DebitInput, Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.Debit
 import uk.gov.hmrc.domain.SaUtr
 

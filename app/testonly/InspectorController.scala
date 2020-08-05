@@ -23,7 +23,7 @@ import journey.{Journey, JourneyService}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpcalculator.CalculatorConnector
+import ssttpcalculator.CalculatorService
 import ssttpdirectdebit.DirectDebitConnector
 import timetopaytaxpayer.cor.TaxpayerConnector
 import views.Views
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class InspectorController @Inject() (
     ddConnector:         DirectDebitConnector,
-    calculatorConnector: CalculatorConnector,
+    calculatorConnector: CalculatorService,
     taxPayerConnector:   TaxpayerConnector,
     cc:                  MessagesControllerComponents,
     journeyService:      JourneyService,

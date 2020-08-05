@@ -20,6 +20,7 @@ import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
+import testsupport.testdata.CalculatorDataGenerator
 
 class CalculatorInstalmentsPageSpec extends ItSpec {
 
@@ -35,7 +36,6 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
     monthlyPaymentAmountPage.enterAmount("2450")
-    CalculatorStub.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
   }
 

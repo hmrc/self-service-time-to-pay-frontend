@@ -22,8 +22,8 @@ import java.time.ZoneOffset.UTC
 
 import org.scalatest.{Matchers, WordSpec}
 import ssttpcalculator.CalculatorService._
-import testsupport.DateSupport
-import timetopaycalculator.cor.model.{CalculatorInput, DebitInput}
+import testsupport.{DateSupport, ItSpec}
+import ssttpcalculator.model.{CalculatorInput, DebitInput}
 
 import scala.math.BigDecimal
 

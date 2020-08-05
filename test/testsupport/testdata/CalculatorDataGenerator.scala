@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testsupport.stubs
+package testsupport.testdata
 
 import java.time.LocalDate
 
@@ -22,16 +22,16 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, stringify, toJson}
+import ssttpcalculator.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
 import testsupport.DateSupport
-import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
 
-object CalculatorStub extends Status with DateSupport {
+object CalculatorDataGenerator extends Status with DateSupport {
   val eightMonthScheduleRegularPaymentAmount = 637
   val sevenMonthScheduleRegularPaymentAmount = 700
-  val sixMonthScheduleRegularPaymentAmount = 816
+  val sixMonthScheduleRegularPaymentAmount = 816.67
   val fiveMonthScheduleRegularPaymentAmount = 980
   val fourMonthScheduleRegularPaymentAmount = 1225
-  val threeMonthScheduleRegularPaymentAmount = 1633
+  val threeMonthScheduleRegularPaymentAmount = 1633.33
   val twoMonthScheduleRegularPaymentAmount = 2450
 
   private val thisYear = _2019
@@ -114,7 +114,7 @@ object CalculatorStub extends Status with DateSupport {
       endDate,
       Some(LocalDate.of(thisYear, december, firstPaymentDayOfMonth)))
 
-  private def paymentSchedule(regularInstalments: List[LocalDate], regularPayment: Int, finalInstalment: LocalDate) = {
+  private def paymentSchedule(regularInstalments: List[LocalDate], regularPayment: BigDecimal, finalInstalment: LocalDate) = {
     val finalPayment = totalDebt - (regularPayment * regularInstalments.size)
     val regularInstallments = regularInstalments.map(paymentDate => Instalment(paymentDate, regularPayment, 0))
     val finalInstallment = Instalment(finalInstalment, finalPayment + totalInterest, totalInterest)
