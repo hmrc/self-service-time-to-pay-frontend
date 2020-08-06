@@ -27,7 +27,7 @@ import testsupport.testdata.TdAll.saUtr
 import testsupport.testdata.CalculatorDataGenerator._
 import ssttpcalculator.model.PaymentSchedule
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, Return, SelfAssessmentDetails}
-import _root_.uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HeaderCarrier
 
 class CalculatorControllerSpec extends ItSpec {
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -46,7 +46,6 @@ class CalculatorControllerSpec extends ItSpec {
   }
 
   trait SetUp {
-    // lazy val connector: CalculatorConnector = app.injector.instanceOf[CalculatorConnector]
     lazy val controller: CalculatorController = app.injector.instanceOf[CalculatorController]
     lazy val service: CalculatorService = app.injector.instanceOf[CalculatorService]
 

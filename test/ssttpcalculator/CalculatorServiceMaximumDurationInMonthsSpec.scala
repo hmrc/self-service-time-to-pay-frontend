@@ -25,7 +25,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.PlaySpec
 import ssttpcalculator.CalculatorService._
 import timetopaytaxpayer.cor.model._
-import _root_.uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HeaderCarrier
 import testsupport.testdata.TdAll.{communicationPreferences, saUtr}
 
 class CalculatorServiceMaximumDurationInMonthsSpec extends PlaySpec with TableDrivenPropertyChecks {

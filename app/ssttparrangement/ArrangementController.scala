@@ -145,8 +145,8 @@ class ArrangementController @Inject() (
             submission match {
               case _@ Journey(_, InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _, _) =>
                 JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
-                val x = changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth)
-                journeyService.saveJourney(x).map {
+                val updatedJourney = changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth)
+                journeyService.saveJourney(updatedJourney).map {
                   _ => Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
                 }
               case _ =>
@@ -171,8 +171,8 @@ class ArrangementController @Inject() (
 
     val changeRequest = CalculatorService.changeScheduleRequest(durationInMonths, dayOfMonth, schedule.initialPayment, debits)(clockProvider.getClock)
 
-    val x = calculatorService.buildSchedule(changeRequest)
-    journey.copy(maybeSchedule       = Some(x), maybeCalculatorData = Some(changeRequest))
+    val updatedPaymentSchedule = calculatorService.buildSchedule(changeRequest)
+    journey.copy(maybeSchedule       = Some(updatedPaymentSchedule), maybeCalculatorData = Some(changeRequest))
   }
 
   /**

@@ -25,7 +25,7 @@ object ArrangementTd {
     //language=Json
     """{
       "paymentDate": "2019-08-25",
-      "amount": 10000,
+      "amount": 300,
       "interest": 2
     }""".asJson
 
