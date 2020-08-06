@@ -40,8 +40,12 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
   (implicit ec: ExecutionContext) {
 
   import clockProvider._
-  //TODO sort this is used twice
+
   val minimumMonthsAllowedTTP = 2
+  val DebitDueAndCalculationDatesWithinRate = Tuple2(true, true)
+  val DebitDueDateWithinRate = Tuple2(true, false)
+  val CalculationDateWithinRate = Tuple2(false, true)
+  val defaultInitialPaymentDays = 7
 
   def availablePaymentSchedules(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0))
     (implicit request: Request[_]): List[PaymentSchedule] = {
@@ -50,41 +54,19 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
       minimumMonthsAllowedTTP to CalculatorService.maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock))
 
     val debits = sa.debits.map(asDebitInput)
-    //TODO check the correct return type here....
     rangeOfAvailableScheduleDurationsInMonths.map { durationInMonths =>
       buildSchedule(CalculatorService.paymentScheduleRequest(debits, initialPayment, durationInMonths))
     }.toList
   }
 
-  //NEW STUFF STARTS HERE
-  val zero = BigDecimal(0)
-  //TODO sort this is used twice
-
-  val DebitDueAndCalculationDatesWithinRate = Tuple2(true, true)
-  val DebitDueDateWithinRate = Tuple2(true, false)
-  val CalculationDateWithinRate = Tuple2(false, true)
-  val defaultInitialPaymentDays = 7
-
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
-  //still fails so probably not here
   @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
   def buildSchedule(implicit calculation: CalculatorInput): PaymentSchedule = {
     // Builds a seq of seq debits, where each sub seq of debits is built from the different interest rate boundaries a debit crosses
-
-    val debixxx = calculation.debits
-    // val l =
-    //TODO problem is with overallDebits
-    val p = calculation.debits
-    val m = p.filter(_.dueDate.isBefore(calculation.startDate))
-
     val overallDebits: Seq[Seq[Debit]] = calculation.debits.filter(_.dueDate.isBefore(calculation.startDate)).map {
       debit => processDebit(debit)
     }
     // Calculate interest on old debits that have incurred interest up to the point of the current calculation date (today)
-    val x = (for {
-      debit <- overallDebits.map(_.filterNot(_.dueDate.isAfter(calculation.startDate)))
-    } yield calculateHistoricInterest(debit))
-
     val totalHistoricInterest = (for {
       debit <- overallDebits.map(_.filterNot(_.dueDate.isAfter(calculation.startDate)))
     } yield calculateHistoricInterest(debit)).sum
@@ -99,14 +81,9 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
 
     // Total amount of debt without interest
     val amountToPay = calculation.debits.map(_.amount).sum
-    val sum = instalments.map(_.interest).sum
 
     val totalInterest = (instalments.map(_.interest).sum + totalHistoricInterest + initialPaymentInterest).setScale(2, HALF_UP)
-    val mx = instalments.init :+ Instalment(
-      instalments.last.paymentDate,
-      instalments.last.amount + totalInterest,
-      instalments.last.interest
-    )
+
     PaymentSchedule(
       calculation.startDate,
       calculation.endDate,
@@ -122,54 +99,6 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
       )
     )
   }
-  /**
-   * Build a PaymentSchedule, calculated in parts - historic interest (in the past up to start date),
-   * initial payment interest, future interest (start date going forward) and instalments (monthly payments).
-   */
-  def buildScheduleNEW(implicit calculation: CalculatorInput): PaymentSchedule = {
-    // Builds a seq of seq debits, where each sub seq of debits is built from the different interest rate boundaries a debit crosses
-    val overallDebits: Seq[Seq[Debit]] = calculation.debits.filter(_.dueDate.isBefore(calculation.startDate)).map {
-      processDebit
-    }
-
-    // Calculate interest on old debits that have incurred interest up to the point of the current calculation date (today)
-    val totalHistoricInterest = (for {
-      debit <- overallDebits.map(_.filterNot(_.dueDate.isAfter(calculation.startDate)))
-    } yield calculateHistoricInterest(debit)).sum
-
-    // Calculate interest for the first 7 days until the initial payment is actually taken out of the taxpayer's account
-    val initialPaymentInterest = if (calculation.initialPayment > 0)
-      calculateInitialPaymentInterest(calculation.debits.filter(_.dueDate.isBefore(calculation.startDate.plusWeeks(1))))
-    else BigDecimal(0)
-
-    // Calculate the schedule of regular payments on the all debits due before endDate
-    val instalments = calculateStagedPayments
-
-    // Total amount of debt without interest
-    val amountToPay = calculation.debits.map(_.amount).sum
-
-    val totalInterest = (instalments.map(_.interest).sum + totalHistoricInterest + initialPaymentInterest).setScale(2, HALF_UP)
-
-    PaymentSchedule(
-      calculation.startDate,
-      calculation.endDate,
-      calculation.initialPayment,
-      amountToPay,
-      amountToPay - calculation.initialPayment,
-      totalInterest,
-      amountToPay + totalInterest,
-      instalments.dropRight(1) :+ Instalment(
-        //instalments.init :+ Instalment(
-        //TODO maybe change these to throw errors if not present, before it would have done that I suppose although it used to use get so had no ability to handle failure...
-
-        //TODO check the minus years below...
-        instalments.lastOption.fold(LocalDate.now())(y => y.paymentDate.minusYears(1)),
-        //instalments.last.paymentDate,
-        instalments.lastOption.fold(zero)(y => y.amount + totalInterest),
-        instalments.lastOption.fold(zero)(y => y.interest)
-      )
-    )
-  }
 
   /**
    * Calculate instalments including interest charged on each instalment, while taking into account
@@ -180,12 +109,10 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
   @SuppressWarnings(Array("org.wartremover.warts.Var"))
   def calculateStagedPayments(implicit calculation: CalculatorInput): Seq[Instalment] = {
     // Get the dates of each instalment payment
-
     val trueFirstPaymentDate = calculation.firstPaymentDate.getOrElse(calculation.startDate)
     val repayments = durationService.getRepaymentDates(trueFirstPaymentDate, calculation.endDate)
     val numberOfPayments = BigDecimal(repayments.size)
 
-    //This var was already there in CalculatorInput case class ... TODO: refactor it without this var
     var initialPaymentRemaining: BigDecimal = calculation.initialPayment
       def applyInitialPaymentToDebt(debtAmount: BigDecimal): BigDecimal = debtAmount match {
         case amt if amt <= initialPaymentRemaining =>
@@ -219,66 +146,10 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
         ins
       }
     }
-
     // Combine instalments that are on the same day
     repayments.map { x =>
       instalments.filter(_.paymentDate.isEqual(x)).reduce((z, y) => Instalment(z.paymentDate, z.amount + y.amount, z.interest + y.interest))
     }
-  }
-  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
-  def calculateStagedPaymentsNEW(implicit calculation: CalculatorInput): Seq[Instalment] = {
-    // Get the dates of each instalment payment
-
-    val trueFirstPaymentDate = calculation.firstPaymentDate.getOrElse(calculation.startDate)
-    val repayments = durationService.getRepaymentDates(trueFirstPaymentDate, calculation.endDate)
-    val numberOfPayments = BigDecimal(repayments.size)
-
-    //This var was already there in CalculatorInput case class ... TODO: refactor it without this var
-    val initialPaymentRemaining: BigDecimal = calculation.initialPayment
-
-      def applyInitialPaymentToDebt(debtAmount: BigDecimal): BigDecimal = debtAmount match {
-        case amt if amt <= initialPaymentRemaining => 0
-        case amt                                   => amt - initialPaymentRemaining
-      }
-
-    val instalments = calculation.debits.sortBy(_.dueDate).flatMap { debit =>
-      // Check if initial payment has been cleared - if not, then date to calculate interest from is a week later
-      val calculateFrom = if (initialPaymentRemaining > 0)
-        calculation.startDate.plusWeeks(1) else calculation.startDate
-
-      val calculationDate = if (calculateFrom.isBefore(debit.dueDate))
-        debit.dueDate else calculateFrom
-
-      // Subtract the initial payment amount from the debts, beginning with the oldest
-      val principal = applyInitialPaymentToDebt(debit.amount)
-
-      val monthlyCapitalRepayment = (principal / numberOfPayments).setScale(2, HALF_UP)
-
-      val currentInterestRate = interestService.rateOn(calculationDate).rate
-      val currentDailyRate = currentInterestRate / BigDecimal(Year.of(calculationDate.getYear).length()) / BigDecimal(100)
-
-      repayments.map { r =>
-        val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(calculationDate, r.plusDays(1)))
-
-        val interest = monthlyCapitalRepayment * currentDailyRate * daysInterestToCharge
-
-        val ins = Instalment(r, monthlyCapitalRepayment, interest)
-        logger.info(s"Repayment $monthlyCapitalRepayment ($calculationDate - $r) $daysInterestToCharge @ $currentDailyRate = $interest")
-        ins
-      }
-    }
-
-    repayments.map { x =>
-      instalments.filter(_.paymentDate.isEqual(x)).reduce((z, y) => Instalment(z.paymentDate, z.amount + y.amount, z.interest + y.interest))
-    }
-
-    // Combine instalments that are on the same day
-    //repayments.map { x =>
-    //TODO tidy up
-    //instalments.filter(_.paymentDate.isEqual(x)).reduceOption((z, y) => Instalment(z.paymentDate, z.amount + y.amount, z.interest + y.interest))
-    // val y = instalments.filter(_.paymentDate.isEqual(x)).fold(Instalment(LocalDate.now.minusYears(0), zero, zero))((z, y) => Instalment(z.paymentDate, z.amount + y.amount, z.interest + y.interest))
-    //y
-    // }
   }
 
   /**
@@ -290,46 +161,6 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
   def calculateInitialPaymentInterest(debits: Seq[DebitInput])(implicit calculation: CalculatorInput): BigDecimal = {
     val currentInterestRate = interestService.rateOn(calculation.startDate).rate
     val currentDailyRate = currentInterestRate / BigDecimal(Year.of(calculation.startDate.getYear).length()) / BigDecimal(100)
-
-    val sortedDebits: Seq[DebitInput] = debits.sortBy(_.dueDate)
-
-      def processDebits(amount: BigDecimal, debits: Seq[DebitInput]): BigDecimal = {
-        debits match {
-          case debit :: Nil => calculateAmount(amount, debit)._1 * calculateDays(debit) * currentDailyRate
-          case debit :: remaining =>
-            val result = calculateAmount(amount, debit)
-            processDebits(result._2, remaining) + (result._1 * calculateDays(debit) * currentDailyRate)
-          case Nil => 0
-        }
-      }
-
-      def calculateDays(debit: DebitInput): Long = {
-        if (debit.dueDate.isBefore(calculation.startDate))
-          //TODO ciould be here?
-          defaultInitialPaymentDays
-        else
-          durationService.getDaysBetween(debit.dueDate, calculation.startDate.plusWeeks(1))
-      }
-
-      // Return - amount (used in the calculation), remaining downPayment
-      def calculateAmount(amount: BigDecimal, debit: DebitInput): (BigDecimal, BigDecimal) = {
-        if (amount > debit.amount) {
-          (debit.amount, amount - debit.amount)
-        } else {
-          (amount, 0)
-        }
-      }
-
-    val initPaymentInterest = processDebits(calculation.initialPayment, sortedDebits)
-    logger.info(s"InitialPayment Interest: $initPaymentInterest")
-    initPaymentInterest
-  }
-
-  @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
-  def calculateInitialPaymentInterestNEW(debits: Seq[DebitInput])(implicit calculation: CalculatorInput): BigDecimal = {
-    val currentInterestRate = interestService.rateOn(calculation.startDate).rate
-    val currentDailyRate = currentInterestRate / BigDecimal(Year.of(calculation.startDate.getYear).length()) / BigDecimal(100)
-
     val sortedDebits: Seq[DebitInput] = debits.sortBy(_.dueDate)
 
       def processDebits(amount: BigDecimal, debits: Seq[DebitInput]): BigDecimal = {
@@ -368,8 +199,6 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
    * into multiple debits, covering each interest rate.
    */
   private def processDebit(debit: DebitInput)(implicit calculation: CalculatorInput): Seq[Debit] = {
-    val x = interestService.getRatesForPeriod(debit.dueDate,
-                                              calculation.endDate)
     interestService.getRatesForPeriod(
       debit.dueDate,
       calculation.endDate
@@ -408,27 +237,11 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
    * the number of days between two dates is inclusive (count one of the dates) or double
    * inclusive (count both days).
    */
-  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps")) //TODO by the tie it gets here has an additional erroneous debit so problem is before here
+  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
   private def calculateHistoricInterest(debits: Seq[Debit])(implicit calculation: CalculatorInput): BigDecimal = {
     debits.map { debit =>
       val debitRateEndDate = debit.rate.endDate
       val inclusive = if (!(debits.head.equals(debit) | debits.last.equals(debit))) 1 else 0
-      val endDate = historicRateEndDate(debitRateEndDate)
-
-      val numberOfDays = durationService.getDaysBetween(debit.dueDate, endDate) + inclusive
-      val historicRate = debit.historicDailyRate
-      val total = historicRate * debit.amount * numberOfDays
-
-      logger.info(s"Historic interest: rate $historicRate days $numberOfDays amount ${debit.amount} total = $total")
-      logger.info(s"Debit due date: ${debit.dueDate} and end date: $endDate is inclusive: $inclusive")
-      logger.info(s"Debit Rate date: $debitRateEndDate and calculation start date: ${calculation.startDate}")
-      total
-    }.sum
-  }
-  private def calculateHistoricInterestNEW(debits: Seq[Debit])(implicit calculation: CalculatorInput): BigDecimal = {
-    debits.map { debit =>
-      val debitRateEndDate = debit.rate.endDate
-      val inclusive = if (!(debits.headOption.equals(debit) | debits.lastOption.equals(debit))) 1 else 0
       val endDate = historicRateEndDate(debitRateEndDate)
 
       val numberOfDays = durationService.getDaysBetween(debit.dueDate, endDate) + inclusive

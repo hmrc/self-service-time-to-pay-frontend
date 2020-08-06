@@ -21,7 +21,6 @@ import testsupport.JsonSyntax._
 import testsupport.testdata.TdAll._
 
 object ArrangementTd {
-  //TODO delete all this? it doesn't use it for instalments anymore
   private val calculatorPaymentScheduleInstalmentJson =
     //language=Json
     """{

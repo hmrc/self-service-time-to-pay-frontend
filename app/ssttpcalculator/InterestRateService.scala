@@ -87,34 +87,6 @@ class InterestRateService {
     }
   }
 
-  def getRatesForPeriodNEW(startDate: LocalDate, endDate: LocalDate): Seq[InterestRate] = {
-    rates.filter { interestRate =>
-      (interestRate.startDate.compareTo(endDate) <= 0) &&
-        (interestRate.endDate.compareTo(startDate) >= 0)
-    }.sorted.flatMap { rate =>
-      val startYear = rate.startDate.getYear.max(startDate.getYear)
-      val endYear = rate.endDate.getYear.max(endDate.getYear)
-      //      val startYear = Seq(rate.startDate.getYear, startDate.getYear).max
-      //      val endYear = Seq(rate.endDate.getYear, endDate.getYear).min
-
-      Range.inclusive(startYear, endYear).map { year =>
-        val ir = InterestRate(
-          //startDate = Seq(LocalDate.of(year, 1, 1), startDate, rate.startDate).max,
-          startDate = getLatestDate(LocalDate.of(year, 1, 1), startDate, rate.startDate),
-          endDate   = getEarliestDate(LocalDate.of(year, 12, 31), endDate, rate.endDate),
-          //            Seq(
-          //              LocalDate.of(year, 12, 31),
-          //              endDate,
-          //              rate.endDate
-          //            ).min,
-          rate = rate.rate
-        )
-        Logger.info(s"Rate: $ir")
-        ir
-      }
-    }
-  }
-
   def getEarliestDate(dateOne: LocalDate, dateTwo: LocalDate, dateThree: LocalDate): LocalDate = {
     val earliestOfFirstTwoDates = if (dateOne.isBefore(dateTwo)) dateOne else dateTwo
     if (earliestOfFirstTwoDates.isBefore(dateThree)) earliestOfFirstTwoDates else dateThree
