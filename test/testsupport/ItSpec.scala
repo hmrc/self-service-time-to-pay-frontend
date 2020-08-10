@@ -45,7 +45,6 @@ class ItSpec
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-calculator.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
-    "microservice.services.time-to-pay-eligibility.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
     "microservice.services.campaign-manager.port" -> WireMockSupport.port,
     "microservice.services.ia.port" -> WireMockSupport.port,
