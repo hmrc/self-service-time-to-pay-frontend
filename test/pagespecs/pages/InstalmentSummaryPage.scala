@@ -83,55 +83,61 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
         case Welsh   => mainTextWelsh(paymentDayOfMonth)
       }
 
-      private def mainTextEnglish(paymentDayOfMonth: String) =
-        s"""Check your payment plan
-          |Upfront payment taken within 5 days
-          |£0.00
-          |Change Monthly payments
-          |Payments collected on
-          |$paymentDayOfMonth or next working day
-          |Change
-          |Monthly payments
-          |December 2019
-          |£1,633.00
-          |January 2020
-          |£1,633.00
-          |February 2020
-          |1,834.00
-          |including interest of £200.00 added to the final payment
-          |Change Monthly payments
-          |Total to pay
-          |£5,100.00
-          |Continue
-        """.stripMargin
+      private def mainTextEnglish(paymentDayOfMonth: String): String = {
+        val x = if (paymentDayOfMonth.equals("11th")) "14.18" else "21.60"
+        val y = if (paymentDayOfMonth.equals("11th")) "2,464.18" else "2,471.60"
+        val z = if (paymentDayOfMonth.equals("11th")) "4,914.18" else "4,921.60"
 
-      private def mainTextWelsh(paymentDayOfMonth: String) =
-        s"""Gwiriwch fanylion eich amserlen talu
-          |Taliad ymlaen llaw
-          |£0.00
-          |Newid Rhandaliadau misol
-          |Dyddiad casglu rhandaliadau misol
-          |$paymentDayOfMonth neu’r diwrnod gwaith nesaf
-          |Newid
-          |Rhandaliadau misol
-          |December 2019
-          |£1,633.00
-          |January 2020
-          |£1,633.00
-          |February 2020
-          |1,834.00
-          |Wedi’u casglu dros £200.00 o fisoedd
-          |Newid Rhandaliadau misol
-          |Cyfanswm yr ad-daliad
-          |£5,100.00
-          |Yn eich blaen
+        s"""Check your payment plan
+           |Upfront payment taken within 5 days
+           |£0.00
+           |Change Monthly payments
+           |Payments collected on
+           |$paymentDayOfMonth or next working day
+           |Change
+           |Monthly payments
+           |December 2019
+           |£2,450.00
+           |January 2020
+           |£$y
+           |including interest of £$x added to the final payment
+           |Change Monthly payments
+           |Total to pay
+           |£$z
+           |Continue
         """.stripMargin
+      }
+
+      private def mainTextWelsh(paymentDayOfMonth: String): String = {
+        val x = if (paymentDayOfMonth.equals("11th")) "14.18" else "21.60"
+        val y = if (paymentDayOfMonth.equals("11th")) "2,464.18" else "2,471.60"
+        val z = if (paymentDayOfMonth.equals("11th")) "4,914.18" else "4,921.60"
+
+        s"""Gwiriwch fanylion eich amserlen talu
+           |Taliad ymlaen llaw
+           |£0.00
+           |Newid Rhandaliadau misol
+           |Dyddiad casglu rhandaliadau misol
+           |$paymentDayOfMonth neu’r diwrnod gwaith nesaf
+           |Newid
+           |Rhandaliadau misol
+           |December 2019
+           |£2,450.00
+           |January 2020
+           |£$y
+           |Wedi’u casglu dros £$x o fisoedd
+           |Newid Rhandaliadau misol
+           |Cyfanswm yr ad-daliad
+           |£$z
+           |Yn eich blaen
+        """.stripMargin
+      }
     }
   }
 }
 
 class InstalmentSummaryPageForPaymentDayOfMonth27th(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
-  extends InstalmentSummaryPage(baseUrl, "27th")(webDriver)
+  extends InstalmentSummaryPage(baseUrl, "28th")(webDriver)
 
 class InstalmentSummaryPageForPaymentDayOfMonth11th(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
   extends InstalmentSummaryPage(baseUrl, "11th")(webDriver)

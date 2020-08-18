@@ -20,6 +20,7 @@ import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
+import testsupport.testdata.CalculatorDataGenerator
 
 class MonthlyPaymentAmountPageSpec extends ItSpec {
 
@@ -56,7 +57,7 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
     val value = "1"
     beginJourney()
     monthlyPaymentAmountPage.enterAmount(value)
-    CalculatorStub.generateSchedules()
+    CalculatorDataGenerator.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
     monthlyPaymentAmountPage.assertErrorPageIsDisplayed(value)
   }
@@ -64,7 +65,7 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
   "valid entry and continue" in {
     beginJourney()
     monthlyPaymentAmountPage.enterAmount("2450")
-    CalculatorStub.generateSchedules()
+    CalculatorDataGenerator.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.assertPageIsDisplayed
   }

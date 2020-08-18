@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.json.{Json, OFormat}
-import timetopaycalculator.cor.model.PaymentSchedule
+import ssttpcalculator.model.PaymentSchedule
 import timetopaytaxpayer.cor.model.Taxpayer
 
 final case class TTPArrangement(paymentPlanReference: String,

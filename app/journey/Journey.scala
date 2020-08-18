@@ -22,7 +22,7 @@ import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import journey.Statuses.InProgress
 import play.api.libs.json.{Format, Json, OFormat}
-import timetopaycalculator.cor.model.{CalculatorInput, PaymentSchedule}
+import ssttpcalculator.model.{CalculatorInput, PaymentSchedule}
 import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.models._
 

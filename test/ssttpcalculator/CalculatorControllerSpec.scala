@@ -20,12 +20,12 @@ import java.time.LocalDate
 import java.time.Month.APRIL
 import java.time.temporal.ChronoUnit.MONTHS
 
-import model._
+import _root_.model._
 import play.api.test.FakeRequest
 import testsupport.ItSpec
-import testsupport.stubs.CalculatorStub._
 import testsupport.testdata.TdAll.saUtr
-import timetopaycalculator.cor.model.PaymentSchedule
+import testsupport.testdata.CalculatorDataGenerator._
+import ssttpcalculator.model.PaymentSchedule
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, Return, SelfAssessmentDetails}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -46,12 +46,12 @@ class CalculatorControllerSpec extends ItSpec {
   }
 
   trait SetUp {
-    lazy val connector: CalculatorConnector = app.injector.instanceOf[CalculatorConnector]
     lazy val controller: CalculatorController = app.injector.instanceOf[CalculatorController]
+    lazy val service: CalculatorService = app.injector.instanceOf[CalculatorService]
 
     lazy val paymentSchedules: List[PaymentSchedule] = Range(twoMonths, sevenMonths).inclusive.map { duration =>
-      connector.calculatePaymentSchedule(calculatorInput(
-        startDate.plus(duration, MONTHS), 2))(FakeRequest()).futureValue
+      service.buildSchedule(calculatorInput(
+        startDate.plus(duration, MONTHS), 2))
     }.toList
   }
 

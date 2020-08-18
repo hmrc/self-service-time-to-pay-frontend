@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import org.scalatest.{Matchers, WordSpec}
 import testsupport.testdata.TdAll._
-import timetopaycalculator.cor.model.{Instalment, PaymentSchedule}
+import ssttpcalculator.model.{Instalment, PaymentSchedule}
 
 class PaymentScheduleExtSpec extends WordSpec with Matchers {
   private val calculatorPaymentSchedule = new PaymentSchedule(

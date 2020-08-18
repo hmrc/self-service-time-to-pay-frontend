@@ -32,13 +32,12 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttpcalculator.CalculatorConnector
-import ssttpcalculator.CalculatorService.changeScheduleRequest
+import ssttpcalculator.{CalculatorService}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.EligibilityService.checkEligibility
 import ssttpeligibility.IaService
 import times.ClockProvider
-import timetopaycalculator.cor.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
+import ssttpcalculator.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -54,7 +53,7 @@ class ArrangementController @Inject() (
     mcc:                  MessagesControllerComponents,
     ddConnector:          DirectDebitConnector,
     arrangementConnector: ArrangementConnector,
-    calculatorConnector:  CalculatorConnector,
+    calculatorService:    CalculatorService,
     taxPayerConnector:    TaxpayerConnector,
     auditService:         AuditService,
     journeyService:       JourneyService,
@@ -146,11 +145,9 @@ class ArrangementController @Inject() (
             submission match {
               case _@ Journey(_, InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _, _) =>
                 JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
-                changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth).flatMap {
-                  ttpSubmission =>
-                    journeyService.saveJourney(ttpSubmission).map {
-                      _ => Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
-                    }
+                val updatedJourney = changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth)
+                journeyService.saveJourney(updatedJourney).map {
+                  _ => Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
                 }
               case _ =>
                 JourneyLogger.info(s"Problematic Submission, redirecting to ${routes.ArrangementController.determineEligibility()}")
@@ -168,21 +165,14 @@ class ArrangementController @Inject() (
       journey:    Journey,
       schedule:   PaymentSchedule,
       debits:     Seq[DebitInput],
-      dayOfMonth: Int
-  )(implicit request: Request[_]): Future[Journey] = {
+      dayOfMonth: Int)(implicit request: Request[_]): Journey = {
 
     val durationInMonths = schedule.instalments.length
 
-    val changeRequest =
-      changeScheduleRequest(durationInMonths, dayOfMonth, schedule.initialPayment, debits)(clockProvider.getClock)
+    val changeRequest = CalculatorService.changeScheduleRequest(durationInMonths, dayOfMonth, schedule.initialPayment, debits)(clockProvider.getClock)
 
-    calculatorConnector.calculatePaymentSchedule(changeRequest)
-      .map[Journey](paymentSchedule =>
-        journey.copy(
-          maybeSchedule       = Some(paymentSchedule),
-          maybeCalculatorData = Some(changeRequest)
-        )
-      )
+    val updatedPaymentSchedule = calculatorService.buildSchedule(changeRequest)
+    journey.copy(maybeSchedule       = Some(updatedPaymentSchedule), maybeCalculatorData = Some(changeRequest))
   }
 
   /**

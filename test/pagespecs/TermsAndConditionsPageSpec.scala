@@ -20,7 +20,7 @@ import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.{CalculatorDataGenerator, DirectDebitTd}
 
 class TermsAndConditionsPageSpec extends ItSpec {
 
@@ -36,10 +36,8 @@ class TermsAndConditionsPageSpec extends ItSpec {
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
     monthlyPaymentAmountPage.enterAmount("2450")
-    CalculatorStub.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.selectAnOption()
-    CalculatorStub.generateSchedules(paymentDayOfMonth      = 27, firstPaymentDayOfMonth = 28)
     calculatorInstalmentsPage.clickContinue()
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()
