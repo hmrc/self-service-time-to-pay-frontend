@@ -49,11 +49,11 @@ class SaStubConnector @Inject() (
       .POST(setTaxpayerUrl, predefinedResponse)
       .map{
         r =>
-          if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer in SA-STUB: ${tu.utr}")
-          Logger.debug(s"Set up a predefined response in SA-STUB for ${tu.utr}")
+          if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer in PAYMENT-STUBS-PROTECTED: ${tu.utr}")
+          Logger.debug(s"Set up a predefined response in PAYMENT-STUBS-PROTECTED for ${tu.utr}")
       }
   }
 
-  private lazy val baseUrl: String = servicesConfig.baseUrl("sa-services")
+  private lazy val baseUrl: String = servicesConfig.baseUrl("payment-stubs-protected")
 
 }
