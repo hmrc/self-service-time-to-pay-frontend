@@ -49,8 +49,8 @@ class DesStubConnector @Inject() (
       .PATCH(setReturnsUrl, predefinedResponse)
       .map{
         r =>
-          if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's return in DES-STUB: $tu")
-          Logger.debug(s"Set up a predefined return in DES-STUB for $tu")
+          if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's return in PAYMENT-STUBS-PROTECTED: $tu")
+          Logger.debug(s"Set up a predefined return in PAYMENT-STUBS-PROTECTED for $tu")
       }
   }
 
@@ -67,11 +67,11 @@ class DesStubConnector @Inject() (
       .PATCH(setReturnsUrl, predefinedResponse)
       .map{
         r =>
-          if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's debit in DES-STUB: $tu")
-          Logger.debug(s"Set up a predefined debit in DES-STUB for $tu")
+          if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's debit in PAYMENT-STUBS-PROTECTED: $tu")
+          Logger.debug(s"Set up a predefined debit in PAYMENT-STUBS-PROTECTED for $tu")
       }
   }
 
-  private lazy val baseUrl: String = servicesConfig.baseUrl("des-services")
+  private lazy val baseUrl: String = servicesConfig.baseUrl("payment-stubs-protected")
 
 }
