@@ -18,12 +18,23 @@ The following diagram shows the overview of the SSTTP architecture.
 ### Quickstart in local
 - Service manager profile: ```sm --start SSTTP```
 
+- Running from source with test only routes enabled: ```sbt runTestOnly```
+
 - View in the browser
- http://localhost:9063/pay-what-you-owe-in-instalments
+  http://localhost:9063/pay-what-you-owe-in-instalments
 
-- For debug purposes
+- For session debug purposes
   http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector
+  
+### Further information
 
+- [Confluence space](https://confluence.tools.tax.service.gov.uk/display/SSTTP)
+
+- [UI acceptance tests](https://github.com/hmrc/self-service-time-to-pay-acceptance-tests)
+
+- [Performance tests](https://github.com/hmrc/self-service-time-to-pay-performance-tests)
+
+---
 
 ### License
 
