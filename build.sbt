@@ -67,4 +67,14 @@ lazy val microservice = Project(appName, file("."))
       "-Ypartial-unification" //required by cats
     )
   )
+  .settings(
+    commands += Command.command("runTestOnly") { state =>
+      state.globalLogging.full.info("running play using 'testOnlyDoNotUseInAppConf' routes...")
+      s"""set javaOptions += "-Dplay.http.router=testOnlyDoNotUseInAppConf.Routes"""" ::
+        "run" ::
+        s"""set javaOptions -= "-Dplay.http.router=testOnlyDoNotUseInAppConf.Routes"""" ::
+        state
+    }
+  )
+
 val appName = "self-service-time-to-pay-frontend"
