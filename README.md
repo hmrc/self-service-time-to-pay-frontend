@@ -16,15 +16,16 @@ The following diagram shows the overview of the SSTTP architecture.
 </a>
 
 ### Quickstart in local
-- Service manager profile: ```sm --start SSTTP```
-
 - Running from source with test only routes enabled: ```sbt runTestOnly```
 
 - View in the browser
   http://localhost:9063/pay-what-you-owe-in-instalments
 
 - For session debug purposes
-  http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector
+  http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector 
+  
+- Service manager profile: ```sm --start SSTTP```
+- Nb: Running the integration tests locally - i.e. `sbt test`- may require that ASSETS_FRONTEND is not running locally.
   
 ### Further information
 
