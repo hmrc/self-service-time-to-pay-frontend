@@ -23,6 +23,6 @@ object AppDependencies {
     "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
     "com.softwaremill.macwire" %% "macros" % "2.3.7" % "test",
     "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
-    "org.seleniumhq.selenium" % "htmlunit-driver" % "2.43.1" % "test"
+    "org.seleniumhq.selenium" % "htmlunit-driver" % "2.36.0" % "test"
   )
 }
