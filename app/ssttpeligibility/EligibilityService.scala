@@ -18,7 +18,10 @@ package ssttpeligibility
 
 import java.time.{LocalDate, MonthDay}
 
+import javax.inject.Inject
+import play.api.Configuration
 import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 /**
@@ -29,12 +32,25 @@ import uk.gov.hmrc.selfservicetimetopay.models._
  * Charge - any money owed that less than 30 days overdue
  * Liability - any money that is not yet due
  */
-object EligibilityService {
-  val insignificantDebtUpperLimit = 32
-  val maximumDebtForSelfServe = 10000
-  val numberOfDaysAfterDueDateForDebtToBeConsideredOld = 60
-  val returnHistoryYearsRequired = 4
-  val taxYearEndDay: MonthDay = MonthDay.of(4, 5)
+class EligibilityService(val insignificantDebtUpperLimit:                      Int,
+                         val maximumDebtForSelfServe:                          Int,
+                         val numberOfDaysAfterDueDateForDebtToBeConsideredOld: Int,
+                         val returnHistoryYearsRequired:                       Int,
+                         val taxYearEndMonthOfYear:                            Int,
+                         val taxYearEndDayOfMonth:                             Int) {
+  @Inject
+  def this(servicesConfig: ServicesConfig) = {
+    this(
+      insignificantDebtUpperLimit                      = servicesConfig.getInt("eligibility.insignificantDebtUpperLimit"),
+      maximumDebtForSelfServe                          = servicesConfig.getInt("eligibility.maximumDebtForSelfServe"),
+      numberOfDaysAfterDueDateForDebtToBeConsideredOld = servicesConfig.getInt("eligibility.numberOfDaysAfterDueDateForDebtToBeConsideredOld"),
+      returnHistoryYearsRequired                       = servicesConfig.getInt("eligibility.returnHistoryYearsRequired"),
+      taxYearEndMonthOfYear                            = servicesConfig.getInt("eligibility.taxYearEndMonthOfYear"),
+      taxYearEndDayOfMonth                             = servicesConfig.getInt("eligibility.taxYearEndDayOfMonth")
+    )
+  }
+
+  val taxYearEndDay: MonthDay = MonthDay.of(taxYearEndMonthOfYear, taxYearEndDayOfMonth)
 
   def checkEligibility(dateOfEligibilityCheck: LocalDate, taxpayer: Taxpayer, directDebits: DirectDebitInstructions, onIa: Boolean): EligibilityStatus = {
     val selfAssessmentDetails: SelfAssessmentDetails = taxpayer.selfAssessment

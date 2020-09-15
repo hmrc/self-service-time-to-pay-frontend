@@ -18,14 +18,13 @@ package eligibility
 
 import java.time.LocalDate
 
-import org.scalatest.{Matchers, WordSpecLike}
-import ssttpeligibility.EligibilityService.checkEligibility
-import testsupport.DateSupport
+import ssttpeligibility.EligibilityService
+import testsupport.{DateSupport, ItSpec}
 import timetopaytaxpayer.cor.model._
 import uk.gov.hmrc.selfservicetimetopay.models.EligibilityStatus.Eligible
 import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitInstruction, _}
 
-class EligibilityServiceSpec extends WordSpecLike with Matchers with DateSupport {
+class EligibilityServiceSpec extends ItSpec with DateSupport {
   private val today = LocalDate.parse("2020-03-30")
   private val yesterday = today.minusDays(1)
   private val tomorrow = today.plusDays(1)
@@ -62,8 +61,10 @@ class EligibilityServiceSpec extends WordSpecLike with Matchers with DateSupport
   private val oldDebtThatIsTooHigh = acceptableOldDebt.copy(amount = significantDebtAmount + onePence)
   private val noDebts = Seq.empty[Debit]
 
-  "checkEligibility" should {
-    "return eligible" when {
+  private lazy val eligibilityService: EligibilityService = app.injector.instanceOf[EligibilityService]
+
+  "checkEligibility should" - {
+    "return eligible when" - {
       "all criteria are met" in {
         eligibility() shouldBe Eligible
       }
@@ -105,7 +106,7 @@ class EligibilityServiceSpec extends WordSpecLike with Matchers with DateSupport
       }
     }
 
-    "return ineligible" when {
+    "return ineligible when" - {
       "an otherwise eligible user is not on IA" in {
         eligibility(onIa = false) shouldBe EligibilityStatus(Seq(IsNotOnIa))
       }
@@ -167,8 +168,9 @@ class EligibilityServiceSpec extends WordSpecLike with Matchers with DateSupport
   private def eligibility(debits:       Seq[Debit]              = Seq(eligibleDebit),
                           returns:      Seq[Return]             = filedReturns,
                           directDebits: DirectDebitInstructions = directDebitInstructions(Seq(eligibleDirectDebitInstruction)),
-                          onIa:         Boolean                 = true) =
-    checkEligibility(today, taxpayer(debits, returns), directDebits, onIa)
+                          onIa:         Boolean                 = true) = {
+    eligibilityService.checkEligibility(today, taxpayer(debits, returns), directDebits, onIa)
+  }
 
   private def debit(amount: Double) = Debit(
     amount     = amount,

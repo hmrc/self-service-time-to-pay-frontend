@@ -32,10 +32,9 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttpcalculator.{CalculatorService}
+import ssttpcalculator.CalculatorService
 import ssttpdirectdebit.DirectDebitConnector
-import ssttpeligibility.EligibilityService.checkEligibility
-import ssttpeligibility.IaService
+import ssttpeligibility.{EligibilityService, IaService}
 import times.ClockProvider
 import ssttpcalculator.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
@@ -54,6 +53,7 @@ class ArrangementController @Inject() (
     ddConnector:          DirectDebitConnector,
     arrangementConnector: ArrangementConnector,
     calculatorService:    CalculatorService,
+    eligibilityService:   EligibilityService,
     taxPayerConnector:    TaxpayerConnector,
     auditService:         AuditService,
     journeyService:       JourneyService,
@@ -188,7 +188,7 @@ class ArrangementController @Inject() (
     for {
       onIa <- iaService.checkIaUtr(utr.value)
       directDebits <- directDebitConnector.getBanks(utr)
-      eligibilityStatus = checkEligibility(clockProvider.nowDate, taxpayer, directDebits, onIa)
+      eligibilityStatus = eligibilityService.checkEligibility(clockProvider.nowDate, taxpayer, directDebits, onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
     } yield {

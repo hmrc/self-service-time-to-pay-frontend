@@ -16,20 +16,35 @@ The following diagram shows the overview of the SSTTP architecture.
 </a>
 
 ### Quickstart in local
-- Running from source with test only routes enabled: ```sbt runTestOnly```
 
-- View in the browser
-  http://localhost:9063/pay-what-you-owe-in-instalments
+#### Running
+From source use ```sbt runTestOnly```
 
-- For session debug purposes
-  http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector 
-  
-- Service manager profile: ```sm --start SSTTP```
-- Nb: Running the integration tests locally - i.e. `sbt test`- may require that ASSETS_FRONTEND is not running locally.
+From service manager profile use ```sm --start SSTTP -r```
+
+#### For session debug purposes and test journey helpers
+http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector 
+
+#### For first page (logged out)
+http://localhost:9063/pay-what-you-owe-in-instalments
+
+#### For starting with a logged in eligible user  
+
+- First go to http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector
+- Choose 'create user and log in' link
+- Accept default 'Frozen Date' so this is in alignment with the default test data in the stubs for the happy path where the customer is eligible.
+- Click 'create user and log in' button
+- Go to the first page at http://localhost:9063/pay-what-you-owe-in-instalments 
+- Clicking the 'Start now' button will now take you to http://localhost:9063/pay-what-you-owe-in-instalments/calculator/tax-liabilities as if you were an eligible taxpayer
+
+#### Note about integration tests
+
+Nb: Running the integration tests locally - i.e. `sbt test`- may require that ASSETS_FRONTEND is not running locally.
   
 ### Further information
 
 - [Confluence space](https://confluence.tools.tax.service.gov.uk/display/SSTTP)
+- [Test data and environment details](https://confluence.tools.tax.service.gov.uk/display/SSTTP/Testing+-+Development+environment+test+data)
 
 - [UI acceptance tests](https://github.com/hmrc/self-service-time-to-pay-acceptance-tests)
 
