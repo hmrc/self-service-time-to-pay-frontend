@@ -18,7 +18,10 @@ package ssttpeligibility
 
 import java.time.{LocalDate, MonthDay}
 
+import javax.inject.Inject
+import play.api.Configuration
 import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 /**
@@ -29,12 +32,8 @@ import uk.gov.hmrc.selfservicetimetopay.models._
  * Charge - any money owed that less than 30 days overdue
  * Liability - any money that is not yet due
  */
-object EligibilityService {
-  val insignificantDebtUpperLimit = 32
-  val maximumDebtForSelfServe = 10000
-  val numberOfDaysAfterDueDateForDebtToBeConsideredOld = 60
-  val returnHistoryYearsRequired = 4
-  val taxYearEndDay: MonthDay = MonthDay.of(4, 5)
+class EligibilityService @Inject() (config: EligibilityServiceConfig) {
+  val taxYearEndDay: MonthDay = MonthDay.of(config.taxYearEndMonthOfYear, config.taxYearEndDayOfMonth)
 
   def checkEligibility(dateOfEligibilityCheck: LocalDate, taxpayer: Taxpayer, directDebits: DirectDebitInstructions, onIa: Boolean): EligibilityStatus = {
     val selfAssessmentDetails: SelfAssessmentDetails = taxpayer.selfAssessment
@@ -59,7 +58,7 @@ object EligibilityService {
     val currentTaxYearEndDate: LocalDate = taxYearEndDateForCalendarYear(today)
     //This is a bit complex but basically it just looks at the last *returnHistoryYearsRequired* years of tax returns
     //and checks to see if they have all been filed
-    (0 to returnHistoryYearsRequired).reverse
+    (0 to config.returnHistoryYearsRequired).reverse
       .map(currentTaxYearEndDate.getYear - _)
       .map(year => returnDateForCalendarYear(year))
       .flatMap(returnDateForYear => checkReturn(returnDateForYear, returns, today)).toList
@@ -84,7 +83,7 @@ object EligibilityService {
   // Liability - any money that is not yet due
   private def checkDebits(debits: Seq[Debit], today: LocalDate): List[Reason] = {
     val chargeStartDay: LocalDate = today.minusDays(1)
-    val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(numberOfDaysAfterDueDateForDebtToBeConsideredOld)
+    val dateBeforeWhichDebtIsConsideredOld: LocalDate = today.minusDays(config.numberOfDaysAfterDueDateForDebtToBeConsideredOld)
 
     val (liabilities, chargesAndDebts) = debits.partition(_.dueDate.isAfter(chargeStartDay))
     val debt = chargesAndDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
@@ -101,13 +100,13 @@ object EligibilityService {
     checkIfOldDebtIsTooHigh(totalDebt) ++ checkIfDebtIsInsignificant(totalOwed) ++ checkIfTotalDebtIsTooHigh(totalOwed)
 
   private def checkIfOldDebtIsTooHigh(totalDebt: Double) =
-    if (totalDebt > insignificantDebtUpperLimit) List(OldDebtIsTooHigh) else Nil
+    if (totalDebt > config.insignificantDebtUpperLimit) List(OldDebtIsTooHigh) else Nil
 
   private def checkIfDebtIsInsignificant(totalOwed: Double) =
-    if (totalOwed < insignificantDebtUpperLimit) List(DebtIsInsignificant) else Nil
+    if (totalOwed < config.insignificantDebtUpperLimit) List(DebtIsInsignificant) else Nil
 
   private def checkIfTotalDebtIsTooHigh(totalOwed: Double) =
-    if (totalOwed >= maximumDebtForSelfServe) List(TotalDebtIsTooHigh) else Nil
+    if (totalOwed >= config.maximumDebtForSelfServe) List(TotalDebtIsTooHigh) else Nil
 
   private def getTotalForDebit(debit: Debit) =
     (debit.interest.map(i => i.amount).getOrElse(BigDecimal(0)) + debit.amount).doubleValue()

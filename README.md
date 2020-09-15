@@ -12,30 +12,45 @@ The following diagram shows the overview of the SSTTP architecture.
 <a href="https://github.com/hmrc/self-service-time-to-pay-frontend">
     <p align="center">
       <img src="https://raw.githubusercontent.com/hmrc/self-service-time-to-pay-frontend/master/public/ServiceOverview.png" alt="ServiceOverview">
-    </p>/*
- * Copyright 2020 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License. 
- */
-
+    </p>
 </a>
 
-1. View in the browser
- http://localhost:9063/pay-what-you-owe-in-instalments
+### Quickstart in local
 
-1. For debug purposes
-  http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector
+#### Running
+From source use ```sbt runTestOnly```
 
+From service manager profile use ```sm --start SSTTP -r```
+
+#### For session debug purposes and test journey helpers
+http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector 
+
+#### For first page (logged out)
+http://localhost:9063/pay-what-you-owe-in-instalments
+
+#### For starting with a logged in eligible user  
+
+- First go to http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector
+- Choose 'create user and log in' link
+- Accept default 'Frozen Date' so this is in alignment with the default test data in the stubs for the happy path where the customer is eligible.
+- Click 'create user and log in' button
+- Go to the first page at http://localhost:9063/pay-what-you-owe-in-instalments 
+- Clicking the 'Start now' button will now take you to http://localhost:9063/pay-what-you-owe-in-instalments/calculator/tax-liabilities as if you were an eligible taxpayer
+
+#### Note about integration tests
+
+Nb: Running the integration tests locally - i.e. `sbt test`- may require that ASSETS_FRONTEND is not running locally.
+  
+### Further information
+
+- [Confluence space](https://confluence.tools.tax.service.gov.uk/display/SSTTP)
+- [Test data and environment details](https://confluence.tools.tax.service.gov.uk/display/SSTTP/Testing+-+Development+environment+test+data)
+
+- [UI acceptance tests](https://github.com/hmrc/self-service-time-to-pay-acceptance-tests)
+
+- [Performance tests](https://github.com/hmrc/self-service-time-to-pay-performance-tests)
+
+---
 
 ### License
 
