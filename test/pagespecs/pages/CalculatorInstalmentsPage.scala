@@ -34,9 +34,6 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
     val content = readMain().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
-    println(s"\n\nExpected.MainText().stripSpaces().split(\\n) is:\n${Expected.MainText().stripSpaces()}\n\n")
-    println(s"\n\nContent is:\n$content\n\n")
-
     Expected.MainText().stripSpaces().split("\n").foreach { expectedLine =>
       withClue(s"The page content should include '$expectedLine'"){
         content should include(expectedLine)
