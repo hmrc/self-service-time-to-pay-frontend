@@ -19,7 +19,8 @@
 
 @this(
   main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  viewsHelpers: views.ViewsHelpers,
+  eligibilityConfig: ssttpeligibility.EligibilityServiceConfig
 )
 
 
@@ -45,7 +46,11 @@
     <h2 class="heading-medium">@Messages("ssttp.landing.before-you-start")</h2>
     <p>@Messages("ssttp.landing.before-you-start.p.1")</p>
     <p class="subsection">
-        @message_list(Some("bullets"), "ssttp.landing.before-you-start.list.", messagesApi)
+        <ul class = "bullets">
+            <li>@Messages("ssttp.landing.before-you-start.list.1",eligibilityConfig.maximumDebtForSelfServe)</li>
+            <li>@Messages("ssttp.landing.before-you-start.list.2")</li>
+            <li>@Messages("ssttp.landing.before-you-start.list.3")</li>
+        </ul>
     </p>
     @viewsHelpers.form(ssttpeligibility.routes.SelfServiceTimeToPayController.submit(), 'class -> "group",'id -> "start") {
        @submit('_buttonClass -> "button--get-started"){@Messages("ssttp.landing.start-button.label")}
