@@ -16,7 +16,6 @@
 
 package audit
 
-import java.time.chrono.ChronoLocalDate
 import java.time.temporal.ChronoUnit
 
 import javax.inject.{Inject, Singleton}
@@ -60,15 +59,14 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
           "accountNumber" -> journey.bankDetails.accountNumber,
           "sortCode" -> journey.bankDetails.sortCode
         ),
-        "installments" -> Json.obj(
+        "schedule" -> Json.obj(
           "initialPaymentAmount" -> journey.schedule.initialPayment,
-          "installment" -> journey.schedule.instalments.getClass.toString,
+          "installments" -> Json.toJson(journey.schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
           "numberOfInstallments" -> journey.schedule.instalments.length,
-          "installmentLengthCalendarDays" -> ChronoUnit.DAYS.between(journey.schedule.startDate, journey.schedule.endDate),
-          "installmentPaymentAmount" -> (journey.schedule.amountToPay-journey.schedule.initialPayment),
-          "balancingPaymentAmount" -> journey.schedule.instalmentBalance,
-          "interestTotal" -> journey.schedule.totalInterestCharged,
-          "total" -> journey.schedule.totalPayable)
+          "installmentLengthCalendarDays" -> (ChronoUnit.DAYS.between(journey.schedule.startDate, journey.schedule.endDate) + 1),
+          "totalPaymentWithoutInterest" -> journey.schedule.amountToPay,
+          "totalInterestCharged" -> journey.schedule.totalInterestCharged,
+          "totalPayable" -> journey.schedule.totalPayable)
       )
     )
 }
