@@ -16,6 +16,8 @@
 
 package audit
 
+import java.time.temporal.ChronoUnit
+
 import javax.inject.{Inject, Singleton}
 import journey.Journey
 import play.api.Logger
@@ -57,10 +59,14 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
           "accountNumber" -> journey.bankDetails.accountNumber,
           "sortCode" -> journey.bankDetails.sortCode
         ),
-        "installments" -> Json.obj(
-          "installment" -> journey.schedule.instalments.getClass.toString,
-          "interestTotal" -> journey.schedule.totalInterestCharged,
-          "total" -> journey.schedule.totalPayable)
+        "schedule" -> Json.obj(
+          "initialPaymentAmount" -> journey.schedule.initialPayment,
+          "installments" -> Json.toJson(journey.schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
+          "numberOfInstallments" -> journey.schedule.instalments.length,
+          "installmentLengthCalendarMonths" -> (ChronoUnit.MONTHS.between(journey.schedule.startDate, journey.schedule.endDate)),
+          "totalPaymentWithoutInterest" -> journey.schedule.amountToPay,
+          "totalInterestCharged" -> journey.schedule.totalInterestCharged,
+          "totalPayable" -> journey.schedule.totalPayable)
       )
     )
 }
