@@ -63,7 +63,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
           "initialPaymentAmount" -> journey.schedule.initialPayment,
           "installments" -> Json.toJson(journey.schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
           "numberOfInstallments" -> journey.schedule.instalments.length,
-          "installmentLengthCalendarDays" -> (ChronoUnit.DAYS.between(journey.schedule.startDate, journey.schedule.endDate) + 1),
+          "installmentLengthCalendarMonths" -> (ChronoUnit.MONTHS.between(journey.schedule.startDate, journey.schedule.endDate)),
           "totalPaymentWithoutInterest" -> journey.schedule.amountToPay,
           "totalInterestCharged" -> journey.schedule.totalInterestCharged,
           "totalPayable" -> journey.schedule.totalPayable)
