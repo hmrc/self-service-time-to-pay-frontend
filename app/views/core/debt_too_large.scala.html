@@ -16,7 +16,8 @@
 
 @this(
   main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  viewsHelpers: views.ViewsHelpers,
+  eligibilityConfig: ssttpeligibility.EligibilityServiceConfig
 )
 
 @(
@@ -29,24 +30,24 @@
 
 
 @main(
-    title = Messages("ssttp.over-ten-thosand.h1"),
+    title = Messages("ssttp.debt-too-large.h1"),
     loggedIn = signedIn
 ) {
-    <h1 class="heading-xlarge">@Messages("ssttp.over-ten-thosand.h1")</h1>
-    <p>@Messages("ssttp.over-ten-thosand.p1")</p>
-    <p>@Messages("ssttp.over-ten-thosand.p2") <strong class ="bold">@Messages("ssttp.over-ten-thosand.p2.number")</strong></p>
-    <h3>@Messages("ssttp.over-ten-thosand.before.you.call.h1")</h3>
+    <h1 class="heading-xlarge">@Messages("ssttp.debt-too-large.h1")</h1>
+    <p>@Messages("ssttp.debt-too-large.p1", eligibilityConfig.maximumDebtForSelfServe )</p>
+    <p>@Messages("ssttp.debt-too-large.p2") <strong class ="bold">@Messages("ssttp.debt-too-large.p2.number")</strong></p>
+    <h3>@Messages("ssttp.debt-too-large.before.you.call.h1")</h3>
     <ul class="bullets">
-        <li>@Messages("ssttp.over-ten-thosand.before.you.call.l1")</li>
-        <li>@Messages("ssttp.over-ten-thosand.before.you.call.l2")</li>
+        <li>@Messages("ssttp.debt-too-large.before.you.call.l1")</li>
+        <li>@Messages("ssttp.debt-too-large.before.you.call.l2")</li>
     </ul>
-    <h3>@Messages("ssttp.over-ten-thosand.likely.to.ask.h1")</h3>
+    <h3>@Messages("ssttp.debt-too-large.likely.to.ask.h1")</h3>
     <ul class="bullets">
-        <li>@Messages("ssttp.over-ten-thosand.likely.to.ask.l1")</li>
-        <li>@Messages("ssttp.over-ten-thosand.likely.to.ask.l2")</li>
+        <li>@Messages("ssttp.debt-too-large.likely.to.ask.l1")</li>
+        <li>@Messages("ssttp.debt-too-large.likely.to.ask.l2")</li>
     </ul>
-    <h3>@Messages("ssttp.over-ten-thosand.opening.hours.h1")</h3>
+    <h3>@Messages("ssttp.debt-too-large.opening.hours.h1")</h3>
     <ul class="bullets">
-        <li>@Messages("ssttp.over-ten-thosand.opening.hours.l1")</li>
+        <li>@Messages("ssttp.debt-too-large.opening.hours.l1")</li>
     </ul>
 }
