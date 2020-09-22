@@ -301,19 +301,19 @@ ssttp.please-call-us.p2-part1 = Rydym yn argymell eich bod yn siarad ag ymgyngho
 ssttp.please-call-us.p2.phone-number = 0300 200 1900
 ssttp.please-call-us.p2-part2 = yng Ngwasanaeth Cwsmeriaid Cymraeg CThEM i drafod eich opsiynau talu.
 
-ssttp.debit-too-large.h1 = Ffoniwch ni
-ssttp.debit-too-large.p1 = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £{0} neu lai.
-ssttp.debit-too-large.p2 = Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar
-ssttp.debit-too-large.p2.number = 0300 200 1900.
-ssttp.debit-too-large.before.you.call.h1 = Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
-ssttp.debit-too-large.before.you.call.l1 = gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
-ssttp.debit-too-large.before.you.call.l2 = eich manylion banc
-ssttp.debit-too-large.likely.to.ask.h1 = Rydym yn debygol o ofyn:
-ssttp.debit-too-large.likely.to.ask.l1 = beth rydych wedi’i wneud i geisio talu’r bil
-ssttp.debit-too-large.likely.to.ask.l2 = a allwch dalu rhywfaint o’r bil nawr
-ssttp.debit-too-large.opening.hours.h1 = Ein horiau agor yw:
-ssttp.debit-too-large.opening.hours.l1 = Dydd Llun i ddydd Gwener: 08:30 – 16:00
-ssttp.debit-too-large.opening.hours.l2 =
+ssttp.debt-too-large.h1 = Ffoniwch ni
+ssttp.debt-too-large.p1 = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £{0} neu lai.
+ssttp.debt-too-large.p2 = Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar
+ssttp.debt-too-large.p2.number = 0300 200 1900.
+ssttp.debt-too-large.before.you.call.h1 = Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
+ssttp.debt-too-large.before.you.call.l1 = gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
+ssttp.debt-too-large.before.you.call.l2 = eich manylion banc
+ssttp.debt-too-large.likely.to.ask.h1 = Rydym yn debygol o ofyn:
+ssttp.debt-too-large.likely.to.ask.l1 = beth rydych wedi’i wneud i geisio talu’r bil
+ssttp.debt-too-large.likely.to.ask.l2 = a allwch dalu rhywfaint o’r bil nawr
+ssttp.debt-too-large.opening.hours.h1 = Ein horiau agor yw:
+ssttp.debt-too-large.opening.hours.l1 = Dydd Llun i ddydd Gwener: 08:30 – 16:00
+ssttp.debt-too-large.opening.hours.l2 =
 
 error.required = Mae''r maes hwn yn ofynnol
 
