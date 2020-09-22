@@ -302,7 +302,7 @@ ssttp.please-call-us.p2.phone-number = 0300 200 1900
 ssttp.please-call-us.p2-part2 = yng Ngwasanaeth Cwsmeriaid Cymraeg CThEM i drafod eich opsiynau talu.
 
 ssttp.over-ten-thosand.h1 = Ffoniwch ni
-ssttp.over-ten-thosand.p1 = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £10,000 neu lai.
+ssttp.over-ten-thosand.p1 = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £{0} neu lai.
 ssttp.over-ten-thosand.p2 = Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar
 ssttp.over-ten-thosand.p2.number = 0300 200 1900.
 ssttp.over-ten-thosand.before.you.call.h1 = Cyn i chi ffonio, sicrhewch fod gennych y canlynol:

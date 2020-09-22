@@ -16,7 +16,8 @@
 
 @this(
   main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  viewsHelpers: views.ViewsHelpers,
+  eligibilityConfig: ssttpeligibility.EligibilityServiceConfig
 )
 
 @(
@@ -33,7 +34,7 @@
     loggedIn = signedIn
 ) {
     <h1 class="heading-xlarge">@Messages("ssttp.over-ten-thosand.h1")</h1>
-    <p>@Messages("ssttp.over-ten-thosand.p1")</p>
+    <p>@Messages("ssttp.over-ten-thosand.p1", eligibilityConfig.maximumDebtForSelfServe )</p>
     <p>@Messages("ssttp.over-ten-thosand.p2") <strong class ="bold">@Messages("ssttp.over-ten-thosand.p2.number")</strong></p>
     <h3>@Messages("ssttp.over-ten-thosand.before.you.call.h1")</h3>
     <ul class="bullets">
