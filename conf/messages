@@ -358,7 +358,7 @@ ssttp.please-call-us.p2-part2 = at the Business Support Service to talk about yo
 ssttp.please-call-us.p2.phone-number = 0300 200 3835
 
 ssttp.debt-too-large.h1 = Please call us
-ssttp.debt-too-large.p1 = To be eligible to set up a payment plan online the tax you owe must be £{} or less.
+ssttp.debt-too-large.p1 = To be eligible to set up a payment plan online the tax you owe must be £{0} or less.
 ssttp.debt-too-large.p2 = For further support you can contact the Business Support Service and speak to an adviser on
 ssttp.debt-too-large.p2.number = 0300 200 3835.
 ssttp.debt-too-large.before.you.call.h1 = Before you call, make sure you have:
