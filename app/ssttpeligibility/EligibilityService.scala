@@ -106,7 +106,7 @@ class EligibilityService @Inject() (config: EligibilityServiceConfig) {
     if (totalOwed < config.insignificantDebtUpperLimit) List(DebtIsInsignificant) else Nil
 
   private def checkIfTotalDebtIsTooHigh(totalOwed: Double) =
-    if (totalOwed >= config.maximumDebtForSelfServe) List(TotalDebtIsTooHigh) else Nil
+    if (totalOwed > config.maximumDebtForSelfServe) List(TotalDebtIsTooHigh) else Nil
 
   private def getTotalForDebit(debit: Debit) =
     (debit.interest.map(i => i.amount).getOrElse(BigDecimal(0)) + debit.amount).doubleValue()
