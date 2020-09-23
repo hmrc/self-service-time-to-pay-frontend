@@ -93,7 +93,9 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
       }
 
       "the user has total debt which is not too high" in {
-        eligibility(debits = Seq(debit(amount = debtLimit - onePence))) shouldBe Eligible
+        eligibility(debits = Seq(debit(amount = debtLimit))) shouldBe Eligible
+        eligibility(debits = Seq(debit(amount = debtLimit - onePence), debit(amount = onePence))) shouldBe Eligible
+        eligibility(debits = Seq(debitWithInterest(amount   = debtLimit - onePence, interest = onePence))) shouldBe Eligible
       }
 
       "the user has filed all due of filed tax returns" in {
@@ -141,13 +143,14 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
         eligibility(debits = Seq(oldDebtThatIsTooHigh)) shouldBe EligibilityStatus(Seq(OldDebtIsTooHigh))
       }
 
-      "an otherwise eligible user has total debt which is too high" in {
-        val totalDebtTooHigh: EligibilityStatus = EligibilityStatus(Seq(TotalDebtIsTooHigh))
+      "an otherwise eligible user has a debt that is too high" in
+        {
+          val totalDebtTooHigh: EligibilityStatus = EligibilityStatus(Seq(TotalDebtIsTooHigh))
 
-        eligibility(debits = Seq(debit(amount = debtLimit))) shouldBe totalDebtTooHigh
-        eligibility(debits = Seq(debit(amount = debtLimit - onePence), debit(amount = onePence))) shouldBe totalDebtTooHigh
-        eligibility(debits = Seq(debitWithInterest(amount   = debtLimit - onePence, interest = onePence))) shouldBe totalDebtTooHigh
-      }
+          eligibility(debits = Seq(debit(amount = debtLimit +1))) shouldBe totalDebtTooHigh
+          eligibility(debits = Seq(debitWithInterest(amount   = debtLimit, interest = onePence))) shouldBe totalDebtTooHigh
+          eligibility(debits = Seq(debit(amount = debtLimit), debit(amount = onePence))) shouldBe totalDebtTooHigh
+        }
 
       "an otherwise eligible user has tax returns that are overdue" in {
         eligibility(returns = missingReturns) shouldBe EligibilityStatus(Seq(ReturnNeedsSubmitting))
