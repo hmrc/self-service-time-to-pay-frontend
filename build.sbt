@@ -69,10 +69,10 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(
     commands += Command.command("runTestOnly") { state =>
-      state.globalLogging.full.info("running play using 'testOnlyDoNotUseInAppConf' routes...")
-      s"""set javaOptions += "-Dplay.http.router=testOnlyDoNotUseInAppConf.Routes"""" ::
+      state.globalLogging.full.info("running play using 'testOnlyDoNotUseInProd' routes...")
+      s"""set javaOptions += "-Dplay.http.router=testOnlyDoNotUseInProd.Routes"""" ::
         "run" ::
-        s"""set javaOptions -= "-Dplay.http.router=testOnlyDoNotUseInAppConf.Routes"""" ::
+        s"""set javaOptions -= "-Dplay.http.router=testOnlyDoNotUseInProd.Routes"""" ::
         state
     }
   )
