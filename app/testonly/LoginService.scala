@@ -35,34 +35,25 @@ class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
   (implicit ec: ExecutionContext) {
 
   def logIn(tu: TestUser)(implicit request: Request[_]): Future[Session] = for {
-    (at, au, gt) <- callAuthLoginApi(tu)
-  } yield buildSession(au, at, gt, tu)
+    at <- callAuthLoginApi(tu)
+  } yield buildSession(at)
 
-  private def buildSession(authorityUri: AuthorityUri, authToken: AuthToken, gatewayToken: GatewayToken, user: TestUser)
+  private def buildSession(authToken: AuthToken)
     (implicit request: Request[_]) =
     Session(Map(
       SessionKeys.sessionId -> s"session-$randomUUID",
-      SessionKeys.userId -> authorityUri.v,
       SessionKeys.authToken -> authToken.v,
       SessionKeys.lastRequestTimestamp -> clockProvider.getClock.millis().toString))
 
   private lazy val authLoginApiUrl = servicesConfig.baseUrl("auth-login-api")
 
-  private def callAuthLoginApi(tu: TestUser): Future[(AuthToken, AuthorityUri, GatewayToken)] = {
+  private def callAuthLoginApi(tu: TestUser): Future[AuthToken] = {
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val requestBody = loginJson(tu)
     httpClient.POST(s"$authLoginApiUrl/government-gateway/session/login", requestBody).map(r =>
-      (
-        AuthToken(
-          r.header(HeaderNames.AUTHORIZATION).getOrElse(throw new RuntimeException(s"missing 'AUTHORIZATION' header: $r"))
-        ),
-          AuthorityUri(
-            r.header(HeaderNames.LOCATION).getOrElse(throw new RuntimeException(s"missing 'LOCATION' header: $r"))
-          ),
-            GatewayToken(
-              (r.json \ "gatewayToken").asOpt[String].getOrElse(throw new RuntimeException(s"missing 'gatewayToken': ${r.body}"))
-            )
+      AuthToken(
+        r.header(HeaderNames.AUTHORIZATION).getOrElse(throw new RuntimeException(s"missing 'AUTHORIZATION' header: $r"))
       )
     )
   }
