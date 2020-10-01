@@ -147,7 +147,7 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
         {
           val totalDebtTooHigh: EligibilityStatus = EligibilityStatus(Seq(TotalDebtIsTooHigh))
 
-          eligibility(debits = Seq(debit(amount = debtLimit +1))) shouldBe totalDebtTooHigh
+          eligibility(debits = Seq(debit(amount = debtLimit + 1))) shouldBe totalDebtTooHigh
           eligibility(debits = Seq(debitWithInterest(amount   = debtLimit, interest = onePence))) shouldBe totalDebtTooHigh
           eligibility(debits = Seq(debit(amount = debtLimit), debit(amount = onePence))) shouldBe totalDebtTooHigh
         }
