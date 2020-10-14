@@ -142,7 +142,6 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
         val interest = monthlyCapitalRepayment * currentDailyRate * daysInterestToCharge
 
         val ins = Instalment(r, monthlyCapitalRepayment, interest)
-        logger.info(s"Repayment $monthlyCapitalRepayment ($calculationDate - $r) $daysInterestToCharge @ $currentDailyRate = $interest")
         ins
       }
     }
@@ -387,14 +386,21 @@ object CalculatorService {
         lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
       }
 
-    val maybeSubmissionDate = sa.returns.flatMap(_.dueDate.map(_.plusYears(1))).reduceOption(max)
+    val maybeSubmissionDate = {
+      val dates: Seq[LocalDate] = sa.returns.flatMap(_.dueDate.map(_.plusYears(1)))
+      dates.reduceOption(max)
+    }
     val maybeDueDate = sa.debits.filter(_.amount > 32).map(_.dueDate.plusYears(1)).reduceOption(min)
 
     val maximumAllowedDurationInMonths = 11
 
     val maximumDurationInMonthsBasedOnSubmissionDate =
       maybeSubmissionDate
-        .map(submissionDate => monthsBetween(today, lastDayOfPreviousMonth(submissionDate)))
+        .map(submissionDate => {
+          val lastDay = lastDayOfPreviousMonth(submissionDate)
+          val mb = monthsBetween(today, lastDay)
+          mb
+        })
         .getOrElse(maximumAllowedDurationInMonths)
 
     val maximumDurationInMonthsBasedOnDueDate =

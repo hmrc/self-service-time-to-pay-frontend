@@ -28,7 +28,6 @@ import model.{CalculatorInput, PaymentSchedule}
 import play.api.mvc.{AnyContent, _}
 import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createInstalmentForm, createMonthlyAmountForm, createPaymentTodayForm, payTodayForm}
-import ssttpcalculator.CalculatorService.{maximumDurationInMonths, minimumMonthsAllowedTTP, payTodayRequest}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -84,7 +83,7 @@ class CalculatorController @Inject() (
             case PayTodayQuestion(Some(false)) =>
               val newJourney =
                 journey.copy(maybeCalculatorData =
-                  Some(payTodayRequest(journey.taxpayer.selfAssessment.debits.map(asDebitInput))))
+                  Some(CalculatorService.payTodayRequest(journey.taxpayer.selfAssessment.debits.map(asDebitInput))))
               journeyService.saveJourney(newJourney).map[Result] {
                 _ => Redirect(ssttpcalculator.routes.CalculatorController.getMonthlyPayment())
               }
@@ -100,7 +99,7 @@ class CalculatorController @Inject() (
     JourneyLogger.info(s"CalculatorController.getPaymentToday: $request")
     journeyService.getJourney.map {
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(Taxpayer(_, _, SelfAssessmentDetails(_, _, debits, _))), _, _, _, _, _, _) if debits.nonEmpty =>
-        val newJourney = journey.copy(maybeCalculatorData = Some(payTodayRequest(debits.map(asDebitInput))))
+        val newJourney = journey.copy(maybeCalculatorData = Some(CalculatorService.payTodayRequest(debits.map(asDebitInput))))
         journeyService.saveJourney(newJourney)
 
         val form = createPaymentTodayForm(debits.map(_.amount).sum)
@@ -147,7 +146,7 @@ class CalculatorController @Inject() (
   }
 
   private def upperMonthlyPaymentBound(sa: SelfAssessmentDetails, calculatorData: CalculatorInput)(implicit hc: HeaderCarrier): String =
-    Try(roundUpToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / minimumMonthsAllowedTTP).toString) match {
+    Try(roundUpToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / CalculatorService.minimumMonthsAllowedTTP).toString) match {
       case Success(s) =>
         JourneyLogger.info(s"CalculatorController.upperMonthlyPaymentBound: [$s]")
         s
@@ -160,7 +159,7 @@ class CalculatorController @Inject() (
     Try(
       roundDownToNearestHundred(
         (sa.debits.map(_.amount).sum - calculatorData.initialPayment) /
-          maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock))).toString) match {
+          CalculatorService.maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock))).toString) match {
         case Success(s) =>
           JourneyLogger.info(s"CalculatorController.lowerMonthlyPaymentBound: [$s]")
           s
@@ -230,7 +229,7 @@ class CalculatorController @Inject() (
       List(Some(closestSchedule), scheduleMonthsLater(1), scheduleMonthsLater(2))
     else if (closestScheduleIndex == schedules.size - 1)
       List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
-    else if (closestScheduleIndex == maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock)) - 2)
+    else if (closestScheduleIndex == CalculatorService.maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock)) - 2)
       List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
     else
       List(scheduleMonthsBefore(1), Some(closestSchedule), scheduleMonthsLater(1))

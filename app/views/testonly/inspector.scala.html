@@ -14,6 +14,9 @@
  * limitations under the License.
  *@
 
+@import play.api.libs.json.Json
+@import journey.Journey
+
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers
@@ -21,8 +24,7 @@
 
 @(
         playSession: Map[String, String],
-        cache: List[(String, String)],
-        authority: String,
+        maybeJourney: Option[Journey],
         hcHeaders: Seq[(String, String)])(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
@@ -78,29 +80,11 @@
     </p>
 
     <p>
-        <h2>Cache from Key Store</h2>
-        <table>
-            <tr>
-                <th>Key</th>
-                <th>Value</th>
-            </tr>
-
-            @cache.map { item =>
-                <tr>
-                    <td style="vertical-align: top">@item._1</td>
-                    <td style="word-break: break-all">
-                        <pre style="border: none">@item._2</pre>
-                    </td>
-                </tr>
-            }
-        </table>
-    </p>
-
-    <p>
-        <h2>Authority</h2>
-        <pre style="border: none; font-size: 15px">@{authority}</pre>
-    </p>
-
+        <h2>Journey Json</h2>
+        @maybeJourney.fold(Html("No journey yet")){journey =>
+          <pre style="border: none">@Json.prettyPrint(Json.toJson(journey))</pre>
+        }
+  </p>
 
     <p>
         <h2>Play Session (decoded `mdtp` cookie) </h2>

@@ -54,18 +54,7 @@ class InspectorController @Inject() (
       maybeJourney <- maybeJourneyF
     } yield Ok(views.inspector(
       request.session.data,
-      List(
-        "debitDate" -> maybeJourney.flatMap(_.debitDate).json,
-        "taxpayer" -> maybeJourney.flatMap(_.maybeTaxpayer).json,
-        "schedule" -> maybeJourney.flatMap(_.maybeSchedule).json,
-        "bankDetails" -> maybeJourney.flatMap(_.maybeBankDetails).json,
-        "existingDDBanks" -> maybeJourney.flatMap(_.existingDDBanks).json,
-
-        "calculatorData" -> maybeJourney.map(_.maybeCalculatorData).json,
-        "durationMonths" -> maybeJourney.map(_.durationMonths).json,
-        "eligibilityStatus" -> maybeJourney.map(_.maybeEligibilityStatus).json
-      ),
-      "not supported - todo remove it",
+      maybeJourney,
       hc.headers
     ))
   }
