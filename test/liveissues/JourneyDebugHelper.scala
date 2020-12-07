@@ -113,7 +113,6 @@ object JourneyDebugHelper extends App {
 }""".stripMargin
   }
 
-
   //implementation
 
   val json = Json.parse(journeyJson)
@@ -121,32 +120,31 @@ object JourneyDebugHelper extends App {
   val returns: JsValue = (json \ "maybeTaxpayer" \ "selfAssessment" \ "returns").get
 
   case class DesDebit(
-                       taxYearEnd: LocalDate,
-                       charge: DesCharge,
-                       relevantDueDate: LocalDate,
-                       totalOutstanding: BigDecimal,
-                       interest: Option[Interest]
-                     )
+      taxYearEnd:       LocalDate,
+      charge:           DesCharge,
+      relevantDueDate:  LocalDate,
+      totalOutstanding: BigDecimal,
+      interest:         Option[Interest]
+  )
 
   case class DesCharge(
-                        originCode: String,
-                        creationDate: LocalDate
-                      )
+      originCode:   String,
+      creationDate: LocalDate
+  )
 
   implicit val f2: OFormat[DesCharge] = Json.format[DesCharge]
   implicit val f1: OFormat[DesDebit] = Json.format[DesDebit]
 
   def toDesDebit(d: timetopaytaxpayer.cor.model.Debit): DesDebit = DesDebit(
-    taxYearEnd = d.taxYearEnd,
-    charge = DesCharge(
-      originCode = d.originCode,
+    taxYearEnd       = d.taxYearEnd,
+    charge           = DesCharge(
+      originCode   = d.originCode,
       creationDate = LocalDate.parse("1900-01-01") //its ignored
     ),
-    relevantDueDate = d.dueDate,
+    relevantDueDate  = d.dueDate,
     totalOutstanding = d.amount,
-    interest = d.interest
+    interest         = d.interest
   )
-
 
   val desReturns = Json.obj("returns" -> returns)
   println(Json.prettyPrint(desReturns))
