@@ -501,3 +501,9 @@ details summary:focus,
 .is-smaller .account-menu__link--menu.account-menu__link--active:focus {
     border-bottom-color: #ffdd00;
 }
+@media (min-width: 48.0625em) {
+.no_bottom_margin{
+    margin-bottom: 0;
+    paddding-bottom: 0;
+}
+}
