@@ -136,16 +136,16 @@ class ArrangementController @Inject() (
   def submitChangeSchedulePaymentDay(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.submitChangeSchedulePaymentDay: $request")
     journeyService.authorizedForSsttp {
-      submission =>
+      journey =>
         dayOfMonthForm.bindFromRequest().fold(
           formWithErrors => {
             Future.successful(BadRequest(views.change_day(formWithErrors)))
           },
           validFormData => {
-            submission match {
-              case _@ Journey(_, InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _, _) =>
+            journey match {
+              case Journey(_, InProgress, _, _, Some(schedule), _, _, _, Some(CalculatorInput(debits, _, _, _, _)), _, _, _, _, _) =>
                 JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
-                val updatedJourney = changeScheduleDay(submission, schedule, debits, validFormData.dayOfMonth)
+                val updatedJourney = changeScheduleDay(journey, schedule, debits, validFormData.dayOfMonth)
                 journeyService.saveJourney(updatedJourney).map {
                   _ => Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
                 }
@@ -169,10 +169,16 @@ class ArrangementController @Inject() (
 
     val durationInMonths = schedule.instalments.length
 
-    val changeRequest = CalculatorService.changeScheduleRequest(durationInMonths, dayOfMonth, schedule.initialPayment, debits)(clockProvider.getClock)
+    val calculatorInput: CalculatorInput = CalculatorService.changeCalculatorInput(
+      durationInMonths,
+      dayOfMonth,
+      schedule.initialPayment,
+      debits)(
+      clockProvider.getClock
+    )
 
-    val updatedPaymentSchedule = calculatorService.buildSchedule(changeRequest)
-    journey.copy(maybeSchedule       = Some(updatedPaymentSchedule), maybeCalculatorData = Some(changeRequest))
+    val updatedPaymentSchedule = calculatorService.buildSchedule(calculatorInput)
+    journey.copy(maybeSchedule       = Some(updatedPaymentSchedule), maybeCalculatorData = Some(calculatorInput))
   }
 
   /**

@@ -37,6 +37,10 @@ final case class PaymentSchedule(
     if (next.paymentDate.toEpochDay < earliest.paymentDate.toEpochDay) next else earliest
 
   def initialPaymentScheduleDate: LocalDate = firstInstallment.paymentDate
+
+  lazy val lastPaymentDate: LocalDate = instalments.map(_.paymentDate).reduceLeftOption((a, b) => if (a.isAfter(b)) a else b).getOrElse(
+    throw new UnsupportedOperationException(s"Instalments were empty [${this}]")
+  )
 }
 
 object PaymentSchedule {

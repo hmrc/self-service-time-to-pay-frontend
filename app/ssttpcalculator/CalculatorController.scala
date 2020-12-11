@@ -28,7 +28,6 @@ import model.{CalculatorInput, PaymentSchedule}
 import play.api.mvc.{AnyContent, _}
 import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createInstalmentForm, createMonthlyAmountForm, createPaymentTodayForm, payTodayForm}
-import ssttpcalculator.CalculatorService.{maximumDurationInMonths, minimumMonthsAllowedTTP, payTodayRequest}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -84,7 +83,7 @@ class CalculatorController @Inject() (
             case PayTodayQuestion(Some(false)) =>
               val newJourney =
                 journey.copy(maybeCalculatorData =
-                  Some(payTodayRequest(journey.taxpayer.selfAssessment.debits.map(asDebitInput))))
+                  Some(CalculatorService.makeCalculatorInputForPayToday(journey.taxpayer.selfAssessment.debits.map(asDebitInput))))
               journeyService.saveJourney(newJourney).map[Result] {
                 _ => Redirect(ssttpcalculator.routes.CalculatorController.getMonthlyPayment())
               }
@@ -100,13 +99,14 @@ class CalculatorController @Inject() (
     JourneyLogger.info(s"CalculatorController.getPaymentToday: $request")
     journeyService.getJourney.map {
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(Taxpayer(_, _, SelfAssessmentDetails(_, _, debits, _))), _, _, _, _, _, _) if debits.nonEmpty =>
-        val newJourney = journey.copy(maybeCalculatorData = Some(payTodayRequest(debits.map(asDebitInput))))
+        val newJourney = journey.copy(maybeCalculatorData = Some(CalculatorService.makeCalculatorInputForPayToday(debits.map(asDebitInput))))
         journeyService.saveJourney(newJourney)
 
         val form = createPaymentTodayForm(debits.map(_.amount).sum)
 
         if (newJourney.calculatorInput.initialPayment.equals(BigDecimal(0))) Ok(views.payment_today_form(form, isSignedIn))
         else Ok(views.payment_today_form(form.fill(newJourney.calculatorInput.initialPayment), isSignedIn))
+
       case journey =>
         JourneyLogger.info(s"CalculatorController.getPaymentToday: pattern match redirect on error", journey)
         technicalDifficulties(journey)
@@ -134,20 +134,33 @@ class CalculatorController @Inject() (
 
   def getMonthlyPayment: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getMonthlyPayment: $request")
-    journeyService.getJourney.flatMap[Result] {
+    journeyService.getJourney.map[Result] {
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _, _) =>
+
+        val lowerBound = lowerMonthlyPaymentBound(sa, journey.calculatorInput)
+        val upperBound = upperMonthlyPaymentBound(sa, journey.calculatorInput)
+
         val form = createMonthlyAmountForm(
-          lowerMonthlyPaymentBound(sa, journey.calculatorInput).toInt, upperMonthlyPaymentBound(sa, journey.calculatorInput).toInt)
-        Future.successful(Ok(views.monthly_amount(
-          form, upperMonthlyPaymentBound(sa, journey.calculatorInput), lowerMonthlyPaymentBound(sa, journey.calculatorInput))))
+          lowerBound.toInt,
+          upperBound.toInt
+        )
+
+        Ok(
+          views.monthly_amount(
+            form,
+            upperBound,
+            lowerBound
+          )
+        )
+
       case journey =>
         JourneyLogger.info(s"CalculatorController.getMonthlyPayment: pattern match redirect on error", journey)
-        Future.successful(technicalDifficulties(journey))
+        technicalDifficulties(journey)
     }
   }
 
   private def upperMonthlyPaymentBound(sa: SelfAssessmentDetails, calculatorData: CalculatorInput)(implicit hc: HeaderCarrier): String =
-    Try(roundUpToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / minimumMonthsAllowedTTP).toString) match {
+    Try(roundUpToNearestHundred((sa.debits.map(_.amount).sum - calculatorData.initialPayment) / CalculatorService.minimumMonthsAllowedTTP).toString) match {
       case Success(s) =>
         JourneyLogger.info(s"CalculatorController.upperMonthlyPaymentBound: [$s]")
         s
@@ -160,7 +173,7 @@ class CalculatorController @Inject() (
     Try(
       roundDownToNearestHundred(
         (sa.debits.map(_.amount).sum - calculatorData.initialPayment) /
-          maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock))).toString) match {
+          CalculatorService.maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock))).toString) match {
         case Success(s) =>
           JourneyLogger.info(s"CalculatorController.lowerMonthlyPaymentBound: [$s]")
           s
@@ -197,7 +210,7 @@ class CalculatorController @Inject() (
     }
   }
 
-  def closestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule])(implicit hc: HeaderCarrier): PaymentSchedule = {
+  def computeClosestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule])(implicit hc: HeaderCarrier): PaymentSchedule = {
       def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
 
       def closest(min: PaymentSchedule, next: PaymentSchedule) = if (difference(next) < difference(min)) next else min
@@ -210,7 +223,7 @@ class CalculatorController @Inject() (
     }
   }
 
-  def closestSchedules(closestSchedule: PaymentSchedule, schedules: List[PaymentSchedule], sa: SelfAssessmentDetails)
+  def computeClosestSchedules(closestSchedule: PaymentSchedule, schedules: List[PaymentSchedule], sa: SelfAssessmentDetails)
     (implicit request: Request[_]): List[PaymentSchedule] = {
     val closestScheduleIndex = schedules.indexOf(closestSchedule)
 
@@ -230,7 +243,7 @@ class CalculatorController @Inject() (
       List(Some(closestSchedule), scheduleMonthsLater(1), scheduleMonthsLater(2))
     else if (closestScheduleIndex == schedules.size - 1)
       List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
-    else if (closestScheduleIndex == maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock)) - 2)
+    else if (closestScheduleIndex == CalculatorService.maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock)) - 2)
       List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
     else
       List(scheduleMonthsBefore(1), Some(closestSchedule), scheduleMonthsLater(1))
@@ -254,11 +267,17 @@ class CalculatorController @Inject() (
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _, _) =>
         JourneyLogger.info("CalculatorController.getCalculateInstalments", journey)
 
-        val listOfPaymentSchedules = calculatorService.availablePaymentSchedules(sa, journey.calculatorInput.initialPayment)
-        Ok(views.calculate_instalments_form(
-          routes.CalculatorController.submitCalculateInstalments(),
-          createInstalmentForm(),
-          closestSchedules(closestSchedule(journey.amount, listOfPaymentSchedules), listOfPaymentSchedules, sa)))
+        val availablePaymentSchedules = calculatorService.availablePaymentSchedules(sa, journey.calculatorInput.initialPayment)
+        val closestSchedule = computeClosestSchedule(journey.amount, availablePaymentSchedules)
+        val closestSchedules = computeClosestSchedules(closestSchedule, availablePaymentSchedules, sa)
+
+        Ok(
+          views.calculate_instalments_form(
+            routes.CalculatorController.submitCalculateInstalments(),
+            createInstalmentForm(),
+            closestSchedules
+          )
+        )
 
       case journey =>
         JourneyLogger.info("CalculatorController.getCalculateInstalment: pattern match redirect on error", journey)
@@ -271,17 +290,23 @@ class CalculatorController @Inject() (
     journeyService.getJourney.flatMap {
       case journey @ Journey(_, InProgress, _, _, _, _, _, Some(Taxpayer(_, _, sa)), _, _, _, _, _, _) =>
         JourneyLogger.info("CalculatorController.submitCalculateInstalments", journey)
-        val listOfPaymentSchedules = calculatorService.availablePaymentSchedules(sa, journey.calculatorInput.initialPayment)
+
+        val availablePaymentSchedules = calculatorService.availablePaymentSchedules(sa, journey.calculatorInput.initialPayment)
+        lazy val closestSchedule = computeClosestSchedule(journey.amount, availablePaymentSchedules)
+        lazy val closestSchedules = computeClosestSchedules(closestSchedule, availablePaymentSchedules, sa)
+
         createInstalmentForm().bindFromRequest().fold(
-          formWithErrors =>
+          formWithErrors => {
             Future.successful(
               BadRequest(
                 views.calculate_instalments_form(
                   ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                   formWithErrors,
-                  closestSchedules(closestSchedule(journey.amount, listOfPaymentSchedules), listOfPaymentSchedules, sa)))),
+                  closestSchedules))
+            )
+          },
           validFormData =>
-            journeyService.saveJourney(journey.copy(maybeSchedule = listOfPaymentSchedules.find(_.durationInMonths == validFormData.chosenMonths))).map { _ =>
+            journeyService.saveJourney(journey.copy(maybeSchedule = availablePaymentSchedules.find(_.durationInMonths == validFormData.chosenMonths))).map { _ =>
               Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
             }
         )

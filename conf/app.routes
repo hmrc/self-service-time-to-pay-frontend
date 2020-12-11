@@ -21,16 +21,19 @@ GET         /eligibility/not-enrolled                                     ssttpe
 
 
 # Calculator
+GET         /calculator/tax-liabilities                                   ssttpcalculator.CalculatorController.getTaxLiabilities()
 
-GET         /calculator/payment-summary                                   ssttpcalculator.CalculatorController.getPaymentSummary()
 GET         /calculator/payment-today-question                            ssttpcalculator.CalculatorController.getPayTodayQuestion()
 POST        /calculator/payment-today-question                            ssttpcalculator.CalculatorController.submitPayTodayQuestion()
+
 GET         /calculator/payment-today                                     ssttpcalculator.CalculatorController.getPaymentToday()
 POST        /calculator/payment-today                                     ssttpcalculator.CalculatorController.submitPaymentToday()
-GET         /calculator/tax-liabilities                                   ssttpcalculator.CalculatorController.getTaxLiabilities()
 
 GET         /calculator/monthly-payment-amount                            ssttpcalculator.CalculatorController.getMonthlyPayment()
 POST        /calculator/monthly-payment-amount                            ssttpcalculator.CalculatorController.submitMonthlyPayment()
+
+GET         /calculator/payment-summary                                   ssttpcalculator.CalculatorController.getPaymentSummary()
+
 GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getCalculateInstalments()
 POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitCalculateInstalments()
 

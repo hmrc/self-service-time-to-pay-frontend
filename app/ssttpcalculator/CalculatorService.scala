@@ -23,20 +23,21 @@ import java.time.{Clock, LocalDate, Year}
 import _root_.model._
 import bankholidays.WorkingDaysService.addWorkingDays
 import javax.inject.Inject
-import play.api.Logger
 import play.api.Logger.logger
-import play.api.libs.json.Json.toJson
 import play.api.mvc.Request
 import ssttpcalculator.model.{CalculatorInput, Debit, DebitInput, Instalment, PaymentSchedule}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 
-import scala.concurrent.{ExecutionContext}
+import scala.concurrent.ExecutionContext
 import scala.math.BigDecimal
 import scala.math.BigDecimal.RoundingMode.HALF_UP
-import scala.util.{Failure, Success, Try}
 
-class CalculatorService @Inject() (clockProvider: ClockProvider, durationService: DurationService, interestService: InterestRateService)
+class CalculatorService @Inject() (
+    clockProvider:   ClockProvider,
+    durationService: DurationService,
+    interestService: InterestRateService
+)
   (implicit ec: ExecutionContext) {
 
   import clockProvider._
@@ -50,34 +51,61 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
   def availablePaymentSchedules(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0))
     (implicit request: Request[_]): List[PaymentSchedule] = {
 
+    val rangeOfAvailableScheduleDurationsInMonths = minimumMonthsAllowedTTP to 13
+
+    val today: LocalDate = clockProvider.nowDate()
+
+    val thresholdDate = today
+      .plusYears(1)
+      .withMonth(1)
+      .withDayOfMonth(29) // the last available payment can happen on 28 Jan next year
+
+    val debits = sa.debits.map(asDebitInput)
+    rangeOfAvailableScheduleDurationsInMonths.map { durationInMonths =>
+      val calculatorInput = CalculatorService.makeCalculatorInput(debits, initialPayment, durationInMonths)
+      buildSchedule(calculatorInput)
+    }
+      .filter(_.lastPaymentDate.isBefore(thresholdDate))
+      .toList
+  }
+
+  private def availablePaymentSchedulesOld(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0))
+    (implicit request: Request[_]): List[PaymentSchedule] = {
+
     val rangeOfAvailableScheduleDurationsInMonths =
       minimumMonthsAllowedTTP to CalculatorService.maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock))
 
     val debits = sa.debits.map(asDebitInput)
     rangeOfAvailableScheduleDurationsInMonths.map { durationInMonths =>
-      buildSchedule(CalculatorService.paymentScheduleRequest(debits, initialPayment, durationInMonths))
+      val calculatorInput: CalculatorInput = CalculatorService.makeCalculatorInput(debits, initialPayment, durationInMonths)
+      buildSchedule(calculatorInput)
     }.toList
   }
 
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
+
   @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
   def buildSchedule(implicit calculation: CalculatorInput): PaymentSchedule = {
-    // Builds a seq of seq debits, where each sub seq of debits is built from the different interest rate boundaries a debit crosses
-    val overallDebits: Seq[Seq[Debit]] = calculation.debits.filter(_.dueDate.isBefore(calculation.startDate)).map {
-      debit => processDebit(debit)
-    }
+    // Builds a seq of seq debits,
+    // where each sub seq of debits is built from the different interest rate boundaries a debit crosses
+    val overallDebits: Seq[Seq[Debit]] =
+      calculation
+        .debits
+        .filter(_.dueDate.isBefore(calculation.startDate))
+        .map(processDebit)
+
     // Calculate interest on old debits that have incurred interest up to the point of the current calculation date (today)
-    val totalHistoricInterest = (for {
+    val totalHistoricInterest: BigDecimal = (for {
       debit <- overallDebits.map(_.filterNot(_.dueDate.isAfter(calculation.startDate)))
     } yield calculateHistoricInterest(debit)).sum
 
     // Calculate interest for the first 7 days until the initial payment is actually taken out of the taxpayer's account
-    val initialPaymentInterest = if (calculation.initialPayment > 0)
+    val initialPaymentInterest: BigDecimal = if (calculation.initialPayment > 0)
       calculateInitialPaymentInterest(calculation.debits.filter(_.dueDate.isBefore(calculation.startDate.plusWeeks(1))))
     else BigDecimal(0)
 
     // Calculate the schedule of regular payments on the all debits due before endDate
-    val instalments = calculateStagedPayments
+    val instalments: Seq[Instalment] = calculateStagedPayments
 
     // Total amount of debt without interest
     val amountToPay = calculation.debits.map(_.amount).sum
@@ -109,11 +137,16 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
   @SuppressWarnings(Array("org.wartremover.warts.Var"))
   def calculateStagedPayments(implicit calculation: CalculatorInput): Seq[Instalment] = {
     // Get the dates of each instalment payment
-    val trueFirstPaymentDate = calculation.firstPaymentDate.getOrElse(calculation.startDate)
-    val repayments = durationService.getRepaymentDates(trueFirstPaymentDate, calculation.endDate)
+    val trueFirstPaymentDate =
+      calculation
+        .firstPaymentDate
+        .getOrElse(calculation.startDate)
+
+    val repayments: Seq[LocalDate] = durationService.getRepaymentDates(trueFirstPaymentDate, calculation.endDate)
     val numberOfPayments = BigDecimal(repayments.size)
 
     var initialPaymentRemaining: BigDecimal = calculation.initialPayment
+
       def applyInitialPaymentToDebt(debtAmount: BigDecimal): BigDecimal = debtAmount match {
         case amt if amt <= initialPaymentRemaining =>
           initialPaymentRemaining = initialPaymentRemaining - debtAmount; 0
@@ -158,8 +191,12 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
    * @param debits - only debits that are not after calculation date plus a week
    */
   @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
-  def calculateInitialPaymentInterest(debits: Seq[DebitInput])(implicit calculation: CalculatorInput): BigDecimal = {
-    val currentInterestRate = interestService.rateOn(calculation.startDate).rate
+  private def calculateInitialPaymentInterest(debits: Seq[DebitInput])(implicit calculation: CalculatorInput): BigDecimal = {
+    val currentInterestRate =
+      interestService
+        .rateOn(calculation.startDate)
+        .rate
+
     val currentDailyRate = currentInterestRate / BigDecimal(Year.of(calculation.startDate.getYear).length()) / BigDecimal(100)
     val sortedDebits: Seq[DebitInput] = debits.sortBy(_.dueDate)
 
@@ -255,17 +292,26 @@ class CalculatorService @Inject() (clockProvider: ClockProvider, durationService
     }.sum
   }
 
-  def historicRateEndDate(debitEndDate: LocalDate)(implicit calculation: CalculatorInput): LocalDate =
+  private def historicRateEndDate(debitEndDate: LocalDate)(implicit calculation: CalculatorInput): LocalDate =
     if (debitEndDate.getYear.equals(calculation.startDate.getYear)) calculation.startDate else debitEndDate
 }
 
 object CalculatorService {
   private val latestValidPaymentDayOfMonth = 28
 
-  def payTodayRequest(debits: Seq[DebitInput])(implicit clock: Clock): CalculatorInput =
-    changeScheduleRequest(0, now(clock).getDayOfMonth, 0, debits)
+  def makeCalculatorInputForPayToday(debits: Seq[DebitInput])(implicit clock: Clock): CalculatorInput = {
 
-  def paymentScheduleRequest(debits: Seq[DebitInput], initialPayment: BigDecimal, durationInMonths: Int)
+    val calculatorInput =
+      changeCalculatorInput(
+        durationInMonths           = 0,
+        preferredPaymentDayOfMonth = now(clock).getDayOfMonth,
+        initialPayment             = 0,
+        debits                     = debits
+      )
+    calculatorInput
+  }
+
+  def makeCalculatorInput(debits: Seq[DebitInput], initialPayment: BigDecimal, durationInMonths: Int)
     (implicit clock: Clock): CalculatorInput = {
 
     val noInitialPayment = BigDecimal(0)
@@ -300,7 +346,7 @@ object CalculatorService {
           endDate          = deferredEndDate,
           debits           = debits)
       }
-    } else
+    } else //no initial payment
       CalculatorInput(
         startDate        = currentDate,
         initialPayment   = noInitialPayment,
@@ -320,7 +366,7 @@ object CalculatorService {
    * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
    */
-  def changeScheduleRequest(
+  def changeCalculatorInput(
       durationInMonths: Int, preferredPaymentDayOfMonth: Int, initialPayment: BigDecimal, debits: Seq[DebitInput])
     (implicit clock: Clock): CalculatorInput = {
 
@@ -371,46 +417,68 @@ object CalculatorService {
     def compare(x: A, y: A): Int = x compareTo y
   }
 
+  private def minDate(date1: LocalDate, date2: LocalDate) = if (math.Ordering[LocalDate].lt(date1, date2)) date1 else date2
+
+  private def max(date1: LocalDate, date2: LocalDate) = if (math.Ordering[LocalDate].gt(date1, date2)) date1 else date2
+
+  private def monthsBetween(date1: LocalDate, date2: LocalDate) = {
+    //we add a day to date2 because we need to compute it inclusive
+    //for example there should be 1 month between 1st JAN an 31st JAN
+    //    MONTHS.between(date1, date2.plusDays(1)).toInt
+    MONTHS.between(date1, date2).toInt
+  }
+
+  private def lastDayOfPreviousMonth(date: LocalDate) = {
+    val lastMonth = date.minusMonths(1)
+    lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
+  }
+
+  def maximumDurationInMonths(sa: SelfAssessmentDetails, today: LocalDate): Int =
+    13
+
   /*
   * Rules:
    a)    End of the calendar month before the due date of the next liability which is outside of the TTP We are not checking this rule
    b)    End of the calendar month before the due date of the next non-submitted SA return
    c)    12 months from the earliest due date of the amounts included in the TTP (*ignoring due dates for any amounts under £32)
     */
-  def maximumDurationInMonths(sa: SelfAssessmentDetails, today: LocalDate): Int = Try {
-      def max(date1: LocalDate, date2: LocalDate) = if (math.Ordering[LocalDate].gt(date1, date2)) date1 else date2
-      def min(date1: LocalDate, date2: LocalDate) = if (math.Ordering[LocalDate].lt(date1, date2)) date1 else date2
-      def monthsBetween(date1: LocalDate, date2: LocalDate) = MONTHS.between(date1, date2).toInt
-
-      def lastDayOfPreviousMonth(date: LocalDate) = {
-        val lastMonth = date.minusMonths(1)
-        lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
-      }
-
-    val maybeSubmissionDate = sa.returns.flatMap(_.dueDate.map(_.plusYears(1))).reduceOption(max)
-    val maybeDueDate = sa.debits.filter(_.amount > 32).map(_.dueDate.plusYears(1)).reduceOption(min)
+  def maximumDurationInMonthsOld(sa: SelfAssessmentDetails, today: LocalDate): Int = {
 
     val maximumAllowedDurationInMonths = 11
 
-    val maximumDurationInMonthsBasedOnSubmissionDate =
-      maybeSubmissionDate
-        .map(submissionDate => monthsBetween(today, lastDayOfPreviousMonth(submissionDate)))
-        .getOrElse(maximumAllowedDurationInMonths)
+    val maxDurationBasedOnReturns = maximumDurationInMonthsBasedOnReturns(sa, today)
+    val maxDurationBasedOnDebits = maximumDurationInMonthsBasedOnDebits(sa, today)
 
-    val maximumDurationInMonthsBasedOnDueDate =
-      maybeDueDate.map(dueDate => monthsBetween(today, dueDate)).getOrElse(maximumAllowedDurationInMonths)
-
-    val maximumDurationInMonths =
-      Math.min(
-        maximumAllowedDurationInMonths,
-        Math.min(maximumDurationInMonthsBasedOnSubmissionDate, maximumDurationInMonthsBasedOnDueDate))
+    val maximumDurationInMonths = min(
+      maximumAllowedDurationInMonths,
+      maxDurationBasedOnReturns.getOrElse(maximumAllowedDurationInMonths),
+      maxDurationBasedOnDebits.getOrElse(maximumAllowedDurationInMonths)
+    )
 
     maximumDurationInMonths
-  } match {
-    case Success(s) => s
-    case Failure(e) =>
-      Logger.error(s"calculateGapInMonths failed. [todayDate=$today], selfAssessment:\n${toJson(sa.obfuscate)}", e)
-      throw e
   }
+
+  def maximumDurationInMonthsBasedOnDebits(sa: SelfAssessmentDetails, today: LocalDate): Option[Int] = {
+    val `debitsMinDueDate+1`: Option[LocalDate] =
+      sa
+        .debits
+        .filter(_.amount > 32)
+        .map(_.dueDate.plusYears(1))
+        .reduceOption(minDate)
+
+    `debitsMinDueDate+1`.map(dueDate => monthsBetween(today, dueDate))
+  }
+
+  def maximumDurationInMonthsBasedOnReturns(sa: SelfAssessmentDetails, today: LocalDate): Option[Int] = {
+    val `returnsMaxDueDate+1y`: Option[LocalDate] = sa.returns.flatMap(_.dueDate.map(_.plusYears(1))).reduceOption(max)
+
+    `returnsMaxDueDate+1y`
+      .map(dueDate => {
+        val lastDateOfPreviousMonthOfDueDate = lastDayOfPreviousMonth(dueDate)
+        monthsBetween(today, lastDateOfPreviousMonthOfDueDate)
+      })
+  }
+
+  def min(first: Int, rest: Int*): Int = rest.toList.foldLeft(first)(Math.min)
 
 }
