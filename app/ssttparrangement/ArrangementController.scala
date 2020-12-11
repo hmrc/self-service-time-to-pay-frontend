@@ -98,11 +98,11 @@ class ArrangementController @Inject() (
 
     for {
       tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
-      maybeJourney <- journeyService.getMaybeJourney()
-      journey = maybeJourney.filter(_.isFinished).getOrElse(Journey.newJourney).copy(maybeTaxpayer = Some(tp))
-      _ <- journeyService.saveJourney(journey)
-      result: Result <- eligibilityCheck(journey)
-    } yield result.placeInSession(journey._id)
+      newJourney: Journey = Journey.newJourney.copy(maybeTaxpayer = Some(tp))
+      _ <- journeyService.saveJourney(newJourney)
+      result: Result <- eligibilityCheck(newJourney)
+    } yield result.placeInSession(newJourney._id)
+
   }
 
   def getInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>

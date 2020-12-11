@@ -40,13 +40,10 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
 
   def getJourney()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
     for {
-      maybeJourney <- journeyRepo.findById(request.readJourneyId)
-      journey = maybeJourney.getOrElse(throw new RuntimeException(s"Journey not found [${request.readJourneyId}]"))
+      journeyId <- Future.successful(()).map(_ => request.readJourneyId)
+      maybeJourney <- journeyRepo.findById(journeyId)
+      journey = maybeJourney.getOrElse(throw new RuntimeException(s"Journey not found [$journeyId]"))
     } yield journey
-  }
-
-  def getMaybeJourney()(implicit request: Request[_]): Future[Option[Journey]] = Mdc.preservingMdc {
-    request.getJourneyId.fold[Future[Option[Journey]]](Future.successful(None))(journeyRepo.findById(_))
   }
 
   /**
