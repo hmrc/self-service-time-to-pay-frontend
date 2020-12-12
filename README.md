@@ -61,5 +61,5 @@ This code is open source software licensed under the [Apache 2.0 License]("http:
 
 Error cases:
 
-Upfront payment taken within 5 days	£200.00	ChangeMonthly payments
-Payments collected on	12th or next working day	Change
+Today is 2019-12-05
+Enter an amount between £1,400.00 and £1,400.00

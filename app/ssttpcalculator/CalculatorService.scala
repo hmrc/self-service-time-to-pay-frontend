@@ -77,8 +77,9 @@ class CalculatorService @Inject() (
 
     val today: LocalDate = clockProvider.nowDate()
 
+    val isAfterTaxYearEndDate = today.isAfter(today.withMonth(4).withDayOfMonth(5))
     val thresholdDate = today
-      .plusYears(1)
+      .plusYears(if (isAfterTaxYearEndDate) 2 else 1)
       .withMonth(1)
       .withDayOfMonth(29) // the last available payment can happen on 28 Jan next year
 
@@ -101,6 +102,7 @@ class CalculatorService @Inject() (
       buildSchedule(calculatorInput)
     }
       .filter(_.lastPaymentDate.isBefore(thresholdDate))
+      .filter(_.instalments.length <= 12) //max 12 instalments
       .toList
   }
 
