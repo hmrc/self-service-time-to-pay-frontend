@@ -23,11 +23,13 @@ import java.time.{Clock, LocalDate, Year}
 import _root_.model._
 import bankholidays.WorkingDaysService.addWorkingDays
 import javax.inject.Inject
+import journey.Journey
 import play.api.Logger.logger
 import play.api.mvc.Request
 import ssttpcalculator.model.{CalculatorInput, Debit, DebitInput, Instalment, PaymentSchedule}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import scala.concurrent.ExecutionContext
 import scala.math.BigDecimal
@@ -47,8 +49,28 @@ class CalculatorService @Inject() (
   val DebitDueDateWithinRate = Tuple2(true, false)
   val CalculationDateWithinRate = Tuple2(false, true)
   val defaultInitialPaymentDays = 7
+  val `14 day gap between the initial payment date and the first scheduled payment date` = 14
 
-  def availablePaymentSchedules(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0))
+  def computeSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
+    val availableSchedules = availablePaymentSchedules(
+      journey.taxpayer.selfAssessment,
+      journey.safeInitialPayment,
+      journey.maybeArrangementDayOfMonth
+    )
+
+    val durationInMonths: Int = journey.calculatorDuration
+
+    val schedule: PaymentSchedule = availableSchedules.find(_.instalments.length == durationInMonths)
+      .orElse(
+        availableSchedules.find(_.instalments.length == durationInMonths - 1)
+      ).getOrElse(
+          throw new RuntimeException(s"Could not find schedule corresponding to $durationInMonths [${journey.obfuscate}] [${availableSchedules}]")
+        )
+    schedule
+  }
+
+  def availablePaymentSchedules(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0),
+                                maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth])
     (implicit request: Request[_]): List[PaymentSchedule] = {
 
     val rangeOfAvailableScheduleDurationsInMonths = minimumMonthsAllowedTTP to 13
@@ -62,7 +84,20 @@ class CalculatorService @Inject() (
 
     val debits = sa.debits.map(asDebitInput)
     rangeOfAvailableScheduleDurationsInMonths.map { durationInMonths =>
-      val calculatorInput = CalculatorService.makeCalculatorInput(debits, initialPayment, durationInMonths)
+
+      val defaultPreferredDayOfMonth = today
+        .plusDays(`14 day gap between the initial payment date and the first scheduled payment date`)
+        .plusDays(defaultInitialPaymentDays)
+        .getDayOfMonth
+
+      val dayOfMonth = maybeArrangementDayOfMonth.map(_.dayOfMonth).getOrElse(defaultPreferredDayOfMonth)
+
+      val calculatorInput = CalculatorService.changeCalculatorInput(
+        durationInMonths,
+        dayOfMonth,
+        initialPayment,
+        debits
+      )
       buildSchedule(calculatorInput)
     }
       .filter(_.lastPaymentDate.isBefore(thresholdDate))
@@ -85,39 +120,39 @@ class CalculatorService @Inject() (
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 
   @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
-  def buildSchedule(implicit calculation: CalculatorInput): PaymentSchedule = {
+  def buildSchedule(implicit calculatorInput: CalculatorInput): PaymentSchedule = {
     // Builds a seq of seq debits,
     // where each sub seq of debits is built from the different interest rate boundaries a debit crosses
     val overallDebits: Seq[Seq[Debit]] =
-      calculation
+      calculatorInput
         .debits
-        .filter(_.dueDate.isBefore(calculation.startDate))
+        .filter(_.dueDate.isBefore(calculatorInput.startDate))
         .map(processDebit)
 
     // Calculate interest on old debits that have incurred interest up to the point of the current calculation date (today)
     val totalHistoricInterest: BigDecimal = (for {
-      debit <- overallDebits.map(_.filterNot(_.dueDate.isAfter(calculation.startDate)))
+      debit <- overallDebits.map(_.filterNot(_.dueDate.isAfter(calculatorInput.startDate)))
     } yield calculateHistoricInterest(debit)).sum
 
     // Calculate interest for the first 7 days until the initial payment is actually taken out of the taxpayer's account
-    val initialPaymentInterest: BigDecimal = if (calculation.initialPayment > 0)
-      calculateInitialPaymentInterest(calculation.debits.filter(_.dueDate.isBefore(calculation.startDate.plusWeeks(1))))
+    val initialPaymentInterest: BigDecimal = if (calculatorInput.initialPayment > 0)
+      calculateInitialPaymentInterest(calculatorInput.debits.filter(_.dueDate.isBefore(calculatorInput.startDate.plusWeeks(1))))
     else BigDecimal(0)
 
     // Calculate the schedule of regular payments on the all debits due before endDate
     val instalments: Seq[Instalment] = calculateStagedPayments
 
     // Total amount of debt without interest
-    val amountToPay = calculation.debits.map(_.amount).sum
+    val amountToPay = calculatorInput.debits.map(_.amount).sum
 
     val totalInterest = (instalments.map(_.interest).sum + totalHistoricInterest + initialPaymentInterest).setScale(2, HALF_UP)
 
     PaymentSchedule(
-      calculation.startDate,
-      calculation.endDate,
-      calculation.initialPayment,
+      calculatorInput.startDate,
+      calculatorInput.endDate,
+      calculatorInput.initialPayment,
       amountToPay,
-      amountToPay - calculation.initialPayment,
+      amountToPay - calculatorInput.initialPayment,
       totalInterest,
       amountToPay + totalInterest,
       instalments.init :+ Instalment(

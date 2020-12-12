@@ -55,3 +55,11 @@ Nb: Running the integration tests locally - i.e. `sbt test`- may require that AS
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
+
+
+
+
+Error cases:
+
+Upfront payment taken within 5 days	£200.00	ChangeMonthly payments
+Payments collected on	12th or next working day	Change

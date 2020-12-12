@@ -46,6 +46,13 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
     } yield journey
   }
 
+  def getEligibleJourneyInProgress()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
+    getJourney().map {
+      case j: Journey if j.status == InProgress && j.maybeEligibilityStatus.isDefined && j.eligibilityStatus.eligible => j
+      case j => throw new RuntimeException(s"Expected eligible journey in progress [${j.obfuscate}]")
+    }
+  }
+
   /**
    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
    */
@@ -55,17 +62,15 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
     for {
       journey <- getJourney()
       result <- journey match {
-        case submission @ Journey(_, InProgress, _, _, Some(_), _, _, Some(_), _, _, Some(eligibility), _, _, _) if eligibility.eligible =>
-          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", submission)
-          block(submission)
+        case journey if journey.status == InProgress =>
+          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", journey)
+          journey.requireIsEligible()
+          block(journey)
 
-        case journey @ Journey(_, FinishedApplicationSuccessful, _, _, _, _, _, _, _, _, _, _, _, _) =>
+        case journey if journey.status == FinishedApplicationSuccessful =>
           JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", journey)
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
-        case journey =>
-          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp.authorizedForSsttp: redirect On Error", journey)
-          Future.successful(technicalDifficulties(journey))
       }
     } yield result
   }

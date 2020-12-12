@@ -29,15 +29,16 @@ import timetopaytaxpayer.cor.TaxpayerConnector
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class InspectorController @Inject() (
-    ddConnector:         DirectDebitConnector,
-    calculatorConnector: CalculatorService,
-    taxPayerConnector:   TaxpayerConnector,
-    cc:                  MessagesControllerComponents,
-    journeyService:      JourneyService,
-    views:               Views,
-    requestSupport:      RequestSupport)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(cc) {
+    ddConnector:       DirectDebitConnector,
+    calculatorService: CalculatorService,
+    taxPayerConnector: TaxpayerConnector,
+    cc:                MessagesControllerComponents,
+    journeyService:    JourneyService,
+    views:             Views,
+    requestSupport:    RequestSupport)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(cc) {
 
   import requestSupport._
 
@@ -57,12 +58,9 @@ class InspectorController @Inject() (
       List(
         "debitDate" -> maybeJourney.flatMap(_.debitDate).json,
         "taxpayer" -> maybeJourney.flatMap(_.maybeTaxpayer).json,
-        "schedule" -> maybeJourney.flatMap(_.maybeSchedule).json,
+        "schedule" -> Try(maybeJourney.map(calculatorService.computeSchedule(_))).toOption.json,
         "bankDetails" -> maybeJourney.flatMap(_.maybeBankDetails).json,
         "existingDDBanks" -> maybeJourney.flatMap(_.existingDDBanks).json,
-
-        "calculatorData" -> maybeJourney.map(_.maybeCalculatorData).json,
-        "durationMonths" -> maybeJourney.map(_.durationMonths).json,
         "eligibilityStatus" -> maybeJourney.map(_.maybeEligibilityStatus).json
       ),
       "not supported - todo remove it",

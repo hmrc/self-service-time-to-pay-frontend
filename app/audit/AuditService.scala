@@ -23,6 +23,7 @@ import journey.Journey
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Request
+import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -35,10 +36,10 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
 
   import req.RequestSupport._
 
-  def sendSubmissionEvent(submission: Journey)(implicit request: Request[_]): Future[Unit] = {
+  def sendSubmissionEvent(submission: Journey, schedule: PaymentSchedule)(implicit request: Request[_]): Future[Unit] = {
     JourneyLogger.info(s"Sending audit event for successful submission")
 
-    val event = eventFor(submission)
+    val event = eventFor(submission, schedule)
     val result = auditConnector.sendExtendedEvent(event)
     result.onFailure {
       case NonFatal(e) => Logger.error(s"Unable to post audit event of type [${event.auditType}] to audit connector - [${e.getMessage}]", e)
@@ -47,7 +48,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
     result.map(_ => ())
   }
 
-  private def eventFor(journey: Journey)(implicit request: Request[_]) =
+  private def eventFor(journey: Journey, schedule: PaymentSchedule)(implicit request: Request[_]) =
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
       auditType   = "directDebitSetup",
@@ -60,13 +61,13 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
           "sortCode" -> journey.bankDetails.sortCode
         ),
         "schedule" -> Json.obj(
-          "initialPaymentAmount" -> journey.schedule.initialPayment,
-          "installments" -> Json.toJson(journey.schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
-          "numberOfInstallments" -> journey.schedule.instalments.length,
-          "installmentLengthCalendarMonths" -> (ChronoUnit.MONTHS.between(journey.schedule.startDate, journey.schedule.endDate)),
-          "totalPaymentWithoutInterest" -> journey.schedule.amountToPay,
-          "totalInterestCharged" -> journey.schedule.totalInterestCharged,
-          "totalPayable" -> journey.schedule.totalPayable)
+          "initialPaymentAmount" -> schedule.initialPayment,
+          "installments" -> Json.toJson(schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
+          "numberOfInstallments" -> schedule.instalments.length,
+          "installmentLengthCalendarMonths" -> (ChronoUnit.MONTHS.between(schedule.startDate, schedule.endDate)),
+          "totalPaymentWithoutInterest" -> schedule.amountToPay,
+          "totalInterestCharged" -> schedule.totalInterestCharged,
+          "totalPayable" -> schedule.totalPayable)
       )
     )
 }
