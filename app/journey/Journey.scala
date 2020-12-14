@@ -107,13 +107,13 @@ final case class Journey(
     require(maybeBankDetails.isDefined, s"'maybeBankDetails' has to be defined at this stage of a journey [${this.obfuscate}]")
   }
 
-  def paymentToday: Boolean = maybePaymentToday.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'maybePaymentToday' to be there but was not found. [${_id}] [${this}]"))
-  def initialPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'paymentTodayAmount' to be there but was not found. [${_id}] [${this}]"))
+  def paymentToday: Boolean = maybePaymentToday.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'maybePaymentToday' to be there but was not found. [${_id}] [${this.obfuscate}]"))
+  def initialPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'paymentTodayAmount' to be there but was not found. [${_id}] [${this.obfuscate}]"))
   def safeInitialPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(0)
-  def calculatorDuration: Int = maybeCalculatorDuration.map(_.chosenMonths).getOrElse(throw new RuntimeException(s"Expected 'maybeCalculatorDuration' to be there but was not found. [${_id}] [${this}]"))
+  def calculatorDuration: Int = maybeCalculatorDuration.map(_.chosenMonths).getOrElse(throw new RuntimeException(s"Expected 'maybeCalculatorDuration' to be there but was not found. [${_id}] [${this.obfuscate}]"))
 
   def eligibilityStatus: EligibilityStatus =
-    maybeEligibilityStatus.getOrElse(throw new RuntimeException(s"Expected 'EligibilityStatus' to be there but was not found. [${_id}] [${this}]"))
+    maybeEligibilityStatus.getOrElse(throw new RuntimeException(s"Expected 'EligibilityStatus' to be there but was not found. [${_id}] [${this.obfuscate}]"))
 
   def arrangementDirectDebit: Option[ArrangementDirectDebit] = maybeBankDetails.map(f => ArrangementDirectDebit.from(f))
 
