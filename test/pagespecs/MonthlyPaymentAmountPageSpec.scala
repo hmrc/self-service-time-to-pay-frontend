@@ -64,7 +64,7 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
 
   "valid entry and continue" in {
     beginJourney()
-    monthlyPaymentAmountPage.enterAmount("2450")
+    monthlyPaymentAmountPage.enterAmount("2000")
     CalculatorDataGenerator.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.assertPageIsDisplayed

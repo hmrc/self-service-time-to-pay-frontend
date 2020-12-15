@@ -71,6 +71,39 @@ object TdAll {
     addressLine5 = None,
     postcode     = Some("BN12 4XL"))
 
+  /*
+taxpayer returns and debits so you can plug it into inspector page and recreate journey
+todays date: 2019-11-25
+
+{
+  "returns" : [ {
+    "taxYearEnd" : "2020-04-05",
+    "issuedDate" : "2019-11-10",
+    "dueDate" : "2019-08-15",
+    "receivedDate" : "2019-03-09"
+  } ]
+}
+
+  {
+    "debits" : [ {
+    "taxYearEnd" : "2020-04-05",
+    "charge" : {
+      "originCode" : "IN1",
+      "creationDate" : "2020-04-05"
+    },
+    "relevantDueDate" : "2019-11-25",
+    "totalOutstanding" : 2500
+  }, {
+    "taxYearEnd" : "2020-04-05",
+    "charge" : {
+      "originCode" : "IN2",
+      "creationDate" : "2020-01-01"
+    },
+    "relevantDueDate" : "2019-11-25",
+    "totalOutstanding" : 2400
+  } ]
+  }
+*/
   val taxpayer: Taxpayer =
     Taxpayer(
       "Mr John Campbell",

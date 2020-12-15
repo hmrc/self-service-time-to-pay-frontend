@@ -30,6 +30,7 @@ class TermsAndConditionsPageSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+
     startPage.open()
     startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()
@@ -42,15 +43,14 @@ class TermsAndConditionsPageSpec extends ItSpec {
     paymentTodayQuestionPage.clickContinue()
 
     monthlyPaymentAmountPage.assertPageIsDisplayed()
-    monthlyPaymentAmountPage.enterAmount("2450")
-    monthlyPaymentAmountPage.enterAmount("2450")
+    monthlyPaymentAmountPage.enterAmount("2000")
     monthlyPaymentAmountPage.clickContinue()
 
     calculatorInstalmentsPage.assertPageIsDisplayed()
     calculatorInstalmentsPage.selectAnOption()
     calculatorInstalmentsPage.clickContinue()
 
-    instalmentSummarySelectDatePage.assertErrorPageIsDisplayed()
+    instalmentSummarySelectDatePage.assertPageIsDisplayed()
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()
 

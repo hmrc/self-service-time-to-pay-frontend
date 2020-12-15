@@ -226,8 +226,6 @@ class CalculatorController @Inject() (
       List(Some(closestSchedule), scheduleMonthsLater(1), scheduleMonthsLater(2))
     else if (closestScheduleIndex == schedules.size - 1)
       List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
-    else if (closestScheduleIndex == CalculatorService.maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock)) - 2)
-      List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
     else
       List(scheduleMonthsBefore(1), Some(closestSchedule), scheduleMonthsLater(1))
   }.flatten

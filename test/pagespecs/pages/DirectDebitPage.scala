@@ -33,10 +33,8 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val content = readMain().stripSpaces()
-    Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
-      content should include(expectedLine)
-    )
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
   }
 
   def expectedHeadingContent(language: Language): String = language match {
@@ -122,7 +120,9 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Check your account name is correct
           |Enter account details to set up a Direct Debit
           |Enter your banking details
-          |Name on the account Check your account name is correct 123ede23efr4efr4ew32ef3r4
+          |Name on the account
+          |Check your account name is correct
+          |123ede23efr4efr4ew32ef3r4
           |Sort code 12-34-56
           |Account number 12345678
           |To continue you must be:
@@ -137,7 +137,9 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Enter account details to set up a Direct Debit
           |Enter your banking details
           |Name on the account Mr John Campbell
-          |Sort code Sort code must be a 6 digit number fqe23fwef322few23r
+          |Sort code
+          |Sort code must be a 6 digit number
+          |fqe23fwef322few23r
           |Account number 12345678
           |To continue you must be:
           |a named account holder for this account
@@ -152,7 +154,9 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Enter your banking details
           |Name on the account Mr John Campbell
           |Sort code 12-34-56
-          |Account number Account number must be an 8 digit number 24wrgedf
+          |Account number
+          |Account number must be an 8 digit number
+          |24wrgedf
           |To continue you must be:
           |a named account holder for this account
           |able to set up Direct Debits without permission from the other account holders, if there are any

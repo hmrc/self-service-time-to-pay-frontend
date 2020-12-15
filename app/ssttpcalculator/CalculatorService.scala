@@ -106,19 +106,6 @@ class CalculatorService @Inject() (
       .toList
   }
 
-  private def availablePaymentSchedulesOld(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0))
-    (implicit request: Request[_]): List[PaymentSchedule] = {
-
-    val rangeOfAvailableScheduleDurationsInMonths =
-      minimumMonthsAllowedTTP to CalculatorService.maximumDurationInMonths(sa, LocalDate.now(clockProvider.getClock))
-
-    val debits = sa.debits.map(asDebitInput)
-    rangeOfAvailableScheduleDurationsInMonths.map { durationInMonths =>
-      val calculatorInput: CalculatorInput = CalculatorService.makeCalculatorInput(debits, initialPayment, durationInMonths)
-      buildSchedule(calculatorInput)
-    }.toList
-  }
-
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 
   @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
@@ -469,9 +456,6 @@ object CalculatorService {
     val lastMonth = date.minusMonths(1)
     lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
   }
-
-  def maximumDurationInMonths(sa: SelfAssessmentDetails, today: LocalDate): Int =
-    13
 
   /*
   * Rules:

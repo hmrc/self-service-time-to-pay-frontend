@@ -30,23 +30,34 @@ class InstalmentSummaryPageSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+
     startPage.open()
+    startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.assertPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.assertPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
-    monthlyPaymentAmountPage.enterAmount("2450")
+
+    monthlyPaymentAmountPage.assertPageIsDisplayed()
+    monthlyPaymentAmountPage.enterAmount("2000")
     monthlyPaymentAmountPage.clickContinue()
+
+    calculatorInstalmentsPage.assertPageIsDisplayed()
     calculatorInstalmentsPage.selectAnOption()
     calculatorInstalmentsPage.clickContinue()
+
+    instalmentSummarySelectDatePage.assertPageIsDisplayed()
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()
+    instalmentSummaryPage.assertPageIsDisplayed()
   }
 
   "language" in {
     beginJourney()
-
-    instalmentSummaryPage.assertPageIsDisplayed
 
     instalmentSummaryPage.clickOnWelshLink()
     instalmentSummaryPage.assertPageIsDisplayed(Welsh)
@@ -63,8 +74,10 @@ class InstalmentSummaryPageSpec extends ItSpec {
 
   "change monthly instalments" in {
     beginJourney()
+    instalmentSummaryPage.assertPageIsDisplayed()
     instalmentSummaryPage.clickInstalmentsChange()
-    calculatorInstalmentsPage.assertPageIsDisplayed
+    //TIP: if it comes back to change plan we know the day of the month thus interest is computed against 28th (not 12th)
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
   }
 
   "change collection day" in {

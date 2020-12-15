@@ -32,10 +32,9 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     href("survey-link") shouldBe Some("http://localhost:9514/feedback/PWYOII/personal")
 
-    val content = readMain().stripSpaces()
-    Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
-      content should include(expectedLine)
-    )
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+
   }
 
   def expectedHeadingContent(language: Language): String = language match {

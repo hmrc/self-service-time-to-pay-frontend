@@ -31,11 +31,8 @@ class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
 
     webDriver.findElement(By.linkText("accessibility problem (opens in a new tab)")).getAttribute("target") shouldBe "_blank"
-
-    val content = readMain().stripSpaces()
-    Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
-      content should include(expectedLine)
-    )
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
   }
 
   def clickOnAccessibilityStatementLink(): Unit = click on linkText("Accessibility statement")

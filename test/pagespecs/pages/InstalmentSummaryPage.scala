@@ -32,10 +32,8 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val content = readMain().stripSpaces()
-    Expected.MainText(paymentDayOfMonth).stripSpaces().split("\n").foreach(expectedLine =>
-      content should include(expectedLine)
-    )
+    val expectedLines = Expected.MainText(paymentDayOfMonth).stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
   }
 
   def expectedHeadingContent(language: Language): String = language match {
@@ -43,7 +41,7 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
     case Languages.Welsh   => "Gwiriwch fanylion eich amserlen talu"
   }
 
-  def clickInstalmentsChange(): Unit = {
+  def clickInstalmentsChange(): Unit = probing {
     val changeLink = xpath("""//*[@id="id_payment"]/dl/div[3]/dd[2]/a""")
     click on changeLink
   }

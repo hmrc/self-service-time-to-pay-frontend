@@ -32,10 +32,8 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val content = readMain().stripSpaces()
-    Expected.MainText().stripSpaces().split("\n").foreach(expectedLine =>
-      content should include(expectedLine)
-    )
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
   }
 
   def expectedHeadingContent(language: Language): String = language match {

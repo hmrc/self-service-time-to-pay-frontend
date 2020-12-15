@@ -36,9 +36,9 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    ()
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
   }
 
   def clickOnStartNowButton(): Unit = {
