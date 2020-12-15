@@ -46,12 +46,12 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
     case Languages.Welsh   => "Dros sawl mis yr hoffech dalu?"
   }
 
-  def selectAnOption(): Unit = {
+  def selectAnOption(): Unit = probing {
     val radioButton = xpath("/html/body/main/div[2]/article/form/fieldset/div/div[1]/input")
     click on radioButton
   }
 
-  def clickContinue(): Unit = {
+  def clickContinue(): Unit = probing{
     val button = xpath("//*[@id=\"next\"]")
     click on button
   }

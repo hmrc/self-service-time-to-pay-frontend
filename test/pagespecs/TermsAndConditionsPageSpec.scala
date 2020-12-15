@@ -31,22 +31,39 @@ class TermsAndConditionsPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
+    startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.assertPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.assertPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
+
+    monthlyPaymentAmountPage.assertPageIsDisplayed()
+    monthlyPaymentAmountPage.enterAmount("2450")
     monthlyPaymentAmountPage.enterAmount("2450")
     monthlyPaymentAmountPage.clickContinue()
+
+    calculatorInstalmentsPage.assertPageIsDisplayed()
     calculatorInstalmentsPage.selectAnOption()
     calculatorInstalmentsPage.clickContinue()
+
+    instalmentSummarySelectDatePage.assertErrorPageIsDisplayed()
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()
+
+    instalmentSummaryPage.assertPageIsDisplayed()
     instalmentSummaryPage.clickContinue()
+
+    directDebitPage.assertPageIsDisplayed()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.validateBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBanksIsSuccessful()
     directDebitPage.clickContinue()
-    directDebitConfirmationPage.assertPageIsDisplayed
+
+    directDebitConfirmationPage.assertPageIsDisplayed()
     directDebitConfirmationPage.clickContinue()
   }
 

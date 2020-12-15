@@ -212,7 +212,7 @@ class CalculatorService @Inject() (
         val interest = monthlyCapitalRepayment * currentDailyRate * daysInterestToCharge
 
         val ins = Instalment(r, monthlyCapitalRepayment, interest)
-        logger.info(s"Repayment $monthlyCapitalRepayment ($calculationDate - $r) $daysInterestToCharge @ $currentDailyRate = $interest")
+        //logger.info(s"Repayment $monthlyCapitalRepayment ($calculationDate - $r) $daysInterestToCharge @ $currentDailyRate = $interest")
         ins
       }
     }

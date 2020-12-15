@@ -88,9 +88,11 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    */
   protected def probing[A](probingF: => A): A = eventually(probingF).withClue {
     s"""
+       |>>>url was: ${webDriver.getCurrentUrl}
+       |>>>path is supposed to be: $path
        |>>>page text was:
        |${webDriver.findElement(By.tagName("body")).getText}
-       |>>>url was: ${webDriver.getCurrentUrl}
+
        |""".stripMargin
   }
 
