@@ -56,10 +56,3 @@ Nb: Running the integration tests locally - i.e. `sbt test`- may require that AS
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
 
-
-
-
-Error cases:
-
-Today is 2019-12-05
-Enter an amount between £1,400.00 and £1,400.00
