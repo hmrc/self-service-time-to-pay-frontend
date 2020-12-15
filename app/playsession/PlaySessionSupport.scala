@@ -39,16 +39,9 @@ object PlaySessionSupport {
 
   implicit class RequestOps(request: Request[_]) {
 
-    def readJourneyId: JourneyId = request
-      .session
-      .get(journeyIdKey)
-      .map(JourneyId.apply)
-      .getOrElse(throw new RuntimeException(s"'$journeyIdKey' Not found in the play session"))
+    def readJourneyId: Option[JourneyId] = request.session.get(journeyIdKey).map(JourneyId.apply)
 
-    def readFrozenClock(): Option[Clock] = request
-      .session
-      .get(frozenDateTimeKey)
-      .map(toFrozenClock)
+    def readFrozenClock(): Option[Clock] = request.session.get(frozenDateTimeKey).map(toFrozenClock)
 
     private def toFrozenClock(frozenDateTimeString: String) = {
       val fixedInstant = LocalDateTime.parse(frozenDateTimeString).toInstant(ZoneOffset.UTC)

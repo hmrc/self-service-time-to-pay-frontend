@@ -17,10 +17,9 @@
 package journey
 
 import java.time.{Clock, LocalDate, LocalDateTime}
-
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
-import journey.Statuses.InProgress
+import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.libs.json.{Format, Json, OFormat}
 import ssttpcalculator.model.{CalculatorInput, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
@@ -121,6 +120,8 @@ final case class Journey(
     maybeBankDetails.getOrElse(throw new RuntimeException(s"bank details missing on submission [${_id}]"))
 
   def saUtr: String = maybeSaUtr.getOrElse(throw new RuntimeException(s"saUtr missing on submission [${_id}]"))
+
+  def isFinished: Boolean = status == FinishedApplicationSuccessful
 
   def obfuscate: Journey = Journey(
     _id                       = _id,
