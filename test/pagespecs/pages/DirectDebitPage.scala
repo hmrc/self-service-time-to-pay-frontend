@@ -42,9 +42,10 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     case Languages.Welsh   => "Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol"
   }
 
-  def assertErrorPageIsDisplayed(implicit field: ErrorCase): Assertion = eventually {
+  def assertErrorPageIsDisplayed(implicit field: ErrorCase): Unit = eventually {
     readPath() shouldBe path
-    readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
+    val expectedLines = Expected.ErrorText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
   }
 
   def fillOutForm(accountNameInput: String, sortCodeInput: String, accountNumberInput: String): Unit = {
