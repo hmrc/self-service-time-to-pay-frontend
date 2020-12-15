@@ -32,9 +32,9 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    ()
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
   }
 
   def expectedHeadingContent(language: Language): String = language match {
@@ -89,14 +89,14 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       // "How much can you pay upfront in Pound Sterling" has css class visually hidden but is still read by content scraper
       private def mainTextEnglish(increase: Int) =
         s"""How much can you afford to pay each month?
-           |Enter an amount between £${format(600.00 + increase)} and £${format(2500.00 + increase)}
+           |Enter an amount between £${format(400.00 + increase)} and £${format(2400.00 + increase)}
            |£ How much can you pay monthly in Pound Sterling
            |Continue
         """.stripMargin
 
       private def mainTextWelsh(increase: Int) =
         s"""Faint y gallwch fforddio ei dalu bob mis?
-           |Nodwch swm sydd rhwng £${format(600.00 + increase)} a £${format(2500.00 + increase)}
+           |Nodwch swm sydd rhwng £${format(400.00 + increase)} a £${format(2400.00 + increase)}
            |£ How much can you pay monthly in Pound Sterling
            |Yn eich blaen
         """.stripMargin
@@ -109,7 +109,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         s"""There is a problem
            |Enter a figure between the given range
            |How much can you afford to pay each month?
-           |Enter an amount between £600.00 and £2,500.00
+           |Enter an amount between £400.00 and £2,400.00
            |Enter numbers only £ How much can you pay monthly in Pound Sterling
            |Continue
         """.stripMargin

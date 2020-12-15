@@ -92,6 +92,7 @@ class ItSpec
   lazy val monthlyPaymentAmountPage: MonthlyPaymentAmountPage = wire[MonthlyPaymentAmountPage]
   lazy val paymentSummaryPage: PaymentSummaryPage = wire[PaymentSummaryPage]
   lazy val calculatorInstalmentsPage: CalculatorInstalmentsPage = wire[CalculatorInstalmentsPage]
+  lazy val calculatorInstalmentsPage28thDay: CalculatorInstalmentsPageDayOfMonth28th = wire[CalculatorInstalmentsPageDayOfMonth28th]
   lazy val instalmentSummarySelectDatePage: InstalmentSummarySelectDatePage = wire[InstalmentSummarySelectDatePage]
   lazy val instalmentSummaryPage: InstalmentSummaryPageForPaymentDayOfMonth27th =
     wire[InstalmentSummaryPageForPaymentDayOfMonth27th]

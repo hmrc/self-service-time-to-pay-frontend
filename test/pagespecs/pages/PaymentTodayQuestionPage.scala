@@ -31,9 +31,9 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    ()
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
   }
 
   def expectedHeadingContent(language: Language): String = language match {
@@ -49,7 +49,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     else click on noRadioButton
   }
 
-  def clickContinue(): Unit = {
+  def clickContinue(): Unit = probing {
     val button = xpath("//*[@id=\"next\"]")
     click on button
   }
@@ -79,8 +79,8 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         """Can you make an upfront payment?
           |Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account in 3 to 5 days.
           |Can you make an upfront payment?
-          |unchecked Yes
-          |unchecked No
+          |Yes
+          |No
           |Continue
         """.stripMargin
 
@@ -88,8 +88,8 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         """A allwch wneud taliad ymlaen llaw?
           |Bydd gwneud taliad ymlaen llaw cyn i chi drefnu’ch cynllun yn golygu y bydd eich taliadau misol yn is.
           |A allwch wneud taliad ymlaen llaw?
-          |unchecked Iawn
-          |unchecked Na
+          |Iawn
+          |Na
           |Yn eich blaen
         """.stripMargin
     }

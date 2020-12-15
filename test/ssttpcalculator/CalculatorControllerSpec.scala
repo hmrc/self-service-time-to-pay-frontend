@@ -73,7 +73,7 @@ class CalculatorControllerSpec extends ItSpec {
       schedule.durationInMonths shouldBe duration
     }
 
-    private def whenUserPrefersMonthlyPayment(amount: Int) = controller.closestSchedule(amount, paymentSchedules)
+    private def whenUserPrefersMonthlyPayment(amount: Int) = controller.computeClosestSchedule(amount, paymentSchedules)
   }
 
   "closestSchedules returns the closest schedule with the next closest 2 schedules if present" in new SetUp {
@@ -91,15 +91,15 @@ class CalculatorControllerSpec extends ItSpec {
     private val sevenMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == sevenMonthScheduleRegularPaymentAmount).head
 
     private val closestSchedulesToTwoMonthSchedule =
-      controller.closestSchedules(twoMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+      controller.computeClosestSchedules(twoMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
     closestSchedulesToTwoMonthSchedule shouldBe Set(twoMonthSchedule, threeMonthSchedule, fourMonthSchedule)
 
     private val closestSchedulesToSixMonthSchedule =
-      controller.closestSchedules(sixMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+      controller.computeClosestSchedules(sixMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
     closestSchedulesToSixMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
 
     private val closestSchedulesToSevenMonthSchedule =
-      controller.closestSchedules(sevenMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+      controller.computeClosestSchedules(sevenMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
     closestSchedulesToSevenMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
   }
 }

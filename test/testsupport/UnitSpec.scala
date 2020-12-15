@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package pagespecs.pages
+package testsupport
 
-import org.openqa.selenium.WebDriver
+import org.scalatest
+import org.scalatest.FreeSpec
 
-class PageScraper(webDriver: WebDriver, baseUrl: BaseUrl) {
-
-  def readPath(): String = {
-    val url = new java.net.URL(webDriver.getCurrentUrl)
-    url.getPath
-  }
-
-}
-
+class UnitSpec
+  extends FreeSpec
+  with RichMatchers

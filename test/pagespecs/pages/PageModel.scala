@@ -58,6 +58,16 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit
 
+  def assertContentMatchesExpectedLines(expectedLines: Seq[String]): Unit = probing {
+    //we replace `\n` with spaces so the tests can run both in intellij and in sbt.
+    //for some reasons webDeriver's `getText` returns text with extra new lines if you run it from intellij.
+    val content = readMain().stripSpaces().replaceAll("\n", " ")
+    expectedLines.foreach { expectedLine =>
+      withClue(s"The page content should include '$expectedLine'"){
+        content should include(expectedLine)
+      }
+    }
+  }
   def open(): Unit = WebBrowser.goTo(s"${baseUrl.value}$path")
 
   def expectedTitle(heading: String, lang: Language): String = lang match {
@@ -88,9 +98,11 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    */
   protected def probing[A](probingF: => A): A = eventually(probingF).withClue {
     s"""
+       |>>>url was: ${webDriver.getCurrentUrl}
+       |>>>path is supposed to be: $path
        |>>>page text was:
        |${webDriver.findElement(By.tagName("body")).getText}
-       |>>>url was: ${webDriver.getCurrentUrl}
+
        |""".stripMargin
   }
 
@@ -126,13 +138,15 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
   implicit class StringOps(s: String) {
     /**
      * Transforms string so it's easier it to compare.
+     * It also replaces `unchecked`
+     *
      */
     def stripSpaces(): String = s
+      .replaceAll("unchecked", "") //when you run tests from intellij webdriver.getText adds extra 'unchecked' around selection
       .replaceAll("[^\\S\\r\\n]+", " ") //replace many consecutive white-spaces (but not new lines) with one space
       .replaceAll("[\r\n]+", "\n") //replace many consecutive new lines with one new line
       .split("\n").map(_.trim) //trim each line
       .filterNot(_ == "") //remove any empty lines
       .mkString("\n")
-
   }
 }

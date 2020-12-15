@@ -35,7 +35,7 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     taxLiabilitiesPage.clickOnStartNowButton()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
-    monthlyPaymentAmountPage.enterAmount("2450")
+    monthlyPaymentAmountPage.enterAmount("2000")
     monthlyPaymentAmountPage.clickContinue()
     calculatorInstalmentsPage.selectAnOption()
     calculatorInstalmentsPage.clickContinue()
