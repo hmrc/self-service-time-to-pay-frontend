@@ -46,12 +46,8 @@ class InspectorController @Inject() (
   }
 
   def inspect(): Action[AnyContent] = Action.async { implicit request =>
-    val maybeJourneyF: Future[Option[Journey]] = journeyService.getJourney.map(Some(_)).recover {
-      case e: RuntimeException => None
-    }
-
     for {
-      maybeJourney <- maybeJourneyF
+      maybeJourney <- journeyService.getMaybeJourney
     } yield Ok(views.inspector(
       request.session.data,
       List(
