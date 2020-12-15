@@ -507,3 +507,7 @@ details summary:focus,
     paddding-bottom: 0;
 }
 }
+
+.no-details details summary .arrow-closed {
+    display:none;
+}
