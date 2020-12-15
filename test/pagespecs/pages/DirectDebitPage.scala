@@ -29,7 +29,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/direct-debit"
 
-  override def assertPageIsDisplayed(implicit lang: Language): Unit = eventually {
+  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
@@ -42,13 +42,13 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     case Languages.Welsh   => "Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol"
   }
 
-  def assertErrorPageIsDisplayed(implicit field: ErrorCase): Unit = eventually {
+  def assertErrorPageIsDisplayed(implicit field: ErrorCase): Unit = probing {
     readPath() shouldBe path
     val expectedLines = Expected.ErrorText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
 
-  def fillOutForm(accountNameInput: String, sortCodeInput: String, accountNumberInput: String): Unit = {
+  def fillOutForm(accountNameInput: String, sortCodeInput: String, accountNumberInput: String): Unit = probing {
     click on xpath("//*[@id=\"accountName\"]")
     enter(accountNameInput)
     click on xpath("//*[@id=\"sortCode\"]")
@@ -57,7 +57,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     enter(accountNumberInput)
   }
 
-  def clickContinue(): Unit = {
+  def clickContinue(): Unit = probing{
     val button = xpath("//*[@id=\"content\"]/article/form/div[2]/button")
     click on button
   }

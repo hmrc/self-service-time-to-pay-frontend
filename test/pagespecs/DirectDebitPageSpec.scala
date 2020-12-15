@@ -19,7 +19,7 @@ package pagespecs
 import langswitch.Languages.{English, Welsh}
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.{CalculatorDataGenerator, DirectDebitTd}
+import testsupport.testdata.DirectDebitTd
 import testsupport.testdata.TdAll.saUtr
 import testsupport.{AccountName, ItSpec, _}
 
@@ -32,22 +32,36 @@ class DirectDebitPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
+    startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.assertPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.assertPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
+
+    monthlyPaymentAmountPage.assertPageIsDisplayed()
     monthlyPaymentAmountPage.enterAmount("2000")
     monthlyPaymentAmountPage.clickContinue()
+
+    calculatorInstalmentsPage.assertPageIsDisplayed()
     calculatorInstalmentsPage.selectAnOption()
     calculatorInstalmentsPage.clickContinue()
+
+    instalmentSummarySelectDatePage.assertPageIsDisplayed()
     instalmentSummarySelectDatePage.selectFirstOption()
     instalmentSummarySelectDatePage.clickContinue()
+
+    instalmentSummaryPage.assertPageIsDisplayed()
     instalmentSummaryPage.clickContinue()
+
+    directDebitPage.assertPageIsDisplayed()
   }
 
   "language" in {
     beginJourney()
-    directDebitPage.assertPageIsDisplayed
 
     directDebitPage.clickOnWelshLink()
     directDebitPage.assertPageIsDisplayed(Welsh)
@@ -98,9 +112,9 @@ class DirectDebitPageSpec extends ItSpec {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.validateBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    getBanksIsSuccessful()
+    DirectDebitStub.getBanksIsSuccessful()
     directDebitPage.clickContinue()
-    directDebitConfirmationPage.assertPageIsDisplayed
+    directDebitConfirmationPage.assertPageIsDisplayed()
   }
 
   "enter valid bank account given business partner not found succeeds" in {
@@ -109,6 +123,6 @@ class DirectDebitPageSpec extends ItSpec {
     DirectDebitStub.validateBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBanksBPNotFound(saUtr)
     directDebitPage.clickContinue()
-    directDebitConfirmationPage.assertPageIsDisplayed
+    directDebitConfirmationPage.assertPageIsDisplayed()
   }
 }
