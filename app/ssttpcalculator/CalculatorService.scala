@@ -64,7 +64,7 @@ class CalculatorService @Inject() (
       .orElse(
         availableSchedules.find(_.instalments.length == durationInMonths - 1)
       ).getOrElse(
-          throw new RuntimeException(s"Could not find schedule corresponding to $durationInMonths [${journey.obfuscate}] [${availableSchedules}]")
+          throw new RuntimeException(s"Could not find schedule corresponding to $durationInMonths [${journey}] [${availableSchedules}]")
         )
     schedule
   }
