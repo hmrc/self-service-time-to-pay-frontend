@@ -21,7 +21,6 @@ import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.libs.json.{Format, Json, OFormat}
-import ssttpcalculator.model.{CalculatorInput, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, _}
 
@@ -84,35 +83,35 @@ final case class Journey(
   def debits: Seq[Debit] = taxpayer.selfAssessment.debits
 
   def requireIsInProgress(): Unit = {
-    require(status == InProgress, s"status has to be InProgress [${this.obfuscate}]")
+    require(status == InProgress, s"status has to be InProgress [${this}]")
   }
   def requireIsEligible(): Unit = {
-    require(eligibilityStatus.eligible, s"taxpayer has to be eligible [${this.obfuscate}]")
+    require(eligibilityStatus.eligible, s"taxpayer has to be eligible [${this}]")
   }
 
   def requireScheduleIsDefined(): Unit = {
     requireIsInProgress()
     requireIsEligible()
 
-    require(maybeTaxpayer.isDefined, s"'taxpayer' has to be defined at this stage of a journey [${this.obfuscate}]")
-    require(maybePaymentToday.isDefined, s"'maybePaymentToday' has to be defined at this stage of a journey [${this.obfuscate}]")
-    require(maybeMonthlyPaymentAmount.isDefined, s"'maybeMonthlyPaymentAmount' has to be defined at this stage of a journey [${this.obfuscate}]")
-    require(maybeCalculatorDuration.isDefined, s"'maybeCalculatorDuration' has to be defined at this stage of a journey [${this.obfuscate}]")
-    require(maybeArrangementDayOfMonth.isDefined, s"'maybeArrangementDayOfMonth' has to be defined at this stage of a journey [${this.obfuscate}]")
+    require(maybeTaxpayer.isDefined, s"'taxpayer' has to be defined at this stage of a journey [${this}]")
+    require(maybePaymentToday.isDefined, s"'maybePaymentToday' has to be defined at this stage of a journey [${this}]")
+    require(maybeMonthlyPaymentAmount.isDefined, s"'maybeMonthlyPaymentAmount' has to be defined at this stage of a journey [${this}]")
+    require(maybeCalculatorDuration.isDefined, s"'maybeCalculatorDuration' has to be defined at this stage of a journey [${this}]")
+    require(maybeArrangementDayOfMonth.isDefined, s"'maybeArrangementDayOfMonth' has to be defined at this stage of a journey [${this}]")
   }
 
   def requireDdIsDefined(): Unit = {
     requireScheduleIsDefined()
-    require(maybeBankDetails.isDefined, s"'maybeBankDetails' has to be defined at this stage of a journey [${this.obfuscate}]")
+    require(maybeBankDetails.isDefined, s"'maybeBankDetails' has to be defined at this stage of a journey [${this}]")
   }
 
-  def paymentToday: Boolean = maybePaymentToday.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'maybePaymentToday' to be there but was not found. [${_id}] [${this.obfuscate}]"))
-  def initialPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'paymentTodayAmount' to be there but was not found. [${_id}] [${this.obfuscate}]"))
+  def paymentToday: Boolean = maybePaymentToday.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'maybePaymentToday' to be there but was not found. [${_id}] [${this}]"))
+  def initialPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'paymentTodayAmount' to be there but was not found. [${_id}] [${this}]"))
   def safeInitialPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(0)
-  def calculatorDuration: Int = maybeCalculatorDuration.map(_.chosenMonths).getOrElse(throw new RuntimeException(s"Expected 'maybeCalculatorDuration' to be there but was not found. [${_id}] [${this.obfuscate}]"))
+  def calculatorDuration: Int = maybeCalculatorDuration.map(_.chosenMonths).getOrElse(throw new RuntimeException(s"Expected 'maybeCalculatorDuration' to be there but was not found. [${_id}] [${this}]"))
 
   def eligibilityStatus: EligibilityStatus =
-    maybeEligibilityStatus.getOrElse(throw new RuntimeException(s"Expected 'EligibilityStatus' to be there but was not found. [${_id}] [${this.obfuscate}]"))
+    maybeEligibilityStatus.getOrElse(throw new RuntimeException(s"Expected 'EligibilityStatus' to be there but was not found. [${_id}] [${this}]"))
 
   def arrangementDirectDebit: Option[ArrangementDirectDebit] = maybeBankDetails.map(f => ArrangementDirectDebit.from(f))
 
@@ -135,6 +134,10 @@ final case class Journey(
     ddRef                     = ddRef.map(_ => "***"),
     maybeSaUtr                = maybeSaUtr.map(_ => "***")
   )
+
+  override def toString: String = {
+    obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
+  }
 }
 
 object Journey {

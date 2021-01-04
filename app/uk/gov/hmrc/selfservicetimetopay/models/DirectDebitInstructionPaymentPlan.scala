@@ -22,7 +22,16 @@ import play.api.libs.json.{Format, Json}
 final case class DirectDebitInstructionPaymentPlan(processingDate:         String,
                                                    acknowledgementId:      String,
                                                    directDebitInstruction: List[DirectDebitInstruction],
-                                                   paymentPlan:            List[DirectDebitPaymentPlan])
+                                                   paymentPlan:            List[DirectDebitPaymentPlan]) {
+
+  def obfuscate: DirectDebitInstructionPaymentPlan = copy(
+    directDebitInstruction = directDebitInstruction.map(_.obfuscate)
+  )
+
+  override def toString: String = {
+    obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
+  }
+}
 
 object DirectDebitInstructionPaymentPlan {
   implicit val format: Format[DirectDebitInstructionPaymentPlan] = Json.format[DirectDebitInstructionPaymentPlan]

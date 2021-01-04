@@ -86,7 +86,7 @@ class DirectDebitController @Inject() (
       journey.requireScheduleIsDefined()
       journey.requireDdIsDefined()
       val schedule = calculatorService.computeSchedule(journey)
-      val directDebit = journey.arrangementDirectDebit.getOrElse(throw new RuntimeException(s"arrangement direct debit not found on submission [${journey.obfuscate}]"))
+      val directDebit = journey.arrangementDirectDebit.getOrElse(throw new RuntimeException(s"arrangement direct debit not found on submission [${journey}]"))
       Future.successful(Ok(views.direct_debit_confirmation(
         journey.taxpayer.selfAssessment.debits, schedule, directDebit, isSignedIn))
       )

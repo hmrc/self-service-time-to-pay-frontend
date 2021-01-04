@@ -22,6 +22,10 @@ final case class DirectDebitInstructions(directDebitInstruction: Seq[DirectDebit
   def obfuscate: DirectDebitInstructions = DirectDebitInstructions(
     directDebitInstruction = directDebitInstruction.map(_.obfuscate)
   )
+
+  override def toString: String = {
+    obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
+  }
 }
 
 object DirectDebitInstructions {

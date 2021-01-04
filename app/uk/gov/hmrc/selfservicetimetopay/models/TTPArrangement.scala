@@ -31,6 +31,10 @@ final case class TTPArrangement(paymentPlanReference: String,
     taxpayer             = taxpayer.obfuscate,
     schedule             = schedule
   )
+
+  override def toString: String = {
+    obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
+  }
 }
 
 object TTPArrangement {

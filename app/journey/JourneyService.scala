@@ -49,7 +49,7 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
   def getEligibleJourneyInProgress()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
     getJourney().map {
       case j: Journey if j.status == InProgress && j.maybeEligibilityStatus.isDefined && j.eligibilityStatus.eligible => j
-      case j => throw new RuntimeException(s"Expected eligible journey in progress [${j.obfuscate}]")
+      case j => throw new RuntimeException(s"Expected eligible journey in progress [${j}]")
     }
   }
 
