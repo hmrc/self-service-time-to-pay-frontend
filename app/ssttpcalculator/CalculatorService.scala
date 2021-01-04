@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,8 @@
 
 package ssttpcalculator
 
-import java.time.LocalDate.now
-import java.time.temporal.ChronoUnit.{DAYS, MONTHS}
-import java.time.{Clock, LocalDate, Year}
-
 import _root_.model._
 import bankholidays.WorkingDaysService.addWorkingDays
-import javax.inject.Inject
 import journey.Journey
 import play.api.Logger.logger
 import play.api.mvc.Request
@@ -31,6 +26,10 @@ import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
+import java.time.LocalDate.now
+import java.time.temporal.ChronoUnit.DAYS
+import java.time.{Clock, LocalDate, Year}
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import scala.math.BigDecimal
 import scala.math.BigDecimal.RoundingMode.HALF_UP
@@ -44,12 +43,12 @@ class CalculatorService @Inject() (
 
   import clockProvider._
 
-  val minimumMonthsAllowedTTP = 2
-  val DebitDueAndCalculationDatesWithinRate = Tuple2(true, true)
-  val DebitDueDateWithinRate = Tuple2(true, false)
-  val CalculationDateWithinRate = Tuple2(false, true)
-  val defaultInitialPaymentDays = 7
-  val `14 day gap between the initial payment date and the first scheduled payment date` = 14
+  val minimumMonthsAllowedTTP: Int = 2
+  val DebitDueAndCalculationDatesWithinRate: (Boolean, Boolean) = Tuple2(true, true)
+  val DebitDueDateWithinRate: (Boolean, Boolean) = Tuple2(true, false)
+  val CalculationDateWithinRate: (Boolean, Boolean) = Tuple2(false, true)
+  val defaultInitialPaymentDays: Int = 7
+  val `14 day gap between the initial payment date and the first scheduled payment date`: Int = 14
 
   def computeSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
     val availableSchedules = availablePaymentSchedules(
@@ -440,66 +439,5 @@ object CalculatorService {
   implicit def ordered[A](implicit ev$1: A => Comparable[_ >: A]): Ordering[A] = new Ordering[A] {
     def compare(x: A, y: A): Int = x compareTo y
   }
-
-  private def minDate(date1: LocalDate, date2: LocalDate) = if (math.Ordering[LocalDate].lt(date1, date2)) date1 else date2
-
-  private def max(date1: LocalDate, date2: LocalDate) = if (math.Ordering[LocalDate].gt(date1, date2)) date1 else date2
-
-  private def monthsBetween(date1: LocalDate, date2: LocalDate) = {
-    //we add a day to date2 because we need to compute it inclusive
-    //for example there should be 1 month between 1st JAN an 31st JAN
-    //    MONTHS.between(date1, date2.plusDays(1)).toInt
-    MONTHS.between(date1, date2).toInt
-  }
-
-  private def lastDayOfPreviousMonth(date: LocalDate) = {
-    val lastMonth = date.minusMonths(1)
-    lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
-  }
-
-  /*
-  * Rules:
-   a)    End of the calendar month before the due date of the next liability which is outside of the TTP We are not checking this rule
-   b)    End of the calendar month before the due date of the next non-submitted SA return
-   c)    12 months from the earliest due date of the amounts included in the TTP (*ignoring due dates for any amounts under £32)
-    */
-  def maximumDurationInMonthsOld(sa: SelfAssessmentDetails, today: LocalDate): Int = {
-
-    val maximumAllowedDurationInMonths = 11
-
-    val maxDurationBasedOnReturns = maximumDurationInMonthsBasedOnReturns(sa, today)
-    val maxDurationBasedOnDebits = maximumDurationInMonthsBasedOnDebits(sa, today)
-
-    val maximumDurationInMonths = min(
-      maximumAllowedDurationInMonths,
-      maxDurationBasedOnReturns.getOrElse(maximumAllowedDurationInMonths),
-      maxDurationBasedOnDebits.getOrElse(maximumAllowedDurationInMonths)
-    )
-
-    maximumDurationInMonths
-  }
-
-  def maximumDurationInMonthsBasedOnDebits(sa: SelfAssessmentDetails, today: LocalDate): Option[Int] = {
-    val `debitsMinDueDate+1`: Option[LocalDate] =
-      sa
-        .debits
-        .filter(_.amount > 32)
-        .map(_.dueDate.plusYears(1))
-        .reduceOption(minDate)
-
-    `debitsMinDueDate+1`.map(dueDate => monthsBetween(today, dueDate))
-  }
-
-  def maximumDurationInMonthsBasedOnReturns(sa: SelfAssessmentDetails, today: LocalDate): Option[Int] = {
-    val `returnsMaxDueDate+1y`: Option[LocalDate] = sa.returns.flatMap(_.dueDate.map(_.plusYears(1))).reduceOption(max)
-
-    `returnsMaxDueDate+1y`
-      .map(dueDate => {
-        val lastDateOfPreviousMonthOfDueDate = lastDayOfPreviousMonth(dueDate)
-        monthsBetween(today, lastDateOfPreviousMonthOfDueDate)
-      })
-  }
-
-  def min(first: Int, rest: Int*): Int = rest.toList.foldLeft(first)(Math.min)
 
 }
