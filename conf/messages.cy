@@ -397,3 +397,16 @@ ssttp.arrangement.instalment-summary-table.monthly-instalments.link-title = Newi
  accessibility-statement-p27b = . Profwyd y gwasanaeth llawn gan CThEM, ac roedd y gwaith o brofi’r gwasanaeth yn cynnwys defnyddwyr anabl.
  accessibility-statement-p28 = Paratowyd y dudalen hon ar 26 Chwefror 2020. Cafodd ei diweddaru ddiwethaf ar 26 Mehefin 2020.
 
+
+
+# Session timeout dialog and timed out page
+timeoutDialog.message.logged-in =  Er eich diogelwch, byddwn yn eich allgofnodi cyn pen
+timeoutDialog.keep-alive-button-text.logged-in = Parhau i fod wedi’ch mewngofnodi
+timeoutDialog.sign-out-button-text.logged-in = Allgofnodi
+
+timeoutDialog.message.logged-out = Er eich diogelwch, byddwn yn dod â’ch sesiwn i ben cyn pen
+timeoutDialog.keep-alive-button-text.logged-out = Nesaf
+timeoutDialog.sign-out-button-text.logged-out = Dileu’ch atebion
+
+delete-answers.heading = Er eich diogelwch, gwnaethom eich allgofnodi
+delete-answers.message = Ni wnaethom gadw’ch atebion.

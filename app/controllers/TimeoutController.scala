@@ -17,7 +17,6 @@
 package controllers
 
 import controllers.action.Actions
-import journey.JourneyId
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.Views
@@ -33,7 +32,7 @@ class TimeoutController @Inject() (actions: Actions,
 
   def keepAliveSession(): Action[AnyContent] = Action(NoContent)
 
-  def keepAliveSessionAndJourney(journeyId: JourneyId): Action[AnyContent] = {
-    ???
+  def killSession(): Action[AnyContent] = Action { implicit request =>
+    Ok(views.delete_answers()).withNewSession
   }
 }

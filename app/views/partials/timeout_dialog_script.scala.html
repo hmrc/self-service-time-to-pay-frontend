@@ -37,7 +37,7 @@ window.addEventListener("load", function(event) {
             keepAliveUrl:        '@timeoutKeepAliveUrl',
 
             signOutButtonText:   '@Messages("timeoutDialog.sign-out-button-text.logged-in")',
-            signOutUrl:          '@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)'
+            signOutUrl:          '@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).url'
         });
     } else {
         window.GOVUK.timeoutDialog({
@@ -49,7 +49,7 @@ window.addEventListener("load", function(event) {
             keepAliveUrl:        '@timeoutKeepAliveUrl',
 
             signOutButtonText:   '@Messages("timeoutDialog.sign-out-button-text.logged-out")',
-            signOutUrl:          '@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)'
+            signOutUrl:          '@controllers.routes.TimeoutController.killSession().url'
         });
     }
 });

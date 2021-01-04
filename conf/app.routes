@@ -64,5 +64,5 @@ GET         /language/:language                                           langsw
 
 GET         /accessibility-statement                                      ssttpaccessibility.AccessibilityController.accessibilityStatement()
 
-GET         /session/keep-alive                                      @controllers.TimeoutController.keepAliveSession()
-GET         /session/keep-alive/:journeyId                           @controllers.TimeoutController.keepAliveSessionAndJourney(journeyId: journey.JourneyId)
+GET         /session/keep-alive                                       controllers.TimeoutController.keepAliveSession()
+GET         /delete-answers                                           controllers.TimeoutController.killSession()
