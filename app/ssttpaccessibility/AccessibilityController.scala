@@ -19,9 +19,12 @@ package ssttpaccessibility
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
+
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, NoActiveSession}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import views.Views
 
@@ -38,4 +41,5 @@ class AccessibilityController @Inject() (
     JourneyLogger.info(s"AccessibilityController.accessibilityStatement: $request")
     Future.successful(Ok(views.accessibility_statement(isSignedIn, mcc.messagesApi)))
   }
+
 }
