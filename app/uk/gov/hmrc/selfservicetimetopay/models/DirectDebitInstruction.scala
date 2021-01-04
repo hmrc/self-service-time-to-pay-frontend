@@ -43,6 +43,10 @@ final case class DirectDebitInstruction(
     ddiRefNumber    = ddiRefNumber.map(_ => "***"),
     ddiReferenceNo  = ddiReferenceNo.map(_ => "***")
   )
+
+  override def toString: String = {
+    obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
+  }
 }
 
 object DirectDebitInstruction {

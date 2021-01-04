@@ -25,6 +25,10 @@ final case class BankDetailsRequest(sortCode:      String,
     sortCode      = "***",
     accountNumber = "***"
   )
+
+  override def toString: String = {
+    obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
+  }
 }
 
 object BankDetailsRequest {

@@ -27,6 +27,10 @@ final case class BankDetails(
     accountName       = "***",
     maybeDDIRefNumber = maybeDDIRefNumber.map(_ => "***")
   )
+
+  override def toString: String = {
+    obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
+  }
 }
 
 object BankDetails {
