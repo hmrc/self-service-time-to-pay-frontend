@@ -18,7 +18,6 @@ package journey
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Format
-import play.api.mvc.PathBindable
 import reactivemongo.bson.BSONObjectID
 
 final case class JourneyId(value: String)
@@ -26,7 +25,5 @@ final case class JourneyId(value: String)
 object JourneyId {
   implicit val format: Format[JourneyId] = implicitly[Format[String]].inmap(JourneyId(_), _.value)
   def newJourneyId(): JourneyId = JourneyId(BSONObjectID.generate.stringify)
-
-  implicit val journeyIdBinder: PathBindable[JourneyId] = PathBindable.bindableString.transform(JourneyId.apply, _.value)
 }
 
