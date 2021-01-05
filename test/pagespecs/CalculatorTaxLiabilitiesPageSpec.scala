@@ -20,8 +20,33 @@ import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
+import testsupport.testdata.TdAll
+import testsupport.testdata.TdAll.toLocalDate
+
+import testsupport.testdata.TdAll.{address, communicationPreferences, debit1, debit1Amount, debit2, debit2Amount, dueDate, saUtr, taxYearEnd}
+import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
+
+import java.time.LocalDate
 
 class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
+
+  private val debit1Amount = 2500
+  private val debit2Amount = 3000
+
+  val lateDebit1: Debit = Debit(originCode = "IN1", debit1Amount, dueDate = "2021-06-01", interest = None, taxYearEnd)
+  val lateDebit2: Debit = Debit(originCode = "IN2", amount = debit2Amount, dueDate, interest = None, taxYearEnd)
+
+  val taxpayerWithLateDebit: Taxpayer =
+    Taxpayer(
+      "Mr John Campbell",
+      List(address),
+      SelfAssessmentDetails(
+        saUtr,
+        communicationPreferences,
+        List(debit1, debit2),
+        List(
+          Return(taxYearEnd, issuedDate = "2019-11-10", dueDate = "2019-08-15", receivedDate = "2019-03-09"),
+          Return(taxYearEnd   = "2018-04-05", issuedDate = "2017-02-15", dueDate = "2018-01-31", receivedDate = "2018-03-09"))))
 
   def beginJourney(): Unit = {
     AuthStub.authorise()
