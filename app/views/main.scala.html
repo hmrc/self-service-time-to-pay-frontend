@@ -71,7 +71,7 @@
     mainContent = viewsHelpers.article(mainContent),
     scriptElem = Some(scriptElems),
     linksElem = Some(linksElems),
-    canSignOut = loggedIn,
+    canSignOut = req.RequestSupport.isLoggedIn,
     allowTimeoutDialog = allowTimeoutDialog,
     googleAnalyticsCalls = googleAnalyticsCalls,
     noGetHelp = noGetHelp,
