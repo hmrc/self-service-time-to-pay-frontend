@@ -55,7 +55,7 @@
 @main(
     title = Messages("ssttp.arrangement.direct-debit.confirmation.title"),
     googleAnalyticsCalls = Seq(gaCheckoutCode.body),
-        backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
+    backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
 ) {
     <h1 class="heading-xlarge">@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
 

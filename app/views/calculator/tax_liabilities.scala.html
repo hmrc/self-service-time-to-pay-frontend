@@ -35,7 +35,7 @@
 
 @main(
     title = Messages("ssttp.calculator.self-assessment-account-summary-page.title", currency(debits.map(_.amount).sum)),
-        backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
+    backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
 ) {
     <h1 class="heading-xlarge">@Messages("ssttp.calculator.self-assessment-account-summary-page.title", currency(debits.map(_.amount).sum))</h1>
 
