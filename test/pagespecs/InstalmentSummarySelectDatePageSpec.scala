@@ -69,7 +69,17 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     selectDatePage.selectSecondOption()
     selectDatePage.enterDay("""123456""")
     selectDatePage.clickContinue()
-    selectDatePage.assertErrorPageIsDisplayed()
+    selectDatePage.assertErrorPageInvalidNumberIsDisplayed()
+    selectDatePage.assertSecondOptionIsChecked()
+  }
+
+  "enter no day" in {
+    beginJourney()
+    selectDatePage.selectSecondOption()
+    selectDatePage.enterDay("")
+    selectDatePage.clickContinue()
+    selectDatePage.assertErrorPageNoDayIsDisplayed()
+    selectDatePage.assertSecondOptionIsChecked()
   }
 
   "choose 28th or next working day and continue" in {

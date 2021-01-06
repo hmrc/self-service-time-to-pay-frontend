@@ -16,6 +16,7 @@
 
 @import helpers.forms.submit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
+@import ssttparrangement.ArrangementForm
 
 @this(
   main: views.html.main,
@@ -23,13 +24,18 @@
 )
 
 @(
-  dayForm: Form[ArrangementDayOfMonth])(
+  dayForm: Form[ArrangementForm])(
   implicit
   messages: play.api.i18n.Messages,
   request: Request[_],
   appConfig: config.AppConfig
 )
 
+@customDaySelected() = @{
+    if(dayForm("other").value.contains("true")){
+        "checked"
+    }
+}
 
 @main(
     title = Messages("ssttp.arrangement.change_day.title"),
@@ -49,10 +55,9 @@
         </div>
 
         <div class="multiple-choice " data-target= customDate>
-            <input id="other" type="radio" name="other" onclick="uncheck(`dayOfMonth`)">
+            <input id="other" type="radio" name="other" value=true onclick="uncheck(`dayOfMonth`)" @customDaySelected()>
             <label for="other">@Messages("ssttp.arrangement.changeday.different")</label>
         </div>
-
 
         <div id="customDate" class="panel panel-border-narrow js-hidden form-group">
             <label for="dayInput" >@Messages("ssttp.arrangement.changeday.enter.date")</label>

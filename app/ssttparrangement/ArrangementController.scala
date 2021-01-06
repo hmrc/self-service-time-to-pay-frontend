@@ -36,7 +36,7 @@ import ssttpcalculator.CalculatorService
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
 import times.ClockProvider
-import ssttpcalculator.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
+import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -128,7 +128,9 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.getChangeSchedulePaymentDay: $request")
     journeyService.authorizedForSsttp { journey =>
       val form = dayOfMonthForm
-      val formWithData = journey.maybeArrangementDayOfMonth.map(form.fill).getOrElse(form)
+      val formWithData = journey.maybeArrangementDayOfMonth
+        .map(arrangmentDayOfMonth => form.fill(ArrangementForm(arrangmentDayOfMonth.dayOfMonth, false)))
+        .getOrElse(form)
       Future.successful(Ok(views.change_day(formWithData)))
     }
   }
@@ -146,9 +148,9 @@ class ArrangementController @Inject() (
           formWithErrors => {
             Future.successful(BadRequest(views.change_day(formWithErrors)))
           },
-          (validFormData: ArrangementDayOfMonth) => {
+          (validFormData: ArrangementForm) => {
             JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
-            val updatedJourney = journey.copy(maybeArrangementDayOfMonth = Some(validFormData))
+            val updatedJourney = journey.copy(maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(validFormData.dayOfMonth)))
             journeyService.saveJourney(updatedJourney).map {
               _ => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
             }

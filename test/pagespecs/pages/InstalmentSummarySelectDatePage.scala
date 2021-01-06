@@ -42,12 +42,23 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     case Languages.Welsh   => "Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu"
   }
 
-  def assertErrorPageIsDisplayed(): Unit = probing {
+  def assertErrorPageInvalidNumberIsDisplayed(): Unit = probing {
     readPath() shouldBe path
-    val expectedLines = Expected.ErrorText().stripSpaces.split("\n")
+    val expectedLines = Expected.ErrorTextInvalidDay().stripSpaces.split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
 
+  def assertErrorPageNoDayIsDisplayed(): Unit = probing {
+    readPath() shouldBe path
+    val expectedLines = Expected.ErrorTextNoDay().stripSpaces.split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+  }
+
+  def assertSecondOptionIsChecked(): Unit = {
+    val secondOption = xpath("/html/body/main/div[2]/article/form/div/div[2]/input")
+    find(secondOption).forall(element => element.attribute("checked").isDefined) shouldBe true
+    ()
+  }
   def selectFirstOption28thDay(): Unit = {
     val firstOption = xpath("/html/body/main/div[2]/article/form/div/div[1]/input")
     click on firstOption
@@ -107,13 +118,27 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
     }
 
-    object ErrorText {
+    object ErrorTextInvalidDay {
       def apply(): String = errorText
 
       private def errorText =
         s"""Which day do you want to pay each month?
            |There is a problem
            |Enter a number between 1 and 28
+           |28th or next working day
+           |A different day
+           |Enter a day between 1 and 28
+           |Continue
+        """.stripMargin
+    }
+
+    object ErrorTextNoDay {
+      def apply(): String = errorText
+
+      private def errorText =
+        s"""Which day do you want to pay each month?
+           |There is a problem
+           |Please enter a value
            |28th or next working day
            |A different day
            |Enter a day between 1 and 28
