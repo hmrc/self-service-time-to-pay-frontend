@@ -18,13 +18,16 @@ package ssttparrangement
 
 import play.api.data.Form
 import play.api.data.Forms._
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
+import play.api.libs.json.{Format, Json}
 
 import scala.util.control.Exception._
 
+final case class ArrangementForm(dayOfMonth:        Int,
+                                 customDaySelected: Boolean)
+
 object ArrangementForm {
 
-  val dayOfMonthForm: Form[ArrangementDayOfMonth] = {
+  val dayOfMonthForm: Form[ArrangementForm] = {
       def isInt(input: String): Boolean = (catching(classOf[NumberFormatException]) opt input.toInt).nonEmpty
 
     Form(mapping(
@@ -32,8 +35,11 @@ object ArrangementForm {
         .verifying("ssttp.arrangement.change_day.payment-day.required", { i: String => i.nonEmpty })
         .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
         .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt >= 1)) })
-        .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt <= 28)) })
-    )(dayOfMonth => ArrangementDayOfMonth(dayOfMonth.toInt))(data => Some(data.dayOfMonth.toString))
+        .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt <= 28)) }),
+      "other" -> boolean
+    )((dayOfMonth, customDaySelected) => ArrangementForm(dayOfMonth.toInt, customDaySelected)) (data => Some((data.dayOfMonth.toString, data.customDaySelected)))
     )
   }
+
+  implicit val format: Format[ArrangementForm] = Json.format[ArrangementForm]
 }
