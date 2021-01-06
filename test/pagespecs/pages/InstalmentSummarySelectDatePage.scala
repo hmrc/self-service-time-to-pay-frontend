@@ -59,8 +59,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     find(secondOption).forall(element => element.attribute("checked").isDefined) shouldBe true
     ()
   }
-
-  def selectFirstOption(): Unit = {
+  def selectFirstOption28thDay(): Unit = {
     val firstOption = xpath("/html/body/main/div[2]/article/form/div/div[1]/input")
     click on firstOption
   }

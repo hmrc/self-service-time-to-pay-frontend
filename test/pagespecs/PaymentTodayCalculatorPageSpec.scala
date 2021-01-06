@@ -28,11 +28,18 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+
     startPage.open()
+    startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.assertPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.assertPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(true)
     paymentTodayQuestionPage.clickContinue()
+    paymentTodayCalculatorPage.assertPageIsDisplayed()
   }
 
   "language" in {

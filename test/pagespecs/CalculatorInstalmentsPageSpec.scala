@@ -31,35 +31,48 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
+    startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.assertPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.assertPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
+
+    monthlyPaymentAmountPage.assertPageIsDisplayed()
     monthlyPaymentAmountPage.enterAmount("2000")
     monthlyPaymentAmountPage.clickContinue()
+
+    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.selectFirstOption28thDay()
+    selectDatePage.clickContinue()
+
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
   }
 
   "language" in {
     beginJourney()
 
-    calculatorInstalmentsPage.assertPageIsDisplayed
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed
 
-    calculatorInstalmentsPage.clickOnWelshLink()
-    calculatorInstalmentsPage.assertPageIsDisplayed(Welsh)
+    calculatorInstalmentsPage28thDay.clickOnWelshLink()
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed(Welsh)
 
-    calculatorInstalmentsPage.clickOnEnglishLink()
-    calculatorInstalmentsPage.assertPageIsDisplayed(English)
+    calculatorInstalmentsPage28thDay.clickOnEnglishLink()
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed(English)
   }
 
   "back button" in {
     beginJourney()
-    calculatorInstalmentsPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getMonthlyPayment()}")
+    calculatorInstalmentsPage28thDay.backButtonHref shouldBe Some(s"${baseUrl.value}${selectDatePage.path}")
   }
 
   "select an option and continue" in {
     beginJourney()
-    calculatorInstalmentsPage.selectAnOption()
-    calculatorInstalmentsPage.clickContinue()
-    instalmentSummarySelectDatePage.assertPageIsDisplayed
+    calculatorInstalmentsPage28thDay.selectAnOption()
+    calculatorInstalmentsPage28thDay.clickContinue()
+    instalmentSummaryPage.assertPageIsDisplayed()
   }
 }

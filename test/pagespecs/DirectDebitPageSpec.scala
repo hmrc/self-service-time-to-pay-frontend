@@ -41,6 +41,7 @@ class DirectDebitPageSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+
     startPage.open()
     startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()
@@ -56,13 +57,13 @@ class DirectDebitPageSpec extends ItSpec {
     monthlyPaymentAmountPage.enterAmount("2000")
     monthlyPaymentAmountPage.clickContinue()
 
-    calculatorInstalmentsPage.assertPageIsDisplayed()
-    calculatorInstalmentsPage.selectAnOption()
-    calculatorInstalmentsPage.clickContinue()
+    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.selectFirstOption28thDay()
+    selectDatePage.clickContinue()
 
-    instalmentSummarySelectDatePage.assertPageIsDisplayed()
-    instalmentSummarySelectDatePage.selectFirstOption()
-    instalmentSummarySelectDatePage.clickContinue()
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
+    calculatorInstalmentsPage28thDay.selectAnOption()
+    calculatorInstalmentsPage28thDay.clickContinue()
 
     instalmentSummaryPage.assertPageIsDisplayed()
     instalmentSummaryPage.clickContinue()

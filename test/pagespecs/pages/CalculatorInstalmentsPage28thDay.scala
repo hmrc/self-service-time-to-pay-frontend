@@ -23,21 +23,9 @@ import org.scalatestplus.selenium.WebBrowser
 import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
 
-class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
-
+abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
-
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
-
-  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-    readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
-    assertContentMatchesExpectedLines(expectedLines)
-
-  }
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "How many months do you want to pay over?"
@@ -52,6 +40,19 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
   def clickContinue(): Unit = probing{
     val button = xpath("//*[@id=\"next\"]")
     click on button
+  }
+}
+
+class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends CalculatorInstalmentsPage(baseUrl) {
+  import WebBrowser._
+
+  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
+    readPath() shouldBe path
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
+
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
   }
 
   object Expected {
@@ -98,17 +99,17 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
       private val mainTextEnglish =
         s"""How many months do you want to pay over?
            |2 months at £2,450.00
-           |Total interest: £16.36
+           |Total interest: £21.60
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,916.36
+           |Total paid:	£4,921.60
            |3 months at £1,633.33
-           |Total interest: £23.12
+           |Total interest: £28.36
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,923.12
+           |Total paid:	£4,928.36
            |4 months at £1,225.00
-           |Total interest: £29.67
+           |Total interest: £34.90
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,929.67
+           |Total paid:	£4,934.90
            |How we calculate interest
            |We only charge interest on overdue amounts.
            |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
@@ -119,17 +120,17 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
       private val mainTextWelsh =
         s"""Dros sawl mis yr hoffech dalu?
            |2 o fisoedd ar £2,450.00
-           |Cyfanswm y llog:	£16.36
+           |Cyfanswm y llog:	£21.60
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,916.36
+           |Cyfanswm a dalwyd:	£4,921.60
            |3 o fisoedd ar £1,633.33
-           |Cyfanswm y llog:	£23.12
+           |Cyfanswm y llog:	£28.36
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,923.12
+           |Cyfanswm a dalwyd:	£4,928.36
            |4 o fisoedd ar £1,225.00
-           |Cyfanswm y llog:	£29.67
+           |Cyfanswm y llog:	£34.90
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,929.67
+           |Cyfanswm a dalwyd:	£4,934.90
            |Sut rydym yn cyfrifo llog
            |Rydym yn codi llog ar symiau hwyr yn unig.
            |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
@@ -140,18 +141,18 @@ class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
   }
 }
 
-class CalculatorInstalmentsPageDayOfMonth28th(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends CalculatorInstalmentsPage(baseUrl) {
+class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends CalculatorInstalmentsPage(baseUrl) {
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
-    val expectedLines = Expected28th.MainText().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
 
-  object Expected28th {
+  object Expected {
 
     object GlobalHeaderText {
 
@@ -174,26 +175,44 @@ class CalculatorInstalmentsPageDayOfMonth28th(baseUrl: BaseUrl)(implicit webDriv
       private val mainTextEnglish =
         s"""How many months do you want to pay over?
            |2 months at £2,450.00
-           |Total interest:	£21.60
+           |Total interest:	£14.18
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,921.60
+           |Total paid:	£4,914.18
            |3 months at £1,633.33
-           |Total interest:	£28.36
+           |Total interest:	£20.94
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,928.36
+           |Total paid:	£4,920.94
            |4 months at £1,225.00
-           |Total interest:	£34.90
+           |Total interest:	£27.49
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,934.90
+           |Total paid:	£4,927.49
            |How we calculate interest
            |We only charge interest on overdue amounts.
            |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
            |If the interest rate changes during your plan, your monthly payments will not change. If we need to, we'll settle the difference at the end of the plan.
            |Continue
-        """.stripMargin
+           """.stripMargin
 
       private val mainTextWelsh =
-        s"""TODO""".stripMargin
+        s"""Dros sawl mis yr hoffech dalu?
+           |2 o fisoedd ar £2,450.00
+           |Cyfanswm y llog:	£14.18
+           |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
+           |Cyfanswm a dalwyd:	£4,914.18
+           |3 o fisoedd ar £1,633.33
+           |Cyfanswm y llog:	£20.94
+           |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
+           |Cyfanswm a dalwyd:	£4,920.94
+           |4 o fisoedd ar £1,225.00
+           |Cyfanswm y llog:	£27.49
+           |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
+           |Cyfanswm a dalwyd:	£4,927.49
+           |Sut rydym yn cyfrifo llog
+           |Rydym yn codi llog ar symiau hwyr yn unig.
+           |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
+           |Os bydd y gyfradd llog yn newid yn ystod eich cynllun, ni fydd eich taliadau misol yn newid. Os bydd angen, byddwn yn setlo’r gwahaniaeth ar ddiwedd y cynllun.
+           |Yn eich blaen
+        """.stripMargin
     }
   }
 }

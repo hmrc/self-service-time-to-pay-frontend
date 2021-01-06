@@ -61,7 +61,7 @@ Time To Pay Instalment Summary Pretty Print Page
     title = Messages("ssttp.arrangement.instalment-summary.title"),
     googleAnalyticsCalls = Seq(gaCheckoutCode.body.seq),
     loggedIn = signedIn,
-    backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
+    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
     ) {
         <h1 class="heading-xlarge">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
 

@@ -186,7 +186,7 @@ class CalculatorController @Inject() (
         },
         (validFormData: MonthlyAmountForm) => {
           journeyService.saveJourney(journey.copy(maybeMonthlyPaymentAmount = Some(validFormData.amount))).map { _ =>
-            Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
+            Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
           }
         }
       )
@@ -278,7 +278,7 @@ class CalculatorController @Inject() (
         },
         (validFormData: CalculatorDuration) =>
           journeyService.saveJourney(journey.copy(maybeCalculatorDuration = Some(validFormData))).map { _ =>
-            Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
+            Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
           }
       )
 
