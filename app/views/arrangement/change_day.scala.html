@@ -39,8 +39,7 @@
 
 @main(
     title = Messages("ssttp.arrangement.change_day.title"),
-    loggedIn = true,
-    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getMonthlyPayment())
+    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
 ){
     <h1 class="heading-xlarge">@Messages("ssttp.arrangement.change_day.title")</h1>
     @if(dayForm.hasErrors) {
