@@ -56,13 +56,13 @@ class DirectDebitPageSpec extends ItSpec {
     monthlyPaymentAmountPage.enterAmount("2000")
     monthlyPaymentAmountPage.clickContinue()
 
-    calculatorInstalmentsPage.assertPageIsDisplayed()
-    calculatorInstalmentsPage.selectAnOption()
-    calculatorInstalmentsPage.clickContinue()
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
+    calculatorInstalmentsPage28thDay.selectAnOption()
+    calculatorInstalmentsPage28thDay.clickContinue()
 
-    instalmentSummarySelectDatePage.assertPageIsDisplayed()
-    instalmentSummarySelectDatePage.selectFirstOption()
-    instalmentSummarySelectDatePage.clickContinue()
+    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.selectFirstOption28thDay()
+    selectDatePage.clickContinue()
 
     instalmentSummaryPage.assertPageIsDisplayed()
     instalmentSummaryPage.clickContinue()

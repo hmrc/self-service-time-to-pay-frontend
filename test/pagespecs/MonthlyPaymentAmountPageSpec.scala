@@ -31,10 +31,17 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
+    startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.assertPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.assertPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
+
+    monthlyPaymentAmountPage.assertPageIsDisplayed()
   }
 
   "language" in {
@@ -67,6 +74,6 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
     monthlyPaymentAmountPage.enterAmount("2000")
     CalculatorDataGenerator.generateSchedules()
     monthlyPaymentAmountPage.clickContinue()
-    calculatorInstalmentsPage.assertPageIsDisplayed
+    selectDatePage.assertPageIsDisplayed()
   }
 }

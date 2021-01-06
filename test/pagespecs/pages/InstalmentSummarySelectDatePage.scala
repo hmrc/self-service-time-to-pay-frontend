@@ -48,7 +48,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     assertContentMatchesExpectedLines(expectedLines)
   }
 
-  def selectFirstOption(): Unit = {
+  def selectFirstOption28thDay(): Unit = {
     val firstOption = xpath("/html/body/main/div[2]/article/form/div/div[1]/input")
     click on firstOption
   }

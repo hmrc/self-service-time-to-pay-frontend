@@ -46,13 +46,14 @@ class InstalmentSummaryPageSpec extends ItSpec {
     monthlyPaymentAmountPage.enterAmount("2000")
     monthlyPaymentAmountPage.clickContinue()
 
-    calculatorInstalmentsPage.assertPageIsDisplayed()
-    calculatorInstalmentsPage.selectAnOption()
-    calculatorInstalmentsPage.clickContinue()
+    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.selectFirstOption28thDay()
+    selectDatePage.clickContinue()
 
-    instalmentSummarySelectDatePage.assertPageIsDisplayed()
-    instalmentSummarySelectDatePage.selectFirstOption()
-    instalmentSummarySelectDatePage.clickContinue()
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
+    calculatorInstalmentsPage28thDay.selectAnOption()
+    calculatorInstalmentsPage28thDay.clickContinue()
+
     instalmentSummaryPage.assertPageIsDisplayed()
   }
 
@@ -69,21 +70,20 @@ class InstalmentSummaryPageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    instalmentSummaryPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()}")
+    instalmentSummaryPage.backButtonHref shouldBe Some(s"${baseUrl.value}${calculatorInstalmentsPage28thDay.path}")
   }
 
   "change monthly instalments" in {
     beginJourney()
     instalmentSummaryPage.assertPageIsDisplayed()
     instalmentSummaryPage.clickInstalmentsChange()
-    //TIP: if it comes back to change plan we know the day of the month thus interest is computed against 28th (not 12th)
     calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
   }
 
   "change collection day" in {
     beginJourney()
     instalmentSummaryPage.clickCollectionDayChange()
-    instalmentSummarySelectDatePage.assertPageIsDisplayed
+    selectDatePage.assertPageIsDisplayed
   }
 
   "change upfront payment" in {

@@ -30,57 +30,63 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+
     startPage.open()
+    startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.assertPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.assertPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
+
+    monthlyPaymentAmountPage.assertPageIsDisplayed()
     monthlyPaymentAmountPage.enterAmount("2000")
     monthlyPaymentAmountPage.clickContinue()
-    calculatorInstalmentsPage.selectAnOption()
-    calculatorInstalmentsPage.clickContinue()
+
   }
 
   "language" in {
     beginJourney()
-    instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
+    selectDatePage.assertPageIsDisplayed(English)
 
-    instalmentSummarySelectDatePage.clickOnWelshLink()
-    instalmentSummarySelectDatePage.assertPageIsDisplayed(Welsh)
+    selectDatePage.clickOnWelshLink()
+    selectDatePage.assertPageIsDisplayed(Welsh)
 
-    instalmentSummarySelectDatePage.clickOnEnglishLink()
-    instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
+    selectDatePage.clickOnEnglishLink()
+    selectDatePage.assertPageIsDisplayed(English)
   }
 
   "back button" in {
     beginJourney()
-    instalmentSummarySelectDatePage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getCalculateInstalments()}")
+    selectDatePage.backButtonHref shouldBe Some(s"${baseUrl.value}${monthlyPaymentAmountPage.path}")
   }
 
   "enter an invalid day" in {
     beginJourney()
-    instalmentSummarySelectDatePage.selectSecondOption()
-    instalmentSummarySelectDatePage.enterDay("""123456""")
-    instalmentSummarySelectDatePage.clickContinue()
-    instalmentSummarySelectDatePage.assertErrorPageIsDisplayed()
+    selectDatePage.selectSecondOption()
+    selectDatePage.enterDay("""123456""")
+    selectDatePage.clickContinue()
+    selectDatePage.assertErrorPageIsDisplayed()
   }
 
   "choose 28th or next working day and continue" in {
     beginJourney()
     CalculatorDataGenerator.generateSchedules(paymentDayOfMonth      = 27, firstPaymentDayOfMonth = 28)
-    instalmentSummarySelectDatePage.assertPageIsDisplayed(English)
-    instalmentSummarySelectDatePage.selectFirstOption()
-    instalmentSummarySelectDatePage.enterDay("28")
-    instalmentSummarySelectDatePage.clickContinue()
-    instalmentSummaryPage.assertPageIsDisplayed
+    selectDatePage.assertPageIsDisplayed(English)
+    selectDatePage.selectFirstOption28thDay()
+    selectDatePage.clickContinue()
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
   }
 
   "choose a different day and continue" in {
     beginJourney()
     CalculatorDataGenerator.generateSchedules(paymentDayOfMonth      = 11, firstPaymentDayOfMonth = 12)
-    instalmentSummarySelectDatePage.selectSecondOption()
-    instalmentSummarySelectDatePage.enterDay("11")
-    instalmentSummarySelectDatePage.clickContinue()
-    instalmentSummaryPageForPaymentDayOfMonth11th.assertPageIsDisplayed
+    selectDatePage.selectSecondOption()
+    selectDatePage.enterDay("11")
+    selectDatePage.clickContinue()
+    calculatorInstalmentsPage11thDay.assertPageIsDisplayed()
   }
 }

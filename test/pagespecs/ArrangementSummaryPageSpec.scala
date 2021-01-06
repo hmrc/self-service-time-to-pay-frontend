@@ -25,42 +25,61 @@ import testsupport.testdata.{CalculatorDataGenerator, DirectDebitTd}
 
 class ArrangementSummaryPageSpec extends ItSpec {
 
-  def beginJourney(): StubMapping = {
+  def beginJourney(): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    DirectDebitStub.postPaymentPlan
+    ArrangementStub.postTtpArrangement
+
     startPage.open()
+    startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.assertPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.assertPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
+
+    monthlyPaymentAmountPage.assertPageIsDisplayed()
     monthlyPaymentAmountPage.enterAmount("2000")
     monthlyPaymentAmountPage.clickContinue()
-    calculatorInstalmentsPage.selectAnOption()
-    calculatorInstalmentsPage.clickContinue()
-    instalmentSummarySelectDatePage.selectFirstOption()
-    instalmentSummarySelectDatePage.clickContinue()
+
+    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.selectFirstOption28thDay()
+    selectDatePage.clickContinue()
+
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
+    calculatorInstalmentsPage28thDay.selectAnOption()
+    calculatorInstalmentsPage28thDay.clickContinue()
+
+    instalmentSummaryPage.assertPageIsDisplayed()
     instalmentSummaryPage.clickContinue()
+
+    directDebitPage.assertPageIsDisplayed()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.validateBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
-    termsAndConditionsPage.clickContinue()
-    DirectDebitStub.postPaymentPlan
-    ArrangementStub.postTtpArrangement
+
+    directDebitConfirmationPage.assertPageIsDisplayed()
+    directDebitConfirmationPage.clickContinue()
+    termsAndConditionsPage.assertPageIsDisplayed()
   }
 
   "language English" in {
     beginJourney()
-    directDebitConfirmationPage.clickContinue()
+    termsAndConditionsPage.clickContinue()
     arrangementSummaryPage.assertPageIsDisplayed(English)
   }
 
   "language Welsh" in {
     beginJourney()
-    directDebitConfirmationPage.clickOnWelshLink()
-    directDebitConfirmationPage.clickContinue()
+    termsAndConditionsPage.clickOnWelshLink()
+    termsAndConditionsPage.clickContinue()
     arrangementSummaryPage.assertPageIsDisplayed(Welsh)
   }
 }
