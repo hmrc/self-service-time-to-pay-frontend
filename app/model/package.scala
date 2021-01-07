@@ -58,6 +58,7 @@ package object model {
   }
 
   implicit class DebitExt(val v: Debit) extends AnyVal {
-    def dueByYear(offset: Int = 0): Int = v.dueDate.getYear - offset
+    def startTaxYear: Int = v.taxYearEnd.getYear - 1
+    def endTaxYear: Int = v.taxYearEnd.getYear
   }
 }

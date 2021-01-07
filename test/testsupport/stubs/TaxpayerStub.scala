@@ -24,13 +24,17 @@ import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, toJson}
 import testsupport.testdata.EligibilityTaxpayerVariationsTd._
 import testsupport.testdata.TdAll.{taxpayer, utr}
+import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 object TaxpayerStub extends Matchers with Status {
   private val url: UrlPathPattern = urlPathEqualTo(s"/taxpayer/$utr")
 
+  def getTaxpayer(tp: Taxpayer): StubMapping =
+    stubFor(get(url).willReturn(aResponse().withStatus(OK).withBody(prettyPrint(toJson(tp)))))
+
   def getTaxpayer(): StubMapping =
-    stubFor(get(url).willReturn(aResponse().withStatus(OK).withBody(prettyPrint(toJson(taxpayer)))))
+    getTaxpayer(taxpayer)
 
   def getTaxpayer(reason: Reason): StubMapping =
     stubFor(get(url).willReturn(aResponse()
