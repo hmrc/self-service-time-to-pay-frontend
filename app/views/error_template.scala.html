@@ -15,9 +15,11 @@
  *@
 
 @import config.AppConfig
+@import config.ViewConfig
 
 @this(
   appConfig: AppConfig,
+  viewConfig: ViewConfig,
   govuk_wrapper: views.html.govuk_wrapper
 )
 
@@ -39,6 +41,7 @@
 }
 
 @govuk_wrapper(
+  viewConfig = viewConfig,
   title = pageTitle,
   maybeContentHeader = Some(contentHeader),
   mainContent = mainContent

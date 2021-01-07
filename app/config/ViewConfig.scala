@@ -29,7 +29,9 @@ final case class ViewConfig(
     signInPath:     String,
     //    signOut:              String,
     //    frontendBaseUrl:      String,
-    frontendBaseUrl: String
+    frontendBaseUrl:        String,
+    timeoutDialogTimeout:   Int,
+    timeoutDialogCountdown: Int
 ) {
 
   //  val reportAProblemPartialUrl = s"$frontendBaseUrl/contact/problem_reports_ajax?service=$appName"
@@ -48,7 +50,9 @@ final case class ViewConfig(
     signInPath     = servicesConfig.getString("microservice.services.company-auth.sign-in-path"),
     //    signOut              = servicesConfig.getString("urls.logout"),
     //    frontendBaseUrl      = servicesConfig.getString("frontend-base-url"),
-    frontendBaseUrl = servicesConfig.getString("microservice.services.auth.login-callback.base-url") //TODO: migrate this config
+    frontendBaseUrl        = servicesConfig.getString("microservice.services.auth.login-callback.base-url"), //TODO: migrate this config,
+    timeoutDialogTimeout   = servicesConfig.getInt("timeout-dialog.timeout"),
+    timeoutDialogCountdown = servicesConfig.getInt("timeout-dialog.countdown")
   )
 
 }

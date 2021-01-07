@@ -39,7 +39,6 @@
 
 @main(
   title = Messages("ssttp.arrangement.direct-debit.assistance.title"),
-  loggedIn = loggedIn,
   backButtonUrl =
     if (!showErrorNotification) Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
     else None

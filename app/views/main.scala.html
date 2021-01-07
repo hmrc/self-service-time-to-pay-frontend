@@ -17,7 +17,8 @@
 @this(
   govUkWrapper: govuk_wrapper,
   viewsHelpers: views.ViewsHelpers,
-  appConfig: config.AppConfig
+  appConfig: config.AppConfig,
+  viewConfig: config.ViewConfig
 )
 
 @(title: String,
@@ -29,7 +30,7 @@
         linksElem:  Option[Html] = None,
         googleAnalyticsCalls: Seq[String] = Seq.empty,
         noGetHelp:Boolean = false,
-        loggedIn:Boolean = false,
+        allowTimeoutDialog: Boolean = true,
         welshToggleEnabled:Boolean = true,
         hasUserPanel: Boolean = false,
         navTitle: String = "ssttp.common.title",
@@ -69,10 +70,13 @@
     mainContent = viewsHelpers.article(mainContent),
     scriptElem = Some(scriptElems),
     linksElem = Some(linksElems),
+    canSignOut = req.RequestSupport.isLoggedIn,
+    allowTimeoutDialog = allowTimeoutDialog,
     googleAnalyticsCalls = googleAnalyticsCalls,
     noGetHelp = noGetHelp,
     welshToggleEnabled = welshToggleEnabled,
     hasUserPanel = hasUserPanel,
     navTitle = navTitle,
-    maybeBackButtonUrl = backButtonUrl
+    maybeBackButtonUrl = backButtonUrl,
+    viewConfig = viewConfig
 )

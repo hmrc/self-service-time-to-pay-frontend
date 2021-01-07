@@ -14,24 +14,27 @@
  * limitations under the License.
  *@
 
+@import config.ViewConfig
+
 @this(
-  main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+    mainTemplate: views.html.main,
+    viewsHelpers: views.ViewsHelpers,
+    implicit val viewConf: ViewConfig
 )
 
-@(
-  signedIn: Boolean = false)(implicit
-  messages: play.api.i18n.Messages,
-  request: Request[_],
-  appConfig: config.AppConfig
-)
+@()(implicit request: Request[_], messages: Messages)
 
-@main(
-    title = Messages("ssttp.you-need-to-file.title")
+@mainTemplate(
+    title = Messages("delete-answers.heading"),
+    navTitle = Messages("delete-answers.heading"),
+    bodyClasses = None,
+    allowTimeoutDialog = false,
+    welshToggleEnabled = true
 ) {
-    <header class="page-header text">
-        <h1 class="heading-xlarge">@Messages("ssttp.you-need-to-file.title")</h1>
-    </header>
-        <p>@Messages("ssttp.you-need-to-file.intro")</p>
-    <p class="subsection"><a href="https://online.hmrc.gov.uk/">@Messages("ssttp.you-need-to-file.check-account.link")</a> @Messages("ssttp.you-need-to-file.check-account")
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">@Messages("delete-answers.heading")</h1>
+        <p>@Messages("delete-answers.message")</p>
+    </div>
+</div>
 }

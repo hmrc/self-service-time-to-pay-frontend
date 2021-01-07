@@ -455,3 +455,17 @@ ssttp.arrangement.changeday.enter.date = Enter a day between 1 and 28
  accessibility-statement-a9 = Digital Accessibility Centre
  accessibility-statement-p27b = . The full service was tested by HMRC and included disabled users.
  accessibility-statement-p28 = This page was prepared on 26 February 2020. It was last updated on 27 February 2020.
+
+
+
+# Session timeout dialog and timed out page
+timeoutDialog.message.logged-in = For your security, we will sign you out in
+timeoutDialog.keep-alive-button-text.logged-in = Stay signed in
+timeoutDialog.sign-out-button-text.logged-in = Sign out
+
+timeoutDialog.message.logged-out = For your security, we will time you out in
+timeoutDialog.keep-alive-button-text.logged-out = Continue
+timeoutDialog.sign-out-button-text.logged-out = Delete your answers
+
+delete-answers.heading = For your security, we signed you out
+delete-answers.message = We did not save your answers.

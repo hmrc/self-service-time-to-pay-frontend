@@ -64,3 +64,5 @@ GET         /language/:language                                           langsw
 
 GET         /accessibility-statement                                      ssttpaccessibility.AccessibilityController.accessibilityStatement()
 
+GET         /session/keep-alive                                       controllers.TimeoutController.keepAliveSession()
+GET         /delete-answers                                           controllers.TimeoutController.killSession()
