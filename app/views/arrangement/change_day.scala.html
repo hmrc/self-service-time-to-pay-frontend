@@ -58,8 +58,14 @@
             <label for="other">@Messages("ssttp.arrangement.changeday.different")</label>
         </div>
 
-        <div id="customDate" class="panel panel-border-narrow js-hidden form-group">
+        <div id="customDate" class="panel panel-border-narrow js-hidden form-group @if(dayForm.hasErrors){form-field--error}">
             <label for="dayInput" >@Messages("ssttp.arrangement.changeday.enter.date")</label>
+            @if(dayForm.hasErrors) {
+                <br>
+                <label class="error-notification" >
+                    @dayForm.error("dayOfMonth").map(formError => Messages(formError.message))
+                </label>
+            }
             <br>
             <input type="text" class="form-control-1-4" id="dayInput" name="dayOfMonth">
         </div>
