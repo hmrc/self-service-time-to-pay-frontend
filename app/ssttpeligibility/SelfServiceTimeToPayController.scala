@@ -19,15 +19,18 @@ package ssttpeligibility
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
+import identityverification.{AddTaxesConnector, StartIdentityVerificationJourneyResult}
 import javax.inject._
 import play.api.mvc._
 import req.RequestSupport
 import journey.JourneyService
+import play.api.libs.json.Json
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import views.Views
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 class SelfServiceTimeToPayController @Inject() (
     mcc:               MessagesControllerComponents,
@@ -35,8 +38,9 @@ class SelfServiceTimeToPayController @Inject() (
     as:                Actions,
     views:             Views,
     requestSupport:    RequestSupport,
-    clockProvider:     ClockProvider)(implicit appConfig: AppConfig,
-                                      ec: ExecutionContext
+    clockProvider:     ClockProvider,
+    addTaxConnector:   AddTaxesConnector)(implicit appConfig: AppConfig,
+                                          ec: ExecutionContext
 ) extends FrontendBaseController(mcc) {
 
   import requestSupport._
@@ -77,6 +81,30 @@ class SelfServiceTimeToPayController @Inject() (
   def getNotSaEnrolled: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
     Ok(views.not_enrolled(isWelsh, isSignedIn))
+  }
+
+  def getAccessYouSelfAssessmentOnline: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
+    Ok(views.you_need_to_request_access_to_self_assessment(isWelsh, isSignedIn))
+  }
+
+  def submitAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser.async { implicit request =>
+    val logMessage = s"Sending user to BTA for Identify Verification " +
+      s"[ConfidenceLevel=${request.confidenceLevel}]" +
+      s"[utr=${request.maybeUtr.map(_.obfuscate)}]"
+
+    JourneyLogger.info(logMessage)
+
+    val resultF: Future[Result] = for {
+      startIdentityVerificationJourneyResult <- addTaxConnector.startIdentityVerificationJourney(request.maybeUtr)
+      redirectUrl = startIdentityVerificationJourneyResult.redirectUrl
+    } yield Redirect(redirectUrl)
+
+    resultF.recover {
+      case NonFatal(ex) =>
+        JourneyLogger.error(s"[Failed] $logMessage", ex)
+        throw ex
+    }
   }
 
   def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action { implicit request =>

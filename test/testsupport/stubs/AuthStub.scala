@@ -22,6 +22,7 @@ import org.scalatest.Matchers
 import play.api.libs.json._
 import testsupport.WireMockSupport
 import testsupport.testdata.TdAll
+import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier}
 
 object AuthStub extends Matchers {
@@ -43,7 +44,7 @@ object AuthStub extends Matchers {
    * Defines response for POST /auth/authorise
    */
   def authorise(
-      utr:             Option[String]          = Some(TdAll.utr),
+      utr:             Option[SaUtr]           = Some(TdAll.saUtr),
       confidenceLevel: Option[ConfidenceLevel] = Some(ConfidenceLevel.L200),
       allEnrolments:   Option[Set[Enrolment]]  = Some(Set(TdAll.saEnrolment))
   ): StubMapping = {
@@ -61,9 +62,10 @@ object AuthStub extends Matchers {
       Json.obj("saUtr" -> utr)
     ).getOrElse(Json.obj())
 
-    val allEnrolmentsJsonPart: JsObject = allEnrolments.map(enrolments => Json.obj(
+    val enrolments: Set[Enrolment] = allEnrolments.getOrElse(Set())
+    val allEnrolmentsJsonPart: JsObject = Json.obj(
       "allEnrolments" -> enrolments
-    )).getOrElse(Json.obj())
+    )
 
     val authoriseJsonBody = allEnrolmentsJsonPart ++ confidenceLevelJsonPart ++ saUtrJsonPart
 

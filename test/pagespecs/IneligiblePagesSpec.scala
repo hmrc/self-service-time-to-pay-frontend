@@ -74,29 +74,29 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
   }
 
   "authorisation based eligibility" - {
-    "show not-enrolled page for confidence level < 200" in {
+    "show you_need_to_request_access_to_self_assessment page for confidence level < 200" in {
       AuthStub.authorise(confidenceLevel = Some(L100))
       TaxpayerStub.getTaxpayer()
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      notEnrolledPage.assertPageIsDisplayed
+      youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
     }
-    "show not-enrolled page no sa enrolments" in {
+    "show you_need_to_request_access_to_self_assessment page no sa enrolments" in {
       AuthStub.authorise(allEnrolments = Some(Set()))
       TaxpayerStub.getTaxpayer()
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      notEnrolledPage.assertPageIsDisplayed
+      youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
     }
-    "show not-enrolled page when the user has no activated sa enrolments" in {
+    "show you_need_to_request_access_to_self_assessment page when the user has no activated sa enrolments" in {
       AuthStub.authorise(allEnrolments = Some(Set(unactivatedSaEnrolment)))
       TaxpayerStub.getTaxpayer()
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      notEnrolledPage.assertPageIsDisplayed
+      youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
     }
   }
 }

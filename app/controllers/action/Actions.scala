@@ -32,6 +32,9 @@ class Actions @Inject() (
   def authorisedSaUser: ActionBuilder[AuthorisedSaUserRequest, AnyContent] =
     defaultActionBuilder andThen authenticatedAction andThen authorisedSaUserAction
 
+  def authenticatedSaUser: ActionBuilder[AuthenticatedRequest, AnyContent] =
+    defaultActionBuilder andThen authenticatedAction
+
   def action: ActionBuilder[Request, AnyContent] = defaultActionBuilder
 
 }

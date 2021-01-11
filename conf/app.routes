@@ -19,6 +19,8 @@ GET         /eligibility/you-need-to-file                                 ssttpe
 GET         /eligibility/call-us                                          ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUs()
 GET         /eligibility/not-enrolled                                     ssttpeligibility.SelfServiceTimeToPayController.getNotSaEnrolled()
 
+GET         /eligibility/access-your-self-assessment-online                ssttpeligibility.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()
+POST        /eligibility/access-your-self-assessment-online                ssttpeligibility.SelfServiceTimeToPayController.submitAccessYouSelfAssessmentOnline()
 
 # Calculator
 GET         /calculator/tax-liabilities                                   ssttpcalculator.CalculatorController.getTaxLiabilities()

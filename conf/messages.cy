@@ -331,6 +331,10 @@ ssttp.arrangement.instalment-summary-table.upfront.payments.link-title = Newid e
 ssttp.arrangement.instalment-summary.payment-date.change.link-title = Newid dyddiad eich taliad
 ssttp.arrangement.instalment-summary-table.monthly-instalments.link-title = Newid eich taliadau misol
 
+ssttp.you-need-to-request-access-to-self-assessment.title = Mae’n rhaid i chi wneud cais i gael at eich cyfrif Hunanasesiad
+ssttp.you-need-to-request-access-to-self-assessment.p1 = Nid ydych wedi gwneud cais i gael at eich cyfrif Hunanasesiad ar-lein hyd yn hyn. Mae angen i chi wneud hyn cyn y gallwch fynd yn eich blaen i drefnu’ch cynllun talu.
+ssttp.you-need-to-request-access-to-self-assessment.button-label = Gwneud cais i gael mynediad at Hunanasesiad
+
 #accessibilitystatement
  accessibility-statement.title = Datganiad Hygyrchedd
  accessibility-statement.link = Datganiad hygyrchedd

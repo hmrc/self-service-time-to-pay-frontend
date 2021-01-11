@@ -49,7 +49,8 @@ class ItSpec
     "microservice.services.ia.port" -> WireMockSupport.port,
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
-    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}")
+    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}",
+    "microservice.services.add-taxes.port" -> WireMockSupport.port)
 
   //in tests use `app`
   override def newAppForTest(testData: TestData): Application = new GuiceApplicationBuilder()
@@ -110,4 +111,6 @@ class ItSpec
   lazy val generalCallUsPage: GeneralCallUsPage = wire[GeneralCallUsPage]
   lazy val needToFilePage: NeedToFilePage = wire[NeedToFilePage]
   lazy val notEnrolledPage: NotEnrolledPage = wire[NotEnrolledPage]
+  lazy val youNeedToRequestAccessToSelfAssessment: YouNeedToRequestAccessToSelfAssessmentPage = wire[YouNeedToRequestAccessToSelfAssessmentPage]
+  lazy val identityVerificationPage: IdentityVerificationPage = wire[IdentityVerificationPage]
 }
