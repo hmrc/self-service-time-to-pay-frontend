@@ -16,15 +16,16 @@
 
 package pagespecs.pages
 
-import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
+import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
-import org.scalatestplus.selenium.WebBrowser.pageTitle
+import org.scalatestplus.selenium.WebBrowser.xpath
 import testsupport.RichMatchers._
 
-class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class YouNeedToRequestAccessToSelfAssessmentPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+  import org.scalatestplus.selenium.WebBrowser._
 
-  override def path: String = "/pay-what-you-owe-in-instalments/eligibility/not-enrolled"
+  override def path: String = "/pay-what-you-owe-in-instalments/eligibility/access-your-self-assessment-online"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
@@ -34,10 +35,14 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Please call us"
-    case Languages.Welsh   => "Ffoniwch ni"
+    case Languages.English => "You need to request access to Self Assessment"
+    case Languages.Welsh   => "Mae’n rhaid i chi wneud cais i gael at eich cyfrif Hunanasesiad"
   }
 
+  def clickTheButton() = {
+    val button = xpath("//*[@id=\"start\"]/div/button")
+    click on button
+  }
   object Expected {
 
     object GlobalHeaderText {
@@ -60,36 +65,18 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
       }
 
       private val mainTextEnglish =
-        """Please call us
-          |You may still be able to set up a payment plan over the phone, but you are not eligible for an online payment plan.
-          |
-          |We recommend you speak to an adviser on 0300 200 3835 at the Business Support Service to talk about your payment options.
-          |
-          |Before you call, make sure you have:
-          |information on any savings or investments you have
-          |your bank details
-          |We're likely to ask:
-          |what you've done to try to pay the bill
-          |if you can pay some of the bill now
-          |Our opening times are:
-          |Monday to Friday: 8am to 4pm"""
+        """You have not yet requested access to your Self Assessment online.
+          |You need to do this before you can continue to set up your payment plan.
+          |Request access to Self Assessment
+          |"""
           .stripMargin
 
       private val mainTextWelsh =
-        """Ffoniwch ni
-          |Efallai y gallwch drefnu cynllun talu dros y ffôn, ond nid ydych yn gymwys i gael cynllun talu ar-lein.
-          |
-          |Rydym yn argymell eich bod yn siarad ag ymgynghorydd ar 0300 200 1900 yng Ngwasanaeth Cwsmeriaid Cymraeg CThEM i drafod eich opsiynau talu.
-          |
-          |Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
-          |gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
-          |eich manylion banc
-          |Rydym yn debygol o ofyn:
-          |beth rydych wedi’i wneud i geisio talu’r bil
-          |a allwch dalu rhywfaint o’r bil nawr
-          |Ein horiau agor yw:
-          |Dydd Llun i ddydd Gwener: 08:30 – 16:00
-        """.stripMargin
+        """Nid ydych wedi gwneud cais i gael at eich cyfrif Hunanasesiad ar-lein hyd yn hyn.
+           |Mae angen i chi wneud hyn cyn y gallwch fynd yn eich blaen i drefnu’ch cynllun talu.
+           |Gwneud cais i gael mynediad at Hunanasesiad
+           |"""
+          .stripMargin
     }
 
   }

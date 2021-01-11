@@ -386,6 +386,9 @@ ssttp.arrangement.changeday.default = 28th or next working day
 ssttp.arrangement.changeday.different = A different day
 ssttp.arrangement.changeday.enter.date = Enter a day between 1 and 28
 
+ssttp.you-need-to-request-access-to-self-assessment.title = You need to request access to Self Assessment
+ssttp.you-need-to-request-access-to-self-assessment.p1 = You have not yet requested access to your Self Assessment online. You need to do this before you can continue to set up your payment plan.
+ssttp.you-need-to-request-access-to-self-assessment.button-label = Request access to Self Assessment
 
 #Utility
  full-stop = .
@@ -469,3 +472,6 @@ timeoutDialog.sign-out-button-text.logged-out = Delete your answers
 
 delete-answers.heading = For your security, we signed you out
 delete-answers.message = We did not save your answers.
+
+
+

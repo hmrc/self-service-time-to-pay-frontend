@@ -29,9 +29,6 @@ package object model {
     debit.dueDate
   )
 
-  def asTaxpayersSaUtr(saUtr: SaUtr): timetopaytaxpayer.cor.model.SaUtr =
-    timetopaytaxpayer.cor.model.SaUtr(saUtr.value)
-
   implicit class PaymentScheduleExt(val ps: PaymentSchedule) extends AnyVal {
     def firstInstallment: Instalment =
       ps.instalments.reduceOption(first).getOrElse(throw new RuntimeException(s"No installments for [$ps]"))

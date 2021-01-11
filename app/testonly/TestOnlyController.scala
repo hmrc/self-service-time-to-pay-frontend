@@ -44,7 +44,7 @@ class TestOnlyController @Inject() (
   }
 
   def getTaxpayer(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    val utr: SaUtr = model.asTaxpayersSaUtr(request.utr)
+    val utr: SaUtr = request.utr
     val getTaxpayerF = taxpayerConnector.getTaxPayer(utr).map(Json.toJson(_)).recover{
       case e => Json.obj("exception" -> e.getMessage)
     }

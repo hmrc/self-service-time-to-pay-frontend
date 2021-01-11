@@ -97,7 +97,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.determineEligibility: $request")
 
     for {
-      tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(asTaxpayersSaUtr(request.utr))
+      tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(request.utr)
       maybeJourney <- journeyService.getMaybeJourney()
       journey = maybeJourney.filterNot(_.isFinished).getOrElse(Journey.newJourney).copy(maybeTaxpayer = Some(tp))
       _ <- journeyService.saveJourney(journey)

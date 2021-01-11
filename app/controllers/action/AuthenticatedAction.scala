@@ -22,10 +22,10 @@ import config.ViewConfig
 import play.api.Logger
 import play.api.mvc.Results._
 import play.api.mvc._
+import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments, _}
-import uk.gov.hmrc.domain.SaUtr
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -56,7 +56,7 @@ class AuthenticatedAction @Inject() (
     ).apply {
         case enrolments ~ confidenceLevel ~ utr =>
           Future.successful(
-            Right(new AuthenticatedRequest[A](request, enrolments, confidenceLevel, utr.map(SaUtr)))
+            Right(new AuthenticatedRequest[A](request, enrolments, confidenceLevel, utr.map(SaUtr.apply)))
           )
       }
       .recover {

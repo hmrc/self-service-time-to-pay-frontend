@@ -20,8 +20,8 @@ import com.google.inject.Inject
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
+import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
-import uk.gov.hmrc.domain.SaUtr
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,7 +41,7 @@ class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
            |  [utr: ${request.maybeUtr}]
            |  [ConfidenceLevel: ${request.confidenceLevel}]
            |  """.stripMargin)
-        Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()))
+        Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
       }
 
     Future.successful(
