@@ -110,6 +110,16 @@
             </p>
 
             <p>
+        <h2>NINO</h2>
+            <span class="flush--ends form-field--hint">legal NINO or leave blank for none</span>
+            @textinput(field = dataForm("nino"),
+                'label -> "NINO",
+                '_maxlength -> "9",
+                '_inputClass -> "input--cleared"
+            )
+            </p>
+
+            <p>
         <h2>Does the user have SA enrolment</h2>
             <span class="flush--ends form-field--hint">If <em>No</em> then below setup will be ignored</span>
 

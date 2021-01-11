@@ -17,8 +17,9 @@
 package testonly
 
 import java.util.UUID.randomUUID
-
 import com.google.inject.Inject
+import play.api.Logger
+
 import javax.inject.Singleton
 import play.api.http.HeaderNames
 import play.api.libs.json.{Json, _}
@@ -73,6 +74,8 @@ class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
     val enrolments: JsArray = if (tu.hasSAEnrolment) Json.arr(saEnrolment) else Json.arr()
     val credId: String = if (tu.hasExistingDirectDebit) "192837465" else tu.authorityId.v
 
+    val maybeNino = tu.nino.fold(Json.obj())(v => Json.obj("nino" -> v.nino))
+
     Json.obj(
       "credId" -> credId,
       "affinityGroup" -> tu.affinityGroup.v,
@@ -84,7 +87,7 @@ class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
       "delegatedEnrolments" -> Json.arr(),
       "email" -> "user@test.com",
       "gatewayInformation" -> Json.obj()
-    )
+    ) ++ maybeNino
   }
 
   private implicit class JsonReplaceOp(j: JsObject) {

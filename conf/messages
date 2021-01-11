@@ -459,7 +459,10 @@ ssttp.you-need-to-request-access-to-self-assessment.button-label = Request acces
  accessibility-statement-p27b = . The full service was tested by HMRC and included disabled users.
  accessibility-statement-p28 = This page was prepared on 26 February 2020. It was last updated on 27 February 2020.
 
-
+# Request access to SA
+request-access-self-assessment.header = You need to request access to Self Assessment
+request-access-self-assessment.content = You have not yet requested access to use your Self Assessment online. You need to do this before you can continue to set up your payment plan.
+request-access-self-assessment.button = Request access to Self Assessment
 
 # Session timeout dialog and timed out page
 timeoutDialog.message.logged-in = For your security, we will sign you out in

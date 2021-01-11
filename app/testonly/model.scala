@@ -17,15 +17,16 @@
 package testonly
 
 import java.time.LocalDate
-
 import play.api.http.Status
 import play.api.libs.json.JsValue
+import uk.gov.hmrc.domain.Nino
 
 import scala.util.Random
 
 final case class TestUser(
     utr:                          Utr,
     hasSAEnrolment:               Boolean,
+    nino:                         Option[Nino],
     isOnIA:                       Boolean,
     authorityId:                  AuthorityId,
     affinityGroup:                AffinityGroup     = AffinityGroup.individual,
@@ -47,6 +48,7 @@ object TestUser {
     utr                          = Utr.random(),
     hasSAEnrolment               = true,
     isOnIA                       = true,
+    nino                         = Some(Nino("AA000005A")),
     authorityId                  = AuthorityId.random,
     affinityGroup                = AffinityGroup.individual,
     confidenceLevel              = 200,

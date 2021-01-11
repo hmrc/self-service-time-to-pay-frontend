@@ -17,9 +17,9 @@
 package testonly
 
 import java.time.{LocalDate, LocalTime}
-
 import config.AppConfig
 import controllers.FrontendBaseController
+
 import javax.inject._
 import play.api.data.Forms._
 import play.api.data._
@@ -28,6 +28,7 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import uk.gov.hmrc.auth.core.ConfidenceLevel.{L100, L200}
+import uk.gov.hmrc.domain.Nino
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +39,7 @@ final case class TestUserForm(
     returnsJson:                  String,
     returnsResponseStatusCode:    String,
     hasSAEnrolment:               Boolean,
+    nino:                         Option[String],
     isOnIA:                       Boolean,
     authorityId:                  Option[String],
     affinityGroup:                String,
@@ -54,6 +56,7 @@ final case class TestUserForm(
   def asTestUser: TestUser = TestUser(
     utr                          = utr.map(Utr.apply).getOrElse(Utr.random()),
     hasSAEnrolment               = hasSAEnrolment,
+    nino                         = nino.map(Nino.apply),
     isOnIA                       = isOnIA,
     authorityId                  = authorityId.map(AuthorityId.apply).getOrElse(AuthorityId.random),
     affinityGroup                = AffinityGroup(affinityGroup),
@@ -77,6 +80,7 @@ object TestUserForm {
     returnsJson                  = Json.prettyPrint(TestUserReturns.sample1),
     returnsResponseStatusCode    = "200",
     hasSAEnrolment               = true,
+    nino                         = None,
     isOnIA                       = false,
     authorityId                  = None,
     affinityGroup                = AffinityGroup.individual.v,
@@ -115,6 +119,8 @@ class TestUsersController @Inject() (
         .verifying("'returns' status code must not be empty", !_.isEmpty)
         .verifying("'returns' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100),
       "has-sa-enrolment" -> boolean,
+      "nino" -> optional(text)
+        .verifying("'nino' value must a legal NINO identifier", x => x.forall(Nino.isValid)),
       "isOnIA" -> boolean,
       "authority-id" -> optional(text),
       "affinity-group" -> text.verifying("'Affinity group' must not be 'Individual', 'Organisation' or 'Agent'",

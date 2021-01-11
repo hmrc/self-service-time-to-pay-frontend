@@ -43,6 +43,8 @@ class Views @Inject() (
     val you_need_to_file:                              views.html.core.you_need_to_file,
     val accessibility_statement:                       views.html.accessibility.accessibility_statement,
 
+    val request_access_sa: views.html.session.request_access_sa,
+
     val delete_answers: views.html.session.delete_answers
 )
 
