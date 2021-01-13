@@ -80,7 +80,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
+      mdtpUplift.assertPageIsDisplayed
     }
     "show you_need_to_request_access_to_self_assessment page no sa enrolments" in {
       AuthStub.authorise(allEnrolments = Some(Set()))

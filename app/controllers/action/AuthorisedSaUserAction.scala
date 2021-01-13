@@ -29,39 +29,24 @@ import scala.concurrent.{ExecutionContext, Future}
 final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val utr: SaUtr)
   extends WrappedRequest[A](request)
 
-class AuthorisedSaUserAction @Inject() (
-    cc:             MessagesControllerComponents,
-    servicesConfig: ServicesConfig
-)
+class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
   extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
-
-  private lazy val baseUrl: String = servicesConfig.baseUrl("identity-verification-frontend")
 
   private val requiredCL = ConfidenceLevel.L200
 
-  private def mdtpUplift(implicit request: RequestHeader) = Redirect(
-    baseUrl + "/mdtp/uplift",
-    Map(
-      "origin" -> Seq("ssttpf"),
-      "confidenceLevel" -> Seq(requiredCL.toString),
-      "completionURL" -> Seq(ssttparrangement.routes.ArrangementController.determineEligibility().absoluteURL()),
-      "failureURL" -> Seq(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled().absoluteURL())
-    )
-  )
-
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
-      def raiseConfidence: Either[Result, AuthorisedSaUserRequest[A]] = {
-        Logger.info(
-          s"""
-           |Authorisation failed, doing mdtp uplift:
-           |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
-           |  [enrolments: ${request.enrolments}]
-           |  [utr: ${request.maybeUtr}]
-           |  [ConfidenceLevel: ${request.confidenceLevel}]
-           |  """.stripMargin)
-
-        Left(mdtpUplift(request))
-      }
+      //      def confidenceUpLift: Either[Result, AuthorisedSaUserRequest[A]] = {
+      //        Logger.info(
+      //          s"""
+      //           |Authorisation failed, doing mdtp uplift:
+      //           |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
+      //           |  [enrolments: ${request.enrolments}]
+      //           |  [utr: ${request.maybeUtr}]
+      //           |  [ConfidenceLevel: ${request.confidenceLevel}]
+      //           |  """.stripMargin)
+      //
+      //        Left(mdtpUplift(request))
+      //      }
 
       def notEnrolled: Either[Result, AuthorisedSaUserRequest[A]] = {
         Logger.info(
@@ -89,7 +74,7 @@ class AuthorisedSaUserAction @Inject() (
 
           Right(new AuthorisedSaUserRequest[A](request, utr))
         } else if (request.hasActiveSaEnrolment)
-          raiseConfidence
+          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.confidenceUplift()))
         else notEnrolled
       }
     )

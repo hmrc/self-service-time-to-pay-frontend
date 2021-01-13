@@ -22,6 +22,8 @@ GET         /eligibility/not-enrolled                                     ssttpe
 GET         /eligibility/access-your-self-assessment-online                ssttpeligibility.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()
 POST        /eligibility/access-your-self-assessment-online                ssttpeligibility.SelfServiceTimeToPayController.submitAccessYouSelfAssessmentOnline()
 
+GET         /eligibility/uplift                                           ssttpeligibility.SelfServiceTimeToPayController.confidenceUplift()
+
 # Calculator
 GET         /calculator/tax-liabilities                                   ssttpcalculator.CalculatorController.getTaxLiabilities()
 

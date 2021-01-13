@@ -27,9 +27,9 @@ import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
 class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
   def begin(
-      utr:             Option[SaUtr]           = Some(TdAll.saUtr),
+      utr:             Option[SaUtr]           = None,
       confidenceLevel: Option[ConfidenceLevel] = Some(ConfidenceLevel.L100),
-      allEnrolments:   Option[Set[Enrolment]]  = Some(Set(TdAll.saEnrolment))
+      allEnrolments:   Option[Set[Enrolment]]  = None
   ): Unit = {
     startPage.open()
     startPage.assertPageIsDisplayed()
@@ -60,7 +60,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
         caseName:        String                 = ""
     )
     val scenarios = List(
-      Scenario(TdAll.saUtr, L100, TdAll.saEnrolment, "confidence level < 200"),
+//      Scenario(TdAll.saUtr, L100, TdAll.saEnrolment, "confidence level < 200"),
       Scenario(None, L100, TdAll.saEnrolment, "confidence level < 200 and not UTR found"),
       Scenario(TdAll.saUtr, L200, None, "no SA enrolment"),
       Scenario(None, L200, None, "no SA enrolment nor UTR"),
