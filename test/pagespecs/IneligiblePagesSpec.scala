@@ -74,13 +74,14 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
   }
 
   "authorisation based eligibility" - {
-    "show you_need_to_request_access_to_self_assessment page for confidence level < 200" in {
+    "redirect to mdtp uplift page for confidence level < 200" in {
       AuthStub.authorise(confidenceLevel = Some(L100))
       TaxpayerStub.getTaxpayer()
       GgStub.signInPage(port)
       startPage.open()
+      IdentityVerificationStub.mdtpUpliftStubbedPage()
       startPage.clickOnStartNowButton()
-      mdtpUplift.assertPageIsDisplayed
+      confidenceUplift.assertPageIsDisplayed
     }
     "show you_need_to_request_access_to_self_assessment page no sa enrolments" in {
       AuthStub.authorise(allEnrolments = Some(Set()))

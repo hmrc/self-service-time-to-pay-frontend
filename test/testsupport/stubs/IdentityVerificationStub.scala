@@ -41,5 +41,24 @@ object IdentityVerificationStub extends Matchers {
                 """)))
   }
 
+  val mdtpUpliftPagePath: String = "/mdtp/uplift"
+
+  def mdtpUpliftStubbedPage(): StubMapping = {
+    stubFor(
+      get(urlPathEqualTo(mdtpUpliftPagePath))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody(
+              s"""
+                    <html>
+                      <head/>
+                      <body>
+                        MDTP uplift here ...
+                      </body>
+                    </html>
+                """)))
+  }
+
 }
 

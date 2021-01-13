@@ -46,8 +46,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val logoutUrl: String = s"$feedbackSurveyUrl"
 
   lazy val mdtpUpliftUrl: String = {
-    val ivf = servicesConfig.getConfString("identity-verification-frontend", "")
-    s"$ivf/mdtp/uplift"
+    val baseUrl: String = servicesConfig.baseUrl("identity-verification-frontend")
+    s"$baseUrl/mdtp/uplift"
   }
 
   // GA enhanced e-commerce custom vars

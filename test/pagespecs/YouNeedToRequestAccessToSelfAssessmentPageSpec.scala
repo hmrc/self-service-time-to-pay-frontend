@@ -60,7 +60,6 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
         caseName:        String                 = ""
     )
     val scenarios = List(
-//      Scenario(TdAll.saUtr, L100, TdAll.saEnrolment, "confidence level < 200"),
       Scenario(None, L100, TdAll.saEnrolment, "confidence level < 200 and not UTR found"),
       Scenario(TdAll.saUtr, L200, None, "no SA enrolment"),
       Scenario(None, L200, None, "no SA enrolment nor UTR"),

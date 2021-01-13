@@ -22,7 +22,6 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,47 +34,32 @@ class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
   private val requiredCL = ConfidenceLevel.L200
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
-      //      def confidenceUpLift: Either[Result, AuthorisedSaUserRequest[A]] = {
-      //        Logger.info(
-      //          s"""
-      //           |Authorisation failed, doing mdtp uplift:
-      //           |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
-      //           |  [enrolments: ${request.enrolments}]
-      //           |  [utr: ${request.maybeUtr}]
-      //           |  [ConfidenceLevel: ${request.confidenceLevel}]
-      //           |  """.stripMargin)
-      //
-      //        Left(mdtpUplift(request))
-      //      }
-
       def notEnrolled: Either[Result, AuthorisedSaUserRequest[A]] = {
-        Logger.info(
+        def logFail(reason: String) = Logger.info(
           s"""
-           |Authorisation failed:
+           |Authorisation failed, reason: $reason:
            |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
            |  [enrolments: ${request.enrolments}]
            |  [utr: ${request.maybeUtr}]
            |  [ConfidenceLevel: ${request.confidenceLevel}]
            |  """.stripMargin)
-        Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
+
+        val call = if (request.hasActiveSaEnrolment) {
+          logFail("active IR-SA enrolment but insufficient CL")
+          ssttpeligibility.routes.SelfServiceTimeToPayController.confidenceUplift()
+        } else {
+          logFail("no active IR-SA enrolment")
+          ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()
+        }
+
+        Left(Redirect(call))
       }
 
     Future.successful(
       request.maybeUtr.fold(notEnrolled) { utr =>
         if (request.hasActiveSaEnrolment && request.confidenceLevel >= requiredCL) {
-          Logger.debug(
-            s"""
-               |Authorisation successful:
-               |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
-               |  [enrolments: ${request.enrolments}]
-               |  [utr: ${request.maybeUtr}]
-               |  [ConfidenceLevel: ${request.confidenceLevel}]
-               |  """.stripMargin)
-
           Right(new AuthorisedSaUserRequest[A](request, utr))
-        } else if (request.hasActiveSaEnrolment)
-          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.confidenceUplift()))
-        else notEnrolled
+        } else notEnrolled
       }
     )
   }

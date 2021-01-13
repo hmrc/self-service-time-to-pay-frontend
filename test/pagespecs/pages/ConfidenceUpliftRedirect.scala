@@ -23,7 +23,8 @@ import testsupport.RichMatchers._
 class ConfidenceUpliftRedirect(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import org.scalatestplus.selenium.WebBrowser._
 
-  override def path: String = "/pay-what-you-owe-in-instalments/eligibility/uplift"
+  //  override def path: String = "/pay-what-you-owe-in-instalments/eligibility/uplift"
+  override def path: String = "/mdtp/uplift"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     println("Readpath: " + readPath())
