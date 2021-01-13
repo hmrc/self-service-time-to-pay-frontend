@@ -81,7 +81,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
       startPage.open()
       IdentityVerificationStub.mdtpUpliftStubbedPage()
       startPage.clickOnStartNowButton()
-      confidenceUplift.assertPageIsDisplayed
+      mdtpUplift.assertPageIsDisplayed
     }
     "show you_need_to_request_access_to_self_assessment page no sa enrolments" in {
       AuthStub.authorise(allEnrolments = Some(Set()))

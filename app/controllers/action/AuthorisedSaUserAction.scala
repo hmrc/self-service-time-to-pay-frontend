@@ -41,12 +41,12 @@ class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
            |  [ConfidenceLevel: ${request.confidenceLevel}]
            |  """.stripMargin)
 
-        val call = if (request.needsUplift) {
-          logFail("active IR-SA enrolment and UTR but needs CL uplift")
-          ssttpeligibility.routes.SelfServiceTimeToPayController.confidenceUplift()
-        } else {
+        val call = if (request.needsEnrolment) {
           logFail("no active IR-SA enrolment or UTR")
           ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()
+        } else {
+          logFail("active IR-SA enrolment and UTR but needs CL uplift")
+          ssttpeligibility.routes.SelfServiceTimeToPayController.confidenceUplift()
         }
 
         Left(Redirect(call))

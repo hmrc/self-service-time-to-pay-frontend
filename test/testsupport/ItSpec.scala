@@ -114,5 +114,5 @@ class ItSpec
   lazy val notEnrolledPage: NotEnrolledPage = wire[NotEnrolledPage]
   lazy val youNeedToRequestAccessToSelfAssessment: YouNeedToRequestAccessToSelfAssessmentPage = wire[YouNeedToRequestAccessToSelfAssessmentPage]
   lazy val identityVerificationPage: IdentityVerificationPage = wire[IdentityVerificationPage]
-  lazy val confidenceUplift: ConfidenceUpliftRedirect = wire[ConfidenceUpliftRedirect]
+  lazy val mdtpUplift: ConfidenceUpliftRedirect = wire[ConfidenceUpliftRedirect]
 }
