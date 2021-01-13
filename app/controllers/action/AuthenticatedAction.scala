@@ -34,6 +34,11 @@ final class AuthenticatedRequest[A](val request:         Request[A],
                                     val confidenceLevel: ConfidenceLevel,
                                     val maybeUtr:        Option[SaUtr]
 ) extends WrappedRequest[A](request) {
+  private val requiredCL = ConfidenceLevel.L200
+
+  lazy val eligible: Boolean = hasActiveSaEnrolment && maybeUtr.isDefined && !needsUplift
+  lazy val needsUplift: Boolean = confidenceLevel < requiredCL
+
   lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.exists(e => e.key == "IR-SA" && e.isActivated)
 }
 

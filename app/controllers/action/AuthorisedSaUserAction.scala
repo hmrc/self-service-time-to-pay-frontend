@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 import timetopaytaxpayer.cor.model.SaUtr
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,12 +30,10 @@ final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val
 class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
   extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
 
-  private val requiredCL = ConfidenceLevel.L200
-
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
-      def notEnrolled: Either[Result, AuthorisedSaUserRequest[A]] = {
-        def logFail(reason: String) = Logger.info(
-          s"""
+      def ineligibleRequest: Either[Result, AuthorisedSaUserRequest[A]] = {
+          def logFail(reason: String) = Logger.info(
+            s"""
            |Authorisation failed, reason: $reason:
            |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
            |  [enrolments: ${request.enrolments}]
@@ -44,11 +41,11 @@ class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
            |  [ConfidenceLevel: ${request.confidenceLevel}]
            |  """.stripMargin)
 
-        val call = if (request.hasActiveSaEnrolment) {
-          logFail("active IR-SA enrolment but insufficient CL")
+        val call = if (request.needsUplift) {
+          logFail("active IR-SA enrolment and UTR but needs CL uplift")
           ssttpeligibility.routes.SelfServiceTimeToPayController.confidenceUplift()
         } else {
-          logFail("no active IR-SA enrolment")
+          logFail("no active IR-SA enrolment or UTR")
           ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()
         }
 
@@ -56,10 +53,10 @@ class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
       }
 
     Future.successful(
-      request.maybeUtr.fold(notEnrolled) { utr =>
-        if (request.hasActiveSaEnrolment && request.confidenceLevel >= requiredCL) {
+      request.maybeUtr.fold(ineligibleRequest) { utr =>
+        if (request.eligible) {
           Right(new AuthorisedSaUserRequest[A](request, utr))
-        } else notEnrolled
+        } else ineligibleRequest
       }
     )
   }

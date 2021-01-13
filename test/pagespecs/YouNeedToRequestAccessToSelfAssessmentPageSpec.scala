@@ -34,13 +34,18 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     startPage.open()
     startPage.assertPageIsDisplayed()
     AuthStub.authorise(utr, confidenceLevel, allEnrolments)
+
+    ()
+  }
+
+  def startAndAssertRequestToSA() = {
     startPage.clickOnStartNowButton()
     youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed()
-    ()
   }
 
   "language" in {
     begin()
+    startAndAssertRequestToSA()
     youNeedToRequestAccessToSelfAssessment.clickOnWelshLink()
     youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed(Languages.Welsh)
     youNeedToRequestAccessToSelfAssessment.clickOnEnglishLink()
@@ -49,29 +54,57 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
   "back button" in {
     begin()
+    startAndAssertRequestToSA()
     youNeedToRequestAccessToSelfAssessment.backButtonHref.value shouldBe s"${baseUrl.value}${startPage.path}"
   }
 
-  "click on the call to action" in {
-    final case class Scenario(
-        maybeSaUtr:      Option[SaUtr],
-        confidenceLevel: ConfidenceLevel,
-        allEnrolments:   Option[Set[Enrolment]],
-        caseName:        String                 = ""
-    )
-    val scenarios = List(
-      Scenario(None, L100, TdAll.saEnrolment, "confidence level < 200 and not UTR found"),
-      Scenario(TdAll.saUtr, L200, None, "no SA enrolment"),
-      Scenario(None, L200, None, "no SA enrolment nor UTR"),
-      Scenario(TdAll.saUtr, L200, TdAll.unactivatedSaEnrolment, "no active SA enrolment")
-    )
+  case class Scenario(
+      maybeSaUtr:      Option[SaUtr],
+      confidenceLevel: ConfidenceLevel,
+      allEnrolments:   Option[Set[Enrolment]],
+      caseName:        String                 = ""
+  )
 
-    scenarios.foreach { s =>
+  val requestSaScenarios = List(
+    Scenario(None, L100, TdAll.saEnrolment, "confidence level < 200 and not UTR found"),
+    Scenario(TdAll.saUtr, L200, None, "no SA enrolment"),
+    Scenario(None, L200, None, "no SA enrolment nor UTR"),
+    Scenario(TdAll.saUtr, L200, TdAll.unactivatedSaEnrolment, "no active SA enrolment")
+  )
+
+  "take the user to request page" in {
+    requestSaScenarios.foreach { s =>
       begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
+
+      startAndAssertRequestToSA()
+    }
+  }
+
+  "click on the call to action" in {
+    requestSaScenarios.foreach { s =>
+      begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
+      startAndAssertRequestToSA()
+
       AddTaxesStub.enrolForSaStub(s.maybeSaUtr)
       IdentityVerificationStub.identityVerificationStubbedPage()
+
       youNeedToRequestAccessToSelfAssessment.clickTheButton()
       identityVerificationPage.assertPageIsDisplayed()
+    }
+  }
+
+  val upliftScenarios = List(
+    Scenario(TdAll.saUtr, L100, TdAll.saEnrolment, "confidence level < 200")
+  )
+
+  "take the user to mdtp uplift" in {
+    upliftScenarios.foreach { s =>
+      begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
+
+      IdentityVerificationStub.mdtpUpliftStubbedPage()
+
+      startPage.clickOnStartNowButton()
+      confidenceUplift.assertPageIsDisplayed()
     }
   }
 

@@ -16,18 +16,17 @@
 
 package pagespecs.pages
 
-import langswitch.{Language}
+import langswitch.Language
 import org.openqa.selenium.WebDriver
 import testsupport.RichMatchers._
+import testsupport.stubs.IdentityVerificationStub
 
 class ConfidenceUpliftRedirect(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import org.scalatestplus.selenium.WebBrowser._
 
-  //  override def path: String = "/pay-what-you-owe-in-instalments/eligibility/uplift"
-  override def path: String = "/mdtp/uplift"
+  override def path: String = IdentityVerificationStub.mdtpUpliftPagePath
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-    println("Readpath: " + readPath())
     readPath() shouldBe path
 
     ()
