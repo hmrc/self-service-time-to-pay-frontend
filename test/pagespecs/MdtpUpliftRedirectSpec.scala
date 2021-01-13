@@ -38,10 +38,6 @@ class MdtpUpliftRedirectSpec extends ItSpec {
     ()
   }
 
-  def begin(s: Scenario): Unit = {
-    begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
-  }
-
   val upliftScenarios = List(
     Scenario(TdAll.saUtr, L100, TdAll.saEnrolment, "confidence level < 200"),
     Scenario(TdAll.saUtr, L50, TdAll.saEnrolment, "confidence level < 200")

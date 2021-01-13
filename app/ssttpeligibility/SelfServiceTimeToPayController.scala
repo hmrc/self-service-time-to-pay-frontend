@@ -20,7 +20,6 @@ import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import identityverification.{AddTaxesConnector, StartIdentityVerificationJourneyResult}
-
 import javax.inject._
 import play.api.mvc._
 import req.RequestSupport

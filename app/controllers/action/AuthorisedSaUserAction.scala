@@ -31,7 +31,7 @@ class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
   extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
-      def ineligibleRequest: Either[Result, AuthorisedSaUserRequest[A]] = {
+      def ineligible: Either[Result, AuthorisedSaUserRequest[A]] = {
           def logFail(reason: String) = Logger.info(
             s"""
            |Authorisation failed, reason: $reason:
@@ -41,23 +41,22 @@ class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
            |  [ConfidenceLevel: ${request.confidenceLevel}]
            |  """.stripMargin)
 
-        val call = if (request.needsEnrolment) {
-          logFail("no active IR-SA enrolment or UTR")
-          ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()
-        } else {
-          logFail("active IR-SA enrolment and UTR but needs CL uplift")
-          ssttpeligibility.routes.SelfServiceTimeToPayController.confidenceUplift()
-        }
-
-        Left(Redirect(call))
+        Left(Redirect {
+          if (request.needsEnrolment) {
+            logFail("no active IR-SA enrolment or UTR")
+            ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()
+          } else {
+            logFail("active IR-SA enrolment and UTR but needs CL uplift")
+            ssttpeligibility.routes.SelfServiceTimeToPayController.confidenceUplift()
+          }
+        })
       }
 
     Future.successful(
-      request.maybeUtr.fold(ineligibleRequest) { utr =>
-        if (request.eligible) {
+      request.maybeUtr.filter(_ => request.eligible)
+        .fold(ineligible) { utr =>
           Right(new AuthorisedSaUserRequest[A](request, utr))
-        } else ineligibleRequest
-      }
+        }
     )
   }
 

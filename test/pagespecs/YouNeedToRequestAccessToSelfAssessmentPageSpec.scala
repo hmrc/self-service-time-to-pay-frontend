@@ -27,9 +27,9 @@ import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
 class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
   def begin(
-      utr:             Option[SaUtr]           = None,
+      utr:             Option[SaUtr]           = Some(TdAll.saUtr),
       confidenceLevel: Option[ConfidenceLevel] = Some(ConfidenceLevel.L100),
-      allEnrolments:   Option[Set[Enrolment]]  = None
+      allEnrolments:   Option[Set[Enrolment]]  = Some(Set(TdAll.saEnrolment))
   ): Unit = {
     startPage.open()
     startPage.assertPageIsDisplayed()
@@ -38,11 +38,12 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     ()
   }
 
-  def begin(s: Scenario): Unit = {
+  def begin(): Unit = {
+    val s = requestSaScenarios.head
     begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
   }
 
-  def startAndAssertRequestToSA() = {
+  def startNowAndAssertRequestToSA(): Unit = {
     startPage.clickOnStartNowButton()
     youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed()
   }
@@ -55,8 +56,8 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
   )
 
   "language" in {
-    begin(requestSaScenarios.head)
-    startAndAssertRequestToSA()
+    begin()
+    startNowAndAssertRequestToSA()
     youNeedToRequestAccessToSelfAssessment.clickOnWelshLink()
     youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed(Languages.Welsh)
     youNeedToRequestAccessToSelfAssessment.clickOnEnglishLink()
@@ -64,8 +65,8 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
   }
 
   "back button" in {
-    begin(requestSaScenarios.head)
-    startAndAssertRequestToSA()
+    begin()
+    startNowAndAssertRequestToSA()
     youNeedToRequestAccessToSelfAssessment.backButtonHref.value shouldBe s"${baseUrl.value}${startPage.path}"
   }
 
@@ -73,36 +74,20 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     requestSaScenarios.foreach { s =>
       begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
 
-      startAndAssertRequestToSA()
+      startNowAndAssertRequestToSA()
     }
   }
 
   "click on the call to action" in {
     requestSaScenarios.foreach { s =>
       begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
-      startAndAssertRequestToSA()
+      startNowAndAssertRequestToSA()
 
       AddTaxesStub.enrolForSaStub(s.maybeSaUtr)
       IdentityVerificationStub.identityVerificationStubbedPage()
 
       youNeedToRequestAccessToSelfAssessment.clickTheButton()
       identityVerificationPage.assertPageIsDisplayed()
-    }
-  }
-
-  val upliftScenarios = List(
-    Scenario(TdAll.saUtr, L100, TdAll.saEnrolment, "confidence level < 200"),
-    Scenario(TdAll.saUtr, L50, TdAll.saEnrolment, "confidence level < 200")
-  )
-
-  "take the user to mdtp uplift" in {
-    upliftScenarios.foreach { s =>
-      begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
-
-      IdentityVerificationStub.mdtpUpliftStubbedPage()
-
-      startPage.clickOnStartNowButton()
-      mdtpUplift.assertPageIsDisplayed()
     }
   }
 
