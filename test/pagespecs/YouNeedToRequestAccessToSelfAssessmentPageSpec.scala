@@ -19,9 +19,9 @@ package pagespecs
 import langswitch.Languages
 import testsupport.ItSpec
 import testsupport.stubs._
-import testsupport.testdata.{Scenario, TdAll}
+import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.auth.core.ConfidenceLevel.{L100, L200, L50}
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
 
 class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
@@ -38,6 +38,13 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     ()
   }
 
+  private case class Scenario(
+      allEnrolments:   Option[Set[Enrolment]],
+      maybeSaUtr:      Option[SaUtr],
+      confidenceLevel: ConfidenceLevel,
+      caseName:        String                 = ""
+  )
+
   def begin(): Unit = {
     val s = requestSaScenarios.head
     begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
@@ -48,11 +55,11 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed()
   }
 
-  val requestSaScenarios = List(
-    Scenario(None, L100, TdAll.saEnrolment, "confidence level < 200 and not UTR found"),
-    Scenario(TdAll.saUtr, L200, None, "no SA enrolment"),
-    Scenario(None, L200, None, "no SA enrolment nor UTR"),
-    Scenario(TdAll.saUtr, L200, TdAll.unactivatedSaEnrolment, "no active SA enrolment")
+  private val requestSaScenarios = List(
+    Scenario(TdAll.saEnrolment, None, L200, "no UTR found"),
+    Scenario(None, TdAll.saUtr, L200, "no SA enrolment"),
+    Scenario(None, None, L200, "no SA enrolment nor UTR"),
+    Scenario(TdAll.unactivatedSaEnrolment, TdAll.saUtr, L200, "no active SA enrolment")
   )
 
   "language" in {
@@ -83,8 +90,8 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
       begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
       startNowAndAssertRequestToSA()
 
-      AddTaxesStub.enrolForSaStub(s.maybeSaUtr)
-      IdentityVerificationStub.identityVerificationStubbedPage()
+      AddTaxesFeStub.enrolForSaStub(s.maybeSaUtr)
+      AddTaxesFeStub.enrolForSaStubbedPage()
 
       youNeedToRequestAccessToSelfAssessment.clickTheButton()
       identityVerificationPage.assertPageIsDisplayed()
@@ -92,6 +99,9 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
   }
 
   private implicit def toOption[T](t: T): Option[T] = Some(t)
+
   private implicit def toSet[T](t: T): Set[T] = Set(t)
+
   private implicit def toOptionSet[T](t: T): Option[Set[T]] = Some(Set(t))
+
 }

@@ -18,20 +18,17 @@ package pagespecs.pages
 
 import langswitch.Language
 import org.openqa.selenium.WebDriver
-import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
-import testsupport.WireMockSupport
-import testsupport.stubs.{GgStub, IdentityVerificationStub}
+import testsupport.stubs.MdptUpliftStub
 
-class IdentityVerificationPage(implicit webDriver: WebDriver) extends BasePage(WireMockSupport.baseUrl) {
-  import WebBrowser._
+class MdtpUpliftPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+  import org.scalatestplus.selenium.WebBrowser._
 
-  override def path: String = IdentityVerificationStub.identityVerificationPagePath
+  override def path: String = MdptUpliftStub.mdtpUpliftPagePath
 
-  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing{
+  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    tagName("body").element.text shouldBe "You can set up for SA Enrolment here ..."
     ()
   }
-}
 
+}

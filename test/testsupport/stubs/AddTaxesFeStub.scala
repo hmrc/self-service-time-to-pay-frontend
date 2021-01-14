@@ -19,15 +19,18 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
-import play.api.libs.json.{JsObject, Json}
 import play.api.libs.json.Json.prettyPrint
+import play.api.libs.json.{JsObject, Json}
 import testsupport.JsonSyntax._
 import testsupport.WireMockSupport
 import testsupport.stubs.DirectDebitStub.OK
-import testsupport.stubs.IdentityVerificationStub.identityVerificationPagePath
 import timetopaytaxpayer.cor.model.SaUtr
 
-object AddTaxesStub extends Matchers {
+/**
+ * A stub representing an endpoint in add-taxes-frontend which we
+ * call when sending user if he misses required enrolments.
+ */
+object AddTaxesFeStub extends Matchers {
 
   def enrolForSaStub(maybeSaUtr: Option[SaUtr]): StubMapping = {
     val bodyJson = Json.obj(
@@ -49,9 +52,28 @@ object AddTaxesStub extends Matchers {
     //language = JSON
     s"""
       {
-        "redirectUrl": "http://localhost:${WireMockSupport.port}$identityVerificationPagePath"
+        "redirectUrl": "http://localhost:${WireMockSupport.port}$enrolForSaPagePath"
       }
     """.asJson
   }
+  lazy val enrolForSaPagePath: String = "/enrol-for-sa-path"
+
+  def enrolForSaStubbedPage(): StubMapping = {
+    stubFor(
+      get(urlPathEqualTo(enrolForSaPagePath))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody(
+              s"""
+                    <html>
+                      <head/>
+                      <body>
+                        You can set up for SA Enrolment here ...
+                      </body>
+                    </html>
+                """)))
+  }
+
 }
 

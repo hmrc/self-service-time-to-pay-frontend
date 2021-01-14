@@ -21,42 +21,65 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import timetopaytaxpayer.cor.model.SaUtr
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 import scala.concurrent.{ExecutionContext, Future}
+import req.RequestSupport._
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val utr: SaUtr)
   extends WrappedRequest[A](request)
 
-class AuthorisedSaUserAction @Inject() (cc: MessagesControllerComponents)
+class AuthorisedSaUserAction @Inject() (
+    servicesConfig: ServicesConfig,
+    cc:             MessagesControllerComponents)
   extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
-      def ineligible: Either[Result, AuthorisedSaUserRequest[A]] = {
-          def logFail(reason: String) = Logger.info(
-            s"""
-           |Authorisation failed, reason: $reason:
-           |  [hasActiveSaEnrolment: ${request.hasActiveSaEnrolment}]
-           |  [enrolments: ${request.enrolments}]
-           |  [utr: ${request.maybeUtr}]
-           |  [ConfidenceLevel: ${request.confidenceLevel}]
-           |  """.stripMargin)
 
-        Left(Redirect {
-          if (request.needsEnrolment) {
-            logFail("no active IR-SA enrolment or UTR")
-            ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()
-          } else {
-            logFail("active IR-SA enrolment and UTR but needs CL uplift")
-            ssttpeligibility.routes.SelfServiceTimeToPayController.confidenceUplift()
-          }
-        })
+    val hasActiveSaEnrolment: Boolean = request.hasActiveSaEnrolment
+    val maybeUtr: Option[SaUtr] = request.maybeUtr
+    val isConfident: Boolean = request.confidenceLevel >= ConfidenceLevel.L200
+
+      def logFail(reason: String) = Logger.info(
+        s"""
+         |Authorisation failed, reason: $reason:
+         |  [hasActiveSaEnrolment: $hasActiveSaEnrolment]
+         |  [enrolments: ${request.enrolments}]
+         |  [utr: $maybeUtr]
+         |  [ConfidenceLevel: ${request.confidenceLevel}]
+         |  """.stripMargin
+      )
+
+    val result: Either[Result, AuthorisedSaUserRequest[A]] =
+      (hasActiveSaEnrolment, maybeUtr, isConfident) match {
+        case (false, _, _) =>
+          logFail("no active IR-SA enrolment")
+          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
+        case (_, None, _) =>
+          logFail("no present UTR")
+          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
+        case (true, Some(utr), false) =>
+          logFail("Confidence level is to low, redirecting to identity-verification")
+          Left(redirectToUplift(request))
+        case (true, Some(utr), true) =>
+          Right(new AuthorisedSaUserRequest[A](request, utr))
       }
 
-    Future.successful(
-      request.maybeUtr.filter(_ => request.eligible)
-        .fold(ineligible) { utr =>
-          Right(new AuthorisedSaUserRequest[A](request, utr))
-        }
+    Future.successful(result)
+  }
+
+  private val identityVerificationFeBaseUrl: String = servicesConfig.baseUrl("identity-verification-frontend")
+
+  private def redirectToUplift(implicit request: Request[_]): Result = {
+    Redirect(
+      s"$identityVerificationFeBaseUrl/mdtp/uplift",
+      Map(
+        "origin" -> Seq("ssttpf"),
+        "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
+        "completionURL" -> Seq(ssttparrangement.routes.ArrangementController.determineEligibility().absoluteURL()),
+        "failureURL" -> Seq(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled().absoluteURL())
+      )
     )
   }
 

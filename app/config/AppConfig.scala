@@ -45,11 +45,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val loginCallBackFullPath = s"$loginCallbackBaseUrl$loginCallbackPath"
   lazy val logoutUrl: String = s"$feedbackSurveyUrl"
 
-  lazy val mdtpUpliftUrl: String = {
-    val baseUrl: String = servicesConfig.baseUrl("identity-verification-frontend")
-    s"$baseUrl/mdtp/uplift"
-  }
-
   // GA enhanced e-commerce custom vars
   lazy val initialPaymentMetric: String = servicesConfig.getConfString("google-analytics.initialPaymentMetric", "metric7")
   lazy val interestMetric: String = servicesConfig.getConfString("google-analytics.initialPaymentMetric", "metric8")

@@ -19,15 +19,12 @@ package ssttpeligibility
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
-import identityverification.{AddTaxesConnector, StartIdentityVerificationJourneyResult}
+import enrolforsa.AddTaxesConnector
 import javax.inject._
+import journey.JourneyService
 import play.api.mvc._
 import req.RequestSupport
-import journey.JourneyService
-import play.api.libs.json.Json
-import play.api.mvc.Results.Redirect
 import times.ClockProvider
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import views.Views
 
@@ -46,7 +43,6 @@ class SelfServiceTimeToPayController @Inject() (
 ) extends FrontendBaseController(mcc) {
 
   import requestSupport._
-  import clockProvider._
 
   def start: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
@@ -98,7 +94,7 @@ class SelfServiceTimeToPayController @Inject() (
     JourneyLogger.info(logMessage)
 
     val resultF: Future[Result] = for {
-      startIdentityVerificationJourneyResult <- addTaxConnector.startIdentityVerificationJourney(request.maybeUtr)
+      startIdentityVerificationJourneyResult <- addTaxConnector.startEnrolForSaJourney(request.maybeUtr)
       redirectUrl = startIdentityVerificationJourneyResult.redirectUrl
     } yield Redirect(redirectUrl)
 
@@ -107,19 +103,6 @@ class SelfServiceTimeToPayController @Inject() (
         JourneyLogger.error(s"[Failed] $logMessage", ex)
         throw ex
     }
-  }
-
-  def confidenceUplift: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"confidenceUplift: $request")
-    Redirect(
-      appConfig.mdtpUpliftUrl,
-      Map(
-        "origin" -> Seq("ssttpf"),
-        "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-        "completionURL" -> Seq(ssttparrangement.routes.ArrangementController.determineEligibility().absoluteURL()),
-        "failureURL" -> Seq(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled().absoluteURL())
-      )
-    )
   }
 
   def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action { implicit request =>

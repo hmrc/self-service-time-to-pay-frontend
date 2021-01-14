@@ -18,18 +18,23 @@ package pagespecs.pages
 
 import langswitch.Language
 import org.openqa.selenium.WebDriver
+import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
-import testsupport.stubs.IdentityVerificationStub
+import testsupport.WireMockSupport
+import testsupport.stubs.AddTaxesFeStub
 
-class ConfidenceUpliftRedirect(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
-  import org.scalatestplus.selenium.WebBrowser._
+/**
+ * This page is not served by SSTTP. Here will be redirected user if he is missing required SA enrolments.
+ */
+class EnrolForSaPage(implicit webDriver: WebDriver) extends BasePage(WireMockSupport.baseUrl) {
+  import WebBrowser._
 
-  override def path: String = IdentityVerificationStub.mdtpUpliftPagePath
+  override def path: String = AddTaxesFeStub.enrolForSaPagePath
 
-  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
+  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing{
     readPath() shouldBe path
-
+    tagName("body").element.text shouldBe "You can set up for SA Enrolment here ..."
     ()
   }
-
 }
+
