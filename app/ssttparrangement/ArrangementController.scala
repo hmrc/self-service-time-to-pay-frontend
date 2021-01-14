@@ -260,12 +260,6 @@ class ArrangementController @Inject() (
               val arrangement = createArrangement(success, journey)
               val result = for {
                 submissionResult <- arrangementConnector.submitArrangements(arrangement)
-                _ = submissionResult.fold(
-                  submissionError =>
-                    JourneyLogger.info(s"ArrangementController.arrangementSetUp: submission failed, ERROR: ${submissionError.message}", arrangement),
-                  submissionSuccess =>
-                    JourneyLogger.info("ArrangementController.arrangementSetUp: submission succeeded", arrangement)
-                )
                 //TODO: below line sends successful event even though a submission failed!
                 _ = auditService.sendSubmissionEvent(journey, paymentSchedule)
                 newJourney = journey
@@ -279,11 +273,10 @@ class ArrangementController @Inject() (
               result.flatMap {
                 _.fold(error => {
                   Logger.error(s"Exception: ${error.code} + ${error.message}")
-                  JourneyLogger.info(
-                    s"ArrangementController.arrangementSetUp: ZONK ERROR! Arrangement submission failed, $error but redirecting to $applicationSuccessful")
+                  JourneyLogger.info(s"ArrangementController.arrangementSetUp: ZONK ERROR! Arrangement submission failed, $error but redirecting to $applicationSuccessful", arrangement)
                   applicationSuccessful
                 }, _ => {
-                  JourneyLogger.info(s"ArrangementController.arrangementSetUp: Arrangement submission Succeeded!")
+                  JourneyLogger.info(s"ArrangementController.arrangementSetUp: Arrangement submission Succeeded!", arrangement)
                   applicationSuccessful
                 }
                 )
