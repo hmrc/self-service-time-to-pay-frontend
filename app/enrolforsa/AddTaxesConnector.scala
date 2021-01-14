@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package identityverification
+package enrolforsa
 
 import com.google.inject.Inject
 import play.api.libs.json.{JsObject, Json, OFormat}
@@ -35,22 +35,22 @@ class AddTaxesConnector @Inject() (
   import req.RequestSupport._
   private val baseUrl: String = servicesConfig.baseUrl("add-taxes")
 
-  def startIdentityVerificationJourney(maybeSaUtr: Option[SaUtr])(implicit request: Request[_]): Future[StartIdentityVerificationJourneyResult] = {
+  def startEnrolForSaJourney(maybeSaUtr: Option[SaUtr])(implicit request: Request[_]): Future[StartEnrolForSaJourneyResult] = {
     val url = s"$baseUrl/internal/self-assessment/enrol-for-sa"
 
     val body = Json.obj(
       "origin" -> "ssttp-sa"
     ) ++ maybeSaUtr.fold(Json.obj())(utr => Json.obj("utr" -> utr))
 
-    httpClient.POST[JsObject, StartIdentityVerificationJourneyResult](url, body)
+    httpClient.POST[JsObject, StartEnrolForSaJourneyResult](url, body)
   }
 }
 
-final case class StartIdentityVerificationJourneyResult(
+final case class StartEnrolForSaJourneyResult(
     redirectUrl: String
 )
 
-object StartIdentityVerificationJourneyResult {
-  implicit val format: OFormat[StartIdentityVerificationJourneyResult] = Json.format[StartIdentityVerificationJourneyResult]
+object StartEnrolForSaJourneyResult {
+  implicit val format: OFormat[StartEnrolForSaJourneyResult] = Json.format[StartEnrolForSaJourneyResult]
 }
 

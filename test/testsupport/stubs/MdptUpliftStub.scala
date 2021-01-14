@@ -20,13 +20,17 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.Matchers
 
-object IdentityVerificationStub extends Matchers {
+/**
+ * A stub representing IdentityVerification service /mdtp/uplift page.
+ * We redirect to it when user has a low confidence level.
+ */
+object MdptUpliftStub extends Matchers {
 
-  val identityVerificationPagePath: String = "/identityVerificationPath"
+  val mdtpUpliftPagePath: String = "/mdtp/uplift"
 
-  def identityVerificationStubbedPage(): StubMapping = {
+  def mdtpUpliftStubbedPage(): StubMapping = {
     stubFor(
-      get(urlPathEqualTo(identityVerificationPagePath))
+      get(urlPathEqualTo(mdtpUpliftPagePath))
         .willReturn(
           aResponse()
             .withStatus(200)
@@ -35,7 +39,7 @@ object IdentityVerificationStub extends Matchers {
                     <html>
                       <head/>
                       <body>
-                        You can set up for SA Enrolment here ...
+                        MDTP uplift here ...
                       </body>
                     </html>
                 """)))

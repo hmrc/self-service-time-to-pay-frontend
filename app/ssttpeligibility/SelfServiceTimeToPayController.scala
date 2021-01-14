@@ -19,12 +19,11 @@ package ssttpeligibility
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
-import identityverification.{AddTaxesConnector, StartIdentityVerificationJourneyResult}
+import enrolforsa.AddTaxesConnector
 import javax.inject._
+import journey.JourneyService
 import play.api.mvc._
 import req.RequestSupport
-import journey.JourneyService
-import play.api.libs.json.Json
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import views.Views
@@ -44,7 +43,6 @@ class SelfServiceTimeToPayController @Inject() (
 ) extends FrontendBaseController(mcc) {
 
   import requestSupport._
-  import clockProvider._
 
   def start: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
@@ -96,7 +94,7 @@ class SelfServiceTimeToPayController @Inject() (
     JourneyLogger.info(logMessage)
 
     val resultF: Future[Result] = for {
-      startIdentityVerificationJourneyResult <- addTaxConnector.startIdentityVerificationJourney(request.maybeUtr)
+      startIdentityVerificationJourneyResult <- addTaxConnector.startEnrolForSaJourney(request.maybeUtr)
       redirectUrl = startIdentityVerificationJourneyResult.redirectUrl
     } yield Redirect(redirectUrl)
 

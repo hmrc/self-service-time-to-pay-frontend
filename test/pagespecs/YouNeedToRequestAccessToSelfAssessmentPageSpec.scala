@@ -21,7 +21,7 @@ import testsupport.ItSpec
 import testsupport.stubs._
 import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.auth.core.ConfidenceLevel.{L100, L200}
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
 
 class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
@@ -34,13 +34,37 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     startPage.open()
     startPage.assertPageIsDisplayed()
     AuthStub.authorise(utr, confidenceLevel, allEnrolments)
-    startPage.clickOnStartNowButton()
-    youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed()
+
     ()
   }
 
+  private case class Scenario(
+      allEnrolments:   Option[Set[Enrolment]],
+      maybeSaUtr:      Option[SaUtr],
+      confidenceLevel: ConfidenceLevel,
+      caseName:        String                 = ""
+  )
+
+  def begin(): Unit = {
+    val s = requestSaScenarios.head
+    begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
+  }
+
+  def startNowAndAssertRequestToSA(): Unit = {
+    startPage.clickOnStartNowButton()
+    youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed()
+  }
+
+  private val requestSaScenarios = List(
+    Scenario(TdAll.saEnrolment, None, L200, "no UTR found"),
+    Scenario(None, TdAll.saUtr, L200, "no SA enrolment"),
+    Scenario(None, None, L200, "no SA enrolment nor UTR"),
+    Scenario(TdAll.unactivatedSaEnrolment, TdAll.saUtr, L200, "no active SA enrolment")
+  )
+
   "language" in {
     begin()
+    startNowAndAssertRequestToSA()
     youNeedToRequestAccessToSelfAssessment.clickOnWelshLink()
     youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed(Languages.Welsh)
     youNeedToRequestAccessToSelfAssessment.clickOnEnglishLink()
@@ -49,34 +73,35 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
   "back button" in {
     begin()
+    startNowAndAssertRequestToSA()
     youNeedToRequestAccessToSelfAssessment.backButtonHref.value shouldBe s"${baseUrl.value}${startPage.path}"
   }
 
-  "click on the call to action" in {
-    final case class Scenario(
-        maybeSaUtr:      Option[SaUtr],
-        confidenceLevel: ConfidenceLevel,
-        allEnrolments:   Option[Set[Enrolment]],
-        caseName:        String                 = ""
-    )
-    val scenarios = List(
-      Scenario(TdAll.saUtr, L100, TdAll.saEnrolment, "confidence level < 200"),
-      Scenario(None, L100, TdAll.saEnrolment, "confidence level < 200 and not UTR found"),
-      Scenario(TdAll.saUtr, L200, None, "no SA enrolment"),
-      Scenario(None, L200, None, "no SA enrolment nor UTR"),
-      Scenario(TdAll.saUtr, L200, TdAll.unactivatedSaEnrolment, "no active SA enrolment")
-    )
-
-    scenarios.foreach { s =>
+  "take the user to request page" in {
+    requestSaScenarios.foreach { s =>
       begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
-      AddTaxesStub.enrolForSaStub(s.maybeSaUtr)
-      IdentityVerificationStub.identityVerificationStubbedPage()
+
+      startNowAndAssertRequestToSA()
+    }
+  }
+
+  "click on the call to action" in {
+    requestSaScenarios.foreach { s =>
+      begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
+      startNowAndAssertRequestToSA()
+
+      AddTaxesFeStub.enrolForSaStub(s.maybeSaUtr)
+      AddTaxesFeStub.enrolForSaStubbedPage()
+
       youNeedToRequestAccessToSelfAssessment.clickTheButton()
       identityVerificationPage.assertPageIsDisplayed()
     }
   }
 
   private implicit def toOption[T](t: T): Option[T] = Some(t)
+
   private implicit def toSet[T](t: T): Set[T] = Set(t)
+
   private implicit def toOptionSet[T](t: T): Option[Set[T]] = Some(Set(t))
+
 }
