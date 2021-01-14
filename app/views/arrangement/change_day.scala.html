@@ -31,14 +31,16 @@
   appConfig: config.AppConfig
 )
 
+@customDateHasErrors = @{dayForm("other").value.contains("true")}
+
 @customDaySelected() = @{
-    if(dayForm("other").value.contains("true")){
+    if(customDateHasErrors){
         "checked"
     }
 }
 
 @errorFocus(key :String) = @{
-    if(dayForm("other").value.contains("true")){
+    if(customDateHasErrors){
        "customDate"
     }else{
         key
@@ -85,10 +87,10 @@
             <label for="other">@Messages("ssttp.arrangement.changeday.different")</label>
         </div>
 
-        <div id="customDate" class="panel panel-border-narrow js-hidden form-group @if(dayForm.hasErrors){form-field--error}">
+        <div id="customDate" class="panel panel-border-narrow js-hidden form-group @if(customDateHasErrors){form-field--error}">
             <label for="dayInput" >@Messages("ssttp.arrangement.changeday.enter.date")</label>
             <br>
-            @if(dayForm.hasErrors) {
+            @if(customDateHasErrors) {
                 <label class="error-notification" >
                     @dayForm.error("dayOfMonth").map(formError => Messages(formError.message))
                 </label>
