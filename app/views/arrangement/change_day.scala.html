@@ -31,9 +31,19 @@
   appConfig: config.AppConfig
 )
 
+@customDateHasErrors = @{dayForm("other").value.contains("true")}
+
 @customDaySelected() = @{
-    if(dayForm("other").value.contains("true")){
+    if(customDateHasErrors){
         "checked"
+    }
+}
+
+@errorFocus(key :String) = @{
+    if(customDateHasErrors){
+       "customDate"
+    }else{
+        key
     }
 }
 
@@ -43,7 +53,26 @@
 ){
     <h1 class="heading-xlarge">@Messages("ssttp.arrangement.change_day.title")</h1>
     @if(dayForm.hasErrors) {
-    @viewsHelpers.errorSummary(Messages("ssttp.calculator.results.error.title"), dayForm)
+    <div class="flash error-summary" aria-labelledby="error-summary-display" role="alert" tabindex="-1" data-module="govuk-error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+           There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                @dayForm.errors.map { error =>
+                <li>
+                    <a href="#@errorFocus(error.key)"
+                       id="@{
+                            errorFocus(error.key)
+                        }-error-summary"
+                       data-focuses="@errorFocus(error.key)">
+                        @Messages(error.message, error.args: _*)
+                    </a>
+                </li>
+                }
+            </ul>
+        </div>
+    </div>
     }
 
     @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm", 'class -> "group") {
@@ -58,15 +87,14 @@
             <label for="other">@Messages("ssttp.arrangement.changeday.different")</label>
         </div>
 
-        <div id="customDate" class="panel panel-border-narrow js-hidden form-group @if(dayForm.hasErrors){form-field--error}">
+        <div id="customDate" class="panel panel-border-narrow js-hidden form-group @if(customDateHasErrors){form-field--error}">
             <label for="dayInput" >@Messages("ssttp.arrangement.changeday.enter.date")</label>
-            @if(dayForm.hasErrors) {
-                <br>
+            <br>
+            @if(customDateHasErrors) {
                 <label class="error-notification" >
                     @dayForm.error("dayOfMonth").map(formError => Messages(formError.message))
                 </label>
             }
-            <br>
             <input type="text" class="form-control-1-4" id="dayInput" name="dayOfMonth">
         </div>
 </div>
