@@ -260,6 +260,7 @@ class ArrangementController @Inject() (
               val arrangement = createArrangement(success, journey)
               val result = for {
                 submissionResult <- arrangementConnector.submitArrangements(arrangement)
+                _ = JourneyLogger.info("ArrangementController.arrangementSetUp: arrangement submitted", arrangement)
                 _ = auditService.sendSubmissionEvent(journey, paymentSchedule)
                 newJourney = journey
                   .copy(
