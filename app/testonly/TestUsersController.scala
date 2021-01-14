@@ -119,7 +119,7 @@ class TestUsersController @Inject() (
         .verifying("'returns' status code must be valid http status code", x => Try(x.toInt).isSuccess && x.toInt < 599 && x.toInt > 100),
       "has-sa-enrolment" -> boolean,
       "nino" -> optional(text)
-        .verifying("'nino' value must a legal NINO identifier", x => x.forall(Nino.isValid)),
+        .verifying("'nino' value must a legal NINO identifier", x => x.forall(uk.gov.hmrc.domain.Nino.isValid)),
       "isOnIA" -> boolean,
       "authority-id" -> optional(text),
       "affinity-group" -> text.verifying("'Affinity group' must not be 'Individual', 'Organisation' or 'Agent'",
