@@ -19,7 +19,6 @@ package testonly
 import java.time.LocalDate
 import play.api.http.Status
 import play.api.libs.json.JsValue
-import uk.gov.hmrc.domain.Nino
 
 import scala.util.Random
 
@@ -48,7 +47,7 @@ object TestUser {
     utr                          = Utr.random(),
     hasSAEnrolment               = true,
     isOnIA                       = true,
-    nino                         = Some(Nino("AA000005A")),
+    nino                         = Some(Nino.random()),
     authorityId                  = AuthorityId.random,
     affinityGroup                = AffinityGroup.individual,
     confidenceLevel              = 200,
@@ -95,5 +94,16 @@ final case class Utr(v: String)
 
 object Utr {
   def random(): Utr = Utr("1234512345".map(_ => nextDigitChar()))
+  private def nextDigitChar() = Random.nextInt(10).toString.charAt(0)
+}
+
+final case class Nino(v: String)
+
+object Nino {
+  def random(): Nino = {
+    val digits = new String(Array.fill(6)(nextDigitChar()))
+
+    Nino(s"AA${digits}A")
+  }
   private def nextDigitChar() = Random.nextInt(10).toString.charAt(0)
 }

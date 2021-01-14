@@ -28,7 +28,6 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import uk.gov.hmrc.auth.core.ConfidenceLevel.{L100, L200}
-import uk.gov.hmrc.domain.Nino
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}

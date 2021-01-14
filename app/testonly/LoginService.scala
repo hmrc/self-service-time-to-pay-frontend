@@ -74,7 +74,7 @@ class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
     val enrolments: JsArray = if (tu.hasSAEnrolment) Json.arr(saEnrolment) else Json.arr()
     val credId: String = if (tu.hasExistingDirectDebit) "192837465" else tu.authorityId.v
 
-    val maybeNino = tu.nino.fold(Json.obj())(v => Json.obj("nino" -> v.nino))
+    val maybeNino = tu.nino.fold(Json.obj())(v => Json.obj("nino" -> v.v))
 
     Json.obj(
       "credId" -> credId,
