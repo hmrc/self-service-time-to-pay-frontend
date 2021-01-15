@@ -90,11 +90,10 @@ class SelfServiceTimeToPayController @Inject() (
     val logMessage = s"Sending user to BTA for Identify Verification " +
       s"[ConfidenceLevel=${request.confidenceLevel}]" +
       s"[utr=${request.maybeUtr.map(_.obfuscate)}]"
-
     JourneyLogger.info(logMessage)
-
+    val credentials = request.credentials.getOrElse(throw new RuntimeException("Missing 'credentials' auth credentials."))
     val resultF: Future[Result] = for {
-      startIdentityVerificationJourneyResult <- addTaxConnector.startEnrolForSaJourney(request.maybeUtr)
+      startIdentityVerificationJourneyResult <- addTaxConnector.startEnrolForSaJourney(request.maybeUtr, credentials)
       redirectUrl = startIdentityVerificationJourneyResult.redirectUrl
     } yield Redirect(redirectUrl)
 

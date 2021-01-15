@@ -32,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 final class AuthenticatedRequest[A](val request:         Request[A],
                                     val enrolments:      Enrolments,
                                     val confidenceLevel: ConfidenceLevel,
-                                    val maybeUtr:        Option[SaUtr]
+                                    val maybeUtr:        Option[SaUtr],
+                                    val credentials:     Option[Credentials]
 ) extends WrappedRequest[A](request) {
 
   lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.exists(e => e.key == "IR-SA" && e.isActivated)
@@ -53,11 +54,11 @@ class AuthenticatedAction @Inject() (
     implicit val r: Request[A] = request
 
     af.authorised.retrieve(
-      Retrievals.allEnrolments and Retrievals.confidenceLevel and Retrievals.saUtr
+      Retrievals.allEnrolments and Retrievals.confidenceLevel and Retrievals.saUtr and Retrievals.credentials
     ).apply {
-        case enrolments ~ confidenceLevel ~ utr =>
+        case enrolments ~ confidenceLevel ~ utr ~ credentials =>
           Future.successful(
-            Right(new AuthenticatedRequest[A](request, enrolments, confidenceLevel, utr.map(SaUtr.apply)))
+            Right(new AuthenticatedRequest[A](request, enrolments, confidenceLevel, utr.map(SaUtr.apply), credentials))
           )
       }
       .recover {

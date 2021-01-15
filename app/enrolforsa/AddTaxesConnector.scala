@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import play.api.libs.json.{JsObject, Json, OFormat}
 import play.api.mvc.Request
 import timetopaytaxpayer.cor.model.SaUtr
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -35,11 +36,12 @@ class AddTaxesConnector @Inject() (
   import req.RequestSupport._
   private val baseUrl: String = servicesConfig.baseUrl("add-taxes")
 
-  def startEnrolForSaJourney(maybeSaUtr: Option[SaUtr])(implicit request: Request[_]): Future[StartEnrolForSaJourneyResult] = {
+  def startEnrolForSaJourney(maybeSaUtr: Option[SaUtr], credentials: Credentials)(implicit request: Request[_]): Future[StartEnrolForSaJourneyResult] = {
     val url = s"$baseUrl/internal/self-assessment/enrol-for-sa"
 
     val body = Json.obj(
-      "origin" -> "ssttp-sa"
+      "origin" -> "ssttp-sa",
+      "providerId" -> credentials.providerId
     ) ++ maybeSaUtr.fold(Json.obj())(utr => Json.obj("utr" -> utr))
 
     httpClient.POST[JsObject, StartEnrolForSaJourneyResult](url, body)
