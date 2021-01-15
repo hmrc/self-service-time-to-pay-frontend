@@ -34,7 +34,8 @@ object AddTaxesFeStub extends Matchers {
 
   def enrolForSaStub(maybeSaUtr: Option[SaUtr]): StubMapping = {
     val bodyJson = Json.obj(
-      "origin" -> "ssttp-sa"
+      "origin" -> "ssttp-sa",
+      "providerId" -> "authId-999"
     ) ++ maybeSaUtr.fold(Json.obj())(utr => Json.obj("utr" -> utr))
 
     stubFor(

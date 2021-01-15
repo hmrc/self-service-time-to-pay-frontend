@@ -62,12 +62,18 @@ object AuthStub extends Matchers {
       Json.obj("saUtr" -> utr)
     ).getOrElse(Json.obj())
 
+    val optionalCredentialsPart = Json.obj(
+      "optionalCredentials" -> Json.obj(
+        "providerId" -> "authId-999",
+        "providerType" -> "GovernmentGateway"
+      )
+    )
     val enrolments: Set[Enrolment] = allEnrolments.getOrElse(Set())
     val allEnrolmentsJsonPart: JsObject = Json.obj(
       "allEnrolments" -> enrolments
     )
 
-    val authoriseJsonBody = allEnrolmentsJsonPart ++ confidenceLevelJsonPart ++ saUtrJsonPart
+    val authoriseJsonBody = allEnrolmentsJsonPart ++ confidenceLevelJsonPart ++ saUtrJsonPart ++ optionalCredentialsPart
 
     stubFor(
       post(urlPathEqualTo("/auth/authorise"))
