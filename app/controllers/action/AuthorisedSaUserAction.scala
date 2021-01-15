@@ -17,6 +17,7 @@
 package controllers.action
 
 import com.google.inject.Inject
+import config.AppConfig
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -31,8 +32,8 @@ final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val
   extends WrappedRequest[A](request)
 
 class AuthorisedSaUserAction @Inject() (
-    servicesConfig: ServicesConfig,
-    cc:             MessagesControllerComponents)
+    appConfig: AppConfig,
+    cc:        MessagesControllerComponents)
   extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
@@ -69,11 +70,9 @@ class AuthorisedSaUserAction @Inject() (
     Future.successful(result)
   }
 
-  private val identityVerificationFeBaseUrl: String = servicesConfig.baseUrl("identity-verification-frontend")
-
   private def redirectToUplift(implicit request: Request[_]): Result = {
     Redirect(
-      s"$identityVerificationFeBaseUrl/mdtp/uplift",
+      appConfig.mdtpUpliftUrl,
       Map(
         "origin" -> Seq("ssttpf"),
         "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
