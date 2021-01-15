@@ -51,7 +51,10 @@ class ItSpec
     "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
     "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}",
     "microservice.services.add-taxes.port" -> WireMockSupport.port,
-    "microservice.services.identity-verification-frontend.url" -> s"http://localhost:${WireMockSupport.port}")
+    "microservice.services.identity-verification-frontend.uplift-url" -> s"http://localhost:${WireMockSupport.port}/mdtp/uplift",
+    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:${port}",
+    "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
+    "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled")
 
   //in tests use `app`
   override def newAppForTest(testData: TestData): Application = new GuiceApplicationBuilder()

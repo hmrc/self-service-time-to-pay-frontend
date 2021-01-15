@@ -45,9 +45,19 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val loginCallBackFullPath = s"$loginCallbackBaseUrl$loginCallbackPath"
   lazy val logoutUrl: String = s"$feedbackSurveyUrl"
 
-  lazy val mdtpUpliftUrl: String = {
-    val baseUrl = servicesConfig.getConfString("identity-verification-frontend.url", throw new RuntimeException("MDTP uplift url required"))
-    s"$baseUrl/mdtp/uplift"
+  lazy val mdtpUpliftUrl: String = servicesConfig.getConfString("identity-verification-frontend.uplift-url",
+    throw new RuntimeException("MDTP uplift url required"))
+
+  lazy val (mdtpUpliftCompleteUrl, mdtpUpliftFailureUrl) = {
+    val baseUrl = servicesConfig.getConfString("identity-verification-frontend.callback.base-url", "")
+
+    val completePath = servicesConfig.getConfString("identity-verification-frontend.callback.complete-path",
+      throw new RuntimeException("uplift continue path required"))
+
+    val failurePath = servicesConfig.getConfString("identity-verification-frontend.callback.failure-path",
+      throw new RuntimeException("uplift failure path required"))
+
+    (s"$baseUrl$completePath", s"$baseUrl$failurePath")
   }
 
   // GA enhanced e-commerce custom vars

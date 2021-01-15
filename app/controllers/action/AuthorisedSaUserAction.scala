@@ -76,8 +76,8 @@ class AuthorisedSaUserAction @Inject() (
       Map(
         "origin" -> Seq("ssttpf"),
         "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-        "completionURL" -> Seq(ssttparrangement.routes.ArrangementController.determineEligibility().absoluteURL()),
-        "failureURL" -> Seq(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled().absoluteURL())
+        "completionURL" -> Seq(appConfig.mdtpUpliftCompleteUrl),
+        "failureURL" -> Seq(appConfig.mdtpUpliftFailureUrl)
       )
     )
   }
