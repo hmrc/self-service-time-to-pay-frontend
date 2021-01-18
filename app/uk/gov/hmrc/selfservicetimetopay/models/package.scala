@@ -52,6 +52,7 @@ package object modelsFormat {
     case "totaldebtistoohigh"                     => Some(TotalDebtIsTooHigh)
     case "ttpislessthentwomonths"                 => Some(TotalDebtIsTooHigh)
     case "isnotonia"                              => Some(IsNotOnIa)
+    case "directdebitcreatedwithinthelastyear"    => Some(DirectDebitCreatedWithinTheLastYear)
     case x if x.contains("returnneedssubmitting") => Some(ReturnNeedsSubmitting)
     case _ =>
       None
