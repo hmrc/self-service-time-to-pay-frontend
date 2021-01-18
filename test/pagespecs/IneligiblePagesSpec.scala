@@ -70,6 +70,18 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
         page.assertPageIsDisplayed
         page.backButtonHref shouldBe None
       }
+
+      s"OPS-5822: User can go back from the /call-us page (via browser back button) and try again but still end up on the /call-us page [$reason]" in {
+        beginJourney(reasonObject)
+        page.assertPageIsDisplayed
+
+        webDriver.navigate().back()
+        startPage.clickOnStartNowButton()
+
+        // Bug OPS-5822 would have shown a technical difficulties page here rather than /call-us because of a
+        // failure to deserialise the reason in the journey object in the db
+        page.assertPageIsDisplayed
+      }
     }
   }
 
