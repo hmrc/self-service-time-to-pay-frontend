@@ -22,6 +22,7 @@ import controllers.action.Actions
 import enrolforsa.AddTaxesConnector
 import javax.inject._
 import journey.JourneyService
+import play.api.Logger
 import play.api.mvc._
 import req.RequestSupport
 import times.ClockProvider
@@ -87,15 +88,27 @@ class SelfServiceTimeToPayController @Inject() (
   }
 
   def submitAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser.async { implicit request =>
-    val logMessage = s"Sending user to BTA for Identify Verification " +
+    val logMessage = s"Sending user to PTA (add-taxes-frontend) to enroll for SA" +
       s"[ConfidenceLevel=${request.confidenceLevel}]" +
       s"[utr=${request.maybeUtr.map(_.obfuscate)}]"
     JourneyLogger.info(logMessage)
-    val credentials = request.credentials.getOrElse(throw new RuntimeException("Missing 'credentials' auth credentials."))
-    val resultF: Future[Result] = for {
-      startIdentityVerificationJourneyResult <- addTaxConnector.startEnrolForSaJourney(request.maybeUtr, credentials)
-      redirectUrl = startIdentityVerificationJourneyResult.redirectUrl
-    } yield Redirect(redirectUrl)
+
+    val resultF = request.credentials match {
+      case Some(credentials) =>
+        for {
+          startIdentityVerificationJourneyResult <- addTaxConnector.startEnrolForSaJourney(request.maybeUtr, credentials)
+          redirectUrl = startIdentityVerificationJourneyResult.redirectUrl
+        } yield Redirect(redirectUrl)
+      case None =>
+        Logger.error(
+          "Rotten credentials error. " +
+            "The auth microservice returned empty credentials which are required to be passed " +
+            "to add-taxes-frontend in order to enrol-for-sa. Please investigate."
+        )
+        Future.successful(Redirect(
+          ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()
+        ))
+    }
 
     resultF.recover {
       case NonFatal(ex) =>

@@ -22,6 +22,7 @@ import testsupport.stubs._
 import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
 
 class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
@@ -85,7 +86,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     }
   }
 
-  "click on the call to action" in {
+  "click on the call to action and navigate to PTA" in {
     requestSaScenarios.foreach { s =>
       begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
       startNowAndAssertRequestToSA()
@@ -94,8 +95,18 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
       AddTaxesFeStub.enrolForSaStubbedPage()
 
       youNeedToRequestAccessToSelfAssessment.clickTheButton()
-      identityVerificationPage.assertPageIsDisplayed()
+      enrolForSaPage.assertPageIsDisplayed()
     }
+  }
+
+  "click on the call to action and navigate call us page if auth sends no credentials/providerId" in {
+    startPage.open()
+    startPage.assertPageIsDisplayed()
+    AuthStub.authorise(allEnrolments = None, credentials = None)
+    startPage.clickOnStartNowButton()
+    youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed()
+    youNeedToRequestAccessToSelfAssessment.clickTheButton()
+    notEnrolledPage.assertPageIsDisplayed()
   }
 
   private implicit def toOption[T](t: T): Option[T] = Some(t)
