@@ -100,6 +100,7 @@ class SelfServiceTimeToPayController @Inject() (
           redirectUrl = startIdentityVerificationJourneyResult.redirectUrl
         } yield Redirect(redirectUrl)
       case None =>
+        //Use kibana to monitor how often this happens. We were told that majority of users should have credentials.
         Logger.error(
           "Rotten credentials error. " +
             "The auth microservice returned empty credentials which are required to be passed " +
