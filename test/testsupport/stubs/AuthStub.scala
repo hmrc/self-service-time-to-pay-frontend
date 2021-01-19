@@ -23,6 +23,7 @@ import play.api.libs.json._
 import testsupport.WireMockSupport
 import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier}
 
 object AuthStub extends Matchers {
@@ -46,7 +47,8 @@ object AuthStub extends Matchers {
   def authorise(
       utr:             Option[SaUtr]           = Some(TdAll.saUtr),
       confidenceLevel: Option[ConfidenceLevel] = Some(ConfidenceLevel.L200),
-      allEnrolments:   Option[Set[Enrolment]]  = Some(Set(TdAll.saEnrolment))
+      allEnrolments:   Option[Set[Enrolment]]  = Some(Set(TdAll.saEnrolment)),
+      credentials:     Option[Credentials]     = Some(Credentials("authId-999", "GovernmentGateway"))
   ): StubMapping = {
 
     implicit val enrolmentFormat: OFormat[Enrolment] = {
@@ -62,12 +64,16 @@ object AuthStub extends Matchers {
       Json.obj("saUtr" -> utr)
     ).getOrElse(Json.obj())
 
-    val optionalCredentialsPart = Json.obj(
-      "optionalCredentials" -> Json.obj(
-        "providerId" -> "authId-999",
-        "providerType" -> "GovernmentGateway"
+    val optionalCredentialsPart = credentials.fold(
+      Json.obj()
+    )(credential =>
+        Json.obj(
+          "optionalCredentials" -> Json.obj(
+            "providerId" -> credential.providerId,
+            "providerType" -> credential.providerType
+          )
+        )
       )
-    )
     val enrolments: Set[Enrolment] = allEnrolments.getOrElse(Set())
     val allEnrolmentsJsonPart: JsObject = Json.obj(
       "allEnrolments" -> enrolments
