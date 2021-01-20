@@ -17,11 +17,14 @@
 package journey
 
 import java.time.{Clock, LocalDate, LocalDateTime}
+
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.libs.json.{Format, Json, OFormat}
-import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
+import play.api.mvc.Request
+import timetopaytaxpayer.cor.model.{Debit, SaUtr, Taxpayer}
+import uk.gov.hmrc.http.logging.SessionId
 import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, _}
 
 import scala.collection.immutable
@@ -60,6 +63,7 @@ object MonthlyPaymentAmount {
 
 final case class Journey(
     _id:              JourneyId,
+    sessionId:        Option[SessionId], //TODO: make it non-optional after next release. The option was to mitigate problems of old journeys without this field set
     status:           Status                          = InProgress,
     createdOn:        LocalDateTime,
     maybeBankDetails: Option[BankDetails]             = None,
@@ -75,7 +79,8 @@ final case class Journey(
     maybeEligibilityStatus: Option[EligibilityStatus] = None,
     debitDate:              Option[LocalDate]         = None,
     ddRef:                  Option[String]            = None,
-    maybeSaUtr:             Option[String]            = None
+    maybeSaUtr:             Option[String]            = None,
+    enrolledForSa:          Option[Boolean]           = None
 ) {
 
   def amount: BigDecimal = maybeMonthlyPaymentAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [${this}]"))
@@ -124,6 +129,7 @@ final case class Journey(
 
   def obfuscate: Journey = Journey(
     _id                       = _id,
+    sessionId                 = sessionId,
     createdOn                 = createdOn,
     maybeMonthlyPaymentAmount = maybeMonthlyPaymentAmount,
     maybeBankDetails          = maybeBankDetails.map(_.obfuscate),
@@ -132,7 +138,8 @@ final case class Journey(
     maybeEligibilityStatus    = maybeEligibilityStatus,
     debitDate                 = debitDate,
     ddRef                     = ddRef.map(_ => "***"),
-    maybeSaUtr                = maybeSaUtr.map(_ => "***")
+    maybeSaUtr                = maybeSaUtr.map(_ => "***"),
+    enrolledForSa             = enrolledForSa
   )
 
   override def toString: String = {
@@ -141,7 +148,19 @@ final case class Journey(
 }
 
 object Journey {
-  implicit val format: OFormat[Journey] = Json.format[Journey]
 
-  def newJourney(implicit clock: Clock): Journey = Journey(_id       = JourneyId.newJourneyId(), createdOn = LocalDateTime.now(clock))
+  private implicit val sessionIdFormat: Format[SessionId] = {
+    import play.api.libs.functional.syntax._
+    implicitly[Format[String]].inmap(SessionId.apply, _.value)
+  }
+
+  implicit val format: OFormat[Journey] = Json.format[Journey]
+  import req.RequestSupport._
+
+  def newJourney(implicit clock: Clock, request: Request[_]): Journey =
+    Journey(
+      _id       = JourneyId.newJourneyId(),
+      sessionId = Some(hc.sessionId.getOrElse(throw new UnsupportedOperationException("Missing session id, this meant to be called if user is logged in"))),
+      createdOn = LocalDateTime.now(clock)
+    )
 }

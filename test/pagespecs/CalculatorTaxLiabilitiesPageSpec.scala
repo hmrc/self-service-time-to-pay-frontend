@@ -33,6 +33,8 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    fakeLoginPage.pretendLogin()
+
     startPage.open()
     startPage.clickOnStartNowButton()
   }
@@ -127,6 +129,8 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    fakeLoginPage.pretendLogin()
+
     startPage.open()
     startPage.clickOnStartNowButton()
 

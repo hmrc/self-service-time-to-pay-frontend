@@ -19,6 +19,8 @@ package testsupport.testdata
 import java.time.LocalDate
 
 import play.api.libs.json.JsObject
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 import timetopaytaxpayer.cor.model._
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import testsupport.JsonSyntax._
@@ -126,4 +128,17 @@ todays date: 2019-11-25
   implicit def toLocalDate(s: String): LocalDate = LocalDate.parse(s)
 
   implicit def toOptionLocalDate(s: String): Option[LocalDate] = Some(LocalDate.parse(s))
+
+  import TdRequest._
+
+  val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+    .withSessionId()
+    .withLangEnglish()
+    .withAuthToken()
+    .withAkamaiReputationHeader()
+    .withRequestId()
+    .withTrueClientIp()
+    .withTrueClientPort()
+    .withDeviceId()
+
 }

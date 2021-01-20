@@ -17,13 +17,16 @@
 package journey
 
 import javax.inject.{Inject, Singleton}
+import play.api.libs.json.Json
 import play.modules.reactivemongo.ReactiveMongoComponent
+import reactivemongo.api.ReadPreference
 import reactivemongo.api.indexes._
 import reactivemongo.bson.BSONDocument
 import repo.Repo
+import uk.gov.hmrc.http.logging.SessionId
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.Duration
 
 @Singleton
@@ -47,4 +50,13 @@ final class JourneyRepo @Inject() (
     )
   )
 
+  /**
+   * Find the latest journey for given sessionId.
+   */
+  def findLatestJourney(sessionId: SessionId): Future[Option[Journey]] = {
+    collection
+      .find(Json.obj("sessionId" -> sessionId.value), None)
+      .sort(Json.obj("createdOn" -> -1))
+      .one(ReadPreference.primaryPreferred)(domainFormatImplicit, implicitly)
+  }
 }

@@ -1,6 +1,7 @@
 # Add all the application routes to the app.routes file
 
 ->         /pay-what-you-owe-in-instalments                 app.Routes
+->         /internal                                        internal.Routes
 ->         /                                                health.Routes
 ->    	   /template                                        template.Routes
 

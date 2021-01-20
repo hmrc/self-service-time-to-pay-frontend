@@ -34,6 +34,8 @@ class ArrangementSummaryPageSpec extends ItSpec {
     DirectDebitStub.postPaymentPlan
     ArrangementStub.postTtpArrangement
 
+    fakeLoginPage.pretendLogin()
+
     startPage.open()
     startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()

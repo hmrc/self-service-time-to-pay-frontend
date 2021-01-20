@@ -28,6 +28,7 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    fakeLoginPage.pretendLogin()
 
     startPage.open()
     startPage.assertPageIsDisplayed()

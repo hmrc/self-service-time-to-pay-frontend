@@ -52,6 +52,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
   )
 
   def beginJourney(ineligibleReason: Reason): Unit = {
+    fakeLoginPage.pretendLogin()
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer(ineligibleReason)
     if (ineligibleReason == IsNotOnIa) IaStub.failedIaCheck
@@ -91,6 +92,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
         s"$confidenceLevel" in {
           AuthStub.authorise(confidenceLevel = Some(confidenceLevel))
           TaxpayerStub.getTaxpayer()
+          fakeLoginPage.pretendLogin()
           startPage.open()
           startPage.assertPageIsDisplayed()
           MdptUpliftStub.mdtpUpliftStubbedPage()
@@ -103,6 +105,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
         AuthStub.authorise(allEnrolments = Some(Set()))
         TaxpayerStub.getTaxpayer()
         GgStub.signInPage(port)
+        fakeLoginPage.pretendLogin()
         startPage.open()
         startPage.clickOnStartNowButton()
         youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
@@ -112,6 +115,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
         AuthStub.authorise(allEnrolments = Some(Set(unactivatedSaEnrolment)))
         TaxpayerStub.getTaxpayer()
         GgStub.signInPage(port)
+        fakeLoginPage.pretendLogin()
         startPage.open()
         startPage.clickOnStartNowButton()
         youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed

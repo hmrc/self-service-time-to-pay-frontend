@@ -16,7 +16,12 @@
 
 package pagespecs
 
+import java.time.Clock
+
+import journey.{Journey, JourneyRepo, JourneyService}
 import langswitch.Languages
+import play.api.mvc.{AnyContentAsEmpty, Request}
+import play.api.test.FakeRequest
 import testsupport.ItSpec
 import testsupport.stubs._
 import testsupport.testdata.TdAll
@@ -24,6 +29,9 @@ import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
@@ -86,7 +94,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     }
   }
 
-  "click on the call to action and navigate to PTA" in {
+  "click on the call to action and navigate to add-taxes-frontend" in {
     requestSaScenarios.foreach { s =>
       begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
       startNowAndAssertRequestToSA()
@@ -109,6 +117,29 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     notEnrolledPage.assertPageIsDisplayed()
   }
 
+  "process notification from add-taxes-frontend" in {
+    import req.RequestSupport._
+
+    val journeyService = app.injector.instanceOf[JourneyService]
+    val journeyRepo = app.injector.instanceOf[JourneyRepo]
+    implicit val ec = app.injector.instanceOf[ExecutionContext]
+    implicit val clock: Clock = fixedClock
+    implicit val request: Request[_] = TdAll.request.withSession()
+    val newJourney = Journey.newJourney
+    newJourney.enrolledForSa shouldBe None
+    val http = app.injector.instanceOf[HttpClient]
+
+    val updatedJourney: Future[Option[Journey]] = for {
+      _ <- journeyService.saveJourney(newJourney)
+      _ <- http.POSTEmpty(s"${baseUrl.value}/internal/enrolled-for-sa")
+      journey <- journeyRepo.findById(newJourney._id)
+    } yield journey
+
+    val expectedJourneyAfterUpdate = newJourney.copy(enrolledForSa = Some(true))
+
+    updatedJourney.futureValue.value shouldBe expectedJourneyAfterUpdate
+
+  }
   private implicit def toOption[T](t: T): Option[T] = Some(t)
 
   private implicit def toSet[T](t: T): Set[T] = Set(t)

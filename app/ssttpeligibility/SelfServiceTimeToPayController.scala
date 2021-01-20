@@ -33,14 +33,14 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 class SelfServiceTimeToPayController @Inject() (
-    mcc:               MessagesControllerComponents,
-    submissionService: JourneyService,
-    as:                Actions,
-    views:             Views,
-    requestSupport:    RequestSupport,
-    clockProvider:     ClockProvider,
-    addTaxConnector:   AddTaxesConnector)(implicit appConfig: AppConfig,
-                                          ec: ExecutionContext
+    mcc:             MessagesControllerComponents,
+    journeyService:  JourneyService,
+    as:              Actions,
+    views:           Views,
+    requestSupport:  RequestSupport,
+    clockProvider:   ClockProvider,
+    addTaxConnector: AddTaxesConnector)(implicit appConfig: AppConfig,
+                                        ec: ExecutionContext
 ) extends FrontendBaseController(mcc) {
 
   import requestSupport._
@@ -121,5 +121,22 @@ class SelfServiceTimeToPayController @Inject() (
   def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
     Redirect(appConfig.logoutUrl).withNewSession
+  }
+
+  def enrolledForSa(): Action[AnyContent] = as.action.async { implicit request =>
+    JourneyLogger.info(s"Notification from PTA - user has been enrolled for SA")
+
+    val sessionId = getSessionId
+    val result = for {
+      journey <- journeyService.getLatestJourney(sessionId)
+      newJourney = journey.copy(enrolledForSa = Some(true))
+      _ <- journeyService.saveJourney(newJourney)
+    } yield Ok("")
+
+    result.recover{
+      case NonFatal(ex) =>
+        Logger.error("Failed processing notification from PTA", ex)
+        Ok("")
+    }
   }
 }

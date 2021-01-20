@@ -64,16 +64,18 @@ class ItSpec
 
   val frozenTimeString: String = s"${frozenDateString}T16:33:51.880"
 
+  val fixedClock: Clock = {
+    val fixedInstant = LocalDateTime.parse(frozenTimeString).toInstant(UTC)
+    Clock.fixed(fixedInstant, ZoneId.systemDefault)
+  }
+
   lazy val module: AbstractModule = new AbstractModule {
     override def configure(): Unit = ()
 
     @Provides
     @Singleton
     def clockProvider: ClockProvider = new ClockProvider {
-      override val defaultClock: Clock = {
-        val fixedInstant = LocalDateTime.parse(frozenTimeString).toInstant(UTC)
-        Clock.fixed(fixedInstant, ZoneId.systemDefault)
-      }
+      override val defaultClock: Clock = fixedClock
     }
   }
 
@@ -89,6 +91,7 @@ class ItSpec
   }
 
   lazy val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$port")
+  lazy val fakeLoginPage: FakeLoginPage = wire[FakeLoginPage]
   lazy val startPage: StartPage = wire[StartPage]
   lazy val ggSignInPage: GgSignInPage = wire[GgSignInPage]
   lazy val taxLiabilitiesPage: CalculatorTaxLiabilitiesPage = wire[CalculatorTaxLiabilitiesPage]

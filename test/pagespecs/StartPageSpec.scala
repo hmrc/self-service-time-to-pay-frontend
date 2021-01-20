@@ -24,6 +24,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.TotalDebtIsTooHigh
 
 class StartPageSpec extends ItSpec {
   "language" in {
+
     startPage.open()
     startPage.assertPageIsDisplayed
 
@@ -54,6 +55,7 @@ class StartPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
 
+    fakeLoginPage.pretendLogin()
     startPage.open()
     startPage.clickOnStartNowButton()
     taxLiabilitiesPage.assertPageIsDisplayed
@@ -64,6 +66,8 @@ class StartPageSpec extends ItSpec {
     TaxpayerStub.getTaxpayer(TotalDebtIsTooHigh)
     IaStub.successfulIaCheck
     getBanksIsSuccessful()
+
+    fakeLoginPage.pretendLogin()
 
     startPage.open()
     startPage.clickOnStartNowButton()

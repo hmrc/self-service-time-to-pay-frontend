@@ -16,6 +16,9 @@
 
 package testonly
 
+import java.util.UUID
+import java.util.UUID.randomUUID
+
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 import controllers.FrontendBaseController
 import controllers.action.Actions
@@ -24,17 +27,24 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import timetopaytaxpayer.cor.TaxpayerConnector
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderNames, HttpResponse, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.ExecutionContext
 import req.RequestSupport._
+import uk.gov.hmrc.http.logging.SessionId
 
 class TestOnlyController @Inject() (
     taxpayerConnector: TaxpayerConnector,
     as:                Actions,
     httpClient:        HttpClient,
     cc:                MessagesControllerComponents)(implicit ec: ExecutionContext) extends FrontendBaseController(cc) {
+
+  def createEmptySession(): Action[AnyContent] = Action { implicit request =>
+    Results.Ok("").addingToSession(
+      SessionKeys.sessionId -> s"session-$randomUUID"
+    )
+  }
 
   def config(): Action[AnyContent] = Action { r =>
     val result: JsValue = Json.parse(

@@ -21,6 +21,7 @@ import javax.inject.Inject
 import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.mvc.{Request, Result, Results}
 import req.RequestSupport
+import uk.gov.hmrc.http.logging.SessionId
 import uk.gov.hmrc.play.http.logging.Mdc
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
@@ -31,6 +32,12 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
   import RequestSupport._
   import playsession.PlaySessionSupport._
   import repo.RepoResultChecker._
+
+  def getLatestJourney(sessionId: SessionId)(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
+    journeyRepo.findLatestJourney(sessionId).map(_.getOrElse(
+      throw new RuntimeException(s"Expected existing journey by sessionId but none found instead. [$sessionId]")
+    ))
+  }
 
   def saveJourney(journey: Journey)(implicit request: Request[_]): Future[Unit] = Mdc.preservingMdc {
     journeyRepo

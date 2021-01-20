@@ -31,6 +31,8 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
 
+    fakeLoginPage.pretendLogin()
+
     startPage.open()
     startPage.assertPageIsDisplayed()
     startPage.clickOnStartNowButton()

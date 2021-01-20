@@ -19,23 +19,14 @@ package controllers.action
 import org.scalatest.{Matchers, WordSpec}
 import play.api.test.FakeRequest
 import testsupport.testdata.TdAll.{saEnrolment, unactivatedSaEnrolment}
-import testsupport.testdata.TdRequest
+import testsupport.testdata.{TdAll, TdRequest}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
 import uk.gov.hmrc.auth.core.Enrolments
 
 class AuthenticatedRequestSpec extends WordSpec with Matchers {
   import TdRequest._
 
-  private val request = FakeRequest()
-    .withSessionId()
-    .withLangEnglish()
-    .withAuthToken()
-    .withAkamaiReputationHeader()
-    .withRequestId()
-    .withSessionId()
-    .withTrueClientIp()
-    .withTrueClientPort()
-    .withDeviceId()
+  private val request = TdAll.request
 
   "hasActiveSaEnrolment" should {
     "return true" when {

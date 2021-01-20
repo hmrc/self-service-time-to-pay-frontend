@@ -20,6 +20,7 @@ import javax.inject.Inject
 import langswitch.Language
 import play.api.i18n._
 import play.api.mvc.Request
+import uk.gov.hmrc.http.logging.SessionId
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendHeaderCarrierProvider
 
@@ -32,6 +33,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendHeaderCarrierProvider
 class RequestSupport @Inject() (override val messagesApi: MessagesApi) extends I18nSupport {
 
   implicit def hc[A](implicit request: Request[A]): HeaderCarrier = RequestSupport.hc
+  def getSessionId[A](implicit request: Request[A]): SessionId = hc.sessionId.getOrElse(throw new RuntimeException("Missing session id in the request"))
   def lang(implicit messages: Messages): Lang = messages.lang
 }
 
