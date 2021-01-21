@@ -24,7 +24,7 @@ import testsupport.WireMockSupport
 import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier}
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 
 object AuthStub extends Matchers {
 
@@ -45,20 +45,15 @@ object AuthStub extends Matchers {
    * Defines response for POST /auth/authorise
    */
   def authorise(
-      utr:             Option[SaUtr]           = Some(TdAll.saUtr),
-      confidenceLevel: Option[ConfidenceLevel] = Some(ConfidenceLevel.L200),
-      allEnrolments:   Option[Set[Enrolment]]  = Some(Set(TdAll.saEnrolment)),
-      credentials:     Option[Credentials]     = Some(Credentials("authId-999", "GovernmentGateway"))
+      utr:           Option[SaUtr]          = Some(TdAll.saUtr),
+      allEnrolments: Option[Set[Enrolment]] = Some(Set(TdAll.saEnrolment)),
+      credentials:   Option[Credentials]    = Some(Credentials("authId-999", "GovernmentGateway"))
   ): StubMapping = {
 
     implicit val enrolmentFormat: OFormat[Enrolment] = {
       implicit val f = Json.format[EnrolmentIdentifier]
       Json.format[Enrolment]
     }
-
-    val confidenceLevelJsonPart: JsObject = confidenceLevel.map(confidenceLevel =>
-      Json.obj("confidenceLevel" -> confidenceLevel)
-    ).getOrElse(Json.obj())
 
     val saUtrJsonPart: JsObject = utr.map(utr =>
       Json.obj("saUtr" -> utr)
@@ -79,7 +74,7 @@ object AuthStub extends Matchers {
       "allEnrolments" -> enrolments
     )
 
-    val authoriseJsonBody = allEnrolmentsJsonPart ++ confidenceLevelJsonPart ++ saUtrJsonPart ++ optionalCredentialsPart
+    val authoriseJsonBody = allEnrolmentsJsonPart ++ saUtrJsonPart ++ optionalCredentialsPart
 
     stubFor(
       post(urlPathEqualTo("/auth/authorise"))

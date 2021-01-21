@@ -21,34 +21,30 @@ import testsupport.ItSpec
 import testsupport.stubs._
 import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
+import uk.gov.hmrc.auth.core.Enrolment
 
 class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
   def begin(
-      utr:             Option[SaUtr]           = Some(TdAll.saUtr),
-      confidenceLevel: Option[ConfidenceLevel] = Some(ConfidenceLevel.L100),
-      allEnrolments:   Option[Set[Enrolment]]  = Some(Set(TdAll.saEnrolment))
+      utr:           Option[SaUtr]          = Some(TdAll.saUtr),
+      allEnrolments: Option[Set[Enrolment]] = Some(Set(TdAll.saEnrolment))
   ): Unit = {
     startPage.open()
     startPage.assertPageIsDisplayed()
-    AuthStub.authorise(utr, confidenceLevel, allEnrolments)
+    AuthStub.authorise(utr, allEnrolments)
 
     ()
   }
 
   private case class Scenario(
-      allEnrolments:   Option[Set[Enrolment]],
-      maybeSaUtr:      Option[SaUtr],
-      confidenceLevel: ConfidenceLevel,
-      caseName:        String                 = ""
+      allEnrolments: Option[Set[Enrolment]],
+      maybeSaUtr:    Option[SaUtr],
+      caseName:      String                 = ""
   )
 
   def begin(): Unit = {
     val s = requestSaScenarios.head
-    begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
+    begin(s.maybeSaUtr, s.allEnrolments)
   }
 
   def startNowAndAssertRequestToSA(): Unit = {
@@ -57,10 +53,10 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
   }
 
   private val requestSaScenarios = List(
-    Scenario(TdAll.saEnrolment, None, L200, "no UTR found"),
-    Scenario(None, TdAll.saUtr, L200, "no SA enrolment"),
-    Scenario(None, None, L200, "no SA enrolment nor UTR"),
-    Scenario(TdAll.unactivatedSaEnrolment, TdAll.saUtr, L200, "no active SA enrolment")
+    Scenario(TdAll.saEnrolment, None, "no UTR found"),
+    Scenario(None, TdAll.saUtr, "no SA enrolment"),
+    Scenario(None, None, "no SA enrolment nor UTR"),
+    Scenario(TdAll.unactivatedSaEnrolment, TdAll.saUtr, "no active SA enrolment")
   )
 
   "language" in {
@@ -80,7 +76,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
   "take the user to request page" in {
     requestSaScenarios.foreach { s =>
-      begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
+      begin(s.maybeSaUtr, s.allEnrolments)
 
       startNowAndAssertRequestToSA()
     }
@@ -88,7 +84,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
   "click on the call to action and navigate to PTA" in {
     requestSaScenarios.foreach { s =>
-      begin(s.maybeSaUtr, s.confidenceLevel, s.allEnrolments)
+      begin(s.maybeSaUtr, s.allEnrolments)
       startNowAndAssertRequestToSA()
 
       AddTaxesFeStub.enrolForSaStub(s.maybeSaUtr)

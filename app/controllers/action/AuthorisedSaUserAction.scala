@@ -22,11 +22,9 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 import scala.concurrent.{ExecutionContext, Future}
 import req.RequestSupport._
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val utr: SaUtr)
   extends WrappedRequest[A](request)
@@ -40,7 +38,6 @@ class AuthorisedSaUserAction @Inject() (
 
     val hasActiveSaEnrolment: Boolean = request.hasActiveSaEnrolment
     val maybeUtr: Option[SaUtr] = request.maybeUtr
-    val isConfident: Boolean = request.confidenceLevel >= ConfidenceLevel.L200
 
       def logFail(reason: String) = Logger.info(
         s"""
@@ -48,38 +45,22 @@ class AuthorisedSaUserAction @Inject() (
          |  [hasActiveSaEnrolment: $hasActiveSaEnrolment]
          |  [enrolments: ${request.enrolments}]
          |  [utr: $maybeUtr]
-         |  [ConfidenceLevel: ${request.confidenceLevel}]
          |  """.stripMargin
       )
 
     val result: Either[Result, AuthorisedSaUserRequest[A]] =
-      (hasActiveSaEnrolment, maybeUtr, isConfident) match {
-        case (false, _, _) =>
+      (hasActiveSaEnrolment, maybeUtr) match {
+        case (false, _) =>
           logFail("no active IR-SA enrolment")
           Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
-        case (_, None, _) =>
+        case (_, None) =>
           logFail("no present UTR")
           Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
-        case (true, Some(utr), false) =>
-          logFail("Confidence level is to low, redirecting to identity-verification")
-          Left(redirectToUplift(request))
-        case (true, Some(utr), true) =>
+        case (true, Some(utr)) =>
           Right(new AuthorisedSaUserRequest[A](request, utr))
       }
 
     Future.successful(result)
-  }
-
-  private def redirectToUplift(implicit request: Request[_]): Result = {
-    Redirect(
-      appConfig.mdtpUpliftUrl,
-      Map(
-        "origin" -> Seq("ssttpf"),
-        "confidenceLevel" -> Seq(ConfidenceLevel.L200.toString),
-        "completionURL" -> Seq(appConfig.mdtpUpliftCompleteUrl),
-        "failureURL" -> Seq(appConfig.mdtpUpliftFailureUrl)
-      )
-    )
   }
 
   override protected def executionContext: ExecutionContext = cc.executionContext

@@ -89,7 +89,6 @@ class SelfServiceTimeToPayController @Inject() (
 
   def submitAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser.async { implicit request =>
     val logMessage = s"Sending user to PTA (add-taxes-frontend) to enroll for SA" +
-      s"[ConfidenceLevel=${request.confidenceLevel}]" +
       s"[utr=${request.maybeUtr.map(_.obfuscate)}]"
     JourneyLogger.info(logMessage)
 

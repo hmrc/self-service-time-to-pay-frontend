@@ -22,7 +22,6 @@ import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.{aYearAgo, almostAYearAgo, unactivatedSaEnrolment}
-import uk.gov.hmrc.auth.core.ConfidenceLevel._
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
@@ -33,7 +32,6 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
    * - No debits
    * - Not on IA
    * - No sa enrolment (not enrolled)
-   * - Confidence level < 200
    * - Not submitted return (Current year)
    * - Previous Tax Returns Not Submitted
    * - Total amount > £10k
@@ -86,36 +84,23 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
   }
 
   "authorisation based eligibility" - {
-    "redirect to mdtp uplift page for confidence level < 200 but has required SA enrolments and UTR" - {
-      List(L50, L100).foreach { confidenceLevel =>
-        s"$confidenceLevel" in {
-          AuthStub.authorise(confidenceLevel = Some(confidenceLevel))
-          TaxpayerStub.getTaxpayer()
-          startPage.open()
-          startPage.assertPageIsDisplayed()
-          MdptUpliftStub.mdtpUpliftStubbedPage()
-          startPage.clickOnStartNowButton()
-          mdtpUpliftPage.assertPageIsDisplayed
-        }
-      }
 
-      "show you_need_to_request_access_to_self_assessment page no sa enrolments" in {
-        AuthStub.authorise(allEnrolments = Some(Set()))
-        TaxpayerStub.getTaxpayer()
-        GgStub.signInPage(port)
-        startPage.open()
-        startPage.clickOnStartNowButton()
-        youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
-      }
+    "show you_need_to_request_access_to_self_assessment page no sa enrolments" in {
+      AuthStub.authorise(allEnrolments = Some(Set()))
+      TaxpayerStub.getTaxpayer()
+      GgStub.signInPage(port)
+      startPage.open()
+      startPage.clickOnStartNowButton()
+      youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
+    }
 
-      "show you_need_to_request_access_to_self_assessment page when the user has no activated sa enrolments" in {
-        AuthStub.authorise(allEnrolments = Some(Set(unactivatedSaEnrolment)))
-        TaxpayerStub.getTaxpayer()
-        GgStub.signInPage(port)
-        startPage.open()
-        startPage.clickOnStartNowButton()
-        youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
-      }
+    "show you_need_to_request_access_to_self_assessment page when the user has no activated sa enrolments" in {
+      AuthStub.authorise(allEnrolments = Some(Set(unactivatedSaEnrolment)))
+      TaxpayerStub.getTaxpayer()
+      GgStub.signInPage(port)
+      startPage.open()
+      startPage.clickOnStartNowButton()
+      youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
     }
   }
 }
