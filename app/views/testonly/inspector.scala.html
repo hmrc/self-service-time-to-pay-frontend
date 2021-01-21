@@ -14,6 +14,9 @@
  * limitations under the License.
  *@
 
+@import play.api.libs.json.Json
+@import journey.Journey
+
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers
@@ -21,7 +24,7 @@
 
 @(
         playSession: Map[String, String],
-        cache: List[(String, String)],
+        maybeJourney: Option[Journey],
         authority: String,
         hcHeaders: Seq[(String, String)])(implicit
         messages: play.api.i18n.Messages,
@@ -56,6 +59,7 @@
         <ul>
 
             <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.start()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.start().path()}</a></li>
+            <li><a class="link" href="@ssttparrangement.routes.ArrangementController.determineEligibility()">@{ssttparrangement.routes.ArrangementController.determineEligibility().path()}</a></li>
 
             <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPaymentSummary()">@{ssttpcalculator.routes.CalculatorController.getPaymentSummary().path()}</a></li>
             <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@{ssttpcalculator.routes.CalculatorController.getPayTodayQuestion().path()}</a></li>
@@ -79,21 +83,9 @@
     </p>
 
     <p>
-        <h2>Cache from Key Store</h2>
-        <table>
-            <tr>
-                <th>Key</th>
-                <th>Value</th>
-            </tr>
+        <h2>Journey</h2>
+        <pre style="border: none">@{maybeJourney.map(journey => Json.prettyPrint(Json.toJson(journey)))}</pre>
 
-            @cache.map { item =>
-                <tr>
-                    <td style="vertical-align: top">@item._1</td>
-                    <td style="word-break: break-all">
-                        <pre style="border: none">@item._2</pre>
-                    </td>
-                </tr>
-            }
         </table>
     </p>
 

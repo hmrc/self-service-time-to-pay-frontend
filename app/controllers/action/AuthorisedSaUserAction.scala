@@ -18,51 +18,66 @@ package controllers.action
 
 import com.google.inject.Inject
 import config.AppConfig
-import play.api.Logger
+import journey.Journey
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
+import req.RequestSupport._
 
 import scala.concurrent.{ExecutionContext, Future}
-import req.RequestSupport._
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val utr: SaUtr)
-  extends WrappedRequest[A](request)
+final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequestWithJourney[A], val utr: SaUtr)
+  extends WrappedRequest[A](request) {
+
+  val journey: Journey = request.journey
+}
 
 class AuthorisedSaUserAction @Inject() (
     appConfig: AppConfig,
     cc:        MessagesControllerComponents)
-  extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
+  extends ActionRefiner[AuthenticatedRequestWithJourney, AuthorisedSaUserRequest] {
 
-  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
-
+  override protected def refine[A](request: AuthenticatedRequestWithJourney[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
+    implicit val r: Request[_] = request
+    implicit val ec: ExecutionContext = executionContext
     val hasActiveSaEnrolment: Boolean = request.hasActiveSaEnrolment
     val maybeUtr: Option[SaUtr] = request.maybeUtr
     val isConfident: Boolean = request.confidenceLevel >= ConfidenceLevel.L200
+    import req.RequestSupport._
 
-      def logFail(reason: String) = Logger.info(
+    //this is being updated by notification from add-taxes-frontend
+    //at some point if user was sent to add-taxes-frontend for enrol-for-sa journey
+    val enrolledForSa = request.journey.userEnrolledForSa.getOrElse(false)
+
+      def logFail(reason: String) = JourneyLogger.info(
         s"""
-         |Authorisation failed, reason: $reason:
+         |Authorisation failed. $reason.
          |  [hasActiveSaEnrolment: $hasActiveSaEnrolment]
          |  [enrolments: ${request.enrolments}]
          |  [utr: $maybeUtr]
          |  [ConfidenceLevel: ${request.confidenceLevel}]
-         |  """.stripMargin
+         |  """.stripMargin,
+        request.journey
       )
 
     val result: Either[Result, AuthorisedSaUserRequest[A]] =
       (hasActiveSaEnrolment, maybeUtr, isConfident) match {
         case (false, _, _) =>
-          logFail("no active IR-SA enrolment")
+          logFail("no active IR-SA enrolment, sending user to add-taxes-frontend for enrol-for-sa journey")
           Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
         case (_, None, _) =>
-          logFail("no present UTR")
+          logFail("no present UTR, sending user to add-taxes-frontend for enrol-for-sa journey")
           Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
         case (true, Some(utr), false) =>
-          logFail("Confidence level is to low, redirecting to identity-verification")
-          Left(redirectToUplift(request))
+          if (enrolledForSa) {
+            JourneyLogger.info("Confidence level is to low, but user came back from add-taxes-frontend from enrol-for-sa journey thus allowing him to proceed.", request.journey)
+            Right(new AuthorisedSaUserRequest[A](request, utr))
+          } else {
+            logFail("Confidence level is to low, redirecting to identity-verification")
+            Left(redirectToUplift(request))
+          }
         case (true, Some(utr), true) =>
           Right(new AuthorisedSaUserRequest[A](request, utr))
       }

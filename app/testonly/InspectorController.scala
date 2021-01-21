@@ -48,17 +48,10 @@ class InspectorController @Inject() (
 
   def inspect(): Action[AnyContent] = Action.async { implicit request =>
     for {
-      maybeJourney <- journeyService.getMaybeJourney
+      maybeJourney <- journeyService.findJourney
     } yield Ok(views.inspector(
       request.session.data,
-      List(
-        "debitDate" -> maybeJourney.flatMap(_.debitDate).json,
-        "taxpayer" -> maybeJourney.flatMap(_.maybeTaxpayer).json,
-        "schedule" -> Try(maybeJourney.map(calculatorService.computeSchedule(_))).toOption.json,
-        "bankDetails" -> maybeJourney.flatMap(_.maybeBankDetails).json,
-        "existingDDBanks" -> maybeJourney.flatMap(_.existingDDBanks).json,
-        "eligibilityStatus" -> maybeJourney.map(_.maybeEligibilityStatus).json
-      ),
+      maybeJourney,
       "not supported - todo remove it",
       hc.headers
     ))

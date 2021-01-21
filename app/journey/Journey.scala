@@ -80,7 +80,9 @@ final case class Journey(
     debitDate:              Option[LocalDate]         = None,
     ddRef:                  Option[String]            = None,
     maybeSaUtr:             Option[String]            = None,
-    enrolledForSa:          Option[Boolean]           = None
+
+    userSentForSaEnrolment: Option[Boolean] = None,
+    userEnrolledForSa:      Option[Boolean] = None
 ) {
 
   def amount: BigDecimal = maybeMonthlyPaymentAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [${this}]"))
@@ -139,7 +141,7 @@ final case class Journey(
     debitDate                 = debitDate,
     ddRef                     = ddRef.map(_ => "***"),
     maybeSaUtr                = maybeSaUtr.map(_ => "***"),
-    enrolledForSa             = enrolledForSa
+    userEnrolledForSa         = userEnrolledForSa
   )
 
   override def toString: String = {

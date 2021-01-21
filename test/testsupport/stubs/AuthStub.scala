@@ -41,6 +41,12 @@ object AuthStub extends Matchers {
             .withBody("")))
   }
 
+  def authoriseRemoveStub(
+      utr:             Option[SaUtr]           = Some(TdAll.saUtr),
+      confidenceLevel: Option[ConfidenceLevel] = Some(ConfidenceLevel.L200),
+      allEnrolments:   Option[Set[Enrolment]]  = Some(Set(TdAll.saEnrolment)),
+      credentials:     Option[Credentials]     = Some(Credentials("authId-999", "GovernmentGateway"))
+  ) = removeStub(authorise(utr, confidenceLevel, allEnrolments, credentials))
   /**
    * Defines response for POST /auth/authorise
    */

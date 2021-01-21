@@ -21,9 +21,10 @@ import controllers.FrontendBaseController
 import controllers.action.Actions
 import enrolforsa.AddTaxesConnector
 import javax.inject._
-import journey.JourneyService
+import journey.{Journey, JourneyService}
 import play.api.Logger
 import play.api.mvc._
+import playsession.PlaySessionSupport.ResultOps
 import req.RequestSupport
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -41,9 +42,11 @@ class SelfServiceTimeToPayController @Inject() (
     clockProvider:   ClockProvider,
     addTaxConnector: AddTaxesConnector)(implicit appConfig: AppConfig,
                                         ec: ExecutionContext
+
 ) extends FrontendBaseController(mcc) {
 
   import requestSupport._
+  import clockProvider._
 
   def start: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
@@ -82,13 +85,13 @@ class SelfServiceTimeToPayController @Inject() (
     Ok(views.not_enrolled(isWelsh, isSignedIn))
   }
 
-  def getAccessYouSelfAssessmentOnline: Action[AnyContent] = as.action { implicit request =>
+  def getAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser { implicit request =>
     JourneyLogger.info(s"$request")
     Ok(views.you_need_to_request_access_to_self_assessment(isWelsh, isSignedIn))
   }
 
   def submitAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser.async { implicit request =>
-    val logMessage = s"Sending user to PTA (add-taxes-frontend) to enroll for SA" +
+    val logMessage = s"Sending user to add-taxes-frontend for enroll-for-SA journey" +
       s"[ConfidenceLevel=${request.confidenceLevel}]" +
       s"[utr=${request.maybeUtr.map(_.obfuscate)}]"
     JourneyLogger.info(logMessage)
@@ -97,6 +100,7 @@ class SelfServiceTimeToPayController @Inject() (
       case Some(credentials) =>
         for {
           startIdentityVerificationJourneyResult <- addTaxConnector.startEnrolForSaJourney(request.maybeUtr, credentials)
+          _ <- journeyService.saveJourney(request.journey.copy(userSentForSaEnrolment = Some(true)))
           redirectUrl = startIdentityVerificationJourneyResult.redirectUrl
         } yield Redirect(redirectUrl)
       case None =>
@@ -129,7 +133,7 @@ class SelfServiceTimeToPayController @Inject() (
     val sessionId = getSessionId
     val result = for {
       journey <- journeyService.getLatestJourney(sessionId)
-      newJourney = journey.copy(enrolledForSa = Some(true))
+      newJourney = journey.copy(userEnrolledForSa = Some(true))
       _ <- journeyService.saveJourney(newJourney)
     } yield Ok("")
 

@@ -26,9 +26,10 @@ import testsupport.ItSpec
 import testsupport.stubs._
 import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
+import uk.gov.hmrc.auth.core.ConfidenceLevel.{L100, L200}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,6 +41,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
       confidenceLevel: Option[ConfidenceLevel] = Some(ConfidenceLevel.L100),
       allEnrolments:   Option[Set[Enrolment]]  = Some(Set(TdAll.saEnrolment))
   ): Unit = {
+    fakeLoginPage.pretendLogin()
     startPage.open()
     startPage.assertPageIsDisplayed()
     AuthStub.authorise(utr, confidenceLevel, allEnrolments)
@@ -107,7 +109,41 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     }
   }
 
+  "user comes back from enrol-for-sa and has confidence level < 200" ignore {
+
+    fakeLoginPage.pretendLogin()
+    startPage.open()
+    startPage.assertPageIsDisplayed()
+    AuthStub.authorise(None, L100, None)
+    startPage.clickOnStartNowButton()
+
+    youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed()
+
+    AddTaxesFeStub.enrolForSaStub(None)
+    AddTaxesFeStub.enrolForSaStubbedPage()
+
+    youNeedToRequestAccessToSelfAssessment.clickTheButton()
+
+    enrolForSaPage.assertPageIsDisplayed()
+
+    val httpClient = app.injector.instanceOf[HttpClient]
+    implicit val hc = HeaderCarrier()
+    import scala.concurrent.ExecutionContext.Implicits.global
+    httpClient.POSTEmpty(s"${baseUrl.value}/internal/enrolled-for-sa").futureValue.status shouldBe 200
+
+    //    AuthStub.authoriseRemoveStub(None, L100, None)
+    AuthStub.authorise(Some(TdAll.saUtr), L100, Some(TdAll.saEnrolment))
+
+    //pretend it comes back from enrol-for-sa journey
+    determineEligibilityPage.open()
+
+    taxLiabilitiesPage.assertPageIsDisplayed()
+
+    ""
+  }
+
   "click on the call to action and navigate call us page if auth sends no credentials/providerId" in {
+    fakeLoginPage.pretendLogin()
     startPage.open()
     startPage.assertPageIsDisplayed()
     AuthStub.authorise(allEnrolments = None, credentials = None)
@@ -126,7 +162,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     implicit val clock: Clock = fixedClock
     implicit val request: Request[_] = TdAll.request.withSession()
     val newJourney = Journey.newJourney
-    newJourney.enrolledForSa shouldBe None
+    newJourney.userEnrolledForSa shouldBe None
     val http = app.injector.instanceOf[HttpClient]
 
     val updatedJourney: Future[Option[Journey]] = for {
@@ -135,11 +171,12 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
       journey <- journeyRepo.findById(newJourney._id)
     } yield journey
 
-    val expectedJourneyAfterUpdate = newJourney.copy(enrolledForSa = Some(true))
+    val expectedJourneyAfterUpdate = newJourney.copy(userEnrolledForSa = Some(true))
 
     updatedJourney.futureValue.value shouldBe expectedJourneyAfterUpdate
 
   }
+
   private implicit def toOption[T](t: T): Option[T] = Some(t)
 
   private implicit def toSet[T](t: T): Set[T] = Set(t)

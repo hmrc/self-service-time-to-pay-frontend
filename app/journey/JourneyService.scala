@@ -45,12 +45,12 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
       .checkResult
   }
 
-  def getMaybeJourney()(implicit request: Request[_]): Future[Option[Journey]] = Mdc.preservingMdc {
+  def findJourney()(implicit request: Request[_]): Future[Option[Journey]] = Mdc.preservingMdc {
     request.readJourneyId.fold[Future[Option[Journey]]](Future.successful(None))(journeyRepo.findById(_))
   }
 
   def getJourney()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
-    getMaybeJourney().map(_.getOrElse(throw new RuntimeException(s"Journey not found [ID: ${request.readJourneyId}]")))
+    findJourney().map(_.getOrElse(throw new RuntimeException(s"Journey not found [ID: ${request.readJourneyId}]")))
   }
 
   def getEligibleJourneyInProgress()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
