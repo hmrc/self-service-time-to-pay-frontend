@@ -20,7 +20,6 @@ import org.scalatest.{Matchers, WordSpec}
 import play.api.test.FakeRequest
 import testsupport.testdata.TdAll.{saEnrolment, unactivatedSaEnrolment}
 import testsupport.testdata.TdRequest
-import uk.gov.hmrc.auth.core.ConfidenceLevel.L200
 import uk.gov.hmrc.auth.core.Enrolments
 
 class AuthenticatedRequestSpec extends WordSpec with Matchers {
@@ -40,18 +39,18 @@ class AuthenticatedRequestSpec extends WordSpec with Matchers {
   "hasActiveSaEnrolment" should {
     "return true" when {
       "the SA enrolment exists and is activated" in {
-        new AuthenticatedRequest(request, Enrolments(Set(saEnrolment)), L200, None, None).hasActiveSaEnrolment shouldBe true
+        new AuthenticatedRequest(request, Enrolments(Set(saEnrolment)), None, None).hasActiveSaEnrolment shouldBe true
       }
     }
 
     "return false" when {
       "the SA enrolment exists and is not activated" in {
         new AuthenticatedRequest(
-          request, Enrolments(Set(unactivatedSaEnrolment)), L200, None, None).hasActiveSaEnrolment shouldBe false
+          request, Enrolments(Set(unactivatedSaEnrolment)), None, None).hasActiveSaEnrolment shouldBe false
       }
 
       "the SA enrolment does not exist" in {
-        new AuthenticatedRequest(request, Enrolments(Set.empty), L200, None, None).hasActiveSaEnrolment shouldBe false
+        new AuthenticatedRequest(request, Enrolments(Set.empty), None, None).hasActiveSaEnrolment shouldBe false
       }
     }
   }

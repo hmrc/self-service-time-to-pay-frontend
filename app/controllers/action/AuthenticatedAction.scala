@@ -25,15 +25,14 @@ import play.api.mvc._
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments, _}
+import uk.gov.hmrc.auth.core.{Enrolments, _}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-final class AuthenticatedRequest[A](val request:         Request[A],
-                                    val enrolments:      Enrolments,
-                                    val confidenceLevel: ConfidenceLevel,
-                                    val maybeUtr:        Option[SaUtr],
-                                    val credentials:     Option[Credentials]
+final class AuthenticatedRequest[A](val request:     Request[A],
+                                    val enrolments:  Enrolments,
+                                    val maybeUtr:    Option[SaUtr],
+                                    val credentials: Option[Credentials]
 ) extends WrappedRequest[A](request) {
 
   lazy val hasActiveSaEnrolment: Boolean = enrolments.enrolments.exists(e => e.key == "IR-SA" && e.isActivated)
@@ -54,11 +53,11 @@ class AuthenticatedAction @Inject() (
     implicit val r: Request[A] = request
 
     af.authorised.retrieve(
-      Retrievals.allEnrolments and Retrievals.confidenceLevel and Retrievals.saUtr and Retrievals.credentials
+      Retrievals.allEnrolments and Retrievals.saUtr and Retrievals.credentials
     ).apply {
-        case enrolments ~ confidenceLevel ~ utr ~ credentials =>
+        case enrolments ~ utr ~ credentials =>
           Future.successful(
-            Right(new AuthenticatedRequest[A](request, enrolments, confidenceLevel, utr.map(SaUtr.apply), credentials))
+            Right(new AuthenticatedRequest[A](request, enrolments, utr.map(SaUtr.apply), credentials))
           )
       }
       .recover {
