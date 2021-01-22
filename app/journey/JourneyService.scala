@@ -61,7 +61,7 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
           block(journey)
 
         case journey if journey.status == FinishedApplicationSuccessful =>
-          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", journey)
+          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission (no eligible journey in progress)", journey)
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
       }
