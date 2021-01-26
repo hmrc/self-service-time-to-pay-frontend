@@ -53,19 +53,19 @@ class CalculatorController @Inject() (
 
   def getTaxLiabilities: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getTaxLiabilities: $request")
-    journeyService.getEligibleJourneyInProgress().map { journey =>
+    journeyService.authorizedForSsttp { journey: Journey =>
       Ok(views.tax_liabilities(journey.debits, isSignedIn))
     }
   }
 
   def getPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getPayTodayQuestion: $request")
-    for {
-      journey <- journeyService.getEligibleJourneyInProgress()
-      formData = PayTodayQuestion(journey.maybePaymentToday.map(_.value))
-      form = payTodayForm.fill(formData)
-    } yield Ok(views.payment_today_question(form, isSignedIn))
 
+    journeyService.authorizedForSsttp { journey: Journey =>
+      val formData = PayTodayQuestion(journey.maybePaymentToday.map(_.value))
+      val form = payTodayForm.fill(formData)
+      Ok(views.payment_today_question(form, isSignedIn))
+    }
   }
 
   /**
@@ -75,7 +75,7 @@ class CalculatorController @Inject() (
   def submitPayTodayQuestion: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.submitPayTodayQuestion: $request")
 
-    journeyService.getEligibleJourneyInProgress().flatMap[Result] { journey: Journey =>
+    journeyService.authorizedForSsttp { journey: Journey =>
       payTodayForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(views.payment_today_question(formWithErrors, isSignedIn))), {
           case PayTodayQuestion(Some(true)) =>
@@ -101,7 +101,7 @@ class CalculatorController @Inject() (
 
   def getPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getPaymentToday: $request")
-    journeyService.getEligibleJourneyInProgress().map { journey: Journey =>
+    journeyService.authorizedForSsttp { journey: Journey =>
       val debits = journey.debits
       val emptyForm = createPaymentTodayForm(debits.map(_.amount).sum)
       val formWithData = journey.maybePaymentTodayAmount.map(paymentTodayAmount =>
@@ -112,7 +112,7 @@ class CalculatorController @Inject() (
 
   def submitPaymentToday: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.submitPaymentToday: $request")
-    journeyService.getEligibleJourneyInProgress().flatMap[Result] { journey: Journey =>
+    journeyService.authorizedForSsttp { journey: Journey =>
 
       createPaymentTodayForm(journey.taxpayer.selfAssessment.debits.map(_.amount).sum).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(views.payment_today_form(formWithErrors, isSignedIn))),
@@ -130,7 +130,7 @@ class CalculatorController @Inject() (
 
   def getMonthlyPayment: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getMonthlyPayment: $request")
-    journeyService.getEligibleJourneyInProgress().map[Result] { journey: Journey =>
+    journeyService.authorizedForSsttp { journey: Journey =>
       val (lowerBound, upperBound) = monthlyPaymentBound(journey.taxpayer.selfAssessment, journey.safeInitialPayment, journey.maybeArrangementDayOfMonth)
       val emptyForm = createMonthlyAmountForm(
         lowerBound.toInt,
@@ -175,7 +175,7 @@ class CalculatorController @Inject() (
 
   def submitMonthlyPayment: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.submitMonthlyPayment: $request")
-    journeyService.getEligibleJourneyInProgress().flatMap { journey: Journey =>
+    journeyService.authorizedForSsttp { journey: Journey =>
       val (min, max) = monthlyPaymentBound(journey.taxpayer.selfAssessment, journey.safeInitialPayment, None)
       val monthlyAmountForm = createMonthlyAmountForm(min.toInt, max.toInt)
       monthlyAmountForm.bindFromRequest().fold(
@@ -232,7 +232,7 @@ class CalculatorController @Inject() (
 
   def getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getPaymentSummary: $request")
-    journeyService.getEligibleJourneyInProgress().map { journey: Journey =>
+    journeyService.authorizedForSsttp { journey: Journey =>
       Ok(views.payment_summary(journey.taxpayer.selfAssessment.debits, journey.initialPayment))
     }
   }
@@ -240,7 +240,7 @@ class CalculatorController @Inject() (
   def getCalculateInstalments: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getCalculateInstalments: $request")
 
-    journeyService.getEligibleJourneyInProgress().flatMap { journey =>
+    journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info("CalculatorController.getCalculateInstalments", journey)
       val sa = journey.taxpayer.selfAssessment
       val availablePaymentSchedules = calculatorService.availablePaymentSchedules(sa, journey.safeInitialPayment, journey.maybeArrangementDayOfMonth)
@@ -259,7 +259,7 @@ class CalculatorController @Inject() (
 
   def submitCalculateInstalments(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.submitCalculateInstalments: $request")
-    journeyService.getEligibleJourneyInProgress().flatMap { journey =>
+    journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info("CalculatorController.submitCalculateInstalments", journey)
       val sa = journey.taxpayer.selfAssessment
       val availablePaymentSchedules = calculatorService.availablePaymentSchedules(sa, journey.safeInitialPayment, journey.maybeArrangementDayOfMonth)

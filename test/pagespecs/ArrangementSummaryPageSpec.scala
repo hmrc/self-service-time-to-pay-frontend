@@ -70,6 +70,13 @@ class ArrangementSummaryPageSpec extends ItSpec {
     termsAndConditionsPage.assertPageIsDisplayed()
   }
 
+  "redirect user to summary page if user returns to calculator" in {
+    beginJourney()
+    termsAndConditionsPage.clickContinue()
+    taxLiabilitiesPage.open()
+    arrangementSummaryPage.assertPageIsDisplayed()
+  }
+
   "language English" in {
     beginJourney()
     termsAndConditionsPage.clickContinue()

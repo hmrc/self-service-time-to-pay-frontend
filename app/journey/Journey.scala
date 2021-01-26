@@ -124,6 +124,7 @@ final case class Journey(
 
   def obfuscate: Journey = Journey(
     _id                       = _id,
+    status                    = status,
     createdOn                 = createdOn,
     maybeMonthlyPaymentAmount = maybeMonthlyPaymentAmount,
     maybeBankDetails          = maybeBankDetails.map(_.obfuscate),

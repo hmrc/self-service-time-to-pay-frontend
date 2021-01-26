@@ -46,13 +46,6 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
     getMaybeJourney().map(_.getOrElse(throw new RuntimeException(s"Journey not found [ID: ${request.readJourneyId}]")))
   }
 
-  def getEligibleJourneyInProgress()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
-    getJourney().map {
-      case j: Journey if j.status == InProgress && j.maybeEligibilityStatus.isDefined && j.eligibilityStatus.eligible => j
-      case j => throw new RuntimeException(s"Expected eligible journey in progress [${j}]")
-    }
-  }
-
   /**
    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
    */
@@ -68,7 +61,7 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
           block(journey)
 
         case journey if journey.status == FinishedApplicationSuccessful =>
-          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", journey)
+          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission (no eligible journey in progress)", journey)
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
       }
