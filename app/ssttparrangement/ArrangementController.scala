@@ -260,8 +260,6 @@ class ArrangementController @Inject() (
               val arrangement = createArrangement(success, journey)
               val result = for {
                 submissionResult <- arrangementConnector.submitArrangements(arrangement)
-                //TODO: below line sends successful event even though a submission failed!
-                _ = auditService.sendSubmissionEvent(journey, paymentSchedule)
                 newJourney = journey
                   .copy(
                     ddRef  = Some(arrangement.directDebitReference),
@@ -277,6 +275,7 @@ class ArrangementController @Inject() (
                   applicationSuccessful
                 }, _ => {
                   JourneyLogger.info(s"ArrangementController.arrangementSetUp: Arrangement submission Succeeded!", arrangement)
+                  auditService.sendSubmissionEvent(journey, paymentSchedule)
                   applicationSuccessful
                 }
                 )
