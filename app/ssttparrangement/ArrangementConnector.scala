@@ -44,7 +44,7 @@ class ArrangementConnector @Inject() (
 
   val arrangementURL: String = servicesConfig.baseUrl("time-to-pay-arrangement")
 
-  def submitArrangements(ttpArrangement: TTPArrangement)(implicit request: Request[_]): Future[SubmissionResult] = {
+  def submitArrangement(ttpArrangement: TTPArrangement)(implicit request: Request[_]): Future[SubmissionResult] = {
     JourneyLogger.info(s"ArrangementConnector.submitArrangements")
 
     httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/ttparrangements", ttpArrangement).map { _ =>

@@ -21,8 +21,9 @@ import java.time.temporal.ChronoUnit
 import javax.inject.{Inject, Singleton}
 import journey.Journey
 import play.api.Logger
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Request
+import ssttparrangement.SubmissionError
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
@@ -30,44 +31,82 @@ import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
+import req.RequestSupport._
 
 @Singleton()
 class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: ExecutionContext) {
 
-  import req.RequestSupport._
+  def sendSubmissionSucceededEvent(
+      journey:  Journey,
+      schedule: PaymentSchedule)(implicit request: Request[_]): Unit = {
 
-  def sendSubmissionEvent(submission: Journey, schedule: PaymentSchedule)(implicit request: Request[_]): Future[Unit] = {
-    JourneyLogger.info(s"Sending audit event for successful submission")
-
-    val event = eventFor(submission, schedule)
-    val result = auditConnector.sendExtendedEvent(event)
-    result.onFailure {
-      case NonFatal(e) => Logger.error(s"Unable to post audit event of type [${event.auditType}] to audit connector - [${e.getMessage}]", e)
-    }
-
-    result.map(_ => ())
+    val event = makeEvent(
+      journey,
+      schedule,
+      Json.obj(
+        "status" -> "successfully submitted direct debit and TTP Arrangement"
+      ))
+    auditConnector.sendExtendedEvent(event)
+    ()
   }
 
-  private def eventFor(journey: Journey, schedule: PaymentSchedule)(implicit request: Request[_]) =
-    ExtendedDataEvent(
-      auditSource = "pay-what-you-owe",
-      auditType   = "directDebitSetup",
-      tags        = hc.headers.toMap,
-      detail      = Json.obj(
-        "utr" -> journey.taxpayer.selfAssessment.utr.value,
-        "bankDetails" -> Json.obj(
-          "name" -> journey.bankDetails.accountName,
-          "accountNumber" -> journey.bankDetails.accountNumber,
-          "sortCode" -> journey.bankDetails.sortCode
-        ),
-        "schedule" -> Json.obj(
-          "initialPaymentAmount" -> schedule.initialPayment,
-          "installments" -> Json.toJson(schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
-          "numberOfInstallments" -> schedule.instalments.length,
-          "installmentLengthCalendarMonths" -> (ChronoUnit.MONTHS.between(schedule.startDate, schedule.endDate)),
-          "totalPaymentWithoutInterest" -> schedule.amountToPay,
-          "totalInterestCharged" -> schedule.totalInterestCharged,
-          "totalPayable" -> schedule.totalPayable)
-      )
-    )
+  def sendDirectDebitSubmissionFailedEvent(
+      journey:         Journey,
+      schedule:        PaymentSchedule,
+      submissionError: SubmissionError)(implicit request: Request[_]): Unit = {
+    val event = makeEvent(
+      journey,
+      schedule,
+      Json.obj(
+        "status" -> "failed to submit direct debit didnt bothered to submit TTP Arrangement",
+        "submissionError" -> submissionError
+      ))
+    auditConnector.sendExtendedEvent(event)
+    ()
+  }
+
+  def sendArrangementSubmissionFailedEvent(
+      journey:         Journey,
+      schedule:        PaymentSchedule,
+      submissionError: SubmissionError)(implicit request: Request[_]): Unit = {
+    val event = makeEvent(
+      journey,
+      schedule,
+      Json.obj(
+        "status" -> "submitted direct debit but failed to submit TTP Arrangement",
+        "submissionError" -> submissionError
+      ))
+    auditConnector.sendExtendedEvent(event)
+    ()
+  }
+
+  private def makeEvent(
+      journey:   Journey,
+      schedule:  PaymentSchedule,
+      extraInfo: JsObject)(implicit request: Request[_]) = ExtendedDataEvent(
+    auditSource = "pay-what-you-owe",
+    //`directDebitSetup` was provided at the beginning.
+    // I'm not changing it to make splunk events consistent with what we already have stored
+    auditType = "directDebitSetup",
+    tags      = hc.headers.toMap,
+    detail    = extraInfo ++ makeDetails(journey, schedule)
+  )
+
+  private def makeDetails(journey: Journey, schedule: PaymentSchedule) = Json.obj(
+    "utr" -> journey.taxpayer.selfAssessment.utr.value,
+    "bankDetails" -> Json.obj(
+      "name" -> journey.bankDetails.accountName,
+      "accountNumber" -> journey.bankDetails.accountNumber,
+      "sortCode" -> journey.bankDetails.sortCode
+    ),
+    "schedule" -> Json.obj(
+      "initialPaymentAmount" -> schedule.initialPayment,
+      "installments" -> Json.toJson(schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
+      "numberOfInstallments" -> schedule.instalments.length,
+      "installmentLengthCalendarMonths" -> (ChronoUnit.MONTHS.between(schedule.startDate, schedule.endDate)),
+      "totalPaymentWithoutInterest" -> schedule.amountToPay,
+      "totalInterestCharged" -> schedule.totalInterestCharged,
+      "totalPayable" -> schedule.totalPayable)
+  )
+
 }
