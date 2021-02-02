@@ -16,5 +16,11 @@
 
 package ssttparrangement
 
+import play.api.libs.json.{Json, OFormat}
+
 final case class SubmissionError(code: Int, message: String)
+
+object SubmissionError {
+  implicit val format: OFormat[SubmissionError] = Json.format[SubmissionError]
+}
 

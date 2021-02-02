@@ -248,44 +248,43 @@ class ArrangementController @Inject() (
    */
   private def arrangementSetUp(journey: Journey, paymentSchedule: PaymentSchedule)(implicit request: Request[_]): Future[Result] = {
     JourneyLogger.info("ArrangementController.arrangementSetUp: (create a DD and make an Arrangement)")
-    journey.maybeTaxpayer match {
-      case Some(Taxpayer(_, _, SelfAssessmentDetails(utr, _, _, _))) =>
-        ddConnector.createPaymentPlan(checkExistingBankDetails(journey), utr).flatMap[Result] {
-          _.fold(_ => {
-            JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup failed, redirecting to error page")
-            Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError())
-          },
-            success => {
-              JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup succeeded, now creating arrangement")
-              val arrangement = createArrangement(success, journey)
-              val result = for {
-                submissionResult <- arrangementConnector.submitArrangements(arrangement)
-                newJourney = journey
-                  .copy(
-                    ddRef  = Some(arrangement.directDebitReference),
-                    status = FinishedApplicationSuccessful
-                  )
-                _ = journeyService.saveJourney(newJourney)
-              } yield submissionResult
+    val paymentPlanRequest: PaymentPlanRequest = makePaymentPlanRequest(journey)
+    val utr = journey.taxpayer.selfAssessment.utr
 
-              result.flatMap {
-                _.fold(error => {
-                  Logger.error(s"Exception: ${error.code} + ${error.message}")
-                  JourneyLogger.info(s"ArrangementController.arrangementSetUp: ZONK ERROR! Arrangement submission failed, $error but redirecting to $applicationSuccessful", arrangement)
-                  applicationSuccessful
-                }, _ => {
-                  JourneyLogger.info(s"ArrangementController.arrangementSetUp: Arrangement submission Succeeded!", arrangement)
-                  auditService.sendSubmissionEvent(journey, paymentSchedule)
-                  applicationSuccessful
-                }
-                )
-              }
-            })
-        }
-      case _ =>
-        Logger.error("Taxpayer or related data not present")
-        JourneyLogger.info("ArrangementController.arrangementSetUp: ERROR, Taxpayer or related data not present")
-        Future.successful(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()))
+    ddConnector.submitPaymentPlan(paymentPlanRequest, utr).flatMap[Result] {
+      _.fold(submissionError => {
+        JourneyLogger.info(s"ArrangementController.arrangementSetUp: dd setup failed, redirecting to error [$submissionError]")
+        auditService.sendDirectDebitSubmissionFailedEvent(journey, paymentSchedule, submissionError)
+        Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError())
+      },
+        directDebitInstructionPaymentPlan => {
+          JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup succeeded, now creating arrangement")
+          val arrangement: TTPArrangement = makeArrangement(directDebitInstructionPaymentPlan, journey)
+          val submitArrangementResult: Future[arrangementConnector.SubmissionResult] = for {
+            submissionResult <- arrangementConnector.submitArrangement(arrangement)
+            newJourney = journey
+              .copy(
+                ddRef  = Some(arrangement.directDebitReference),
+                status = FinishedApplicationSuccessful
+              )
+            //we finish the journey regardless of the result ...
+            _ <- journeyService.saveJourney(newJourney)
+          } yield submissionResult
+
+          submitArrangementResult.flatMap {
+            _.fold(submissionError => {
+              Logger.error(s"Exception: ${submissionError.code} + ${submissionError.message}")
+              JourneyLogger.info(s"ArrangementController.arrangementSetUp: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to $applicationSuccessful", arrangement)
+              auditService.sendArrangementSubmissionFailedEvent(journey, paymentSchedule, submissionError)
+              applicationSuccessful
+            }, _ => {
+              JourneyLogger.info(s"ArrangementController.arrangementSetUp: Arrangement submission Succeeded!", arrangement)
+              auditService.sendSubmissionSucceededEvent(journey, paymentSchedule)
+              applicationSuccessful
+            }
+            )
+          }
+        })
     }
   }
 
@@ -293,8 +292,7 @@ class ArrangementController @Inject() (
    * Checks if the TTPSubmission data contains an existing direct debit reference number and either
    * passes this information to a payment plan constructor function or builds a new Direct Debit Instruction
    */
-  private def checkExistingBankDetails(journey: Journey)(implicit request: Request[_]) = {
-    JourneyLogger.info("ArrangementController.checkExistingBankDetails")
+  private def makePaymentPlanRequest(journey: Journey)(implicit request: Request[_]): PaymentPlanRequest = {
 
     paymentPlan(
       journey,
@@ -341,7 +339,7 @@ class ArrangementController @Inject() (
   /**
    * Builds and returns a TTPArrangement
    */
-  private def createArrangement(ddInstruction: DirectDebitInstructionPaymentPlan, journey: Journey)(implicit request: Request[_]): TTPArrangement = {
+  private def makeArrangement(ddInstruction: DirectDebitInstructionPaymentPlan, journey: Journey)(implicit request: Request[_]): TTPArrangement = {
     val ppReference =
       ddInstruction.paymentPlan.headOption.getOrElse(
         throw new RuntimeException(s"No payment plans for [$ddInstruction]")).ppReferenceNo
