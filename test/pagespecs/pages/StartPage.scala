@@ -76,7 +76,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
           |To be eligible to set up an online payment plan you need to:
           |
           |have filed your 2019 to 2020 tax return
-          |owe £10,000 or less
+          |owe £30,000 or less
           |have no other tax debts
           |have no other HMRC payment plans set up
           |You can use this service within 60 days of the payment deadline.
@@ -95,7 +95,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
           |I fod yn gymwys i sefydlu cynllun talu ar-lein, mae’n rhaid bod y canlynol yn wir:
           |
           |rydych wedi cyflwyno’ch Ffurflen Dreth ar gyfer 2019 i 2020
-          |mae arnoch £10,000 neu lai
+          |mae arnoch £30,000 neu lai
           |nid oes gennych unrhyw ddyledion treth eraill
           |nid ydych wedi sefydlu cynlluniau talu eraill gyda CThEM
           |Gallwch ddefnyddio’r gwasanaeth hwn cyn pen 60 diwrnod o’r dyddiad cau ar gyfer talu.

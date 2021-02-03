@@ -20,17 +20,18 @@ import javax.inject.Inject
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 final case class EligibilityServiceConfig(insignificantDebtUpperLimit:                      Int,
-                                          maximumDebtForSelfServe:                          Int,
                                           numberOfDaysAfterDueDateForDebtToBeConsideredOld: Int,
                                           returnHistoryYearsRequired:                       Int,
                                           taxYearEndMonthOfYear:                            Int,
                                           taxYearEndDayOfMonth:                             Int) {
+
   @Inject def this(servicesConfig: ServicesConfig) = this(
     insignificantDebtUpperLimit                      = servicesConfig.getInt("eligibility.insignificantDebtUpperLimit"),
-    maximumDebtForSelfServe                          = servicesConfig.getInt("eligibility.maximumDebtForSelfServe"),
     numberOfDaysAfterDueDateForDebtToBeConsideredOld = servicesConfig.getInt("eligibility.numberOfDaysAfterDueDateForDebtToBeConsideredOld"),
     returnHistoryYearsRequired                       = servicesConfig.getInt("eligibility.returnHistoryYearsRequired"),
     taxYearEndMonthOfYear                            = servicesConfig.getInt("eligibility.taxYearEndMonthOfYear"),
     taxYearEndDayOfMonth                             = servicesConfig.getInt("eligibility.taxYearEndDayOfMonth")
   )
+
+  val maximumDebtForSelfServe = 30000
 }
