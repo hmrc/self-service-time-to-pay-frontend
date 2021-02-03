@@ -33,5 +33,5 @@ final case class EligibilityServiceConfig(insignificantDebtUpperLimit:          
     taxYearEndDayOfMonth                             = servicesConfig.getInt("eligibility.taxYearEndDayOfMonth")
   )
 
-  val maximumDebtForSelfServe = 30000
+  val maximumDebtForSelfServe: Int = 30000
 }
