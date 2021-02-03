@@ -34,7 +34,7 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
   private val origin = "IN1"
 
   private val onePence = 0.01
-  private val debtLimit = 10000
+  private val debtLimit = 30000
   private val significantDebtAmount = 32.00
   private val insignificantDebtAmount = significantDebtAmount - onePence
 

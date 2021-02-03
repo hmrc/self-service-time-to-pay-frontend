@@ -62,7 +62,7 @@ class DebtTooLargePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends 
 
       private val mainTextEnglish =
         """Please call us
-          |To be eligible to set up a payment plan online the tax you owe must be £10,000 or less.
+          |To be eligible to set up a payment plan online the tax you owe must be £30,000 or less.
           |For further support you can contact the Business Support Service and speak to an adviser on 0300 200 3835.
           |Before you call, make sure you have:
           |information on any savings or investments you have
@@ -76,7 +76,7 @@ class DebtTooLargePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends 
 
       private val mainTextWelsh =
         """Ffoniwch ni
-          |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £10,000 neu lai.
+          |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £30,000 neu lai.
           |
           |Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar 0300 200 1900.
           |

@@ -64,17 +64,22 @@ ssttp.sidebar.having_problems.title = Oes problem?
 ssttp.sidebar.having_problems.intro = Os oes problem, neu os oes angen rhagor o help arnoch, gallwch ein ffonio am gymorth.
 
 #landing
-ssttp.landing.title = Trefnu cynllun talu
 
-ssttp.landing.intro = Mae cynllun talu yn eich galluogi i dalu’r dreth sydd arnoch fesul rhandaliad. Mae’r cynllun yn cwmpasu’r symiau y mae’n rhaid i chi eu talu nawr.
-ssttp.landing.alert = Ein bwriad yw y bydd hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch, mae’n bosibl y bydd CThEM yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.
-ssttp.landing.before-you-start = Cyn i chi ddechrau
-ssttp.landing.before-you-start.p.1 = Mae’r cynllun talu hwn ar gyfer treth Hunanasesiad yn unig.
-ssttp.landing.before-you-start.p.2 = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid bod y canlynol yn wir:
-ssttp.landing.before-you-start.list.1 = mae arnoch £{0} neu lai
-ssttp.landing.before-you-start.list.2 = nid oes gennych unrhyw ddyledion treth eraill
-ssttp.landing.before-you-start.list.3 = nid ydych wedi trefnu cynlluniau talu eraill â CThEM
+ssttp.landing.title = Sefydlu cynllun talu ar gyfer Hunanasesiad
+
+ssttp.landing.p1 = Mae cynllun talu’n eich galluogi i dalu’ch taliadau treth fesul rhandaliad, dros gyfnod o hyd at 12 mis.
+ssttp.landing.p2 = Mae’ch cynllun yn cynnwys eich taliad mantoli, eich taliad ar gyfrif cyntaf a’ch ail daliad ar gyfrif, yn ogystal ag unrhyw gosbau neu daliadau eraill yn erbyn eich cyfrif. Bydd yn rhaid i chi dalu llog ar y swm a dalwch yn hwyr.
+ssttp.landing.p3 = I fod yn gymwys i sefydlu cynllun talu ar-lein, mae’n rhaid bod y canlynol yn wir:
+ssttp.landing.p3list.1 = rydych wedi cyflwyno’ch Ffurflen Dreth ar gyfer 2019 i 2020
+ssttp.landing.p3list.2 = mae arnoch £{0} neu lai
+ssttp.landing.p3list.3 = nid oes gennych unrhyw ddyledion treth eraill
+ssttp.landing.p3list.4 = nid ydych wedi sefydlu cynlluniau talu eraill gyda CThEM
+ssttp.landing.p4 = Gallwch ddefnyddio’r gwasanaeth hwn cyn pen 60 diwrnod o’r dyddiad cau ar gyfer talu.
+
 ssttp.landing.start-button.label = Dechrau nawr
+
+ssttp.landing.before-you-start = Cyn i chi ddechrau
+ssttp.landing.before-you-start.p1 = Bwriad CThEM yw bod hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch yn gwneud hynny, mae’n bosibl y bydd CThEM yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.
 
 #calculator
 

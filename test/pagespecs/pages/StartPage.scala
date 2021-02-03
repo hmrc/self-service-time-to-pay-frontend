@@ -30,7 +30,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Set up a Self Assessment payment plan"
-    case Languages.Welsh   => "Trefnu cynllun talu"
+    case Languages.Welsh   => "Sefydlu cynllun talu ar gyfer Hunanasesiad"
   }
 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
@@ -69,33 +69,42 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
 
       private val mainTextEnglish =
         """Set up a Self Assessment payment plan
-          |A payment plan allows you to pay your tax charges over a number of months. The plan covers the amounts you need to pay now and your next payment amount.
+          |A payment plan allows you to pay your tax charges in instalments, over a period of up to 12 months.
           |
-          |HMRC intend this as a one-off payment plan to give you extra support. You must keep up to date with your payments. If you do not, HMRC may ask you to pay the entire outstanding amount.
+          |Your plan covers your balancing payment, your first and second payment on account, and any other penalties or charges against your account. You’ll have to pay interest on the amount you pay late.
           |
-          |Before you start
           |To be eligible to set up an online payment plan you need to:
           |
-          |owe £10,000 or less
+          |have filed your 2019 to 2020 tax return
+          |owe £30,000 or less
           |have no other tax debts
           |have no other HMRC payment plans set up
+          |You can use this service within 60 days of the payment deadline.
+          |
           |Start now
+          |Before you start
+          |HMRC intend this as a one-off payment plan to give you extra support. You must keep up to date with your payments. If you do not, HMRC may ask you to pay the entire outstanding amount.
         """.stripMargin
 
       private val mainTextWelsh =
-        """Trefnu cynllun talu
-          |Mae cynllun talu yn eich galluogi i dalu’r dreth sydd arnoch fesul rhandaliad. Mae’r cynllun yn cwmpasu’r symiau y mae’n rhaid i chi eu talu nawr.
+        """Sefydlu cynllun talu ar gyfer Hunanasesiad
+          |Mae cynllun talu’n eich galluogi i dalu’ch taliadau treth fesul rhandaliad, dros gyfnod o hyd at 12 mis.
           |
-          |Ein bwriad yw y bydd hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch, mae’n bosibl y bydd CThEM yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.
+          |Mae’ch cynllun yn cynnwys eich taliad mantoli, eich taliad ar gyfrif cyntaf a’ch ail daliad ar gyfrif, yn ogystal ag unrhyw gosbau neu daliadau eraill yn erbyn eich cyfrif. Bydd yn rhaid i chi dalu llog ar y swm a dalwch yn hwyr.
           |
-          |Cyn i chi ddechrau
-          |Mae’r cynllun talu hwn ar gyfer treth Hunanasesiad yn unig.
+          |I fod yn gymwys i sefydlu cynllun talu ar-lein, mae’n rhaid bod y canlynol yn wir:
           |
-          |mae arnoch £10,000 neu lai
+          |rydych wedi cyflwyno’ch Ffurflen Dreth ar gyfer 2019 i 2020
+          |mae arnoch £30,000 neu lai
           |nid oes gennych unrhyw ddyledion treth eraill
-          |nid ydych wedi trefnu cynlluniau talu eraill â CThEM
+          |nid ydych wedi sefydlu cynlluniau talu eraill gyda CThEM
+          |Gallwch ddefnyddio’r gwasanaeth hwn cyn pen 60 diwrnod o’r dyddiad cau ar gyfer talu.
+          |
           |Dechrau nawr
-        """.stripMargin
+          |Cyn i chi ddechrau
+          |Bwriad CThEM yw bod hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch yn gwneud hynny, mae’n bosibl y bydd CThEM yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.
+          |
+          |""".stripMargin
     }
 
   }
