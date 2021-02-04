@@ -18,16 +18,23 @@ package ssttpcalculator
 
 import testsupport.UnitSpec
 
-class BigDecimalUtilTest extends UnitSpec {
+class BigDecimalUtilSpec extends UnitSpec {
 
   "test rounding" in {
     testCases.foreach { tc =>
-      BigDecimalUtil.roundDownToNearestTen(tc.bigDecimal) shouldBe tc.roundedDown
-      BigDecimalUtil.roundUpToNearestTen(tc.bigDecimal) shouldBe tc.roundedUp
+      BigDecimalUtil.roundDownToNearestTen(tc.bigDecimal) shouldBe (tc.roundedDown: BigDecimal)
+      BigDecimalUtil.roundUpToNearestTen(tc.bigDecimal) shouldBe (tc.roundedUp: BigDecimal) withClue tc
     }
   }
 
   lazy val testCases: List[TestCase] = List(
+    TestCase(bigDecimal  = "9.9", roundedUp = "10", roundedDown = "0"),
+    TestCase(bigDecimal  = "19.9", roundedUp = "20", roundedDown = "10"),
+    TestCase(bigDecimal  = "0.0", roundedUp = "0.0", roundedDown = "0.0"),
+    TestCase(bigDecimal  = "10.0", roundedUp = "10.0", roundedDown = "10.0"),
+    TestCase(bigDecimal  = "15.5", roundedUp = "20", roundedDown = "10"),
+
+    TestCase(bigDecimal  = "0.000000001", roundedUp = "10.0", roundedDown = "0.0"),
     TestCase(bigDecimal  = "0.000000001", roundedUp = "10.0", roundedDown = "0.0"),
     TestCase(bigDecimal  = "15.000000001", roundedUp = "20.0", roundedDown = "10.0"),
     TestCase(bigDecimal  = "10.000000001", roundedUp = "20.0", roundedDown = "10.0"),
@@ -35,9 +42,9 @@ class BigDecimalUtilTest extends UnitSpec {
   )
 
   case class TestCase(
-      bigDecimal:  BigDecimal,
-      roundedUp:   BigDecimal,
-      roundedDown: BigDecimal
+      bigDecimal:  String,
+      roundedUp:   String,
+      roundedDown: String
   )
 
   implicit def toBigDecimal(s: String): BigDecimal = BigDecimal(s)
