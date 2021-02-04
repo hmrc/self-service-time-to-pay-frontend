@@ -59,6 +59,6 @@ class PaymentSummaryPageSpec extends ItSpec {
     paymentSummaryPage.assertPageIsDisplayed
 
     paymentSummaryPage.clickContinue()
-    monthlyPaymentAmountPage.assertPageIsDisplayedAltPath(-100: Int)
+    monthlyPaymentAmountPage.assertPageIsDisplayedAltPath(400, 2390)
   }
 }

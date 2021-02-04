@@ -42,10 +42,10 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     case Languages.Welsh   => "Faint y gallwch fforddio ei dalu bob mis?"
   }
 
-  def assertPageIsDisplayedAltPath(difference: Int)(implicit lang: Language = English): Assertion = probing {
+  def assertPageIsDisplayedAltPath(lowerAmount: Int, upperAmount: Int)(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText(difference).stripSpaces
+    readMain().stripSpaces shouldBe Expected.MainText(lowerAmount, upperAmount).stripSpaces
   }
 
   def assertErrorPageIsDisplayed(implicit value: String): Assertion = probing {
@@ -79,24 +79,24 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     }
 
     object MainText {
-      def apply(increase: Int = 0)(implicit language: Language): String = language match {
-        case English => mainTextEnglish(increase)
-        case Welsh   => mainTextWelsh(increase)
+      def apply(lowerAmount: Int = 410, upperAmount: Int = 2460)(implicit language: Language): String = language match {
+        case English => mainTextEnglish(lowerAmount, upperAmount)
+        case Welsh   => mainTextWelsh(lowerAmount, upperAmount)
       }
 
       private def format(value: Double) = value.formatted("%,1.2f")
 
       // "How much can you pay upfront in Pound Sterling" has css class visually hidden but is still read by content scraper
-      private def mainTextEnglish(increase: Int) =
+      private def mainTextEnglish(lowerAmount: Int, upperAmount: Int) =
         s"""How much can you afford to pay each month?
-           |Enter an amount between £${format(410.00 + increase)} and £${format(2460.00 + increase)}
+           |Enter an amount between £${format(lowerAmount)} and £${format(upperAmount)}
            |£ How much can you pay monthly in Pound Sterling
            |Continue
         """.stripMargin
 
-      private def mainTextWelsh(increase: Int) =
+      private def mainTextWelsh(lowerAmount: Int, upperAmount: Int) =
         s"""Faint y gallwch fforddio ei dalu bob mis?
-           |Nodwch swm sydd rhwng £${format(410.00 + increase)} a £${format(2460.00 + increase)}
+           |Nodwch swm sydd rhwng £${format(lowerAmount)} a £${format(upperAmount)}
            |£ How much can you pay monthly in Pound Sterling
            |Yn eich blaen
         """.stripMargin
@@ -109,7 +109,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         s"""There is a problem
            |Enter a figure between the given range
            |How much can you afford to pay each month?
-           |Enter an amount between £400.00 and £2,400.00
+           |Enter an amount between £410.00 and £2,460.00
            |Enter numbers only £ How much can you pay monthly in Pound Sterling
            |Continue
         """.stripMargin
