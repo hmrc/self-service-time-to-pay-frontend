@@ -36,12 +36,28 @@ object DirectDebitForm {
       .verifying("ssttp.direct-debit.form.error.accountName.check", x => condTrue(x.trim != "", x.trim.length > 1))
       .verifying("ssttp.direct-debit.form.error.accountName.check", x => condTrue(x.length > 1, x.matches("^[a-zA-Z].{1,39}$")))
       .verifying("ssttp.direct-debit.form.error.accountName.not-text", x => condTrue(x.matches("^[a-zA-Z].{1,39}$"), x.length == x.replaceAll("[^a-zA-Z '.& \\/]", "").length)),
-    "sortCode" -> text.verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim == "") | validateNumberLength(x, x.length) && validateNumberLength(x, 6) | validateNumberLength(x.replaceAll("-", "").replaceAll(" ", ""), 6)),
+    "sortCode" -> text
+      .verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", isValidSortCode _),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | (validateNumberLength(x, x.length) && validateNumberLength(x, 8)))
   )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, cleanSortCode(sc), acctNo) }
     )({ case arrangementDirectDebit => Some((arrangementDirectDebit.accountName, arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber)) })
+
+  def isValidSortCode(sortCode: String): Boolean = {
+    hasValidSortCodeCharacters(sortCode) && has6Numbers(sortCode)
+  }
+
+  private def has6Numbers(sortCode: String): Boolean = validateNumberLength(sortCode, 6)
+
+  private def hasValidSortCodeCharacters(sortCode: String): Boolean = {
+    sortCode
+      .trim
+      .replaceAll("\\d", "")
+      .replaceAll("-", "")
+      .replaceAll(" ", "")
+      .isEmpty
+  }
 
   def validateNumberLength(number: String, length: Int): Boolean = {
     number.replaceAll("[^0-9]", "").length == length
