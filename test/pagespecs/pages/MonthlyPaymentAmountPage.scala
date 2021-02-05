@@ -29,26 +29,22 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/monthly-payment-amount"
 
-  def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-    readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
-    assertContentMatchesExpectedLines(expectedLines)
-  }
+  def assertPageIsDisplayed(implicit lang: Language): Unit = assertPageIsDisplayedAltPath(410, 2450)
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "How much can you afford to pay each month?"
     case Languages.Welsh   => "Faint y gallwch fforddio ei dalu bob mis?"
   }
 
-  def assertPageIsDisplayedAltPath(difference: Int)(implicit lang: Language = English): Assertion = probing {
+  def assertPageIsDisplayedAltPath(lowerAmount: Int, upperAmount: Int)(implicit lang: Language = English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    readMain().stripSpaces shouldBe Expected.MainText(difference).stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
+    val expectedLines = Expected.MainText(lowerAmount, upperAmount).stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
   }
 
-  def assertErrorPageIsDisplayed(implicit value: String): Assertion = probing {
+  def assertErrorPageIsDisplayed(): Assertion = probing {
     readPath() shouldBe path
     readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
   }
@@ -79,40 +75,39 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
     }
 
     object MainText {
-      def apply(increase: Int = 0)(implicit language: Language): String = language match {
-        case English => mainTextEnglish(increase)
-        case Welsh   => mainTextWelsh(increase)
+      def apply(lowerAmount: Int, upperAmount: Int)(implicit language: Language): String = language match {
+        case English => mainTextEnglish(lowerAmount, upperAmount)
+        case Welsh   => mainTextWelsh(lowerAmount, upperAmount)
       }
 
       private def format(value: Double) = value.formatted("%,1.2f")
 
       // "How much can you pay upfront in Pound Sterling" has css class visually hidden but is still read by content scraper
-      private def mainTextEnglish(increase: Int) =
+      private def mainTextEnglish(lowerAmount: Int, upperAmount: Int) =
         s"""How much can you afford to pay each month?
-           |Enter an amount between £${format(400.00 + increase)} and £${format(2400.00 + increase)}
+           |Enter an amount between £${format(lowerAmount)} and £${format(upperAmount)}
            |£ How much can you pay monthly in Pound Sterling
            |Continue
         """.stripMargin
 
-      private def mainTextWelsh(increase: Int) =
+      private def mainTextWelsh(lowerAmount: Int, upperAmount: Int) =
         s"""Faint y gallwch fforddio ei dalu bob mis?
-           |Nodwch swm sydd rhwng £${format(400.00 + increase)} a £${format(2400.00 + increase)}
+           |Nodwch swm sydd rhwng £${format(lowerAmount)} a £${format(upperAmount)}
            |£ How much can you pay monthly in Pound Sterling
            |Yn eich blaen
         """.stripMargin
     }
 
     object ErrorText {
-      def apply()(implicit value: String): String = errorText(value)
-
-      private def errorText(value: String) =
+      def apply(): String =
         s"""There is a problem
            |Enter a figure between the given range
            |How much can you afford to pay each month?
-           |Enter an amount between £400.00 and £2,400.00
+           |Enter an amount between £410.00 and £2,450.00
            |Enter numbers only £ How much can you pay monthly in Pound Sterling
            |Continue
         """.stripMargin
+
     }
 
   }

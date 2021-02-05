@@ -159,7 +159,7 @@ class CalculatorController @Inject() (
       val schedules = calculatorService.availablePaymentSchedules(sa, initialPayment, maybeArrangementDayOfMonth)
       val lowestPossibleMonthlyAmount = schedules.head.firstInstallment.amount
       val largestPossibleMonthlyAmount = schedules.last.firstInstallment.amount
-      (roundDownToNearestHundred(largestPossibleMonthlyAmount), roundDownToNearestHundred(lowestPossibleMonthlyAmount))
+      (BigDecimalUtil.roundUpToNearestTen(largestPossibleMonthlyAmount), BigDecimalUtil.roundUpToNearestTen(lowestPossibleMonthlyAmount))
     } match {
       case Success(s) =>
         JourneyLogger.info(s"CalculatorController.lowerMonthlyPaymentBound: [$s]")
@@ -168,10 +168,6 @@ class CalculatorController @Inject() (
         JourneyLogger.info(s"CalculatorController.lowerMonthlyPaymentBound: ERROR [${e.toString}]")
         throw e
     }
-
-  private def roundDownToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100)
-
-  private def roundUpToNearestHundred(value: BigDecimal): BigDecimal = BigDecimal((value.intValue() / 100) * 100) + 100
 
   def submitMonthlyPayment: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.submitMonthlyPayment: $request")
