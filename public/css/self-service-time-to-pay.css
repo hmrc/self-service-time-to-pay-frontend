@@ -190,12 +190,14 @@ input.accountName{
 
 @media print {
 
-    body * {
-        visibility: hidden;
-        margin:0; padding:0;
+    .printable  {
+        display: block;
     }
-    .printable * {
-        visibility: visible;
+    #global-header,
+    #content,
+    #footer,
+    .centered-content {
+        display: none;
     }
 }
 
