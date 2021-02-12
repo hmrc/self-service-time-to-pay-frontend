@@ -19,6 +19,7 @@ package controllers.action
 import com.google.inject.Inject
 import config.AppConfig
 import play.api.Logger
+import play.api.libs.json.Json
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import timetopaytaxpayer.cor.model.SaUtr
@@ -30,8 +31,7 @@ final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val
   extends WrappedRequest[A](request)
 
 class AuthorisedSaUserAction @Inject() (
-    appConfig: AppConfig,
-    cc:        MessagesControllerComponents)
+    cc: MessagesControllerComponents)
   extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
@@ -39,14 +39,27 @@ class AuthorisedSaUserAction @Inject() (
     val hasActiveSaEnrolment: Boolean = request.hasActiveSaEnrolment
     val maybeUtr: Option[SaUtr] = request.maybeUtr
 
-      def logFail(reason: String) = Logger.info(
-        s"""
-         |Authorisation failed, reason: $reason:
-         |  [hasActiveSaEnrolment: $hasActiveSaEnrolment]
-         |  [enrolments: ${request.enrolments}]
-         |  [utr: $maybeUtr]
-         |  """.stripMargin
+    val obfuscatedEnrolments = {
+      val es = request.enrolments.enrolments
+      es.map(e =>
+        e.copy(identifiers =
+          e.identifiers.map(i => i.copy(value = "***"))
+        )
       )
+    }
+
+    val maybeObfuscatedUtr = maybeUtr.map(_ => "***")
+
+      def logFail(reason: String) = {
+        Logger.info(
+          s"""
+           |Authorisation failed, reason: $reason:
+           |  [hasActiveSaEnrolment: $hasActiveSaEnrolment]
+           |  [enrolments: ${Json.prettyPrint(Json.toJson(obfuscatedEnrolments))}]
+           |  [utr: $maybeObfuscatedUtr]
+           |  """.stripMargin
+        )
+      }
 
     val result: Either[Result, AuthorisedSaUserRequest[A]] =
       (hasActiveSaEnrolment, maybeUtr) match {
