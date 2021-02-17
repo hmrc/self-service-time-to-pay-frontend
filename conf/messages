@@ -452,18 +452,18 @@ ssttp.you-need-to-request-access-to-self-assessment.button-label = Request acces
  accessibility-statement-h9 = Non-compliance with the accessibility regulations
  accessibility-statement-p18 = This service uses radio buttons which are grouped so that the page can be navigated with only the keyboard.
  accessibility-statement-p19 = In some places, these groups are missing their labels which means screen reading software will not read out the description of the selected element. This does not meet WCAG success criterion 2.4.6 (Headings and Labels).
- accessibility-statement-p20 = We plan to add the correct labels and field sets to all of our radio buttons by 30 September 2020.
+ accessibility-statement-p20 = We plan to add the correct labels and field sets to all of our radio buttons by 15 December 2021.
  accessibility-statement-p21 = We use tab titles to describe the content of our web pages. In some places, the tab titles do not match the heading of the page. This does not meet WCAG 2.1 success criterion 2.4.6 (Headings and Labels).
- accessibility-statement-p22 = We plan to add consistent titles and headings for all the pages in the service by 30 September 2020.
+ accessibility-statement-p22 = We plan to add consistent titles and headings for all the pages in the service by 15 December 2021.
  accessibility-statement-p23 = Some error messages are not descriptive enough for people with visual impairments. This does not meet WCAG Success Criterion 3.3.3 (Error Suggestion)
  accessibility-statement-p24 = The service is not fully compliant with WCAG 2.2.1 (timing adjustable) as there is not a warning for the service timeout.
- accessibility-statement-p25 = We plan to meet this criterion by 30 September 2020.
+ accessibility-statement-p25 = We plan to meet this criterion by 15 December 2021.
  accessibility-statement-h10 = How we tested this service
  accessibility-statement-p26 = The service was last tested on 14 February 2019 and was checked for compliance with WCAG 2.1 AA.
  accessibility-statement-p27a = The service was built using parts that were tested by the
  accessibility-statement-a9 = Digital Accessibility Centre
  accessibility-statement-p27b = . The full service was tested by HMRC and included disabled users.
- accessibility-statement-p28 = This page was prepared on 26 February 2020. It was last updated on 27 February 2020.
+ accessibility-statement-p28 = This page was prepared on 26 February 2020. It was last updated on 11 February 2021.
 
 
 
