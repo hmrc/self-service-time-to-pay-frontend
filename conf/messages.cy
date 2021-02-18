@@ -393,18 +393,18 @@ ssttp.you-need-to-request-access-to-self-assessment.button-label = Gwneud cais i
  accessibility-statement-h9 = Diffyg cydymffurfio â’r rheoliadau hygyrchedd
  accessibility-statement-p18 = Mae’r gwasanaeth hwn yn defnyddio botymau radio sydd wedi’u grwpio fel y gellir llywio’r dudalen gyda’r bysellfwrdd yn unig. Mewn rhai lleoedd, mae’r grwpiau hyn yn colli eu labeli sy’n golygu na fydd meddalwedd darllen sgrin yn darllen y disgrifiad o’r elfen a ddewiswyd.
  accessibility-statement-p19 = Nid yw hyn yn bodloni maen prawf llwyddiant 2.4.6 (Headings and Labels) Canllawiau Hygyrchedd Cynnwys y We.
- accessibility-statement-p20 = Rydym yn bwriadu ychwanegu’r labeli a’r setiau meysydd cywir i’n holl fotymau radio erbyn 30 Medi 2020.
+ accessibility-statement-p20 = Rydym yn bwriadu ychwanegu’r labeli a’r setiau meysydd cywir i’n holl fotymau radio erbyn 15 Rhagfyr 2021.
  accessibility-statement-p21 = Rydym yn defnyddio teitlau tab i ddisgrifio cynnwys ein tudalennau gwe. Mewn rhai lleoedd, nid yw’r teitlau tab yn cyfateb i bennawd y dudalen.
- accessibility-statement-p22 = Nid yw hyn yn bodloni maen prawf llwyddiant 2.4.6 (Headings and Labels) Canllawiau Hygyrchedd Cynnwys y We. Rydym yn bwriadu ychwanegu teitlau a phenawdau cyson ar gyfer yr holl dudalennau yn y gwasanaeth erbyn 30 Medi 2020.
+ accessibility-statement-p22 = Nid yw hyn yn bodloni maen prawf llwyddiant 2.4.6 (Headings and Labels) Canllawiau Hygyrchedd Cynnwys y We. Rydym yn bwriadu ychwanegu teitlau a phenawdau cyson ar gyfer yr holl dudalennau yn y gwasanaeth erbyn 15 Rhagfyr 2021.
  accessibility-statement-p23 = Nid yw rhai negeseuon gwall yn ddigon disgrifiadol i’r rhai sydd â nam ar eu golwg. Nid yw hyn yn bodloni maen prawf llwyddiant 3.3.3 (Error Suggestion) Canllawiau Hygyrchedd Cynnwys y We.
  accessibility-statement-p24 = Nid yw’r gwasanaeth yn cydymffurfio’n llawn â 2.2.1 (timing adjustable) Canllawiau Hygyrchedd Cynnwys y We gan nad oes neges sy’n rhybuddio am derfyn amser y gwasanaeth.
- accessibility-statement-p25 = Rydym yn bwriadu bodloni’r maen prawf hwn erbyn 30 Medi 2020.
+ accessibility-statement-p25 = Rydym yn bwriadu bodloni’r maen prawf hwn erbyn 15 Rhagfyr 2021.
  accessibility-statement-h10 = Sut gwnaethom brofi’r gwasanaeth hwn
  accessibility-statement-p26 = Cafodd y gwasanaeth ei brofi ddiwethaf ar 14 Chwefror 2019 a gwiriwyd ei fod yn cydymffurfio â safon ‘AA’ Canllawiau Hygyrchedd Cynnwys y We, fersiwn 2.1.
  accessibility-statement-p27a = Adeiladwyd y gwasanaeth gan ddefnyddio rhannau a brofwyd gan y
  accessibility-statement-a9 =  Ganolfan Hygyrchedd Digidol (Digital Accessibility Centre)
  accessibility-statement-p27b = . Profwyd y gwasanaeth llawn gan CThEM, ac roedd y gwaith o brofi’r gwasanaeth yn cynnwys defnyddwyr anabl.
- accessibility-statement-p28 = Paratowyd y dudalen hon ar 26 Chwefror 2020. Cafodd ei diweddaru ddiwethaf ar 26 Mehefin 2020.
+ accessibility-statement-p28 = Paratowyd y dudalen hon ar 26 Chwefror 2020. Cafodd ei diweddaru ddiwethaf ar 11 Chwefror 2021.
 
 
 

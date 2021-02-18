@@ -90,16 +90,16 @@ class AccessibilityStatementPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
           |Non-compliance with the accessibility regulations
           |This service uses radio buttons which are grouped so that the page can be navigated with only the keyboard
           |In some places, these groups are missing their labels which means screen reading software will not read out the description of the selected element. This does not meet WCAG success criterion 2.4.6 (Headings and Labels).
-          |We plan to add the correct labels and field sets to all of our radio buttons by 30 September 2020.
+          |We plan to add the correct labels and field sets to all of our radio buttons by 15 December 2021.
           |We use tab titles to describe the content of our web pages. In some places, the tab titles do not match the heading of the page. This does not meet WCAG 2.1 success criterion 2.4.6 (Headings and Labels).
-          |We plan to add consistent titles and headings for all the pages in the service by 30 September 2020.
+          |We plan to add consistent titles and headings for all the pages in the service by 15 December 2021.
           |Some error messages are not descriptive enough for people with visual impairments. This does not meet WCAG Success Criterion 3.3.3 (Error Suggestion)
           |The service is not fully compliant with WCAG 2.2.1 (timing adjustable) as there is not a warning for the service timeout.
-          |We plan to meet this criterion by 30 September 2020.
+          |We plan to meet this criterion by 15 December 2021.
           |How we tested this service
           |The service was last tested on 14 February 2019 and was checked for compliance with WCAG 2.1 AA.
           |The service was built using parts that were tested by the Digital Accessibility Centre. The full service was tested by HMRC and included disabled users.
-          |This page was prepared on 26 February 2020. It was last updated on 27 February 2020.
+          |This page was prepared on 26 February 2020. It was last updated on 11 February 2021.
         """.stripMargin
     }
   }
