@@ -66,6 +66,33 @@ object BarsStub extends Matchers with Status {
         )
     )
 
+  def validateBankFailSortCodeOnDenyList(sortCode: String, accountNumber: String): StubMapping =
+    stubFor(
+      post(urlPathEqualTo(s"/v2/validateBankDetails"))
+        .withRequestBody(equalToJson(
+          s"""
+            {
+            "account" : {
+              "sortCode" : "${sortCode.replace("-", "")}",
+              "accountNumber" : "$accountNumber"
+              }
+            }
+            """))
+        .willReturn(
+          aResponse()
+            .withStatus(BAD_REQUEST)
+            .withBody(errorResponse)
+        )
+    )
+
+  val errorResponse: String =
+    // language=JSON
+    """
+      {
+        "code": "SORT_CODE_ON_DENY_LIST",
+        "desc": "083210: sort code is on deny list"
+      }"""
+
   val validResponse: String =
     // language=JSON
     """

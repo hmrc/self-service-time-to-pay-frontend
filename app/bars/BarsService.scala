@@ -16,30 +16,31 @@
 
 package bars
 
-import bars.model.{Account, ValidateBankDetailsRequest, ValidateBankDetailsResponse}
+import bars.model._
 import javax.inject.Inject
 import play.api.mvc.Request
 
 import scala.concurrent.{ExecutionContext, Future}
 
-sealed trait BarsValidationResult
-
-final case class Valid(obfuscatedResponse: ValidateBankDetailsResponse) extends BarsValidationResult
-
-final case class Invalid(obfuscatedResponse: ValidateBankDetailsResponse) extends BarsValidationResult
-
 class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: ExecutionContext) {
 
   def validateBankDetails(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[BarsValidationResult] = {
+
     val validateBankDetailsRequest = ValidateBankDetailsRequest(account = Account(
       sortCode,
       accountNumber
     ))
 
     for {
-      response <- barsConnector.validateBank(validateBankDetailsRequest)
-      result = if (response.isValid) Valid(response) else Invalid(response)
-    } yield result
+      barsResponse <- barsConnector.validateBank(validateBankDetailsRequest)
+      barsValidationResult = barsResponse match {
+        case barsResponse @ BarsResponseOk(validateBankDetailsResponse) =>
+          val obfuscatedBarsResponse = barsResponse.copy(validateBankDetailsResponse.obfuscate)
+          if (validateBankDetailsResponse.isValid) ValidBankDetails(obfuscatedBarsResponse) else InvalidBankDetails(obfuscatedBarsResponse)
+        case barsResponse: BarsResponseSortCodeOnDenyList =>
+          InvalidBankDetails(barsResponse)
+      }
+    } yield barsValidationResult
   }
 
 }

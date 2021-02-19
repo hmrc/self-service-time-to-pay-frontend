@@ -16,21 +16,18 @@
 
 package ssttpdirectdebit
 
-import bars.model.ValidateBankDetailsResponse
-import bars.{BarsConnector, BarsService, Invalid, Valid}
+import bars.BarsService
+import bars.model.{InvalidBankDetails, ValidBankDetails}
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import javax.inject._
-import journey.Statuses.InProgress
 import journey.{Journey, JourneyService}
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorService
 import ssttpdirectdebit.DirectDebitForm._
-import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.play.config.AssetsConfig
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails}
@@ -111,15 +108,15 @@ class DirectDebitController @Inject() (
         (validFormData: ArrangementDirectDebit) => {
           barsService.validateBankDetails(validFormData.sortCode, validFormData.accountNumber).flatMap {
 
-            case Valid(obfuscatedValidateBankDetailsResponse) =>
-              JourneyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedValidateBankDetailsResponse))}", journey)
+            case ValidBankDetails(obfuscatedBarsResponse) =>
+              JourneyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
               submissionService.saveJourney(
                 journey.copy(maybeBankDetails = Some(BankDetails(validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
               ).map { _ =>
                   Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
                 }
-            case Invalid(obfuscatedValidateBankDetailsResponse) =>
-              JourneyLogger.info(s"Bank details are invalid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedValidateBankDetailsResponse))}", journey)
+            case InvalidBankDetails(obfuscatedBarsResponse) =>
+              JourneyLogger.info(s"Bank details are invalid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
               Future.successful(BadRequest(views.direct_debit_form(
                 journey.taxpayer.selfAssessment.debits,
                 schedule,
