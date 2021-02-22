@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfservicetimetopay.models
+package bars.model
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OFormat}
 
-final case class BankDetailsRequest(sortCode:      String,
-                                    accountNumber: String) {
+sealed trait BarsValidationResult
+final case class ValidBankDetails(obfuscatedBarsResponse: BarsResponseOk) extends BarsValidationResult
+final case class InvalidBankDetails(obfuscatedBarsResponse: BarsResponse) extends BarsValidationResult
 
-  def obfuscate: BankDetailsRequest = BankDetailsRequest(
-    sortCode      = "***",
-    accountNumber = "***"
-  )
-
-  override def toString: String = {
-    obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
-  }
-}
-
-object BankDetailsRequest {
-  implicit val format: Format[BankDetailsRequest] = Json.format[BankDetailsRequest]
-}

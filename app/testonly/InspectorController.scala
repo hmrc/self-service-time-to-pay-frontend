@@ -16,6 +16,7 @@
 
 package testonly
 
+import bars.BarsConnector
 import config.AppConfig
 import controllers.FrontendBaseController
 import javax.inject.Inject
@@ -24,7 +25,6 @@ import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttpcalculator.CalculatorService
-import ssttpdirectdebit.DirectDebitConnector
 import timetopaytaxpayer.cor.TaxpayerConnector
 import views.Views
 
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 class InspectorController @Inject() (
-    ddConnector:       DirectDebitConnector,
+    ddConnector:       BarsConnector,
     calculatorService: CalculatorService,
     taxPayerConnector: TaxpayerConnector,
     cc:                MessagesControllerComponents,

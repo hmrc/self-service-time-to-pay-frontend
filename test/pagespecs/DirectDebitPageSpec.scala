@@ -110,11 +110,19 @@ class DirectDebitPageSpec extends ItSpec {
   "enter invalid bank account " ignore {
     beginJourney()
     directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
-    DirectDebitStub.validateBankFail(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    BarsStub.validateBankFail(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(InvalidBankDetails())
-
   }
+
+  "enter invalid bank account - SortCodeOnDenyList " ignore {
+    beginJourney()
+    directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
+    BarsStub.validateBankFailSortCodeOnDenyList(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    directDebitPage.clickContinue()
+    directDebitPage.assertErrorPageIsDisplayed(InvalidBankDetails())
+  }
+
   val sortCode = "12-34-56"
   val accountNumber = "12345678"
   val accountName = "Mr John Campbell"
@@ -122,7 +130,7 @@ class DirectDebitPageSpec extends ItSpec {
   "enter valid bank account " ignore {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.validateBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBanksIsSuccessful()
     directDebitPage.clickContinue()
     directDebitConfirmationPage.assertPageIsDisplayed()
@@ -131,7 +139,7 @@ class DirectDebitPageSpec extends ItSpec {
   "enter valid bank account given business partner not found succeeds" ignore {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.validateBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBanksBPNotFound(saUtr)
     directDebitPage.clickContinue()
     directDebitConfirmationPage.assertPageIsDisplayed()

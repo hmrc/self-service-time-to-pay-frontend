@@ -28,28 +28,6 @@ import timetopaytaxpayer.cor.model.SaUtr
 
 object DirectDebitStub extends Matchers with Status {
 
-  def validateBank(port: Int, sortCode: String, accountNumber: String): StubMapping =
-    stubFor(
-      post(urlPathEqualTo(s"/direct-debit/validate-bank-account"))
-        .withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
-        .willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody("true")
-        )
-    )
-
-  def validateBankFail(port: Int, sortCode: String, accountNumber: String): StubMapping =
-    stubFor(
-      post(urlPathEqualTo(s"/direct-debit/validate-bank-account"))
-        .withRequestBody(equalToJson("{\"sortCode\":\"" + sortCode.replace("-", "") + "\", \"accountNumber\":\"" + accountNumber + "\"}"))
-        .willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody("false")
-        )
-    )
-
   def getBanksIsSuccessful(creationDate: String = aYearAgo): StubMapping =
     stubFor(
       get(urlPathEqualTo(s"/direct-debit/${TdAll.utr}/banks"))

@@ -16,18 +16,18 @@
 
 package ssttpdirectdebit
 
+import bars.BarsService
+import bars.model.{InvalidBankDetails, ValidBankDetails}
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import javax.inject._
-import journey.Statuses.InProgress
 import journey.{Journey, JourneyService}
-import play.api.Logger
+import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorService
 import ssttpdirectdebit.DirectDebitForm._
-import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.play.config.AssetsConfig
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails}
@@ -36,13 +36,13 @@ import views.Views
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectDebitController @Inject() (
-    mcc:                  MessagesControllerComponents,
-    directDebitConnector: DirectDebitConnector,
-    actions:              Actions,
-    submissionService:    JourneyService,
-    requestSupport:       RequestSupport,
-    calculatorService:    CalculatorService,
-    views:                Views)(implicit appConfig: AppConfig, ec: ExecutionContext, assetsConfig: AssetsConfig)
+    mcc:               MessagesControllerComponents,
+    barsService:       BarsService,
+    actions:           Actions,
+    submissionService: JourneyService,
+    requestSupport:    RequestSupport,
+    calculatorService: CalculatorService,
+    views:             Views)(implicit appConfig: AppConfig, ec: ExecutionContext, assetsConfig: AssetsConfig)
   extends FrontendBaseController(mcc) {
 
   import requestSupport._
@@ -106,14 +106,17 @@ class DirectDebitController @Inject() (
             schedule,
             formWithErrors))),
         (validFormData: ArrangementDirectDebit) => {
-          directDebitConnector.validateBank(validFormData.sortCode, validFormData.accountNumber).flatMap { valid =>
-            if (valid)
+          barsService.validateBankDetails(validFormData.sortCode, validFormData.accountNumber).flatMap {
+
+            case ValidBankDetails(obfuscatedBarsResponse) =>
+              JourneyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
               submissionService.saveJourney(
                 journey.copy(maybeBankDetails = Some(BankDetails(validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
               ).map { _ =>
                   Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
                 }
-            else
+            case InvalidBankDetails(obfuscatedBarsResponse) =>
+              JourneyLogger.info(s"Bank details are invalid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
               Future.successful(BadRequest(views.direct_debit_form(
                 journey.taxpayer.selfAssessment.debits,
                 schedule,

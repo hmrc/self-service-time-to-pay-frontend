@@ -62,7 +62,7 @@ class ArrangementSummaryPageSpec extends ItSpec {
 
     directDebitPage.assertPageIsDisplayed()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    DirectDebitStub.validateBank(port, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
 
     directDebitConfirmationPage.assertPageIsDisplayed()
