@@ -122,10 +122,15 @@ class CalculatorService @Inject() (
       debit <- overallDebits.map(_.filterNot(_.dueDate.isAfter(calculatorInput.startDate)))
     } yield calculateHistoricInterest(debit)).sum
 
-    // Calculate interest for the first 7 days until the initial payment is actually taken out of the taxpayer's account
-    val initialPaymentInterest: BigDecimal = if (calculatorInput.initialPayment > 0)
-      calculateInitialPaymentInterest(calculatorInput.debits.filter(_.dueDate.isBefore(calculatorInput.startDate.plusWeeks(1))))
-    else BigDecimal(0)
+    // Calculate interest for the initial days leading up until when the initial upfront payment is actually taken out of the taxpayer's account
+    val hasAnInitialPayment: Boolean = calculatorInput.initialPayment > 0
+    val initialPaymentInterest: BigDecimal = if(hasAnInitialPayment) {
+      val initialPaymentDate: LocalDate = calculatorInput.startDate.plusDays(defaultInitialPaymentDays)
+      val debitsDueBeforeInitialPayment: Seq[DebitInput] = calculatorInput.debits.filter(_.dueDate.isBefore(initialPaymentDate))
+      calculateInitialPaymentInterest(debitsDueBeforeInitialPayment)
+    } else {
+      BigDecimal(0)
+    }
 
     // Calculate the schedule of regular payments on the all debits due before endDate
     val instalments: Seq[Instalment] = calculateStagedPayments
