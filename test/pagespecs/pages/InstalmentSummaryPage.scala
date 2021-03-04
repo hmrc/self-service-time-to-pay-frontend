@@ -87,7 +87,7 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
         val z = if (paymentDayOfMonth.equals("11th")) "4,914.18" else "4,921.60"
 
         s"""Check your payment plan
-           |Upfront payment taken within 5 days
+           |Upfront payment taken within 7 working days
            |£0.00
            |Change Monthly payments
            |Payments collected on

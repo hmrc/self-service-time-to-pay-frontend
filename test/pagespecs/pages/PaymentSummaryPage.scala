@@ -68,7 +68,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
       private val mainTextEnglish =
         """Payment summary
           |Upfront payment
-          |Taken in 3 to 5 days' time
+          |Taken within 7 working days
           |£123.00
           |Change Upfront payment
           |Remaining amount to pay

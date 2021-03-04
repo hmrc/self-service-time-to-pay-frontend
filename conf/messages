@@ -90,7 +90,7 @@ ssttp.landing.before-you-start.p1 = HMRC intend this as a one-off payment plan t
 
 ssttp.calculator.form.payment_summary.title = Payment summary
 ssttp.calculator.form.payment_summary.up-front-payment = Upfront payment
-ssttp.calculator.form.payment_summary.up-front-payment.hint = Taken in 3 to 5 days'' time
+ssttp.calculator.form.payment_summary.up-front-payment.hint = Taken within 7 working days
 ssttp.calculator.form.payment_summary.up-front-payment.change = Change
 ssttp.calculator.form.payment_summary.amount.remaining = Remaining amount to pay
 ssttp.calculator.form.payment_summary.continue = Continue
@@ -119,7 +119,7 @@ ssttp.calculator.form.payment_today_question.required = Select ''yes'' if you wa
 ssttp.calculator.form.payment_today_question.yes_label = Yes
 ssttp.calculator.form.payment_today_question.no_label = No
 
-ssttp.calculatorform.payment_today_question.why_pay_today.info = Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account in 3 to 5 days.
+ssttp.calculatorform.payment_today_question.why_pay_today.info = Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account within 7 working days.
 ssttp.calculator.payment_today_question.button-continue = Continue
 
 ssttp.calculator.form.duration.months.required = Enter a valid number of months
@@ -228,7 +228,7 @@ ssttp.arrangement.change_day.payment-day.continue = Continue
 ssttp.arrangement.change_day.payment-day.change.take-payment-on = Change Day
 
 ssttp.arrangement.instalment-summary.title = Check your payment plan
-ssttp.arrangement.instalment-summary.up-front-payment = Upfront payment taken within 5 days
+ssttp.arrangement.instalment-summary.up-front-payment = Upfront payment taken within 7 working days
 ssttp.arrangement.instalment-summary.up-front-payment.change = Change
 ssttp.arrangement.instalment-summary-table.title = Your payment plan
 ssttp.arrangement.instalment-summary-table.monthly-instalments = Monthly payments
@@ -345,7 +345,7 @@ ssttp.arrangement.complete.ddref = Your Direct Debit mandate reference:
 ssttp.arrangement.complete.print-label = Print your payment plan
 ssttp.arrangement.complete.next = What happens next?
 ssttp.arrangement.complete.summary = HMRC will send you a letter within 5 days with your payment dates.
-ssttp.arrangement.complete.first-payment = Your upfront payment will be taken in 3 to 5 days. Your next payment will be taken on {0}.
+ssttp.arrangement.complete.first-payment = Your upfront payment will be taken within 7 working days. Your next payment will be taken on {0}.
 ssttp.arrangement.complete.feedback = What did you think of this service?
 ssttp.arrangement.complete.help.h2 = If you need to change your payment plan
 ssttp.arrangement.complete.help.p1 = Call the HMRC Helpline on 0300 322 7015.
