@@ -57,15 +57,4 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
     (s"$baseUrl$completePath", s"$baseUrl$failurePath")
   }
-
-  // GA enhanced e-commerce custom vars
-  lazy val initialPaymentMetric: String = servicesConfig.getConfString("google-analytics.initialPaymentMetric", "metric7")
-  lazy val interestMetric: String = servicesConfig.getConfString("google-analytics.initialPaymentMetric", "metric8")
-  lazy val durationMetric: String = servicesConfig.getConfString("google-analytics.initialPaymentMetric", "metric9")
-  lazy val regularPaymentMetric: String = servicesConfig.getConfString("google-analytics.initialPaymentMetric", "metric10")
-  lazy val monthlyDueDateMetric: String = servicesConfig.getConfString("google-analytics.monthlyDueDateMetric", "metric11")
-  lazy val dueDateDimension: String = servicesConfig.getConfString("google-analytics.dueDateDimension", "dimension45")
-  lazy val callForDirectDebitAssistanceDimension: String = servicesConfig.getConfString("google-analytics.dueDateDimension", "dimension46")
-  lazy val printCompletePageDimension: String = servicesConfig.getConfString("google-analytics.dueDateDimension", "dimension47")
-  lazy val clickFeedbackOnComplete: String = servicesConfig.getConfString("google-analytics.dueDateDimension", "dimension48")
 }
