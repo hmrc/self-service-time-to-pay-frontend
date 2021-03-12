@@ -124,7 +124,7 @@ class CalculatorService @Inject() (
 
     // Calculate interest for the initial days leading up until when the initial upfront payment is actually taken out of the taxpayer's account
     val hasAnInitialPayment: Boolean = calculatorInput.initialPayment > 0
-    val initialPaymentInterest: BigDecimal = if(hasAnInitialPayment) {
+    val initialPaymentInterest: BigDecimal = if (hasAnInitialPayment) {
       val initialPaymentDate: LocalDate = calculatorInput.startDate.plusDays(defaultInitialPaymentDays)
       val debitsDueBeforeInitialPayment: Seq[DebitInput] = calculatorInput.debits.filter(_.dueDate.isBefore(initialPaymentDate))
       calculateInitialPaymentInterest(debitsDueBeforeInitialPayment)

@@ -36,23 +36,10 @@
         appConfig: config.AppConfig
 )
 
-@gaCheckoutCode = {
-@gaDoTransaction(debits = debits,
-  id = transactionId,
-  revenue = schedule.totalPayable,
-  initialPayment = Some(schedule.initialPayment),
-  interest = schedule.totalInterestCharged,
-  duration = schedule.instalments.length,
-  regularPayment = schedule.firstInstallment.amount,
-  step = 4,
-  paymentDay = schedule.firstInstallment.paymentDate.getDayOfMonth
-)
-}
 <div class="no_print">
 @main(
   title = Messages("ssttp.arrangement.complete.title"),
   maybeSidebarLinks = None,
-  googleAnalyticsCalls = Seq(gaCheckoutCode.body),
   welshToggleEnabled = false,
   hasUserPanel = true
 ) {

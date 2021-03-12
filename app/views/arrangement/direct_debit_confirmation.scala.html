@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
-@import partials.{direct_debit_details,gaDoCheckout, currency}
+@import partials.{direct_debit_details, currency}
 @import uk.gov.hmrc.play.config.AssetsConfig
 @import model._
 @import timetopaytaxpayer.cor.model._
@@ -40,21 +40,9 @@
   assetsConfig: uk.gov.hmrc.play.config.AssetsConfig
 )
 
-@gaCheckoutCode = {
-@gaDoCheckout(debits = debits,
-    step = 3,
-    revenue = schedule.totalPayable,
-    initialPayment = Some(schedule.initialPayment),
-    interest = schedule.totalInterestCharged,
-    duration = schedule.instalments.length,
-    regularPayment = schedule.firstInstallment.amount,
-    paymentDay = schedule.firstInstallment.paymentDate.getDayOfMonth
-)
-}
 
 @main(
     title = Messages("ssttp.arrangement.direct-debit.confirmation.title"),
-    googleAnalyticsCalls = Seq(gaCheckoutCode.body),
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
 ) {
     <h1 class="heading-xlarge">@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>

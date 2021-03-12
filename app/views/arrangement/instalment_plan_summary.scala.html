@@ -20,7 +20,6 @@ Time To Pay Instalment Summary Pretty Print Page
 *@
 
 @import timetopaytaxpayer.cor.model.Debit
-@import partials.gaDoCheckout
 @import helpers.{alert, message_list}
 @import helpers.forms.submit
 @import uk.gov.hmrc.play.views.html.helpers
@@ -45,21 +44,8 @@ Time To Pay Instalment Summary Pretty Print Page
 )
 
 
-@gaCheckoutCode = {
-    @gaDoCheckout(debits = debits,
-        step = 1,
-        revenue = schedule.totalPayable,
-        initialPayment = Some(schedule.initialPayment),
-        interest = schedule.totalInterestCharged,
-        duration = schedule.instalments.length,
-        regularPayment = schedule.firstInstallment.amount,
-        paymentDay = schedule.firstInstallment.paymentDate.getDayOfMonth
-    )
-}
-
 @main(
     title = Messages("ssttp.arrangement.instalment-summary.title"),
-    googleAnalyticsCalls = Seq(gaCheckoutCode.body.seq),
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
     ) {
         <h1 class="heading-xlarge">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
