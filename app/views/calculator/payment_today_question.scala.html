@@ -58,18 +58,4 @@
     <button id="next" type="submit" class="button" onclick="continue()">@Messages("ssttp.calculator.payment_today_question.button-continue")</button>
 </div>
     }
-
-<script type="text/javascript">
-function continue() {
-    window['optimizely'] = window['optimizely'] || [];
-        window['optimizely'].push({
-        type: "event",
-        eventName: "upfront-payment-continue",
-        tags: {
-            revenue: 0, // Optional in cents as integer (500 == $5.00)
-            value: 0.00 // Optional as float
-    }
-    });
-}
-    </script>
 }

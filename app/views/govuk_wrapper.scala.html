@@ -46,12 +46,10 @@
         maybeBackButtonUrl: Option[play.api.mvc.Call] = None)(implicit request: Request[_], messages: play.api.i18n.Messages)
 
 
-@import partials.{google_analytics_js}
-
 
 
 @head = {
-@viewsHelpers.head(
+@viewsHelpers.headWithTrackingConsent(
     linkElem = linksElem,
     headScripts = None
 )
@@ -75,18 +73,15 @@
 
 @afterHeader = {}
 
-@gaJs = @{
-    google_analytics_js(googleAnalyticsCalls)
-}
 
 @bodyEnd = {
 @viewsHelpers.footer(
-    analyticsToken = Some(appConfig.analyticsToken),
-    analyticsHost = appConfig.analyticsHost,
+    analyticsToken = None,
+    analyticsHost = "N/A",
     ssoUrl = None,
     scriptElem = Some(scriptElem),
     gaCalls = None,
-    analyticsAdditionalJs = Some(gaJs)
+    analyticsAdditionalJs = None
 )
 }
 

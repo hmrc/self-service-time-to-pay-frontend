@@ -30,8 +30,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
       throw new RuntimeException("Feedback survey url required")) + "/feedback/PWYOII/personal"
 
   lazy val assetsPrefix: String = servicesConfig.getString("assets.url") + servicesConfig.getString("assets.version")
-  lazy val analyticsToken: String = servicesConfig.getString("google-analytics.token")
-  lazy val analyticsHost: String = servicesConfig.getString("google-analytics.host")
   lazy val reportAProblemPartialUrl: String = s"$contactFrontendBaseUrl/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl: String = s"$contactFrontendBaseUrl/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val reportAccessibilityProblemUrl: String = s"$contactFrontendBaseUrl/contact/accessibility?service=$contactFormServiceIdentifier"

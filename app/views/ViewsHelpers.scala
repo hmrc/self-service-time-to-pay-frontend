@@ -43,21 +43,20 @@ class ViewsHelpers @Inject() (
     val textArea:                   TextArea,
 
     //copied from uk.gov.hmrc.play.views.html.layouts
-    val article:           Article,
-    val attorneyBanner:    AttorneyBanner,
-    val betaBanner:        BetaBanner,
-    val footer:            Footer,
-    val euExitLinks:       EuExitLinks,
-    val footerLinks:       FooterLinks,
-    val head:              Head,
-    val headerNav:         HeaderNav,
-    val loginStatus:       LoginStatus,
-    val mainContent:       MainContent,
-    val mainContentHeader: MainContentHeader,
-    val optimizelySnippet: OptimizelySnippet,
-    val gtmSnippet:        GTMSnippet,
-    val serviceInfo:       ServiceInfo,
-    val sidebar:           Sidebar
+    val article:                 Article,
+    val attorneyBanner:          AttorneyBanner,
+    val betaBanner:              BetaBanner,
+    val footer:                  Footer,
+    val euExitLinks:             EuExitLinks,
+    val footerLinks:             FooterLinks,
+    val headWithTrackingConsent: HeadWithTrackingConsent,
+    val headerNav:               HeaderNav,
+    val loginStatus:             LoginStatus,
+    val mainContent:             MainContent,
+    val mainContentHeader:       MainContentHeader,
+    val gtmSnippet:              GTMSnippet,
+    val serviceInfo:             ServiceInfo,
+    val sidebar:                 Sidebar
 
 //our partials
 

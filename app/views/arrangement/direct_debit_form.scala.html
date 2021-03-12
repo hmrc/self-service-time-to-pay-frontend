@@ -15,7 +15,7 @@
  *@
 
 @import timetopaytaxpayer.cor.model.Debit
-@import partials.{direct_debit_fields, gaDoCheckout}
+@import partials.direct_debit_fields
 @import helpers.forms.submit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import ssttpcalculator.model.PaymentSchedule
@@ -38,25 +38,9 @@
 )
 
 
-@gaCheckoutCode = {
-@gaDoCheckout(debits = debits,
-    step = 2,
-    revenue = schedule.totalPayable,
-    initialPayment = Some(schedule.initialPayment),
-    interest = schedule.totalInterestCharged,
-    duration = schedule.instalments.length,
-    regularPayment = schedule.firstInstallment.amount,
-    paymentDay = schedule.firstInstallment.paymentDate.getDayOfMonth
-)
-}
 @main(
     title = Messages("ssttp.arrangement.direct-debit.form.title"),
     maybeSidebarLinks =  None,
-    googleAnalyticsCalls = if(ddForm.hasErrors) {
-        Seq.empty
-    } else {
-        Seq(gaCheckoutCode.body)
-    },
     backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
 ) {
     @if(ddForm.hasErrors) {
