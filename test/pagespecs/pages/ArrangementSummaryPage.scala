@@ -80,9 +80,9 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |Cyfeirnod mandad Debyd Uniongyrchol:
           |123ABC123
           |Argraffu crynodeb o’ch taliadau
-          |Beth sy’n digwydd nesaf?
-          |Byddwn yn anfon llythyr atoch cyn pen 5 diwrnod i gadarnhau’ch dyddiadau talu.
-          |Your upfront payment will be taken within 7 working days. Your next payment will be taken on 28th December 2019.
+          |Yr hyn sy’n digwydd nesaf
+          |Bydd CThEM yn anfon llythyr atoch cyn pen 5 diwrnod gyda’ch dyddiadau talu.
+          |Caiff eich taliad ymlaen llaw ei gymryd cyn pen 7 diwrnod gwaith. Caiff eich taliad nesaf ei gymryd ar 28ain Rhagfyr 2019.
           |Os oes angen i chi newid eich cynllun talu
           |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.
           |Beth oedd eich barn am y gwasanaeth hwn? (mae’n cymryd 30 eiliad)

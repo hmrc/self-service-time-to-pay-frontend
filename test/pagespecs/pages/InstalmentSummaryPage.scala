@@ -18,11 +18,15 @@ package pagespecs.pages
 
 import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
+import language.Dates
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+import java.time.LocalDate
+
+abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: String, paymentDayOfMonthWelsh: String)
+                                    (implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
 
@@ -32,7 +36,7 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val expectedLines = Expected.MainText(paymentDayOfMonth).stripSpaces().split("\n")
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
 
@@ -76,9 +80,9 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
     }
 
     object MainText {
-      def apply(paymentDayOfMonth: String)(implicit language: Language): String = language match {
-        case English => mainTextEnglish(paymentDayOfMonth)
-        case Welsh   => mainTextWelsh(paymentDayOfMonth)
+      def apply()(implicit language: Language): String = language match {
+        case English => mainTextEnglish(paymentDayOfMonthEnglish)
+        case Welsh   => mainTextWelsh(paymentDayOfMonthWelsh)
       }
 
       private def mainTextEnglish(paymentDayOfMonth: String): String = {
@@ -107,9 +111,9 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
       }
 
       private def mainTextWelsh(paymentDayOfMonth: String): String = {
-        val x = if (paymentDayOfMonth.equals("11th")) "14.18" else "21.60"
-        val y = if (paymentDayOfMonth.equals("11th")) "2,464.18" else "2,471.60"
-        val z = if (paymentDayOfMonth.equals("11th")) "4,914.18" else "4,921.60"
+        val x = if (paymentDayOfMonth.equals("11eg")) "14.18" else "21.60"
+        val y = if (paymentDayOfMonth.equals("11eg")) "2,464.18" else "2,471.60"
+        val z = if (paymentDayOfMonth.equals("11eg")) "4,914.18" else "4,921.60"
 
         s"""Gwiriwch fanylion eich amserlen talu
            |Taliad ymlaen llaw
@@ -119,9 +123,9 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
            |$paymentDayOfMonth neu’r diwrnod gwaith nesaf
            |Newid
            |Rhandaliadau misol
-           |December 2019
+           |Rhagfyr 2019
            |£2,450.00
-           |January 2020
+           |Ionawr 2020
            |£$y
            |Wedi’u casglu dros £$x o fisoedd
            |Newid Rhandaliadau misol
@@ -135,7 +139,7 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonth: String
 }
 
 class InstalmentSummaryPageForPaymentDayOfMonth27th(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
-  extends InstalmentSummaryPage(baseUrl, "28th")(webDriver)
+  extends InstalmentSummaryPage(baseUrl, paymentDayOfMonthEnglish = "28th",  paymentDayOfMonthWelsh = "28ain")(webDriver)
 
 class InstalmentSummaryPageForPaymentDayOfMonth11th(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
-  extends InstalmentSummaryPage(baseUrl, "11th")(webDriver)
+  extends InstalmentSummaryPage(baseUrl, paymentDayOfMonthEnglish = "11th", paymentDayOfMonthWelsh = "11eg")(webDriver)

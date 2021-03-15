@@ -30,50 +30,46 @@
         implicit messages: play.api.i18n.Messages
 )
 
+<h1 class="heading-large">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
+<h2 class="heading-small">@Messages("ssttp.arrangement.complete.ddref")</h2>
+<p class="small">@directDebitMandate</p>
+<table>
+    <tbody>
+    @if(schedule.initialPayment > BigDecimal(0)) {
 
-@defining(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)) { formatter =>
+        <tr>
+            <td><div class="bold">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</div>
+                <p class="small">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p></td>
+            <td>@partials.currency(schedule.initialPayment)</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<h2 class="heading-small">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
+<table>
+    <tbody>
 
-    <h1 class="heading-large">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
-    <h2 class="heading-small">@Messages("ssttp.arrangement.complete.ddref")</h2>
-    <p class="small">@directDebitMandate</p>
-    <table>
-        <tbody>
-        @if(schedule.initialPayment > BigDecimal(0)) {
+    @schedule.instalments.zipWithIndex.map { case (instalment, index) =>
+        <tr>
+            <td>
+                <div><strong class="bold">@wholeDate(instalment.paymentDate)</strong></div>
+                @if(index + 1 == schedule.instalments.size) {
+                    @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest", partials.currency(schedule.totalInterestCharged))
+                }
+            </td>
+            <td> @partials.currency(instalment.amount)
+            </td>
+        </tr>
+    }
+    <tr>
+        <td><strong class="bold">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment")</strong></td>
+        <td>@partials.currency(schedule.totalPayable)</td>
+    </tr>
 
-            <tr>
-                <td><div class="bold">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</div>
-                    <p class="small">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p></td>
-                <td>@partials.currency(schedule.initialPayment)</td>
-            </tr>
-        }
-        </tbody>
-    </table>
-    <h2 class="heading-small">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
-    <table>
-        <tbody>
-
-        @schedule.instalments.zipWithIndex.map { case (instalment, index) =>
-            <tr>
-                <td>
-                    <div><strong class="bold">@instalment.paymentDate.format(formatter)</strong></div>
-                    @if(index + 1 == schedule.instalments.size) {
-                        @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest", partials.currency(schedule.totalInterestCharged))
-                    }
-                </td>
-                <td> @partials.currency(instalment.amount)
-                </td>
-            </tr>
-        }
-}
-<tr>
-    <td><strong class="bold">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment")</strong></td>
-    <td>@partials.currency(schedule.totalPayable)</td>
-</tr>
-
-<tr>
-    <td><p class="bold">@Messages("ssttp.arrangement.instalment-summary.payment-date.title")</p></td>
-    <td>@getMonthlyDateFormatted(schedule.ps.firstInstallment.paymentDate) @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")</td>
-</tr>
-</tbody>
+    <tr>
+        <td><p class="bold">@Messages("ssttp.arrangement.instalment-summary.payment-date.title")</p></td>
+        <td>@getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")</td>
+    </tr>
+    </tbody>
 </table>
 

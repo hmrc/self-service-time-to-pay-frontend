@@ -20,7 +20,6 @@ import language.Dates
 import play.api.i18n.Messages
 import ssttpcalculator.model.{DebitInput, Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.Debit
-import uk.gov.hmrc.domain.SaUtr
 
 package object model {
 
@@ -47,11 +46,7 @@ package object model {
     def getMonthlyInstalmentDate: Int = firstInstallment.paymentDate.getDayOfMonth
     def initialPaymentScheduleDate: LocalDate = firstInstallment.paymentDate
     def getUpFrontPayment: BigDecimal = ps.initialPayment
-    def getMonthlyDateFormatted(implicit messages: Messages): String = Dates.getMonthlyDateFormatted(firstInstallment.paymentDate)
-  }
-
-  implicit class InstalmentExt(val v: Instalment) extends AnyVal {
-    def getDateInReadableFormat: String = s"${v.paymentDate.getMonth} ${v.paymentDate.getYear.toString}".toLowerCase.capitalize
+    def getMonthlyDateFormatted(implicit messages: Messages): String = Dates.getDayOfMonthOrdinal(firstInstallment.paymentDate)
   }
 
   implicit class DebitExt(val v: Debit) extends AnyVal {

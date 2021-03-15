@@ -16,35 +16,34 @@
 
 package language
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
 import play.api.i18n.Messages
-import req.RequestSupport
+
+import java.time.LocalDate
 
 object Dates {
-
-  val `format d MMMM y` = DateTimeFormatter.ofPattern("d MMMM y")
-
-  def formatDate(date: LocalDate): String = `format d MMMM y`.format(date)
-
-  def getMonthlyDateFormatted(localDate: LocalDate)(implicit messages: Messages): String = RequestSupport.language(messages) match {
-    //TODO: Welsh
-    case _ =>
-      val date = localDate.getDayOfMonth.toString
-      val postfix = {
-        if (date == "11" || date == "12" || date == "13") "th"
-        else if (date.endsWith("1")) "st"
-        else if (date.endsWith("2")) "nd"
-        else if (date.endsWith("3")) "rd"
-        else "th"
-      }
-      s"$date$postfix"
+  /**
+   * @return the day of month will be formatted as an ordinal in english or welsh, e.g. "31st" or "31ain"
+   */
+  def getDayOfMonthOrdinal(localDate: LocalDate)
+    (implicit messages: Messages): String = {
+    val day = localDate.getDayOfMonth
+    val ordinal = messages(s"date.ordinal.$day")
+    s"$day$ordinal"
   }
 
-  def wholeDate(localDate: LocalDate)(implicit messages: Messages): String = {
-    val day = getMonthlyDateFormatted(localDate)
-    val month = localDate.getMonth.toString.toLowerCase.capitalize
+  def getMonthFormatted(localDate: LocalDate)(implicit messages: Messages): String = {
+    messages(s"date.${localDate.getMonth.toString.toLowerCase}")
+  }
+
+  /**
+   * @param useOrdinals If true the day of month will be formatted as an ordinal, i.e. "12th"
+   *                    If false, the day of month will be formatted as a cardinal, i.e. "12"
+   * @return the formatted date in either english or welsh, such as "31st January 2021" or "31ain Ionawr 2021"
+   */
+  def wholeDate(localDate: LocalDate, useOrdinals: Boolean = true)
+    (implicit messages: Messages): String = {
+    val day = getDayOfMonthOrdinal(localDate)
+    val month = getMonthFormatted(localDate)
     val year = localDate.getYear
     s"$day $month $year"
   }

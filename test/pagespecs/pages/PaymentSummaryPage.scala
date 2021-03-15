@@ -79,7 +79,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
       private val mainTextWelsh =
         """Crynodeb o’r taliadau
           |Taliad ymlaen llaw
-          |Wedi’i gymryd ymhen 3 i 5 diwrnod
+          |I’w gymryd cyn pen 7 diwrnod gwaith
           |£123.00
           |Newid Taliad ymlaen llaw
           |Swm sy’n weddill i’w dalu
