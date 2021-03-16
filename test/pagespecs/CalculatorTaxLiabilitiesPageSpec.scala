@@ -93,11 +93,11 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
         private val mainTextEnglish =
           """Your Self Assessment tax bill is £4,900.00
             |Self Assessment statement
-            |Due 25 November 2021
+            |Due 25th November 2021
             |First payment on account for tax year 2019 to 2020
             |
             |£2,500.00
-            |Due 25 November 2021
+            |Due 25th November 2021
             |Second payment on account for tax year 2019 to 2020
             |
             |£2,400.00
@@ -107,11 +107,11 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
         private val mainTextWelsh =
           """Crynodeb o’ch cyfrif Hunanasesiad £4,900.00
             |Dadansoddiad Hunanasesiad
-            |Due 25 November 2021
+            |Due 25th Tachwedd 2021
             |Taliad cyntaf ar gyfrif for tax year 2019 to 2020
             |
             |£2,500.00
-            |Due 25 November 2021
+            |Due 25th Tachwedd 2021
             |Ail daliad ar gyfrif for tax year 2019 to 2020
             |
             |£2,400.00

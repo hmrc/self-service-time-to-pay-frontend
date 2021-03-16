@@ -19,6 +19,7 @@
 @import ssttpcalculator.model.PaymentSchedule
 @import _root_.model._
 @import model._
+@import language.Dates
 
 @(
         paymentSchedule: PaymentSchedule)(
@@ -68,7 +69,7 @@
     </div>
     @{
       paymentSchedule.instalments.map { instalment => <div class="app-check-your-answers__contents">
-      <dt class="app-check-your-answers__question no_borderline">{instalment.getDateInReadableFormat}</dt>
+      <dt class="app-check-your-answers__question no_borderline">{Dates.getMonthFormatted(instalment.paymentDate)} {instalment.paymentDate.getYear}</dt>
       <dd class="app-check-your-answers__answer no_borderline">{partials.currency(instalment.amount)}</dd>
       <dd class="app-check-your-answers__change no_borderline"></dd></div>}
       }
