@@ -26,7 +26,14 @@ final case class PaymentPlanRequest(requestingService:      String,
                                     knownFact:              List[KnownFact],
                                     directDebitInstruction: DirectDebitInstruction,
                                     paymentPlan:            PaymentPlan,
-                                    printFlag:              Boolean)
+                                    printFlag:              Boolean) {
+
+  def obfuscate: PaymentPlanRequest = copy(
+    knownFact              = knownFact.map(_.obfuscate),
+    directDebitInstruction = directDebitInstruction.obfuscate,
+    paymentPlan            = paymentPlan.obfuscate
+  )
+}
 
 object PaymentPlanRequest {
   implicit val paymentPlanRequestFormatter: Format[PaymentPlanRequest] = Json.format[PaymentPlanRequest]
@@ -35,7 +42,12 @@ object PaymentPlanRequest {
 final case class KnownFact(
     service: String,
     value:   String
-)
+) {
+
+  def obfuscate: KnownFact = copy(
+    value = "***" //utr
+  )
+}
 
 object KnownFact {
   implicit val format: Format[KnownFact] = Json.format[KnownFact]
@@ -55,7 +67,12 @@ final case class PaymentPlan(
     balancingPaymentAmount:    String,
     balancingPaymentDate:      LocalDate,
     totalLiability:            String
-)
+) {
+
+  def obfuscate: PaymentPlan = copy(
+    paymentReference = "***" //utr
+  )
+}
 
 object PaymentPlan {
   implicit val format: Format[PaymentPlan] = Json.format[PaymentPlan]

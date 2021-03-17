@@ -19,6 +19,7 @@ package ssttpdirectdebit
 import com.google.inject._
 import play.api.Logger
 import play.api.http.Status
+import play.api.libs.json.Json
 import play.api.mvc.Request
 import ssttparrangement.SubmissionError
 import timetopaytaxpayer.cor.model.SaUtr
@@ -43,7 +44,8 @@ class DirectDebitConnector @Inject() (
   val baseUrl: String = servicesConfig.baseUrl("direct-debit")
 
   def submitPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit request: Request[_]): Future[DDSubmissionResult] = {
-    JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan")
+    val obfuscatedPaymentPlan = paymentPlan.obfuscate
+    JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan:\n ${Json.prettyPrint(Json.toJson(obfuscatedPaymentPlan))}")
 
     httpClient.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$baseUrl/direct-debit/${saUtr.value}/instructions/payment-plan", paymentPlan).map {
       Result => Right(Result)
