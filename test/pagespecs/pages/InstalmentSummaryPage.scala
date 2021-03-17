@@ -26,7 +26,7 @@ import testsupport.RichMatchers._
 import java.time.LocalDate
 
 abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: String, paymentDayOfMonthWelsh: String)
-                                    (implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+  (implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
 
@@ -139,7 +139,7 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
 }
 
 class InstalmentSummaryPageForPaymentDayOfMonth27th(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
-  extends InstalmentSummaryPage(baseUrl, paymentDayOfMonthEnglish = "28th",  paymentDayOfMonthWelsh = "28ain")(webDriver)
+  extends InstalmentSummaryPage(baseUrl, paymentDayOfMonthEnglish = "28th", paymentDayOfMonthWelsh = "28ain")(webDriver)
 
 class InstalmentSummaryPageForPaymentDayOfMonth11th(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
   extends InstalmentSummaryPage(baseUrl, paymentDayOfMonthEnglish = "11th", paymentDayOfMonthWelsh = "11eg")(webDriver)
