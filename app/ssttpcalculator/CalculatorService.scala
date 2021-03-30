@@ -398,6 +398,7 @@ object CalculatorService {
       durationInMonths: Int, preferredPaymentDayOfMonth: Int, initialPayment: BigDecimal, debits: Seq[DebitInput])
     (implicit clock: Clock): CalculatorInput = {
 
+    val tenDays = 10
     val oneWeek = 7
     val twoWeeks = oneWeek * 2
 
@@ -417,9 +418,9 @@ object CalculatorService {
       if (initialPayment.equals(BigDecimal(0))) {
         val daysBetweenStartAndPaymentDates = DAYS.between(startDate, defaultPaymentDate)
 
-        if (daysBetweenStartAndPaymentDates < oneWeek && DAYS.between(startDate, defaultPaymentDatePlusOneMonth) < oneWeek)
+        if (daysBetweenStartAndPaymentDates < tenDays && DAYS.between(startDate, defaultPaymentDatePlusOneMonth) < oneWeek)
           (defaultPaymentDatePlusTwoMonths, defaultEndDatePlusTwoMonths)
-        else if (daysBetweenStartAndPaymentDates < oneWeek)
+        else if (daysBetweenStartAndPaymentDates < tenDays)
           (defaultPaymentDatePlusOneMonth, defaultEndDatePlusOneMonth)
         else
           (defaultPaymentDate, defaultEndDate)
