@@ -26,7 +26,10 @@ case class CalculatorInput(
     startDate:        LocalDate,
     endDate:          LocalDate,
     firstPaymentDate: Option[LocalDate] = None
-)
+) {
+  //TODO remove this
+  override def toString: String = s"CalculatorInput(debits=$debits, initialPayment=$initialPayment, startDate=$startDate, endDate=$endDate, firstPaymentDate=$firstPaymentDate)"
+}
 
 object CalculatorInput {
 

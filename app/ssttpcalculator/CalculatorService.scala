@@ -30,6 +30,7 @@ import java.time.LocalDate.now
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.{Clock, LocalDate, Year}
 import javax.inject.Inject
+import scala.collection.immutable
 import scala.concurrent.ExecutionContext
 import scala.math.BigDecimal
 import scala.math.BigDecimal.RoundingMode.HALF_UP
@@ -51,7 +52,7 @@ class CalculatorService @Inject() (
   val `14 day gap between the initial payment date and the first scheduled payment date`: Int = 14
 
   def computeSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
-    val availableSchedules = availablePaymentSchedules(
+    val availableSchedules: Seq[PaymentSchedule] = availablePaymentSchedules(
       journey.taxpayer.selfAssessment,
       journey.safeInitialPayment,
       journey.maybeArrangementDayOfMonth
@@ -92,7 +93,7 @@ class CalculatorService @Inject() (
 
       val dayOfMonth = maybeArrangementDayOfMonth.map(_.dayOfMonth).getOrElse(defaultPreferredDayOfMonth)
 
-      val calculatorInput = CalculatorService.changeCalculatorInput(
+      val calculatorInput: CalculatorInput = CalculatorService.changeCalculatorInput(
         durationInMonths,
         dayOfMonth,
         initialPayment,
@@ -141,14 +142,14 @@ class CalculatorService @Inject() (
     val totalInterest = (instalments.map(_.interest).sum + totalHistoricInterest + initialPaymentInterest).setScale(2, HALF_UP)
 
     PaymentSchedule(
-      calculatorInput.startDate,
-      calculatorInput.endDate,
-      calculatorInput.initialPayment,
-      amountToPay,
-      amountToPay - calculatorInput.initialPayment,
-      totalInterest,
-      amountToPay + totalInterest,
-      instalments.init :+ Instalment(
+      startDate            = calculatorInput.startDate,
+      endDate              = calculatorInput.endDate,
+      initialPayment       = calculatorInput.initialPayment,
+      amountToPay          = amountToPay,
+      instalmentBalance    = amountToPay - calculatorInput.initialPayment,
+      totalInterestCharged = totalInterest,
+      totalPayable         = amountToPay + totalInterest,
+      instalments          = instalments.init :+ Instalment(
         instalments.last.paymentDate,
         instalments.last.amount + totalInterest,
         instalments.last.interest
@@ -395,10 +396,17 @@ object CalculatorService {
    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
    */
   def changeCalculatorInput(
-      durationInMonths: Int, preferredPaymentDayOfMonth: Int, initialPayment: BigDecimal, debits: Seq[DebitInput])
+      durationInMonths:           Int,
+      preferredPaymentDayOfMonth: Int,
+      initialPayment:             BigDecimal,
+      debits:                     Seq[DebitInput])
     (implicit clock: Clock): CalculatorInput = {
 
-    val tenDays = 10
+    /**
+     * TODO: explain why
+     */
+    val fewDays = 10
+
     val oneWeek = 7
     val twoWeeks = oneWeek * 2
 
@@ -418,9 +426,9 @@ object CalculatorService {
       if (initialPayment.equals(BigDecimal(0))) {
         val daysBetweenStartAndPaymentDates = DAYS.between(startDate, defaultPaymentDate)
 
-        if (daysBetweenStartAndPaymentDates < tenDays && DAYS.between(startDate, defaultPaymentDatePlusOneMonth) < oneWeek)
+        if (daysBetweenStartAndPaymentDates < fewDays && DAYS.between(startDate, defaultPaymentDatePlusOneMonth) < fewDays)
           (defaultPaymentDatePlusTwoMonths, defaultEndDatePlusTwoMonths)
-        else if (daysBetweenStartAndPaymentDates < tenDays)
+        else if (daysBetweenStartAndPaymentDates < fewDays)
           (defaultPaymentDatePlusOneMonth, defaultEndDatePlusOneMonth)
         else
           (defaultPaymentDate, defaultEndDate)

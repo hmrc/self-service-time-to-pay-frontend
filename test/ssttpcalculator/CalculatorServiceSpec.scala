@@ -297,49 +297,49 @@ class CalculatorServiceSpec extends WordSpec with Matchers with DateSupport {
         val clock = clockForMay(_23rd)
 
         changeCalculatorInput(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
-          debits, noInitialPayment, startDate = may(_23rd), endDate = may(_31st), firstPaymentDate = Some(june(_1st)))
+          debits, noInitialPayment, startDate = may(_23rd), endDate = june(_30th), firstPaymentDate = Some(july(_1st)))
       }
 
-      "the required day of the month is the 28th which is in seven days time" in {
+      "the required day of the month is the 28th which is in 10 days time" in {
         val clock = clockForMay(_21st)
 
         changeCalculatorInput(zeroDuration, _28th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
-          debits, noInitialPayment, startDate = may(_21st), endDate = may(_27th), firstPaymentDate = Some(may(_28th)))
+          debits, noInitialPayment, startDate = may(_21st), endDate = june(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
-      "the required day of the month is the 29th which is in seven days time" in {
+      "the required day of the month is the 29th which is in 10 days time" in {
         val clock = clockForMay(_22nd)
 
         changeCalculatorInput(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
           debits, noInitialPayment, startDate = may(_22nd), endDate = may(_31st), firstPaymentDate = Some(june(_1st)))
       }
 
-      "the required day of the month is less than seven days from the current date and in the same month" in {
+      "the required day of the month is less than 10 days from the current date and in the same month" in {
         val clock = clockForMay(_15th)
 
         changeCalculatorInput(zeroDuration, _21st, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
           debits, noInitialPayment, startDate = may(_15th), endDate = june(_20th), firstPaymentDate = Some(june(_21st)))
       }
 
-      "the required day of the month is less than seven days from the current date and in the next month" in {
+      "the required day of the month is less than 10 days from the current date and in the next month" in {
         val clock = clockForMay(_28th)
 
         changeCalculatorInput(zeroDuration, _3rd, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
           debits, noInitialPayment, startDate = may(_28th), endDate = july(_2nd), firstPaymentDate = Some(july(_3rd)))
       }
 
-      "the required day of the month is seven days or more from the current date in the same month" in {
+      "the required day of the month is 10 days or more from the current date in the same month" in {
         val clock = clockForMay(_15th)
 
         changeCalculatorInput(zeroDuration, _22nd, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
-          debits, noInitialPayment, startDate = may(_15th), endDate = may(_21st), firstPaymentDate = Some(may(_22nd)))
+          debits, noInitialPayment, startDate = may(_15th), endDate = june(_21st), firstPaymentDate = Some(june(_22nd)))
       }
 
-      "the required day of the month is seven days or more from the current date in the next month" in {
+      "the required day of the month is 10 days or more from the current date in the next month" in {
         val clock = clockForMay(_28th)
 
         changeCalculatorInput(zeroDuration, _4th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
-          debits, noInitialPayment, startDate = may(_28th), endDate = june(_3rd), firstPaymentDate = Some(june(_4th)))
+          debits, noInitialPayment, startDate = may(_28th), endDate = july(_3rd), firstPaymentDate = Some(july(_4th)))
       }
     }
   }
@@ -381,60 +381,60 @@ class CalculatorServiceSpec extends WordSpec with Matchers with DateSupport {
           debits, noInitialPayment, startDate = may(_29th), endDate = july(_31st), firstPaymentDate = Some(july(_1st)))
       }
 
-      "the required day of the month is the 28th which is in less than seven days time" in {
+      "the required day of the month is the 28th which is in less than 10 days time" in {
         val clock = clockForMay(_22nd)
 
         changeCalculatorInput(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
           debits, noInitialPayment, startDate = may(_22nd), endDate = july(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
-      "the required day of the month is the 29th which is in less than seven days time" in {
+      "the required day of the month is the 29th which is in less than 10 days time" in {
         val clock = clockForMay(_23rd)
 
         changeCalculatorInput(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
-          debits, noInitialPayment, startDate = may(_23rd), endDate = june(_30th), firstPaymentDate = Some(june(_1st)))
+          debits, noInitialPayment, startDate = may(_23rd), endDate = july(_31st), firstPaymentDate = Some(july(_1st)))
       }
 
-      "the required day of the month is the 28th which is in seven days time" in {
+      "the required day of the month is the 28th which is in 10 days time" in {
         val clock = clockForMay(_21st)
 
         changeCalculatorInput(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
-          debits, noInitialPayment, startDate = may(_21st), endDate = june(_27th), firstPaymentDate = Some(may(_28th)))
+          debits, noInitialPayment, startDate = may(_21st), endDate = july(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
-      "the required day of the month is the 29th which is in seven days time" in {
+      "the required day of the month is the 29th which is in 10 days time" in {
         val clock = clockForMay(_22nd)
 
         changeCalculatorInput(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
           debits, noInitialPayment, startDate = may(_22nd), endDate = june(_30th), firstPaymentDate = Some(june(_1st)))
       }
 
-      "the required day of the month is less than seven days from the current date and in the same month" in {
+      "the required day of the month is less than 10 days from the current date and in the same month" in {
         val clock = clockForMay(_15th)
 
         changeCalculatorInput(oneMonthDuration, _21st, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
           debits, noInitialPayment, startDate = may(_15th), endDate = july(_20th), firstPaymentDate = Some(june(_21st)))
       }
 
-      "the required day of the month is less than seven days from the current date and in the next month" in {
+      "the required day of the month is less than 10 days from the current date and in the next month" in {
         val clock = clockForMay(_28th)
 
         changeCalculatorInput(oneMonthDuration, _3rd, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
           debits, noInitialPayment, startDate = may(_28th), endDate = august(_2nd), firstPaymentDate = Some(july(_3rd)))
       }
 
-      "the required day of the month is seven days or more from the current date in the same month" in {
+      "the required day of the month is 10 days or more from the current date in the same month" in {
         val clock = clockForMay(_15th)
 
         changeCalculatorInput(oneMonthDuration, _22nd, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
-          debits, noInitialPayment, startDate = may(_15th), endDate = june(_21st), firstPaymentDate = Some(may(_22nd)))
+          debits, noInitialPayment, startDate = may(_15th), endDate = july(_21st), firstPaymentDate = Some(june(_22nd)))
       }
 
-      "the required day of the month is seven days or more from the current date in the next month" in {
+      "the required day of the month is 10 days or more from the current date in the next month" in {
         val clock = clockForMay(_28th)
 
         changeCalculatorInput(oneMonthDuration, _4th, noInitialPayment, debits)(clock) shouldBe CalculatorInput(
-          debits, noInitialPayment, startDate = may(_28th), endDate = july(_3rd), firstPaymentDate = Some(june(_4th)))
+          debits, noInitialPayment, startDate = may(_28th), endDate = august(_3rd), firstPaymentDate = Some(july(_4th)))
       }
     }
   }
