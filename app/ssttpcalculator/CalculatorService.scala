@@ -403,7 +403,9 @@ object CalculatorService {
     (implicit clock: Clock): CalculatorInput = {
 
     /**
-     * TODO: explain why
+     * We add 10 days extra capacity just in case if there are 3 bank holidays within the 10 days
+     * so ETMP still has chance to create direct debit instruction within 2 working days
+     * (it's assumed that weekends aren't working days)
      */
     val fewDays = 10
 
