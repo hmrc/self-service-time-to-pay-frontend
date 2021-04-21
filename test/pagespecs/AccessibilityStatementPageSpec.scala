@@ -19,6 +19,4 @@ package pagespecs
 import testsupport.ItSpec
 import testsupport.stubs._
 
-class AccessibilityStatementPageSpec extends ItSpec {
-
-}
+class AccessibilityStatementPageSpec extends ItSpec {}
