@@ -21,18 +21,5 @@ import testsupport.stubs._
 
 class AccessibilityStatementPageSpec extends ItSpec {
 
-  def beginJourney(): Unit = {
-    AuthStub.authorise()
-    TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
-    GgStub.signInPage(port)
-    startPage.open()
-    startPage.clickOnStartNowButton()
-  }
 
-  "check link and content are correct" in {
-    beginJourney()
-    accessibilityStatementPage.clickOnAccessibilityStatementLink()
-    accessibilityStatementPage.assertPageIsDisplayed
-  }
 }
