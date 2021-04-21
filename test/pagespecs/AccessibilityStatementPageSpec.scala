@@ -21,5 +21,4 @@ import testsupport.stubs._
 
 class AccessibilityStatementPageSpec extends ItSpec {
 
-
 }
