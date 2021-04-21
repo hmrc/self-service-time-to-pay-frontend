@@ -18,6 +18,7 @@ package language
 
 import play.api.i18n.{Lang, MessagesApi}
 import testsupport.ItSpec
+import times.ClockProvider
 
 import java.time.LocalDate
 
@@ -25,7 +26,7 @@ class DatesSpec extends ItSpec {
   import language.Dates._
 
   "getDayOfMonthOrdinal should show number with ordinal postfix" - {
-    val d = LocalDate.now()
+    val d = LocalDate.parse("2000-01-01") // Mb: January has 31 days, so we can test all 31 ordinals with it
 
     "when language is English" in {
       implicit val englishMsgs = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang("en")))
@@ -65,7 +66,6 @@ class DatesSpec extends ItSpec {
 
     "when language is Welsh" in {
       implicit val welshMsgs = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang("cy")))
-      val d = LocalDate.now()
 
       getDayOfMonthOrdinal(d.withDayOfMonth(1)) shouldBe "1af"
       getDayOfMonthOrdinal(d.withDayOfMonth(2)) shouldBe "2il"
