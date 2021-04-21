@@ -141,8 +141,7 @@
   afterHeader,
   footerTop,
   Some(
-    viewsHelpers.footerLinks(Some(Html(
-      s"""<li><a href="${ssttpaccessibility.routes.AccessibilityController.accessibilityStatement()}" data-sso="false" data-journey-click="footer:Click:Accessibility">${Messages("accessibility-statement.link")}</a></li>""") ))),
+    viewsHelpers.footerLinks()),
   nav = true)(
   content
 )
