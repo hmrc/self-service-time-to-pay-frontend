@@ -41,7 +41,6 @@ class Views @Inject() (
     val service_start:                                 views.html.core.service_start,
     val call_us:                                       views.html.core.call_us,
     val you_need_to_file:                              views.html.core.you_need_to_file,
-    val accessibility_statement:                       views.html.accessibility.accessibility_statement,
 
     val delete_answers: views.html.session.delete_answers
 )
