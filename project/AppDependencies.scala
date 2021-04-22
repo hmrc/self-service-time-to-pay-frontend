@@ -25,6 +25,7 @@ object AppDependencies {
     "com.github.tomakehurst" % "wiremock-standalone" % "2.27.1" % "test",
     "org.scalatest" %% "scalatest" % "3.0.8" % "test",
     "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
+    "org.scalacheck" %% "scalacheck" % "1.14.1" % "test",
     "com.softwaremill.macwire" %% "macros" % "2.3.7" % "test",
     "org.seleniumhq.selenium" % "selenium-java" % "3.141.59" % "test",
     "org.seleniumhq.selenium" % "htmlunit-driver" % "2.45.0" % "test"
