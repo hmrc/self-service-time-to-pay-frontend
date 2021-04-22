@@ -64,7 +64,6 @@ GET         /assets/*file                                                 contro
 
 GET         /language/:language                                           langswitch.LanguageSwitchController.switchToLanguage(language: Language)
 
-GET         /accessibility-statement                                      ssttpaccessibility.AccessibilityController.accessibilityStatement()
 
 GET         /session/keep-alive                                       controllers.TimeoutController.keepAliveSession()
 GET         /delete-answers                                           controllers.TimeoutController.killSession()
