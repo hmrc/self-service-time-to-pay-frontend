@@ -514,3 +514,11 @@ details summary:focus,
 .no-details details summary .arrow-closed {
     display:none;
 }
+
+.font-xsmall-normal {
+    font-size: 19px;
+}
+
+.margin-top-30 details {
+    margin-bottom:20px;
+}
