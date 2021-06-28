@@ -109,7 +109,6 @@ class ItSpec
   lazy val directDebitConfirmationPage: DirectDebitConfirmationPage = wire[DirectDebitConfirmationPage]
   lazy val arrangementSummaryPage: ArrangementSummaryPage = wire[ArrangementSummaryPage]
 
-
   // not eligible pages
   lazy val debtTooLargePage: DebtTooLargePage = wire[DebtTooLargePage]
   lazy val notOnIaPage: NotOnIaPage = wire[NotOnIaPage]

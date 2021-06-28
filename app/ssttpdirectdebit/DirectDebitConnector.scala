@@ -37,6 +37,8 @@ class DirectDebitConnector @Inject() (
     implicit
     ec: ExecutionContext
 ) {
+  private val logger = Logger(getClass)
+
   type DDSubmissionResult = Either[SubmissionError, DirectDebitInstructionPaymentPlan]
 
   import req.RequestSupport._
@@ -66,7 +68,7 @@ class DirectDebitConnector @Inject() (
       .recover {
         case e: RuntimeException =>
           JourneyLogger.info(s"DirectDebitConnector.getBanks: Error, $e")
-          Logger.error(e.getMessage)
+          logger.error(e.getMessage)
           throw new RuntimeException("GETBANKS threw unexpected error")
       }
   }
@@ -81,7 +83,7 @@ class DirectDebitConnector @Inject() (
       case e: Throwable           => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
     }
 
-    Logger.error(s"Failure from DES, code $code and body $message")
+    logger.error(s"Failure from DES, code $code and body $message")
     Left(SubmissionError(code, message))
   }
 }

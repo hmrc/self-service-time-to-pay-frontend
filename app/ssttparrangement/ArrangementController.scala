@@ -67,6 +67,8 @@ class ArrangementController @Inject() (
     appConfig: AppConfig,
     ec:        ExecutionContext) extends FrontendBaseController(mcc) {
 
+  private val logger = Logger(getClass)
+
   import clockProvider._
   import requestSupport._
 
@@ -273,7 +275,7 @@ class ArrangementController @Inject() (
 
           submitArrangementResult.flatMap {
             _.fold(submissionError => {
-              Logger.error(s"Exception: ${submissionError.code} + ${submissionError.message}")
+              logger.error(s"Exception: ${submissionError.code} + ${submissionError.message}")
               JourneyLogger.info(s"ArrangementController.arrangementSetUp: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to $applicationSuccessful", arrangement)
               auditService.sendArrangementSubmissionFailedEvent(journey, paymentSchedule, submissionError)
               applicationSuccessful

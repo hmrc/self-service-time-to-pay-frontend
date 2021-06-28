@@ -37,6 +37,7 @@ class ArrangementConnector @Inject() (
     implicit
     ec: ExecutionContext
 ) {
+  private val logger = Logger(getClass)
 
   import req.RequestSupport._
 
@@ -66,7 +67,7 @@ class ArrangementConnector @Inject() (
       case e: Throwable           => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
     }
 
-    Logger.error(s"Failure from DES, code $code and body $message")
+    logger.error(s"Failure from DES, code $code and body $message")
     Left(SubmissionError(code, message))
   }
 }

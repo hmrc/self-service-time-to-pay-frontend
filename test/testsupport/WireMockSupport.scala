@@ -26,6 +26,8 @@ import play.api.Logger
 trait WireMockSupport extends BeforeAndAfterAll with BeforeAndAfterEach {
   self: Suite =>
 
+  private val logger = Logger(getClass)
+
   implicit val wireMockServer: WireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(WireMockSupport.port))
 
   WireMock.configureFor(WireMockSupport.port)
@@ -33,15 +35,15 @@ trait WireMockSupport extends BeforeAndAfterAll with BeforeAndAfterEach {
   override protected def beforeAll(): Unit = wireMockServer.start()
 
   override protected def afterAll(): Unit = {
-    Logger.info("Stopping wire mock server ...")
+    logger.info("Stopping wire mock server ...")
     wireMockServer.stop()
-    Logger.info("Stopping wire mock server - done")
+    logger.info("Stopping wire mock server - done")
   }
 
   override def beforeEach() {
-    Logger.info("Resetting wire mock server ...")
+    logger.info("Resetting wire mock server ...")
     WireMock.reset()
-    Logger.info("Resetting wire mock server - done")
+    logger.info("Resetting wire mock server - done")
   }
 
 }

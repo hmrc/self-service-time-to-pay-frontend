@@ -34,6 +34,8 @@ class DesStubConnector @Inject() (
     requestSupport: RequestSupport
 )(implicit ec: ExecutionContext) {
 
+  private val logger = Logger(getClass)
+
   import requestSupport._
 
   def setReturns(tu: TestUser)(implicit request: Request[_]): Future[Unit] = {
@@ -50,7 +52,7 @@ class DesStubConnector @Inject() (
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's return in DES-STUB: $tu")
-          Logger.debug(s"Set up a predefined return in DES-STUB for $tu")
+          logger.debug(s"Set up a predefined return in DES-STUB for $tu")
       }
   }
 
@@ -68,7 +70,7 @@ class DesStubConnector @Inject() (
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's debit in DES-STUB: $tu")
-          Logger.debug(s"Set up a predefined debit in DES-STUB for $tu")
+          logger.debug(s"Set up a predefined debit in DES-STUB for $tu")
       }
   }
 

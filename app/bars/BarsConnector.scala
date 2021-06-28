@@ -16,22 +16,18 @@
 
 package bars
 
-import bars.model.{Account, BarsError, BarsResponse, BarsResponseOk, BarsResponseSortCodeOnDenyList, ValidateBankDetailsRequest, ValidateBankDetailsResponse}
+import bars.model._
 import com.google.inject._
 import play.api.Logger
-import play.api.http.Status
-import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
+import play.api.libs.json.Json
 import play.api.mvc.Request
 import ssttparrangement.SubmissionError
-import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
 /**
  * Bank Account Reputation (Bars) Connector
@@ -42,6 +38,8 @@ class BarsConnector @Inject() (
     implicit
     ec: ExecutionContext
 ) {
+  private val logger = Logger(getClass)
+
   type DDSubmissionResult = Either[SubmissionError, DirectDebitInstructionPaymentPlan]
 
   import req.RequestSupport._
@@ -65,7 +63,7 @@ class BarsConnector @Inject() (
           if (barsError.code == BarsError.sortCodeOnDenyList) {
             BarsResponseSortCodeOnDenyList(barsError)
           } else {
-            Logger.error(s"Unhandled error code for 400 HttpResponse: [$barsError]")
+            logger.error(s"Unhandled error code for 400 HttpResponse: [$barsError]")
             HttpReads.handleResponse("POST", url)(r)
 
             //any other idea? Above will throw exception. We can't refactor it because it's a lib and we

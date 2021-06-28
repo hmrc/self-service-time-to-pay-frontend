@@ -28,6 +28,8 @@ import scala.io.Source
 @Singleton
 class InterestRateService {
 
+  private val logger = Logger(getClass)
+
   lazy val rates: Seq[InterestRate] = streamInterestRates()
   val filename: String = "/interestRates.csv"
   val source: Source = Source.fromInputStream(getClass.getResourceAsStream(filename))
@@ -81,7 +83,7 @@ class InterestRateService {
             ).min,
           rate      = rate.rate
         )
-        Logger.info(s"Rate: $ir")
+        logger.info(s"Rate: $ir")
         ir
       }
     }
