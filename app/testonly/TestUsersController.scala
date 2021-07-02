@@ -27,7 +27,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
-import uk.gov.hmrc.auth.core.ConfidenceLevel.{L100, L200}
+import uk.gov.hmrc.auth.core.ConfidenceLevel.{L50, L200}
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,7 +59,7 @@ final case class TestUserForm(
     isOnIA                       = isOnIA,
     authorityId                  = authorityId.map(AuthorityId.apply).getOrElse(AuthorityId.random),
     affinityGroup                = AffinityGroup(affinityGroup),
-    confidenceLevel              = if (hasOverTwoHundred) L200.level else L100.level,
+    confidenceLevel              = if (hasOverTwoHundred) L200.level else L50.level,
     returns                      = Json.parse(returnsJson),
     returnsResponseStatusCode    = returnsResponseStatusCode.toInt,
     debits                       = Json.parse(debitsJson),

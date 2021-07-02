@@ -21,7 +21,7 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.mvc.Request
 import uk.gov.hmrc.http.{HttpException, HttpResponse, Upstream4xxResponse, Upstream5xxResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement

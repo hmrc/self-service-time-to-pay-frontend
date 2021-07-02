@@ -47,7 +47,7 @@ class PaymentTodayQuestionPageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    paymentTodayQuestionPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getTaxLiabilities()}")
+    paymentTodayQuestionPage.backButtonHref mustBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getTaxLiabilities()}")
   }
 
   "select yes and go to calculator payment-today" in {

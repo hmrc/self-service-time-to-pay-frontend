@@ -60,7 +60,7 @@ class InspectorController @Inject() (
         "eligibilityStatus" -> maybeJourney.map(_.maybeEligibilityStatus).json
       ),
       "not supported - todo remove it",
-      hc.headers
+      hc.otherHeaders // TODO was hc.headers
     ))
   }
 

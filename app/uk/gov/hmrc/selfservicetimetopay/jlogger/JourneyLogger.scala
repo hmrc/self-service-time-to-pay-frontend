@@ -21,7 +21,7 @@ import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.logging.SessionId
+import uk.gov.hmrc.http.SessionId
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
 
 object JourneyLogger {

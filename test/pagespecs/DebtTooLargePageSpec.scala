@@ -35,6 +35,6 @@ class DebtTooLargePageSpec extends ItSpec {
 
   "back button" in {
     debtTooLargePage.open()
-    debtTooLargePage.backButtonHref shouldBe None
+    debtTooLargePage.backButtonHref mustBe None
   }
 }

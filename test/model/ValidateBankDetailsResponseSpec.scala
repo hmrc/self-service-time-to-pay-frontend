@@ -17,11 +17,12 @@
 package model
 
 import bars.model.ValidateBankDetailsResponse
-import org.scalatest.{FreeSpec, Matchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import testsupport.RichMatchers.convertToClueful
 
-class ValidateBankDetailsResponseSpec extends FreeSpec with Matchers with ScalaCheckPropertyChecks {
+class ValidateBankDetailsResponseSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks {
   private val yes = "yes"
   private val no = "no"
   private val indeterminate = "indeterminate"

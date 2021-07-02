@@ -22,8 +22,8 @@ class BigDecimalUtilSpec extends UnitSpec {
 
   "test rounding" in {
     testCases.foreach { tc =>
-      BigDecimalUtil.roundDownToNearestTen(tc.bigDecimal) shouldBe (tc.roundedDown: BigDecimal)
-      BigDecimalUtil.roundUpToNearestTen(tc.bigDecimal) shouldBe (tc.roundedUp: BigDecimal) withClue tc
+      BigDecimalUtil.roundDownToNearestTen(tc.bigDecimal) mustBe (tc.roundedDown: BigDecimal)
+      BigDecimalUtil.roundUpToNearestTen(tc.bigDecimal) mustBe (tc.roundedUp: BigDecimal) withClue tc
     }
   }
 

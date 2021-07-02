@@ -18,13 +18,15 @@ package testsupport
 
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime, ZoneId}
-
 import com.google.inject.{AbstractModule, Provides}
 import com.softwaremill.macwire._
+
 import javax.inject.Singleton
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{FreeSpec, TestData}
+import org.scalatest.TestData
+import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
 import pagespecs.pages._
 import play.api.Application
@@ -33,7 +35,7 @@ import testsupport.testdata.TdAll.frozenDateString
 import times.ClockProvider
 
 class ItSpec
-  extends FreeSpec
+  extends PlaySpec
   with GuiceOneServerPerTest
   with RichMatchers
   with WireMockSupport {
@@ -41,7 +43,7 @@ class ItSpec
   implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds)))
 
-  protected def configMap: Map[String, Any] = Map(
+  protected lazy val configMap: Map[String, Any] = Map(
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
@@ -49,11 +51,11 @@ class ItSpec
     "microservice.services.ia.port" -> WireMockSupport.port,
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
-    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}",
+    //    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}",
     "microservice.services.add-taxes.port" -> WireMockSupport.port,
     "microservice.services.bars.port" -> WireMockSupport.port,
     "microservice.services.identity-verification-frontend.uplift-url" -> s"http://localhost:${WireMockSupport.port}/mdtp/uplift",
-    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:${port}",
+    //    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:${port}",
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled")
 

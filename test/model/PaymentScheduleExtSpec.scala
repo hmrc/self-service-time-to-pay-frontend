@@ -16,13 +16,14 @@
 
 package model
 
-import java.time.LocalDate
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-import org.scalatest.{Matchers, WordSpec}
+import java.time.LocalDate
 import testsupport.testdata.TdAll._
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 
-class PaymentScheduleExtSpec extends WordSpec with Matchers {
+class PaymentScheduleExtSpec extends AnyWordSpec with Matchers {
   private val calculatorPaymentSchedule = new PaymentSchedule(
     startDate            = LocalDate.of(2019: Int, 4: Int, 23: Int),
     endDate              = LocalDate.of(2019: Int, 8: Int, 21: Int),

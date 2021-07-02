@@ -83,7 +83,7 @@ class DirectDebitPageSpec extends ItSpec {
 
   "back button" ignore {
     beginJourney()
-    directDebitPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttparrangement.routes.ArrangementController.getInstalmentSummary()}")
+    directDebitPage.backButtonHref mustBe Some(s"${baseUrl.value}${ssttparrangement.routes.ArrangementController.getInstalmentSummary()}")
   }
 
   "enter invalid Account Name" ignore {

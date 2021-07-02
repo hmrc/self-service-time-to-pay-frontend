@@ -16,9 +16,8 @@
 
 package testsupport
 
-import org.scalatest
-import org.scalatest.FreeSpec
+import org.scalatest.freespec.AnyFreeSpec
 
 class UnitSpec
-  extends FreeSpec
+  extends AnyFreeSpec
   with RichMatchers

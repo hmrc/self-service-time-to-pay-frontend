@@ -20,8 +20,8 @@ import play.api.libs.json.Json
 import testsupport.stubs.AuthStub
 import testsupport.{ItSpec, WireMockSupport}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.logging.{Authorization, SessionId}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.{Authorization, SessionId}
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -58,7 +58,7 @@ class AuthStubDebuggerSpec extends ItSpec {
       r.json
     }
 
-    authStubResponse shouldBe realAuthResponse withClue "USE http://jsondiff.com/ to compare"
+    authStubResponse mustBe realAuthResponse withClue "USE http://jsondiff.com/ to compare"
   }
 
 }

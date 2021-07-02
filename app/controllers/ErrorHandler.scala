@@ -22,7 +22,7 @@ import journey.Journey
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Request, Result, Results}
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 @Singleton

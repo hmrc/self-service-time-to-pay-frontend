@@ -6,15 +6,6 @@ import sbt.Tests.{Group, SubProcess}
 val appName = "self-service-time-to-pay-frontend"
 val scalaV = "2.12.12"
 
-val akkaVersion = "2.5.23"
-val akkaHttpVersion = "10.0.15"
-
-dependencyOverrides += "com.typesafe.akka" %% "akka-stream" % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-protobuf" % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-actor" % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
-
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests map { test =>
     Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
@@ -56,7 +47,7 @@ lazy val microservice = Project(appName, file("."))
     ))
   .settings(
     scalacOptions ++= Seq(
-      "-Xfatal-warnings",
+//      "-Xfatal-warnings",
       "-Xlint:-missing-interpolator,_",
       "-Yno-adapted-args",
       "-Ywarn-value-discard",

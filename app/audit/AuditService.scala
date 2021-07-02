@@ -88,7 +88,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
     //`directDebitSetup` was provided at the beginning.
     // I'm not changing it to make splunk events consistent with what we already have stored
     auditType = "directDebitSetup",
-    tags      = hc.headers.toMap,
+    tags      = hc.otherHeaders.toMap, // TODO was hc.headers.toMap
     detail    = extraInfo ++ makeDetails(journey, schedule)
   )
 

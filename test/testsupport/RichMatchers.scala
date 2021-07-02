@@ -16,14 +16,17 @@
 
 package testsupport
 
-import org.scalatest._
+//import org.scalatest._
+import org.scalatest.{AppendedClues, EitherValues, Inside, OptionValues, StreamlinedXml, TryValues}
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.diagrams.Diagrams
 
 object RichMatchers extends RichMatchers
 
 trait RichMatchers
   extends Matchers
-  with DiagrammedAssertions
+  with Diagrams
   with TryValues
   with EitherValues
   with OptionValues

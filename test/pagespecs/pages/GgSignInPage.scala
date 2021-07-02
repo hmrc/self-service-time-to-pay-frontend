@@ -29,8 +29,8 @@ class GgSignInPage(implicit webDriver: WebDriver) extends BasePage(WireMockSuppo
   override def path: String = GgStub.signInPath
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing{
-    readPath() shouldBe path
-    tagName("body").element.text shouldBe "Sign in using Government Gateway"
+    readPath() mustBe path
+    tagName("body").element.text mustBe "Sign in using Government Gateway"
     ()
   }
 }

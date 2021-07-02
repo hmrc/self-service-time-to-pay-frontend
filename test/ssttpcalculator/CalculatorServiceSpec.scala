@@ -19,15 +19,15 @@ package ssttpcalculator
 import java.time.{Clock, LocalDate, LocalDateTime}
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
-
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import ssttpcalculator.CalculatorService._
 import testsupport.{DateSupport, ItSpec}
 import ssttpcalculator.model.{CalculatorInput, DebitInput}
 
 import scala.math.BigDecimal
 
-class CalculatorServiceSpec extends WordSpec with Matchers with DateSupport {
+class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
   private def date(month: Int, day: Int): LocalDate = LocalDate.of(_2020, month, day)
   private def may(day: Int): LocalDate = date(may, day)
   private def june(day: Int): LocalDate = date(june, day)

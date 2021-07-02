@@ -61,7 +61,7 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    selectDatePage.backButtonHref shouldBe Some(s"${baseUrl.value}${monthlyPaymentAmountPage.path}")
+    selectDatePage.backButtonHref mustBe Some(s"${baseUrl.value}${monthlyPaymentAmountPage.path}")
   }
 
   "enter an invalid day" in {

@@ -24,7 +24,7 @@ import play.api.mvc.Request
 import ssttparrangement.SubmissionError
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.concurrent.{ExecutionContext, Future}

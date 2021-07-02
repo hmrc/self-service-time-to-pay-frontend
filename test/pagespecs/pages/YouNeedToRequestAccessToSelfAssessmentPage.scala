@@ -28,8 +28,8 @@ class YouNeedToRequestAccessToSelfAssessmentPage(baseUrl: BaseUrl)(implicit webD
   override def path: String = "/pay-what-you-owe-in-instalments/eligibility/access-your-self-assessment-online"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-    readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readPath() mustBe path
+    readGlobalHeaderText().stripSpaces mustBe Expected.GlobalHeaderText().stripSpaces
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }

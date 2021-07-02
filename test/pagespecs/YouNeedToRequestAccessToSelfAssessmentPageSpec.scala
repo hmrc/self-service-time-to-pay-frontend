@@ -71,7 +71,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
   "back button" in {
     begin()
     startNowAndAssertRequestToSA()
-    youNeedToRequestAccessToSelfAssessment.backButtonHref.value shouldBe s"${baseUrl.value}${startPage.path}"
+    youNeedToRequestAccessToSelfAssessment.backButtonHref.value mustBe s"${baseUrl.value}${startPage.path}"
   }
 
   "take the user to request page" in {

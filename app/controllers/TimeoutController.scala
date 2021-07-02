@@ -18,7 +18,7 @@ package controllers
 
 import controllers.action.Actions
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
 import javax.inject.Inject

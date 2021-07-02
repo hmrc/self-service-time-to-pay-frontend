@@ -55,7 +55,7 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    paymentTodayCalculatorPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()}")
+    paymentTodayCalculatorPage.backButtonHref mustBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()}")
   }
 
   "not valid amount" in {

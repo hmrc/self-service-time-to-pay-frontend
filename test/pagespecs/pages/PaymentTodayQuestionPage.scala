@@ -29,9 +29,9 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   override val path: String = "/pay-what-you-owe-in-instalments/calculator/payment-today-question"
 
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
-    readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
+    readPath() mustBe path
+    readGlobalHeaderText().stripSpaces mustBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle mustBe expectedTitle(expectedHeadingContent(lang), lang)
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }

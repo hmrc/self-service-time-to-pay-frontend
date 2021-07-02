@@ -64,7 +64,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
     val content = readMain().stripSpaces().replaceAll("\n", " ")
     expectedLines.foreach { expectedLine =>
       withClue(s"The page content should include '$expectedLine'"){
-        content should include(expectedLine)
+        content must include(expectedLine)
       }
     }
   }

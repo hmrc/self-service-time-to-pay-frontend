@@ -19,7 +19,7 @@ package ssttpcalculator
 import _root_.model._
 import bankholidays.WorkingDaysService.addWorkingDays
 import journey.Journey
-import play.api.Logger.logger
+import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.{CalculatorInput, Debit, DebitInput, Instalment, PaymentSchedule}
 import times.ClockProvider
@@ -43,6 +43,8 @@ class CalculatorService @Inject() (
   (implicit ec: ExecutionContext) {
 
   import clockProvider._
+
+  val logger = Logger(getClass)
 
   val minimumMonthsAllowedTTP: Int = 2
   val DebitDueAndCalculationDatesWithinRate: (Boolean, Boolean) = Tuple2(true, true)

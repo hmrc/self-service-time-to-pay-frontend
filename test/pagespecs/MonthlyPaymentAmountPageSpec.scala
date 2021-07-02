@@ -57,7 +57,7 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    monthlyPaymentAmountPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()}")
+    monthlyPaymentAmountPage.backButtonHref mustBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()}")
   }
 
   "invalid entry" in {

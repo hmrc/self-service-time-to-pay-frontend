@@ -35,7 +35,7 @@ class DirectDebitConnectorSpec extends ItSpec {
   "getBanks should return a DirectDebitBank" in {
     getBanksIsSuccessful()
 
-    connector.getBanks(saUtr)(FakeRequest()).futureValue shouldBe
+    connector.getBanks(saUtr)(FakeRequest()).futureValue mustBe
       DirectDebitInstructions(
         List(DirectDebitInstruction(
           sortCode      = Some("12-34-56"),
@@ -52,13 +52,13 @@ class DirectDebitConnectorSpec extends ItSpec {
 
     intercept[Exception] {
       connector.getBanks(saUtr)(FakeRequest()).futureValue
-    }.getCause.isInstanceOf[NotFoundException] shouldBe true
+    }.getCause.isInstanceOf[NotFoundException] mustBe true
   }
 
   "getBanks should tolerate a BP Not Found payload" in {
     DirectDebitStub.getBanksBPNotFound(saUtr)
 
-    connector.getBanks(saUtr)(FakeRequest()).futureValue shouldBe DirectDebitInstructions(Seq.empty)
+    connector.getBanks(saUtr)(FakeRequest()).futureValue mustBe DirectDebitInstructions(Seq.empty)
   }
 }
 

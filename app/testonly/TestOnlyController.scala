@@ -25,7 +25,7 @@ import play.api.mvc._
 import timetopaytaxpayer.cor.TaxpayerConnector
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.ExecutionContext
 import req.RequestSupport._

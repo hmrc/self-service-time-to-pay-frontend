@@ -27,8 +27,8 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
   override def path: String = "/pay-what-you-owe-in-instalments/eligibility/not-enrolled"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-    readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readPath() mustBe path
+    readGlobalHeaderText().stripSpaces mustBe Expected.GlobalHeaderText().stripSpaces
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }

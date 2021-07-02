@@ -30,9 +30,9 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/instalment-summary/select-date"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-    readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
+    readPath() mustBe path
+    readGlobalHeaderText().stripSpaces mustBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle mustBe expectedTitle(expectedHeadingContent(lang), lang)
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
@@ -43,20 +43,20 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
   }
 
   def assertErrorPageInvalidNumberIsDisplayed(): Unit = probing {
-    readPath() shouldBe path
+    readPath() mustBe path
     val expectedLines = Expected.ErrorTextInvalidDay().stripSpaces.split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
 
   def assertErrorPageNoDayIsDisplayed(): Unit = probing {
-    readPath() shouldBe path
+    readPath() mustBe path
     val expectedLines = Expected.ErrorTextNoDay().stripSpaces.split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
 
   def assertSecondOptionIsChecked(): Unit = {
     val secondOption = xpath("/html/body/main/div[2]/article/form/div/div[2]/input")
-    find(secondOption).forall(element => element.attribute("checked").isDefined) shouldBe true
+    find(secondOption).forall(element => element.attribute("checked").isDefined) mustBe true
     ()
   }
   def selectFirstOption28thDay(): Unit = {
