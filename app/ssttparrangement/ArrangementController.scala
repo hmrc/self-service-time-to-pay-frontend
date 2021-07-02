@@ -80,7 +80,12 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.start: $request")
 
     journeyService.getJourney.flatMap {
-      case journey @ Journey(_, InProgress, _, _, _, _, _, _, Some(_), _, _, _, _, _, _) => eligibilityCheck(journey)
+      case journey if !journey.isFinished && journey.maybeMonthlyPaymentAmount.isDefined =>
+        eligibilityCheck(journey)
+      case j =>
+        val ex = new RuntimeException(s"could not start journey")
+        JourneyLogger.error("Illegal state", ex)
+        throw ex
     }
   }
 

@@ -10,10 +10,10 @@ object AppDependencies {
     "com.beachape" %% "enumeratum" % "1.6.1",
     "uk.gov.hmrc" %% "simple-reactivemongo" % "7.30.0-play-26",
 
-    "uk.gov.hmrc" %% "time-to-pay-taxpayer-cor" % "[0.34.0]",
+    "uk.gov.hmrc" %% "time-to-pay-taxpayer-cor" % "[0.40.0]",
 
     "uk.gov.hmrc" %% "domain" %  "5.9.0-play-26",
-    "com.typesafe.play" %% "play-json-joda" % "2.6.13",
+    "com.typesafe.play" %% "play-json-joda" % "2.7.4",
 
     "com.beachape" %% "enumeratum-play" % "1.5.15", // Nb: Staying below version 1.5.16 whilst https://github.com/lloydmeta/enumeratum/issues/285 causes play-2.7 to be pulled in
     "org.julienrf" %% "play-json-derived-codecs" % "4.0.1"// Nb: Choose carefully for version of play. 4.0.1 is latest for play 2.6.

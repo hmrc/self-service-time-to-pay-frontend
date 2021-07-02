@@ -162,8 +162,7 @@ class CalculatorService @Inject() (
    * interest is not charged on debits where initial payment fully or partially clears the oldest debits or
    * if the debit is not liable for interest (due in the future after the end date).
    */
-  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
-  @SuppressWarnings(Array("org.wartremover.warts.Var"))
+  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps", "org.wartremover.warts.Var"))
   def calculateStagedPayments(implicit calculation: CalculatorInput): Seq[Instalment] = {
     // Get the dates of each instalment payment
     val trueFirstPaymentDate =

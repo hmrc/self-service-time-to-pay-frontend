@@ -3,6 +3,8 @@ import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import sbt.Tests.{Group, SubProcess}
 
+val appName = "self-service-time-to-pay-frontend"
+val scalaV = "2.12.12"
 
 val akkaVersion = "2.5.23"
 val akkaHttpVersion = "10.0.15"
@@ -23,7 +25,7 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
-    scalaVersion := "2.11.12",
+    scalaVersion := scalaV,
     majorVersion := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test )
   .settings(ScalariformSettings())
@@ -64,7 +66,8 @@ lazy val microservice = Project(appName, file("."))
       "-unchecked",
       "-language:implicitConversions",
       "-language:reflectiveCalls",
-      "-Ypartial-unification" //required by cats
+      "-Ypartial-unification", //required by cats
+      "-Ywarn-unused:-imports,-patvars,-privates,-locals,-explicits,-implicits,_"
     )
   )
   .settings(
@@ -76,5 +79,3 @@ lazy val microservice = Project(appName, file("."))
         state
     }
   )
-
-val appName = "self-service-time-to-pay-frontend"
