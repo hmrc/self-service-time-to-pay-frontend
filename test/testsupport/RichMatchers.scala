@@ -16,8 +16,7 @@
 
 package testsupport
 
-//import org.scalatest._
-import org.scalatest.{AppendedClues, EitherValues, Inside, OptionValues, StreamlinedXml, TryValues}
+import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.diagrams.Diagrams

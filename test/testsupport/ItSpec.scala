@@ -16,34 +16,38 @@
 
 package testsupport
 
-import java.time.ZoneOffset.UTC
-import java.time.{Clock, LocalDateTime, ZoneId}
 import com.google.inject.{AbstractModule, Provides}
 import com.softwaremill.macwire._
-
-import javax.inject.Singleton
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.TestData
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneServerPerTest
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import pagespecs.pages._
-import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
+import play.api.test.{DefaultTestServerFactory, RunningServer}
+import play.api.{Application, Mode}
+import play.core.server.ServerConfig
 import testsupport.testdata.TdAll.frozenDateString
 import times.ClockProvider
 
+import java.time.ZoneOffset.UTC
+import java.time.{Clock, LocalDateTime, ZoneId}
+import javax.inject.Singleton
+
 class ItSpec
   extends PlaySpec
-  with GuiceOneServerPerTest
+  with GuiceOneServerPerSuite
   with RichMatchers
   with WireMockSupport {
+
+  val testPort: Int = 19001
+  lazy val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$testPort")
 
   implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds)))
 
   protected lazy val configMap: Map[String, Any] = Map(
+    "assets.url" -> s"http://localhost:$testPort/assets/",
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
@@ -51,16 +55,16 @@ class ItSpec
     "microservice.services.ia.port" -> WireMockSupport.port,
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
-    //    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${port}",
+    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${testPort}",
     "microservice.services.add-taxes.port" -> WireMockSupport.port,
     "microservice.services.bars.port" -> WireMockSupport.port,
     "microservice.services.identity-verification-frontend.uplift-url" -> s"http://localhost:${WireMockSupport.port}/mdtp/uplift",
-    //    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:${port}",
+    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:${testPort}",
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled")
 
   //in tests use `app`
-  override def newAppForTest(testData: TestData): Application = new GuiceApplicationBuilder()
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
     .configure(configMap)
     .build()
@@ -91,7 +95,16 @@ class ItSpec
     webDriver.manage().deleteAllCookies()
   }
 
-  lazy val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$port")
+  override implicit protected lazy val runningServer: RunningServer =
+    TestServerFactory.start(app)
+
+  object TestServerFactory extends DefaultTestServerFactory {
+    override protected def serverConfig(app: Application): ServerConfig = {
+      val sc = ServerConfig(port    = Some(testPort), sslPort = Some(0), mode = Mode.Test, rootDir = app.path)
+      sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
+    }
+  }
+
   lazy val startPage: StartPage = wire[StartPage]
   lazy val ggSignInPage: GgSignInPage = wire[GgSignInPage]
   lazy val taxLiabilitiesPage: CalculatorTaxLiabilitiesPage = wire[CalculatorTaxLiabilitiesPage]

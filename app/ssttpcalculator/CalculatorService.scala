@@ -231,8 +231,8 @@ class CalculatorService @Inject() (
     val sortedDebits: Seq[DebitInput] = debits.sortBy(_.dueDate)
 
       def processDebits(amount: BigDecimal, debits: Seq[DebitInput]): BigDecimal = {
-        debits match {
-          case debit :: Nil => calculateAmount(amount, debit)._1 * calculateDays(debit) * currentDailyRate
+        debits.toList match {
+          case List(debit) => calculateAmount(amount, debit)._1 * calculateDays(debit) * currentDailyRate
           case debit :: remaining =>
             val result = calculateAmount(amount, debit)
             processDebits(result._2, remaining) + (result._1 * calculateDays(debit) * currentDailyRate)
