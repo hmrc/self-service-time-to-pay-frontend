@@ -120,6 +120,7 @@ final case class Journey(
 
   def saUtr: String = maybeSaUtr.getOrElse(throw new RuntimeException(s"saUtr missing on submission [${_id}]"))
 
+  def inProgress: Boolean = status == InProgress
   def isFinished: Boolean = status == FinishedApplicationSuccessful
 
   def obfuscate: Journey = Journey(

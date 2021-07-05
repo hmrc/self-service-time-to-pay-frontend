@@ -33,5 +33,8 @@ object JourneyLogger {
   def info(message: => String, selfAssessment: SelfAssessmentDetails)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(selfAssessment.obfuscate))
   def info(message: => String, journey: Option[Journey] = None)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(journey.map(_.obfuscate)))
   def info(message: => String, arrangement: TTPArrangement)(implicit hc: HeaderCarrier): Unit = JourneyLogger.info(message, Json.toJson(arrangement.obfuscate))
+
+  def error(sessionId: SessionId, message: => String, data: JsValue): Unit = logger.error(s"$message [sessionId=${sessionId.value}]\n${Json.prettyPrint(data)}")
   def error(message: => String, ex: Throwable)(implicit hc: HeaderCarrier): Unit = logger.error(s"$message [sessionId=${hc.sessionId.getOrElse(SessionId("NoSessionId"))}]", ex)
+  def error(message: => String, journey: Journey)(implicit hc: HeaderCarrier): Unit = error(hc.sessionId.getOrElse(SessionId("NoSessionId")), message, Json.toJson(journey.obfuscate))
 }
