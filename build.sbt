@@ -27,7 +27,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(WartRemoverSettings.wartRemoverWarning)
   .settings(wartremoverExcluded ++=
     routes.in(Compile).value ++
-      (baseDirectory.value / "it").get ++
       (baseDirectory.value / "test").get ++
       Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
   .settings(ScalariformSettings())
