@@ -19,8 +19,8 @@ package testsupport
 import com.google.inject.{AbstractModule, Provides}
 import com.softwaremill.macwire._
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import pagespecs.pages._
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
@@ -35,7 +35,7 @@ import java.time.{Clock, LocalDateTime, ZoneId}
 import javax.inject.Singleton
 
 class ItSpec
-  extends PlaySpec
+  extends AnyFreeSpec
   with GuiceOneServerPerSuite
   with RichMatchers
   with WireMockSupport {

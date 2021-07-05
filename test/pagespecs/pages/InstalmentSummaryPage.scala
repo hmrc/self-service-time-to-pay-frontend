@@ -33,9 +33,9 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/instalment-summary"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-    readPath() mustBe path
-    readGlobalHeaderText().stripSpaces mustBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle mustBe expectedTitle(expectedHeadingContent(lang), lang)
+    readPath() shouldBe path
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }

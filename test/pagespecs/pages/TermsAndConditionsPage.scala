@@ -29,9 +29,9 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/terms-and-conditions"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-    readPath() mustBe path
-    readGlobalHeaderText().stripSpaces mustBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle mustBe expectedTitle(expectedHeadingContent(lang), lang)
+    readPath() shouldBe path
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }

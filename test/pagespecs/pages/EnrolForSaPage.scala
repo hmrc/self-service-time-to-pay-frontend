@@ -32,8 +32,8 @@ class EnrolForSaPage(implicit webDriver: WebDriver) extends BasePage(WireMockSup
   override def path: String = AddTaxesFeStub.enrolForSaPagePath
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing{
-    readPath() mustBe path
-    tagName("body").element.text mustBe "You can set up for SA Enrolment here ..."
+    readPath() shouldBe path
+    tagName("body").element.text shouldBe "You can set up for SA Enrolment here ..."
     ()
   }
 }

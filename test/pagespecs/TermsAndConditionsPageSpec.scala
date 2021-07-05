@@ -80,7 +80,7 @@ class TermsAndConditionsPageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    termsAndConditionsPage.backButtonHref mustBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
+    termsAndConditionsPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
   }
 
   "click continue" in {

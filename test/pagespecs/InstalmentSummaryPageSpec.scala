@@ -70,7 +70,7 @@ class InstalmentSummaryPageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    instalmentSummaryPage.backButtonHref mustBe Some(s"${baseUrl.value}${calculatorInstalmentsPage28thDay.path}")
+    instalmentSummaryPage.backButtonHref shouldBe Some(s"${baseUrl.value}${calculatorInstalmentsPage28thDay.path}")
   }
 
   "change monthly instalments" in {

@@ -37,16 +37,16 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   }
 
   def assertPageIsDisplayedAltPath(lowerAmount: Int, upperAmount: Int)(implicit lang: Language = English): Unit = probing {
-    readPath() must startWith(path)
-    readGlobalHeaderText().stripSpaces mustBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle mustBe expectedTitle(expectedHeadingContent(lang), lang)
+    readPath() should startWith(path)
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     val expectedLines = Expected.MainText(lowerAmount, upperAmount).stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
 
   def assertErrorPageIsDisplayed(): Assertion = probing {
-    readPath() mustBe path
-    readMain().stripSpaces mustBe Expected.ErrorText().stripSpaces
+    readPath() shouldBe path
+    readMain().stripSpaces shouldBe Expected.ErrorText().stripSpaces
   }
 
   def enterAmount(value: String): Unit = {

@@ -61,12 +61,12 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     ()
   }
 
-  "Ineligible pages displayed correctly - ssttp eligibility" should {
+  "Ineligible pages displayed correctly - ssttp eligibility" - {
     TableDrivenPropertyChecks.forAll(listOfIneligibleReasons) { (reason, reasonObject, pageAsString, page) =>
       s"$pageAsString should be displayed when user has ineligible reason: [$reason]" in {
         beginJourney(reasonObject)
         page.assertPageIsDisplayed
-        page.backButtonHref mustBe None
+        page.backButtonHref shouldBe None
       }
 
       s"OPS-5822: User can go back from the /call-us page (via browser back button) and try again but still end up on the /call-us page [$reason]" in {
@@ -83,7 +83,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     }
   }
 
-  "authorisation based eligibility" should {
+  "authorisation based eligibility" - {
 
     "show you_need_to_request_access_to_self_assessment page no sa enrolments" in {
       AuthStub.authorise(allEnrolments = Some(Set()))

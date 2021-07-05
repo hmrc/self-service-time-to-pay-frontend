@@ -36,7 +36,7 @@ class StartPageSpec extends ItSpec {
 
   "back button" in {
     startPage.open()
-    startPage.backButtonHref mustBe None
+    startPage.backButtonHref shouldBe None
   }
 
   "unauthorised - missing bearer token (user not logged in)" in {

@@ -41,7 +41,7 @@ class DirectDebitFormSpec extends UnitSpec {
 
   "sort code validation" in {
     testCases.foreach{ tc =>
-      DirectDebitForm.isValidSortCode(tc.input) mustBe tc.isValid withClue tc.clue
+      DirectDebitForm.isValidSortCode(tc.input) shouldBe tc.isValid withClue tc.clue
     }
   }
 

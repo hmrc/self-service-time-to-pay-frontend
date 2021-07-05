@@ -78,7 +78,7 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    directDebitConfirmationPage.backButtonHref mustBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()}")
+    directDebitConfirmationPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()}")
   }
 
   "change sort code" in {

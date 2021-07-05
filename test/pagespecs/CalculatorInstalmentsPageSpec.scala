@@ -66,7 +66,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    calculatorInstalmentsPage28thDay.backButtonHref mustBe Some(s"${baseUrl.value}${selectDatePage.path}")
+    calculatorInstalmentsPage28thDay.backButtonHref shouldBe Some(s"${baseUrl.value}${selectDatePage.path}")
   }
 
   "select an option and continue" in {

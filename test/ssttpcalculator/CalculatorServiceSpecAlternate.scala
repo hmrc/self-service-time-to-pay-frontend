@@ -62,14 +62,14 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
       logger.info(s"Payment Schedule: Initial: ${schedule.initialPayment}, Over ${schedule.instalments.size}, Regular: ${schedule.instalments.head.amount}, Final: ${schedule.instalments.last.amount}, Total: $totalPaid")
 
-      totalPaid.doubleValue() mustBe totalPayable.doubleValue()
-      schedule.totalInterestCharged.doubleValue() mustBe totalInterestCharged.doubleValue()
+      totalPaid.doubleValue() shouldBe totalPayable.doubleValue()
+      schedule.totalInterestCharged.doubleValue() shouldBe totalInterestCharged.doubleValue()
 
       val instalments = schedule.instalments
 
-      instalments.size mustBe duration
-      instalments.head.amount mustBe regularInstalmentAmount
-      instalments.last.amount.doubleValue() mustBe finalInstalmentAmount.doubleValue()
+      instalments.size shouldBe duration
+      instalments.head.amount shouldBe regularInstalmentAmount
+      instalments.last.amount.doubleValue() shouldBe finalInstalmentAmount.doubleValue()
     }
   }
 
@@ -105,7 +105,7 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
       logger.info(s"Payment Schedule: Initial: ${schedule.initialPayment}, Over ${schedule.instalments.size}, Regular: ${schedule.instalments.head.amount}, Final: ${schedule.instalments.last.amount}, Total: $totalPaid")
 
-      schedule.instalments.size mustBe duration
+      schedule.instalments.size shouldBe duration
     }
   }
 }

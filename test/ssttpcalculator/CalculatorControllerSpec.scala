@@ -69,8 +69,8 @@ class CalculatorControllerSpec extends ItSpec {
     confirm(whenUserPrefersMonthlyPayment(2042), closestActualPayment = twoMonthScheduleRegularPaymentAmount, duration = twoMonths)
 
     private def confirm(schedule: PaymentSchedule, closestActualPayment: BigDecimal, duration: Int) = {
-      schedule.firstInstallment.amount mustBe closestActualPayment
-      schedule.durationInMonths mustBe duration
+      schedule.firstInstallment.amount shouldBe closestActualPayment
+      schedule.durationInMonths shouldBe duration
     }
 
     private def whenUserPrefersMonthlyPayment(amount: Int) = controller.computeClosestSchedule(amount, paymentSchedules)
@@ -92,14 +92,14 @@ class CalculatorControllerSpec extends ItSpec {
 
     private val closestSchedulesToTwoMonthSchedule =
       controller.computeClosestSchedules(twoMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
-    closestSchedulesToTwoMonthSchedule mustBe Set(twoMonthSchedule, threeMonthSchedule, fourMonthSchedule)
+    closestSchedulesToTwoMonthSchedule shouldBe Set(twoMonthSchedule, threeMonthSchedule, fourMonthSchedule)
 
     private val closestSchedulesToSixMonthSchedule =
       controller.computeClosestSchedules(sixMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
-    closestSchedulesToSixMonthSchedule mustBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
+    closestSchedulesToSixMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
 
     private val closestSchedulesToSevenMonthSchedule =
       controller.computeClosestSchedules(sevenMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
-    closestSchedulesToSevenMonthSchedule mustBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
+    closestSchedulesToSevenMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
   }
 }

@@ -41,8 +41,8 @@ abstract class CommonPage(implicit webDriver: WebDriver) extends RichMatchers wi
   def assertPageIsDisplayed: Assertion
 
   final def assertCommonContentIsDisplayed(): Unit = probing {
-    readFooterText().text mustBe expectedFooterTextEnglish
-    readGetHelpElement().value.text mustBe "Get help with this page."
+    readFooterText().text shouldBe expectedFooterTextEnglish
+    readGetHelpElement().value.text shouldBe "Get help with this page."
     ()
   }
 

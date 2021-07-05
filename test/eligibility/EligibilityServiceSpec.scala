@@ -63,98 +63,98 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
 
   private lazy val eligibilityService: EligibilityService = app.injector.instanceOf[EligibilityService]
 
-  "checkEligibility should" should {
-    "return eligible when" should {
+  "checkEligibility should" - {
+    "return eligible when" - {
       "all criteria are met" in {
-        eligibility() mustBe Eligible
+        eligibility() shouldBe Eligible
       }
 
       "the user has no direct debits created within the last year" in {
-        eligibility(directDebits = directDebitInstructions(Seq.empty)) mustBe Eligible
+        eligibility(directDebits = directDebitInstructions(Seq.empty)) shouldBe Eligible
 
         eligibility(directDebits =
           directDebitInstructions(Seq(
             eligibleDirectDebitInstruction,
-            eligibleDirectDebitInstruction.copy(sortCode = Some("sortCode2"))))) mustBe Eligible
+            eligibleDirectDebitInstruction.copy(sortCode = Some("sortCode2"))))) shouldBe Eligible
       }
 
       "the user has significant debt" in {
-        eligibility(debits = Seq(debit(significantDebtAmount))) mustBe Eligible
-        eligibility(debits = Seq(debit(insignificantDebtAmount), debit(onePence))) mustBe Eligible
+        eligibility(debits = Seq(debit(significantDebtAmount))) shouldBe Eligible
+        eligibility(debits = Seq(debit(insignificantDebtAmount), debit(onePence))) shouldBe Eligible
       }
 
       "an otherwise eligible user has old debt which is not too high" in {
-        eligibility(debits = Seq(acceptableOldDebt)) mustBe Eligible
+        eligibility(debits = Seq(acceptableOldDebt)) shouldBe Eligible
       }
 
       "the user has debt which will become too high when it is older" in {
         eligibility(
-          debits = Seq(oldDebtThatIsTooHigh.copy(dueDate = oldDebtDate.plusDays(1)))) mustBe Eligible
+          debits = Seq(oldDebtThatIsTooHigh.copy(dueDate = oldDebtDate.plusDays(1)))) shouldBe Eligible
       }
 
       "the user has total debt which is not too high" in {
-        eligibility(debits = Seq(debit(amount = debtLimit))) mustBe Eligible
-        eligibility(debits = Seq(debit(amount = debtLimit - onePence), debit(amount = onePence))) mustBe Eligible
-        eligibility(debits = Seq(debitWithInterest(amount   = debtLimit - onePence, interest = onePence))) mustBe Eligible
+        eligibility(debits = Seq(debit(amount = debtLimit))) shouldBe Eligible
+        eligibility(debits = Seq(debit(amount = debtLimit - onePence), debit(amount = onePence))) shouldBe Eligible
+        eligibility(debits = Seq(debitWithInterest(amount   = debtLimit - onePence, interest = onePence))) shouldBe Eligible
       }
 
       "the user has filed all due of filed tax returns" in {
-        eligibility(returns = filedReturns) mustBe Eligible
-        eligibility(returns = Seq(filedReturns.head)) mustBe Eligible
+        eligibility(returns = filedReturns) shouldBe Eligible
+        eligibility(returns = Seq(filedReturns.head)) shouldBe Eligible
       }
 
       "the user has filed tax returns which are not yet due" in {
-        eligibility(returns = filedReturns ++ Seq(filedNotDueReturn)) mustBe Eligible
+        eligibility(returns = filedReturns ++ Seq(filedNotDueReturn)) shouldBe Eligible
       }
     }
 
-    "return ineligible when" should {
+    "return ineligible when" - {
       "an otherwise eligible user is not on IA" in {
-        eligibility(onIa = false) mustBe EligibilityStatus(Seq(IsNotOnIa))
+        eligibility(onIa = false) shouldBe EligibilityStatus(Seq(IsNotOnIa))
       }
 
       "an otherwise eligible user has direct debits created within the last year" in {
         val ineligible = EligibilityStatus(Seq(DirectDebitCreatedWithinTheLastYear))
 
-        eligibility(directDebits = directDebitInstructions(Seq(directDebitCreatedWithinTheLastYear))) mustBe ineligible
+        eligibility(directDebits = directDebitInstructions(Seq(directDebitCreatedWithinTheLastYear))) shouldBe ineligible
 
         eligibility(directDebits =
-          directDebitInstructions(Seq(eligibleDirectDebitInstruction, directDebitCreatedWithinTheLastYear))) mustBe ineligible
+          directDebitInstructions(Seq(eligibleDirectDebitInstruction, directDebitCreatedWithinTheLastYear))) shouldBe ineligible
 
         eligibility(directDebits =
           directDebitInstructions(Seq(
             directDebitCreatedWithinTheLastYear,
-            directDebitCreatedWithinTheLastYear.copy(sortCode = Some("sortCode2"))))) mustBe ineligible
+            directDebitCreatedWithinTheLastYear.copy(sortCode = Some("sortCode2"))))) shouldBe ineligible
       }
 
       "an otherwise eligible user has no debt" in {
-        eligibility(debits = noDebts) mustBe EligibilityStatus(Seq(NoDebt))
+        eligibility(debits = noDebts) shouldBe EligibilityStatus(Seq(NoDebt))
       }
 
       "an otherwise eligible user has insignificant debt" in {
         val debtIsInsignificant = EligibilityStatus(Seq(DebtIsInsignificant))
 
-        eligibility(debits = Seq(debit(insignificantDebtAmount))) mustBe debtIsInsignificant
-        eligibility(debits = Seq(debitWithInterest(insignificantDebtAmount - onePence, onePence))) mustBe debtIsInsignificant
-        eligibility(debits = Seq(debit(insignificantDebtAmount - onePence), debit(onePence))) mustBe debtIsInsignificant
+        eligibility(debits = Seq(debit(insignificantDebtAmount))) shouldBe debtIsInsignificant
+        eligibility(debits = Seq(debitWithInterest(insignificantDebtAmount - onePence, onePence))) shouldBe debtIsInsignificant
+        eligibility(debits = Seq(debit(insignificantDebtAmount - onePence), debit(onePence))) shouldBe debtIsInsignificant
       }
 
       "an otherwise eligible user has old debt which is too high" in {
-        eligibility(debits = Seq(oldDebtThatIsTooHigh)) mustBe EligibilityStatus(Seq(OldDebtIsTooHigh))
+        eligibility(debits = Seq(oldDebtThatIsTooHigh)) shouldBe EligibilityStatus(Seq(OldDebtIsTooHigh))
       }
 
       "an otherwise eligible user has a debt that is too high" in
         {
           val totalDebtTooHigh: EligibilityStatus = EligibilityStatus(Seq(TotalDebtIsTooHigh))
 
-          eligibility(debits = Seq(debit(amount = debtLimit + 1))) mustBe totalDebtTooHigh
-          eligibility(debits = Seq(debitWithInterest(amount   = debtLimit, interest = onePence))) mustBe totalDebtTooHigh
-          eligibility(debits = Seq(debit(amount = debtLimit), debit(amount = onePence))) mustBe totalDebtTooHigh
+          eligibility(debits = Seq(debit(amount = debtLimit + 1))) shouldBe totalDebtTooHigh
+          eligibility(debits = Seq(debitWithInterest(amount   = debtLimit, interest = onePence))) shouldBe totalDebtTooHigh
+          eligibility(debits = Seq(debit(amount = debtLimit), debit(amount = onePence))) shouldBe totalDebtTooHigh
         }
 
       "an otherwise eligible user has tax returns that are overdue" in {
-        eligibility(returns = missingReturns) mustBe EligibilityStatus(Seq(ReturnNeedsSubmitting))
-        eligibility(returns = filedReturns ++ Seq(overdueReturn)) mustBe EligibilityStatus(Seq(ReturnNeedsSubmitting))
+        eligibility(returns = missingReturns) shouldBe EligibilityStatus(Seq(ReturnNeedsSubmitting))
+        eligibility(returns = filedReturns ++ Seq(overdueReturn)) shouldBe EligibilityStatus(Seq(ReturnNeedsSubmitting))
       }
     }
 
@@ -164,7 +164,7 @@ class EligibilityServiceSpec extends ItSpec with DateSupport {
         returns      = missingReturns,
         directDebits = directDebitInstructions(Seq(directDebitCreatedWithinTheLastYear)),
         onIa         = false
-      ).reasons.toSet mustBe Set(ReturnNeedsSubmitting, NoDebt, IsNotOnIa, DirectDebitCreatedWithinTheLastYear)
+      ).reasons.toSet shouldBe Set(ReturnNeedsSubmitting, NoDebt, IsNotOnIa, DirectDebitCreatedWithinTheLastYear)
     }
   }
 

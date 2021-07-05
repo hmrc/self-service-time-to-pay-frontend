@@ -47,9 +47,9 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
   import WebBrowser._
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-    readPath() mustBe path
-    readGlobalHeaderText().stripSpaces mustBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle mustBe expectedTitle(expectedHeadingContent(lang), lang)
+    readPath() shouldBe path
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
@@ -144,9 +144,9 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends CalculatorInstalmentsPage(baseUrl) {
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-    readPath() mustBe path
-    readGlobalHeaderText().stripSpaces mustBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle mustBe expectedTitle(expectedHeadingContent(lang), lang)
+    readPath() shouldBe path
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)

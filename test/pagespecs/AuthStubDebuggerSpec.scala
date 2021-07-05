@@ -58,7 +58,7 @@ class AuthStubDebuggerSpec extends ItSpec {
       r.json
     }
 
-    authStubResponse mustBe realAuthResponse withClue "USE http://jsondiff.com/ to compare"
+    authStubResponse shouldBe realAuthResponse withClue "USE http://jsondiff.com/ to compare"
   }
 
 }
