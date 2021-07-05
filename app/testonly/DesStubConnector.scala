@@ -17,14 +17,15 @@
 package testonly
 
 import com.google.inject.Singleton
-import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Request
 import req.RequestSupport
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.http.HttpClient
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -48,7 +49,7 @@ class DesStubConnector @Inject() (
     val setReturnsUrl = s"$baseUrl/sa/taxpayer/${tu.utr.v}/returns"
 
     httpClient
-      .PATCH(setReturnsUrl, predefinedResponse)
+      .PATCH[JsValue, HttpResponse](setReturnsUrl, predefinedResponse)
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's return in DES-STUB: $tu")
@@ -66,7 +67,7 @@ class DesStubConnector @Inject() (
     val setReturnsUrl = s"$baseUrl/sa/taxpayer/${tu.utr.v}/debits"
 
     httpClient
-      .PATCH(setReturnsUrl, predefinedResponse)
+      .PATCH[JsValue, HttpResponse](setReturnsUrl, predefinedResponse)
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's debit in DES-STUB: $tu")

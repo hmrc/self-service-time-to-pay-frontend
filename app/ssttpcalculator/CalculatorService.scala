@@ -30,6 +30,7 @@ import java.time.LocalDate.now
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.{Clock, LocalDate, Year}
 import javax.inject.Inject
+import scala.annotation.tailrec
 import scala.collection.immutable
 import scala.concurrent.ExecutionContext
 import scala.math.BigDecimal

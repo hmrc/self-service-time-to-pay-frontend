@@ -29,6 +29,7 @@ import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import testsupport.testdata.TdAll.frozenDateString
 import times.ClockProvider
+import uk.gov.hmrc.http.HttpReadsInstances
 
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime, ZoneId}
@@ -38,7 +39,8 @@ class ItSpec
   extends AnyFreeSpec
   with GuiceOneServerPerSuite
   with RichMatchers
-  with WireMockSupport {
+  with WireMockSupport
+  with HttpReadsInstances {
 
   val testPort: Int = 19001
   val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$testPort")

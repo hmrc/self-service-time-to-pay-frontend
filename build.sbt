@@ -47,7 +47,7 @@ lazy val microservice = Project(appName, file("."))
     ))
   .settings(
     scalacOptions ++= Seq(
-//      "-Xfatal-warnings",
+      "-Xfatal-warnings",
       "-Xlint:-missing-interpolator,_",
       "-Yno-adapted-args",
       "-Ywarn-value-discard",

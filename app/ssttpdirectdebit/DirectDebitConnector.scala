@@ -23,9 +23,9 @@ import play.api.libs.json.Json
 import play.api.mvc.Request
 import ssttparrangement.SubmissionError
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HttpClient, HttpException, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -75,12 +75,11 @@ class DirectDebitConnector @Inject() (
 
   private def onError(ex: Throwable) = {
     val (code, message) = ex match {
-      case e: HttpException       => (e.responseCode, e.getMessage)
+      case e: HttpException         => (e.responseCode, e.getMessage)
 
-      case e: Upstream4xxResponse => (e.reportAs, e.getMessage)
-      case e: Upstream5xxResponse => (e.reportAs, e.getMessage)
+      case e: UpstreamErrorResponse => (e.reportAs, e.getMessage)
 
-      case e: Throwable           => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
+      case e: Throwable             => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
     }
 
     logger.error(s"Failure from DES, code $code and body $message")

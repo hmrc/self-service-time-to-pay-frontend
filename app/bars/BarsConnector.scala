@@ -26,7 +26,6 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.selfservicetimetopay.models._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
@@ -55,21 +54,25 @@ class BarsConnector @Inject() (
   @SuppressWarnings(Array("org.wartremover.warts.Null"))
   def validateBank(validateBankAccountRequest: ValidateBankDetailsRequest)(implicit request: Request[_]): Future[BarsResponse] = {
     val url = s"$baseUrl/v2/validateBankDetails"
-    httpClient.POST[ValidateBankDetailsRequest, HttpResponse](url, validateBankAccountRequest)(implicitly, rds = httpResponseReads, implicitly, implicitly)
+    httpClient.POST[ValidateBankDetailsRequest, HttpResponse](url, validateBankAccountRequest) //(implicitly, rds = httpResponseReads, implicitly, implicitly)
       .map {
         case r: HttpResponse if r.status == 200 => BarsResponseOk(Json.parse(r.body).as[ValidateBankDetailsResponse])
         case r: HttpResponse if r.status == 400 =>
-          val barsError = Json.parse(r.body).as[BarsError]
-          if (barsError.code == BarsError.sortCodeOnDenyList) {
-            BarsResponseSortCodeOnDenyList(barsError)
-          } else {
-            logger.error(s"Unhandled error code for 400 HttpResponse: [$barsError]")
-            HttpReads.handleResponse("POST", url)(r)
 
-            //any other idea? Above will throw exception. We can't refactor it because it's a lib and we
-            // want to preserve current http verbs way of handling it
-            null: BarsResponse
+          HttpReads.handleResponseEither("POST", url)(r) match {
+            case Right(_) =>
+              val barsError = Json.parse(r.body).as[BarsError]
+
+              if (barsError.code == BarsError.sortCodeOnDenyList) {
+                BarsResponseSortCodeOnDenyList(barsError)
+              } else {
+                val msg = new RuntimeException(s"Unhandled error code for 400 HttpResponse: [$barsError]")
+                logger.error("couldn't validateBank", msg)
+                throw new RuntimeException(msg)
+              }
+            case Left(value) => throw value
           }
+
       }
   }
 

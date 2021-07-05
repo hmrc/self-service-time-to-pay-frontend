@@ -17,12 +17,13 @@
 package testonly
 
 import com.google.inject.Singleton
+
 import javax.inject.Inject
 import play.api.mvc.Request
 import req.RequestSupport
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,7 +39,7 @@ class IaConnector @Inject() (
 
   def uploadUtr(utr: String)(implicit request: Request[_]): Future[Unit] =
     httpClient
-      .POSTEmpty(baseUrl + s"/ia/upload/$utr")
+      .POSTEmpty[HttpResponse](baseUrl + s"/ia/upload/$utr")
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not upload utr into Ia")

@@ -16,12 +16,10 @@
 
 package pagespecs
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import testsupport.stubs.AuthStub
 import testsupport.{ItSpec, WireMockSupport}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.{Authorization, SessionId}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpResponse, SessionId}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -47,14 +45,14 @@ class AuthStubDebuggerSpec extends ItSpec {
 
     val realAuthResponse = {
       val serviceUrl = "http://localhost:8500"
-      val r = http.POST(s"$serviceUrl/auth/authorise", inputJson).futureValue
+      val r = http.POST[JsValue, HttpResponse](s"$serviceUrl/auth/authorise", inputJson).futureValue
       r.json
     }
 
     val authStubResponse = {
       AuthStub.authorise()
       val serviceUrl = s"http://localhost:${WireMockSupport.port}"
-      val r = http.POST(s"$serviceUrl/auth/authorise", inputJson).futureValue
+      val r = http.POST[JsValue, HttpResponse](s"$serviceUrl/auth/authorise", inputJson).futureValue
       r.json
     }
 
