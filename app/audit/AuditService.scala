@@ -17,12 +17,12 @@
 package audit
 
 import java.time.temporal.ChronoUnit
-
 import javax.inject.{Inject, Singleton}
 import journey.Journey
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Request
+import req.RequestSupport
 import ssttparrangement.SubmissionError
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -32,6 +32,7 @@ import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 import req.RequestSupport._
+import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton()
 class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: ExecutionContext) {
@@ -88,7 +89,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
     //`directDebitSetup` was provided at the beginning.
     // I'm not changing it to make splunk events consistent with what we already have stored
     auditType = "directDebitSetup",
-    tags      = hc.otherHeaders.toMap, // TODO was hc.headers.toMap
+    tags      = AuditService.auditTags,
     detail    = extraInfo ++ makeDetails(journey, schedule)
   )
 
@@ -109,4 +110,20 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
       "totalPayable" -> schedule.totalPayable)
   )
 
+}
+
+object AuditService {
+  def auditTags(implicit request: Request[_]): Map[String, String] = {
+
+    val hc: HeaderCarrier = RequestSupport.hc(request)
+    Map(
+      "Akamai-Reputation" -> hc.akamaiReputation.map(_.value).getOrElse("-"),
+      "X-Request-ID" -> hc.requestId.map(_.value).getOrElse("-"),
+      "X-Session-ID" -> hc.sessionId.map(_.value).getOrElse("-"),
+      "clientIP" -> hc.trueClientIp.getOrElse("-"),
+      "clientPort" -> hc.trueClientPort.getOrElse("-"),
+      "path" -> request.path,
+      "deviceID" -> hc.deviceID.getOrElse("-")
+    )
+  }
 }
