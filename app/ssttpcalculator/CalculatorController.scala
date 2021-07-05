@@ -93,7 +93,11 @@ class CalculatorController @Inject() (
 
             journeyService.saveJourney(newJourney).map(
               _ => Redirect(ssttpcalculator.routes.CalculatorController.getMonthlyPayment()))
-
+          case PayTodayQuestion(None) =>
+            val msg = s"could not submitPayTodayQuestion, payToday must be defined"
+            val ex = new RuntimeException(msg)
+            JourneyLogger.error("Illegal state", journey)
+            throw ex
         }
       )
     }

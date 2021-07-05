@@ -16,22 +16,17 @@
 
 package bars
 
-import bars.model.{Account, BarsError, BarsResponse, BarsResponseOk, BarsResponseSortCodeOnDenyList, ValidateBankDetailsRequest, ValidateBankDetailsResponse}
+import bars.model._
 import com.google.inject._
 import play.api.Logger
-import play.api.http.Status
-import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
+import play.api.libs.json.Json
 import play.api.mvc.Request
 import ssttparrangement.SubmissionError
-import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.selfservicetimetopay.models._
-
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
 /**
  * Bank Account Reputation (Bars) Connector
@@ -42,6 +37,8 @@ class BarsConnector @Inject() (
     implicit
     ec: ExecutionContext
 ) {
+  private val logger = Logger(getClass)
+
   type DDSubmissionResult = Either[SubmissionError, DirectDebitInstructionPaymentPlan]
 
   import req.RequestSupport._
@@ -57,21 +54,25 @@ class BarsConnector @Inject() (
   @SuppressWarnings(Array("org.wartremover.warts.Null"))
   def validateBank(validateBankAccountRequest: ValidateBankDetailsRequest)(implicit request: Request[_]): Future[BarsResponse] = {
     val url = s"$baseUrl/v2/validateBankDetails"
-    httpClient.POST[ValidateBankDetailsRequest, HttpResponse](url, validateBankAccountRequest)(implicitly, rds = httpResponseReads, implicitly, implicitly)
+    httpClient.POST[ValidateBankDetailsRequest, HttpResponse](url, validateBankAccountRequest)
       .map {
         case r: HttpResponse if r.status == 200 => BarsResponseOk(Json.parse(r.body).as[ValidateBankDetailsResponse])
         case r: HttpResponse if r.status == 400 =>
-          val barsError = Json.parse(r.body).as[BarsError]
-          if (barsError.code == BarsError.sortCodeOnDenyList) {
-            BarsResponseSortCodeOnDenyList(barsError)
-          } else {
-            Logger.error(s"Unhandled error code for 400 HttpResponse: [$barsError]")
-            HttpReads.handleResponse("POST", url)(r)
 
-            //any other idea? Above will throw exception. We can't refactor it because it's a lib and we
-            // want to preserve current http verbs way of handling it
-            null: BarsResponse
+          HttpReads.handleResponseEither("POST", url)(r) match {
+            case Right(_) =>
+              val barsError = Json.parse(r.body).as[BarsError]
+
+              if (barsError.code == BarsError.sortCodeOnDenyList) {
+                BarsResponseSortCodeOnDenyList(barsError)
+              } else {
+                val msg = new RuntimeException(s"Unhandled error code for 400 HttpResponse: [$barsError]")
+                logger.error("couldn't validateBank", msg)
+                throw new RuntimeException(msg)
+              }
+            case Left(value) => throw value
           }
+
       }
   }
 

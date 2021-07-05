@@ -34,6 +34,8 @@ class AuthorisedSaUserAction @Inject() (
     cc: MessagesControllerComponents)
   extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
 
+  private val logger = Logger(getClass)
+
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
 
     val hasActiveSaEnrolment: Boolean = request.hasActiveSaEnrolment
@@ -51,7 +53,7 @@ class AuthorisedSaUserAction @Inject() (
     val maybeObfuscatedUtr = maybeUtr.map(_ => "***")
 
       def logFail(reason: String) = {
-        Logger.info(
+        logger.info(
           s"""
            |Authorisation failed, reason: $reason:
            |  [hasActiveSaEnrolment: $hasActiveSaEnrolment]

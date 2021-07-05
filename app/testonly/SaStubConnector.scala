@@ -17,14 +17,15 @@
 package testonly
 
 import com.google.inject.Singleton
-import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Request
 import req.RequestSupport
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -34,6 +35,8 @@ class SaStubConnector @Inject() (
     requestSupport: RequestSupport)(
     implicit
     ec: ExecutionContext) {
+
+  private val logger = Logger(getClass)
 
   import requestSupport._
 
@@ -46,11 +49,11 @@ class SaStubConnector @Inject() (
     val setTaxpayerUrl = s"$baseUrl/sa/individual/${tu.utr.v}/designatory-details/taxpayer"
 
     httpClient
-      .POST(setTaxpayerUrl, predefinedResponse)
+      .POST[JsValue, HttpResponse](setTaxpayerUrl, predefinedResponse)
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer in PAYMENT-STUBS-PROTECTED: ${tu.utr}")
-          Logger.debug(s"Set up a predefined response in PAYMENT-STUBS-PROTECTED for ${tu.utr}")
+          logger.debug(s"Set up a predefined response in PAYMENT-STUBS-PROTECTED for ${tu.utr}")
       }
   }
 

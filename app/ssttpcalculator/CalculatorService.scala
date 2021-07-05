@@ -19,7 +19,7 @@ package ssttpcalculator
 import _root_.model._
 import bankholidays.WorkingDaysService.addWorkingDays
 import journey.Journey
-import play.api.Logger.logger
+import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.{CalculatorInput, Debit, DebitInput, Instalment, PaymentSchedule}
 import times.ClockProvider
@@ -30,6 +30,7 @@ import java.time.LocalDate.now
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.{Clock, LocalDate, Year}
 import javax.inject.Inject
+import scala.annotation.tailrec
 import scala.collection.immutable
 import scala.concurrent.ExecutionContext
 import scala.math.BigDecimal
@@ -43,6 +44,8 @@ class CalculatorService @Inject() (
   (implicit ec: ExecutionContext) {
 
   import clockProvider._
+
+  val logger = Logger(getClass)
 
   val minimumMonthsAllowedTTP: Int = 2
   val DebitDueAndCalculationDatesWithinRate: (Boolean, Boolean) = Tuple2(true, true)
@@ -162,8 +165,7 @@ class CalculatorService @Inject() (
    * interest is not charged on debits where initial payment fully or partially clears the oldest debits or
    * if the debit is not liable for interest (due in the future after the end date).
    */
-  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
-  @SuppressWarnings(Array("org.wartremover.warts.Var"))
+  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps", "org.wartremover.warts.Var"))
   def calculateStagedPayments(implicit calculation: CalculatorInput): Seq[Instalment] = {
     // Get the dates of each instalment payment
     val trueFirstPaymentDate =
@@ -230,8 +232,8 @@ class CalculatorService @Inject() (
     val sortedDebits: Seq[DebitInput] = debits.sortBy(_.dueDate)
 
       def processDebits(amount: BigDecimal, debits: Seq[DebitInput]): BigDecimal = {
-        debits match {
-          case debit :: Nil => calculateAmount(amount, debit)._1 * calculateDays(debit) * currentDailyRate
+        debits.toList match {
+          case List(debit) => calculateAmount(amount, debit)._1 * calculateDays(debit) * currentDailyRate
           case debit :: remaining =>
             val result = calculateAmount(amount, debit)
             processDebits(result._2, remaining) + (result._1 * calculateDays(debit) * currentDailyRate)

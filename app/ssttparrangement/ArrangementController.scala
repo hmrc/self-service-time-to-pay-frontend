@@ -67,6 +67,8 @@ class ArrangementController @Inject() (
     appConfig: AppConfig,
     ec:        ExecutionContext) extends FrontendBaseController(mcc) {
 
+  private val logger = Logger(getClass)
+
   import clockProvider._
   import requestSupport._
 
@@ -78,7 +80,13 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.start: $request")
 
     journeyService.getJourney.flatMap {
-      case journey @ Journey(_, InProgress, _, _, _, _, _, _, Some(_), _, _, _, _, _, _) => eligibilityCheck(journey)
+      case journey if journey.inProgress && journey.maybeMonthlyPaymentAmount.isDefined =>
+        eligibilityCheck(journey)
+      case j =>
+        val msg = "Illegal state, journey must be in progress with defined payment amount"
+        val ex = new RuntimeException(msg)
+        JourneyLogger.error(msg, j)
+        throw ex
     }
   }
 
@@ -273,7 +281,7 @@ class ArrangementController @Inject() (
 
           submitArrangementResult.flatMap {
             _.fold(submissionError => {
-              Logger.error(s"Exception: ${submissionError.code} + ${submissionError.message}")
+              logger.error(s"Exception: ${submissionError.code} + ${submissionError.message}")
               JourneyLogger.info(s"ArrangementController.arrangementSetUp: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to $applicationSuccessful", arrangement)
               auditService.sendArrangementSubmissionFailedEvent(journey, paymentSchedule, submissionError)
               applicationSuccessful

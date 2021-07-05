@@ -37,7 +37,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   }
 
   def assertPageIsDisplayedAltPath(lowerAmount: Int, upperAmount: Int)(implicit lang: Language = English): Unit = probing {
-    readPath() shouldBe path
+    readPath() should startWith(path)
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     val expectedLines = Expected.MainText(lowerAmount, upperAmount).stripSpaces().split("\n")

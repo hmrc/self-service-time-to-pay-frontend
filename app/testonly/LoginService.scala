@@ -16,19 +16,17 @@
 
 package testonly
 
-import java.util.UUID.randomUUID
 import com.google.inject.Inject
-import play.api.Logger
-
-import javax.inject.Singleton
 import play.api.http.HeaderNames
-import play.api.libs.json.{Json, _}
+import play.api.libs.json.{JsArray, JsNull, JsNumber, JsObject, JsString, Json, __}
 import play.api.mvc.{Request, Session}
 import times.ClockProvider
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
+import java.util.UUID.randomUUID
+import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -52,7 +50,7 @@ class LoginService @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val requestBody = loginJson(tu)
-    httpClient.POST(s"$authLoginApiUrl/government-gateway/session/login", requestBody).map(r =>
+    httpClient.POST[JsObject, HttpResponse](s"$authLoginApiUrl/government-gateway/session/login", requestBody).map(r =>
       AuthToken(
         r.header(HeaderNames.AUTHORIZATION).getOrElse(throw new RuntimeException(s"missing 'AUTHORIZATION' header: $r"))
       )

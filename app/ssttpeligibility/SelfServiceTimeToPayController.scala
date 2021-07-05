@@ -43,6 +43,8 @@ class SelfServiceTimeToPayController @Inject() (
                                           ec: ExecutionContext
 ) extends FrontendBaseController(mcc) {
 
+  private val logger = Logger(getClass)
+
   import requestSupport._
 
   def start: Action[AnyContent] = as.action { implicit request =>
@@ -100,7 +102,7 @@ class SelfServiceTimeToPayController @Inject() (
         } yield Redirect(redirectUrl)
       case None =>
         //Use kibana to monitor how often this happens. We were told that majority of users should have credentials.
-        Logger.error(
+        logger.error(
           "Rotten credentials error. " +
             "The auth microservice returned empty credentials which are required to be passed " +
             "to add-taxes-frontend in order to enrol-for-sa. Please investigate."

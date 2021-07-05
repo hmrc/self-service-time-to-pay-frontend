@@ -47,6 +47,8 @@ class AuthenticatedAction @Inject() (
     ec: ExecutionContext
 ) extends ActionRefiner[Request, AuthenticatedRequest] {
 
+  private val logger = Logger(getClass)
+
   import req.RequestSupport._
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
@@ -65,7 +67,7 @@ class AuthenticatedAction @Inject() (
           //TODO: what is a proper value to origin
           Left(Redirect(viewConfig.loginUrl, Map("continue" -> Seq(viewConfig.frontendBaseUrl + request.uri), "origin" -> Seq("pay-online"))))
         case e: AuthorisationException =>
-          Logger.debug(s"Unauthorised because of ${e.reason}, $e")
+          logger.debug(s"Unauthorised because of ${e.reason}, $e")
           Left(badResponses.unauthorised)
       }
   }

@@ -18,13 +18,8 @@ package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
-import play.api.libs.json.Json.prettyPrint
-import testsupport.testdata.DirectDebitTd.{bpNotFound, directDebitBankJson}
-import testsupport.testdata.TdAll.aYearAgo
-import testsupport.testdata.{DirectDebitTd, TdAll}
-import timetopaytaxpayer.cor.model.SaUtr
 
 object BarsStub extends Matchers with Status {
 

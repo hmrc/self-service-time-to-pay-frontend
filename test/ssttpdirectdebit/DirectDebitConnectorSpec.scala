@@ -17,14 +17,13 @@
 package ssttpdirectdebit
 
 import java.time.LocalDate
-
 import play.api.inject.Injector
 import play.api.test.FakeRequest
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.testdata.TdAll.saUtr
-import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.http.{NotFoundException, UpstreamErrorResponse}
 import uk.gov.hmrc.selfservicetimetopay.models.{DirectDebitInstruction, DirectDebitInstructions}
 
 class DirectDebitConnectorSpec extends ItSpec {
@@ -52,7 +51,7 @@ class DirectDebitConnectorSpec extends ItSpec {
 
     intercept[Exception] {
       connector.getBanks(saUtr)(FakeRequest()).futureValue
-    }.getCause.isInstanceOf[NotFoundException] shouldBe true
+    }.getCause.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 404
   }
 
   "getBanks should tolerate a BP Not Found payload" in {
