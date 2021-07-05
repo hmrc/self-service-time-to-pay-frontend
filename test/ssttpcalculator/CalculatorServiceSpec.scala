@@ -16,15 +16,15 @@
 
 package ssttpcalculator
 
-import java.time.{Clock, LocalDate, LocalDateTime}
-import java.time.ZoneId.systemDefault
-import java.time.ZoneOffset.UTC
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import ssttpcalculator.CalculatorService._
-import testsupport.{DateSupport, ItSpec}
 import ssttpcalculator.model.{CalculatorInput, DebitInput}
+import testsupport.DateSupport
 
+import java.time.ZoneId.systemDefault
+import java.time.ZoneOffset.UTC
+import java.time.{Clock, LocalDate, LocalDateTime}
 import scala.math.BigDecimal
 
 class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {

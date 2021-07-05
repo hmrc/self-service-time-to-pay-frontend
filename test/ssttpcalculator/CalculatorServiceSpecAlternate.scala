@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.timetopaycalculator.services
 
-import testsupport.ItSpec
-import java.time.LocalDate
-
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.api.Logger
-import ssttpcalculator.{CalculatorService, DurationService, InterestRateService}
 import ssttpcalculator.model.{CalculatorInput, DebitInput, PaymentSchedule}
+import ssttpcalculator.{CalculatorService, DurationService, InterestRateService}
+import testsupport.ItSpec
+
+import java.time.LocalDate
 
 class CalculatorServiceSpecAlternate extends ItSpec {
   private val logger = Logger(getClass)

@@ -41,7 +41,7 @@ class ItSpec
   with WireMockSupport {
 
   val testPort: Int = 19001
-  lazy val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$testPort")
+  val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$testPort")
 
   implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds)))

@@ -16,18 +16,18 @@
 
 package ssttpcalculator
 
+import _root_.model._
+import play.api.test.FakeRequest
+import ssttpcalculator.model.PaymentSchedule
+import testsupport.ItSpec
+import testsupport.testdata.CalculatorDataGenerator._
+import testsupport.testdata.TdAll.saUtr
+import timetopaytaxpayer.cor.model.{CommunicationPreferences, Return, SelfAssessmentDetails}
+import uk.gov.hmrc.http.HeaderCarrier
+
 import java.time.LocalDate
 import java.time.Month.APRIL
 import java.time.temporal.ChronoUnit.MONTHS
-
-import _root_.model._
-import play.api.test.FakeRequest
-import testsupport.ItSpec
-import testsupport.testdata.TdAll.saUtr
-import testsupport.testdata.CalculatorDataGenerator._
-import ssttpcalculator.model.PaymentSchedule
-import timetopaytaxpayer.cor.model.{CommunicationPreferences, Return, SelfAssessmentDetails}
-import uk.gov.hmrc.http.HeaderCarrier
 
 class CalculatorControllerSpec extends ItSpec {
   private implicit val hc: HeaderCarrier = HeaderCarrier()
