@@ -2,6 +2,7 @@
 import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import sbt.Tests.{Group, SubProcess}
+import uk.gov.hmrc.DefaultBuildSettings.defaultSettings
 
 val appName = "self-service-time-to-pay-frontend"
 val scalaV = "2.12.12"
@@ -15,6 +16,7 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .disablePlugins(JUnitXmlReportPlugin)
+  .settings(defaultSettings(): _*)
   .settings(
     scalaVersion := scalaV,
     majorVersion := 0,
@@ -43,7 +45,10 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     routesImport ++= Seq(
       "langswitch.Language"
-    ))
+    ),
+    sources in (Compile,doc) := Seq.empty,
+    publishArtifact in packageDoc := false
+  )
   .settings(
     scalacOptions ++= Seq(
       "-Xfatal-warnings",
