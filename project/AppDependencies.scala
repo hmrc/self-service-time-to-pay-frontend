@@ -6,7 +6,11 @@ object AppDependencies {
     ws,
     "uk.gov.hmrc" %% "govuk-template" % "5.69.0-play-28",
     "uk.gov.hmrc" %% "play-ui" % "9.6.0-play-28",
-    "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % "5.3.0",
+
+    "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % "5.4.0",
+    "uk.gov.hmrc"    %% "play-frontend-govuk"                        % "0.77.0-play-28",
+    "uk.gov.hmrc"    %% "play-frontend-hmrc"                         % "0.74.0-play-28",
+
     "com.beachape" %% "enumeratum" % "1.6.1",
     "uk.gov.hmrc" %% "time" % "3.25.0",
     "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-28",

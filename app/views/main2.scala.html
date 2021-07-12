@@ -1,0 +1,123 @@
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{BackLink, FooterItem, HtmlContent, Text}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.phasebanner.PhaseBanner
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.{Header, ReportTechnicalIssue}
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En, LanguageSelect}
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
+@import langswitch.Languages
+@import config.ViewConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
+
+@this(
+        govukLayout: uk.gov.hmrc.govukfrontend.views.html.layouts.govukLayout,
+        twoThirdsMainContent: uk.gov.hmrc.govukfrontend.views.html.layouts.twoThirdsMainContent,
+        govukBackLink: uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink,
+        hmrcHeader: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcHeader,
+        languageSelect: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcLanguageSelect,
+
+        reportTechnicalIssues: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcReportTechnicalIssue,
+        hmrcTrackingConsentSnippet: uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcTrackingConsentSnippet,
+
+        standardBetaBanner: uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner,
+
+        hmrcStandardFooter: HmrcStandardFooter,
+
+        scripts: views.html.scripts2
+)
+
+@(title: String,
+        maybeSidebarLinks: Option[Html] = None,
+        contentHeader: Option[Html] = None,
+        bodyClasses: Option[String] = None,
+        mainClass: Option[String] = None,
+        scriptElem: Option[Html] = None,
+        linksElem:  Option[Html] = None,
+        googleAnalyticsCalls: Seq[String] = Seq.empty,
+        noGetHelp:Boolean = false,
+        allowTimeoutDialog: Boolean = true,
+        welshToggleEnabled:Boolean = true,
+        hasUserPanel: Boolean = false,
+        navTitle: String = "ssttp.common.title",
+        backButtonUrl: Option[play.api.mvc.Call] = None
+)(
+        mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+@sidebar = {
+@maybeSidebarLinks.map { sidebarLinks =>
+    @viewsHelpers.sidebar(sidebarLinks, Some("sidebar"))
+}
+}
+
+@scriptElems = {
+    <script src="@routes.Assets.at("javascripts/self-service-time-to-pay.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/urBanner.js")" type="text/javascript"></script>
+@if(scriptElem.isDefined){@scriptElem}
+}
+@links = {@if(req.RequestSupport.isLoggedIn){
+    <li><a href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)">@Messages("ssttp.common.sign-out")</a></li>
+}else{
+    @play.twirl.api.HtmlFormat.empty
+}}
+
+@head = {
+@if(allowTimeoutDialog) {
+    @partial.timeout_dialog_script(canSignOut)(messages, viewConfig)
+}
+    <link href='@routes.Assets.versioned("stylesheets/directDebitFrontend-print.css")' media="print" rel="stylesheet" type="text/css">
+    <link href='@routes.Assets.versioned("stylesheets/all.css")' rel="stylesheet" type="text/css">
+    <link href='@routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" />
+
+@headScripts
+}
+
+@beforeContentBlock = {
+    @backUrl.map { call =>
+        @govukBackLink(BackLink(href = call, classes = "govuk-!-display-none-print", attributes = Map("id" -> "back"), content = Text(Messages("back"))))
+    }
+
+    @if(showWelshLangToggle) {
+        <div class="language-toggle-position govuk-!-display-none-print">
+        @partial.language_selection(LanguageSelect(
+            if(messages.lang.code == "cy") Cy else En,
+            En -> langswitch.routes.LanguageSwitchController.switchToLanguage(Languages.English).url,
+            Cy -> langswitch.routes.LanguageSwitchController.switchToLanguage(Languages.Welsh).url,
+        ))
+        </div>
+    }
+}
+
+@contentBlock = {
+    @contentHeader
+
+    @mainContent
+
+    <div class="govuk-!-display-none-print">
+    @reportTechnicalIssues(ReportTechnicalIssue(serviceCode = "direct-debit-frontend", language = if(messages.lang.code == "cy") Cy else En))
+    </div>
+}
+
+@govukLayout(
+//    pageTitle = title.some,
+//    headBlock = Some(head),
+    headerBlock = Some(hmrcHeader(Header(
+        homepageUrl = "https://www.gov.uk",
+//        serviceName = Some(navTitle.getOrElse(Messages("header.default"))),
+//        phaseBanner = Some(standardBetaBanner(viewConfig.feedbackUrl)),
+//        signOutHref = if(canSignOut) Some(s"${viewConfig.signOut}${signOutContinueUrl.map(url => s"?continue=$url").getOrElse("")}") else None,
+        language = if(messages.lang.code == "cy") Cy else En
+    ))),
+    scriptsBlock = Some(scripts()),
+//    beforeContentBlock = Some(beforeContentBlock),
+    footerItems = Seq(
+//        FooterItem(text = Some(Messages("footer_cookies.link")), href = Some(viewConfig.cookiesUrl)),
+//        FooterItem(
+//            text = Some(Messages("accessibility-statement.label")),
+//            href = Some(viewConfig.accessibilityStatementUrl(request.uri)),
+//            attributes = Map("id" -> "accessibility-statement-link", "data-sso" -> "false", "data-journey-click" -> "footer:Click:Accessibility")
+//        ),
+//        FooterItem(text = Some(Messages("footer_privacyNotice.link")), href = Some(viewConfig.privacyNoticeUrl)),
+//        FooterItem(text = Some(Messages("footer_termsAndConditions.link")), href = Some(viewConfig.termsAndConditionsUrl)),
+//        FooterItem(text = Some(Messages("footer_helpUsingGovUk.link")), href = Some(viewConfig.helpUsingGovUkUrl))
+    ),
+    bodyEndBlock = None,
+    mainContentLayout = (if (!fullWidth) Some(twoThirdsMainContent.apply _) else None)
+)(contentBlock)
