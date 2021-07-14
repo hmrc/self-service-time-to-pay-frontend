@@ -2,5 +2,4 @@
 
 ->         /pay-what-you-owe-in-instalments                 app.Routes
 ->         /                                                health.Routes
-->    	   /template                                        template.Routes
 

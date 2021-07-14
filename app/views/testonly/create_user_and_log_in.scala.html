@@ -59,7 +59,7 @@
         <div class="">
             <p>
         <h2 class="govuk-heading-m">Frozen Date</h2>
-            <span class="flush--ends form-field--hint">YYYY-MM-DD</span>
+            <span class="flush--ends govuk-hint">YYYY-MM-DD</span>
             @textinput(field = dataForm("todays-date"),
                 'label -> "todays-date",
                 '_inputClass -> "input--cleared"
@@ -166,7 +166,7 @@
 
             <p>
         <h2 class="govuk-heading-m">UTR</h2>
-            <span class="flush--ends form-field--hint">10 digits or leave blank for random UTR</span>
+            <span class="flush--ends govuk-hint">10 digits or leave blank for random UTR</span>
             @textinput(field = dataForm("utr"),
                 '_maxlength -> "10",
                 '_inputClass -> "input--cleared"
@@ -175,17 +175,17 @@
 
             <p>
         <h2 class="govuk-heading-m">Returns</h2>
-            <span class="flush--ends form-field--hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/returns</em>
+            <span class="flush--ends govuk-hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/returns</em>
                 . Read DES API Tracker for more details.</span>
             @textinput(field = dataForm("returns-status-code"),
                 'label -> "returns http status code",
                 '_maxlength -> "3",
                 '_inputClass -> "input--cleared"
             )
-            <label for="returns-response-body">returns json response</label>
+            <label class="govuk-label" for="returns-response-body">returns json response</label>
             <textarea
-            class="@{
-                if(dataForm(" returns-response-body") hasErrors) "error-field form-field--error" else ""
+            class="govuk-textarea @{
+                if(dataForm(" returns-response-body") hasErrors) "error-field govuk-textarea--error" else ""
             }"
             rows="20"
             style="width: 100%;
@@ -195,17 +195,17 @@
             </p>
             <p>
         <h2 class="govuk-heading-m">Debits</h2>
-            <span class="flush--ends form-field--hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/debits</em>
+            <span class="flush--ends govuk-hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/debits</em>
                 . Read DES API Tracker for more details.</span>
             @textinput(field = dataForm("debits-status-code"),
                 'label -> "debits http status code",
                 '_maxlength -> "3",
                 '_inputClass -> "input--cleared"
             )
-            <label for="debits-response-body">debits json response</label>
+            <label class="govuk-label" for="debits-response-body">debits json response</label>
             <textarea
-            class="@{
-                if(dataForm(" debits-response-body") hasErrors) "error-field form-field--error" else ""
+            class="govuk-textarea @{
+                if(dataForm(" debits-response-body") hasErrors) "error-field govuk-textarea--error" else ""
             }"
             rows="20"
             style="width: 100%;
@@ -216,17 +216,17 @@
 
             <p>
         <h2 class="govuk-heading-m">Taxpayer definition in SA</h2>
-            <span class="flush--ends form-field--hint">Define response in SA-STUB for <em>
+            <span class="flush--ends govuk-hint">Define response in SA-STUB for <em>
                 GET /sa/individual/:saUtr/designatory-details/taxpayer</em>. Read SA docs for more details.</span>
             @textinput(field = dataForm("sa-taxpayer-status-code"),
                 'label -> "sa taxpayer http status code",
                 '_maxlength -> "3",
                 '_inputClass -> "input--cleared"
             )
-            <label for="sa-taxpayer-response-body">Taxpayer definition in SA json response</label>
+            <label class="govuk-label" for="sa-taxpayer-response-body">Taxpayer definition in SA json response</label>
             <textarea
-            class="@{
-                if(dataForm(" sa-taxpayer-response-body") hasErrors) "error-field form-field--error" else ""
+            class="govuk-textarea @{
+                if(dataForm(" sa-taxpayer-response-body") hasErrors) " govuk-textarea--error" else ""
             }"
             rows="20"
             style="width: 100%;

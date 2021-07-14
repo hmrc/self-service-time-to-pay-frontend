@@ -16,33 +16,13 @@
 
 package views
 
-import uk.gov.hmrc.govukfrontend.views.html.components.govukRadios
-
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.play.views.html.helpers._
-import uk.gov.hmrc.play.views.html.layouts._
 import views.html.helpers.forms.ssttpErrorSummary
 
 @Singleton
 class ViewsHelpers @Inject() (
     val errorSummary: ssttpErrorSummary,
-    val form: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
-    val inputRadioGroup:    InputRadioGroup,
-    val reportAProblemLink: ReportAProblemLink,
-
-    //copied from uk.gov.hmrc.play.views.html.layouts
-    val article: Article,
-    val betaBanner: BetaBanner,
-    val footer:     Footer,
-    val footerLinks:             FooterLinks,
-    val headWithTrackingConsent: HeadWithTrackingConsent,
-    val headerNav:               HeaderNav,
-    val loginStatus:             LoginStatus,
-    val mainContent:             MainContent,
-    val mainContentHeader:       MainContentHeader,
-    val gtmSnippet:              GTMSnippet,
-    val serviceInfo:             ServiceInfo,
-    val sidebar:                 Sidebar
+    val form:         uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 
 //our partials
 

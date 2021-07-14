@@ -16,9 +16,7 @@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import helpers.forms.submit
-@import uk.gov.hmrc.play.views.html.helpers
 @import partials.{direct_debit_details, currency}
-@import uk.gov.hmrc.play.config.AssetsConfig
 @import model._
 @import timetopaytaxpayer.cor.model._
 @import ssttpcalculator.model.PaymentSchedule
@@ -36,8 +34,7 @@
   implicit
   messages: play.api.i18n.Messages,
   request: Request[_],
-  appConfig: config.AppConfig,
-  assetsConfig: uk.gov.hmrc.play.config.AssetsConfig
+  appConfig: config.AppConfig
 )
 
 
@@ -56,7 +53,7 @@
             </summary>
             <div>
                 <p class="text--right">
-                    <img alt="" src="@{assetsConfig.assetsPrefix}/images/direct-debit-logo-2x.png" width="148px" height="60px">
+                    <img alt="" src="/images/direct-debit-logo-2x.png" width="148px" height="60px">
                 </p>
                 <h2 class="govuk-heading-m">@Messages("ssttp.direct-debit.guarantee.title")</h2>
                     <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.1")</p>

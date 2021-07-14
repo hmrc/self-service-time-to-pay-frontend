@@ -4,8 +4,8 @@ import sbt._
 object AppDependencies {
   val compile = Seq(
     ws,
-    "uk.gov.hmrc" %% "govuk-template" % "5.69.0-play-28",
-    "uk.gov.hmrc" %% "play-ui" % "9.6.0-play-28",
+//    "uk.gov.hmrc" %% "govuk-template" % "5.69.0-play-28",
+//    "uk.gov.hmrc" %% "play-ui" % "9.6.0-play-28",
 
     "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % "5.4.0",
     "uk.gov.hmrc"    %% "play-frontend-govuk"                        % "0.77.0-play-28",
