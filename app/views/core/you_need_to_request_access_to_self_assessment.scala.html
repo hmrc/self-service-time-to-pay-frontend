@@ -17,7 +17,7 @@
 @import helpers.forms.submit
 
 @this(
-  main: views.html.main,
+  main: views.html.main2,
   viewsHelpers: views.ViewsHelpers
 )
 
@@ -34,7 +34,7 @@
     backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
 ){
     <header class="page-header text">
-        <h1 class="heading-xlarge">@Messages("ssttp.you-need-to-request-access-to-self-assessment.title")</h1>
+        <h1 class="govuk-heading-xl">@Messages("ssttp.you-need-to-request-access-to-self-assessment.title")</h1>
     </header>
 
     <p>@Messages("ssttp.you-need-to-request-access-to-self-assessment.p1")</p>

@@ -23,4 +23,4 @@
 
 @argsMap = @{ args.toMap }
 
-<button class="@{("button " + argsMap.getOrElse('_modifierClass, "").trim)}" @toHtmlArgs(argsMap.filterNot(entry => entry._1.name.startsWith("_")))>@content</button>
+<button class="@{("govuk-button " + argsMap.getOrElse('_modifierClass, "").trim)}" @toHtmlArgs(argsMap.filterNot(entry => entry._1.name.startsWith("_")))>@content</button>

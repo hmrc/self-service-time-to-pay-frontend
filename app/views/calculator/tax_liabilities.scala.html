@@ -21,7 +21,7 @@
 @import java.util.Locale
 
 @this(
-  main: views.html.main,
+  main: views.html.main2,
   viewsHelpers: views.ViewsHelpers
 )
 
@@ -37,11 +37,17 @@
     title = Messages("ssttp.calculator.self-assessment-account-summary-page.title", currency(debits.map(_.amount).sum)),
     backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
 ) {
-    <h1 class="heading-xlarge">@Messages("ssttp.calculator.self-assessment-account-summary-page.title", currency(debits.map(_.amount).sum))</h1>
+    <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.self-assessment-account-summary-page.title", currency(debits.map(_.amount).sum))</h1>
 
-    <details>
-        <summary><span class="summary">@Messages("ssttp.calculator.self-assessment-account-summary-page.tax-account-details")</span></summary>
-        @tax_liabilities_summary(debits)
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                @Messages("ssttp.calculator.self-assessment-account-summary-page.tax-account-details")
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            @tax_liabilities_summary(debits)
+        </div>
     </details>
     <p>
     @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()) {

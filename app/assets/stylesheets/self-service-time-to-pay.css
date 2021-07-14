@@ -99,7 +99,7 @@ input.accountName{
     margin-top: -20px;
 }
 
-.govuk-grid-row {
+.govuk-grid-row2 {
     font-size: 16px;
     color: #fff;
     margin-bottom: 10px;
@@ -177,7 +177,6 @@ input.accountName{
     margin-bottom: 30px !important;
 }
 .app-check-your-answers {
-    font-family: "nta", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: 400;

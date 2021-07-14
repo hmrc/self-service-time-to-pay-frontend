@@ -21,7 +21,7 @@
 @import helpers.forms.submit
 
 @this(
-  main: views.html.main,
+  main: views.html.main2,
   viewsHelpers: views.ViewsHelpers
 )
 
@@ -50,7 +50,7 @@
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             <h1 class="govuk-fieldset__heading">@Messages("ssttp.calculator.results.title")</h1>
         </legend>
-             <div id="chosen-month">
+             <div id="chosen-month" class="govuk-radios">
              @{
                schedules.map{mts =>
                  instalment_by_month(mts)
@@ -58,29 +58,26 @@
              }
              </div>
     </fieldset>
-<details>
- <summary><span class="summary">@Messages("ssttp.calculator.results.section.title")</span></summary>
- <div class="panel panel-border-narrow">
+<details class="govuk-details">
+ <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.results.section.title")</span></summary>
+ <div class="govuk-details__text">
   <p>@Messages("ssttp.calculator.results.section.p1")</p>
   <p>@Messages("ssttp.calculator.results.section.p2")</p>
   <p>@Messages("ssttp.calculator.results.section.p3")</p>
  </div>
 </details>
 
-<br>
-
-<details>
-  <summary><span class="summary">@Messages("ssttp.calculator.check-calculation.cant-afford")</span></summary>
-  <div class="panel panel-border-narrow">
+<details class="govuk-details">
+  <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.check-calculation.cant-afford")</span></summary>
+  <div class="govuk-details__text">
     <p>@Messages("ssttp.calculator.check-calculation.cant-afford.p1")</p>
     <p>@Messages("ssttp.calculator.check-calculation.cant-afford.p2.1") <strong class="bold">@Messages("ssttp.calculator.check-calculation.cant-afford.p2.2")</strong> @Messages("ssttp.calculator.check-calculation.cant-afford.p2.3")</p>
   </div>
 </details>
 
-<br>
 <div class="clear">
  <div class="form-group">
-  <button id="next" type="submit" class="button" onclick="continue()">@Messages("ssttp.calculator.form.continue")</button>
+  <button id="next" type="submit" class="govuk-button" onclick="continue()">@Messages("ssttp.calculator.form.continue")</button>
  </div>
 </div>
 }

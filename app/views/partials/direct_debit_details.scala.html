@@ -19,8 +19,8 @@
 
 @(directDebit:ArrangementDirectDebit, print:Boolean = false)(implicit messages: play.api.i18n.Messages)
 
-<div class="add_bottom_line">
-    <dl class="app-check-your-answers app-check-your-answers--long">
+<div class="govuk-body add_bottom_line">
+    <dl class="app-check-your-answers app-check-your-answers--long govuk-!-margin-0">
         <div class="app-check-your-answers__contents">
             <dt class="app-check-your-answers__question no_bottom_line">
                 @Messages("ssttp.direct-debit.account-name")
@@ -34,7 +34,7 @@
             </dd>
         </div>
     </dl>
-    <dl class="app-check-your-answers app-check-your-answers--long">
+    <dl class="app-check-your-answers app-check-your-answers--long govuk-!-margin-0">
         <div class="app-check-your-answers__contents">
             <dt class="app-check-your-answers__question no_bottom_line">
                 <span class="govuk-body-m">@Messages("ssttp.direct-debit.sort-code")</span>
@@ -44,7 +44,7 @@
             </dd>
         </div>
     </dl>
-    <dl class="app-check-your-answers app-check-your-answers--long">
+    <dl class="app-check-your-answers app-check-your-answers--long govuk-!-margin-0">
         <div class="app-check-your-answers__contents">
             <dt class="app-check-your-answers__question no_bottom_line">
                 <span class="govuk-body-m">@Messages("ssttp.direct-debit.account-number")</span>

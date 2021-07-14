@@ -17,9 +17,11 @@
 @import helpers.forms.submit
 @import ssttpcalculator.MonthlyAmountForm
 @import partials.currency
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Input
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
 
 @this(
-  main: views.html.main,
+  main: views.html.main2,
   viewsHelpers: views.ViewsHelpers
 )
 
@@ -40,24 +42,27 @@
         @viewsHelpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"),dataForm)
     }
 
-    <h1 class="heading-xlarge">@Messages("ssttp.monthy.amount.title")</h1>
+    <h1 class="govuk-heading-xl">@Messages("ssttp.monthy.amount.title")</h1>
 
-    <p>@Messages("ssttp.monthly.amount.hint", currency(lowerBound.toDouble), currency(upperBound.toDouble))</p>
+    <p class="govuk-body">@Messages("ssttp.monthly.amount.hint", currency(lowerBound.toDouble), currency(upperBound.toDouble))</p>
 
     @viewsHelpers.form(action = ssttpcalculator.routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group"){
 
-<label for="amount" class="@if(dataForm.hasErrors){form-field--error}">
+<div class="govuk-form-group @if(dataForm.hasErrors){govuk-form-group--error}">
     @if(dataForm.hasErrors){
-    <span class="error-notification" role="tooltip" data-journey="search-page:error:amount">
+    <span class="govuk-error-message" role="tooltip" data-journey="search-page:error:amount">
           @Messages("ssttp.monthly.amount.numbers-only")
         </span>
     }
-    <span>
+    <span class="govuk-body" for="amount">
       £
     </span>
-    <span class="visually-hidden">@Messages("ssttp.monthly.amount.pound.sign.description")</span>
-    <input type="text" class="form-control-1-4" name="amount" id="amount" value="" aria-invalid="true">
-</label>
-        @submit(){@Messages("ssttp.calculator.form.continue")}
+    <span class="govuk-visually-hidden">@Messages("ssttp.monthly.amount.pound.sign.description")</span>
+
+    <input type="text" class="govuk-input govuk-!-width-one-quarter @if(dataForm.hasErrors){govuk-input--error}" name="amount" id="amount" value="" aria-invalid="true">
+</div>
+        @submit('_buttonClass -> "govuk-button") {
+            @Messages("ssttp.calculator.form.continue")
+        }
     }
 }

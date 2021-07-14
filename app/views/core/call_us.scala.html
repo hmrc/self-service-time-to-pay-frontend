@@ -15,7 +15,7 @@
  *@
 
 @this(
-  main: views.html.main,
+  main: views.html.main2,
   viewsHelpers: views.ViewsHelpers
 )
 
@@ -31,14 +31,14 @@
     title = Messages("ssttp.call-us.title")
 ){
     <header class="page-header text">
-        <h1 class="heading-xlarge">@Messages("ssttp.call-us.title")</h1>
+        <h1 class="govuk-heading-xl">@Messages("ssttp.call-us.title")</h1>
     </header>
 
     <p>@Messages("ssttp.call-us.p1")</p>
 
     <p>@Messages("ssttp.call-us.p2") <strong class="bold">@Messages("ssttp.call-us.p2.telephone")</strong></p>
 
-    <h2>@Messages("ssttp.call-us.before-call.heading")</h2>
+    <h2 class="govuk-heading-m">@Messages("ssttp.call-us.before-call.heading")</h2>
 
     <ul class="bullets">
         <li>@Messages("ssttp.call-us.before-call.l1")</li>

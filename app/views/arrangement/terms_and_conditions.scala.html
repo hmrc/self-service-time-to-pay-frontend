@@ -19,7 +19,7 @@
 @import helpers.forms.submit
 
 @this(
-  main: views.html.main,
+  main: views.html.main2,
   viewsHelpers: views.ViewsHelpers
 )
 
@@ -35,9 +35,12 @@
     title = Messages("ssttp.arrangement.declaration.h1"),
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
 ) {
-    <h1 class="heading-xlarge">@Messages("ssttp.arrangement.declaration.h1")</h1>
+    <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.declaration.h1")</h1>
+
+    <div class="govuk-body">
+
     <p>@Messages("ssttp.arrangement.declaration.cancel-if")</p>
-    <ul class="bullets">
+    <ul class="govuk-list govuk-list--bullet">
         <li>@Messages("ssttp.arrangement.declaration.cancel-if.1")</li>
         <li>@Messages("ssttp.arrangement.declaration.cancel-if.2")</li>
         <li>@Messages("ssttp.arrangement.declaration.cancel-if.3")</li>
@@ -52,5 +55,7 @@
         @Messages("ssttp.arrangement.declaration.agreement.confirm")
       }
     }
+
+    </div>
 
 }

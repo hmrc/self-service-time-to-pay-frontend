@@ -28,7 +28,7 @@ Time To Pay Instalment Summary Pretty Print Page
 @import ssttpcalculator.model.PaymentSchedule
 
 @this(
-  main: views.html.main,
+  main: views.html.main2,
   viewsHelpers: views.ViewsHelpers
 )
 
@@ -48,7 +48,7 @@ Time To Pay Instalment Summary Pretty Print Page
     title = Messages("ssttp.arrangement.instalment-summary.title"),
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
     ) {
-        <h1 class="heading-xlarge">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
+        <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
 
         @instalments_plan_summary_table(schedule)
 

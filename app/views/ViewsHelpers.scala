@@ -16,9 +16,12 @@
 
 package views
 
+import uk.gov.hmrc.govukfrontend.views.html.components.govukRadios
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.views.html.helpers._
 import uk.gov.hmrc.play.views.html.layouts._
+import views.html.helpers.forms.ssttpErrorSummary
 
 @Singleton
 class ViewsHelpers @Inject() (
@@ -30,17 +33,18 @@ class ViewsHelpers @Inject() (
     val dateFieldsFreeYearInline:   DateFieldsFreeYearInline,
     val dateFieldsFreeYear:         DateFieldsFreeYear,
     val dateFieldsInline:           DateFieldsInline,
-    val dropdown:                   Dropdown,
-    val errorInline:                ErrorInline,
-    val errorNotifications:         ErrorNotifications,
-    val errorSummary:               ErrorSummary,
-    val fieldGroup:                 FieldGroup,
-    val form:                       FormWithCSRF,
-    val input:                      Input,
-    val inputRadioGroup:            InputRadioGroup,
-    val reportAProblemLink:         ReportAProblemLink,
-    val singleCheckbox:             SingleCheckbox,
-    val textArea:                   TextArea,
+    //    val dropdown:                   Dropdown,
+    //    val errorInline:                ErrorInline,
+    //    val errorNotifications:         ErrorNotifications,
+    val errorSummary:       ssttpErrorSummary,
+    val fieldGroup:         FieldGroup,
+    val form:               uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
+    val formOld:            FormWithCSRF,
+    val input:              Input,
+    val inputRadioGroup:    InputRadioGroup,
+    val reportAProblemLink: ReportAProblemLink,
+    val singleCheckbox:     SingleCheckbox,
+    val textArea:           TextArea,
 
     //copied from uk.gov.hmrc.play.views.html.layouts
     val article:                 Article,

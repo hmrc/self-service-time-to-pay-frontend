@@ -1,0 +1,19 @@
+@import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+
+@this(
+    errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.govukErrorSummary
+)
+
+@(
+  title: String,
+  form: Form[_]
+)(implicit messages: Messages)
+
+@errorSummary(
+    ErrorSummary(
+        title = Text(title),
+        errorList = form.errors.asTextErrorLinks
+    )
+)
