@@ -25,33 +25,15 @@ import views.html.helpers.forms.ssttpErrorSummary
 
 @Singleton
 class ViewsHelpers @Inject() (
-    //copied from uk.gov.hmrc.play.views.html.helpers
-    val address:                    Address,
-    val dateFields:                 DateFields,
-    val dateFieldsFreeInline:       DateFieldsFreeInline,
-    val dateFieldsFreeInlineLegend: DateFieldsFreeInlineLegend,
-    val dateFieldsFreeYearInline:   DateFieldsFreeYearInline,
-    val dateFieldsFreeYear:         DateFieldsFreeYear,
-    val dateFieldsInline:           DateFieldsInline,
-    //    val dropdown:                   Dropdown,
-    //    val errorInline:                ErrorInline,
-    //    val errorNotifications:         ErrorNotifications,
-    val errorSummary:       ssttpErrorSummary,
-    val fieldGroup:         FieldGroup,
-    val form:               uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
-    val formOld:            FormWithCSRF,
-    val input:              Input,
+    val errorSummary: ssttpErrorSummary,
+    val form: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
     val inputRadioGroup:    InputRadioGroup,
     val reportAProblemLink: ReportAProblemLink,
-    val singleCheckbox:     SingleCheckbox,
-    val textArea:           TextArea,
 
     //copied from uk.gov.hmrc.play.views.html.layouts
-    val article:                 Article,
-    val attorneyBanner:          AttorneyBanner,
-    val betaBanner:              BetaBanner,
-    val footer:                  Footer,
-    val euExitLinks:             EuExitLinks,
+    val article: Article,
+    val betaBanner: BetaBanner,
+    val footer:     Footer,
     val footerLinks:             FooterLinks,
     val headWithTrackingConsent: HeadWithTrackingConsent,
     val headerNav:               HeaderNav,

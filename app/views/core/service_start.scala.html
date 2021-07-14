@@ -38,11 +38,12 @@
     hasUserPanel = true
 ){
 
-    <h1 class="govuk-heading-xl">@Messages("ssttp.landing.title")</h1>
+<h1 class="govuk-heading-xl">@Messages("ssttp.landing.title")</h1>
 
-    <p class="govuk-body">@Messages("ssttp.landing.p2")</p>
-    <p class="govuk-body">@Messages("ssttp.landing.p1")</p>
-    <p class="govuk-body">@Messages("ssttp.landing.p3")</p>
+<section class="govuk-body">
+    <p>@Messages("ssttp.landing.p2")</p>
+    <p>@Messages("ssttp.landing.p1")</p>
+    <p>@Messages("ssttp.landing.p3")</p>
 
     <ul class="govuk-list govuk-list--bullet">
       <li>@Messages("ssttp.landing.p3list.1")</li>
@@ -51,7 +52,7 @@
       <li>@Messages("ssttp.landing.p3list.4")</li>
     </ul>
 
-    <p class="govuk-body">@Messages("ssttp.landing.p4")</p>
+    <p>@Messages("ssttp.landing.p4")</p>
 
     @viewsHelpers.form(ssttpeligibility.routes.SelfServiceTimeToPayController.submit(), 'class -> "group",'id -> "start") {
       @submit('_buttonClass -> "govuk-button button--get-started"){@Messages("ssttp.landing.start-button.label")}
@@ -59,6 +60,8 @@
 
   <h2 class="govuk-heading-m">@Messages("ssttp.landing.before-you-start")</h2>
 
-  <p class="govuk-body">@Messages("ssttp.landing.before-you-start.p1")</p>
+  <p>@Messages("ssttp.landing.before-you-start.p1")</p>
+
+</section>
 
 }

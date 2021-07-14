@@ -73,7 +73,11 @@
 @contentBlock = {
     @contentHeader
 
-    @mainContent
+    <div id="content">
+        <article>
+            @mainContent
+        </article>
+    </div>
 
     <div class="govuk-!-display-none-print">
     @reportTechnicalIssues(ReportTechnicalIssue(serviceCode = "direct-debit-frontend", language = if(messages.lang.code == "cy") Cy else En))
@@ -81,7 +85,7 @@
 }
 
 @govukLayout(
-    pageTitle = Some(title),
+    pageTitle = Some(s"$title - ${Messages("ssttp.common.title")} - GOV.UK"),
     headBlock = Some(head),
     headerBlock = Some(hmrcHeader(Header(
         homepageUrl = "https://www.gov.uk",

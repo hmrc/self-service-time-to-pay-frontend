@@ -80,7 +80,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    */
   def readMain(): String = xpath("""//*[@id="content"]/article""").element.text
 
-  def readGlobalHeaderText(): String = id("proposition-menu").element.text
+  def readGlobalHeaderText(): String = className("govuk-header__link--service-name").element.text
 
   def href(id: String): Option[String] = find(IdQuery(id)).fold(Option.empty[String])(e => e.attribute("href"))
   def backButtonHref: Option[String] = href("back-link")
