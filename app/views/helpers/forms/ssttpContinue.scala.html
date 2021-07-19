@@ -1,0 +1,14 @@
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Button
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+
+@this(
+        govukButton: uk.gov.hmrc.govukfrontend.views.html.components.govukButton
+)
+
+@(text: String = "")(implicit messages: play.api.i18n.Messages)
+
+@govukButton(Button(
+    inputType = Some("submit"),
+    content = Text(if(text.nonEmpty) text else Messages("ssttp.common.continue")),
+    attributes = Map("id" -> "continue")
+))

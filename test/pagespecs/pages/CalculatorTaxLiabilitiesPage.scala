@@ -47,8 +47,9 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
   //  }
 
   def clickOnStartNowButton(): Unit = {
-    val button = xpath("//*[@id=\"content\"]/article/form/div/button")
-    click on button
+    clickOnContinue()
+    //    val button = xpath("//*[@id=\"content\"]/article/form/div/button")
+    //    click on button
   }
 
   object Expected {

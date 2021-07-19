@@ -75,7 +75,8 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
   }
 
   def enterDay(day: String): Unit = {
-    val dayField = xpath("/html/body/main/div[2]/article/form/div/div[3]/input")
+    //    val dayField = xpath("/html/body/main/div[2]/article/form/div/div[3]/input")
+    val dayField = id("dayInput")
     click on dayField
     enter(day)
   }

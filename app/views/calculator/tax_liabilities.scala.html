@@ -51,8 +51,6 @@
     </details>
     <p>
     @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()) {
-        @submit() {
-            @Messages("ssttp.calculator.self-assessment-account-summary-page.button-continue")
-        }
+        @viewsHelpers.continue(Messages("ssttp.calculator.self-assessment-account-summary-page.button-continue"))
     }</p>
 }

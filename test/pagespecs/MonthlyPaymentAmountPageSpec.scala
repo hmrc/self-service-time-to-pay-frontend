@@ -35,7 +35,7 @@ class MonthlyPaymentAmountPageSpec extends ItSpec {
     startPage.clickOnStartNowButton()
 
     taxLiabilitiesPage.assertPageIsDisplayed()
-    taxLiabilitiesPage.clickOnStartNowButton()
+    taxLiabilitiesPage.clickOnContinue()
 
     paymentTodayQuestionPage.assertPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)

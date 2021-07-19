@@ -65,9 +65,7 @@
                 <li>@Messages("ssttp.direct-debit.form.message.permission")</li>
             </ul>
         </div>
-        @submit() {
-            @Messages("ssttp.arrangement.direct-debit.form.submit")
-        }
+        @viewsHelpers.continue(Messages("ssttp.arrangement.direct-debit.form.submit"))
     }
 }
 

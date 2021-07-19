@@ -90,6 +90,8 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
   def clickOnEnglishLink(): Unit = click on id("en-switch")
   def clickOnWelshLink(): Unit = click on id("cy-switch")
 
+  def clickOnContinue(): Unit = click on id("continue")
+
   /**
    * Probing tries to run `probingF` until until it succeeds. If it doesn't it:
    * reports what was the page source

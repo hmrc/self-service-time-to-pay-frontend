@@ -5,6 +5,8 @@ ssttp.common.print = Print
 ssttp.common.sign-out = Sign out
 ssttp.common.back = Back
 
+ssttp.common.continue = Continue
+
 
 ssttp.payment-plan-calculator.title = Self Assessment payment plan calculator
 
