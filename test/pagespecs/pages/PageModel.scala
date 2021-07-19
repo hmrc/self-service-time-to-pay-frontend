@@ -87,8 +87,8 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def readPath(): String = new java.net.URL(webDriver.getCurrentUrl).getPath
 
-  def clickOnEnglishLink(): Unit = click on linkText("English")
-  def clickOnWelshLink(): Unit = click on linkText("Cymraeg")
+  def clickOnEnglishLink(): Unit = click on id("en-switch")
+  def clickOnWelshLink(): Unit = click on id("cy-switch")
 
   /**
    * Probing tries to run `probingF` until until it succeeds. If it doesn't it:

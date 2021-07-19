@@ -61,13 +61,17 @@
         @partials.back_button(call)
     }
 
-    <div class="language-toggle-position govuk-!-display-none-print">
+    @if(welshToggleEnabled) {
+        @partials.language_selection()
+    }
+
+@*    <div class="language-toggle-position govuk-!-display-none-print">
     @languageSelect(LanguageSelect(
         if (messages.lang.code == "cy") Cy else En,
         En -> langswitch.routes.LanguageSwitchController.switchToLanguage(Languages.English).url,
         Cy -> langswitch.routes.LanguageSwitchController.switchToLanguage(Languages.Welsh).url
     ))
-    </div>
+    </div>*@
 }
 
 @contentBlock = {
@@ -91,10 +95,20 @@
         homepageUrl = "https://www.gov.uk",
         serviceName = Some(Messages(navTitle)),
         serviceUrl = "",
-//        phaseBanner = if (includeBanner.value) Some(PhaseBanner(content = HtmlContent(partial.beta_banner(s"${urls.feedbackUrl}")))) else None,
         signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).url) else None,
         language = if (messages.lang.code == "cy") Cy else En
     ))),
     scriptsBlock = Some(scripts),
-    beforeContentBlock = Some(beforeContentBlock)
+    beforeContentBlock = Some(beforeContentBlock),
+    footerItems = Seq(
+        FooterItem(text = Some(Messages("footer_cookies.link")), href = Some(viewConfig.cookiesUrl)),
+        FooterItem(
+            text = Some(Messages("accessibility-statement.title")),
+            href = Some(viewConfig.accessibilityStatementUrl(request.uri)),
+            attributes = Map("id" -> "accessibility-statement-link", "data-sso" -> "false", "data-journey-click" -> "footer:Click:Accessibility")
+        ),
+        FooterItem(text = Some(Messages("footer_privacyNotice.link")), href = Some(viewConfig.privacyNoticeUrl)),
+        FooterItem(text = Some(Messages("footer_termsAndConditions.link")), href = Some(viewConfig.termsAndConditionsUrl)),
+        FooterItem(text = Some(Messages("footer_helpUsingGovUk.link")), href = Some(viewConfig.helpUsingGovUkUrl))
+    )
 )(contentBlock)

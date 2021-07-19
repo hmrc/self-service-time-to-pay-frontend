@@ -27,7 +27,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
 
 @this(
-  main: views.html.main2,
+  main: views.html.main,
   radios: uk.gov.hmrc.govukfrontend.views.html.components.govukRadios,
   formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
   errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.govukErrorSummary,
@@ -68,10 +68,12 @@
             Radios(
                 items = List(
                     RadioItem(
+                        id = Some("paytoday-true"),
                         content = Text(Messages("ssttp.calculator.form.payment_today_question.yes_label")),
                         value = Some("true")
                     ),
                     RadioItem(
+                        id = Some("paytoday-false"),
                         content = Text(Messages("ssttp.calculator.form.payment_today_question.no_label")),
                         value = Some("false")
                     )

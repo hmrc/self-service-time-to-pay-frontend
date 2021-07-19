@@ -58,7 +58,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
   }
 
   def clickContinue(): Unit = probing{
-    val button = xpath("//*[@id=\"content\"]/article/form/div[2]/button")
+    val button = xpath("""//*[@id="content"]/article/form/div[2]/button""")
     click on button
   }
 

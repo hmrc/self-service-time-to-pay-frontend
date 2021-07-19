@@ -465,6 +465,11 @@ ssttp.you-need-to-request-access-to-self-assessment.button-label = Request acces
  accessibility-statement-p27b = . The full service was tested by HMRC and included disabled users.
  accessibility-statement-p28 = This page was prepared on 26 February 2020. It was last updated on 11 February 2021.
 
+#other footer links:
+footer_cookies.link = Cookies
+footer_privacyNotice.link = Privacy
+footer_termsAndConditions.link = Terms and conditions
+footer_helpUsingGovUk.link = Help using GOV.UK
 
 
 # Session timeout dialog and timed out page
