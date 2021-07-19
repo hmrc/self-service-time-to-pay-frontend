@@ -29,6 +29,7 @@ final case class ViewConfig(
     //    frontendBaseUrl:      String,
     frontendBaseUrl:               String,
     accessibilityStatementBaseUrl: String,
+    accessibilityStatementPath:    String,
     timeoutDialogTimeout:          Int,
     timeoutDialogCountdown:        Int
 ) {
@@ -50,7 +51,8 @@ final case class ViewConfig(
     frontendBaseUrl               = servicesConfig.getString("microservice.services.auth.login-callback.base-url"), //TODO: migrate this config,
     timeoutDialogTimeout          = servicesConfig.getInt("timeout-dialog.timeout"),
     timeoutDialogCountdown        = servicesConfig.getInt("timeout-dialog.countdown"),
-    accessibilityStatementBaseUrl = servicesConfig.getString("accessibility-statement-frontend.url")
+    accessibilityStatementBaseUrl = servicesConfig.getString("accessibility-statement-frontend.url"),
+    accessibilityStatementPath    = servicesConfig.getString("accessibility-statement-frontend.path")
   )
 
   // footer links
@@ -59,5 +61,5 @@ final case class ViewConfig(
   val termsAndConditionsUrl: String = "https://www.tax.service.gov.uk/help/terms-and-conditions"
   val helpUsingGovUkUrl: String = "https://www.gov.uk/help"
 
-  def accessibilityStatementUrl(relativeUrl: String): String = s"$accessibilityStatementBaseUrl/accessibility-statement/${acc}?referrerUrl=$frontendBaseUrl$relativeUrl"
+  def accessibilityStatementUrl(relativeUrl: String): String = s"$accessibilityStatementBaseUrl/accessibility-statement${accessibilityStatementPath}?referrerUrl=$frontendBaseUrl$relativeUrl"
 }
