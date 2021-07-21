@@ -42,7 +42,8 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
   }
 
   def clickOnStartNowButton(): Unit = {
-    val button = xpath("//*[@id=\"start\"]/div/button")
+    //    val button = xpath("//*[@id=\"start\"]/div/button")
+    val button = id("start-now")
     click on button
   }
 

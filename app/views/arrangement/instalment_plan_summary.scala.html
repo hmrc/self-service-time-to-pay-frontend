@@ -22,7 +22,6 @@ Time To Pay Instalment Summary Pretty Print Page
 @import timetopaytaxpayer.cor.model.Debit
 @import helpers.{alert, message_list}
 @import helpers.forms.submit
-@import uk.gov.hmrc.play.views.html.helpers
 @import partials._
 @import _root_.model._
 @import ssttpcalculator.model.PaymentSchedule
@@ -48,7 +47,7 @@ Time To Pay Instalment Summary Pretty Print Page
     title = Messages("ssttp.arrangement.instalment-summary.title"),
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
     ) {
-        <h1 class="heading-xlarge">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
+        <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
 
         @instalments_plan_summary_table(schedule)
 

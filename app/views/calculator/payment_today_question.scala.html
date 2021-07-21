@@ -17,9 +17,20 @@
 @import helpers.forms.submit
 
 @import uk.gov.hmrc.selfservicetimetopay.models.PayTodayQuestion
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Fieldset
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
 
 @this(
   main: views.html.main,
+  radios: uk.gov.hmrc.govukfrontend.views.html.components.govukRadios,
+  formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
+  errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.govukErrorSummary,
   viewsHelpers: views.ViewsHelpers
 )
 
@@ -39,23 +50,48 @@
 ) {
 
     @if(dataForm.hasErrors){
-        @viewsHelpers.errorSummary(Messages("ssttp.calculator.form.payment_today_question.required.title"),dataForm)
+        @errorSummary(ErrorSummary(
+            errorList = dataForm.errors.asTextErrorLinks,
+            title = Text(Messages("ssttp.calculator.form.payment_today_question.required.title")),
+        ))
     }
 
-   <h1 class="heading-xlarge">@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
-    <p>@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
-    @viewsHelpers.form(action = ssttpcalculator.routes.CalculatorController.submitPayTodayQuestion(),
-        'id -> "paytoday",'class -> "form-group inline"){
-        @viewsHelpers.inputRadioGroup(dataForm("paytoday"),Seq(
-                "true" -> Messages("ssttp.calculator.form.payment_today_question.yes_label"),
+   <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
+    <p class="govuk-body">@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
+    @formWithCsrf(
+        action = ssttpcalculator.routes.CalculatorController.submitPayTodayQuestion(),
+        'id -> "paytoday",'class -> "form-group inline"
+    ){
+
+
+        @radios(
+            Radios(
+                items = List(
+                    RadioItem(
+                        id = Some("paytoday-true"),
+                        content = Text(Messages("ssttp.calculator.form.payment_today_question.yes_label")),
+                        value = Some("true")
+                    ),
+                    RadioItem(
+                        id = Some("paytoday-false"),
+                        content = Text(Messages("ssttp.calculator.form.payment_today_question.no_label")),
+                        value = Some("false")
+                    )
+                ),
+                classes = "govuk-radios--inline"
+            ).withFormField(dataForm("paytoday"))
+        )
+
+@*        @viewsHelpers.inputRadioGroup(dataForm("paytoday"),Seq(
+                "true" -> "",
                 "false" -> Messages("ssttp.calculator.form.payment_today_question.no_label")
         ), '_label -> Html(Messages("ssttp.eligibility.form.existing_ttp.question")),
             '_labelClass -> "block-label block-label--inline",
             '_legend -> Html(Messages("ssttp.calculator.form.payment_today_question.title")),
-            '_legendClass -> "visually-hidden")
-<br>
-<div class="form-group">
-    <button id="next" type="submit" class="button" onclick="continue()">@Messages("ssttp.calculator.payment_today_question.button-continue")</button>
-</div>
+            '_legendClass -> "govuk-visually-hidden")*@
+        <br>
+        <div class="govuk-form-group">
+            <button id="next" type="submit" class="govuk-button" onclick="continue()">@Messages("ssttp.calculator.payment_today_question.button-continue")</button>
+        </div>
     }
 }

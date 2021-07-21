@@ -50,7 +50,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   }
 
   def clickContinue(): Unit = probing {
-    val button = xpath("//*[@id=\"next\"]")
+    val button = id("next")
     click on button
   }
 

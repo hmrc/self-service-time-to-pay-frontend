@@ -20,20 +20,20 @@
 
 <form action="@ssttpcalculator.routes.CalculatorController.submitPaymentToday()" method="post">
     @helper.CSRF.formField
-    <label for="amount" class="@if(dataForm.hasErrors){form-field--error}">
+    <label class="govuk-label" for="amount" class="@if(dataForm.hasErrors){govuk-form-group--error}">
       @if(dataForm.hasErrors){
-        <span class="error-notification" role="tooltip" data-journey="search-page:error:amount">
+        <span class="govuk-error-message" role="tooltip" data-journey="search-page:error:amount">
           @Messages("ssttp.calculator.form.payment_today.amount.required")
         </span>
       }
-      <span>
+      <span class="govuk-body">
       £
       </span>
-        <span class="visually-hidden">@Messages("ssttp.upfront.amount.pound.sign.description")</span>
-      <input type="text" class="form-control-1-4" name="amount" id="amount" value="" aria-invalid="true">
+        <span class="govuk-visually-hidden">@Messages("ssttp.upfront.amount.pound.sign.description")</span>
+      <input type="text" class="govuk-input govuk-!-width-one-quarter" name="amount" id="amount" value="" aria-invalid="true">
     </label>
     <div class="form-group margin-top-30 form-field--submit">
-      <button class="button " type="submit" onclick="continue()">@Messages("ssttp.calculator.form.continue")</button>
+      <button class="govuk-button " type="submit" onclick="continue()">@Messages("ssttp.calculator.form.continue")</button>
 
     </div>
 </form>

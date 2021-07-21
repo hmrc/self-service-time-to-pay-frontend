@@ -20,7 +20,7 @@
 @this(
   appConfig: AppConfig,
   viewConfig: ViewConfig,
-  govuk_wrapper: views.html.govuk_wrapper
+  govukLayout: uk.gov.hmrc.govukfrontend.views.html.layouts.govukLayout
 )
 
 @(
@@ -40,9 +40,9 @@
   <b>@message</b>
 }
 
-@govuk_wrapper(
-  viewConfig = viewConfig,
-  title = pageTitle,
-  maybeContentHeader = Some(contentHeader),
-  mainContent = mainContent
-)
+@govukLayout(
+  pageTitle = Some(pageTitle),
+  beforeContentBlock = Some(contentHeader)
+//  maybeContentHeader = Some(contentHeader),
+
+)(mainContent)

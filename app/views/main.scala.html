@@ -1,24 +1,32 @@
-@*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{BackLink, FooterItem, HtmlContent, Text}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.phasebanner.PhaseBanner
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.{Header, ReportTechnicalIssue}
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En, LanguageSelect}
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
+@import langswitch.Languages
+@import config.ViewConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
+@import req.RequestSupport.isLoggedIn
 
 @this(
-  govUkWrapper: govuk_wrapper,
-  viewsHelpers: views.ViewsHelpers,
-  appConfig: config.AppConfig,
-  viewConfig: config.ViewConfig
+        govukLayout: uk.gov.hmrc.govukfrontend.views.html.layouts.govukLayout,
+        twoThirdsMainContent: uk.gov.hmrc.govukfrontend.views.html.layouts.twoThirdsMainContent,
+        govukBackLink: uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink,
+        hmrcHeader: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcHeader,
+        languageSelect: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcLanguageSelect,
+
+        reportTechnicalIssues: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcReportTechnicalIssue,
+        hmrcTrackingConsentSnippet: uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcTrackingConsentSnippet,
+
+        standardBetaBanner: uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner,
+
+        hmrcStandardFooter: HmrcStandardFooter,
+
+        mainScripts: views.html.scripts,
+
+        viewsHelpers: views.ViewsHelpers,
+        appConfig: config.AppConfig,
+        viewConfig: config.ViewConfig
 )
 
 @(title: String,
@@ -38,45 +46,60 @@
 )(
         mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
-@sidebar = {
-    @maybeSidebarLinks.map { sidebarLinks =>
-        @viewsHelpers.sidebar(sidebarLinks, Some("sidebar"))
+@head = {
+    <link href='@routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" />
+    <link rel='stylesheet' href='@routes.Assets.versioned("stylesheets/self-service-time-to-pay.css")' />
+}
+
+@scripts = {
+    @mainScripts()
+    @if(scriptElem.isDefined){@scriptElem}
+}
+
+@beforeContentBlock = {
+    @backButtonUrl.map{ call =>
+        @partials.back_button(call)
+    }
+
+    @if(welshToggleEnabled) {
+        @partials.language_selection()
     }
 }
 
-@scriptElems = {
-    <script src="@routes.Assets.at("javascripts/self-service-time-to-pay.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/urBanner.js")" type="text/javascript"></script>
-    @if(scriptElem.isDefined){@scriptElem}
-}
-@links = {@if(req.RequestSupport.isLoggedIn){
-    <li><a href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)">@Messages("ssttp.common.sign-out")</a></li>
-}else{
-    @play.twirl.api.HtmlFormat.empty
-}}
+@contentBlock = {
+    @contentHeader
 
-@linksElems = {
-    @linksElem.getOrElse("")
-    <link rel='stylesheet' href='@routes.Assets.at("css/self-service-time-to-pay.css")' />
+    <div id="content">
+        <article>
+            @mainContent
+        </article>
+    </div>
+
+    <div class="govuk-!-display-none-print">
+    @reportTechnicalIssues(ReportTechnicalIssue(serviceCode = "self-service-time-to-pay-frontend", language = if(messages.lang.code == "cy") Cy else En))
+    </div>
 }
 
-@govUkWrapper(
-    title = s"$title - ${Messages("ssttp.common.title")} - GOV.UK",
-    mainClass = mainClass,
-    bodyClasses = bodyClasses,
-    navLinks = Option(links),
-    sidebar = sidebar,
-    maybeContentHeader = contentHeader,
-    mainContent = viewsHelpers.article(mainContent),
-    scriptElem = Some(scriptElems),
-    linksElem = Some(linksElems),
-    canSignOut = req.RequestSupport.isLoggedIn,
-    allowTimeoutDialog = allowTimeoutDialog,
-    googleAnalyticsCalls = googleAnalyticsCalls,
-    noGetHelp = noGetHelp,
-    welshToggleEnabled = welshToggleEnabled,
-    hasUserPanel = hasUserPanel,
-    navTitle = navTitle,
-    maybeBackButtonUrl = backButtonUrl,
-    viewConfig = viewConfig
-)
+@govukLayout(
+    pageTitle = Some(s"$title - ${Messages("ssttp.common.title")} - GOV.UK"),
+    headBlock = Some(head),
+    headerBlock = Some(hmrcHeader(Header(
+        homepageUrl = "https://www.gov.uk",
+        serviceName = Some(Messages(navTitle)),
+        signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).url) else None,
+        language = if (messages.lang.code == "cy") Cy else En
+    ))),
+    scriptsBlock = Some(scripts),
+    beforeContentBlock = Some(beforeContentBlock),
+    footerItems = Seq(
+        FooterItem(text = Some(Messages("footer_cookies.link")), href = Some(viewConfig.cookiesUrl)),
+        FooterItem(
+            text = Some(Messages("accessibility-statement.title")),
+            href = Some(viewConfig.accessibilityStatementUrl(request.uri)),
+            attributes = Map("id" -> "accessibility-statement-link", "data-sso" -> "false", "data-journey-click" -> "footer:Click:Accessibility")
+        ),
+        FooterItem(text = Some(Messages("footer_privacyNotice.link")), href = Some(viewConfig.privacyNoticeUrl)),
+        FooterItem(text = Some(Messages("footer_termsAndConditions.link")), href = Some(viewConfig.termsAndConditionsUrl)),
+        FooterItem(text = Some(Messages("footer_helpUsingGovUk.link")), href = Some(viewConfig.helpUsingGovUkUrl))
+    )
+)(contentBlock)

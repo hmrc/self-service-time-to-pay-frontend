@@ -28,7 +28,6 @@ import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorService
 import ssttpdirectdebit.DirectDebitForm._
-import uk.gov.hmrc.play.config.AssetsConfig
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails}
 import views.Views
@@ -42,7 +41,7 @@ class DirectDebitController @Inject() (
     submissionService: JourneyService,
     requestSupport:    RequestSupport,
     calculatorService: CalculatorService,
-    views:             Views)(implicit appConfig: AppConfig, ec: ExecutionContext, assetsConfig: AssetsConfig)
+    views:             Views)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendBaseController(mcc) {
 
   import requestSupport._

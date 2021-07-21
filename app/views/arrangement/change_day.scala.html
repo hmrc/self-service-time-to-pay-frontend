@@ -51,7 +51,7 @@
     title = Messages("ssttp.arrangement.change_day.title"),
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getMonthlyPayment())
 ){
-    <h1 class="heading-xlarge">@Messages("ssttp.arrangement.change_day.title")</h1>
+    <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.change_day.title")</h1>
     @if(dayForm.hasErrors) {
     <div class="flash error-summary" aria-labelledby="error-summary-display" role="alert" tabindex="-1" data-module="govuk-error-summary">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -76,31 +76,31 @@
     }
 
     @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm", 'class -> "group") {
-<div class="form-group">
-        <div class="multiple-choice">
-            <input id="dayOfMonth" type="radio" name="dayOfMonth" value=28 onclick="uncheck(`other`)">
-             <label for="dayOfMonth">@Messages("ssttp.arrangement.changeday.default")</label>
+<div class="govuk-form-group">
+        <div class="govuk-radios__item">
+            <input id="dayOfMonth" class="govuk-radios__input" type="radio" name="dayOfMonth" value=28 onclick="uncheck(`other`)">
+             <label class="govuk-radios__label" for="dayOfMonth">@Messages("ssttp.arrangement.changeday.default")</label>
         </div>
 
-        <div class="multiple-choice " data-target= customDate>
-            <input id="other" type="radio" name="other" value=true onclick="uncheck(`dayOfMonth`)" @customDaySelected()>
-            <label for="other">@Messages("ssttp.arrangement.changeday.different")</label>
+        <div class="govuk-radios__item " data-target= customDate>
+            <input id="other" class="govuk-radios__input" type="radio" name="other" value=true onclick="uncheck(`dayOfMonth`)" @customDaySelected()>
+            <label class="govuk-radios__label" for="other">@Messages("ssttp.arrangement.changeday.different")</label>
         </div>
 
-        <div id="customDate" class="panel panel-border-narrow js-hidden form-group @if(customDateHasErrors){form-field--error}">
-            <label for="dayInput" >@Messages("ssttp.arrangement.changeday.enter.date")</label>
+        <div id="customDate" class="govuk-inset-text panel-border-narrow js-hidden @if(customDateHasErrors){govuk-form-group--error}">
+            <label class="govuk-label" for="dayInput" >@Messages("ssttp.arrangement.changeday.enter.date")</label>
             <br>
             @if(customDateHasErrors) {
                 <label class="error-notification" >
                     @dayForm.error("dayOfMonth").map(formError => Messages(formError.message))
                 </label>
             }
-            <input type="text" class="form-control-1-4" id="dayInput" name="dayOfMonth">
+            <input type="text" class="govuk-input govuk-!-width-one-quarter" id="dayInput" name="dayOfMonth">
         </div>
 </div>
 
             <div class="form-group">
-                <button id="next" type="submit" class="button" >@Messages("ssttp.arrangement.change_day.payment-day.continue")</button>
+                <button id="next" type="submit" class="govuk-button" >@Messages("ssttp.arrangement.change_day.payment-day.continue")</button>
             </div>
 
     }

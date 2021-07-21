@@ -33,7 +33,7 @@ abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: W
   }
 
   def selectAnOption(): Unit = probing {
-    val radioButton = xpath("/html/body/main/div[2]/article/form/fieldset/div/div[1]/input")
+    val radioButton = xpath("//*[@id=\"content\"]/article/form/fieldset/div/div[1]/input")
     click on radioButton
   }
 

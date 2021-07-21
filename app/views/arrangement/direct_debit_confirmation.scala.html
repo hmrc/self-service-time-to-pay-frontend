@@ -16,9 +16,7 @@
 
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import helpers.forms.submit
-@import uk.gov.hmrc.play.views.html.helpers
 @import partials.{direct_debit_details, currency}
-@import uk.gov.hmrc.play.config.AssetsConfig
 @import model._
 @import timetopaytaxpayer.cor.model._
 @import ssttpcalculator.model.PaymentSchedule
@@ -36,8 +34,7 @@
   implicit
   messages: play.api.i18n.Messages,
   request: Request[_],
-  appConfig: config.AppConfig,
-  assetsConfig: uk.gov.hmrc.play.config.AssetsConfig
+  appConfig: config.AppConfig
 )
 
 
@@ -45,19 +42,21 @@
     title = Messages("ssttp.arrangement.direct-debit.confirmation.title"),
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
 ) {
-    <h1 class="heading-xlarge">@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
+    <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
 
     @direct_debit_details(directDebit)
 
     <section class="margin-top-30">
-        <details class="details-margin">
-            <summary><span class="summary">@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary")</span></summary>
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary")</span>
+            </summary>
             <div>
                 <p class="text--right">
-                    <img alt="" src="@{assetsConfig.assetsPrefix}/images/direct-debit-logo-2x.png" width="148px" height="60px">
+                    <img alt="" src="/images/direct-debit-logo-2x.png" width="148px" height="60px">
                 </p>
-                <h2>@Messages("ssttp.direct-debit.guarantee.title")</h2>
-                    <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.1")</p class="govuk-body-m">
+                <h2 class="govuk-heading-m">@Messages("ssttp.direct-debit.guarantee.title")</h2>
+                    <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.1")</p>
                     <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.2")</p>
                     <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.3")</p>
                     <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.4")</p>
@@ -65,7 +64,7 @@
             </div>
         </details>
 
-      <a id="continue_button" class="button" href="@ssttparrangement.routes.ArrangementController.getTermsAndConditions()">@Messages("ssttp.arrangement.direct-debit.form.submit")</a>
+      <a id="continue_button" class="govuk-button" href="@ssttparrangement.routes.ArrangementController.getTermsAndConditions()">@Messages("ssttp.arrangement.direct-debit.form.submit")</a>
 
     </section>
 }

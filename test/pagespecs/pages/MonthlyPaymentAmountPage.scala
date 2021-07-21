@@ -104,7 +104,8 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
            |Enter a figure between the given range
            |How much can you afford to pay each month?
            |Enter an amount between £410.00 and £2,450.00
-           |Enter numbers only £ How much can you pay monthly in Pound Sterling
+           |Enter numbers only
+           |£ How much can you pay monthly in Pound Sterling
            |Continue
         """.stripMargin
 

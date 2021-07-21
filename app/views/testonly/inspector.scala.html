@@ -36,85 +36,87 @@
     allowTimeoutDialog = false
 ) {
 
-    <header>
-        <h1>Inspector</h1>
-        <p>This is `test-only` endpoint for debug purposes.</p>
-    </header>
+    <h1 class="govuk-heading-l">Inspector</h1>
+    <p class="govuk-body">This is `test-only` endpoint for debug purposes.</p>
 
-    <p>
-        <h2>Quick links</h2>
-        <ul>
-            <li><a class="link" href="@_root_.testonly.routes.InspectorController.clearPlaySession()">clear play session</a></li>
-            <li><a class="link" href="@_root_.testonly.routes.TestUsersController.testUsers()">create user and log in</a></li>
-            <li><a class="link" href="@_root_.testonly.routes.TestOnlyController.config()">show config of 'frontend' microservice</a></li>
-            <li><a class="link" href="@_root_.testonly.routes.TestOnlyController.getTaxpayer()">show taxpayer</a></li>
+    <p class="govuk-body">
+        <h2 class="govuk-heading-m">Quick links</h2>
+        <ul class="govuk-list govuk-list--bulletß">
+            <li><a class="govuk-link" href="@_root_.testonly.routes.InspectorController.clearPlaySession()">clear play session</a></li>
+            <li><a class="govuk-link" href="@_root_.testonly.routes.TestUsersController.testUsers()">create user and log in</a></li>
+            <li><a class="govuk-link" href="@_root_.testonly.routes.TestOnlyController.config()">show config of 'frontend' microservice</a></li>
+            <li><a class="govuk-link" href="@_root_.testonly.routes.TestOnlyController.getTaxpayer()">show taxpayer</a></li>
         </ul>
     </p>
 
-    <p>
-        <h2>Pages</h2>
-        <ul>
+    <p class="govuk-body">
+        <h2 class="govuk-heading-m">Pages</h2>
+        <ul class="govuk-list govuk-list--bulletß">
 
-            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.start()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.start().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.start()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.start().path()}</a></li>
 
-            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPaymentSummary()">@{ssttpcalculator.routes.CalculatorController.getPaymentSummary().path()}</a></li>
-            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@{ssttpcalculator.routes.CalculatorController.getPayTodayQuestion().path()}</a></li>
-            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">@{ssttpcalculator.routes.CalculatorController.getPaymentToday().path()}</a></li>
-            <li><a class="link" href="@ssttpcalculator.routes.CalculatorController.getTaxLiabilities()">@{ssttpcalculator.routes.CalculatorController.getTaxLiabilities().path()}</a></li>
-            <li><a class="link" href="@ssttparrangement.routes.ArrangementController.determineEligibility()>@{ssttparrangement.routes.ArrangementController.determineEligibility().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPaymentSummary()">@{ssttpcalculator.routes.CalculatorController.getPaymentSummary().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@{ssttpcalculator.routes.CalculatorController.getPayTodayQuestion().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">@{ssttpcalculator.routes.CalculatorController.getPaymentToday().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getTaxLiabilities()">@{ssttpcalculator.routes.CalculatorController.getTaxLiabilities().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttparrangement.routes.ArrangementController.determineEligibility()>@{ssttparrangement.routes.ArrangementController.determineEligibility().path()}</a></li>
 
-            <li><a class="link" href="@ssttparrangement.routes.ArrangementController.getInstalmentSummary()">@{ssttparrangement.routes.ArrangementController.getInstalmentSummary().path()} </a></li>
-            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebit().path()}</a></li>
-            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation().path()}</a></li>
-            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance().path()}</a></li>
-            <li><a class="link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError().path()}</a></li>
-            <li><a class="link" href="@ssttparrangement.routes.ArrangementController.applicationComplete()">@{ssttparrangement.routes.ArrangementController.applicationComplete().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttparrangement.routes.ArrangementController.getInstalmentSummary()">@{ssttparrangement.routes.ArrangementController.getInstalmentSummary().path()} </a></li>
+            <li><a class="govuk-link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebit().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttparrangement.routes.ArrangementController.applicationComplete()">@{ssttparrangement.routes.ArrangementController.applicationComplete().path()}</a></li>
 
-            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)">@{ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).path()}</a></li>
-            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile().path()}</a></li>
-            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs().path()}</a></li>
-            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled().path()}</a></li>
-            <li><a class="link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)">@{ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled().path()}</a></li>
+            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge().path()}</a></li>
         </ul>
     </p>
 
-    <p>
-        <h2>Cache from Key Store</h2>
-        <table>
-            <tr>
-                <th>Key</th>
-                <th>Value</th>
-            </tr>
+    <p class="govuk-body">
+        <h2 class="govuk-heading-m">Cache from Key Store</h2>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header">Key</th>
+                    <th class="govuk-table__header">Value</th>
+                </tr>
+            </thead>
 
+            <tbody>
             @cache.map { item =>
-                <tr>
-                    <td style="vertical-align: top">@item._1</td>
-                    <td style="word-break: break-all">
+                <tr class="govuk-table__row">
+                <td class="govuk-table__row" style="vertical-align: top">@item._1</td>
+                    <td class="govuk-table__row" style="word-break: break-all">
                         <pre style="border: none">@item._2</pre>
                     </td>
                 </tr>
             }
+            </tbody>
         </table>
     </p>
 
-    <p>
-        <h2>Authority</h2>
+    <p class="govuk-body">
+        <h2 class="govuk-heading-m">Authority</h2>
         <pre style="border: none; font-size: 15px">@{authority}</pre>
     </p>
 
 
-    <p>
-        <h2>Play Session (decoded `mdtp` cookie) </h2>
-        <table>
-            <tr>
-                <th>Key</th>
-                <th>Value</th>
+    <p class="govuk-body">
+        <h2 class="govuk-heading-m">Play Session (decoded `mdtp` cookie) </h2>
+        <table class="govuk-table">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header">Key</th>
+                <th class="govuk-table__header">Value</th>
             </tr>
 
             @playSession.map { item =>
-                <tr>
-                    <td style="vertical-align: top">@item._1</td>
-                    <td style="word-break: break-all">
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" style="vertical-align: top">@item._1</td>
+                    <td class="govuk-table__cell" style="word-break: break-all">
                         <code style="border: none">@item._2</code>
                     </td>
                 </tr>
@@ -123,20 +125,20 @@
     </p>
 
 
-    <p>
-        <h2>Cookies</h2>
-        <table>
-            <tr>
-                <th>Key</th>
-                <th>Value</th>
+    <p class="govuk-body">
+        <h2 class="govuk-heading-m">Cookies</h2>
+        <table class="govuk-table">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header">Key</th>
+                <th class="govuk-table__header">Value</th>
             </tr>
 
             @request.cookies.toList.map { item =>
-                <tr>
-                    <td style="vertical-align: top">@{
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" style="vertical-align: top">@{
                         item.name
                     }</td>
-                    <td style="word-break: break-all">
+                    <td class="govuk-table__cell" style="word-break: break-all">
                         <code style="border: none">@{
                             item.value
                         }</code>
@@ -146,18 +148,18 @@
         </table>
     </p>
 
-    <p>
-        <h2>Header Carrier content</h2>
-        <table>
-            <tr>
-                <th>Key</th>
-                <th>Value</th>
+    <p class="govuk-body">
+        <h2 class="govuk-heading-m">Header Carrier content</h2>
+        <table class="govuk-table">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header">Key</th>
+                <th class="govuk-table__header">Value</th>
             </tr>
 
             @hcHeaders.map { item =>
-                <tr>
-                    <td style="vertical-align: top">@item._1</td>
-                    <td style="word-break: break-all">
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" style="vertical-align: top">@item._1</td>
+                    <td class="govuk-table__cell" style="word-break: break-all">
                         <pre style="border: none">@item._2</pre>
                     </td>
                 </tr>

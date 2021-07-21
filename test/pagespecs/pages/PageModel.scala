@@ -80,15 +80,17 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    */
   def readMain(): String = xpath("""//*[@id="content"]/article""").element.text
 
-  def readGlobalHeaderText(): String = id("proposition-menu").element.text
+  def readGlobalHeaderText(): String = className("govuk-header__link--service-name").element.text
 
   def href(id: String): Option[String] = find(IdQuery(id)).fold(Option.empty[String])(e => e.attribute("href"))
   def backButtonHref: Option[String] = href("back-link")
 
   def readPath(): String = new java.net.URL(webDriver.getCurrentUrl).getPath
 
-  def clickOnEnglishLink(): Unit = click on linkText("English")
-  def clickOnWelshLink(): Unit = click on linkText("Cymraeg")
+  def clickOnEnglishLink(): Unit = click on id("en-switch")
+  def clickOnWelshLink(): Unit = click on id("cy-switch")
+
+  def clickOnContinue(): Unit = click on id("continue")
 
   /**
    * Probing tries to run `probingF` until until it succeeds. If it doesn't it:

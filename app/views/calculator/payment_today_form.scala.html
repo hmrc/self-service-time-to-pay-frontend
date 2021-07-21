@@ -15,10 +15,14 @@
  *@
 
 @import ssttpcalculator.CalculatorPaymentTodayForm
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
 @this(
   main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  viewsHelpers: views.ViewsHelpers,
+  errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.govukErrorSummary
 )
 
 @(
@@ -35,9 +39,12 @@
 
 ){
     @if(dataForm.hasErrors){
-        @viewsHelpers.errorSummary(Messages("ssttp.calculator.form.payment_today.error.summary.title"), dataForm)
+        @errorSummary(ErrorSummary(
+            errorList = dataForm.errors.asTextErrorLinks,
+            title = Text(Messages("ssttp.calculator.form.payment_today.error.summary.title"))
+        ))
     }
-  <h1 class="heading-xlarge">@Messages("ssttp.calculator.form.payment_today.title")</h1>
+  <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.form.payment_today.title")</h1>
 
  @helpers.forms.input(dataForm)
 

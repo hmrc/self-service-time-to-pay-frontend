@@ -50,24 +50,22 @@
             @viewsHelpers.errorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm)
         }
     }
-        <h1 class="heading-xlarge">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
+        <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
        @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.submitDirectDebit) {
 
-        <fieldset class="form-field-group">
-            <legend><span class="visually-hidden">Enter your banking details</span></legend>
+        <div class="govuk-form-group">
+            <legend><span class="govuk-visually-hidden">Enter your banking details</span></legend>
             @direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode"), ddForm("accountNumber"))
-        </fieldset>
+        </div>
 
-        <div class="panel panel-border-wide">
+        <div class="govuk-inset-text">
             <p>@Messages("ssttp.direct-debit.form.message.title")</p>
-            <ul class="list list-bullet">
+            <ul class="govuk-list govuk-list--bullet">
                 <li>@Messages("ssttp.direct-debit.form.message.named.account")</li>
                 <li>@Messages("ssttp.direct-debit.form.message.permission")</li>
             </ul>
         </div>
-        @submit() {
-            @Messages("ssttp.arrangement.direct-debit.form.submit")
-        }
+        @viewsHelpers.continue(Messages("ssttp.arrangement.direct-debit.form.submit"))
     }
 }
 

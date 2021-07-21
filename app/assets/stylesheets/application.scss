@@ -1,0 +1,21 @@
+$govuk-assets-path: "/pay-what-you-owe-in-instalments/assets/lib/govuk-frontend/govuk/assets/";
+$hmrc-assets-path: "/pay-what-you-owe-in-instalments/assets/lib/hmrc-frontend/hmrc/";
+
+@import "lib/govuk-frontend/govuk/all";
+@import "lib/hmrc-frontend/hmrc/all";
+
+.language-toggle-position {
+  float: right;
+}
+
+.input-error {
+  border: 4px solid #d4351c;
+}
+
+.panel-tabular-data {
+  padding-left: 1.4em;
+}
+
+.panel-border-narrow {
+  border-left-width: 5px;
+}

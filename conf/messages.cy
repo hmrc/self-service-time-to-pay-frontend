@@ -5,6 +5,8 @@ ssttp.common.print = Argraffu
 ssttp.common.sign-out = Allgofnodi
 ssttp.common.back = Yn ôl
 
+ssttp.common.continue = Yn eich blaen
+
 ssttp.common.charge-code.ASST = Asesiad refeniw
 ssttp.common.charge-code.BCC = Credyd cost mantoli
 ssttp.common.charge-code.BCD = Taliad mantoli

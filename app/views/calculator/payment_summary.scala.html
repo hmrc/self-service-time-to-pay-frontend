@@ -17,7 +17,6 @@
 @import helpers.forms.submit
 @import timetopaytaxpayer.cor.model.Debit
 @import partials.currency
-@import uk.gov.hmrc.play.views.html.helpers
 
 @this(
   main: views.html.main,
@@ -37,13 +36,15 @@
 @main(
     title = Messages("ssttp.calculator.form.payment_summary.title"),
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPaymentToday())) {
-    <h1 class="heading-xlarge">@Messages("ssttp.calculator.form.payment_summary.title")</h1>
+    <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.form.payment_summary.title")</h1>
+
+    <section class="govuk-body">
 
     <dl class="app-check-your-answers app-check-your-answers--long margin-bottom-20">
         <div class="app-check-your-answers__contents">
           <dt class="app-check-your-answers__question ">
             @Messages("ssttp.calculator.form.payment_summary.up-front-payment")
-            <p class="small">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
+            <p class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
           </dt>
           <dd class="app-check-your-answers__answer">
             @currency(initialPayment)
@@ -51,7 +52,7 @@
           <dd class="app-check-your-answers__change">
               <a href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">
                 @Messages("ssttp.calculator.form.payment_summary.up-front-payment.change")
-                <span class="visually-hidden">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")
+                <span class="govuk-visually-hidden">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")
                 </span>
               </a>
           </dd>
@@ -69,8 +70,10 @@
         </div>
     </dl>
 
+    </section>
+
     @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getMonthlyPayment()) {
-        @submit() {
+        @submit('_buttonClass -> "govuk-button") {
             @Messages("ssttp.calculator.form.payment_summary.continue")
         }
     }

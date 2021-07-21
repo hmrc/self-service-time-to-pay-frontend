@@ -52,7 +52,7 @@
       </div>
   }
   <header class="page-header text">
-    <h1 class="heading-xlarge">@Messages("ssttp.arrangement.direct-debit.assistance.title")</h1>
+    <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.direct-debit.assistance.title")</h1>
   </header>
 
   <section>
@@ -61,14 +61,14 @@
       <p>Please call <strong>0300 322 7015</strong> to complete your application.</p>
       <br>
 
-      <h2>What you owe</h2>
+      <h2 class="govuk-heading-m">What you owe</h2>
       @what_you_owe(debits)
       <div class="subsection grid-layout divider--bottom font-xsmall">
         <div class="grid-layout__column grid-layout__column--3-4"><p><strong>@Messages("ssttp.direct-debit-assistance.complete.total")</strong></p></div>
         <div class="grid-layout__column grid-layout__column--1-4 align--middle"><p><strong>@currency(schedule.amountToPay)</strong></p></div>
       </div>
 
-      <h2>The instalments you chose</h2>
+      <h2 class="govuk-heading-m">The instalments you chose</h2>
       <div class="subsection grid-layout">
         <div class="grid-layout__column grid-layout__column--1-2">
         @Messages("ssttp.direct-debit-assistance.initial-payment-of")

@@ -22,7 +22,7 @@
     @argsMap = @{args.toMap}
     @clss = @{
         val modifierClass = argsMap.get('_modifierClass).fold(Seq.empty[String])(modifierClass => Seq(modifierClass.toString))
-        val errors = dataForm.error(fieldName).fold(Seq.empty[String])(_ => Seq("form-field-group--error"))
+        val errors = dataForm.error(fieldName).fold(Seq.empty[String])(_ => Seq("govuk-form-group--error"))
         val classes = Seq("") ++ modifierClass ++ errors
 
         Html(classes.mkString(" class=\"", "", "\""))
