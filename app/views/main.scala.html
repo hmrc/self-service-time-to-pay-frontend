@@ -64,14 +64,6 @@
     @if(welshToggleEnabled) {
         @partials.language_selection()
     }
-
-@*    <div class="language-toggle-position govuk-!-display-none-print">
-    @languageSelect(LanguageSelect(
-        if (messages.lang.code == "cy") Cy else En,
-        En -> langswitch.routes.LanguageSwitchController.switchToLanguage(Languages.English).url,
-        Cy -> langswitch.routes.LanguageSwitchController.switchToLanguage(Languages.Welsh).url
-    ))
-    </div>*@
 }
 
 @contentBlock = {
@@ -84,7 +76,7 @@
     </div>
 
     <div class="govuk-!-display-none-print">
-    @reportTechnicalIssues(ReportTechnicalIssue(serviceCode = "direct-debit-frontend", language = if(messages.lang.code == "cy") Cy else En))
+    @reportTechnicalIssues(ReportTechnicalIssue(serviceCode = "self-service-time-to-pay-frontend", language = if(messages.lang.code == "cy") Cy else En))
     </div>
 }
 
@@ -94,7 +86,6 @@
     headerBlock = Some(hmrcHeader(Header(
         homepageUrl = "https://www.gov.uk",
         serviceName = Some(Messages(navTitle)),
-        serviceUrl = "",
         signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).url) else None,
         language = if (messages.lang.code == "cy") Cy else En
     ))),

@@ -22,9 +22,6 @@ lazy val microservice = Project(appName, file("."))
     majorVersion := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test )
   .settings(ScalariformSettings())
-//  .settings(
-//    unmanagedResourceDirectories in Compile += baseDirectory.value / "public"
-//  )
   .settings(WartRemoverSettings.wartRemoverError)
   .settings(WartRemoverSettings.wartRemoverWarning)
   .settings(wartremoverExcluded ++=

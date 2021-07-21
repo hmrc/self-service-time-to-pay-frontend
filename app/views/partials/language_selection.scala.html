@@ -21,8 +21,6 @@
 
 @(maybeCustomClass: Option[String] = None, appName: Option[String] = None)(implicit messages: Messages)
 
-@*//shamelessly copied from play-ui*@
-
 <p class="govuk-body @maybeCustomClass.getOrElse("") pull-right">
 
 <nav class="hmrc-language-select language-toggle-position" aria-label="Language switcher">
@@ -30,15 +28,7 @@
 @availableLanguages.zipWithIndex.map { case (language, index) =>
   @if(messages.lang.code != language.code) {
       <li class="hmrc-language-select__list-item">
-
-@*          <a href="@langswitch.routes.LanguageSwitchController.switchToLanguage(language)">*@
-@*              <span aria-current="true">*@
-@*              @language.label*@
-@*              </span>*@
-@*          </a>*@
-
-
-    @Link.toInternalPage(
+      @Link.toInternalPage(
       id      = Some(s"${language.code}-switch"),
       url     = s"${langswitch.routes.LanguageSwitchController.switchToLanguage(language)}",
       value   = Some(language.label),
