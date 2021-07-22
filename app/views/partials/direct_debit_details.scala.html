@@ -19,37 +19,37 @@
 
 @(directDebit:ArrangementDirectDebit, print:Boolean = false)(implicit messages: play.api.i18n.Messages)
 
-<div class="govuk-body add_bottom_line">
-    <dl class="app-check-your-answers app-check-your-answers--long govuk-!-margin-0">
-        <div class="app-check-your-answers__contents">
-            <dt class="app-check-your-answers__question no_bottom_line">
+<div id="dd-details-summary-list" class="govuk-body add_bottom_line">
+    <dl class="govuk-summary-list govuk-!-margin-0">
+        <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+            <dt class="govuk-summary-list__key">
                 @Messages("ssttp.direct-debit.account-name")
             </dt>
-            <dd class="app-check-your-answers__answer no_bottom_line">
+            <dd class="govuk-summary-list__value">
                 @directDebit.accountName
             </dd>
 
-            <dd class="app-check-your-answers__change no_bottom_line">
+            <dd class="govuk-summary-list__actions">
                 <a id="dd-change" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.change")</a>
             </dd>
         </div>
     </dl>
-    <dl class="app-check-your-answers app-check-your-answers--long govuk-!-margin-0">
-        <div class="app-check-your-answers__contents">
-            <dt class="app-check-your-answers__question no_bottom_line">
-                <span class="govuk-body-m">@Messages("ssttp.direct-debit.sort-code")</span>
+    <dl class="govuk-summary-list govuk-!-margin-0">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key no_bottom_line">
+                <span>@Messages("ssttp.direct-debit.sort-code")</span>
             </dt>
-            <dd class="app-check-your-answers__answer no_bottom_line">
+            <dd class="govuk-summary-list__value no_bottom_line">
                 <span class="govuk-body-m">@directDebit.formatSortCode</span>
             </dd>
         </div>
     </dl>
-    <dl class="app-check-your-answers app-check-your-answers--long govuk-!-margin-0">
-        <div class="app-check-your-answers__contents">
-            <dt class="app-check-your-answers__question no_bottom_line">
-                <span class="govuk-body-m">@Messages("ssttp.direct-debit.account-number")</span>
+    <dl class="govuk-summary-list govuk-!-margin-0">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key no_bottom_line">
+                <span>@Messages("ssttp.direct-debit.account-number")</span>
             </dt>
-            <dd class="app-check-your-answers__answer no_bottom_line">
+            <dd class="govuk-summary-list__value no_bottom_line">
                 <span class="govuk-body-m">@directDebit.accountNumber</span>
             </dd>
         </div>

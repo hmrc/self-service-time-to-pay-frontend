@@ -18,18 +18,18 @@
 @import model._
 
 @(debits: Seq[Debit])(implicit messages: play.api.i18n.Messages, request: Request[_])
-<div class="panel-tabular-data">
-    <div class="tabular-data__divider--full-width">
-
+<div class="govuk-!-margin-left-2">
       @debits.map { debit =>
-        <div class="tabular-data__entry border-bottom">
-          <span class="tabular-data__heading tabular-data__heading--label">
-            <h2 class="heading-small">@(Messages("ssttp.calculator.self-assessment-account-summary-page.due")) @{language.Dates.wholeDate(debit.dueDate)}</h2>
-            <p>@partials.charge_code(debit.originCode, debit.taxYearEnd) @Messages("ssttp.calculator.self-assessment-account-summary-page.for-tax-year", debit.startTaxYear.toString, debit.endTaxYear.toString) </p>
-          </span>
-          <div class="tabular-data__data-1"><span class="normal-text">@partials.currency(debit.amount)</span></div>
+        <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+            <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
+                @(Messages("ssttp.calculator.self-assessment-account-summary-page.due")) @{language.Dates.wholeDate(debit.dueDate)}
+                <p class="govuk-body-s govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+                    @partials.charge_code(debit.originCode, debit.taxYearEnd) @Messages("ssttp.calculator.self-assessment-account-summary-page.for-tax-year", debit.startTaxYear.toString, debit.endTaxYear.toString)
+                </p>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <span class="normal-text">@partials.currency(debit.amount)</span>
+            </dd>
         </div>
       }
-
-    </div>
 </div>

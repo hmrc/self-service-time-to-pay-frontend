@@ -24,17 +24,17 @@
 )
 
 <div id="id_payment" class="margin-top-40">
-    <dl class="app-check-your-answers app-check-your-answers--long">
-        <div class="app-check-your-answers__contents">
-            <dt class="app-check-your-answers__question">
+    <dl class="govuk-summary-list govuk-summary-list--long">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
                 @Messages("ssttp.calculator.form.payment_summary.up-front-payment")
             <br>    
             <span class="small">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</span>
             </dt>
-            <dd class="app-check-your-answers__answer">
+            <dd class="govuk-summary-list__value">
                 £@paymentSchedule.initialPayment
             </dd>
-            <dd class="app-check-your-answers__change">
+            <dd class="govuk-summary-list__actions">
                 <a href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.change") <span class="govuk-visually-hidden">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</span></a>
             </dd>
         </div>

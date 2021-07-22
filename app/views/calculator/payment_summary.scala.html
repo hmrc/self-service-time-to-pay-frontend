@@ -40,16 +40,16 @@
 
     <section class="govuk-body">
 
-    <dl class="app-check-your-answers app-check-your-answers--long margin-bottom-20">
-        <div class="app-check-your-answers__contents">
-          <dt class="app-check-your-answers__question ">
+    <dl class="govuk-summary-list margin-bottom-20">
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key ">
             @Messages("ssttp.calculator.form.payment_summary.up-front-payment")
             <p class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
           </dt>
-          <dd class="app-check-your-answers__answer">
+          <dd class="govuk-summary-list__value">
             @currency(initialPayment)
           </dd>
-          <dd class="app-check-your-answers__change">
+          <dd class="govuk-summary-list__actions">
               <a href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">
                 @Messages("ssttp.calculator.form.payment_summary.up-front-payment.change")
                 <span class="govuk-visually-hidden">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")
@@ -57,14 +57,14 @@
               </a>
           </dd>
         </div>
-        <div class="app-check-your-answers__contents add_bottom_line">
-          <dt class="app-check-your-answers__question">
+        <div class="govuk-summary-list__row add_bottom_line">
+          <dt class="govuk-summary-list__key">
             @Messages("ssttp.calculator.form.payment_summary.amount.remaining")
           </dt>
-          <dd class="app-check-your-answers__answer">
+          <dd class="govuk-summary-list__value">
             @currency(debits.map(_.amount).sum - initialPayment)
           </dd>
-          <dd class="app-check-your-answers__change">
+          <dd class="govuk-summary-list__actions">
 
           </dd>
         </div>

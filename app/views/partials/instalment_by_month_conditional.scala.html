@@ -19,32 +19,31 @@
 
 @(schedule: PaymentSchedule)(implicit messages: play.api.i18n.Messages)
 
-@*<div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="@{schedule.durationInMonths}_id" data-module="@{schedule.durationInMonths}_id">*@
-    <dl class="app-check-your-answers app-check-your-answers--long">
-        <div class="app-check-your-answers__contents">
-            <dt class="app-check-your-answers__question no_bottom_line">
-                @Messages("ssttp.calculator.results.month.option.table.total.interest")
-            </dt>
-            <dd class="app-check-your-answers__answer no_bottom_line numeric">
-                @partials.currency(schedule.totalInterestCharged)
-            </dd>
-        </div>
-        <div class="app-check-your-answers__contents">
-            <dd class="app-check-your-answers__answer numeric">
-                @Messages("ssttp.calculator.results.month.option.table.total.interest.base.rate")
-            </dd>
-            <dd class="app-check-your-answers__answer">
-                @Messages("ssttp.calculator.results.month.option.table.total.interest.hint")
-            </dd>
-        </div>
-        <div class="app-check-your-answers__contents">
-            <dt class="app-check-your-answers__question">
-                @Messages("ssttp.calculator.results.month.option.table.total.paid")
-            </dt>
-            <dd class="app-check-your-answers__answer numeric">
-                @partials.currency(schedule.totalPayable)
-            </dd>
-        </div>
-    </dl>
-@*</div>*@
+<dl class="govuk-summary-list by-month-summary-list">
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+            @Messages("ssttp.calculator.results.month.option.table.total.interest")
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @partials.currency(schedule.totalInterestCharged)
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key govuk-!-font-weight-regular">
+            @Messages("ssttp.calculator.results.month.option.table.total.interest.base.rate")
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Messages("ssttp.calculator.results.month.option.table.total.interest.hint")
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @Messages("ssttp.calculator.results.month.option.table.total.paid")
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @partials.currency(schedule.totalPayable)
+        </dd>
+    </div>
+</dl>
+
 
