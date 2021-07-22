@@ -17,11 +17,17 @@
 @import partials._
 @import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
 @import ssttpcalculator.model._
-
+@import model._
 @import helpers.forms.submit
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Radios
+@import uk.gov.hmrc.govukfrontend.views.Aliases.RadioItem
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
 
 @this(
   main: views.html.main,
+  radios: uk.gov.hmrc.govukfrontend.views.html.components.govukRadios,
   viewsHelpers: views.ViewsHelpers
 )
 
@@ -40,23 +46,32 @@
     backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
 ) {
 
+<section class="govuk-body">
 
 @if(durationForm.hasErrors) {
   @viewsHelpers.errorSummary(Messages("ssttp.calculator.results.error.title"), durationForm)
 }
 
-@viewsHelpers.form(redirectCall, 'id -> "paymentTodayForm", 'class -> "group") {
+@viewsHelpers.form(redirectCall, 'id -> "paymentTodayForm") {
     <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             <h1 class="govuk-fieldset__heading">@Messages("ssttp.calculator.results.title")</h1>
         </legend>
-             <div id="chosen-month" class="govuk-radios">
-             @{
-               schedules.map{mts =>
-                 instalment_by_month(mts)
-               }
-             }
-             </div>
+
+        @radios(Radios(
+            name = "chosen-month",
+            attributes = Map("id" -> "chosen-month"),
+            items = schedules.map ( schedule => {
+                RadioItem(
+                    id = Some(schedule.durationInMonths.toString),
+                    value = Some((if (schedule.durationInMonths < 0) 12 + schedule.durationInMonths else schedule.durationInMonths).toString),
+                    content = HtmlContent(
+                        instalment_by_month_label(schedule)
+                    ),
+                    conditionalHtml = Some(instalment_by_month_conditional(schedule))
+                )
+            })
+        ))
     </fieldset>
 <details class="govuk-details">
  <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.results.section.title")</span></summary>
@@ -81,4 +96,6 @@
  </div>
 </div>
 }
+
+</section>
 }

@@ -19,12 +19,7 @@
 
 @(schedule: PaymentSchedule)(implicit messages: play.api.i18n.Messages)
 
-<div class="govuk-radios__item" data-target="@{schedule.durationInMonths}_id">
-  <input class="govuk-radios__input" aria-controls="@{schedule.durationInMonths}_id" id=@{schedule.durationInMonths} type="radio" name="chosen-month" value=@{if (schedule.durationInMonths < 0) 12 + schedule.durationInMonths else schedule.durationInMonths}>
-  <label class="govuk-radios__label" for=@{schedule.durationInMonths}>@{if (schedule.durationInMonths < 0) 12 + schedule.durationInMonths else schedule.durationInMonths} @Messages("ssttp.calculator.results.month.option.1") <strong class="bold">@currency(schedule.firstInstallment.amount)</strong></label>
-</div>
-
-<div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="@{schedule.durationInMonths}_id" data-module="@{schedule.durationInMonths}_id">
+@*<div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="@{schedule.durationInMonths}_id" data-module="@{schedule.durationInMonths}_id">*@
     <dl class="app-check-your-answers app-check-your-answers--long">
         <div class="app-check-your-answers__contents">
             <dt class="app-check-your-answers__question no_bottom_line">
@@ -51,5 +46,5 @@
             </dd>
         </div>
     </dl>
-</div>
+@*</div>*@
 

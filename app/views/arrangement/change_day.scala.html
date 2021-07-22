@@ -82,10 +82,6 @@
     }
 
     @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitChangeSchedulePaymentDay(), 'id -> "arrangementPaymentDayForm") {
-
-        @{dayForm.value.fold("")(_.dayOfMonth.toString)}
-        {dayForm.value.fold("")(_.customDaySelected.toString)}
-
         @radios(Radios(
             name = "other",
             items = Seq(
