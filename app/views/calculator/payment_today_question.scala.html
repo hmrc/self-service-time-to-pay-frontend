@@ -25,6 +25,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Legend
 
 @this(
   main: views.html.main,
@@ -33,7 +34,6 @@
   errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.govukErrorSummary,
   viewsHelpers: views.ViewsHelpers
 )
-
 
 @(
         dataForm: Form[PayTodayQuestion],
@@ -51,7 +51,11 @@
 
     @if(dataForm.hasErrors){
         @errorSummary(ErrorSummary(
-            errorList = dataForm.errors.asTextErrorLinks,
+            errorList = dataForm.errors.asTextErrorLinks.map {error =>
+              if(error.href.contains("paytoday")) error.copy (
+                  href = Some("paytoday-true")
+              ) else error
+            },
             title = Text(Messages("ssttp.calculator.form.payment_today_question.required.title")),
         ))
     }
@@ -60,12 +64,23 @@
     <p class="govuk-body">@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
     @formWithCsrf(
         action = ssttpcalculator.routes.CalculatorController.submitPayTodayQuestion(),
-        'id -> "paytoday",'class -> "form-group inline"
+        'id -> "paytoday-form",'class -> "form-group inline"
     ){
 
 
         @radios(
             Radios(
+                name = "paytoday",
+                idPrefix = Some("paytoday"),
+
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text(Messages("ssttp.calculator.form.payment_today_question.title")),
+                        classes = "govuk-fieldset__legend--1",
+//                        isPageHeading = true
+                    ))
+                )),
+//                errorMessage = dataForm.error("paytoday").map(error => ErrorMessage(content = Text(Messages(error.message)))),
                 items = List(
                     RadioItem(
                         id = Some("paytoday-true"),
@@ -79,7 +94,7 @@
                     )
                 ),
                 classes = "govuk-radios--inline"
-            ).withFormField(dataForm("paytoday"))
+            )//.withFormField(dataForm("paytoday"))
         )
 
 @*        @viewsHelpers.inputRadioGroup(dataForm("paytoday"),Seq(
