@@ -24,8 +24,9 @@ class ViewsHelpers @Inject() (
     val errorSummary: ssttpErrorSummary,
     val form:         uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
     val startNow:     views.html.helpers.forms.ssttpStartNow,
-    val continue:     views.html.helpers.forms.ssttpContinue
+    val continue:     views.html.helpers.forms.ssttpContinue,
 
+    val direct_debit_fields: views.html.partials.direct_debit_fields
 //our partials
 
 )

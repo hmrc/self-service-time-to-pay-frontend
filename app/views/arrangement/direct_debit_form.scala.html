@@ -55,7 +55,7 @@
 
         <div class="govuk-form-group">
             <legend><span class="govuk-visually-hidden">Enter your banking details</span></legend>
-            @direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode"), ddForm("accountNumber"))
+            @viewsHelpers.direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode"), ddForm("accountNumber"))
         </div>
 
         <div class="govuk-inset-text">
