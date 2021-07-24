@@ -24,8 +24,6 @@
 )
 
 @(field: Field, args: (Symbol, Any)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
-@import helpers.forms.fieldErrors
-@import helpers.labelWrap
 
 @argsMap = @{
     args.toMap
@@ -35,6 +33,7 @@
     id = field.id,
     name = field.name,
     value = field.value,
+    classes = argsMap.getOrElse('_inputClass, "").toString,
     errorMessage = field.errors.headOption.map(error => ErrorMessage(content = Text(Messages(error.message)))),
     label = Label(
         content = Text(argsMap.getOrElse('label, "").toString),
