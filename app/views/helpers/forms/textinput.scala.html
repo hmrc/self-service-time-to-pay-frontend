@@ -1,60 +1,48 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Label
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Input
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
+@import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorMessage
 
-@(field: Field, args: (Symbol, Any)*)(implicit messages:play.api.i18n.Messages, lang: Lang = Lang("en"))
-@import helpers.forms.fieldErrors
-@import helpers.labelWrap
-@import views.html.helper.FieldElements
+@this(
+    input: uk.gov.hmrc.govukfrontend.views.html.components.govukInput
+)
 
-@argsMap = @{ args.toMap }
-@elements = @{ FieldElements(field.id, field, Html(""), argsMap, messages) }
-@value = @{ field.value.getOrElse("") }
-@wrapperClass = @{
-    val wrapperClasses = Seq("govuk-form-group") ++ argsMap.getOrElse('_modifierClass, "").toString.split(" ")
+@(field: Field, args: (Symbol, Any)*)(implicit messages: play.api.i18n.Messages, lang: Lang = Lang("en"))
 
-    (if (field.hasErrors) wrapperClasses :+ "govuk-form-group--error" else wrapperClasses).mkString(" ")
+@argsMap = @{
+    args.toMap
 }
-@inputClass = @{
-    val classes:String = "govuk-input " + argsMap.getOrElse('_inputClass, "").toString
 
-    (if(field.hasErrors) classes + " govuk-input--error" else classes).trim
-}
-<div@if(wrapperClass.nonEmpty){ class="@wrapperClass"}>
-    @labelWrap('labelText -> argsMap.getOrElse('label, ""), 'for -> elements.field.name, '_modifierClass -> argsMap.get('_labelClass)){
-        @if(argsMap.get('hint).isDefined) {<div class="govuk-hint">@argsMap.get('hint)</div>}
-        @fieldErrors(field)
-    }
-    <input type="text"@if(inputClass.nonEmpty){ class="@inputClass" } name="@elements.field.name" id="@elements.field.name" value="@value"
-        @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
-        @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
-        @if(elements.args.get('_error_id).isDefined) { aria-labeledby="@elements.args.get('_error_id)" }
-        @if(elements.args.get('_hintId).isDefined) { aria-describedby="@elements.args.get('_hintId)" }
-        @if(elements.args.get('_maxlength).isDefined) { maxlength="@elements.args.get('_maxlength)" }
-        @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }
-        @if(elements.args.get('_pattern).isDefined) { pattern="@elements.args.get('_pattern)" }
-        @if(elements.args.get('_title).isDefined) { title="@elements.args.get('_title)" }
-        @if(elements.args.get('datalist).isDefined) { list="@{elements.field.name}_datalist" }
-    />
-    @if(elements.args.get('datalist).isDefined) {
-        <datalist id="@{elements.field.name}_datalist">
-        @{
-            elements.args('datalist) match {
-                case t:Traversable[_] => t.foreach( v => <option value="@v"/> )
-            }
-        }
-        </datalist>
-    }
-</div>
+@input(Input(
+    id = field.id,
+    name = field.name,
+    value = field.value,
+    classes = argsMap.getOrElse('_inputClass, "").toString,
+    errorMessage = field.errors.headOption.map(error => ErrorMessage(content = Text(Messages(error.message)))),
+    label = Label(
+        content = Text(argsMap.getOrElse('label, "").toString),
+        classes = argsMap.getOrElse('_labelClass, "").toString
+    ),
+    hint = argsMap.get('hint).map { hintLabel =>
+        Hint(
+            content = Text(argsMap.getOrElse('label, "").toString),
+            classes = argsMap.getOrElse('_labelClass, "").toString
+        )
+    })
+)

@@ -29,71 +29,69 @@
 )
 
 <div id="id_payment" class="govuk-body margin-top-40">
-  <dl class="app-check-your-answers app-check-your-answers--long">
+  <dl id="instalment-summary-list" class="govuk-summary-list">
     @*upfront payment*@
-    <div class="app-check-your-answers__contents">
-      <dt class="app-check-your-answers__question">
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
       @Messages("ssttp.arrangement.instalment-summary.up-front-payment")
       </dt>
-      <dd class="app-check-your-answers__answer">
+      <dd class="govuk-summary-list__value">
       @partials.currency(paymentSchedule.getUpFrontPayment)
       </dd>
-      <dd class="app-check-your-answers__change _action" onclick="change()">
+      <dd class="govuk-summary-list__actions" onclick="change()">
         <a href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()" title='@Messages("ssttp.arrangement.instalment-summary-table.upfront.payments.link-title")'>@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="govuk-visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
       </dd>
     </div>
 
     @*collected on date*@
-    <div class="app-check-your-answers__contents">
-      <dt class="app-check-your-answers__question">
+      <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
       @Messages("ssttp.arrangement.instalment-summary.payment-date.title")
       </dt>
-      <dd class="app-check-your-answers__answer">
+      <dd class="govuk-summary-list__value">
         @paymentSchedule.getMonthlyDateFormatted @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")
       </dd>
-      <dd class="app-check-your-answers__change">
+      <dd class="govuk-summary-list__actions">
         <a href="@ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()" title='@Messages("ssttp.arrangement.instalment-summary.payment-date.change.link-title")'>@Messages("ssttp.arrangement.instalment-summary.payment-date.change")</a>
       </dd>
     </div>
 
     @*monthly instalments (total number)*@
-    <div class="app-check-your-answers__contents">
-      <dt class="app-check-your-answers__question no_borderline">
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
         @Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")
       </dt>
-      <dd class="app-check-your-answers__answer no_borderline"">
+      <dd class="govuk-summary-list__value">
       </dd>
-      <dd class="app-check-your-answers__change no_borderline"">
+      <dd class="govuk-summary-list__actions">
         <a href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()" title='@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments.link-title")'>@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments-change") <span class="govuk-visually-hidden">@Messages("ssttp.arrangement.instalment-summary-table.monthly-instalments")</span></a>
       </dd>
     </div>
     @{
-      paymentSchedule.instalments.map { instalment => <div class="app-check-your-answers__contents">
-      <dt class="app-check-your-answers__question no_borderline">{Dates.getMonthFormatted(instalment.paymentDate)} {instalment.paymentDate.getYear}</dt>
-      <dd class="app-check-your-answers__answer no_borderline">{partials.currency(instalment.amount)}</dd>
-      <dd class="app-check-your-answers__change no_borderline"></dd></div>}
+      paymentSchedule.instalments.map { instalment => <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">{Dates.getMonthFormatted(instalment.paymentDate)} {instalment.paymentDate.getYear}</dt>
+      <dd class="govuk-summary-list__value">{partials.currency(instalment.amount)}</dd>
+      <dd class="govuk-summary-list__actions"></dd></div>}
       }
-      <div class="app-check-your-answers__contents">
-          <dt class="app-check-your-answers__question no_borderline">
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+          <dt class="govuk-summary-list__key">
               <p class="govuk-body-s">@Messages("ssttp.arrangement.instalment-summary-table.total-interest-hint", partials.currency(paymentSchedule.totalInterestCharged))</p>
-              <br>
           </dt>
-          <dd class="app-check-your-answers__answer no_borderline">
+          <dd class="govuk-summary-list__value">
           </dd>
-
-          <dd class="app-check-your-answers__change no_borderline">
+          <dd class="govuk-summary-list__actions">
           </dd>
       </div>
 
     @*total repayment*@
-    <div class="app-check-your-answers__contents">
-      <dt class="app-check-your-answers__question">
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
       @Messages("ssttp.arrangement.instalment-summary-table.total-repayment")
       </dt>
-      <dd class="app-check-your-answers__answer">
+      <dd class="govuk-summary-list__value">
       @partials.currency(paymentSchedule.totalPayable)
       </dd>
-      <dd class="app-check-your-answers__change">
+      <dd class="govuk-summary-list__actions">
       </dd>
     </div>
   </dl>

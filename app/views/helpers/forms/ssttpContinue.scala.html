@@ -5,10 +5,10 @@
         govukButton: uk.gov.hmrc.govukfrontend.views.html.components.govukButton
 )
 
-@(text: String = "")(implicit messages: play.api.i18n.Messages)
+@(text: String = "", id: String = "continue")(implicit messages: play.api.i18n.Messages)
 
 @govukButton(Button(
     inputType = Some("submit"),
     content = Text(if(text.nonEmpty) text else Messages("ssttp.common.continue")),
-    attributes = Map("id" -> "continue")
+    attributes = Map("id" -> id)
 ))

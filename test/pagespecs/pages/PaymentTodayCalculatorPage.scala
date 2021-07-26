@@ -44,6 +44,12 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
 
   def assertErrorIsDisplayed: Assertion = probing {
     readPath() shouldBe path
+
+    println("actual")
+    println(readMain().stripSpaces)
+    println("expected")
+    println(Expected.TextError())
+
     readMain().stripSpaces shouldBe Expected.TextError().stripSpaces()
   }
 
@@ -54,8 +60,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
   }
 
   def clickContinue(): Unit = {
-    val button = xpath("//*[@id=\"content\"]/article/form/div/button")
-    click on button
+    clickOnContinue()
   }
 
   object Expected {
@@ -96,8 +101,9 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
         """There is a problem
           |You need to enter an amount less than the amount you owe
           |How much can you pay upfront?
-          |Enter the amount you want to pay upfront
-          |£ How much can you pay upfront in Pound Sterling
+          |How much can you pay upfront in Pound Sterling
+          |Error: You need to enter an amount less than the amount you owe
+          |£
           |Continue
         """.stripMargin
     }

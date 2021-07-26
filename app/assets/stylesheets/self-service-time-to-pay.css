@@ -147,6 +147,10 @@ input.accountName{
         display: table-cell;
         width: 70%;
     }
+    .tabular-data__heading--label {
+        font-size: 16px;
+        line-height: 1.25;
+    }
     .panel-tabular-data .tabular-data__data-1 {
         display: table-cell;
         width: 30%;
@@ -176,13 +180,20 @@ input.accountName{
 .margin-bottom-30 {
     margin-bottom: 30px !important;
 }
-.app-check-your-answers {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 1.25;
+
+
+#instalment-summary-list .govuk-summary-list__key {
+    width: 60%;
 }
+
+.by-month-summary-list .govuk-summary-list__key {
+    width: 60%;
+}
+
+#dd-details-summary-list .govuk-summary-list__key {
+    width: 50%;
+}
+
 .printable {
     display: none;
 }
@@ -201,7 +212,7 @@ input.accountName{
 }
 
 @media (min-width: 40.0625em) {
-    .app-check-your-answers {
+    .govuk-summary-list {
         font-size: 19px;
         line-height: 1.31579;
     }
@@ -209,30 +220,30 @@ input.accountName{
 
 
 @media (min-width: 48.0625em) {
-    .app-check-your-answers {
+    .govuk-summary-list {
         display: table;
     }
 }
 
 @media (min-width: 48.0625em) {
-    .app-check-your-answers--short {
+    .govuk-summary-list--short {
         width: 100%;
     }
-    .app-check-your-answers--short .app-check-your-answers__question {
+    .govuk-summary-list--short .govuk-summary-list__key {
         width: 30%;
     }
 }
 
 @media (min-width: 48.0625em) {
-    .app-check-your-answers--long {
+    .{
         width: 100%;
     }
-    .app-check-your-answers--long .app-check-your-answers__question {
+    ..govuk-summary-list__key {
         width: 50%;
     }
 }
 
-.app-check-your-answers__contents {
+.govuk-summary-list__row {
     position: relative;
     border-bottom: 1px solid #bfc1c3;
 }
@@ -245,45 +256,45 @@ input.accountName{
 }
 
 @media (min-width: 48.0625em) {
-    .app-check-your-answers__contents {
+    .govuk-summary-list__row {
         display: table-row;
     }
 }
 
 @media (min-width: 48.0625em) {
-    .app-check-your-answers__contents:first-child .app-check-your-answers__question,
-    .app-check-your-answers__contents:first-child .app-check-your-answers__answer,
-    .app-check-your-answers__contents:first-child .app-check-your-answers__change {
+    .govuk-summary-list__row:first-child .govuk-summary-list__key,
+    .govuk-summary-list__row:first-child .govuk-summary-list__value,
+    .govuk-summary-list__row:first-child .govuk-summary-list__actions {
         padding-top: 0;
     }
 }
 
-.app-check-your-answers__question,
-.app-check-your-answers__answer,
-.app-check-your-answers__change {
+.govuk-summary-list__key,
+.govuk-summary-list__value,
+.govuk-summary-list__actions {
     display: block;
     margin: 0;
 }
 
 @media (min-width: 48.0625em) {
-    .app-check-your-answers__question,
-    .app-check-your-answers__answer,
-    .app-check-your-answers__change {
+    .govuk-summary-list__key,
+    .govuk-summary-list__value,
+    .govuk-summary-list__actions {
         display: table-cell;
         border-bottom: 1px solid #bfc1c3;
         padding: 0.63158em 1.05263em 0.47368em 0;
     }
 }
 
-.app-check-your-answers__question {
+.govuk-summary-list__key {
     font-weight: bold;
     margin: 0.63158em 4em 0.21053em 0;
 }
-.app-check-your-answers__question span.small{
+.govuk-summary-list__key span.small{
     font-weight: normal;
 }
 
-.app-check-your-answers__answer {
+.govuk-summary-list__value {
     padding-bottom: 0.47368em;
 }
 
@@ -291,7 +302,7 @@ input.accountName{
     text-align: left;
 }
 
-.app-check-your-answers__change {
+.govuk-summary-list__actions {
   /*  text-align: right;
     position: absolute;*/
     top: 0;
@@ -299,7 +310,7 @@ input.accountName{
 }
 
 @media (min-width: 48.0625em) {
-    .app-check-your-answers__change {
+    .govuk-summary-list__actions {
         position: static;
         padding-right: 0;
     }
@@ -330,10 +341,10 @@ input.accountName{
     height: 1.9em;
 }
 @media (min-width: 48.0625em){
-    #id_summary .app-check-your-answers--long .app-check-your-answers__question {
+    #id_summary ..govuk-summary-list__key {
         width: 70%;
     }
-    .summary_payment .app-check-your-answers--long .app-check-your-answers__question {
+    .summary_payment ..govuk-summary-list__key {
         width: 50%;
     }
 }

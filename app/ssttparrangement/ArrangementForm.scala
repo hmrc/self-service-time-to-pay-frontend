@@ -19,26 +19,40 @@ package ssttparrangement
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.{Format, Json}
+import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
 import scala.util.control.Exception._
 
-final case class ArrangementForm(dayOfMonth:        Int,
-                                 customDaySelected: Boolean)
+final case class ArrangementForm(
+    dayOfMonthOpt: Option[Int]
+) {
+  lazy val dayOfMonth: Int = dayOfMonthOpt.getOrElse(28)
+}
 
 object ArrangementForm {
+
+  def coerce(dayOfMonth: Option[String], customDaySelected: Option[Boolean]): ArrangementForm = {
+    ArrangementForm(dayOfMonth.map(_.toInt))
+  }
+
+  def uncoerce(data: ArrangementForm): Option[(Option[String], Option[Boolean])] = Option {
+    (data.dayOfMonthOpt.map(_.toString), data.dayOfMonthOpt.map(_ => true))
+  }
 
   val dayOfMonthForm: Form[ArrangementForm] = {
       def isInt(input: String): Boolean = (catching(classOf[NumberFormatException]) opt input.toInt).nonEmpty
 
+    val dayOfMonth = text
+      .verifying("ssttp.arrangement.change_day.payment-day.required", { i: String => i.nonEmpty })
+      .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
+      .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt >= 1)) })
+      .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt <= 28)) })
+
     Form(mapping(
-      "dayOfMonth" -> text
-        .verifying("ssttp.arrangement.change_day.payment-day.required", { i: String => i.nonEmpty })
-        .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
-        .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt >= 1)) })
-        .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt <= 28)) }),
-      "other" -> boolean
-    )((dayOfMonth, customDaySelected) => ArrangementForm(dayOfMonth.toInt, customDaySelected)) (data => Some((data.dayOfMonth.toString, data.customDaySelected)))
-    )
+      "dayOfMonth" -> mandatoryIfTrue("other", dayOfMonth),
+      "other" -> optional(boolean)
+        .verifying("ssttp.arrangement.change_day.payment-day.required", { _.isDefined })
+    )(coerce) (uncoerce))
   }
 
   implicit val format: Format[ArrangementForm] = Json.format[ArrangementForm]

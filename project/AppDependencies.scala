@@ -11,7 +11,9 @@ object AppDependencies {
     "uk.gov.hmrc"    %% "play-frontend-govuk"                        % "0.77.0-play-28",
     "uk.gov.hmrc"    %% "play-frontend-hmrc"                         % "0.74.0-play-28",
 
-    "com.beachape" %% "enumeratum" % "1.6.1",
+    "uk.gov.hmrc" %%  "play-conditional-form-mapping" % "1.9.0-play-28",
+
+  "com.beachape" %% "enumeratum" % "1.6.1",
     "uk.gov.hmrc" %% "time" % "3.25.0",
     "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-28",
 

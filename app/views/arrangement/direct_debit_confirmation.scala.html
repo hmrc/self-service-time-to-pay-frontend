@@ -53,7 +53,7 @@
             </summary>
             <div>
                 <p class="text--right">
-                    <img alt="" src="/images/direct-debit-logo-2x.png" width="148px" height="60px">
+                    <img alt="" src="@routes.Assets.versioned("./images/direct-debit-logo-2x.png")" width="148px" height="60px">
                 </p>
                 <h2 class="govuk-heading-m">@Messages("ssttp.direct-debit.guarantee.title")</h2>
                     <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.1")</p>
@@ -64,7 +64,11 @@
             </div>
         </details>
 
-      <a id="continue_button" class="govuk-button" href="@ssttparrangement.routes.ArrangementController.getTermsAndConditions()">@Messages("ssttp.arrangement.direct-debit.form.submit")</a>
+        @viewsHelpers.form(ssttparrangement.routes.ArrangementController.getTermsAndConditions(), 'method -> "GET", 'class -> "group") {
+            @submit('id -> "continue_button") {
+                @Messages("ssttp.arrangement.direct-debit.form.submit")
+            }
+        }
 
     </section>
 }

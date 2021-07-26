@@ -46,14 +46,18 @@ Time To Pay Instalment Summary Pretty Print Page
 @main(
     title = Messages("ssttp.arrangement.instalment-summary.title"),
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
-    ) {
-        <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
+) {
 
-        @instalments_plan_summary_table(schedule)
+<h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.instalment-summary.title")</h1>
 
-            @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitInstalmentSummary()) {
-                @submit() {
-                    @Messages("ssttp.arrangement.instalment-summary.submit")
-                }
-      }
+<section class="govuk-body">
+    @instalments_plan_summary_table(schedule)
+</section>
+
+@viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitInstalmentSummary()) {
+    @submit() {
+        @Messages("ssttp.arrangement.instalment-summary.submit")
     }
+}
+
+}
