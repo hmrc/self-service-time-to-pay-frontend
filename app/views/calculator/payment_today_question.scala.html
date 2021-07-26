@@ -52,8 +52,8 @@
     @if(dataForm.hasErrors){
         @errorSummary(ErrorSummary(
             errorList = dataForm.errors.asTextErrorLinks.map {error =>
-              if(error.href.contains("paytoday")) error.copy (
-                  href = Some("paytoday-true")
+              if(error.href.forall(_.contains("paytoday"))) error.copy (
+                  href = error.href.map(_ ++ "-true")
               ) else error
             },
             title = Text(Messages("ssttp.calculator.form.payment_today_question.required.title")),
@@ -80,7 +80,7 @@
                         isPageHeading = true
                     ))
                 )),
-//                errorMessage = dataForm.error("paytoday").map(error => ErrorMessage(content = Text(Messages(error.message)))),
+                errorMessage = dataForm.error("paytoday").map(error => ErrorMessage(content = Text(Messages(error.message)))),
                 items = List(
                     RadioItem(
                         id = Some("paytoday-true"),
@@ -89,21 +89,15 @@
                     ),
                     RadioItem(
                         id = Some("paytoday-false"),
+
                         content = Text(Messages("ssttp.calculator.form.payment_today_question.no_label")),
                         value = Some("false")
                     )
                 ),
                 classes = "govuk-radios--inline"
-            )//.withFormField(dataForm("paytoday"))
+            )
         )
 
-@*        @viewsHelpers.inputRadioGroup(dataForm("paytoday"),Seq(
-                "true" -> "",
-                "false" -> Messages("ssttp.calculator.form.payment_today_question.no_label")
-        ), '_label -> Html(Messages("ssttp.eligibility.form.existing_ttp.question")),
-            '_labelClass -> "block-label block-label--inline",
-            '_legend -> Html(Messages("ssttp.calculator.form.payment_today_question.title")),
-            '_legendClass -> "govuk-visually-hidden")*@
         <br>
         <div class="govuk-form-group">
             <button id="next" type="submit" class="govuk-button" onclick="continue()">@Messages("ssttp.calculator.payment_today_question.button-continue")</button>

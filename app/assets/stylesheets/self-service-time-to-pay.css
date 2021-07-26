@@ -181,9 +181,12 @@ input.accountName{
     margin-bottom: 30px !important;
 }
 
-
 #instalment-summary-list .govuk-summary-list__key {
     width: 60%;
+}
+
+#payment-summary-list .govuk-summary-list__key {
+    width: 70%;
 }
 
 .by-month-summary-list .govuk-summary-list__key {
@@ -247,6 +250,7 @@ input.accountName{
     position: relative;
     border-bottom: 1px solid #bfc1c3;
 }
+
 .add_bottom_line{
     border-bottom: 1px solid #bfc1c3 !important;
 }

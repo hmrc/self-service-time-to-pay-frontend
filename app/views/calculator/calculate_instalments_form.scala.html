@@ -24,9 +24,12 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
+@import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
 
 @this(
   main: views.html.main,
+  errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.govukErrorSummary,
   radios: uk.gov.hmrc.govukfrontend.views.html.components.govukRadios,
   viewsHelpers: views.ViewsHelpers
 )
@@ -49,7 +52,16 @@
 <section class="govuk-body">
 
 @if(durationForm.hasErrors) {
-  @viewsHelpers.errorSummary(Messages("ssttp.calculator.results.error.title"), durationForm)
+    @errorSummary(
+        ErrorSummary(
+            title = Text(Messages("ssttp.calculator.results.error.title")),
+            errorList = durationForm.errors.asTextErrorLinks.map {error =>
+                if(error.href.forall(_.contains("chosen-month"))) error.copy (
+                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("chosen-month", s.durationInMonths.toString)))
+                ) else error
+            }
+        )
+    )
 }
 
 @viewsHelpers.form(redirectCall, 'id -> "paymentTodayForm") {
@@ -68,6 +80,7 @@
                     content = HtmlContent(
                         instalment_by_month_label(schedule)
                     ),
+
                     conditionalHtml = Some(instalment_by_month_conditional(schedule))
                 )
             })

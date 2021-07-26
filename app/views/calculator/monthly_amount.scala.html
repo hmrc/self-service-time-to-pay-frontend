@@ -19,9 +19,16 @@
 @import partials.currency
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Input
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorMessage
+@import uk.gov.hmrc.govukfrontend.views.Aliases.PrefixOrSuffix
 
 @this(
   main: views.html.main,
+  formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
+  input: uk.gov.hmrc.govukfrontend.views.html.components.govukInput,
+  continue: views.html.helpers.forms.ssttpContinue,
   viewsHelpers: views.ViewsHelpers
 )
 
@@ -46,23 +53,24 @@
 
     <p class="govuk-body">@Messages("ssttp.monthly.amount.hint", currency(lowerBound.toDouble), currency(upperBound.toDouble))</p>
 
-    @viewsHelpers.form(action = ssttpcalculator.routes.CalculatorController.submitMonthlyPayment, 'id -> "monthlyPaymentForm", 'class -> "group"){
+    @formWithCsrf(
+        action = ssttpcalculator.routes.CalculatorController.submitMonthlyPayment(),
+        'id -> "monthlyPaymentForm"
+    ){
+        @input(Input(
+            id = "amount",
+            name = "amount",
+            hint = Some(Hint(
+                content = Text(Messages("ssttp.monthly.amount.pound.sign.description")),
+                classes = "govuk-visually-hidden",
+            )),
+            errorMessage = dataForm.error("amount").map(error => ErrorMessage(content = Text(Messages(error.message)))),
+            prefix = Some(PrefixOrSuffix(
+                content = Text("£")
+            )),
+            classes = "govuk-!-width-one-quarter"
+        ))
 
-<div class="govuk-form-group @if(dataForm.hasErrors){govuk-form-group--error}">
-    @if(dataForm.hasErrors){
-        <span class="govuk-error-message" role="tooltip" data-journey="search-page:error:amount">
-          @Messages("ssttp.monthly.amount.numbers-only")
-        </span>
-    }
-    <span class="govuk-body" for="amount">
-      £
-    </span>
-    <span class="govuk-visually-hidden">@Messages("ssttp.monthly.amount.pound.sign.description")</span>
-
-    <input type="text" class="govuk-input govuk-!-width-one-quarter @if(dataForm.hasErrors){govuk-input--error}" name="amount" id="amount" value="" aria-invalid="true">
-</div>
-        @submit('_buttonClass -> "govuk-button") {
-            @Messages("ssttp.calculator.form.continue")
-        }
+        @continue(Messages("ssttp.calculator.form.continue"))
     }
 }

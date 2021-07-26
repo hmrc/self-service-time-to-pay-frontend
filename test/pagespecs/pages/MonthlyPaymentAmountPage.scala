@@ -56,8 +56,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   }
 
   def clickContinue(): Unit = {
-    val button = xpath("//*[@id=\"monthlyPaymentForm\"]/div/button")
-    click on button
+    clickOnContinue()
   }
 
   object Expected {
@@ -86,14 +85,16 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       private def mainTextEnglish(lowerAmount: Int, upperAmount: Int) =
         s"""How much can you afford to pay each month?
            |Enter an amount between £${format(lowerAmount)} and £${format(upperAmount)}
-           |£ How much can you pay monthly in Pound Sterling
+           |How much can you pay monthly in Pound Sterling
+           |£
            |Continue
         """.stripMargin
 
       private def mainTextWelsh(lowerAmount: Int, upperAmount: Int) =
         s"""Faint y gallwch fforddio ei dalu bob mis?
            |Nodwch swm sydd rhwng £${format(lowerAmount)} a £${format(upperAmount)}
-           |£ How much can you pay monthly in Pound Sterling
+           |How much can you pay monthly in Pound Sterling
+           |£
            |Yn eich blaen
         """.stripMargin
     }
@@ -104,8 +105,9 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
            |Enter a figure between the given range
            |How much can you afford to pay each month?
            |Enter an amount between £410.00 and £2,450.00
-           |Enter numbers only
-           |£ How much can you pay monthly in Pound Sterling
+           |How much can you pay monthly in Pound Sterling
+           |Error: Enter a figure between the given range
+           |£
            |Continue
         """.stripMargin
 
