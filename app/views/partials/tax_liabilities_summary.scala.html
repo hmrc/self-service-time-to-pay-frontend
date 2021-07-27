@@ -19,6 +19,7 @@
 
 @(debits: Seq[Debit])(implicit messages: play.api.i18n.Messages, request: Request[_])
 <div class="govuk-!-margin-left-2 govuk-!-margin-top-2">
+    <dl class="govuk-summary-list">
       @debits.map { debit =>
         <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
             <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
@@ -32,4 +33,5 @@
             </dd>
         </div>
       }
+    </dl>
 </div>

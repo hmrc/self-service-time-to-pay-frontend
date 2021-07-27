@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorMessage
 @import uk.gov.hmrc.govukfrontend.views.Aliases.PrefixOrSuffix
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Label
 
 @this(
   main: views.html.main,
@@ -60,10 +61,10 @@
         @input(Input(
             id = "amount",
             name = "amount",
-            hint = Some(Hint(
+            label = Label(
                 content = Text(Messages("ssttp.monthly.amount.pound.sign.description")),
                 classes = "govuk-visually-hidden",
-            )),
+            ),
             errorMessage = dataForm.error("amount").map(error => ErrorMessage(content = Text(Messages(error.message)))),
             prefix = Some(PrefixOrSuffix(
                 content = Text("£")
