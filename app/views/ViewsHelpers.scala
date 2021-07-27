@@ -27,6 +27,4 @@ class ViewsHelpers @Inject() (
     val continue:     views.html.helpers.forms.ssttpContinue,
 
     val direct_debit_fields: views.html.partials.direct_debit_fields
-//our partials
-
 )

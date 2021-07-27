@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import helpers.forms.submit
 @import timetopaytaxpayer.cor.model.Debit
 @import partials.currency
 
@@ -22,7 +21,6 @@
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers
 )
-
 
 @(
         debits:Seq[Debit],
@@ -32,15 +30,17 @@
         appConfig: config.AppConfig
 )
 
+@import viewsHelpers._
 
 @main(
     title = Messages("ssttp.calculator.form.payment_summary.title"),
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPaymentToday())) {
+
     <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.form.payment_summary.title")</h1>
 
     <section class="govuk-body">
 
-    <dl id="payment-summary-list" class="govuk-summary-list margin-bottom-20">
+    <dl id="payment-summary-list" class="govuk-summary-list">
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key ">
             @Messages("ssttp.calculator.form.payment_summary.up-front-payment")
@@ -73,8 +73,6 @@
     </section>
 
     @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getMonthlyPayment()) {
-        @submit('_buttonClass -> "govuk-button") {
-            @Messages("ssttp.calculator.form.payment_summary.continue")
-        }
+        @continue(Messages("ssttp.calculator.form.payment_summary.continue"))
     }
 }
