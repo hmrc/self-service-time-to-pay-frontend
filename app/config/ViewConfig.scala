@@ -21,7 +21,6 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 final case class ViewConfig(
     appName:        String,
-    assetsPrefix:   String,
     authUrl:        String,
     companyAuthUrl: String,
     signInPath:     String,
@@ -34,20 +33,14 @@ final case class ViewConfig(
     timeoutDialogCountdown:        Int
 ) {
 
-  //  val reportAProblemPartialUrl = s"$frontendBaseUrl/contact/problem_reports_ajax?service=$appName"
-  //  val reportAProblemNonJSUrl = s"$frontendBaseUrl/contact/problem_reports_nonjs?service=$appName"
-
   val loginUrl = companyAuthUrl + signInPath
 
   @Inject
   def this(servicesConfig: ServicesConfig) = this(
-    appName        = servicesConfig.getString("appName"),
-    assetsPrefix   = servicesConfig.getString(s"assets.url") + servicesConfig.getString(s"assets.version"),
-    authUrl        = servicesConfig.baseUrl("auth"),
-    companyAuthUrl = servicesConfig.getString("microservice.services.company-auth.url"),
-    signInPath     = servicesConfig.getString("microservice.services.company-auth.sign-in-path"),
-    //    signOut              = servicesConfig.getString("urls.logout"),
-    //    frontendBaseUrl      = servicesConfig.getString("frontend-base-url"),
+    appName                       = servicesConfig.getString("appName"),
+    authUrl                       = servicesConfig.baseUrl("auth"),
+    companyAuthUrl                = servicesConfig.getString("microservice.services.company-auth.url"),
+    signInPath                    = servicesConfig.getString("microservice.services.company-auth.sign-in-path"),
     frontendBaseUrl               = servicesConfig.getString("microservice.services.auth.login-callback.base-url"), //TODO: migrate this config,
     timeoutDialogTimeout          = servicesConfig.getInt("timeout-dialog.timeout"),
     timeoutDialogCountdown        = servicesConfig.getInt("timeout-dialog.countdown"),
