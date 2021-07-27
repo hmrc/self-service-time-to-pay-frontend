@@ -49,7 +49,6 @@ class ItSpec
     PatienceConfig(timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds)))
 
   protected lazy val configMap: Map[String, Any] = Map(
-    "assets.url" -> s"http://localhost:$testPort/assets/",
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,

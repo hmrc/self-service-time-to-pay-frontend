@@ -41,15 +41,8 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
     case Languages.Welsh   => "Crynodeb o’ch cyfrif Hunanasesiad £4,900.00"
   }
 
-  //  def clickOnStartNowButton(): Unit = {
-  //    val button = xpath("/html/body/main/div[2]/article/form/div/button")
-  //    click on button
-  //  }
-
   def clickOnStartNowButton(): Unit = {
     clickOnContinue()
-    //    val button = xpath("//*[@id=\"content\"]/article/form/div/button")
-    //    click on button
   }
 
   object Expected {

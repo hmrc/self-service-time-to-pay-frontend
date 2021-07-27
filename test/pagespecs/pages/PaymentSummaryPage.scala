@@ -42,8 +42,7 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
   }
 
   def clickContinue(): Unit = {
-    val button = xpath("//*[@id=\"content\"]/article/form/div/button")
-    click on button
+    clickOnContinue()
   }
 
   object Expected {
