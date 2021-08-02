@@ -30,9 +30,9 @@
         implicit messages: play.api.i18n.Messages
 )
 
-<h1 class="heading-large">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
-<h2 class="heading-small">@Messages("ssttp.arrangement.complete.ddref")</h2>
-<p class="small">@directDebitMandate</p>
+<h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
+<h2 class="govuk-heading-m">@Messages("ssttp.arrangement.complete.ddref")</h2>
+<p class="govuk-body-s">@directDebitMandate</p>
 <table>
     <tbody>
     @if(schedule.initialPayment > BigDecimal(0)) {
@@ -45,8 +45,8 @@
     }
     </tbody>
 </table>
-<h2 class="heading-small">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
-<table>
+<h2 class="govuk-heading-m">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
+<table class="govuk-body">
     <tbody>
 
     @schedule.instalments.zipWithIndex.map { case (instalment, index) =>
