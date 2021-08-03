@@ -33,12 +33,12 @@
     title = Messages("ssttp.direct-debit.unauthorized.title"),
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
 ){
-    <header class="page-header text">
-        <h1>@Messages("ssttp.direct-debit.unauthorized.title")</h1>
-    </header>
-    <p>@Messages("ssttp.direct-debit.unauthorized.intro.p1") <a href="https://www.gov.uk/government/publications/vat-instruction-to-your-bank-or-building-society-to-pay-by-direct-debit-vatc9">@Messages("ssttp.direct-debit.unauthorized.intro.p1.link")</a></p>
-    <p>
-        @Messages("ssttp.direct-debit.unauthorized.intro.p2")
-    </p>
-    <a class="govuk-button" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.unauthorized.button")</a>
+    <h1 class="govuk-heading-l">@Messages("ssttp.direct-debit.unauthorized.title")</h1>
+    <section class="govuk-body">
+        <p>@Messages("ssttp.direct-debit.unauthorized.intro.p1") <a class="govuk-link" href="https://www.gov.uk/government/publications/vat-instruction-to-your-bank-or-building-society-to-pay-by-direct-debit-vatc9">@Messages("ssttp.direct-debit.unauthorized.intro.p1.link")</a></p>
+        <p>
+            @Messages("ssttp.direct-debit.unauthorized.intro.p2")
+        </p>
+        <a class="govuk-button" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.unauthorized.button")</a>
+    </section>
 }
