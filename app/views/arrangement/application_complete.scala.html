@@ -23,7 +23,11 @@
 @import _root_.model._
 @import ssttpcalculator.model.PaymentSchedule
 
-@this(main: views.html.main, viewsHelpers: views.ViewsHelpers)
+@this(
+        main: views.html.main,
+        viewsHelpers: views.ViewsHelpers
+)
+
 @(
         debits: Seq[Debit],
         transactionId: String,
@@ -36,39 +40,42 @@
         appConfig: config.AppConfig
 )
 
-<div class="govuk-!-display-none-print">
+@scripts = {
+    <script>
+        function openPrintView() {
+            const win = window.open("@ssttparrangement.routes.ArrangementController.printComplete().absoluteURL()")
+            win.print()
+        }
+    </script>
+}
+
 @main(
   title = Messages("ssttp.arrangement.complete.title"),
   maybeSidebarLinks = None,
   welshToggleEnabled = false,
-  hasUserPanel = true
+  hasUserPanel = true,
+  scriptElem = Some(scripts)
 ) {
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">@Messages("ssttp.arrangement.complete.title")</h1>
-      <div class="govuk-panel__body">
-      @maybeDirectDebitReference.map { directDebitReference =>
-        @Messages("ssttp.arrangement.complete.ddref")<br/><strong>@directDebitReference</strong>
-      }
-      </div>
+        <div class="govuk-panel__body">
+            @maybeDirectDebitReference.map { directDebitReference =>
+                @Messages("ssttp.arrangement.complete.ddref")<br/><strong>@directDebitReference</strong>
+            }
+        </div>
     </div>
 
-  <section class="govuk-body divider--bottom">
-    <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.print-label")</a>
-    <br>
-    <br>
-    <h2 class="govuk-heading-m">@Messages("ssttp.arrangement.complete.next")</h2>
-    <p>@Messages("ssttp.arrangement.complete.summary")</p>
-    <p>@Messages("ssttp.arrangement.complete.first-payment", language.Dates.wholeDate(schedule.initialPaymentScheduleDate))</p>
+    <section class="govuk-body divider--bottom">
+        <a class="govuk-link" href="javascript:openPrintView()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.print-label")</a>
+        <br>
+        <br>
+        <h2 class="govuk-heading-m">@Messages("ssttp.arrangement.complete.next")</h2>
+        <p>@Messages("ssttp.arrangement.complete.summary")</p>
+        <p>@Messages("ssttp.arrangement.complete.first-payment", language.Dates.wholeDate(schedule.initialPaymentScheduleDate))</p>
 
-    <h2 class="govuk-heading-m">@Messages("ssttp.arrangement.complete.help.h2")</h2>
-    <p>@Messages("ssttp.arrangement.complete.help.p1")</p>
-
-
-    <span><a class="govuk-link" id="survey-link" href="@appConfig.logoutUrl">@Messages("ssttp.arrangement.complete.feedback")</a> @Messages("ssttp.arrangement.complete.help.p2")</span>
-  </section>
+        <h2 class="govuk-heading-m">@Messages("ssttp.arrangement.complete.help.h2")</h2>
+        <p>@Messages("ssttp.arrangement.complete.help.p1")</p>
+        
+        <span><a class="govuk-link" id="survey-link" href="@appConfig.logoutUrl">@Messages("ssttp.arrangement.complete.feedback")</a> @Messages("ssttp.arrangement.complete.help.p2")</span>
+    </section>
 }
-</div>
-<div class="js-visible printable">
-@print_payment_schedule(schedule, maybeDirectDebitReference)
-</div>
-

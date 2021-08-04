@@ -18,12 +18,12 @@ package ssttparrangement
 
 import java.time.format.DateTimeFormatter.ISO_INSTANT
 import java.time.{LocalDate, ZonedDateTime}
-
 import _root_.model._
 import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.{Actions, AuthorisedSaUserRequest}
+
 import javax.inject._
 import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import journey.{Journey, JourneyService}
@@ -43,6 +43,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
+import views.html.partials.print_payment_schedule
 
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
@@ -240,6 +241,20 @@ class ArrangementController @Inject() (
           debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
           transactionId = journey.taxpayer.selfAssessment.utr + clockProvider.now.toString,
           directDebit,
+          schedule,
+          journey.ddRef
+        ))
+      } else technicalDifficulties(journey)
+    }
+  }
+
+  def printComplete(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.printComplete: $request")
+
+    journeyService.getJourney().map { journey =>
+      if (journey.status == FinishedApplicationSuccessful) {
+        val schedule = calculatorService.computeSchedule(journey)
+        Ok(print_payment_schedule(
           schedule,
           journey.ddRef
         ))

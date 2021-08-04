@@ -42,6 +42,8 @@ class Views @Inject() (
     val call_us:                                       views.html.core.call_us,
     val you_need_to_file:                              views.html.core.you_need_to_file,
 
+    //    val print_payment_schedule:       views.html.partials.print_payment_schedule,
+
     val delete_answers: views.html.session.delete_answers
 )
 
