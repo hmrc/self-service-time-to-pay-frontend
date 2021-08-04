@@ -55,9 +55,7 @@ Time To Pay Instalment Summary Pretty Print Page
 </section>
 
 @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submitInstalmentSummary()) {
-    @submit() {
-        @Messages("ssttp.arrangement.instalment-summary.submit")
-    }
+    @viewsHelpers.continue(Messages("ssttp.arrangement.instalment-summary.submit"))
 }
 
 }

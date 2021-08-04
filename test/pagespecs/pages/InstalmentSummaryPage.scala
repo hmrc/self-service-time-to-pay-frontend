@@ -56,8 +56,7 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
   }
 
   def clickContinue(): Unit = {
-    val button = xpath("//*[@id=\"content\"]/article/form/div/button")
-    click on button
+    clickOnContinue()
   }
 
   def clickUpfrontPaymentChange(): Unit = {
