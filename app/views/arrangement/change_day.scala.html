@@ -65,7 +65,7 @@
             @dayForm.error("dayOfMonth").map(formError => Messages(formError.message))
             </div>
         }
-        <input type="text" class="govuk-input govuk-!-width-one-quarter" id="dayInput" name="dayOfMonth">
+        <input type="text" class="govuk-input govuk-!-width-one-quarter" id="dayOfMonth" name="dayOfMonth">
     </div>
 }
 
@@ -76,7 +76,11 @@
     <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.change_day.title")</h1>
     @if(dayForm.hasErrors) {
         @errorSummary(ErrorSummary(
-            errorList = dayForm.errors.asTextErrorLinks,
+            errorList = dayForm.errors.asTextErrorLinks.map {error =>
+                if(error.href.forall(_.contains("other"))) error.copy (
+                    href = error.href.map(_.replaceAll("other", "28th"))
+                ) else error
+            },
             title = Text(Messages("ssttp.arrangement.change_day.error.summary.title"))
         ))
     }
@@ -87,7 +91,7 @@
             items = Seq(
                 RadioItem(
                     content = Text(Messages("ssttp.arrangement.changeday.default")),
-                    id = Some("dayOfMonth"),
+                    id = Some("28th"),
                     value = Some("false"),
                     checked = dayForm("dayOfMonth").value.contains("28")
                 ),

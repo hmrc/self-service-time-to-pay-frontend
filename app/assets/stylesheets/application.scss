@@ -4,6 +4,20 @@ $hmrc-assets-path: "/pay-what-you-owe-in-instalments/assets/lib/hmrc-frontend/hm
 @import "lib/govuk-frontend/govuk/all";
 @import "lib/hmrc-frontend/hmrc/all";
 
+.print-only {
+  display: none;
+}
+
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  .print-only {
+    display: block;
+  }
+}
+
 .language-toggle-position {
   float: right;
 }

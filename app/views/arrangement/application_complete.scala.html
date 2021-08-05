@@ -40,23 +40,13 @@
         appConfig: config.AppConfig
 )
 
-@scripts = {
-    <script>
-        function openPrintView() {
-            const win = window.open("@ssttparrangement.routes.ArrangementController.printComplete().absoluteURL()")
-            win.print()
-        }
-    </script>
-}
-
 @main(
   title = Messages("ssttp.arrangement.complete.title"),
   maybeSidebarLinks = None,
   welshToggleEnabled = false,
-  hasUserPanel = true,
-  scriptElem = Some(scripts)
+  hasUserPanel = true
 ) {
-    <div class="govuk-panel govuk-panel--confirmation">
+    <div class="govuk-panel govuk-panel--confirmation govuk-!-display-none-print">
         <h1 class="govuk-panel__title">@Messages("ssttp.arrangement.complete.title")</h1>
         <div class="govuk-panel__body">
             @maybeDirectDebitReference.map { directDebitReference =>
@@ -65,8 +55,8 @@
         </div>
     </div>
 
-    <section class="govuk-body divider--bottom">
-        <a class="govuk-link" href="javascript:openPrintView()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.print-label")</a>
+    <section class="govuk-body divider--bottom govuk-!-display-none-print">
+        <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.print-label")</a>
         <br>
         <br>
         <h2 class="govuk-heading-m">@Messages("ssttp.arrangement.complete.next")</h2>
@@ -78,4 +68,8 @@
 
         <span><a class="govuk-link" id="survey-link" href="@appConfig.logoutUrl">@Messages("ssttp.arrangement.complete.feedback")</a> @Messages("ssttp.arrangement.complete.help.p2")</span>
     </section>
+
+    <div class="print-only">
+        @print_payment_schedule(schedule, maybeDirectDebitReference)
+    </div>
 }
