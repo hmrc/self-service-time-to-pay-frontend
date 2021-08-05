@@ -248,20 +248,6 @@ class ArrangementController @Inject() (
     }
   }
 
-  def printComplete(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"ArrangementController.printComplete: $request")
-
-    journeyService.getJourney().map { journey =>
-      if (journey.status == FinishedApplicationSuccessful) {
-        val schedule = calculatorService.computeSchedule(journey)
-        Ok(print_payment_schedule(
-          schedule,
-          journey.ddRef
-        ))
-      } else technicalDifficulties(journey)
-    }
-  }
-
   private def applicationSuccessful = successful(Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
   /**

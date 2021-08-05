@@ -1,18 +1,19 @@
-@import uk.gov.hmrc.govukfrontend.views.Aliases.{BackLink, FooterItem, HtmlContent, Text}
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.phasebanner.PhaseBanner
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.FooterItem
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.{Header, ReportTechnicalIssue}
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En, LanguageSelect}
-@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
-@import langswitch.Languages
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En}
 @import config.ViewConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
+
 @import req.RequestSupport.isLoggedIn
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.Meta
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.Footer
 
 @this(
         govukLayout: uk.gov.hmrc.govukfrontend.views.html.layouts.govukLayout,
         twoThirdsMainContent: uk.gov.hmrc.govukfrontend.views.html.layouts.twoThirdsMainContent,
         govukBackLink: uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink,
         hmrcHeader: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcHeader,
+        hmrcFooter: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcFooter,
         languageSelect: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcLanguageSelect,
 
         reportTechnicalIssues: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcReportTechnicalIssue,
@@ -87,19 +88,27 @@
         homepageUrl = "https://www.gov.uk",
         serviceName = Some(Messages(navTitle)),
         signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).url) else None,
-        language = if (messages.lang.code == "cy") Cy else En
+        language = if (messages.lang.code == "cy") Cy else En,
+        classes = "govuk-!-display-none-print"
     ))),
     scriptsBlock = Some(scripts),
     beforeContentBlock = Some(beforeContentBlock),
-    footerItems = Seq(
-        FooterItem(text = Some(Messages("footer_cookies.link")), href = Some(viewConfig.cookiesUrl)),
-        FooterItem(
-            text = Some(Messages("accessibility-statement.title")),
-            href = Some(viewConfig.accessibilityStatementUrl(request.uri)),
-            attributes = Map("id" -> "accessibility-statement-link", "data-sso" -> "false", "data-journey-click" -> "footer:Click:Accessibility")
-        ),
-        FooterItem(text = Some(Messages("footer_privacyNotice.link")), href = Some(viewConfig.privacyNoticeUrl)),
-        FooterItem(text = Some(Messages("footer_termsAndConditions.link")), href = Some(viewConfig.termsAndConditionsUrl)),
-        FooterItem(text = Some(Messages("footer_helpUsingGovUk.link")), href = Some(viewConfig.helpUsingGovUkUrl))
-    )
+    footerBlock = Some(hmrcFooter(Footer(
+        meta = Some(Meta(
+            items = Some(
+                Seq(
+                    FooterItem(text = Some(Messages("footer_cookies.link")), href = Some(viewConfig.cookiesUrl)),
+                    FooterItem(
+                        text = Some(Messages("accessibility-statement.title")),
+                        href = Some(viewConfig.accessibilityStatementUrl(request.uri)),
+                        attributes = Map("id" -> "accessibility-statement-link", "data-sso" -> "false", "data-journey-click" -> "footer:Click:Accessibility")
+                    ),
+                    FooterItem(text = Some(Messages("footer_privacyNotice.link")), href = Some(viewConfig.privacyNoticeUrl)),
+                    FooterItem(text = Some(Messages("footer_termsAndConditions.link")), href = Some(viewConfig.termsAndConditionsUrl)),
+                    FooterItem(text = Some(Messages("footer_helpUsingGovUk.link")), href = Some(viewConfig.helpUsingGovUkUrl))
+                )
+            )
+        )),
+        classes = "govuk-!-display-none-print"
+    )))
 )(contentBlock)

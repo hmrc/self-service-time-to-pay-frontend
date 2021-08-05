@@ -61,7 +61,6 @@ GET         /arrangement/direct-debit-assistance                          ssttpd
 GET         /arrangement/direct-debit-error                               ssttpdirectdebit.DirectDebitController.getDirectDebitError()
 POST        /arrangement/submit                                           ssttparrangement.ArrangementController.submit()
 GET         /arrangement/summary                                          ssttparrangement.ArrangementController.applicationComplete()
-GET         /arrangement/summary/print                                    ssttparrangement.ArrangementController.printComplete()
 
 GET         /sign-out                                                     ssttpeligibility.SelfServiceTimeToPayController.signOut(continueUrl: Option[String])
 
