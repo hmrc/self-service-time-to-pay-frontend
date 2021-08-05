@@ -60,7 +60,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
     ()
   }
   def selectFirstOption28thDay(): Unit = {
-    val firstOption = xpath("//*[@id=\"dayOfMonth\"]")
+    val firstOption = xpath("//*[@id=\"28th\"]")
     click on firstOption
   }
 
@@ -75,8 +75,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
   }
 
   def enterDay(day: String): Unit = {
-    //    val dayField = xpath("/html/body/main/div[2]/article/form/div/div[3]/input")
-    val dayField = id("dayInput")
+    val dayField = id("dayOfMonth")
     click on dayField
     enter(day)
   }
