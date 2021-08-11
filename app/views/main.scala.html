@@ -16,6 +16,8 @@
         hmrcFooter: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcFooter,
         languageSelect: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcLanguageSelect,
 
+        timeoutDialogue: views.html.partials.timeout_dialog_script,
+
         reportTechnicalIssues: uk.gov.hmrc.hmrcfrontend.views.html.components.hmrcReportTechnicalIssue,
         hmrcTrackingConsentSnippet: uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcTrackingConsentSnippet,
 
@@ -26,9 +28,8 @@
         mainScripts: views.html.scripts,
 
         viewsHelpers: views.ViewsHelpers,
-        appConfig: config.AppConfig,
-        viewConfig: config.ViewConfig
-)
+        appConfig: config.AppConfig
+)(implicit viewConfig: config.ViewConfig)
 
 @(title: String,
         maybeSidebarLinks: Option[Html] = None,
@@ -48,6 +49,10 @@
         mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
 @head = {
+    @if(allowTimeoutDialog) {
+        @timeoutDialogue(isLoggedIn)
+    }
+
     <link href='@routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" />
     <link rel='stylesheet' href='@routes.Assets.versioned("stylesheets/self-service-time-to-pay.css")' />
 }

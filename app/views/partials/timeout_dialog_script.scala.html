@@ -1,56 +1,25 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+*@
 
 @import config.ViewConfig
 
-@(isSignedIn: Boolean)(implicit m: Messages, viewConf: ViewConfig)
+@this(
+        timeoutDialogue: uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcTimeoutDialogHelper,
+)
 
-@timeoutKeepAliveUrl = @{
-    routes.TimeoutController.keepAliveSession().url
-}
+@(isLoggedIn: Boolean)(implicit r: Request[_], m: Messages, viewConf: ViewConfig)
 
-<script type="text/javascript">
-window.addEventListener("load", function(event) {
 
-    if(!window.GOVUK) return;
 
-    @if(isSignedIn) {
-        window.GOVUK.timeoutDialog({
-            message:             '@Messages("timeoutDialog.message.logged-in")',
-            timeout:             @viewConf.timeoutDialogTimeout,
-            countdown:           @viewConf.timeoutDialogCountdown,
-
-            keepAliveButtonText: '@Messages("timeoutDialog.keep-alive-button-text.logged-in")',
-            keepAliveUrl:        '@timeoutKeepAliveUrl',
-
-            signOutButtonText:   '@Messages("timeoutDialog.sign-out-button-text.logged-in")',
-            signOutUrl:          '@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).url'
-        });
-    } else {
-        window.GOVUK.timeoutDialog({
-            message:             '@Messages("timeoutDialog.message.logged-out")',
-            timeout:             @viewConf.timeoutDialogTimeout,
-            countdown:           @viewConf.timeoutDialogCountdown,
-
-            keepAliveButtonText: '@Messages("timeoutDialog.keep-alive-button-text.logged-out")',
-            keepAliveUrl:        '@timeoutKeepAliveUrl',
-
-            signOutButtonText:   '@Messages("timeoutDialog.sign-out-button-text.logged-out")',
-            signOutUrl:          '@controllers.routes.TimeoutController.killSession().url'
-        });
-    }
-});
-</script>
+@timeoutDialogue(
+    signOutUrl = routes.TimeoutController.killSession().url,
+    keepAliveUrl = Some(controllers.routes.TimeoutController.keepAliveSession().url),
+    timeout = Some(viewConf.timeoutDialogTimeout),
+    countdown = Some(viewConf.timeoutDialogCountdown),
+    title = None,
+    message = Some { if (isLoggedIn) Messages("timeoutDialog.message.logged-in") else Messages("timeoutDialog.message.logged-out") },
+    keepAliveButtonText = Some { if (isLoggedIn) Messages("timeoutDialog.keep-alive-button-text.logged-in") else Messages("timeoutDialog.keep-alive-button-text.logged-out") },
+    signOutButtonText = Some { if (isLoggedIn) Messages(s"timeoutDialog.sign-out-button-text.logged-in") else Messages("timeoutDialog.sign-out-button-text.logged-out") }
+)
