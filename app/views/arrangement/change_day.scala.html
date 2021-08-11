@@ -61,7 +61,7 @@
         <label class="govuk-label" for="dayOfMonth" >@Messages("ssttp.arrangement.changeday.enter.date")</label>
         <br>
         @if(customDateHasErrors) {
-            <div class="govuk-error-message" >
+            <div class="govuk-error-message">
             @dayForm.error("dayOfMonth").map(formError => Messages(formError.message))
             </div>
         }
