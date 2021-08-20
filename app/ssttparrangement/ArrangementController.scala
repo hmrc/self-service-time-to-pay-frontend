@@ -361,7 +361,7 @@ class ArrangementController @Inject() (
     val taxpayer = journey.taxpayer
     val schedule = calculatorService.computeSchedule(journey)
 
-    TTPArrangement(ppReference, ddReference, taxpayer, schedule)
+    TTPArrangement(ppReference, ddReference, taxpayer, journey.bankDetails, schedule)
   }
 
 }
