@@ -284,11 +284,9 @@ class ArrangementController @Inject() (
             _.fold(submissionError => {
               logger.error(s"Exception: ${submissionError.code} + ${submissionError.message}")
               JourneyLogger.info(s"ArrangementController.arrangementSetUp: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to $applicationSuccessful", arrangement)
-              auditService.sendArrangementSubmissionFailedEvent(journey, paymentSchedule, submissionError)
               applicationSuccessful
             }, _ => {
               JourneyLogger.info(s"ArrangementController.arrangementSetUp: Arrangement submission Succeeded!", arrangement)
-              auditService.sendSubmissionSucceededEvent(journey, paymentSchedule)
               applicationSuccessful
             }
             )
@@ -361,7 +359,7 @@ class ArrangementController @Inject() (
     val taxpayer = journey.taxpayer
     val schedule = calculatorService.computeSchedule(journey)
 
-    TTPArrangement(ppReference, ddReference, taxpayer, schedule)
+    TTPArrangement(ppReference, ddReference, taxpayer, journey.bankDetails, schedule)
   }
 
 }

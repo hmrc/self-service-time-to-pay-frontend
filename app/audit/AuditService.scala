@@ -37,20 +37,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 @Singleton()
 class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: ExecutionContext) {
 
-  def sendSubmissionSucceededEvent(
-      journey:  Journey,
-      schedule: PaymentSchedule)(implicit request: Request[_]): Unit = {
-
-    val event = makeEvent(
-      journey,
-      schedule,
-      Json.obj(
-        "status" -> "successfully submitted direct debit and TTP Arrangement"
-      ))
-    auditConnector.sendExtendedEvent(event)
-    ()
-  }
-
   def sendDirectDebitSubmissionFailedEvent(
       journey:         Journey,
       schedule:        PaymentSchedule,
@@ -60,21 +46,6 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
       schedule,
       Json.obj(
         "status" -> "failed to submit direct debit didnt bothered to submit TTP Arrangement",
-        "submissionError" -> submissionError
-      ))
-    auditConnector.sendExtendedEvent(event)
-    ()
-  }
-
-  def sendArrangementSubmissionFailedEvent(
-      journey:         Journey,
-      schedule:        PaymentSchedule,
-      submissionError: SubmissionError)(implicit request: Request[_]): Unit = {
-    val event = makeEvent(
-      journey,
-      schedule,
-      Json.obj(
-        "status" -> "submitted direct debit but failed to submit TTP Arrangement",
         "submissionError" -> submissionError
       ))
     auditConnector.sendExtendedEvent(event)
