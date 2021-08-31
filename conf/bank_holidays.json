@@ -428,8 +428,13 @@
       "bunting": true
     }, {
       "title": "Spring bank holiday",
-      "date": "2022-05-30",
+      "date": "2022-06-02",
       "notes": "",
+      "bunting": true
+    }, {
+      "title": "Platinum Jubilee bank holiday",
+      "date": "2022-06-03",
+      "notes": "Extra bank holiday",
       "bunting": true
     }, {
       "title": "Summer bank holiday",
