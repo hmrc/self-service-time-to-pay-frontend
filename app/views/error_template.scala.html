@@ -19,7 +19,7 @@
 @this(
         appConfig: AppConfig,
         viewConfig: ViewConfig,
-        govukLayout: uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout
+        main: views.html.main
 )
 
 @(
@@ -31,17 +31,12 @@
         messages: Messages
 )
 
-@contentHeader = {
-    <h1 class="govuk-heading-l">@heading</h1>
-}
-
-@mainContent = {
+@main(
+    title = pageTitle
+) {
     <section class="govuk-body">
+        <h1 class="govuk-heading-l">@heading</h1>
+
         <p class="govuk-!-font-weight-bold">@message</p>
     </section>
 }
-
-@govukLayout(
-    pageTitle = Some(pageTitle),
-    beforeContentBlock = Some(contentHeader)
-)(mainContent)
