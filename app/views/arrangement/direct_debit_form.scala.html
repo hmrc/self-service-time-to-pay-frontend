@@ -51,7 +51,7 @@
         }
     }
         <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
-       @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.submitDirectDebit) {
+       @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.submitDirectDebit, 'autoComplete -> "off") {
 
         <fieldset class="govuk-fieldset">
             <legend><span class="govuk-visually-hidden">Enter your banking details</span></legend>
