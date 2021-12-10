@@ -18,12 +18,12 @@ import java.time.LocalDate
 
 import language.Dates
 import play.api.i18n.Messages
-import ssttpcalculator.model.{DebitInput, Instalment, PaymentSchedule}
+import ssttpcalculator.model.{TaxLiability, Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.Debit
 
 package object model {
 
-  def asDebitInput(debit: Debit): DebitInput = DebitInput(
+  def asDebitInput(debit: Debit): TaxLiability = TaxLiability(
     debit.amount,
     debit.dueDate
   )

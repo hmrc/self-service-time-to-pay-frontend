@@ -29,7 +29,7 @@ case class Debit(
 
   def historicDailyRate: BigDecimal = rate.rate / BigDecimal(Year.of(dueDate.getYear).length()) / BigDecimal(100)
 
-  def asDebitInput(debit: Debit): DebitInput = DebitInput(
+  def asDebitInput(debit: Debit): TaxLiability = TaxLiability(
     debit.amount,
     debit.dueDate
   )

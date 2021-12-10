@@ -20,11 +20,18 @@ import java.time.LocalDate
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class DebitInput(
+final case class TaxLiability(
     amount:  BigDecimal,
     dueDate: LocalDate
-)
+) {
+  def amortize(payment: BigDecimal): (TaxLiability, BigDecimal) = payment match {
+    case p if p <= 0      => (this, payment)
+    case p if p >= amount => (this.copy(amount = 0), p - amount)
+    case p if p < amount  => (this.copy(amount - p), 0)
 
-object DebitInput {
-  implicit val format: OFormat[DebitInput] = Json.format[DebitInput]
+  }
+}
+
+object TaxLiability {
+  implicit val format: OFormat[TaxLiability] = Json.format[TaxLiability]
 }
