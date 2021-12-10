@@ -231,7 +231,8 @@ class CalculatorService @Inject() (
 
       case ((ls, s), dt) if !ls.head.dueDate.isBefore(dt) => (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, 0))
 
-      case ((ls, s), dt)                                  => (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, latePaymentInterest(ls, monthlyRepayment, dt)))
+      case ((ls, s), dt)                                  =>
+            (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, latePaymentInterest(ls, monthlyRepayment, dt)))
 
     }
     result._2
