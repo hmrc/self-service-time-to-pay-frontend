@@ -227,12 +227,13 @@ class CalculatorService @Inject() (
 
   def createInstalments(liabilities: Seq[TaxLiability], monthlyRepayment: BigDecimal, repaymentDates: Seq[LocalDate]): Seq[Instalment] = {
     val result = repaymentDates.foldLeft((liabilities, Seq.empty[Instalment])){
-      case ((Nil, s), _)                                  => (Nil, s)
+      case ((Nil, s), _) => (Nil, s)
 
-      case ((ls, s), dt) if !ls.head.dueDate.isBefore(dt) => (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, 0))
+      case ((ls, s), dt) if ls.headOption.map(!_.dueDate.isBefore(dt)).getOrElse(false) =>
+        (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, 0))
 
-      case ((ls, s), dt)                                  =>
-            (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, latePaymentInterest(ls, monthlyRepayment, dt)))
+      case ((ls, s), dt) =>
+        (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, latePaymentInterest(ls, monthlyRepayment, dt)))
 
     }
     result._2
