@@ -40,11 +40,11 @@ case class TaxPaymentPlan(
 
   def applyInitialPayment: Seq[TaxLiability] = {
     val result = liabilities.sortBy(_.dueDate).foldLeft((initialPayment, Seq.empty[TaxLiability])){
-      case ((p, l), lt) if p == 0         => (p, l :+ lt.copy(dueDate = if (startDate.isBefore(lt.dueDate)) lt.dueDate else startDate))
+      case ((p, s), lt) if p == 0         => (p, s :+ lt.copy(dueDate = if (startDate.isBefore(lt.dueDate)) lt.dueDate else startDate))
 
-      case ((p, l), lt) if p >= lt.amount => (p - lt.amount, l)
+      case ((p, s), lt) if p >= lt.amount => (p - lt.amount, s)
 
-      case ((p, l), lt) if p < lt.amount => (0, l :+ lt.copy(amount  = lt.amount - p,
+      case ((p, s), lt) if p < lt.amount => (0, s :+ lt.copy(amount  = lt.amount - p,
                                                              dueDate = if (startDate.plusWeeks(1).isBefore(lt.dueDate)) lt.dueDate else startDate.plusWeeks(1)))
     }
     result._2
