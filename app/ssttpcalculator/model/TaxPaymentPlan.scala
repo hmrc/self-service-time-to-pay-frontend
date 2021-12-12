@@ -29,7 +29,6 @@ case class TaxPaymentPlan(
     endDate:          LocalDate,
     firstPaymentDate: Option[LocalDate] = None
 ) {
-
   import TaxPaymentPlan._
 
   def totalLiability: BigDecimal = liabilities.map(_.amount).sum - initialPayment
@@ -38,18 +37,17 @@ case class TaxPaymentPlan(
 
   def actualStartDate = firstPaymentDate.getOrElse(startDate)
 
-  def applyInitialPayment: Seq[TaxLiability] = {
+  def outstandingLiabilities: Seq[TaxLiability] = {
     val result = liabilities.sortBy(_.dueDate).foldLeft((initialPayment, Seq.empty[TaxLiability])){
-      case ((p, s), lt) if p == 0         => (p, s :+ lt.copy(dueDate = if (startDate.isBefore(lt.dueDate)) lt.dueDate else startDate))
+      case ((p, s), lt) if p <= 0         => (p, s :+ lt.copy(dueDate = if (startDate.isBefore(lt.dueDate)) lt.dueDate else startDate))
 
       case ((p, s), lt) if p >= lt.amount => (p - lt.amount, s)
 
-      case ((p, s), lt) if p < lt.amount => (0, s :+ lt.copy(amount  = lt.amount - p,
-                                                             dueDate = if (startDate.plusWeeks(1).isBefore(lt.dueDate)) lt.dueDate else startDate.plusWeeks(1)))
+      case ((p, s), lt) => (0, s :+ lt.copy(amount  = lt.amount - p,
+                                            dueDate = if (startDate.plusWeeks(1).isBefore(lt.dueDate)) lt.dueDate else startDate.plusWeeks(1)))
     }
     result._2
   }
-
 }
 
 object TaxPaymentPlan {

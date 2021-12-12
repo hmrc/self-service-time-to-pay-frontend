@@ -17,21 +17,32 @@
 package ssttpcalculator.model
 
 import java.time.LocalDate
-
 import play.api.libs.json.{Json, OFormat}
+
+import scala.math.BigDecimal
 
 final case class TaxLiability(
     amount:  BigDecimal,
     dueDate: LocalDate
-) {
-  def amortize(payment: BigDecimal): (TaxLiability, BigDecimal) = payment match {
-    case p if p <= 0      => (this, payment)
-    case p if p >= amount => (this.copy(amount = 0), p - amount)
-    case p if p < amount  => (this.copy(amount - p), 0)
-
-  }
-}
+)
 
 object TaxLiability {
   implicit val format: OFormat[TaxLiability] = Json.format[TaxLiability]
+
+  def amortizedLiabilities(liabilities: Seq[TaxLiability], payment: BigDecimal): Seq[TaxLiability] = {
+    val result = liabilities.foldLeft((payment, Seq.empty[TaxLiability])){
+      case ((p, s), lt) if p <= 0         => (p, s :+ lt)
+
+      case ((p, s), lt) if p >= lt.amount => (p - lt.amount, s)
+
+      case ((p, s), lt)                   => (0, s :+ lt.copy(amount = lt.amount - p))
+    }
+    result._2
+  }
+
+  def latePayments(date: LocalDate)(ls: Seq[TaxLiability], repayment: BigDecimal) = ls.foldLeft((repayment, List.empty[LatePayment])){
+    case ((p, l), lt) if p <= 0 || !lt.dueDate.isBefore(date) => (p, l)
+    case ((p, l), lt) if lt.amount >= p                       => (0, LatePayment(lt.dueDate, date, p) :: l)
+    case ((p, l), lt)                                         => (p - lt.amount, LatePayment(lt.dueDate, date, lt.amount) :: l)
+  }._2
 }

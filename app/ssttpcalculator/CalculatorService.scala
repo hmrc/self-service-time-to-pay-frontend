@@ -21,6 +21,7 @@ import bankholidays.WorkingDaysService.addWorkingDays
 import journey.Journey
 import play.api.Logger
 import play.api.mvc.Request
+import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
 import ssttpcalculator.model.{Debit, Instalment, LatePayment, PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
@@ -137,7 +138,7 @@ class CalculatorService @Inject() (
     }
 
     // Calculate the schedule of regular payments on the all debits due before endDate
-    val instalments: Seq[Instalment] = calculateStagedPayments
+    val instalments: Seq[Instalment] = createStagedPayments
 
     // Total amount of debt without interest
     val amountToPay = calculatorInput.liabilities.map(_.amount).sum
@@ -219,10 +220,10 @@ class CalculatorService @Inject() (
   // NEW Impl
 
   def createStagedPayments(implicit taxPaymentPlan: TaxPaymentPlan): Seq[Instalment] = {
-    val remainingLiabilities = taxPaymentPlan.applyInitialPayment
+    val liabilities = taxPaymentPlan.outstandingLiabilities
     val repaymentDates: Seq[LocalDate] = durationService.getRepaymentDates(taxPaymentPlan.actualStartDate, taxPaymentPlan.endDate)
     val monthlyRepayment = taxPaymentPlan.monthlyRepayment(repaymentDates.size)
-    createInstalments(remainingLiabilities, monthlyRepayment, repaymentDates)
+    createInstalments(liabilities, monthlyRepayment, repaymentDates)
   }
 
   def createInstalments(liabilities: Seq[TaxLiability], monthlyRepayment: BigDecimal, repaymentDates: Seq[LocalDate]): Seq[Instalment] = {
@@ -233,37 +234,19 @@ class CalculatorService @Inject() (
         (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, 0))
 
       case ((ls, s), dt) =>
-        (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, latePaymentInterest(ls, monthlyRepayment, dt)))
-
+        (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, latePaymentInterest(latePayments(dt)(ls, monthlyRepayment))))
     }
     result._2
   }
 
-  def latePaymentInterest(ls: Seq[TaxLiability], repayment: BigDecimal, date: LocalDate): BigDecimal = {
-    val result = ls.foldLeft((repayment, List.empty[LatePayment])){
-      case ((p, l), lt) if p <= 0         => (p, l)
-      case ((p, l), lt) if lt.amount >= p => (0, LatePayment(lt.dueDate, date, p) :: l)
-      case ((p, l), lt)                   => (p - lt.amount, LatePayment(lt.dueDate, date, lt.amount) :: l)
-    }
-
-    result._2.map{ p =>
+  def latePaymentInterest(latePayments: Seq[LatePayment]): BigDecimal = {
+    latePayments.map{ p =>
       val currentInterestRate = interestService.rateOn(p.dueDate).rate
       val currentDailyRate = currentInterestRate / BigDecimal(Year.of(p.dueDate.getYear).length()) / BigDecimal(100)
-      val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(p.dueDate, date.plusDays(1)))
-      repayment * currentDailyRate * daysInterestToCharge
+      val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(p.dueDate, p.chargeDate.plusDays(1)))
+      p.amount * currentDailyRate * daysInterestToCharge
     }.sum
 
-  }
-
-  def amortizedLiabilities(liabilities: Seq[TaxLiability], payment: BigDecimal): Seq[TaxLiability] = {
-    val result = liabilities.foldLeft((payment, Seq.empty[TaxLiability])){
-      case ((p, s), lt) if p == 0         => (p, s :+ lt)
-
-      case ((p, s), lt) if p >= lt.amount => (p - lt.amount, s)
-
-      case ((p, s), lt)                   => (0, s :+ lt.copy(amount = lt.amount - p))
-    }
-    result._2
   }
 
   /**
