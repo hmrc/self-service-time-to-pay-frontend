@@ -226,11 +226,12 @@ class CalculatorService @Inject() (
     createInstalments(liabilities, monthlyRepayment, repaymentDates)
   }
 
+  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
   def createInstalments(liabilities: Seq[TaxLiability], monthlyRepayment: BigDecimal, repaymentDates: Seq[LocalDate]): Seq[Instalment] = {
     val result = repaymentDates.foldLeft((liabilities, Seq.empty[Instalment])){
       case ((Nil, s), _) => (Nil, s)
 
-      case ((ls, s), dt) if ls.headOption.map(!_.hasInterestCharge(dt)).getOrElse(false) =>
+      case ((ls, s), dt) if !ls.head.hasInterestCharge(dt) =>
         (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, 0))
 
       case ((ls, s), dt) =>

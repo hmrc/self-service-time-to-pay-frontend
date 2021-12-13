@@ -31,9 +31,9 @@ case class TaxPaymentPlan(
 ) {
   import TaxPaymentPlan._
 
-  def totalLiability: BigDecimal = liabilities.map(_.amount).sum - initialPayment
+  def remainingLiability: BigDecimal = liabilities.map(_.amount).sum - initialPayment
 
-  def monthlyRepayment(months: Int): BigDecimal = (totalLiability / months).setScale(2, HALF_UP)
+  def monthlyRepayment(months: Int): BigDecimal = (remainingLiability / months).setScale(2, HALF_UP)
 
   def actualStartDate = firstPaymentDate.getOrElse(startDate)
 
