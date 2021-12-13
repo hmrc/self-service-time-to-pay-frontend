@@ -24,7 +24,11 @@ import scala.math.BigDecimal
 final case class TaxLiability(
     amount:  BigDecimal,
     dueDate: LocalDate
-)
+) {
+  def hasInterestCharge(payment: Payment): Boolean = hasInterestCharge(payment.date)
+
+  def hasInterestCharge(paymentDate: LocalDate): Boolean = dueDate.isBefore(paymentDate)
+}
 
 object TaxLiability {
   implicit val format: OFormat[TaxLiability] = Json.format[TaxLiability]
@@ -40,9 +44,9 @@ object TaxLiability {
     result._2
   }
 
-  def latePayments(date: LocalDate)(ls: Seq[TaxLiability], repayment: BigDecimal) = ls.foldLeft((repayment, List.empty[LatePayment])){
-    case ((p, l), lt) if p <= 0 || !lt.dueDate.isBefore(date) => (p, l)
-    case ((p, l), lt) if lt.amount >= p                       => (0, LatePayment(lt.dueDate, date, p) :: l)
-    case ((p, l), lt)                                         => (p - lt.amount, LatePayment(lt.dueDate, date, lt.amount) :: l)
+  def latePayments(payment: Payment)(ls: Seq[TaxLiability]) = ls.foldLeft((payment, List.empty[LatePayment])){
+    case ((p, l), lt) if p.amount <= 0 || !lt.hasInterestCharge(payment) => (p, l)
+    case ((p, l), lt) if lt.amount >= p.amount => (p.copy(amount = 0), LatePayment(lt.dueDate, p) :: l)
+    case ((p, l), lt) => (p.copy(amount = p.amount - lt.amount), LatePayment(lt.dueDate, p) :: l)
   }._2
 }

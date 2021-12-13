@@ -22,7 +22,7 @@ import journey.Journey
 import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
-import ssttpcalculator.model.{Debit, Instalment, LatePayment, PaymentSchedule, TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{Debit, Instalment, LatePayment, Payment, PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
@@ -230,11 +230,11 @@ class CalculatorService @Inject() (
     val result = repaymentDates.foldLeft((liabilities, Seq.empty[Instalment])){
       case ((Nil, s), _) => (Nil, s)
 
-      case ((ls, s), dt) if ls.headOption.map(!_.dueDate.isBefore(dt)).getOrElse(false) =>
+      case ((ls, s), dt) if ls.headOption.map(!_.hasInterestCharge(dt)).getOrElse(false) =>
         (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, 0))
 
       case ((ls, s), dt) =>
-        (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, latePaymentInterest(latePayments(dt)(ls, monthlyRepayment))))
+        (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, latePaymentInterest(latePayments(Payment(dt, monthlyRepayment))(ls))))
     }
     result._2
   }
@@ -243,8 +243,8 @@ class CalculatorService @Inject() (
     latePayments.map{ p =>
       val currentInterestRate = interestService.rateOn(p.dueDate).rate
       val currentDailyRate = currentInterestRate / BigDecimal(Year.of(p.dueDate.getYear).length()) / BigDecimal(100)
-      val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(p.dueDate, p.chargeDate.plusDays(1)))
-      p.amount * currentDailyRate * daysInterestToCharge
+      val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(p.dueDate, p.payment.date.plusDays(1)))
+      p.payment.amount * currentDailyRate * daysInterestToCharge
     }.sum
 
   }
