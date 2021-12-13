@@ -97,7 +97,7 @@ class CalculatorService @Inject() (
 
       val dayOfMonth = maybeArrangementDayOfMonth.map(_.dayOfMonth).getOrElse(defaultPreferredDayOfMonth)
 
-      val calculatorInput: TaxPaymentPlan = CalculatorService.changeCalculatorInput(
+      val calculatorInput: TaxPaymentPlan = CalculatorService.changePaymentPlan(
         durationInMonths,
         dayOfMonth,
         initialPayment,
@@ -113,25 +113,25 @@ class CalculatorService @Inject() (
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 
   @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
-  def buildSchedule(implicit calculatorInput: TaxPaymentPlan): PaymentSchedule = {
+  def buildSchedule(implicit taxPaymentPlan: TaxPaymentPlan): PaymentSchedule = {
     // Builds a seq of seq debits,
     // where each sub seq of debits is built from the different interest rate boundaries a debit crosses
     val overallDebits: Seq[Seq[Debit]] =
-      calculatorInput
+      taxPaymentPlan
         .liabilities
-        .filter(_.dueDate.isBefore(calculatorInput.startDate))
+        .filter(_.dueDate.isBefore(taxPaymentPlan.startDate))
         .map(processDebit)
 
     // Calculate interest on old debits that have incurred interest up to the point of the current calculation date (today)
     val totalHistoricInterest: BigDecimal = (for {
-      debit <- overallDebits.map(_.filterNot(_.dueDate.isAfter(calculatorInput.startDate)))
+      debit <- overallDebits.map(_.filterNot(_.dueDate.isAfter(taxPaymentPlan.startDate)))
     } yield calculateHistoricInterest(debit)).sum
 
     // Calculate interest for the initial days leading up until when the initial upfront payment is actually taken out of the taxpayer's account
-    val hasAnInitialPayment: Boolean = calculatorInput.initialPayment > 0
+    val hasAnInitialPayment: Boolean = taxPaymentPlan.initialPayment > 0
     val initialPaymentInterest: BigDecimal = if (hasAnInitialPayment) {
-      val initialPaymentDate: LocalDate = calculatorInput.startDate.plusDays(defaultInitialPaymentDays)
-      val debitsDueBeforeInitialPayment: Seq[TaxLiability] = calculatorInput.liabilities.filter(_.dueDate.isBefore(initialPaymentDate))
+      val initialPaymentDate: LocalDate = taxPaymentPlan.startDate.plusDays(defaultInitialPaymentDays)
+      val debitsDueBeforeInitialPayment: Seq[TaxLiability] = taxPaymentPlan.liabilities.filter(_.dueDate.isBefore(initialPaymentDate))
       calculateInitialPaymentInterest(debitsDueBeforeInitialPayment)
     } else {
       BigDecimal(0)
@@ -141,16 +141,16 @@ class CalculatorService @Inject() (
     val instalments: Seq[Instalment] = createStagedPayments
 
     // Total amount of debt without interest
-    val amountToPay = calculatorInput.liabilities.map(_.amount).sum
+    val amountToPay = taxPaymentPlan.liabilities.map(_.amount).sum
 
     val totalInterest = (instalments.map(_.interest).sum + totalHistoricInterest + initialPaymentInterest).setScale(2, HALF_UP)
 
     PaymentSchedule(
-      startDate            = calculatorInput.startDate,
-      endDate              = calculatorInput.endDate,
-      initialPayment       = calculatorInput.initialPayment,
+      startDate            = taxPaymentPlan.startDate,
+      endDate              = taxPaymentPlan.endDate,
+      initialPayment       = taxPaymentPlan.initialPayment,
       amountToPay          = amountToPay,
-      instalmentBalance    = amountToPay - calculatorInput.initialPayment,
+      instalmentBalance    = amountToPay - taxPaymentPlan.initialPayment,
       totalInterestCharged = totalInterest,
       totalPayable         = amountToPay + totalInterest,
       instalments          = instalments.init :+ Instalment(
@@ -366,18 +366,18 @@ object CalculatorService {
 
   def makeCalculatorInputForPayToday(debits: Seq[TaxLiability])(implicit clock: Clock): TaxPaymentPlan = {
 
-    val calculatorInput =
-      changeCalculatorInput(
+    val taxPaymentPlan =
+      changePaymentPlan(
         durationInMonths           = 0,
         preferredPaymentDayOfMonth = now(clock).getDayOfMonth,
         initialPayment             = 0,
         debits                     = debits
       )
-    calculatorInput
+    taxPaymentPlan
   }
 
-  def makeCalculatorInput(debits: Seq[TaxLiability], initialPayment: BigDecimal, durationInMonths: Int)
-    (implicit clock: Clock): TaxPaymentPlan = {
+  def makeTaxPaymentPlan(debits: Seq[TaxLiability], initialPayment: BigDecimal, durationInMonths: Int)
+                        (implicit clock: Clock): TaxPaymentPlan = {
 
     val noInitialPayment = BigDecimal(0)
     val workingDaysInAWeek = 5
@@ -431,12 +431,12 @@ object CalculatorService {
    * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
    */
-  def changeCalculatorInput(
+  def changePaymentPlan(
       durationInMonths:           Int,
       preferredPaymentDayOfMonth: Int,
       initialPayment:             BigDecimal,
       debits:                     Seq[TaxLiability])
-    (implicit clock: Clock): TaxPaymentPlan = {
+                       (implicit clock: Clock): TaxPaymentPlan = {
 
     /*
      * We add 10 days extra capacity just in case if there are 3 bank holidays within the 10 days

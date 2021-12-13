@@ -83,9 +83,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(may(_11th))
 
-        makeCalculatorInput(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = june(_1st), firstPaymentDate)
-        makeCalculatorInput(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = july(_1st), firstPaymentDate)
       }
 
@@ -94,9 +94,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(may(_15th))
 
-        makeCalculatorInput(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = june(_7th), firstPaymentDate)
-        makeCalculatorInput(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = july(_7th), firstPaymentDate)
       }
 
@@ -105,9 +105,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(may(_15th))
 
-        makeCalculatorInput(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = june(_8th), firstPaymentDate)
-        makeCalculatorInput(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = july(_8th), firstPaymentDate)
       }
 
@@ -116,9 +116,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(may(_18th))
 
-        makeCalculatorInput(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = june(_11th), firstPaymentDate)
-        makeCalculatorInput(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = july(_11th), firstPaymentDate)
       }
 
@@ -127,9 +127,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = may(_25th)
         val firstPaymentDate = june(_1st)
 
-        makeCalculatorInput(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = june(_25th), firstPaymentDate = Some(firstPaymentDate))
-        makeCalculatorInput(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = july(_25th), firstPaymentDate = Some(firstPaymentDate))
       }
     }
@@ -140,9 +140,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(june(_11th))
 
-        makeCalculatorInput(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, currentDate, endDate = july(_1st), firstPaymentDate)
-        makeCalculatorInput(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, currentDate, endDate = august(_1st), firstPaymentDate)
       }
 
@@ -151,9 +151,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(june(_15th))
 
-        makeCalculatorInput(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, currentDate, endDate = july(_7th), firstPaymentDate)
-        makeCalculatorInput(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, currentDate, endDate = august(_7th), firstPaymentDate)
       }
 
@@ -162,9 +162,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(june(_15th))
 
-        makeCalculatorInput(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, currentDate, endDate = july(_8th), firstPaymentDate)
-        makeCalculatorInput(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, currentDate, endDate = august(_8th), firstPaymentDate)
       }
 
@@ -173,9 +173,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(june(_18th))
 
-        makeCalculatorInput(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, currentDate, endDate = july(_11th), firstPaymentDate)
-        makeCalculatorInput(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, currentDate, endDate = august(_11th), firstPaymentDate)
       }
 
@@ -184,9 +184,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = may(_25th)
         val firstPaymentDate = july(_1st)
 
-        makeCalculatorInput(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, currentDate, endDate = july(_25th), firstPaymentDate = Some(firstPaymentDate))
-        makeCalculatorInput(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, currentDate, endDate = august(_25th), firstPaymentDate = Some(firstPaymentDate))
       }
     }
@@ -197,9 +197,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(june(_11th))
 
-        makeCalculatorInput(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = july(_1st), firstPaymentDate)
-        makeCalculatorInput(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = august(_1st), firstPaymentDate)
       }
 
@@ -208,9 +208,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(june(_15th))
 
-        makeCalculatorInput(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = july(_7th), firstPaymentDate)
-        makeCalculatorInput(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = august(_7th), firstPaymentDate)
       }
 
@@ -219,9 +219,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(june(_15th))
 
-        makeCalculatorInput(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = july(_8th), firstPaymentDate)
-        makeCalculatorInput(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = august(_8th), firstPaymentDate)
       }
 
@@ -230,9 +230,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = LocalDate.now(clock)
         val firstPaymentDate = Some(june(_18th))
 
-        makeCalculatorInput(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = july(_11th), firstPaymentDate)
-        makeCalculatorInput(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = august(_11th), firstPaymentDate)
       }
 
@@ -241,9 +241,9 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
         val currentDate = may(_25th)
         val firstPaymentDate = july(_1st)
 
-        makeCalculatorInput(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = july(_25th), firstPaymentDate = Some(firstPaymentDate))
-        makeCalculatorInput(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+        makeTaxPaymentPlan(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, currentDate, endDate = august(_25th), firstPaymentDate = Some(firstPaymentDate))
       }
     }
@@ -254,91 +254,91 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
       "the required day of the month and the current date are the 1st" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(zeroDuration, _1st, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _1st, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_1st), endDate = may(_31st), firstPaymentDate = Some(june(_1st)))
       }
 
       "the required day of the month is 20 days after the current date" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(zeroDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_1st), endDate = june(_20th), firstPaymentDate = Some(june(_21st)))
       }
 
       "the required day of the month is more than 20 days after the current date" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(zeroDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_1st), endDate = may(_21st), firstPaymentDate = Some(may(_22nd)))
       }
 
       "the required day of the month and the current date are the 28th" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(zeroDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_28th), endDate = june(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month and the current date are the 29th" in {
         val clock = clockForMay(_29th)
 
-        changeCalculatorInput(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_29th), endDate = june(_30th), firstPaymentDate = Some(july(_1st)))
       }
 
       "the required day of the month is the 28th which is in less than seven days time" in {
         val clock = clockForMay(_22nd)
 
-        changeCalculatorInput(zeroDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_22nd), endDate = june(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month is the 29th which is in less than seven days time" in {
         val clock = clockForMay(_23rd)
 
-        changeCalculatorInput(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_23rd), endDate = june(_30th), firstPaymentDate = Some(july(_1st)))
       }
 
       "the required day of the month is the 28th which is in 10 days time" in {
         val clock = clockForMay(_21st)
 
-        changeCalculatorInput(zeroDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_21st), endDate = june(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month is the 29th which is in 10 days time" in {
         val clock = clockForMay(_22nd)
 
-        changeCalculatorInput(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_22nd), endDate = may(_31st), firstPaymentDate = Some(june(_1st)))
       }
 
       "the required day of the month is less than 10 days from the current date and in the same month" in {
         val clock = clockForMay(_15th)
 
-        changeCalculatorInput(zeroDuration, _21st, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _21st, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_15th), endDate = june(_20th), firstPaymentDate = Some(june(_21st)))
       }
 
       "the required day of the month is less than 10 days from the current date and in the next month" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(zeroDuration, _3rd, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _3rd, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_28th), endDate = july(_2nd), firstPaymentDate = Some(july(_3rd)))
       }
 
       "the required day of the month is 10 days or more from the current date in the same month" in {
         val clock = clockForMay(_15th)
 
-        changeCalculatorInput(zeroDuration, _22nd, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _22nd, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_15th), endDate = june(_21st), firstPaymentDate = Some(june(_22nd)))
       }
 
       "the required day of the month is 10 days or more from the current date in the next month" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(zeroDuration, _4th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _4th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_28th), endDate = july(_3rd), firstPaymentDate = Some(july(_4th)))
       }
     }
@@ -349,91 +349,91 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
       "the required day of the month and the current date are the 1st" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(oneMonthDuration, _1st, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _1st, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_1st), endDate = june(_30th), firstPaymentDate = Some(june(_1st)))
       }
 
       "the required day of the month is 20 days after the current date" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(oneMonthDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_1st), endDate = july(_20th), firstPaymentDate = Some(june(_21st)))
       }
 
       "the required day of the month is more than 20 days after the current date" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(oneMonthDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_1st), endDate = june(_21st), firstPaymentDate = Some(may(_22nd)))
       }
 
       "the required day of the month and the current date are the 28th" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_28th), endDate = july(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month and the current date are the 29th" in {
         val clock = clockForMay(_29th)
 
-        changeCalculatorInput(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_29th), endDate = july(_31st), firstPaymentDate = Some(july(_1st)))
       }
 
       "the required day of the month is the 28th which is in less than 10 days time" in {
         val clock = clockForMay(_22nd)
 
-        changeCalculatorInput(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_22nd), endDate = july(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month is the 29th which is in less than 10 days time" in {
         val clock = clockForMay(_23rd)
 
-        changeCalculatorInput(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_23rd), endDate = july(_31st), firstPaymentDate = Some(july(_1st)))
       }
 
       "the required day of the month is the 28th which is in 10 days time" in {
         val clock = clockForMay(_21st)
 
-        changeCalculatorInput(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _28th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_21st), endDate = july(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month is the 29th which is in 10 days time" in {
         val clock = clockForMay(_22nd)
 
-        changeCalculatorInput(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _29th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_22nd), endDate = june(_30th), firstPaymentDate = Some(june(_1st)))
       }
 
       "the required day of the month is less than 10 days from the current date and in the same month" in {
         val clock = clockForMay(_15th)
 
-        changeCalculatorInput(oneMonthDuration, _21st, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _21st, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_15th), endDate = july(_20th), firstPaymentDate = Some(june(_21st)))
       }
 
       "the required day of the month is less than 10 days from the current date and in the next month" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(oneMonthDuration, _3rd, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _3rd, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_28th), endDate = august(_2nd), firstPaymentDate = Some(july(_3rd)))
       }
 
       "the required day of the month is 10 days or more from the current date in the same month" in {
         val clock = clockForMay(_15th)
 
-        changeCalculatorInput(oneMonthDuration, _22nd, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _22nd, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_15th), endDate = july(_21st), firstPaymentDate = Some(june(_22nd)))
       }
 
       "the required day of the month is 10 days or more from the current date in the next month" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(oneMonthDuration, _4th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _4th, noInitialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, noInitialPayment, startDate = may(_28th), endDate = august(_3rd), firstPaymentDate = Some(july(_4th)))
       }
     }
@@ -444,91 +444,91 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
       "the required day of the month and the current date are the 1st" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(zeroDuration, _1st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _1st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_1st), endDate = may(_31st), firstPaymentDate = Some(june(_1st)))
       }
 
       "the required day of the month is 20 days after the current date" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(zeroDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_1st), endDate = june(_20th), firstPaymentDate = Some(june(_21st)))
       }
 
       "the required day of the month is more than 20 days after the current date" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(zeroDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_1st), endDate = may(_21st), firstPaymentDate = Some(may(_22nd)))
       }
 
       "the required day of the month and the current date are the 28th" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(zeroDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_28th), endDate = june(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month and the current date are the 29th" in {
         val clock = clockForMay(_29th)
 
-        changeCalculatorInput(zeroDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_29th), endDate = june(_30th), firstPaymentDate = Some(july(_1st)))
       }
 
       "the required day of the month is the 28th which is in less than seven days time" in {
         val clock = clockForMay(_22nd)
 
-        changeCalculatorInput(zeroDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_22nd), endDate = june(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month is the 29th which is in less than seven days time" in {
         val clock = clockForMay(_23rd)
 
-        changeCalculatorInput(zeroDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_23rd), endDate = june(_30th), firstPaymentDate = Some(july(_1st)))
       }
 
       "the required day of the month is the 28th which is in seven days time" in {
         val clock = clockForMay(_21st)
 
-        changeCalculatorInput(zeroDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_21st), endDate = june(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month is the 29th which is in seven days time" in {
         val clock = clockForMay(_22nd)
 
-        changeCalculatorInput(zeroDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_22nd), endDate = june(_30th), firstPaymentDate = Some(july(_1st)))
       }
 
       "the required day of the month is less than seven days from the current date and in the same month" in {
         val clock = clockForMay(_15th)
 
-        changeCalculatorInput(zeroDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_15th), endDate = june(_20th), firstPaymentDate = Some(june(_21st)))
       }
 
       "the required day of the month is less than seven days from the current date and in the next month" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(zeroDuration, _3rd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _3rd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_28th), endDate = july(_2nd), firstPaymentDate = Some(july(_3rd)))
       }
 
       "the required day of the month is seven days or more from the current date in the same month" in {
         val clock = clockForMay(_15th)
 
-        changeCalculatorInput(zeroDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_15th), endDate = june(_21st), firstPaymentDate = Some(june(_22nd)))
       }
 
       "the required day of the month is seven days or more from the current date in the next month" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(zeroDuration, _4th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(zeroDuration, _4th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_28th), endDate = july(_3rd), firstPaymentDate = Some(july(_4th)))
       }
     }
@@ -539,91 +539,91 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
       "the required day of the month and the current date are the 1st" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(oneMonthDuration, _1st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _1st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_1st), endDate = june(_30th), firstPaymentDate = Some(june(_1st)))
       }
 
       "the required day of the month is 20 days after the current date" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(oneMonthDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_1st), endDate = july(_20th), firstPaymentDate = Some(june(_21st)))
       }
 
       "the required day of the month is more than 20 days after the current date" in {
         val clock = clockForMay(_1st)
 
-        changeCalculatorInput(oneMonthDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_1st), endDate = june(_21st), firstPaymentDate = Some(may(_22nd)))
       }
 
       "the required day of the month and the current date are the 28th" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(oneMonthDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_28th), endDate = july(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month and the current date are the 29th" in {
         val clock = clockForMay(_29th)
 
-        changeCalculatorInput(oneMonthDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_29th), endDate = july(_31st), firstPaymentDate = Some(july(_1st)))
       }
 
       "the required day of the month is the 28th which is in less than seven days time" in {
         val clock = clockForMay(_22nd)
 
-        changeCalculatorInput(oneMonthDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_22nd), endDate = july(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month is the 29th which is in less than seven days time" in {
         val clock = clockForMay(_23rd)
 
-        changeCalculatorInput(oneMonthDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_23rd), endDate = july(_31st), firstPaymentDate = Some(july(_1st)))
       }
 
       "the required day of the month is the 28th which is in seven days time" in {
         val clock = clockForMay(_21st)
 
-        changeCalculatorInput(oneMonthDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _28th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_21st), endDate = july(_27th), firstPaymentDate = Some(june(_28th)))
       }
 
       "the required day of the month is the 29th which is in seven days time" in {
         val clock = clockForMay(_22nd)
 
-        changeCalculatorInput(oneMonthDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _29th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_22nd), endDate = july(_31st), firstPaymentDate = Some(july(_1st)))
       }
 
       "the required day of the month is less than seven days from the current date and in the same month" in {
         val clock = clockForMay(_15th)
 
-        changeCalculatorInput(oneMonthDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _21st, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_15th), endDate = july(_20th), firstPaymentDate = Some(june(_21st)))
       }
 
       "the required day of the month is less than seven days from the current date and in the next month" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(oneMonthDuration, _3rd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _3rd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_28th), endDate = august(_2nd), firstPaymentDate = Some(july(_3rd)))
       }
 
       "the required day of the month is seven days or more from the current date in the same month" in {
         val clock = clockForMay(_15th)
 
-        changeCalculatorInput(oneMonthDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _22nd, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_15th), endDate = july(_21st), firstPaymentDate = Some(june(_22nd)))
       }
 
       "the required day of the month is seven days or more from the current date in the next month" in {
         val clock = clockForMay(_28th)
 
-        changeCalculatorInput(oneMonthDuration, _4th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
+        changePaymentPlan(oneMonthDuration, _4th, initialPayment, debits)(clock) shouldBe TaxPaymentPlan(
           debits, initialPayment, startDate = may(_28th), endDate = august(_3rd), firstPaymentDate = Some(july(_4th)))
       }
     }

@@ -18,4 +18,6 @@ package ssttpcalculator.model
 
 import java.time.LocalDate
 
-case class Payment(date: LocalDate, amount: BigDecimal)
+case class Payment(date: LocalDate, amount: BigDecimal){
+  def settlesInFull(liability: TaxLiability): Boolean = amount >= liability.amount
+}
