@@ -18,7 +18,7 @@ package uk.gov.hmrc.timetopaycalculator.services
 
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.api.Logger
-import ssttpcalculator.model.{CalculatorInput, DebitInput, PaymentSchedule}
+import ssttpcalculator.model.{TaxPaymentPlan, TaxLiability, PaymentSchedule}
 import ssttpcalculator.{CalculatorService, DurationService, InterestRateService}
 import testsupport.ItSpec
 
@@ -31,7 +31,7 @@ class CalculatorServiceSpecAlternate extends ItSpec {
   val durationService = fakeApplication().injector.instanceOf[DurationService]
   val calculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
-  def debit(amt: BigDecimal, due: String) = DebitInput(amount  = amt.setScale(2), dueDate = LocalDate.parse(due))
+  def debit(amt: BigDecimal, due: String) = TaxLiability(amount  = amt.setScale(2), dueDate = LocalDate.parse(due))
   def date(date: String): LocalDate = LocalDate.parse(date)
 
   val interestCalculationScenarios = Table(
@@ -52,7 +52,7 @@ class CalculatorServiceSpecAlternate extends ItSpec {
   forAll(interestCalculationScenarios) { (id, debits, startDate, endDate, firstPaymentDate, initialPayment, duration, totalPayable, totalInterestCharged, regularInstalmentAmount, finalInstalmentAmount) =>
     s"The calculator service should, for $id calculate totalInterestCharged of $totalInterestCharged with totalPayable of $totalPayable, regularInstalmentAmount of $regularInstalmentAmount and finalInstalmentAmount of $finalInstalmentAmount" in {
 
-      val calculation = CalculatorInput(debits, initialPayment, startDate, endDate, Some(firstPaymentDate))
+      val calculation = TaxPaymentPlan(debits, initialPayment, startDate, endDate, Some(firstPaymentDate))
 
       val schedule: PaymentSchedule = calculatorService.buildSchedule(calculation)
 
@@ -95,7 +95,7 @@ class CalculatorServiceSpecAlternate extends ItSpec {
   forAll(regularPaymentDateScenarios) { (id, debits, startDate, endDate, firstPaymentDate, initialPayment, duration) =>
     s"The calculator service should, for $id calculate a duration of $duration" in {
 
-      val calculation = CalculatorInput(debits, initialPayment, startDate, endDate, Some(firstPaymentDate))
+      val calculation = TaxPaymentPlan(debits, initialPayment, startDate, endDate, Some(firstPaymentDate))
 
       val schedule: PaymentSchedule = calculatorService.buildSchedule(calculation)
 

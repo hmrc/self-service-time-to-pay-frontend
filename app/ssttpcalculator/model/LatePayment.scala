@@ -18,13 +18,4 @@ package ssttpcalculator.model
 
 import java.time.LocalDate
 
-import play.api.libs.json.{Json, OFormat}
-
-final case class DebitInput(
-    amount:  BigDecimal,
-    dueDate: LocalDate
-)
-
-object DebitInput {
-  implicit val format: OFormat[DebitInput] = Json.format[DebitInput]
-}
+case class LatePayment(dueDate: LocalDate, payment: Payment)

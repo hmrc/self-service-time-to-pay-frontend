@@ -16,28 +16,8 @@
 
 package ssttpcalculator.model
 
-import java.time.{LocalDate, Year}
+import java.time.LocalDate
 
-import play.api.libs.json.{Json, OFormat}
-
-case class Debit(
-    amount:  BigDecimal,
-    dueDate: LocalDate,
-    endDate: LocalDate,
-    rate:    InterestRate
-) {
-
-  def historicDailyRate: BigDecimal = rate.rate / BigDecimal(Year.of(dueDate.getYear).length()) / BigDecimal(100)
-
-  def asDebitInput(debit: Debit): TaxLiability = TaxLiability(
-    debit.amount,
-    debit.dueDate
-  )
-}
-
-case class Interest(amountAccrued: BigDecimal, calculationDate: LocalDate)
-
-object Interest {
-  implicit val formatInterest: OFormat[Interest] = Json.format[Interest]
-
+case class Payment(date: LocalDate, amount: BigDecimal) {
+  def settlesInFull(liability: TaxLiability): Boolean = amount >= liability.amount
 }

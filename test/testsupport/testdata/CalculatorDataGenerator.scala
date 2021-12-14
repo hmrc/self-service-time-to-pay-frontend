@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, stringify, toJson}
-import ssttpcalculator.model.{CalculatorInput, DebitInput, Instalment, PaymentSchedule}
+import ssttpcalculator.model.{TaxPaymentPlan, TaxLiability, Instalment, PaymentSchedule}
 import testsupport.DateSupport
 
 object CalculatorDataGenerator extends Status with DateSupport {
@@ -106,9 +106,9 @@ object CalculatorDataGenerator extends Status with DateSupport {
             .withBody(prettyPrint(toJson(schedule))))
     )
 
-  def calculatorInput(endDate: LocalDate, firstPaymentDayOfMonth: Int): CalculatorInput =
-    CalculatorInput(
-      Seq(DebitInput(debit1Value, startDate), DebitInput(debit2Value, startDate)),
+  def calculatorInput(endDate: LocalDate, firstPaymentDayOfMonth: Int): TaxPaymentPlan =
+    TaxPaymentPlan(
+      Seq(TaxLiability(debit1Value, startDate), TaxLiability(debit2Value, startDate)),
       initialPayment,
       startDate,
       endDate,
