@@ -377,7 +377,7 @@ object CalculatorService {
   }
 
   def makeTaxPaymentPlan(debits: Seq[TaxLiability], initialPayment: BigDecimal, durationInMonths: Int)
-                        (implicit clock: Clock): TaxPaymentPlan = {
+    (implicit clock: Clock): TaxPaymentPlan = {
 
     val noInitialPayment = BigDecimal(0)
     val workingDaysInAWeek = 5
@@ -436,7 +436,7 @@ object CalculatorService {
       preferredPaymentDayOfMonth: Int,
       initialPayment:             BigDecimal,
       debits:                     Seq[TaxLiability])
-                       (implicit clock: Clock): TaxPaymentPlan = {
+    (implicit clock: Clock): TaxPaymentPlan = {
 
     /*
      * We add 10 days extra capacity just in case if there are 3 bank holidays within the 10 days
