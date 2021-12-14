@@ -18,4 +18,6 @@ package ssttpcalculator.model
 
 import java.time.LocalDate
 
-case class LatePayment(dueDate: LocalDate, payment: Payment)
+case class LatePayment(dueDate: LocalDate, payment: Payment) {
+  def amount: BigDecimal = payment.amount
+}

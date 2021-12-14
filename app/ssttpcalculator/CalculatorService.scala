@@ -161,64 +161,6 @@ class CalculatorService @Inject() (
     )
   }
 
-  /**
-   * Calculate instalments including interest charged on each instalment, while taking into account
-   * interest is not charged on debits where initial payment fully or partially clears the oldest debits or
-   * if the debit is not liable for interest (due in the future after the end date).
-   */
-  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps", "org.wartremover.warts.Var"))
-  def calculateStagedPayments(implicit taxPaymentPlan: TaxPaymentPlan): Seq[Instalment] = {
-    // Get the dates of each instalment payment
-    val trueFirstPaymentDate =
-      taxPaymentPlan
-        .firstPaymentDate
-        .getOrElse(taxPaymentPlan.startDate)
-
-    val repayments: Seq[LocalDate] = durationService.getRepaymentDates(trueFirstPaymentDate, taxPaymentPlan.endDate)
-    val numberOfPayments = BigDecimal(repayments.size)
-
-    var initialPaymentRemaining: BigDecimal = taxPaymentPlan.initialPayment
-
-      def applyInitialPaymentToDebt(debtAmount: BigDecimal): BigDecimal = debtAmount match {
-        case amt if amt <= initialPaymentRemaining =>
-          initialPaymentRemaining = initialPaymentRemaining - debtAmount; 0
-        case amt => val remainingDebt = amt - initialPaymentRemaining; initialPaymentRemaining = 0; remainingDebt
-      }
-
-    val instalments = taxPaymentPlan.liabilities.sortBy(_.dueDate).flatMap { debit =>
-      // Check if initial payment has been cleared - if not, then date to calculate interest from is a week later
-      val calculateFrom = if (initialPaymentRemaining > 0)
-        taxPaymentPlan.startDate.plusWeeks(1) else taxPaymentPlan.startDate
-
-      val calculationDate = if (calculateFrom.isBefore(debit.dueDate))
-        debit.dueDate else calculateFrom
-
-      // Subtract the initial payment amount from the debts, beginning with the oldest
-      val principal = applyInitialPaymentToDebt(debit.amount)
-
-      val monthlyCapitalRepayment = (principal / numberOfPayments).setScale(2, HALF_UP)
-
-      val currentInterestRate = interestService.rateOn(calculationDate).rate
-      val currentDailyRate = currentInterestRate / BigDecimal(Year.of(calculationDate.getYear).length()) / BigDecimal(100)
-
-      repayments.map { r =>
-        val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(calculationDate, r.plusDays(1)))
-
-        val interest = monthlyCapitalRepayment * currentDailyRate * daysInterestToCharge
-
-        val ins = Instalment(r, monthlyCapitalRepayment, interest)
-        //logger.info(s"Repayment $monthlyCapitalRepayment ($calculationDate - $r) $daysInterestToCharge @ $currentDailyRate = $interest")
-        ins
-      }
-    }
-    // Combine instalments that are on the same day
-    repayments.map { x =>
-      instalments.filter(_.paymentDate.isEqual(x)).reduce((z, y) => Instalment(z.paymentDate, z.amount + y.amount, z.interest + y.interest))
-    }
-  }
-
-  // NEW Impl
-
   def createStagedPayments(implicit taxPaymentPlan: TaxPaymentPlan): Seq[Instalment] = {
     val liabilities = taxPaymentPlan.outstandingLiabilities
     val repaymentDates: Seq[LocalDate] = durationService.getRepaymentDates(taxPaymentPlan.actualStartDate, taxPaymentPlan.endDate)

@@ -18,7 +18,7 @@ package ssttpcalculator.model
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import ssttpcalculator.model.TaxLiability.amortizedLiabilities
+import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
 
 import java.time.{LocalDate, Month}
 
@@ -26,13 +26,30 @@ class TaxLiabilitySpec extends AnyWordSpec with Matchers {
 
   "The TaxLiabilities module" when {
     "A payment is made" should {
-      val liabilities = List(TaxLiability(BigDecimal(380.60), LocalDate.of(2022, Month.JANUARY, 31)),
-                             TaxLiability(BigDecimal(1779.60), LocalDate.of(2022, Month.JULY, 31)))
+      val D380_60 = BigDecimal(380.60)
+      val D1779_60 = BigDecimal(1779.60)
+      val D500_00 = BigDecimal(500.00)
+      val JanuaryDueDate = LocalDate.of(2022, Month.JANUARY, 31)
+      val JulyDueDate = LocalDate.of(2022, Month.JULY, 31)
+      val FebruaryPayment = Payment(LocalDate.of(2022, Month.FEBRUARY, 28), D500_00)
+
+      val liabilities = List(TaxLiability(D380_60, JanuaryDueDate),
+                             TaxLiability(D1779_60, JanuaryDueDate),
+                             TaxLiability(D1779_60, JulyDueDate))
       "remove paid up liabilities" in {
-        amortizedLiabilities(liabilities, BigDecimal(500)).size shouldBe 1
+        amortizedLiabilities(liabilities, D500_00).size shouldBe 2
       }
       "reduce a liability by the remaining payment" in {
-        amortizedLiabilities(liabilities, BigDecimal(500)).head.amount shouldBe BigDecimal(1779.60) - BigDecimal(500) + BigDecimal(380.60)
+        amortizedLiabilities(liabilities, D500_00).head.amount shouldBe D1779_60 - D500_00 + D380_60
+      }
+      "generate the correct number of late payments on receipt of a payment" in {
+        val payment = Payment(LocalDate.of(2022, Month.FEBRUARY, 28), D500_00)
+        val result = latePayments(payment)(liabilities)
+        result.size shouldBe 2
+      }
+      "generate the correct late payment values on receipt of a payment" in {
+        val result = latePayments(FebruaryPayment)(liabilities)
+        result.map(_.amount).sum shouldBe FebruaryPayment.amount
       }
     }
   }
