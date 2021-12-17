@@ -17,7 +17,8 @@
 package ssttparrangement
 
 import akka.util.Timeout
-import journey.JourneyId
+import journey.Statuses.InProgress
+import journey.{Journey, JourneyId, JourneyService, PaymentToday}
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
@@ -28,8 +29,11 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import testsupport.WireMockSupport
 import testsupport.stubs.{ArrangementStub, AuthStub, DirectDebitStub, TaxpayerStub}
-import testsupport.testdata.TdRequest
+import testsupport.testdata.{TdAll, TdRequest}
 import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, CalculatorDuration, EligibilityStatus}
+
+import java.time.LocalDateTime
 import java.util.UUID
 
 class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with WireMockSupport {
@@ -71,11 +75,32 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       val sessionId = UUID.randomUUID().toString
       val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.value)
 
+      val journey = createJourney(journeyId)
+      val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
+      journeyService.saveJourney(journey)(fakeRequest)
+
       val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
 
       val res = controller.submit()(fakeRequest)
       status(res) mustBe (Status.SEE_OTHER)
       res.value.get.get.header.headers("Location") mustBe ("/pay-what-you-owe-in-instalments/arrangement/summary")
     }
+  }
+
+  private def createJourney(journeyId: JourneyId): Journey = {
+    Journey(
+      _id               = journeyId,
+      status            = InProgress,
+      createdOn         = LocalDateTime.now(),
+      maybeBankDetails  = Some(BankDetails("111111", "12345678", "Darth Vader", None)),
+      existingDDBanks   = None,
+      maybeTaxpayer     = Some(TdAll.taxpayer),
+      maybePaymentToday = Some(PaymentToday(true)),
+
+      maybeMonthlyPaymentAmount  = Some(3),
+      maybeCalculatorDuration    = Some(CalculatorDuration(3)),
+      maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(3)),
+      maybeEligibilityStatus     = Some(EligibilityStatus(Seq.empty))
+    )
   }
 }
