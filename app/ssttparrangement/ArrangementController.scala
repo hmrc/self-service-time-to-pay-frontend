@@ -21,7 +21,7 @@ import java.time.{LocalDate, ZonedDateTime}
 import _root_.model._
 import audit.AuditService
 import config.AppConfig
-import controllers.FrontendBaseController
+import controllers.{FrontendBaseController, RequestLock}
 import controllers.action.{Actions, AuthorisedSaUserRequest}
 
 import javax.inject._
@@ -39,7 +39,7 @@ import times.ClockProvider
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
@@ -63,6 +63,7 @@ class ArrangementController @Inject() (
     views:                Views,
     clockProvider:        ClockProvider,
     iaService:            IaService,
+    requestLock:          RequestLock,
     directDebitConnector: DirectDebitConnector)(
     implicit
     appConfig: AppConfig,
@@ -217,12 +218,20 @@ class ArrangementController @Inject() (
     }
 
   def submit(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"ArrangementController.submit: $request")
-    journeyService.authorizedForSsttp { ttp =>
-      ttp.requireScheduleIsDefined()
-      ttp.requireDdIsDefined()
-      val paymentSchedule = calculatorService.computeSchedule(ttp)
-      arrangementSetUp(ttp, paymentSchedule)
+    requestLock.tryLock(request.request.session.get(SessionKeys.sessionId).getOrElse("unknown-session")) {
+      JourneyLogger.info(s"ArrangementController.submit: $request")
+      journeyService.authorizedForSsttp { ttp =>
+        ttp.requireScheduleIsDefined()
+        ttp.requireDdIsDefined()
+        val paymentSchedule = calculatorService.computeSchedule(ttp)
+        arrangementSetUp(ttp, paymentSchedule)
+      }
+    }.map {
+      case Some(res) =>
+        res
+      case err =>
+        JourneyLogger.info(s"ArrangementController.submit: locked, duplicate request: $request, err: $err")
+        Redirect(routes.ArrangementController.getTermsAndConditions())
     }
   }
 
