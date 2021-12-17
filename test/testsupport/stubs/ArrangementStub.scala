@@ -46,18 +46,4 @@ object ArrangementStub extends Matchers {
           )
       )
     }
-
-  def postTtpArrangementWithDelay(delay: Int = 15000): StubMapping =
-    {
-      stubFor(
-        post(urlPathEqualTo("/ttparrangements"))
-          .willReturn(
-            aResponse()
-              .withStatus(200)
-              .withFixedDelay(delay)
-              .withBody(Json.prettyPrint(ArrangementTd.tTPArrangementJson))
-          )
-      )
-    }
-
 }

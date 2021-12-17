@@ -77,30 +77,5 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       status(res) mustBe (Status.SEE_OTHER)
       res.value.get.get.header.headers("Location") mustBe ("/pay-what-you-owe-in-instalments/arrangement/summary")
     }
-
-    // this is only a basic test. In production there will multiple instance to lock and cannot be tested here
-    "with a multiple event" in {
-      AuthStub.authorise()
-      val sessionId = UUID.randomUUID().toString
-
-      DirectDebitStub.postPaymentPlan
-      ArrangementStub.postTtpArrangementWithDelay()
-      TaxpayerStub.getTaxpayer()
-
-      val journeyId = JourneyId("a-journeyid")
-      val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.value)
-
-      val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
-
-      val resList = (1 to 5)
-        .map(_ => controller.submit()(fakeRequest))
-        .map(r => { status(r) mustBe (Status.SEE_OTHER); r })
-
-      val resTypes = resList.groupBy(r => r.value.get.get.header.headers("Location"))
-
-      resTypes("/pay-what-you-owe-in-instalments/arrangement/summary").length mustBe 1
-      resTypes("/pay-what-you-owe-in-instalments/arrangement/terms-and-conditions").length mustBe 4
-
-    }
   }
 }
