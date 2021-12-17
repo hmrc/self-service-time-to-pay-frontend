@@ -46,5 +46,4 @@ object ArrangementStub extends Matchers {
           )
       )
     }
-
 }
