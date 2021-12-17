@@ -21,7 +21,7 @@ import java.time.{LocalDate, ZonedDateTime}
 import _root_.model._
 import audit.AuditService
 import config.AppConfig
-import controllers.{FrontendBaseController, RequestLock}
+import controllers.FrontendBaseController
 import controllers.action.{Actions, AuthorisedSaUserRequest}
 
 import javax.inject._
@@ -29,6 +29,7 @@ import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import journey.{Journey, JourneyService}
 import play.api.Logger
 import play.api.mvc._
+import play.modules.reactivemongo.ReactiveMongoComponent
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
@@ -40,6 +41,7 @@ import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.lock.{LockKeeper, LockMongoRepository, LockRepository}
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
@@ -50,21 +52,21 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.exact
 
 class ArrangementController @Inject() (
-    mcc:                  MessagesControllerComponents,
-    ddConnector:          DirectDebitConnector,
-    arrangementConnector: ArrangementConnector,
-    calculatorService:    CalculatorService,
-    eligibilityService:   EligibilityService,
-    taxPayerConnector:    TaxpayerConnector,
-    auditService:         AuditService,
-    journeyService:       JourneyService,
-    as:                   Actions,
-    requestSupport:       RequestSupport,
-    views:                Views,
-    clockProvider:        ClockProvider,
-    iaService:            IaService,
-    requestLock:          RequestLock,
-    directDebitConnector: DirectDebitConnector)(
+    mcc:                    MessagesControllerComponents,
+    ddConnector:            DirectDebitConnector,
+    arrangementConnector:   ArrangementConnector,
+    calculatorService:      CalculatorService,
+    eligibilityService:     EligibilityService,
+    taxPayerConnector:      TaxpayerConnector,
+    auditService:           AuditService,
+    journeyService:         JourneyService,
+    as:                     Actions,
+    requestSupport:         RequestSupport,
+    views:                  Views,
+    clockProvider:          ClockProvider,
+    iaService:              IaService,
+    reactiveMongoComponent: ReactiveMongoComponent,
+    directDebitConnector:   DirectDebitConnector)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext) extends FrontendBaseController(mcc) {
@@ -218,7 +220,7 @@ class ArrangementController @Inject() (
     }
 
   def submit(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    requestLock.tryLock(request.request.session.get(SessionKeys.sessionId).getOrElse("unknown-session")) {
+    tryLock(request.request.session.get(SessionKeys.sessionId).getOrElse("unknown-session")) {
       JourneyLogger.info(s"ArrangementController.submit: $request")
       journeyService.authorizedForSsttp { ttp =>
         ttp.requireScheduleIsDefined()
@@ -369,6 +371,18 @@ class ArrangementController @Inject() (
     val schedule = calculatorService.computeSchedule(journey)
 
     TTPArrangement(ppReference, ddReference, taxpayer, journey.bankDetails, schedule)
+  }
+
+  private def tryLock[T](lockName: String)(body: => Future[T])(implicit ec: ExecutionContext): Future[Option[T]] = {
+    lazy val lockKeeper = new LockKeeper {
+      override def repo: LockRepository = LockMongoRepository(reactiveMongoComponent.mongoConnector.db)
+
+      override def lockId: String = s"des-lock-" + lockName
+
+      override val forceLockReleaseAfter: org.joda.time.Duration = org.joda.time.Duration.standardMinutes(5)
+    }
+
+    lockKeeper.tryLock(body)
   }
 
 }
