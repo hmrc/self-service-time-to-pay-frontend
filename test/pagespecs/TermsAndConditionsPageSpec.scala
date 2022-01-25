@@ -69,25 +69,25 @@ class TermsAndConditionsPageSpec extends ItSpec {
 
   "language" in {
     beginJourney()
-    //    termsAndConditionsPage.assertPageIsDisplayed
+    termsAndConditionsPage.assertPageIsDisplayed
 
-    //    termsAndConditionsPage.clickOnWelshLink()
-    //    termsAndConditionsPage.assertPageIsDisplayed(Welsh)
-    //
-    //    termsAndConditionsPage.clickOnEnglishLink()
-    //    termsAndConditionsPage.assertPageIsDisplayed(English)
+    termsAndConditionsPage.clickOnWelshLink()
+    termsAndConditionsPage.assertPageIsDisplayed(Welsh)
+
+    termsAndConditionsPage.clickOnEnglishLink()
+    termsAndConditionsPage.assertPageIsDisplayed(English)
   }
 
-  //  "back button" in {
-  //    beginJourney()
-  //    termsAndConditionsPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
-  //  }
-  //
-  //  "click continue" in {
-  //    beginJourney()
-  //    DirectDebitStub.postPaymentPlan
-  //    ArrangementStub.postTtpArrangement
-  //    termsAndConditionsPage.clickContinue()
-  //    arrangementSummaryPage.assertPageIsDisplayed
-  //  }
+  "back button" in {
+    beginJourney()
+    termsAndConditionsPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
+  }
+
+  "click continue" in {
+    beginJourney()
+    DirectDebitStub.postPaymentPlan
+    ArrangementStub.postTtpArrangement
+    termsAndConditionsPage.clickContinue()
+    arrangementSummaryPage.assertPageIsDisplayed
+  }
 }
