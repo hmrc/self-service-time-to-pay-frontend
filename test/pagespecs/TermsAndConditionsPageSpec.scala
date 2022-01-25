@@ -55,16 +55,16 @@ class TermsAndConditionsPageSpec extends ItSpec {
     calculatorInstalmentsPage28thDay.clickContinue()
 
     instalmentSummaryPage.assertPageIsDisplayed()
-    //    instalmentSummaryPage.clickContinue()
-    //
-    //    directDebitPage.assertPageIsDisplayed()
-    //    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    //    BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    //    DirectDebitStub.getBanksIsSuccessful()
-    //    directDebitPage.clickContinue()
-    //
-    //    directDebitConfirmationPage.assertPageIsDisplayed()
-    //    directDebitConfirmationPage.clickContinue()
+    instalmentSummaryPage.clickContinue()
+
+    directDebitPage.assertPageIsDisplayed()
+    directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanksIsSuccessful()
+    directDebitPage.clickContinue()
+
+    directDebitConfirmationPage.assertPageIsDisplayed()
+    directDebitConfirmationPage.clickContinue()
   }
 
   "language" in {
