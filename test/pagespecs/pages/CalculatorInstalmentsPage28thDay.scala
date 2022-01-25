@@ -175,17 +175,17 @@ class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       private val mainTextEnglish =
         s"""How many months do you want to pay over?
            |2 months at £2,450.00
-           |Total interest:	£14.18
+           |Total interest:	£13.74
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,914.18
+           |Total paid:	£4,913.74
            |3 months at £1,633.33
-           |Total interest:	£20.94
+           |Total interest:	£20.51
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,920.94
+           |Total paid:	£4,920.51
            |4 months at £1,225.00
-           |Total interest:	£27.49
+           |Total interest:	£27.05
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,927.49
+           |Total paid:	£4,927.05
            |How we calculate interest
            |We only charge interest on overdue amounts.
            |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
@@ -196,17 +196,17 @@ class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       private val mainTextWelsh =
         s"""Dros sawl mis yr hoffech dalu?
            |2 o fisoedd ar £2,450.00
-           |Cyfanswm y llog:	£14.18
+           |Cyfanswm y llog:	£13.74
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,914.18
+           |Cyfanswm a dalwyd:	£4,913.74
            |3 o fisoedd ar £1,633.33
-           |Cyfanswm y llog:	£20.94
+           |Cyfanswm y llog:	£20.51
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,920.94
+           |Cyfanswm a dalwyd:	£4,920.51
            |4 o fisoedd ar £1,225.00
-           |Cyfanswm y llog:	£27.49
+           |Cyfanswm y llog:	£27.05
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,927.49
+           |Cyfanswm a dalwyd:	£4,927.05
            |Sut rydym yn cyfrifo llog
            |Rydym yn codi llog ar symiau hwyr yn unig.
            |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
