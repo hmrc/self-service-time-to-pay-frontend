@@ -7,10 +7,10 @@ import uk.gov.hmrc.DefaultBuildSettings.defaultSettings
 val appName = "self-service-time-to-pay-frontend"
 val scalaV = "2.12.12"
 
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
-  tests map { test =>
-    Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
-  }
+//def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
+//  tests map { test =>
+//    Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
+//  }
 
 
 lazy val microservice = Project(appName, file("."))
@@ -18,6 +18,7 @@ lazy val microservice = Project(appName, file("."))
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(defaultSettings(): _*)
   .settings(
+    fork in Test := false,
     scalaVersion := scalaV,
     majorVersion := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test )
