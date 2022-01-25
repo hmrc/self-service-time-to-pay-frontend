@@ -120,15 +120,15 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       private val mainTextWelsh =
         s"""Dros sawl mis yr hoffech dalu?
            |2 o fisoedd ar £2,450.00
-           |Cyfanswm y llog:	£21.60
+           |Cyfanswm y llog: £21.16
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:	£4,921.16
            |3 o fisoedd ar £1,633.33
-           |Cyfanswm y llog:	£28.36
+           |Cyfanswm y llog:	£27.92
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:	£4,927.92
            |4 o fisoedd ar £1,225.00
-           |Cyfanswm y llog:	£34.90
+           |Cyfanswm y llog:	£34.47
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:	£4,934.47
            |Sut rydym yn cyfrifo llog
