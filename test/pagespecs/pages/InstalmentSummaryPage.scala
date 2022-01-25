@@ -86,8 +86,8 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
 
       private def mainTextEnglish(paymentDayOfMonth: String): String = {
         val x = if (paymentDayOfMonth.equals("11th")) "14.18" else "21.16"
-        val y = if (paymentDayOfMonth.equals("11th")) "2,464.18" else "2,471.60"
-        val z = if (paymentDayOfMonth.equals("11th")) "4,914.18" else "4,921.60"
+        val y = if (paymentDayOfMonth.equals("11th")) "2,464.18" else "2,471.16"
+        val z = if (paymentDayOfMonth.equals("11th")) "4,914.18" else "4,921.16"
 
         s"""Check your payment plan
            |Upfront payment taken within 7 working days
@@ -111,8 +111,8 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
 
       private def mainTextWelsh(paymentDayOfMonth: String): String = {
         val x = if (paymentDayOfMonth.equals("11eg")) "14.18" else "21.16"
-        val y = if (paymentDayOfMonth.equals("11eg")) "2,464.18" else "2,471.60"
-        val z = if (paymentDayOfMonth.equals("11eg")) "4,914.18" else "4,921.60"
+        val y = if (paymentDayOfMonth.equals("11eg")) "2,464.18" else "2,471.16"
+        val z = if (paymentDayOfMonth.equals("11eg")) "4,914.18" else "4,921.16"
 
         s"""Gwiriwch fanylion eich amserlen talu
            |Taliad ymlaen llaw

@@ -51,10 +51,10 @@ class TermsAndConditionsPageSpec extends ItSpec {
     selectDatePage.clickContinue()
 
     calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
-    //    calculatorInstalmentsPage28thDay.selectAnOption()
-    //    calculatorInstalmentsPage28thDay.clickContinue()
+    calculatorInstalmentsPage28thDay.selectAnOption()
+    calculatorInstalmentsPage28thDay.clickContinue()
 
-    //    instalmentSummaryPage.assertPageIsDisplayed()
+    instalmentSummaryPage.assertPageIsDisplayed()
     //    instalmentSummaryPage.clickContinue()
     //
     //    directDebitPage.assertPageIsDisplayed()
