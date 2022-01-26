@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,17 +78,17 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       private val mainTextEnglishNew =
         s"""How many months do you want to pay over?
            |2 months at £2,450.00
-           |Total interest:	£21.60
+           |Total interest:	£21.16
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,921.60
+           |Total paid:	£4,921.16
            |3 months at £1,633.33
-           |Total interest:	£28.36
+           |Total interest:	£27.92
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,928.36
+           |Total paid:	£4,927.92
            |4 months at £1,225.00
-           |Total interest:	£34.90
+           |Total interest:	£34.47
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,934.90
+           |Total paid:	£4,934.47
            |How we calculate interest
            |We only charge interest on overdue amounts.
            |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
@@ -99,17 +99,17 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       private val mainTextEnglish =
         s"""How many months do you want to pay over?
            |2 months at £2,450.00
-           |Total interest: £21.60
+           |Total interest: £21.16
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,921.60
+           |Total paid:	£4,921.16
            |3 months at £1,633.33
-           |Total interest: £28.36
+           |Total interest: £27.92
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,928.36
+           |Total paid:	£4,927.92
            |4 months at £1,225.00
-           |Total interest: £34.90
+           |Total interest: £34.47
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,934.90
+           |Total paid:	£4,934.47
            |How we calculate interest
            |We only charge interest on overdue amounts.
            |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
@@ -120,17 +120,17 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       private val mainTextWelsh =
         s"""Dros sawl mis yr hoffech dalu?
            |2 o fisoedd ar £2,450.00
-           |Cyfanswm y llog:	£21.60
+           |Cyfanswm y llog: £21.16
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,921.60
+           |Cyfanswm a dalwyd:	£4,921.16
            |3 o fisoedd ar £1,633.33
-           |Cyfanswm y llog:	£28.36
+           |Cyfanswm y llog:	£27.92
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,928.36
+           |Cyfanswm a dalwyd:	£4,927.92
            |4 o fisoedd ar £1,225.00
-           |Cyfanswm y llog:	£34.90
+           |Cyfanswm y llog:	£34.47
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,934.90
+           |Cyfanswm a dalwyd:	£4,934.47
            |Sut rydym yn cyfrifo llog
            |Rydym yn codi llog ar symiau hwyr yn unig.
            |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
@@ -175,17 +175,17 @@ class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       private val mainTextEnglish =
         s"""How many months do you want to pay over?
            |2 months at £2,450.00
-           |Total interest:	£14.18
+           |Total interest:	£13.74
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,914.18
+           |Total paid:	£4,913.74
            |3 months at £1,633.33
-           |Total interest:	£20.94
+           |Total interest:	£20.51
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,920.94
+           |Total paid:	£4,920.51
            |4 months at £1,225.00
-           |Total interest:	£27.49
+           |Total interest:	£27.05
            |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,927.49
+           |Total paid:	£4,927.05
            |How we calculate interest
            |We only charge interest on overdue amounts.
            |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
@@ -196,17 +196,17 @@ class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       private val mainTextWelsh =
         s"""Dros sawl mis yr hoffech dalu?
            |2 o fisoedd ar £2,450.00
-           |Cyfanswm y llog:	£14.18
+           |Cyfanswm y llog:	£13.74
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,914.18
+           |Cyfanswm a dalwyd:	£4,913.74
            |3 o fisoedd ar £1,633.33
-           |Cyfanswm y llog:	£20.94
+           |Cyfanswm y llog:	£20.51
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,920.94
+           |Cyfanswm a dalwyd:	£4,920.51
            |4 o fisoedd ar £1,225.00
-           |Cyfanswm y llog:	£27.49
+           |Cyfanswm y llog:	£27.05
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,927.49
+           |Cyfanswm a dalwyd:	£4,927.05
            |Sut rydym yn cyfrifo llog
            |Rydym yn codi llog ar symiau hwyr yn unig.
            |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
