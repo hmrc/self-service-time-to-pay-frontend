@@ -7,6 +7,7 @@
 @import req.RequestSupport.isLoggedIn
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.Meta
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.Footer
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
 
 @this(
         govukLayout: uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout,
@@ -20,7 +21,7 @@
 
         reportTechnicalIssues: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcReportTechnicalIssue,
         hmrcTrackingConsentSnippet: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet,
-
+        hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
         standardBetaBanner: uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner,
 
         hmrcStandardFooter: HmrcStandardFooter,
@@ -84,7 +85,7 @@
     </div>
 
     <div class="govuk-!-display-none-print">
-    @reportTechnicalIssues(ReportTechnicalIssue(serviceCode = "self-service-time-to-pay-frontend", language = if(messages.lang.code == "cy") Cy else En))
+        @hmrcReportTechnicalIssueHelper()
     </div>
 }
 
