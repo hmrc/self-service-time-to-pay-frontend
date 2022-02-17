@@ -408,7 +408,14 @@ ssttp.you-need-to-request-access-to-self-assessment.button-label = Gwneud cais i
  accessibility-statement-p27b = . Profwyd y gwasanaeth llawn gan CThEM, ac roedd y gwaith o brofi’r gwasanaeth yn cynnwys defnyddwyr anabl.
  accessibility-statement-p28 = Paratowyd y dudalen hon ar 26 Chwefror 2020. Cafodd ei diweddaru ddiwethaf ar 11 Chwefror 2021.
 
+ssttp.calculator.check-calculation.cant-afford.p3 = Os na allwch ddefnyddio meddalwedd adnabod lleferydd, dysgwch sut i <a href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEM os oes angen cymorth ychwanegol arnoch.</a>
+ssttp.calculator.check-calculation.cant-afford.p4 = Gallwch hefyd ddefnyddio <a href="https://www.relayuk.bt.com/">Relay UK</a> (Saesneg yn unig) os na allwch glywed neu siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>.
+ssttp.calculator.check-calculation.cant-afford.p5 = Os ydych y tu allan i’r DU: <b>+44 2890 538 192</b>
 
+ssttp.calculator.please-call-us.cant-afford.summary = Os na allwch ddefnyddio meddalwedd adnabod lleferydd
+ssttp.calculator.please-call-us.cant-afford.p1 = Dysgwch sut i <a href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEM os oes angen cymorth ychwanegol arnoch.</a>
+ssttp.calculator.please-call-us.cant-afford.p2 = Gallwch hefyd ddefnyddio <a href="https://www.relayuk.bt.com/">Relay UK</a> (Saesneg yn unig) Os na allwch glywed neu siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>.
+ssttp.calculator.please-call-us.cant-afford.p3= Os ydych y tu allan i’r DU: <b>+44 2890 538 192</b>
 
 # Session timeout dialog and timed out page
 timeoutDialog.message.logged-in =  Er eich diogelwch, byddwn yn eich allgofnodi cyn pen

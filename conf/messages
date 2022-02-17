@@ -180,6 +180,9 @@ ssttp.calculator.check-calculation.cant-afford.p1 = You may still be able to set
 ssttp.calculator.check-calculation.cant-afford.p2.1 = We recommend you speak to an adviser on
 ssttp.calculator.check-calculation.cant-afford.p2.2 = 0300 200 3835
 ssttp.calculator.check-calculation.cant-afford.p2.3 = at the Business Support Service to talk about your payment options.
+ssttp.calculator.check-calculation.cant-afford.p3 = If you cannot use speech recognition software, find out how to <a href="https://www.gov.uk/get-help-hmrc-extra-support">deal with HMRC if you need extra support.</a>
+ssttp.calculator.check-calculation.cant-afford.p4 = You can also use <a href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
+ssttp.calculator.check-calculation.cant-afford.p5 = If you are outside the UK: <b>+44 2890 538 192</b>
 ssttp.calculator.check-calculation.what-happens-next = What happens next?
 ssttp.calculator.check-calculation.what-happens-next.p1.1 = This is a calculation based on the information you provided. When you file your Self Assessment the exact figures you owe might be different.
 ssttp.calculator.check-calculation.what-happens-next.p1.link = Go to your tax account
@@ -189,6 +192,11 @@ ssttp.calculator.check-calculation.what-happens-next.p2.link = set up a payment 
 ssttp.calculator.check-calculation.what-happens-next.p3.1 = If you want to plan ahead for a future tax return you can use the
 ssttp.calculator.check-calculation.what-happens-next.p3.link = budget payment plan
 ssttp.calculator.check-calculation.what-happens-next.p3.2 = to save towards a future liability.
+
+ssttp.calculator.please-call-us.cant-afford.summary = If you cannot use speech recognition software
+ssttp.calculator.please-call-us.cant-afford.p1 = Find out how to <a href="https://www.gov.uk/get-help-hmrc-extra-support">deal with HMRC if you need extra support.</a>
+ssttp.calculator.please-call-us.cant-afford.p2 = You can also use <a href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
+ssttp.calculator.please-call-us.cant-afford.p3= If you are outside the UK: <b>+44 2890 538 192</b>
 
 
 ssttp.calculator.form.amount-due.required = Enter the amount you owe the HMRC
