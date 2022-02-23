@@ -39,7 +39,14 @@
     <p>@Messages("ssttp.call-us.p1")</p>
 
     <p>@Messages("ssttp.call-us.p2") <strong class="bold">@Messages("ssttp.call-us.p2.telephone")</strong></p>
-
+        <details class="govuk-details">
+            <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.please-call-us.cant-afford.summary")</span></summary>
+            <div class="govuk-details__text">
+                <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p1"))}</p>
+                <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p2"))}</p>
+                <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p3"))}</p>
+            </div>
+        </details>
     <h2 class="govuk-heading-m">@Messages("ssttp.call-us.before-call.heading")</h2>
 
     <ul class="govuk-list--bullet">
