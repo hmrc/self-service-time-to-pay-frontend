@@ -37,6 +37,14 @@
     <section class="govuk-body">
     <p>@Messages("ssttp.debt-too-large.p1", eligibilityConfig.maximumDebtForSelfServe )</p>
     <p>@Messages("ssttp.debt-too-large.p2") <strong class ="bold">@Messages("ssttp.debt-too-large.p2.number")</strong></p>
+        <details class="govuk-details">
+            <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.please-call-us.cant-afford.summary")</span></summary>
+            <div class="govuk-details__text">
+                <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p1"))}</p>
+                <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p2"))}</p>
+                <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p3"))}</p>
+            </div>
+        </details>
     <h3>@Messages("ssttp.debt-too-large.before.you.call.h1")</h3>
     <ul class="govuk-list--bullet">
         <li>@Messages("ssttp.debt-too-large.before.you.call.l1")</li>
