@@ -76,7 +76,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
           |
           |To be eligible to set up an online payment plan you need to:
           |
-          |have filed your 2019 to 2020 tax return
+          |have filed your 2020 to 2021 tax return
           |owe £30,000 or less
           |have no other tax debts
           |have no other HMRC payment plans set up
