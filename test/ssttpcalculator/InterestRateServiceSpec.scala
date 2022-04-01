@@ -27,13 +27,13 @@ class InterestRateServiceSpec extends AnyWordSpec with Matchers {
     "the interest rates are up to date" should {
       "provide the latest rate" in {
         val irc = new InterestRateService()
-        val ir = irc.rateOn(LocalDate.of(2022, Month.FEBRUARY, 21))
-        ir.rate shouldBe BigDecimal("3.00")
+        val ir = irc.rateOn(LocalDate.of(2022, Month.APRIL, 6))
+        ir.rate shouldBe BigDecimal("3.25")
       }
       "provide the previous rate" in {
         val irc = new InterestRateService()
-        val ir = irc.rateOn(LocalDate.of(2022, Month.FEBRUARY, 20))
-        ir.rate shouldBe BigDecimal("2.75")
+        val ir = irc.rateOn(LocalDate.of(2022, Month.FEBRUARY, 21))
+        ir.rate shouldBe BigDecimal("3.00")
       }
     }
   }
