@@ -19,13 +19,13 @@ package ssttpcalculator
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import ssttpcalculator.CalculatorService._
-import ssttpcalculator.model.{TaxPaymentPlan, TaxLiability}
+import ssttpcalculator.model.{PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import testsupport.DateSupport
+import times.ClockProvider
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDate, LocalDateTime}
-import scala.math.BigDecimal
 
 class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
   private def date(month: Int, day: Int): LocalDate = LocalDate.of(_2020, month, day)
@@ -628,4 +628,52 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
       }
     }
   }
+
+  "availablePaymentSchedules with an endDate" should {
+    implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+    val LastPaymentDelayDays = 7
+
+    "return a payment schedule with endDate" when {
+      "matching last payment date plush seven days" in {
+        val startDate = LocalDate.now
+        val endDate = startDate.plusMonths(3)
+
+        val taxPaymentPlan = TaxPaymentPlan(
+          Seq(
+            TaxLiability(1000, startDate)
+          ),
+          0,
+          startDate,
+          endDate,
+          None)
+
+        val calculatorService = new CalculatorService(new ClockProvider(), new DurationService(), new InterestRateService())
+
+        val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
+
+        result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
+      }
+
+      "ignoring public holidays,  last payment date plush seven days" in {
+        val startDate = LocalDate.of(2022, 6, 1)
+        val endDate = startDate.plusMonths(6)
+
+        val taxPaymentPlan = TaxPaymentPlan(
+          Seq(
+            TaxLiability(1000, startDate)
+          ),
+          0,
+          startDate,
+          endDate,
+          None)
+
+        val calculatorService = new CalculatorService(new ClockProvider(), new DurationService(), new InterestRateService())
+
+        val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
+
+        result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
+      }
+    }
+  }
+
 }

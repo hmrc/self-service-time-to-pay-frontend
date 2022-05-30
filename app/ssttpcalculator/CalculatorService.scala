@@ -54,6 +54,7 @@ class CalculatorService @Inject() (
   val CalculationDateWithinRate: (Boolean, Boolean) = Tuple2(false, true)
   val defaultInitialPaymentDays: Int = 10
   val `14 day gap between the initial payment date and the first scheduled payment date`: Int = 14
+  val LastPaymentDelayDays = 7
 
   def computeSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
     val availableSchedules: Seq[PaymentSchedule] = availablePaymentSchedules(
@@ -147,7 +148,7 @@ class CalculatorService @Inject() (
 
     PaymentSchedule(
       startDate            = taxPaymentPlan.startDate,
-      endDate              = taxPaymentPlan.endDate,
+      endDate              = instalments.last.paymentDate.plusDays(LastPaymentDelayDays), // OPS-7952
       initialPayment       = taxPaymentPlan.initialPayment,
       amountToPay          = amountToPay,
       instalmentBalance    = amountToPay - taxPaymentPlan.initialPayment,
