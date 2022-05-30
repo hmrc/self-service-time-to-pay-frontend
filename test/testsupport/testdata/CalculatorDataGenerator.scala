@@ -45,6 +45,8 @@ object CalculatorDataGenerator extends Status with DateSupport {
   private val initialPayment = 0
   private val totalInterest = 200
 
+  private val LastPaymentDelayDays = 7
+
   def generateSchedules(paymentDayOfMonth: Int = _25th, firstPaymentDayOfMonth: Int = _2nd): StubMapping = {
       def paymentDate(month: Int) = LocalDate.of(nextYear, month, paymentDayOfMonth)
 
@@ -121,7 +123,7 @@ object CalculatorDataGenerator extends Status with DateSupport {
 
     new PaymentSchedule(
       startDate            = startDate,
-      endDate              = finalInstallment.paymentDate,
+      endDate              = finalInstallment.paymentDate.plusDays(LastPaymentDelayDays),
       initialPayment       = initialPayment,
       amountToPay          = totalDebt,
       instalmentBalance    = totalDebt,
