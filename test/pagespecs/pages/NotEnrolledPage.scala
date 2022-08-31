@@ -88,7 +88,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |beth rydych wedi’i wneud i geisio talu’r bil
           |a allwch dalu rhywfaint o’r bil nawr
           |Ein horiau agor yw:
-          |Dydd Llun i ddydd Gwener: 08:30 – 18:00
+          |Dydd Llun i ddydd Gwener: 8:00 i 18:00
         """.stripMargin
     }
 
