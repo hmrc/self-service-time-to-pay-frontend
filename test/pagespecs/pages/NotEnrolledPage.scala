@@ -72,7 +72,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |what you've done to try to pay the bill
           |if you can pay some of the bill now
           |Our opening times are:
-          |Monday to Friday: 8am to 4pm"""
+          |Monday to Friday: 8am to 6pm"""
           .stripMargin
 
       private val mainTextWelsh =
@@ -88,7 +88,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |beth rydych wedi’i wneud i geisio talu’r bil
           |a allwch dalu rhywfaint o’r bil nawr
           |Ein horiau agor yw:
-          |Dydd Llun i ddydd Gwener: 08:30 – 16:00
+          |Dydd Llun i ddydd Gwener: 8:00 i 18:00
         """.stripMargin
     }
 

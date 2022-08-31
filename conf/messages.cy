@@ -152,11 +152,12 @@ ssttp.call-us.p2.telephone = 0300 200 1900.
 ssttp.call-us.before-call.heading = Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
 ssttp.call-us.before-call.l1 = gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
 ssttp.call-us.before-call.l2 = eich manylion banc
+ssttp.call-us.before-call.l3 = manylion incwm a gwariant
 ssttp.call-us.likely-to-ask.heading = Rydym yn debygol o ofyn:
 ssttp.call-us.likely-to-ask.l1 = beth rydych wedi’i wneud i geisio talu’r bil
 ssttp.call-us.likely-to-ask.l2 = a allwch dalu rhywfaint o’r bil nawr
 ssttp.call-us.opening-times.heading = Ein horiau agor yw:
-ssttp.call-us.opening-times.l1 = Dydd Llun i ddydd Gwener: 08:30 – 16:00
+ssttp.call-us.opening-times.l1 = Dydd Llun i ddydd Gwener: 8:00 i 18:00
 
 ssttp.direct-debit.unauthorized.title = Os oes angen i fwy nag un person awdurdodi Debyd Uniongyrchol
 ssttp.direct-debit.unauthorized.intro.p1 = Os oes angen mwy nag un llofnod i awdurdodi’r Debyd Uniongyrchol ar y cyfrif hwn, bydd angen i chi
@@ -319,7 +320,7 @@ ssttp.debt-too-large.likely.to.ask.h1 = Rydym yn debygol o ofyn:
 ssttp.debt-too-large.likely.to.ask.l1 = beth rydych wedi’i wneud i geisio talu’r bil
 ssttp.debt-too-large.likely.to.ask.l2 = a allwch dalu rhywfaint o’r bil nawr
 ssttp.debt-too-large.opening.hours.h1 = Ein horiau agor yw:
-ssttp.debt-too-large.opening.hours.l1 = Dydd Llun i ddydd Gwener: 08:30 – 16:00
+ssttp.debt-too-large.opening.hours.l1 = Dydd Llun i ddydd Gwener: 8:00 i 18:00
 ssttp.debt-too-large.opening.hours.l2 =
 
 error.required = Mae''r maes hwn yn ofynnol
