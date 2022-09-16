@@ -170,6 +170,8 @@ ssttp.you-need-to-file.intro = I fod yn gymwys i drefnu cynllun talu ar-lein, ma
 ssttp.you-need-to-file.check-account.link = Ewch i’ch cyfrif treth
 ssttp.you-need-to-file.check-account = i gyflwyno’ch Ffurflen Dreth Hunanasesiad.
 
+ssttp.you-need-to-file..phone-number = I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEM a siarad ag ymgynghorydd ar <strong>0300 200 1900</strong>.
+
 
 ssttp.arrangement.change_day.title = Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
 ssttp.arrangement.change_day.payment-day.required = Nodwch werth
