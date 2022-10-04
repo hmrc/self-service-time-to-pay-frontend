@@ -16,15 +16,16 @@
 
 package journey
 
-import java.time.{Clock, LocalDate, LocalDateTime}
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.libs.json.{Format, Json, OFormat}
 import repo.HasId
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
-import uk.gov.hmrc.selfservicetimetopay.models.{CalculatorDuration, _}
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+import uk.gov.hmrc.selfservicetimetopay.models._
 
+import java.time.{Clock, LocalDate, LocalDateTime}
 import scala.collection.immutable
 
 sealed trait Status extends EnumEntry
@@ -144,6 +145,8 @@ final case class Journey(
 }
 
 object Journey {
+  implicit val localDateTimeFormat: Format[LocalDateTime] = MongoJavatimeFormats.localDateTimeFormat
+
   implicit val format: OFormat[Journey] = Json.format[Journey]
 
   def newJourney(implicit clock: Clock): Journey = Journey(_id       = JourneyId.newJourneyId(), createdOn = LocalDateTime.now(clock))
