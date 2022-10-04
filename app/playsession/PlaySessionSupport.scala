@@ -28,7 +28,7 @@ object PlaySessionSupport {
 
   implicit class ResultOps(result: Result)(implicit request: RequestHeader) {
 
-    def placeInSession(journeyId: JourneyId): Result = result.addingToSession(journeyIdKey -> journeyId.value)
+    def placeInSession(journeyId: JourneyId): Result = result.addingToSession(journeyIdKey -> journeyId.toHexString)
 
     def placeInSessionIfPresent(frozenDateTime: Option[LocalDateTime]): Result = {
       frozenDateTime

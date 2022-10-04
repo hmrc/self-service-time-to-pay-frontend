@@ -16,57 +16,54 @@
 
 package ssttparrangement
 
-import java.time.format.DateTimeFormatter.ISO_INSTANT
-import java.time.{LocalDate, ZonedDateTime}
 import _root_.model._
 import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.{Actions, AuthorisedSaUserRequest}
-
-import javax.inject._
-import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
+import journey.Statuses.FinishedApplicationSuccessful
 import journey.{Journey, JourneyService}
 import play.api.Logger
 import play.api.mvc._
-import play.modules.reactivemongo.ReactiveMongoComponent
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttpcalculator.CalculatorService
+import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
 import times.ClockProvider
-import ssttpcalculator.model.{Instalment, PaymentSchedule}
-import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
 import timetopaytaxpayer.cor.{TaxpayerConnector, model}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
-import uk.gov.hmrc.lock.{LockKeeper, LockMongoRepository, LockRepository}
+import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
-import views.html.partials.print_payment_schedule
 
+import java.time.format.DateTimeFormatter.ISO_INSTANT
+import java.time.{LocalDate, ZonedDateTime}
+import javax.inject._
 import scala.concurrent.Future.successful
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.exact
 
 class ArrangementController @Inject() (
-    mcc:                    MessagesControllerComponents,
-    ddConnector:            DirectDebitConnector,
-    arrangementConnector:   ArrangementConnector,
-    calculatorService:      CalculatorService,
-    eligibilityService:     EligibilityService,
-    taxPayerConnector:      TaxpayerConnector,
-    auditService:           AuditService,
-    journeyService:         JourneyService,
-    as:                     Actions,
-    requestSupport:         RequestSupport,
-    views:                  Views,
-    clockProvider:          ClockProvider,
-    iaService:              IaService,
-    reactiveMongoComponent: ReactiveMongoComponent,
-    directDebitConnector:   DirectDebitConnector)(
+    mcc:                  MessagesControllerComponents,
+    ddConnector:          DirectDebitConnector,
+    arrangementConnector: ArrangementConnector,
+    calculatorService:    CalculatorService,
+    eligibilityService:   EligibilityService,
+    taxPayerConnector:    TaxpayerConnector,
+    auditService:         AuditService,
+    journeyService:       JourneyService,
+    as:                   Actions,
+    requestSupport:       RequestSupport,
+    views:                Views,
+    clockProvider:        ClockProvider,
+    iaService:            IaService,
+    mongoLockRepository:  MongoLockRepository,
+    directDebitConnector: DirectDebitConnector)(
     implicit
     appConfig: AppConfig,
     ec:        ExecutionContext) extends FrontendBaseController(mcc) {
@@ -374,15 +371,9 @@ class ArrangementController @Inject() (
   }
 
   private def tryLock[T](lockName: String)(body: => Future[T])(implicit ec: ExecutionContext): Future[Option[T]] = {
-    lazy val lockKeeper = new LockKeeper {
-      override def repo: LockRepository = LockMongoRepository(reactiveMongoComponent.mongoConnector.db)
+    val lockKeeper = LockService(mongoLockRepository, lockId = s"des-lock-" + lockName, ttl = 5.minutes)
 
-      override def lockId: String = s"des-lock-" + lockName
-
-      override val forceLockReleaseAfter: org.joda.time.Duration = org.joda.time.Duration.standardMinutes(5)
-    }
-
-    lockKeeper.tryLock(body)
+    lockKeeper.withLock(body)
   }
 
 }
