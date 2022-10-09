@@ -42,5 +42,5 @@ final class JourneyRepo @Inject() (
     collectionName = "journey",
     mongoComponent = mongoComponent,
     indexes        = JourneyRepo.indexes(config.getDuration("journey.ttl").toSeconds),
-    replaceIndexes = true // TODO Kostas ?
+    replaceIndexes = false
   )

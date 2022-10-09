@@ -42,9 +42,7 @@ abstract class Repo[ID <: Id, A <: HasId[ID]](
     indexes:        Seq[IndexModel],
     replaceIndexes: Boolean         = false
 )(implicit manifest: Manifest[A],
-  mid:              Manifest[ID],
   domainFormat:     OFormat[A],
-  idFormat:         Format[ID],
   executionContext: ExecutionContext)
   extends PlayMongoRepository[A](
     mongoComponent = mongoComponent,
