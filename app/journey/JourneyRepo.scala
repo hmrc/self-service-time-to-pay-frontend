@@ -16,35 +16,31 @@
 
 package journey
 
-import javax.inject.{Inject, Singleton}
-import play.modules.reactivemongo.ReactiveMongoComponent
-import reactivemongo.api.indexes._
-import reactivemongo.bson.BSONDocument
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import repo.Repo
+import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.util.concurrent.TimeUnit
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration.Duration
+
+object JourneyRepo {
+  def indexes(cacheTtlInSeconds: Long): Seq[IndexModel] = Seq(
+    IndexModel(
+      keys         = Indexes.ascending("createdOn"),
+      indexOptions = IndexOptions().expireAfter(cacheTtlInSeconds, TimeUnit.SECONDS)
+    )
+  )
+}
 
 @Singleton
 final class JourneyRepo @Inject() (
-    reactiveMongoComponent: ReactiveMongoComponent,
-    config:                 ServicesConfig)(
-    implicit
-    ec: ExecutionContext)
-  extends Repo[Journey, JourneyId](
-    "journey",
-    reactiveMongoComponent
-  ) {
-
-  private lazy val ttl: Duration = config.getDuration("journey.ttl")
-
-  override def indexes: Seq[Index] = Seq(
-    Index(
-      key     = Seq("createdOn" -> IndexType.Ascending),
-      name    = Some("createdOnTime"),
-      options = BSONDocument("expireAfterSeconds" -> ttl.toSeconds)
-    )
+    mongoComponent: MongoComponent,
+    config:         ServicesConfig)(implicit ec: ExecutionContext)
+  extends Repo[JourneyId, Journey](
+    collectionName = "journey-new-mongo",
+    mongoComponent = mongoComponent,
+    indexes        = JourneyRepo.indexes(config.getDuration("journey.ttl").toSeconds),
+    replaceIndexes = false
   )
-
-}

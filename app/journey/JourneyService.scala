@@ -16,26 +16,23 @@
 
 package journey
 
-import controllers.ErrorHandler.technicalDifficulties
-import javax.inject.Inject
 import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.mvc.{Request, Result, Results}
 import req.RequestSupport
 import uk.gov.hmrc.play.http.logging.Mdc
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) {
 
   import RequestSupport._
   import playsession.PlaySessionSupport._
-  import repo.RepoResultChecker._
 
   def saveJourney(journey: Journey)(implicit request: Request[_]): Future[Unit] = Mdc.preservingMdc {
     journeyRepo
-      .upsert(journey._id, journey)
-      .checkResult
+      .upsert(journey)
   }
 
   def getMaybeJourney()(implicit request: Request[_]): Future[Option[Journey]] = Mdc.preservingMdc {

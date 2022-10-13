@@ -51,11 +51,11 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
     "microservice.services.ia.port" -> WireMockSupport.port,
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
-    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:${testPort}",
+    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:$testPort",
     "microservice.services.add-taxes.port" -> WireMockSupport.port,
     "microservice.services.bars.port" -> WireMockSupport.port,
     "microservice.services.identity-verification-frontend.uplift-url" -> s"http://localhost:${WireMockSupport.port}/mdtp/uplift",
-    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:${testPort}",
+    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:$testPort",
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled")
 
@@ -71,9 +71,9 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       ArrangementStub.postTtpArrangement
       TaxpayerStub.getTaxpayer()
 
-      val journeyId = JourneyId("a-journeyid")
+      val journeyId = JourneyId("62ce7631b7602426d74f83b0")
       val sessionId = UUID.randomUUID().toString
-      val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.value)
+      val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
 
       val journey = createJourney(journeyId)
       val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
@@ -82,8 +82,8 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
 
       val res = controller.submit()(fakeRequest)
-      status(res) mustBe (Status.SEE_OTHER)
-      res.value.get.get.header.headers("Location") mustBe ("/pay-what-you-owe-in-instalments/arrangement/summary")
+      status(res) mustBe Status.SEE_OTHER
+      res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/arrangement/summary"
     }
   }
 

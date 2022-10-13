@@ -18,12 +18,17 @@ package journey
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Format
-import reactivemongo.bson.BSONObjectID
+import org.bson.types.ObjectId
+import repo.Id
+import uk.gov.hmrc.mongo.play.json.formats.MongoFormats
 
-final case class JourneyId(value: String)
+final case class JourneyId(value: ObjectId) extends Id
 
 object JourneyId {
-  implicit val format: Format[JourneyId] = implicitly[Format[String]].inmap(JourneyId(_), _.value)
-  def newJourneyId(): JourneyId = JourneyId(BSONObjectID.generate.stringify)
+  implicit val format: Format[JourneyId] = MongoFormats.objectIdFormat.inmap(JourneyId(_), _.value)
+
+  def apply(hexString: String): JourneyId = JourneyId(new ObjectId(hexString))
+
+  def newJourneyId(): JourneyId = JourneyId(ObjectId.get())
 }
 
