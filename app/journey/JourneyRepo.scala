@@ -42,5 +42,5 @@ final class JourneyRepo @Inject() (
     collectionName = "journey-new-mongo",
     mongoComponent = mongoComponent,
     indexes        = JourneyRepo.indexes(config.getDuration("journey.ttl").toSeconds),
-    replaceIndexes = false
+    replaceIndexes = true
   )
