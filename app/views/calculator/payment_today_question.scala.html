@@ -77,7 +77,7 @@
                     legend = Some(Legend(
                         content = Text(Messages("ssttp.calculator.form.payment_today_question.title")),
                         classes = "govuk-fieldset__legend--1",
-                        isPageHeading = true
+                        isPageHeading = false
                     ))
                 )),
                 errorMessage = dataForm.error("paytoday").map(error => ErrorMessage(content = Text(Messages(error.message)))),
