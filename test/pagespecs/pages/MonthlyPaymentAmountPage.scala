@@ -87,7 +87,6 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         s"""Faint y gallwch fforddio ei dalu bob mis?
            |Nodwch swm sydd rhwng £${format(lowerAmount)} a £${format(upperAmount)}
            |Faint y gallwch fforddio ei dalu bob mis?
-           |Faint y gallwch ei dalu ymlaen llaw mewn punnoedd sterling
            |£
            |Yn eich blaen
         """.stripMargin
