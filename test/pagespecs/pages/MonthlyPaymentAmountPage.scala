@@ -31,15 +31,9 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   def assertPageIsDisplayed(implicit lang: Language): Unit = assertPageIsDisplayedAltPath(410, 2450)
 
-  def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "How much can you afford to pay each month?"
-    case Languages.Welsh   => "Faint y gallwch fforddio ei dalu bob mis?"
-  }
-
   def assertPageIsDisplayedAltPath(lowerAmount: Int, upperAmount: Int)(implicit lang: Language = English): Unit = probing {
     readPath() should startWith(path)
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     val expectedLines = Expected.MainText(lowerAmount, upperAmount).stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
@@ -83,9 +77,8 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
       // "How much can you pay upfront in Pound Sterling" has css class visually hidden but is still read by content scraper
       private def mainTextEnglish(lowerAmount: Int, upperAmount: Int) =
-        s"""How much can you afford to pay each month?
-           |Enter an amount between £${format(lowerAmount)} and £${format(upperAmount)}
-           |How much can you pay monthly in Pound Sterling
+        s"""Enter an amount between £${format(lowerAmount)} and £${format(upperAmount)}
+           |How much can you afford to pay each month?
            |£
            |Continue
         """.stripMargin
@@ -105,7 +98,6 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
            |Enter a figure between the given range
            |How much can you afford to pay each month?
            |Enter an amount between £410.00 and £2,450.00
-           |How much can you pay monthly in Pound Sterling
            |Error: Enter a figure between the given range
            |£
            |Continue
