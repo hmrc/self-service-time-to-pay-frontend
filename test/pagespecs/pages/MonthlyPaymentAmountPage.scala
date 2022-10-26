@@ -31,8 +31,6 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
   def assertPageIsDisplayed(implicit lang: Language): Unit = assertPageIsDisplayedAltPath(410, 2450)
 
-
-
   def assertPageIsDisplayedAltPath(lowerAmount: Int, upperAmount: Int)(implicit lang: Language = English): Unit = probing {
     readPath() should startWith(path)
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
@@ -80,7 +78,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       // "How much can you pay upfront in Pound Sterling" has css class visually hidden but is still read by content scraper
       private def mainTextEnglish(lowerAmount: Int, upperAmount: Int) =
         s"""Enter an amount between £${format(lowerAmount)} and £${format(upperAmount)}
-           |How much can you pay monthly in Pound Sterling
+           |How much can you afford to pay each month?
            |£
            |Continue
         """.stripMargin
@@ -88,7 +86,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       private def mainTextWelsh(lowerAmount: Int, upperAmount: Int) =
         s"""Faint y gallwch fforddio ei dalu bob mis?
            |Nodwch swm sydd rhwng £${format(lowerAmount)} a £${format(upperAmount)}
-           |How much can you pay monthly in Pound Sterling
+           |Faint y gallwch fforddio ei dalu bob mis?
            |£
            |Yn eich blaen
         """.stripMargin
@@ -98,8 +96,8 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       def apply(): String =
         s"""There is a problem
            |Enter a figure between the given range
+           |How much can you afford to pay each month?
            |Enter an amount between £410.00 and £2,450.00
-           |How much can you pay monthly in Pound Sterling
            |Error: Enter a figure between the given range
            |£
            |Continue
