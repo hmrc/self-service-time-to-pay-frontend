@@ -93,7 +93,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       private def mainTextWelsh(lowerAmount: Int, upperAmount: Int) =
         s"""Faint y gallwch fforddio ei dalu bob mis?
            |Nodwch swm sydd rhwng £${format(lowerAmount)} a £${format(upperAmount)}
-           |How much can you pay monthly in Pound Sterling
+           |Faint y gallwch ei dalu ymlaen llaw mewn punnoedd sterling
            |£
            |Yn eich blaen
         """.stripMargin
