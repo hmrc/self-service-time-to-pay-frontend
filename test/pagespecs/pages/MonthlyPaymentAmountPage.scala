@@ -77,8 +77,9 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
       // "How much can you pay upfront in Pound Sterling" has css class visually hidden but is still read by content scraper
       private def mainTextEnglish(lowerAmount: Int, upperAmount: Int) =
-        s"""Enter an amount between £${format(lowerAmount)} and £${format(upperAmount)}
-           |How much can you afford to pay each month?
+        s"""How much can you afford to pay each month?
+           |Enter an amount between £${format(lowerAmount)} and £${format(upperAmount)}
+           |How much can you pay monthly in Pound Sterling
            |£
            |Continue
         """.stripMargin
