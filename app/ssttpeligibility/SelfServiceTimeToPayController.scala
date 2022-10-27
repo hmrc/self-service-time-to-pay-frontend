@@ -89,6 +89,11 @@ class SelfServiceTimeToPayController @Inject() (
     Ok(views.you_need_to_request_access_to_self_assessment(isWelsh, isSignedIn))
   }
 
+  def getNotSoleSignatory: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
+    Ok(views.not_sole_signatory(isWelsh, isSignedIn))
+  }
+
   def submitAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser.async { implicit request =>
     val logMessage = s"Sending user to PTA (add-taxes-frontend) to enroll for SA" +
       s"[utr=${request.maybeUtr.map(_.obfuscate)}]"

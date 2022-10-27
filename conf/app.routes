@@ -23,6 +23,7 @@ GET         /calculator/instalments/call-us                               ssttpe
 GET         /eligibility/you-need-to-file                                 ssttpeligibility.SelfServiceTimeToPayController.getYouNeedToFile()
 GET         /eligibility/call-us                                          ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUs()
 GET         /eligibility/not-enrolled                                     ssttpeligibility.SelfServiceTimeToPayController.getNotSaEnrolled()
+GET         /eligibility/not-sole-signatory                               ssttpeligibility.SelfServiceTimeToPayController.getNotSoleSignatory()
 
 GET         /eligibility/access-your-self-assessment-online                ssttpeligibility.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()
 POST        /eligibility/access-your-self-assessment-online                ssttpeligibility.SelfServiceTimeToPayController.submitAccessYouSelfAssessmentOnline()

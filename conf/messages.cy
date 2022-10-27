@@ -326,6 +326,10 @@ ssttp.please-call-us.p2-part1 = Rydym yn argymell eich bod yn siarad ag ymgyngho
 ssttp.please-call-us.p2.phone-number = 0300 200 1900
 ssttp.please-call-us.p2-part2 = yng Ngwasanaeth Cwsmeriaid Cymraeg CThEM i drafod eich opsiynau talu.
 
+#not-sole-signatory
+ssttp.not-sole-signatory.title = Ni allwch drefnu Debyd Uniongyrchol ar-lein
+
+
 ssttp.debt-too-large.h1 = Ffoniwch ni
 ssttp.debt-too-large.p1 = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £{0} neu lai.
 ssttp.debt-too-large.p2 = Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar
