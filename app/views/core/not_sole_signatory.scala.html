@@ -16,35 +16,36 @@
 
 @this(
   main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  viewsHelpers: views.ViewsHelpers,
 )
 
 @(
-        isWelsh: Boolean,
-        loggedIn: Boolean = false)(implicit
-        messages: play.api.i18n.Messages,
-        request: Request[_],
-        appConfig: config.AppConfig
+    isWelsh: Boolean,
+    loggedIn: Boolean = false)(implicit
+    messages: play.api.i18n.Messages,
+    request: Request[_],
+    appConfig: config.AppConfig,
 )
 
 @main(
-    title = Messages("ssttp.not-sole-signatory.title")
+    title = Messages("ssttp.not-sole-signatory.title"),
+    backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSoleSignatory()) // Change after previous page is done
 ){
-    <div class="govuk-grid-row">
         <h1 class="govuk-heading-xl">@Messages("ssttp.not-sole-signatory.title")</h1>
 
-        <p class="govuk-body">
-            You need a named account holder or someone with authorisation to set up a Direct Debit.
+        <p class="govuk-body">@Messages("ssttp.not-sole-signatory.p1")
         </p>
-        <p class="govuk-body">If you are not the account holder or you wish to set up a Direct Debit with a multi-signature account, we recommend you speak to an adviser on <br><strong>0300 200 3835</strong> at the Payment Support Service.
-            You must ensure all account holders are present when calling.
+        <p class="govuk-body">@Messages("ssttp.not-sole-signatory.p2a")
+            <strong>
+                <span class="keeptogether">@Messages("ssttp.support-service.tel")</span>
+            </strong>
+            @Messages("ssttp.not-sole-signatory.p2b")
         </p>
 
         <br>
         <p class="govuk-body">
             <a class="govuk-button" href="business-tax-account" role="button">
-                Go to tax account
+                @Messages("ssttp.not-sole-signatory.go-to-account")
             </a>
         </p>
-    </div>
 }

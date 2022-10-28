@@ -391,6 +391,10 @@ ssttp.please-call-us.p2.phone-number = 0300 200 3835
 
 #not-sole-signatory
 ssttp.not-sole-signatory.title = You cannot set up a Direct Debit online
+ssttp.not-sole-signatory.p1 = You need a named account holder or someone with authorisation to set up a Direct Debit.
+ssttp.not-sole-signatory.p2a = If you are not the account holder or you wish to set up a Direct Debit with a multi-signature account, we recommend you speak to an adviser on
+ssttp.not-sole-signatory.p2b = at the Payment Support Service. You must ensure all account holders are present when calling.
+ssttp.not-sole-signatory.go-to-account = Go to tax account
 
 ssttp.debt-too-large.h1 = Please call us
 ssttp.debt-too-large.p1 = To be eligible to set up a payment plan online the tax you owe must be £{0} or less.
@@ -512,6 +516,11 @@ timeoutDialog.sign-out-button-text.logged-out = Delete your answers
 
 delete-answers.heading = For your security, we signed you out
 delete-answers.message = We did not save your answers.
+
+
+# telephone numbers
+ssttp.support-service.tel = 0300 200 3835
+
 
 # dates
 date.january=January
