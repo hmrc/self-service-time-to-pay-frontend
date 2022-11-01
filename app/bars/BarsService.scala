@@ -17,16 +17,14 @@
 package bars
 
 import bars.model._
-import play.api.Logger
+import play.api.Logging
 
 import javax.inject.Inject
 import play.api.mvc.Request
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: ExecutionContext) {
-
-  val logger = Logger(getClass)
+class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: ExecutionContext) extends Logging {
 
   def validateBankDetails(sortCode:      String,
                           accountNumber: String
