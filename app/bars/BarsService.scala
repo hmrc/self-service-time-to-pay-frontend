@@ -24,7 +24,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: ExecutionContext) {
 
-  def validateBankDetails(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[BarsValidationResult] = {
+  def validateBankDetails(sortCode:      String,
+                          accountNumber: String
+  )(implicit request: Request[_]): Future[BarsValidationResult] = {
 
     val validateBankDetailsRequest = ValidateBankDetailsRequest(account = Account(
       sortCode,

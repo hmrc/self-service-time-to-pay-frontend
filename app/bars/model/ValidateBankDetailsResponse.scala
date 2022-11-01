@@ -16,62 +16,28 @@
 
 package bars.model
 
+import bars.model.BarsAssessmentType._
 import play.api.libs.json.{Json, OFormat}
 
 final case class ValidateBankDetailsResponse(
-    accountNumberWithSortCodeIsValid:         String,
-    nonStandardAccountDetailsRequiredForBacs: String,
-    sortCodeIsPresentOnEISCD:                 String,
-    supportsBACS:                             Option[String],
-    ddiVoucherFlag:                           Option[String],
-    directDebitsDisallowed:                   Option[String],
-    directDebitInstructionsDisallowed:        Option[String],
-    iban:                                     Option[String],
-    sortCodeBankName:                         Option[String]
+    accountNumberIsWellFormatted:             BarsAssessmentType,
+    nonStandardAccountDetailsRequiredForBacs: BarsAssessmentType,
+    sortCodeIsPresentOnEISCD:                 BarsAssessmentType,
+    sortCodeSupportsDirectDebit:              Option[BarsAssessmentType],
+    sortCodeSupportsDirectCredit:             Option[BarsAssessmentType] = None,
+    iban:                                     Option[String]             = None,
+    sortCodeBankName:                         Option[String]             = None
 ) {
 
   def obfuscate: ValidateBankDetailsResponse = this.copy(
     iban = iban.map(_ => "***")
   )
 
-  val isModCheckValid: Option[Boolean] =
-    if (accountNumberWithSortCodeIsValid == "yes") Some(true)
-    else if (accountNumberWithSortCodeIsValid == "no") Some(false)
-    else None
+  def isValid: Boolean =
+    (accountNumberIsWellFormatted == Yes
+      || accountNumberIsWellFormatted == Indeterminate) &&
+      sortCodeIsPresentOnEISCD == Yes
 
-  val isBacsSupported: Option[Boolean] = supportsBACS.map(_ == "yes")
-
-  val isDdSupported: Option[Boolean] = {
-    val isDdAllowed: Option[Boolean] = directDebitsDisallowed.map(_ == "no")
-    val isDdInstructionAllowed: Option[Boolean] = directDebitInstructionsDisallowed.map(_ == "no")
-
-    //returns true if there is any evidence that dd is supported
-    (isDdAllowed, isDdInstructionAllowed) match {
-      case (Some(true), Some(true))   => Some(true)
-      case (Some(true), Some(false))  => Some(true)
-      case (Some(false), Some(true))  => Some(true)
-      case (Some(false), Some(false)) => Some(false)
-      case (None, Some(x))            => Some(x)
-      case (Some(x), None)            => Some(x)
-      case (None, None)               => None
-    }
-  }
-
-  val isValid: Boolean = {
-    isDdSupported match {
-      case Some(true)  => true
-      case Some(false) => false
-      case None => isBacsSupported match {
-        case Some(true)  => true
-        case Some(false) => false
-        case None => isModCheckValid match {
-          case Some(true)  => true
-          case Some(false) => false
-          case None        => false
-        }
-      }
-    }
-  }
 }
 
 object ValidateBankDetailsResponse {
