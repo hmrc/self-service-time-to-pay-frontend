@@ -25,7 +25,7 @@ object BarsStub extends Matchers with Status {
 
   def validateBank(sortCode: String, accountNumber: String): StubMapping =
     stubFor(
-      post(urlPathEqualTo(s"/v2/validateBankDetails"))
+      post(urlPathEqualTo(s"/validate/bank-details"))
         .withRequestBody(equalToJson(
           s"""
             {
@@ -44,7 +44,7 @@ object BarsStub extends Matchers with Status {
 
   def validateBankFail(sortCode: String, accountNumber: String): StubMapping =
     stubFor(
-      post(urlPathEqualTo(s"/v2/validateBankDetails"))
+      post(urlPathEqualTo(s"/validate/bank-details"))
         .withRequestBody(equalToJson(
           s"""
             {
@@ -63,7 +63,7 @@ object BarsStub extends Matchers with Status {
 
   def validateBankFailSortCodeOnDenyList(sortCode: String, accountNumber: String): StubMapping =
     stubFor(
-      post(urlPathEqualTo(s"/v2/validateBankDetails"))
+      post(urlPathEqualTo(s"/validate/bank-details"))
         .withRequestBody(equalToJson(
           s"""
             {
@@ -92,13 +92,11 @@ object BarsStub extends Matchers with Status {
     // language=JSON
     """
       {
-        "accountNumberWithSortCodeIsValid": "yes",
-        "nonStandardAccountDetailsRequiredForBacs": "no",
-        "sortCodeIsPresentOnEISCD":"yes",
-        "supportsBACS":"yes",
-        "ddiVoucherFlag":"no",
-        "directDebitsDisallowed": "no",
-        "directDebitInstructionsDisallowed": "no",
+        "accountNumberIsWellFormatted": "Yes",
+        "nonStandardAccountDetailsRequiredForBacs": "No",
+        "sortCodeIsPresentOnEISCD":"Yes",
+        "sortCodeSupportsDirectDebit": "Yes",
+        "sortCodeSupportsDirectCredit": "Yes",
         "iban": "GB59 HBUK 1234 5678",
         "sortCodeBankName": "Lloyds"
       }
@@ -108,13 +106,11 @@ object BarsStub extends Matchers with Status {
     // language=JSON
     """
       {
-        "accountNumberWithSortCodeIsValid": "yes",
-        "nonStandardAccountDetailsRequiredForBacs": "no",
-        "sortCodeIsPresentOnEISCD":"yes",
-        "supportsBACS":"yes",
-        "ddiVoucherFlag":"no",
-        "directDebitsDisallowed": "yes",
-        "directDebitInstructionsDisallowed": "yes",
+        "accountNumberIsWellFormatted": "No",
+        "nonStandardAccountDetailsRequiredForBacs": "No",
+        "sortCodeIsPresentOnEISCD":"Yes",
+        "sortCodeSupportsDirectDebit": "Yes",
+        "sortCodeSupportsDirectCredit": "Yes",
         "iban": "GB59 HBUK 1234 5678",
         "sortCodeBankName": "Lloyds"
       }

@@ -17,14 +17,18 @@
 package bars
 
 import bars.model._
+import play.api.Logging
+
 import javax.inject.Inject
 import play.api.mvc.Request
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: ExecutionContext) {
+class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: ExecutionContext) extends Logging {
 
-  def validateBankDetails(sortCode: String, accountNumber: String)(implicit request: Request[_]): Future[BarsValidationResult] = {
+  def validateBankDetails(sortCode:      String,
+                          accountNumber: String
+  )(implicit request: Request[_]): Future[BarsValidationResult] = {
 
     val validateBankDetailsRequest = ValidateBankDetailsRequest(account = Account(
       sortCode,
@@ -35,9 +39,11 @@ class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: Executio
       barsResponse <- barsConnector.validateBank(validateBankDetailsRequest)
       barsValidationResult = barsResponse match {
         case barsResponse @ BarsResponseOk(validateBankDetailsResponse) =>
+            logger.debug(s"BARs response: $barsResponse")
           val obfuscatedBarsResponse = barsResponse.copy(validateBankDetailsResponse.obfuscate)
           if (validateBankDetailsResponse.isValid) ValidBankDetails(obfuscatedBarsResponse) else InvalidBankDetails(obfuscatedBarsResponse)
         case barsResponse: BarsResponseSortCodeOnDenyList =>
+            logger.debug(s"BARs response: $barsResponse")
           InvalidBankDetails(barsResponse)
       }
     } yield barsValidationResult

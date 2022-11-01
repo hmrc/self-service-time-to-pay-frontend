@@ -53,7 +53,7 @@ class BarsConnector @Inject() (
    */
   @SuppressWarnings(Array("org.wartremover.warts.Null"))
   def validateBank(validateBankAccountRequest: ValidateBankDetailsRequest)(implicit request: Request[_]): Future[BarsResponse] = {
-    val url = s"$baseUrl/v2/validateBankDetails"
+    val url = s"$baseUrl/validate/bank-details"
     httpClient.POST[ValidateBankDetailsRequest, HttpResponse](url, validateBankAccountRequest)
       .map {
         case r: HttpResponse if r.status == 200 => BarsResponseOk(Json.parse(r.body).as[ValidateBankDetailsResponse])
