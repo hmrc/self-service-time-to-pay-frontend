@@ -58,7 +58,7 @@ abstract class CommonPage(implicit webDriver: WebDriver) extends RichMatchers wi
    */
   def readPageTitle(): String = pageTitle
 
-  def readArticleTitle(): String = xpath("""//*[@id="content"]/article/legend/h1""").element.text
+  def readArticleTitle(): String = xpath("""//*[@id="content"]/legend/h1""").element.text
 
   def readBannerTitle(): String = cssSelector(".header__menu__proposition-name").element.text
 
@@ -86,7 +86,7 @@ abstract class CommonPage(implicit webDriver: WebDriver) extends RichMatchers wi
    * The varying part of every page.
    * @return
    */
-  def readArticle() = xpath("""//*[@id="content"]/article""").element
+  def readArticle() = xpath("""//*[@id="content"]""").element
 
   /**
    * Probing tries to run `probingF` until until it succeeds. If it doesn't it:
