@@ -78,7 +78,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
   /**
    * Reads the main content of the page
    */
-  def readMain(): String = xpath("""//*[@id="content"]/article""").element.text
+  def readMain(): String = xpath("""//*[@id="content"]""").element.text
 
   def readGlobalHeaderText(): String = className("govuk-header__link--service-name").element.text
 
