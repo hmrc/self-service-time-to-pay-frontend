@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package model
+package model.enumsforforms
 
-import enumeratum.{Enum, EnumEntry}
-import play.api.libs.json.Format
-import utils.EnumFormat
-
+import enumeratum.Enum
 import scala.collection.immutable
 
-sealed trait TypeOfBankAccount extends EnumEntry
-
-object TypeOfBankAccount {
-  implicit val format: Format[TypeOfBankAccount] = EnumFormat(TypesOfBankAccount)
+sealed trait IsSoleSignatory extends enumeratum.EnumEntry {
+  def asBoolean: Boolean = this match {
+    case IsSoleSignatory.Yes => true
+    case IsSoleSignatory.No  => false
+  }
 }
 
-object TypesOfBankAccount extends Enum[TypeOfBankAccount] {
+object IsSoleSignatory extends Enum[IsSoleSignatory] {
+  case object Yes extends IsSoleSignatory
+  case object No extends IsSoleSignatory
+  override def values: immutable.IndexedSeq[IsSoleSignatory] = findValues
 
-  case object Personal extends TypeOfBankAccount
-  case object Business extends TypeOfBankAccount
-
-  override val values: immutable.IndexedSeq[TypeOfBankAccount] = findValues
+  def booleanToIsSoleSignatory(isSoleSignatory: Boolean): IsSoleSignatory = if (isSoleSignatory) {
+    IsSoleSignatory.Yes
+  } else {
+    IsSoleSignatory.No
+  }
 }

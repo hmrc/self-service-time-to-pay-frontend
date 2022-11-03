@@ -41,7 +41,7 @@
 @main(
     title = Messages("ssttp.arrangement.direct-debit.form.title"),
     maybeSidebarLinks =  None,
-    backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
+    backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount())
 ) {
     @if(ddForm.hasErrors) {
         @if(isBankError) {

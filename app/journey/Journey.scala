@@ -61,11 +61,12 @@ object MonthlyPaymentAmount {
 }
 
 final case class Journey(
-    _id:              JourneyId,
-    status:           Status                          = InProgress,
-    createdOn:        LocalDateTime,
-    maybeBankDetails: Option[BankDetails]             = None,
-    existingDDBanks:  Option[DirectDebitInstructions] = None,
+    _id:                       JourneyId,
+    status:                    Status                          = InProgress,
+    createdOn:                 LocalDateTime,
+    maybeTypeOfAccountDetails: Option[TypeOfAccountDetails]    = None,
+    maybeBankDetails:          Option[BankDetails]             = None,
+    existingDDBanks:           Option[DirectDebitInstructions] = None,
 
     maybeTaxpayer:              Option[Taxpayer]              = None,
     maybePaymentToday:          Option[PaymentToday]          = None,

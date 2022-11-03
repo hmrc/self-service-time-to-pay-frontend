@@ -26,6 +26,7 @@ class Views @Inject() (
     val payment_summary:                               views.html.calculator.payment_summary,
     val monthly_amount:                                views.html.calculator.monthly_amount,
     val tax_liabilities:                               views.html.calculator.tax_liabilities,
+    val about_bank_account:                            views.html.arrangement.about_bank_account,
     val direct_debit_confirmation:                     views.html.arrangement.direct_debit_confirmation,
     val application_complete:                          views.html.arrangement.application_complete,
     val direct_debit_assistance:                       views.html.arrangement.direct_debit_assistance,

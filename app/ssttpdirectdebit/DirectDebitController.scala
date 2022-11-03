@@ -21,15 +21,18 @@ import bars.model.{InvalidBankDetails, ValidBankDetails}
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
+
 import javax.inject._
 import journey.{Journey, JourneyService}
+import model.enumsforforms.{IsSoleSignatory, TypeOfBankAccount}
+import model.forms.TypeOfAccountForm
 import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorService
 import ssttpdirectdebit.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
-import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails}
+import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails, TypeOfAccountDetails}
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,6 +48,70 @@ class DirectDebitController @Inject() (
   extends FrontendBaseController(mcc) {
 
   import requestSupport._
+
+  def aboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"$request")
+    submissionService.authorizedForSsttp { journey: Journey =>
+      // TODO journey.bankAccountDetails
+      Ok(views.about_bank_account(TypeOfAccountForm.form))
+    }
+  }
+
+  def submitAboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+    submissionService.authorizedForSsttp { journey =>
+      TypeOfAccountForm.form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(
+              Ok(views.about_bank_account(formWithErrors))
+            ),
+          (detailsAboutBankAccountForm: TypeOfAccountForm) => {
+            submissionService.saveJourney(
+              journey.copy(maybeTypeOfAccountDetails = Some(TypeOfAccountDetails(
+                detailsAboutBankAccountForm.typeOfAccount,
+                detailsAboutBankAccountForm.isSoleSignatory.asBoolean)))
+            )
+              .map { _ =>
+                val redirectTo = detailsAboutBankAccountForm.isSoleSignatory match {
+                  case IsSoleSignatory.Yes => ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()
+                  case IsSoleSignatory.No  => ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount() //TODO
+                }
+                Redirect(redirectTo)
+              }
+          }
+        )
+    }
+  }
+
+  //  def aboutBankAccountSubmit: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  //    TypeOfAccountForm.form
+  //      .bindFromRequest()
+  //      .fold(
+  //        formWithErrors =>
+  //          Future.successful(
+  //            Ok(views.about_bank_account(formWithErrors))
+  //          ),
+  //        (detailsAboutBankAccountForm: TypeOfAccountForm) =>
+  //          submissionService
+  //            .updateDetailsAboutBankAccount(
+  //              journeyId = request.journeyId,
+  //              aboutBankAccount = TypeOfBankAccount(
+  //                TypesOfBankAccount.typeOfBankAccountFromFormValue(detailsAboutBankAccountForm.typeOfAccount),
+  //                detailsAboutBankAccountForm.isSoleSignatory.asBoolean
+  //              )
+  //            ).map { _ =>
+  //            val redirectTo = detailsAboutBankAccountForm.isSoleSignatory match {
+  //              case IsSoleSignatoryFormValue.No =>
+  //                routes.BankDetailsController.cannotSetupDirectDebitOnlinePage
+  //
+  //              case IsSoleSignatoryFormValue.Yes =>
+  //                routes.BankDetailsController.enterBankDetails
+  //            }
+  //            Redirect(redirectTo)
+  //          }
+  //      )
+  //  }
 
   def getDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")

@@ -20,7 +20,9 @@ object AppDependencies {
     "com.typesafe.play" %% "play-json-joda" % "2.7.4",
 
     "com.beachape" %% "enumeratum-play" % "1.7.0",
-    "org.julienrf" %% "play-json-derived-codecs" % "10.0.2"
+    "org.julienrf" %% "play-json-derived-codecs" % "10.1.0",
+
+    "org.typelevel" %% "cats-core" % "2.8.0",
 
   )
 

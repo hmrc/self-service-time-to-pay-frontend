@@ -233,6 +233,16 @@ ssttp.you-need-to-file.check-account = to file your Self Assessment tax return.
 
 ssttp.you-need-to-file..phone-number = For further support you can contact the Business Support Service and speak to an adviser on <strong>0300 200 3835</strong>.
 
+ssttp.arrangement.type_of_account.title = About your bank account
+ssttp.arrangement.type_of_account.details = What type of account details are you providing?
+ssttp.arrangement.type_of_account.business = Business bank account
+ssttp.arrangement.type_of_account.personal = Personal bank account
+ssttp.arrangement.account_holder = Are you the account holder
+ssttp.arrangement.account_holder.hint = You must be the sole account holder, or for multi-signature accounts you must have authority to set up a Direct Debit without additional signatures.
+ssttp.arrangement.type_of_account.problem = There is a problem
+ssttp.arrangement.type_of_account.button = Continue
+ssttp.arrangement.type_of_account.error = Select what type of account details you are providing
+ssttp.arrangement.sole_signatory.error = Select yes if you are the account holder
 
 ssttp.arrangement.change_day.title = Which day do you want to pay each month?
 ssttp.arrangement.change_day.error.summary.title = There is a problem
