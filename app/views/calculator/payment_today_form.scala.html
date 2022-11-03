@@ -54,8 +54,10 @@
         ))
     }
 
-    <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.form.payment_today.title")</h1>
 
+<h1 class="govuk-label-wrapper"><label class="govuk-label govuk-label--xl govuk-!-margin-bottom-9" for="amount">
+    @Messages("ssttp.calculator.form.payment_today.title")
+</label> </h1>
     <section class="govuk-body">
     @formWithCsrf(
         action = ssttpcalculator.routes.CalculatorController.submitPaymentToday(),
