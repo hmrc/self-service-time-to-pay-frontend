@@ -172,6 +172,18 @@ ssttp.you-need-to-file.check-account = i gyflwyno’ch Ffurflen Dreth Hunanasesi
 
 ssttp.you-need-to-file..phone-number = I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEM a siarad ag ymgynghorydd ar <strong>0300 200 1900</strong>.
 
+ssttp.arrangement.type_of_account.title = Ynglŷn â’ch cyfrif banc
+ssttp.arrangement.type_of_account.details = Pa fath o fanylion cyfrif yr ydych yn eu rhoi?
+ssttp.arrangement.type_of_account.business = Cyfrif banc busnes
+ssttp.arrangement.type_of_account.personal = Cyfrif banc personol
+ssttp.arrangement.account_holder = Ai chi yw deiliad y cyfrif?
+ssttp.arrangement.account_holder.hint = Mae’n rhaid mai chi yw’r talwr a’r unig berson sydd ei angen i awdurdodi Debyd Uniongyrchol o’r cyfrif hwn.
+ssttp.arrangement.account_holder.yes = Iawn
+ssttp.arrangement.account_holder.no = Na
+ssttp.arrangement.type_of_account.problem = Mae problem wedi codi
+ssttp.arrangement.type_of_account.button = Yn eich blaen
+ssttp.arrangement.type_of_account.error = Dewiswch pa fath o gyfrif yr ydych yn ei ddarparu
+ssttp.arrangement.sole_signatory.error = Dewiswch ‘Iawn’ os mai chi yw deiliad y cyfrif
 
 ssttp.arrangement.change_day.title = Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
 ssttp.arrangement.change_day.payment-day.required = Nodwch werth

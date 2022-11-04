@@ -16,7 +16,7 @@
 
 @import play.api.data.Form
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import controllers.routes
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import model.forms.TypeOfAccountForm
 @import model.enumsforforms.TypesOfBankAccount
 @import model.enumsforforms.IsSoleSignatory
@@ -26,7 +26,6 @@
 @this(
         main: views.html.main,
         viewsHelpers: views.ViewsHelpers,
-        govukButton: GovukButton,
         govukRadios: GovukRadios,
         formWithCSRF: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
@@ -73,7 +72,8 @@
                 checked = form.data.get(typeOfAccountKey).contains(TypesOfBankAccount.Personal.entryName)
             )
         ),
-        errorMessage = form.error(typeOfAccountKey).map(e => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(e.message)))
+        errorMessage = form.error(typeOfAccountKey).map(e => ErrorMessage(content = Text(messages(e.message))))
+    ).withFormField(form(typeOfAccountKey)
     ))
 }
 
@@ -93,23 +93,25 @@
         name = soleSignatoryKey,
         items = Seq(
             RadioItem(
-                content = Text("Yes"),
+                content = Text(messages("ssttp.arrangement.account_holder.yes")),
                 value = Some(IsSoleSignatory.Yes.entryName),
                 checked = form.data.get(soleSignatoryKey).contains(IsSoleSignatory.Yes.entryName)
             ),
             RadioItem(
-                content = Text("No"),
+                content = Text(messages("ssttp.arrangement.account_holder.no")),
                 value = Some(IsSoleSignatory.No.entryName),
                 checked = form.data.get(soleSignatoryKey).contains(IsSoleSignatory.No.entryName)
             )
         ),
         classes = "govuk-radios",
-        errorMessage = form.error(soleSignatoryKey).map(e => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(e.message)))
+        errorMessage = form.error(soleSignatoryKey).map(e => ErrorMessage(content = Text(messages(e.message))))
+    ).withFormField(form(soleSignatoryKey)
     ))
 }
 
 @main(
     title = title,
+    welshToggleEnabled = true,
     backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
 ) {
     @if(form.errors.nonEmpty) {
@@ -117,7 +119,7 @@
             ErrorSummary(errorList = form.errors.map(e =>
                 ErrorLink(
                     href = Some(s"#${e.key}"),
-                    content = Text(e.message)
+                    content = Text(messages(e.message, e.args: _*))
                 )
             ),
                 title = Text(messages("ssttp.arrangement.type_of_account.problem")))
@@ -131,7 +133,7 @@
 
         @soleSignatoryRadios
 
-        @govukButton(Button(content = Text(messages("ssttp.arrangement.type_of_account.button")), attributes = Map("id" -> "continue")))
+        @viewsHelpers.continue(Messages("ssttp.arrangement.type_of_account.button"))
     }
 
 }

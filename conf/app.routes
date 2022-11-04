@@ -54,7 +54,7 @@ POST        /arrangement/instalment-summary                               ssttpa
 # Arrangement
 POST        /arrangement                                                  ssttparrangement.ArrangementController.start()
 GET         /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.aboutBankAccount()
-POST        /arrangement/submit-about-your-bank-account                   ssttpdirectdebit.DirectDebitController.submitAboutBankAccount()
+POST        /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.submitAboutBankAccount()
 GET         /arrangement/terms-and-conditions                             ssttparrangement.ArrangementController.getTermsAndConditions()
 GET         /arrangement/direct-debit                                     ssttpdirectdebit.DirectDebitController.getDirectDebit()
 POST        /arrangement/direct-debit                                     ssttpdirectdebit.DirectDebitController.submitDirectDebit
