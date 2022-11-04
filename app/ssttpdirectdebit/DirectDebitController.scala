@@ -24,6 +24,8 @@ import controllers.action.Actions
 
 import javax.inject._
 import journey.{Journey, JourneyService}
+import model.enumsforforms.IsSoleSignatory.booleanToIsSoleSignatory
+import model.enumsforforms.TypesOfBankAccount.typeOfBankAccountAsFormValue
 import model.enumsforforms.{IsSoleSignatory, TypeOfBankAccount}
 import model.forms.TypeOfAccountForm
 import play.api.libs.json.Json
@@ -52,8 +54,12 @@ class DirectDebitController @Inject() (
   def aboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"$request")
     submissionService.authorizedForSsttp { journey: Journey =>
-      // TODO journey.bankAccountDetails
-      Ok(views.about_bank_account(TypeOfAccountForm.form))
+      val form = journey.maybeTypeOfAccountDetails match {
+        case Some(value) => TypeOfAccountForm.form.fill(TypeOfAccountForm(typeOfBankAccountAsFormValue(value.typeOfAccount),
+                                                                          booleanToIsSoleSignatory(value.isAccountHolder)))
+        case None => TypeOfAccountForm.form
+      }
+      Ok(views.about_bank_account(form))
     }
   }
 
