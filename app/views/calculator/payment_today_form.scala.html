@@ -55,9 +55,8 @@
     }
 
 
-<h1 class="govuk-label-wrapper"><label class="govuk-label govuk-label--xl govuk-!-margin-bottom-9" for="amount">
-    @Messages("ssttp.calculator.form.payment_today.title")
-</label> </h1>
+
+
     <section class="govuk-body">
     @formWithCsrf(
         action = ssttpcalculator.routes.CalculatorController.submitPaymentToday(),
@@ -70,6 +69,12 @@
                 content = Text(Messages("ssttp.upfront.amount.pound.sign.description")),
                 classes = "govuk-visually-hidden",
             )),
+            label = Label(
+                forAttr = Some("amount"),
+                content = Text(Messages("ssttp.calculator.form.payment_today.title")),
+                classes = "govuk-!-font-weight-bold govuk-label--xl govuk-!-margin-bottom-9",
+                isPageHeading = true
+            ),
             errorMessage = dataForm.error("amount").map(error => ErrorMessage(content = Text(Messages(error.message)))),
             prefix = Some(PrefixOrSuffix(
                 content = Text("£")
