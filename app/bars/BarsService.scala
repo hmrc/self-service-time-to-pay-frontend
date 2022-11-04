@@ -39,11 +39,11 @@ class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: Executio
       barsResponse <- barsConnector.validateBank(validateBankDetailsRequest)
       barsValidationResult = barsResponse match {
         case barsResponse @ BarsResponseOk(validateBankDetailsResponse) =>
-            logger.debug(s"BARs response: $barsResponse")
+          logger.debug(s"BARs response: $barsResponse")
           val obfuscatedBarsResponse = barsResponse.copy(validateBankDetailsResponse.obfuscate)
           if (validateBankDetailsResponse.isValid) ValidBankDetails(obfuscatedBarsResponse) else InvalidBankDetails(obfuscatedBarsResponse)
         case barsResponse: BarsResponseSortCodeOnDenyList =>
-            logger.debug(s"BARs response: $barsResponse")
+          logger.debug(s"BARs response: $barsResponse")
           InvalidBankDetails(barsResponse)
       }
     } yield barsValidationResult
