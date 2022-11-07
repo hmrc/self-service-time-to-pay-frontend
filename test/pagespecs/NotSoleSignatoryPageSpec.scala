@@ -35,6 +35,6 @@ class NotSoleSignatoryPageSpec extends ItSpec {
 
   "back button" in {
     notSoleSignatoryPage.open()
-    notSoleSignatoryPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSoleSignatory()}")
+    notSoleSignatoryPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount()}")
   }
 }
