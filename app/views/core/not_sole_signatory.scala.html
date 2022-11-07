@@ -28,24 +28,24 @@
 )
 
 @main(
-    title = Messages("ssttp.not-sole-signatory.title"),
+    title = messages("ssttp.not-sole-signatory.title"),
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount())
 ){
-        <h1 class="govuk-heading-xl">@Messages("ssttp.not-sole-signatory.title")</h1>
+        <h1 class="govuk-heading-xl">@messages("ssttp.not-sole-signatory.title")</h1>
 
-        <p class="govuk-body">@Messages("ssttp.not-sole-signatory.p1")
+        <p class="govuk-body">@messages("ssttp.not-sole-signatory.p1")
         </p>
-        <p class="govuk-body">@Messages("ssttp.not-sole-signatory.p2a")
+        <p class="govuk-body">@messages("ssttp.not-sole-signatory.p2a")
             <strong>
-                <span class="nowrap">@Messages("ssttp.support-service.tel")</span>
+                <span class="nowrap">@messages("ssttp.support-service.tel")</span>
             </strong>
-            @Messages("ssttp.not-sole-signatory.p2b")
+            @messages("ssttp.not-sole-signatory.p2b")
         </p>
 
         <br>
         <p class="govuk-body">
             <a class="govuk-button" href="business-tax-account" role="button">
-                @Messages("ssttp.not-sole-signatory.go-to-account")
+                @messages("ssttp.not-sole-signatory.go-to-account")
             </a>
         </p>
 }
