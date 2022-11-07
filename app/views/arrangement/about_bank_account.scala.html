@@ -1,0 +1,143 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import play.api.data.Form
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import model.forms.TypeOfAccountForm
+@import model.enumsforforms.TypesOfBankAccount
+@import model.enumsforforms.IsSoleSignatory
+@import req.RequestSupport
+@import config.AppConfig
+
+@this(
+        main: views.html.main,
+        viewsHelpers: views.ViewsHelpers,
+        govukRadios: GovukRadios,
+        formWithCSRF: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        requestSupport: RequestSupport
+)
+
+@(
+        form: Form[TypeOfAccountForm],
+        signedIn: Boolean = false
+)(implicit
+        request: Request[_],
+        messages: Messages,
+        appConfig: AppConfig
+)
+
+@typeOfAccountKey = @{"typeOfAccount"}
+
+@soleSignatoryKey = @{"isSoleSignatory"}
+
+@title = @{
+    Messages("ssttp.arrangement.type_of_account.title")
+}
+
+@typeOfBankAccountRadios = @{
+    govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("ssttp.arrangement.type_of_account.details")),
+                classes = "govuk-fieldset__legend--m",
+                isPageHeading = false
+            ))
+        )),
+        idPrefix = Some(typeOfAccountKey),
+        name = typeOfAccountKey,
+        items = Seq(
+            RadioItem(
+                id = Some("business"),
+                content = Text(messages("ssttp.arrangement.type_of_account.business")),
+                value = Some(TypesOfBankAccount.Business.entryName),
+                checked = form.data.get(typeOfAccountKey).contains(TypesOfBankAccount.Business.entryName),
+            ),
+            RadioItem(
+                id = Some("personal"),
+                content = Text(messages("ssttp.arrangement.type_of_account.personal")),
+                value = Some(TypesOfBankAccount.Personal.entryName),
+                checked = form.data.get(typeOfAccountKey).contains(TypesOfBankAccount.Personal.entryName)
+            )
+        ),
+        errorMessage = form.error(typeOfAccountKey).map(e => ErrorMessage(content = Text(messages(e.message))))
+    ).withFormField(form(typeOfAccountKey)
+    ))
+}
+
+@soleSignatoryRadios = @{
+    govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("ssttp.arrangement.account_holder")),
+                classes = "govuk-label--m",
+                isPageHeading = false
+            ))
+        )),
+        hint = Some(Hint(
+            content = Text(messages("ssttp.arrangement.account_holder.hint"))
+        )),
+        idPrefix = Some(soleSignatoryKey),
+        name = soleSignatoryKey,
+        items = Seq(
+            RadioItem(
+                id = Some("yes"),
+                content = Text(messages("ssttp.arrangement.account_holder.yes")),
+                value = Some(IsSoleSignatory.Yes.entryName),
+                checked = form.data.get(soleSignatoryKey).contains(IsSoleSignatory.Yes.entryName)
+            ),
+            RadioItem(
+                id = Some("no"),
+                content = Text(messages("ssttp.arrangement.account_holder.no")),
+                value = Some(IsSoleSignatory.No.entryName),
+                checked = form.data.get(soleSignatoryKey).contains(IsSoleSignatory.No.entryName)
+            )
+        ),
+        classes = "govuk-radios",
+        errorMessage = form.error(soleSignatoryKey).map(e => ErrorMessage(content = Text(messages(e.message))))
+    ).withFormField(form(soleSignatoryKey)
+    ))
+}
+
+@main(
+    title = title,
+    welshToggleEnabled = true,
+    backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
+) {
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(
+            ErrorSummary(errorList = form.errors.map(e =>
+                ErrorLink(
+                    href = Some(s"#${e.key}"),
+                    content = Text(messages(e.message, e.args: _*))
+                )
+            ),
+                title = Text(messages("ssttp.arrangement.type_of_account.problem")))
+        )
+    }
+
+    <h1 class="govuk-heading-xl">@title</h1>
+
+    @formWithCSRF(action = ssttpdirectdebit.routes.DirectDebitController.submitAboutBankAccount()) {
+        @typeOfBankAccountRadios
+
+        @soleSignatoryRadios
+
+        @viewsHelpers.continue(Messages("ssttp.arrangement.type_of_account.button"))
+    }
+
+}

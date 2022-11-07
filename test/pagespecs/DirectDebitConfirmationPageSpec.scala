@@ -17,6 +17,7 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
+import model.enumsforforms.{IsSoleSignatory, TypeOfBankAccount, TypesOfBankAccount}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -56,6 +57,11 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
 
     instalmentSummaryPage.assertPageIsDisplayed()
     instalmentSummaryPage.clickContinue()
+
+    aboutBankAccountPage.assertPageIsDisplayed()
+    aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
+    aboutBankAccountPage.selectIsAccountHolderRadioButton(IsSoleSignatory.Yes)
+    aboutBankAccountPage.clickContinue()
 
     directDebitPage.assertPageIsDisplayed()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
