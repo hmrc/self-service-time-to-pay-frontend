@@ -29,7 +29,7 @@
 
 @main(
     title = Messages("ssttp.not-sole-signatory.title"),
-    backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSoleSignatory()) // Change after previous page is done
+    backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount())
 ){
         <h1 class="govuk-heading-xl">@Messages("ssttp.not-sole-signatory.title")</h1>
 

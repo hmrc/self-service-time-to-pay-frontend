@@ -89,7 +89,7 @@ class DirectDebitController @Inject() (
               .map { _ =>
                 val redirectTo = detailsAboutBankAccountForm.isSoleSignatory match {
                   case IsSoleSignatory.Yes => ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()
-                  case IsSoleSignatory.No  => ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount() //TODO Connect to kickout page
+                  case IsSoleSignatory.No  => ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSoleSignatory()
                 }
                 Redirect(redirectTo)
               }
