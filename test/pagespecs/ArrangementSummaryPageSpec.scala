@@ -18,6 +18,7 @@ package pagespecs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import langswitch.Languages.{English, Welsh}
+import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -59,6 +60,11 @@ class ArrangementSummaryPageSpec extends ItSpec {
 
     instalmentSummaryPage.assertPageIsDisplayed()
     instalmentSummaryPage.clickContinue()
+
+    aboutBankAccountPage.assertPageIsDisplayed()
+    aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
+    aboutBankAccountPage.selectIsAccountHolderRadioButton(IsSoleSignatory.Yes)
+    aboutBankAccountPage.clickContinue()
 
     directDebitPage.assertPageIsDisplayed()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)

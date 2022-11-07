@@ -120,6 +120,7 @@ class ItSpec
     wire[InstalmentSummaryPageForPaymentDayOfMonth27th]
   lazy val instalmentSummaryPageForPaymentDayOfMonth11th: InstalmentSummaryPageForPaymentDayOfMonth11th =
     wire[InstalmentSummaryPageForPaymentDayOfMonth11th]
+  lazy val aboutBankAccountPage: AboutBankAccountPage = wire[AboutBankAccountPage]
   lazy val termsAndConditionsPage: TermsAndConditionsPage = wire[TermsAndConditionsPage]
   lazy val directDebitPage: DirectDebitPage = wire[DirectDebitPage]
   lazy val directDebitConfirmationPage: DirectDebitConfirmationPage = wire[DirectDebitConfirmationPage]

@@ -19,6 +19,7 @@ package ssttparrangement
 import akka.util.Timeout
 import journey.Statuses.InProgress
 import journey.{Journey, JourneyId, JourneyService, PaymentToday}
+import model.enumsforforms.{IsSoleSignatory, TypeOfBankAccount, TypesOfBankAccount}
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
@@ -31,7 +32,7 @@ import testsupport.WireMockSupport
 import testsupport.stubs.{ArrangementStub, AuthStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.{TdAll, TdRequest}
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, CalculatorDuration, EligibilityStatus}
+import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, CalculatorDuration, EligibilityStatus, TypeOfAccountDetails}
 
 import java.time.LocalDateTime
 import java.util.UUID
@@ -89,13 +90,14 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
   private def createJourney(journeyId: JourneyId): Journey = {
     Journey(
-      _id               = journeyId,
-      status            = InProgress,
-      createdOn         = LocalDateTime.now(),
-      maybeBankDetails  = Some(BankDetails("111111", "12345678", "Darth Vader", None)),
-      existingDDBanks   = None,
-      maybeTaxpayer     = Some(TdAll.taxpayer),
-      maybePaymentToday = Some(PaymentToday(true)),
+      _id                       = journeyId,
+      status                    = InProgress,
+      createdOn                 = LocalDateTime.now(),
+      maybeTypeOfAccountDetails = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
+      maybeBankDetails          = Some(BankDetails("111111", "12345678", "Darth Vader", None)),
+      existingDDBanks           = None,
+      maybeTaxpayer             = Some(TdAll.taxpayer),
+      maybePaymentToday         = Some(PaymentToday(true)),
 
       maybeMonthlyPaymentAmount  = Some(3),
       maybeCalculatorDuration    = Some(CalculatorDuration(3)),
