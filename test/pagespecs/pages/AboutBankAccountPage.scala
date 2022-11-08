@@ -43,16 +43,16 @@ class AboutBankAccountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exte
   }
 
   def selectTypeOfAccountRadioButton(businessOrPersonal: TypeOfBankAccount): Unit = {
-    val businessRadioButton = xpath("//*[@id=\"business\"]")
-    val personalRadioButton = xpath("//*[@id=\"personal\"]")
+    val businessRadioButton = xpath("//*[@id=\"typeOfAccount\"]")
+    val personalRadioButton = xpath("//*[@id=\"typeOfAccount-2\"]")
 
     if (businessOrPersonal == TypesOfBankAccount.Business) click on businessRadioButton
     else click on personalRadioButton
   }
 
   def selectIsAccountHolderRadioButton(yesOrNo: IsSoleSignatory): Unit = {
-    val yesRadioButton = xpath("//*[@id=\"yes\"]")
-    val noRadioButton = xpath("//*[@id=\"no\"]")
+    val yesRadioButton = xpath("//*[@id=\"isSoleSignatory\"]")
+    val noRadioButton = xpath("//*[@id=\"isSoleSignatory-2\"]")
 
     if (yesOrNo == IsSoleSignatory.Yes) click on yesRadioButton
     else click on noRadioButton

@@ -62,13 +62,11 @@
         name = typeOfAccountKey,
         items = Seq(
             RadioItem(
-                id = Some("business"),
                 content = Text(messages("ssttp.arrangement.type_of_account.business")),
                 value = Some(TypesOfBankAccount.Business.entryName),
                 checked = form.data.get(typeOfAccountKey).contains(TypesOfBankAccount.Business.entryName),
             ),
             RadioItem(
-                id = Some("personal"),
                 content = Text(messages("ssttp.arrangement.type_of_account.personal")),
                 value = Some(TypesOfBankAccount.Personal.entryName),
                 checked = form.data.get(typeOfAccountKey).contains(TypesOfBankAccount.Personal.entryName)
@@ -95,13 +93,11 @@
         name = soleSignatoryKey,
         items = Seq(
             RadioItem(
-                id = Some("yes"),
                 content = Text(messages("ssttp.arrangement.account_holder.yes")),
                 value = Some(IsSoleSignatory.Yes.entryName),
                 checked = form.data.get(soleSignatoryKey).contains(IsSoleSignatory.Yes.entryName)
             ),
             RadioItem(
-                id = Some("no"),
                 content = Text(messages("ssttp.arrangement.account_holder.no")),
                 value = Some(IsSoleSignatory.No.entryName),
                 checked = form.data.get(soleSignatoryKey).contains(IsSoleSignatory.No.entryName)
