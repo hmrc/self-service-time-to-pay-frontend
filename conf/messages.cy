@@ -463,7 +463,7 @@ delete-answers.message = Ni wnaethom gadw’ch atebion.
 
 
 # telephone numbers
-ssttp.support-service.tel = 0300 200 3835
+ssttp.support-service.tel = 0300 200 1900
 
 
 # dates
