@@ -377,3 +377,7 @@ details summary:focus,
 .details-margin {
     margin-bottom:20px;
 }
+
+span.nowrap {
+    white-space: nowrap ;
+}

@@ -134,4 +134,5 @@ class ItSpec
   lazy val notEnrolledPage: NotEnrolledPage = wire[NotEnrolledPage]
   lazy val youNeedToRequestAccessToSelfAssessment: YouNeedToRequestAccessToSelfAssessmentPage = wire[YouNeedToRequestAccessToSelfAssessmentPage]
   lazy val enrolForSaPage: EnrolForSaPage = wire[EnrolForSaPage]
+  lazy val notSoleSignatoryPage: NotSoleSignatoryPage = wire[NotSoleSignatoryPage]
 }
