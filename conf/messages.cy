@@ -41,6 +41,7 @@ ssttp.common.charge-code.SUP = Swm sydd heb ei gynnwys yn y cod treth mwyach
 ssttp.common.charge-code.SUR1 = Gordal cyntaf ar gyfer taliad hwyr
 ssttp.common.charge-code.SUR2 = Ail ordal ar gyfer taliad hwyr
 ssttp.common.charge-code.TTO = Trosglwyddo i OAS
+ssttp.common.title-prefix = Gwall:
 
 #what you owe partial
 ssttp.amounts_due.due = Yn ddyledus:
