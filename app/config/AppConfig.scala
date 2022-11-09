@@ -41,6 +41,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val loginCallbackPath: String = servicesConfig.getConfString("auth.login-callback.path", "")
   lazy val loginCallBackFullPath = s"$loginCallbackBaseUrl$loginCallbackPath"
   lazy val logoutUrl: String = s"$feedbackSurveyUrl"
+  lazy val backToTaxAccountUrl: String = servicesConfig.getString("back-to-tax-account.url")
 
   lazy val mdtpUpliftUrl: String = servicesConfig.getConfString("identity-verification-frontend.uplift-url",
     throw new RuntimeException("MDTP uplift url required"))

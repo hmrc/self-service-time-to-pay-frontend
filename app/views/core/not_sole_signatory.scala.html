@@ -24,7 +24,7 @@
     loggedIn: Boolean = false)(implicit
     messages: play.api.i18n.Messages,
     request: Request[_],
-    appConfig: config.AppConfig,
+    appConfig: config.AppConfig
 )
 
 @main(
@@ -44,7 +44,7 @@
 
         <br>
         <p class="govuk-body">
-            <a class="govuk-button" href="business-tax-account" role="button">
+            <a class="govuk-button" href=@{s"${appConfig.backToTaxAccountUrl}"} role="button">
                 @messages("ssttp.not-sole-signatory.go-to-account")
             </a>
         </p>
