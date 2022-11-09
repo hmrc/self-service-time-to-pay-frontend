@@ -236,7 +236,7 @@ ssttp.direct-debit-assistance.interest-added-to-final = wedi’i ychwanegu at y 
 ssttp.direct-debit-assistance.total-repayment = Cyfanswm yr ad-daliad:
 ssttp.direct-debit-assistance.complete.total = Cyfanswm:
 
-ssttp.arrangement.direct-debit.form.title = Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol
+ssttp.arrangement.direct-debit.form.title = Trefnu Debyd Uniongyrchol
 ssttp.arrangement.direct-debit.form.confirmed = Cadarnhau cytundeb y Debyd Uniongyrchol
 ssttp.arrangement.direct-debit.form.submit = Yn eich blaen
 ssttp.direct-debit.form.accountName = Enw’r cyfrif
