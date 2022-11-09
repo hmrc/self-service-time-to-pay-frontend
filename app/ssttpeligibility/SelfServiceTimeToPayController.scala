@@ -16,7 +16,7 @@
 
 package ssttpeligibility
 
-import config.{AppConfig, ViewConfig}
+import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import enrolforsa.AddTaxesConnector
