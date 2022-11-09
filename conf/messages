@@ -4,6 +4,7 @@ ssttp.common.currency.symbol = £
 ssttp.common.print = Print
 ssttp.common.sign-out = Sign out
 ssttp.common.back = Back
+ssttp.common.title-prefix = Error:
 
 ssttp.common.continue = Continue
 

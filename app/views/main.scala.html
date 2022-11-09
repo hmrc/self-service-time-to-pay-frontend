@@ -49,6 +49,7 @@
 )(implicit viewConfig: config.ViewConfig)
 
 @(title: String,
+        hasErrors: Boolean = false,
         maybeSidebarLinks: Option[Html] = None,
         contentHeader: Option[Html] = None,
         bodyClasses: Option[String] = None,
@@ -105,12 +106,14 @@
     </div>
 }
 
+@fullTitle = @{s"$title - ${messages("ssttp.common.title")} - GOV.UK"}
+
 @govukLayout(
-    pageTitle = Some(s"$title - ${Messages("ssttp.common.title")} - GOV.UK"),
+    pageTitle = if (hasErrors) {Some(s"${messages("ssttp.common.title-prefix")} " + fullTitle)} else Some(fullTitle),
     headBlock = Some(head),
     headerBlock = Some(hmrcHeader(Header(
         homepageUrl = "https://www.gov.uk",
-        serviceName = Some(Messages(navTitle)),
+        serviceName = Some(messages(navTitle)),
         signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).url) else None,
         language = if (messages.lang.code == "cy") Cy else En,
         classes = "govuk-!-display-none-print"
@@ -121,15 +124,15 @@
         meta = Some(Meta(
             items = Some(
                 Seq(
-                    FooterItem(text = Some(Messages("footer_cookies.link")), href = Some(viewConfig.cookiesUrl)),
+                    FooterItem(text = Some(messages("footer_cookies.link")), href = Some(viewConfig.cookiesUrl)),
                     FooterItem(
-                        text = Some(Messages("accessibility-statement.title")),
+                        text = Some(messages("accessibility-statement.title")),
                         href = Some(viewConfig.accessibilityStatementUrl(request.uri)),
                         attributes = Map("id" -> "accessibility-statement-link", "data-sso" -> "false", "data-journey-click" -> "footer:Click:Accessibility")
                     ),
-                    FooterItem(text = Some(Messages("footer_privacyNotice.link")), href = Some(viewConfig.privacyNoticeUrl)),
-                    FooterItem(text = Some(Messages("footer_termsAndConditions.link")), href = Some(viewConfig.termsAndConditionsUrl)),
-                    FooterItem(text = Some(Messages("footer_helpUsingGovUk.link")), href = Some(viewConfig.helpUsingGovUkUrl))
+                    FooterItem(text = Some(messages("footer_privacyNotice.link")), href = Some(viewConfig.privacyNoticeUrl)),
+                    FooterItem(text = Some(messages("footer_termsAndConditions.link")), href = Some(viewConfig.termsAndConditionsUrl)),
+                    FooterItem(text = Some(messages("footer_helpUsingGovUk.link")), href = Some(viewConfig.helpUsingGovUkUrl))
                 )
             )
         )),
