@@ -255,9 +255,6 @@ ssttp.direct-debit.form.error.sortCode.not-valid = Rhaid i’r cod didoli fod yn
 ssttp.direct-debit.form.error.accountNumber.not-number = Rhaid i rif y cyfrif banc beidio â chynnwys llythrennau na symbolau
 ssttp.direct-debit.form.error.accountNumber.not-valid = Rhaid i rif y cyfrif fod yn rhif 8 digid
 ssttp.direct-debit.form.single-account-holder.required = Dewiswch opsiwn
-ssttp.direct-debit.form.message.title = I fynd yn eich blaen, mae’n rhaid bod y canlynol yn wir:
-ssttp.direct-debit.form.message.named.account = rydych wedi’ch enwi’n ddeiliad y cyfrif ar gyfer y cyfrif hwn
-ssttp.direct-debit.form.message.permission = rydych yn gallu sefydlu Debydau Uniongyrchol heb ganiatâd deiliaid eraill y cyfrif
 
 ssttp.direct-debit.guarantee.title = Y Warant Debyd Uniongyrchol
 ssttp.direct-debit.guarantee.list.1 = Cynigir y Warant hon gan bob banc a chymdeithas adeiladu sy’n derbyn cyfarwyddiadau i dalu Debydau Uniongyrchol.

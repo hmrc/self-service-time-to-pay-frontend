@@ -38,8 +38,8 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Enter account details to set up a Direct Debit"
-    case Languages.Welsh   => "Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol"
+    case Languages.English => "Set up Direct Debit"
+    case Languages.Welsh   => "Trefnu Debyd Uniongyrchol"
   }
 
   def assertErrorPageIsDisplayed(implicit field: ErrorCase): Unit = probing {
@@ -84,27 +84,22 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
       }
 
       private val mainTextEnglish =
-        """Enter account details to set up a Direct Debit
-          |Enter your banking details
+        """Set up Direct Debit
           |Name on the account
           |Sort code
+          |Must be 6 digits long
           |Account number
-          |To continue you must be:
-          |
-          |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders, if there are any
+          |Must be between 6 and 8 digits long
           |Continue
         """.stripMargin
 
       private val mainTextWelsh =
-        """Nodwch fanylion y cyfrif i drefnu Debyd Uniongyrchol
-          |Enter your banking details
-          |Enw’r cyfrif
+        """Trefnu Debyd Uniongyrchol
+          |Yr enw sydd ar y cyfrif
           |Cod didoli
+          |Must be 6 digits long
           |Rhif y cyfrif
-          |I fynd yn eich blaen, mae’n rhaid bod y canlynol yn wir:
-          |rydych wedi’ch enwi’n ddeiliad y cyfrif ar gyfer y cyfrif hwn
-          |rydych yn gallu sefydlu Debydau Uniongyrchol heb ganiatâd deiliaid eraill y cyfrif
+          |Must be between 6 and 8 digits long
           |Yn eich blaen
         """.stripMargin
     }
@@ -120,62 +115,53 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
       private val accountNameErrorText =
         """There is a problem
           |Check your account name is correct
-          |Enter account details to set up a Direct Debit
-          |Enter your banking details
+          |Set up Direct Debit
           |Name on the account
           |Check your account name is correct
           |123ede23efr4efr4ew32ef3r4
           |Sort code 12-34-56
+          |Must be 6 digits long
           |Account number 12345678
-          |To continue you must be:
-          |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders, if there are any
+          |Must be between 6 and 8 digits long
           |Continue
       """.stripMargin
 
       private val sortCodeErrorText =
         """There is a problem
           |Sort code must be a 6 digit number
-          |Enter account details to set up a Direct Debit
-          |Enter your banking details
+          |Set up Direct Debit
           |Name on the account Mr John Campbell
           |Sort code
+          |Must be 6 digits long
           |Sort code must be a 6 digit number
           |fqe23fwef322few23r
           |Account number 12345678
-          |To continue you must be:
-          |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders, if there are any
+          |Must be between 6 and 8 digits long
+          |Account number must be between 6 and 8 digits long
           |Continue
         """.stripMargin
 
       private val accountNumberErrorText =
         """There is a problem
-          |Account number must be an 8 digit number
-          |Enter account details to set up a Direct Debit
-          |Enter your banking details
+          |Account number must be between 6 and 8 digits
+          |Set up Direct Debit
           |Name on the account Mr John Campbell
           |Sort code 12-34-56
           |Account number
-          |Account number must be an 8 digit number
+          |Must be between 6 and 8 digits long
           |24wrgedf
-          |To continue you must be:
-          |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders, if there are any
           |Continue
         """.stripMargin
 
       private val invalidBankDetailsErrorText =
         """This isn't a valid bank account
           |Re-enter your bank details
-          |Enter account details to set up a Direct Debit
-          |Enter your banking details
+          |Set up Direct Debit
           |Name on the account Mr John Campbell
           |Sort code 123456
+          |Must be 6 digits long
           |Account number 12345678
-          |To continue you must be:
-          |a named account holder for this account
-          |able to set up Direct Debits without permission from the other account holders, if there are any
+          |Must be between 6 and 8 digits long
           |Continue
         """.stripMargin
     }
