@@ -30,7 +30,7 @@ class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: Executio
                           accountNumber: String
   )(implicit request: Request[_]): Future[BarsValidationResult] = {
 
-    val validateBankDetailsRequest = ValidateBankDetailsRequest(account = Account(
+    val validateBankDetailsRequest = ValidateBankDetailsRequest(account = Account.padded(
       sortCode,
       accountNumber
     ))
