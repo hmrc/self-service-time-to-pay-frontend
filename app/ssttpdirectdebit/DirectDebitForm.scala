@@ -29,12 +29,12 @@ object DirectDebitForm {
 
   val directDebitMapping = mapping(
     "accountName" -> text.verifying("ssttp.direct-debit.form.error.accountName.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.accountName.check", x => condTrue(x.trim != "", x.trim.length < 70)),
+      .verifying("ssttp.direct-debit.form.error.accountName.check", x => condTrue(x.trim != "", x.trim.length <= 70)),
     "sortCode" -> text
       .verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => condTrue(x.trim != "", isValidSortCode(x))),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | (validateNumberLength(x, x.length) && validateNumberLength(x, 8)))
+      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | (isValidNumber(x, x.length) && validateNumberLength(x)))
   )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, cleanSortCode(sc), acctNo) }
     )({ case arrangementDirectDebit => Some((arrangementDirectDebit.accountName, arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber)) })
 
@@ -42,7 +42,8 @@ object DirectDebitForm {
     hasValidSortCodeCharacters(sortCode) && has6Numbers(sortCode)
   }
 
-  private def has6Numbers(sortCode: String): Boolean = validateNumberLength(sortCode, 6)
+  private def has6Numbers(sortCode: String): Boolean =
+    countNumeralsIn(sortCode) == 6
 
   private def hasValidSortCodeCharacters(sortCode: String): Boolean = {
     sortCode
@@ -53,8 +54,16 @@ object DirectDebitForm {
       .isEmpty
   }
 
-  def validateNumberLength(number: String, length: Int): Boolean = {
-    number.replaceAll("[^0-9]", "").length == length
+  private def countNumeralsIn(number: String): Int =
+    number.replaceAll("[^0-9]", "").length
+
+  private def validateNumberLength(number: String): Boolean = {
+    val length = countNumeralsIn(number)
+    length >= 6 && length <= 8
+  }
+
+  private def isValidNumber(number: String, length: Int): Boolean = {
+    countNumeralsIn(number) == length
   }
 
   val directDebitForm = Form(directDebitMapping)
