@@ -40,6 +40,7 @@
 
 @main(
     title = Messages("ssttp.arrangement.direct-debit.form.title"),
+    hasErrors = ddForm.hasErrors,
     maybeSidebarLinks =  None,
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount())
 ) {
