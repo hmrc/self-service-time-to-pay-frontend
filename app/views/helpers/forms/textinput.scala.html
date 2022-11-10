@@ -42,8 +42,8 @@
     ),
     hint = argsMap.get('hint).map { hintLabel =>
         Hint(
-            content = Text(argsMap.getOrElse('label, "").toString),
-            classes = argsMap.getOrElse('_labelClass, "").toString
+            content = Text(argsMap.getOrElse('hintContent, "").toString),
+            classes = argsMap.getOrElse('hintClass, "").toString
         )
     })
 )
