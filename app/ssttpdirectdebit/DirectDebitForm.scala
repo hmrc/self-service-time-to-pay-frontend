@@ -24,21 +24,15 @@ import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit.cleanSortC
 import scala.util.Try
 
 object DirectDebitForm {
-  val minAccountNumber = 0
-  val maxAccountNumber = 999999999
-
-  def parseIntOption(str: String) = Try(str.toInt).toOption
 
   def condTrue(condition: Boolean, statement: Boolean) = if (condition) statement else true
 
   val directDebitMapping = mapping(
     "accountName" -> text.verifying("ssttp.direct-debit.form.error.accountName.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.accountName.check", x => condTrue(x.trim != "", x.trim.length > 1))
-      .verifying("ssttp.direct-debit.form.error.accountName.check", x => condTrue(x.length > 1, x.matches("^[a-zA-Z].{1,39}$")))
-      .verifying("ssttp.direct-debit.form.error.accountName.not-text", x => condTrue(x.matches("^[a-zA-Z].{1,39}$"), x.length == x.replaceAll("[^a-zA-Z '.& \\/]", "").length)),
+      .verifying("ssttp.direct-debit.form.error.accountName.check", x => condTrue(x.trim != "", x.trim.length < 70)),
     "sortCode" -> text
       .verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => (x.trim == "") || isValidSortCode(x)),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => condTrue(x.trim != "", isValidSortCode(x))),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | (validateNumberLength(x, x.length) && validateNumberLength(x, 8)))
   )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, cleanSortCode(sc), acctNo) }
