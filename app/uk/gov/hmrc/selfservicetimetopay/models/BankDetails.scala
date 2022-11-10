@@ -35,4 +35,13 @@ final case class BankDetails(
 
 object BankDetails {
   implicit val format: Format[BankDetails] = Json.format[BankDetails]
+
+  def truncateAccountName(sortCode:          String,
+                          accountNumber:     String,
+                          accountName:       String,
+                          maybeDDIRefNumber: Option[String] = None): BankDetails =
+    BankDetails(sortCode,
+                accountNumber,
+                accountName.take(40),
+                maybeDDIRefNumber)
 }
