@@ -42,6 +42,6 @@ object BankDetails {
                           maybeDDIRefNumber: Option[String] = None): BankDetails =
     BankDetails(sortCode,
                 accountNumber,
-                accountName.take(40),
+                accountName.take(60),
                 maybeDDIRefNumber)
 }
