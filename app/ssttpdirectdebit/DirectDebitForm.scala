@@ -33,39 +33,11 @@ object DirectDebitForm {
       .verifying("ssttp.direct-debit.form.error.accountName.check", _.matches("^[a-zA-Z '.&/]{1,39}$")), // regex from API#1856
     "sortCode" -> text
       .verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => condTrue(x.trim != "", isValidSortCode(x))),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => condTrue(x.trim != "", x.matches("[0-9]{6}"))),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | (isValidNumber(x, x.length) && validateNumberLength(x)))
+      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | x.matches("[0-9]{6,8}"))
   )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, cleanSortCode(sc), acctNo) }
     )({ case arrangementDirectDebit => Some((arrangementDirectDebit.accountName, arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber)) })
-
-  def isValidSortCode(sortCode: String): Boolean = {
-    hasValidSortCodeCharacters(sortCode) && hasSixDigits(sortCode)
-  }
-
-  private def hasSixDigits(sortCode: String): Boolean =
-    countNumeralsIn(sortCode) == 6
-
-  private def hasValidSortCodeCharacters(sortCode: String): Boolean = {
-    sortCode
-      .trim
-      .replaceAll("\\d", "")
-      .replaceAll("-", "")
-      .replaceAll(" ", "")
-      .isEmpty
-  }
-
-  private def countNumeralsIn(number: String): Int =
-    number.replaceAll("[^0-9]", "").length
-
-  private def validateNumberLength(number: String): Boolean = {
-    val length = countNumeralsIn(number)
-    length >= 6 && length <= 8
-  }
-
-  private def isValidNumber(number: String, length: Int): Boolean = {
-    countNumeralsIn(number) == length
-  }
 
   val directDebitForm = Form(directDebitMapping)
   val directDebitFormWithBankAccountError = directDebitForm.copy(errors = Seq(FormError(" ", "ssttp.direct-debit.form.bank-not-found-info")))
