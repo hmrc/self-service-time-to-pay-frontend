@@ -16,6 +16,7 @@
 
 package bars.model
 
+import org.apache.commons.lang3.StringUtils
 import play.api.libs.json.{Format, Json}
 
 final case class Account(
@@ -34,5 +35,15 @@ final case class Account(
 }
 
 object Account {
+
+  def padded(sortCode: String, accountNumber: String): Account =
+    Account(sortCode, leftPad(accountNumber))
+
+  private val minimumLength = 8
+  private val padStr = "0"
+
+  private def leftPad(accountNumber: String): String =
+    StringUtils.leftPad(accountNumber, minimumLength, padStr)
+
   implicit val format: Format[Account] = Json.format[Account]
 }

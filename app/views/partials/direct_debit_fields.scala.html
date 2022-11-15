@@ -14,27 +14,33 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-
 @this(
         textinput: views.html.helpers.forms.textinput
 )
 
 @(ddForm: Form[_], accountNameField: Field, sortCodeField: Field, accountNumberField: Field)(implicit messages: play.api.i18n.Messages)
-@import helpers.forms.textinput
+
 
 @textinput(accountNameField,
-    'label -> Messages("ssttp.direct-debit.form.accountName"),
+    'label -> messages("ssttp.direct-debit.form.accountName"),
+    '_labelClass -> "govuk-label--m",
     '_maxlength -> "39",
-    '_inputClass -> "input--cleared accountName"
+    '_inputClass -> "govuk-!-width-two-thirds"
 )
 @textinput(sortCodeField,
-    'label -> Messages("ssttp.direct-debit.form.sortCode"),
-    '_inputClass ->  "input--cleared accountName")
+    'label -> messages("ssttp.direct-debit.form.sortCode"),
+    '_labelClass -> "govuk-label--m",
+    'hint -> "sortCodeHint",
+    'hintContent -> messages("ssttp.direct-debit.form.sortCode.hint"),
+    'hintClass -> "",
+    '_inputClass ->  "govuk-input--width-5"
+)
 @textinput(accountNumberField,
-    'label -> Messages("ssttp.direct-debit.form.accountNumber"),
+    'label -> messages("ssttp.direct-debit.form.accountNumber"),
+    '_labelClass -> "govuk-label--m",
+    'hint -> "accountNumberHint",
+    'hintContent -> messages("ssttp.direct-debit.form.accountNumber.hint"),
+    'hintClass -> "",
     '_maxlength -> "8",
-    '_inputClass ->  "input--cleared accountName"
+    '_inputClass ->  "govuk-!-width-two-thirds"
 )

@@ -24,13 +24,8 @@ final case class ArrangementDirectDebit(accountName: String, sortCode: String, a
 
 object ArrangementDirectDebit {
 
-  def cleanSortCode(sortCode: String): String = sortCode
-    .replaceAll("-", "")
-    .replaceAll(" ", "")
-    .trim
-
   def from(bankDetails: BankDetails): ArrangementDirectDebit =
-    ArrangementDirectDebit(bankDetails.accountName, cleanSortCode(bankDetails.sortCode), bankDetails.accountNumber)
+    ArrangementDirectDebit(bankDetails.accountName, bankDetails.sortCode, bankDetails.accountNumber)
 
   implicit val format: Format[ArrangementDirectDebit] = Json.format[ArrangementDirectDebit]
 
