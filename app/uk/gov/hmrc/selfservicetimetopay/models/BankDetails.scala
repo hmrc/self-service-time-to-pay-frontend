@@ -36,7 +36,4 @@ final case class BankDetails(
 object BankDetails {
   implicit val format: Format[BankDetails] = Json.format[BankDetails]
 
-  def truncateAccName(bankDetails: BankDetails): BankDetails =
-    bankDetails.copy(accountName = bankDetails.accountName.take(60))
-
 }

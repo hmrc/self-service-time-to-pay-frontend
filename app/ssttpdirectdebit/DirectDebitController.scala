@@ -32,7 +32,6 @@ import req.RequestSupport
 import ssttpcalculator.CalculatorService
 import ssttpdirectdebit.DirectDebitForm._
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
-import uk.gov.hmrc.selfservicetimetopay.models.BankDetails.truncateAccName
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails, TypeOfAccountDetails}
 import views.Views
 
@@ -163,7 +162,7 @@ class DirectDebitController @Inject() (
             case ValidBankDetails(obfuscatedBarsResponse) =>
               JourneyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
               submissionService.saveJourney(
-                journey.copy(maybeBankDetails = Some(truncateAccName(BankDetails(validFormData.sortCode, validFormData.accountNumber, validFormData.accountName))))
+                journey.copy(maybeBankDetails = Some(BankDetails(validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
               ).map { _ =>
                   Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
                 }
