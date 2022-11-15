@@ -77,7 +77,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |Mr John Campbell
           |Change
           |Sort code
-          |12 - 34 - 56
+          |123456
           |Account number
           |12345678
           |You are covered by the Direct Debit Guarantee
@@ -95,7 +95,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |Mr John Campbell
           |Newid
           |Cod didoli
-          |12 - 34 - 56
+          |123456
           |Rhif y cyfrif
           |12345678
           |Rydych wedi’ch gwarchod gan y Warant Debyd Uniongyrchol

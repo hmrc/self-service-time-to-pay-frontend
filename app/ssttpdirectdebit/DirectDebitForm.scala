@@ -19,7 +19,6 @@ package ssttpdirectdebit
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit.cleanSortCode
 
 import scala.util.Try
 
@@ -36,7 +35,7 @@ object DirectDebitForm {
       .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => condTrue(x.trim != "", x.matches("[0-9]{6}"))),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | x.matches("[0-9]{6,8}"))
-  )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, cleanSortCode(sc), acctNo) }
+  )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, sc, acctNo) }
     )({ case arrangementDirectDebit => Some((arrangementDirectDebit.accountName, arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber)) })
 
   val directDebitForm = Form(directDebitMapping)
