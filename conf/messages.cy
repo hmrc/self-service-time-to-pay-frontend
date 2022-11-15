@@ -254,7 +254,7 @@ ssttp.direct-debit.form.error.accountNumber.required = Nodwch rif y cyfrif
 ssttp.direct-debit.form.error.sortCode.required = Nodwch god didoli
 ssttp.direct-debit.form.error.sortCode.not-valid = Rhaid i’r cod didoli fod yn rhif 6 digid
 ssttp.direct-debit.form.error.accountNumber.not-number = Rhaid i rif y cyfrif banc beidio â chynnwys llythrennau na symbolau
-ssttp.direct-debit.form.error.accountNumber.not-valid = Rhaid i rif y cyfrif fod yn rhif 8 digid
+ssttp.direct-debit.form.error.accountNumber.not-valid = Mae’n rhaid i rif y cyfrif fod rhwng 6 ac 8 digid
 ssttp.direct-debit.form.single-account-holder.required = Dewiswch opsiwn
 
 ssttp.direct-debit.guarantee.title = Y Warant Debyd Uniongyrchol
