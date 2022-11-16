@@ -87,10 +87,10 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     directDebitConfirmationPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()}")
   }
 
-  "change sort code" in {
+  "change bank details" in {
     beginJourney()
     directDebitConfirmationPage.clickChangeButton()
-    directDebitPage.assertPageIsDisplayed
+    aboutBankAccountPage.assertPageIsDisplayed
   }
 
   "click continue" in {

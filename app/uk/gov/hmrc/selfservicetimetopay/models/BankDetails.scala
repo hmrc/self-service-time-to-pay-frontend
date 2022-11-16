@@ -20,7 +20,7 @@ import model.enumsforforms.TypeOfBankAccount
 import play.api.libs.json.{Format, Json}
 
 final case class BankDetails(
-    typeOfAccount:     Option[TypeOfBankAccount],
+    typeOfAccount:     Option[TypeOfBankAccount] = None,
     sortCode:          String,
     accountNumber:     String,
     accountName:       String,
