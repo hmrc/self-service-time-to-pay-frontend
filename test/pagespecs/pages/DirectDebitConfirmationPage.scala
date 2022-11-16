@@ -90,7 +90,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
         """.stripMargin
       private val mainTextWelsh =
         """Gwiriwch fanylion eich Debyd Uniongyrchol
-          |Enw’r cyfrif
+          |Yr enw sydd ar y cyfrif
           |Mr John Campbell
           |Newid
           |Cod didoli
@@ -100,9 +100,8 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |Rydych wedi’ch gwarchod gan y Warant Debyd Uniongyrchol
           |Y Warant Debyd Uniongyrchol
           |Cynigir y Warant hon gan bob banc a chymdeithas adeiladu sy’n derbyn cyfarwyddiadau i dalu Debydau Uniongyrchol.
-          |Os oes unrhyw newidiadau i swm, dyddiad neu amlder eich Debyd Uniongyrchol, bydd Cyllid a Thollau EM yn eich hysbysu 10 diwrnod gwaith cyn i’ch cyfrif gael ei ddebydu neu fel y cytunwyd fel arall. Os gwnewch gais i Gyllid a Thollau EM i gasglu taliad, rhoddir cadarnhad o’r swm a’r dyddiad i chi ar adeg y cais.
-          |Os gwneir camgymeriad gan Gyllid a Thollau EM neu’ch banc neu gymdeithas adeiladu wrth dalu Debyd Uniongyrchol, mae gennych hawl i ad-daliad llawn a di-oed o’r swm a dalwyd o’ch banc neu’ch cymdeithas adeiladu.
-          |Os cewch ad-daliad nad oes gennych hawl iddo, rhaid i chi ei dalu’n ôl pan fydd Cyllid a Thollau EM yn gofyn i chi wneud hynny.
+          |Os oes unrhyw newidiadau i swm, dyddiad neu amlder eich Debyd Uniongyrchol, bydd NDDS CThEF yn rhoi gwybod i chi 10 diwrnod gwaith cyn i’ch cyfrif gael ei ddebydu, neu fel y cytunwyd fel arall. Os byddwch yn gwneud cais i NDDS CThEF gasglu taliad, rhoddir cadarnhad o’r swm a’r dyddiad i chi ar adeg y cais.
+          |Os gwneir camgymeriad gan NDDS CThEF neu eich banc neu’ch cymdeithas adeiladu wrth dalu Debyd Uniongyrchol, mae gennych hawl i ad-daliad llawn a di-oed o’r swm a dalwyd o’ch banc neu’ch cymdeithas adeiladu. Os byddwch yn cael ad-daliad nad oes hawl gennych iddo, bydd yn rhaid i chi ei dalu’n ôl pan fydd NDDS CThEF yn gofyn i chi wneud hynny.
           |Gallwch ganslo Debyd Uniongyrchol ar unrhyw adeg drwy gysylltu â’ch banc neu gymdeithas adeiladu. Efallai y bydd angen cadarnhad ysgrifenedig. Rhowch wybod i ninnau hefyd.
           |Yn eich blaen
         """.stripMargin
