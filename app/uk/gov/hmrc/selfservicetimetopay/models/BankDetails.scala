@@ -16,14 +16,15 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import model.enumsforforms.TypeOfBankAccount
 import play.api.libs.json.{Format, Json}
 
 final case class BankDetails(
-    typeOfAccount:     Option[TypeOfAccountDetails],
+    typeOfAccount:     Option[TypeOfBankAccount],
     sortCode:          String,
     accountNumber:     String,
     accountName:       String,
-    maybeDDIRefNumber: Option[String]               = None) {
+    maybeDDIRefNumber: Option[String]            = None) {
 
   def obfuscate: BankDetails = BankDetails(
     typeOfAccount     = typeOfAccount,

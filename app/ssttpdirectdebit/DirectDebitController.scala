@@ -22,9 +22,9 @@ import config.{AppConfig, ViewConfig}
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import journey.{Journey, JourneyService}
-import model.enumsforforms.{IsSoleSignatory, TypeOfBankAccount, TypesOfBankAccount}
+import model.enumsforforms.IsSoleSignatory
 import model.enumsforforms.IsSoleSignatory.booleanToIsSoleSignatory
-import model.enumsforforms.TypesOfBankAccount.{Business, Personal, typeOfBankAccountAsFormValue}
+import model.enumsforforms.TypesOfBankAccount.typeOfBankAccountAsFormValue
 import model.forms.TypeOfAccountForm
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -102,7 +102,7 @@ class DirectDebitController @Inject() (
     JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")
     submissionService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
-      val typeOfAccInJourney = journey.maybeTypeOfAccountDetails
+      val typeOfAccInJourney = journey.maybeTypeOfAccountDetails.map(_.typeOfAccount)
       val typeOfAccInBankDetails = journey.maybeBankDetails.flatMap(_.typeOfAccount)
       val formData = journey.arrangementDirectDebit match {
         case Some(value) =>
@@ -170,7 +170,7 @@ class DirectDebitController @Inject() (
             case ValidBankDetails(obfuscatedBarsResponse) =>
               JourneyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
               submissionService.saveJourney(
-                journey.copy(maybeBankDetails = Some(BankDetails(journey.maybeTypeOfAccountDetails,
+                journey.copy(maybeBankDetails = Some(BankDetails(journey.maybeTypeOfAccountDetails.map(_.typeOfAccount),
                                                                  validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
               ).map { _ =>
                   Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
