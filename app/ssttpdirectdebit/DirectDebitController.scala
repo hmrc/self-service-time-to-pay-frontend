@@ -22,9 +22,9 @@ import config.{AppConfig, ViewConfig}
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import journey.{Journey, JourneyService}
-import model.enumsforforms.IsSoleSignatory
+import model.enumsforforms.{IsSoleSignatory, TypeOfBankAccount, TypesOfBankAccount}
 import model.enumsforforms.IsSoleSignatory.booleanToIsSoleSignatory
-import model.enumsforforms.TypesOfBankAccount.typeOfBankAccountAsFormValue
+import model.enumsforforms.TypesOfBankAccount.{Business, Personal, typeOfBankAccountAsFormValue}
 import model.forms.TypeOfAccountForm
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -102,9 +102,13 @@ class DirectDebitController @Inject() (
     JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")
     submissionService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
+      val typeOfAccInJourney = journey.maybeTypeOfAccountDetails
+      val typeOfAccInBankDetails = journey.maybeBankDetails.flatMap(_.typeOfAccount)
       val formData = journey.arrangementDirectDebit match {
         case Some(value) =>
-          directDebitForm.fill(value)
+          if (typeOfAccInJourney == typeOfAccInBankDetails)
+            directDebitForm.fill(value)
+          else directDebitForm
         case None => directDebitForm
       }
       val schedule = calculatorService.computeSchedule(journey)
@@ -166,7 +170,8 @@ class DirectDebitController @Inject() (
             case ValidBankDetails(obfuscatedBarsResponse) =>
               JourneyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
               submissionService.saveJourney(
-                journey.copy(maybeBankDetails = Some(BankDetails(validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
+                journey.copy(maybeBankDetails = Some(BankDetails(journey.maybeTypeOfAccountDetails,
+                                                                 validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
               ).map { _ =>
                   Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
                 }

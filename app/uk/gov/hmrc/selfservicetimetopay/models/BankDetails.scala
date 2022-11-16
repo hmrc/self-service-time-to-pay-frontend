@@ -19,9 +19,14 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import play.api.libs.json.{Format, Json}
 
 final case class BankDetails(
-    sortCode: String, accountNumber: String, accountName: String, maybeDDIRefNumber: Option[String] = None) {
+    typeOfAccount:     Option[TypeOfAccountDetails],
+    sortCode:          String,
+    accountNumber:     String,
+    accountName:       String,
+    maybeDDIRefNumber: Option[String]               = None) {
 
   def obfuscate: BankDetails = BankDetails(
+    typeOfAccount     = typeOfAccount,
     sortCode          = "***",
     accountNumber     = "***",
     accountName       = "***",
