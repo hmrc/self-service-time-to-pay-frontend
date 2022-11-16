@@ -100,11 +100,15 @@ class DirectDebitController @Inject() (
 
   def getDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")
-
     submissionService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
+      val formData = journey.arrangementDirectDebit match {
+        case Some(value) =>
+          directDebitForm.fill(value)
+        case None => directDebitForm
+      }
       val schedule = calculatorService.computeSchedule(journey)
-      Future.successful(Ok(views.direct_debit_form(journey.taxpayer.selfAssessment.debits, schedule, directDebitForm, isSignedIn)))
+      Future.successful(Ok(views.direct_debit_form(journey.taxpayer.selfAssessment.debits, schedule, formData, isSignedIn)))
     }
   }
 
