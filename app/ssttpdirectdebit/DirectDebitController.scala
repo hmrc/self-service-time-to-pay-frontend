@@ -164,30 +164,33 @@ class DirectDebitController @Inject() (
             journey.taxpayer.selfAssessment.debits,
             schedule,
             formWithErrors))),
-        (validFormData: ArrangementDirectDebit) => {
-          barsService.validateBankDetails(validFormData.sortCode, validFormData.accountNumber).flatMap {
+        (validFormData: ArrangementDirectDebit) =>
+          if (ArrangementDirectDebit.to(validFormData) == journey.maybeBankDetails) {
+            Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
+          } else {
+            barsService.validateBankDetails(validFormData.sortCode, validFormData.accountNumber).flatMap {
 
-            case ValidBankDetails(obfuscatedBarsResponse) =>
-              JourneyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
-              submissionService.saveJourney(
-                journey.copy(maybeBankDetails = Some(BankDetails(journey.maybeTypeOfAccountDetails.map(_.typeOfAccount),
-                                                                 validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
-              ).map { _ =>
-                  Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
-                }
-            case InvalidBankDetails(obfuscatedBarsResponse) =>
-              JourneyLogger.info(s"Bank details are invalid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
-              Future.successful(BadRequest(views.direct_debit_form(
-                journey.taxpayer.selfAssessment.debits,
-                schedule,
-                directDebitFormWithBankAccountError.copy(data = Map(
-                  "accountName" -> validFormData.accountName,
-                  "accountNumber" -> validFormData.accountNumber,
-                  "sortCode" -> validFormData.sortCode)
-                ),
-                isBankError = true)))
+              case ValidBankDetails(obfuscatedBarsResponse) =>
+                JourneyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
+                submissionService.saveJourney(
+                  journey.copy(maybeBankDetails = Some(BankDetails(journey.maybeTypeOfAccountDetails.map(_.typeOfAccount),
+                                                                   validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
+                ).map { _ =>
+                    Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
+                  }
+              case InvalidBankDetails(obfuscatedBarsResponse) =>
+                JourneyLogger.info(s"Bank details are invalid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
+                Future.successful(BadRequest(views.direct_debit_form(
+                  journey.taxpayer.selfAssessment.debits,
+                  schedule,
+                  directDebitFormWithBankAccountError.copy(data = Map(
+                    "accountName" -> validFormData.accountName,
+                    "accountNumber" -> validFormData.accountNumber,
+                    "sortCode" -> validFormData.sortCode)
+                  ),
+                  isBankError = true)))
+            }
           }
-        }
       )
     }
   }
