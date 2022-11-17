@@ -119,7 +119,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Name on the account
           |Check your account name is correct
           |123ede23efr4efr4ew32ef3r4
-          |Sort code 123456
+          |Sort code 12-34-56
           |Must be 6 digits long
           |Account number 12345678
           |Must be between 6 and 8 digits long
@@ -146,7 +146,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Account number must be between 6 and 8 digits
           |Set up Direct Debit
           |Name on the account Mr John Campbell
-          |Sort code 123456
+          |Sort code 12-34-56
           |Account number
           |Must be between 6 and 8 digits long
           |24wrgedf

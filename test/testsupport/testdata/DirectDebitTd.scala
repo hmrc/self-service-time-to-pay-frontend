@@ -21,13 +21,13 @@ import testsupport.JsonSyntax._
 import testsupport.testdata.TdAll.aYearAgo
 
 object DirectDebitTd {
-  val sortCode = "123456"
+  val sortCode = "12-34-56"
   val accountNumber = "12345678"
   val accountName = "Mr John Campbell"
 
   private def directDebitInstructionJson(creationDate: String) =
     s"""{
-          "sortCode":"123456",
+          "sortCode":"12-34-56",
           "accountNumber":"12345678",
           "referenceNumber":"123456789",
           "creationDate": "$creationDate",

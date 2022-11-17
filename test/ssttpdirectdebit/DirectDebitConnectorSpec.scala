@@ -37,7 +37,7 @@ class DirectDebitConnectorSpec extends ItSpec {
     connector.getBanks(saUtr)(FakeRequest()).futureValue shouldBe
       DirectDebitInstructions(
         List(DirectDebitInstruction(
-          sortCode      = Some("123456"),
+          sortCode      = Some("12-34-56"),
           accountNumber = Some("12345678"),
           accountName   = Some("Mr John Campbell"),
           Some("123456789"),
