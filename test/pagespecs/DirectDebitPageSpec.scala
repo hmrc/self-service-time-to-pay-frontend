@@ -109,7 +109,7 @@ class DirectDebitPageSpec extends ItSpec {
 
   "enter invalid bank account " ignore {
     beginJourney()
-    directDebitPage.fillOutForm("Mr John Campbell", "123456", "12345678")
+    directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
     BarsStub.validateBankFail(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(InvalidBankDetails())
@@ -117,13 +117,13 @@ class DirectDebitPageSpec extends ItSpec {
 
   "enter invalid bank account - SortCodeOnDenyList " ignore {
     beginJourney()
-    directDebitPage.fillOutForm("Mr John Campbell", "123456", "12345678")
+    directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
     BarsStub.validateBankFailSortCodeOnDenyList(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(InvalidBankDetails())
   }
 
-  val sortCode = "123456"
+  val sortCode = "12-34-56"
   val accountNumber = "12345678"
   val accountName = "Mr John Campbell"
 
