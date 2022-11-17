@@ -20,8 +20,6 @@ import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 
-import scala.util.Try
-
 object DirectDebitForm {
 
   def condTrue(condition: Boolean, statement: Boolean) = if (condition) statement else true

@@ -22,35 +22,40 @@
 <div id="dd-details-summary-list" class="govuk-body add_bottom_line">
     <dl class="govuk-summary-list govuk-!-margin-0">
         <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-            <dt class="govuk-summary-list__key">
-                @Messages("ssttp.direct-debit.account-name")
+            <dt class="govuk-summary-list__key no_bottom_line">
+                <span>@Messages("ssttp.direct-debit.account-name")</span>
             </dt>
-            <dd class="govuk-summary-list__value">
-                @directDebit.accountName
+            <dd class="govuk-summary-list__value no_bottom_line">
+                <span class="govuk-body-m">@directDebit.accountName</span>
             </dd>
-
             <dd class="govuk-summary-list__actions">
-                <a id="dd-change" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@Messages("ssttp.direct-debit.change")</a>
+                <a id="dd-change" href="@ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount()">@Messages("ssttp.direct-debit.change")</a>
             </dd>
         </div>
     </dl>
     <dl class="govuk-summary-list govuk-!-margin-0">
-        <div class="govuk-summary-list__row">
+        <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
             <dt class="govuk-summary-list__key no_bottom_line">
                 <span>@Messages("ssttp.direct-debit.sort-code")</span>
             </dt>
             <dd class="govuk-summary-list__value no_bottom_line">
                 <span class="govuk-body-m">@directDebit.formatSortCode</span>
             </dd>
+            <dd class="govuk-summary-list__actions">
+                <a id="dd-change" href="@ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount()">@Messages("ssttp.direct-debit.change")</a>
+            </dd>
         </div>
     </dl>
     <dl class="govuk-summary-list govuk-!-margin-0">
-        <div class="govuk-summary-list__row">
+        <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
             <dt class="govuk-summary-list__key no_bottom_line">
                 <span>@Messages("ssttp.direct-debit.account-number")</span>
             </dt>
             <dd class="govuk-summary-list__value no_bottom_line">
                 <span class="govuk-body-m">@directDebit.accountNumber</span>
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                <a id="dd-change" href="@ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount()">@Messages("ssttp.direct-debit.change")</a>
             </dd>
         </div>
     </dl>

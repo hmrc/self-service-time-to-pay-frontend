@@ -27,6 +27,11 @@ object ArrangementDirectDebit {
   def from(bankDetails: BankDetails): ArrangementDirectDebit =
     ArrangementDirectDebit(bankDetails.accountName, bankDetails.sortCode, bankDetails.accountNumber)
 
+  def to(arrangementDirectDebit: ArrangementDirectDebit): Option[BankDetails] =
+    Some(BankDetails(accountName   = arrangementDirectDebit.accountName,
+                     sortCode      = arrangementDirectDebit.sortCode,
+                     accountNumber = arrangementDirectDebit.accountNumber))
+
   implicit val format: Format[ArrangementDirectDebit] = Json.format[ArrangementDirectDebit]
 
 }
