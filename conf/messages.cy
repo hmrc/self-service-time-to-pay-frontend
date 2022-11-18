@@ -275,7 +275,7 @@ ssttp.direct-debit.final-payment = (taliad terfynol)
 ssttp.upfront.amount.pound.sign.description=Faint y gallwch ei dalu ymlaen llaw mewn punnoedd sterling
 ssttp.monthly.amount.pound.sign.description=Faint y gallwch ei dalu ymlaen llaw mewn punnoedd sterling
 
-ssttp.arrangement.direct-debit.form.error.summary.title = Rydych wedi nodi rhywbeth annilys
+ssttp.arrangement.direct-debit.form.error.summary.title = Mae problem wedi codi
 ssttp.arrangement.direct-debit.confirmation.title = Gwiriwch fanylion eich Debyd Uniongyrchol
 ssttp.arrangement.direct-debit.confirmation.total-payment = Cyfanswm y taliad fydd:
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary = Rydych wedi’ch gwarchod gan y Warant Debyd Uniongyrchol
