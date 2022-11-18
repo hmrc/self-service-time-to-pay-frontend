@@ -27,7 +27,7 @@ object DirectDebitForm {
   val directDebitMapping = mapping(
     "accountName" -> text.verifying("ssttp.direct-debit.form.error.accountName.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountName.check", x => condTrue(x.trim != "", x.trim.length <= 39))
-      .verifying("ssttp.direct-debit.form.error.accountName.check", _.matches("^[a-zA-Z '.&/]{1,39}$")), // regex from API#1856
+      .verifying("ssttp.direct-debit.form.error.accountName.check", x => (x.trim == "") | x.matches("^[a-zA-Z '.&/]{1,39}$")), // regex from API#1856
     "sortCode" -> text
       .verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => condTrue(x.trim != "", x.matches("[0-9]{6}"))),
