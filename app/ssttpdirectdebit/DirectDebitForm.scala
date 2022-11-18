@@ -31,7 +31,7 @@ object DirectDebitForm {
       .verifying("ssttp.direct-debit.form.error.accountName.check", x => (x.trim == "") | x.matches("^[a-zA-Z '.&/]{1,39}$")), // regex from API#1856
     "sortCode" -> text
       .verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", isValidSortCode _),
+      .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => condTrue(x.trim != "", isValidSortCode(x))),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | x.matches("[0-9]{6,8}"))
   )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, cleanSortCode(sc), acctNo) }
