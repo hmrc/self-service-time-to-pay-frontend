@@ -42,7 +42,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
   }
 
   def clickChangeButton(): Unit = {
-    val button = id("dd-change")
+    val button = id("change-name")
     click on button
   }
 
