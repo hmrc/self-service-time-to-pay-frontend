@@ -288,10 +288,19 @@ ssttp.arrangement.declaration.cancel-if.2 = pay another tax bill late
 ssttp.arrangement.declaration.cancel-if.3 = do not submit your future tax returns on time
 ssttp.arrangement.declaration.warning.p1 = If we cancel this agreement, you will need to pay the total amount you owe straight away.
 ssttp.arrangement.declaration.warning.p2 = We can use any refunds you might get to pay off your tax charges.
-ssttp.arrangement.declaration.warning.p3 = If your circumstances change and you can pay more or you can pay in full, you need to let us know.
-ssttp.arrangement.declaration.agreement.h1 = Declaration
-ssttp.arrangement.declaration.agreement.p1 = By continuing, you confirm this is the earliest you can settle the charges and you agree to the terms and conditions.
-ssttp.arrangement.declaration.agreement.confirm = Confirm and continue
+ssttp.arrangement.declaration.warning.p3 = This plan does not cover your future tax bills. You will still need to pay your future bills in full and on time.
+ssttp.arrangement.declaration.contact = You need to contact HMRC if:
+ssttp.arrangement.declaration.contact.bp1 = anything changes that you think affects your payment plan
+ssttp.arrangement.declaration.contact.bp2 = you need to change your payment plan
+ssttp.arrangement.declaration.contact.write = You can write to us about your Direct Debit:
+ssttp.arrangement.declaration.contact.address.ln1 = Debt Management
+ssttp.arrangement.declaration.contact.address.ln2 = Self Assessment
+ssttp.arrangement.declaration.contact.address.ln3 = HM Revenue and Customs
+ssttp.arrangement.declaration.contact.address.ln4 = BX9 1AS
+ssttp.arrangement.declaration.contact.address.ln5 = United Kingdom
+ssttp.arrangement.declaration.title = Declaration
+ssttp.arrangement.declaration.p1 = I agree to the terms and conditions of this payment plan. I confirm that this is the earliest I am able to settle this debt.
+ssttp.arrangement.declaration.agreement.confirm = Agree and continue
 
 
 
