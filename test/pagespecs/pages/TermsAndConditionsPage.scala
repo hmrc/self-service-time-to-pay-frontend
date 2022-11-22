@@ -77,11 +77,24 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |
           |We can use any refunds you might get to pay off your tax charges.
           |
-          |If your circumstances change and you can pay more or you can pay in full, you need to let us know.
+          |This plan does not cover your future tax bills. You will still need to pay your future bills in full and on time.
           |
-          |By continuing, you confirm this is the earliest you can settle the charges and you agree to the terms and conditions.
+          |You need to contact HMRC if:
           |
-          |Confirm and continue
+          |anything changes that you think affects your payment plan
+          |you need to change your payment plan
+          |You can write to us about your Direct Debit:
+          |
+          |Debt Management
+          |Self Assessment
+          |HM Revenue and Customs
+          |BX9 1AS
+          |United Kingdom
+          |Declaration
+          |
+          |I agree to the terms and conditions of this payment plan. I confirm that this is the earliest I am able to settle this debt.
+          |
+          |Agree and continue
         """.stripMargin
       private val mainTextWelsh =
         """Telerau ac amodau
@@ -91,14 +104,26 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |ydych yn talu bil treth arall yn hwyr
           |nad ydych yn cyflwyno’ch Ffurflenni Treth yn y dyfodol mewn pryd
           |Os byddwn yn canslo’r cytundeb hwn, bydd yn rhaid i chi dalu’r cyfanswm sydd arnoch ar unwaith.
+          |Gallwn ddefnyddio unrhyw ad-daliadau y gallech eu cael i dalu’ch taliadau treth.
           |
-          |Gallwn ddefnyddio unrhyw ad-daliadau y gallech eu cael i dalu’r ddyled hon yn ôl.
+          |Nid yw’r cynllun hwn yn cwmpasu’ch biliau treth yn y dyfodol. Bydd dal angen i chi dalu eich biliau yn y dyfodol yn llawn ac mewn pryd.
           |
-          |Os bydd eich amgylchiadau’n newid, a gallwch dalu mwy neu gallwch dalu’n llawn, mae’n rhaid i chi roi gwybod i ni.
+          |Bydd angen i chi gysylltu â CThEF os yw unrhyw un o’r canlynol yn berthnasol:
+          |
+          |mae unrhyw beth yn newid ac rydych o’r farn ei fod yn effeithio ar eich cynllun talu
+          |mae angen i chi newid eich cynllun talu
+          |Gallwch ysgrifennu atom ynglŷn â’ch Debyd Uniongyrchol:
+          |
+          |Rheolaeth Dyledion
+          |Hunanasesiad
+          |HGwasanaeth Cwsmeriaid Cymraeg CThEF
+          |HMRC
+          |BX9 1ST
+          |Datganiad
           |
           |Cytunaf â thelerau ac amodau’r cynllun talu hwn. Cadarnhaf mai dyma’r cynharaf y gallaf setlo’r ddyled hon.
           |
-          |Cadarnhau ac yn eich blaen
+          |Cytuno ac yn eich blaen
         """.stripMargin
     }
   }
