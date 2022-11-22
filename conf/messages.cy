@@ -221,11 +221,20 @@ ssttp.arrangement.declaration.cancel-if.1 = ydych yn talu’n hwyr neu’n methu
 ssttp.arrangement.declaration.cancel-if.2 = ydych yn talu bil treth arall yn hwyr
 ssttp.arrangement.declaration.cancel-if.3 = nad ydych yn cyflwyno’ch Ffurflenni Treth yn y dyfodol mewn pryd
 ssttp.arrangement.declaration.warning.p1 = Os byddwn yn canslo’r cytundeb hwn, bydd yn rhaid i chi dalu’r cyfanswm sydd arnoch ar unwaith.
-ssttp.arrangement.declaration.warning.p2 = Gallwn ddefnyddio unrhyw ad-daliadau y gallech eu cael i dalu’r ddyled hon yn ôl.
-ssttp.arrangement.declaration.warning.p3 = Os bydd eich amgylchiadau’n newid, a gallwch dalu mwy neu gallwch dalu’n llawn, mae’n rhaid i chi roi gwybod i ni.
-ssttp.arrangement.declaration.agreement.h1 = Datganiad
-ssttp.arrangement.declaration.agreement.p1 = Cytunaf â thelerau ac amodau’r cynllun talu hwn. Cadarnhaf mai dyma’r cynharaf y gallaf setlo’r ddyled hon.
-ssttp.arrangement.declaration.agreement.confirm = Cadarnhau ac yn eich blaen
+ssttp.arrangement.declaration.warning.p2 = Gallwn ddefnyddio unrhyw ad-daliadau y gallech eu cael i dalu’ch taliadau treth.
+ssttp.arrangement.declaration.warning.p3 = Nid yw’r cynllun hwn yn cwmpasu’ch biliau treth yn y dyfodol. Bydd dal angen i chi dalu eich biliau yn y dyfodol yn llawn ac mewn pryd.
+ssttp.arrangement.declaration.contact = Bydd angen i chi gysylltu â CThEF os yw unrhyw un o’r canlynol yn berthnasol:
+ssttp.arrangement.declaration.contact.bp1 = mae unrhyw beth yn newid ac rydych o’r farn ei fod yn effeithio ar eich cynllun talu
+ssttp.arrangement.declaration.contact.bp2 = mae angen i chi newid eich cynllun talu
+ssttp.arrangement.declaration.contact.write = Gallwch ysgrifennu atom ynglŷn â’ch Debyd Uniongyrchol:
+ssttp.arrangement.declaration.contact.address.ln1 = Rheolaeth Dyledion
+ssttp.arrangement.declaration.contact.address.ln2 = Hunanasesiad
+ssttp.arrangement.declaration.contact.address.ln3 = HGwasanaeth Cwsmeriaid Cymraeg CThEF
+ssttp.arrangement.declaration.contact.address.ln4 = HMRC
+ssttp.arrangement.declaration.contact.address.ln5 = BX9 1ST
+ssttp.arrangement.declaration.title = Datganiad
+ssttp.arrangement.declaration.p1 = Cytunaf â thelerau ac amodau’r cynllun talu hwn. Cadarnhaf mai dyma’r cynharaf y gallaf setlo’r ddyled hon.
+ssttp.arrangement.declaration.agreement.confirm = Cytuno ac yn eich blaen
 
 
 
