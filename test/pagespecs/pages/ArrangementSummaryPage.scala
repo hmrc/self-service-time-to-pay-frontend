@@ -94,7 +94,6 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |View your payment plan
           |Os oes angen i chi newid eich cynllun talu
           |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.
-          |Ewch i’r cyfrif treth
           |Beth oedd eich barn am y gwasanaeth hwn? (mae’n cymryd 30 eiliad)
         """.stripMargin
     }

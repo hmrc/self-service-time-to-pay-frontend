@@ -383,6 +383,7 @@ ssttp.arrangement.complete.feedback = What did you think of this service?
 ssttp.arrangement.complete.help.h2 = If you need to change your payment plan
 ssttp.arrangement.complete.help.p1 = Call the HMRC Helpline on 0300 123 1813.
 ssttp.arrangement.complete.help.p2 = (takes 30 seconds)
+ssttp.arrangement.complete.go-to-tax-account = Go to tax account
 
 #Service unavailable you do not have an sa enrollment page
 ssttp.not.enrolled.title = You must be enrolled to view your Self Assessment account

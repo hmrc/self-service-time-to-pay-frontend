@@ -44,7 +44,7 @@
   welshToggleEnabled = false,
   hasUserPanel = true
 ) {
-    <div class="govuk-panel govuk-panel--confirmation">
+    <div class="govuk-panel govuk-panel--confirmation govuk-!-display-none-print">
         <h1 class="govuk-panel__title">@messages("ssttp.arrangement.complete.title")</h1>
         <div class="govuk-panel__body">
             @maybeDirectDebitReference.map { directDebitReference =>
@@ -63,21 +63,22 @@
                     <span>@messages("ssttp.arrangement.complete.next-payment", language.Dates.wholeDate(schedule.initialPaymentScheduleDate))</span>
                 </p>
                 <p>@messages("ssttp.arrangement.complete.24h")</p>
-
-                <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">@messages("ssttp.arrangement.complete.view-plan")</a>
-            </section>
-                <h2 class="govuk-heading-m">@messages("ssttp.arrangement.complete.help.h2")</h2>
-            <div class="govuk-body">@messages("ssttp.arrangement.complete.help.p1")</div>
+                    <p>
+                    <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">
+                    @messages("ssttp.arrangement.complete.view-plan")</a>
+                    </p>
+                <p class="govuk-heading-m">@messages("ssttp.arrangement.complete.help.h2")</p>
+                <p class="govuk-body">@messages("ssttp.arrangement.complete.help.p1")</p>
 
             <a class="govuk-button" href=@{s"${appConfig.backToTaxAccountUrl}"} role="button">
-            @messages("ssttp.not-sole-signatory.go-to-account")
+            @messages("ssttp.arrangement.complete.go-to-tax-account")
             </a>
 
         <div class="govuk-body">
             <a class="govuk-link" id="survey-link" href="@appConfig.logoutUrl">@messages("ssttp.arrangement.complete.feedback")
             </a> @messages("ssttp.arrangement.complete.help.p2")
         </div>
-
+            </section>
     <div class="print-only">
         @print_payment_schedule(schedule, maybeDirectDebitReference)
     </div>
