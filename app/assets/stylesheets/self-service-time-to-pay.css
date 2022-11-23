@@ -315,14 +315,18 @@ a.link-back{
 
 
 h1.govuk-panel__title {
-    font-size: 36px;
+    margin-top: 0;
+    font-size: 48px;
+    font-weight: bold;
+    padding: 0 15px;
 }
 
 
 .govuk-panel__body{
     font-weight: 400;
-    font-size: 24px;
+    font-size: 36px;
     line-height: 1.04167;
+    margin-bottom: 6px;
 }
 
 .transaction-banner--complete {
