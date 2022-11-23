@@ -116,7 +116,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |
           |Rheolaeth Dyledion
           |Hunanasesiad
-          |HGwasanaeth Cwsmeriaid Cymraeg CThEF
+          |Gwasanaeth Cwsmeriaid Cymraeg CThEF
           |HMRC
           |BX9 1ST
           |Datganiad
