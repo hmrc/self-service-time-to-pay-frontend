@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-@import helpers.{highlight, message_list}
-@import partials.tax_liabilities_summary
 @import helpers.forms.submit
 
 @this(
@@ -32,30 +30,56 @@
 )
 
 @main(
-    title = Messages("ssttp.arrangement.declaration.h1"),
+    title = messages("ssttp.arrangement.declaration.h1"),
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
 ) {
-    <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.declaration.h1")</h1>
+    <h1 class="govuk-heading-xl">@messages("ssttp.arrangement.declaration.h1")</h1>
 
     <div class="govuk-body">
 
-    <p>@Messages("ssttp.arrangement.declaration.cancel-if")</p>
+    <p>@messages("ssttp.arrangement.declaration.cancel-if")</p>
     <ul class="govuk-list govuk-list--bullet">
-        <li>@Messages("ssttp.arrangement.declaration.cancel-if.1")</li>
-        <li>@Messages("ssttp.arrangement.declaration.cancel-if.2")</li>
-        <li>@Messages("ssttp.arrangement.declaration.cancel-if.3")</li>
+        <li>@messages("ssttp.arrangement.declaration.cancel-if.1")</li>
+        <li>@messages("ssttp.arrangement.declaration.cancel-if.2")</li>
+        <li>@messages("ssttp.arrangement.declaration.cancel-if.3")</li>
     </ul>
-    <p>@Messages("ssttp.arrangement.declaration.warning.p1")</p>
-    <p>@Messages("ssttp.arrangement.declaration.warning.p2")</p>
-    <p>@Messages("ssttp.arrangement.declaration.warning.p3")</p>
-    <p>@Messages("ssttp.arrangement.declaration.agreement.p1")</p>
+    </div>
+<div class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        @messages("ssttp.arrangement.declaration.warning.p1")
+    </strong>
+</div>
 
+<div class="govuk-body">
+    <p>@messages("ssttp.arrangement.declaration.warning.p2")</p>
+        <p>@messages("ssttp.arrangement.declaration.warning.p3")</p>
+
+        <p>@messages("ssttp.arrangement.declaration.contact")</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>@messages("ssttp.arrangement.declaration.contact.bp1")</li>
+            <li>@messages("ssttp.arrangement.declaration.contact.bp2")</li>
+        </ul>
+
+        <p>@messages("ssttp.arrangement.declaration.contact.write")</p>
+
+        <pre class="govuk-body" style="white-space: pre-line">
+            @messages("ssttp.arrangement.declaration.contact.address.ln1")
+            @messages("ssttp.arrangement.declaration.contact.address.ln2")
+            @messages("ssttp.arrangement.declaration.contact.address.ln3")
+            @messages("ssttp.arrangement.declaration.contact.address.ln4")
+            @messages("ssttp.arrangement.declaration.contact.address.ln5")
+        </pre>
+
+        <p><strong>@messages("ssttp.arrangement.declaration.title")</strong></p>
+        <p>@messages("ssttp.arrangement.declaration.p1")</p>
+
+</div>
     @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submit(), 'class -> "group") {
       @submit('id -> "continue_button") {
-        @Messages("ssttp.arrangement.declaration.agreement.confirm")
+        @messages("ssttp.arrangement.declaration.agreement.confirm")
       }
     }
-
-    </div>
 
 }
