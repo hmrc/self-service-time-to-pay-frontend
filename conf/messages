@@ -378,6 +378,7 @@ ssttp.arrangement.complete.next = What happens next?
 ssttp.arrangement.complete.summary = We will send a letter by post confirming the set up of your Direct Debit instruction within 10 working days.
 ssttp.arrangement.complete.upfront-payment = Your upfront payment will be taken within 10 working days.
 ssttp.arrangement.complete.next-payment = Your next payment will be taken on {0} or the next working day.
+ssttp.arrangement.complete.24h = Your tax account will be updated with your payment plan within 24 hours.
 ssttp.arrangement.complete.feedback = What did you think of this service?
 ssttp.arrangement.complete.help.h2 = If you need to change your payment plan
 ssttp.arrangement.complete.help.p1 = Call the HMRC Helpline on 0300 123 1813.
