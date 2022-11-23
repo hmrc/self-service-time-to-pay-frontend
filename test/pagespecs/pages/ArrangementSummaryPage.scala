@@ -64,14 +64,19 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
 
       private val mainTextEnglish =
         """Your payment plan is set up
-          |Your Direct Debit mandate reference:
+          |Your payment reference is
           |123ABC123
-          |Print your payment plan
           |What happens next?
-          |HMRC will send you a letter within 5 days with your payment dates.
-          |Your upfront payment will be taken within 7 working days. Your next payment will be taken on 28th December 2019.
+          |We will send a letter by post confirming the set up of your Direct Debit instruction within 10 working days.
+          |
+          |Your next payment will be taken on 28th December 2019 or the next working day.
+          |
+          |Your tax account will be updated with your payment plan within 24 hours.
+          |
+          |View your payment plan
           |If you need to change your payment plan
-          |Call the HMRC Helpline on 0300 322 7015.
+          |Call the HMRC Helpline on 0300 123 1813.
+          |Go to tax account
           |What did you think of this service? (takes 30 seconds)
         """.stripMargin
 
@@ -79,12 +84,17 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
         """Cais yn llwyddiannus
           |Cyfeirnod mandad Debyd Uniongyrchol:
           |123ABC123
-          |Argraffu crynodeb o’ch taliadau
           |Yr hyn sy’n digwydd nesaf
           |Bydd CThEM yn anfon llythyr atoch cyn pen 5 diwrnod gyda’ch dyddiadau talu.
-          |Caiff eich taliad ymlaen llaw ei gymryd cyn pen 7 diwrnod gwaith. Caiff eich taliad nesaf ei gymryd ar 28ain Rhagfyr 2019.
+          |
+          |Your next payment will be taken on 28ain Rhagfyr 2019 or the next working day.
+          |
+          |Your tax account will be updated with your payment plan within 24 hours.
+          |
+          |View your payment plan
           |Os oes angen i chi newid eich cynllun talu
           |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.
+          |Ewch i’r cyfrif treth
           |Beth oedd eich barn am y gwasanaeth hwn? (mae’n cymryd 30 eiliad)
         """.stripMargin
     }
