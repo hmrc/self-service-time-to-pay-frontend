@@ -40,37 +40,45 @@
         appConfig: config.AppConfig
 )
 
+@hasUpfrontPayment = @{schedule.initialPayment > 0}
+
 @main(
-  title = Messages("ssttp.arrangement.complete.title"),
+  title = messages("ssttp.arrangement.complete.title"),
   maybeSidebarLinks = None,
   welshToggleEnabled = false,
   hasUserPanel = true
 ) {
     <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">@Messages("ssttp.arrangement.complete.title")</h1>
+        <h1 class="govuk-panel__title">@messages("ssttp.arrangement.complete.title")</h1>
         <div class="govuk-panel__body">
             @maybeDirectDebitReference.map { directDebitReference =>
-                @Messages("ssttp.arrangement.complete.ddref")<br/><strong>@directDebitReference</strong>
+                @messages("ssttp.arrangement.complete.ddref")<br/><strong>@directDebitReference</strong>
             }
         </div>
     </div>
 
-        <h2 class="govuk-heading-m">@Messages("ssttp.arrangement.complete.next")</h2>
+        <h2 class="govuk-heading-m">@messages("ssttp.arrangement.complete.next")</h2>
             <section class="govuk-body divider--bottom govuk-!-display-none-print">
-                <p>@Messages("ssttp.arrangement.complete.summary")</p>
-                <p>@Messages("ssttp.arrangement.complete.first-payment", language.Dates.wholeDate(schedule.initialPaymentScheduleDate))</p>
-                <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">@Messages("ssttp.arrangement.complete.view-plan")</a>
+                <p>@messages("ssttp.arrangement.complete.summary")</p>
+                <p>
+                @{ if (hasUpfrontPayment) messages("ssttp.arrangement.complete.upfront-payment")
+                    else ""
+                }
+                    <span>@messages("ssttp.arrangement.complete.next-payment", language.Dates.wholeDate(schedule.initialPaymentScheduleDate))</span>
+                </p>
+
+                <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">@messages("ssttp.arrangement.complete.view-plan")</a>
             </section>
-                <h2 class="govuk-heading-m">@Messages("ssttp.arrangement.complete.help.h2")</h2>
-            <div class="govuk-body">@Messages("ssttp.arrangement.complete.help.p1")</div>
+                <h2 class="govuk-heading-m">@messages("ssttp.arrangement.complete.help.h2")</h2>
+            <div class="govuk-body">@messages("ssttp.arrangement.complete.help.p1")</div>
 
             <a class="govuk-button" href=@{s"${appConfig.backToTaxAccountUrl}"} role="button">
             @messages("ssttp.not-sole-signatory.go-to-account")
             </a>
 
         <div class="govuk-body">
-            <a class="govuk-link" id="survey-link" href="@appConfig.logoutUrl">@Messages("ssttp.arrangement.complete.feedback")
-            </a> @Messages("ssttp.arrangement.complete.help.p2")
+            <a class="govuk-link" id="survey-link" href="@appConfig.logoutUrl">@messages("ssttp.arrangement.complete.feedback")
+            </a> @messages("ssttp.arrangement.complete.help.p2")
         </div>
 
     <div class="print-only">
