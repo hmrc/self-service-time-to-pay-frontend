@@ -66,7 +66,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
         """Your payment plan is set up
           |Your payment reference is
           |123ABC123
-          |What happens next?
+          |What happens next
           |We will send a letter by post confirming the set up of your Direct Debit instruction within 10 working days.
           |
           |Your next payment will be taken on 28th December 2019 or the next working day.
