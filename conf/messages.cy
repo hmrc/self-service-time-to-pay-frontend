@@ -146,19 +146,17 @@ ssttp.calculator.results.month.greater-then-six.header = A oes angen cynllun tal
 ssttp.calculator.results.month.greater-then-six.intro = Bydd y gyfradd llog a’r ad-daliad cyffredinol yn uwch pan fyddwch yn dewis cynllun talu hirach.
 
 ssttp.call-us.title = Ffoniwch ni
-ssttp.call-us.intro = Nid ydych yn gymwys i drefnu cynllun talu ar-lein.
 ssttp.call-us.p1 = Nid ydych yn gymwys i drefnu cynllun talu ar-lein.
-ssttp.call-us.p2 = Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar
-ssttp.call-us.p2.telephone = 0300 200 1900.
+ssttp.call-us.p2 = I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong> i siarad ag ymgynghorydd.
 ssttp.call-us.before-call.heading = Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
 ssttp.call-us.before-call.l1 = gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
 ssttp.call-us.before-call.l2 = eich manylion banc
-ssttp.call-us.before-call.l3 = manylion incwm a gwariant
-ssttp.call-us.likely-to-ask.heading = Rydym yn debygol o ofyn:
+ssttp.call-us.before-call.l3 = manylion eich incwm a’ch gwariant
+ssttp.call-us.likely-to-ask.heading = Rydym yn debygol o ofyn y canlynol:
 ssttp.call-us.likely-to-ask.l1 = beth rydych wedi’i wneud i geisio talu’r bil
 ssttp.call-us.likely-to-ask.l2 = a allwch dalu rhywfaint o’r bil nawr
 ssttp.call-us.opening-times.heading = Ein horiau agor yw:
-ssttp.call-us.opening-times.l1 = Dydd Llun i ddydd Gwener: 8:00 i 18:00
+ssttp.call-us.opening-times.l1 = Dydd Llun i ddydd Gwener: 08:30 i 17:00 (rydym ar gau ar benwythnosau a gwyliau banc)
 
 ssttp.direct-debit.unauthorized.title = Os oes angen i fwy nag un person awdurdodi Debyd Uniongyrchol
 ssttp.direct-debit.unauthorized.intro.p1 = Os oes angen mwy nag un llofnod i awdurdodi’r Debyd Uniongyrchol ar y cyfrif hwn, bydd angen i chi

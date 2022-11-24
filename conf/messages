@@ -206,20 +206,17 @@ ssttp.calculator.form.amount-due.decimal-places = Amount must not contain more t
 ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less than £100,000.00
 
 ssttp.call-us.title = Please call us
-ssttp.call-us.intro = You are not eligible to set up a payment plan online.
 ssttp.call-us.p1 = You are not eligible to set up a payment plan online.
-ssttp.call-us.p2 = For further support you can contact the Business Support Service and speak to an adviser on
-ssttp.call-us.p2.telephone = 0300 200 3835.
+ssttp.call-us.p2 = For further support you can contact the Payment Support Service and speak to an adviser on <strong>0300 200 3835</strong>.
 ssttp.call-us.before-call.heading = Before you call, make sure you have:
 ssttp.call-us.before-call.l1 = information on any savings or investments you have
 ssttp.call-us.before-call.l2 = your bank details
-ssttp.call-us.before-call.l3 = details of income and expenditure
+ssttp.call-us.before-call.l3 = details of income and spending
 ssttp.call-us.likely-to-ask.heading = We''re likely to ask:
 ssttp.call-us.likely-to-ask.l1 = what you''ve done to try to pay the bill
 ssttp.call-us.likely-to-ask.l2 = if you can pay some of the bill now
 ssttp.call-us.opening-times.heading = Our opening times are:
 ssttp.call-us.opening-times.l1 = Monday to Friday: 8am to 6pm
-ssttp.call-us.opening-times.l2 = Saturday: 8am to 4pm
 
 ssttp.direct-debit.unauthorized.title = If more then one person is required to authorise a Direct Debit
 ssttp.direct-debit.unauthorized.intro.p1 = If more then one sigature is required to authorise the Direct Debit on this account, you will need to
