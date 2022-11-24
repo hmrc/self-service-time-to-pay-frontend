@@ -71,8 +71,6 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |
           |Your next payment will be taken on 28th December 2019 or the next working day.
           |
-          |Your tax account will be updated with your payment plan within 24 hours.
-          |
           |View your payment plan
           |If you need to change your payment plan
           |Call the HMRC Helpline on 0300 123 1813.
@@ -89,12 +87,9 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |
           |Your next payment will be taken on 28ain Rhagfyr 2019 or the next working day.
           |
-          |Your tax account will be updated with your payment plan within 24 hours.
-          |
           |View your payment plan
           |Os oes angen i chi newid eich cynllun talu
           |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.
-          |Ewch i’r cyfrif treth
           |Beth oedd eich barn am y gwasanaeth hwn? (mae’n cymryd 30 eiliad)
         """.stripMargin
     }
