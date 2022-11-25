@@ -64,7 +64,7 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
         """Please call us
           |You are not eligible to set up a payment plan online.
           |
-          |For further support you can contact the Business Support Service and speak to an adviser on 0300 200 3835.
+          |For further support you can contact the Payment Support Service and speak to an adviser on 0300 200 3835.
           |
           |Before you call, make sure you have:
           |information on any savings or investments you have
@@ -85,11 +85,11 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
           |Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
           |gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
           |eich manylion banc
-          |Rydym yn debygol o ofyn:
+          |Rydym yn debygol o ofyn y canlynol:
           |beth rydych wedi’i wneud i geisio talu’r bil
           |a allwch dalu rhywfaint o’r bil nawr
           |Ein horiau agor yw:
-          |Dydd Llun i ddydd Gwener: 8:00 i 18:00
+          |Dydd Llun i ddydd Gwener: 08:30 i 17:00 (rydym ar gau ar benwythnosau a gwyliau banc)
         """.stripMargin
     }
 
