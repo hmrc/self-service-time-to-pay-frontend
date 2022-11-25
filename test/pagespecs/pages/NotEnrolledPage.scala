@@ -68,8 +68,8 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Before you call, make sure you have:
           |information on any savings or investments you have
           |your bank details
-          |We're likely to ask:
-          |what you've done to try to pay the bill
+          |We’re likely to ask:
+          |what you’ve done to try to pay the bill
           |if you can pay some of the bill now
           |Our opening times are:
           |Monday to Friday: 8am to 6pm"""

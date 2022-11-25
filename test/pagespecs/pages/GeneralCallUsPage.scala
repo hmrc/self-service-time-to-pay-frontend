@@ -69,8 +69,9 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
           |Before you call, make sure you have:
           |information on any savings or investments you have
           |your bank details
-          |We're likely to ask:
-          |what you've done to try to pay the bill
+          |details of your income and spending
+          |We’re likely to ask:
+          |what you’ve done to try to pay the bill
           |if you can pay some of the bill now
           |Our opening times are:
           |Monday to Friday: 8am to 6pm"""
@@ -85,6 +86,7 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
           |Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
           |gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
           |eich manylion banc
+          |manylion eich incwm a’ch gwariant
           |Rydym yn debygol o ofyn y canlynol:
           |beth rydych wedi’i wneud i geisio talu’r bil
           |a allwch dalu rhywfaint o’r bil nawr
