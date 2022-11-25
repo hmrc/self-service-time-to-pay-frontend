@@ -450,9 +450,9 @@ ssttp.calculator.check-calculation.cant-afford.p4 = Gallwch hefyd ddefnyddio <a 
 ssttp.calculator.check-calculation.cant-afford.p5 = Os ydych y tu allan i’r DU: <b>+44 2890 538 192</b>
 
 ssttp.calculator.please-call-us.cant-afford.summary = Os na allwch ddefnyddio meddalwedd adnabod lleferydd
-ssttp.calculator.please-call-us.cant-afford.p1 = Dysgwch sut i <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEM os oes angen cymorth ychwanegol arnoch.</a>
+ssttp.calculator.please-call-us.cant-afford.p1 = Cael gwybod sut i <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEM os oes angen cymorth ychwanegol arnoch.</a>
 ssttp.calculator.please-call-us.cant-afford.p2 = Gallwch hefyd ddefnyddio <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> (Saesneg yn unig) Os na allwch glywed neu siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>.
-ssttp.calculator.please-call-us.cant-afford.p3= Os ydych y tu allan i’r DU: <b>+44 2890 538 192</b>
+ssttp.calculator.please-call-us.cant-afford.p3= Os ydych y tu allan i’r DU: <b>+44 300 200 1900</b>
 
 # Session timeout dialog and timed out page
 timeoutDialog.message.logged-in =  Er eich diogelwch, byddwn yn eich allgofnodi cyn pen
