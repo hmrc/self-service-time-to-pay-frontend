@@ -63,12 +63,12 @@ class DebtTooLargePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends 
       private val mainTextEnglish =
         """Please call us
           |To be eligible to set up a payment plan online the tax you owe must be £30,000 or less.
-          |For further support you can contact the Business Support Service and speak to an adviser on 0300 200 3835.
+          |For further support you can contact the Payment Support Service and speak to an adviser on 0300 200 3835.
           |Before you call, make sure you have:
           |information on any savings or investments you have
           |your bank details
-          |We're likely to ask:
-          |what you've done to try to pay the bill
+          |We’re likely to ask:
+          |what you’ve done to try to pay the bill
           |if you can pay some of the bill now
           |Our opening times are:
           |Monday to Friday: 8am to 6pm"""
@@ -76,18 +76,18 @@ class DebtTooLargePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends 
 
       private val mainTextWelsh =
         """Ffoniwch ni
-          |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £30,000 neu lai.
+          |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £30,000 neu’n llai.
           |
-          |Am gymorth pellach, gallwch gysylltu â’r Gwasanaeth Cymorth Busnes a siarad ag ymgynghorydd ar 0300 200 1900.
+          |I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i siarad ag ymgynghorydd.
           |
           |Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
           |gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
           |eich manylion banc
-          |Rydym yn debygol o ofyn:
+          |Rydym yn debygol o ofyn y canlynol:
           |beth rydych wedi’i wneud i geisio talu’r bil
           |a allwch dalu rhywfaint o’r bil nawr
           |Ein horiau agor yw:
-          |Dydd Llun i ddydd Gwener: 8:00 i 18:00
+          |Dydd Llun i ddydd Gwener: 08:30 i 17:00 (rydym ar gau ar benwythnosau a gwyliau banc)
         """.stripMargin
     }
 
