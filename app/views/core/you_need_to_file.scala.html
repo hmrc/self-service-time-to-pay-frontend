@@ -27,36 +27,34 @@
 )
 
 @main(
-    title = Messages("ssttp.you-need-to-file.title")
+    title = messages("ssttp.you-need-to-file.title")
 ) {
-    <header class="page-header text">
-        <h1 class="govuk-heading-xl">@Messages("ssttp.you-need-to-file.title")</h1>
-    </header>
+        <h1 class="govuk-heading-xl">@messages("ssttp.you-need-to-file.title")</h1>
 
     <section class="govuk-body ">
 
-        <p>@Messages("ssttp.you-need-to-file.intro")</p>
+        <p>@messages("ssttp.you-need-to-file.intro")</p>
 
         <p>
-            <a class="govuk-link" href="https://online.hmrc.gov.uk/">@Messages("ssttp.you-need-to-file.check-account.link")</a>
-            @Messages("ssttp.you-need-to-file.check-account")
+            <a class="govuk-link" href="https://online.hmrc.gov.uk/">@messages("ssttp.you-need-to-file.check-account.link")</a>
+            @messages("ssttp.you-need-to-file.check-account")
         </p>
-        <p>@{Html(Messages("ssttp.you-need-to-file..phone-number"))}</p>
+        <p>@{Html(messages("ssttp.you-need-to-file..phone-number"))}</p>
 
     </section>
     <details class="govuk-details">
-        <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.please-call-us.cant-afford.summary")</span></summary>
+        <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@messages("ssttp.calculator.please-call-us.cant-afford.summary")</span></summary>
         <div class="govuk-details__text">
-            <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p1"))}</p>
-            <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p2"))}</p>
-            <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p3"))}</p>
+            <p>@{Html(messages("ssttp.calculator.please-call-us.cant-afford.p1"))}</p>
+            <p>@{Html(messages("ssttp.calculator.please-call-us.cant-afford.p2"))}</p>
+            <p>@{Html(messages("ssttp.calculator.please-call-us.cant-afford.p3"))}</p>
         </div>
     </details>
     <section class="govuk-body">
-        <h3>@Messages("ssttp.call-us.opening-times.heading")</h3>
+        <h3>@messages("ssttp.call-us.opening-times.heading")</h3>
 
         <ul class="govuk-list--bullet">
-            <li>@Messages("ssttp.call-us.opening-times.l1")</li>
+            <li>@messages("ssttp.call-us.opening-times.l1")</li>
         </ul>
     </section>
 }
