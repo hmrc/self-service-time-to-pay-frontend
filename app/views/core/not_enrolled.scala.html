@@ -28,43 +28,41 @@
 )
 
     @main(
-        title = Messages("ssttp.call-us.title")
+        title = messages("ssttp.call-us.title")
     ){
-        <header class="page-header text">
-            <h1 class="govuk-heading-xl">@Messages("ssttp.call-us.title")</h1>
-        </header>
+            <h1 class="govuk-heading-xl">@messages("ssttp.call-us.title")</h1>
 
         <section class="govuk-body">
 
-        <p>@Messages("ssttp.please-call-us.p1")</p>
+        <p>@messages("ssttp.please-call-us.p1")</p>
 
-        <p>@Messages("ssttp.please-call-us.p2-part1") <strong class="bold">@Messages("ssttp.please-call-us.p2.phone-number")</strong> @Messages("ssttp.please-call-us.p2-part2")</p>
+        <p>@{Html(messages("ssttp.please-call-us.p2-part1"))}</p>
             <details class="govuk-details">
-                <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.please-call-us.cant-afford.summary")</span></summary>
+                <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@messages("ssttp.calculator.please-call-us.cant-afford.summary")</span></summary>
                 <div class="govuk-details__text">
-                    <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p1"))}</p>
-                    <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p2"))}</p>
-                    <p>@{Html(Messages("ssttp.calculator.please-call-us.cant-afford.p3"))}</p>
+                    <p>@{Html(messages("ssttp.calculator.please-call-us.cant-afford.p1"))}</p>
+                    <p>@{Html(messages("ssttp.calculator.please-call-us.cant-afford.p2"))}</p>
+                    <p>@{Html(messages("ssttp.calculator.please-call-us.cant-afford.p3"))}</p>
                 </div>
             </details>
-        <h3>@Messages("ssttp.call-us.before-call.heading")</h3>
+        <p>@messages("ssttp.call-us.before-call.heading")</p>
 
         <ul class="govuk-list--bullet">
-            <li>@Messages("ssttp.call-us.before-call.l1")</li>
-            <li>@Messages("ssttp.call-us.before-call.l2")</li>
+            <li>@messages("ssttp.call-us.before-call.l1")</li>
+            <li>@messages("ssttp.call-us.before-call.l2")</li>
         </ul>
 
-        <h3>@Messages("ssttp.call-us.likely-to-ask.heading")</h3>
+        <p>@messages("ssttp.call-us.likely-to-ask.heading")</p>
 
         <ul class="govuk-list--bullet">
-            <li>@Messages("ssttp.call-us.likely-to-ask.l1")</li>
-            <li>@Messages("ssttp.call-us.likely-to-ask.l2")</li>
+            <li>@messages("ssttp.call-us.likely-to-ask.l1")</li>
+            <li>@messages("ssttp.call-us.likely-to-ask.l2")</li>
         </ul>
 
-        <h3>@Messages("ssttp.call-us.opening-times.heading")</h3>
+        <p>@messages("ssttp.call-us.opening-times.heading")</p>
 
         <ul class="govuk-list--bullet">
-            <li>@Messages("ssttp.call-us.opening-times.l1")</li>
+            <li>@messages("ssttp.call-us.opening-times.l1")</li>
         </ul>
 
         </section>

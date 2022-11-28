@@ -326,10 +326,8 @@ ssttp.not.enrolled.tax-account-link = Ymrestrwch i fwrw golwg ar eich cyfrif tre
 ssttp.not.enrolled.tax-account = , yna gallwch ddefnyddio’r gwasanaeth hwn i drefnu cynllun talu.
 
 #not-enrolled-please-call-us
-ssttp.please-call-us.p1 = Efallai y gallwch drefnu cynllun talu dros y ffôn, ond nid ydych yn gymwys i gael cynllun talu ar-lein.
-ssttp.please-call-us.p2-part1 = Rydym yn argymell eich bod yn siarad ag ymgynghorydd ar
-ssttp.please-call-us.p2.phone-number = 0300 200 1900
-ssttp.please-call-us.p2-part2 = yng Ngwasanaeth Cwsmeriaid Cymraeg CThEM i drafod eich opsiynau talu.
+ssttp.please-call-us.p1 = Mae’n bosibl y gallwch drefnu cynllun talu dros y ffôn o hyd, ond nid ydych yn gymwys i gael cynllun talu ar-lein.
+ssttp.please-call-us.p2-part1 = Rydym yn argymell eich bod yn siarad ag ymgynghorydd am eich opsiynau talu. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong>.
 
 #not-sole-signatory
 ssttp.not-sole-signatory.title = Ni allwch drefnu Debyd Uniongyrchol ar-lein

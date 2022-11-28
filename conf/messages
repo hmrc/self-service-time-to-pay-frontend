@@ -391,9 +391,7 @@ ssttp.not.enrolled.tax-account = , then you can use this service to set up a pay
 
 #not-enrolled-please-call-us
 ssttp.please-call-us.p1 = You may still be able to set up a payment plan over the phone, but you are not eligible for an online payment plan.
-ssttp.please-call-us.p2-part1 = We recommend you speak to an adviser on
-ssttp.please-call-us.p2-part2 = at the Business Support Service to talk about your payment options.
-ssttp.please-call-us.p2.phone-number = 0300 200 3835
+ssttp.please-call-us.p2-part1 = We recommend you speak to an adviser on <strong>0300 200 3835</strong> at the Payment Support Service to talk about your payment options.
 
 #not-sole-signatory
 ssttp.not-sole-signatory.title = You cannot set up a Direct Debit online
