@@ -76,14 +76,14 @@ class DebtTooLargePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends 
 
       private val mainTextWelsh =
         """Ffoniwch ni
-          |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £30,000 neu lai.
+          |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £30,000 neu’n llai.
           |
           |I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i siarad ag ymgynghorydd.
           |
           |Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
           |gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
           |eich manylion banc
-          |Rydym yn debygol o ofyn:
+          |Rydym yn debygol o ofyn y canlynol:
           |beth rydych wedi’i wneud i geisio talu’r bil
           |a allwch dalu rhywfaint o’r bil nawr
           |Ein horiau agor yw:
