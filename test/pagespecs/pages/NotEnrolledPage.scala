@@ -63,7 +63,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         """Please call us
           |You may still be able to set up a payment plan over the phone, but you are not eligible for an online payment plan.
           |
-          |We recommend you speak to an adviser on 0300 200 3835 at the Business Support Service to talk about your payment options.
+          |We recommend you speak to an adviser on 0300 200 3835 at the Payment Support Service to talk about your payment options.
           |
           |Before you call, make sure you have:
           |information on any savings or investments you have
@@ -79,7 +79,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         """Ffoniwch ni
           |Efallai y gallwch drefnu cynllun talu dros y ffôn, ond nid ydych yn gymwys i gael cynllun talu ar-lein.
           |
-          |Rydym yn argymell eich bod yn siarad ag ymgynghorydd ar 0300 200 1900 yng Ngwasanaeth Cwsmeriaid Cymraeg CThEM i drafod eich opsiynau talu.
+          |Rydym yn argymell eich bod yn siarad ag ymgynghorydd am eich opsiynau talu. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900.
           |
           |Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
           |gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
@@ -88,7 +88,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |beth rydych wedi’i wneud i geisio talu’r bil
           |a allwch dalu rhywfaint o’r bil nawr
           |Ein horiau agor yw:
-          |Dydd Llun i ddydd Gwener: 8:00 i 18:00
+          |Dydd Llun i ddydd Gwener: 08:30 i 17:00 (rydym ar gau ar benwythnosau a gwyliau banc)
         """.stripMargin
     }
 
