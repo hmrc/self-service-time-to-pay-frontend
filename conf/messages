@@ -402,13 +402,12 @@ ssttp.not-sole-signatory.go-to-account = Go to tax account
 
 ssttp.debt-too-large.h1 = Please call us
 ssttp.debt-too-large.p1 = To be eligible to set up a payment plan online the tax you owe must be £{0} or less.
-ssttp.debt-too-large.p2 = For further support you can contact the Business Support Service and speak to an adviser on
-ssttp.debt-too-large.p2.number = 0300 200 3835.
+ssttp.debt-too-large.p2 = For further support you can contact the Payment Support Service and speak to an adviser on <strong>0300 200 3835</strong>.
 ssttp.debt-too-large.before.you.call.h1 = Before you call, make sure you have:
 ssttp.debt-too-large.before.you.call.l1 = information on any savings or investments you have
 ssttp.debt-too-large.before.you.call.l2 = your bank details
-ssttp.debt-too-large.likely.to.ask.h1 = We''re likely to ask:
-ssttp.debt-too-large.likely.to.ask.l1 = what you''ve done to try to pay the bill
+ssttp.debt-too-large.likely.to.ask.h1 = We’re likely to ask:
+ssttp.debt-too-large.likely.to.ask.l1 = what you’ve done to try to pay the bill
 ssttp.debt-too-large.likely.to.ask.l2 = if you can pay some of the bill now
 ssttp.debt-too-large.opening.hours.h1 = Our opening times are:
 ssttp.debt-too-large.opening.hours.l1 = Monday to Friday: 8am to 6pm
