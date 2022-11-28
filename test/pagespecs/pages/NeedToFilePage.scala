@@ -65,14 +65,26 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
           |To be eligible to set up a payment plan online you need to have filed your Self Assessment tax return. Once you have done this, you can return to the service.
           |
           |Go to your tax account to file your Self Assessment tax return.
+          |
+          |For further support you can contact the Payment Support Service and speak to an adviser on 0300 200 3835.
+          |
+          |If you cannot use speech recognition software
+          |Our opening times are:
+          |Monday to Friday: 8am to 6pm
         """
           .stripMargin
 
       private val mainTextWelsh =
         """Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn
-          |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid eich bod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
+          |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i chi fod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
           |
-          |Ewch i’ch cyfrif treth i gyflwyno’ch Ffurflen Dreth Hunanasesiad.
+          |Ewch i’ch cyfrif treth er mwyn cyflwyno’ch Ffurflen Dreth Hunanasesiad.
+          |
+          |I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i siarad ag ymgynghorydd.
+          |
+          |Os na allwch ddefnyddio meddalwedd adnabod lleferydd
+          |Ein horiau agor yw:
+          |Dydd Llun i ddydd Gwener: 08:30 i 17:00 (rydym ar gau ar benwythnosau a gwyliau banc)
         """.stripMargin
     }
 
