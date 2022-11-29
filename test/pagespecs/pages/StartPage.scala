@@ -98,12 +98,12 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
           |rydych wedi cyflwyno’ch Ffurflen Dreth ar gyfer 2019 i 2020
           |mae arnoch £30,000 neu lai
           |nid oes gennych unrhyw ddyledion treth eraill
-          |nid ydych wedi sefydlu cynlluniau talu eraill gyda CThEM
+          |nid ydych wedi sefydlu cynlluniau talu eraill gyda CThEF
           |Gallwch ddefnyddio’r gwasanaeth hwn cyn pen 60 diwrnod o’r dyddiad cau ar gyfer talu.
           |
           |Dechrau nawr
           |Cyn i chi ddechrau
-          |Bwriad CThEM yw bod hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch yn gwneud hynny, mae’n bosibl y bydd CThEM yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.
+          |Bwriad CThEF yw bod hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch yn gwneud hynny, mae’n bosibl y bydd CThEF yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.
           |
           |""".stripMargin
     }

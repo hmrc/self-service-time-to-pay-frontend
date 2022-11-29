@@ -49,7 +49,7 @@ ssttp.amounts_due.amount = Swm:
 
 #help and advice sidebar
 ssttp.sidebar.help-and-advice.title = Help a chyngor
-ssttp.sidebar.help-and-advice.ways-to-pay = Gwahanol ddulliau o dalu CThEM
+ssttp.sidebar.help-and-advice.ways-to-pay = Gwahanol ddulliau o dalu CThEF
 ssttp.sidebar.help-and-advice.payments-on-account = Dysgwch am daliadau ar gyfrif
 ssttp.sidebar.help-and-advice.dont-pay = Yr hyn sy’n digwydd os na fyddwch yn talu’ch bil
 ssttp.sidebar.help-and-advice.feedback = Gadewch adborth a rhowch wybod i ni beth yw’ch barn am y gwasanaeth hwn.
@@ -76,13 +76,13 @@ ssttp.landing.p3 = I fod yn gymwys i sefydlu cynllun talu ar-lein, mae’n rhaid
 ssttp.landing.p3list.1 = rydych wedi cyflwyno’ch Ffurflen Dreth ar gyfer 2019 i 2020
 ssttp.landing.p3list.2 = mae arnoch £{0} neu lai
 ssttp.landing.p3list.3 = nid oes gennych unrhyw ddyledion treth eraill
-ssttp.landing.p3list.4 = nid ydych wedi sefydlu cynlluniau talu eraill gyda CThEM
+ssttp.landing.p3list.4 = nid ydych wedi sefydlu cynlluniau talu eraill gyda CThEF
 ssttp.landing.p4 = Gallwch ddefnyddio’r gwasanaeth hwn cyn pen 60 diwrnod o’r dyddiad cau ar gyfer talu.
 
 ssttp.landing.start-button.label = Dechrau nawr
 
 ssttp.landing.before-you-start = Cyn i chi ddechrau
-ssttp.landing.before-you-start.p1 = Bwriad CThEM yw bod hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch yn gwneud hynny, mae’n bosibl y bydd CThEM yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.
+ssttp.landing.before-you-start.p1 = Bwriad CThEF yw bod hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch yn gwneud hynny, mae’n bosibl y bydd CThEF yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.
 
 #calculator
 
@@ -287,9 +287,9 @@ ssttp.arrangement.direct-debit.confirmation.title = Gwiriwch fanylion eich Debyd
 ssttp.arrangement.direct-debit.confirmation.total-payment = Cyfanswm y taliad fydd:
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary = Rydych wedi’ch gwarchod gan y Warant Debyd Uniongyrchol
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.title = Cyfarwyddyd i’ch banc neu gymdeithas adeiladu i dalu drwy Ddebyd Uniongyrchol
-ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.1 = Cyllid a Thollau EM (CThEM) / HM Revenue & Customs (HMRC)
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.1 = Cyllid a Thollau EM (CThEF) / HM Revenue & Customs (HMRC)
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.2 = Adran Debydau Uniongyrchol / Direct Debit Section
-ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.3 = Swyddfa Cyfrifon CThEM / HMRC Accounts Office
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.3 = Swyddfa Cyfrifon CThEF / HMRC Accounts Office
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.4 = Cumbernauld
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.5 = Glasgow G67 1YZ
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.phone.1 = Telephone: 0300 200 1900
@@ -297,7 +297,7 @@ ssttp.arrangement.direct-debit.confirmation.bank-instruction.phone.2 = Ffôn tes
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.phone.3 = Y tu allan i’r DU: +44 300 200 1900
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.label = Rhif defnyddiwr y gwasanaeth:
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.service-user.number = 919342
-ssttp.arrangement.direct-debit.confirmation.bank-instruction.text = Talwch Ddebydau Uniongyrchol i CThEM o’r cyfrif a nodir yn y cyfarwyddyd hwn, yn amodol ar y sicrwydd diogelwch a sicrhawyd gan y Warant Debyd Uniongyrchol. Rwyf yn deall y gall y cyfarwyddyd hwn aros gyda CThEM ac, os felly, y caiff manylion eu trosglwyddo’n electronig i’m banc/cymdeithas adeiladu.
+ssttp.arrangement.direct-debit.confirmation.bank-instruction.text = Talwch Ddebydau Uniongyrchol i CThEF o’r cyfrif a nodir yn y cyfarwyddyd hwn, yn amodol ar y sicrwydd diogelwch a sicrhawyd gan y Warant Debyd Uniongyrchol. Rwyf yn deall y gall y cyfarwyddyd hwn aros gyda CThEF ac, os felly, y caiff manylion eu trosglwyddo’n electronig i’m banc/cymdeithas adeiladu.
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.do-not-send-to-bank = Peidiwch ag anfon y ffurflen hon i’ch banc.
 ssttp.arrangement.instalment-summary.total-interest = Cyfanswm y llog:
 ssttp.arrangement.direct-debit.confirmation.confirm-payment = Yn eich blaen
@@ -384,7 +384,7 @@ ssttp.you-need-to-request-access-to-self-assessment.button-label = Gwneud cais i
  accessibility-statement-p3b = www.tax.service.gov.uk/pay-what-you-owe-in-instalments/
  accessibility-statement-h2 = Defnyddio’r gwasanaeth hwn
  accessibility-statement-p4 = Mae’r gwasanaeth hwn yn eich galluogi i sefydlu cynllun talu i dalu taliadau treth Hunanasesiad hwyr fesul rhandaliad, os ydych yn gymwys.
- accessibility-statement-p5 = Mae’r gwasanaeth hwn yn cael ei redeg gan Gyllid a Thollau EM (CThEM). Rydym am i gymaint o bobl â phosibl allu defnyddio’r gwasanaeth hwn. Mae hyn yn golygu y dylech allu gwneud y canlynol:
+ accessibility-statement-p5 = Mae’r gwasanaeth hwn yn cael ei redeg gan Gyllid a Thollau EM (CThEF). Rydym am i gymaint o bobl â phosibl allu defnyddio’r gwasanaeth hwn. Mae hyn yn golygu y dylech allu gwneud y canlynol:
  accessibility-statement-l1-item1 = •	newid lliwiau, lefelau cyferbyniad a ffontiau
  accessibility-statement-l1-item2 = •	chwyddo’r sgrin hyd at 300% heb i’r testun ddisgyn oddi ar y sgrin
  accessibility-statement-l1-item3 = •	mynd o ddechrau’r gwasanaeth i’r diwedd gan ddefnyddio bysellfwrdd yn unig
@@ -412,11 +412,11 @@ ssttp.you-need-to-request-access-to-self-assessment.button-label = Gwneud cais i
  accessibility-statement-p11c = (ECNI) os ydych yn byw yng Ngogledd Iwerddon.
  accessibility-statement-h6 = Cysylltu â ni dros y ffôn neu gael ymweliad personol gennym
  accessibility-statement-p12 = Rydym yn cynnig gwasanaeth text relay os ydych yn fyddar, â nam ar eich clyw neu os oes gennych nam ar eich lleferydd.
- accessibility-statement-p13 = Gallwn ddarparu dehonglydd Iaith Arwyddion Prydain (BSL), neu gallwch drefnu ymweliad gan ymgynghorydd CThEM i’ch helpu i gwblhau’r gwasanaeth.
+ accessibility-statement-p13 = Gallwn ddarparu dehonglydd Iaith Arwyddion Prydain (BSL), neu gallwch drefnu ymweliad gan ymgynghorydd CThEF i’ch helpu i gwblhau’r gwasanaeth.
  accessibility-statement-p14 = Gwybodaeth am sut i
  accessibility-statement-a7 =  gysylltu â ni
  accessibility-statement-h7 = Gwybodaeth dechnegol am hygyrchedd y gwasanaeth hwn
- accessibility-statement-p15 = Mae CThEM wedi ymrwymo i wneud y gwasanaeth hwn yn hygyrch, yn unol â Rheoliadau Hygyrchedd Cyrff Sector Cyhoeddus (Gwefannau a Chymwysiadau Symudol) (Rhif 2) 2018.
+ accessibility-statement-p15 = Mae CThEF wedi ymrwymo i wneud y gwasanaeth hwn yn hygyrch, yn unol â Rheoliadau Hygyrchedd Cyrff Sector Cyhoeddus (Gwefannau a Chymwysiadau Symudol) (Rhif 2) 2018.
  accessibility-statement-p16a = Mae’r gwasanaeth hwn yn cydymffurfio’n rhannol â
  accessibility-statement-a8 = safon AA Canllawiau Hygyrchedd Cynnwys y We, fersiwn 2.1
  accessibility-statement-p16b =.
@@ -435,7 +435,7 @@ ssttp.you-need-to-request-access-to-self-assessment.button-label = Gwneud cais i
  accessibility-statement-p26 = Cafodd y gwasanaeth ei brofi ddiwethaf ar 14 Chwefror 2019 a gwiriwyd ei fod yn cydymffurfio â safon ‘AA’ Canllawiau Hygyrchedd Cynnwys y We, fersiwn 2.1.
  accessibility-statement-p27a = Adeiladwyd y gwasanaeth gan ddefnyddio rhannau a brofwyd gan y
  accessibility-statement-a9 =  Ganolfan Hygyrchedd Digidol (Digital Accessibility Centre)
- accessibility-statement-p27b = . Profwyd y gwasanaeth llawn gan CThEM, ac roedd y gwaith o brofi’r gwasanaeth yn cynnwys defnyddwyr anabl.
+ accessibility-statement-p27b = . Profwyd y gwasanaeth llawn gan CThEF, ac roedd y gwaith o brofi’r gwasanaeth yn cynnwys defnyddwyr anabl.
  accessibility-statement-p28 = Paratowyd y dudalen hon ar 26 Chwefror 2020. Cafodd ei diweddaru ddiwethaf ar 11 Chwefror 2021.
 
 
@@ -445,7 +445,7 @@ ssttp.calculator.check-calculation.cant-afford.p2.1 = Rydym yn argymell eich bod
 ssttp.calculator.check-calculation.cant-afford.p2.2 = 0300 200 3835
 ssttp.calculator.check-calculation.cant-afford.p2.3 = yng Ngwasanaeth Cwsmeriaid Cymraeg CThEF i drafod eich opsiynau talu.
 
-ssttp.calculator.check-calculation.cant-afford.p3 = Os na allwch ddefnyddio meddalwedd adnabod lleferydd, dysgwch sut i <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEM os oes angen cymorth ychwanegol arnoch.</a>
+ssttp.calculator.check-calculation.cant-afford.p3 = Os na allwch ddefnyddio meddalwedd adnabod lleferydd, dysgwch sut i <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEF os oes angen cymorth ychwanegol arnoch.</a>
 ssttp.calculator.check-calculation.cant-afford.p4 = Gallwch hefyd ddefnyddio <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> (Saesneg yn unig) os na allwch glywed neu siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>.
 ssttp.calculator.check-calculation.cant-afford.p5 = Os ydych y tu allan i’r DU: <b>+44 2890 538 192</b>
 
