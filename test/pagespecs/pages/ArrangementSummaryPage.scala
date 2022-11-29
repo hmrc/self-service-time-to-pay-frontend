@@ -39,7 +39,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Your payment plan is set up"
-    case Languages.Welsh   => "Cais yn llwyddiannus"
+    case Languages.Welsh   => "Mae’ch cynllun talu wedi’i sefydlu"
   }
 
   object Expected {
@@ -79,17 +79,21 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
         """.stripMargin
 
       private val mainTextWelsh =
-        """Cais yn llwyddiannus
-          |Cyfeirnod mandad Debyd Uniongyrchol:
+        """Mae’ch cynllun talu wedi’i sefydlu
+          |Eich cyfeirnod talu yw
           |123ABC123
           |Yr hyn sy’n digwydd nesaf
-          |Bydd CThEM yn anfon llythyr atoch cyn pen 5 diwrnod gyda’ch dyddiadau talu.
+          |Byddwn yn anfon llythyr atoch drwy’r post i gadarnhau bod eich cyfarwyddyd Debyd Uniongyrchol wedi’i sefydlu cyn pen 10 diwrnod gwaith.
           |
-          |Your next payment will be taken on 28ain Rhagfyr 2019 or the next working day.
+          |Caiff eich taliad nesaf ei gymryd ar 28ain Rhagfyr 2019 neu ar y diwrnod gwaith nesaf.
           |
-          |View your payment plan
+          |Bwrw golwg dros eich cynllun talu
+          |
           |Os oes angen i chi newid eich cynllun talu
-          |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.
+          |
+          |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900.
+          |
+          |Ewch i’r cyfrif treth
           |Beth oedd eich barn am y gwasanaeth hwn? (mae’n cymryd 30 eiliad)
         """.stripMargin
     }

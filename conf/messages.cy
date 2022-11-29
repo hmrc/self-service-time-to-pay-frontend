@@ -320,6 +320,7 @@ ssttp.arrangement.complete.feedback = Beth oedd eich barn am y gwasanaeth hwn?
 ssttp.arrangement.complete.help.h2 = Os oes angen i chi newid eich cynllun talu
 ssttp.arrangement.complete.help.p1 = Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900.
 ssttp.arrangement.complete.help.p2 = (mae’n cymryd 30 eiliad)
+ssttp.arrangement.complete.go-to-tax-account = 	Ewch i’r cyfrif treth
 
 #Service unavailable you do not have an sa enrollment page
 ssttp.not.enrolled.title = Mae’n rhaid eich bod wedi’ch ymrestru i fwrw golwg ar eich cyfrif Hunanasesiad
