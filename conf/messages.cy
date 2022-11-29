@@ -308,16 +308,19 @@ ssttp.arrangement.direct-debit.assistance.total.hint = gan gynnwys llog
 ssttp.arrangement.direct-debit.assistance.alert = Methodd eich Debyd Uniongyrchol â chael ei gyflwyno.
 ssttp.arrangement.direct-debit.assistance.alert.1 = Rydym yn cael anawsterau yn cyflwyno’ch cyfarwyddyd Debyd Uniongyrchol. Ffoniwch ni i gwblhau’ch cais.
 
-ssttp.arrangement.complete.title = Cais yn llwyddiannus
-ssttp.arrangement.complete.ddref = Cyfeirnod mandad Debyd Uniongyrchol:
+ssttp.arrangement.complete.title = Mae’ch cynllun talu wedi’i sefydlu
+ssttp.arrangement.complete.ddref = Eich cyfeirnod talu yw
+ssttp.arrangement.complete.view-plan = Bwrw golwg dros eich cynllun talu
 ssttp.arrangement.complete.print-label = Argraffu crynodeb o’ch taliadau
 ssttp.arrangement.complete.next = Yr hyn sy’n digwydd nesaf
-ssttp.arrangement.complete.summary = Bydd CThEM yn anfon llythyr atoch cyn pen 5 diwrnod gyda’ch dyddiadau talu.
-ssttp.arrangement.complete.first-payment = Caiff eich taliad ymlaen llaw ei gymryd cyn pen 7 diwrnod gwaith. Caiff eich taliad nesaf ei gymryd ar {0}.
+ssttp.arrangement.complete.summary = Byddwn yn anfon llythyr atoch drwy’r post i gadarnhau bod eich cyfarwyddyd Debyd Uniongyrchol wedi’i sefydlu cyn pen 10 diwrnod gwaith.
+ssttp.arrangement.complete.upfront-payment = Caiff eich taliad ymlaen llaw ei gymryd cyn pen 10 diwrnod gwaith.
+ssttp.arrangement.complete.next-payment  = Caiff eich taliad nesaf ei gymryd ar {0} neu ar y diwrnod gwaith nesaf.
 ssttp.arrangement.complete.feedback = Beth oedd eich barn am y gwasanaeth hwn?
 ssttp.arrangement.complete.help.h2 = Os oes angen i chi newid eich cynllun talu
-ssttp.arrangement.complete.help.p1 = Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEM ar 0300 200 1900.
+ssttp.arrangement.complete.help.p1 = Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900.
 ssttp.arrangement.complete.help.p2 = (mae’n cymryd 30 eiliad)
+ssttp.arrangement.complete.go-to-tax-account = 	Ewch i’r cyfrif treth
 
 #Service unavailable you do not have an sa enrollment page
 ssttp.not.enrolled.title = Mae’n rhaid eich bod wedi’ch ymrestru i fwrw golwg ar eich cyfrif Hunanasesiad
