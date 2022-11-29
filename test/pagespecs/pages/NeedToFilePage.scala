@@ -36,7 +36,7 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "File your return to use this service"
-    case Languages.Welsh   => "Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn"
+    case Languages.Welsh   => "Cyflwynwch eich Ffurflen Dreth er mwyn defnyddio’r gwasanaeth hwn"
   }
 
   object Expected {
@@ -75,7 +75,7 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
           .stripMargin
 
       private val mainTextWelsh =
-        """Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn
+        """Cyflwynwch eich Ffurflen Dreth er mwyn defnyddio’r gwasanaeth hwn
           |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i chi fod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
           |
           |Ewch i’ch cyfrif treth er mwyn cyflwyno’ch Ffurflen Dreth Hunanasesiad.

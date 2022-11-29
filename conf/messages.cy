@@ -164,7 +164,7 @@ ssttp.direct-debit.unauthorized.intro.p1.link = lenwi fersiwn bapur o’r ffurfl
 ssttp.direct-debit.unauthorized.intro.p2 = Bydd angen i chi ddychwelyd y ffurflen i Gyllid a Thollau EM.
 ssttp.direct-debit.unauthorized.button = Yn ôl i’r manylion banc
 
-ssttp.you-need-to-file.title = Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn
+ssttp.you-need-to-file.title = Cyflwynwch eich Ffurflen Dreth er mwyn defnyddio’r gwasanaeth hwn
 ssttp.you-need-to-file.intro = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i chi fod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
 ssttp.you-need-to-file.check-account.link = Ewch i’ch cyfrif treth
 ssttp.you-need-to-file.check-account = er mwyn cyflwyno’ch Ffurflen Dreth Hunanasesiad.
