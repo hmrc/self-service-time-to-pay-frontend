@@ -165,11 +165,11 @@ ssttp.direct-debit.unauthorized.intro.p2 = Bydd angen i chi ddychwelyd y ffurfle
 ssttp.direct-debit.unauthorized.button = Yn ôl i’r manylion banc
 
 ssttp.you-need-to-file.title = Cyflwynwch eich Ffurflen Dreth i ddefnyddio’r gwasanaeth hwn
-ssttp.you-need-to-file.intro = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid eich bod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
+ssttp.you-need-to-file.intro = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i chi fod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
 ssttp.you-need-to-file.check-account.link = Ewch i’ch cyfrif treth
-ssttp.you-need-to-file.check-account = i gyflwyno’ch Ffurflen Dreth Hunanasesiad.
+ssttp.you-need-to-file.check-account = er mwyn cyflwyno’ch Ffurflen Dreth Hunanasesiad.
 
-ssttp.you-need-to-file..phone-number = I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEM a siarad ag ymgynghorydd ar <strong>0300 200 1900</strong>.
+ssttp.you-need-to-file..phone-number = I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong> i siarad ag ymgynghorydd.
 
 ssttp.arrangement.type_of_account.title = Ynglŷn â’ch cyfrif banc
 ssttp.arrangement.type_of_account.details = Pa fath o fanylion cyfrif yr ydych yn eu rhoi?
