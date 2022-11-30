@@ -14,7 +14,7 @@ ssttp.common.charge-code.DET = Penderfyniad refeniw
 ssttp.common.charge-code.DPI = Cosb ddyddiol
 ssttp.common.charge-code.DPP = Cosb ddyddiol i bartneriaeth
 ssttp.common.charge-code.ETA = Diwygiad ymholiad
-ssttp.common.charge-code.IN1 = Taliad cyntaf ar gyfrif
+ssttp.common.charge-code.IN1 = Taliad ar gyfrif cyntaf
 ssttp.common.charge-code.IN2 = Ail daliad ar gyfrif
 ssttp.common.charge-code.JEP = Diwygiad ymholiad
 ssttp.common.charge-code.LFI1 = Cosb am gyflwyno 6 mis yn hwyr
@@ -95,12 +95,15 @@ ssttp.calculator.form.payment_summary.amount.remaining = Swm sy’n weddill i’
 ssttp.calculator.form.payment_summary.continue = Yn eich blaen
 
 
-ssttp.calculator.self-assessment-account-summary-page.title = Crynodeb o’ch cyfrif Hunanasesiad {0}
+ssttp.calculator.self-assessment-account-summary-page.title = Mae’ch bil treth Hunanasesiad yn dod i gyfanswm o {0}
 ssttp.calculator.self-assessment-account-summary-page.amount = Swm
 ssttp.calculator.self-assessment-account-summary-page.total-due = Cyfanswm sy’n ddyledus
 ssttp.calculator.self-assessment-account-summary-page.tax-year-ending = Ar gyfer y flwyddyn dreth a ddaeth i ben
-ssttp.calculator.self-assessment-account-summary-page.tax-account-details = Dadansoddiad Hunanasesiad
+ssttp.calculator.self-assessment-account-summary-page.tax-account-details = Datganiad Hunanasesiad
+ssttp.calculator.self-assessment-account-summary-page.due = Yn ddyledus erbyn
+ssttp.calculator.self-assessment-account-summary-page.for-tax-year = ar gyfer blwyddyn dreth {0} i {1}
 ssttp.calculator.self-assessment-account-summary-page.due-by = Mae’ch taliad yn ddyledus ar
+ssttp.calculator.self-assessment-account-summary-page.includes-interest = (yn cynnwys llog a ychwanegwyd hyd yn hyn)
 ssttp.calculator.self-assessment-account-summary-page.button-continue = Yn eich blaen
 
 ssttp.calculator.form.payment_today.title = Faint y gallwch ei dalu ymlaen llaw?

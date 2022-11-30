@@ -105,6 +105,7 @@ ssttp.calculator.self-assessment-account-summary-page.total-due = Total due
 ssttp.calculator.self-assessment-account-summary-page.tax-account-details = Self Assessment statement
 ssttp.calculator.self-assessment-account-summary-page.due = Due
 ssttp.calculator.self-assessment-account-summary-page.for-tax-year = for tax year {0} to {1}
+ssttp.calculator.self-assessment-account-summary-page.includes-interest = (includes interest added to date)
 ssttp.calculator.self-assessment-account-summary-page.button-continue = Continue
 
 ssttp.calculator.form.payment_today.title = How much can you pay upfront?
