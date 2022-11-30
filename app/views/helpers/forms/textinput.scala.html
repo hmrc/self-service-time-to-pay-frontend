@@ -34,6 +34,7 @@
     id = field.id,
     name = field.name,
     value = field.value,
+    autocomplete = Some(argsMap.getOrElse('autoComplete, "off").toString),
     classes = argsMap.getOrElse('_inputClass, "").toString,
     errorMessage = field.errors.headOption.map(error => ErrorMessage(content = Text(Messages(error.message)))),
     label = Label(
