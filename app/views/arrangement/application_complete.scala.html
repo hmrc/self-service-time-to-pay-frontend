@@ -66,11 +66,6 @@
                     <a class="govuk-link" id="print" href="view-payment-plan">@messages("ssttp.arrangement.complete.view-plan")</a>
                 </p>
 
-                   <p>
-                    <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">
-                    @messages("ssttp.arrangement.complete.view-plan")</a>
-                    </p>
-
                 <p class="govuk-heading-m">@messages("ssttp.arrangement.complete.help.h2")</p>
                 <p class="govuk-body">@messages("ssttp.arrangement.complete.help.p1")</p>
 
@@ -83,7 +78,4 @@
             </a> @messages("ssttp.arrangement.complete.help.p2")
         </div>
             </section>
-    <div class="print-only">
-        @print_payment_schedule(schedule, maybeDirectDebitReference)
-   </div>
 }
