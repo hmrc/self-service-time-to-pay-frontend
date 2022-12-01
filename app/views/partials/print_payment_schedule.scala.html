@@ -16,30 +16,26 @@
 
 @import ssttpcalculator.model.PaymentSchedule
 @import model._
-
-@import java.time.format.DateTimeFormatter
-@import java.time.LocalDate
-@import java.util.Locale
 @import language.Dates._
 
 
 @(
         schedule: PaymentSchedule,
-        directDebitMandate: Option[String]
+        ddRef: Option[String]
 )(
         implicit messages: play.api.i18n.Messages
 )
 
-<h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
-<h2 class="govuk-heading-m">@Messages("ssttp.arrangement.complete.ddref")</h2>
-<p class="govuk-body-s">@directDebitMandate</p>
+<h1 class="govuk-heading-xl">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
+<h2 class="govuk-heading-m">@messages("ssttp.arrangement.complete.ddref")</h2>
+<p class="govuk-body-s">@ddRef</p>
 <table class="govuk-table">
     <thead class="govuk-table__body">
     @if(schedule.initialPayment > BigDecimal(0)) {
         <tr class="govuk-table__row">
             <th class="govuk-table__header">
-                <div>@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</div>
-                <p class="govuk-body-s govuk-!-margin-bottom-0">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
+                <div>@messages("ssttp.calculator.form.payment_summary.up-front-payment")</div>
+                <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
             </th>
             <td class="govuk-table__cell">
                 @partials.currency(schedule.initialPayment)
@@ -48,7 +44,7 @@
     }
     </thead>
 
-    <h2 class="govuk-heading-m">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
+    <h2 class="govuk-heading-m">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
 
     <tbody class="govuk-table__body">
     @schedule.instalments.zipWithIndex.map { case (instalment, index) =>
@@ -57,7 +53,7 @@
             <div><strong class="bold">@wholeDate(instalment.paymentDate)</strong></div>
                 <p class="govuk-body-s govuk-!-margin-bottom-0">
                     @if(index + 1 == schedule.instalments.size) {
-                        @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest", partials.currency(schedule.totalInterestCharged))
+                        @messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest", partials.currency(schedule.totalInterestCharged))
                     }
                 </p>
             </th>
@@ -68,7 +64,7 @@
     }
     <tr class="govuk-table__row">
         <th class="govuk-table__header">
-            <strong class="bold">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment")</strong>
+            <strong class="bold">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment")</strong>
         </th>
         <td class="govuk-table__cell">
             @partials.currency(schedule.totalPayable)
@@ -77,10 +73,10 @@
 
     <tr class="govuk-table__row">
         <th class="govuk-table__header">
-            @Messages("ssttp.arrangement.instalment-summary.payment-date.title")
+            @messages("ssttp.arrangement.instalment-summary.payment-date.title")
         </th>
         <td class="govuk-table__cell">
-            @getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")
+            @getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @messages("ssttp.arrangement.instalment-summary.payment-date.ending")
         </td>
     </tr>
     </tbody>

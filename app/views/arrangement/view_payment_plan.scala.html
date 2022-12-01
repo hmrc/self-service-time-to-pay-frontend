@@ -16,10 +16,7 @@
 
 @import ssttpcalculator.model.PaymentSchedule
 @import model._
-
-@import java.time.format.DateTimeFormatter
-@import java.time.LocalDate
-@import java.util.Locale
+@import partials._
 @import language.Dates._
 
 @this(
@@ -29,69 +26,96 @@
 
 @(
         schedule: PaymentSchedule,
-        directDebitMandate: Option[String]
+        ddRef: Option[String]
 )(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
 )
 @main(
-    title = messages("ssttp.arrangement.declaration.h1"),
+    title = messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1"),
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
 ) {
-    <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
-    <h2 class="govuk-heading-m">@Messages("ssttp.arrangement.complete.ddref")</h2>
-    <p class="govuk-body-s">@directDebitMandate</p>
-    <table class="govuk-table">
-        <thead class="govuk-table__body">
-        @if(schedule.initialPayment > BigDecimal(0)) {
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header">
-                    <div>@Messages("ssttp.calculator.form.payment_summary.up-front-payment")</div>
-                    <p class="govuk-body-s govuk-!-margin-bottom-0">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
-                </th>
-                <td class="govuk-table__cell">
-                @partials.currency(schedule.initialPayment)
-                </td>
-            </tr>
+<section class="govuk-body divider--bottom govuk-!-display-none-print">
+    <h1 class="govuk-heading-xl">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
+
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-full">
+                <span>@messages("ssttp.arrangement.complete.ddref")</span>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <span class="govuk-body-m">@ddRef</span>
+            </dd>
+        </div>
+    </dl>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-6">
+        <div class="govuk-summary-list__row govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-full">
+                <span>@messages("ssttp.calculator.form.payment_summary.up-front-payment")</span>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <span class="govuk-body-m">@partials.currency(schedule.initialPayment)</span>
+            </dd>
+        </div>
+    </dl>
+
+    <h2 class="govuk-heading-m">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.monthly-payments.h2")</h2>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-6">
+        <div class="govuk-summary-list__row govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-full">
+                <span>@messages("ssttp.arrangement.instalment-summary.payment-date.title")</span>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <span class="govuk-body-m">@getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @messages("ssttp.arrangement.instalment-summary.payment-date.ending")</span>
+            </dd>
+        </div>
+    </dl>
+
+    <div class="govuk-!-margin-bottom-6">
+        @schedule.instalments.map {instalment =>
+        <dl class="govuk-summary-list govuk-!-margin-0">
+            <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                <dt class="govuk-summary-list__key no_bottom_line">
+                    <span><strong class="bold">@monthYear(instalment.paymentDate)</strong></span>
+                </dt>
+                <dd>
+                    <span class="govuk-body-m">@partials.currency(instalment.amount)</span>
+                </dd>
+            </div>
+        </dl>
         }
-        </thead>
+    </div>
 
-        <h2 class="govuk-heading-m">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
+                    <span><strong class="bold">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest")</strong></span>
+                    <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.instalment-summary.schedule.interest-included")</p>
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    <span class="govuk-body-m">@partials.currency(schedule.totalInterestCharged)</span>
+                </dd>
+            </div>
 
-        <tbody class="govuk-table__body">
-            @schedule.instalments.zipWithIndex.map { case (instalment, index) =>
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header">
-                    <div><strong class="bold">@wholeDate(instalment.paymentDate)</strong></div>
-                    <p class="govuk-body-s govuk-!-margin-bottom-0">
-                    @if(index + 1 == schedule.instalments.size) {
-                        @Messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest", partials.currency(schedule.totalInterestCharged))
-                    }
-                    </p>
-                </th>
-                <td class="govuk-table__cell">
-                @partials.currency(instalment.amount)
-            </td>
-            </tr>
-            }
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header">
-                    <strong class="bold">@Messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment")</strong>
-                </th>
-                <td class="govuk-table__cell">
-                @partials.currency(schedule.totalPayable)
-                </td>
-            </tr>
+            <div class="govuk-summary-list__row govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
+                    <span><strong class="bold">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay")</strong></span>
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    <span class="govuk-body-m">@partials.currency(schedule.totalPayable)</span>
+                </dd>
+            </div>
+        </dl>
 
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header">
-                @Messages("ssttp.arrangement.instalment-summary.payment-date.title")
-                </th>
-                <td class="govuk-table__cell">
-                    @getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @Messages("ssttp.arrangement.instalment-summary.payment-date.ending")
-                </td>
-            </tr>
-        </tbody>
-    </table>
+        <p class="govuk-body">
+           <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">
+           @messages("ssttp.arrangement.print-summary.schedule.payment-plan.print")</a>
+        </p>
+</section>
+    <div class="print-only">
+        @print_payment_schedule(schedule, ddRef)
+    </div>
 }
