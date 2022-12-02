@@ -88,7 +88,7 @@ ssttp.landing.before-you-start.p1 = Bwriad CThEF yw bod hwn yn gynllun talu un-t
 
 
 ssttp.calculator.form.payment_summary.title = Crynodeb o’r taliadau
-ssttp.calculator.form.payment_summary.up-front-payment = Swm y taliad ymlaen llaw
+ssttp.calculator.form.payment_summary.up-front-payment = Taliad ymlaen llaw
 ssttp.calculator.form.payment_summary.up-front-payment.hint = I’w gymryd cyn pen 7 diwrnod gwaith
 ssttp.calculator.form.payment_summary.up-front-payment.change = Newid
 ssttp.calculator.form.payment_summary.amount.remaining = Swm sy’n weddill i’w dalu
@@ -202,13 +202,17 @@ ssttp.arrangement.instalment-summary-table.total-interest-hint = Wedi’u casglu
 ssttp.arrangement.instalment-summary-table.monthly-instalments-change = Newid
 ssttp.arrangement.instalment-summary-table.total-interest = Cyfanswm y llog
 ssttp.arrangement.instalment-summary-table.hint = Wedi’i ychwanegu at y taliad terfynol
-ssttp.arrangement.instalment-summary.payment-date.title = Mae taliadau’n cael eu casglu ar
-ssttp.arrangement.instalment-summary.payment-date.ending = neu ar y diwrnod gwaith nesaf
+ssttp.arrangement.instalment-summary.payment-date.title = Dyddiad casglu rhandaliadau misol
+ssttp.arrangement.instalment-summary.payment-date.ending = neu’r diwrnod gwaith nesaf
 ssttp.arrangement.instalment-summary.payment-date.change = Newid
 ssttp.arrangement.instalment-summary.schedule.final-payment-interest = Llog wedi’i ychwanegu at y taliad terfynol
 
 ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Eich cynllun talu
 ssttp.arrangement.print-summary.schedule.payment-plan.monthly-payments.h2 = Taliadau misol
+ssttp.arrangement.print-summary.schedule.up-front-payment = Swm y taliad ymlaen llaw
+ssttp.arrangement.print-summary.payment-date.title = Mae taliadau’n cael eu casglu ar
+ssttp.arrangement.print-summary.payment-date.ending = neu ar y diwrnod gwaith nesaf
+ssttp.arrangement.print-summary.ddref = Cyfeirnod y taliad
 ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest = Amcangyfrif o gyfanswm y llog
 ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay = Y cyfanswm i’w dalu
 ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment.hint = Gan gynnwys llog
@@ -314,7 +318,7 @@ ssttp.arrangement.direct-debit.assistance.alert = Methodd eich Debyd Uniongyrcho
 ssttp.arrangement.direct-debit.assistance.alert.1 = Rydym yn cael anawsterau yn cyflwyno’ch cyfarwyddyd Debyd Uniongyrchol. Ffoniwch ni i gwblhau’ch cais.
 
 ssttp.arrangement.complete.title = Mae’ch cynllun talu wedi’i sefydlu
-ssttp.arrangement.complete.ddref = Cyfeirnod y taliad
+ssttp.arrangement.complete.ddref = Eich cyfeirnod talu yw
 ssttp.arrangement.complete.view-plan = Bwrw golwg dros eich cynllun talu
 ssttp.arrangement.complete.print-label = Argraffu crynodeb o’ch taliadau
 ssttp.arrangement.complete.next = Yr hyn sy’n digwydd nesaf

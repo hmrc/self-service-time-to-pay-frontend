@@ -92,7 +92,7 @@ ssttp.landing.before-you-start.p1 = HMRC intend this as a one-off payment plan t
 
 
 ssttp.calculator.form.payment_summary.title = Payment summary
-ssttp.calculator.form.payment_summary.up-front-payment = Upfront payment amount
+ssttp.calculator.form.payment_summary.up-front-payment = Upfront payment
 ssttp.calculator.form.payment_summary.up-front-payment.hint = Taken within 7 working days
 ssttp.calculator.form.payment_summary.up-front-payment.change = Change
 ssttp.calculator.form.payment_summary.amount.remaining = Remaining amount to pay
@@ -272,7 +272,11 @@ ssttp.arrangement.instalment-summary.schedule.interest-included = Included in mo
 
 
 ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Your payment plan
+ssttp.arrangement.print-summary.schedule.up-front-payment = Upfront payment amount
 ssttp.arrangement.print-summary.schedule.payment-plan.monthly-payments.h2 = Monthly payments
+ssttp.arrangement.print-summary.payment-date.title = Payments collected on
+ssttp.arrangement.print-summary.payment-date.ending = or next working day
+ssttp.arrangement.print-summary.ddref = Payment reference
 ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay = Total to pay
 ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest = Estimated total interest
 ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment.hint = Including interest
@@ -373,7 +377,7 @@ ssttp.arrangement.direct-debit.assistance.alert = Direct Debit submission failed
 ssttp.arrangement.direct-debit.assistance.alert.1 = We’re having problems submitting your Direct Debit instruction. Please call us to complete your application.
 
 ssttp.arrangement.complete.title = Your payment plan is set up
-ssttp.arrangement.complete.ddref = Payment reference
+ssttp.arrangement.complete.ddref = Your payment reference is
 ssttp.arrangement.complete.view-plan = View your payment plan
 ssttp.arrangement.complete.next = What happens next
 ssttp.arrangement.complete.summary = We will send a letter by post confirming the set up of your Direct Debit instruction within 10 working days.
