@@ -27,57 +27,71 @@
 )
 
 <h1 class="govuk-heading-xl">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
-<h2 class="govuk-heading-m">@messages("ssttp.arrangement.complete.ddref")</h2>
-<p class="govuk-body-s">@ddRef</p>
+
 <table class="govuk-table">
     <thead class="govuk-table__body">
-    @if(schedule.initialPayment > BigDecimal(0)) {
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header">
+                <div>@messages("ssttp.arrangement.complete.ddref")</div>
+            </th>
+            <td class="govuk-table__cell">
+                @ddRef
+            </td>
+        </tr>
         <tr class="govuk-table__row">
             <th class="govuk-table__header">
                 <div>@messages("ssttp.calculator.form.payment_summary.up-front-payment")</div>
-                <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
             </th>
             <td class="govuk-table__cell">
                 @partials.currency(schedule.initialPayment)
             </td>
         </tr>
-    }
     </thead>
+</table>
 
-    <h2 class="govuk-heading-m">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.h2")</h2>
+<h2 class="govuk-heading-m">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.monthly-payments.h2")</h2>
+
+<table class="govuk-table">
+
+    <tr class="govuk-table__row">
+        <th class="govuk-table__header">
+        @messages("ssttp.arrangement.instalment-summary.payment-date.title")
+        </th>
+        <td class="govuk-table__cell">
+            @getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @messages("ssttp.arrangement.instalment-summary.payment-date.ending")
+        </td>
+    </tr>
 
     <tbody class="govuk-table__body">
-    @schedule.instalments.zipWithIndex.map { case (instalment, index) =>
+    @schedule.instalments.map {instalment =>
         <tr class="govuk-table__row">
             <th class="govuk-table__header">
             <div><strong class="bold">@wholeDate(instalment.paymentDate)</strong></div>
-                <p class="govuk-body-s govuk-!-margin-bottom-0">
-                    @if(index + 1 == schedule.instalments.size) {
-                        @messages("ssttp.arrangement.instalment-summary.schedule.final-payment-interest", partials.currency(schedule.totalInterestCharged))
-                    }
-                </p>
+                <p class="govuk-body-s govuk-!-margin-bottom-0"></p>
             </th>
             <td class="govuk-table__cell">
                 @partials.currency(instalment.amount)
             </td>
         </tr>
     }
-    <tr class="govuk-table__row">
-        <th class="govuk-table__header">
-            <strong class="bold">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment")</strong>
-        </th>
-        <td class="govuk-table__cell">
-            @partials.currency(schedule.totalPayable)
-        </td>
-    </tr>
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header">
+                <strong class="bold">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest")</strong>
+                <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.instalment-summary.schedule.interest-included")</p>
+            </th>
+            <td class="govuk-table__cell">
+                @partials.currency(schedule.totalInterestCharged)
+            </td>
+        </tr>
 
-    <tr class="govuk-table__row">
-        <th class="govuk-table__header">
-            @messages("ssttp.arrangement.instalment-summary.payment-date.title")
-        </th>
-        <td class="govuk-table__cell">
-            @getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @messages("ssttp.arrangement.instalment-summary.payment-date.ending")
-        </td>
-    </tr>
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header">
+                <strong class="bold">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay")</strong>
+            </th>
+            <td class="govuk-table__cell">
+                @partials.currency(schedule.totalPayable)
+            </td>
+        </tr>
+
     </tbody>
 </table>
