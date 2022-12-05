@@ -19,32 +19,26 @@ package pagespecs.pages
 import langswitch.Languages.{English, Welsh}
 import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
-import org.scalatestplus.selenium.WebBrowser.{pageTitle, click, id}
+import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
-  override def path: String = "/pay-what-you-owe-in-instalments/arrangement/summary"
+  import WebBrowser._
+
+  override def path: String = "/pay-what-you-owe-in-instalments/arrangement/view-payment-plan"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    href("survey-link") shouldBe Some("http://localhost:9514/feedback/PWYOII/personal")
-
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
-
-  }
-
-  def clickLink(): Unit = {
-    val link = id("print")
-    click on link
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Your payment plan is set up"
-    case Languages.Welsh   => "Mae’ch cynllun talu wedi’i sefydlu"
+    case Languages.English => "Your payment plan"
+    case Languages.Welsh   => "Eich cynllun talu"
   }
 
   object Expected {
@@ -68,41 +62,29 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
       }
 
       private val mainTextEnglish =
-        """Your payment plan is set up
-          |Your payment reference is
-          |123ABC123
-          |What happens next
-          |We will send a letter by post confirming the set up of your Direct Debit instruction within 10 working days.
+        """Your payment plan
+          |Payment reference	123ABC123
+          |Upfront payment amount
+          |Monthly payments
           |
-          |Your next payment will be taken on 28th December 2019 or the next working day.
+          |Estimated total interest
+          |Included in monthly payments
           |
-          |View your payment plan
-          |If you need to change your payment plan
-          |Call the HMRC Helpline on 0300 123 1813.
-          |Go to tax account
-          |What did you think of this service? (takes 30 seconds)
+          |Total to pay
+          |Print a copy of your payment plan
         """.stripMargin
-
       private val mainTextWelsh =
-        """Mae’ch cynllun talu wedi’i sefydlu
-          |Eich cyfeirnod talu yw
-          |123ABC123
-          |Yr hyn sy’n digwydd nesaf
-          |Byddwn yn anfon llythyr atoch drwy’r post i gadarnhau bod eich cyfarwyddyd Debyd Uniongyrchol wedi’i sefydlu cyn pen 10 diwrnod gwaith.
+        """Eich cynllun talu
+          |Cyfeirnod y taliad	123ABC123
+          |Taliadau misol
+          |Mae taliadau’n cael eu casglu ar	28ain neu ar y diwrnod gwaith nesaf
           |
-          |Caiff eich taliad nesaf ei gymryd ar 28ain Rhagfyr 2019 neu ar y diwrnod gwaith nesaf.
+          |Amcangyfrif o gyfanswm y llog
+          |wedi’i gynnwys yn eich taliadau misol
           |
-          |Bwrw golwg dros eich cynllun talu
-          |
-          |Os oes angen i chi newid eich cynllun talu
-          |
-          |Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900.
-          |
-          |Ewch i’r cyfrif treth
-          |Beth oedd eich barn am y gwasanaeth hwn? (mae’n cymryd 30 eiliad)
+          |Y cyfanswm i’w dalu
+          |Argraffwch gopi o’ch cynllun talu
         """.stripMargin
     }
-
   }
-
 }

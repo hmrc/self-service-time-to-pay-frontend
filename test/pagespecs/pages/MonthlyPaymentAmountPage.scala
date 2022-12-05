@@ -73,7 +73,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         case Welsh   => mainTextWelsh(lowerAmount, upperAmount)
       }
 
-      private def format(value: Double) = value.formatted("%,1.2f")
+      private def format(value: Double) = value.formatted("%,1.2f").stripSuffix(".00")
 
       // "How much can you pay upfront in Pound Sterling" has css class visually hidden but is still read by content scraper
       private def mainTextEnglish(lowerAmount: Int, upperAmount: Int) =
@@ -97,7 +97,7 @@ class MonthlyPaymentAmountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
         s"""There is a problem
            |Enter a figure between the given range
            |How much can you afford to pay each month?
-           |Enter an amount between £410.00 and £2,450.00
+           |Enter an amount between £410 and £2,450
            |Error: Enter a figure between the given range
            |£
            |Continue

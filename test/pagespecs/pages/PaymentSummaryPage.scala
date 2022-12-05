@@ -68,10 +68,10 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         """Payment summary
           |Upfront payment
           |Taken within 7 working days
-          |£123.00
+          |£123
           |Change Upfront payment
           |Remaining amount to pay
-          |£4,777.00
+          |£4,777
           |Continue
         """.stripMargin
 
@@ -79,10 +79,10 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
         """Crynodeb o’r taliadau
           |Taliad ymlaen llaw
           |I’w gymryd cyn pen 7 diwrnod gwaith
-          |£123.00
+          |£123
           |Newid Taliad ymlaen llaw
           |Swm sy’n weddill i’w dalu
-          |£4,777.00
+          |£4,777
           |Yn eich blaen
         """.stripMargin
     }

@@ -110,7 +110,7 @@ ssttp.calculator.form.payment_today.title = Faint y gallwch ei dalu ymlaen llaw?
 ssttp.calculator.form.payment_today.error.summary.title = Rydych wedi nodi rhywbeth annilys
 ssttp.calculator.form.payment_today.amount.less-than-owed = Mae’n rhaid i chi nodi swm sy’n llai na’r swm sydd arnoch
 ssttp.calculator.form.payment_today.amount.required = Nodwch y swm yr hoffech ei dalu ymlaen llaw
-ssttp.calculator.form.payment_today.amount.required.min = Rhaid i’r swm fod yn fwy na £0.00
+ssttp.calculator.form.payment_today.amount.required.min = Rhaid i’r swm fod yn fwy na £0
 ssttp.calculator.form.payment_today.amount.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.calculator.form.payment_today.amount.less-than-maxval = Rhaid i’r cyfansymiau fod yn llai na £1,000,000,000,000
 
