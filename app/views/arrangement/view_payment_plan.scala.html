@@ -36,13 +36,14 @@
     title = messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1"),
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
 ) {
+
 <section class="govuk-body divider--bottom govuk-!-display-none-print">
     <h1 class="govuk-heading-xl">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
 
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-full">
-                <span>@messages("ssttp.arrangement.print-summary.ddref")</span>
+                @messages("ssttp.arrangement.print-summary.ddref")
             </dt>
             <dd class="govuk-summary-list__value">
                 <span class="govuk-body-m">@ddRef</span>
@@ -53,10 +54,10 @@
     <dl class="govuk-summary-list govuk-!-margin-bottom-6">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-full">
-                <span>@messages("ssttp.arrangement.print-summary.schedule.up-front-payment")</span>
+                @messages("ssttp.arrangement.print-summary.schedule.up-front-payment")
             </dt>
             <dd class="govuk-summary-list__value">
-                <span class="govuk-body-m">@partials.currency(schedule.initialPayment)</span>
+                @partials.currency(schedule.initialPayment)
             </dd>
         </div>
     </dl>
@@ -66,10 +67,10 @@
     <dl class="govuk-summary-list govuk-!-margin-bottom-6">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-full">
-                <span>@messages("ssttp.arrangement.print-summary.payment-date.title")</span>
+                @messages("ssttp.arrangement.print-summary.payment-date.title")
             </dt>
             <dd class="govuk-summary-list__value">
-                <span class="govuk-body-m">@getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @messages("ssttp.arrangement.print-summary.payment-date.ending")</span>
+                @getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @messages("ssttp.arrangement.print-summary.payment-date.ending")
             </dd>
         </div>
     </dl>
@@ -79,42 +80,47 @@
         <dl class="govuk-summary-list govuk-!-margin-0">
             <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
                 <dt class="govuk-summary-list__key no_bottom_line">
-                    <span><strong class="bold">@monthYear(instalment.paymentDate)</strong></span>
+                    <strong>@monthYear(instalment.paymentDate)</strong>
                 </dt>
                 <dd>
-                    <span class="govuk-body-m">@partials.currency(instalment.amount)</span>
+                    @partials.currency(instalment.amount)
                 </dd>
+                <dd class="govuk-summary-list__actions"></dd>
             </div>
         </dl>
         }
     </div>
 
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
-                    <span><strong class="bold">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest")</strong></span>
-                    <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.instalment-summary.schedule.interest-included")</p>
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    <span class="govuk-body-m">@partials.currency(schedule.totalInterestCharged)</span>
-                </dd>
-            </div>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">
+                <strong>@messages("ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest")</strong>
+                <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.instalment-summary.schedule.interest-included")</p>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @partials.currency(schedule.totalInterestCharged)
+            </dd>
+            <dd class="govuk-summary-list__actions"></dd>
+        </div>
 
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
-                    <span><strong class="bold">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay")</strong></span>
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    <span class="govuk-body-m">@partials.currency(schedule.totalPayable)</span>
-                </dd>
-            </div>
-        </dl>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">
+                <strong>@messages("ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay")</strong>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @partials.currency(schedule.totalPayable)
+            </dd>
+            <dd class="govuk-summary-list__actions"></dd>
+        </div>
+    </dl>
 
-        <p class="govuk-body">
-           <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">
-           @messages("ssttp.arrangement.print-summary.schedule.payment-plan.print")</a>
-        </p>
+    <p class="govuk-body">
+       <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">
+       @messages("ssttp.arrangement.print-summary.schedule.payment-plan.print")</a>
+    </p>
 </section>
+
+
     <div class="print-only">
         @print_payment_schedule(schedule, ddRef)
     </div>
