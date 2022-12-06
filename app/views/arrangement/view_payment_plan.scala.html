@@ -1,0 +1,123 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import ssttpcalculator.model.PaymentSchedule
+@import model._
+@import partials._
+@import language.Dates._
+
+@this(
+        main: views.html.main,
+        viewsHelpers: views.ViewsHelpers
+)
+
+@(
+        schedule: PaymentSchedule,
+        ddRef: Option[String]
+)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+@main(
+    title = messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1"),
+    backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
+) {
+
+<section class="govuk-body divider--bottom govuk-!-display-none-print">
+    <h1 class="govuk-heading-xl">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
+
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
+                @messages("ssttp.arrangement.print-summary.ddref")
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <span class="govuk-body-m">@ddRef</span>
+            </dd>
+        </div>
+    </dl>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-6">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
+                @messages("ssttp.arrangement.print-summary.schedule.up-front-payment")
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @partials.currency(schedule.initialPayment)
+            </dd>
+        </div>
+    </dl>
+
+    <h2 class="govuk-heading-m">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.monthly-payments.h2")</h2>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
+                @messages("ssttp.arrangement.print-summary.payment-date.title")
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @messages("ssttp.arrangement.print-summary.payment-date.ending")
+            </dd>
+        </div>
+    </dl>
+
+    <div class="govuk-!-margin-bottom-6">
+        @schedule.instalments.map {instalment =>
+        <dl class="govuk-summary-list govuk-!-margin-0">
+            <div class="govuk-summary-list__row grouped-row">
+                <dt class="govuk-summary-list__key no_bottom_line govuk-!-width-three-quarters">
+                    <strong>@monthYear(instalment.paymentDate)</strong>
+                </dt>
+                <dd class="govuk-summary-list__value no_bottom_line">
+                    @partials.currency(instalment.amount)
+                </dd>
+            </div>
+        </dl>
+        }
+    </div>
+
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
+                <strong>@messages("ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest")</strong>
+                <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.instalment-summary.schedule.interest-included")</p>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @partials.currency(schedule.totalInterestCharged)
+            </dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
+                <strong>@messages("ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay")</strong>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @partials.currency(schedule.totalPayable)
+            </dd>
+        </div>
+    </dl>
+
+    <p class="govuk-body">
+       <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">
+       @messages("ssttp.arrangement.print-summary.schedule.payment-plan.print")</a>
+    </p>
+</section>
+
+    <div class="print-only">
+        @print_payment_schedule(schedule, ddRef)
+    </div>
+}

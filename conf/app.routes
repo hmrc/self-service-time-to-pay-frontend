@@ -60,6 +60,7 @@ GET         /arrangement/terms-and-conditions                             ssttpa
 GET         /arrangement/direct-debit                                     ssttpdirectdebit.DirectDebitController.getDirectDebit()
 POST        /arrangement/direct-debit                                     ssttpdirectdebit.DirectDebitController.submitDirectDebit
 GET         /arrangement/direct-debit-confirmation                        ssttpdirectdebit.DirectDebitController.getDirectDebitConfirmation()
+GET         /arrangement/view-payment-plan                                ssttparrangement.ArrangementController.viewPaymentPlan()
 GET         /arrangement/direct-debit-assistance                          ssttpdirectdebit.DirectDebitController.getDirectDebitAssistance()
 GET         /arrangement/direct-debit-error                               ssttpdirectdebit.DirectDebitController.getDirectDebitError()
 POST        /arrangement/submit                                           ssttparrangement.ArrangementController.submit()

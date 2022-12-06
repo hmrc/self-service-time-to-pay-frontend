@@ -77,7 +77,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
       private val mainTextEnglishNew =
         s"""How many months do you want to pay over?
-           |2 months at £2,450.00
+           |2 months at £2,450
            |Total interest:	£21.16
            |Base rate + 2.5%	added to the final payment
            |Total paid:	£4,921.16
@@ -85,7 +85,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
            |Total interest:	£27.92
            |Base rate + 2.5%	added to the final payment
            |Total paid:	£4,927.92
-           |4 months at £1,225.00
+           |4 months at £1,225
            |Total interest:	£34.47
            |Base rate + 2.5%	added to the final payment
            |Total paid:	£4,934.47
@@ -98,7 +98,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
       private val mainTextEnglish =
         s"""How many months do you want to pay over?
-           |2 months at £2,450.00
+           |2 months at £2,450
            |Total interest: £21.16
            |Base rate + 2.5%	added to the final payment
            |Total paid:	£4,921.16
@@ -106,7 +106,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
            |Total interest: £27.92
            |Base rate + 2.5%	added to the final payment
            |Total paid:	£4,927.92
-           |4 months at £1,225.00
+           |4 months at £1,225
            |Total interest: £34.47
            |Base rate + 2.5%	added to the final payment
            |Total paid:	£4,934.47
@@ -119,7 +119,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
       private val mainTextWelsh =
         s"""Dros sawl mis yr hoffech dalu?
-           |2 o fisoedd ar £2,450.00
+           |2 o fisoedd ar £2,450
            |Cyfanswm y llog: £21.16
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:	£4,921.16
@@ -127,7 +127,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
            |Cyfanswm y llog:	£27.92
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:	£4,927.92
-           |4 o fisoedd ar £1,225.00
+           |4 o fisoedd ar £1,225
            |Cyfanswm y llog:	£34.47
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:	£4,934.47
@@ -174,7 +174,7 @@ class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
       private val mainTextEnglish =
         s"""How many months do you want to pay over?
-           |2 months at £2,450.00
+           |2 months at £2,450
            |Total interest:	£13.74
            |Base rate + 2.5%	added to the final payment
            |Total paid:	£4,913.74
@@ -182,7 +182,7 @@ class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: Web
            |Total interest:	£20.51
            |Base rate + 2.5%	added to the final payment
            |Total paid:	£4,920.51
-           |4 months at £1,225.00
+           |4 months at £1,225
            |Total interest:	£27.05
            |Base rate + 2.5%	added to the final payment
            |Total paid:	£4,927.05
@@ -195,7 +195,7 @@ class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
       private val mainTextWelsh =
         s"""Dros sawl mis yr hoffech dalu?
-           |2 o fisoedd ar £2,450.00
+           |2 o fisoedd ar £2,450
            |Cyfanswm y llog:	£13.74
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:	£4,913.74
@@ -203,7 +203,7 @@ class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: Web
            |Cyfanswm y llog:	£20.51
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:	£4,920.51
-           |4 o fisoedd ar £1,225.00
+           |4 o fisoedd ar £1,225
            |Cyfanswm y llog:	£27.05
            |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
            |Cyfanswm a dalwyd:	£4,927.05

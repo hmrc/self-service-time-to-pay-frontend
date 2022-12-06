@@ -112,7 +112,7 @@ ssttp.calculator.form.payment_today.title = How much can you pay upfront?
 ssttp.calculator.form.payment_today.error.summary.title = There is a problem
 ssttp.calculator.form.payment_today.amount.less-than-owed = You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required = Enter the amount you want to pay upfront
-ssttp.calculator.form.payment_today.amount.required.min = The amount must be more than £0.00
+ssttp.calculator.form.payment_today.amount.required.min = The amount must be more than £0
 ssttp.calculator.form.payment_today.amount.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.calculator.form.payment_today.amount.less-than-maxval = Total amounts must be less than £1,000,000,000,000
 
@@ -202,9 +202,9 @@ ssttp.calculator.please-call-us.cant-afford.p3= If you are outside the UK: <b>+4
 
 
 ssttp.calculator.form.amount-due.required = Enter the amount you owe the HMRC
-ssttp.calculator.form.amount-due.required.min = The amount must be more than £32.00
+ssttp.calculator.form.amount-due.required.min = The amount must be more than £32
 ssttp.calculator.form.amount-due.decimal-places = Amount must not contain more than 2 decimal places
-ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less than £100,000.00
+ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less than £100,000
 
 ssttp.call-us.title = Please call us
 ssttp.call-us.p1 = You are not eligible to set up a payment plan online.
@@ -268,13 +268,19 @@ ssttp.arrangement.instalment-summary.payment-date.title = Payments collected on
 ssttp.arrangement.instalment-summary.payment-date.ending = or next working day
 ssttp.arrangement.instalment-summary.payment-date.change = Change
 ssttp.arrangement.instalment-summary.payment-date.change.link-title = Change your payment date
-ssttp.arrangement.instalment-summary.schedule.final-payment-interest = Interest added to final payment
+ssttp.arrangement.instalment-summary.schedule.interest-included = Included in monthly payments
 
 
-ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Payment summary
-ssttp.arrangement.print-summary.schedule.payment-plan.h2 = Your payment plan
-ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment = Total repayment
+ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Your payment plan
+ssttp.arrangement.print-summary.schedule.up-front-payment = Upfront payment amount
+ssttp.arrangement.print-summary.schedule.payment-plan.monthly-payments.h2 = Monthly payments
+ssttp.arrangement.print-summary.payment-date.title = Payments collected on
+ssttp.arrangement.print-summary.payment-date.ending = or next working day
+ssttp.arrangement.print-summary.ddref = Payment reference
+ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay = Total to pay
+ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest = Estimated total interest
 ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment.hint = Including interest
+ssttp.arrangement.print-summary.schedule.payment-plan.print = Print a copy of your payment plan
 
 ssttp.arrangement.instalment-summary-table.total-repayment = Total to pay
 ssttp.arrangement.instalment-summary-table.total-repayment-hint = Including interest

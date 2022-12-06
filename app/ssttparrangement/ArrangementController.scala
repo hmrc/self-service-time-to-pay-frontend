@@ -256,6 +256,13 @@ class ArrangementController @Inject() (
     }
   }
 
+  def viewPaymentPlan(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.getDeclaration: $request")
+    journeyService.getJourney.flatMap { journey =>
+      Future.successful(Ok(views.view_payment_plan(calculatorService.computeSchedule(journey), journey.ddRef)))
+    }
+  }
+
   private def applicationSuccessful = successful(Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
   /**

@@ -48,4 +48,11 @@ object Dates {
     s"$day $month $year"
   }
 
+  def monthYear(localDate: LocalDate)
+    (implicit messages: Messages): String = {
+    val month = getMonthFormatted(localDate)
+    val year = localDate.getYear
+    s"$month $year"
+  }
+
 }

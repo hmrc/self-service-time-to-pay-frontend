@@ -91,14 +91,14 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
 
         s"""Check your payment plan
            |Upfront payment taken within 7 working days
-           |£0.00
+           |£0
            |Change Monthly payments
            |Payments collected on
            |$paymentDayOfMonth or next working day
            |Change
            |Monthly payments
            |December 2019
-           |£2,450.00
+           |£2,450
            |January 2020
            |£$y
            |including interest of £$x added to the final payment
@@ -116,14 +116,14 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
 
         s"""Gwiriwch fanylion eich amserlen talu
            |Taliad ymlaen llaw
-           |£0.00
+           |£0
            |Newid Rhandaliadau misol
            |Dyddiad casglu rhandaliadau misol
            |$paymentDayOfMonth neu’r diwrnod gwaith nesaf
            |Newid
            |Rhandaliadau misol
            |Rhagfyr 2019
-           |£2,450.00
+           |£2,450
            |Ionawr 2020
            |£$y
            |Wedi’u casglu dros £$x o fisoedd

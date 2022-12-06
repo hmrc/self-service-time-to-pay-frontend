@@ -37,8 +37,8 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Your Self Assessment tax bill is £4,900.00"
-    case Languages.Welsh   => "Mae’ch bil treth Hunanasesiad yn dod i gyfanswm o £4,900.00"
+    case Languages.English => "Your Self Assessment tax bill is £4,900"
+    case Languages.Welsh   => "Mae’ch bil treth Hunanasesiad yn dod i gyfanswm o £4,900"
   }
 
   def clickOnStartNowButton(): Unit = {
@@ -67,35 +67,35 @@ class CalculatorTaxLiabilitiesPage(baseUrl: BaseUrl)(implicit webDriver: WebDriv
       }
 
       private val mainTextEnglish =
-        """Your Self Assessment tax bill is £4,900.00
+        """Your Self Assessment tax bill is £4,900
           |Self Assessment statement
           |Due 25th November 2019
           |First payment on account for tax year 2019 to 2020
           |
-          |£2,500.00
+          |£2,500
           |(includes interest added to date)
           |
           |Due 25th November 2019
           |Second payment on account for tax year 2019 to 2020
           |
-          |£2,400.00
+          |£2,400
           |(includes interest added to date)
           |Continue
         """.stripMargin
 
       private val mainTextWelsh =
-        """Mae’ch bil treth Hunanasesiad yn dod i gyfanswm o £4,900.00
+        """Mae’ch bil treth Hunanasesiad yn dod i gyfanswm o £4,900
           |Datganiad Hunanasesiad
           |Yn ddyledus erbyn 25ain Tachwedd 2019
           |Taliad ar gyfrif cyntaf ar gyfer blwyddyn dreth 2019 i 2020
           |
-          |£2,500.00
+          |£2,500
           |(yn cynnwys llog a ychwanegwyd hyd yn hyn)
           |
           |Yn ddyledus erbyn 25ain Tachwedd 2019
           |Ail daliad ar gyfrif ar gyfer blwyddyn dreth 2019 i 2020
           |
-          |£2,400.00
+          |£2,400
           |(yn cynnwys llog a ychwanegwyd hyd yn hyn)
           |
           |Yn eich blaen

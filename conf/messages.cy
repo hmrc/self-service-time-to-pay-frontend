@@ -110,7 +110,7 @@ ssttp.calculator.form.payment_today.title = Faint y gallwch ei dalu ymlaen llaw?
 ssttp.calculator.form.payment_today.error.summary.title = Rydych wedi nodi rhywbeth annilys
 ssttp.calculator.form.payment_today.amount.less-than-owed = Mae’n rhaid i chi nodi swm sy’n llai na’r swm sydd arnoch
 ssttp.calculator.form.payment_today.amount.required = Nodwch y swm yr hoffech ei dalu ymlaen llaw
-ssttp.calculator.form.payment_today.amount.required.min = Rhaid i’r swm fod yn fwy na £0.00
+ssttp.calculator.form.payment_today.amount.required.min = Rhaid i’r swm fod yn fwy na £0
 ssttp.calculator.form.payment_today.amount.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.calculator.form.payment_today.amount.less-than-maxval = Rhaid i’r cyfansymiau fod yn llai na £1,000,000,000,000
 
@@ -207,10 +207,16 @@ ssttp.arrangement.instalment-summary.payment-date.ending = neu’r diwrnod gwait
 ssttp.arrangement.instalment-summary.payment-date.change = Newid
 ssttp.arrangement.instalment-summary.schedule.final-payment-interest = Llog wedi’i ychwanegu at y taliad terfynol
 
-ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Argraffu crynodeb o’ch taliadau
-ssttp.arrangement.print-summary.schedule.payment-plan.h2 = Eich cynllun talu
-ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment = Cyfanswm yr ad-daliad
+ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Eich cynllun talu
+ssttp.arrangement.print-summary.schedule.payment-plan.monthly-payments.h2 = Taliadau misol
+ssttp.arrangement.print-summary.schedule.up-front-payment = Swm y taliad ymlaen llaw
+ssttp.arrangement.print-summary.payment-date.title = Mae taliadau’n cael eu casglu ar
+ssttp.arrangement.print-summary.payment-date.ending = neu ar y diwrnod gwaith nesaf
+ssttp.arrangement.print-summary.ddref = Cyfeirnod y taliad
+ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest = Amcangyfrif o gyfanswm y llog
+ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay = Y cyfanswm i’w dalu
 ssttp.arrangement.print-summary.schedule.payment-plan.total.repayment.hint = Gan gynnwys llog
+ssttp.arrangement.print-summary.schedule.payment-plan.print = Argraffwch gopi o’ch cynllun talu
 
 ssttp.arrangement.instalment-summary-table.total-repayment = Cyfanswm yr ad-daliad
 ssttp.arrangement.instalment-summary-table.total-repayment-hint = Gan gynnwys llog
@@ -370,6 +376,7 @@ ssttp.arrangement.changeday.enter.date = Ewch i mewn i ddiwrnod y mis
 ssttp.arrangement.instalment-summary-table.upfront.payments.link-title = Newid eich taliadau ymlaen llaw
 ssttp.arrangement.instalment-summary.payment-date.change.link-title = Newid dyddiad eich taliad
 ssttp.arrangement.instalment-summary-table.monthly-instalments.link-title = Newid eich taliadau misol
+ssttp.arrangement.instalment-summary.schedule.interest-included = wedi’i gynnwys yn eich taliadau misol
 
 ssttp.you-need-to-request-access-to-self-assessment.title = Mae’n rhaid i chi wneud cais i gael at eich cyfrif Hunanasesiad
 ssttp.you-need-to-request-access-to-self-assessment.p1 = Nid ydych wedi gwneud cais i gael at eich cyfrif Hunanasesiad ar-lein hyd yn hyn. Mae angen i chi wneud hyn cyn y gallwch fynd yn eich blaen i drefnu’ch cynllun talu.

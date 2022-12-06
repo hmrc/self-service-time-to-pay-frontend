@@ -27,7 +27,7 @@
     <ul class="hmrc-language-select__list">
 @availableLanguages.zipWithIndex.map { case (language, index) =>
   @if(messages.lang.code != language.code) {
-      <li class="hmrc-language-select__list-item">
+      <li class="hmrc-language-select__list-item @maybeCustomClass.getOrElse("")">
       @Link.toInternalPage(
       id      = Some(s"${language.code}-switch"),
       url     = s"${langswitch.routes.LanguageSwitchController.switchToLanguage(language)}",
@@ -37,7 +37,7 @@
     ).toHtml
       </li>
   } else {
-      <li class="hmrc-language-select__list-item">
+      <li class="hmrc-language-select__list-item @maybeCustomClass.getOrElse("")">
           <span aria-current="true">
             @language.label
           </span>
