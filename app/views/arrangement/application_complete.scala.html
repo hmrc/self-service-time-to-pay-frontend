@@ -55,14 +55,14 @@
 
         <h2 class="govuk-heading-m">@messages("ssttp.arrangement.complete.next")</h2>
             <section class="govuk-body divider--bottom">
-                <p>@messages("ssttp.arrangement.complete.summary")</p>
-                <p>
+                <p class="govuk-body">@messages("ssttp.arrangement.complete.summary")</p>
+                <p class="govuk-body">
                 @{ if (hasUpfrontPayment) messages("ssttp.arrangement.complete.upfront-payment")
                     else ""
                 }
                     <span>@messages("ssttp.arrangement.complete.next-payment", language.Dates.wholeDate(schedule.initialPaymentScheduleDate))</span>
                 </p>
-                <p>
+                <p class="govuk-body">
                     <a class="govuk-link" id="print" href="view-payment-plan">@messages("ssttp.arrangement.complete.view-plan")</a>
                 </p>
 
