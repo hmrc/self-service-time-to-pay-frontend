@@ -19,11 +19,11 @@
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Input
-@import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorMessage
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
 @import uk.gov.hmrc.govukfrontend.views.Aliases.PrefixOrSuffix
 @import views.html.helpers.forms.submit
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 
 @this(
   main: views.html.main,
@@ -75,7 +75,7 @@
                 classes = "govuk-!-font-weight-bold govuk-label--xl govuk-!-margin-bottom-9",
                 isPageHeading = true
             ),
-            errorMessage = dataForm.error("amount").map(error => ErrorMessage(content = Text(Messages(error.message)))),
+            errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(Messages(error.message)))),
             prefix = Some(PrefixOrSuffix(
                 content = Text("£")
             )),

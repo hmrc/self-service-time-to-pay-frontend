@@ -22,6 +22,7 @@
 @import model.enumsforforms.IsSoleSignatory
 @import req.RequestSupport
 @import config.AppConfig
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 
 @this(
         main: views.html.main,
@@ -72,7 +73,7 @@
                 checked = form.data.get(typeOfAccountKey).contains(TypesOfBankAccount.Personal.entryName)
             )
         ),
-        errorMessage = form.error(typeOfAccountKey).map(e => ErrorMessage(content = Text(messages(e.message))))
+        errorMessage = form.error(typeOfAccountKey).map(e => errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message))))
     ).withFormField(form(typeOfAccountKey)
     ))
 }
@@ -104,7 +105,7 @@
             )
         ),
         classes = "govuk-radios",
-        errorMessage = form.error(soleSignatoryKey).map(e => ErrorMessage(content = Text(messages(e.message))))
+        errorMessage = form.error(soleSignatoryKey).map(e => errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message))))
     ).withFormField(form(soleSignatoryKey)
     ))
 }
