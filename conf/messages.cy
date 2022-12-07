@@ -324,12 +324,13 @@ ssttp.arrangement.complete.print-label = Argraffu crynodeb o’ch taliadau
 ssttp.arrangement.complete.next = Yr hyn sy’n digwydd nesaf
 ssttp.arrangement.complete.summary = Byddwn yn anfon llythyr atoch drwy’r post i gadarnhau bod eich cyfarwyddyd Debyd Uniongyrchol wedi’i sefydlu cyn pen 10 diwrnod gwaith.
 ssttp.arrangement.complete.upfront-payment = Caiff eich taliad ymlaen llaw ei gymryd cyn pen 10 diwrnod gwaith.
-ssttp.arrangement.complete.next-payment  = Caiff eich taliad nesaf ei gymryd ar {0} neu ar y diwrnod gwaith nesaf.
+ssttp.arrangement.complete.next-payment = Caiff eich taliad nesaf ei gymryd ar {0} neu ar y diwrnod gwaith nesaf.
+ssttp.arrangement.complete.24h = Bydd eich cyfrif treth yn cael ei ddiweddaru gydach cynllun talu cyn pen 24 awr.
 ssttp.arrangement.complete.feedback = Beth oedd eich barn am y gwasanaeth hwn?
 ssttp.arrangement.complete.help.h2 = Os oes angen i chi newid eich cynllun talu
 ssttp.arrangement.complete.help.p1 = Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900.
 ssttp.arrangement.complete.help.p2 = (mae’n cymryd 30 eiliad)
-ssttp.arrangement.complete.go-to-tax-account = 	Ewch i’r cyfrif treth
+ssttp.arrangement.complete.go-to-tax-account = Ewch i’r cyfrif treth
 
 #Service unavailable you do not have an sa enrollment page
 ssttp.not.enrolled.title = Mae’n rhaid eich bod wedi’ch ymrestru i fwrw golwg ar eich cyfrif Hunanasesiad
