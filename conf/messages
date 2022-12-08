@@ -268,7 +268,7 @@ ssttp.arrangement.instalment-summary.payment-date.title = Payments collected on
 ssttp.arrangement.instalment-summary.payment-date.ending = or next working day
 ssttp.arrangement.instalment-summary.payment-date.change = Change
 ssttp.arrangement.instalment-summary.payment-date.change.link-title = Change your payment date
-ssttp.arrangement.instalment-summary.schedule.interest-included = Included in monthly payments
+ssttp.arrangement.instalment-summary.schedule.interest-included = included in monthly payments
 
 
 ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Your payment plan

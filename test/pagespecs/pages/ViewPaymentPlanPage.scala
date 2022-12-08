@@ -68,7 +68,7 @@ class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exten
           |Monthly payments
           |
           |Estimated total interest
-          |Included in monthly payments
+          |included in monthly payments
           |
           |Total to pay
           |Print a copy of your payment plan
