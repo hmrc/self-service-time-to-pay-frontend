@@ -94,7 +94,7 @@ class ArrangementSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |
           |Caiff eich taliad nesaf ei gymryd ar 28ain Rhagfyr 2019 neu ar y diwrnod gwaith nesaf.
           |
-          |Bydd eich cyfrif treth yn cael ei ddiweddaru gydach cynllun talu cyn pen 24 awr.
+          |Bydd eich cyfrif treth yn cael ei ddiweddaru gyda’ch cynllun talu cyn pen 24 awr.
           |
           |Bwrw golwg dros eich cynllun talu
           |
