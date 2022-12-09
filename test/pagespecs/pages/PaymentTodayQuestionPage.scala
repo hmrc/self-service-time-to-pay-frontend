@@ -77,8 +77,8 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
       private val mainTextEnglish =
         """Can you make an upfront payment?
-          |Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account within 7 working days.
-          |Can you make an upfront payment?
+          |Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account within 10 working days.
+          |If you have savings, consider using them to make a payment now.
           |Yes
           |No
           |Continue
