@@ -46,7 +46,7 @@
 
 
 @main(
-    title = Messages("ssttp.calculator.form.payment_today_question.title"),
+    title = messages("ssttp.calculator.form.payment_today_question.title"),
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 ) {
 
@@ -57,17 +57,16 @@
                   href = error.href.map(_ ++ "-true")
               ) else error
             },
-            title = Text(Messages("ssttp.calculator.form.payment_today_question.required.title")),
+            title = Text(messages("ssttp.calculator.form.payment_today_question.required.title")),
         ))
     }
 
-   <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.form.payment_today_question.title")</h1>
-    <p class="govuk-body">@Messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
+   <h1 class="govuk-heading-xl">@messages("ssttp.calculator.form.payment_today_question.title")</h1>
+    <p class="govuk-body">@messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
     @formWithCsrf(
         action = ssttpcalculator.routes.CalculatorController.submitPayTodayQuestion(),
         'id -> "paytoday-form",'class -> "form-group inline"
     ){
-
 
         @radios(
             Radios(
@@ -76,22 +75,22 @@
 
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                        content = Text(Messages("ssttp.calculator.form.payment_today_question.title")),
+                      content = Text(messages("ssttp.calculator.form.payment_today_question.have-savings")),
                         classes = "govuk-fieldset__legend--1",
                         isPageHeading = false
                     ))
                 )),
-                errorMessage = dataForm.error("paytoday").map(error => errorMessageWithDefaultStringsTranslated(content = Text(Messages(error.message)))),
+                errorMessage = dataForm.error("paytoday").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 items = List(
                     RadioItem(
                         id = Some("paytoday-true"),
-                        content = Text(Messages("ssttp.calculator.form.payment_today_question.yes_label")),
+                        content = Text(messages("ssttp.calculator.form.payment_today_question.yes_label")),
                         value = Some("true")
                     ),
                     RadioItem(
                         id = Some("paytoday-false"),
 
-                        content = Text(Messages("ssttp.calculator.form.payment_today_question.no_label")),
+                        content = Text(messages("ssttp.calculator.form.payment_today_question.no_label")),
                         value = Some("false")
                     )
                 ),
@@ -101,7 +100,7 @@
 
         <br>
         <div class="govuk-form-group">
-            <button id="next" type="submit" class="govuk-button" onclick="continue()">@Messages("ssttp.calculator.payment_today_question.button-continue")</button>
+            <button id="next" type="submit" class="govuk-button" onclick="continue()">@messages("ssttp.calculator.payment_today_question.button-continue")</button>
         </div>
     }
 }
