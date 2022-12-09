@@ -79,7 +79,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |
           |This plan does not cover your future tax bills. You will still need to pay your future bills in full and on time.
           |
-          |You need to contact HMRC if:
+          |Contact HMRC on 0300 123 1813 if:
           |
           |anything changes that you think affects your payment plan
           |you need to change your payment plan
@@ -108,7 +108,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
           |
           |Nid yw’r cynllun hwn yn cwmpasu’ch biliau treth yn y dyfodol. Bydd dal angen i chi dalu eich biliau yn y dyfodol yn llawn ac mewn pryd.
           |
-          |Bydd angen i chi gysylltu â CThEF os yw unrhyw un o’r canlynol yn berthnasol:
+          |Cysylltwch â CThEF ar 0300 200 1900 os yw un o’r canlynol yn berthnasol:
           |
           |mae unrhyw beth yn newid ac rydych o’r farn ei fod yn effeithio ar eich cynllun talu
           |mae angen i chi newid eich cynllun talu
