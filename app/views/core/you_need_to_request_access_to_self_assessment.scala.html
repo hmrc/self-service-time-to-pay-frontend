@@ -30,21 +30,19 @@
 )
 
 @main(
-    title = Messages("ssttp.you-need-to-request-access-to-self-assessment.title"),
+    title = messages("ssttp.you-need-to-request-access-to-self-assessment.title"),
     backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
 ){
-    <header class="page-header text">
-        <h1 class="govuk-heading-xl">@Messages("ssttp.you-need-to-request-access-to-self-assessment.title")</h1>
-    </header>
+    <h1 class="govuk-heading-xl">@messages("ssttp.you-need-to-request-access-to-self-assessment.title")</h1>
 
-    <p>@Messages("ssttp.you-need-to-request-access-to-self-assessment.p1")</p>
+    <p class="govuk-body">@messages("ssttp.you-need-to-request-access-to-self-assessment.p1")</p>
 
     @viewsHelpers.form(
       ssttpeligibility.routes.SelfServiceTimeToPayController.submitAccessYouSelfAssessmentOnline(),
       'class -> "group",
       'id -> "start"
     ) {
-      @submit('_buttonClass -> "button--get-started"){@Messages("ssttp.you-need-to-request-access-to-self-assessment.button-label")}
+      @submit('_buttonClass -> "button--get-started"){@messages("ssttp.you-need-to-request-access-to-self-assessment.button-label")}
     }
 
 }
