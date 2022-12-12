@@ -34,8 +34,6 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(publishingSettings: _*)
   .settings(resolvers ++= Seq(
-    "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/",
-    Resolver.bintrayRepo("hmrc", "releases"),
     sbt.Resolver.jcenterRepo
   ))
   .settings(PlayKeys.playDefaultPort := 9063)
