@@ -86,8 +86,9 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
 
       private val mainTextWelsh =
         """A allwch wneud taliad ymlaen llaw?
-          |Bydd eich taliadau misol yn is os gallwch wneud taliad ymlaen llaw. Caiff y taliad hwn ei gymryd o’ch cyfrif banc cyn pen 7 diwrnod gwaith.
-          |A allwch wneud taliad ymlaen llaw?
+          |Bydd eich taliadau misol yn is os gallwch wneud taliad ymlaen llaw. Caiff y taliad hwn ei gymryd o’ch cyfrif banc cyn pen 10 diwrnod gwaith.
+          |
+          |Os oes gennych gynilion, dylech ystyried eu defnyddio i wneud taliad nawr.
           |Iawn
           |Na
           |Yn eich blaen
