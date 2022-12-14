@@ -109,6 +109,7 @@ ssttp.calculator.self-assessment-account-summary-page.includes-interest = (inclu
 ssttp.calculator.self-assessment-account-summary-page.button-continue = Continue
 
 ssttp.calculator.form.payment_today.title = How much can you pay upfront?
+ssttp.calculator.form.payment_today.hint = Enter an amount between £1 and {0}
 ssttp.calculator.form.payment_today.error.summary.title = There is a problem
 ssttp.calculator.form.payment_today.amount.less-than-owed = You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required = Enter the amount you want to pay upfront

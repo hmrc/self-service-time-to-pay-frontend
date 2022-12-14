@@ -110,7 +110,7 @@ class CalculatorController @Inject() (
       val emptyForm = createPaymentTodayForm(debits.map(_.amount).sum)
       val formWithData = journey.maybePaymentTodayAmount.map(paymentTodayAmount =>
         emptyForm.fill(CalculatorPaymentTodayForm(paymentTodayAmount.value))).getOrElse(emptyForm)
-      Ok(views.payment_today_form(formWithData, isSignedIn))
+      Ok(views.payment_today_form(formWithData, debits, isSignedIn))
     }
   }
 
@@ -118,8 +118,9 @@ class CalculatorController @Inject() (
     JourneyLogger.info(s"CalculatorController.submitPaymentToday: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
 
+      val debits = journey.debits
       createPaymentTodayForm(journey.taxpayer.selfAssessment.debits.map(_.amount).sum).bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(views.payment_today_form(formWithErrors, isSignedIn))),
+        formWithErrors => Future.successful(BadRequest(views.payment_today_form(formWithErrors, debits, isSignedIn))),
         (form: CalculatorPaymentTodayForm) => {
           val newJourney = journey.copy(
             maybePaymentTodayAmount = Some(PaymentTodayAmount(form.amount))
