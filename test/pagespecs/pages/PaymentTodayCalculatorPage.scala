@@ -85,12 +85,14 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
       }
       private val mainTextEnglish =
         """How much can you pay upfront?
+          |Enter an amount between £1 and £4,900
           |£
           |Continue
         """.stripMargin
 
       private val mainTextWelsh =
         """Faint y gallwch ei dalu ymlaen llaw?
+          |Enter an amount between £1 and £4,900
           |£
           |Yn eich blaen
         """.stripMargin
@@ -101,7 +103,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
         """There is a problem
           |You need to enter an amount less than the amount you owe
           |How much can you pay upfront?
-          |How much can you pay upfront in Pound Sterling
+          |Enter an amount between £1 and £4,900
           |Error: You need to enter an amount less than the amount you owe
           |£
           |Continue
