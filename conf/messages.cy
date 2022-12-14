@@ -89,7 +89,7 @@ ssttp.landing.before-you-start.p1 = Bwriad CThEF yw bod hwn yn gynllun talu un-t
 
 ssttp.calculator.form.payment_summary.title = Crynodeb o’r taliadau
 ssttp.calculator.form.payment_summary.up-front-payment = Taliad ymlaen llaw
-ssttp.calculator.form.payment_summary.up-front-payment.hint = I’w gymryd cyn pen 7 diwrnod gwaith
+ssttp.calculator.form.payment_summary.up-front-payment.hint = I’w gymryd cyn pen 10 diwrnod gwaith
 ssttp.calculator.form.payment_summary.up-front-payment.change = Newid
 ssttp.calculator.form.payment_summary.amount.remaining = Swm sy’n weddill i’w dalu
 ssttp.calculator.form.payment_summary.continue = Yn eich blaen
