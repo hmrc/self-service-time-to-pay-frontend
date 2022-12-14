@@ -113,7 +113,7 @@ ssttp.calculator.form.payment_today.hint = Enter an amount between £1 and {0}
 ssttp.calculator.form.payment_today.error.summary.title = There is a problem
 ssttp.calculator.form.payment_today.amount.less-than-owed = You need to enter an amount less than the amount you owe
 ssttp.calculator.form.payment_today.amount.required = Enter the amount you want to pay upfront
-ssttp.calculator.form.payment_today.amount.required.min = The amount must be more than £0
+ssttp.calculator.form.payment_today.amount.required.min = Enter an amount of £1 or above
 ssttp.calculator.form.payment_today.amount.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.calculator.form.payment_today.amount.less-than-maxval = Total amounts must be less than £1,000,000,000,000
 
