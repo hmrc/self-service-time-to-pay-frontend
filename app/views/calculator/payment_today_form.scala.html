@@ -15,6 +15,7 @@
  *@
 
 @import ssttpcalculator.CalculatorPaymentTodayForm
+@import timetopaytaxpayer.cor.model.Debit
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -23,6 +24,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.PrefixOrSuffix
 @import views.html.helpers.forms.submit
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
+@import partials.currency
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 
 @this(
@@ -36,6 +38,7 @@
 
 @(
         dataForm: Form[CalculatorPaymentTodayForm],
+        debits: Seq[Debit],
         loggedIn: Boolean = false)(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
@@ -43,19 +46,17 @@
 )
 
 @main(
-  title = Messages("ssttp.calculator.form.payment_today.title"),
+  title = messages("ssttp.calculator.form.payment_today.title"),
+  hasErrors = dataForm.hasErrors,
   backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
 
 ){
     @if(dataForm.hasErrors){
         @errorSummary(ErrorSummary(
             errorList = dataForm.errors.asTextErrorLinks,
-            title = Text(Messages("ssttp.calculator.form.payment_today.error.summary.title"))
+            title = Text(messages("ssttp.calculator.form.payment_today.error.summary.title"))
         ))
     }
-
-
-
 
     <section class="govuk-body">
     @formWithCsrf(
@@ -66,23 +67,22 @@
             id = "amount",
             name = "amount",
             hint = Some(Hint(
-                content = Text(Messages("ssttp.upfront.amount.pound.sign.description")),
-                classes = "govuk-visually-hidden",
+                content = Text(messages("ssttp.calculator.form.payment_today.hint", currency(debits.map(_.amount).sum)))
             )),
             label = Label(
                 forAttr = Some("amount"),
-                content = Text(Messages("ssttp.calculator.form.payment_today.title")),
+                content = Text(messages("ssttp.calculator.form.payment_today.title")),
                 classes = "govuk-!-font-weight-bold govuk-label--xl govuk-!-margin-bottom-9",
                 isPageHeading = true
             ),
-            errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(Messages(error.message)))),
+            errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
             prefix = Some(PrefixOrSuffix(
                 content = Text("£")
             )),
-            classes = "govuk-!-width-one-quarter"
+            classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
         ))
 
-        @continue(Messages("ssttp.calculator.form.continue"))
+        @continue(messages("ssttp.calculator.form.continue"))
     }
     </section>
 
