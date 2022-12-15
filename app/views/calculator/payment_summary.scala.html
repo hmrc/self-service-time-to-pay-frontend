@@ -42,10 +42,10 @@
     <dl id="payment-summary-list" class="govuk-summary-list govuk-!-margin-bottom-6">
 
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">
+            <dt class="govuk-summary-list__key govuk-!-width-two-quarters">
                 @messages("ssttp.calculator.form.payment_summary.today_question")
             </dt>
-            <dd class="govuk-summary-list__value govuk-!-width-one-third">
+            <dd class="govuk-summary-list__value govuk-!-width-three-quarters">
                 @{if(payToday) messages("ssttp.calculator.form.payment_summary.today_question.yes") else messages("ssttp.calculator.form.payment_summary.today_question.no")}
             </dd>
             <dd class="govuk-summary-list__actions">
@@ -58,11 +58,11 @@
         </div>
 
         <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key govuk-!-width-one-third">
+          <dt class="govuk-summary-list__key">
             @messages("ssttp.calculator.form.payment_summary.up-front-payment")
             <p class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
           </dt>
-          <dd class="govuk-summary-list__value govuk-!-width-one-third">
+          <dd class="govuk-summary-list__value">
             @currency(initialPayment)
           </dd>
           <dd class="govuk-summary-list__actions">
@@ -74,10 +74,10 @@
           </dd>
         </div>
         <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key govuk-!-width-one-third">
+          <dt class="govuk-summary-list__key">
             @messages("ssttp.calculator.form.payment_summary.amount.remaining")
           </dt>
-          <dd class="govuk-summary-list__value govuk-!-width-two-thirds">
+          <dd class="govuk-summary-list__value">
             @currency(debits.map(_.amount).sum - initialPayment)
               <p class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@messages("ssttp.calculator.form.payment_summary.amount.remaining.hint")</p>
           </dd>
