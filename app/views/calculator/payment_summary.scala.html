@@ -46,7 +46,7 @@
                 @messages("ssttp.calculator.form.payment_summary.today_question")
             </dt>
             <dd class="govuk-summary-list__value govuk-!-width-one-third">
-                @{if(payToday) "Yes" else "No"}
+                @{if(payToday) messages("ssttp.calculator.form.payment_summary.today_question.yes") else messages("ssttp.calculator.form.payment_summary.today_question.no")}
             </dd>
             <dd class="govuk-summary-list__actions">
                 <a href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">
