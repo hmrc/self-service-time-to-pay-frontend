@@ -79,13 +79,15 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
 
       private val mainTextWelsh =
         """Crynodeb o’r taliadau
+          |A allwch wneud taliad ymlaen llaw?
           |Taliad ymlaen llaw
-          |I’w gymryd cyn pen 7 diwrnod gwaith
+          |I’w gymryd cyn pen 10 diwrnod gwaith
           |£123
-          |Newid Taliad ymlaen llaw
+          |
           |Swm sy’n weddill i’w dalu
           |£4,777
-          |Yn eich blaen
+          |Bydd llog yn cael ei ychwanegu at y swm hwn
+          |Sut rydym yn cyfrifo llog
         """.stripMargin
     }
 
