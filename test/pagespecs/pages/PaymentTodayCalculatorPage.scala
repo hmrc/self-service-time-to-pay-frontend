@@ -92,7 +92,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
 
       private val mainTextWelsh =
         """Faint y gallwch ei dalu ymlaen llaw?
-          |Enter an amount between £1 and £4,900
+          |Nodwch swm sydd rhwng £1 a £4,900
           |£
           |Yn eich blaen
         """.stripMargin
