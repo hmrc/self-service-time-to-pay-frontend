@@ -118,6 +118,7 @@ ssttp.calculator.form.payment_today.title = Faint y gallwch ei dalu ymlaen llaw?
 ssttp.calculator.form.payment_today.hint = Nodwch swm sydd rhwng £1 a {0}
 ssttp.calculator.form.payment_today.error.summary.title = Mae problem wedi codi
 ssttp.calculator.form.payment_today.amount.less-than-owed = Mae’n rhaid i chi nodi swm sy’n llai na’r swm sydd arnoch
+ssttp.calculator.form.payment_today.amount.non-numerals = Rhowch rifau yn unig
 ssttp.calculator.form.payment_today.amount.required = Nodwch swm o £1 neu fwy
 ssttp.calculator.form.payment_today.amount.required.min = Nodwch swm o £1 neu fwy
 ssttp.calculator.form.payment_today.amount.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
