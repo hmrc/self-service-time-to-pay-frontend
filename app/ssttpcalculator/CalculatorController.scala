@@ -234,7 +234,8 @@ class CalculatorController @Inject() (
   def getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getPaymentSummary: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
-      Ok(views.payment_summary(journey.taxpayer.selfAssessment.debits, journey.initialPayment))
+      val payToday = journey.paymentToday
+      Ok(views.payment_summary(journey.taxpayer.selfAssessment.debits, payToday, journey.initialPayment))
     }
   }
 

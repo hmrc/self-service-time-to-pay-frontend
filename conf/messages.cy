@@ -88,10 +88,18 @@ ssttp.landing.before-you-start.p1 = Bwriad CThEF yw bod hwn yn gynllun talu un-t
 
 
 ssttp.calculator.form.payment_summary.title = Crynodeb o’r taliadau
+ssttp.calculator.form.payment_summary.today_question = A allwch wneud taliad ymlaen llaw?
 ssttp.calculator.form.payment_summary.up-front-payment = Taliad ymlaen llaw
-ssttp.calculator.form.payment_summary.up-front-payment.hint = I’w gymryd cyn pen 7 diwrnod gwaith
+ssttp.calculator.form.payment_summary.today_question.yes = Iawn
+ssttp.calculator.form.payment_summary.today_question.no = Na
+ssttp.calculator.form.payment_summary.up-front-payment.hint = I’w gymryd cyn pen 10 diwrnod gwaith
 ssttp.calculator.form.payment_summary.up-front-payment.change = Newid
 ssttp.calculator.form.payment_summary.amount.remaining = Swm sy’n weddill i’w dalu
+ssttp.calculator.form.payment_summary.amount.remaining.hint = Bydd llog yn cael ei ychwanegu at y swm hwn
+ssttp.calculator.form.payment_summary.detail.title = Sut rydym yn cyfrifo llog
+ssttp.calculator.form.payment_summary.detail.p1 = Rydym yn codi llog ar bob swm sy’n hwyr.
+ssttp.calculator.form.payment_summary.detail.p2 = Rydym yn codi <strong>cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%</strong> y flwyddyn.
+ssttp.calculator.form.payment_summary.detail.p3 = Os bydd y gyfradd llog yn newid yn ystod eich cynllun, ni fydd eich taliadau misol yn newid. Os bydd y gyfradd llog yn cynyddu neu’n gostwng yn ystod eich cynllun talu, byddwn yn addasu’ch taliad terfynol i setlo unrhyw wahaniaeth.
 ssttp.calculator.form.payment_summary.continue = Yn eich blaen
 
 

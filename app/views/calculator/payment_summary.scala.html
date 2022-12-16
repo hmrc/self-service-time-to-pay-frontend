@@ -24,6 +24,7 @@
 
 @(
         debits:Seq[Debit],
+        payToday: Boolean,
         initialPayment:BigDecimal)(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
@@ -33,46 +34,67 @@
 @import viewsHelpers._
 
 @main(
-    title = Messages("ssttp.calculator.form.payment_summary.title"),
+    title = messages("ssttp.calculator.form.payment_summary.title"),
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPaymentToday())) {
 
-    <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.form.payment_summary.title")</h1>
+    <h1 class="govuk-heading-xl">@messages("ssttp.calculator.form.payment_summary.title")</h1>
 
-    <section class="govuk-body">
+    <dl id="payment-summary-list" class="govuk-summary-list govuk-!-margin-bottom-6">
 
-    <dl id="payment-summary-list" class="govuk-summary-list">
         <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key ">
-            @Messages("ssttp.calculator.form.payment_summary.up-front-payment")
-            <p class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@Messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
+            <dt class="govuk-summary-list__key govuk-!-width-two-quarters">
+                @messages("ssttp.calculator.form.payment_summary.today_question")
+            </dt>
+            <dd class="govuk-summary-list__value govuk-!-width-three-quarters">
+                @{if(payToday) messages("ssttp.calculator.form.payment_summary.today_question.yes") else messages("ssttp.calculator.form.payment_summary.today_question.no")}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                <a href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">
+                    @messages("ssttp.calculator.form.payment_summary.up-front-payment.change")
+                    <span class="govuk-visually-hidden">@messages("ssttp.calculator.form.payment_summary.today_question")
+                    </span>
+                </a>
+            </dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            @messages("ssttp.calculator.form.payment_summary.up-front-payment")
+            <p class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
           </dt>
           <dd class="govuk-summary-list__value">
             @currency(initialPayment)
           </dd>
           <dd class="govuk-summary-list__actions">
               <a href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">
-                @Messages("ssttp.calculator.form.payment_summary.up-front-payment.change")
-                <span class="govuk-visually-hidden">@Messages("ssttp.calculator.form.payment_summary.up-front-payment")
+                @messages("ssttp.calculator.form.payment_summary.up-front-payment.change")
+                <span class="govuk-visually-hidden">@messages("ssttp.calculator.form.payment_summary.up-front-payment")
                 </span>
               </a>
           </dd>
         </div>
-        <div class="govuk-summary-list__row add_bottom_line">
+        <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">
-            @Messages("ssttp.calculator.form.payment_summary.amount.remaining")
+            @messages("ssttp.calculator.form.payment_summary.amount.remaining")
           </dt>
           <dd class="govuk-summary-list__value">
             @currency(debits.map(_.amount).sum - initialPayment)
+              <p class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@messages("ssttp.calculator.form.payment_summary.amount.remaining.hint")</p>
           </dd>
-          <dd class="govuk-summary-list__actions">
-
-          </dd>
+            <dd class="govuk-summary-list__value"></dd>
         </div>
     </dl>
 
-    </section>
+    <details class="govuk-details">
+        <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@messages("ssttp.calculator.form.payment_summary.detail.title")</span></summary>
+        <div class="govuk-details__text">
+            <p class="govuk-body">@messages("ssttp.calculator.form.payment_summary.detail.p1")</p>
+            <p class="govuk-body">@{Html(messages("ssttp.calculator.form.payment_summary.detail.p2"))}</p>
+            <p class="govuk-body">@messages("ssttp.calculator.form.payment_summary.detail.p3")</p>
+        </div>
+    </details>
 
     @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getMonthlyPayment()) {
-        @continue(Messages("ssttp.calculator.form.payment_summary.continue"))
+        @continue(messages("ssttp.calculator.form.payment_summary.continue"))
     }
 }

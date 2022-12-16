@@ -66,24 +66,28 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
 
       private val mainTextEnglish =
         """Payment summary
+          |Can you make an upfront payment?
           |Upfront payment
-          |Taken within 7 working days
+          |Taken within 10 working days
           |£123
-          |Change Upfront payment
+          |
           |Remaining amount to pay
           |£4,777
-          |Continue
+          |Interest will be added to this amount
+          |How we calculate interest
         """.stripMargin
 
       private val mainTextWelsh =
         """Crynodeb o’r taliadau
+          |A allwch wneud taliad ymlaen llaw?
           |Taliad ymlaen llaw
-          |I’w gymryd cyn pen 7 diwrnod gwaith
+          |I’w gymryd cyn pen 10 diwrnod gwaith
           |£123
-          |Newid Taliad ymlaen llaw
+          |
           |Swm sy’n weddill i’w dalu
           |£4,777
-          |Yn eich blaen
+          |Bydd llog yn cael ei ychwanegu at y swm hwn
+          |Sut rydym yn cyfrifo llog
         """.stripMargin
     }
 

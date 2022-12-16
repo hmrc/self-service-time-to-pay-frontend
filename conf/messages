@@ -92,10 +92,18 @@ ssttp.landing.before-you-start.p1 = HMRC intend this as a one-off payment plan t
 
 
 ssttp.calculator.form.payment_summary.title = Payment summary
+ssttp.calculator.form.payment_summary.today_question = Can you make an upfront payment?
 ssttp.calculator.form.payment_summary.up-front-payment = Upfront payment
-ssttp.calculator.form.payment_summary.up-front-payment.hint = Taken within 7 working days
+ssttp.calculator.form.payment_summary.today_question.yes = Yes
+ssttp.calculator.form.payment_summary.today_question.no = No
+ssttp.calculator.form.payment_summary.up-front-payment.hint = Taken within 10 working days
 ssttp.calculator.form.payment_summary.up-front-payment.change = Change
 ssttp.calculator.form.payment_summary.amount.remaining = Remaining amount to pay
+ssttp.calculator.form.payment_summary.amount.remaining.hint = Interest will be added to this amount
+ssttp.calculator.form.payment_summary.detail.title = How we calculate interest
+ssttp.calculator.form.payment_summary.detail.p1 = We charge interest on all overdue amounts.
+ssttp.calculator.form.payment_summary.detail.p2 = We charge the <strong>Bank of England base rate plus 2.5%</strong> per year.
+ssttp.calculator.form.payment_summary.detail.p3 = If the interest rate changes during your plan, your monthly payments will not change. If the interest rate goes up or down during your payment plan, we will adjust your final payment to settle any difference.
 ssttp.calculator.form.payment_summary.continue = Continue
 
 
