@@ -70,19 +70,20 @@ ssttp.sidebar.having_problems.intro = Os oes problem, neu os oes angen rhagor o 
 
 ssttp.landing.title = Sefydlu cynllun talu ar gyfer Hunanasesiad
 
-ssttp.landing.p1 = Mae cynllun talu’n eich galluogi i dalu’ch taliadau treth fesul rhandaliad, dros gyfnod o hyd at 12 mis.
-ssttp.landing.p2 = Mae’ch cynllun yn cynnwys eich taliad mantoli, eich taliad ar gyfrif cyntaf a’ch ail daliad ar gyfrif, yn ogystal ag unrhyw gosbau neu daliadau eraill yn erbyn eich cyfrif. Bydd yn rhaid i chi dalu llog ar y swm a dalwch yn hwyr.
-ssttp.landing.p3 = I fod yn gymwys i sefydlu cynllun talu ar-lein, mae’n rhaid bod y canlynol yn wir:
-ssttp.landing.p3list.1 = rydych wedi cyflwyno’ch Ffurflen Dreth ar gyfer 2019 i 2020
+ssttp.landing.p1 = Mae cynllun talu yn eich galluogi i dalu’ch taliadau treth fesul rhandaliad dros gyfnod o amser.
+ssttp.landing.p2 = Mae eich cynllun yn cwmpasu’r dreth sydd arnoch ac, os yw’n berthnasol, y ddau daliad ymlaen llaw tuag at eich bil treth. Mae’r cynllun hefyd yn cwmpasu unrhyw gosbau neu daliadau yn erbyn eich cyfrif. Bydd yn rhaid i chi dalu llog ar y swm a dalwch yn hwyr.
+ssttp.landing.p3 = I fod yn gymwys i sefydlu cynllun talu ar-lein, mae’n rhaid i’r canlynol fod yn wir amdanoch:
+ssttp.landing.p3list.1 = mae’n rhaid i chi sicrhau bod eich Ffurflenni Treth yn gyfredol
 ssttp.landing.p3list.2 = mae arnoch £{0} neu lai
 ssttp.landing.p3list.3 = nid oes gennych unrhyw ddyledion treth eraill
 ssttp.landing.p3list.4 = nid ydych wedi sefydlu cynlluniau talu eraill gyda CThEF
-ssttp.landing.p4 = Gallwch ddefnyddio’r gwasanaeth hwn cyn pen 60 diwrnod o’r dyddiad cau ar gyfer talu.
+ssttp.landing.p4 = Gallwch ddefnyddio’r gwasanaeth hwn cyn pen 60 diwrnod i’r dyddiad cau ar gyfer talu.
 
 ssttp.landing.start-button.label = Dechrau nawr
 
 ssttp.landing.before-you-start = Cyn i chi ddechrau
-ssttp.landing.before-you-start.p1 = Bwriad CThEF yw bod hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch yn gwneud hynny, mae’n bosibl y bydd CThEF yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.
+ssttp.landing.before-you-start.p1 = Bwriad CThEF yw y bydd hwn yn gynllun talu un-tro er mwyn rhoi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch, mae’n bosibl y bydd CThEF yn gofyn i chi dalu’r swm cyfan sy’n weddill.
+ssttp.landing.before-you-start.p2 = Er mwyn sefydlu’r cynllun talu, bydd angen i chi wybod beth yw’ch incwm a’ch gwariant misol, ac unrhyw gynilion neu fuddsoddiadau.
 
 #calculator
 
