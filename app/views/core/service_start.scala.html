@@ -34,33 +34,34 @@
 
 
 @main(
-    title = Messages("ssttp.landing.title"),
+    title = messages("ssttp.landing.title"),
     hasUserPanel = true
 ){
 
-<h1 class="govuk-heading-xl">@Messages("ssttp.landing.title")</h1>
+<h1 class="govuk-heading-xl">@messages("ssttp.landing.title")</h1>
 
 <section class="govuk-body">
-    <p>@Messages("ssttp.landing.p2")</p>
-    <p>@Messages("ssttp.landing.p1")</p>
-    <p>@Messages("ssttp.landing.p3")</p>
+    <p class="govuk-body">@messages("ssttp.landing.p1")</p>
+    <p class="govuk-body">@messages("ssttp.landing.p2")</p>
+    <p class="govuk-body">@messages("ssttp.landing.p3")</p>
 
     <ul class="govuk-list govuk-list--bullet">
-      <li>@Messages("ssttp.landing.p3list.1")</li>
-      <li>@Messages("ssttp.landing.p3list.2", eligibilityConfig.maximumDebtForSelfServe)</li>
-      <li>@Messages("ssttp.landing.p3list.3")</li>
-      <li>@Messages("ssttp.landing.p3list.4")</li>
+      <li>@messages("ssttp.landing.p3list.1")</li>
+      <li>@messages("ssttp.landing.p3list.2", eligibilityConfig.maximumDebtForSelfServe)</li>
+      <li>@messages("ssttp.landing.p3list.3")</li>
+      <li>@messages("ssttp.landing.p3list.4")</li>
     </ul>
 
-    <p>@Messages("ssttp.landing.p4")</p>
+    <p class="govuk-body">@messages("ssttp.landing.p4")</p>
+
+  <h2 class="govuk-heading-m">@messages("ssttp.landing.before-you-start")</h2>
+
+  <p class="govuk-body">@messages("ssttp.landing.before-you-start.p1")</p>
+  <p class="govuk-body govuk-!-margin-bottom-6" >@messages("ssttp.landing.before-you-start.p2")</p>
 
     @viewsHelpers.form(ssttpeligibility.routes.SelfServiceTimeToPayController.submit(), 'class -> "group",'id -> "start") {
         @viewsHelpers.startNow()
     }
-
-  <h2 class="govuk-heading-m">@Messages("ssttp.landing.before-you-start")</h2>
-
-  <p>@Messages("ssttp.landing.before-you-start.p1")</p>
 
 </section>
 

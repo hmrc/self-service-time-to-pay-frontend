@@ -70,42 +70,45 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
 
       private val mainTextEnglish =
         """Set up a Self Assessment payment plan
-          |A payment plan allows you to pay your tax charges in instalments, over a period of up to 12 months.
+          |A payment plan allows you to pay your tax charges in instalments over a period of time.
           |
-          |Your plan covers your balancing payment, your first and second payment on account, and any other penalties or charges against your account. You’ll have to pay interest on the amount you pay late.
+          |Your plan covers the tax you owe and, if applicable, the 2 advance payments towards your tax bill. It also covers any penalties or charges against your account. You’ll have to pay interest on the amount you pay late.
           |
           |To be eligible to set up an online payment plan you need to:
           |
-          |have filed your 2020 to 2021 tax return
+          |ensure your tax returns are up to date
           |owe £30,000 or less
           |have no other tax debts
           |have no other HMRC payment plans set up
           |You can use this service within 60 days of the payment deadline.
           |
-          |Start now
           |Before you start
           |HMRC intend this as a one-off payment plan to give you extra support. You must keep up to date with your payments. If you do not, HMRC may ask you to pay the entire outstanding amount.
+          |To set up the payment plan, you’ll need to know your monthly income and spending, and any savings or investments.
+          |Start now
         """.stripMargin
 
       private val mainTextWelsh =
         """Sefydlu cynllun talu ar gyfer Hunanasesiad
-          |Mae cynllun talu’n eich galluogi i dalu’ch taliadau treth fesul rhandaliad, dros gyfnod o hyd at 12 mis.
+          |Mae cynllun talu yn eich galluogi i dalu’ch taliadau treth fesul rhandaliad dros gyfnod o amser.
           |
-          |Mae’ch cynllun yn cynnwys eich taliad mantoli, eich taliad ar gyfrif cyntaf a’ch ail daliad ar gyfrif, yn ogystal ag unrhyw gosbau neu daliadau eraill yn erbyn eich cyfrif. Bydd yn rhaid i chi dalu llog ar y swm a dalwch yn hwyr.
+          |Mae eich cynllun yn cwmpasu’r dreth sydd arnoch ac, os yw’n berthnasol, y ddau daliad ymlaen llaw tuag at eich bil treth. Mae’r cynllun hefyd yn cwmpasu unrhyw gosbau neu daliadau yn erbyn eich cyfrif. Bydd yn rhaid i chi dalu llog ar y swm a dalwch yn hwyr.
           |
-          |I fod yn gymwys i sefydlu cynllun talu ar-lein, mae’n rhaid bod y canlynol yn wir:
+          |I fod yn gymwys i sefydlu cynllun talu ar-lein, mae’n rhaid i’r canlynol fod yn wir amdanoch:
           |
-          |rydych wedi cyflwyno’ch Ffurflen Dreth ar gyfer 2019 i 2020
+          |mae’n rhaid i chi sicrhau bod eich Ffurflenni Treth yn gyfredol
           |mae arnoch £30,000 neu lai
           |nid oes gennych unrhyw ddyledion treth eraill
           |nid ydych wedi sefydlu cynlluniau talu eraill gyda CThEF
-          |Gallwch ddefnyddio’r gwasanaeth hwn cyn pen 60 diwrnod o’r dyddiad cau ar gyfer talu.
+          |Gallwch ddefnyddio’r gwasanaeth hwn cyn pen 60 diwrnod i’r dyddiad cau ar gyfer talu.
+          |
+          |Cyn i chi ddechrau
+          |Bwriad CThEF yw y bydd hwn yn gynllun talu un-tro er mwyn rhoi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch, mae’n bosibl y bydd CThEF yn gofyn i chi dalu’r swm cyfan sy’n weddill.
+          |
+          |Er mwyn sefydlu’r cynllun talu, bydd angen i chi wybod beth yw’ch incwm a’ch gwariant misol, ac unrhyw gynilion neu fuddsoddiadau.
           |
           |Dechrau nawr
-          |Cyn i chi ddechrau
-          |Bwriad CThEF yw bod hwn yn gynllun talu un-tro i roi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch yn gwneud hynny, mae’n bosibl y bydd CThEF yn gofyn i chi dalu’r swm cyfan sydd heb ei dalu.
-          |
-          |""".stripMargin
+        """.stripMargin
     }
 
   }
