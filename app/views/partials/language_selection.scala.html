@@ -33,7 +33,8 @@
       url     = s"${langswitch.routes.LanguageSwitchController.switchToLanguage(language)}",
       value   = Some(language.label),
       cssClasses = Some("govuk-link"),
-      dataAttributes = appName.map(name => Map("journey-click" -> s"$name:language: ${language.code}"))
+      dataAttributes = appName.map(name => Map("journey-click" -> s"$name:language: ${language.code}")),
+      hiddenInfo = Some(language.hiddenText)
     ).toHtml
       </li>
   } else {
