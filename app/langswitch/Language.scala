@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import scala.collection.immutable
 sealed trait Language extends EnumEntry {
   def code: String
   def label: String
+  def hiddenText: String
   val toPlayLang: Lang = Lang(code)
 }
 
@@ -51,10 +52,12 @@ object Languages extends Enum[Language] {
   case object English extends Language {
     override def code: String = "en"
     override def label: String = "English"
+    override def hiddenText: String = "Change the language to English"
   }
   case object Welsh extends Language {
     override def code: String = "cy"
     override def label: String = "Cymraeg"
+    override def hiddenText: String = "Newid yr iaith i'r Gymraeg"
   }
 
   val availableLanguages = List(English, Welsh)
