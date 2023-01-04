@@ -10,6 +10,7 @@ GET         /assets/*file                                 controllers.Assets.ver
 # Home page
 GET         /                                                             ssttpeligibility.SelfServiceTimeToPayController.start()
 POST        /                                                             ssttpeligibility.SelfServiceTimeToPayController.submit()
+GET         /start-from-govuk                                             ssttpeligibility.SelfServiceTimeToPayController.startFromGovuk()
 
 # eligibility
 GET         /arrangement/determine-eligibility                            ssttparrangement.ArrangementController.determineEligibility()
