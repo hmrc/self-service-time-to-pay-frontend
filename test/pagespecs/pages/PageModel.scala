@@ -87,8 +87,8 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def readPath(): String = new java.net.URL(webDriver.getCurrentUrl).getPath
 
-  def clickOnEnglishLink(): Unit = click on id("en-switch")
-  def clickOnWelshLink(): Unit = click on id("cy-switch")
+  def clickOnEnglishLink(): Unit = click on id("en")
+  def clickOnWelshLink(): Unit = click on id("cy")
 
   def clickOnContinue(): Unit = click on id("continue")
 
