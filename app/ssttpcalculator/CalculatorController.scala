@@ -235,10 +235,11 @@ class CalculatorController @Inject() (
     JourneyLogger.info(s"CalculatorController.getPaymentSummary: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
       journey.maybePaymentToday match {
-        case Some(PaymentToday(false)) => Redirect(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
         case Some(PaymentToday(true)) =>
           val payToday = journey.paymentToday
           Ok(views.payment_summary(journey.taxpayer.selfAssessment.debits, payToday, journey.initialPayment))
+        case Some(PaymentToday(false)) =>
+          Redirect(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
         case None =>
           JourneyLogger.error("Illegal state", journey)
           throw new RuntimeException(s"payToday must be defined")
