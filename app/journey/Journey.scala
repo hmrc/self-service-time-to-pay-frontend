@@ -71,7 +71,7 @@ final case class Journey(
     maybeTaxpayer:              Option[Taxpayer]              = None,
     maybePaymentToday:          Option[PaymentToday]          = None,
     maybePaymentTodayAmount:    Option[PaymentTodayAmount]    = None,
-    maybeMonthlyPaymentAmount:  Option[BigDecimal]            = None,
+    maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(500), // TODO Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
     maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
 

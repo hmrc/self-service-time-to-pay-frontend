@@ -92,7 +92,7 @@ class CalculatorController @Inject() (
             )
 
             journeyService.saveJourney(newJourney).map(
-              _ => Redirect(ssttpcalculator.routes.CalculatorController.getMonthlyPayment()))
+              _ => Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()))
           case PayTodayQuestion(None) =>
             val msg = s"could not submitPayTodayQuestion, payToday must be defined"
             val ex = new RuntimeException(msg)
@@ -234,8 +234,15 @@ class CalculatorController @Inject() (
   def getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getPaymentSummary: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
-      val payToday = journey.paymentToday
-      Ok(views.payment_summary(journey.taxpayer.selfAssessment.debits, payToday, journey.initialPayment))
+      journey.maybePaymentToday match {
+        case Some(PaymentToday(false)) => Redirect(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
+        case Some(PaymentToday(true)) =>
+          val payToday = journey.paymentToday
+          Ok(views.payment_summary(journey.taxpayer.selfAssessment.debits, payToday, journey.initialPayment))
+        case None =>
+          JourneyLogger.error("Illegal state", journey)
+          throw new RuntimeException(s"payToday must be defined")
+      }
     }
   }
 
