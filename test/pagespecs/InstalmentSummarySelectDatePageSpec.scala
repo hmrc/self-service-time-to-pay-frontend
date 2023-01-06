@@ -42,10 +42,6 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    monthlyPaymentAmountPage.assertPageIsDisplayed()
-    monthlyPaymentAmountPage.enterAmount("2000")
-    monthlyPaymentAmountPage.clickContinue()
-
   }
 
   "language" in {
@@ -61,7 +57,7 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    selectDatePage.backButtonHref shouldBe Some(s"${baseUrl.value}${monthlyPaymentAmountPage.path}")
+    selectDatePage.backButtonHref shouldBe Some(s"${baseUrl.value}${paymentSummaryPage.path}")
   }
 
   "enter an invalid day" in {

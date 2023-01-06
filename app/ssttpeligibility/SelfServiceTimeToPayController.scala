@@ -58,6 +58,8 @@ class SelfServiceTimeToPayController @Inject() (
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
+  def startFromGovuk: Action[AnyContent] = submit
+
   def actionCallUsInEligibility: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
     Ok(views.call_us(isWelsh, loggedIn = isSignedIn))

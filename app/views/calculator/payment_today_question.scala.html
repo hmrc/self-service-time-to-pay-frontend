@@ -47,6 +47,7 @@
 
 @main(
     title = messages("ssttp.calculator.form.payment_today_question.title"),
+    hasErrors = dataForm.hasErrors,
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
 ) {
 

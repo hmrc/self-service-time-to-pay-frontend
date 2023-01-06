@@ -43,10 +43,6 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    monthlyPaymentAmountPage.assertPageIsDisplayed()
-    monthlyPaymentAmountPage.enterAmount("2000")
-    monthlyPaymentAmountPage.clickContinue()
-
     selectDatePage.assertPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()

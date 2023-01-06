@@ -67,7 +67,7 @@ class PaymentTodayQuestionPageSpec extends ItSpec {
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    monthlyPaymentAmountPage.assertPageIsDisplayed
+    selectDatePage.assertPageIsDisplayed
   }
 }
 

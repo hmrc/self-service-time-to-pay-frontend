@@ -10,6 +10,7 @@ GET         /assets/*file                                 controllers.Assets.ver
 # Home page
 GET         /                                                             ssttpeligibility.SelfServiceTimeToPayController.start()
 POST        /                                                             ssttpeligibility.SelfServiceTimeToPayController.submit()
+GET         /start-from-govuk                                             ssttpeligibility.SelfServiceTimeToPayController.startFromGovuk()
 
 # eligibility
 GET         /arrangement/determine-eligibility                            ssttparrangement.ArrangementController.determineEligibility()
@@ -38,9 +39,6 @@ GET         /calculator/payment-today                                     ssttpc
 POST        /calculator/payment-today                                     ssttpcalculator.CalculatorController.submitPaymentToday()
 
 GET         /calculator/payment-summary                                   ssttpcalculator.CalculatorController.getPaymentSummary()
-
-GET         /calculator/monthly-payment-amount                            ssttpcalculator.CalculatorController.getMonthlyPayment()
-POST        /calculator/monthly-payment-amount                            ssttpcalculator.CalculatorController.submitMonthlyPayment()
 
 GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getCalculateInstalments()
 POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitCalculateInstalments()
