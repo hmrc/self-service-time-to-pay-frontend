@@ -111,7 +111,6 @@ class ItSpec
   lazy val taxLiabilitiesPage: CalculatorTaxLiabilitiesPage = wire[CalculatorTaxLiabilitiesPage]
   lazy val paymentTodayQuestionPage: PaymentTodayQuestionPage = wire[PaymentTodayQuestionPage]
   lazy val paymentTodayCalculatorPage: PaymentTodayCalculatorPage = wire[PaymentTodayCalculatorPage]
-  lazy val monthlyPaymentAmountPage: MonthlyPaymentAmountPage = wire[MonthlyPaymentAmountPage]
   lazy val paymentSummaryPage: PaymentSummaryPage = wire[PaymentSummaryPage]
   lazy val calculatorInstalmentsPage28thDay: CalculatorInstalmentsPage28thDay = wire[CalculatorInstalmentsPage28thDay]
   lazy val calculatorInstalmentsPage11thDay: CalculatorInstalmentsPage11thDay = wire[CalculatorInstalmentsPage11thDay]

@@ -59,6 +59,6 @@ class PaymentSummaryPageSpec extends ItSpec {
     paymentSummaryPage.assertPageIsDisplayed
 
     paymentSummaryPage.clickContinue()
-    monthlyPaymentAmountPage.assertPageIsDisplayedAltPath(lowerAmount = 400, upperAmount = 2390)
+    selectDatePage.assertPageIsDisplayed
   }
 }

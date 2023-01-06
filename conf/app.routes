@@ -40,9 +40,6 @@ POST        /calculator/payment-today                                     ssttpc
 
 GET         /calculator/payment-summary                                   ssttpcalculator.CalculatorController.getPaymentSummary()
 
-GET         /calculator/monthly-payment-amount                            ssttpcalculator.CalculatorController.getMonthlyPayment()
-POST        /calculator/monthly-payment-amount                            ssttpcalculator.CalculatorController.submitMonthlyPayment()
-
 GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getCalculateInstalments()
 POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitCalculateInstalments()
 

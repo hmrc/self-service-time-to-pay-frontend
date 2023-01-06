@@ -432,15 +432,6 @@ ssttp.debt-too-large.opening.hours.h1 = Our opening times are:
 ssttp.debt-too-large.opening.hours.l1 = Monday to Friday: 8am to 6pm
 ssttp.debt-too-large.opening.hours.l2 = Saturday: 8am to 4pm
 
-ssttp.monthy.amount.title = How much can you afford to pay each month?
-ssttp.monthly.amount.hint = Enter an amount between {0} and {1}
-ssttp.monthly.amount.negative = Please enter an amount greater than zero
-ssttp.monthly.amount.numbers-only = Enter numbers only
-ssttp.monthly.amount.out-of-bounds = Enter a figure between the given range
-ssttp.upfront.amount.pound.sign.description=How much can you pay upfront in Pound Sterling
-ssttp.monthly.amount.pound.sign.description=How much can you pay monthly in Pound Sterling
-
-ssttp.monthly.amount.pound.sign.description=How much can you pay monthly in Pound Sterling
 ssttp.upfront.amount.pound.sign.description=How much can you pay upfront in Pound Sterling
 
 ssttp.arrangement.changeday.default = 28th or next working day
