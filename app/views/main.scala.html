@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En}
 @import config.ViewConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 
 @import req.RequestSupport.isLoggedIn
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.Meta
@@ -32,6 +33,7 @@
         hmrcHeader: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcHeader,
         hmrcFooter: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcFooter,
         languageSelect: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcLanguageSelect,
+        hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
 
         timeoutDialogue: views.html.partials.timeout_dialog_script,
 
@@ -87,9 +89,7 @@
         @partials.back_button(call)
     }
 
-    @if(welshToggleEnabled) {
-        @partials.language_selection(maybeCustomClass = Some("govuk-!-display-none-print"))
-    }
+    @hmrcLanguageSelectHelper()
 }
 
 @contentBlock = {
