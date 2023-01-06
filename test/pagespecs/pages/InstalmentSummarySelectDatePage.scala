@@ -39,7 +39,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Which day do you want to pay each month?"
-    case Languages.Welsh   => "Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu"
+    case Languages.Welsh   => "Ar ba ddiwrnod a ydych eisiau talu bob mis?"
   }
 
   def assertErrorPageInvalidNumberIsDisplayed(): Unit = probing {
@@ -109,10 +109,9 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
         """.stripMargin
 
       private val mainTextWelsh =
-        s"""Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
-           |28ain diwrnod nesaf
+        s"""Ar ba ddiwrnod a ydych eisiau talu bob mis?
+           |yr 28ain neu’r diwrnod gwaith nesaf
            |Diwrnod gwahanol
-           |Ewch i mewn i ddiwrnod y mis
            |Yn eich blaen
         """.stripMargin
 
