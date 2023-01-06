@@ -133,29 +133,6 @@ class CalculatorController @Inject() (
     }
   }
 
-  def getMonthlyPayment: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"CalculatorController.getMonthlyPayment: $request")
-    journeyService.authorizedForSsttp { journey: Journey =>
-      val (lowerBound, upperBound) = monthlyPaymentBound(journey.taxpayer.selfAssessment, journey.safeInitialPayment, journey.maybeArrangementDayOfMonth)
-      val emptyForm = createMonthlyAmountForm(
-        lowerBound.toInt,
-        upperBound.toInt
-      )
-      val formWithData = journey
-        .maybeMonthlyPaymentAmount
-        .map(amount => emptyForm.fill(MonthlyAmountForm(amount)))
-        .getOrElse(emptyForm)
-
-      Ok(
-        views.monthly_amount(
-          formWithData,
-          upperBound.toString(),
-          lowerBound.toString()
-        )
-      )
-    }
-  }
-
   @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
   private def monthlyPaymentBound(sa:                         SelfAssessmentDetails,
                                   initialPayment:             BigDecimal,
@@ -173,26 +150,6 @@ class CalculatorController @Inject() (
         JourneyLogger.info(s"CalculatorController.lowerMonthlyPaymentBound: ERROR [${e.toString}]")
         throw e
     }
-
-  def submitMonthlyPayment: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"CalculatorController.submitMonthlyPayment: $request")
-    journeyService.authorizedForSsttp { journey: Journey =>
-      val (min, max) = monthlyPaymentBound(journey.taxpayer.selfAssessment, journey.safeInitialPayment, None)
-      val monthlyAmountForm = createMonthlyAmountForm(min.toInt, max.toInt)
-      monthlyAmountForm.bindFromRequest().fold(
-        formWithErrors => {
-          Future.successful(BadRequest(views.monthly_amount(
-            formWithErrors, max.toString(), min.toString()
-          )))
-        },
-        (validFormData: MonthlyAmountForm) => {
-          journeyService.saveJourney(journey.copy(maybeMonthlyPaymentAmount = Some(validFormData.amount))).map { _ =>
-            Redirect(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
-          }
-        }
-      )
-    }
-  }
 
   def computeClosestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule])(implicit hc: HeaderCarrier): PaymentSchedule = {
       def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
