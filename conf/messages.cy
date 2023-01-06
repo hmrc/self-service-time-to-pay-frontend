@@ -199,7 +199,8 @@ ssttp.arrangement.type_of_account.button = Yn eich blaen
 ssttp.arrangement.type_of_account.error = Dewiswch pa fath o gyfrif yr ydych yn ei ddarparu
 ssttp.arrangement.sole_signatory.error = Dewiswch ‘Iawn’ os mai chi yw deiliad y cyfrif
 
-ssttp.arrangement.change_day.title = Dewiswch y dydd yr hoffech i’ch taliadau misol gael eu casglu
+ssttp.arrangement.change_day.title = Ar ba ddiwrnod a ydych eisiau talu bob mis?
+ssttp.arrangement.change_day.error.summary.title = Mae problem wedi codi
 ssttp.arrangement.change_day.payment-day.required = Nodwch werth
 ssttp.arrangement.change_day.payment-day.out-of-range = Nodwch rif rhwng 1 a 28
 ssttp.arrangement.change_day.payment-day.continue = Yn eich blaen
@@ -382,9 +383,9 @@ ssttp.monthly.amount.negative = Rhowch swm sy'n fwy na sero
 ssttp.monthly.amount.numbers-only = Rhowch rifau yn unig
 ssttp.monthly.amount.out-of-bounds = Rhowch ffigur rhwng yr ystod benodol
 
-ssttp.arrangement.changeday.default = 28ain diwrnod nesaf
+ssttp.arrangement.changeday.default = yr 28ain neu’r diwrnod gwaith nesaf
 ssttp.arrangement.changeday.different = Diwrnod gwahanol
-ssttp.arrangement.changeday.enter.date = Ewch i mewn i ddiwrnod y mis
+ssttp.arrangement.changeday.enter.date = Nodwch rif rhwng 1 a 28
 
 ssttp.arrangement.instalment-summary-table.upfront.payments.link-title = Newid eich taliadau ymlaen llaw
 ssttp.arrangement.instalment-summary.payment-date.change.link-title = Newid dyddiad eich taliad

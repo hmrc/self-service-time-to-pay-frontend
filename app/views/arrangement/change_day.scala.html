@@ -73,6 +73,7 @@
 
 @main(
     title = Messages("ssttp.arrangement.change_day.title"),
+    hasErrors = dayForm.hasErrors,
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPaymentSummary())
 ){
 
