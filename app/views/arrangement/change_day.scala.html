@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-@import helpers.forms.submit
-@import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 @import ssttparrangement.ArrangementForm
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Radios
@@ -60,12 +58,12 @@
 
 @enterCustomDayPanel = {
     <div id="customDate" class="govuk-form-group @if(customDateHasErrors){govuk-form-group--error}">
-        <label class="govuk-label" for="dayOfMonth" >@Messages("ssttp.arrangement.changeday.enter.date")</label>
+        <label class="govuk-label" for="dayOfMonth" >@messages("ssttp.arrangement.changeday.enter.date")</label>
         <br>
         @if(customDateHasErrors) {
             <span id="other-error" class="govuk-error-message">
                 <span class="govuk-visually-hidden">Error:</span>
-                @dayForm.error("dayOfMonth").map(formError => Messages(formError.message))
+                @dayForm.error("dayOfMonth").map(formError => messages(formError.message))
             </span>
         }
         <input type="text" class="govuk-input govuk-!-width-one-quarter" id="dayOfMonth" name="dayOfMonth">
@@ -73,7 +71,7 @@
 }
 
 @main(
-    title = Messages("ssttp.arrangement.change_day.title"),
+    title = messages("ssttp.arrangement.change_day.title"),
     hasErrors = dayForm.hasErrors,
     backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPaymentSummary())
 ){
@@ -85,7 +83,7 @@
                     href = error.href.map(_.replaceAll("other", "28th"))
                 ) else error
             },
-            title = Text(Messages("ssttp.arrangement.change_day.error.summary.title"))
+            title = Text(messages("ssttp.arrangement.change_day.error.summary.title"))
         ))
     }
 
@@ -94,21 +92,21 @@
             name = "other",
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                content = Text(Messages("ssttp.arrangement.change_day.title")),
+                content = Text(messages("ssttp.arrangement.change_day.title")),
                 classes = "govuk-fieldset__legend--xl govuk-!-margin-bottom-9",
                 isPageHeading = true
                 ))
             )),
-            errorMessage = dayForm.error("other").map(error => errorMessageWithDefaultStringsTranslated(content = Text(Messages(error.message)))),
+            errorMessage = dayForm.error("other").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
             items = Seq(
                 RadioItem(
-                    content = Text(Messages("ssttp.arrangement.changeday.default")),
+                    content = Text(messages("ssttp.arrangement.changeday.default")),
                     id = Some("28th"),
                     value = Some("false"),
                     checked = dayForm("dayOfMonth").value.contains("28")
                 ),
                 RadioItem(
-                    content = Text(Messages("ssttp.arrangement.changeday.different")),
+                    content = Text(messages("ssttp.arrangement.changeday.different")),
                     id = Some("other"),
                     value = Some("true"),
                     checked = dayForm("other").value.contains("true"),
