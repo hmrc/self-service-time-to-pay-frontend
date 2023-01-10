@@ -21,17 +21,11 @@ import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import journey.JourneyService
-import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttparrangement.{ArrangementConnector, ArrangementForm}
-import ssttpcalculator.CalculatorService
+import ssttparrangement.ArrangementForm
 import ssttpdirectdebit.DirectDebitConnector
-import ssttpeligibility.{EligibilityService, IaService}
-import times.ClockProvider
-import timetopaytaxpayer.cor.TaxpayerConnector
-import uk.gov.hmrc.mongo.lock.MongoLockRepository
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 import views.Views
@@ -40,20 +34,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AffordabilityController @Inject() (
-    mcc: MessagesControllerComponents,
-    //    ddConnector:          DirectDebitConnector,
-    //    arrangementConnector: ArrangementConnector,
-    //    calculatorService:    CalculatorService,
-    //    eligibilityService:   EligibilityService,
-    //    taxPayerConnector:    TaxpayerConnector,
-    auditService:   AuditService,
-    journeyService: JourneyService,
-    as:             Actions,
-    requestSupport: RequestSupport,
-    views:          Views,
-    clockProvider:  ClockProvider,
-    //    iaService:            IaService,
-    //    mongoLockRepository:  MongoLockRepository,
+    mcc:                  MessagesControllerComponents,
+    auditService:         AuditService,
+    journeyService:       JourneyService,
+    as:                   Actions,
+    requestSupport:       RequestSupport,
+    views:                Views,
     directDebitConnector: DirectDebitConnector)(
     implicit
     appConfig: AppConfig,
