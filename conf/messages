@@ -89,8 +89,20 @@ ssttp.landing.before-you-start.p1 = HMRC intend this as a one-off payment plan t
 ssttp.landing.before-you-start.p2 = To set up the payment plan, you’ll need to know your monthly income and spending, and any savings or investments.
 
 
-#calculator
+#affordability
 
+ssttp.affordability.start.h1 = We need to check you can afford the payment plan
+ssttp.affordability.start.p1 = To make sure you can afford your payment plan for the remaining <strong>{0}</strong>, we need to ask about your income and spending. We will use this information to check how much income you have left over after your essential monthly spending.
+ssttp.affordability.start.p2 = You may need to look at bank statements or utility bills before you continue. HMRC may ask for proof of your income and spending.
+ssttp.affordability.start.p3  = If you decide to call us, we will still ask you about your income and spending.
+ssttp.affordability.start.detail = How we calculate the plan
+ssttp.affordability.start.detail.text1 = We expect you to pay around half of your left over income towards the tax you owe. This is to help you:
+ssttp.affordability.start.detail.list1 = afford your monthly payments
+ssttp.affordability.start.detail.list2 = manage any unexpected changes in spending
+ssttp.affordability.start.detail.text2 = You can choose to pay more than half of your left over income. This will reduce the interest you pay.
+
+
+#calculator
 
 ssttp.calculator.form.payment_summary.title = Payment summary
 ssttp.calculator.form.payment_summary.today_question = Can you make an upfront payment?

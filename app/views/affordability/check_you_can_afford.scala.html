@@ -33,39 +33,30 @@
 
 @main(
     title = messages("ssttp.calculator.form.payment_summary.title"),
-    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())) {
+    backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())) {
 
-        <h1 class="govuk-heading-xl">We need to check you can afford the payment plan</h1>
+        <h1 class="govuk-heading-xl">@messages("ssttp.affordability.start.h1")</h1>
 
-    <p class="govuk-body">To make sure you can afford your payment plan for the remaining <strong>@currency(totalLiability-initialPayment)</strong>, we need to ask about your income and spending..
-        </p>
+        <p class="govuk-body">@{Html(messages("ssttp.affordability.start.p1", currency(totalLiability-initialPayment)))}</p>
 
-        <p class="govuk-body">
-            To ensure you can complete a payment plan, we'd like to ask about your income and spending. We will use this information to calculate your disposable income.
-        </p>
+        <p class="govuk-body">@messages("ssttp.affordability.start.p2")</p>
 
-        <p class="govuk-body">
-            You don't need any specific documents to answer the questions. Although, you might find it helpful to get bank statements or accounts before you continue.
-        </p>
+        <p class="govuk-body">@messages("ssttp.affordability.start.p3")</p>
 
 
         <details class="govuk-details" data-module="govuk-details">
             <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                    How we calculate the plan
-                </span>
+                <span class="govuk-details__summary-text">@messages("ssttp.affordability.start.detail")</span>
             </summary>
             <div class="govuk-details__text">
-                We expect you to pay 50% of your disposable income towards the plan. We expect 50% rather than 100% because we want:
-                <br><br>
+                @messages("ssttp.affordability.start.detail.text1")
 
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>your arrangement to be sustainable</li>
-                    <li>for you to be able to manage any unexpected changes in spending</li>
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-6">
+                    <li>@messages("ssttp.affordability.start.detail.list1")</li>
+                    <li>@messages("ssttp.affordability.start.detail.list2")</li>
                 </ul>
-                <br>
 
-                You may wish to pay more than 50% to reduce the interest you pay.
+                @messages("ssttp.affordability.start.detail.text2")
             </div>
         </details>
 
