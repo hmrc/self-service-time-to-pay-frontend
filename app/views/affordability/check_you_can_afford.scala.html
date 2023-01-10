@@ -1,0 +1,77 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import partials.currency
+
+@this(
+  main: views.html.main,
+  viewsHelpers: views.ViewsHelpers
+)
+
+@(      totalLiability:BigDecimal,
+        initialPayment:BigDecimal
+        )(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
+@import viewsHelpers._
+
+@main(
+    title = messages("ssttp.calculator.form.payment_summary.title"),
+    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPaymentToday())) {
+
+        <h1 class="govuk-heading-xl">We need to check you can afford the payment plan</h1>
+
+    <p class="govuk-body">To make sure you can afford your payment plan for the remaining <strong>@currency(totalLiability-initialPayment)</strong>, we need to ask about your income and spending..
+        </p>
+
+        <p class="govuk-body">
+            To ensure you can complete a payment plan, we'd like to ask about your income and spending. We will use this information to calculate your disposable income.
+        </p>
+
+        <p class="govuk-body">
+            You don't need any specific documents to answer the questions. Although, you might find it helpful to get bank statements or accounts before you continue.
+        </p>
+
+
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    How we calculate the plan
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                We expect you to pay 50% of your disposable income towards the plan. We expect 50% rather than 100% because we want:
+                <br><br>
+
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>your arrangement to be sustainable</li>
+                    <li>for you to be able to manage any unexpected changes in spending</li>
+                </ul>
+                <br>
+
+                You may wish to pay more than 50% to reduce the interest you pay.
+            </div>
+        </details>
+
+
+        <form action="task-list" method="get">
+            <input type="submit" class="govuk-button" value="Continue">
+        </form>
+
+}
