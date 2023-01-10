@@ -47,6 +47,8 @@ class AffordabilityController @Inject() (
 
   import requestSupport._
 
+  //TODO This method is duplicated in ArrangementController as def submitChangeSchedulePaymentDay.
+  // Delete from here and direct it to getCheckYouCanAfford, when the journey incorporates affordability
   def submitChooseDay(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.submitChooseDay: $request")
     journeyService.authorizedForSsttp {

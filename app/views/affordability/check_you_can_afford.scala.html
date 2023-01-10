@@ -29,10 +29,8 @@
         appConfig: config.AppConfig
 )
 
-@import viewsHelpers._
-
 @main(
-    title = messages("ssttp.calculator.form.payment_summary.title"),
+    title = messages("ssttp.affordability.start.h1"),
     backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())) {
 
         <h1 class="govuk-heading-xl">@messages("ssttp.affordability.start.h1")</h1>
@@ -60,9 +58,8 @@
             </div>
         </details>
 
-
-        <form action="task-list" method="get">
-            <input type="submit" class="govuk-button" value="Continue">
-        </form>
+    @viewsHelpers.form(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford(), 'id -> "start") {
+        @viewsHelpers.continue()
+    }
 
 }
