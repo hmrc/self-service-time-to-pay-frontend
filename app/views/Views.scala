@@ -22,6 +22,7 @@ class Views @Inject() (
     val create_user_and_log_in:                        views.html.testonly.create_user_and_log_in,
     val payment_today_question:                        views.html.calculator.payment_today_question,
     val payment_today_form:                            views.html.calculator.payment_today_form,
+    val check_you_can_afford:                          views.html.affordability.check_you_can_afford,
     val calculate_instalments_form:                    views.html.calculator.calculate_instalments_form,
     val payment_summary:                               views.html.calculator.payment_summary,
     val tax_liabilities:                               views.html.calculator.tax_liabilities,

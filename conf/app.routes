@@ -71,3 +71,9 @@ GET         /language/:language                                           langsw
 
 GET         /session/keep-alive                                       controllers.TimeoutController.keepAliveSession()
 GET         /delete-answers                                           controllers.TimeoutController.killSession()
+
+
+# Affordability
+
+POST        /start-affordability/                                         ssttpaffordability.AffordabilityController.submitChooseDay()
+GET         /start-affordability                                          ssttpaffordability.AffordabilityController.getCheckYouCanAfford()

@@ -85,11 +85,13 @@
 }
 
 @beforeContentBlock = {
+    @hmrcLanguageSelectHelper()
+
     @backButtonUrl.map{ call =>
         @partials.back_button(call)
     }
 
-    @hmrcLanguageSelectHelper()
+
 }
 
 @contentBlock = {

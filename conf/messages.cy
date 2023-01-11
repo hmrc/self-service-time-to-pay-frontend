@@ -85,8 +85,21 @@ ssttp.landing.before-you-start = Cyn i chi ddechrau
 ssttp.landing.before-you-start.p1 = Bwriad CThEF yw y bydd hwn yn gynllun talu un-tro er mwyn rhoi cymorth ychwanegol i chi. Mae’n rhaid i chi sicrhau eich bod yn gwneud eich taliadau mewn pryd. Os na fyddwch, mae’n bosibl y bydd CThEF yn gofyn i chi dalu’r swm cyfan sy’n weddill.
 ssttp.landing.before-you-start.p2 = Er mwyn sefydlu’r cynllun talu, bydd angen i chi wybod beth yw’ch incwm a’ch gwariant misol, ac unrhyw gynilion neu fuddsoddiadau.
 
-#calculator
 
+#affordability
+
+ssttp.affordability.start.h1 = Mae angen i ni wirio eich bod yn gallu fforddio’r cynllun talu
+ssttp.affordability.start.p1 = I wneud yn siŵr eich bod yn gallu fforddio’r cynllun talu ar gyfer y <strong>{0}</strong> sy’n weddill, mae angen i ni ofyn i chi am eich incwm a’ch gwariant. Byddwn yn defnyddio’r wybodaeth hon i wirio faint o incwm sy’n weddill gennych yn dilyn eich gwariant misol hanfodol.
+ssttp.affordability.start.p2 = Mae’n bosibl y bydd angen i chi edrych ar gyfriflenni banc neu filiau cyfleustodau cyn i chi fynd yn eich blaen. Mae’n bosibl y bydd CThEF yn gofyn am dystiolaeth o’ch incwm a’ch gwariant.
+ssttp.affordability.start.p3 = Os byddwch yn penderfynu ein ffonio, byddwn yn dal i ofyn i chi am eich incwm a’ch gwariant.
+ssttp.affordability.start.detail = Sut yr ydym yn cyfrifo’ch cynllun
+ssttp.affordability.start.detail.text1 = Rydym yn disgwyl i chi ddefnyddio tua hanner yr incwm sy’n weddill gennych i dalu’r dreth sydd arnoch. Mae hyn i’ch helpu i:
+ssttp.affordability.start.detail.list1 = fforddio’ch taliadau misol
+ssttp.affordability.start.detail.list2 = rheoli unrhyw newidiadau annisgwyl mewn gwariant
+ssttp.affordability.start.detail.text2 = Gallwch ddewis talu mwy na hanner eich incwm sy’n weddill. Bydd hyn yn gostwng y llog y byddwch yn ei dalu.
+
+
+#calculator
 
 ssttp.calculator.form.payment_summary.title = Crynodeb o’r taliadau
 ssttp.calculator.form.payment_summary.today_question = A allwch wneud taliad ymlaen llaw?
