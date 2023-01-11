@@ -73,7 +73,7 @@ class StartAffordabilityPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
            |
            |If you decide to call us, we will still ask you about your income and spending.
            |
-           |How we calculate the plan
+           |How we work out your plan
            |Continue
         """.stripMargin
 
