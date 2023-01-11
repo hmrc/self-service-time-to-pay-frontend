@@ -1,0 +1,142 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.FooterItem
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.{Header, ReportTechnicalIssue}
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En}
+@import config.ViewConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+
+@import req.RequestSupport.isLoggedIn
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.Meta
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.Footer
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
+
+@this(
+        govukLayout: uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout,
+        twoThirdsMainContent: uk.gov.hmrc.govukfrontend.views.html.components.TwoThirdsMainContent,
+        govukBackLink: uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink,
+        hmrcHeader: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcHeader,
+        hmrcFooter: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcFooter,
+        languageSelect: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcLanguageSelect,
+        hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
+
+        timeoutDialogue: views.html.partials.timeout_dialog_script,
+
+        reportTechnicalIssues: uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcReportTechnicalIssue,
+        hmrcTrackingConsentSnippet: uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet,
+        hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+        standardBetaBanner: uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner,
+
+        hmrcStandardFooter: HmrcStandardFooter,
+
+        mainScripts: views.html.scripts,
+
+        viewsHelpers: views.ViewsHelpers,
+        appConfig: config.AppConfig
+)(implicit viewConfig: config.ViewConfig)
+
+@(title: String,
+        hasErrors: Boolean = false,
+        maybeSidebarLinks: Option[Html] = None,
+        contentHeader: Option[Html] = None,
+        bodyClasses: Option[String] = None,
+        mainClass: Option[String] = None,
+        scriptElem: Option[Html] = None,
+        linksElem:  Option[Html] = None,
+        googleAnalyticsCalls: Seq[String] = Seq.empty,
+        noGetHelp:Boolean = false,
+        allowTimeoutDialog: Boolean = true,
+        welshToggleEnabled:Boolean = true,
+        hasUserPanel: Boolean = false,
+        navTitle: String = "ssttp.common.title",
+        backButtonUrl: Option[play.api.mvc.Call] = None
+)(
+        mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
+
+@head = {
+    @if(allowTimeoutDialog) {
+    @timeoutDialogue(isLoggedIn)
+    }
+
+    @hmrcTrackingConsentSnippet()
+
+    <link href='@routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" />
+    <link rel='stylesheet' href='@routes.Assets.versioned("stylesheets/self-service-time-to-pay.css")' />
+}
+
+@scripts = {
+    @mainScripts()
+    @if(scriptElem.isDefined){@scriptElem}
+}
+
+@beforeContentBlock = {
+    @hmrcLanguageSelectHelper()
+
+    @backButtonUrl.map{ call =>
+        @partials.back_button(call)
+    }
+
+
+}
+
+@contentBlock = {
+    @contentHeader
+
+    <div id="content">
+
+        @mainContent
+
+    </div>
+
+    <div class="govuk-!-display-none-print">
+        @hmrcReportTechnicalIssueHelper()
+    </div>
+}
+
+@fullTitle = @{s"$title - ${messages("ssttp.common.title")} - GOV.UK"}
+
+@govukLayout(
+    pageTitle = if (hasErrors) {Some(s"${messages("ssttp.common.title-prefix")} " + fullTitle)} else Some(fullTitle),
+    headBlock = Some(head),
+    headerBlock = Some(hmrcHeader(Header(
+        homepageUrl = "https://www.gov.uk",
+        signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).url) else None,
+        language = if (messages.lang.code == "cy") Cy else En,
+        classes = "govuk-!-display-none-print"
+    ))),
+    scriptsBlock = Some(scripts),
+    beforeContentBlock = Some(beforeContentBlock),
+    footerBlock = Some(hmrcFooter(Footer(
+        meta = Some(Meta(
+            items = Some(
+                Seq(
+                    FooterItem(text = Some(messages("footer_cookies.link")), href = Some(viewConfig.cookiesUrl)),
+                    FooterItem(
+                        text = Some(messages("accessibility-statement.title")),
+                        href = Some(viewConfig.accessibilityStatementUrl(request.uri)),
+                        attributes = Map("id" -> "accessibility-statement-link", "data-sso" -> "false", "data-journey-click" -> "footer:Click:Accessibility")
+                    ),
+                    FooterItem(text = Some(messages("footer_privacyNotice.link")), href = Some(viewConfig.privacyNoticeUrl)),
+                    FooterItem(text = Some(messages("footer_termsAndConditions.link")), href = Some(viewConfig.termsAndConditionsUrl)),
+                    FooterItem(text = Some(messages("footer_helpUsingGovUk.link")), href = Some(viewConfig.helpUsingGovUkUrl))
+                )
+            )
+        )),
+        classes = "govuk-!-display-none-print"
+    )))
+)(contentBlock)
