@@ -28,29 +28,32 @@
 )
 
 @main(
-    title = messages("ssttp.affordability.start.h1"),
+    title = messages("ssttp.affordability.income-spending.h1"),
     backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())) {
 
-    <h1 class="govuk-heading-xl">Add your income and spending</h1>
+    <h1 class="govuk-heading-xl">@messages("ssttp.affordability.income-spending.h1")</h1>
 
-    <ol class="app-task-list">
+    <ol class="app-task-list govuk-!-padding-left-5">
         <li>
             <span class="pull-right">
-                <a class="govuk-link" href="monthly-income">Add income</a>
+                <a class="govuk-link govuk-body-m" href="monthly-income">@messages("ssttp.affordability.income-spending.add-income")</a>
+                <span class="govuk-visually-hidden"> @messages("ssttp.affordability.income-spending.add-income")</span>
             </span>
             <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">1.</span>Income
+                <span class="app-task-list__section-number">1.</span>@messages("ssttp.affordability.income-spending.income")
             </h2>
                 <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9" />
         </li>
         <li>
             <span class="pull-right">
-                <a class="govuk-link" href="monthly-outgoings">Add spending</a>
+                <a class="govuk-link govuk-body-m" href="monthly-outgoings">@messages("ssttp.affordability.income-spending.add-spending")</a>
+                <span class="govuk-visually-hidden"> @messages("ssttp.affordability.income-spending.add-spending")</span>
             </span>
             <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">2.</span>Spending
+                <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
             </h2>
                 <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9" />
         </li>
     </ol>
+
 }

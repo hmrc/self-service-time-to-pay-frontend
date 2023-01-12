@@ -98,6 +98,12 @@ ssttp.affordability.start.detail.list1 = fforddio’ch taliadau misol
 ssttp.affordability.start.detail.list2 = rheoli unrhyw newidiadau annisgwyl mewn gwariant
 ssttp.affordability.start.detail.text2 = Gallwch ddewis talu mwy na hanner eich incwm sy’n weddill. Bydd hyn yn gostwng y llog y byddwch yn ei dalu.
 
+ssttp.affordability.income-spending.h1 = Ychwanegu eich incwm a’ch gwariant
+ssttp.affordability.income-spending.income = Incwm
+ssttp.affordability.income-spending.spending = Gwariant
+ssttp.affordability.income-spending.add-income = Ychwanegu incwm
+ssttp.affordability.income-spending.add-spending = Ychwanegu gwariant
+
 
 #calculator
 
