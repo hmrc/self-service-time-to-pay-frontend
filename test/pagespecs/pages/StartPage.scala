@@ -33,10 +33,14 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
     case Languages.Welsh   => "Sefydlu cynllun talu ar gyfer Hunanasesiad"
   }
 
+  def expectedTitleStartPageOnly(heading: String, lang: Language): String = lang match {
+    case Languages.English => s"Set up a Self Assessment payment plan - GOV.UK"
+    case Languages.Welsh   => s"Trefnu cynllun talu - GOV.UK"
+  }
+
   def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
+    pageTitle shouldBe expectedTitleStartPageOnly(expectedHeadingContent(lang), lang)
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }

@@ -108,14 +108,14 @@
     </div>
 }
 
-@fullTitle = @{s"$title - ${messages("ssttp.common.title")} - GOV.UK"}
+@fullTitle = @{s"${messages("ssttp.common.title")} - GOV.UK"}
 
 @govukLayout(
     pageTitle = if (hasErrors) {Some(s"${messages("ssttp.common.title-prefix")} " + fullTitle)} else Some(fullTitle),
     headBlock = Some(head),
     headerBlock = Some(hmrcHeader(Header(
         homepageUrl = "https://www.gov.uk",
-        serviceName = Some(none),
+        serviceName = None,
         signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).url) else None,
         language = if (messages.lang.code == "cy") Cy else En,
         classes = "govuk-!-display-none-print"
