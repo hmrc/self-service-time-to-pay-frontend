@@ -101,6 +101,12 @@ ssttp.affordability.start.detail.list1 = afford your monthly payments
 ssttp.affordability.start.detail.list2 = manage any unexpected changes in spending
 ssttp.affordability.start.detail.text2 = You can choose to pay more than half of your left over income. This will reduce the interest you pay.
 
+ssttp.affordability.income-spending.h1 = Add your income and spending
+ssttp.affordability.income-spending.income = Income
+ssttp.affordability.income-spending.spending = Spending
+ssttp.affordability.income-spending.add-income = Add income
+ssttp.affordability.income-spending.add-spending = Add spending
+
 
 #calculator
 
