@@ -103,6 +103,7 @@ ssttp.affordability.income-spending.income = Incwm
 ssttp.affordability.income-spending.spending = Gwariant
 ssttp.affordability.income-spending.add-income = Ychwanegu incwm
 ssttp.affordability.income-spending.add-spending = Ychwanegu gwariant
+ssttp.affordability.income-spending.hidden = manylion
 
 
 #calculator
