@@ -19,6 +19,7 @@ package pagespecs.pages
 import langswitch.Languages.{English, Welsh}
 import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
+import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
@@ -26,7 +27,7 @@ import testsupport.RichMatchers.convertToAnyShouldWrapper
 class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
 
-  override def path: String = "/py-what-you-owe-in-instalments/your-monthly-income"
+  override def path: String = "/pay-what-you-owe-in-instalments/your-monthly-income"
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Your monthly income"
@@ -42,6 +43,29 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
     val expectedLines = Expected.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
+  }
+
+  def enterPrimaryIncome(value: String): Unit = {
+    val primaryIncome = xpath("//*[@id=\"primaryIncome\"]")
+    click on primaryIncome
+    enter(value)
+  }
+
+  def enterBenefits(value: String): Unit = {
+    val benefits = xpath("//*[@id=\"benefits\"]")
+    click on benefits
+    enter(value)
+  }
+
+  def enterOtherIncome(value: String): Unit = {
+    val otherIncome = xpath("//*[@id=\"otherIncome\"]")
+    click on otherIncome
+    enter(value)
+  }
+
+  def assertErrorIsDisplayed(implicit lang: Language): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces shouldBe Expected.TextError().stripSpaces()
   }
 
   object Expected {
@@ -84,6 +108,25 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
            |Er enghraifft, Credyd Cynhwysol, credydau treth
            |Incwm misol arall
            |Er enghraifft, incwm rhent, difidendau
+        """.stripMargin
+    }
+
+    object TextError {
+      def apply()(implicit language: Language): String = language match {
+        case English => errorTextEnglish
+        case Welsh => errorTextWelsh
+      }
+
+      private val errorTextEnglish =
+        """There is a problem
+          |You must enter an income figure.
+          |If you do not have any income call us on 0300 200 3835.
+        """.stripMargin
+
+      private val errorTextWelsh =
+        """Mae problem wedi codi
+          |Mae’n rhaid i chi nodi ffigur ar gyfer yr incwm
+          |Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
         """.stripMargin
     }
   }
