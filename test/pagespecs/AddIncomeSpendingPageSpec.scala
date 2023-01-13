@@ -50,6 +50,28 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     addIncomeSpendingPage.assertPageIsDisplayed()
   }
 
+  "add income button" - {
+    "in English" in {
+      beginJourney()
+
+      addIncomeSpendingPage.assertPageIsDisplayed
+
+      addIncomeSpendingPage.clickOnAddIncome()
+      yourMonthlyIncomePage.assertPageIsDisplayed(English)
+    }
+    "in Welsh" in {
+      beginJourney()
+
+      addIncomeSpendingPage.assertPageIsDisplayed
+
+      addIncomeSpendingPage.clickOnWelshLink()
+      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+
+      addIncomeSpendingPage.clickOnAddIncome()
+      yourMonthlyIncomePage.assertPageIsDisplayed(Welsh)
+    }
+  }
+
   "language" in {
     beginJourney()
 

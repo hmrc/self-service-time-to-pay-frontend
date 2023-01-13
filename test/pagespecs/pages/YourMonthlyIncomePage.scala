@@ -46,9 +46,14 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   }
 
   def enterPrimaryIncome(value: String): Unit = {
-    val primaryIncome = xpath("//*[@id=\"primaryIncome\"]")
+    val primaryIncome = xpath("//*[@id=\"primary-income\"]")
     click on primaryIncome
     enter(value)
+  }
+
+  def assertPrimaryIncomeValueIsDisplayed(value: String): Unit = {
+    val primaryIncome = textField("primary-income")
+    primaryIncome.value shouldBe value
   }
 
   def enterBenefits(value: String): Unit = {
@@ -57,13 +62,23 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     enter(value)
   }
 
+  def assertBenefitsValueIsDisplayed(value: String): Unit = {
+    val benefits = textField("benefits")
+    benefits.value shouldBe value
+  }
+
   def enterOtherIncome(value: String): Unit = {
-    val otherIncome = xpath("//*[@id=\"otherIncome\"]")
+    val otherIncome = xpath("//*[@id=\"other-income\"]")
     click on otherIncome
     enter(value)
   }
 
-  def assertErrorIsDisplayed(implicit lang: Language): Assertion = probing {
+  def assertOtherIncomeValueIsDisplayed(value: String): Unit = {
+    val otherIncome = textField("other-income")
+    otherIncome.value shouldBe value
+  }
+
+  def assertErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
     readMain().stripSpaces shouldBe Expected.TextError().stripSpaces()
   }

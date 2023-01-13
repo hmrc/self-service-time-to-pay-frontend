@@ -44,6 +44,10 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     assertContentMatchesExpectedLines(expectedLines)
   }
 
+  def clickOnAddIncome(): Unit = {
+    click on id("monthly-income")
+  }
+
   object Expected {
 
     object GlobalHeaderText {
