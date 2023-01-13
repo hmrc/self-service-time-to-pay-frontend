@@ -16,7 +16,6 @@
 
 package pagespecs
 
-import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
@@ -97,69 +96,70 @@ class YourMonthlyIncomePageSpec extends ItSpec {
 
       addIncomeSpendingPage.assertPageIsDisplayed()
     }
+  }
 
-    "add zero or negative monthly income and press continue stays on page" - {
-      "- zero value for monthly income -" - {
-        "displays error message" in {
-          beginJourney()
+  "add zero or negative monthly income and press continue stays on page" - {
+    "- zero value for monthly income -" - {
+      "displays error message" in {
+        beginJourney()
 
-          yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertPageIsDisplayed
 
-          yourMonthlyIncomePage.enterPrimaryIncome("0")
-          yourMonthlyIncomePage.clickOnContinue()
+        yourMonthlyIncomePage.enterPrimaryIncome("0")
+        yourMonthlyIncomePage.clickOnContinue()
 
-          yourMonthlyIncomePage.assertPageIsDisplayed
-          yourMonthlyIncomePage.assertErrorIsDisplayed
-        }
-        "retains values entered" in {
-          beginJourney()
-
-          yourMonthlyIncomePage.assertPageIsDisplayed
-
-          yourMonthlyIncomePage.enterPrimaryIncome("0")
-          yourMonthlyIncomePage.clickOnContinue()
-
-          yourMonthlyIncomePage.assertPageIsDisplayed
-          yourMonthlyIncomePage.assertErrorIsDisplayed
-          yourMonthlyIncomePage.assertPrimaryIncomeValueIsDisplayed("0")
-        }
+        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertErrorIsDisplayed
       }
+      "retains values entered" in {
+        beginJourney()
 
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterPrimaryIncome("0")
+        yourMonthlyIncomePage.clickOnContinue()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertErrorIsDisplayed
+        yourMonthlyIncomePage.assertPrimaryIncomeValueIsDisplayed("0")
       }
-      "- negative value for monthly income -" - {
-        "displays error message" in {
-          beginJourney()
-
-          yourMonthlyIncomePage.assertPageIsDisplayed
-
-          yourMonthlyIncomePage.enterPrimaryIncome("-0.01")
-          yourMonthlyIncomePage.clickOnContinue()
-
-          yourMonthlyIncomePage.assertPageIsDisplayed
-          yourMonthlyIncomePage.assertErrorIsDisplayed
-        }
-        "retains values entered" in {
-          beginJourney()
-
-          yourMonthlyIncomePage.assertPageIsDisplayed
-
-          yourMonthlyIncomePage.enterPrimaryIncome("-0.01")
-          yourMonthlyIncomePage.enterBenefits("0.01")
-          yourMonthlyIncomePage.enterOtherIncome("0.01")
-
-          yourMonthlyIncomePage.clickOnContinue()
-
-          yourMonthlyIncomePage.assertPageIsDisplayed
-          yourMonthlyIncomePage.assertErrorIsDisplayed
-          yourMonthlyIncomePage.assertPrimaryIncomeValueIsDisplayed("-0.01")
-          yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
-          yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
-
-
-        }
     }
-    "not adding monthly income and press continue stays on page" - {
-      "and displays error message" in {
+
+  }
+  "- negative value for monthly income -" - {
+    "displays error message" in {
+      beginJourney()
+
+      yourMonthlyIncomePage.assertPageIsDisplayed
+
+      yourMonthlyIncomePage.enterPrimaryIncome("-0.01")
+      yourMonthlyIncomePage.clickOnContinue()
+
+      yourMonthlyIncomePage.assertPageIsDisplayed
+      yourMonthlyIncomePage.assertErrorIsDisplayed
+    }
+    "retains values entered" in {
+      beginJourney()
+
+      yourMonthlyIncomePage.assertPageIsDisplayed
+
+      yourMonthlyIncomePage.enterPrimaryIncome("-0.01")
+      yourMonthlyIncomePage.enterBenefits("0.01")
+      yourMonthlyIncomePage.enterOtherIncome("0.01")
+
+      yourMonthlyIncomePage.clickOnContinue()
+
+      yourMonthlyIncomePage.assertPageIsDisplayed
+      yourMonthlyIncomePage.assertErrorIsDisplayed
+      yourMonthlyIncomePage.assertPrimaryIncomeValueIsDisplayed("-0.01")
+      yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
+      yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
+
+
+    }
+  }
+  "not adding monthly income and press continue stays on page" - {
+    "and displays error message" in {
       beginJourney()
 
       yourMonthlyIncomePage.assertPageIsDisplayed
@@ -168,22 +168,23 @@ class YourMonthlyIncomePageSpec extends ItSpec {
 
       yourMonthlyIncomePage.assertPageIsDisplayed
       yourMonthlyIncomePage.assertErrorIsDisplayed
-      }
-      "retains other values entered" in {
-        beginJourney()
+    }
+    "retains other values entered" in {
+      beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+      yourMonthlyIncomePage.assertPageIsDisplayed
 
-        yourMonthlyIncomePage.enterBenefits("0.01")
-        yourMonthlyIncomePage.enterOtherIncome("0.01")
-        yourMonthlyIncomePage.clickOnContinue()
+      yourMonthlyIncomePage.enterBenefits("0.01")
+      yourMonthlyIncomePage.enterOtherIncome("0.01")
+      yourMonthlyIncomePage.clickOnContinue()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
-        yourMonthlyIncomePage.assertErrorIsDisplayed
-        yourMonthlyIncomePage.assertPrimaryIncomeValueIsDisplayed("")
-        yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
-        yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
-      }
+      yourMonthlyIncomePage.assertPageIsDisplayed
+      yourMonthlyIncomePage.assertErrorIsDisplayed
+      yourMonthlyIncomePage.assertPrimaryIncomeValueIsDisplayed("")
+      yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
+      yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
+    }
+  }
 
   "language" in {
     beginJourney()
@@ -201,5 +202,4 @@ class YourMonthlyIncomePageSpec extends ItSpec {
     beginJourney()
     startAffordabilityPage.backButtonHref shouldBe Some(s"${baseUrl.value}${startAffordabilityPage.path}")
   }
-
 }
