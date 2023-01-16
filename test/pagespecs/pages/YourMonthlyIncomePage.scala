@@ -26,7 +26,7 @@ import testsupport.RichMatchers.convertToAnyShouldWrapper
 class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
 
-  override def path: String = "/pay-what-you-owe-in-instalments/your-monthly-income"
+  override def path: String = "/pay-what-you-owe-in-instalments/monthly-income"
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Your monthly income"

@@ -83,4 +83,11 @@ class AffordabilityController @Inject() (
       Future.successful(Ok(views.add_income_spending()))
     }
   }
+
+  def getYourMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"AffordabilityController.getYourMonthlyIncome: $request")
+    journeyService.authorizedForSsttp({ _ =>
+      Future.successful(Ok(views.your_monthly_income()))
+    })
+  }
 }
