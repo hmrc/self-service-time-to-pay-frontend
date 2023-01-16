@@ -129,7 +129,7 @@
                 hint = Some(Hint(content = HtmlContent("If <em>No</em> then below setup will be ignored"))),
                 items = List(
                     RadioItem(content = Text("Yes"), value = Some("true")),
-                    RadioItem(content = Text("No"), value = Some("true"))
+                    RadioItem(content = Text("No"), value = Some("false"))
                 ),
                 classes = "govuk-radios--inline"
             ).withFormField(dataForm("has-sa-enrolment")))
