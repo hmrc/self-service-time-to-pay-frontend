@@ -155,7 +155,6 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
       yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
 
-
     }
   }
   "not adding monthly income and press continue stays on page" - {

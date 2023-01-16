@@ -23,7 +23,6 @@ import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-
 class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
 
@@ -31,7 +30,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Your monthly income"
-    case Languages.Welsh => "Eich incwm misol"
+    case Languages.Welsh   => "Eich incwm misol"
   }
 
   override def clickOnContinue(): Unit = clickOnContinue()
@@ -51,7 +50,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     enter(value)
   }
 
-  def assertPrimaryIncomeValueIsDisplayed(value: String): Unit = {
+  def assertPrimaryIncomeValueIsDisplayed(value: String): Assertion = {
     val primaryIncome = textField("primary-income")
     primaryIncome.value shouldBe value
   }
@@ -62,7 +61,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     enter(value)
   }
 
-  def assertBenefitsValueIsDisplayed(value: String): Unit = {
+  def assertBenefitsValueIsDisplayed(value: String): Assertion = {
     val benefits = textField("benefits")
     benefits.value shouldBe value
   }
@@ -73,9 +72,10 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     enter(value)
   }
 
-  def assertOtherIncomeValueIsDisplayed(value: String): Unit = {
+  def assertOtherIncomeValueIsDisplayed(value: String): Assertion = {
     val otherIncome = textField("other-income")
     otherIncome.value shouldBe value
+
   }
 
   def assertErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
@@ -89,7 +89,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
       def apply()(implicit language: Language): String = language match {
         case English => globalHeaderTextEnglish
-        case Welsh => globalHeaderTextWelsh
+        case Welsh   => globalHeaderTextWelsh
       }
 
       private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
@@ -100,7 +100,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     object MainText {
       def apply()(implicit language: Language): String = language match {
         case English => mainTextEnglish
-        case Welsh => mainTextWelsh
+        case Welsh   => mainTextWelsh
       }
 
       private val mainTextEnglish =
@@ -129,7 +129,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     object TextError {
       def apply()(implicit language: Language): String = language match {
         case English => errorTextEnglish
-        case Welsh => errorTextWelsh
+        case Welsh   => errorTextWelsh
       }
 
       private val errorTextEnglish =
