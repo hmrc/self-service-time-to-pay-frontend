@@ -14,46 +14,78 @@
  * limitations under the License.
  *@
 
+@import ssttpcalculator.CalculatorPaymentTodayForm
+@import timetopaytaxpayer.cor.model.Debit
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Input
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
+@import uk.gov.hmrc.govukfrontend.views.Aliases.PrefixOrSuffix
+@import views.html.helpers.forms.submit
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
 @import partials.currency
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 
 @this(
 main: views.html.main,
-viewsHelpers: views.ViewsHelpers
+viewsHelpers: views.ViewsHelpers,
+formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
+input: uk.gov.hmrc.govukfrontend.views.html.components.GovukInput,
+errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
+continue: views.html.helpers.forms.ssttpContinue
 )
 
-@()(implicit
+@(
+dataForm: Form[CalculatorPaymentTodayForm],
+debits: Seq[Debit],
+loggedIn: Boolean = false)(implicit
 messages: play.api.i18n.Messages,
 request: Request[_],
 appConfig: config.AppConfig
 )
 
 @main(
-title = messages("ssttp.affordability.your-monthly-income.h1"),
-backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())) {
+title = messages("ssttp.calculator.form.payment_today.title"),
+hasErrors = dataForm.hasErrors,
+backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
 
-<h1 class="govuk-heading-xl">@messages("ssttp.affordability.your-monthly-income.h1")</h1>
+){
+@if(dataForm.hasErrors){
+@errorSummary(ErrorSummary(
+errorList = dataForm.errors.asTextErrorLinks,
+title = Text(messages("ssttp.calculator.form.payment_today.error.summary.title"))
+))
+}
 
-<ol class="app-task-list govuk-!-padding-left-5">
-    <li>
-            <span class="pull-right">
-                <a class="govuk-link govuk-body-m" id="monthly-income" href="monthly-income">@messages("ssttp.affordability.income-spending.add-income")</a>
-                <span class="govuk-visually-hidden"> @messages("ssttp.affordability.income-spending.hidden")</span>
-            </span>
-        <h2 class="app-task-list__section">
-            <span class="app-task-list__section-number">1.</span>@messages("ssttp.affordability.income-spending.income")
-        </h2>
-        <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9" />
-    </li>
-    <li>
-            <span class="pull-right">
-                <a class="govuk-link govuk-body-m" href="monthly-spending">@messages("ssttp.affordability.income-spending.add-spending")</a>
-                <span class="govuk-visually-hidden"> @messages("ssttp.affordability.income-spending.hidden")</span>
-            </span>
-        <h2 class="app-task-list__section">
-            <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
-        </h2>
-        <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9" />
-    </li>
-</ol>
+<section class="govuk-body">
+    @formWithCsrf(
+    action = ssttpcalculator.routes.CalculatorController.submitPaymentToday(),
+    'id -> "paytoday-form"
+    ){
+    @input(Input(
+    id = "amount",
+    name = "amount",
+    hint = Some(Hint(
+    content = Text(messages("ssttp.calculator.form.payment_today.hint", currency(debits.map(_.amount).sum)))
+    )),
+    label = Label(
+    forAttr = Some("amount"),
+    content = Text(messages("ssttp.calculator.form.payment_today.title")),
+    classes = "govuk-!-font-weight-bold govuk-label--xl govuk-!-margin-bottom-9",
+    isPageHeading = true
+    ),
+    errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+    prefix = Some(PrefixOrSuffix(
+    content = Text("£")
+    )),
+    classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+    ))
+
+    @continue(messages("ssttp.calculator.form.continue"))
+    }
+</section>
+
+
 
 }
