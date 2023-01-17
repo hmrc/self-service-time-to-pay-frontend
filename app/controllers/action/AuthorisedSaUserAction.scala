@@ -67,7 +67,7 @@ class AuthorisedSaUserAction @Inject() (
       (hasActiveSaEnrolment, maybeUtr) match {
         case (false, _) =>
           logFail("no active IR-SA enrolment")
-          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
+          Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()))
         case (_, None) =>
           logFail("no present UTR")
           Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
