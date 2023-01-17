@@ -18,7 +18,7 @@ package ssttpcalculator
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
-final case class MonthlyIncomeForm(amount: BigDecimal)
+final case class MonthlyIncomeForm(monthlyIncome: BigDecimal)
 
 object MonthlyIncomeForm {
   def apply(str: String): MonthlyIncomeForm = {
@@ -33,7 +33,7 @@ object MonthlyIncomeForm {
   }
 
   implicit def monthlyIncomeToBigDecimal(mif: MonthlyIncomeForm): BigDecimal = {
-    mif.amount.setScale(2, HALF_UP)
+    mif.monthlyIncome.setScale(2, HALF_UP)
   }
 
   def unapply(arg: BigDecimal): Option[BigDecimal] = Option(arg.setScale(2, HALF_UP))

@@ -114,8 +114,7 @@ ssttp.affordability.your-monthly-income.benefits.hint = Er enghraifft, Credyd Cy
 ssttp.affordability.your-monthly-income.other-income = Incwm misol arall
 ssttp.affordability.your-monthly-income.other-income.hint = Er enghraifft, incwm rhent, difidendau
 ssttp.affordability.your-monthly-income.error.title = Mae problem wedi codi
-ssttp.affordability.your-monthly-income.error.helper = Mae’n rhaid i chi nodi ffigur ar gyfer yr incwm
-ssttp.affordability.your-monthly-income.error.call = Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
+ssttp.affordability.your-monthly-income.error.helper = Mae’n rhaid i chi nodi ffigur ar gyfer yr incwm. Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
 ssttp.affordability.your-monthly-income.continue = Yn eich blaen
 
 #calculator

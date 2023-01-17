@@ -95,7 +95,7 @@ object CalculatorForm {
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)
   )(PayTodayQuestion.apply)(PayTodayQuestion.unapply))
 
-  def createMonthlyIncomeForm(): Form[MonthlyIncomeForm] =
+  def createMonthlyIncomeForm(): Form[MonthlyIncomeForm] = {
     Form(mapping(
       "monthly-income" -> text
         .verifying("ssttp.affordability.your-monthly-income.error.helper", { i: String => i.nonEmpty })
@@ -107,6 +107,7 @@ object CalculatorForm {
           if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
         })
     // consider adding max value of 1,000,000,000 as per upfront payment
-    )(text => MonthlyIncomeForm(text))(bd => Some(bd.amount.toString)))
+    )(text => MonthlyIncomeForm(text))(bd => Some(bd.monthlyIncome.toString)))
+  }
 
 }

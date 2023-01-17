@@ -20,7 +20,7 @@ import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
-import journey.{Journey, JourneyService}
+import journey.{Journey, JourneyService, MonthlyIncome}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
@@ -98,8 +98,18 @@ class AffordabilityController @Inject() (
 
   def submitMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.submitMonthlyIncome: $request")
-    journeyService.authorizedForSsttp { _ =>
-      Future.successful(Ok(views.add_income_spending()))
+    journeyService.authorizedForSsttp { journey: Journey =>
+      createMonthlyIncomeForm().bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn))),
+        (form: MonthlyIncomeForm) => {
+          val newJourney = journey.copy(
+            maybeMonthlyIncome = Some(MonthlyIncome(form.monthlyIncome))
+          )
+          journeyService.saveJourney(newJourney).map { _ =>
+            Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+          }
+        }
+      )
     }
   }
 }
