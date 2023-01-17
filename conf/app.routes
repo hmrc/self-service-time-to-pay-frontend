@@ -79,3 +79,4 @@ POST        /start-affordability/                                         ssttpa
 GET         /start-affordability                                          ssttpaffordability.AffordabilityController.getCheckYouCanAfford()
 GET         /add-income-spending                                          ssttpaffordability.AffordabilityController.getAddIncomeAndSpending()
 GET         /monthly-income                                               ssttpaffordability.AffordabilityController.getYourMonthlyIncome()
+POST        /monthly-income                                               ssttpaffordability.AffordabilityController.submitMonthlyIncome()

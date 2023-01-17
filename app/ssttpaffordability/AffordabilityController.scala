@@ -20,11 +20,13 @@ import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
-import journey.JourneyService
+import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
+import ssttpcalculator.CalculatorForm.createMonthlyIncomeForm
+import ssttpcalculator.MonthlyIncomeForm
 import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
@@ -86,8 +88,18 @@ class AffordabilityController @Inject() (
 
   def getYourMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.getYourMonthlyIncome: $request")
-    journeyService.authorizedForSsttp({ _ =>
-      Future.successful(Ok(views.your_monthly_income()))
-    })
+    journeyService.authorizedForSsttp{ journey: Journey =>
+      val emptyForm = createMonthlyIncomeForm()
+      val formWithData = journey.maybeMonthlyIncome.map(monthlyIncome =>
+        emptyForm.fill(MonthlyIncomeForm(monthlyIncome.value))).getOrElse(emptyForm)
+      Future.successful(Ok(views.your_monthly_income(formWithData, isSignedIn)))
+    }
+  }
+
+  def submitMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"AffordabilityController.submitMonthlyIncome: $request")
+    journeyService.authorizedForSsttp { _ =>
+      Future.successful(Ok(views.add_income_spending()))
+    }
   }
 }

@@ -60,6 +60,12 @@ object MonthlyPaymentAmount {
   implicit val format: OFormat[MonthlyPaymentAmount] = Json.format[MonthlyPaymentAmount]
 }
 
+final case class MonthlyIncome(value: BigDecimal)
+
+object MonthlyIncome {
+  implicit val format: OFormat[MonthlyIncome] = Json.format[MonthlyIncome]
+}
+
 final case class Journey(
     _id:                       JourneyId,
     status:                    Status                          = InProgress,
@@ -72,6 +78,7 @@ final case class Journey(
     maybePaymentToday:          Option[PaymentToday]          = None,
     maybePaymentTodayAmount:    Option[PaymentTodayAmount]    = None,
     maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
+    maybeMonthlyIncome:         Option[MonthlyIncome]         = None,
     maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
 

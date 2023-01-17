@@ -110,16 +110,16 @@ ssttp.affordability.income-spending.hidden = details
 
 ssttp.affordability.your-monthly-income.h1 = Your monthly income
 ssttp.affordability.your-monthly-income.instruction = Add information about yourself only.
-ssttp.affordability.your-monthly-income.monthly-income = Monthly income after tax
-ssttp.affordability.your-monthly-income.monthly-income.hint = If you do not have a regular monthly income, add an estimate.
-ssttp.affordability.your-monthly-income.benefits = Benefits
-ssttp.affordability.your-monthly-income.benefits.hint = For example, Universal Credit, tax credits
-ssttp.affordability.your-monthly-income.other-income = Other monthly income
-ssttp.affordability.your-monthly-income.other-income.hint = For example, rental income, dividends
+ssttp.affordability.form.your-monthly-income.monthly-income = Monthly income after tax
+ssttp.affordability.form.your-monthly-income.monthly-income.hint = If you do not have a regular monthly income, add an estimate.
+ssttp.affordability.form.your-monthly-income.benefits = Benefits
+ssttp.affordability.form.your-monthly-income.benefits.hint = For example, Universal Credit, tax credits
+ssttp.affordability.form.your-monthly-income.other-income = Other monthly income
+ssttp.affordability.form.your-monthly-income.other-income.hint = For example, rental income, dividends
 ssttp.affordability.your-monthly-income.error.title = There is a problem
 ssttp.affordability.your-monthly-income.error.helper = You must enter an income figure.
 ssttp.affordability.your-monthly-income.error.call = If you do not have any income call us on 0300 200 3835.
-ssttp.affordability.your-monthly-income.error.continue = Continue
+ssttp.affordability.your-monthly-income.continue = Continue
 
 #calculator
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import ssttpcalculator.CalculatorPaymentTodayForm
+@import ssttpcalculator.MonthlyIncomeForm
 @import timetopaytaxpayer.cor.model.Debit
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
@@ -37,8 +37,7 @@ continue: views.html.helpers.forms.ssttpContinue
 )
 
 @(
-dataForm: Form[CalculatorPaymentTodayForm],
-debits: Seq[Debit],
+dataForm: Form[MonthlyIncomeForm],
 loggedIn: Boolean = false)(implicit
 messages: play.api.i18n.Messages,
 request: Request[_],
@@ -46,34 +45,37 @@ appConfig: config.AppConfig
 )
 
 @main(
-title = messages("ssttp.calculator.form.payment_today.title"),
+title = messages("ssttp.affordability.your-monthly-income.h1"),
 hasErrors = dataForm.hasErrors,
-backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
+backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
 
 ){
 @if(dataForm.hasErrors){
 @errorSummary(ErrorSummary(
 errorList = dataForm.errors.asTextErrorLinks,
-title = Text(messages("ssttp.calculator.form.payment_today.error.summary.title"))
+title = Text(messages("ssttp.affordability.your-monthly-income.error.title"))
 ))
 }
+<h1 class="govuk-heading-xl">@messages("ssttp.affordability.your-monthly-income.h1")</h1>
+
+<p class="govuk-body">@messages("ssttp.affordability.your-monthly-income.instruction")</p>
 
 <section class="govuk-body">
     @formWithCsrf(
-    action = ssttpcalculator.routes.CalculatorController.submitPaymentToday(),
-    'id -> "paytoday-form"
+    action = ssttpaffordability.routes.AffordabilityController.submitMonthlyIncome(),
+    'id -> "monthlyincome-form"
     ){
     @input(Input(
-    id = "amount",
-    name = "amount",
+    id = "monthly-income",
+    name = "monthly-income",
     hint = Some(Hint(
-    content = Text(messages("ssttp.calculator.form.payment_today.hint", currency(debits.map(_.amount).sum)))
+    content = Text(messages("ssttp.affordability.form.your-monthly-income.monthly-income.hint"))
     )),
     label = Label(
-    forAttr = Some("amount"),
-    content = Text(messages("ssttp.calculator.form.payment_today.title")),
-    classes = "govuk-!-font-weight-bold govuk-label--xl govuk-!-margin-bottom-9",
-    isPageHeading = true
+    forAttr = Some("monthly-income"),
+    content = Text(messages("ssttp.affordability.form.your-monthly-income.monthly-income")),
+    classes = "govuk-label govuk-label--s",
+    isPageHeading = false
     ),
     errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
     prefix = Some(PrefixOrSuffix(
