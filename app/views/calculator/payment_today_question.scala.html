@@ -86,13 +86,14 @@
                     RadioItem(
                         id = Some("paytoday-true"),
                         content = Text(messages("ssttp.calculator.form.payment_today_question.yes_label")),
-                        value = Some("true")
+                        value = Some("true"),
+                        checked = dataForm("paytoday").value.contains("true")
                     ),
                     RadioItem(
                         id = Some("paytoday-false"),
-
                         content = Text(messages("ssttp.calculator.form.payment_today_question.no_label")),
-                        value = Some("false")
+                        value = Some("false"),
+                        checked = dataForm("paytoday").value.contains("false")
                     )
                 ),
                 classes = "govuk-radios--inline"
