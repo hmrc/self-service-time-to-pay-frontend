@@ -98,15 +98,14 @@ object CalculatorForm {
   def createMonthlyIncomeForm(): Form[MonthlyIncomeForm] = {
     Form(mapping(
       "monthly-income" -> text
-        .verifying("ssttp.affordability.your-monthly-income.error.helper", { i: String => i.nonEmpty })
-        .verifying("ssttp.affordability.your-monthly-income.error.helper", { i: String =>
+        .verifying("ssttp.affordability.your-monthly-income.error.required", { i: String => i.nonEmpty })
+        .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
           if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
         })
-        // consider adding min value of 1.00 as per upfront payment
-        .verifying("ssttp.affordability.your-monthly-income.error.helper", { i: String =>
-          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-        })
-    // consider adding max value of 1,000,000,000 as per upfront payment
+    // TODO: OPS-9644 add validation for positive numbers once Welsh translation received
+    //        .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i: String =>
+    //          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.00 else true
+    //        })
     )(text => MonthlyIncomeForm(text))(bd => Some(bd.monthlyIncome.toString)))
   }
 

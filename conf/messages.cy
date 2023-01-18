@@ -107,14 +107,15 @@ ssttp.affordability.income-spending.hidden = manylion
 
 ssttp.affordability.your-monthly-income.h1 = Eich incwm misol
 ssttp.affordability.your-monthly-income.instruction = Ychwanegwch wybodaeth amdanoch chi’ch hun yn unig.
-ssttp.affordability.your-monthly-income.monthly-income = Incwm misol ar ôl treth
-ssttp.affordability.your-monthly-income.monthly-income.hint = Os nad oes gennych incwm misol rheolaidd, nodwch amcangyfrif.
-ssttp.affordability.your-monthly-income.benefits = Budd-daliadau
-ssttp.affordability.your-monthly-income.benefits.hint = Er enghraifft, Credyd Cynhwysol, credydau treth
-ssttp.affordability.your-monthly-income.other-income = Incwm misol arall
-ssttp.affordability.your-monthly-income.other-income.hint = Er enghraifft, incwm rhent, difidendau
+ssttp.affordability.your-monthly-income.form.monthly-income = Incwm misol ar ôl treth
+ssttp.affordability.your-monthly-income.form.monthly-income.hint = Os nad oes gennych incwm misol rheolaidd, nodwch amcangyfrif.
+ssttp.affordability.your-monthly-income.form.benefits = Budd-daliadau
+ssttp.affordability.your-monthly-income.form.benefits.hint = Er enghraifft, Credyd Cynhwysol, credydau treth
+ssttp.affordability.your-monthly-income.form.other-income = Incwm misol arall
+ssttp.affordability.your-monthly-income.form.other-income.hint = Er enghraifft, incwm rhent, difidendau
 ssttp.affordability.your-monthly-income.error.title = Mae problem wedi codi
-ssttp.affordability.your-monthly-income.error.helper = Mae’n rhaid i chi nodi ffigur ar gyfer yr incwm. Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
+ssttp.affordability.your-monthly-income.error.required = Mae’n rhaid i chi nodi ffigur ar gyfer yr incwm. Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
+ssttp.affordability.your-monthly-income.error.non-numerals = Rhowch rifau yn unig
 ssttp.affordability.your-monthly-income.continue = Yn eich blaen
 
 #calculator

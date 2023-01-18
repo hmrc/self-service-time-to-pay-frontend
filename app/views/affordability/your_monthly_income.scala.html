@@ -28,64 +28,69 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 
 @this(
-main: views.html.main,
-viewsHelpers: views.ViewsHelpers,
-formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
-input: uk.gov.hmrc.govukfrontend.views.html.components.GovukInput,
-errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
-continue: views.html.helpers.forms.ssttpContinue
+    main: views.html.main,
+    viewsHelpers: views.ViewsHelpers,
+    formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
+    input: uk.gov.hmrc.govukfrontend.views.html.components.GovukInput,
+    errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
+    continue: views.html.helpers.forms.ssttpContinue
 )
 
 @(
-dataForm: Form[MonthlyIncomeForm],
-loggedIn: Boolean = false)(implicit
-messages: play.api.i18n.Messages,
-request: Request[_],
-appConfig: config.AppConfig
+    dataForm: Form[MonthlyIncomeForm],
+    loggedIn: Boolean = false
+)(implicit
+    messages: play.api.i18n.Messages,
+    request: Request[_],
+    appConfig: config.AppConfig
 )
 
 @main(
-title = messages("ssttp.affordability.your-monthly-income.h1"),
-hasErrors = dataForm.hasErrors,
-backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+    title = messages("ssttp.affordability.your-monthly-income.h1"),
+    hasErrors = dataForm.hasErrors,
+    backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
 
 ){
-@if(dataForm.hasErrors){
-@errorSummary(ErrorSummary(
-errorList = dataForm.errors.asTextErrorLinks,
-title = Text(messages("ssttp.affordability.your-monthly-income.error.title"))
-))
-}
-<h1 class="govuk-heading-xl">@messages("ssttp.affordability.your-monthly-income.h1")</h1>
-
-<p class="govuk-body">@messages("ssttp.affordability.your-monthly-income.instruction")</p>
+    @if(dataForm.hasErrors){
+        @errorSummary(ErrorSummary(
+            errorList = dataForm.errors.asTextErrorLinks,
+            title = Text(messages("ssttp.affordability.your-monthly-income.error.title"))
+        ))
+    }
 
 <section class="govuk-body">
-    @formWithCsrf(
-    action = ssttpaffordability.routes.AffordabilityController.submitMonthlyIncome(),
-    'id -> "monthlyincome-form"
-    ){
-    @input(Input(
-    id = "monthly-income",
-    name = "monthly-income",
-    hint = Some(Hint(
-    content = Text(messages("ssttp.affordability.form.your-monthly-income.monthly-income.hint"))
-    )),
-    label = Label(
-    forAttr = Some("monthly-income"),
-    content = Text(messages("ssttp.affordability.form.your-monthly-income.monthly-income")),
-    classes = "govuk-label govuk-label--s",
-    isPageHeading = false
-    ),
-    errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
-    prefix = Some(PrefixOrSuffix(
-    content = Text("£")
-    )),
-    classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
-    ))
 
-    @continue(messages("ssttp.calculator.form.continue"))
+    <h1 class="govuk-heading-xl">@messages("ssttp.affordability.your-monthly-income.h1")</h1>
+
+    <p class="govuk-body">@messages("ssttp.affordability.your-monthly-income.instruction")</p>
+
+
+    @formWithCsrf(
+        action = ssttpaffordability.routes.AffordabilityController.submitMonthlyIncome(),
+        'id -> "monthlyincome-form"
+    ){
+        @input(Input(
+            id = "monthly-income",
+            name = "monthly-income",
+            hint = Some(Hint(
+                content = Text(messages("ssttp.affordability.your-monthly-income.form.monthly-income.hint"))
+        )),
+        label = Label(
+            forAttr = Some("monthly-income"),
+            content = Text(messages("ssttp.affordability.your-monthly-income.form.monthly-income")),
+            classes = "govuk-label govuk-label--s",
+            isPageHeading = false
+        ),
+            errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+            prefix = Some(PrefixOrSuffix(
+                content = Text("£")
+            )),
+            classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+        ))
+
+        @continue(messages("ssttp.calculator.form.continue"))
     }
+
 </section>
 
 
