@@ -16,6 +16,7 @@
 
 package ssttpcalculator
 
+import journey.IncomeCategory
 import play.api.data.Forms.{text, _}
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms, Mapping}
@@ -95,18 +96,26 @@ object CalculatorForm {
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)
   )(PayTodayQuestion.apply)(PayTodayQuestion.unapply))
 
-  def createMonthlyIncomeForm(): Form[MonthlyIncomeForm] = {
-    Form(mapping(
-      "monthly-income" -> text
-        .verifying("ssttp.affordability.your-monthly-income.error.required", { i: String => i.nonEmpty })
-        .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
-          if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-        })
-    // TODO: OPS-9644 add validation for positive numbers once Welsh translation received
-    //        .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i: String =>
-    //          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.00 else true
-    //        })
-    )(text => MonthlyIncomeForm(text))(bd => Some(bd.monthlyIncome.toString)))
+  val incomeMapping = mapping(
+    "monthlyIncome" -> text
+      .verifying("ssttp.affordability.your-monthly-income.error.required", { i: String => i.nonEmpty })
+      .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
+        if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+      }),
+    "benefits" -> text,
+    "otherIncome" -> text
+  )((monthlyIncome, benefits, otherIncome) => IncomeForm(
+      monthlyIncome,
+      benefits,
+      otherIncome
+    ))(incomeForm => {
+      Some(
+        (incomeForm.monthlyIncome.toString(), incomeForm.benefits.toString(), incomeForm.otherIncome.toString())
+      )
+    })
+
+  def createMonthlyIncomeForm(): Form[IncomeForm] = {
+    Form(incomeMapping)
   }
 
 }

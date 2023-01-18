@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import ssttpcalculator.MonthlyIncomeForm
+@import ssttpcalculator.IncomeForm
 @import timetopaytaxpayer.cor.model.Debit
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
@@ -37,7 +37,7 @@
 )
 
 @(
-    dataForm: Form[MonthlyIncomeForm],
+    dataForm: Form[IncomeForm],
     loggedIn: Boolean = false
 )(implicit
     messages: play.api.i18n.Messages,
@@ -70,13 +70,14 @@
         'id -> "monthlyincome-form"
     ){
         @input(Input(
-            id = "monthly-income",
-            name = "monthly-income",
+            id = "monthlyIncome",
+            name = "monthlyIncome",
+            value = dataForm.data.get("monthlyIncome"),
             hint = Some(Hint(
                 content = Text(messages("ssttp.affordability.your-monthly-income.form.monthly-income.hint"))
         )),
         label = Label(
-            forAttr = Some("monthly-income"),
+            forAttr = Some("monthlyIncome"),
             content = Text(messages("ssttp.affordability.your-monthly-income.form.monthly-income")),
             classes = "govuk-label govuk-label--s",
             isPageHeading = false
@@ -85,7 +86,47 @@
             prefix = Some(PrefixOrSuffix(
                 content = Text("£")
             )),
-            classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+            classes = "govuk-input--width-5"
+        ))
+
+        @input(Input(
+            id = "benefits",
+            name = "benefits",
+            value = dataForm.data.get("benefits"),
+            hint = Some(Hint(
+                content = Text(messages("ssttp.affordability.your-monthly-income.form.benefits.hint"))
+        )),
+            label = Label(
+                forAttr = Some("benefits"),
+                content = Text(messages("ssttp.affordability.your-monthly-income.form.benefits")),
+                classes = "govuk-label govuk-label--s",
+                isPageHeading = false
+        ),
+            errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+            prefix = Some(PrefixOrSuffix(
+                content = Text("£")
+            )),
+            classes = " govuk-input--width-5"
+        ))
+
+        @input(Input(
+            id = "otherIncome",
+            name = "otherIncome",
+            value = dataForm.data.get("otherIncome"),
+            hint = Some(Hint(
+                content = Text(messages("ssttp.affordability.your-monthly-income.form.other-income.hint"))
+        )),
+            label = Label(
+                forAttr = Some("otherIncome"),
+                content = Text(messages("ssttp.affordability.your-monthly-income.form.other-income")),
+                classes = "govuk-label govuk-label--s",
+                isPageHeading = false
+        ),
+            errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+            prefix = Some(PrefixOrSuffix(
+                content = Text("£")
+            )),
+            classes = "govuk-input--width-5"
         ))
 
         @continue(messages("ssttp.calculator.form.continue"))

@@ -62,6 +62,10 @@ object MonthlyPaymentAmount {
 
 final case class Income(categories: Seq[IncomeCategory]) {
   def totalIncome: BigDecimal = categories.map(_.amount).sum
+
+  def amount(category: String): BigDecimal = {
+    categories.find(_.category == category).fold(BigDecimal(0))(_.amount)
+  }
 }
 
 object Income {
@@ -75,25 +79,25 @@ object IncomeCategory {
 }
 
 final case class Journey(
-                          _id:                       JourneyId,
-                          status:                    Status                          = InProgress,
-                          createdOn:                 LocalDateTime,
-                          maybeTypeOfAccountDetails: Option[TypeOfAccountDetails]    = None,
-                          maybeBankDetails:          Option[BankDetails]             = None,
-                          existingDDBanks:           Option[DirectDebitInstructions] = None,
+    _id:                       JourneyId,
+    status:                    Status                          = InProgress,
+    createdOn:                 LocalDateTime,
+    maybeTypeOfAccountDetails: Option[TypeOfAccountDetails]    = None,
+    maybeBankDetails:          Option[BankDetails]             = None,
+    existingDDBanks:           Option[DirectDebitInstructions] = None,
 
-                          maybeTaxpayer:              Option[Taxpayer]              = None,
-                          maybePaymentToday:          Option[PaymentToday]          = None,
-                          maybePaymentTodayAmount:    Option[PaymentTodayAmount]    = None,
-                          maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
-                          maybeIncome:         Option[Income]         = None,
-                          maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
-                          maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
+    maybeTaxpayer:              Option[Taxpayer]              = None,
+    maybePaymentToday:          Option[PaymentToday]          = None,
+    maybePaymentTodayAmount:    Option[PaymentTodayAmount]    = None,
+    maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
+    maybeIncome:                Option[Income]                = None,
+    maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
+    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
 
-                          maybeEligibilityStatus: Option[EligibilityStatus] = None,
-                          debitDate:              Option[LocalDate]         = None,
-                          ddRef:                  Option[String]            = None,
-                          maybeSaUtr:             Option[String]            = None
+    maybeEligibilityStatus: Option[EligibilityStatus] = None,
+    debitDate:              Option[LocalDate]         = None,
+    ddRef:                  Option[String]            = None,
+    maybeSaUtr:             Option[String]            = None
 ) extends HasId[JourneyId] {
 
   def amount: BigDecimal = maybeMonthlyPaymentAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [$this]"))

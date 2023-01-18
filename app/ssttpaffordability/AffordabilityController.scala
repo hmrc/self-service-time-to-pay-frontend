@@ -20,13 +20,13 @@ import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
-import journey.{Journey, JourneyService, Income}
+import journey.{Income, IncomeCategory, Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
 import ssttpcalculator.CalculatorForm.createMonthlyIncomeForm
-import ssttpcalculator.MonthlyIncomeForm
+import ssttpcalculator.IncomeForm
 import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
@@ -90,8 +90,13 @@ class AffordabilityController @Inject() (
     JourneyLogger.info(s"AffordabilityController.getYourMonthlyIncome: $request")
     journeyService.authorizedForSsttp{ journey: Journey =>
       val emptyForm = createMonthlyIncomeForm()
-      val formWithData = journey.maybeMonthlyIncome.map(monthlyIncome =>
-        emptyForm.fill(MonthlyIncomeForm(monthlyIncome.monthlyIncome))).getOrElse(emptyForm)
+      val formWithData = journey.maybeIncome.map(income =>
+        emptyForm.fill(IncomeForm(
+          monthlyIncome = income.amount("monthlyIncome"),
+          benefits      = income.amount("benefits"),
+          otherIncome   = income.amount("otherIncome")
+        ))
+      ).getOrElse(emptyForm)
       Future.successful(Ok(views.your_monthly_income(formWithData, isSignedIn)))
     }
   }
@@ -101,10 +106,13 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       createMonthlyIncomeForm().bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn))),
-        (form: MonthlyIncomeForm) => {
+        (form: IncomeForm) => {
           val newJourney = journey.copy(
-            maybeMonthlyIncome = Some(Income(form.monthlyIncome, 0, 0))
-          )
+            maybeIncome = Some(Income(Seq(
+              IncomeCategory("monthlyIncome", form.monthlyIncome),
+              IncomeCategory("benefits", form.benefits),
+              IncomeCategory("otherIncome", form.otherIncome)
+            ))))
           journeyService.saveJourney(newJourney).map { _ =>
             Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
           }
