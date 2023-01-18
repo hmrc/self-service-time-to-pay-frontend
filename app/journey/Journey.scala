@@ -60,41 +60,46 @@ object MonthlyPaymentAmount {
   implicit val format: OFormat[MonthlyPaymentAmount] = Json.format[MonthlyPaymentAmount]
 }
 
-final case class MonthlyIncome(
-    monthlyIncome: BigDecimal,
-    benefits:      BigDecimal,
-    otherIncome:   BigDecimal
-)
+final case class Income(categories: Seq[IncomeCategory]) {
+  def totalIncome: BigDecimal = categories.map(_.amount).sum
+}
 
-object MonthlyIncome {
-  implicit val format: OFormat[MonthlyIncome] = Json.format[MonthlyIncome]
+object Income {
+  implicit val format: OFormat[Income] = Json.format[Income]
+}
+
+final case class IncomeCategory(category: String, amount: BigDecimal)
+
+object IncomeCategory {
+  implicit val format: OFormat[IncomeCategory] = Json.format[IncomeCategory]
 }
 
 final case class Journey(
-    _id:                       JourneyId,
-    status:                    Status                          = InProgress,
-    createdOn:                 LocalDateTime,
-    maybeTypeOfAccountDetails: Option[TypeOfAccountDetails]    = None,
-    maybeBankDetails:          Option[BankDetails]             = None,
-    existingDDBanks:           Option[DirectDebitInstructions] = None,
+                          _id:                       JourneyId,
+                          status:                    Status                          = InProgress,
+                          createdOn:                 LocalDateTime,
+                          maybeTypeOfAccountDetails: Option[TypeOfAccountDetails]    = None,
+                          maybeBankDetails:          Option[BankDetails]             = None,
+                          existingDDBanks:           Option[DirectDebitInstructions] = None,
 
-    maybeTaxpayer:              Option[Taxpayer]              = None,
-    maybePaymentToday:          Option[PaymentToday]          = None,
-    maybePaymentTodayAmount:    Option[PaymentTodayAmount]    = None,
-    maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
-    maybeMonthlyIncome:         Option[MonthlyIncome]         = None,
-    maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
-    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
+                          maybeTaxpayer:              Option[Taxpayer]              = None,
+                          maybePaymentToday:          Option[PaymentToday]          = None,
+                          maybePaymentTodayAmount:    Option[PaymentTodayAmount]    = None,
+                          maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
+                          maybeIncome:         Option[Income]         = None,
+                          maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
+                          maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
 
-    maybeEligibilityStatus: Option[EligibilityStatus] = None,
-    debitDate:              Option[LocalDate]         = None,
-    ddRef:                  Option[String]            = None,
-    maybeSaUtr:             Option[String]            = None
+                          maybeEligibilityStatus: Option[EligibilityStatus] = None,
+                          debitDate:              Option[LocalDate]         = None,
+                          ddRef:                  Option[String]            = None,
+                          maybeSaUtr:             Option[String]            = None
 ) extends HasId[JourneyId] {
 
   def amount: BigDecimal = maybeMonthlyPaymentAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [$this]"))
   def taxpayer: Taxpayer = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [$this]"))
   def debits: Seq[Debit] = taxpayer.selfAssessment.debits
+  def income: Income = maybeIncome.getOrElse(throw new RuntimeException(s"Some error message"))
 
   def requireIsInProgress(): Unit = {
     require(status == InProgress, s"status has to be InProgress [$this]")

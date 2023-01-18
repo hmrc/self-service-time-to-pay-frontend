@@ -20,7 +20,7 @@ import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
-import journey.{Journey, JourneyService, MonthlyIncome}
+import journey.{Journey, JourneyService, Income}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
@@ -103,7 +103,7 @@ class AffordabilityController @Inject() (
         formWithErrors => Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn))),
         (form: MonthlyIncomeForm) => {
           val newJourney = journey.copy(
-            maybeMonthlyIncome = Some(MonthlyIncome(form.monthlyIncome, 0, 0))
+            maybeMonthlyIncome = Some(Income(form.monthlyIncome, 0, 0))
           )
           journeyService.saveJourney(newJourney).map { _ =>
             Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
