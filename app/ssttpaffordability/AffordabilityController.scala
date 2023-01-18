@@ -91,7 +91,7 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp{ journey: Journey =>
       val emptyForm = createMonthlyIncomeForm()
       val formWithData = journey.maybeMonthlyIncome.map(monthlyIncome =>
-        emptyForm.fill(MonthlyIncomeForm(monthlyIncome.value))).getOrElse(emptyForm)
+        emptyForm.fill(MonthlyIncomeForm(monthlyIncome.monthlyIncome))).getOrElse(emptyForm)
       Future.successful(Ok(views.your_monthly_income(formWithData, isSignedIn)))
     }
   }
