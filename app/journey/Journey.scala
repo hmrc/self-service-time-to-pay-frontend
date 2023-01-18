@@ -61,10 +61,10 @@ object MonthlyPaymentAmount {
 }
 
 final case class MonthlyIncome(
-                                monthlyIncome: BigDecimal,
-                                benefits: BigDecimal,
-                                otherIncome: BigDecimal
-                              )
+    monthlyIncome: BigDecimal,
+    benefits:      BigDecimal,
+    otherIncome:   BigDecimal
+)
 
 object MonthlyIncome {
   implicit val format: OFormat[MonthlyIncome] = Json.format[MonthlyIncome]
