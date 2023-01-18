@@ -103,7 +103,7 @@ class AffordabilityController @Inject() (
         formWithErrors => Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn))),
         (form: MonthlyIncomeForm) => {
           val newJourney = journey.copy(
-            maybeMonthlyIncome = Some(MonthlyIncome(form.monthlyIncome))
+            maybeMonthlyIncome = Some(MonthlyIncome(form.monthlyIncome, 0, 0))
           )
           journeyService.saveJourney(newJourney).map { _ =>
             Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
