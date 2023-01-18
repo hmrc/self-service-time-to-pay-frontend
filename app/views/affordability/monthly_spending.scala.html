@@ -35,6 +35,7 @@
         continue: views.html.helpers.forms.ssttpContinue
 )
 
+@import ssttpaffordability.MonthlySpendingForm
 @(
         dataForm: Form[MonthlySpendingForm],
         loggedIn: Boolean = false
@@ -71,6 +72,7 @@
             @input(Input(
                 id = "housing",
                 name = "housing",
+                value = dataForm.data.get("housing"),
                 hint = Some(Hint(
                     content = Text(messages("ssttp.affordability.your-monthly-spending.form.housing.hint"))
                 )),
@@ -90,6 +92,7 @@
             @input(Input(
                 id = "pension-contributions",
                 name = "pension-contributions",
+                value = dataForm.data.get("pension-contributions"),
                 label = Label(
                     forAttr = Some("housing"),
                     content = Text(messages("ssttp.affordability.your-monthly-spending.form.pension-contributions")),
@@ -106,6 +109,7 @@
             @input(Input(
                 id = "council-tax",
                 name = "council-tax",
+                value = dataForm.data.get("council-tax"),
                 label = Label(
                     forAttr = Some("housing"),
                     content = Text(messages("ssttp.affordability.your-monthly-spending.form.council-tax")),
@@ -122,6 +126,7 @@
             @input(Input(
                 id = "utilities",
                 name = "utilities",
+                value = dataForm.data.get("utilities"),
                 hint = Some(Hint(
                     content = Text(messages("ssttp.affordability.your-monthly-spending.form.utilities.hint"))
                 )),
