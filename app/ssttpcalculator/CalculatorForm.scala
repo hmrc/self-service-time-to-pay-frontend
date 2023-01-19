@@ -96,14 +96,18 @@ object CalculatorForm {
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)
   )(PayTodayQuestion.apply)(PayTodayQuestion.unapply))
 
-  val incomeMapping = mapping(
+  val incomeMapping: Mapping[IncomeForm] = mapping(
     "monthlyIncome" -> text
       .verifying("ssttp.affordability.your-monthly-income.error.required", { i: String => i.nonEmpty })
       .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
         if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
       }),
-    "benefits" -> text,
-    "otherIncome" -> text
+    "benefits" -> text.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
+      if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+    }),
+    "otherIncome" -> text.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
+      if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+    })
   )((monthlyIncome, benefits, otherIncome) => IncomeForm(
       monthlyIncome,
       benefits,
@@ -116,6 +120,15 @@ object CalculatorForm {
 
   def createMonthlyIncomeForm(): Form[IncomeForm] = {
     Form(incomeMapping)
+  }
+
+  def validateIncomeFormForPositiveTotal(form: Form[IncomeForm]): Form[IncomeForm] = {
+    if (form.get.hasPositiveTotal) {
+      val formErrorsWithTotalError = form.errors :+ FormError("monthlyIncome", "ssttp.affordability.your-monthly-income.error.required")
+      form.copy(errors = formErrorsWithTotalError)
+    } else {
+      form
+    }
   }
 
 }

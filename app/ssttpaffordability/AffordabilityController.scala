@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
-import ssttpcalculator.CalculatorForm.createMonthlyIncomeForm
+import ssttpcalculator.CalculatorForm.{createMonthlyIncomeForm, validateIncomeFormForPositiveTotal}
 import ssttpcalculator.IncomeForm
 import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -106,15 +106,20 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       createMonthlyIncomeForm().bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn))),
-        (form: IncomeForm) => {
-          val newJourney = journey.copy(
-            maybeIncome = Some(Income(Seq(
-              IncomeCategory("monthlyIncome", form.monthlyIncome),
-              IncomeCategory("benefits", form.benefits),
-              IncomeCategory("otherIncome", form.otherIncome)
-            ))))
-          journeyService.saveJourney(newJourney).map { _ =>
-            Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+        { (form: IncomeForm) =>
+          val formValidatedForPositiveTotal = validateIncomeFormForPositiveTotal(createMonthlyIncomeForm().fill(form))
+          if (formValidatedForPositiveTotal.hasErrors) {
+            Future.successful(BadRequest(views.your_monthly_income(formValidatedForPositiveTotal, isSignedIn)))
+          } else {
+            val newJourney = journey.copy(
+              maybeIncome = Some(Income(Seq(
+                IncomeCategory("monthlyIncome", form.monthlyIncome),
+                IncomeCategory("benefits", form.benefits),
+                IncomeCategory("otherIncome", form.otherIncome)
+              ))))
+            journeyService.saveJourney(newJourney).map { _ =>
+              Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+            }
           }
         }
       )

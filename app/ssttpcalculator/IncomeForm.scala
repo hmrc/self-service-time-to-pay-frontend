@@ -22,7 +22,17 @@ final case class IncomeForm(
     monthlyIncome: BigDecimal,
     benefits:      BigDecimal,
     otherIncome:   BigDecimal
-)
+) {
+  def hasPositiveTotal: Boolean = totalIncome > 0
+
+  private val allIncome: Seq[BigDecimal] = Seq(
+    monthlyIncome,
+    benefits,
+    otherIncome
+  )
+
+  private val totalIncome: BigDecimal = allIncome.sum
+}
 
 object IncomeForm {
   def apply(
