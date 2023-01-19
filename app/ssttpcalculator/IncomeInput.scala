@@ -18,7 +18,7 @@ package ssttpcalculator
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
-final case class IncomeForm(
+final case class IncomeInput(
     monthlyIncome: BigDecimal,
     benefits:      BigDecimal,
     otherIncome:   BigDecimal
@@ -34,12 +34,12 @@ final case class IncomeForm(
   private val totalIncome: BigDecimal = allIncome.sum
 }
 
-object IncomeForm {
+object IncomeInput {
   def apply(
       monthlyIncomeStr: String,
       benefitsStr:      String,
       otherIncomeStr:   String
-  ): IncomeForm = {
+  ): IncomeInput = {
     val monthlyIncomeBigDecimal = monthlyIncomeStr match {
       case s if s.isEmpty => BigDecimal(0)
       case s              => BigDecimal(s)
@@ -52,17 +52,17 @@ object IncomeForm {
       case s if s.isEmpty => BigDecimal(0)
       case s              => BigDecimal(s)
     }
-    IncomeForm(monthlyIncomeBigDecimal, benefitsBigDecimal, otherIncomeBigDecimal)
+    IncomeInput(monthlyIncomeBigDecimal, benefitsBigDecimal, otherIncomeBigDecimal)
   }
 
   implicit def bigDecimalsToIncome(
       monthlyIncome: BigDecimal,
       benefits:      BigDecimal,
-      otherIncome:   BigDecimal): IncomeForm = {
-    IncomeForm(monthlyIncome, benefits, otherIncome)
+      otherIncome:   BigDecimal): IncomeInput = {
+    IncomeInput(monthlyIncome, benefits, otherIncome)
   }
 
-  implicit def incomeToBigDecimal(inf: IncomeForm): (BigDecimal, BigDecimal, BigDecimal) = {
+  implicit def incomeToBigDecimal(inf: IncomeInput): (BigDecimal, BigDecimal, BigDecimal) = {
     (
       inf.monthlyIncome.setScale(2, HALF_UP),
       inf.benefits.setScale(2, HALF_UP),

@@ -19,14 +19,14 @@ package ssttpaffordability
 import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
-import controllers.action.Actions
+import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Income, IncomeCategory, Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
-import ssttpcalculator.CalculatorForm.{createMonthlyIncomeForm, validateIncomeFormForPositiveTotal}
-import ssttpcalculator.IncomeForm
+import ssttpcalculator.CalculatorForm.{createIncomeForm, validateIncomeInputTotal}
+import ssttpcalculator.IncomeInput
 import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
@@ -89,9 +89,9 @@ class AffordabilityController @Inject() (
   def getYourMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.getYourMonthlyIncome: $request")
     journeyService.authorizedForSsttp{ journey: Journey =>
-      val emptyForm = createMonthlyIncomeForm()
+      val emptyForm = createIncomeForm()
       val formWithData = journey.maybeIncome.map(income =>
-        emptyForm.fill(IncomeForm(
+        emptyForm.fill(IncomeInput(
           monthlyIncome = income.amount("monthlyIncome"),
           benefits      = income.amount("benefits"),
           otherIncome   = income.amount("otherIncome")
@@ -103,24 +103,20 @@ class AffordabilityController @Inject() (
 
   def submitMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.submitMonthlyIncome: $request")
+
     journeyService.authorizedForSsttp { journey: Journey =>
-      createMonthlyIncomeForm().bindFromRequest().fold(
+      createIncomeForm().bindFromRequest().fold(
         formWithErrors => {
           Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn)))
         },
-        { (form: IncomeForm) =>
-          JourneyLogger.info(s"FORM PASSING FIRST VALIDATION ${form.toString}")
-          val formValidatedForPositiveTotal = validateIncomeFormForPositiveTotal(createMonthlyIncomeForm().fill(form))
+
+        { (input: IncomeInput) =>
+          val formValidatedForPositiveTotal = validateIncomeInputTotal(createIncomeForm().fill(input))
           if (formValidatedForPositiveTotal.hasErrors) {
             Future.successful(BadRequest(views.your_monthly_income(formValidatedForPositiveTotal, isSignedIn)))
+
           } else {
-            val newJourney = journey.copy(
-              maybeIncome = Some(Income(Seq(
-                IncomeCategory("monthlyIncome", form.monthlyIncome),
-                IncomeCategory("benefits", form.benefits),
-                IncomeCategory("otherIncome", form.otherIncome)
-              ))))
-            journeyService.saveJourney(newJourney).map { _ =>
+            storeIncomeInputToJourney(input, journey).map { _ =>
               Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
             }
           }
@@ -128,4 +124,19 @@ class AffordabilityController @Inject() (
       )
     }
   }
+
+  private def storeIncomeInputToJourney(
+      input:   IncomeInput,
+      journey: Journey
+  )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
+    val newJourney = journey.copy(
+      maybeIncome = Some(Income(Seq(
+        IncomeCategory("monthlyIncome", input.monthlyIncome),
+        IncomeCategory("benefits", input.benefits),
+        IncomeCategory("otherIncome", input.otherIncome)
+      )))
+    )
+    journeyService.saveJourney(newJourney)
+  }
+
 }
