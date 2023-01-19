@@ -34,6 +34,7 @@ import views.Views
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class AffordabilityController @Inject() (
     mcc:                  MessagesControllerComponents,
@@ -131,9 +132,9 @@ class AffordabilityController @Inject() (
   )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
     val newJourney = journey.copy(
       maybeIncome = Some(Income(Seq(
-        IncomeCategory("monthlyIncome", input.monthlyIncome),
-        IncomeCategory("benefits", input.benefits),
-        IncomeCategory("otherIncome", input.otherIncome)
+        IncomeCategory("monthlyIncome", input.monthlyIncome.setScale(2, HALF_UP)),
+        IncomeCategory("benefits", input.benefits.setScale(2, HALF_UP)),
+        IncomeCategory("otherIncome", input.otherIncome.setScale(2, HALF_UP))
       )))
     )
     journeyService.saveJourney(newJourney)
