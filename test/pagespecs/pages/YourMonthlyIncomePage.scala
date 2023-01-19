@@ -21,7 +21,7 @@ import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
-import testsupport.RichMatchers.convertToAnyShouldWrapper
+import testsupport.RichMatchers.{convertToAnyShouldWrapper, include}
 
 class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
@@ -33,7 +33,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     case Languages.Welsh   => "Eich incwm misol"
   }
 
-  override def clickOnContinue(): Unit = clickOnContinue()
+  def clickContinue(): Unit = clickOnContinue()
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
@@ -44,15 +44,15 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     assertContentMatchesExpectedLines(expectedLines)
   }
 
-  def enterPrimaryIncome(value: String): Unit = {
-    val primaryIncome = xpath("//*[@id=\"primary-income\"]")
-    click on primaryIncome
+  def enterMonthlyIncome(value: String): Unit = {
+    val monthlyIncome = xpath("//*[@id=\"monthlyIncome\"]")
+    click on monthlyIncome
     enter(value)
   }
 
-  def assertPrimaryIncomeValueIsDisplayed(value: String): Assertion = {
-    val primaryIncome = textField("primary-income")
-    primaryIncome.value shouldBe value
+  def assertMonthlyIncomeValueIsDisplayed(value: String): Assertion = {
+    val monthlyIncome = textField("monthlyIncome")
+    monthlyIncome.value shouldBe value
   }
 
   def enterBenefits(value: String): Unit = {
@@ -67,20 +67,25 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   }
 
   def enterOtherIncome(value: String): Unit = {
-    val otherIncome = xpath("//*[@id=\"other-income\"]")
+    val otherIncome = xpath("//*[@id=\"otherIncome\"]")
     click on otherIncome
     enter(value)
   }
 
   def assertOtherIncomeValueIsDisplayed(value: String): Assertion = {
-    val otherIncome = textField("other-income")
+    val otherIncome = textField("otherIncome")
     otherIncome.value shouldBe value
 
   }
 
   def assertErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
-    readMain().stripSpaces shouldBe Expected.TextError().stripSpaces()
+    readMain().stripSpaces() should include(Expected.SpecificErrorText().stripSpaces())
+  }
+
+  def assertNonNumeralErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.NonNumericErrorText().stripSpaces())
   }
 
   object Expected {
@@ -126,7 +131,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         """.stripMargin
     }
 
-    object TextError {
+    object SpecificErrorText {
       def apply()(implicit language: Language): String = language match {
         case English => errorTextEnglish
         case Welsh   => errorTextWelsh
@@ -134,14 +139,29 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
       private val errorTextEnglish =
         """There is a problem
-          |You must enter an income figure.
-          |If you do not have any income call us on 0300 200 3835.
+          |You must enter an income figure. If you do not have any income call us on 0300 200 3835.
         """.stripMargin
 
       private val errorTextWelsh =
         """Mae problem wedi codi
-          |Mae’n rhaid i chi nodi ffigur ar gyfer yr incwm
-          |Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
+          |Mae’n rhaid i chi nodi ffigur ar gyfer yr incwm. Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
+        """.stripMargin
+    }
+
+    object NonNumericErrorText {
+      def apply()(implicit language: Language): String = language match {
+        case English => errorTextEnglish
+        case Welsh   => errorTextWelsh
+      }
+
+      private val errorTextEnglish =
+        """There is a problem
+          |Enter numbers only
+        """.stripMargin
+
+      private val errorTextWelsh =
+        """Mae problem wedi codi
+          |Rhowch rifau yn unig
         """.stripMargin
     }
   }

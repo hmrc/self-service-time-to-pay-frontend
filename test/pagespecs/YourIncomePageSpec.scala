@@ -51,91 +51,202 @@ class YourIncomePageSpec extends ItSpec {
     addIncomeSpendingPage.clickOnAddIncome()
   }
 
-  "add non-zero positive monthly income and press continue goes to add-income-spending-page" - {
-    "without filling out benefits or other monthly income" in {
-      beginJourney()
+  "add non-zero positive income input and press continue goes to add-income-spending-page" - {
+    "adding monthly income" - {
+      "without filling out benefits or other income" in {
+        beginJourney()
 
-      yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertPageIsDisplayed
 
-      yourMonthlyIncomePage.enterPrimaryIncome("00.01")
-      yourMonthlyIncomePage.clickOnContinue()
+        yourMonthlyIncomePage.enterMonthlyIncome("00.01")
+        yourMonthlyIncomePage.clickContinue()
 
-      addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertPageIsDisplayed()
+      }
+      "and filling out non-zero positive benefits but not other income" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+        yourMonthlyIncomePage.clickContinue()
+
+        addIncomeSpendingPage.assertPageIsDisplayed()
+      }
+      "and filling out non-zero positive other income but not benefits" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterOtherIncome("0.01")
+        yourMonthlyIncomePage.clickContinue()
+
+        addIncomeSpendingPage.assertPageIsDisplayed()
+      }
+      "and filling out both non-zero positive benefits and other income" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterMonthlyIncome("00.01")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+        yourMonthlyIncomePage.enterOtherIncome("0.01")
+        yourMonthlyIncomePage.clickContinue()
+
+        addIncomeSpendingPage.assertPageIsDisplayed()
+      }
     }
-    "filling out non-zero positive benefits but not other monthly income" in {
-      beginJourney()
+    "adding benefit" - {
+      "without filling out monthly income or other income" in {
+        beginJourney()
 
-      yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertPageIsDisplayed
 
-      yourMonthlyIncomePage.enterPrimaryIncome("0.01")
-      yourMonthlyIncomePage.enterBenefits("0.01")
-      yourMonthlyIncomePage.clickOnContinue()
+        yourMonthlyIncomePage.enterBenefits("00.01")
+        yourMonthlyIncomePage.clickContinue()
 
-      addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertPageIsDisplayed()
+      }
+      "and filling out non-zero positive other income but not monthly income" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+        yourMonthlyIncomePage.clickContinue()
+
+        addIncomeSpendingPage.assertPageIsDisplayed()
+      }
     }
-    "filling out non-zero positive other monthly income but not benefits" in {
-      beginJourney()
+    "adding other income" - {
+      "without filling out monthly income or benefits" in {
+        beginJourney()
 
-      yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertPageIsDisplayed
 
-      yourMonthlyIncomePage.enterPrimaryIncome("0.01")
-      yourMonthlyIncomePage.enterOtherIncome("0.01")
-      yourMonthlyIncomePage.clickOnContinue()
+        yourMonthlyIncomePage.enterOtherIncome("00.01")
+        yourMonthlyIncomePage.clickContinue()
 
-      addIncomeSpendingPage.assertPageIsDisplayed()
-    }
-    "filling out both non-zero positive benefits and other monthly income" in {
-      beginJourney()
-
-      yourMonthlyIncomePage.assertPageIsDisplayed
-
-      yourMonthlyIncomePage.enterPrimaryIncome("00.01")
-      yourMonthlyIncomePage.enterBenefits("0.01")
-      yourMonthlyIncomePage.enterOtherIncome("0.01")
-      yourMonthlyIncomePage.clickOnContinue()
-
-      addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertPageIsDisplayed()
+      }
     }
   }
 
-  "add zero or negative monthly income and press continue stays on page" - {
-    "- zero value for monthly income -" - {
+  "add non-numeric inputs and press continue stays on page" - {
+    "non-numeric monthly income" - {
       "displays error message" in {
         beginJourney()
 
         yourMonthlyIncomePage.assertPageIsDisplayed
 
-        yourMonthlyIncomePage.enterPrimaryIncome("0")
-        yourMonthlyIncomePage.clickOnContinue()
+        yourMonthlyIncomePage.enterMonthlyIncome("word")
+        yourMonthlyIncomePage.clickContinue()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
-        yourMonthlyIncomePage.assertErrorIsDisplayed
+        yourMonthlyIncomePage.assertNonNumeralErrorIsDisplayed
       }
-      "retains values entered" in {
+      "retains value entered" in {
         beginJourney()
 
         yourMonthlyIncomePage.assertPageIsDisplayed
 
-        yourMonthlyIncomePage.enterPrimaryIncome("0")
-        yourMonthlyIncomePage.clickOnContinue()
+        yourMonthlyIncomePage.enterMonthlyIncome("word")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("word")
+      }
+
+    }
+    "non-numeric benefits" - {
+      "displays error message" in {
+        beginJourney()
 
         yourMonthlyIncomePage.assertPageIsDisplayed
-        yourMonthlyIncomePage.assertErrorIsDisplayed
-        yourMonthlyIncomePage.assertPrimaryIncomeValueIsDisplayed("0")
+
+        yourMonthlyIncomePage.enterBenefits("word")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertNonNumeralErrorIsDisplayed
+      }
+      "retains value entered" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterBenefits("word")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("word")
+      }
+    }
+    "non-numeric other income" - {
+      "displays error message" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterOtherIncome("word")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertNonNumeralErrorIsDisplayed
+
+      }
+      "retains value entered" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterOtherIncome("word")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("word")
       }
     }
 
   }
-  "- negative value for monthly income -" - {
-    "displays error message" in {
+  // TODO: OPS-9325 Add validation for negative values
+  //  "- negative value for monthly income -" - {
+  //    "displays error message" in {
+  //      beginJourney()
+  //
+  //      yourMonthlyIncomePage.assertPageIsDisplayed
+  //
+  //      yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
+  //      yourMonthlyIncomePage.clickContinue()
+  //
+  //      yourMonthlyIncomePage.assertErrorIsDisplayed
+  //    }
+  //    "retains values entered" in {
+  //      beginJourney()
+  //
+  //      yourMonthlyIncomePage.assertPageIsDisplayed
+  //
+  //      yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
+  //      yourMonthlyIncomePage.enterBenefits("0.01")
+  //      yourMonthlyIncomePage.enterOtherIncome("0.01")
+  //
+  //      yourMonthlyIncomePage.clickContinue()
+  //
+  //      yourMonthlyIncomePage.assertErrorIsDisplayed
+  //      yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("-0.01")
+  //      yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
+  //      yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
+  //    }
+  //  }
+  "inputs not adding up to positive income and press continue stays on page" - {
+    "and displays error message" in {
       beginJourney()
 
       yourMonthlyIncomePage.assertPageIsDisplayed
 
-      yourMonthlyIncomePage.enterPrimaryIncome("-0.01")
-      yourMonthlyIncomePage.clickOnContinue()
+      yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
+      yourMonthlyIncomePage.enterBenefits("-0.01")
+      yourMonthlyIncomePage.enterOtherIncome("0.01")
 
-      yourMonthlyIncomePage.assertPageIsDisplayed
+      yourMonthlyIncomePage.clickContinue()
+
       yourMonthlyIncomePage.assertErrorIsDisplayed
     }
     "retains values entered" in {
@@ -143,44 +254,13 @@ class YourIncomePageSpec extends ItSpec {
 
       yourMonthlyIncomePage.assertPageIsDisplayed
 
-      yourMonthlyIncomePage.enterPrimaryIncome("-0.01")
-      yourMonthlyIncomePage.enterBenefits("0.01")
+      yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
+      yourMonthlyIncomePage.enterBenefits("-0.01")
       yourMonthlyIncomePage.enterOtherIncome("0.01")
+      yourMonthlyIncomePage.clickContinue()
 
-      yourMonthlyIncomePage.clickOnContinue()
-
-      yourMonthlyIncomePage.assertPageIsDisplayed
-      yourMonthlyIncomePage.assertErrorIsDisplayed
-      yourMonthlyIncomePage.assertPrimaryIncomeValueIsDisplayed("-0.01")
-      yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
-      yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
-
-    }
-  }
-  "not adding monthly income and press continue stays on page" - {
-    "and displays error message" in {
-      beginJourney()
-
-      yourMonthlyIncomePage.assertPageIsDisplayed
-
-      yourMonthlyIncomePage.clickOnContinue()
-
-      yourMonthlyIncomePage.assertPageIsDisplayed
-      yourMonthlyIncomePage.assertErrorIsDisplayed
-    }
-    "retains other values entered" in {
-      beginJourney()
-
-      yourMonthlyIncomePage.assertPageIsDisplayed
-
-      yourMonthlyIncomePage.enterBenefits("0.01")
-      yourMonthlyIncomePage.enterOtherIncome("0.01")
-      yourMonthlyIncomePage.clickOnContinue()
-
-      yourMonthlyIncomePage.assertPageIsDisplayed
-      yourMonthlyIncomePage.assertErrorIsDisplayed
-      yourMonthlyIncomePage.assertPrimaryIncomeValueIsDisplayed("")
-      yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
+      yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("-0.01")
+      yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("-0.01")
       yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
     }
   }
@@ -188,17 +268,17 @@ class YourIncomePageSpec extends ItSpec {
   "language" in {
     beginJourney()
 
-    addIncomeSpendingPage.assertPageIsDisplayed
+    yourMonthlyIncomePage.assertPageIsDisplayed
 
-    addIncomeSpendingPage.clickOnWelshLink()
-    addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+    yourMonthlyIncomePage.clickOnWelshLink()
+    yourMonthlyIncomePage.assertPageIsDisplayed(Welsh)
 
-    addIncomeSpendingPage.clickOnEnglishLink()
-    addIncomeSpendingPage.assertPageIsDisplayed(English)
+    yourMonthlyIncomePage.clickOnEnglishLink()
+    yourMonthlyIncomePage.assertPageIsDisplayed(English)
   }
 
   "back button" in {
     beginJourney()
-    startAffordabilityPage.backButtonHref shouldBe Some(s"${baseUrl.value}${startAffordabilityPage.path}")
+    yourMonthlyIncomePage.backButtonHref shouldBe Some(s"${baseUrl.value}${addIncomeSpendingPage.path}")
   }
 }
