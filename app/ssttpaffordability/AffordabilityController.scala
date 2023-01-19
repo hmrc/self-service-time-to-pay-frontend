@@ -20,10 +20,11 @@ import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.{Actions, AuthorisedSaUserRequest}
-import journey.{Income, IncomeCategory, Journey, JourneyService}
+import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttpaffordability.AffordabilityForm.{createIncomeForm, validateIncomeInputTotal}
+import ssttpaffordability.model.{Income, IncomeCategory}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
 import ssttpcalculator.IncomeInput

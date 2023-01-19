@@ -21,6 +21,7 @@ import enumformat.EnumFormat
 import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.libs.json.{Format, Json, OFormat}
 import repo.HasId
+import ssttpaffordability.model.Income
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -58,24 +59,6 @@ final case class MonthlyPaymentAmount(value: BigDecimal)
 
 object MonthlyPaymentAmount {
   implicit val format: OFormat[MonthlyPaymentAmount] = Json.format[MonthlyPaymentAmount]
-}
-
-final case class Income(categories: Seq[IncomeCategory]) {
-  def totalIncome: BigDecimal = categories.map(_.amount).sum
-
-  def amount(category: String): BigDecimal = {
-    categories.find(_.category == category).fold(BigDecimal(0))(_.amount)
-  }
-}
-
-object Income {
-  implicit val format: OFormat[Income] = Json.format[Income]
-}
-
-final case class IncomeCategory(category: String, amount: BigDecimal)
-
-object IncomeCategory {
-  implicit val format: OFormat[IncomeCategory] = Json.format[IncomeCategory]
 }
 
 final case class Journey(
