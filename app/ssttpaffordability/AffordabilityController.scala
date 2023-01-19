@@ -23,9 +23,9 @@ import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Income, IncomeCategory, Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
+import ssttpaffordability.AffordabilityForm.{createIncomeForm, validateIncomeInputTotal}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
-import ssttpcalculator.CalculatorForm.{createIncomeForm, validateIncomeInputTotal}
 import ssttpcalculator.IncomeInput
 import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -34,7 +34,6 @@ import views.Views
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class AffordabilityController @Inject() (
     mcc:                  MessagesControllerComponents,

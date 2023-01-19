@@ -95,48 +95,4 @@ object CalculatorForm {
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)
   )(PayTodayQuestion.apply)(PayTodayQuestion.unapply))
 
-  def createIncomeForm(): Form[IncomeInput] = {
-    Form(incomeMapping)
-  }
-
-  def validateIncomeInputTotal(form: Form[IncomeInput]): Form[IncomeInput] = {
-    if (!form.get.hasPositiveTotal) {
-      val formErrorsWithTotalError = form.errors :+ FormError(
-        key      = "monthlyIncome",
-        messages = Seq("ssttp.affordability.your-monthly-income.error.required")
-      )
-      form.copy(errors = formErrorsWithTotalError)
-    } else form
-  }
-
-  val incomeMapping: Mapping[IncomeInput] = mapping(
-    "monthlyIncome" -> text
-      .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
-        if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-      })
-      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-      }),
-    "benefits" -> text.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
-      if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-    })
-      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-      }),
-    "otherIncome" -> text.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
-      if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-    })
-      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-      })
-  )((monthlyIncome, benefits, otherIncome) => IncomeInput(
-      monthlyIncome,
-      benefits,
-      otherIncome
-    ))(incomeForm => {
-      Some(
-        (incomeForm.monthlyIncome.toString(), incomeForm.benefits.toString(), incomeForm.otherIncome.toString())
-      )
-    })
-
 }
