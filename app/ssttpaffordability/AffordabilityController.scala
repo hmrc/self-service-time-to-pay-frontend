@@ -105,8 +105,11 @@ class AffordabilityController @Inject() (
     JourneyLogger.info(s"AffordabilityController.submitMonthlyIncome: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
       createMonthlyIncomeForm().bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn))),
+        formWithErrors => {
+          Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn)))
+        },
         { (form: IncomeForm) =>
+          JourneyLogger.info(s"FORM PASSING FIRST VALIDATION ${form.toString}")
           val formValidatedForPositiveTotal = validateIncomeFormForPositiveTotal(createMonthlyIncomeForm().fill(form))
           if (formValidatedForPositiveTotal.hasErrors) {
             Future.successful(BadRequest(views.your_monthly_income(formValidatedForPositiveTotal, isSignedIn)))

@@ -20,6 +20,7 @@ import journey.IncomeCategory
 import play.api.data.Forms.{text, _}
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms, Mapping}
+import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.util.Try
@@ -98,7 +99,6 @@ object CalculatorForm {
 
   val incomeMapping: Mapping[IncomeForm] = mapping(
     "monthlyIncome" -> text
-      .verifying("ssttp.affordability.your-monthly-income.error.required", { i: String => i.nonEmpty })
       .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
         if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
       }),
@@ -123,8 +123,8 @@ object CalculatorForm {
   }
 
   def validateIncomeFormForPositiveTotal(form: Form[IncomeForm]): Form[IncomeForm] = {
-    if (form.get.hasPositiveTotal) {
-      val formErrorsWithTotalError = form.errors :+ FormError("monthlyIncome", "ssttp.affordability.your-monthly-income.error.required")
+    if (!form.get.hasPositiveTotal) {
+      val formErrorsWithTotalError = form.errors :+ FormError("monthlyIncome", Seq("ssttp.affordability.your-monthly-income.error.required"))
       form.copy(errors = formErrorsWithTotalError)
     } else {
       form
