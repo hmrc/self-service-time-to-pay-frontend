@@ -17,6 +17,7 @@
 package ssttpcalculator
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
+import java.math.MathContext
 
 final case class IncomeInput(
     monthlyIncome: BigDecimal,

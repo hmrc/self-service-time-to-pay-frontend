@@ -103,8 +103,6 @@ final case class Journey(
   def amount: BigDecimal = maybeMonthlyPaymentAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [$this]"))
   def taxpayer: Taxpayer = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [$this]"))
   def debits: Seq[Debit] = taxpayer.selfAssessment.debits
-  def income: Income = maybeIncome.getOrElse(throw new RuntimeException(s"Some error message"))
-
   def requireIsInProgress(): Unit = {
     require(status == InProgress, s"status has to be InProgress [$this]")
   }

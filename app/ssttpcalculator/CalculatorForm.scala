@@ -16,11 +16,9 @@
 
 package ssttpcalculator
 
-import journey.IncomeCategory
 import play.api.data.Forms.{text, _}
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms, Mapping}
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import scala.util.Try
@@ -115,13 +113,22 @@ object CalculatorForm {
     "monthlyIncome" -> text
       .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
         if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+      })
+      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
       }),
     "benefits" -> text.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
       if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-    }),
+    })
+      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
+      }),
     "otherIncome" -> text.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
       if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
     })
+      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
+      })
   )((monthlyIncome, benefits, otherIncome) => IncomeInput(
       monthlyIncome,
       benefits,

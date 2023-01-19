@@ -116,6 +116,7 @@ ssttp.affordability.your-monthly-income.form.other-income.hint = Er enghraifft, 
 ssttp.affordability.your-monthly-income.error.title = Mae problem wedi codi
 ssttp.affordability.your-monthly-income.error.required = Mae’n rhaid i chi nodi ffigur ar gyfer yr incwm. Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
 ssttp.affordability.your-monthly-income.error.non-numerals = Rhowch rifau yn unig
+ssttp.affordability.your-monthly-income.error.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.affordability.your-monthly-income.continue = Yn eich blaen
 
 #calculator
