@@ -18,7 +18,6 @@ package ssttpaffordability
 
 import play.api.data.Forms.{text, _}
 import play.api.data.{Form, FormError, Mapping}
-import ssttpcalculator.IncomeInput
 
 import scala.util.Try
 

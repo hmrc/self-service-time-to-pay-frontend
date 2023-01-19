@@ -27,7 +27,6 @@ import ssttpaffordability.AffordabilityForm.{createIncomeForm, validateIncomeInp
 import ssttpaffordability.model.{Income, IncomeCategory}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
-import ssttpcalculator.IncomeInput
 import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth

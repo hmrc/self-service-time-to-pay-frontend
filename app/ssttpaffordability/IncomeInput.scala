@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package ssttpcalculator
+package ssttpaffordability
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
-import java.math.MathContext
 
 final case class IncomeInput(
     monthlyIncome: BigDecimal,
