@@ -16,27 +16,57 @@
 
 package ssttpaffordability
 
-import ssttpcalculator.MonthlyIncomeForm
+import play.api.data.Forms.{text, _}
+import play.api.data.Form
+import scala.util.Try
 
-import scala.math.BigDecimal.RoundingMode.HALF_UP
-
-final case class MonthlySpendingForm(monthlySpending: BigDecimal)
+final case class MonthlySpendingForm()
 
 object MonthlySpendingForm {
-  def apply(str: String): MonthlySpendingForm = {
-    str match {
-      case s if s.isEmpty => MonthlySpendingForm(BigDecimal(0))
-      case s              => MonthlySpendingForm(BigDecimal(s))
-    }
+
+  def createMonthlySpendingForm(): Form[SpendingForm] = {
+    Form(spendingMapping)
   }
 
-  implicit def digDecimalToMonthlySpending(bd: BigDecimal): MonthlyIncomeForm = {
-    MonthlyIncomeForm(bd)
-  }
+  val spendingMapping = mapping(
+    "housing" -> text
+      .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
+        if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+      }),
+    "pension-contributions" -> text,
+    "council-tax" -> text,
+    "utilities" -> text,
+    "debt-repayments" -> text,
+    "travel" -> text,
+    "childcare" -> text,
+    "insurance" -> text,
+    "groceries" -> text,
+    "health" -> text
+  )((housing, pensionContribution, councilTax, utilities, debtRepayments, travel, childcare, insurance, groceries, health) => SpendingForm(
+      housing,
+      pensionContribution,
+      councilTax,
+      utilities,
+      debtRepayments,
+      travel,
+      childcare,
+      insurance,
+      groceries,
+      health
+    ))(spendingForm => {
+      Some(
+        (spendingForm.housing.toString(),
+          spendingForm.pensionContribution.toString(),
+          spendingForm.councilTax.toString(),
+          spendingForm.utilities.toString(),
+          spendingForm.debtRepayments.toString(),
+          spendingForm.travel.toString(),
+          spendingForm.childcare.toString(),
+          spendingForm.insurance.toString(),
+          spendingForm.groceries.toString(),
+          spendingForm.health.toString()
+        )
+      )
+    })
 
-  implicit def monthlySpendingToBigDecimal(mif: MonthlyIncomeForm): BigDecimal = {
-    mif.monthlyIncome.setScale(2, HALF_UP)
-  }
-
-  def unapply(arg: BigDecimal): Option[BigDecimal] = Option(arg.setScale(2, HALF_UP))
 }

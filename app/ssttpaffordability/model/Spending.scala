@@ -18,11 +18,14 @@ package ssttpaffordability.model
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class Expense(
-    category: String,
-    amount:   BigDecimal = BigDecimal(0)
-)
+final case class Spending(expenses: Seq[Expense]) {
+  def totalSpending: BigDecimal = expenses.map(_.amount).sum
 
-object Expense {
-  implicit val format: OFormat[Expense] = Json.format[Expense]
+  def amount(category: String): BigDecimal = {
+    expenses.find(_.category == category).fold(BigDecimal(0))(_.amount)
+  }
+}
+
+object Spending {
+  implicit val format: OFormat[Spending] = Json.format[Spending]
 }

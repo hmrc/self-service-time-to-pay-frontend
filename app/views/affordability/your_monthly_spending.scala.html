@@ -14,17 +14,12 @@
  * limitations under the License.
  *@
 
-@import ssttpcalculator.MonthlySpendingForm
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+@import ssttpaffordability.SpendingForm
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{Hint, Input, PrefixOrSuffix, Text}
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Input
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
-@import uk.gov.hmrc.govukfrontend.views.Aliases.PrefixOrSuffix
-@import views.html.helpers.forms.submit
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
-@import partials.currency
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
 
 @this(
         main: views.html.main,
@@ -35,9 +30,8 @@
         continue: views.html.helpers.forms.ssttpContinue
 )
 
-@import ssttpaffordability.MonthlySpendingForm
 @(
-        dataForm: Form[MonthlySpendingForm],
+        dataForm: Form[SpendingForm],
         loggedIn: Boolean = false
 )(implicit
         messages: play.api.i18n.Messages,
@@ -60,7 +54,7 @@
 
     <section class="govuk-body">
 
-        <h1 class="govuk-heading-xl">@messages("ssttp.affordability.your-monthly-spending-spending.h1")</h1>
+        <h1 class="govuk-heading-xl">@messages("ssttp.affordability.your-monthly-spending.h1")</h1>
 
         <p class="govuk-body">@messages("ssttp.affordability.your-monthly-spending.instruction")</p>
 
@@ -86,7 +80,7 @@
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
-                classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+                classes = "govuk-input govuk-input--width-5"
             ))
 
             @input(Input(
@@ -103,7 +97,7 @@
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
-                classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+                classes = "govuk-input govuk-input--width-5"
             ))
 
             @input(Input(
@@ -120,7 +114,7 @@
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
-                classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+                classes = "govuk-input govuk-input--width-5"
             ))
 
             @input(Input(
@@ -140,12 +134,13 @@
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
-                classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+                classes = "govuk-input govuk-input--width-5"
             ))
 
             @input(Input(
                 id = "debt-repayments",
                 name = "debt-repayments",
+                value = dataForm.data.get("debt-repayments"),
                 hint = Some(Hint(
                     content = Text(messages("ssttp.affordability.your-monthly-spending.form.debt-repayments.hint"))
                 )),
@@ -159,12 +154,13 @@
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
-                classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+                classes = "govuk-input govuk-input--width-5"
             ))
 
             @input(Input(
                 id = "travel",
                 name = "travel",
+                value = dataForm.data.get("travel"),
                 hint = Some(Hint(
                     content = Text(messages("ssttp.affordability.your-monthly-spending.form.travel.hint"))
                 )),
@@ -178,12 +174,13 @@
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
-                classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+                classes = "govuk-input govuk-input--width-5"
             ))
 
             @input(Input(
                 id = "childcare",
                 name = "childcare",
+                value = dataForm.data.get("childcare"),
                 hint = Some(Hint(
                     content = Text(messages("ssttp.affordability.your-monthly-spending.form.childcare.hint"))
                 )),
@@ -197,12 +194,13 @@
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
-                classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+                classes = "govuk-input govuk-input--width-5"
             ))
 
             @input(Input(
                 id = "insurance",
                 name = "insurance",
+                value = dataForm.data.get("insurance"),
                 hint = Some(Hint(
                     content = Text(messages("ssttp.affordability.your-monthly-spending.form.insurance.hint"))
                 )),
@@ -216,12 +214,13 @@
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
-                classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+                classes = "govuk-input govuk-input--width-5"
             ))
 
             @input(Input(
                 id = "groceries",
                 name = "groceries",
+                value = dataForm.data.get("groceries"),
                 label = Label(
                     forAttr = Some("housing"),
                     content = Text(messages("ssttp.affordability.your-monthly-spending.form.groceries")),
@@ -232,12 +231,13 @@
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
-                classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+                classes = "govuk-input govuk-input--width-5"
             ))
 
             @input(Input(
                 id = "health",
                 name = "health",
+                value = dataForm.data.get("health"),
                 hint = Some(Hint(
                     content = Text(messages("ssttp.affordability.your-monthly-spending.form.health.hint"))
                 )),
@@ -251,14 +251,12 @@
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
-                classes = "govuk-input govuk-input--width-5 govuk-!-margin-bottom-4"
+                classes = "govuk-input govuk-input--width-5"
             ))
 
             @continue(messages("ssttp.calculator.form.continue"))
         }
 
     </section>
-
-
 
 }
