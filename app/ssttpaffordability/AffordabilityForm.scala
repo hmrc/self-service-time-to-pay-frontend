@@ -17,7 +17,6 @@
 package ssttpaffordability
 
 import play.api.data.Forms.{text, _}
-import play.api.data.validation.Constraints.nonEmpty
 import play.api.data.{Form, FormError, Mapping}
 
 import scala.util.Try
@@ -69,19 +68,20 @@ object AffordabilityForm {
 
   val spendingForm: Form[SpendingInput] = Form(
     mapping(
-      "housing" -> text
-        .verifying("ssttp.affordability.your-monthly-spending.error.non-numerals", { i: String =>
-          if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-        }),
-      "pension-contributions" -> text,
-      "council-tax" -> text,
-      "utilities" -> text,
-      "debt-repayments" -> text,
-      "travel" -> text,
-      "childcare" -> text,
-      "insurance" -> text,
-      "groceries" -> text,
-      "health" -> text
+      "housing" -> validate(text),
+      "pension-contributions" -> validate(text),
+      "council-tax" -> validate(text),
+      "utilities" -> validate(text),
+      "debt-repayments" -> validate(text),
+      "travel" -> validate(text),
+      "childcare" -> validate(text),
+      "insurance" -> validate(text),
+      "groceries" -> validate(text),
+      "health" -> validate(text)
     )(SpendingInput.apply)(SpendingInput.unapply)
   )
+
+  private def validate(mappingStr: Mapping[String]) = mappingStr.verifying("ssttp.affordability.your-monthly-spending.error.non-numerals", { i: String =>
+    if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+  })
 }
