@@ -16,8 +16,6 @@
 
 package ssttpaffordability
 
-import scala.math.BigDecimal.RoundingMode.HALF_UP
-
 final case class IncomeInput(
     monthlyIncome: BigDecimal,
     benefits:      BigDecimal,
@@ -40,35 +38,15 @@ object IncomeInput {
       benefitsStr:      String,
       otherIncomeStr:   String
   ): IncomeInput = {
-    val monthlyIncomeBigDecimal = monthlyIncomeStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val benefitsBigDecimal = benefitsStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val otherIncomeBigDecimal = otherIncomeStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    IncomeInput(monthlyIncomeBigDecimal, benefitsBigDecimal, otherIncomeBigDecimal)
-  }
-
-  implicit def bigDecimalsToIncome(
-      monthlyIncome: BigDecimal,
-      benefits:      BigDecimal,
-      otherIncome:   BigDecimal): IncomeInput = {
-    IncomeInput(monthlyIncome, benefits, otherIncome)
-  }
-
-  implicit def incomeToBigDecimal(inf: IncomeInput): (BigDecimal, BigDecimal, BigDecimal) = {
-    (
-      inf.monthlyIncome.setScale(2, HALF_UP),
-      inf.benefits.setScale(2, HALF_UP),
-      inf.otherIncome.setScale(2, HALF_UP)
+    IncomeInput(
+      parseStringToBigDecimal(monthlyIncomeStr),
+      parseStringToBigDecimal(benefitsStr),
+      parseStringToBigDecimal(otherIncomeStr)
     )
   }
 
-  def unapply(arg: BigDecimal): Option[BigDecimal] = Option(arg.setScale(2, HALF_UP))
+  private def parseStringToBigDecimal(string: String): BigDecimal = string match {
+    case s if s.isEmpty => BigDecimal(0)
+    case s              => BigDecimal(s)
+  }
 }
