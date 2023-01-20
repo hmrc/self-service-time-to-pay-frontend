@@ -44,49 +44,23 @@ object SpendingData {
       groceriesStr:           String,
       healthStr:              String
   ): SpendingData = {
-    val housingBigDecimal = housingStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val pensionContributionBigDecimal = pensionContributionStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val councilTaxBigDecimal = councilTaxStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val utilitiesBigDecimal = utilitiesStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val debtRepaymentsBigDecimal = debtRepaymentsStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val travelBigDecimal = travelStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val childcareBigDecimal = childcareStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val insuranceBigDecimal = insuranceStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val groceriesBigDecimal = groceriesStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    val healthBigDecimal = healthStr match {
-      case s if s.isEmpty => BigDecimal(0)
-      case s              => BigDecimal(s)
-    }
-    SpendingData(housingBigDecimal, pensionContributionBigDecimal, councilTaxBigDecimal,
-                 utilitiesBigDecimal, debtRepaymentsBigDecimal, travelBigDecimal, childcareBigDecimal,
-                 insuranceBigDecimal, groceriesBigDecimal, healthBigDecimal)
+    SpendingData(
+      parseStringToBigDecimal(housingStr),
+      parseStringToBigDecimal(pensionContributionStr),
+      parseStringToBigDecimal(councilTaxStr),
+      parseStringToBigDecimal(utilitiesStr),
+      parseStringToBigDecimal(debtRepaymentsStr),
+      parseStringToBigDecimal(travelStr),
+      parseStringToBigDecimal(childcareStr),
+      parseStringToBigDecimal(insuranceStr),
+      parseStringToBigDecimal(groceriesStr),
+      parseStringToBigDecimal(healthStr),
+    )
+  }
+
+  private def parseStringToBigDecimal(string: String): BigDecimal = string match {
+    case s if s.isEmpty => BigDecimal(0)
+    case s              => BigDecimal(s)
   }
 
   //  implicit def bigDecimalsToSpending(
