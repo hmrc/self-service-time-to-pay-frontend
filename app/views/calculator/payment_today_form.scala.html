@@ -66,6 +66,7 @@
         @input(Input(
             id = "amount",
             name = "amount",
+            value = dataForm.data.get("amount"),
             hint = Some(Hint(
                 content = Text(messages("ssttp.calculator.form.payment_today.hint", currency(debits.map(_.amount).sum)))
             )),
