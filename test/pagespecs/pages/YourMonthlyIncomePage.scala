@@ -44,6 +44,10 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     assertContentMatchesExpectedLines(expectedLines)
   }
 
+  def assertPagePathCorrect: Assertion = probing {
+    readPath() shouldBe path
+  }
+
   def enterMonthlyIncome(value: String): Unit = {
     val monthlyIncome = xpath("//*[@id=\"monthlyIncome\"]")
     click on monthlyIncome
