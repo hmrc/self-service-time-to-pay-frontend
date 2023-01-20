@@ -50,6 +50,16 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     addIncomeSpendingPage.assertPageIsDisplayed()
   }
 
+  "add income button goes to 'Your monthly income' page" in {
+    beginJourney()
+
+    addIncomeSpendingPage.assertPageIsDisplayed
+
+    addIncomeSpendingPage.clickOnAddIncome()
+
+    yourMonthlyIncomePage.assertPagePathCorrect
+  }
+
   "language" in {
     beginJourney()
 

@@ -19,10 +19,12 @@ package ssttpaffordability
 import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
-import controllers.action.Actions
-import journey.JourneyService
+import controllers.action.{Actions, AuthorisedSaUserRequest}
+import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
+import ssttpaffordability.AffordabilityForm.{createIncomeForm, validateIncomeInputTotal}
+import ssttpaffordability.model.{Income, IncomeCategory}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
 import ssttpdirectdebit.DirectDebitConnector
@@ -83,4 +85,58 @@ class AffordabilityController @Inject() (
       Future.successful(Ok(views.add_income_spending()))
     }
   }
+
+  def getYourMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"AffordabilityController.getYourMonthlyIncome: $request")
+    journeyService.authorizedForSsttp{ journey: Journey =>
+      val emptyForm = createIncomeForm()
+      val formWithData = journey.maybeIncome.map(income =>
+        emptyForm.fill(IncomeInput(
+          monthlyIncome = income.amount("monthlyIncome"),
+          benefits      = income.amount("benefits"),
+          otherIncome   = income.amount("otherIncome")
+        ))
+      ).getOrElse(emptyForm)
+      Future.successful(Ok(views.your_monthly_income(formWithData, isSignedIn)))
+    }
+  }
+
+  def submitMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"AffordabilityController.submitMonthlyIncome: $request")
+
+    journeyService.authorizedForSsttp { journey: Journey =>
+      createIncomeForm().bindFromRequest().fold(
+        formWithErrors => {
+          Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn)))
+        },
+
+        { (input: IncomeInput) =>
+          val formValidatedForPositiveTotal = validateIncomeInputTotal(createIncomeForm().fill(input))
+          if (formValidatedForPositiveTotal.hasErrors) {
+            Future.successful(BadRequest(views.your_monthly_income(formValidatedForPositiveTotal, isSignedIn)))
+
+          } else {
+            storeIncomeInputToJourney(input, journey).map { _ =>
+              Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+            }
+          }
+        }
+      )
+    }
+  }
+
+  private def storeIncomeInputToJourney(
+      input:   IncomeInput,
+      journey: Journey
+  )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
+    val newJourney = journey.copy(
+      maybeIncome = Some(Income(Seq(
+        IncomeCategory("monthlyIncome", input.monthlyIncome),
+        IncomeCategory("benefits", input.benefits),
+        IncomeCategory("otherIncome", input.otherIncome)
+      )))
+    )
+    journeyService.saveJourney(newJourney)
+  }
+
 }

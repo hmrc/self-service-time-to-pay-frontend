@@ -21,6 +21,7 @@ import enumformat.EnumFormat
 import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.libs.json.{Format, Json, OFormat}
 import repo.HasId
+import ssttpaffordability.model.Income
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -72,6 +73,7 @@ final case class Journey(
     maybePaymentToday:          Option[PaymentToday]          = None,
     maybePaymentTodayAmount:    Option[PaymentTodayAmount]    = None,
     maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
+    maybeIncome:                Option[Income]                = None,
     maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
 
@@ -84,7 +86,6 @@ final case class Journey(
   def amount: BigDecimal = maybeMonthlyPaymentAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [$this]"))
   def taxpayer: Taxpayer = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [$this]"))
   def debits: Seq[Debit] = taxpayer.selfAssessment.debits
-
   def requireIsInProgress(): Unit = {
     require(status == InProgress, s"status has to be InProgress [$this]")
   }
