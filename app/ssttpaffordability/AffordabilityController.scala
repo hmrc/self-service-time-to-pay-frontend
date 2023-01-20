@@ -145,7 +145,7 @@ class AffordabilityController @Inject() (
     JourneyLogger.info(s"AffordabilityController.getYourMonthlySpending: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
       val formWithData = journey.maybeSpending.map(expense =>
-        spendingForm.fill(SpendingData(
+        spendingForm.fill(SpendingInput(
           housing             = expense.amount("housing"),
           pensionContribution = expense.amount("pension-contribution"),
           councilTax          = expense.amount("council-tax"),
@@ -167,7 +167,7 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       spendingForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(views.your_monthly_spending(formWithErrors, isSignedIn))),
-        (form: SpendingData) => {
+        (form: SpendingInput) => {
           val newJourney = journey.copy(
             maybeSpending = Some(Spending(Seq(
               Expense("housing", form.housing),

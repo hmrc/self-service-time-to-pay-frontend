@@ -67,7 +67,7 @@ object AffordabilityForm {
       )
     })
 
-  val spendingForm: Form[SpendingData] = Form(
+  val spendingForm: Form[SpendingInput] = Form(
     mapping(
       "housing" -> text
         .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
@@ -82,7 +82,7 @@ object AffordabilityForm {
       "insurance" -> text,
       "groceries" -> text,
       "health" -> text
-    )((housing, pensionContribution, councilTax, utilities, debtRepayments, travel, childcare, insurance, groceries, health) => SpendingData(
+    )((housing, pensionContribution, councilTax, utilities, debtRepayments, travel, childcare, insurance, groceries, health) => SpendingInput(
         housing,
         pensionContribution,
         councilTax,
@@ -93,18 +93,18 @@ object AffordabilityForm {
         insurance,
         groceries,
         health
-      ))(spendingData => {
+      ))(spendingInput => {
         Some(
-          (spendingData.housing.toString(),
-            spendingData.pensionContribution.toString(),
-            spendingData.councilTax.toString(),
-            spendingData.utilities.toString(),
-            spendingData.debtRepayments.toString(),
-            spendingData.travel.toString(),
-            spendingData.childcare.toString(),
-            spendingData.insurance.toString(),
-            spendingData.groceries.toString(),
-            spendingData.health.toString()
+          (spendingInput.housing.toString(),
+            spendingInput.pensionContribution.toString(),
+            spendingInput.councilTax.toString(),
+            spendingInput.utilities.toString(),
+            spendingInput.debtRepayments.toString(),
+            spendingInput.travel.toString(),
+            spendingInput.childcare.toString(),
+            spendingInput.insurance.toString(),
+            spendingInput.groceries.toString(),
+            spendingInput.health.toString()
           )
         )
       }

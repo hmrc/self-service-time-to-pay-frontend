@@ -14,12 +14,13 @@
  * limitations under the License.
  *@
 
-@import ssttpaffordability.SpendingData
+@import ssttpaffordability.SpendingInput
 @import uk.gov.hmrc.govukfrontend.views.Aliases.{Hint, Input, PrefixOrSuffix, Text}
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
+@import views.html.helper.input
 
 @this(
         main: views.html.main,
@@ -30,8 +31,9 @@
         continue: views.html.helpers.forms.ssttpContinue
 )
 
+
 @(
-        dataForm: Form[SpendingData],
+        dataForm: Form[SpendingInput],
         loggedIn: Boolean = false
 )(implicit
         messages: play.api.i18n.Messages,

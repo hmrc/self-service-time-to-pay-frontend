@@ -18,7 +18,7 @@ package ssttpaffordability
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
-final case class SpendingData(
+final case class SpendingInput(
     housing:             BigDecimal,
     pensionContribution: BigDecimal,
     councilTax:          BigDecimal,
@@ -31,7 +31,7 @@ final case class SpendingData(
     health:              BigDecimal
 )
 
-object SpendingData {
+object SpendingInput {
   def apply(
       housingStr:             String,
       pensionContributionStr: String,
@@ -43,8 +43,8 @@ object SpendingData {
       insuranceStr:           String,
       groceriesStr:           String,
       healthStr:              String
-  ): SpendingData = {
-    SpendingData(
+  ): SpendingInput = {
+    SpendingInput(
       parseStringToBigDecimal(housingStr),
       parseStringToBigDecimal(pensionContributionStr),
       parseStringToBigDecimal(councilTaxStr),
@@ -73,11 +73,11 @@ object SpendingData {
   //      childcare:           BigDecimal,
   //      insurance:           BigDecimal,
   //      groceries:           BigDecimal,
-  //      health:              BigDecimal): SpendingData = {
-  //    SpendingData(housing, pensionContribution, councilTax, utilities, debtRepayments, travel, childcare, insurance, groceries, health)
+  //      health:              BigDecimal): SpendingInput = {
+  //    SpendingInput(housing, pensionContribution, councilTax, utilities, debtRepayments, travel, childcare, insurance, groceries, health)
   //  }
   //
-  //  implicit def spendingToBigDecimal(inf: SpendingData): (BigDecimal, BigDecimal, BigDecimal, BigDecimal,
+  //  implicit def spendingToBigDecimal(inf: SpendingInput): (BigDecimal, BigDecimal, BigDecimal, BigDecimal,
   //    BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal) = {
   //    (
   //      inf.housing.setScale(2, HALF_UP),
