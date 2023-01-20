@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import ssttpcalculator.IncomeForm
+@import ssttpaffordability.IncomeInput
 @import timetopaytaxpayer.cor.model.Debit
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
@@ -37,7 +37,7 @@
 )
 
 @(
-    dataForm: Form[IncomeForm],
+    dataForm: Form[IncomeInput],
     loggedIn: Boolean = false
 )(implicit
     messages: play.api.i18n.Messages,
