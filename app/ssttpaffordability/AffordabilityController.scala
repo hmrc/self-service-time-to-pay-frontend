@@ -23,9 +23,8 @@ import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpaffordability.AffordabilityForm.{createIncomeForm, validateIncomeInputTotal}
+import ssttpaffordability.AffordabilityForm.{createIncomeForm, spendingForm, validateIncomeInputTotal}
 import ssttpaffordability.model.{Income, IncomeCategory}
-import ssttpaffordability.MonthlySpendingForm.createMonthlySpendingForm
 import ssttpaffordability.model.{Expense, Spending}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
@@ -128,7 +127,6 @@ class AffordabilityController @Inject() (
     }
   }
 
-
   private def storeIncomeInputToJourney(
       input:   IncomeInput,
       journey: Journey
@@ -143,13 +141,11 @@ class AffordabilityController @Inject() (
     journeyService.saveJourney(newJourney)
   }
 
-
   def getYourMonthlySpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.getYourMonthlySpending: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
-      val emptyForm = createMonthlySpendingForm()
       val formWithData = journey.maybeSpending.map(expense =>
-        emptyForm.fill(SpendingForm(
+        spendingForm.fill(SpendingData(
           housing             = expense.amount("housing"),
           pensionContribution = expense.amount("pension-contribution"),
           councilTax          = expense.amount("council-tax"),
@@ -161,7 +157,7 @@ class AffordabilityController @Inject() (
           groceries           = expense.amount("groceries"),
           health              = expense.amount("health"),
         ))
-      ).getOrElse(emptyForm)
+      ).getOrElse(spendingForm)
       Future.successful(Ok(views.your_monthly_spending(formWithData, isSignedIn)))
     }
   }
@@ -169,9 +165,9 @@ class AffordabilityController @Inject() (
   def submitMonthlySpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.submitMonthlySpending: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
-      createMonthlySpendingForm().bindFromRequest().fold(
+      spendingForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(views.your_monthly_spending(formWithErrors, isSignedIn))),
-        (form: SpendingForm) => {
+        (form: SpendingData) => {
           val newJourney = journey.copy(
             maybeSpending = Some(Spending(Seq(
               Expense("housing", form.housing),

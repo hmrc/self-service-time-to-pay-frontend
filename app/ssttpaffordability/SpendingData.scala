@@ -18,7 +18,7 @@ package ssttpaffordability
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
-final case class SpendingForm(
+final case class SpendingData(
     housing:             BigDecimal,
     pensionContribution: BigDecimal,
     councilTax:          BigDecimal,
@@ -31,7 +31,7 @@ final case class SpendingForm(
     health:              BigDecimal
 )
 
-object SpendingForm {
+object SpendingData {
   def apply(
       housingStr:             String,
       pensionContributionStr: String,
@@ -43,7 +43,7 @@ object SpendingForm {
       insuranceStr:           String,
       groceriesStr:           String,
       healthStr:              String
-  ): SpendingForm = {
+  ): SpendingData = {
     val housingBigDecimal = housingStr match {
       case s if s.isEmpty => BigDecimal(0)
       case s              => BigDecimal(s)
@@ -84,7 +84,7 @@ object SpendingForm {
       case s if s.isEmpty => BigDecimal(0)
       case s              => BigDecimal(s)
     }
-    SpendingForm(housingBigDecimal, pensionContributionBigDecimal, councilTaxBigDecimal,
+    SpendingData(housingBigDecimal, pensionContributionBigDecimal, councilTaxBigDecimal,
                  utilitiesBigDecimal, debtRepaymentsBigDecimal, travelBigDecimal, childcareBigDecimal,
                  insuranceBigDecimal, groceriesBigDecimal, healthBigDecimal)
   }
@@ -99,11 +99,11 @@ object SpendingForm {
   //      childcare:           BigDecimal,
   //      insurance:           BigDecimal,
   //      groceries:           BigDecimal,
-  //      health:              BigDecimal): SpendingForm = {
-  //    SpendingForm(housing, pensionContribution, councilTax, utilities, debtRepayments, travel, childcare, insurance, groceries, health)
+  //      health:              BigDecimal): SpendingData = {
+  //    SpendingData(housing, pensionContribution, councilTax, utilities, debtRepayments, travel, childcare, insurance, groceries, health)
   //  }
   //
-  //  implicit def spendingToBigDecimal(inf: SpendingForm): (BigDecimal, BigDecimal, BigDecimal, BigDecimal,
+  //  implicit def spendingToBigDecimal(inf: SpendingData): (BigDecimal, BigDecimal, BigDecimal, BigDecimal,
   //    BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal) = {
   //    (
   //      inf.housing.setScale(2, HALF_UP),

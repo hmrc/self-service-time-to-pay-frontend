@@ -17,6 +17,7 @@
 package ssttpaffordability
 
 import play.api.data.Forms.{text, _}
+import play.api.data.validation.Constraints.nonEmpty
 import play.api.data.{Form, FormError, Mapping}
 
 import scala.util.Try
@@ -65,4 +66,47 @@ object AffordabilityForm {
         (incomeForm.monthlyIncome.toString(), incomeForm.benefits.toString(), incomeForm.otherIncome.toString())
       )
     })
+
+  val spendingForm: Form[SpendingData] = Form(
+    mapping(
+      "housing" -> text
+        .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
+          if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+        }),
+      "pension-contributions" -> text,
+      "council-tax" -> text,
+      "utilities" -> text,
+      "debt-repayments" -> text,
+      "travel" -> text,
+      "childcare" -> text,
+      "insurance" -> text,
+      "groceries" -> text,
+      "health" -> text
+    )((housing, pensionContribution, councilTax, utilities, debtRepayments, travel, childcare, insurance, groceries, health) => SpendingData(
+        housing,
+        pensionContribution,
+        councilTax,
+        utilities,
+        debtRepayments,
+        travel,
+        childcare,
+        insurance,
+        groceries,
+        health
+      ))(spendingData => {
+        Some(
+          (spendingData.housing.toString(),
+            spendingData.pensionContribution.toString(),
+            spendingData.councilTax.toString(),
+            spendingData.utilities.toString(),
+            spendingData.debtRepayments.toString(),
+            spendingData.travel.toString(),
+            spendingData.childcare.toString(),
+            spendingData.insurance.toString(),
+            spendingData.groceries.toString(),
+            spendingData.health.toString()
+          )
+        )
+      }
+      ))
 }

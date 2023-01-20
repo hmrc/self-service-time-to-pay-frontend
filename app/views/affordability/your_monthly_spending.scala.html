@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import ssttpaffordability.SpendingForm
+@import ssttpaffordability.SpendingData
 @import uk.gov.hmrc.govukfrontend.views.Aliases.{Hint, Input, PrefixOrSuffix, Text}
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
@@ -31,7 +31,7 @@
 )
 
 @(
-        dataForm: Form[SpendingForm],
+        dataForm: Form[SpendingData],
         loggedIn: Boolean = false
 )(implicit
         messages: play.api.i18n.Messages,
