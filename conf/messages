@@ -141,6 +141,8 @@ ssttp.affordability.your-monthly-spending.form.insurance.hint = For example, hea
 ssttp.affordability.your-monthly-spending.form.groceries = Groceries
 ssttp.affordability.your-monthly-spending.form.health = Health
 ssttp.affordability.your-monthly-spending.form.health.hint = For example, prescriptions, private healthcare
+ssttp.affordability.your-monthly-spending.error.title = There is a problem
+ssttp.affordability.your-monthly-spending.error.non-numerals = Enter numbers only
 
 
 #calculator

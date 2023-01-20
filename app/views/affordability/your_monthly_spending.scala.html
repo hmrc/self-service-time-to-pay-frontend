@@ -78,7 +78,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("housing").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
@@ -95,7 +95,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("pension-contributions").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
@@ -112,7 +112,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("council-tax").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
@@ -120,7 +120,7 @@
             ))
 
             @input(Input(
-                id = "utilities",
+                id = "council-tax",
                 name = "utilities",
                 value = dataForm.data.get("utilities"),
                 hint = Some(Hint(
@@ -132,7 +132,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("council-tax").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
@@ -152,7 +152,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("debt-repayments").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
@@ -172,7 +172,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("travel").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
@@ -192,7 +192,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("childcare").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
@@ -212,7 +212,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("insurance").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
@@ -229,7 +229,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("groceries").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
@@ -249,7 +249,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("health").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
