@@ -70,7 +70,7 @@ object AffordabilityForm {
   val spendingForm: Form[SpendingInput] = Form(
     mapping(
       "housing" -> text
-        .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
+        .verifying("ssttp.affordability.your-monthly-spending.error.non-numerals", { i: String =>
           if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
         }),
       "pension-contributions" -> text,
@@ -82,31 +82,6 @@ object AffordabilityForm {
       "insurance" -> text,
       "groceries" -> text,
       "health" -> text
-    )((housing, pensionContribution, councilTax, utilities, debtRepayments, travel, childcare, insurance, groceries, health) => SpendingInput(
-        housing,
-        pensionContribution,
-        councilTax,
-        utilities,
-        debtRepayments,
-        travel,
-        childcare,
-        insurance,
-        groceries,
-        health
-      ))(spendingInput => {
-        Some(
-          (spendingInput.housing.toString(),
-            spendingInput.pensionContribution.toString(),
-            spendingInput.councilTax.toString(),
-            spendingInput.utilities.toString(),
-            spendingInput.debtRepayments.toString(),
-            spendingInput.travel.toString(),
-            spendingInput.childcare.toString(),
-            spendingInput.insurance.toString(),
-            spendingInput.groceries.toString(),
-            spendingInput.health.toString()
-          )
-        )
-      }
-      ))
+    )(SpendingInput.apply)(SpendingInput.unapply)
+  )
 }
