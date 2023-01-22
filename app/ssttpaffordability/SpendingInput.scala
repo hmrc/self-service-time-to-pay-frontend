@@ -73,7 +73,7 @@ object SpendingInput {
 
   private def parseStringToBigDecimal(string: String): BigDecimal = string match {
     case s if s.isEmpty => BigDecimal(0)
-    case s              => BigDecimal(s)
+    case s              => BigDecimal(s).underlying().stripTrailingZeros()
   }
 
 }
