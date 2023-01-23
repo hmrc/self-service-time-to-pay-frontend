@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
@@ -50,6 +51,21 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     addIncomeSpendingPage.assertPageIsDisplayed()
   }
 
+  def fillOutIncome(
+                             monthlyIncome: BigDecimal = 0,
+                             benefits: BigDecimal = 0,
+                             otherIncome: BigDecimal = 0
+                           ): Unit = {
+    addIncomeSpendingPage.clickOnAddIncome()
+
+    yourMonthlyIncomePage.enterMonthlyIncome(monthlyIncome.toString())
+    yourMonthlyIncomePage.enterBenefits(benefits.toString())
+    yourMonthlyIncomePage.enterOtherIncome(otherIncome.toString())
+
+    yourMonthlyIncomePage.clickContinue()
+  }
+
+
   "add income button goes to 'Your monthly income' page" in {
     beginJourney()
 
@@ -58,6 +74,16 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     addIncomeSpendingPage.clickOnAddIncome()
 
     yourMonthlyIncomePage.assertPagePathCorrect
+  }
+
+  "displays total income once filled out" in {
+    implicit val englishLanguage: Language = Languages.English
+
+    beginJourney()
+
+    fillOutIncome(2000, 200, 1000)
+
+    addIncomeSpendingPage.assertIncomeFilled(2000, 200, 1000)
   }
 
   "language" in {

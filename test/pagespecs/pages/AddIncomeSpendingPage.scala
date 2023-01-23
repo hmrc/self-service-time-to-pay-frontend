@@ -19,6 +19,7 @@ package pagespecs.pages
 import langswitch.Languages.{English, Welsh}
 import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
+import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
@@ -52,13 +53,33 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     click on id("monthly-spending")
   }
 
+  def assertIncomeFilled(
+                          monthlyIncome: BigDecimal,
+                          benefits: BigDecimal,
+                          otherIncome: BigDecimal
+                        )(implicit lang: Language): Unit = probing {
+    assertPathHeaderTitleCorrect
+    val expectedLines = Expected.IncomeFilledText(
+      monthlyIncome,
+      benefits,
+      otherIncome
+    ).stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+  }
+
+  def assertPathHeaderTitleCorrect(implicit lang: Language): Assertion = probing {
+    readPath() shouldBe path
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
+  }
+
   object Expected {
 
     object GlobalHeaderText {
 
       def apply()(implicit language: Language): String = language match {
         case English => globalHeaderTextEnglish
-        case Welsh   => globalHeaderTextWelsh
+        case Welsh => globalHeaderTextWelsh
       }
 
       private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
@@ -69,7 +90,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     object MainText {
       def apply()(implicit language: Language): String = language match {
         case English => mainTextEnglish
-        case Welsh   => mainTextWelsh
+        case Welsh => mainTextWelsh
       }
 
       private val mainTextEnglish =
@@ -78,7 +99,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
            |1.Income
            |Add spending
            |2.Spending
-        """.stripMargin
+      """.stripMargin
 
       private val mainTextWelsh =
         s"""Ychwanegu eich incwm a’ch gwariant
@@ -86,7 +107,39 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
            |1.Incwm
            |Ychwanegu gwariant
            |2.Gwariant
-        """.stripMargin
+      """.stripMargin
+    }
+
+    object IncomeFilledText {
+      def apply(
+                 monthlyIncome: BigDecimal,
+                 benefits: BigDecimal,
+                 otherIncome: BigDecimal
+               )(implicit language: Language): String = {
+        val totalIncome = (monthlyIncome + benefits + otherIncome).toString()
+        language match {
+          case English => incomeFilledTextEnglish(totalIncome)
+          case Welsh => incomeFilledTextWelsh(totalIncome)
+        }
+      }
+
+      private def incomeFilledTextEnglish(totalIncome: String) =
+        s"""Add your income and spending
+           |Add income
+           |1.Income
+           |Total income £$totalIncome
+           |Add spending
+           |2.Spending
+      """.stripMargin
+
+      private def incomeFilledTextWelsh(totalIncome: String) =
+        s"""Ychwanegu eich incwm a’ch gwariant
+           |Ychwanegu incwm
+           |1.Incwm
+           |Cyfanswm eich incwm £$totalIncome
+           |Ychwanegu gwariant
+           |2.Gwariant
+      """.stripMargin
     }
   }
 }
