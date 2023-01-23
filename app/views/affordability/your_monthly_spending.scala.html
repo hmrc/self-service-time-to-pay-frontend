@@ -1,0 +1,264 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import ssttpaffordability.SpendingInput
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{Hint, Input, PrefixOrSuffix, Text}
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
+@import views.html.helper.input
+
+@this(
+        main: views.html.main,
+        viewsHelpers: views.ViewsHelpers,
+        formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
+        input: uk.gov.hmrc.govukfrontend.views.html.components.GovukInput,
+        errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
+        continue: views.html.helpers.forms.ssttpContinue
+)
+
+
+@(
+        dataForm: Form[SpendingInput],
+        loggedIn: Boolean = false
+)(implicit
+        messages: play.api.i18n.Messages,
+        request: Request[_],
+        appConfig: config.AppConfig
+)
+
+@main(
+    title = messages("ssttp.affordability.your-monthly-spending.h1"),
+    hasErrors = dataForm.hasErrors,
+    backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+
+){
+    @if(dataForm.hasErrors){
+        @errorSummary(ErrorSummary(
+            errorList = dataForm.errors.asTextErrorLinks,
+            title = Text(messages("ssttp.affordability.your-monthly-spending.error.title"))
+        ))
+    }
+
+    <section class="govuk-body">
+
+        <h1 class="govuk-heading-xl">@messages("ssttp.affordability.your-monthly-spending.h1")</h1>
+
+        <p class="govuk-body">@messages("ssttp.affordability.your-monthly-spending.instruction")</p>
+
+
+        @formWithCsrf(
+            action = ssttpaffordability.routes.AffordabilityController.submitMonthlySpending(),
+            'id -> "monthlyspending-form"
+        ){
+            @input(Input(
+                id = "housing",
+                name = "housing",
+                value = dataForm.data.get("housing"),
+                hint = Some(Hint(
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.housing.hint"))
+                )),
+                label = Label(
+                    forAttr = Some("housing"),
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.housing")),
+                    classes = "govuk-label govuk-label--s",
+                    isPageHeading = false
+                ),
+                errorMessage = dataForm.error("housing").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                prefix = Some(PrefixOrSuffix(
+                    content = Text("£")
+                )),
+                classes = "govuk-input govuk-input--width-5"
+            ))
+
+            @input(Input(
+                id = "pension-contributions",
+                name = "pension-contributions",
+                value = dataForm.data.get("pension-contributions"),
+                label = Label(
+                    forAttr = Some("pension-contributions"),
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.pension-contributions")),
+                    classes = "govuk-label govuk-label--s",
+                    isPageHeading = false
+                ),
+                errorMessage = dataForm.error("pension-contributions").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                prefix = Some(PrefixOrSuffix(
+                    content = Text("£")
+                )),
+                classes = "govuk-input govuk-input--width-5"
+            ))
+
+            @input(Input(
+                id = "council-tax",
+                name = "council-tax",
+                value = dataForm.data.get("council-tax"),
+                label = Label(
+                    forAttr = Some("council-tax"),
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.council-tax")),
+                    classes = "govuk-label govuk-label--s",
+                    isPageHeading = false
+                ),
+                errorMessage = dataForm.error("council-tax").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                prefix = Some(PrefixOrSuffix(
+                    content = Text("£")
+                )),
+                classes = "govuk-input govuk-input--width-5"
+            ))
+
+            @input(Input(
+                id = "council-tax",
+                name = "utilities",
+                value = dataForm.data.get("utilities"),
+                hint = Some(Hint(
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.utilities.hint"))
+                )),
+                label = Label(
+                    forAttr = Some("utilities"),
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.utilities")),
+                    classes = "govuk-label govuk-label--s",
+                    isPageHeading = false
+                ),
+                errorMessage = dataForm.error("council-tax").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                prefix = Some(PrefixOrSuffix(
+                    content = Text("£")
+                )),
+                classes = "govuk-input govuk-input--width-5"
+            ))
+
+            @input(Input(
+                id = "debt-repayments",
+                name = "debt-repayments",
+                value = dataForm.data.get("debt-repayments"),
+                hint = Some(Hint(
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.debt-repayments.hint"))
+                )),
+                label = Label(
+                    forAttr = Some("debt-repayments"),
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.debt-repayments")),
+                    classes = "govuk-label govuk-label--s",
+                    isPageHeading = false
+                ),
+                errorMessage = dataForm.error("debt-repayments").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                prefix = Some(PrefixOrSuffix(
+                    content = Text("£")
+                )),
+                classes = "govuk-input govuk-input--width-5"
+            ))
+
+            @input(Input(
+                id = "travel",
+                name = "travel",
+                value = dataForm.data.get("travel"),
+                hint = Some(Hint(
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.travel.hint"))
+                )),
+                label = Label(
+                    forAttr = Some("travel"),
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.travel")),
+                    classes = "govuk-label govuk-label--s",
+                    isPageHeading = false
+                ),
+                errorMessage = dataForm.error("travel").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                prefix = Some(PrefixOrSuffix(
+                    content = Text("£")
+                )),
+                classes = "govuk-input govuk-input--width-5"
+            ))
+
+            @input(Input(
+                id = "childcare",
+                name = "childcare",
+                value = dataForm.data.get("childcare"),
+                hint = Some(Hint(
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.childcare.hint"))
+                )),
+                label = Label(
+                    forAttr = Some("childcare"),
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.childcare")),
+                    classes = "govuk-label govuk-label--s",
+                    isPageHeading = false
+                ),
+                errorMessage = dataForm.error("childcare").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                prefix = Some(PrefixOrSuffix(
+                    content = Text("£")
+                )),
+                classes = "govuk-input govuk-input--width-5"
+            ))
+
+            @input(Input(
+                id = "insurance",
+                name = "insurance",
+                value = dataForm.data.get("insurance"),
+                hint = Some(Hint(
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.insurance.hint"))
+                )),
+                label = Label(
+                    forAttr = Some("insurance"),
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.insurance")),
+                    classes = "govuk-label govuk-label--s",
+                    isPageHeading = false
+                ),
+                errorMessage = dataForm.error("insurance").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                prefix = Some(PrefixOrSuffix(
+                    content = Text("£")
+                )),
+                classes = "govuk-input govuk-input--width-5"
+            ))
+
+            @input(Input(
+                id = "groceries",
+                name = "groceries",
+                value = dataForm.data.get("groceries"),
+                label = Label(
+                    forAttr = Some("groceries"),
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.groceries")),
+                    classes = "govuk-label govuk-label--s",
+                    isPageHeading = false
+                ),
+                errorMessage = dataForm.error("groceries").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                prefix = Some(PrefixOrSuffix(
+                    content = Text("£")
+                )),
+                classes = "govuk-input govuk-input--width-5"
+            ))
+
+            @input(Input(
+                id = "health",
+                name = "health",
+                value = dataForm.data.get("health"),
+                hint = Some(Hint(
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.health.hint"))
+                )),
+                label = Label(
+                    forAttr = Some("health"),
+                    content = Text(messages("ssttp.affordability.your-monthly-spending.form.health")),
+                    classes = "govuk-label govuk-label--s",
+                    isPageHeading = false
+                ),
+                errorMessage = dataForm.error("health").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                prefix = Some(PrefixOrSuffix(
+                    content = Text("£")
+                )),
+                classes = "govuk-input govuk-input--width-5"
+            ))
+
+            @continue(messages("ssttp.calculator.form.continue"))
+        }
+
+    </section>
+
+}

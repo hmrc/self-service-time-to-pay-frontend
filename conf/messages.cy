@@ -119,6 +119,29 @@ ssttp.affordability.your-monthly-income.error.non-numerals = Rhowch rifau yn uni
 ssttp.affordability.your-monthly-income.error.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.affordability.your-monthly-income.continue = Yn eich blaen
 
+ssttp.affordability.your-monthly-spending.h1 = Eich gwariant misol
+ssttp.affordability.your-monthly-spending.instruction = Ychwanegwch wybodaeth amdanoch chi’ch hun yn unig. Os ydych yn byw gyda phobl eraill, nodwch eich cyfran chi o’r gwariant. Gallwch adael blwch yn wag os nad yw’n berthnasol i chi.
+ssttp.affordability.your-monthly-spending.form.housing = Tai
+ssttp.affordability.your-monthly-spending.form.housing.hint = Er enghraifft, morgais, rhent, atgyweiriadau
+ssttp.affordability.your-monthly-spending.form.pension-contributions = Cyfraniadau pensiwn
+ssttp.affordability.your-monthly-spending.form.council-tax = Treth Gyngor
+ssttp.affordability.your-monthly-spending.form.utilities = Cyfleustodau
+ssttp.affordability.your-monthly-spending.form.utilities.hint = Er enghraifft, ynni, dŵr, ffôn, band eang
+ssttp.affordability.your-monthly-spending.form.debt-repayments = Ad-daliadau dyledion
+ssttp.affordability.your-monthly-spending.form.debt-repayments.hint = Er enghraifft, cerdyn credyd, benthyciad, taliadau Gorchymyn Llys
+ssttp.affordability.your-monthly-spending.form.travel = Teithio
+ssttp.affordability.your-monthly-spending.form.travel.hint = Er enghraifft, cerbydau, tanwydd, tocynnau tymor
+ssttp.affordability.your-monthly-spending.form.childcare = Costau gofal plant
+ssttp.affordability.your-monthly-spending.form.childcare.hint = Er enghraifft, addysg, taliadau cynhaliaeth
+ssttp.affordability.your-monthly-spending.form.insurance = Yswiriant
+ssttp.affordability.your-monthly-spending.form.insurance.hint = Er enghraifft, iechyd, car, cartref
+ssttp.affordability.your-monthly-spending.form.groceries = Nwyddau Groser
+ssttp.affordability.your-monthly-spending.form.health = Iechyd
+ssttp.affordability.your-monthly-spending.form.health.hint = Er enghraifft, presgripsiynau, gofal iechyd preifat
+ssttp.affordability.your-monthly-spending.error.title = Mae problem wedi codi
+ssttp.affordability.your-monthly-spending.error.non-numerals = Enter numbers only
+
+
 #calculator
 
 ssttp.calculator.form.payment_summary.title = Crynodeb o’r taliadau

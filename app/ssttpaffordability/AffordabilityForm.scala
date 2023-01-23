@@ -65,4 +65,28 @@ object AffordabilityForm {
         (incomeForm.monthlyIncome.toString(), incomeForm.benefits.toString(), incomeForm.otherIncome.toString())
       )
     })
+
+  val spendingForm: Form[SpendingInput] = Form(
+    mapping(
+      "housing" -> validate(text),
+      "pension-contributions" -> validate(text),
+      "council-tax" -> validate(text),
+      "utilities" -> validate(text),
+      "debt-repayments" -> validate(text),
+      "travel" -> validate(text),
+      "childcare" -> validate(text),
+      "insurance" -> validate(text),
+      "groceries" -> validate(text),
+      "health" -> validate(text)
+    )(SpendingInput.apply)(SpendingInput.unapply)
+  )
+
+  private def validate(mappingStr: Mapping[String]) = mappingStr.verifying("ssttp.affordability.your-monthly-spending.error.non-numerals", { i: String =>
+    if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+  })
+
+  def parseStringToBigDecimal(string: String): BigDecimal = string match {
+    case s if s.isEmpty => BigDecimal(0)
+    case s => BigDecimal(s)
+  }
 }
