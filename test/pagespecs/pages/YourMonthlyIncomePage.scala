@@ -143,7 +143,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
       private val errorTextEnglish =
         """There is a problem
-          |You must enter an income figure. If you do not have any income call us on 0300 200 3835.
+          |You must enter an income figure. If you do not have any income call us on 0300 200 3835
         """.stripMargin
 
       private val errorTextWelsh =
