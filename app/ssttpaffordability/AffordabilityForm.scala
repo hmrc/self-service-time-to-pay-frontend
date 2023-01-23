@@ -18,6 +18,7 @@ package ssttpaffordability
 
 import play.api.data.Forms.{text, _}
 import play.api.data.{Form, FormError, Mapping}
+import ssttpaffordability.model.forms.helper.FormErrorWithFieldMessageOverrides
 
 import scala.util.Try
 
@@ -25,40 +26,6 @@ object AffordabilityForm {
   def createIncomeForm(): Form[IncomeInput] = {
     Form(incomeMapping)
   }
-
-  def validateIncomeInputTotal(form: Form[IncomeInput]): Form[IncomeInput] = {
-    if (!form.get.hasPositiveTotal) {
-      val formErrorsWithTotalError = form.errors :+ FormError(
-        key      = "monthlyIncome",
-        messages = Seq("ssttp.affordability.your-monthly-income.error.required")
-      )
-      form.copy(errors = formErrorsWithTotalError)
-    } else form
-  }
-
-  private val allInputsOverrides: Seq[FormError] = Seq(
-    FormError("monthlyIncome", ""),
-    FormError("benefits", ""),
-    FormError("otherIncome", ""),
-    FormError("allIncomeInputs", "ssttp.affordability.your-monthly-income.error.required")
-  )
-
-  val incomeInputsNotPositiveTotal: FormErrorWithFieldMessageOverrides = {
-    FormErrorWithFieldMessageOverrides(
-      formError             = FormError(
-        key      = "monthlyIncome",
-        messages = Seq("ssttp.affordability.your-monthly-income.error.required")
-      ),
-      fieldMessageOverrides = allInputsOverrides
-
-    )
-
-  }
-
-  final case class FormErrorWithFieldMessageOverrides(
-      formError:             FormError,
-      fieldMessageOverrides: Seq[FormError] = Seq.empty
-  )
 
   val incomeMapping: Mapping[IncomeInput] = mapping(
     "monthlyIncome" -> text
@@ -89,5 +56,32 @@ object AffordabilityForm {
         (incomeForm.monthlyIncome.toString(), incomeForm.benefits.toString(), incomeForm.otherIncome.toString())
       )
     })
+
+  def validateIncomeInputTotal(form: Form[IncomeInput]): Form[IncomeInput] = {
+    if (!form.get.hasPositiveTotal) {
+      val formErrorsWithTotalError = form.errors :+ FormError(
+        key      = "monthlyIncome",
+        messages = Seq("ssttp.affordability.your-monthly-income.error.required")
+      )
+      form.copy(errors = formErrorsWithTotalError)
+    } else form
+  }
+
+  private val allInputsOverrides: Seq[FormError] = Seq(
+    FormError("monthlyIncome", ""),
+    FormError("benefits", ""),
+    FormError("otherIncome", ""),
+    FormError("allIncomeInputs", "ssttp.affordability.your-monthly-income.error.required")
+  )
+
+  val incomeInputTotalNotPositive: FormErrorWithFieldMessageOverrides = {
+    FormErrorWithFieldMessageOverrides(
+      formError             = FormError(
+        key      = "monthlyIncome",
+        messages = Seq("ssttp.affordability.your-monthly-income.error.required")
+      ),
+      fieldMessageOverrides = allInputsOverrides
+    )
+  }
 
 }

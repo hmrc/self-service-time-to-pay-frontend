@@ -118,6 +118,7 @@ ssttp.affordability.your-monthly-income.error.required = Mae’n rhaid i chi nod
 ssttp.affordability.your-monthly-income.error.non-numerals = Rhowch rifau yn unig
 ssttp.affordability.your-monthly-income.error.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.affordability.your-monthly-income.continue = Yn eich blaen
+ssttp.affordability.your-monthly-income.hidden = Incwm
 
 #calculator
 

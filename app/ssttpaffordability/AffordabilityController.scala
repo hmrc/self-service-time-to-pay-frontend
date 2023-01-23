@@ -23,7 +23,7 @@ import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpaffordability.AffordabilityForm.{createIncomeForm, incomeInputsNotPositiveTotal, validateIncomeInputTotal}
+import ssttpaffordability.AffordabilityForm.{createIncomeForm, incomeInputTotalNotPositive, validateIncomeInputTotal}
 import ssttpaffordability.model.{Income, IncomeCategory}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
@@ -116,7 +116,7 @@ class AffordabilityController @Inject() (
             Future.successful(BadRequest(views.your_monthly_income(
               formValidatedForPositiveTotal,
               isSignedIn,
-              incomeInputsNotPositiveTotal.fieldMessageOverrides
+              incomeInputTotalNotPositive.fieldMessageOverrides
             )))
 
           } else {

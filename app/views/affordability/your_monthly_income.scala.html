@@ -46,8 +46,8 @@
     appConfig: config.AppConfig
 )
 
-@optErrorBars = @{
-    dataForm.error("bars-invalid-boiler")
+@optErrorTotal = @{
+    dataForm.error("total-invalid")
 }
 
 @fieldErrorMessage(key: String, form: Form[IncomeInput], overrides: Seq[FormError]) = @{
@@ -61,9 +61,9 @@
     }
 }
 
-@sortCodeAndAccountNumberFormError= @{
+@incomeInputTotalFormError= @{
     errorMessageOverrides.find(_.key == "allIncomeInputs")
-        .orElse(optErrorBars)
+        .orElse(optErrorTotal)
 }
 
 @main(
@@ -91,14 +91,15 @@
         'id -> "monthlyincome-form"
     ){
 
-        @defining(sortCodeAndAccountNumberFormError) { incomeInputTotalError =>
+        @defining(incomeInputTotalFormError) { incomeInputTotalError =>
             <fieldset class="govuk-fieldset long-word-wrap" aria-describedby="@if(incomeInputTotalError.isDefined) {total-invalid-error}">
-                <legend class="govuk-label govuk-visually-hidden">Something</legend>
+                <legend class="govuk-label govuk-visually-hidden">@messages("ssttp.affordability.your-monthly-income.hidden")</legend>
 
                 <div id="total-invalid" class="form-field @incomeInputTotalError.map { error => govuk-form-group--error }">
                     @incomeInputTotalError.map { error =>
-                        <span class="govuk-error-message" id="bars-invalid-error">
-                            <span class="govuk-visually-hidden">Something else</span> @messages("ssttp.affordability.your-monthly-income.error.required")
+                        <span class="govuk-error-message" id="income-invalid-error">
+                            <span class="govuk-visually-hidden">@Messages("ssttp.common.title-prefix")</span>
+                            @messages("ssttp.affordability.your-monthly-income.error.required")
                         </span>
                     }
 
@@ -135,7 +136,7 @@
                         classes = "govuk-label govuk-label--s",
                         isPageHeading = false
                 ),
-                    errorMessage = dataForm.error("benefits").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                    errorMessage = fieldErrorMessage("benefits", dataForm, errorMessageOverrides),
                     prefix = Some(PrefixOrSuffix(
                         content = Text("£")
                     )),
@@ -155,7 +156,7 @@
                         classes = "govuk-label govuk-label--s",
                         isPageHeading = false
                 ),
-                    errorMessage = dataForm.error("otherIncome").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                    errorMessage = fieldErrorMessage("otherIncome", dataForm, errorMessageOverrides),
                     prefix = Some(PrefixOrSuffix(
                         content = Text("£")
                     )),

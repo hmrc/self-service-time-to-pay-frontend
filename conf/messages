@@ -121,6 +121,7 @@ ssttp.affordability.your-monthly-income.error.required = You must enter an incom
 ssttp.affordability.your-monthly-income.error.non-numerals = Enter numbers only
 ssttp.affordability.your-monthly-income.error.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.affordability.your-monthly-income.continue = Continue
+ssttp.affordability.your-monthly-income.hidden = Income
 
 #calculator
 
