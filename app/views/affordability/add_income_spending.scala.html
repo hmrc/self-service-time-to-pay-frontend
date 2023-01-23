@@ -28,6 +28,8 @@
         appConfig: config.AppConfig
 )
 
+@spending = @{monthlySpending.fold(BigDecimal(0))(_.totalSpending)}
+
 @main(
     title = messages("ssttp.affordability.income-spending.h1"),
     backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())) {
@@ -53,14 +55,11 @@
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
             </h2>
-                 @{
-                     if(monthlySpending.isEmpty) {
-                                 <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9"/>
-                     } else if(monthlySpending.map(_.totalSpending).contains(BigDecimal(0))) {
-                                 <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9"/>
-                     } else {
-                         spending_list(monthlySpending)
-                     }
+                 @{if(spending == BigDecimal(0)) {
+                     <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9"/>
+                 } else {
+                     spending_list(monthlySpending)
+                 }
                  }
         </li>
     </ol>
