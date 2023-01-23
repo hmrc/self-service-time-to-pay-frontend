@@ -23,39 +23,23 @@ import ssttpaffordability.model.forms.helper.FormErrorWithFieldMessageOverrides
 import scala.util.Try
 
 object AffordabilityForm {
-  def createIncomeForm(): Form[IncomeInput] = {
-    Form(incomeMapping)
-  }
 
-  val incomeMapping: Mapping[IncomeInput] = mapping(
-    "monthlyIncome" -> text
-      .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
-        if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-      })
-      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-      }),
-    "benefits" -> text.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
-      if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-    })
-      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-      }),
-    "otherIncome" -> text.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
+  val incomeForm: Form[IncomeInput] = Form(
+    mapping(
+      "monthlyIncome" -> validateIncome(text),
+      "benefits" -> validateIncome(text),
+      "otherIncome" -> validateIncome(text)
+    )(IncomeInput.apply)(IncomeInput.unapply)
+  )
+
+  private def validateIncome(mappingStr: Mapping[String]) = {
+    mappingStr.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
       if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
     })
       .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
       })
-  )((monthlyIncome, benefits, otherIncome) => IncomeInput(
-      monthlyIncome,
-      benefits,
-      otherIncome
-    ))(incomeForm => {
-      Some(
-        (incomeForm.monthlyIncome.toString(), incomeForm.benefits.toString(), incomeForm.otherIncome.toString())
-      )
-    })
+  }
 
   def validateIncomeInputTotal(form: Form[IncomeInput]): Form[IncomeInput] = {
     if (!form.get.hasPositiveTotal) {
