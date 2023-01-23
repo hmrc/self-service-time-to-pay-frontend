@@ -84,4 +84,9 @@ object AffordabilityForm {
   private def validate(mappingStr: Mapping[String]) = mappingStr.verifying("ssttp.affordability.your-monthly-spending.error.non-numerals", { i: String =>
     if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
   })
+
+  def parseStringToBigDecimal(string: String): BigDecimal = string match {
+    case s if s.isEmpty => BigDecimal(0)
+    case s => BigDecimal(s)
+  }
 }
