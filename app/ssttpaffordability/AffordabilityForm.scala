@@ -36,6 +36,30 @@ object AffordabilityForm {
     } else form
   }
 
+  private val allInputsOverrides: Seq[FormError] = Seq(
+    FormError("monthlyIncome", ""),
+    FormError("benefits", ""),
+    FormError("otherIncome", ""),
+    FormError("allIncomeInputs", "ssttp.affordability.your-monthly-income.error.required")
+  )
+
+  val incomeInputsNotPositiveTotal: FormErrorWithFieldMessageOverrides = {
+    FormErrorWithFieldMessageOverrides(
+      formError             = FormError(
+        key      = "monthlyIncome",
+        messages = Seq("ssttp.affordability.your-monthly-income.error.required")
+      ),
+      fieldMessageOverrides = allInputsOverrides
+
+    )
+
+  }
+
+  final case class FormErrorWithFieldMessageOverrides(
+      formError:             FormError,
+      fieldMessageOverrides: Seq[FormError] = Seq.empty
+  )
+
   val incomeMapping: Mapping[IncomeInput] = mapping(
     "monthlyIncome" -> text
       .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
@@ -65,4 +89,5 @@ object AffordabilityForm {
         (incomeForm.monthlyIncome.toString(), incomeForm.benefits.toString(), incomeForm.otherIncome.toString())
       )
     })
+
 }
