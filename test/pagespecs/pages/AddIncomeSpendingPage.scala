@@ -48,6 +48,10 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     click on id("monthly-income")
   }
 
+  def clickOnAddSpending(): Unit = {
+    click on id("monthly-spending")
+  }
+
   object Expected {
 
     object GlobalHeaderText {

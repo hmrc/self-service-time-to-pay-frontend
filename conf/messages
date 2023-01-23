@@ -123,6 +123,29 @@ ssttp.affordability.your-monthly-income.error.decimal-places = Amount must not c
 ssttp.affordability.your-monthly-income.continue = Continue
 ssttp.affordability.your-monthly-income.hidden = Income
 
+ssttp.affordability.your-monthly-spending.h1 = Your monthly spending
+ssttp.affordability.your-monthly-spending.instruction = Add information about yourself only. If you live with other people, input your share of the spending. You can leave a box empty if it does not apply to you.
+ssttp.affordability.your-monthly-spending.form.housing = Housing
+ssttp.affordability.your-monthly-spending.form.housing.hint = For example, mortgage, rent, repairs
+ssttp.affordability.your-monthly-spending.form.pension-contributions = Pension contributions
+ssttp.affordability.your-monthly-spending.form.council-tax = Council tax
+ssttp.affordability.your-monthly-spending.form.utilities = Utilities
+ssttp.affordability.your-monthly-spending.form.utilities.hint = For example, energy, water, phone, broadband
+ssttp.affordability.your-monthly-spending.form.debt-repayments = Debt repayments
+ssttp.affordability.your-monthly-spending.form.debt-repayments.hint = For example, credit card, loan, court order payments
+ssttp.affordability.your-monthly-spending.form.travel = Travel
+ssttp.affordability.your-monthly-spending.form.travel.hint = For example, vehicles, fuel, season ticket
+ssttp.affordability.your-monthly-spending.form.childcare = Childcare costs
+ssttp.affordability.your-monthly-spending.form.childcare.hint = For example, education, maintenance payments
+ssttp.affordability.your-monthly-spending.form.insurance = Insurance
+ssttp.affordability.your-monthly-spending.form.insurance.hint = For example, health, car, home
+ssttp.affordability.your-monthly-spending.form.groceries = Groceries
+ssttp.affordability.your-monthly-spending.form.health = Health
+ssttp.affordability.your-monthly-spending.form.health.hint = For example, prescriptions, private healthcare
+ssttp.affordability.your-monthly-spending.error.title = There is a problem
+ssttp.affordability.your-monthly-spending.error.non-numerals = Enter numbers only
+
+
 #calculator
 
 ssttp.calculator.form.payment_summary.title = Payment summary

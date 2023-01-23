@@ -16,6 +16,8 @@
 
 package ssttpaffordability
 
+import ssttpaffordability.AffordabilityForm.parseStringToBigDecimal
+
 final case class IncomeInput(
     monthlyIncome: BigDecimal,
     benefits:      BigDecimal,
@@ -45,8 +47,4 @@ object IncomeInput {
     )
   }
 
-  private def parseStringToBigDecimal(string: String): BigDecimal = string match {
-    case s if s.isEmpty => BigDecimal(0)
-    case s              => BigDecimal(s)
-  }
 }

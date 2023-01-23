@@ -23,8 +23,9 @@ import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpaffordability.AffordabilityForm.{createIncomeForm, incomeInputTotalNotPositiveOverride, validateIncomeInputTotal}
+import ssttpaffordability.AffordabilityForm.{createIncomeForm, incomeInputTotalNotPositiveOverride, spendingForm, validateIncomeInputTotal}
 import ssttpaffordability.model.{Income, IncomeCategory}
+import ssttpaffordability.model.{Expense, Spending}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
 import ssttpdirectdebit.DirectDebitConnector
@@ -34,6 +35,7 @@ import views.Views
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class AffordabilityController @Inject() (
     mcc:                  MessagesControllerComponents,
@@ -135,12 +137,60 @@ class AffordabilityController @Inject() (
   )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
     val newJourney = journey.copy(
       maybeIncome = Some(Income(Seq(
-        IncomeCategory("monthlyIncome", input.monthlyIncome),
-        IncomeCategory("benefits", input.benefits),
-        IncomeCategory("otherIncome", input.otherIncome)
+        IncomeCategory("monthlyIncome", input.monthlyIncome.setScale(2, HALF_UP)),
+        IncomeCategory("benefits", input.benefits.setScale(2, HALF_UP)),
+        IncomeCategory("otherIncome", input.otherIncome.setScale(2, HALF_UP))
       )))
     )
     journeyService.saveJourney(newJourney)
+  }
+
+  def getYourMonthlySpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"AffordabilityController.getYourMonthlySpending: $request")
+    journeyService.authorizedForSsttp { journey: Journey =>
+      val formWithData = journey.maybeSpending.map(expense =>
+        spendingForm.fill(SpendingInput(
+          housing             = expense.amount("housing"),
+          pensionContribution = expense.amount("pension-contribution"),
+          councilTax          = expense.amount("council-tax"),
+          utilities           = expense.amount("utilities"),
+          debtRepayments      = expense.amount("debt-repayments"),
+          travel              = expense.amount("travel"),
+          childcare           = expense.amount("childcare"),
+          insurance           = expense.amount("insurance"),
+          groceries           = expense.amount("groceries"),
+          health              = expense.amount("health"),
+        ))
+      ).getOrElse(spendingForm)
+      Future.successful(Ok(views.your_monthly_spending(formWithData, isSignedIn)))
+    }
+  }
+
+  def submitMonthlySpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"AffordabilityController.submitMonthlySpending: $request")
+    journeyService.authorizedForSsttp { journey: Journey =>
+      spendingForm.bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(views.your_monthly_spending(formWithErrors, isSignedIn))),
+        (form: SpendingInput) => {
+          val newJourney = journey.copy(
+            maybeSpending = Some(Spending(Seq(
+              Expense("housing", form.housing),
+              Expense("pension-contribution", form.pensionContribution),
+              Expense("council-tax", form.councilTax),
+              Expense("utilities", form.utilities),
+              Expense("debt-repayments", form.debtRepayments),
+              Expense("travel", form.travel),
+              Expense("childcare", form.childcare),
+              Expense("insurance", form.insurance),
+              Expense("groceries", form.groceries),
+              Expense("health", form.health),
+            ))))
+          journeyService.saveJourney(newJourney).map { _ =>
+            Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+          }
+        }
+      )
+    }
   }
 
 }

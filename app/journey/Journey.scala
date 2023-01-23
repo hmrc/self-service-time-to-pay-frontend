@@ -22,6 +22,8 @@ import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.libs.json.{Format, Json, OFormat}
 import repo.HasId
 import ssttpaffordability.model.Income
+import ssttpaffordability.model.Expense
+import ssttpaffordability.model.Spending
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -74,6 +76,7 @@ final case class Journey(
     maybePaymentTodayAmount:    Option[PaymentTodayAmount]    = None,
     maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
     maybeIncome:                Option[Income]                = None,
+    maybeSpending:              Option[Spending]              = None,
     maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
 
