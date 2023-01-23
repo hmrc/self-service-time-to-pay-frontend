@@ -59,13 +59,15 @@ object AffordabilityForm {
 
   def validateIncomeInputTotal(form: Form[IncomeInput]): Form[IncomeInput] = {
     if (!form.get.hasPositiveTotal) {
-      val formErrorsWithTotalError = form.errors :+ FormError(
-        key      = "monthlyIncome",
-        messages = Seq("ssttp.affordability.your-monthly-income.error.required")
-      )
+      val formErrorsWithTotalError = form.errors :+ incomeInputTotalNotPositiveSeed
       form.copy(errors = formErrorsWithTotalError)
     } else form
   }
+
+  private val incomeInputTotalNotPositiveSeed: FormError = FormError(
+    key      = "monthlyIncome",
+    messages = Seq("ssttp.affordability.your-monthly-income.error.required")
+  )
 
   private val allInputsOverrides: Seq[FormError] = Seq(
     FormError("monthlyIncome", ""),
@@ -74,12 +76,9 @@ object AffordabilityForm {
     FormError("allIncomeInputs", "ssttp.affordability.your-monthly-income.error.required")
   )
 
-  val incomeInputTotalNotPositive: FormErrorWithFieldMessageOverrides = {
+  val incomeInputTotalNotPositiveOverride: FormErrorWithFieldMessageOverrides = {
     FormErrorWithFieldMessageOverrides(
-      formError             = FormError(
-        key      = "monthlyIncome",
-        messages = Seq("ssttp.affordability.your-monthly-income.error.required")
-      ),
+      formError             = incomeInputTotalNotPositiveSeed,
       fieldMessageOverrides = allInputsOverrides
     )
   }
