@@ -14,14 +14,15 @@
  * limitations under the License.
  *@
 
-@import partials.currency
+@import partials.spending_list
+@import ssttpaffordability.model.Spending
 
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit
+@(monthlySpending: Option[Spending])(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
@@ -52,7 +53,11 @@
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
             </h2>
-                <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9" />
+                 @if(!monthlySpending.map(_.totalSpending).contains(BigDecimal(0))) {
+                     @spending_list(monthlySpending)
+                 } else {
+            <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9"/>
+        }
         </li>
     </ol>
 

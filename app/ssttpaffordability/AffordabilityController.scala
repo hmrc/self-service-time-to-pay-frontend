@@ -83,8 +83,8 @@ class AffordabilityController @Inject() (
 
   def getAddIncomeAndSpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.getAddIncomeAndSpending: $request")
-    journeyService.authorizedForSsttp { _ =>
-      Future.successful(Ok(views.add_income_spending()))
+    journeyService.authorizedForSsttp { journey =>
+      Future.successful(Ok(views.add_income_spending(journey.maybeSpending)))
     }
   }
 
@@ -147,7 +147,7 @@ class AffordabilityController @Inject() (
       val formWithData = journey.maybeSpending.map(expense =>
         spendingForm.fill(SpendingInput(
           housing             = expense.amount("housing"),
-          pensionContribution = expense.amount("pension-contribution"),
+          pensionContribution = expense.amount("pension-contributions"),
           councilTax          = expense.amount("council-tax"),
           utilities           = expense.amount("utilities"),
           debtRepayments      = expense.amount("debt-repayments"),
@@ -171,7 +171,7 @@ class AffordabilityController @Inject() (
           val newJourney = journey.copy(
             maybeSpending = Some(Spending(Seq(
               Expense("housing", form.housing),
-              Expense("pension-contribution", form.pensionContribution),
+              Expense("pension-contributions", form.pensionContribution),
               Expense("council-tax", form.councilTax),
               Expense("utilities", form.utilities),
               Expense("debt-repayments", form.debtRepayments),

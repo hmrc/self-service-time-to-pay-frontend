@@ -17,23 +17,27 @@
 @import ssttpaffordability.model.Spending
 
 
-@(monthlySpending: Spending)(implicit messages: play.api.i18n.Messages)
+@(monthlySpending: Option[Spending])(implicit messages: play.api.i18n.Messages)
 
-<div class="cya-hybrid">
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-        @{for (expense <- monthlySpending.expenses  if expense.amount > 0)
-            yield
-            <div class="govuk-summary-list_row">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular">@{messages("ssttp.affordability.your-monthly-spending.form."+{s"${expense.category}"}}</dt>
-                <dd class="govuk-summary-list__value">@{expense.amount}</dd>
-            </div>
-        }
-        @{
-        if(monthlySpending.totalSpending > 0)
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
-                <dd class="govuk-summary-list__value govuk-!-font-weight-bold">@{monthlySpending.totalSpending}</dd>
-            </div>
-        }
-    </dl>
+@spending = @{monthlySpending.getOrElse(throw new RuntimeException(s"Expected monthlySpending to be there but was not found."))}
+
+
+<div class="govuk-summary-list govuk-!-margin-bottom-9">
+
+    @{for (expense <- spending.expenses  if expense.amount > 0)
+        yield
+        <div class="govuk-summary-list_row">
+            <dt class="govuk-summary-list__key govuk-!-font-weight-regular">{messages("ssttp.affordability.your-monthly-spending.form."+{s"${expense.category}"})}</dt>
+            <dd class="govuk-summary-list__value">{expense.amount}</dd>
+        </div>
+    }
+    @{if(spending.totalSpending > 0)
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
+            <dd class="govuk-summary-list__value govuk-!-font-weight-bold">{spending.totalSpending}</dd>
+        </div>
+    }
+
 </div>
+
+
