@@ -14,9 +14,11 @@
  * limitations under the License.
  *@
 
+@import ssttpaffordability.model.Spending
 
 @import ssttpaffordability.model.Expense
 
+@(monthlySpending: Option[Spending])(implicit messages: play.api.i18n.Messages)
 
 @(monthlySpending: Seq[Expense])(implicit messages: play.api.i18n.Messages)
 
@@ -37,3 +39,5 @@
         </div>
     </dl>
 </div>
+
+
