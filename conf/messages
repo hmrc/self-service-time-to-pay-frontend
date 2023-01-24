@@ -106,6 +106,7 @@ ssttp.affordability.income-spending.income = Income
 ssttp.affordability.income-spending.spending = Spending
 ssttp.affordability.income-spending.add-income = Add income
 ssttp.affordability.income-spending.add-spending = Add spending
+ssttp.affordability.income-spending.change-spending = Change spending
 ssttp.affordability.income-spending.hidden = details
 
 ssttp.affordability.your-monthly-income.h1 = Your monthly income

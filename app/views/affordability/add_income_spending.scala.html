@@ -28,8 +28,6 @@
         appConfig: config.AppConfig
 )
 
-@monthlySpending = @{maybeSpending.fold(BigDecimal(0))(_.totalSpending)}
-
 @main(
     title = messages("ssttp.affordability.income-spending.h1"),
     backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())) {
@@ -49,17 +47,23 @@
         </li>
         <li>
             <span class="pull-right">
-                <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">@messages("ssttp.affordability.income-spending.add-spending")</a>
+                <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
+                    @{if(maybeSpending.isEmpty) {
+                        messages("ssttp.affordability.income-spending.add-spending")
+                        } else {
+                            messages("ssttp.affordability.income-spending.change-spending")}
+                    }
+                </a>
                 <span class="govuk-visually-hidden"> @messages("ssttp.affordability.income-spending.hidden")</span>
             </span>
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
             </h2>
-                 @{if(monthlySpending == BigDecimal(0)) {
+                 @{if(maybeSpending.isEmpty) {
                      <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9"/>
-                 } else {
-                     spending_list(maybeSpending)
-                 }
+                     } else {
+                         spending_list(maybeSpending)
+                     }
                  }
         </li>
     </ol>
