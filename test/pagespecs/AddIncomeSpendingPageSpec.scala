@@ -82,14 +82,13 @@ class AddIncomeSpendingPageSpec extends ItSpec {
       s"in $lang" - {
         "only monthly income filled out" in {
           beginJourney()
-
           if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
 
           val monthlyIncome = 2000
-
           fillOutIncome(monthlyIncome = monthlyIncome)
 
           addIncomeSpendingPage.assertIncomeFilled(monthlyIncome = monthlyIncome)
+          addIncomeSpendingPage.assertCategoriesNotShown(benefits = true, otherIncome = true)
         }
         "only benefits filled out" in {
           beginJourney()
@@ -99,6 +98,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           fillOutIncome(benefits = benefits)
 
           addIncomeSpendingPage.assertIncomeFilled(benefits = benefits)
+          addIncomeSpendingPage.assertCategoriesNotShown(monthlyIncome = true, otherIncome = true)
         }
         "only other income filled out" in {
           beginJourney()
@@ -108,6 +108,8 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           fillOutIncome(otherIncome = otherIncome)
 
           addIncomeSpendingPage.assertIncomeFilled(otherIncome = otherIncome)
+          addIncomeSpendingPage.assertCategoriesNotShown(monthlyIncome = true, benefits = true)
+
         }
         "all categories filled out" in {
           beginJourney()

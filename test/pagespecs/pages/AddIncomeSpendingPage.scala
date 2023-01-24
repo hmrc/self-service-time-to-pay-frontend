@@ -61,12 +61,22 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
       otherIncome:   BigDecimal = 0
   )(implicit lang: Language): Unit = probing {
     assertPathHeaderTitleCorrect
-    val expectedLines = Expected.IncomeFilledText(
+    val expectedLines = Expected.IncomeText(
       monthlyIncome,
       benefits,
       otherIncome
     )(lang).stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
+  }
+
+  def assertCategoriesNotShown(
+                                    monthlyIncome: Boolean = false,
+                                    benefits:  Boolean = false,
+                                    otherIncome:  Boolean = false
+                                  )(implicit lang: Language): Unit = probing {
+    if (monthlyIncome) { assertContentDoesNotContainLines(Seq(Expected.IncomeText.monthlyIncomeText)) }
+    if (benefits) { assertContentDoesNotContainLines(Seq(Expected.IncomeText.benefitsText)) }
+    if (otherIncome) { assertContentDoesNotContainLines(Seq(Expected.IncomeText.otherIncomeText)) }
   }
 
   def assertPathHeaderTitleCorrect(implicit lang: Language): Assertion = probing {
@@ -112,11 +122,11 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
       """.stripMargin
     }
 
-    object IncomeFilledText {
+    object IncomeText {
       def apply(
-          monthlyIncome: BigDecimal = 0,
-          benefits:      BigDecimal = 0,
-          otherIncome:   BigDecimal = 0
+          monthlyIncome: BigDecimal,
+          benefits:      BigDecimal,
+          otherIncome:   BigDecimal
       )(implicit lang: Language) = {
         val optionalMonthlyIncomeAmountString = if (monthlyIncome == 0) { "" } else { s"£${commaFormat(monthlyIncome)}" }
         val optionalBenefitsAmountString = if (benefits == 0) { "" } else { s"£${commaFormat(benefits)}" }
@@ -140,51 +150,25 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
       """.stripMargin
       }
 
-      private def monthlyIncomeText(implicit lang: Language) = {
-        println(s"lang at level of monthlyIncomeText $lang")
-        lang match {
+      def monthlyIncomeText(implicit lang: Language) = lang match {
           case English => "Monthly income after tax"
           case Welsh => "Incwm misol ar ôl treth"
         }
-      }
 
-      private def benefitsText(implicit language: Language) = language match {
+      def benefitsText(implicit language: Language) = language match {
         case English => "Benefits"
         case Welsh => "Budd-daliadau"
       }
 
-      private def otherIncomeText(implicit language: Language) = language match {
+      def otherIncomeText(implicit language: Language) = language match {
         case English => "Other monthly income"
         case Welsh => "Incwm misol arall"
       }
+
       private def totalIncomeText(implicit language: Language) = language match {
         case English => "Total income"
         case Welsh => "Cyfanswm eich incwm"
       }
-
-
-
-//      private def incomeFilledTextWelsh(
-//          monthlyIncome: BigDecimal,
-//          benefits:      BigDecimal,
-//          otherIncome:   BigDecimal
-//      ) = {
-//        val totalIncome = monthlyIncome + benefits + otherIncome
-//        s"""Ychwanegu eich incwm a’ch gwariant
-//           |Ychwanegu incwm
-//           |1.Incwm
-//           |Incwm misol ar ôl treth
-//           |£${commaFormat(monthlyIncome)}
-//           |Budd-daliadau
-//           |£${commaFormat(benefits)}
-//           |Incwm misol arall
-//           |£${commaFormat(otherIncome)}
-//           |Cyfanswm eich incwm
-//           |£${commaFormat(totalIncome)}
-//           |Ychwanegu gwariant
-//           |2.Gwariant
-//      """.stripMargin
-//      }
 
       private def commaFormat(amount: BigDecimal) = {
         val df = new DecimalFormat("#,##0")

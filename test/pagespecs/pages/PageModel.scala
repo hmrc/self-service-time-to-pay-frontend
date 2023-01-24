@@ -68,6 +68,16 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
       }
     }
   }
+
+  def assertContentDoesNotContainLines(notExpectedLines: Seq[String]): Unit = probing {
+    val content = readMain().stripSpaces().replaceAll("\n", " ")
+    notExpectedLines.foreach { notExpectedLine =>
+      withClue(s"The page content should not include '$notExpectedLine'") {
+        content should not include (notExpectedLine)
+      }
+    }
+  }
+
   def open(): Unit = WebBrowser.goTo(s"${baseUrl.value}$path")
 
   def expectedTitle(heading: String, lang: Language): String = lang match {
