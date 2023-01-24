@@ -16,7 +16,7 @@
 
 @import ssttpaffordability.model.IncomeCategory
 
-@(income: Seq[IncomeCategory)(implicit messages: play.api.i18n.Messages)
+@(income: Seq[IncomeCategory])(implicit messages: play.api.i18n.Messages)
 
 <div class="govuk-!-padding-left-6 govuk-!-margin-bottom-9">
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
@@ -28,7 +28,7 @@
             </div>
             )
         }
-        @{if(income.totalIncome > 0)
+        @{if(income.map(_.amount).sum > 0)
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{messages("ssttp.affordability.your-monthly-income.total")}</dt>
             <dd class="govuk-summary-list__value govuk-!-font-weight-bold govuk-!-text-align-right">{partials.currency(income.map(_.amount).sum)}</dd>

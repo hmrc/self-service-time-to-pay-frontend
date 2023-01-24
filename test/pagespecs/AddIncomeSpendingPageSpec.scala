@@ -49,6 +49,9 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     startAffordabilityPage.clickContinue()
 
     addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertAddLinkIsDisplayed("income")
+    addIncomeSpendingPage.assertAddLinkIsDisplayed("spending")
+
   }
 
   def fillOutIncome(
@@ -69,6 +72,8 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     beginJourney()
 
     addIncomeSpendingPage.assertPageIsDisplayed
+    addIncomeSpendingPage.assertAddLinkIsDisplayed("income")
+    addIncomeSpendingPage.assertAddLinkIsDisplayed("spending")
 
     addIncomeSpendingPage.clickOnAddIncome()
 
@@ -88,7 +93,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           fillOutIncome(monthlyIncome = monthlyIncome)
 
           addIncomeSpendingPage.assertIncomeFilled(monthlyIncome = monthlyIncome)
-          addIncomeSpendingPage.assertCategoriesNotShown(benefits = true, otherIncome = true)
+          addIncomeSpendingPage.assertCategoriesNotShown(benefits    = true, otherIncome = true)
         }
         "only benefits filled out" in {
           beginJourney()
@@ -124,7 +129,23 @@ class AddIncomeSpendingPageSpec extends ItSpec {
         }
       }
 
+    }
+  }
+  "displays 'Change income' link once income has been filled out" - {
+    List(English, Welsh).foreach { lang =>
+      implicit val language: Language = lang
 
+      s"in $lang" in {
+        beginJourney()
+        if (lang == Welsh) {
+          addIncomeSpendingPage.clickOnWelshLink()
+        }
+
+        val monthlyIncome = 2000
+        fillOutIncome(monthlyIncome)
+
+        addIncomeSpendingPage.assertChangeLinkIsDisplayed("income")(lang)
+      }
     }
   }
 
@@ -135,9 +156,15 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
     addIncomeSpendingPage.clickOnWelshLink()
     addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+    addIncomeSpendingPage.assertAddLinkIsDisplayed("income")(Welsh)
+    addIncomeSpendingPage.assertAddLinkIsDisplayed("spending")(Welsh)
+
 
     addIncomeSpendingPage.clickOnEnglishLink()
     addIncomeSpendingPage.assertPageIsDisplayed(English)
+    addIncomeSpendingPage.assertAddLinkIsDisplayed("income")(English)
+    addIncomeSpendingPage.assertAddLinkIsDisplayed("spending")(English)
+
   }
 
   "back button" in {
