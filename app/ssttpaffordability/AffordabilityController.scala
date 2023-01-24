@@ -23,7 +23,7 @@ import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpaffordability.AffordabilityForm.{createIncomeForm, spendingForm, validateIncomeInputTotal}
+import ssttpaffordability.AffordabilityForm.{incomeForm, incomeInputTotalNotPositiveOverride, spendingForm, validateIncomeInputTotal}
 import ssttpaffordability.model.{Income, IncomeCategory}
 import ssttpaffordability.model.{Expense, Spending}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
@@ -91,7 +91,7 @@ class AffordabilityController @Inject() (
   def getYourMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.getYourMonthlyIncome: $request")
     journeyService.authorizedForSsttp{ journey: Journey =>
-      val emptyForm = createIncomeForm()
+      val emptyForm = incomeForm
       val formWithData = journey.maybeIncome.map(income =>
         emptyForm.fill(IncomeInput(
           monthlyIncome = income.amount("monthlyIncome"),
@@ -107,15 +107,19 @@ class AffordabilityController @Inject() (
     JourneyLogger.info(s"AffordabilityController.submitMonthlyIncome: $request")
 
     journeyService.authorizedForSsttp { journey: Journey =>
-      createIncomeForm().bindFromRequest().fold(
+      incomeForm.bindFromRequest().fold(
         formWithErrors => {
           Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn)))
         },
 
         { (input: IncomeInput) =>
-          val formValidatedForPositiveTotal = validateIncomeInputTotal(createIncomeForm().fill(input))
+          val formValidatedForPositiveTotal = validateIncomeInputTotal(incomeForm.fill(input))
           if (formValidatedForPositiveTotal.hasErrors) {
-            Future.successful(BadRequest(views.your_monthly_income(formValidatedForPositiveTotal, isSignedIn)))
+            Future.successful(BadRequest(views.your_monthly_income(
+              dataForm              = formValidatedForPositiveTotal,
+              loggedIn              = isSignedIn,
+              errorMessageOverrides = incomeInputTotalNotPositiveOverride.fieldMessageOverrides
+            )))
 
           } else {
             storeIncomeInputToJourney(input, journey).map { _ =>
