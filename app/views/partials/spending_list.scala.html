@@ -19,24 +19,22 @@
 
 @(maybeSpending: Option[Spending])(implicit messages: play.api.i18n.Messages)
 
-@monthlySpending = @{maybeSpending.getOrElse(throw new RuntimeException(s"Expected monthlySpending to be there but was not found."))}
-
 <div class="govuk-!-padding-left-6 govuk-!-margin-bottom-9">
     <dl class="govuk-summary-list">
 
-        @{for (expense <- monthlySpending.expenses  if expense.amount > 0)
-            yield {
+        @{maybeSpending.map(_.expenses.map( exp => if (exp.amount > 0)
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages("ssttp.affordability.your-monthly-spending.form."+{s"${expense.category}"})}</dt>
-                <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(expense.amount)}</dd>
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages("ssttp.affordability.your-monthly-spending.form."+{s"${exp.category}"})}</dt>
+                <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(exp.amount)}</dd>
             </div>
-            }
+                )
+            )
         }
 
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
-                <dd class="govuk-summary-list__value govuk-!-font-weight-bold govuk-!-text-align-right">@{partials.currency(monthlySpending.totalSpending)}</dd>
-            </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
+            <dd class="govuk-summary-list__value govuk-!-font-weight-bold govuk-!-text-align-right">@{partials.currency(maybeSpending.map(spending => spending.totalSpending).getOrElse(0))}</dd>
+        </div>
 
     </dl>
 </div>
