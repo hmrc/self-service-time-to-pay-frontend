@@ -15,14 +15,15 @@
  *@
 
 @import partials.spending_list
-@import ssttpaffordability.model.Spending
+@import ssttpaffordability.model.Expense
 
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers
 )
 
-@(maybeSpending: Option[Spending])(implicit
+
+@(monthlySpending: Seq[Expense])(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
@@ -48,7 +49,7 @@
         <li>
             <span class="pull-right">
                 <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
-                    @{if(maybeSpending.isEmpty) {
+                    @{if(monthlySpending.isEmpty) {
                         messages("ssttp.affordability.income-spending.add-spending")
                         } else {
                             messages("ssttp.affordability.income-spending.change-spending")}
@@ -59,10 +60,10 @@
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
             </h2>
-                 @{if(maybeSpending.isEmpty) {
+                 @{if(monthlySpending.isEmpty) {
                      <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9"/>
                      } else {
-                         spending_list(maybeSpending)
+                         spending_list(monthlySpending)
                      }
                  }
         </li>

@@ -84,7 +84,8 @@ class AffordabilityController @Inject() (
   def getAddIncomeAndSpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.getAddIncomeAndSpending: $request")
     journeyService.authorizedForSsttp { journey =>
-      Future.successful(Ok(views.add_income_spending(journey.maybeSpending)))
+      val monthlySpending = journey.maybeSpending.fold(Seq.empty[Expense])(_.expenses)
+      Future.successful(Ok(views.add_income_spending(monthlySpending)))
     }
   }
 
