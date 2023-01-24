@@ -22,13 +22,13 @@
   viewsHelpers: views.ViewsHelpers
 )
 
-@(monthlySpending: Option[Spending])(implicit
+@(maybeSpending: Option[Spending])(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
 )
 
-@spending = @{monthlySpending.fold(BigDecimal(0))(_.totalSpending)}
+@monthlySpending = @{maybeSpending.fold(BigDecimal(0))(_.totalSpending)}
 
 @main(
     title = messages("ssttp.affordability.income-spending.h1"),
@@ -55,10 +55,10 @@
             <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
             </h2>
-                 @{if(spending == BigDecimal(0)) {
+                 @{if(monthlySpending == BigDecimal(0)) {
                      <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9"/>
                  } else {
-                     spending_list(monthlySpending)
+                     spending_list(maybeSpending)
                  }
                  }
         </li>
