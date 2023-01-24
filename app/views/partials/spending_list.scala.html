@@ -26,7 +26,7 @@
         @{for (expense <- monthlySpending.expenses  if expense.amount > 0)
             yield {
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key- govuk-!-font-weight-regular">{messages("ssttp.affordability.your-monthly-spending.form."+{s"${expense.category}"})}</dt>
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages("ssttp.affordability.your-monthly-spending.form."+{s"${expense.category}"})}</dt>
                 <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(expense.amount)}</dd>
             </div>
             }
