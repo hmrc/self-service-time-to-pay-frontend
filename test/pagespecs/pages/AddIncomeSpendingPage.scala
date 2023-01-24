@@ -56,16 +56,16 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   }
 
   def assertIncomeFilled(
-      monthlyIncome: BigDecimal,
-      benefits:      BigDecimal,
-      otherIncome:   BigDecimal
+      monthlyIncome: BigDecimal = 0,
+      benefits:      BigDecimal = 0,
+      otherIncome:   BigDecimal = 0
   )(implicit lang: Language): Unit = probing {
     assertPathHeaderTitleCorrect
     val expectedLines = Expected.IncomeFilledText(
       monthlyIncome,
       benefits,
       otherIncome
-    ).stripSpaces().split("\n")
+    )(lang).stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
 
@@ -114,60 +114,77 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
     object IncomeFilledText {
       def apply(
-          monthlyIncome: BigDecimal,
-          benefits:      BigDecimal,
-          otherIncome:   BigDecimal
-      )(implicit language: Language): String = {
-        language match {
-          case English => incomeFilledTextEnglish(monthlyIncome, benefits, otherIncome)
-          case Welsh   => incomeFilledTextWelsh(monthlyIncome, benefits, otherIncome)
+          monthlyIncome: BigDecimal = 0,
+          benefits:      BigDecimal = 0,
+          otherIncome:   BigDecimal = 0
+      )(implicit lang: Language) = {
+        val optionalMonthlyIncomeAmountString = if (monthlyIncome == 0) { "" } else { s"£${commaFormat(monthlyIncome)}" }
+        val optionalBenefitsAmountString = if (benefits == 0) { "" } else { s"£${commaFormat(benefits)}" }
+        val optionalOtherIncomeAmountString = if (otherIncome == 0) { "" } else { s"£${commaFormat(otherIncome)}" }
+
+        val optionalMonthlyIncomeTextString = if (monthlyIncome == 0) { "" } else { s"$monthlyIncomeText" }
+        val optionalBenefitsTextString = if (benefits == 0) { "" } else { s"$benefitsText" }
+        val optionalOtherIncomeTextString = if (otherIncome == 0) { "" } else { s"$otherIncomeText"
+        }
+
+        val totalIncomeString = s"£${commaFormat(monthlyIncome + benefits + otherIncome)}"
+
+        s"""$optionalMonthlyIncomeTextString
+           |$optionalMonthlyIncomeAmountString
+           |$optionalBenefitsTextString
+           |$optionalBenefitsAmountString
+           |$optionalOtherIncomeTextString
+           |$optionalOtherIncomeAmountString
+           |$totalIncomeText
+           |$totalIncomeString
+      """.stripMargin
+      }
+
+      private def monthlyIncomeText(implicit lang: Language) = {
+        println(s"lang at level of monthlyIncomeText $lang")
+        lang match {
+          case English => "Monthly income after tax"
+          case Welsh => "Incwm misol ar ôl treth"
         }
       }
 
-      private def incomeFilledTextEnglish(
-          monthlyIncome: BigDecimal,
-          benefits:      BigDecimal,
-          otherIncome:   BigDecimal
-      ) = {
-        val totalIncome = monthlyIncome + benefits + otherIncome
-        println(s"commaFormat(monthlyIncome): £${commaFormat(monthlyIncome)}")
-        s"""Add your income and spending
-           |Add income
-           |1.Income
-           |Monthly income after tax
-           |£${commaFormat(monthlyIncome)}
-           |Benefits
-           |£${commaFormat(benefits)}
-           |Other monthly income
-           |£${commaFormat(otherIncome)}
-           |Total income
-           |£${commaFormat(totalIncome)}
-           |Add spending
-           |2.Spending
-      """.stripMargin
+      private def benefitsText(implicit language: Language) = language match {
+        case English => "Benefits"
+        case Welsh => "Budd-daliadau"
       }
 
-      private def incomeFilledTextWelsh(
-          monthlyIncome: BigDecimal,
-          benefits:      BigDecimal,
-          otherIncome:   BigDecimal
-      ) = {
-        val totalIncome = monthlyIncome + benefits + otherIncome
-        s"""Ychwanegu eich incwm a’ch gwariant
-           |Ychwanegu incwm
-           |1.Incwm
-           |Incwm misol ar ôl treth
-           |£${commaFormat(monthlyIncome)}
-           |Budd-daliadau
-           |£${commaFormat(benefits)}
-           |Incwm misol arall
-           |£${commaFormat(otherIncome)}
-           |Cyfanswm eich incwm
-           |£${commaFormat(totalIncome)}
-           |Ychwanegu gwariant
-           |2.Gwariant
-      """.stripMargin
+      private def otherIncomeText(implicit language: Language) = language match {
+        case English => "Other monthly income"
+        case Welsh => "Incwm misol arall"
       }
+      private def totalIncomeText(implicit language: Language) = language match {
+        case English => "Total income"
+        case Welsh => "Cyfanswm eich incwm"
+      }
+
+
+
+//      private def incomeFilledTextWelsh(
+//          monthlyIncome: BigDecimal,
+//          benefits:      BigDecimal,
+//          otherIncome:   BigDecimal
+//      ) = {
+//        val totalIncome = monthlyIncome + benefits + otherIncome
+//        s"""Ychwanegu eich incwm a’ch gwariant
+//           |Ychwanegu incwm
+//           |1.Incwm
+//           |Incwm misol ar ôl treth
+//           |£${commaFormat(monthlyIncome)}
+//           |Budd-daliadau
+//           |£${commaFormat(benefits)}
+//           |Incwm misol arall
+//           |£${commaFormat(otherIncome)}
+//           |Cyfanswm eich incwm
+//           |£${commaFormat(totalIncome)}
+//           |Ychwanegu gwariant
+//           |2.Gwariant
+//      """.stripMargin
+//      }
 
       private def commaFormat(amount: BigDecimal) = {
         val df = new DecimalFormat("#,##0")

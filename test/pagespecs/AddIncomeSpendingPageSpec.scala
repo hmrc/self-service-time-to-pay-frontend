@@ -75,14 +75,55 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     yourMonthlyIncomePage.assertPagePathCorrect
   }
 
-  "displays total income once filled out" in {
-    implicit val englishLanguage: Language = Languages.English
+  "displays income once filled out" - {
+    List(English, Welsh).foreach{ lang =>
+      implicit val language: Language = lang
 
-    beginJourney()
+      s"in $lang" - {
+        "only monthly income filled out" in {
+          beginJourney()
 
-    fillOutIncome(2000, 200, 1000)
+          if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
 
-    addIncomeSpendingPage.assertIncomeFilled(2000, 200, 1000)
+          val monthlyIncome = 2000
+
+          fillOutIncome(monthlyIncome = monthlyIncome)
+
+          addIncomeSpendingPage.assertIncomeFilled(monthlyIncome = monthlyIncome)
+        }
+        "only benefits filled out" in {
+          beginJourney()
+          if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
+
+          val benefits = 700
+          fillOutIncome(benefits = benefits)
+
+          addIncomeSpendingPage.assertIncomeFilled(benefits = benefits)
+        }
+        "only other income filled out" in {
+          beginJourney()
+          if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
+
+          val otherIncome = 1000
+          fillOutIncome(otherIncome = otherIncome)
+
+          addIncomeSpendingPage.assertIncomeFilled(otherIncome = otherIncome)
+        }
+        "all categories filled out" in {
+          beginJourney()
+          if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
+
+          val monthlyIncome = 2000
+          val benefits = 200
+          val otherIncome = 1000
+          fillOutIncome(monthlyIncome, benefits, otherIncome)
+
+          addIncomeSpendingPage.assertIncomeFilled(monthlyIncome, benefits, otherIncome)
+        }
+      }
+
+
+    }
   }
 
   "language" in {
