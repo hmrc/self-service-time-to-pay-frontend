@@ -102,6 +102,7 @@ ssttp.affordability.income-spending.h1 = Ychwanegu eich incwm a’ch gwariant
 ssttp.affordability.income-spending.income = Incwm
 ssttp.affordability.income-spending.spending = Gwariant
 ssttp.affordability.income-spending.add-income = Ychwanegu incwm
+ssttp.affordability.income-spending.change-income = Newid incwm
 ssttp.affordability.income-spending.add-spending = Ychwanegu gwariant
 ssttp.affordability.income-spending.change-spending = Newid gwariant
 ssttp.affordability.income-spending.hidden = manylion

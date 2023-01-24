@@ -105,6 +105,7 @@ ssttp.affordability.income-spending.h1 = Add your income and spending
 ssttp.affordability.income-spending.income = Income
 ssttp.affordability.income-spending.spending = Spending
 ssttp.affordability.income-spending.add-income = Add income
+ssttp.affordability.income-spending.change-income = Change income
 ssttp.affordability.income-spending.add-spending = Add spending
 ssttp.affordability.income-spending.change-spending = Change spending
 ssttp.affordability.income-spending.hidden = details
@@ -122,6 +123,7 @@ ssttp.affordability.your-monthly-income.error.required = You must enter an incom
 ssttp.affordability.your-monthly-income.error.non-numerals = Enter numbers only
 ssttp.affordability.your-monthly-income.error.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.affordability.your-monthly-income.continue = Continue
+ssttp.affordability.your-monthly-income.total = Total income
 
 ssttp.affordability.your-monthly-spending.h1 = Your monthly spending
 ssttp.affordability.your-monthly-spending.instruction = Add information about yourself only. If you live with other people, input your share of the spending. You can leave a box empty if it does not apply to you.

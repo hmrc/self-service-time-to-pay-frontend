@@ -52,10 +52,10 @@ class AddIncomeSpendingPageSpec extends ItSpec {
   }
 
   def fillOutIncome(
-                             monthlyIncome: BigDecimal = 0,
-                             benefits: BigDecimal = 0,
-                             otherIncome: BigDecimal = 0
-                           ): Unit = {
+      monthlyIncome: BigDecimal = 0,
+      benefits:      BigDecimal = 0,
+      otherIncome:   BigDecimal = 0
+  ): Unit = {
     addIncomeSpendingPage.clickOnAddIncome()
 
     yourMonthlyIncomePage.enterMonthlyIncome(monthlyIncome.toString())
@@ -64,7 +64,6 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
     yourMonthlyIncomePage.clickContinue()
   }
-
 
   "add income button goes to 'Your monthly income' page" in {
     beginJourney()

@@ -23,6 +23,8 @@ import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
+import java.text.DecimalFormat
+
 class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
   override def path: String = "/pay-what-you-owe-in-instalments/add-income-spending"
@@ -54,10 +56,10 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   }
 
   def assertIncomeFilled(
-                          monthlyIncome: BigDecimal,
-                          benefits: BigDecimal,
-                          otherIncome: BigDecimal
-                        )(implicit lang: Language): Unit = probing {
+      monthlyIncome: BigDecimal,
+      benefits:      BigDecimal,
+      otherIncome:   BigDecimal
+  )(implicit lang: Language): Unit = probing {
     assertPathHeaderTitleCorrect
     val expectedLines = Expected.IncomeFilledText(
       monthlyIncome,
@@ -79,7 +81,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
       def apply()(implicit language: Language): String = language match {
         case English => globalHeaderTextEnglish
-        case Welsh => globalHeaderTextWelsh
+        case Welsh   => globalHeaderTextWelsh
       }
 
       private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
@@ -90,7 +92,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     object MainText {
       def apply()(implicit language: Language): String = language match {
         case English => mainTextEnglish
-        case Welsh => mainTextWelsh
+        case Welsh   => mainTextWelsh
       }
 
       private val mainTextEnglish =
@@ -112,34 +114,66 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
     object IncomeFilledText {
       def apply(
-                 monthlyIncome: BigDecimal,
-                 benefits: BigDecimal,
-                 otherIncome: BigDecimal
-               )(implicit language: Language): String = {
-        val totalIncome = (monthlyIncome + benefits + otherIncome).toString()
+          monthlyIncome: BigDecimal,
+          benefits:      BigDecimal,
+          otherIncome:   BigDecimal
+      )(implicit language: Language): String = {
         language match {
-          case English => incomeFilledTextEnglish(totalIncome)
-          case Welsh => incomeFilledTextWelsh(totalIncome)
+          case English => incomeFilledTextEnglish(monthlyIncome, benefits, otherIncome)
+          case Welsh   => incomeFilledTextWelsh(monthlyIncome, benefits, otherIncome)
         }
       }
 
-      private def incomeFilledTextEnglish(totalIncome: String) =
+      private def incomeFilledTextEnglish(
+          monthlyIncome: BigDecimal,
+          benefits:      BigDecimal,
+          otherIncome:   BigDecimal
+      ) = {
+        val totalIncome = monthlyIncome + benefits + otherIncome
+        println(s"commaFormat(monthlyIncome): £${commaFormat(monthlyIncome)}")
         s"""Add your income and spending
            |Add income
            |1.Income
-           |Total income £$totalIncome
+           |Monthly income after tax
+           |£${commaFormat(monthlyIncome)}
+           |Benefits
+           |£${commaFormat(benefits)}
+           |Other monthly income
+           |£${commaFormat(otherIncome)}
+           |Total income
+           |£${commaFormat(totalIncome)}
            |Add spending
            |2.Spending
       """.stripMargin
+      }
 
-      private def incomeFilledTextWelsh(totalIncome: String) =
+      private def incomeFilledTextWelsh(
+          monthlyIncome: BigDecimal,
+          benefits:      BigDecimal,
+          otherIncome:   BigDecimal
+      ) = {
+        val totalIncome = monthlyIncome + benefits + otherIncome
         s"""Ychwanegu eich incwm a’ch gwariant
            |Ychwanegu incwm
            |1.Incwm
-           |Cyfanswm eich incwm £$totalIncome
+           |Incwm misol ar ôl treth
+           |£${commaFormat(monthlyIncome)}
+           |Budd-daliadau
+           |£${commaFormat(benefits)}
+           |Incwm misol arall
+           |£${commaFormat(otherIncome)}
+           |Cyfanswm eich incwm
+           |£${commaFormat(totalIncome)}
            |Ychwanegu gwariant
            |2.Gwariant
       """.stripMargin
+      }
+
+      private def commaFormat(amount: BigDecimal) = {
+        val df = new DecimalFormat("#,##0")
+        df.format(amount)
+      }
+
     }
   }
 }

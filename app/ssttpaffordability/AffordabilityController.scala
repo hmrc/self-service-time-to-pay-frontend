@@ -85,7 +85,8 @@ class AffordabilityController @Inject() (
     JourneyLogger.info(s"AffordabilityController.getAddIncomeAndSpending: $request")
     journeyService.authorizedForSsttp { journey =>
       val monthlySpending = journey.maybeSpending.fold(Seq.empty[Expense])(_.expenses)
-      Future.successful(Ok(views.add_income_spending(monthlySpending)))
+      val income = journey.maybeIncome.fold(Seq.empty[IncomeCategory])(_.categories)
+      Future.successful(Ok(views.add_income_spending(income, monthlySpending)))
     }
   }
 
@@ -95,9 +96,9 @@ class AffordabilityController @Inject() (
       val emptyForm = createIncomeForm()
       val formWithData = journey.maybeIncome.map(income =>
         emptyForm.fill(IncomeInput(
-          monthlyIncome = income.amount("monthlyIncome"),
+          monthlyIncome = income.amount("monthly-income"),
           benefits      = income.amount("benefits"),
-          otherIncome   = income.amount("otherIncome")
+          otherIncome   = income.amount("other-income")
         ))
       ).getOrElse(emptyForm)
       Future.successful(Ok(views.your_monthly_income(formWithData, isSignedIn)))
@@ -134,9 +135,9 @@ class AffordabilityController @Inject() (
   )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
     val newJourney = journey.copy(
       maybeIncome = Some(Income(Seq(
-        IncomeCategory("monthlyIncome", input.monthlyIncome.setScale(2, HALF_UP)),
+        IncomeCategory("monthly-income", input.monthlyIncome.setScale(2, HALF_UP)),
         IncomeCategory("benefits", input.benefits.setScale(2, HALF_UP)),
-        IncomeCategory("otherIncome", input.otherIncome.setScale(2, HALF_UP))
+        IncomeCategory("other-income", input.otherIncome.setScale(2, HALF_UP))
       )))
     )
     journeyService.saveJourney(newJourney)

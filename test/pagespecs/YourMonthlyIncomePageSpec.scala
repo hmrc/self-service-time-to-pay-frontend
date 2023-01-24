@@ -21,7 +21,7 @@ import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
 
-class YourIncomePageSpec extends ItSpec {
+class YourMonthlyIncomePageSpec extends ItSpec {
 
   def beginJourney(): Unit = {
     AuthStub.authorise()
