@@ -18,6 +18,7 @@ package pagespecs
 
 import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
+import ssttpaffordability.model.{Benefits, MonthlyIncome, OtherIncome}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -89,50 +90,50 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           beginJourney()
           if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
 
-          val monthlyIncome = 2000
-          fillOutIncome(monthlyIncome = monthlyIncome.toString)
+          val monthlyIncomeAmount = 2000
+          fillOutIncome(monthlyIncome = monthlyIncomeAmount.toString)
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
-          addIncomeSpendingPage.assertIncomeTableDisplayed(Seq("monthlyIncome" -> monthlyIncome))
-          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Seq("benefits", "otherIncome"))
+          addIncomeSpendingPage.assertIncomeTableDisplayed(MonthlyIncome(monthlyIncomeAmount))
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Benefits(), OtherIncome())
         }
         "only benefits filled out" in {
           beginJourney()
           if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
 
-          val benefits = 700
-          fillOutIncome(benefits = benefits.toString)
+          val benefitsAmount = 700
+          fillOutIncome(benefits = benefitsAmount.toString)
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
-          addIncomeSpendingPage.assertIncomeTableDisplayed(Seq("benefits" -> benefits))
-          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Seq("monthlyIncome", "otherIncome"))
+          addIncomeSpendingPage.assertIncomeTableDisplayed(Benefits(benefitsAmount))
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome(), OtherIncome())
         }
         "only other income filled out" in {
           beginJourney()
           if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
 
-          val otherIncome = 1000
-          fillOutIncome(otherIncome = otherIncome.toString)
+          val otherIncomeAmount = 1000
+          fillOutIncome(otherIncome = otherIncomeAmount.toString)
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
-          addIncomeSpendingPage.assertIncomeTableDisplayed(Seq("otherIncome" -> otherIncome))
-          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Seq("monthlyIncome", "benefits"))
+          addIncomeSpendingPage.assertIncomeTableDisplayed(OtherIncome(otherIncomeAmount))
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome(), Benefits())
         }
         "all categories filled out" in {
           beginJourney()
           if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
 
-          val monthlyIncome = 2000
-          val benefits = 200
-          val otherIncome = 1000
-          fillOutIncome(monthlyIncome.toString, benefits.toString, otherIncome.toString)
+          val monthlyIncomeAmount = 2000
+          val benefitsAmount = 200
+          val otherIncomeAmount = 1000
+          fillOutIncome(monthlyIncomeAmount.toString, benefitsAmount.toString, otherIncomeAmount.toString)
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
-          addIncomeSpendingPage.assertIncomeTableDisplayed(Seq(
-            "monthlyIncome" -> monthlyIncome,
-            "benefits" -> benefits,
-            "otherIncome" -> otherIncome
-          ))
+          addIncomeSpendingPage.assertIncomeTableDisplayed(
+            MonthlyIncome(monthlyIncomeAmount),
+            Benefits(benefitsAmount),
+            OtherIncome(otherIncomeAmount)
+          )
         }
       }
 

@@ -21,6 +21,7 @@ import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
+import ssttpaffordability.model.{Benefits, IncomeCategory, MonthlyIncome, OtherIncome}
 import testsupport.RichMatchers._
 
 import java.text.DecimalFormat
@@ -49,11 +50,11 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
   }
 
-  def assertIncomeTableDisplayed(categoriesFilled: Seq[(String, BigDecimal)] = Seq())(implicit lang: Language): Unit = {
-    val expectedCategoryHeadings = Expected.IncomeText.categoryHeadingsText(categoriesFilled.map(_._1))
-    val expectedCategoryAmount = Expected.IncomeText.categoryAmounts(categoriesFilled.map(_._2))
+  def assertIncomeTableDisplayed(categoriesFilled: IncomeCategory*)(implicit lang: Language): Unit = {
+    val expectedCategoryHeadings = Expected.IncomeText.categoryHeadingsText(categoriesFilled)
+    val expectedCategoryAmount = Expected.IncomeText.categoryAmounts(categoriesFilled)
     val expectedTotalHeading = Expected.IncomeText.totalIncomeHeadingText
-    val expectedTotalAmount = Expected.IncomeText.totalIncomeAmount(categoriesFilled.map(_._2))
+    val expectedTotalAmount = Expected.IncomeText.totalIncomeAmount(categoriesFilled)
 
     probing {
       assertContentMatchesExpectedLines(
@@ -65,14 +66,12 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
   }
 
-  def assertZeroIncomeCategoriesNotDisplayed(
-                                          categoriesNotFilled: Seq[String] = Seq()
-                                        )(implicit lang: Language): Unit = {
-    val expectedCategoryHeadings = Expected.IncomeText.categoryHeadingsText(categoriesNotFilled)
-    val expectedCategoryValues = Expected.IncomeText.categoryAmounts(categoriesNotFilled.map(_ => BigDecimal(0)))
+  def assertZeroIncomeCategoriesNotDisplayed(categoriesNotFilled: IncomeCategory*)(implicit lang: Language): Unit = {
+    val categoryHeadingsNotExpected = Expected.IncomeText.categoryHeadingsText(categoriesNotFilled)
+    val categoryAmountsNotExpected = Expected.IncomeText.categoryAmounts(categoriesNotFilled)
 
     probing {
-      assertContentDoesNotContainLines(expectedCategoryHeadings ++ expectedCategoryValues)
+      assertContentDoesNotContainLines(categoryHeadingsNotExpected ++ categoryAmountsNotExpected)
     }
   }
 
@@ -195,22 +194,22 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
     object IncomeText {
       def categoryHeadingsText(
-          categoriesFilled: Seq[String] = Seq()
+          categoriesFilled: Seq[IncomeCategory] = Seq()
       )(implicit lang: Language): Seq[String] = {
         categoriesFilled.map {
-          case "monthlyIncome" => monthlyIncomeText
-          case "benefits"      => benefitsText
-          case "otherIncome"   => otherIncomeText
-          case (_)             => "nothing"
+          case MonthlyIncome(_) => monthlyIncomeText
+          case Benefits(_)      => benefitsText
+          case OtherIncome(_)   => otherIncomeText
+          case (_)              => "nothing"
         }.filterNot(_ == "nothing")
       }
 
       def categoryAmounts(
-          categoryAmounts: Seq[BigDecimal] = Seq()
+          categoryAmounts: Seq[IncomeCategory] = Seq()
       )(implicit lang: Language): Seq[String] = {
         categoryAmounts
-          .filterNot(_ == 0)
-          .map(amount => s"£${commaFormat(amount)}")
+          .filterNot(_.amount == 0)
+          .map(category => s"£${commaFormat(category.amount)}")
       }
 
       def totalIncomeHeadingText(implicit language: Language) = language match {
@@ -218,8 +217,8 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         case Welsh   => "Cyfanswm eich incwm"
       }
 
-      def totalIncomeAmount(categoryAmounts: Seq[BigDecimal] = Seq())(implicit lang: Language): String = {
-        commaFormat(categoryAmounts.sum)
+      def totalIncomeAmount(categoryAmounts: Seq[IncomeCategory] = Seq())(implicit lang: Language): String = {
+        commaFormat(categoryAmounts.map(_.amount).sum)
       }
 
       private def monthlyIncomeText(implicit lang: Language) = lang match {

@@ -24,8 +24,7 @@ import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttpaffordability.AffordabilityForm.{createIncomeForm, spendingForm, validateIncomeInputTotal}
-import ssttpaffordability.model.{Income, IncomeCategory}
-import ssttpaffordability.model.{Expense, Spending}
+import ssttpaffordability.model.{Benefits, Expense, Income, IncomeCategory, MonthlyIncome, OtherIncome, Spending}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
 import ssttpdirectdebit.DirectDebitConnector
@@ -135,9 +134,9 @@ class AffordabilityController @Inject() (
   )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
     val newJourney = journey.copy(
       maybeIncome = Some(Income(Seq(
-        IncomeCategory("monthly-income", input.monthlyIncome.setScale(2, HALF_UP)),
-        IncomeCategory("benefits", input.benefits.setScale(2, HALF_UP)),
-        IncomeCategory("other-income", input.otherIncome.setScale(2, HALF_UP))
+        MonthlyIncome(input.monthlyIncome.setScale(2, HALF_UP)),
+        Benefits(input.benefits.setScale(2, HALF_UP)),
+        OtherIncome(input.otherIncome.setScale(2, HALF_UP))
       )))
     )
     journeyService.saveJourney(newJourney)

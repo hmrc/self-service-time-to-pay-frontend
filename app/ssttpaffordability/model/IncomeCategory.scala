@@ -16,10 +16,41 @@
 
 package ssttpaffordability.model
 
-import play.api.libs.json.{Json, OFormat}
+import enumeratum.EnumEntry
+import enumformat.EnumFormat
+import play.api.libs.json.{Format, Json, OFormat}
 
-final case class IncomeCategory(category: String, amount: BigDecimal)
+sealed trait IncomeCategory {
+  val name: String
+  val amount: BigDecimal
+}
 
 object IncomeCategory {
   implicit val format: OFormat[IncomeCategory] = Json.format[IncomeCategory]
+}
+
+final case class MonthlyIncome(amount: BigDecimal = 0) extends IncomeCategory {
+  val name = "monthly-income"
+}
+
+object MonthlyIncome {
+  implicit val format: OFormat[MonthlyIncome] = Json.format[MonthlyIncome]
+
+  def apply: MonthlyIncome = MonthlyIncome()
+}
+
+final case class Benefits(amount: BigDecimal = 0) extends IncomeCategory {
+  val name = "benefits"
+}
+
+object Benefits {
+  implicit val format: OFormat[Benefits] = Json.format[Benefits]
+}
+
+final case class OtherIncome(amount: BigDecimal = 0) extends IncomeCategory {
+  val name = "other-income"
+}
+
+object OtherIncome {
+  implicit val format: OFormat[OtherIncome] = Json.format[OtherIncome]
 }

@@ -22,7 +22,7 @@ final case class Income(categories: Seq[IncomeCategory]) {
   def totalIncome: BigDecimal = categories.map(_.amount).sum
 
   def amount(category: String): BigDecimal = {
-    categories.find(_.category == category).fold(BigDecimal(0))(_.amount)
+    categories.find(_.name == category).fold(BigDecimal(0))(_.amount)
   }
 }
 
