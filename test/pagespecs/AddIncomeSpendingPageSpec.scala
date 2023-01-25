@@ -59,7 +59,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
       benefits:      String = "",
       otherIncome:   String = ""
   ): Unit = {
-    addIncomeSpendingPage.clickOnAddIncome()
+    addIncomeSpendingPage.clickOnAddChangeIncome()
 
     yourMonthlyIncomePage.enterMonthlyIncome(monthlyIncome)
     yourMonthlyIncomePage.enterBenefits(benefits)
@@ -75,7 +75,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     addIncomeSpendingPage.assertAddLinkIsDisplayed("income")
     addIncomeSpendingPage.assertAddLinkIsDisplayed("spending")
 
-    addIncomeSpendingPage.clickOnAddIncome()
+    addIncomeSpendingPage.clickOnAddChangeIncome()
 
     yourMonthlyIncomePage.assertPagePathCorrect
   }
@@ -94,7 +94,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
           addIncomeSpendingPage.assertIncomeTableDisplayed(Seq("monthlyIncome" -> monthlyIncome))
-          addIncomeSpendingPage.assertCategoriesNotShown(benefits    = true, otherIncome = true)
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Seq("benefits", "otherIncome"))
         }
         "only benefits filled out" in {
           beginJourney()
@@ -105,7 +105,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
           addIncomeSpendingPage.assertIncomeTableDisplayed(Seq("benefits" -> benefits))
-          addIncomeSpendingPage.assertCategoriesNotShown(monthlyIncome = true, otherIncome = true)
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Seq("monthlyIncome", "otherIncome"))
         }
         "only other income filled out" in {
           beginJourney()
@@ -116,8 +116,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
           addIncomeSpendingPage.assertIncomeTableDisplayed(Seq("otherIncome" -> otherIncome))
-          addIncomeSpendingPage.assertCategoriesNotShown(monthlyIncome = true, benefits = true)
-
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Seq("monthlyIncome", "benefits"))
         }
         "all categories filled out" in {
           beginJourney()
@@ -166,7 +165,6 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
     addIncomeSpendingPage.assertAddLinkIsDisplayed("income")(Welsh)
     addIncomeSpendingPage.assertAddLinkIsDisplayed("spending")(Welsh)
-
 
     addIncomeSpendingPage.clickOnEnglishLink()
     addIncomeSpendingPage.assertPageIsDisplayed(English)

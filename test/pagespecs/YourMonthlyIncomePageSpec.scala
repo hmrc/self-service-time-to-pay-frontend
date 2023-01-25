@@ -48,7 +48,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
     startAffordabilityPage.clickContinue()
 
     addIncomeSpendingPage.assertPageIsDisplayed()
-    addIncomeSpendingPage.clickOnAddIncome()
+    addIncomeSpendingPage.clickOnAddChangeIncome()
   }
 
   "add non-zero positive income input and press continue goes to add-income-spending-page" - {

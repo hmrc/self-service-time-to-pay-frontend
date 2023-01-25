@@ -48,7 +48,7 @@ class YourSpendingPageSpec extends ItSpec {
     startAffordabilityPage.clickContinue()
 
     addIncomeSpendingPage.assertPageIsDisplayed()
-    addIncomeSpendingPage.clickOnAddSpending()
+    addIncomeSpendingPage.clickOnAddChangeSpending()
   }
 
   "add non-zero positive spending input and press continue goes to add-income-spending-page" - {
