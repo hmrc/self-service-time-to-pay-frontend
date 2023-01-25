@@ -77,18 +77,19 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     click on id("monthly-spending")
   }
 
-  def assertIncomeFilled(
-      monthlyIncome: BigDecimal = 0,
-      benefits:      BigDecimal = 0,
-      otherIncome:   BigDecimal = 0
-  )(implicit lang: Language): Unit = probing {
-    assertPathHeaderTitleCorrect
-    val expectedLines = Expected.IncomeText(
-      monthlyIncome,
-      benefits,
-      otherIncome
-    )(lang).stripSpaces().split("\n")
-    assertContentMatchesExpectedLines(expectedLines)
+  def assertIncomeTableDisplayed(categoriesFilled: Seq[(String, BigDecimal)] = Seq())(implicit lang: Language): Unit = {
+    val expectedCategoryHeadings = Expected.IncomeText.categoryHeadings(categoriesFilled)
+    val expectedCategoryValues = Expected.IncomeText.categoryValues(categoriesFilled)
+    val expectedTotalHeading = Expected.IncomeText.totalIncomeText
+    val expectedTotalValue = Expected.IncomeText.totalIncomeValue(categoriesFilled)
+    probing {
+      assertContentMatchesExpectedLines(
+        expectedCategoryHeadings ++
+          expectedCategoryValues :+
+          expectedTotalHeading :+
+          expectedTotalValue
+      )
+    }
   }
 
   def assertCategoriesNotShown(
@@ -219,6 +220,35 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
       """.stripMargin
       }
 
+      def categoryHeadings(
+                 categoriesFilled: Seq[(String, BigDecimal)] = Seq()
+                 )(implicit lang: Language): Seq[String] = {
+        categoriesFilled.map( category => category match {
+          case ("monthlyIncome", _) => monthlyIncomeText
+          case ("benefits", _) => benefitsText
+          case ("otherIncome", _) => otherIncomeText
+          case (_, _) => ""
+        })
+      }
+
+      def categoryValues(
+                            categoriesFilled: Seq[(String, BigDecimal)] = Seq()
+                          )(implicit lang: Language): Seq[String] =
+        categoriesFilled.map(category => {
+          if (category._2 == 0) { "" } else { s"£${commaFormat(category._2)}" }
+        })
+
+      def totalIncomeText(implicit language: Language) = language match {
+        case English => "Total income"
+        case Welsh => "Cyfanswm eich incwm"
+      }
+
+      def totalIncomeValue(categoriesFilled: Seq[(String, BigDecimal)] = Seq()
+                          )(implicit lang: Language): String = {
+        commaFormat(categoriesFilled.map(_._2).sum)
+      }
+
+
       def monthlyIncomeText(implicit lang: Language) = lang match {
         case English => "Monthly income after tax"
         case Welsh   => "Incwm misol ar ôl treth"
@@ -234,10 +264,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         case Welsh   => "Incwm misol arall"
       }
 
-      private def totalIncomeText(implicit language: Language) = language match {
-        case English => "Total income"
-        case Welsh   => "Cyfanswm eich incwm"
-      }
+
 
       private def commaFormat(amount: BigDecimal) = {
         val df = new DecimalFormat("#,##0")

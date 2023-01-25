@@ -55,15 +55,15 @@ class AddIncomeSpendingPageSpec extends ItSpec {
   }
 
   def fillOutIncome(
-      monthlyIncome: BigDecimal = 0,
-      benefits:      BigDecimal = 0,
-      otherIncome:   BigDecimal = 0
+      monthlyIncome: String = "",
+      benefits:      String = "",
+      otherIncome:   String = ""
   ): Unit = {
     addIncomeSpendingPage.clickOnAddIncome()
 
-    yourMonthlyIncomePage.enterMonthlyIncome(monthlyIncome.toString())
-    yourMonthlyIncomePage.enterBenefits(benefits.toString())
-    yourMonthlyIncomePage.enterOtherIncome(otherIncome.toString())
+    yourMonthlyIncomePage.enterMonthlyIncome(monthlyIncome)
+    yourMonthlyIncomePage.enterBenefits(benefits)
+    yourMonthlyIncomePage.enterOtherIncome(otherIncome)
 
     yourMonthlyIncomePage.clickContinue()
   }
@@ -90,9 +90,10 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
 
           val monthlyIncome = 2000
-          fillOutIncome(monthlyIncome = monthlyIncome)
+          fillOutIncome(monthlyIncome = monthlyIncome.toString)
 
-          addIncomeSpendingPage.assertIncomeFilled(monthlyIncome = monthlyIncome)
+          addIncomeSpendingPage.assertPathHeaderTitleCorrect
+          addIncomeSpendingPage.assertIncomeTableDisplayed(Seq("monthlyIncome" -> monthlyIncome))
           addIncomeSpendingPage.assertCategoriesNotShown(benefits    = true, otherIncome = true)
         }
         "only benefits filled out" in {
@@ -100,9 +101,10 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
 
           val benefits = 700
-          fillOutIncome(benefits = benefits)
+          fillOutIncome(benefits = benefits.toString)
 
-          addIncomeSpendingPage.assertIncomeFilled(benefits = benefits)
+          addIncomeSpendingPage.assertPathHeaderTitleCorrect
+          addIncomeSpendingPage.assertIncomeTableDisplayed(Seq("benefits" -> benefits))
           addIncomeSpendingPage.assertCategoriesNotShown(monthlyIncome = true, otherIncome = true)
         }
         "only other income filled out" in {
@@ -110,9 +112,10 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
 
           val otherIncome = 1000
-          fillOutIncome(otherIncome = otherIncome)
+          fillOutIncome(otherIncome = otherIncome.toString)
 
-          addIncomeSpendingPage.assertIncomeFilled(otherIncome = otherIncome)
+          addIncomeSpendingPage.assertPathHeaderTitleCorrect
+          addIncomeSpendingPage.assertIncomeTableDisplayed(Seq("otherIncome" -> otherIncome))
           addIncomeSpendingPage.assertCategoriesNotShown(monthlyIncome = true, benefits = true)
 
         }
@@ -123,9 +126,14 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           val monthlyIncome = 2000
           val benefits = 200
           val otherIncome = 1000
-          fillOutIncome(monthlyIncome, benefits, otherIncome)
+          fillOutIncome(monthlyIncome.toString, benefits.toString, otherIncome.toString)
 
-          addIncomeSpendingPage.assertIncomeFilled(monthlyIncome, benefits, otherIncome)
+          addIncomeSpendingPage.assertPathHeaderTitleCorrect
+          addIncomeSpendingPage.assertIncomeTableDisplayed(Seq(
+            "monthlyIncome" -> monthlyIncome,
+            "benefits" -> benefits,
+            "otherIncome" -> otherIncome
+          ))
         }
       }
 
@@ -142,7 +150,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
         }
 
         val monthlyIncome = 2000
-        fillOutIncome(monthlyIncome)
+        fillOutIncome(monthlyIncome.toString)
 
         addIncomeSpendingPage.assertChangeLinkIsDisplayed("income")(lang)
       }
