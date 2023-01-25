@@ -133,11 +133,11 @@ class AffordabilityController @Inject() (
       journey: Journey
   )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
     val newJourney = journey.copy(
-      maybeIncome = Some(Income(Seq(
+      maybeIncome = Some(Income(
         MonthlyIncome(input.monthlyIncome.setScale(2, HALF_UP)),
         Benefits(input.benefits.setScale(2, HALF_UP)),
         OtherIncome(input.otherIncome.setScale(2, HALF_UP))
-      )))
+      ))
     )
     journeyService.saveJourney(newJourney)
   }

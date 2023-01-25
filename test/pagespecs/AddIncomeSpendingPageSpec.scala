@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import langswitch.{Language, Languages}
+import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import ssttpaffordability.model.{Benefits, MonthlyIncome, OtherIncome}
 import testsupport.ItSpec
@@ -50,9 +50,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     startAffordabilityPage.clickContinue()
 
     addIncomeSpendingPage.assertPageIsDisplayed()
-    addIncomeSpendingPage.assertAddLinkIsDisplayed("income")
-    addIncomeSpendingPage.assertAddLinkIsDisplayed("spending")
-
+    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed
   }
 
   def fillOutIncome(
@@ -73,8 +71,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     beginJourney()
 
     addIncomeSpendingPage.assertPageIsDisplayed
-    addIncomeSpendingPage.assertAddLinkIsDisplayed("income")
-    addIncomeSpendingPage.assertAddLinkIsDisplayed("spending")
+    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed
 
     addIncomeSpendingPage.clickOnAddChangeIncome()
 
@@ -152,7 +149,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
         val monthlyIncome = 2000
         fillOutIncome(monthlyIncome.toString)
 
-        addIncomeSpendingPage.assertChangeLinkIsDisplayed("income")(lang)
+        addIncomeSpendingPage.assertChangeIncomeLinkIsDisplayed(lang)
       }
     }
   }
@@ -164,13 +161,11 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
     addIncomeSpendingPage.clickOnWelshLink()
     addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
-    addIncomeSpendingPage.assertAddLinkIsDisplayed("income")(Welsh)
-    addIncomeSpendingPage.assertAddLinkIsDisplayed("spending")(Welsh)
+    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
     addIncomeSpendingPage.clickOnEnglishLink()
     addIncomeSpendingPage.assertPageIsDisplayed(English)
-    addIncomeSpendingPage.assertAddLinkIsDisplayed("income")(English)
-    addIncomeSpendingPage.assertAddLinkIsDisplayed("spending")(English)
+    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(English)
 
   }
 

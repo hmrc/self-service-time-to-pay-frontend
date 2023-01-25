@@ -39,15 +39,8 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     assertContentMatchesExpectedLines(expectedLines)
   }
 
-  def assertAddLinkIsDisplayed(incomeOrSpending: String)(implicit lang: Language = Languages.English): Unit = {
-    incomeOrSpending.toLowerCase() match {
-      case "income" => probing {
-        assertContentMatchesExpectedLines(Seq(Expected.LinkText.Add.Income()))
-      }
-      case "spending" => probing {
-        assertContentMatchesExpectedLines(Seq(Expected.LinkText.Add.Spending()))
-      }
-    }
+  def assertAddIncomeLinkIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+    assertContentMatchesExpectedLines(Seq(Expected.LinkText.AddIncome()))
   }
 
   def assertIncomeTableDisplayed(categoriesFilled: IncomeCategory*)(implicit lang: Language): Unit = {
@@ -75,15 +68,8 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
   }
 
-  def assertChangeLinkIsDisplayed(incomeOrSpending: String)(implicit lang: Language = Languages.English): Unit = {
-    incomeOrSpending.toLowerCase() match {
-      case "income" => probing {
-        assertContentMatchesExpectedLines(Seq(Expected.LinkText.Change.Income()))
-      }
-      case "spending" => probing {
-        assertContentMatchesExpectedLines(Seq(Expected.LinkText.Change.Spending()))
-      }
-    }
+  def assertChangeIncomeLinkIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+    assertContentMatchesExpectedLines(Seq(Expected.LinkText.ChangeIncome()))
   }
 
   def assertPathHeaderTitleCorrect(implicit lang: Language): Assertion = probing {
@@ -143,52 +129,25 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
 
     object LinkText {
-      object Add {
-
-        object Income {
-          def apply()(implicit language: Language): String = language match {
-            case English => addIncomeTextEnglish
-            case Welsh   => addIncomeTextWelsh
-          }
-
-          private val addIncomeTextEnglish = "Add income"
-
-          private val addIncomeTextWelsh = "Ychwanegu incwm"
+      object AddIncome {
+        def apply()(implicit language: Language): String = language match {
+          case English => addIncomeTextEnglish
+          case Welsh   => addIncomeTextWelsh
         }
 
-        object Spending {
-          def apply()(implicit language: Language): String = language match {
-            case English => addSpendingTextEnglish
-            case Welsh   => addSpendingTextWelsh
-          }
+        private val addIncomeTextEnglish = "Add income"
 
-          private val addSpendingTextEnglish = "Add spending"
-
-          private val addSpendingTextWelsh = "Ychwanegu gwariant"
-
-        }
+        private val addIncomeTextWelsh = "Ychwanegu incwm"
       }
-      object Change {
-        object Income {
-          def apply()(implicit language: Language): String = language match {
-            case English => changeIncomeTextEnglish
-            case Welsh   => changeIncomeTextWelsh
-          }
-
-          private val changeIncomeTextEnglish = "Change income"
-
-          private val changeIncomeTextWelsh = "Newid incwm"
+      object ChangeIncome {
+        def apply()(implicit language: Language): String = language match {
+          case English => changeIncomeTextEnglish
+          case Welsh   => changeIncomeTextWelsh
         }
-        object Spending {
-          def apply()(implicit language: Language): String = language match {
-            case English => changeSpendingTextEnglish
-            case Welsh   => changeSpendingTextWelsh
-          }
 
-          private val changeSpendingTextEnglish = "Change spending"
+        private val changeIncomeTextEnglish = "Change income"
 
-          private val changeSpendingTextWelsh = "Newid gwariant"
-        }
+        private val changeIncomeTextWelsh = "Newid incwm"
       }
     }
 
@@ -200,7 +159,6 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
           case MonthlyIncome(_) => monthlyIncomeText
           case Benefits(_)      => benefitsText
           case OtherIncome(_)   => otherIncomeText
-          case (_)              => "nothing"
         }.filterNot(_ == "nothing")
       }
 
@@ -212,7 +170,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
           .map(category => s"£${commaFormat(category.amount)}")
       }
 
-      def totalIncomeHeadingText(implicit language: Language) = language match {
+      def totalIncomeHeadingText(implicit language: Language): String = language match {
         case English => "Total income"
         case Welsh   => "Cyfanswm eich incwm"
       }

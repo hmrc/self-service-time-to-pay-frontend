@@ -16,9 +16,7 @@
 
 package ssttpaffordability.model
 
-import enumeratum.EnumEntry
-import enumformat.EnumFormat
-import play.api.libs.json.{Format, Json, OFormat}
+import play.api.libs.json.{Json, OFormat}
 
 sealed trait IncomeCategory {
   val name: String
@@ -36,7 +34,6 @@ final case class MonthlyIncome(amount: BigDecimal = 0) extends IncomeCategory {
 object MonthlyIncome {
   implicit val format: OFormat[MonthlyIncome] = Json.format[MonthlyIncome]
 
-  def apply: MonthlyIncome = MonthlyIncome()
 }
 
 final case class Benefits(amount: BigDecimal = 0) extends IncomeCategory {
