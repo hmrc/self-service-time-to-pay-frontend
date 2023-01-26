@@ -94,7 +94,7 @@ class AffordabilityController @Inject() (
       val emptyForm = incomeForm
       val formWithData = journey.maybeIncome.map(income =>
         emptyForm.fill(IncomeInput(
-          monthlyIncome = income.amount("Monthly income after text"),
+          monthlyIncome = income.amount("Monthly income after tax"),
           benefits      = income.amount("Benefits"),
           otherIncome   = income.amount("Other monthly income")
         ))

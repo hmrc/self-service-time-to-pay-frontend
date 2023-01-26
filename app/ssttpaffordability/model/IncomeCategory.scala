@@ -29,7 +29,7 @@ object IncomeCategory {
 }
 
 final case class MonthlyIncome(amount: BigDecimal = 0) extends IncomeCategory {
-  val heading = "Monthly income after text"
+  val heading = "Monthly income after tax"
   val messageKey = "ssttp.affordability.your-monthly-income.form.monthly-income"
 }
 
