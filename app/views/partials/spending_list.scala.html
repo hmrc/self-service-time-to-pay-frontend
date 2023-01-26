@@ -30,7 +30,7 @@
         }
 
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
+            <dt class="govuk-summary-list__key govuk-!-width-one-half">@{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
             <dd class="govuk-summary-list__value govuk-!-font-weight-bold govuk-!-text-align-right">@{partials.currency(spending.map(_.amount).sum)}</dd>
         </div>
 

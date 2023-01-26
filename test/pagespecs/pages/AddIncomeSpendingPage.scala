@@ -284,7 +284,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
       def totalSpendingHeadingText(implicit language: Language): String = language match {
         case English => "Total spending"
-        case Welsh   => "Cyfanswm eich incwm"
+        case Welsh   => "Cyfanswm y gwariant"
       }
 
       def totalSpendingAmount(categoryAmounts: Seq[Expense] = Seq())(implicit lang: Language): String = {

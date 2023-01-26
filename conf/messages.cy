@@ -144,6 +144,7 @@ ssttp.affordability.your-monthly-spending.form.health = Iechyd
 ssttp.affordability.your-monthly-spending.form.health.hint = Er enghraifft, presgripsiynau, gofal iechyd preifat
 ssttp.affordability.your-monthly-spending.error.title = Mae problem wedi codi
 ssttp.affordability.your-monthly-spending.error.non-numerals = Enter numbers only
+ssttp.affordability.your-monthly-spending.total = Cyfanswm y gwariant
 
 
 #calculator

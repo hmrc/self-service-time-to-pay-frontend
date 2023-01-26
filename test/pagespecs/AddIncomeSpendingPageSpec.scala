@@ -176,8 +176,15 @@ class AddIncomeSpendingPageSpec extends ItSpec {
             Housing(housingAmount),
             PensionContributions(pensionContributionsAmount)
           )
-          addIncomeSpendingPage.assertZeroSpendingCategoriesNotDisplayed(CouncilTax(),
-                                                                         Utilities(), DebtRepayments(), Travel(), Childcare(), Insurance(), Groceries(), Health())
+          addIncomeSpendingPage.assertZeroSpendingCategoriesNotDisplayed(
+            CouncilTax(),
+            Utilities(),
+            DebtRepayments(),
+            Travel(),
+            Childcare(),
+            Insurance(),
+            Groceries(),
+            Health())
         }
       }
 
