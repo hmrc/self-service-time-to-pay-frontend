@@ -23,9 +23,8 @@ import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpaffordability.AffordabilityForm.{incomeForm, incomeInputTotalNotPositiveOverride, spendingForm, validateIncomeInputTotal}
-import ssttpaffordability.model.{Income, IncomeCategory}
-import ssttpaffordability.model.{Expense, Spending}
+import ssttpaffordability.AffordabilityForm.{incomeForm, spendingForm, validateIncomeInputTotal, incomeInputTotalNotPositiveOverride}
+import ssttpaffordability.model.{Benefits, Expense, Income, IncomeCategory, MonthlyIncome, OtherIncome, Spending}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
 import ssttpdirectdebit.DirectDebitConnector
@@ -35,7 +34,6 @@ import views.Views
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class AffordabilityController @Inject() (
     mcc:                  MessagesControllerComponents,
@@ -83,8 +81,10 @@ class AffordabilityController @Inject() (
 
   def getAddIncomeAndSpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.getAddIncomeAndSpending: $request")
-    journeyService.authorizedForSsttp { _ =>
-      Future.successful(Ok(views.add_income_spending()))
+    journeyService.authorizedForSsttp { journey =>
+      val monthlySpending = journey.maybeSpending.fold(Seq.empty[Expense])(_.expenses)
+      val income = journey.maybeIncome.fold(Seq.empty[IncomeCategory])(_.categories)
+      Future.successful(Ok(views.add_income_spending(income, monthlySpending)))
     }
   }
 
@@ -94,9 +94,9 @@ class AffordabilityController @Inject() (
       val emptyForm = incomeForm
       val formWithData = journey.maybeIncome.map(income =>
         emptyForm.fill(IncomeInput(
-          monthlyIncome = income.amount("monthlyIncome"),
-          benefits      = income.amount("benefits"),
-          otherIncome   = income.amount("otherIncome")
+          monthlyIncome = income.amount("Monthly income after tax"),
+          benefits      = income.amount("Benefits"),
+          otherIncome   = income.amount("Other monthly income")
         ))
       ).getOrElse(emptyForm)
       Future.successful(Ok(views.your_monthly_income(formWithData, isSignedIn)))
@@ -136,11 +136,11 @@ class AffordabilityController @Inject() (
       journey: Journey
   )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
     val newJourney = journey.copy(
-      maybeIncome = Some(Income(Seq(
-        IncomeCategory("monthlyIncome", input.monthlyIncome.setScale(2, HALF_UP)),
-        IncomeCategory("benefits", input.benefits.setScale(2, HALF_UP)),
-        IncomeCategory("otherIncome", input.otherIncome.setScale(2, HALF_UP))
-      )))
+      maybeIncome = Some(Income(
+        MonthlyIncome(input.monthlyIncome),
+        Benefits(input.benefits),
+        OtherIncome(input.otherIncome)
+      ))
     )
     journeyService.saveJourney(newJourney)
   }
@@ -151,7 +151,7 @@ class AffordabilityController @Inject() (
       val formWithData = journey.maybeSpending.map(expense =>
         spendingForm.fill(SpendingInput(
           housing             = expense.amount("housing"),
-          pensionContribution = expense.amount("pension-contribution"),
+          pensionContribution = expense.amount("pension-contributions"),
           councilTax          = expense.amount("council-tax"),
           utilities           = expense.amount("utilities"),
           debtRepayments      = expense.amount("debt-repayments"),
@@ -175,7 +175,7 @@ class AffordabilityController @Inject() (
           val newJourney = journey.copy(
             maybeSpending = Some(Spending(Seq(
               Expense("housing", form.housing),
-              Expense("pension-contribution", form.pensionContribution),
+              Expense("pension-contributions", form.pensionContribution),
               Expense("council-tax", form.councilTax),
               Expense("utilities", form.utilities),
               Expense("debt-repayments", form.debtRepayments),

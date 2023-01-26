@@ -105,7 +105,9 @@ ssttp.affordability.income-spending.h1 = Add your income and spending
 ssttp.affordability.income-spending.income = Income
 ssttp.affordability.income-spending.spending = Spending
 ssttp.affordability.income-spending.add-income = Add income
+ssttp.affordability.income-spending.change-income = Change income
 ssttp.affordability.income-spending.add-spending = Add spending
+ssttp.affordability.income-spending.change-spending = Change spending
 ssttp.affordability.income-spending.hidden = details
 
 ssttp.affordability.your-monthly-income.h1 = Your monthly income
@@ -121,6 +123,7 @@ ssttp.affordability.your-monthly-income.error.required = You must enter an incom
 ssttp.affordability.your-monthly-income.error.non-numerals = Enter numbers only
 ssttp.affordability.your-monthly-income.error.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.affordability.your-monthly-income.continue = Continue
+ssttp.affordability.your-monthly-income.total = Total income
 ssttp.affordability.your-monthly-income.hidden = Income
 
 ssttp.affordability.your-monthly-spending.h1 = Your monthly spending
@@ -144,6 +147,7 @@ ssttp.affordability.your-monthly-spending.form.health = Health
 ssttp.affordability.your-monthly-spending.form.health.hint = For example, prescriptions, private healthcare
 ssttp.affordability.your-monthly-spending.error.title = There is a problem
 ssttp.affordability.your-monthly-spending.error.non-numerals = Enter numbers only
+ssttp.affordability.your-monthly-spending.total = Total spending
 
 
 #calculator

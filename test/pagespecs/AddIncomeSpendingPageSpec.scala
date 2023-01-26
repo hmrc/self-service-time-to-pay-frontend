@@ -16,7 +16,9 @@
 
 package pagespecs
 
+import langswitch.Language
 import langswitch.Languages.{English, Welsh}
+import ssttpaffordability.model.{Benefits, MonthlyIncome, OtherIncome}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -48,16 +50,108 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     startAffordabilityPage.clickContinue()
 
     addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed
+  }
+
+  def fillOutIncome(
+      monthlyIncome: String = "",
+      benefits:      String = "",
+      otherIncome:   String = ""
+  ): Unit = {
+    addIncomeSpendingPage.clickOnAddChangeIncome()
+
+    yourMonthlyIncomePage.enterMonthlyIncome(monthlyIncome)
+    yourMonthlyIncomePage.enterBenefits(benefits)
+    yourMonthlyIncomePage.enterOtherIncome(otherIncome)
+
+    yourMonthlyIncomePage.clickContinue()
   }
 
   "add income button goes to 'Your monthly income' page" in {
     beginJourney()
 
     addIncomeSpendingPage.assertPageIsDisplayed
+    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed
 
-    addIncomeSpendingPage.clickOnAddIncome()
+    addIncomeSpendingPage.clickOnAddChangeIncome()
 
     yourMonthlyIncomePage.assertPagePathCorrect
+  }
+
+  "displays income once filled out" - {
+    List(English, Welsh).foreach{ lang =>
+      implicit val language: Language = lang
+
+      s"in $lang" - {
+        "only monthly income filled out" in {
+          beginJourney()
+          if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
+
+          val monthlyIncomeAmount = 2000
+          fillOutIncome(monthlyIncome = monthlyIncomeAmount.toString)
+
+          addIncomeSpendingPage.assertPathHeaderTitleCorrect
+          addIncomeSpendingPage.assertIncomeTableDisplayed(MonthlyIncome(monthlyIncomeAmount))
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Benefits(), OtherIncome())
+        }
+        "only benefits filled out" in {
+          beginJourney()
+          if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
+
+          val benefitsAmount = 700
+          fillOutIncome(benefits = benefitsAmount.toString)
+
+          addIncomeSpendingPage.assertPathHeaderTitleCorrect
+          addIncomeSpendingPage.assertIncomeTableDisplayed(Benefits(benefitsAmount))
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome(), OtherIncome())
+        }
+        "only other income filled out" in {
+          beginJourney()
+          if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
+
+          val otherIncomeAmount = 1000
+          fillOutIncome(otherIncome = otherIncomeAmount.toString)
+
+          addIncomeSpendingPage.assertPathHeaderTitleCorrect
+          addIncomeSpendingPage.assertIncomeTableDisplayed(OtherIncome(otherIncomeAmount))
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome(), Benefits())
+        }
+        "all categories filled out" in {
+          beginJourney()
+          if (lang == Welsh) { addIncomeSpendingPage.clickOnWelshLink() }
+
+          val monthlyIncomeAmount = 2000
+          val benefitsAmount = 200
+          val otherIncomeAmount = 1000
+          fillOutIncome(monthlyIncomeAmount.toString, benefitsAmount.toString, otherIncomeAmount.toString)
+
+          addIncomeSpendingPage.assertPathHeaderTitleCorrect
+          addIncomeSpendingPage.assertIncomeTableDisplayed(
+            MonthlyIncome(monthlyIncomeAmount),
+            Benefits(benefitsAmount),
+            OtherIncome(otherIncomeAmount)
+          )
+        }
+      }
+
+    }
+  }
+  "displays 'Change income' link once income has been filled out" - {
+    List(English, Welsh).foreach { lang =>
+      implicit val language: Language = lang
+
+      s"in $lang" in {
+        beginJourney()
+        if (lang == Welsh) {
+          addIncomeSpendingPage.clickOnWelshLink()
+        }
+
+        val monthlyIncome = 2000
+        fillOutIncome(monthlyIncome.toString)
+
+        addIncomeSpendingPage.assertChangeIncomeLinkIsDisplayed(lang)
+      }
+    }
   }
 
   "language" in {
@@ -67,9 +161,12 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
     addIncomeSpendingPage.clickOnWelshLink()
     addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
     addIncomeSpendingPage.clickOnEnglishLink()
     addIncomeSpendingPage.assertPageIsDisplayed(English)
+    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(English)
+
   }
 
   "back button" in {

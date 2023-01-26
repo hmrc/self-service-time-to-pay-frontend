@@ -21,7 +21,7 @@ import enumformat.EnumFormat
 import langswitch.Languages.{English, Welsh}
 import play.api.i18n.{Lang, Messages}
 import play.api.libs.json.Format
-import play.api.mvc.{PathBindable, Request}
+import play.api.mvc.PathBindable
 import controllers.ValueClassBinder._
 
 import scala.collection.immutable
@@ -60,7 +60,7 @@ object Languages extends Enum[Language] {
     override def hiddenText: String = "Newid yr iaith i'r Gymraeg"
   }
 
-  val availableLanguages = List(English, Welsh)
+  val availableLanguages: Seq[Language] = List(English, Welsh)
   override def values: immutable.IndexedSeq[Language] = findValues
 }
 

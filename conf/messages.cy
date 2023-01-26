@@ -102,7 +102,9 @@ ssttp.affordability.income-spending.h1 = Ychwanegu eich incwm a’ch gwariant
 ssttp.affordability.income-spending.income = Incwm
 ssttp.affordability.income-spending.spending = Gwariant
 ssttp.affordability.income-spending.add-income = Ychwanegu incwm
+ssttp.affordability.income-spending.change-income = Newid incwm
 ssttp.affordability.income-spending.add-spending = Ychwanegu gwariant
+ssttp.affordability.income-spending.change-spending = Newid gwariant
 ssttp.affordability.income-spending.hidden = manylion
 
 ssttp.affordability.your-monthly-income.h1 = Eich incwm misol
@@ -118,6 +120,7 @@ ssttp.affordability.your-monthly-income.error.required = Mae’n rhaid i chi nod
 ssttp.affordability.your-monthly-income.error.non-numerals = Rhowch rifau yn unig
 ssttp.affordability.your-monthly-income.error.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.affordability.your-monthly-income.continue = Yn eich blaen
+ssttp.affordability.your-monthly-income.total = Cyfanswm eich incwm
 ssttp.affordability.your-monthly-income.hidden = Incwm
 
 ssttp.affordability.your-monthly-spending.h1 = Eich gwariant misol

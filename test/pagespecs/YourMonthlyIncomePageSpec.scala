@@ -21,7 +21,7 @@ import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
 
-class YourIncomePageSpec extends ItSpec {
+class YourMonthlyIncomePageSpec extends ItSpec {
 
   def beginJourney(): Unit = {
     AuthStub.authorise()
@@ -48,7 +48,7 @@ class YourIncomePageSpec extends ItSpec {
     startAffordabilityPage.clickContinue()
 
     addIncomeSpendingPage.assertPageIsDisplayed()
-    addIncomeSpendingPage.clickOnAddIncome()
+    addIncomeSpendingPage.clickOnAddChangeIncome()
   }
 
   "add non-zero positive income input and press continue goes to add-income-spending-page" - {
