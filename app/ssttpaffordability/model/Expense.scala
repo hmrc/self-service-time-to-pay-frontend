@@ -18,17 +18,18 @@ package ssttpaffordability.model
 
 import play.api.libs.json.{Json, OFormat}
 
-
-sealed trait Expenses {
+sealed trait Expense {
+  val category: String
   val messageKey: String
   val amount: BigDecimal
 }
 
-object Expenses {
-  implicit val format: OFormat[Expenses] = Json.format[Expenses]
+object Expense {
+  implicit val format: OFormat[Expense] = Json.format[Expense]
 }
 
-final case class Housing(amount: BigDecimal = 0) extends Expenses {
+final case class Housing(amount: BigDecimal = 0) extends Expense {
+  val category = "Housing"
   val messageKey = "ssttp.affordability.your-monthly-spending.form.housing"
 }
 
@@ -37,7 +38,8 @@ object Housing {
 
 }
 
-final case class PensionContributions(amount: BigDecimal = 0) extends Expenses {
+final case class PensionContributions(amount: BigDecimal = 0) extends Expense {
+  val category = "Pension contributions"
   val messageKey = "ssttp.affordability.your-monthly-spending.form.pension-contributions"
 }
 
@@ -46,7 +48,8 @@ object PensionContributions {
 
 }
 
-final case class CouncilTax(amount: BigDecimal = 0) extends Expenses {
+final case class CouncilTax(amount: BigDecimal = 0) extends Expense {
+  val category = "Council tax"
   val messageKey = "ssttp.affordability.your-monthly-spending.form.council-tax"
 }
 
@@ -55,7 +58,8 @@ object CouncilTax {
 
 }
 
-final case class Utilities(amount: BigDecimal = 0) extends Expenses {
+final case class Utilities(amount: BigDecimal = 0) extends Expense {
+  val category = "Utilities"
   val messageKey = "ssttp.affordability.your-monthly-spending.form.utilities"
 }
 
@@ -64,7 +68,8 @@ object Utilities {
 
 }
 
-final case class DebtRepayments(amount: BigDecimal = 0) extends Expenses {
+final case class DebtRepayments(amount: BigDecimal = 0) extends Expense {
+  val category = "Debt repayments"
   val messageKey = "ssttp.affordability.your-monthly-spending.form.debt-repayments"
 }
 
@@ -73,7 +78,8 @@ object DebtRepayments {
 
 }
 
-final case class Travel(amount: BigDecimal = 0) extends Expenses {
+final case class Travel(amount: BigDecimal = 0) extends Expense {
+  val category = "Travel"
   val messageKey = "ssttp.affordability.your-monthly-spending.form.travel"
 }
 
@@ -82,7 +88,8 @@ object Travel {
 
 }
 
-final case class Childcare(amount: BigDecimal = 0) extends Expenses {
+final case class Childcare(amount: BigDecimal = 0) extends Expense {
+  val category = "Childcare"
   val messageKey = "ssttp.affordability.your-monthly-spending.form.childcare"
 }
 
@@ -91,7 +98,8 @@ object Childcare {
 
 }
 
-final case class Insurance(amount: BigDecimal = 0) extends Expenses {
+final case class Insurance(amount: BigDecimal = 0) extends Expense {
+  val category = "Insurance"
   val messageKey = "ssttp.affordability.your-monthly-spending.form.insurance"
 }
 
@@ -100,7 +108,8 @@ object Insurance {
 
 }
 
-final case class Groceries(amount: BigDecimal = 0) extends Expenses {
+final case class Groceries(amount: BigDecimal = 0) extends Expense {
+  val category = "Groceries"
   val messageKey = "ssttp.affordability.your-monthly-spending.form.groceries"
 }
 
@@ -109,7 +118,8 @@ object Groceries {
 
 }
 
-final case class Health(amount: BigDecimal = 0) extends Expenses {
+final case class Health(amount: BigDecimal = 0) extends Expense {
+  val category = "Health"
   val messageKey = "ssttp.affordability.your-monthly-spending.form.health"
 }
 

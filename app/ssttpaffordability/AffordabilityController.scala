@@ -23,8 +23,8 @@ import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpaffordability.AffordabilityForm.{incomeForm, spendingForm, validateIncomeInputTotal, incomeInputTotalNotPositiveOverride}
-import ssttpaffordability.model.{Benefits, Expense, Income, IncomeCategory, MonthlyIncome, OtherIncome, Spending}
+import ssttpaffordability.AffordabilityForm.{incomeForm, incomeInputTotalNotPositiveOverride, spendingForm, validateIncomeInputTotal}
+import ssttpaffordability.model._
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
 import ssttpdirectdebit.DirectDebitConnector
@@ -150,16 +150,16 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       val formWithData = journey.maybeSpending.map(expense =>
         spendingForm.fill(SpendingInput(
-          housing             = expense.amount("housing"),
-          pensionContribution = expense.amount("pension-contributions"),
-          councilTax          = expense.amount("council-tax"),
-          utilities           = expense.amount("utilities"),
-          debtRepayments      = expense.amount("debt-repayments"),
-          travel              = expense.amount("travel"),
-          childcare           = expense.amount("childcare"),
-          insurance           = expense.amount("insurance"),
-          groceries           = expense.amount("groceries"),
-          health              = expense.amount("health"),
+          housing              = expense.amount("Housing"),
+          pensionContributions = expense.amount("Pension contributions"),
+          councilTax           = expense.amount("Council tax"),
+          utilities            = expense.amount("Utilities"),
+          debtRepayments       = expense.amount("Debt repayments"),
+          travel               = expense.amount("Travel"),
+          childcare            = expense.amount("Childcare"),
+          insurance            = expense.amount("Insurance"),
+          groceries            = expense.amount("Groceries"),
+          health               = expense.amount("Health"),
         ))
       ).getOrElse(spendingForm)
       Future.successful(Ok(views.your_monthly_spending(formWithData, isSignedIn)))
@@ -173,18 +173,18 @@ class AffordabilityController @Inject() (
         formWithErrors => Future.successful(BadRequest(views.your_monthly_spending(formWithErrors, isSignedIn))),
         (form: SpendingInput) => {
           val newJourney = journey.copy(
-            maybeSpending = Some(Spending(Seq(
-              Expense("housing", form.housing),
-              Expense("pension-contributions", form.pensionContribution),
-              Expense("council-tax", form.councilTax),
-              Expense("utilities", form.utilities),
-              Expense("debt-repayments", form.debtRepayments),
-              Expense("travel", form.travel),
-              Expense("childcare", form.childcare),
-              Expense("insurance", form.insurance),
-              Expense("groceries", form.groceries),
-              Expense("health", form.health),
-            ))))
+            maybeSpending = Some(Spending(
+              Housing(form.housing),
+              PensionContributions(form.pensionContributions),
+              CouncilTax(form.councilTax),
+              Utilities(form.utilities),
+              DebtRepayments(form.debtRepayments),
+              Travel(form.travel),
+              Childcare(form.childcare),
+              Insurance(form.insurance),
+              Groceries(form.groceries),
+              Health(form.health)
+            )))
           journeyService.saveJourney(newJourney).map { _ =>
             Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
           }
