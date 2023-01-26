@@ -23,7 +23,7 @@
 
         @{income.map( category => if (category.amount > 0)
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages("ssttp.affordability.your-monthly-income.form."+{s"${category.name}"})}</dt>
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages(s"${category.messageKey}")}</dt>
                 <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(category.amount)}</dd>
             </div>
             )

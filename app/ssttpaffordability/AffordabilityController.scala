@@ -94,9 +94,9 @@ class AffordabilityController @Inject() (
       val emptyForm = incomeForm
       val formWithData = journey.maybeIncome.map(income =>
         emptyForm.fill(IncomeInput(
-          monthlyIncome = income.amount("monthly-income"),
-          benefits      = income.amount("benefits"),
-          otherIncome   = income.amount("other-income")
+          monthlyIncome = income.amount("Monthly income after text"),
+          benefits      = income.amount("Benefits"),
+          otherIncome   = income.amount("Other monthly income")
         ))
       ).getOrElse(emptyForm)
       Future.successful(Ok(views.your_monthly_income(formWithData, isSignedIn)))

@@ -19,7 +19,8 @@ package ssttpaffordability.model
 import play.api.libs.json.{Json, OFormat}
 
 sealed trait IncomeCategory {
-  val name: String
+  val heading: String
+  val messageKey: String
   val amount: BigDecimal
 }
 
@@ -28,7 +29,8 @@ object IncomeCategory {
 }
 
 final case class MonthlyIncome(amount: BigDecimal = 0) extends IncomeCategory {
-  val name = "monthly-income"
+  val heading = "Monthly income after text"
+  val messageKey = "ssttp.affordability.your-monthly-income.form.monthly-income"
 }
 
 object MonthlyIncome {
@@ -37,7 +39,8 @@ object MonthlyIncome {
 }
 
 final case class Benefits(amount: BigDecimal = 0) extends IncomeCategory {
-  val name = "benefits"
+  val heading = "Benefits"
+  val messageKey = "ssttp.affordability.your-monthly-income.form.benefits"
 }
 
 object Benefits {
@@ -45,7 +48,8 @@ object Benefits {
 }
 
 final case class OtherIncome(amount: BigDecimal = 0) extends IncomeCategory {
-  val name = "other-income"
+  val heading = "Other monthly income"
+  val messageKey = "ssttp.affordability.your-monthly-income.form.other-income"
 }
 
 object OtherIncome {
