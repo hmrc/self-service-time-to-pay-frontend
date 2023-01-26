@@ -14,28 +14,28 @@
  * limitations under the License.
  *@
 
-@import ssttpaffordability.model.Spending
+@import ssttpaffordability.model.Expense
+
+@(spending: Seq[Expense])(implicit messages: play.api.i18n.Messages)
 
 
-@(monthlySpending: Option[Spending])(implicit messages: play.api.i18n.Messages)
+@(spending: Seq[Expense])(implicit messages: play.api.i18n.Messages)
 
-@spending = @{monthlySpending.getOrElse(throw new RuntimeException(s"Expected monthlySpending to be there but was not found."))}
 <div class="govuk-!-padding-left-6 govuk-!-margin-bottom-9">
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    <dl class="govuk-summary-list">
 
-        @{for (expense <- spending.expenses  if expense.amount > 0)
-            yield {
+        @{spending.map( exp => if (exp.amount > 0)
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key- govuk-!-font-weight-regular">{messages("ssttp.affordability.your-monthly-spending.form."+{s"${expense.category}"})}</dt>
-                <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(expense.amount)}</dd>
+            <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages("ssttp.affordability.your-monthly-spending.form."+{s"${exp.category}"})}</dt>
+            <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(exp.amount)}</dd>
             </div>
-            }
+        )
         }
-        @{if(spending.totalSpending > 0)
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
-                <dd class="govuk-summary-list__value govuk-!-font-weight-bold govuk-!-text-align-right">{partials.currency(spending.totalSpending)}</dd>
-            </div>
-        }
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
+            <dd class="govuk-summary-list__value govuk-!-font-weight-bold govuk-!-text-align-right">@{partials.currency(spending.map(_.amount).sum)}</dd>
+        </div>
+
     </dl>
 </div>
