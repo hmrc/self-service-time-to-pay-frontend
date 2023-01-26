@@ -23,7 +23,7 @@ import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpaffordability.AffordabilityForm.{incomeForm, spendingForm, validateIncomeInputTotal}
+import ssttpaffordability.AffordabilityForm.{incomeForm, spendingForm, validateIncomeInputTotal, incomeInputTotalNotPositiveOverride}
 import ssttpaffordability.model.{Benefits, Expense, Income, IncomeCategory, MonthlyIncome, OtherIncome, Spending}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
@@ -34,7 +34,6 @@ import views.Views
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class AffordabilityController @Inject() (
     mcc:                  MessagesControllerComponents,
@@ -116,7 +115,11 @@ class AffordabilityController @Inject() (
         { (input: IncomeInput) =>
           val formValidatedForPositiveTotal = validateIncomeInputTotal(incomeForm.fill(input))
           if (formValidatedForPositiveTotal.hasErrors) {
-            Future.successful(BadRequest(views.your_monthly_income(formValidatedForPositiveTotal, isSignedIn)))
+            Future.successful(BadRequest(views.your_monthly_income(
+              dataForm              = formValidatedForPositiveTotal,
+              loggedIn              = isSignedIn,
+              errorMessageOverrides = incomeInputTotalNotPositiveOverride.fieldMessageOverrides
+            )))
 
           } else {
             storeIncomeInputToJourney(input, journey).map { _ =>

@@ -123,7 +123,6 @@ ssttp.affordability.your-monthly-income.continue = Yn eich blaen
 ssttp.affordability.your-monthly-income.total = Cyfanswm eich incwm
 ssttp.affordability.your-monthly-income.hidden = Incwm
 
-
 ssttp.affordability.your-monthly-spending.h1 = Eich gwariant misol
 ssttp.affordability.your-monthly-spending.instruction = Ychwanegwch wybodaeth amdanoch chi’ch hun yn unig. Os ydych yn byw gyda phobl eraill, nodwch eich cyfran chi o’r gwariant. Gallwch adael blwch yn wag os nad yw’n berthnasol i chi.
 ssttp.affordability.your-monthly-spending.form.housing = Tai

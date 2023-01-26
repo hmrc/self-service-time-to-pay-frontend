@@ -120,7 +120,7 @@
             ))
 
             @input(Input(
-                id = "council-tax",
+                id = "utilities",
                 name = "utilities",
                 value = dataForm.data.get("utilities"),
                 hint = Some(Hint(
@@ -132,7 +132,7 @@
                     classes = "govuk-label govuk-label--s",
                     isPageHeading = false
                 ),
-                errorMessage = dataForm.error("council-tax").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+                errorMessage = dataForm.error("utilities").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
                 prefix = Some(PrefixOrSuffix(
                     content = Text("£")
                 )),
