@@ -18,7 +18,7 @@ package pagespecs
 
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
-import ssttpaffordability.model.{Benefits, MonthlyIncome, OtherIncome}
+import ssttpaffordability.model._
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -51,6 +51,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
     addIncomeSpendingPage.assertPageIsDisplayed()
     addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed
+    addIncomeSpendingPage.assertAddSpendingLinkIsDisplayed
   }
 
   def fillOutIncome(
@@ -136,6 +137,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
     }
   }
+
   "displays 'Change income' link once income has been filled out" - {
     List(English, Welsh).foreach { lang =>
       implicit val language: Language = lang
@@ -152,6 +154,77 @@ class AddIncomeSpendingPageSpec extends ItSpec {
         addIncomeSpendingPage.assertChangeIncomeLinkIsDisplayed(lang)
       }
     }
+  }
+
+  "displays spending once filled out" - {
+    List(English, Welsh).foreach { lang =>
+      implicit val language: Language = lang
+
+      s"in $lang" - {
+        "housing and pension contributions filled out" in {
+          beginJourney()
+          if (lang == Welsh) {
+            addIncomeSpendingPage.clickOnWelshLink()
+          }
+
+          val housingAmount = 1000
+          val pensionContributionsAmount = 500
+          fillOutSpending(housingAmount.toString, pensionContributionsAmount.toString)
+
+          addIncomeSpendingPage.assertPathHeaderTitleCorrect
+          addIncomeSpendingPage.assertSpendingTableDisplayed(
+            Housing(housingAmount),
+            PensionContributions(pensionContributionsAmount)
+          )
+          addIncomeSpendingPage.assertZeroSpendingCategoriesNotDisplayed(CouncilTax(),
+                                                                         Utilities(), DebtRepayments(), Travel(), Childcare(), Insurance(), Groceries(), Health())
+        }
+      }
+
+    }
+  }
+
+  "displays 'Change spending' link once spending has been filled out" - {
+    List(English, Welsh).foreach { lang =>
+      implicit val language: Language = lang
+
+      s"in $lang" in {
+        beginJourney()
+        if (lang == Welsh) {
+          addIncomeSpendingPage.clickOnWelshLink()
+        }
+
+        val housing = 1000
+        fillOutSpending(housing.toString)
+
+        addIncomeSpendingPage.assertChangeSpendingLinkIsDisplayed(lang)
+      }
+    }
+  }
+
+  "add spending button goes to 'Your monthly spending' page" in {
+    beginJourney()
+
+    addIncomeSpendingPage.assertPageIsDisplayed
+    addIncomeSpendingPage.assertAddSpendingLinkIsDisplayed
+
+    addIncomeSpendingPage.clickOnAddChangeSpending()
+
+    yourMonthlySpendingPage.assertPagePathCorrect
+  }
+
+  def fillOutSpending(
+      housing:              String = "",
+      pensionContributions: String = "",
+      councilTax:           String = ""
+  ): Unit = {
+    addIncomeSpendingPage.clickOnAddChangeSpending()
+
+    yourMonthlySpendingPage.enterHousing(housing)
+    yourMonthlySpendingPage.enterPensionContributions(pensionContributions)
+    yourMonthlySpendingPage.enterCouncilTax(councilTax)
+
+    yourMonthlySpendingPage.clickContinue()
   }
 
   "language" in {
