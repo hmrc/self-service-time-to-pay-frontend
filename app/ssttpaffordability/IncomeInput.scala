@@ -47,4 +47,11 @@ object IncomeInput {
     )
   }
 
+  def unapply(incomeInput: IncomeInput): Option[(String, String, String)] = {
+    Some((
+      incomeInput.monthlyIncome.toString(),
+      incomeInput.benefits.toString(),
+      incomeInput.otherIncome.toString()
+    ))
+  }
 }

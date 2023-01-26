@@ -22,9 +22,6 @@ import play.api.data.{Form, FormError, Mapping}
 import scala.util.Try
 
 object AffordabilityForm {
-  def createIncomeForm(): Form[IncomeInput] = {
-    Form(incomeMapping)
-  }
 
   def validateIncomeInputTotal(form: Form[IncomeInput]): Form[IncomeInput] = {
     if (!form.get.hasPositiveTotal) {
@@ -36,34 +33,20 @@ object AffordabilityForm {
     } else form
   }
 
-  val incomeMapping: Mapping[IncomeInput] = mapping(
-    "monthlyIncome" -> text
-      .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
-        if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-      })
-      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-      }),
-    "benefits" -> text.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
+  val incomeForm: Form[IncomeInput] = Form(
+    mapping(
+      "monthlyIncome" -> validateIncomeInput(text),
+      "benefits" -> validateIncomeInput(text),
+      "otherIncome" -> validateIncomeInput(text)
+    )(IncomeInput.apply)(IncomeInput.unapply)
+  )
+
+  private def validateIncomeInput(mappingStr: Mapping[String]): Mapping[String] = mappingStr
+    .verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
       if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
     })
-      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-      }),
-    "otherIncome" -> text.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
-      if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-    })
-      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-      })
-  )((monthlyIncome, benefits, otherIncome) => IncomeInput(
-      monthlyIncome,
-      benefits,
-      otherIncome
-    ))(incomeForm => {
-      Some(
-        (incomeForm.monthlyIncome.toString(), incomeForm.benefits.toString(), incomeForm.otherIncome.toString())
-      )
+    .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
+      if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
     })
 
   val spendingForm: Form[SpendingInput] = Form(

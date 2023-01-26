@@ -23,7 +23,7 @@ import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpaffordability.AffordabilityForm.{createIncomeForm, spendingForm, validateIncomeInputTotal}
+import ssttpaffordability.AffordabilityForm.{incomeForm, spendingForm, validateIncomeInputTotal}
 import ssttpaffordability.model.{Benefits, Expense, Income, IncomeCategory, MonthlyIncome, OtherIncome, Spending}
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
@@ -92,7 +92,7 @@ class AffordabilityController @Inject() (
   def getYourMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.getYourMonthlyIncome: $request")
     journeyService.authorizedForSsttp{ journey: Journey =>
-      val emptyForm = createIncomeForm()
+      val emptyForm = incomeForm
       val formWithData = journey.maybeIncome.map(income =>
         emptyForm.fill(IncomeInput(
           monthlyIncome = income.amount("monthly-income"),
@@ -108,13 +108,13 @@ class AffordabilityController @Inject() (
     JourneyLogger.info(s"AffordabilityController.submitMonthlyIncome: $request")
 
     journeyService.authorizedForSsttp { journey: Journey =>
-      createIncomeForm().bindFromRequest().fold(
+      incomeForm.bindFromRequest().fold(
         formWithErrors => {
           Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn)))
         },
 
         { (input: IncomeInput) =>
-          val formValidatedForPositiveTotal = validateIncomeInputTotal(createIncomeForm().fill(input))
+          val formValidatedForPositiveTotal = validateIncomeInputTotal(incomeForm.fill(input))
           if (formValidatedForPositiveTotal.hasErrors) {
             Future.successful(BadRequest(views.your_monthly_income(formValidatedForPositiveTotal, isSignedIn)))
 
