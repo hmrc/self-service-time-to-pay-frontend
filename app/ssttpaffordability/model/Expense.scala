@@ -57,11 +57,6 @@ object Expense extends Enum[Expense] with PlayInsensitiveJsonEnum[Expense] {
   }
 }
 
-//object Expense {
-//  implicit val format: OFormat[Expense] = Json.format[Expense]
-//  implicit val format1: OFormat[HousingExp.type] = Json.format[HousingExp.type]
-//}
-//
 final case class Expenses(category: Expense, amount: BigDecimal = 0)
 
 object Expenses {

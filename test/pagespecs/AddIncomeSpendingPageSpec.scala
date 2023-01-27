@@ -18,6 +18,7 @@ package pagespecs
 
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
+import ssttpaffordability.model.Expense._
 import ssttpaffordability.model._
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
@@ -173,18 +174,18 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
           addIncomeSpendingPage.assertSpendingTableDisplayed(
-            Housing(housingAmount),
-            PensionContributions(pensionContributionsAmount)
+            Expenses(HousingExp, housingAmount),
+            Expenses(PensionContributionsExp, pensionContributionsAmount)
           )
           addIncomeSpendingPage.assertZeroSpendingCategoriesNotDisplayed(
-            CouncilTax(),
-            Utilities(),
-            DebtRepayments(),
-            Travel(),
-            Childcare(),
-            Insurance(),
-            Groceries(),
-            Health())
+            Expenses(CouncilTaxExp),
+            Expenses(UtilitiesExp),
+            Expenses(DebtRepaymentsExp),
+            Expenses(TravelExp),
+            Expenses(ChildcareExp),
+            Expenses(InsuranceExp),
+            Expenses(GroceriesExp),
+            Expenses(HealthExp))
         }
       }
 

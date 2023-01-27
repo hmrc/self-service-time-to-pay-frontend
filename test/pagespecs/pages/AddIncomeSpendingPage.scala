@@ -21,6 +21,7 @@ import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
+import ssttpaffordability.model.Expense._
 import ssttpaffordability.model._
 import testsupport.RichMatchers._
 
@@ -63,7 +64,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
   }
 
-  def assertSpendingTableDisplayed(categoriesFilled: Expense*)(implicit lang: Language): Unit = {
+  def assertSpendingTableDisplayed(categoriesFilled: Expenses*)(implicit lang: Language): Unit = {
     val expectedCategoryHeadings = Expected.SpendingText.categoryHeadingsText(categoriesFilled)
     val expectedCategoryAmount = Expected.SpendingText.categoryAmounts(categoriesFilled)
     val expectedTotalHeading = Expected.SpendingText.totalSpendingHeadingText
@@ -88,7 +89,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
   }
 
-  def assertZeroSpendingCategoriesNotDisplayed(categoriesNotFilled: Expense*)(implicit lang: Language): Unit = {
+  def assertZeroSpendingCategoriesNotDisplayed(categoriesNotFilled: Expenses*)(implicit lang: Language): Unit = {
     val categoryHeadingsNotExpected = Expected.SpendingText.categoryHeadingsText(categoriesNotFilled)
     val categoryAmountsNotExpected = Expected.SpendingText.categoryAmounts(categoriesNotFilled)
 
@@ -258,24 +259,26 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
     object SpendingText {
       def categoryHeadingsText(
-          categoriesFilled: Seq[Expense] = Seq()
+          categoriesFilled: Seq[Expenses] = Seq()
       )(implicit lang: Language): Seq[String] = {
         categoriesFilled.map {
-          case Housing(_)              => housingText
-          case PensionContributions(_) => pensionContributionsText
-          case CouncilTax(_)           => councilTaxText
-          case Utilities(_)            => utilitiesText
-          case DebtRepayments(_)       => debtRepaymentsText
-          case Travel(_)               => travelText
-          case Childcare(_)            => childcareText
-          case Insurance(_)            => insuranceText
-          case Groceries(_)            => groceriesText
-          case Health(_)               => healthText
+          _.category match {
+            case HousingExp              => housingText
+            case PensionContributionsExp => pensionContributionsText
+            case CouncilTaxExp           => councilTaxText
+            case UtilitiesExp            => utilitiesText
+            case DebtRepaymentsExp       => debtRepaymentsText
+            case TravelExp               => travelText
+            case ChildcareExp            => childcareText
+            case InsuranceExp            => insuranceText
+            case GroceriesExp            => groceriesText
+            case HealthExp               => healthText
+          }
         }.filterNot(_ == "nothing")
       }
 
       def categoryAmounts(
-          categoryAmounts: Seq[Expense] = Seq()
+          categoryAmounts: Seq[Expenses] = Seq()
       )(implicit lang: Language): Seq[String] = {
         categoryAmounts
           .filterNot(_.amount == 0)
@@ -287,7 +290,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         case Welsh   => "Cyfanswm y gwariant"
       }
 
-      def totalSpendingAmount(categoryAmounts: Seq[Expense] = Seq())(implicit lang: Language): String = {
+      def totalSpendingAmount(categoryAmounts: Seq[Expenses] = Seq())(implicit lang: Language): String = {
         commaFormat(categoryAmounts.map(_.amount).sum)
       }
 
