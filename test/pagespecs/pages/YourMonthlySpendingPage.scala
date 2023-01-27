@@ -54,6 +54,18 @@ class YourMonthlySpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) e
     enter(value)
   }
 
+  def enterPensionContributions(value: String): Unit = {
+    val pensionContributions = xpath("//*[@id=\"pension-contributions\"]")
+    click on pensionContributions
+    enter(value)
+  }
+
+  def enterCouncilTax(value: String): Unit = {
+    val councilTax = xpath("//*[@id=\"council-tax\"]")
+    click on councilTax
+    enter(value)
+  }
+
   def assertHousingValueIsDisplayed(value: String): Assertion = {
     val housing = textField("housing")
     housing.value shouldBe value

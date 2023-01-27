@@ -19,34 +19,34 @@ package ssttpaffordability
 import ssttpaffordability.AffordabilityForm.parseStringToBigDecimal
 
 final case class SpendingInput(
-    housing:             BigDecimal,
-    pensionContribution: BigDecimal,
-    councilTax:          BigDecimal,
-    utilities:           BigDecimal,
-    debtRepayments:      BigDecimal,
-    travel:              BigDecimal,
-    childcare:           BigDecimal,
-    insurance:           BigDecimal,
-    groceries:           BigDecimal,
-    health:              BigDecimal
+    housing:              BigDecimal,
+    pensionContributions: BigDecimal,
+    councilTax:           BigDecimal,
+    utilities:            BigDecimal,
+    debtRepayments:       BigDecimal,
+    travel:               BigDecimal,
+    childcare:            BigDecimal,
+    insurance:            BigDecimal,
+    groceries:            BigDecimal,
+    health:               BigDecimal
 )
 
 object SpendingInput {
   def apply(
-      housingStr:             String,
-      pensionContributionStr: String,
-      councilTaxStr:          String,
-      utilitiesStr:           String,
-      debtRepaymentsStr:      String,
-      travelStr:              String,
-      childcareStr:           String,
-      insuranceStr:           String,
-      groceriesStr:           String,
-      healthStr:              String
+      housingStr:              String,
+      pensionContributionsStr: String,
+      councilTaxStr:           String,
+      utilitiesStr:            String,
+      debtRepaymentsStr:       String,
+      travelStr:               String,
+      childcareStr:            String,
+      insuranceStr:            String,
+      groceriesStr:            String,
+      healthStr:               String
   ): SpendingInput = {
     SpendingInput(
       parseStringToBigDecimal(housingStr),
-      parseStringToBigDecimal(pensionContributionStr),
+      parseStringToBigDecimal(pensionContributionsStr),
       parseStringToBigDecimal(councilTaxStr),
       parseStringToBigDecimal(utilitiesStr),
       parseStringToBigDecimal(debtRepaymentsStr),
@@ -61,7 +61,7 @@ object SpendingInput {
   def unapply(spendingInput: SpendingInput): Option[(String, String, String, String, String, String, String, String, String, String)] = {
     Some((
       spendingInput.housing.toString(),
-      spendingInput.pensionContribution.toString(),
+      spendingInput.pensionContributions.toString(),
       spendingInput.councilTax.toString(),
       spendingInput.utilities.toString(),
       spendingInput.debtRepayments.toString(),

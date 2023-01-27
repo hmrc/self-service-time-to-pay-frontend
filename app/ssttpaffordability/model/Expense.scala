@@ -16,13 +16,49 @@
 
 package ssttpaffordability.model
 
+import enumeratum._
 import play.api.libs.json.{Json, OFormat}
 
-final case class Expense(
-    category: String,
-    amount:   BigDecimal = BigDecimal(0)
-)
+sealed trait Expense extends EnumEntry with EnumEntry.Uncapitalised {
+  val messageKey: String
+}
+object Expense extends Enum[Expense] with PlayInsensitiveJsonEnum[Expense] {
+  val values = findValues
 
-object Expense {
-  implicit val format: OFormat[Expense] = Json.format[Expense]
+  case object HousingExp extends Expense {
+    val messageKey: String = "ssttp.affordability.your-monthly-spending.form.housing"
+  }
+  case object PensionContributionsExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.pension-contributions"
+  }
+  case object CouncilTaxExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.council-tax"
+  }
+  case object UtilitiesExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.utilities"
+  }
+  case object DebtRepaymentsExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.debt-repayments"
+  }
+  case object TravelExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.travel"
+  }
+  case object ChildcareExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.childcare"
+  }
+  case object InsuranceExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.insurance"
+  }
+  case object GroceriesExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.groceries"
+  }
+  case object HealthExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.health"
+  }
+}
+
+final case class Expenses(category: Expense, amount: BigDecimal = 0)
+
+object Expenses {
+  implicit val format: OFormat[Expenses] = Json.format[Expenses]
 }

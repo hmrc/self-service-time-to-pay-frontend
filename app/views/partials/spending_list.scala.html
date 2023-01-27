@@ -14,24 +14,24 @@
  * limitations under the License.
  *@
 
-@import ssttpaffordability.model.Expense
+@import ssttpaffordability.model.Expenses
 
-@(monthlySpending: Seq[Expense])(implicit messages: play.api.i18n.Messages)
+@(spending: Seq[Expenses])(implicit messages: play.api.i18n.Messages)
 
 <div class="govuk-!-padding-left-6 govuk-!-margin-bottom-9">
     <dl class="govuk-summary-list">
 
-        @{monthlySpending.map( exp => if (exp.amount > 0)
+        @{spending.map( expense => if (expense.amount > 0)
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages("ssttp.affordability.your-monthly-spending.form."+{s"${exp.category}"})}</dt>
-                <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(exp.amount)}</dd>
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages(expense.category.messageKey)}</dt>
+                <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(expense.amount)}</dd>
             </div>
             )
         }
 
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
-            <dd class="govuk-summary-list__value govuk-!-font-weight-bold govuk-!-text-align-right">@{partials.currency(monthlySpending.map(_.amount).sum)}</dd>
+            <dt class="govuk-summary-list__key govuk-!-width-one-half">@{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
+            <dd class="govuk-summary-list__value govuk-!-font-weight-bold govuk-!-text-align-right">@{partials.currency(spending.map(_.amount).sum)}</dd>
         </div>
 
     </dl>

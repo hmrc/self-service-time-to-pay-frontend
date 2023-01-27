@@ -15,7 +15,9 @@
  *@
 
 @import partials.{income_list, spending_list}
-@import ssttpaffordability.model.{IncomeCategory, Expense}
+@import ssttpaffordability.model.IncomeCategory
+@import ssttpaffordability.model.Expense
+@import ssttpaffordability.model.Expenses
 
 @this(
   main: views.html.main,
@@ -24,12 +26,13 @@
 
 @(
     income: Seq[IncomeCategory],
-    monthlySpending: Seq[Expense]
+    spending: Seq[Expenses]
 )(implicit
     messages: play.api.i18n.Messages,
     request: Request[_],
     appConfig: config.AppConfig
 )
+
 
 @main(
     title = messages("ssttp.affordability.income-spending.h1"),
@@ -43,9 +46,9 @@
                 <a class="govuk-link govuk-body-m" id="monthly-income" href="monthly-income">
                     @(if(income.isEmpty) {
                         messages("ssttp.affordability.income-spending.add-income")
-                    } else {
-                        messages("ssttp.affordability.income-spending.change-income")
-                    })
+                        } else {
+                            messages("ssttp.affordability.income-spending.change-income")
+                        })
                 </a>
                 <span class="govuk-visually-hidden"> @messages("ssttp.affordability.income-spending.hidden")</span>
             </span>
@@ -54,16 +57,16 @@
             </h2>
 
             @{if(income.isEmpty) {
-                <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9" />
-            } else {
-                income_list(income)
-            }
+                        <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9" />
+                } else {
+                    income_list(income)
+                }
             }
         </li>
         <li>
             <span class="pull-right">
                 <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
-                    @{if(monthlySpending.isEmpty) {
+                    @{if(spending.isEmpty) {
                         messages("ssttp.affordability.income-spending.add-spending")
                         } else {
                             messages("ssttp.affordability.income-spending.change-spending")}
@@ -71,16 +74,17 @@
                 </a>
                 <span class="govuk-visually-hidden"> @messages("ssttp.affordability.income-spending.hidden")</span>
             </span>
-            <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
-            </h2>
-                 @{if(monthlySpending.isEmpty) {
-                     <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9"/>
-                     } else {
-                         spending_list(monthlySpending)
-                     }
-                 }
+                <h2 class="app-task-list__section">
+                    <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
+                </h2>
+                    @{if(spending.isEmpty) {
+                                <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-9"/>
+                        } else {
+                            spending_list(spending)
+                    }
+                }
         </li>
     </ol>
+
 
 }
