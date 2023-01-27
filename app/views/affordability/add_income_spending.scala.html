@@ -15,18 +15,18 @@
  *@
 
 @import partials.{income_list, spending_list}
-@import ssttpaffordability.model.Expense
 @import ssttpaffordability.model.IncomeCategory
+@import ssttpaffordability.model.Expense
+@import ssttpaffordability.model.Expenses
 
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers
 )
 
-
 @(
     income: Seq[IncomeCategory],
-    spending: Seq[Expense]
+    spending: Seq[Expenses]
 )(implicit
     messages: play.api.i18n.Messages,
     request: Request[_],

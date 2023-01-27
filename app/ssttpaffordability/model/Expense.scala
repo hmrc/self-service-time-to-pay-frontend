@@ -16,114 +16,54 @@
 
 package ssttpaffordability.model
 
+import enumeratum._
 import play.api.libs.json.{Json, OFormat}
 
-sealed trait Expense {
-  val category: String
+sealed trait Expense extends EnumEntry with EnumEntry.Uncapitalised {
   val messageKey: String
-  val amount: BigDecimal
+}
+object Expense extends Enum[Expense] with PlayInsensitiveJsonEnum[Expense] {
+  val values = findValues
+
+  case object HousingExp extends Expense {
+    val messageKey: String = "ssttp.affordability.your-monthly-spending.form.housing"
+  }
+  case object PensionContributionsExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.pension-contributions"
+  }
+  case object CouncilTaxExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.council-tax"
+  }
+  case object UtilitiesExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.utilities"
+  }
+  case object DebtRepaymentsExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.debt-repayments"
+  }
+  case object TravelExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.travel"
+  }
+  case object ChildcareExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.childcare"
+  }
+  case object InsuranceExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.insurance"
+  }
+  case object GroceriesExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.groceries"
+  }
+  case object HealthExp extends Expense {
+    val messageKey = "ssttp.affordability.your-monthly-spending.form.health"
+  }
 }
 
-object Expense {
-  implicit val format: OFormat[Expense] = Json.format[Expense]
-}
+//object Expense {
+//  implicit val format: OFormat[Expense] = Json.format[Expense]
+//  implicit val format1: OFormat[HousingExp.type] = Json.format[HousingExp.type]
+//}
+//
+final case class Expenses(category: Expense, amount: BigDecimal = 0)
 
-final case class Housing(amount: BigDecimal = 0) extends Expense {
-  val category = "Housing"
-  val messageKey = "ssttp.affordability.your-monthly-spending.form.housing"
-}
-
-object Housing {
-  implicit val format: OFormat[Housing] = Json.format[Housing]
-
-}
-
-final case class PensionContributions(amount: BigDecimal = 0) extends Expense {
-  val category = "Pension contributions"
-  val messageKey = "ssttp.affordability.your-monthly-spending.form.pension-contributions"
-}
-
-object PensionContributions {
-  implicit val format: OFormat[PensionContributions] = Json.format[PensionContributions]
-
-}
-
-final case class CouncilTax(amount: BigDecimal = 0) extends Expense {
-  val category = "Council tax"
-  val messageKey = "ssttp.affordability.your-monthly-spending.form.council-tax"
-}
-
-object CouncilTax {
-  implicit val format: OFormat[CouncilTax] = Json.format[CouncilTax]
-
-}
-
-final case class Utilities(amount: BigDecimal = 0) extends Expense {
-  val category = "Utilities"
-  val messageKey = "ssttp.affordability.your-monthly-spending.form.utilities"
-}
-
-object Utilities {
-  implicit val format: OFormat[Utilities] = Json.format[Utilities]
-
-}
-
-final case class DebtRepayments(amount: BigDecimal = 0) extends Expense {
-  val category = "Debt repayments"
-  val messageKey = "ssttp.affordability.your-monthly-spending.form.debt-repayments"
-}
-
-object DebtRepayments {
-  implicit val format: OFormat[DebtRepayments] = Json.format[DebtRepayments]
-
-}
-
-final case class Travel(amount: BigDecimal = 0) extends Expense {
-  val category = "Travel"
-  val messageKey = "ssttp.affordability.your-monthly-spending.form.travel"
-}
-
-object Travel {
-  implicit val format: OFormat[Travel] = Json.format[Travel]
-
-}
-
-final case class Childcare(amount: BigDecimal = 0) extends Expense {
-  val category = "Childcare"
-  val messageKey = "ssttp.affordability.your-monthly-spending.form.childcare"
-}
-
-object Childcare {
-  implicit val format: OFormat[Childcare] = Json.format[Childcare]
-
-}
-
-final case class Insurance(amount: BigDecimal = 0) extends Expense {
-  val category = "Insurance"
-  val messageKey = "ssttp.affordability.your-monthly-spending.form.insurance"
-}
-
-object Insurance {
-  implicit val format: OFormat[Insurance] = Json.format[Insurance]
-
-}
-
-final case class Groceries(amount: BigDecimal = 0) extends Expense {
-  val category = "Groceries"
-  val messageKey = "ssttp.affordability.your-monthly-spending.form.groceries"
-}
-
-object Groceries {
-  implicit val format: OFormat[Groceries] = Json.format[Groceries]
-
-}
-
-final case class Health(amount: BigDecimal = 0) extends Expense {
-  val category = "Health"
-  val messageKey = "ssttp.affordability.your-monthly-spending.form.health"
-}
-
-object Health {
-  implicit val format: OFormat[Health] = Json.format[Health]
-
+object Expenses {
+  implicit val format: OFormat[Expenses] = Json.format[Expenses]
 }
