@@ -18,11 +18,11 @@ package ssttpaffordability.model
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class Income(categories: IncomeCategory*) {
-  def totalIncome: BigDecimal = categories.map(_.amount).sum
+final case class Income(budgetLines: IncomeBudgetLine*) {
+  def totalIncome: BigDecimal = budgetLines.map(_.amount).sum
 
-  def amount(heading: String): BigDecimal = {
-    categories.find(_.heading == heading).fold(BigDecimal(0))(_.amount)
+  def amount(category: IncomeCategory): BigDecimal = {
+    budgetLines.find(_.category == category).fold(BigDecimal(0))(_.amount)
   }
 }
 

@@ -25,6 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttpaffordability.AffordabilityForm.{incomeForm, incomeInputTotalNotPositiveOverride, spendingForm, validateIncomeInputTotal}
 import ssttpaffordability.model.Expense._
+import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
@@ -85,7 +86,7 @@ class AffordabilityController @Inject() (
     JourneyLogger.info(s"AffordabilityController.getAddIncomeAndSpending: $request")
     journeyService.authorizedForSsttp { journey =>
       val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
-      val income = journey.maybeIncome.fold(Seq.empty[IncomeCategory])(_.categories)
+      val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
       Future.successful(Ok(views.add_income_spending(income, spending)))
     }
   }
@@ -96,9 +97,9 @@ class AffordabilityController @Inject() (
       val emptyForm = incomeForm
       val formWithData = journey.maybeIncome.map(income =>
         emptyForm.fill(IncomeInput(
-          monthlyIncome = income.amount("Monthly income after tax"),
-          benefits      = income.amount("Benefits"),
-          otherIncome   = income.amount("Other monthly income")
+          monthlyIncome = income.amount(MonthlyIncome),
+          benefits      = income.amount(Benefits),
+          otherIncome   = income.amount(OtherIncome)
         ))
       ).getOrElse(emptyForm)
       Future.successful(Ok(views.your_monthly_income(formWithData, isSignedIn)))
@@ -139,9 +140,9 @@ class AffordabilityController @Inject() (
   )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
     val newJourney = journey.copy(
       maybeIncome = Some(Income(
-        MonthlyIncome(input.monthlyIncome),
-        Benefits(input.benefits),
-        OtherIncome(input.otherIncome)
+        IncomeBudgetLine(MonthlyIncome, input.monthlyIncome),
+        IncomeBudgetLine(Benefits, input.benefits),
+        IncomeBudgetLine(OtherIncome, input.otherIncome)
       ))
     )
     journeyService.saveJourney(newJourney)

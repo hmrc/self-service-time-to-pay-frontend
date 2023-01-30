@@ -19,6 +19,7 @@ package pagespecs
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
 import ssttpaffordability.model.Expense._
+import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
@@ -93,8 +94,10 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           fillOutIncome(monthlyIncome = monthlyIncomeAmount.toString)
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
-          addIncomeSpendingPage.assertIncomeTableDisplayed(MonthlyIncome(monthlyIncomeAmount))
-          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Benefits(), OtherIncome())
+          addIncomeSpendingPage.assertIncomeTableDisplayed(
+            IncomeBudgetLine(MonthlyIncome, monthlyIncomeAmount)
+          )
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Benefits, OtherIncome)
         }
         "only benefits filled out" in {
           beginJourney()
@@ -104,8 +107,10 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           fillOutIncome(benefits = benefitsAmount.toString)
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
-          addIncomeSpendingPage.assertIncomeTableDisplayed(Benefits(benefitsAmount))
-          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome(), OtherIncome())
+          addIncomeSpendingPage.assertIncomeTableDisplayed(
+            IncomeBudgetLine(Benefits, benefitsAmount)
+          )
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome, OtherIncome)
         }
         "only other income filled out" in {
           beginJourney()
@@ -115,8 +120,10 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           fillOutIncome(otherIncome = otherIncomeAmount.toString)
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
-          addIncomeSpendingPage.assertIncomeTableDisplayed(OtherIncome(otherIncomeAmount))
-          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome(), Benefits())
+          addIncomeSpendingPage.assertIncomeTableDisplayed(
+            IncomeBudgetLine(OtherIncome, otherIncomeAmount)
+          )
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome, Benefits)
         }
         "all categories filled out" in {
           beginJourney()
@@ -129,9 +136,9 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
           addIncomeSpendingPage.assertPathHeaderTitleCorrect
           addIncomeSpendingPage.assertIncomeTableDisplayed(
-            MonthlyIncome(monthlyIncomeAmount),
-            Benefits(benefitsAmount),
-            OtherIncome(otherIncomeAmount)
+            IncomeBudgetLine(MonthlyIncome, monthlyIncomeAmount),
+            IncomeBudgetLine(Benefits, benefitsAmount),
+            IncomeBudgetLine(OtherIncome, otherIncomeAmount)
           )
         }
       }

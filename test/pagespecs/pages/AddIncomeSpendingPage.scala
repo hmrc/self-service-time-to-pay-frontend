@@ -22,6 +22,7 @@ import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import ssttpaffordability.model.Expense._
+import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
 import testsupport.RichMatchers._
 
@@ -48,11 +49,11 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     assertContentMatchesExpectedLines(Seq(Expected.LinkText.AddSpending()))
   }
 
-  def assertIncomeTableDisplayed(categoriesFilled: IncomeCategory*)(implicit lang: Language): Unit = {
-    val expectedCategoryHeadings = Expected.IncomeText.categoryHeadingsText(categoriesFilled)
-    val expectedCategoryAmount = Expected.IncomeText.categoryAmounts(categoriesFilled)
+  def assertIncomeTableDisplayed(budgetLines: IncomeBudgetLine*)(implicit lang: Language): Unit = {
+    val expectedCategoryHeadings = Expected.IncomeText.categoryHeadingsText(budgetLines.map(_.category))
+    val expectedCategoryAmount = Expected.IncomeText.categoryAmounts(budgetLines)
     val expectedTotalHeading = Expected.IncomeText.totalIncomeHeadingText
-    val expectedTotalAmount = Expected.IncomeText.totalIncomeAmount(categoriesFilled)
+    val expectedTotalAmount = Expected.IncomeText.totalIncomeAmount(budgetLines)
 
     probing {
       assertContentMatchesExpectedLines(
@@ -82,7 +83,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
   def assertZeroIncomeCategoriesNotDisplayed(categoriesNotFilled: IncomeCategory*)(implicit lang: Language): Unit = {
     val categoryHeadingsNotExpected = Expected.IncomeText.categoryHeadingsText(categoriesNotFilled)
-    val categoryAmountsNotExpected = Expected.IncomeText.categoryAmounts(categoriesNotFilled)
+    val categoryAmountsNotExpected = Expected.IncomeText.categoryAmounts(categoriesNotFilled.map(IncomeBudgetLine(_)))
 
     probing {
       assertContentDoesNotContainLines(categoryHeadingsNotExpected ++ categoryAmountsNotExpected)
@@ -212,14 +213,14 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
           categoriesFilled: Seq[IncomeCategory] = Seq()
       )(implicit lang: Language): Seq[String] = {
         categoriesFilled.map {
-          case MonthlyIncome(_) => monthlyIncomeText
-          case Benefits(_)      => benefitsText
-          case OtherIncome(_)   => otherIncomeText
+          case MonthlyIncome => monthlyIncomeText
+          case Benefits      => benefitsText
+          case OtherIncome   => otherIncomeText
         }.filterNot(_ == "nothing")
       }
 
       def categoryAmounts(
-          categoryAmounts: Seq[IncomeCategory] = Seq()
+          categoryAmounts: Seq[IncomeBudgetLine] = Seq()
       )(implicit lang: Language): Seq[String] = {
         categoryAmounts
           .filterNot(_.amount == 0)
@@ -231,7 +232,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
         case Welsh   => "Cyfanswm eich incwm"
       }
 
-      def totalIncomeAmount(categoryAmounts: Seq[IncomeCategory] = Seq())(implicit lang: Language): String = {
+      def totalIncomeAmount(categoryAmounts: Seq[IncomeBudgetLine] = Seq())(implicit lang: Language): String = {
         commaFormat(categoryAmounts.map(_.amount).sum)
       }
 
