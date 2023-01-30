@@ -15,7 +15,7 @@
  *@
 
 @import partials.{income_list, spending_list}
-@import ssttpaffordability.model.IncomeCategory
+@import ssttpaffordability.model.IncomeBudgetLine
 @import ssttpaffordability.model.Expense
 @import ssttpaffordability.model.Expenses
 
@@ -25,7 +25,7 @@
 )
 
 @(
-    income: Seq[IncomeCategory],
+    income: Seq[IncomeBudgetLine],
     spending: Seq[Expenses]
 )(implicit
     messages: play.api.i18n.Messages,

@@ -16,42 +16,34 @@
 
 package ssttpaffordability.model
 
+import enumeratum._
 import play.api.libs.json.{Json, OFormat}
 
-sealed trait IncomeCategory {
-  val heading: String
+sealed trait IncomeCategory extends EnumEntry with EnumEntry.Uncapitalised {
   val messageKey: String
-  val amount: BigDecimal
 }
 
-object IncomeCategory {
-  implicit val format: OFormat[IncomeCategory] = Json.format[IncomeCategory]
+object IncomeCategory extends Enum[IncomeCategory] with PlayInsensitiveJsonEnum[IncomeCategory] {
+  val values = findValues
+
+  case object MonthlyIncome extends IncomeCategory {
+    val messageKey = "ssttp.affordability.your-monthly-income.form.monthly-income"
+  }
+
+  case object Benefits extends IncomeCategory {
+    val messageKey = "ssttp.affordability.your-monthly-income.form.benefits"
+  }
+
+  case object OtherIncome extends IncomeCategory {
+    val messageKey = "ssttp.affordability.your-monthly-income.form.other-income"
+  }
 }
 
-final case class MonthlyIncome(amount: BigDecimal = 0) extends IncomeCategory {
-  val heading = "Monthly income after tax"
-  val messageKey = "ssttp.affordability.your-monthly-income.form.monthly-income"
-}
+final case class IncomeBudgetLine(
+    category: IncomeCategory,
+    amount:   BigDecimal     = 0
+)
 
-object MonthlyIncome {
-  implicit val format: OFormat[MonthlyIncome] = Json.format[MonthlyIncome]
-
-}
-
-final case class Benefits(amount: BigDecimal = 0) extends IncomeCategory {
-  val heading = "Benefits"
-  val messageKey = "ssttp.affordability.your-monthly-income.form.benefits"
-}
-
-object Benefits {
-  implicit val format: OFormat[Benefits] = Json.format[Benefits]
-}
-
-final case class OtherIncome(amount: BigDecimal = 0) extends IncomeCategory {
-  val heading = "Other monthly income"
-  val messageKey = "ssttp.affordability.your-monthly-income.form.other-income"
-}
-
-object OtherIncome {
-  implicit val format: OFormat[OtherIncome] = Json.format[OtherIncome]
+object IncomeBudgetLine {
+  implicit val format: OFormat[IncomeBudgetLine] = Json.format[IncomeBudgetLine]
 }

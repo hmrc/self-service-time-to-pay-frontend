@@ -14,17 +14,17 @@
  * limitations under the License.
  *@
 
-@import ssttpaffordability.model.IncomeCategory
+@import ssttpaffordability.model.IncomeBudgetLine
 
-@(income: Seq[IncomeCategory])(implicit messages: play.api.i18n.Messages)
+@(income: Seq[IncomeBudgetLine])(implicit messages: play.api.i18n.Messages)
 
 <div class="govuk-!-padding-left-6 govuk-!-margin-bottom-9">
     <dl class="govuk-summary-list">
 
-        @{income.map( category => if (category.amount > 0)
+        @{income.map( budgetLine => if (budgetLine.amount > 0)
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages(category.messageKey)}</dt>
-                <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(category.amount)}</dd>
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages(budgetLine.category.messageKey)}</dt>
+                <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(budgetLine.amount)}</dd>
             </div>
             )
         }
