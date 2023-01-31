@@ -57,7 +57,7 @@
         <li>
             <span class="pull-right">
                 <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
-                    @messages("ssttp.affordability.income-spending.change-spending")}
+                    @messages("ssttp.affordability.income-spending.change-spending")
                 </a>
                 <span class="govuk-visually-hidden"> @messages("ssttp.affordability.income-spending.hidden")</span>
             </span>
@@ -68,18 +68,24 @@
         </li>
         <li>
             <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.how-much-you-could-afford.left-over-income")
+                <span class="app-task-list__section-number">3.</span>@messages("ssttp.affordability.how-much-you-could-afford.left-over-income")
             </h2>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">@messages("ssttp.affordability.how-much-you-could-afford.total")</dt>
-                <dd class="govuk-summary-list__value govuk-!-text-align-right">@partials.currency(total)</dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key govuk-!-width-one-half">@messages("ssttp.affordability.how-much-you-could-afford.half-of-total")</dt>
-                <dd class="govuk-summary-list__value govuk-!-text-align-right">@partials.currency(total / 2)</dd>
+            <div class="govuk-!-padding-left-6 govuk-!-margin-bottom-9">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">@messages("ssttp.affordability.how-much-you-could-afford.total")</dt>
+                        <dd class="govuk-summary-list__value govuk-!-text-align-right">@partials.currency(total)</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key govuk-!-width-one-half">@messages("ssttp.affordability.how-much-you-could-afford.half-of-total")</dt>
+                        <dd class="govuk-summary-list__value govuk-!-text-align-right govuk-!-font-weight-bold">@partials.currency(total / 2)</dd>
+                    </div>
+                </dl>
             </div>
         </li>
     </ol>
 
-
-}
+        @viewsHelpers.form(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford(), 'id -> "how-much-you-could-afford") {
+            @viewsHelpers.continue()
+        }
+    }

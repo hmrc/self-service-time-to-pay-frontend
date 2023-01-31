@@ -87,7 +87,21 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { journey =>
       val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
       val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
-      Future.successful(Ok(views.add_income_spending(income, spending)))
+      if (spending.nonEmpty && income.nonEmpty) {
+        Redirect(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford())
+      } else {
+        Future.successful(Ok(views.add_income_spending(income, spending)))
+      }
+    }
+  }
+
+  def getHowMuchYouCouldAfford(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"AffordabilityController.getHowMuchYouCouldAfford: $request")
+    journeyService.authorizedForSsttp { journey =>
+      val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
+      val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
+      val total = income.map(_.amount).sum - spending.map(_.amount).sum
+      Future.successful(Ok(views.how_much_you_could_afford(income, spending, total)))
     }
   }
 
