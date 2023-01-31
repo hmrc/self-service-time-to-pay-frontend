@@ -59,8 +59,8 @@
 
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">
-            @messages("ssttp.calculator.form.payment_summary.up-front-payment")
-            <p class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</p>
+            @messages("ssttp.calculator.form.payment_summary.up-front-payment")<br>
+            <span class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@messages("ssttp.calculator.form.payment_summary.up-front-payment.hint")</span>
           </dt>
           <dd class="govuk-summary-list__value">
             @currency(initialPayment)
@@ -78,8 +78,8 @@
             @messages("ssttp.calculator.form.payment_summary.amount.remaining")
           </dt>
           <dd class="govuk-summary-list__value">
-            @currency(debits.map(_.amount).sum - initialPayment)
-              <p class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@messages("ssttp.calculator.form.payment_summary.amount.remaining.hint")</p>
+            @currency(debits.map(_.amount).sum - initialPayment)<br>
+              <span class="small govuk-!-font-weight-regular govuk-!-margin-top-1">@messages("ssttp.calculator.form.payment_summary.amount.remaining.hint")</span>
           </dd>
             <dd class="govuk-summary-list__value"></dd>
         </div>
