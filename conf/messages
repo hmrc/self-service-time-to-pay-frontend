@@ -153,7 +153,10 @@ ssttp.affordability.how-much-you-could-afford.h1 = How much you could afford
 ssttp.affordability.how-much-you-could-afford.left-over-income = Left over income
 ssttp.affordability.how-much-you-could-afford.total = Total left over income
 ssttp.affordability.how-much-you-could-afford.half-of-total = Half of left over income
-
+ssttp.affordability.how-much-you-could-afford.leftover-zero.h2 = Your spending is the same as your income
+ssttp.affordability.how-much-you-could-afford.leftover-zero.p = As your spending is the same as your income, call the Payment Support Service on <strong>0300 200 3835</strong> to discuss your debt. You may also want to seek independent debt advice.
+ssttp.affordability.how-much-you-could-afford.leftover-negative.h2 = Your spending is higher than your income
+ssttp.affordability.how-much-you-could-afford.leftover-negative.p = As your spending is higher than your income, call the Payment Support Service on <strong>0300 200 3835</strong> to discuss your debt. You may also want to seek independent debt advice.
 
 #calculator
 
