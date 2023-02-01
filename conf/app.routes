@@ -81,3 +81,4 @@ GET         /monthly-income                                               ssttpa
 POST        /monthly-income                                               ssttpaffordability.AffordabilityController.submitMonthlyIncome()
 GET         /monthly-spending                                             ssttpaffordability.AffordabilityController.getYourMonthlySpending()
 POST        /monthly-spending                                             ssttpaffordability.AffordabilityController.submitMonthlySpending()
+GET         /how-much-you-could-afford                                    ssttpaffordability.AffordabilityController.getHowMuchYouCouldAfford()

@@ -149,6 +149,11 @@ ssttp.affordability.your-monthly-spending.error.title = There is a problem
 ssttp.affordability.your-monthly-spending.error.non-numerals = Enter numbers only
 ssttp.affordability.your-monthly-spending.total = Total spending
 
+ssttp.affordability.how-much-you-could-afford.h1 = How much you could afford
+ssttp.affordability.how-much-you-could-afford.left-over-income = Left over income
+ssttp.affordability.how-much-you-could-afford.total = Total left over income
+ssttp.affordability.how-much-you-could-afford.half-of-total = Half of left over income
+
 
 #calculator
 

@@ -41,6 +41,10 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     assertContentMatchesExpectedLines(expectedLines)
   }
 
+  def assertPagePathCorrect: Assertion = probing {
+    readPath() shouldBe path
+  }
+
   def assertAddIncomeLinkIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     assertContentMatchesExpectedLines(Seq(Expected.LinkText.AddIncome()))
   }
@@ -116,6 +120,30 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Add your income and spending"
     case Languages.Welsh   => "Ychwanegu eich incwm a’ch gwariant"
+  }
+
+  def enterIncome(amount: String): Unit = {
+    clickOnAddChangeIncome()
+    enterIncomeAmount(amount)
+    clickContinue()
+  }
+
+  def enterIncomeAmount(value: String): Unit = {
+    val amount = xpath("//*[@id=\"monthlyIncome\"]")
+    click on amount
+    enter(value)
+  }
+
+  def enterSpending(amount: String): Unit = {
+    clickOnAddChangeSpending()
+    enterSpendingAmount(amount)
+    clickContinue()
+  }
+
+  def enterSpendingAmount(value: String): Unit = {
+    val amount = xpath("//*[@id=\"housing\"]")
+    click on amount
+    enter(value)
   }
 
   def clickContinue(): Unit = {
