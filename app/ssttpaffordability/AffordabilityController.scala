@@ -95,7 +95,7 @@ class AffordabilityController @Inject() (
     }
   }
 
-  def getHowMuchYouCouldAfford(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def getHowMuchYouCouldAfford: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.getHowMuchYouCouldAfford: $request")
     journeyService.authorizedForSsttp { journey =>
       val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)

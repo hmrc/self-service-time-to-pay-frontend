@@ -146,6 +146,11 @@ ssttp.affordability.your-monthly-spending.error.title = Mae problem wedi codi
 ssttp.affordability.your-monthly-spending.error.non-numerals = Enter numbers only
 ssttp.affordability.your-monthly-spending.total = Cyfanswm y gwariant
 
+ssttp.affordability.how-much-you-could-afford.h1 = Faint y gallech ei fforddio
+ssttp.affordability.how-much-you-could-afford.left-over-income = Incwm sydd dros ben
+ssttp.affordability.how-much-you-could-afford.total = Cyfanswm yr incwm sydd dros ben
+ssttp.affordability.how-much-you-could-afford.half-of-total = Hanner yr incwm sydd dros ben
+
 
 #calculator
 
