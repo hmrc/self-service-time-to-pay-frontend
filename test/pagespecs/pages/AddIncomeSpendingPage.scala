@@ -41,6 +41,10 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     assertContentMatchesExpectedLines(expectedLines)
   }
 
+  def assertPagePathCorrect: Assertion = probing {
+    readPath() shouldBe path
+  }
+
   def assertAddIncomeLinkIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     assertContentMatchesExpectedLines(Seq(Expected.LinkText.AddIncome()))
   }
