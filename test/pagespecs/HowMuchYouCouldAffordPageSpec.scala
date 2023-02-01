@@ -48,34 +48,13 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
     startAffordabilityPage.clickContinue()
 
     addIncomeSpendingPage.assertPageIsDisplayed()
-    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed
-    addIncomeSpendingPage.assertAddSpendingLinkIsDisplayed
-  }
-
-  def fillOutIncome(
-      monthlyIncome: String = "",
-  ): Unit = {
-    addIncomeSpendingPage.clickOnAddChangeIncome()
-    yourMonthlyIncomePage.enterMonthlyIncome(monthlyIncome)
-    yourMonthlyIncomePage.clickContinue()
-  }
-
-  def fillOutSpending(
-                       housing: String = "",
-                     ): Unit = {
-    addIncomeSpendingPage.clickOnAddChangeSpending()
-    yourMonthlySpendingPage.enterHousing(housing)
-    yourMonthlySpendingPage.clickContinue()
   }
 
   "page is displayed when both income and spending are filled in" in {
     beginJourney()
 
-    val monthlyIncome = 2000
-    val housing = 1000
-
-    fillOutIncome(monthlyIncome.toString)
-    fillOutSpending(housing.toString)
+    addIncomeSpendingPage.enterIncome("2000")
+    addIncomeSpendingPage.enterSpending("1000")
 
     howMuchYouCouldAffordPage.assertPagePathCorrect
   }
@@ -83,8 +62,7 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
   "page is not displayed if only income is filled in" in {
     beginJourney()
 
-    val monthlyIncome = 2000
-    fillOutIncome(monthlyIncome.toString)
+    addIncomeSpendingPage.enterIncome("2000")
 
     addIncomeSpendingPage.assertPagePathCorrect
   }
@@ -92,12 +70,10 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
   "page is not displayed if only spending is filled in" in {
     beginJourney()
 
-    val housing = 1000
-    fillOutSpending(housing.toString)
+    addIncomeSpendingPage.enterSpending("1000")
 
     addIncomeSpendingPage.assertPagePathCorrect
   }
-
 
   "language" in {
     beginJourney()
@@ -111,11 +87,8 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
     addIncomeSpendingPage.clickOnEnglishLink()
     addIncomeSpendingPage.assertPageIsDisplayed(English)
 
-    val monthlyIncome = 2000
-    val housing = 1000
-
-    fillOutIncome(monthlyIncome.toString)
-    fillOutSpending(housing.toString)
+    addIncomeSpendingPage.enterIncome("2000")
+    addIncomeSpendingPage.enterSpending("1000")
 
     howMuchYouCouldAffordPage.assertPageIsDisplayed()
 

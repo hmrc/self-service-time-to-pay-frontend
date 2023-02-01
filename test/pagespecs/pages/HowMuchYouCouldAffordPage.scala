@@ -23,7 +23,6 @@ import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-
 class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
   override def path: String = "/pay-what-you-owe-in-instalments/how-much-you-could-afford"
