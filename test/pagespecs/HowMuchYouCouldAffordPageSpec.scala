@@ -16,11 +16,7 @@
 
 package pagespecs
 
-import langswitch.Language
 import langswitch.Languages.{English, Welsh}
-import ssttpaffordability.model.Expense._
-import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
-import ssttpaffordability.model._
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._

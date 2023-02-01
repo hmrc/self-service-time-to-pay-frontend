@@ -21,12 +21,8 @@ import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
-import ssttpaffordability.model.Expense._
-import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
-import ssttpaffordability.model._
 import testsupport.RichMatchers._
 
-import java.text.DecimalFormat
 
 class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
