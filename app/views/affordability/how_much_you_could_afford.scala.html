@@ -86,12 +86,12 @@
     </ol>
 
             <h2 class="govuk-heading-m">
-                @(if (total/2 == 0) {messages("ssttp.affordability.how-much-you-could-afford.leftover-zero.h2")}
-                    else if (total/2 < 0) {messages("ssttp.affordability.how-much-you-could-afford.leftover-negative.h2")})
+                @(if (total == 0) {messages("ssttp.affordability.how-much-you-could-afford.leftover-zero.h2")}
+                    else if (total < 0) {messages("ssttp.affordability.how-much-you-could-afford.leftover-negative.h2")})
             </h2>
                 <p class="govuk-body">
-                    @(if (total/2 == 0) {Html(messages("ssttp.affordability.how-much-you-could-afford.leftover-zero.p"))}
-                        else if (total/2 < 0) {Html(messages("ssttp.affordability.how-much-you-could-afford.leftover-negative.p"))})
+                    @(if (total == 0) {Html(messages("ssttp.affordability.how-much-you-could-afford.leftover-zero.p"))}
+                        else if (total < 0) {Html(messages("ssttp.affordability.how-much-you-could-afford.leftover-negative.p"))})
                 </p>
 
         @viewsHelpers.form(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford(), 'id -> "how-much-you-could-afford") {
