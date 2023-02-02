@@ -74,7 +74,45 @@ class CalculatorService @Inject() (
   def regularInstalments(paymentsCalendar:     PaymentsCalendar,
                          regularPaymentAmount: BigDecimal,
                          payables:             Payables
-  ): Seq[Instalment] = ???
+  ): Seq[Instalment] = {
+    val regularPaymentDates = paymentsCalendar.regularPaymentDates
+
+    def regularInstalmentsRecursive(
+                                   regularPaymentDates: Seq[LocalDate],
+                                   regularPaymentAmount: BigDecimal,
+                                   payables: Payables,
+                                   instalmentsAggregator: Seq[Instalment]
+                                 ): Seq[Instalment] = {
+      val balanceToPay = payables.balanceToPay
+
+      if (balanceToPay <= 0) { instalmentsAggregator }
+
+      else if (balanceToPay < regularPaymentAmount) {
+        regularInstalmentsRecursive(
+          regularPaymentDates.tail,
+          regularPaymentAmount,
+          payables.payOff(balanceToPay),
+          instalmentsAggregator :+ Instalment(
+            paymentDate = regularPaymentDates.head,
+            amount = balanceToPay,
+            interest = 0)
+        )
+
+      } else {
+        regularInstalmentsRecursive(
+          regularPaymentDates.tail,
+          regularPaymentAmount,
+          payables.payOff(regularPaymentAmount),
+          instalmentsAggregator :+ Instalment(
+            paymentDate = regularPaymentDates.head,
+            amount = regularPaymentAmount,
+            interest = 0
+          )
+        )
+      }
+    }
+    regularInstalmentsRecursive(regularPaymentDates, regularPaymentAmount, payables, Seq.empty[Instalment])
+  }
 
   // End new for ops-9610
 

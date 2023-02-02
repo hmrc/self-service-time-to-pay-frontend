@@ -21,15 +21,17 @@ import play.api.libs.json.{Json, OFormat}
 
 import scala.math.BigDecimal
 
+sealed trait Animal
+case class Dog(name: String) extends Animal
+case class Cat(name: String) extends Animal
+
 sealed trait Payable {
   def amount: BigDecimal
 }
 
-final case class InterestLiability(segments: Seq[Interest]) {
-  def amount: BigDecimal = segments.map(_.amountAccrued).sum
-}
+case class InterestLiability(amount: BigDecimal) extends Payable
 
-final case class TaxLiability(
+case class TaxLiability(
     amount:  BigDecimal,
     dueDate: LocalDate
 ) extends Payable {

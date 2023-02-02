@@ -17,12 +17,11 @@
 package testsupport.testdata
 
 import java.time.LocalDate
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, stringify, toJson}
-import ssttpcalculator.model.{TaxPaymentPlan, TaxLiability, Instalment, PaymentSchedule}
+import ssttpcalculator.model.{Instalment, Payables, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import testsupport.DateSupport
 
 object CalculatorDataGenerator extends Status with DateSupport {
@@ -130,5 +129,20 @@ object CalculatorDataGenerator extends Status with DateSupport {
       totalInterestCharged = totalInterest,
       totalPayable         = totalDebt + totalInterest,
       instalments          = regularInstallments :+ finalInstallment)
+  }
+
+  object newCalculatorModel {
+    def date(date: String): LocalDate = LocalDate.parse(date)
+
+    val paymentsCalendar: PaymentsCalendar = PaymentsCalendar(
+      upfrontPaymentDate = date("2023-02-12"),
+      regularPaymentsDay = 17
+    )
+
+    val aPaymentOnAccount: TaxLiability = TaxLiability(amount = 1000, dueDate = date("2023-04-30"))
+    val anotherPaymentOnAccount: TaxLiability = TaxLiability(amount = 2000, dueDate = date("2023-07-31"))
+
+    val payables2000inJuly2023: Payables = Payables(liabilities = Seq(anotherPaymentOnAccount))
+    val payablesTwoLiabilities: Payables = Payables(liabilities = Seq(aPaymentOnAccount, anotherPaymentOnAccount))
   }
 }
