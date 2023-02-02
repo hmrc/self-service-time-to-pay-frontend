@@ -36,6 +36,16 @@ class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
     assertContentMatchesExpectedLines(expectedLines)
   }
 
+  def assertZeroIncomeParagraphIsDisplayed(implicit lang: Language): Unit = probing {
+    val zeroIncomeParagraph = Expected.ZeroIncomeParagraph().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(zeroIncomeParagraph)
+  }
+
+  def assertNegativeIncomeParagraphIsDisplayed(implicit lang: Language): Unit = probing {
+    val negativeIncomeParagraph = Expected.NegativeIncomeParagraph().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(negativeIncomeParagraph)
+  }
+
   def assertPagePathCorrect: Assertion = probing {
     readPath() shouldBe path
   }
@@ -111,6 +121,40 @@ class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
            |3.Incwm sydd dros ben
            |Cyfanswm yr incwm sydd dros ben	£1,000
            |Hanner yr incwm sydd dros ben	£500
+      """.stripMargin
+    }
+
+    object ZeroIncomeParagraph {
+      def apply()(implicit language: Language): String = language match {
+        case English => mainTextEnglish
+        case Welsh   => mainTextWelsh
+      }
+
+      private val mainTextEnglish =
+        s"""Your spending is the same as your income
+            |As your spending is the same as your income, call the Payment Support Service on 0300 200 3835 to discuss your debt. You may also want to seek independent debt advice.
+      """.stripMargin
+
+      private val mainTextWelsh =
+        s"""Mae’ch gwariant yr un faint a’ch incwm
+            |Gan fod eich gwariant yr un faint a’ch incwm, cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEF drwy ffonio 0300 200 1900 i drafod eich dyled. Mae’n bosibl yr hoffech geisio cyngor annibynnol ar ddyledion.
+      """.stripMargin
+    }
+
+    object NegativeIncomeParagraph {
+      def apply()(implicit language: Language): String = language match {
+        case English => mainTextEnglish
+        case Welsh   => mainTextWelsh
+      }
+
+      private val mainTextEnglish =
+        s"""Your spending is higher than your income
+            |As your spending is higher than your income, call the Payment Support Service on 0300 200 3835 to discuss your debt. You may also want to seek independent debt advice.
+      """.stripMargin
+
+      private val mainTextWelsh =
+        s"""Mae’ch gwariant yn fwy na’ch incwm
+            |Gan fod eich gwariant yn fwy na’ch incwm, cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEF drwy ffonio 0300 200 1900 i drafod eich dyled. Mae’n bosibl yr hoffech geisio cyngor annibynnol ar ddyledion.
       """.stripMargin
     }
   }
