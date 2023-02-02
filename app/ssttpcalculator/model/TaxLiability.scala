@@ -21,10 +21,18 @@ import play.api.libs.json.{Json, OFormat}
 
 import scala.math.BigDecimal
 
+abstrate trait Payable {
+  def amount: BigDecimal
+}
+
+final case class InterestLiability(segments: Seq[Interest]) {
+  def amount: BigDecimal = segments.map(_.amountAccrued).sum
+}
+
 final case class TaxLiability(
     amount:  BigDecimal,
     dueDate: LocalDate
-) {
+) extends Payable {
   def hasInterestCharge(payment: Payment): Boolean = hasInterestCharge(payment.date)
 
   def hasInterestCharge(paymentDate: LocalDate): Boolean = dueDate.isBefore(paymentDate)

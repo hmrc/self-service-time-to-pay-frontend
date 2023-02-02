@@ -22,7 +22,7 @@ import journey.Journey
 import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
-import ssttpcalculator.model.{Debit, Instalment, LatePayment, Payment, PaymentSchedule, TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{Debit, Instalment, LatePayment, Payables, Payment, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
@@ -55,6 +55,29 @@ class CalculatorService @Inject() (
   val defaultInitialPaymentDays: Int = 10
   val `14 day gap between the initial payment date and the first scheduled payment date`: Int = 14
   val LastPaymentDelayDays = 7
+
+  // NEW for ops-9610
+
+  def buildScheduleNew(
+                      paymentsCalendar: PaymentsCalendar,
+                      upfrontPaymentAmount: BigDecimal,
+                      regularPaymentAmount: BigDecimal,
+                      payables: Payables
+                      ): PaymentSchedule
+
+  def payablesLessUpfrontPayment(
+                                paymentsCalendar: PaymentsCalendar,
+                                upfrontPaymentAmount: BigDecimal,
+                                payables: Payables
+                                ): Payables
+
+  def regularInstalments(paymentsCalendar: PaymentsCalendar,
+                         regularPaymentAmount: BigDecimal,
+                         payables: Payables
+                        ): Seq[Instalment]
+
+
+  // End new for ops-9610
 
   def computeSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
     val availableSchedules: Seq[PaymentSchedule] = availablePaymentSchedules(
