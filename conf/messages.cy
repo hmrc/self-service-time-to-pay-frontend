@@ -153,7 +153,7 @@ ssttp.affordability.how-much-you-could-afford.half-of-total = Hanner yr incwm sy
 ssttp.affordability.how-much-you-could-afford.leftover-zero.h2 = Mae’ch gwariant yr un faint a’ch incwm
 ssttp.affordability.how-much-you-could-afford.leftover-zero.p = Gan fod eich gwariant yr un faint a’ch incwm, cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEF drwy ffonio <strong>0300 200 1900</strong> i drafod eich dyled. Mae’n bosibl yr hoffech geisio cyngor annibynnol ar ddyledion.
 ssttp.affordability.how-much-you-could-afford.leftover-negative.h2 = Mae’ch gwariant yn fwy na’ch incwm
-ssttp.affordability.how-much-you-could-afford.leftover-negative.p = Gan fod eich gwariant yr un faint a’ch incwm, cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEF drwy ffonio <strong>0300 200 1900</strong> i drafod eich dyled. Mae’n bosibl yr hoffech geisio cyngor annibynnol ar ddyledion.
+ssttp.affordability.how-much-you-could-afford.leftover-negative.p = Gan fod eich gwariant yn fwy na’ch incwm, cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEF drwy ffonio <strong>0300 200 1900</strong> i drafod eich dyled. Mae’n bosibl yr hoffech geisio cyngor annibynnol ar ddyledion.
 
 
 #calculator

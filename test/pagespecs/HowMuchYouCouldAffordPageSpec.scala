@@ -75,23 +75,68 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
     addIncomeSpendingPage.assertPagePathCorrect
   }
 
-  "language" in {
-    beginJourney()
+  "when income is higher than spending" - {
+    "language" in {
+      beginJourney()
 
-    addIncomeSpendingPage.assertPageIsDisplayed
+      addIncomeSpendingPage.assertPageIsDisplayed
 
-    addIncomeSpendingPage.clickOnWelshLink()
-    addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
-    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
+      addIncomeSpendingPage.clickOnWelshLink()
+      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
-    addIncomeSpendingPage.clickOnEnglishLink()
-    addIncomeSpendingPage.assertPageIsDisplayed(English)
+      addIncomeSpendingPage.clickOnEnglishLink()
+      addIncomeSpendingPage.assertPageIsDisplayed(English)
 
-    addIncomeSpendingPage.enterIncome("2000")
-    addIncomeSpendingPage.enterSpending("1000")
+      addIncomeSpendingPage.enterIncome("2000")
+      addIncomeSpendingPage.enterSpending("1000")
 
-    howMuchYouCouldAffordPage.assertPageIsDisplayed()
+      howMuchYouCouldAffordPage.assertPageIsDisplayed()
+    }
+  }
 
+  "when income is equal to spending" - {
+    "language" in {
+      beginJourney()
+
+      addIncomeSpendingPage.assertPageIsDisplayed
+
+      addIncomeSpendingPage.clickOnWelshLink()
+      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
+
+      addIncomeSpendingPage.clickOnEnglishLink()
+      addIncomeSpendingPage.assertPageIsDisplayed(English)
+
+      addIncomeSpendingPage.enterIncome("2000")
+      addIncomeSpendingPage.enterSpending("2000")
+
+      howMuchYouCouldAffordPage.assertZeroIncomeParagraphIsDisplayed(English)
+      howMuchYouCouldAffordPage.clickOnWelshLink()
+      howMuchYouCouldAffordPage.assertZeroIncomeParagraphIsDisplayed(Welsh)
+    }
+  }
+
+  "when income is lower than spending" - {
+    "language" in {
+      beginJourney()
+
+      addIncomeSpendingPage.assertPageIsDisplayed
+
+      addIncomeSpendingPage.clickOnWelshLink()
+      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
+
+      addIncomeSpendingPage.clickOnEnglishLink()
+      addIncomeSpendingPage.assertPageIsDisplayed(English)
+
+      addIncomeSpendingPage.enterIncome("1000")
+      addIncomeSpendingPage.enterSpending("2000")
+
+      howMuchYouCouldAffordPage.assertNegativeIncomeParagraphIsDisplayed(English)
+      howMuchYouCouldAffordPage.clickOnWelshLink()
+      howMuchYouCouldAffordPage.assertNegativeIncomeParagraphIsDisplayed(Welsh)
+    }
   }
 
   "back button" in {
