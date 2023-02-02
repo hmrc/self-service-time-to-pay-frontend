@@ -18,8 +18,15 @@ package ssttpcalculator.model
 
 import java.time.LocalDate
 
-case class PaymentsCalendar (
-                            upfrontPaymentDate: LocalDate,
-                            regularPaymentDates: Seq[LocalDate]
-                            )
+case class PaymentsCalendar(
+                           // TODO: update for cases without upfront payments, with a date created or some such
+    upfrontPaymentDate: LocalDate,
+    regularPaymentsDay: Int
+) {
+
+  // TODO: update method against rules for separation of upfront payment date and first regular payment date
+  def regularPaymentDates: Seq[LocalDate] = {
+    (1 to 24).map(upfrontPaymentDate.plusMonths(_).withDayOfMonth(regularPaymentsDay))
+  }
+}
 

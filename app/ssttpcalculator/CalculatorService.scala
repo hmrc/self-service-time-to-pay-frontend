@@ -59,23 +59,22 @@ class CalculatorService @Inject() (
   // NEW for ops-9610
 
   def buildScheduleNew(
-                      paymentsCalendar: PaymentsCalendar,
-                      upfrontPaymentAmount: BigDecimal,
-                      regularPaymentAmount: BigDecimal,
-                      payables: Payables
-                      ): PaymentSchedule
+      paymentsCalendar:     PaymentsCalendar,
+      upfrontPaymentAmount: BigDecimal,
+      regularPaymentAmount: BigDecimal,
+      payables:             Payables
+  ): PaymentSchedule = ???
 
   def payablesLessUpfrontPayment(
-                                paymentsCalendar: PaymentsCalendar,
-                                upfrontPaymentAmount: BigDecimal,
-                                payables: Payables
-                                ): Payables
+      paymentsCalendar:     PaymentsCalendar,
+      upfrontPaymentAmount: BigDecimal,
+      payables:             Payables
+  ): Payables = ???
 
-  def regularInstalments(paymentsCalendar: PaymentsCalendar,
+  def regularInstalments(paymentsCalendar:     PaymentsCalendar,
                          regularPaymentAmount: BigDecimal,
-                         payables: Payables
-                        ): Seq[Instalment]
-
+                         payables:             Payables
+  ): Seq[Instalment] = ???
 
   // End new for ops-9610
 

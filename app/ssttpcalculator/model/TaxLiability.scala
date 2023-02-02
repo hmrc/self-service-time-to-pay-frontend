@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import scala.math.BigDecimal
 
-abstrate trait Payable {
+sealed trait Payable {
   def amount: BigDecimal
 }
 
