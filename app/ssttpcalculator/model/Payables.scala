@@ -16,27 +16,18 @@
 
 package ssttpcalculator.model
 
-import java.time.LocalDate
-
 case class Payables(liabilities: Seq[Payable]) {
   def balanceToPay: BigDecimal = liabilities.map(_.amount).sum
+}
 
-  // TODO [OPS-9610]: add interest accruing functionality
-  def payOff(paymentAmount: BigDecimal)
-            (interestRateCalculator: LocalDate => InterestRate): Payables = {
-    val result = liabilities.foldLeft((paymentAmount, Seq.empty[Payable])) {
-      case ((payment, newSeqBuilder), liability) if payment <= 0 =>
-        (payment, newSeqBuilder :+ liability)
-
-      case ((payment, newSeqBuilder), liability) if payment >= liability.amount =>
-        (payment - liability.amount, newSeqBuilder)
-
-      case ((payment, newSeqBuilder), TaxLiability(amount, dueDate)) =>
-        (0, newSeqBuilder :+ TaxLiability(amount - payment, dueDate))
-
-      case ((payment, newSeqBuilder), InterestLiability(amount)) =>
-        (0, newSeqBuilder :+ InterestLiability(amount - payment))
-    }
-    Payables(liabilities = result._2)
+object Payables {
+  def latePayments(payment: Payment, payables: Payables): List[LatePayment] = {
+    payables.liabilities.foldLeft((payment, List.empty[LatePayment])) {
+      case ((p, l), InterestLiability(_)) => (p, l)
+      case ((p, l), lt) if lt.amount <= 0 || !lt.hasInterestCharge(payment) => (p, l)
+      case ((p, l), TaxLiability(a, d)) if a >= p.amount => (p.copy(amount = 0), LatePayment(d, p) :: l)
+      case ((p, l), TaxLiability(a, d)) => (p.copy(amount = p.amount - a), LatePayment(d, p.copy(amount = a)) :: l)
+    }._2
   }
+
 }

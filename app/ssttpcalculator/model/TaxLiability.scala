@@ -16,7 +16,7 @@
 
 package ssttpcalculator.model
 
-import java.time.LocalDate
+import java.time.{LocalDate, Year}
 import play.api.libs.json.{Json, OFormat}
 
 import scala.math.BigDecimal
@@ -27,9 +27,14 @@ case class Cat(name: String) extends Animal
 
 sealed trait Payable {
   def amount: BigDecimal
+
+  def hasInterestCharge(payment: Payment): Boolean
 }
 
-case class InterestLiability(amount: BigDecimal) extends Payable
+case class InterestLiability(amount: BigDecimal) extends Payable {
+  def hasInterestCharge(payment: Payment): Boolean = false
+
+}
 
 case class TaxLiability(
     amount:  BigDecimal,
@@ -60,3 +65,5 @@ object TaxLiability {
     case ((p, l), lt) => (p.copy(amount = p.amount - lt.amount), LatePayment(lt.dueDate, p.copy(amount = lt.amount)) :: l)
   }._2
 }
+
+final case class LatePaymentsInterest(amount: BigDecimal)

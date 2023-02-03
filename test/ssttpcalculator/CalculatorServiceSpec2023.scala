@@ -17,7 +17,8 @@
 package ssttpcalculator
 
 import play.api.Logger
-import ssttpcalculator.model.{Instalment, InterestRate, Payables, TaxLiability}
+import play.libs.Scala.Tuple
+import ssttpcalculator.model.{Instalment, InterestRate, LatePaymentsInterest, Payables, Payment, TaxLiability}
 import testsupport.ItSpec
 
 import java.time.LocalDate
@@ -65,49 +66,49 @@ class CalculatorServiceSpec2023 extends ItSpec {
     }
   }
 
-  "Payables.payOff" - {
+  "CalculatorService.payOff" - {
     "pays off the payment amount (in argument) from the Payables' liabilities starting with the oldest" - {
       "returns the same Payables if the payment amount is 0" in {
-        val paymentAmount = 0
+        val payment = Payment(LocalDate.now, 0)
 
-        payablesWithOne2000LiabilityNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
-          payablesWithOne2000LiabilityNoDueDate
+        calculatorService.payOff(payment, payablesWithOne2000LiabilityNoDueDate)(fixedZeroInterest) shouldBe
+          Tuple(payablesWithOne2000LiabilityNoDueDate, LatePaymentsInterest(0))
       }
       "pays off only part of the oldest liability if the payment amount is smaller than it" - {
         "leaving what is left of the only liability if there is only one" in {
-          val paymentAmount = 500
+          val payment = Payment(LocalDate.now, 500)
 
-          payablesWithOne2000LiabilityNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
-            Payables(Seq(TaxLiability(1500, date("2100-01-01"))))
+          calculatorService.payOff(payment, payablesWithOne2000LiabilityNoDueDate)(fixedZeroInterest) shouldBe
+            Tuple(Payables(Seq(TaxLiability(1500, date("2100-01-01")))), LatePaymentsInterest(0))
         }
         "leaving multiple liabilities if there are more than one" in {
-          val paymentAmount = 500
+          val payment = Payment(LocalDate.now, 500)
 
-          payablesWithTwoLiabilitiesNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
-            Payables(Seq(
-              TaxLiability(500, date("2100-01-01")),
-              TaxLiability(2000, date("2100-01-01"))
-            ))
+          calculatorService.payOff(payment, payablesWithTwoLiabilitiesNoDueDate)(fixedZeroInterest) shouldBe
+            Tuple(
+              Payables(Seq(TaxLiability(500, date("2100-01-01")), TaxLiability(2000, date("2100-01-01")))),
+              LatePaymentsInterest(0)
+            )
         }
       }
       "pays off the oldest liability and part of the next oldest is the payment amount is larger than the first liability" in {
-        val paymentAmount = 1200
+        val payment = Payment(LocalDate.now, 1200)
 
-        payablesWithTwoLiabilitiesNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
-          Payables(Seq(TaxLiability(1800, date("2100-01-01"))))
+        calculatorService.payOff(payment, payablesWithTwoLiabilitiesNoDueDate)(fixedZeroInterest) shouldBe
+          Tuple(Payables(Seq(TaxLiability(1800, date("2100-01-01")))), LatePaymentsInterest(0))
       }
       "returns a Payables with no liabilities if the payment amount covers all the liabilities" - {
         "when there is only one liability" in {
-          val paymentAmount = 2000
+          val payment = Payment(LocalDate.now, 2000)
 
-          payablesWithOne2000LiabilityNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
-            Payables(Seq())
+          calculatorService.payOff(payment, payablesWithOne2000LiabilityNoDueDate)(fixedZeroInterest) shouldBe
+            Tuple(Payables(Seq()), LatePaymentsInterest(0))
         }
         "when there are multiple liabilities" in {
-          val paymentAmount = 3000
+          val payment = Payment(LocalDate.now, 3000)
 
-          payablesWithTwoLiabilitiesNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
-            Payables(Seq())
+          calculatorService.payOff(payment, payablesWithTwoLiabilitiesNoDueDate)(fixedZeroInterest) shouldBe
+            Tuple(Payables(Seq()), LatePaymentsInterest(0))
         }
       }
 
