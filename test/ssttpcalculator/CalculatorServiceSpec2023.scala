@@ -17,7 +17,7 @@
 package ssttpcalculator
 
 import play.api.Logger
-import ssttpcalculator.model.{Instalment, Payables, TaxLiability}
+import ssttpcalculator.model.{Instalment, InterestRate, Payables, TaxLiability}
 import testsupport.ItSpec
 
 import java.time.LocalDate
@@ -32,7 +32,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
   def date(date: String): LocalDate = LocalDate.parse(date)
 
   import testsupport.testdata.CalculatorDataGenerator.newCalculatorModel._
-
 
 
   "PaymentsCalendar.regularPaymentDates" - {
@@ -71,43 +70,43 @@ class CalculatorServiceSpec2023 extends ItSpec {
       "returns the same Payables if the payment amount is 0" in {
         val paymentAmount = 0
 
-        payables2000inJuly2023.payOff(paymentAmount) shouldBe
-          payables2000inJuly2023
+        payablesWithOne2000LiabilityNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
+          payablesWithOne2000LiabilityNoDueDate
       }
       "pays off only part of the oldest liability if the payment amount is smaller than it" - {
         "leaving what is left of the only liability if there is only one" in {
           val paymentAmount = 500
 
-          payables2000inJuly2023.payOff(paymentAmount) shouldBe
-            Payables(Seq(TaxLiability(1500, date("2023-07-31"))))
+          payablesWithOne2000LiabilityNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
+            Payables(Seq(TaxLiability(1500, date("2100-01-01"))))
         }
         "leaving multiple liabilities if there are more than one" in {
           val paymentAmount = 500
 
-          payablesTwoLiabilities.payOff(paymentAmount) shouldBe
+          payablesWithTwoLiabilitiesNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
             Payables(Seq(
-              TaxLiability(500, date("2023-04-30")),
-              TaxLiability(2000, date("2023-07-31"))
+              TaxLiability(500, date("2100-01-01")),
+              TaxLiability(2000, date("2100-01-01"))
             ))
         }
       }
       "pays off the oldest liability and part of the next oldest is the payment amount is larger than the first liability" in {
         val paymentAmount = 1200
 
-        payablesTwoLiabilities.payOff(paymentAmount) shouldBe
-          Payables(Seq(TaxLiability(1800, date("2023-07-31"))))
+        payablesWithTwoLiabilitiesNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
+          Payables(Seq(TaxLiability(1800, date("2100-01-01"))))
       }
       "returns a Payables with no liabilities if the payment amount covers all the liabilities" - {
         "when there is only one liability" in {
           val paymentAmount = 2000
 
-          payables2000inJuly2023.payOff(paymentAmount) shouldBe
+          payablesWithOne2000LiabilityNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
             Payables(Seq())
         }
         "when there are multiple liabilities" in {
           val paymentAmount = 3000
 
-          payablesTwoLiabilities.payOff(paymentAmount) shouldBe
+          payablesWithTwoLiabilitiesNoDueDate.payOff(paymentAmount)(fixedZeroInterest) shouldBe
             Payables(Seq())
         }
       }
@@ -117,66 +116,83 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
   "CalculatorService.regularInstalments" - {
     "generates a list of monthly payment instalments of the regular payment amount until the payables are cleared" - {
-      "if balance to pay is 0, creates an empty list (no instalments)" in {
-        val regularPaymentAmount = 500
-
-        calculatorService.regularInstalments(
-          paymentsCalendar = paymentsCalendar,
-          regularPaymentAmount = regularPaymentAmount,
-          payables = Payables(liabilities = Seq())
-        ) shouldBe Seq()
-
-      }
-      "if balance to pay <= the regular payment amount," +
-        " creates a list with a single instalment of the balance to pay" in {
-        val regularPaymentAmount = 2000
-
-        calculatorService.regularInstalments(
-          paymentsCalendar = paymentsCalendar,
-          regularPaymentAmount = regularPaymentAmount,
-          payables = payables2000inJuly2023
-        ) shouldBe Seq(
-          Instalment(paymentDate = date("2023-03-17"), amount = regularPaymentAmount, interest = 0),
-        )
-      }
-      "if balance to pay > regular payment amount, creates list of multiple instalments" - {
-        "if balance to pay exactly divisible by regular payment amount" +
-          " all instalments are for exactly regular payment amount" in {
+      "where no interest is payable on any liabilities" - {
+        "if balance to pay is 0, creates an empty list (no instalments)" in {
           val regularPaymentAmount = 500
 
           calculatorService.regularInstalments(
             paymentsCalendar = paymentsCalendar,
             regularPaymentAmount = regularPaymentAmount,
-            payables = payables2000inJuly2023
-          ) shouldBe Seq(
-            Instalment(paymentDate = date("2023-03-17"), amount = regularPaymentAmount, interest = 0),
-            Instalment(paymentDate = date("2023-04-17"), amount = regularPaymentAmount, interest = 0),
-            Instalment(paymentDate = date("2023-05-17"), amount = regularPaymentAmount, interest = 0),
-            Instalment(paymentDate = date("2023-06-17"), amount = regularPaymentAmount, interest = 0)
-          )
+            payables = Payables(Seq()),
+            interestRateCalculator = fixedZeroInterest
+          ) shouldBe Seq()
+
         }
-        "if balance to pay not exactly divisible by regular payment amount," +
-          " all instalments = regular payment amount, except last which is less" in {
-          val regularPaymentAmount = 600
+        "if balance to pay <= the regular payment amount," +
+          " creates a list with a single instalment of the balance to pay" in {
+          val regularPaymentAmount = 2000
 
           calculatorService.regularInstalments(
             paymentsCalendar = paymentsCalendar,
             regularPaymentAmount = regularPaymentAmount,
-            payables = payables2000inJuly2023
+            payables = payablesWithOne2000LiabilityNoDueDate,
+            interestRateCalculator = fixedZeroInterest
           ) shouldBe Seq(
             Instalment(paymentDate = date("2023-03-17"), amount = regularPaymentAmount, interest = 0),
-            Instalment(paymentDate = date("2023-04-17"), amount = regularPaymentAmount, interest = 0),
-            Instalment(paymentDate = date("2023-05-17"), amount = regularPaymentAmount, interest = 0),
-            Instalment(paymentDate = date("2023-06-17"), amount = 200, interest = 0)
           )
-
         }
+        "if balance to pay > regular payment amount, creates list of multiple instalments" - {
+          "if balance to pay exactly divisible by regular payment amount" +
+            " all instalments are for exactly regular payment amount" in {
+            val regularPaymentAmount = 500
+
+            calculatorService.regularInstalments(
+              paymentsCalendar = paymentsCalendar,
+              regularPaymentAmount = regularPaymentAmount,
+              payables = payablesWithOne2000LiabilityNoDueDate,
+              interestRateCalculator = fixedZeroInterest
+            ) shouldBe Seq(
+              Instalment(paymentDate = date("2023-03-17"), amount = regularPaymentAmount, interest = 0),
+              Instalment(paymentDate = date("2023-04-17"), amount = regularPaymentAmount, interest = 0),
+              Instalment(paymentDate = date("2023-05-17"), amount = regularPaymentAmount, interest = 0),
+              Instalment(paymentDate = date("2023-06-17"), amount = regularPaymentAmount, interest = 0)
+            )
+          }
+          "if balance to pay not exactly divisible by regular payment amount," +
+            " all instalments = regular payment amount, except last which is less" in {
+            val regularPaymentAmount = 600
+
+            calculatorService.regularInstalments(
+              paymentsCalendar = paymentsCalendar,
+              regularPaymentAmount = regularPaymentAmount,
+              payables = payablesWithOne2000LiabilityNoDueDate,
+              interestRateCalculator = fixedZeroInterest
+            ) shouldBe Seq(
+              Instalment(paymentDate = date("2023-03-17"), amount = regularPaymentAmount, interest = 0),
+              Instalment(paymentDate = date("2023-04-17"), amount = regularPaymentAmount, interest = 0),
+              Instalment(paymentDate = date("2023-05-17"), amount = regularPaymentAmount, interest = 0),
+              Instalment(paymentDate = date("2023-06-17"), amount = 200, interest = 0)
+            )
+          }
+        }
+      }
+      "where interest is payable on all liabilities" in {
+        val regularPaymentAmount = 1000
+
+        val expectedInterestAccrued = 1000 * 0.01
+
+        calculatorService.regularInstalments(
+          paymentsCalendar = paymentsCalendar,
+          regularPaymentAmount = regularPaymentAmount,
+          payables = payablesWithOneDebt,
+          interestRateCalculator = fixedInterestRate) shouldBe Seq(
+          Instalment(paymentDate = date("2023-03-17"), amount = regularPaymentAmount, interest = expectedInterestAccrued),
+          Instalment(paymentDate = date("2023-04-17"), amount = expectedInterestAccrued, interest = 0)
+        )
 
 
       }
-
     }
-
   }
-
 }
+

@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, stringify, toJson}
-import ssttpcalculator.model.{Instalment, Payables, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{Instalment, InterestRate, Payables, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import testsupport.DateSupport
 
 object CalculatorDataGenerator extends Status with DateSupport {
@@ -139,10 +139,25 @@ object CalculatorDataGenerator extends Status with DateSupport {
       regularPaymentsDay = 17
     )
 
-    val aPaymentOnAccount: TaxLiability = TaxLiability(amount = 1000, dueDate = date("2023-04-30"))
-    val anotherPaymentOnAccount: TaxLiability = TaxLiability(amount = 2000, dueDate = date("2023-07-31"))
+    val aPaymentOnAccountNoInterestPayable: TaxLiability = TaxLiability(amount = 1000, dueDate = date("2100-01-01"))
+    val anotherPaymentOnAccountNoInterestPayable: TaxLiability = TaxLiability(amount = 2000, dueDate = date("2100-01-01"))
+    val aDebtWithInterestPayable: TaxLiability = TaxLiability(amount = 1000, dueDate = date("2022-03-17"))
 
-    val payables2000inJuly2023: Payables = Payables(liabilities = Seq(anotherPaymentOnAccount))
-    val payablesTwoLiabilities: Payables = Payables(liabilities = Seq(aPaymentOnAccount, anotherPaymentOnAccount))
+    val payablesWithOne2000LiabilityNoDueDate: Payables = Payables(liabilities = Seq(anotherPaymentOnAccountNoInterestPayable))
+    val payablesWithTwoLiabilitiesNoDueDate: Payables = Payables(liabilities = Seq(aPaymentOnAccountNoInterestPayable, anotherPaymentOnAccountNoInterestPayable))
+    val payablesWithOneDebt: Payables = Payables(liabilities = Seq(aDebtWithInterestPayable))
+
+    def fixedZeroInterest(d: LocalDate = date("2023-02-01")): InterestRate = {
+      InterestRate(
+        startDate = date("1900-01-01"), endDate = date("2100-12-31"), rate = 0
+      )
+    }
+
+    def fixedInterestRate: LocalDate => InterestRate = (_: LocalDate) => InterestRate(
+      startDate = date("1900-01-01"),
+      endDate = date("2100-12-31"),
+      rate = 1
+    )
+
   }
 }

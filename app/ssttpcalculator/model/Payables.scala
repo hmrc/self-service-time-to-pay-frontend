@@ -16,11 +16,14 @@
 
 package ssttpcalculator.model
 
+import java.time.LocalDate
+
 case class Payables(liabilities: Seq[Payable]) {
   def balanceToPay: BigDecimal = liabilities.map(_.amount).sum
 
   // TODO [OPS-9610]: add interest accruing functionality
-  def payOff(paymentAmount: BigDecimal): Payables = {
+  def payOff(paymentAmount: BigDecimal)
+            (interestRateCalculator: LocalDate => InterestRate): Payables = {
     val result = liabilities.foldLeft((paymentAmount, Seq.empty[Payable])) {
       case ((payment, newSeqBuilder), liability) if payment <= 0 =>
         (payment, newSeqBuilder :+ liability)

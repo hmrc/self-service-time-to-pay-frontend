@@ -22,7 +22,7 @@ import journey.Journey
 import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
-import ssttpcalculator.model.{Debit, Instalment, LatePayment, Payables, Payment, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{Debit, Instalment, InterestRate, LatePayment, Payables, Payment, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
@@ -73,7 +73,8 @@ class CalculatorService @Inject() (
 
   def regularInstalments(paymentsCalendar:     PaymentsCalendar,
                          regularPaymentAmount: BigDecimal,
-                         payables:             Payables
+                         payables:             Payables,
+                         interestRateCalculator: LocalDate => InterestRate,
   ): Seq[Instalment] = {
     val regularPaymentDates = paymentsCalendar.regularPaymentDates
 
@@ -82,6 +83,7 @@ class CalculatorService @Inject() (
                                    regularPaymentDates: Seq[LocalDate],
                                    regularPaymentAmount: BigDecimal,
                                    payables: Payables,
+                                   interestRateCalculator: LocalDate => InterestRate,
                                    instalmentsAggregator: Seq[Instalment]
                                  ): Seq[Instalment] = {
       val balanceToPay = payables.balanceToPay
@@ -92,7 +94,8 @@ class CalculatorService @Inject() (
         regularInstalmentsRecursive(
           regularPaymentDates.tail,
           regularPaymentAmount,
-          payables.payOff(balanceToPay),
+          payables.payOff(balanceToPay)(interestRateCalculator),
+          interestRateCalculator,
           instalmentsAggregator :+ Instalment(
             paymentDate = regularPaymentDates.head,
             amount = balanceToPay,
@@ -103,7 +106,8 @@ class CalculatorService @Inject() (
         regularInstalmentsRecursive(
           regularPaymentDates.tail,
           regularPaymentAmount,
-          payables.payOff(regularPaymentAmount),
+          payables.payOff(regularPaymentAmount)(interestRateCalculator),
+          interestRateCalculator,
           instalmentsAggregator :+ Instalment(
             paymentDate = regularPaymentDates.head,
             amount = regularPaymentAmount,
@@ -112,7 +116,13 @@ class CalculatorService @Inject() (
         )
       }
     }
-    regularInstalmentsRecursive(regularPaymentDates, regularPaymentAmount, payables, Seq.empty[Instalment])
+    regularInstalmentsRecursive(
+      regularPaymentDates,
+      regularPaymentAmount,
+      payables,
+      interestRateCalculator,
+      Seq.empty[Instalment]
+    )
   }
 
   // End new for ops-9610
