@@ -67,14 +67,49 @@ class CalculatorServiceSpec2023 extends ItSpec {
   }
 
   "Payables.payOff" - {
-    "pays off the payment amount from the liabilities starting with the oldest" - {
-      "pays off part of the oldest liability if the payment amount is smaller than it" in {
-        payables2000inJuly2023.payOff(500) shouldBe
-          Payables(Seq(TaxLiability(1500, date("2023-07-31"))))
+    "pays off the payment amount (in argument) from the Payables' liabilities starting with the oldest" - {
+      "returns the same Payables if the payment amount is 0" in {
+        val paymentAmount = 0
+
+        payables2000inJuly2023.payOff(paymentAmount) shouldBe
+          payables2000inJuly2023
+      }
+      "pays off only part of the oldest liability if the payment amount is smaller than it" - {
+        "leaving what is left of the only liability if there is only one" in {
+          val paymentAmount = 500
+
+          payables2000inJuly2023.payOff(paymentAmount) shouldBe
+            Payables(Seq(TaxLiability(1500, date("2023-07-31"))))
+        }
+        "leaving multiple liabilities if there are more than one" in {
+          val paymentAmount = 500
+
+          payablesTwoLiabilities.payOff(paymentAmount) shouldBe
+            Payables(Seq(
+              TaxLiability(500, date("2023-04-30")),
+              TaxLiability(2000, date("2023-07-31"))
+            ))
+        }
       }
       "pays off the oldest liability and part of the next oldest is the payment amount is larger than the first liability" in {
-        payablesTwoLiabilities.payOff(1200) shouldBe
+        val paymentAmount = 1200
+
+        payablesTwoLiabilities.payOff(paymentAmount) shouldBe
           Payables(Seq(TaxLiability(1800, date("2023-07-31"))))
+      }
+      "returns a Payables with no liabilities if the payment amount covers all the liabilities" - {
+        "when there is only one liability" in {
+          val paymentAmount = 2000
+
+          payables2000inJuly2023.payOff(paymentAmount) shouldBe
+            Payables(Seq())
+        }
+        "when there are multiple liabilities" in {
+          val paymentAmount = 3000
+
+          payablesTwoLiabilities.payOff(paymentAmount) shouldBe
+            Payables(Seq())
+        }
       }
 
     }

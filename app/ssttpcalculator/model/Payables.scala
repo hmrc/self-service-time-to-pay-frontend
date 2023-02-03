@@ -21,14 +21,17 @@ case class Payables(liabilities: Seq[Payable]) {
 
   def payOff(paymentAmount: BigDecimal): Payables = {
     val result = liabilities.foldLeft((paymentAmount, Seq.empty[Payable])) {
-      case ((payment, newSeqBuilder), liability) if payment <= 0 => (payment, newSeqBuilder :+ liability)
+      case ((payment, newSeqBuilder), liability) if payment <= 0 =>
+        (payment, newSeqBuilder :+ liability)
 
-      case ((payment, newSeqBuilder), liability) if payment >= liability.amount => (payment - liability.amount, newSeqBuilder)
+      case ((payment, newSeqBuilder), liability) if payment >= liability.amount =>
+        (payment - liability.amount, newSeqBuilder)
 
-      case ((payment, newSeqBuilder), liability) => liability match {
-        case TaxLiability(amount, dueDate) => (0, newSeqBuilder :+ TaxLiability(amount - payment, dueDate))
-        case InterestLiability(amount) => (0, newSeqBuilder :+ InterestLiability(amount - payment))
-      }
+      case ((payment, newSeqBuilder), TaxLiability(amount, dueDate)) =>
+        (0, newSeqBuilder :+ TaxLiability(amount - payment, dueDate))
+
+      case ((payment, newSeqBuilder), InterestLiability(amount)) =>
+        (0, newSeqBuilder :+ InterestLiability(amount - payment))
     }
     Payables(liabilities = result._2)
   }
