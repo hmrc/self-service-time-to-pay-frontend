@@ -23,7 +23,7 @@ case class Payables(liabilities: Seq[Payable]) {
 object Payables {
   def latePayments(payment: Payment, payables: Payables): List[LatePayment] = {
     payables.liabilities.foldLeft((payment, List.empty[LatePayment])) {
-      case ((p, l), InterestLiability(_)) => (p, l)
+      case ((p, l), LatePaymentInterest(_)) => (p, l)
       case ((p, l), lt) if lt.amount <= 0 || !lt.hasInterestCharge(payment) => (p, l)
       case ((p, l), TaxLiability(a, d)) if a >= p.amount => (p.copy(amount = 0), LatePayment(d, p) :: l)
       case ((p, l), TaxLiability(a, d)) => (p.copy(amount = p.amount - a), LatePayment(d, p.copy(amount = a)) :: l)

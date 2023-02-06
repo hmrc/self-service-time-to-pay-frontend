@@ -22,7 +22,7 @@ import journey.Journey
 import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
-import ssttpcalculator.model.{Debit, Instalment, InterestLiability, InterestRate, LatePayment, LatePaymentsInterest, Payable, Payables, Payment, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{Debit, Instalment, LatePaymentInterest, InterestRate, LatePayment, Payable, Payables, Payment, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
@@ -102,46 +102,60 @@ class CalculatorService @Inject() (
     }
 
     else if (balanceToPay < regularPaymentAmount) {
-      val updatedPayables = payOff(Payment(regularPaymentDates.head, balanceToPay), payables)(interestRateCalculator)
-      regularInstalmentsRecursive(
-        regularPaymentDates.tail,
-        regularPaymentAmount,
-        updatedPayables._1,
-        interestRateCalculator,
-        instalmentsAggregator :+ Instalment(
-          paymentDate = regularPaymentDates.head,
-          amount = balanceToPay,
-          interest = updatedPayables._2.amount
-        )
+      val payment = Payment(regularPaymentDates.head, balanceToPay)
+      val updatedtaxLiabilitiesAfterPayment = updatedTaxLiabilities(payment, payables)(interestRateCalculator)
+      val interestPayableDueToLatePayment = latePaymentInterest(payment, payables)(interestRateCalculator)
+      val updatedPayables = Payables(updatedtaxLiabilitiesAfterPayment :+ interestPayableDueToLatePayment)
+
+      val instalments = instalmentsAggregator :+ Instalment(
+        paymentDate = regularPaymentDates.head,
+        amount = balanceToPay,
+        interest = interestPayableDueToLatePayment.amount
       )
 
+      regularInstalmentsRecursive(regularPaymentDates.tail, regularPaymentAmount, updatedPayables, interestRateCalculator, instalments)
+
     } else {
-      val updatedPayables = payOff(Payment(regularPaymentDates.head, regularPaymentAmount), payables)(interestRateCalculator)
-      regularInstalmentsRecursive(
-        regularPaymentDates.tail,
-        regularPaymentAmount,
-        updatedPayables._1,
-        interestRateCalculator,
-        instalmentsAggregator :+ Instalment(
-          paymentDate = regularPaymentDates.head,
-          amount = regularPaymentAmount,
-          interest = updatedPayables._2.amount
-        )
+      val payment = Payment(regularPaymentDates.head, regularPaymentAmount)
+      val updatedtaxLiabilitiesAfterPayment = updatedTaxLiabilities(payment, payables)(interestRateCalculator)
+      val interestPayableDueToLatePayment = latePaymentInterest(payment, payables)(interestRateCalculator)
+      val updatedPayables = Payables(updatedtaxLiabilitiesAfterPayment :+ interestPayableDueToLatePayment)
+
+      val instalments = instalmentsAggregator :+ Instalment(
+        paymentDate = regularPaymentDates.head,
+        amount = regularPaymentAmount,
+        interest = interestPayableDueToLatePayment.amount
       )
+
+      regularInstalmentsRecursive(regularPaymentDates.tail, regularPaymentAmount, updatedPayables, interestRateCalculator, instalments)
     }
   }
 
   // TODO [OPS-9610]: add interest accruing functionality
-  def payOff(payment: Payment, payables: Payables)
-            (interestRateCalculator: LocalDate => InterestRate): (Payables, LatePaymentsInterest) = {
-    val latePayments = Payables.latePayments(payment, payables)
-    val latePaymentsInterestToPayAtEnd = latePaymentsInterest(latePayments)(interestRateCalculator)
+  def updatedTaxLiabilities(payment: Payment, payables: Payables)
+                           (interestRateCalculator: LocalDate => InterestRate): Seq[Payable] = {
+    val latePaymentsInterestToPayAtEnd = latePaymentInterest(payment, payables)(interestRateCalculator)
     val updatedLiabilities = updatedLiabilitiesAfterPayment(payment, payables)
     if (latePaymentsInterestToPayAtEnd.amount > 0) {
-      (Payables(liabilities = updatedLiabilities :+ InterestLiability(latePaymentsInterestToPayAtEnd.amount)), latePaymentsInterestToPayAtEnd)
+      updatedLiabilities :+ LatePaymentInterest(latePaymentsInterestToPayAtEnd.amount)
     } else {
-      (Payables(liabilities = updatedLiabilities), latePaymentsInterestToPayAtEnd)
+      updatedLiabilities
     }
+  }
+
+  private def latePaymentInterest(payment:Payment, payables: Payables)
+                                  (interestRateCalculator: LocalDate => InterestRate): LatePaymentInterest = {
+    val latePayments = Payables.latePayments(payment, payables)
+
+    val latePaymentsInterestTotal = latePayments.map { p =>
+      val currentInterestRate = interestRateCalculator(p.dueDate).rate
+      val currentDailyRate = currentInterestRate / BigDecimal(Year.of(p.dueDate.getYear).length()) / BigDecimal(100)
+      val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(p.dueDate, p.payment.date))
+      p.payment.amount * currentDailyRate * daysInterestToCharge
+    }.sum
+
+    LatePaymentInterest(latePaymentsInterestTotal)
+
   }
 
   private def updatedLiabilitiesAfterPayment(payment: Payment, payables: Payables): Seq[Payable] = {
@@ -155,8 +169,8 @@ class CalculatorService @Inject() (
       case ((payment, newSeqBuilder), TaxLiability(amount, dueDate)) =>
         (payment.copy(amount = 0), newSeqBuilder :+ TaxLiability(amount - payment.amount, dueDate))
 
-      case ((payment, newSeqBuilder), InterestLiability(amount)) =>
-        (payment.copy(amount = 0), newSeqBuilder :+ InterestLiability(amount - payment.amount))
+      case ((payment, newSeqBuilder), LatePaymentInterest(amount)) =>
+        (payment.copy(amount = 0), newSeqBuilder :+ LatePaymentInterest(amount - payment.amount))
     }
     updatedLiabilities._2
   }
@@ -285,21 +299,18 @@ class CalculatorService @Inject() (
         (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, 0))
 
       case ((ls, s), dt) =>
-        (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, latePaymentsInterest(latePayments(Payment(dt, monthlyRepayment))(ls))(interestService.rateOn).amount))
+        (amortizedLiabilities(ls, monthlyRepayment), s :+ Instalment(dt, monthlyRepayment, latePaymentsInterest(latePayments(Payment(dt, monthlyRepayment))(ls))(interestService.rateOn)))
     }
     result._2
   }
 
-  def latePaymentsInterest(latePayments: Seq[LatePayment])(interestRateCalculator: LocalDate => InterestRate): LatePaymentsInterest = {
-    LatePaymentsInterest(
-        latePayments.map{ p =>
-        val currentInterestRate = interestRateCalculator(p.dueDate).rate
-        val currentDailyRate = currentInterestRate / BigDecimal(Year.of(p.dueDate.getYear).length()) / BigDecimal(100)
-        val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(p.dueDate, p.payment.date))
-        p.payment.amount * currentDailyRate * daysInterestToCharge
-      }.sum
-    )
-
+  def latePaymentsInterest(latePayments: Seq[LatePayment])(interestRateCalculator: LocalDate => InterestRate): BigDecimal = {
+      latePayments.map{ p =>
+      val currentInterestRate = interestRateCalculator(p.dueDate).rate
+      val currentDailyRate = currentInterestRate / BigDecimal(Year.of(p.dueDate.getYear).length()) / BigDecimal(100)
+      val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(p.dueDate, p.payment.date))
+      p.payment.amount * currentDailyRate * daysInterestToCharge
+    }.sum
   }
 
   /**

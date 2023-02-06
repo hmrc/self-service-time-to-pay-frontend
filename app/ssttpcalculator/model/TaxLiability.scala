@@ -31,7 +31,7 @@ sealed trait Payable {
   def hasInterestCharge(payment: Payment): Boolean
 }
 
-case class InterestLiability(amount: BigDecimal) extends Payable {
+case class LatePaymentInterest(amount: BigDecimal) extends Payable {
   def hasInterestCharge(payment: Payment): Boolean = false
 
 }
@@ -65,5 +65,3 @@ object TaxLiability {
     case ((p, l), lt) => (p.copy(amount = p.amount - lt.amount), LatePayment(lt.dueDate, p.copy(amount = lt.amount)) :: l)
   }._2
 }
-
-final case class LatePaymentsInterest(amount: BigDecimal)
