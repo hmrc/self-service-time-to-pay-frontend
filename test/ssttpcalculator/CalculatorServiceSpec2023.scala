@@ -193,15 +193,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           }
           "two debts, paid in more than two months" - {
             "with final month clearing late payment interest" in {
-              val firstDebtAmount = 5000
-              val firstDebtDueDate = date("2022-03-17")
-              val secondDebtAmount = 5000
-              val secondDebtDueDate = date("2022-09-17")
-              val payables = Payables(liabilities = Seq(
-                TaxLiability(firstDebtAmount, firstDebtDueDate),
-                TaxLiability(secondDebtAmount, secondDebtDueDate)
-              ))
-
+              val payables = testPayables((5000, date("2022-03-17")), (5000, date("2022-09-17")))
               val regularPaymentAmount = 1000
 
               val result = calculatorService.regularInstalments(
@@ -220,15 +212,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               result.map(_.interest).sum shouldEqual result.last.amount
             }
             "with late payment interest over two final months" in {
-              val firstDebtAmount = 5000
-              val firstDebtDueDate = date("2022-03-17")
-              val secondDebtAmount = 5000
-              val secondDebtDueDate = date("2022-09-17")
-              val payables = Payables(liabilities = Seq(
-                TaxLiability(firstDebtAmount, firstDebtDueDate),
-                TaxLiability(secondDebtAmount, secondDebtDueDate)
-              ))
-
+              val payables = testPayables((5000, date("2022-03-17")), (5000, date("2022-09-17")))
               val regularPaymentAmount = 1000
 
               val result = calculatorService.regularInstalments(

@@ -158,5 +158,9 @@ object CalculatorDataGenerator extends Status with DateSupport {
       endDate = date("2100-12-31"),
       rate = rate
     )
+
+    def testPayables(liabilities: (BigDecimal, LocalDate)*): Payables = {
+      Payables(liabilities.map(liability => TaxLiability(liability._1, liability._2)))
+    }
   }
 }
