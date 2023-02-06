@@ -74,11 +74,10 @@ class CalculatorService @Inject() (
   def regularInstalments(paymentsCalendar:     PaymentsCalendar,
                          regularPaymentAmount: BigDecimal,
                          payables:             Payables,
-                         interestRateCalculator: LocalDate => InterestRate,
+                         dateToRate: LocalDate => InterestRate,
   ): Seq[Instalment] = {
     val regularPaymentDates = paymentsCalendar.regularPaymentDates
-
-    regularInstalmentsRecursive(regularPaymentDates, regularPaymentAmount, payables, interestRateCalculator, Seq.empty[Instalment])
+    regularInstalmentsRecursive(regularPaymentDates, regularPaymentAmount, payables, dateToRate, Seq.empty[Instalment])
   }
 
   @tailrec

@@ -153,10 +153,10 @@ object CalculatorDataGenerator extends Status with DateSupport {
       )
     }
 
-    def fixedInterestRate: LocalDate => InterestRate = (_: LocalDate) => InterestRate(
+    def fixedInterestRate(rate: BigDecimal = 1): LocalDate => InterestRate = (_: LocalDate) => InterestRate(
       startDate = date("1900-01-01"),
       endDate = date("2100-12-31"),
-      rate = 1
+      rate = rate
     )
   }
 }
