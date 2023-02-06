@@ -21,7 +21,7 @@ import play.libs.Scala.Tuple
 import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, TaxLiability}
 import testsupport.ItSpec
 
-import java.time.LocalDate
+import java.time.{LocalDate, Year}
 
 class CalculatorServiceSpec2023 extends ItSpec {
   private val logger = Logger(getClass)
@@ -31,6 +31,14 @@ class CalculatorServiceSpec2023 extends ItSpec {
   val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
   def date(date: String): LocalDate = LocalDate.parse(date)
+
+  def interestAccrued(interestRateCalculator: LocalDate => InterestRate)(dueDate: LocalDate, payment: Payment): BigDecimal = {
+    val currentInterestRate = interestRateCalculator(dueDate).rate
+    val currentDailyRate = currentInterestRate / BigDecimal(Year.of(dueDate.getYear).length()) / BigDecimal(100)
+    val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(dueDate, payment.date))
+    payment.amount * currentDailyRate * daysInterestToCharge
+  }
+
 
   import testsupport.testdata.CalculatorDataGenerator.newCalculatorModel._
 
@@ -175,20 +183,25 @@ class CalculatorServiceSpec2023 extends ItSpec {
         }
       }
       "where interest is payable on all liabilities" in {
+        val debtAmount = 1000
+        val dueDate = date("2022-03-17")
+        val payables = Payables(liabilities = Seq(TaxLiability(debtAmount, dueDate)))
+
         val regularPaymentAmount = 1000
 
-        val expectedInterestAccrued = 1000 * 0.01
+        val expectedFirstInstalmentPaymentDate = paymentsCalendar.regularPaymentDates(0)
+        val expectedFirstPayment = Payment(expectedFirstInstalmentPaymentDate, regularPaymentAmount)
+
+        val expectedInterestAccrued = interestAccrued(fixedInterestRate)(dueDate, expectedFirstPayment)
 
         calculatorService.regularInstalments(
           paymentsCalendar = paymentsCalendar,
           regularPaymentAmount = regularPaymentAmount,
-          payables = payablesWithOneDebt,
+          payables = payables,
           interestRateCalculator = fixedInterestRate) shouldBe Seq(
           Instalment(paymentDate = date("2023-03-17"), amount = regularPaymentAmount, interest = expectedInterestAccrued),
           Instalment(paymentDate = date("2023-04-17"), amount = expectedInterestAccrued, interest = 0)
         )
-
-
       }
     }
   }

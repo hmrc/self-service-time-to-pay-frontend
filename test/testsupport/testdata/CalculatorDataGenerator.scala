@@ -158,6 +158,5 @@ object CalculatorDataGenerator extends Status with DateSupport {
       endDate = date("2100-12-31"),
       rate = 1
     )
-
   }
 }
