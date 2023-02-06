@@ -19,7 +19,12 @@ package ssttpcalculator.model
 import java.time.LocalDate
 
 case class Payables(liabilities: Seq[Payable]) {
-  def balanceToPay: BigDecimal = liabilities.map(_.amount).sum
+  def balance: BigDecimal = liabilities.map(_.amount).sum
+
+  def inDate(date: LocalDate): Boolean = liabilities.head match {
+    case TaxLiability(_, dueDate) => dueDate.isAfter(date)
+    case LatePaymentInterest(_) => true
+  }
 }
 
 object Payables {

@@ -74,52 +74,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
     }
   }
 
-  "CalculatorService.updatedLiabilities" - {
-    "pays off the payment amount (in argument) from the Payables' liabilities starting with the oldest" - {
-      "returns the same liabilities if the payment amount is 0" in {
-        val paymentAmount = 0
-
-        calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithOne2000LiabilityNoDueDate) shouldBe
-          payablesWithOne2000LiabilityNoDueDate.liabilities
-      }
-      "pays off only part of the oldest liability if the payment amount is smaller than it" - {
-        "leaving what is left of the only liability if there is only one" in {
-          val paymentAmount = 500
-
-          calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithOne2000LiabilityNoDueDate) shouldBe
-            Seq(TaxLiability(1500, date("2100-01-01")))
-        }
-        "leaving multiple liabilities if there are more than one" in {
-          val paymentAmount = 500
-
-          calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithTwoLiabilitiesNoDueDate) shouldBe
-            Seq(TaxLiability(500, date("2100-01-01")), TaxLiability(2000, date("2100-01-01")))
-        }
-      }
-      "pays off the oldest liability and part of the next oldest is the payment amount is larger than the first liability" in {
-        val paymentAmount = 1200
-
-        calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithTwoLiabilitiesNoDueDate) shouldBe
-          Seq(TaxLiability(1800, date("2100-01-01")))
-      }
-      "returns a Payables with no liabilities if the payment amount covers all the liabilities" - {
-        "when there is only one liability" in {
-          val paymentAmount = 2000
-
-          calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithOne2000LiabilityNoDueDate) shouldBe
-            Seq()
-        }
-        "when there are multiple liabilities" in {
-          val paymentAmount = 3000
-
-          calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithTwoLiabilitiesNoDueDate) shouldBe
-            Seq()
-        }
-      }
-
-    }
-  }
-
   "CalculatorService.regularInstalments" - {
     "generates a list of monthly payment instalments of the regular payment amount until the payables are cleared" - {
       "where no interest is payable on any liabilities" - {
