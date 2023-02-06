@@ -16,17 +16,19 @@
 
 package ssttpcalculator.model
 
+import java.time.LocalDate
+
 case class Payables(liabilities: Seq[Payable]) {
   def balanceToPay: BigDecimal = liabilities.map(_.amount).sum
 }
 
 object Payables {
-  def latePayments(payment: Payment, payables: Payables): List[LatePayment] = {
-    payables.liabilities.foldLeft((payment, List.empty[LatePayment])) {
+  def latePayments(paymentAmount: BigDecimal, paymentDate: LocalDate, payables: Payables): List[LatePayment] = {
+    payables.liabilities.foldLeft((paymentAmount, List.empty[LatePayment])) {
       case ((p, l), LatePaymentInterest(_)) => (p, l)
-      case ((p, l), lt) if lt.amount <= 0 || !lt.hasInterestCharge(payment) => (p, l)
-      case ((p, l), TaxLiability(a, d)) if a >= p.amount => (p.copy(amount = 0), LatePayment(d, p) :: l)
-      case ((p, l), TaxLiability(a, d)) => (p.copy(amount = p.amount - a), LatePayment(d, p.copy(amount = a)) :: l)
+      case ((p, l), lt) if lt.amount <= 0 || !lt.hasInterestCharge(paymentDate) => (p, l)
+      case ((p, l), TaxLiability(a, d)) if a >= p => (0, LatePayment(d, Payment(paymentDate, p)) :: l)
+      case ((p, l), TaxLiability(a, d)) => (p - a, LatePayment(d, Payment(paymentDate, a)) :: l)
     }._2
   }
 

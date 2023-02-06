@@ -77,42 +77,42 @@ class CalculatorServiceSpec2023 extends ItSpec {
   "CalculatorService.updatedLiabilities" - {
     "pays off the payment amount (in argument) from the Payables' liabilities starting with the oldest" - {
       "returns the same liabilities if the payment amount is 0" in {
-        val payment = Payment(LocalDate.now, 0)
+        val paymentAmount = 0
 
-        calculatorService.taxLiabilitiesUpdated(payment, payablesWithOne2000LiabilityNoDueDate) shouldBe
+        calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithOne2000LiabilityNoDueDate) shouldBe
           payablesWithOne2000LiabilityNoDueDate.liabilities
       }
       "pays off only part of the oldest liability if the payment amount is smaller than it" - {
         "leaving what is left of the only liability if there is only one" in {
-          val payment = Payment(LocalDate.now, 500)
+          val paymentAmount = 500
 
-          calculatorService.taxLiabilitiesUpdated(payment, payablesWithOne2000LiabilityNoDueDate) shouldBe
+          calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithOne2000LiabilityNoDueDate) shouldBe
             Seq(TaxLiability(1500, date("2100-01-01")))
         }
         "leaving multiple liabilities if there are more than one" in {
-          val payment = Payment(LocalDate.now, 500)
+          val paymentAmount = 500
 
-          calculatorService.taxLiabilitiesUpdated(payment, payablesWithTwoLiabilitiesNoDueDate) shouldBe
+          calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithTwoLiabilitiesNoDueDate) shouldBe
             Seq(TaxLiability(500, date("2100-01-01")), TaxLiability(2000, date("2100-01-01")))
         }
       }
       "pays off the oldest liability and part of the next oldest is the payment amount is larger than the first liability" in {
-        val payment = Payment(LocalDate.now, 1200)
+        val paymentAmount = 1200
 
-        calculatorService.taxLiabilitiesUpdated(payment, payablesWithTwoLiabilitiesNoDueDate) shouldBe
+        calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithTwoLiabilitiesNoDueDate) shouldBe
           Seq(TaxLiability(1800, date("2100-01-01")))
       }
       "returns a Payables with no liabilities if the payment amount covers all the liabilities" - {
         "when there is only one liability" in {
-          val payment = Payment(LocalDate.now, 2000)
+          val paymentAmount = 2000
 
-          calculatorService.taxLiabilitiesUpdated(payment, payablesWithOne2000LiabilityNoDueDate) shouldBe
+          calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithOne2000LiabilityNoDueDate) shouldBe
             Seq()
         }
         "when there are multiple liabilities" in {
-          val payment = Payment(LocalDate.now, 3000)
+          val paymentAmount = 3000
 
-          calculatorService.taxLiabilitiesUpdated(payment, payablesWithTwoLiabilitiesNoDueDate) shouldBe
+          calculatorService.taxLiabilitiesUpdated(paymentAmount, payablesWithTwoLiabilitiesNoDueDate) shouldBe
             Seq()
         }
       }
@@ -182,26 +182,64 @@ class CalculatorServiceSpec2023 extends ItSpec {
           }
         }
       }
-      "where interest is payable on all liabilities" in {
-        val debtAmount = 1000
-        val dueDate = date("2022-03-17")
-        val payables = Payables(liabilities = Seq(TaxLiability(debtAmount, dueDate)))
+      "where interest is payable on all liabilities" - {
+        "single liability" in {
+          val debtAmount = 1000
+          val dueDate = date("2022-03-17")
+          val payables = Payables(liabilities = Seq(TaxLiability(debtAmount, dueDate)))
 
-        val regularPaymentAmount = 1000
+          val regularPaymentAmount = 1000
 
-        val expectedFirstInstalmentPaymentDate = paymentsCalendar.regularPaymentDates(0)
-        val expectedFirstPayment = Payment(expectedFirstInstalmentPaymentDate, regularPaymentAmount)
+          val expectedFirstInstalmentPaymentDate = paymentsCalendar.regularPaymentDates.head
+          val expectedFirstPayment = Payment(expectedFirstInstalmentPaymentDate, regularPaymentAmount)
 
-        val expectedInterestAccrued = interestAccrued(fixedInterestRate)(dueDate, expectedFirstPayment)
+          val expectedInterestAccrued = interestAccrued(fixedInterestRate)(dueDate, expectedFirstPayment)
 
-        calculatorService.regularInstalments(
-          paymentsCalendar = paymentsCalendar,
-          regularPaymentAmount = regularPaymentAmount,
-          payables = payables,
-          interestRateCalculator = fixedInterestRate) shouldBe Seq(
-          Instalment(paymentDate = date("2023-03-17"), amount = regularPaymentAmount, interest = expectedInterestAccrued),
-          Instalment(paymentDate = date("2023-04-17"), amount = expectedInterestAccrued, interest = 0)
-        )
+          calculatorService.regularInstalments(
+            paymentsCalendar = paymentsCalendar,
+            regularPaymentAmount = regularPaymentAmount,
+            payables = payables,
+            interestRateCalculator = fixedInterestRate) shouldBe Seq(
+            Instalment(paymentDate = date("2023-03-17"), amount = regularPaymentAmount, interest = expectedInterestAccrued),
+            Instalment(paymentDate = date("2023-04-17"), amount = expectedInterestAccrued, interest = 0)
+          )
+        }
+        "multiple liabilities" in {
+          val firstDebtAmount = 1000
+          val firstDebtDueDate = date("2022-03-17")
+          val secondDebtAmount = 100
+          val secondDebtDueDate = date("2022-09-17")
+          val payables = Payables(liabilities = Seq(
+            TaxLiability(firstDebtAmount, firstDebtDueDate),
+            TaxLiability(secondDebtAmount, secondDebtDueDate)
+          ))
+
+          val regularPaymentAmount = 1000
+
+          val expectedFirstInstalmentPaymentDate = paymentsCalendar.regularPaymentDates.head
+          val expectedFirstPayment = Payment(expectedFirstInstalmentPaymentDate, regularPaymentAmount)
+          val expectedInterestAccruedOnFirstDebt = interestAccrued(fixedInterestRate)(firstDebtDueDate, expectedFirstPayment)
+
+          val expectedSecondInstalmentPaymentDate = paymentsCalendar.regularPaymentDates(1)
+          val expectedSecondPayment = Payment(expectedSecondInstalmentPaymentDate, secondDebtAmount)
+          val expectedInterestAccruedOnSecondDebt = interestAccrued(fixedInterestRate)(secondDebtDueDate, expectedSecondPayment)
+
+          calculatorService.regularInstalments(
+            paymentsCalendar,
+            regularPaymentAmount,
+            payables,
+            fixedInterestRate
+          ) shouldBe Seq(
+            Instalment(paymentDate = date("2023-03-17"), amount = regularPaymentAmount, interest = expectedInterestAccruedOnFirstDebt),
+            Instalment(
+              paymentDate = date("2023-04-17"),
+              amount = secondDebtAmount + expectedInterestAccruedOnFirstDebt + expectedInterestAccruedOnSecondDebt,
+              interest = expectedInterestAccruedOnSecondDebt
+            )
+          )
+
+        }
+
       }
     }
   }

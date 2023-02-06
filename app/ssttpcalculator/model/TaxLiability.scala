@@ -28,11 +28,11 @@ case class Cat(name: String) extends Animal
 sealed trait Payable {
   def amount: BigDecimal
 
-  def hasInterestCharge(payment: Payment): Boolean
+  def hasInterestCharge(paymentDate: LocalDate): Boolean
 }
 
 case class LatePaymentInterest(amount: BigDecimal) extends Payable {
-  def hasInterestCharge(payment: Payment): Boolean = false
+  def hasInterestCharge(paymentDate: LocalDate): Boolean = false
 
 }
 
