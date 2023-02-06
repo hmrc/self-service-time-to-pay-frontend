@@ -78,13 +78,7 @@ class CalculatorService @Inject() (
   ): Seq[Instalment] = {
     val regularPaymentDates = paymentsCalendar.regularPaymentDates
 
-    regularInstalmentsRecursive(
-      regularPaymentDates,
-      regularPaymentAmount,
-      payables,
-      interestRateCalculator,
-      Seq.empty[Instalment]
-    )
+    regularInstalmentsRecursive(regularPaymentDates, regularPaymentAmount, payables, interestRateCalculator, Seq.empty[Instalment])
   }
 
   @tailrec
@@ -103,7 +97,7 @@ class CalculatorService @Inject() (
 
     else if (balanceToPay < regularPaymentAmount) {
       val payment = Payment(regularPaymentDates.head, balanceToPay)
-      val updatedtaxLiabilitiesAfterPayment = updatedTaxLiabilities(payment, payables)(interestRateCalculator)
+      val updatedtaxLiabilitiesAfterPayment = taxLiabilitiesUpdated(payment, payables)
       val interestPayableDueToLatePayment = latePaymentInterest(payment, payables)(interestRateCalculator)
       val updatedPayables = Payables(updatedtaxLiabilitiesAfterPayment :+ interestPayableDueToLatePayment)
 
@@ -117,7 +111,7 @@ class CalculatorService @Inject() (
 
     } else {
       val payment = Payment(regularPaymentDates.head, regularPaymentAmount)
-      val updatedtaxLiabilitiesAfterPayment = updatedTaxLiabilities(payment, payables)(interestRateCalculator)
+      val updatedtaxLiabilitiesAfterPayment = taxLiabilitiesUpdated(payment, payables)
       val interestPayableDueToLatePayment = latePaymentInterest(payment, payables)(interestRateCalculator)
       val updatedPayables = Payables(updatedtaxLiabilitiesAfterPayment :+ interestPayableDueToLatePayment)
 
@@ -131,34 +125,7 @@ class CalculatorService @Inject() (
     }
   }
 
-  // TODO [OPS-9610]: add interest accruing functionality
-  def updatedTaxLiabilities(payment: Payment, payables: Payables)
-                           (interestRateCalculator: LocalDate => InterestRate): Seq[Payable] = {
-    val latePaymentsInterestToPayAtEnd = latePaymentInterest(payment, payables)(interestRateCalculator)
-    val updatedLiabilities = updatedLiabilitiesAfterPayment(payment, payables)
-    if (latePaymentsInterestToPayAtEnd.amount > 0) {
-      updatedLiabilities :+ LatePaymentInterest(latePaymentsInterestToPayAtEnd.amount)
-    } else {
-      updatedLiabilities
-    }
-  }
-
-  private def latePaymentInterest(payment:Payment, payables: Payables)
-                                  (interestRateCalculator: LocalDate => InterestRate): LatePaymentInterest = {
-    val latePayments = Payables.latePayments(payment, payables)
-
-    val latePaymentsInterestTotal = latePayments.map { p =>
-      val currentInterestRate = interestRateCalculator(p.dueDate).rate
-      val currentDailyRate = currentInterestRate / BigDecimal(Year.of(p.dueDate.getYear).length()) / BigDecimal(100)
-      val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(p.dueDate, p.payment.date))
-      p.payment.amount * currentDailyRate * daysInterestToCharge
-    }.sum
-
-    LatePaymentInterest(latePaymentsInterestTotal)
-
-  }
-
-  private def updatedLiabilitiesAfterPayment(payment: Payment, payables: Payables): Seq[Payable] = {
+  def taxLiabilitiesUpdated(payment: Payment, payables: Payables): Seq[Payable] = {
     val updatedLiabilities = payables.liabilities.foldLeft((payment, Seq.empty[Payable])) {
       case ((payment, newSeqBuilder), liability) if payment.amount <= 0 =>
         (payment, newSeqBuilder :+ liability)
@@ -173,6 +140,22 @@ class CalculatorService @Inject() (
         (payment.copy(amount = 0), newSeqBuilder :+ LatePaymentInterest(amount - payment.amount))
     }
     updatedLiabilities._2
+  }
+
+  // TODO [OPS-9610]: return option, consider removing LatePayments intermediate model
+  private def latePaymentInterest(payment:Payment, payables: Payables)
+                                  (interestRateCalculator: LocalDate => InterestRate): LatePaymentInterest = {
+    val latePayments = Payables.latePayments(payment, payables)
+
+    val latePaymentsInterestTotal = latePayments.map { p =>
+      val currentInterestRate = interestRateCalculator(p.dueDate).rate
+      val currentDailyRate = currentInterestRate / BigDecimal(Year.of(p.dueDate.getYear).length()) / BigDecimal(100)
+      val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(p.dueDate, p.payment.date))
+      p.payment.amount * currentDailyRate * daysInterestToCharge
+    }.sum
+
+    LatePaymentInterest(latePaymentsInterestTotal)
+
   }
 
   // End new for ops-9610
@@ -304,6 +287,7 @@ class CalculatorService @Inject() (
     result._2
   }
 
+  // bypassed by new work under OPS-9610
   def latePaymentsInterest(latePayments: Seq[LatePayment])(interestRateCalculator: LocalDate => InterestRate): BigDecimal = {
       latePayments.map{ p =>
       val currentInterestRate = interestRateCalculator(p.dueDate).rate
