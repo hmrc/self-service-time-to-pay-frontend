@@ -69,7 +69,7 @@ class CalculatorService @Inject() (
       paymentsCalendar:     PaymentsCalendar,
       upfrontPaymentAmount: BigDecimal,
       payables:             Payables
-  ): Payables = ???
+  ): Payables = payables
 
   def regularInstalments(paymentsCalendar:     PaymentsCalendar,
                          regularPaymentAmount: BigDecimal,
