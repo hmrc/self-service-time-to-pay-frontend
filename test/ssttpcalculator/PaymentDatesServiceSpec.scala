@@ -16,48 +16,125 @@
 
 package ssttpcalculator
 
+import journey.PaymentToday
 import play.api.Logger
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import testsupport.ItSpec
+import times.ClockProvider
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
-
 import java.time.{Clock, LocalDate, LocalDateTime}
 
 class PaymentDatesServiceSpec extends ItSpec {
   private val logger = Logger(getClass)
 
+  val clockProvider: ClockProvider = fakeApplication().injector.instanceOf[ClockProvider]
   val servicesConfig: ServicesConfig = fakeApplication().injector.instanceOf[ServicesConfig]
   val paymentDatesService: PaymentDatesService = fakeApplication().injector.instanceOf[PaymentDatesService]
+
+  val daysFromCreatedDateToProcessFirstPayment: Int = servicesConfig.getInt("paymentDatesConfig.daysToProcessPayment")
+  val minGapBetweenPayments: Int = servicesConfig.getInt("paymentDatesConfig.minGapBetweenPayments")
 
   def date(date: String): LocalDate = LocalDate.parse(date)
 
   "PaymentDatesService" - {
     ".paymentsCalendar" - {
-      "returns a Payments Calendar for payments plans based on customer's payment day and upfront payment preferences" - {
+      "returns a Payments Calendar for payments plans based on customer preferences for payment day and upfront payment " - {
         "no upfront payment and no payment day preference returns Payment Calendar" - {
+          implicit val fakeRequest: FakeRequest[Any] = FakeRequest()
+          val dateOfJourney = clockProvider.nowDate()
           val noPaymentToday = None
           val noArrangementDayOfMonth = None
 
-          val result = paymentDatesService.paymentsCalendar(noPaymentToday, noArrangementDayOfMonth)(FakeRequest(), servicesConfig)
-          "created on date of journey" in {
-            result.createdOn shouldBe date("2019-11-25")
+          val result = paymentDatesService
+            .paymentsCalendar(noPaymentToday, noArrangementDayOfMonth)(fakeRequest, servicesConfig)
 
+          "created on date of journey" in {
+            result.createdOn shouldBe dateOfJourney
           }
           "with no upfront payment date" in {
             result.maybeUpfrontPaymentDate shouldBe None
-
           }
-          "regular payments day 24 days from date of journey" in {
-            val expectedGapFromCreatedOnToFirstPaymentDay = 24
-            val dayDateCreatedPlusGap = result.createdOn.plusDays(expectedGapFromCreatedOnToFirstPaymentDay).getDayOfMonth
-            result.regularPaymentsDay shouldEqual dayDateCreatedPlusGap
+          "with first regular payment date is at least " +
+            s"${daysFromCreatedDateToProcessFirstPayment + minGapBetweenPayments} day/s from date of journey" in {
+            result.regularPaymentDates.head.minusDays(daysFromCreatedDateToProcessFirstPayment + minGapBetweenPayments - 1)
+              .isAfter(result.createdOn)
           }
-
         }
+        "upfront payment but no payment day preference returns Payment Calendar" - {
+          implicit val fakeRequest: FakeRequest[Any] = FakeRequest()
+          val dateOfJourney = clockProvider.nowDate()
+          val paymentToday = Some(PaymentToday(true))
+          val noArrangementDayOfMonth = None
+
+          val result = paymentDatesService
+            .paymentsCalendar(paymentToday, noArrangementDayOfMonth)(fakeRequest, servicesConfig)
+          "created on date of journey" in {
+            result.createdOn shouldBe dateOfJourney
+          }
+          s"with upfront payment date at least $daysFromCreatedDateToProcessFirstPayment day/s from date of journey" in {
+            result
+              .maybeUpfrontPaymentDate.get.minusDays(daysFromCreatedDateToProcessFirstPayment - 1)
+              .isAfter(dateOfJourney) shouldBe true
+          }
+          s"with first regular payment date at least $minGapBetweenPayments day/s from upfront payment date" in {
+            result.regularPaymentDates.head.minusDays(minGapBetweenPayments - 1)
+              .isAfter(result.maybeUpfrontPaymentDate.get)
+          }
+        }
+        "payment day preference but no upfront payment returns Payment Calendar" - {
+          implicit val fakeRequest: FakeRequest[Any] = FakeRequest()
+          val dateOfJourney = clockProvider.nowDate()
+          val noPaymentToday = None
+          val preferredRegularPaymentDay = Some(ArrangementDayOfMonth(1))
+
+          val result = paymentDatesService
+            .paymentsCalendar(noPaymentToday, preferredRegularPaymentDay)(fakeRequest, servicesConfig)
+
+          "created on date of journey" in {
+            result.createdOn shouldBe dateOfJourney
+          }
+          "with no upfront payment date" in {
+            result.maybeUpfrontPaymentDate shouldBe None
+          }
+          s"with first regular payment date at least $daysFromCreatedDateToProcessFirstPayment day/s from date of journey" in {
+            result.regularPaymentDates.head.minusDays(daysFromCreatedDateToProcessFirstPayment - 1)
+              .isAfter(result.createdOn)
+          }
+          "payment date for all regular payments is the customer's preferred day of payment" in {
+            result.regularPaymentDates.foreach(_.getDayOfMonth shouldBe preferredRegularPaymentDay.get.dayOfMonth)
+          }
+        }
+        "upfront payment and payment day preference returns Payment Calendar" - {
+          implicit val fakeRequest: FakeRequest[Any] = FakeRequest()
+          val dateOfJourney = clockProvider.nowDate()
+          val paymentToday = Some(PaymentToday(true))
+          val preferredRegularPaymentDay = Some(ArrangementDayOfMonth(1))
+
+          val result = paymentDatesService
+            .paymentsCalendar(paymentToday, preferredRegularPaymentDay)(fakeRequest, servicesConfig)
+
+          "created on date of journey" in {
+            result.createdOn shouldBe dateOfJourney
+          }
+          s"with upfront payment date at least $daysFromCreatedDateToProcessFirstPayment day/s from date of journey" in {
+            result
+              .maybeUpfrontPaymentDate.get.minusDays(daysFromCreatedDateToProcessFirstPayment - 1)
+              .isAfter(dateOfJourney) shouldBe true
+          }
+          s"with first regular payment date at least $minGapBetweenPayments day/s from upfront payment date" in {
+            result.regularPaymentDates.head.minusDays(minGapBetweenPayments - 1)
+              .isAfter(result.maybeUpfrontPaymentDate.get)
+          }
+          "payment date for all regular payments is the customer's preferred day of payment" in {
+            result.regularPaymentDates.foreach(_.getDayOfMonth shouldBe preferredRegularPaymentDay.get.dayOfMonth)
+          }
+        }
+
       }
     }
   }
