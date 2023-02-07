@@ -21,31 +21,42 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import java.time.LocalDate
 
 case class PaymentsCalendar(
-                           createdOn: LocalDate,
-                           upfrontPaymentDate: Option[LocalDate],
-                           regularPaymentsDay: Int
+                             createdOn: LocalDate,
+                             maybeUpfrontPaymentDate: Option[LocalDate],
+                             regularPaymentsDay: Int
 )(implicit config: ServicesConfig) {
   val daysFromCreatedDateToProcessFirstPayment: Int = config.getInt("paymentDatesConfig.daysToProcessPayment")
+  val minGapBetweenPayments: Int = config.getInt("paymentDatesConfig.minGapBetweenPayments")
   val minimumLengthOfPaymentPlan: Int = config.getInt("paymentDatesConfig.minimumLengthOfPaymentPlan")
   val maximumLengthOfPaymentPlan: Int = config.getInt("paymentDatesConfig.maximumLengthOfPaymentPlan")
 
-  lazy val regularPaymentDates: Seq[LocalDate] = upfrontPaymentDate
-    .map(regularPaymentDatesFromDate)
-    .getOrElse(
-      if (regularPaymentsDaySufficientlyAfterDate(createdOn)) {
-        regularPaymentDatesFromDate(createdOn)
-      } else {
-        regularPaymentDatesFromDate(createdOn.plusMonths(1))
-      }
-    )
+  lazy val regularPaymentDates: Seq[LocalDate] = {
+    val baselineDate = maybeUpfrontPaymentDate.getOrElse(createdOn)
 
-  private def regularPaymentDatesFromDate(initialDate: LocalDate): Seq[LocalDate] = {
-    (minimumLengthOfPaymentPlan to maximumLengthOfPaymentPlan)
-      .map(initialDate.plusMonths(_).withDayOfMonth(regularPaymentsDay))
+    if (regularPaymentsDaySufficientlyAfterDate(baselineDate)) {
+      regularPaymentDatesFromDate(baselineDate)
+    } else {
+      regularPaymentDatesFromDate(baselineDate.plusMonths(1))
+    }
   }
 
+
+  private def regularPaymentDatesFromDate(baselineDate: LocalDate): Seq[LocalDate] = {
+    (minimumLengthOfPaymentPlan to maximumLengthOfPaymentPlan)
+      .map(baselineDate.plusMonths(_).withDayOfMonth(regularPaymentsDay))
+  }
+
+
+  // TODO OPS-9610 check old implementation. About how long the first regular payment is compared to:
+  // - createdOn date when no upfront payment
+  // - upfront payment when there is one.
+  // this implementation ensures there's at least 14 days (max of 10 and 14)
+  // but old implementation maybe went for 24 days from createdOn regardless of whether there's an upfront payment
   private def regularPaymentsDaySufficientlyAfterDate(date: LocalDate): Boolean = {
-    regularPaymentsDay.compareTo(date.getDayOfMonth) >= daysFromCreatedDateToProcessFirstPayment
+    regularPaymentsDay.compareTo(date.getDayOfMonth) >= Math.max(
+      daysFromCreatedDateToProcessFirstPayment,
+      minGapBetweenPayments
+    )
   }
 }
 

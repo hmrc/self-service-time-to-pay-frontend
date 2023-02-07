@@ -48,7 +48,7 @@ class PaymentDatesServiceSpec extends ItSpec {
 
           }
           "with no upfront payment date" in {
-            result.upfrontPaymentDate shouldBe None
+            result.maybeUpfrontPaymentDate shouldBe None
 
           }
           "regular payments day 24 days from date of journey" in {

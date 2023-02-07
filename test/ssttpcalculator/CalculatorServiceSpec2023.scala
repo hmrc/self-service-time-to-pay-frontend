@@ -44,7 +44,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
   val paymentsCalendar: PaymentsCalendar = PaymentsCalendar(
     createdOn = date("2023-02-02"),
-    upfrontPaymentDate = Some(date("2023-02-12")),
+    maybeUpfrontPaymentDate = Some(date("2023-02-12")),
     regularPaymentsDay = 17
   )
 
