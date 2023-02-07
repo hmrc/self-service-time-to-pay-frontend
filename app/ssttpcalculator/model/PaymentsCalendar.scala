@@ -16,17 +16,36 @@
 
 package ssttpcalculator.model
 
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
 import java.time.LocalDate
 
 case class PaymentsCalendar(
-                           // TODO: update for cases without upfront payments, with a date created or some such
-    upfrontPaymentDate: LocalDate,
-    regularPaymentsDay: Int
-) {
+                           createdOn: LocalDate,
+                           upfrontPaymentDate: Option[LocalDate],
+                           regularPaymentsDay: Int
+)(implicit config: ServicesConfig) {
+  val daysFromCreatedDateToProcessFirstPayment: Int = config.getInt("paymentDatesConfig.daysToProcessPayment")
+  val minimumLengthOfPaymentPlan: Int = config.getInt("paymentDatesConfig.minimumLengthOfPaymentPlan")
+  val maximumLengthOfPaymentPlan: Int = config.getInt("paymentDatesConfig.maximumLengthOfPaymentPlan")
 
-  // TODO: update method against rules for separation of upfront payment date and first regular payment date
-  def regularPaymentDates: Seq[LocalDate] = {
-    (1 to 24).map(upfrontPaymentDate.plusMonths(_).withDayOfMonth(regularPaymentsDay))
+  lazy val regularPaymentDates: Seq[LocalDate] = upfrontPaymentDate
+    .map(regularPaymentDatesFromDate)
+    .getOrElse(
+      if (regularPaymentsDaySufficientlyAfterDate(createdOn)) {
+        regularPaymentDatesFromDate(createdOn)
+      } else {
+        regularPaymentDatesFromDate(createdOn.plusMonths(1))
+      }
+    )
+
+  private def regularPaymentDatesFromDate(initialDate: LocalDate): Seq[LocalDate] = {
+    (minimumLengthOfPaymentPlan to maximumLengthOfPaymentPlan)
+      .map(initialDate.plusMonths(_).withDayOfMonth(regularPaymentsDay))
+  }
+
+  private def regularPaymentsDaySufficientlyAfterDate(date: LocalDate): Boolean = {
+    regularPaymentsDay.compareTo(date.getDayOfMonth) >= daysFromCreatedDateToProcessFirstPayment
   }
 }
 
