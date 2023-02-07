@@ -24,7 +24,7 @@ import times.ClockProvider
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 import javax.inject.Inject
 
 class PaymentDatesService @Inject() (
@@ -47,8 +47,8 @@ class PaymentDatesService @Inject() (
   // TODO OPS-9610: consider change to defaultRegularPaymentsDay if no upfront payment
   // TODO OPS-9610: deal with payment date that is more than 28
   def paymentsCalendar(
-                        maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth],
-                        maybePaymentToday: Option[PaymentToday]
+                        maybePaymentToday: Option[PaymentToday],
+                        maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth]
                       )(
     implicit request: Request[_],
     config: ServicesConfig

@@ -23,6 +23,7 @@ import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, stringify, toJson}
 import ssttpcalculator.model.{Instalment, InterestRate, Payables, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import testsupport.DateSupport
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 object CalculatorDataGenerator extends Status with DateSupport {
   val eightMonthScheduleRegularPaymentAmount = 637
@@ -132,12 +133,11 @@ object CalculatorDataGenerator extends Status with DateSupport {
   }
 
   object newCalculatorModel {
+
+
     def date(date: String): LocalDate = LocalDate.parse(date)
 
-    val paymentsCalendar: PaymentsCalendar = PaymentsCalendar(
-      upfrontPaymentDate = date("2023-02-12"),
-      regularPaymentsDay = 17
-    )
+
 
     val aPaymentOnAccountNoInterestPayable: TaxLiability = TaxLiability(amount = 1000, dueDate = date("2100-01-01"))
     val anotherPaymentOnAccountNoInterestPayable: TaxLiability = TaxLiability(amount = 2000, dueDate = date("2100-01-01"))

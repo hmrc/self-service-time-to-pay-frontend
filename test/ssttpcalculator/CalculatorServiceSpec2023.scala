@@ -18,8 +18,9 @@ package ssttpcalculator
 
 import play.api.Logger
 import play.libs.Scala.Tuple
-import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, TaxLiability}
+import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, PaymentsCalendar, TaxLiability}
 import testsupport.ItSpec
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.{LocalDate, Year}
 
@@ -30,6 +31,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
   val durationService: DurationService = fakeApplication().injector.instanceOf[DurationService]
   val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
+  implicit val servicesConfig: ServicesConfig = fakeApplication().injector.instanceOf[ServicesConfig]
+
   def date(date: String): LocalDate = LocalDate.parse(date)
 
   def interestAccrued(interestRateCalculator: LocalDate => InterestRate)(dueDate: LocalDate, payment: Payment): BigDecimal = {
@@ -38,6 +41,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
     val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(dueDate, payment.date))
     payment.amount * currentDailyRate * daysInterestToCharge
   }
+
+  val paymentsCalendar: PaymentsCalendar = PaymentsCalendar(
+    createdOn = date("2023-02-02"),
+    upfrontPaymentDate = Some(date("2023-02-12")),
+    regularPaymentsDay = 17
+  )
 
 
   import testsupport.testdata.CalculatorDataGenerator.newCalculatorModel._
