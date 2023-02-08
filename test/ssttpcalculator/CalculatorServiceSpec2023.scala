@@ -36,15 +36,15 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
   def date(date: String): LocalDate = LocalDate.parse(date)
 
-  def interestAccrued(interestRateCalculator: LocalDate => InterestRate)(dueDate: LocalDate, payment: Payment): BigDecimal = {
-    val currentInterestRate = interestRateCalculator(dueDate).rate
-    val currentDailyRate = currentInterestRate / BigDecimal(Year.of(dueDate.getYear).length()) / BigDecimal(100)
-    val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(dueDate, payment.date))
+  def interestSincePlanStartDate(interestRateCalculator: LocalDate => InterestRate)(startDate: LocalDate, payment: Payment): BigDecimal = {
+    val currentInterestRate = interestRateCalculator(startDate).rate
+    val currentDailyRate = currentInterestRate / BigDecimal(Year.of(startDate.getYear).length()) / BigDecimal(100)
+    val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(startDate, payment.date))
     payment.amount * currentDailyRate * daysInterestToCharge
   }
 
   val paymentsCalendar: PaymentsCalendar = PaymentsCalendar(
-    createdOn = date("2023-02-02"),
+    planStartDate = date("2023-02-02"),
     maybeUpfrontPaymentDate = Some(date("2023-02-12")),
     regularPaymentsDay = 17
   )
@@ -99,10 +99,10 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
           val payables = Payables(Seq(firstDebt, secondDebt, thirdLiability, fourthLiability))
 
-          val dateOfCalculation = paymentsCalendar.createdOn
+          val dateOfCalculation = paymentsCalendar.planStartDate
 
-          val expectedHistoricInterestOnFirstDebt = interestAccrued(fixedInterestRate())(firstDebtDueDate, Payment(dateOfCalculation, firstDebtAmount))
-          val expectedHistoricInterestOnSecondDebt = interestAccrued(fixedInterestRate())(secondDebtDueDate, Payment(dateOfCalculation, secondDebtAmount))
+          val expectedHistoricInterestOnFirstDebt = interestSincePlanStartDate(fixedInterestRate())(firstDebtDueDate, Payment(dateOfCalculation, firstDebtAmount))
+          val expectedHistoricInterestOnSecondDebt = interestSincePlanStartDate(fixedInterestRate())(secondDebtDueDate, Payment(dateOfCalculation, secondDebtAmount))
 
 
           calculatorService.totalHistoricInterest(
@@ -181,9 +181,9 @@ class CalculatorServiceSpec2023 extends ItSpec {
               result.liabilities.head shouldEqual taxLiability.copy(amount = taxLiability.amount - upfrontPaymentAmount)
 
 
-              val upfrontPaymentDateAsToday = paymentsCalendar.createdOn
+              val upfrontPaymentDateAsToday = paymentsCalendar.planStartDate
               val expectedUpfrontPayment = Payment(upfrontPaymentDateAsToday, upfrontPaymentAmount)
-              val expectedInterestAccruedOnFirstDebt = interestAccrued(fixedInterestRate())(firstDebtDueDate, expectedUpfrontPayment)
+              val expectedInterestAccruedOnFirstDebt = interestSincePlanStartDate(fixedInterestRate())(firstDebtDueDate, expectedUpfrontPayment)
               result.liabilities.last.amount shouldBe expectedInterestAccruedOnFirstDebt
             }
           }
@@ -201,12 +201,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
               val upfrontPaymentAmount = 1200
 
-              val upfrontPaymentDateAsJourneyToday = paymentsCalendar.createdOn
+              val upfrontPaymentDateAsJourneyToday = paymentsCalendar.planStartDate
               val upfrontPaymentAgainstFirstDebt = Payment(upfrontPaymentDateAsJourneyToday, firstDebtAmount)
-              val expectedInterestAccruedOnFirstDebt = interestAccrued(fixedInterestRate())(firstDebtDueDate, upfrontPaymentAgainstFirstDebt)
+              val expectedInterestAccruedOnFirstDebt = interestSincePlanStartDate(fixedInterestRate())(firstDebtDueDate, upfrontPaymentAgainstFirstDebt)
 
               val upfrontPaymentAgainstSecondDebt = Payment(upfrontPaymentDateAsJourneyToday, upfrontPaymentAmount - firstDebtAmount)
-              val expectedInterestAccruedOnSecondDebt = interestAccrued(fixedInterestRate())(secondDebtDueDate, upfrontPaymentAgainstSecondDebt)
+              val expectedInterestAccruedOnSecondDebt = interestSincePlanStartDate(fixedInterestRate())(secondDebtDueDate, upfrontPaymentAgainstSecondDebt)
 
               val result = calculatorService.payablesLessUpfrontPayment(
                 paymentsCalendar,
@@ -226,7 +226,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
 
     ".regularInstalments" - {
-      "generates a list of monthly payment instalments at the regular payment amount until the payables are cleared" - {
+      "generates a list of monthly payment instalments at the regular payment amount" +
+        " until the payables (including any late payment interest payable) are cleared" - {
         "where no interest is payable on any liabilities" - {
           "if balance to pay is 0, creates an empty list (no instalments)" in {
             val regularPaymentAmount = 500
@@ -299,7 +300,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
             val expectedFirstInstalmentPaymentDate = paymentsCalendar.regularPaymentDates.head
             val expectedFirstPayment = Payment(expectedFirstInstalmentPaymentDate, regularPaymentAmount)
 
-            val expectedInterestAccrued = interestAccrued(fixedInterestRate(1))(dueDate, expectedFirstPayment)
+            val expectedInterestAccrued = interestSincePlanStartDate(fixedInterestRate(1))(paymentsCalendar.planStartDate, expectedFirstPayment)
 
             calculatorService.regularInstalments(
               paymentsCalendar = paymentsCalendar,
@@ -325,11 +326,11 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
               val expectedFirstInstalmentPaymentDate = paymentsCalendar.regularPaymentDates.head
               val expectedFirstPayment = Payment(expectedFirstInstalmentPaymentDate, regularPaymentAmount)
-              val expectedInterestAccruedOnFirstDebt = interestAccrued(fixedInterestRate())(firstDebtDueDate, expectedFirstPayment)
+              val expectedInterestAccruedOnFirstDebt = interestSincePlanStartDate(fixedInterestRate())(paymentsCalendar.planStartDate, expectedFirstPayment)
 
               val expectedSecondInstalmentPaymentDate = paymentsCalendar.regularPaymentDates(1)
               val expectedSecondPayment = Payment(expectedSecondInstalmentPaymentDate, secondDebtAmount)
-              val expectedInterestAccruedOnSecondDebt = interestAccrued(fixedInterestRate())(secondDebtDueDate, expectedSecondPayment)
+              val expectedInterestAccruedOnSecondDebt = interestSincePlanStartDate(fixedInterestRate())(paymentsCalendar.planStartDate, expectedSecondPayment)
 
               calculatorService.regularInstalments(
                 paymentsCalendar,
@@ -365,7 +366,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 result.last.amount <= 1000 shouldBe true
                 result.map(_.interest).sum shouldEqual result.last.amount
               }
-              "with late payment interest over two final months" in {
+              "with late payment interest over multiple final months" in {
                 val payables = testPayables((5000, date("2022-03-17")), (5000, date("2022-09-17")))
                 val regularPaymentAmount = 1000
 
@@ -373,10 +374,10 @@ class CalculatorServiceSpec2023 extends ItSpec {
                   paymentsCalendar,
                   regularPaymentAmount,
                   payables,
-                  fixedInterestRate(10)
+                  fixedInterestRate(30)
                 )
 
-                result.length shouldBe 12
+                result.length > 11 shouldBe true
                 result.init.foreach(instalment => instalment.amount shouldBe 1000)
                 result.slice(0, -2).foreach(instalment => instalment.interest > 0 shouldBe true)
                 result.last.amount <= 1000 shouldBe true

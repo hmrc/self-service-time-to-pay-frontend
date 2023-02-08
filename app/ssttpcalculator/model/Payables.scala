@@ -21,6 +21,7 @@ import java.time.LocalDate
 case class Payables(liabilities: Seq[Payable]) {
   def balance: BigDecimal = liabilities.map(_.amount).sum
 
+  // TODO [OPS-9610] ensure payables are ordered by their due dates, earliest first, otherwise this method won't work
   def inDate(date: LocalDate): Boolean = liabilities.head match {
     case TaxLiability(_, dueDate) => dueDate.isAfter(date)
     case LatePaymentInterest(_) => true

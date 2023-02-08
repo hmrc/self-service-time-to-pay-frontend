@@ -38,7 +38,7 @@ class PaymentsCalendarSpec extends ItSpec {
     ".regularPaymentDates" - {
       s"generates $maximumLengthOfPaymentPlan months' worth of dates" in {
         PaymentsCalendar(
-          createdOn = date("2023-01-15"),
+          planStartDate = date("2023-01-15"),
           maybeUpfrontPaymentDate = None,
           regularPaymentsDay = 28
         ).regularPaymentDates.length shouldBe maximumLengthOfPaymentPlan
@@ -47,7 +47,7 @@ class PaymentsCalendarSpec extends ItSpec {
         val journeyPreferredPaymentDay = 28
 
         val paymentsCalendar = PaymentsCalendar(
-          createdOn = date("2023-01-15"),
+          planStartDate = date("2023-01-15"),
           maybeUpfrontPaymentDate = None,
           regularPaymentsDay = journeyPreferredPaymentDay
         )
@@ -64,7 +64,7 @@ class PaymentsCalendarSpec extends ItSpec {
           val upfrontPaymentDate = date("2023-01-27")
 
           val firstRegularPaymentDate = PaymentsCalendar(
-            createdOn = date("2023-01-15"),
+            planStartDate = date("2023-01-15"),
             maybeUpfrontPaymentDate = Some(upfrontPaymentDate),
             regularPaymentsDay = journeyPreferredPaymentDay
           ).regularPaymentDates.head
@@ -77,7 +77,7 @@ class PaymentsCalendarSpec extends ItSpec {
 
 
           val firstRegularPaymentDate = PaymentsCalendar(
-            createdOn = date("2023-01-15"),
+            planStartDate = date("2023-01-15"),
             maybeUpfrontPaymentDate = Some(upfrontPaymentDate),
             regularPaymentsDay = journeyPreferredPaymentDay
           ).regularPaymentDates.head
@@ -93,7 +93,7 @@ class PaymentsCalendarSpec extends ItSpec {
             val journeyPreferredPaymentDay = 15
 
             val firstRegularPaymentDate = PaymentsCalendar(
-              createdOn = dateAtTimeOfJourney,
+              planStartDate = dateAtTimeOfJourney,
               maybeUpfrontPaymentDate = None,
               regularPaymentsDay = journeyPreferredPaymentDay
             ).regularPaymentDates.head
@@ -108,7 +108,7 @@ class PaymentsCalendarSpec extends ItSpec {
 
 
             val firstRegularPaymentDate = PaymentsCalendar(
-              createdOn = dateAtTimeOfJourney,
+              planStartDate = dateAtTimeOfJourney,
               maybeUpfrontPaymentDate = None,
               regularPaymentsDay = journeyPreferredPaymentDay
             ).regularPaymentDates.head

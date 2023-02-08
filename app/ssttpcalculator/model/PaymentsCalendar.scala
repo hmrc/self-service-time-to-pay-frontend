@@ -21,7 +21,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import java.time.LocalDate
 
 case class PaymentsCalendar(
-                             createdOn: LocalDate,
+                             planStartDate: LocalDate,
                              maybeUpfrontPaymentDate: Option[LocalDate],
                              regularPaymentsDay: Int
 )(implicit config: ServicesConfig) {
@@ -31,7 +31,7 @@ case class PaymentsCalendar(
   val maximumLengthOfPaymentPlan: Int = config.getInt("paymentDatesConfig.maximumLengthOfPaymentPlan")
 
   lazy val regularPaymentDates: Seq[LocalDate] = {
-    val baselineDate = maybeUpfrontPaymentDate.getOrElse(createdOn)
+    val baselineDate = maybeUpfrontPaymentDate.getOrElse(planStartDate)
 
     if (noTimeForRegularPaymentDateThisMonth(baselineDate)) {
       regularPaymentDatesFromNextMonth(baselineDate)

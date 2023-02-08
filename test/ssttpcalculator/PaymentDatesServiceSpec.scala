@@ -54,7 +54,7 @@ class PaymentDatesServiceSpec extends ItSpec {
             .paymentsCalendar(noPaymentToday, noArrangementDayOfMonth)(fakeRequest, servicesConfig)
 
           "created on date of journey" in {
-            result.createdOn shouldBe dateOfJourney
+            result.planStartDate shouldBe dateOfJourney
           }
           "with no upfront payment date" in {
             result.maybeUpfrontPaymentDate shouldBe None
@@ -62,7 +62,7 @@ class PaymentDatesServiceSpec extends ItSpec {
           "with first regular payment date is at least " +
             s"${daysFromCreatedDateToProcessFirstPayment + minGapBetweenPayments} day/s from date of journey" in {
             result.regularPaymentDates.head.minusDays(daysFromCreatedDateToProcessFirstPayment + minGapBetweenPayments - 1)
-              .isAfter(result.createdOn)
+              .isAfter(result.planStartDate)
           }
         }
         "upfront payment but no payment day preference returns Payment Calendar" - {
@@ -74,7 +74,7 @@ class PaymentDatesServiceSpec extends ItSpec {
           val result = paymentDatesService
             .paymentsCalendar(paymentToday, noArrangementDayOfMonth)(fakeRequest, servicesConfig)
           "created on date of journey" in {
-            result.createdOn shouldBe dateOfJourney
+            result.planStartDate shouldBe dateOfJourney
           }
           s"with upfront payment date at least $daysFromCreatedDateToProcessFirstPayment day/s from date of journey" in {
             result
@@ -96,14 +96,14 @@ class PaymentDatesServiceSpec extends ItSpec {
             .paymentsCalendar(noPaymentToday, preferredRegularPaymentDay)(fakeRequest, servicesConfig)
 
           "created on date of journey" in {
-            result.createdOn shouldBe dateOfJourney
+            result.planStartDate shouldBe dateOfJourney
           }
           "with no upfront payment date" in {
             result.maybeUpfrontPaymentDate shouldBe None
           }
           s"with first regular payment date at least $daysFromCreatedDateToProcessFirstPayment day/s from date of journey" in {
             result.regularPaymentDates.head.minusDays(daysFromCreatedDateToProcessFirstPayment - 1)
-              .isAfter(result.createdOn)
+              .isAfter(result.planStartDate)
           }
           "payment date for all regular payments is the customer's preferred day of payment" in {
             result.regularPaymentDates.foreach(_.getDayOfMonth shouldBe preferredRegularPaymentDay.get.dayOfMonth)
@@ -119,7 +119,7 @@ class PaymentDatesServiceSpec extends ItSpec {
             .paymentsCalendar(paymentToday, preferredRegularPaymentDay)(fakeRequest, servicesConfig)
 
           "created on date of journey" in {
-            result.createdOn shouldBe dateOfJourney
+            result.planStartDate shouldBe dateOfJourney
           }
           s"with upfront payment date at least $daysFromCreatedDateToProcessFirstPayment day/s from date of journey" in {
             result

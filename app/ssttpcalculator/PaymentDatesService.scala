@@ -62,7 +62,7 @@ class PaymentDatesService @Inject() (
       .getDayOfMonth
 
     PaymentsCalendar(
-      createdOn = today,
+      planStartDate = today,
       maybeUpfrontPaymentDate = maybePaymentToday
         .map(_ => dateWithValidPaymentDay(
           today.plusDays(daysToProcessUpfrontPayment),
