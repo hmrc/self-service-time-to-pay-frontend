@@ -18,8 +18,9 @@ package ssttpcalculator
 
 import play.api.Logger
 import play.libs.Scala.Tuple
-import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, PaymentsCalendar, TaxLiability}
+import ssttpcalculator.model.{Instalment, InterestRate, LatePaymentInterest, Payables, Payment, PaymentsCalendar, TaxLiability}
 import testsupport.ItSpec
+import testsupport.testdata.CalculatorDataGenerator.newCalculatorModel.date
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.{LocalDate, Year}
@@ -59,11 +60,108 @@ class CalculatorServiceSpec2023 extends ItSpec {
           calculatorService.payablesLessUpfrontPayment(
             paymentsCalendar = paymentsCalendar,
             upfrontPaymentAmount = 0,
-            payables = payablesWithOne2000LiabilityNoDueDate
+            payables = payablesWithOne2000LiabilityNoDueDate,
+            dateToRate = fixedInterestRate()
           ) shouldBe payablesWithOne2000LiabilityNoDueDate
         }
-      }
+        "where no interest is payable on any liabilities" - {
+          "if upfront payment is less the first liability" - {
+            "returns a copy of payables with first reduced by upfront payment" in {
+              val result = calculatorService.payablesLessUpfrontPayment(
+                paymentsCalendar = paymentsCalendar,
+                upfrontPaymentAmount = 500,
+                payables = payablesWithOne2000LiabilityNoDueDate,
+                dateToRate = fixedInterestRate()
+              )
 
+              result.liabilities.length shouldEqual(payablesWithOne2000LiabilityNoDueDate.liabilities.length)
+              result.liabilities.head.amount shouldBe 1500
+            }
+          }
+          "if upfront payment is more than the first liability but less than first two" - {
+            "returns a copy of payables with first removed and second reduced by the remainder" in {
+              calculatorService.payablesLessUpfrontPayment(
+                paymentsCalendar = paymentsCalendar,
+                upfrontPaymentAmount = 2000,
+                payables = payablesWithTwoLiabilitiesNoDueDate,
+                dateToRate = fixedZeroInterest
+              ) shouldBe Payables(Seq(
+                anotherPaymentOnAccountNoInterestPayable.copy(amount = 1000)
+              ))
+            }
+          }
+          "if upfront payment covers all the liabilities" - {
+            "returns a payables with no liabilities" in {
+              calculatorService.payablesLessUpfrontPayment(
+                paymentsCalendar = paymentsCalendar,
+                upfrontPaymentAmount = 3000,
+                payables = payablesWithTwoLiabilitiesNoDueDate,
+                dateToRate = fixedZeroInterest
+              ) shouldBe Payables(Seq())
+            }
+          }
+        }
+        "where interest in payable on liabilities" - {
+          "if upfront payment is less the first liability" - {
+            "returns payables with first liability reduced and late payment interest added at end" in {
+              val upfrontPaymentAmount = 800
+
+              val firstDebtDueDate = date("2022-03-17")
+              val taxLiability = TaxLiability(amount = 1000, dueDate = firstDebtDueDate)
+
+              val payablesInitially = Payables(Seq(taxLiability))
+
+              val result = calculatorService.payablesLessUpfrontPayment(
+                paymentsCalendar,
+                upfrontPaymentAmount,
+                payablesInitially,
+                dateToRate = fixedInterestRate()
+              )
+
+              result.liabilities.head shouldEqual taxLiability.copy(amount = taxLiability.amount - upfrontPaymentAmount)
+
+
+              val upfrontPaymentDateAsToday = paymentsCalendar.createdOn
+              val expectedUpfrontPayment = Payment(upfrontPaymentDateAsToday, upfrontPaymentAmount)
+              val expectedInterestAccruedOnFirstDebt = interestAccrued(fixedInterestRate())(firstDebtDueDate, expectedUpfrontPayment)
+              result.liabilities.last.amount shouldBe expectedInterestAccruedOnFirstDebt
+            }
+          }
+          "if upfront payment is more than first liability and less than first two" - {
+            "returns payables with first liability removed, second reduced, and late payment interest against first two liabilities added at end" in {
+              val firstDebtAmount = 1000
+              val firstDebtDueDate = date("2022-03-17")
+              val firstDebt = TaxLiability(firstDebtAmount, firstDebtDueDate)
+
+              val secondDebtAmount = 1000
+              val secondDebtDueDate = date("2022-09-17")
+              val secondDebt = TaxLiability(secondDebtAmount, secondDebtDueDate)
+
+              val payablesInitially = Payables(liabilities = Seq(firstDebt, secondDebt))
+
+              val upfrontPaymentAmount = 1200
+
+              val upfrontPaymentDateAsJourneyToday = paymentsCalendar.createdOn
+              val upfrontPaymentAgainstFirstDebt = Payment(upfrontPaymentDateAsJourneyToday, firstDebtAmount)
+              val expectedInterestAccruedOnFirstDebt = interestAccrued(fixedInterestRate())(firstDebtDueDate, upfrontPaymentAgainstFirstDebt)
+
+              val upfrontPaymentAgainstSecondDebt = Payment(upfrontPaymentDateAsJourneyToday, upfrontPaymentAmount - firstDebtAmount)
+              val expectedInterestAccruedOnSecondDebt = interestAccrued(fixedInterestRate())(secondDebtDueDate, upfrontPaymentAgainstSecondDebt)
+
+              val result = calculatorService.payablesLessUpfrontPayment(
+                paymentsCalendar,
+                upfrontPaymentAmount,
+                payablesInitially,
+                dateToRate = fixedInterestRate()
+              )
+
+              result.liabilities.length shouldEqual payablesInitially.liabilities.length
+              result.liabilities.head shouldBe secondDebt.copy(amount = secondDebtAmount - (upfrontPaymentAmount - firstDebtAmount))
+              result.liabilities.last.amount shouldEqual expectedInterestAccruedOnFirstDebt + expectedInterestAccruedOnSecondDebt
+            }
+          }
+        }
+      }
     }
 
 

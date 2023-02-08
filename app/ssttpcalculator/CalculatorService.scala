@@ -68,8 +68,15 @@ class CalculatorService @Inject() (
   def payablesLessUpfrontPayment(
       paymentsCalendar:     PaymentsCalendar,
       upfrontPaymentAmount: BigDecimal,
-      payables:             Payables
-  ): Payables = payables
+      payables:             Payables,
+      dateToRate: LocalDate => InterestRate
+                                ): Payables = {
+    // TODO OPS 9610: Check that upfront payment date considered as journey's today, rather than 10 days later)
+    val upfrontPaymentDateAsToday = paymentsCalendar.createdOn
+    val maybeLatePaymentInterest = latePaymentInterest(upfrontPaymentAmount, upfrontPaymentDateAsToday, payables, dateToRate)
+
+    payablesUpdated(upfrontPaymentAmount, payables, maybeLatePaymentInterest)
+  }
 
   def regularInstalments(paymentsCalendar:     PaymentsCalendar,
                          regularPaymentAmount: BigDecimal,
