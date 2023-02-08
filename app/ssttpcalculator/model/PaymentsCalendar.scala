@@ -33,15 +33,15 @@ case class PaymentsCalendar(
   lazy val regularPaymentDates: Seq[LocalDate] = {
     val baselineDate = maybeUpfrontPaymentDate.getOrElse(createdOn)
 
-    if (regularPaymentsDaySufficientlyAfterDate(baselineDate)) {
-      regularPaymentDatesFromDate(baselineDate)
+    if (noTimeForRegularPaymentDateThisMonth(baselineDate)) {
+      regularPaymentDatesFromNextMonth(baselineDate)
     } else {
-      regularPaymentDatesFromDate(baselineDate.plusMonths(1))
+      regularPaymentDatesFromNextMonth(baselineDate.minusMonths(1))
     }
   }
 
 
-  private def regularPaymentDatesFromDate(baselineDate: LocalDate): Seq[LocalDate] = {
+  private def regularPaymentDatesFromNextMonth(baselineDate: LocalDate): Seq[LocalDate] = {
     (minimumLengthOfPaymentPlan to maximumLengthOfPaymentPlan)
       .map(baselineDate.plusMonths(_).withDayOfMonth(regularPaymentsDay))
   }
@@ -52,11 +52,10 @@ case class PaymentsCalendar(
   // - upfront payment when there is one.
   // this implementation ensures there's at least 14 days (max of 10 and 14)
   // but old implementation maybe went for 24 days from createdOn regardless of whether there's an upfront payment
-  private def regularPaymentsDaySufficientlyAfterDate(date: LocalDate): Boolean = {
-    regularPaymentsDay.compareTo(date.getDayOfMonth) >= Math.max(
+  private def noTimeForRegularPaymentDateThisMonth(date: LocalDate): Boolean = {
+    date.withDayOfMonth(regularPaymentsDay).minusDays(Math.max(
       daysFromCreatedDateToProcessFirstPayment,
-      minGapBetweenPayments
-    )
+      minGapBetweenPayments)).isBefore(date)
   }
 }
 
