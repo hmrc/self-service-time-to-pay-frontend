@@ -20,7 +20,7 @@ import java.time.{LocalDate, Year}
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Debit(
+case class FixedInterestDebt(
     amount:  BigDecimal,
     dueDate: LocalDate,
     endDate: LocalDate,
@@ -29,7 +29,7 @@ case class Debit(
 
   def historicDailyRate: BigDecimal = rate.rate / BigDecimal(Year.of(dueDate.getYear).length()) / BigDecimal(100)
 
-  def asDebitInput(debit: Debit): TaxLiability = TaxLiability(
+  def asDebitInput(debit: FixedInterestDebt): TaxLiability = TaxLiability(
     debit.amount,
     debit.dueDate
   )

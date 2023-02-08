@@ -49,11 +49,71 @@ class CalculatorServiceSpec2023 extends ItSpec {
     regularPaymentsDay = 17
   )
 
-
   import testsupport.testdata.CalculatorDataGenerator.newCalculatorModel._
 
-
   "CalculatorService" - {
+    ".totalHistoricInterest" - {
+      "returns the total interest accrued across the payables from their respective due dates to the journey date (today)" - {
+        "returns 0 where there is one payable not past its due date" in {
+          val liabilityAmount = 1000
+          val liabilityDueDate = date("2023-07-31")
+          val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+          val payables = Payables(Seq(liability))
+
+          calculatorService.totalHistoricInterest(
+            payables = payables,
+            paymentsCalendar = paymentsCalendar,
+            periodToRates = fixedInterestRates()
+          ) shouldBe 0
+
+        }
+        "returns 0 where there are multiple payables none past their due dates" in {
+          val firstLiabilityAmount = 1000
+          val firstLiabilityDueDate = date("2023-07-31")
+          val firstLiability = TaxLiability(firstLiabilityAmount, firstLiabilityDueDate)
+          val secondLiabilityAmount = 1000
+          val secondLiabilityDueDate = date("2024-01-31")
+          val secondLiability = TaxLiability(secondLiabilityAmount, secondLiabilityDueDate)
+          val payables = Payables(Seq(firstLiability, secondLiability))
+
+          calculatorService.totalHistoricInterest(
+            payables = payables,
+            paymentsCalendar = paymentsCalendar,
+            periodToRates = fixedInterestRates()
+          ) shouldBe 0
+
+        }
+        "returns interest only on payables past due date, where some but not all payables are past their due dates" in {
+          val firstDebtAmount = 1000
+          val firstDebtDueDate = date("2022-01-31")
+          val firstDebt = TaxLiability(firstDebtAmount, firstDebtDueDate)
+          val secondDebtAmount = 1000
+          val secondDebtDueDate = date("2022-07-31")
+          val secondDebt = TaxLiability(secondDebtAmount, secondDebtDueDate)
+          val thirdLiabilityAmount = 1000
+          val thirdLiabilityDueDate = date("2023-07-31")
+          val thirdLiability = TaxLiability(thirdLiabilityAmount, thirdLiabilityDueDate)
+          val fourthLiabilityAmount = 1000
+          val fourthLiabilityDueDate = date("2024-01-31")
+          val fourthLiability = TaxLiability(fourthLiabilityAmount, fourthLiabilityDueDate)
+
+          val payables = Payables(Seq(firstDebt, secondDebt, thirdLiability, fourthLiability))
+
+          val dateOfCalculation = paymentsCalendar.createdOn
+
+          val expectedHistoricInterestOnFirstDebt = interestAccrued(fixedInterestRate())(firstDebtDueDate, Payment(dateOfCalculation, firstDebtAmount))
+          val expectedHistoricInterestOnSecondDebt = interestAccrued(fixedInterestRate())(secondDebtDueDate, Payment(dateOfCalculation, secondDebtAmount))
+
+
+          calculatorService.totalHistoricInterest(
+            payables = payables,
+            paymentsCalendar = paymentsCalendar,
+            periodToRates = fixedInterestRates()
+          ) shouldBe expectedHistoricInterestOnFirstDebt + expectedHistoricInterestOnSecondDebt
+
+        }
+      }
+    }
     ".payablesLessUpfrontPayment" - {
       "returns a copy of payables with the upfront payment removed" - {
         "where the upfront payment is 0, payables is returned unchanged" in {

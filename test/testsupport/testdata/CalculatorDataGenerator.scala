@@ -159,6 +159,16 @@ object CalculatorDataGenerator extends Status with DateSupport {
       rate = rate
     )
 
+    def fixedInterestRates(rate: BigDecimal = 1): (LocalDate, LocalDate) => Seq[InterestRate] = {
+      (startDate: LocalDate, endDate: LocalDate) => {
+        Seq(InterestRate(
+          startDate = startDate,
+          endDate = endDate,
+          rate = rate
+        ))
+      }
+    }
+
     def testPayables(liabilities: (BigDecimal, LocalDate)*): Payables = {
       Payables(liabilities.map(liability => TaxLiability(liability._1, liability._2)))
     }
