@@ -20,24 +20,18 @@ import java.time.{LocalDate, Year}
 import play.api.libs.json.{Json, OFormat}
 import timetopaytaxpayer.cor.model.Debit
 
-import scala.math.BigDecimal
-
-sealed trait Animal
-case class Dog(name: String) extends Animal
-case class Cat(name: String) extends Animal
-
 sealed trait Payable {
   def amount: BigDecimal
 
   def hasInterestCharge(paymentDate: LocalDate): Boolean
 }
 
-case class LatePaymentInterest(amount: BigDecimal) extends Payable {
+final case class LatePaymentInterest(amount: BigDecimal) extends Payable {
   def hasInterestCharge(paymentDate: LocalDate): Boolean = false
 
 }
 
-case class TaxLiability(
+final case class TaxLiability(
     amount:  BigDecimal,
     dueDate: LocalDate
 ) extends Payable {

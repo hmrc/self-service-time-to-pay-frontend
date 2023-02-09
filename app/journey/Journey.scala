@@ -96,6 +96,7 @@ final case class Journey(
     require(eligibilityStatus.eligible, s"taxpayer has to be eligible [$this]")
   }
 
+  //TODO OPS-9610 update this
   def requireScheduleIsDefined(): Unit = {
     requireIsInProgress()
     requireIsEligible()

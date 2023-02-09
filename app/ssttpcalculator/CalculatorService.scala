@@ -63,52 +63,43 @@ class CalculatorService @Inject() (
       upfrontPaymentAmount: BigDecimal,
       regularPaymentAmount: BigDecimal,
       payables:             Payables
-  ): PaymentSchedule = {
-
+  ): Option[PaymentSchedule] = {
     val principal = payables.liabilities.map(_.amount).sum
 
     val maybeInterestAccruedUpToStartDate: Option[LatePaymentInterest] = totalHistoricInterest(payables, paymentsCalendar, interestService.getRatesForPeriod)
-
     val maybeUpfrontPaymentLateInterest: Option[LatePaymentInterest] = paymentsCalendar.maybeUpfrontPaymentDate match {
-      case Some(_) => latePaymentInterestFromUpfrontPayment(
-        paymentsCalendar,
-        upfrontPaymentAmount,
-        payables,
-        interestService.getRatesForPeriod
-      )
-      case None => None
+      case Some(_) => latePaymentInterestFromUpfrontPayment(paymentsCalendar, upfrontPaymentAmount, payables, interestService.getRatesForPeriod)
+      case None    => None
     }
-
     val liabilitiesUpdated = Seq(maybeInterestAccruedUpToStartDate, maybeUpfrontPaymentLateInterest)
       .foldLeft(payables.liabilities)((ls, maybeInterest) => maybeInterest match {
         case Some(interest) => ls :+ interest
         case None           => ls
       })
-
     val payablesUpdated = payablesLessUpfrontPayment(upfrontPaymentAmount, payables.copy(liabilities = liabilitiesUpdated))
 
-    val instalments = regularInstalments(
-      paymentsCalendar,
-      regularPaymentAmount,
-      payablesUpdated,
-      interestService.rateOn
-    )
+    val instalments = regularInstalments(paymentsCalendar, regularPaymentAmount, payablesUpdated, interestService.rateOn)
+    instalments match {
+      case None => None
+      case Some(instalments) =>
+        val instalmentLatePaymentInterest = instalments.map(_.interest).sum
 
-    val instalmentLatePaymentInterest = instalments.map(_.interest).sum
+        val totalInterestCharged = maybeInterestAccruedUpToStartDate.map(_.amount).getOrElse(BigDecimal(0)) +
+          maybeUpfrontPaymentLateInterest.map(_.amount).getOrElse(0) + instalmentLatePaymentInterest
 
-    val totalInterestCharged = maybeInterestAccruedUpToStartDate.map(_.amount).getOrElse(BigDecimal(0)) +
-      maybeUpfrontPaymentLateInterest.map(_.amount).getOrElse(0) + instalmentLatePaymentInterest
-
-    PaymentSchedule(
-      startDate            = paymentsCalendar.planStartDate,
-      endDate              = instalments.last.paymentDate,
-      initialPayment       = upfrontPaymentAmount,
-      amountToPay          = principal,
-      instalmentBalance    = principal - upfrontPaymentAmount,
-      totalInterestCharged = totalInterestCharged,
-      totalPayable         = principal + totalInterestCharged,
-      instalments          = instalments
-    )
+        Some(PaymentSchedule(
+          startDate            = paymentsCalendar.planStartDate,
+          endDate              = instalments
+            .lastOption.map(_.paymentDate)
+            .getOrElse(throw new IllegalArgumentException("no instalments found to create the schedule")),
+          initialPayment       = upfrontPaymentAmount,
+          amountToPay          = principal,
+          instalmentBalance    = principal - upfrontPaymentAmount,
+          totalInterestCharged = totalInterestCharged,
+          totalPayable         = principal + totalInterestCharged,
+          instalments          = instalments
+        ))
+    }
   }
 
   def totalHistoricInterest(
@@ -161,7 +152,7 @@ class CalculatorService @Inject() (
                          regularPaymentAmount: BigDecimal,
                          payables:             Payables,
                          dateToRate:           LocalDate => InterestRate
-  ): Seq[Instalment] = {
+  ): Option[Seq[Instalment]] = {
     regularInstalmentsRecursive(
       paymentsCalendar.planStartDate,
       paymentsCalendar.regularPaymentDates,
@@ -180,30 +171,40 @@ class CalculatorService @Inject() (
       payables:              Payables,
       dateToRate:            LocalDate => InterestRate,
       instalmentsAggregator: Seq[Instalment]
-  ): Seq[Instalment] = {
-    val paymentDate = regularPaymentDates.head
+  ): Option[Seq[Instalment]] = {
+    val paymentDate = regularPaymentDates.headOption
     val balance = payables.balance
 
-    if (balance <= 0) { instalmentsAggregator }
-    else {
-      val maybeLatePaymentInterest = latePaymentInterest(maxPaymentAmount, paymentDate, payables, dateToRate, planStartDate)
-      val latePaymentInterestAmount: BigDecimal = maybeLatePaymentInterest.map(_.amount).getOrElse(0)
+    if (balance <= 0) { Some(instalmentsAggregator) } else {
+      paymentDate match {
+        case None => None
+        case Some(nextPaymentDate) =>
+          val maybeLatePaymentInterest = latePaymentInterest(maxPaymentAmount, nextPaymentDate, payables, dateToRate, planStartDate)
+          val latePaymentInterestAmount: BigDecimal = maybeLatePaymentInterest.map(_.amount).getOrElse(0)
 
-      val instalment = Instalment(
-        paymentDate = regularPaymentDates.head,
-        amount      = min(maxPaymentAmount, balance + latePaymentInterestAmount),
-        interest    = latePaymentInterestAmount
-      )
-      val updatedInstalments = instalmentsAggregator :+ instalment
+          val instalment = Instalment(
+            paymentDate = nextPaymentDate,
+            amount      = min(maxPaymentAmount, balance + latePaymentInterestAmount),
+            interest    = latePaymentInterestAmount
+          )
+          val updatedInstalments = instalmentsAggregator :+ instalment
 
-      regularInstalmentsRecursive(
-        planStartDate,
-        regularPaymentDates.tail,
-        maxPaymentAmount,
-        payablesUpdated(maxPaymentAmount, payables, maybeLatePaymentInterest),
-        dateToRate,
-        updatedInstalments
-      )
+          val remainingPaymentDates = regularPaymentDates.drop(1)
+          val remainingBalance = payablesUpdated(maxPaymentAmount, payables, maybeLatePaymentInterest).balance
+
+          if (remainingBalance > 0 && remainingPaymentDates.isEmpty) {
+            None
+          } else {
+            regularInstalmentsRecursive(
+              planStartDate,
+              remainingPaymentDates,
+              maxPaymentAmount,
+              payablesUpdated(maxPaymentAmount, payables, maybeLatePaymentInterest),
+              dateToRate,
+              updatedInstalments
+            )
+          }
+      }
     }
   }
 
@@ -257,7 +258,7 @@ class CalculatorService @Inject() (
 
   // End new for ops-9610
 
-  def computeSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
+  def computeSchedule(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = {
     val paymentsCalendar = paymentDatesService.paymentsCalendar(
       journey.maybePaymentToday,
       journey.maybeArrangementDayOfMonth
@@ -302,15 +303,18 @@ class CalculatorService @Inject() (
       } yield TaxLiability(selfAssessmentDebit)
     )
 
-    for {
+    val schedules = for {
       proportionOfNetMonthlyIncome <- List(0.5, 0.6, 0.7)
       regularPaymentAmount = proportionOfNetMonthlyIncome * netMonthlyIncome
-    } yield buildScheduleNew(
-      paymentsCalendar     = paymentsCalendar,
-      upfrontPaymentAmount = initialPayment,
-      regularPaymentAmount = regularPaymentAmount,
-      payables             = payables
-    )
+      schedule = buildScheduleNew(
+        paymentsCalendar     = paymentsCalendar,
+        upfrontPaymentAmount = initialPayment,
+        regularPaymentAmount = regularPaymentAmount,
+        payables             = payables
+      )
+    } yield schedule
+
+    schedules.flatten
   }
 
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)

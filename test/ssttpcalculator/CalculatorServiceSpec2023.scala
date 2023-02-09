@@ -340,7 +340,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                     regularPaymentAmount,
                     payables,
                     fixedInterestRate(1)
-                  )
+                  ).get
 
                   result.length shouldBe 11
                   result.init.foreach(instalment => {
@@ -359,7 +359,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                     regularPaymentAmount,
                     payables,
                     fixedInterestRate(30)
-                  )
+                  ).get
 
                   result.length > 11 shouldBe true
                   result.init.foreach(instalment => instalment.amount shouldBe 1000)
