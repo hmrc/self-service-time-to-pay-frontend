@@ -41,8 +41,7 @@ class CalculatorService @Inject() (
     paymentDatesService: PaymentDatesService
 )
   (implicit ec: ExecutionContext,
-   appConfig: AppConfig,
-   request:   Request[_]) {
+   appConfig: AppConfig) {
 
   import clockProvider._
 
