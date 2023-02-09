@@ -16,7 +16,7 @@
 
 package ssttpcalculator.model
 
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import config.AppConfig
 
 import java.time.LocalDate
 
@@ -24,11 +24,7 @@ case class PaymentsCalendar(
                              planStartDate: LocalDate,
                              maybeUpfrontPaymentDate: Option[LocalDate],
                              regularPaymentsDay: Int
-)(implicit config: ServicesConfig) {
-  val daysFromCreatedDateToProcessFirstPayment: Int = config.getInt("paymentDatesConfig.daysToProcessPayment")
-  val minGapBetweenPayments: Int = config.getInt("paymentDatesConfig.minGapBetweenPayments")
-  val minimumLengthOfPaymentPlan: Int = config.getInt("paymentDatesConfig.minimumLengthOfPaymentPlan")
-  val maximumLengthOfPaymentPlan: Int = config.getInt("paymentDatesConfig.maximumLengthOfPaymentPlan")
+)(implicit config: AppConfig) {
 
   lazy val regularPaymentDates: Seq[LocalDate] = {
     val baselineDate = maybeUpfrontPaymentDate.getOrElse(planStartDate)
@@ -42,7 +38,7 @@ case class PaymentsCalendar(
 
 
   private def regularPaymentDatesFromNextMonth(baselineDate: LocalDate): Seq[LocalDate] = {
-    (minimumLengthOfPaymentPlan to maximumLengthOfPaymentPlan)
+    (config.minimumLengthOfPaymentPlan to config.maximumLengthOfPaymentPlan)
       .map(baselineDate.plusMonths(_).withDayOfMonth(regularPaymentsDay))
   }
 
@@ -54,8 +50,8 @@ case class PaymentsCalendar(
   // but old implementation maybe went for 24 days from createdOn regardless of whether there's an upfront payment
   private def noTimeForRegularPaymentDateThisMonth(date: LocalDate): Boolean = {
     date.withDayOfMonth(regularPaymentsDay).minusDays(Math.max(
-      daysFromCreatedDateToProcessFirstPayment,
-      minGapBetweenPayments)).isBefore(date)
+      config.daysToProcessUpfrontPayment,
+      config.minGapBetweenPayments)).isBefore(date)
   }
 }
 

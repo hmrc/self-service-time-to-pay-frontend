@@ -17,12 +17,12 @@
 package ssttpcalculator
 
 import bankholidays.WorkingDaysService.addWorkingDays
+import config.AppConfig
 import journey.{Journey, PaymentToday}
 import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
-import model.{FixedInterestPeriod, Instalment, InterestRate, LatePayment, LatePaymentInterest,
-  Payable, Payables, Payment, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
+import model.{FixedInterestPeriod, Instalment, InterestRate, LatePayment, LatePaymentInterest, Payable, Payables, Payment, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -280,14 +280,14 @@ class CalculatorService @Inject() (
   // should only create plans for 60 and 80% if 50% is not one month long
   // needs to handle not creating a plan if it's more than 24 months long
   // proportions of netMonthlyIncome should be configurable
-  def availablePaymentSchedules(
+  def paymentPlanOptions(
                                  sa: SelfAssessmentDetails,
                                  initialPayment: BigDecimal = BigDecimal(0),
                                  maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth],
                                  netMonthlyIncome: BigDecimal,
                                  maybePaymentToday: Option[PaymentToday]
                                )(implicit request: Request[_],
-                                 config: ServicesConfig
+                                 config: AppConfig
     ): List[PaymentSchedule] = {
 
       val paymentsCalendar = paymentDatesService.paymentsCalendar(

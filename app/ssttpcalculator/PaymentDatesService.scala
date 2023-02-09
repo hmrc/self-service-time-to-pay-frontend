@@ -16,31 +16,29 @@
 
 package ssttpcalculator
 
+import config.AppConfig
 import journey.PaymentToday
 import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.PaymentsCalendar
 import times.ClockProvider
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
-import java.time.{Clock, LocalDate}
+import java.time.LocalDate
 import javax.inject.Inject
 
 class PaymentDatesService @Inject() (
                                     clockProvider: ClockProvider,
-                                    config: ServicesConfig
+                                    config: AppConfig
                                     ){
-  import clockProvider._
+  val logger: Logger = Logger(getClass)
 
-  val logger = Logger(getClass)
-
-  val minimumLengthOfPaymentPlan: Int = config.getInt("paymentDatesConfig.minimumLengthOfPaymentPlan")
-  val maximumLengthOfPaymentPlan: Int = config.getInt("paymentDatesConfig.maximumLengthOfPaymentPlan")
-  val daysToProcessUpfrontPayment: Int = config.getInt("paymentDatesConfig.daysToProcessPayment")
-  val minGapBetweenPayments: Int = config.getInt("paymentDatesConfig.minGapBetweenPayments")
-  val firstPaymentDayOfMonth: Int = config.getInt("paymentDatesConfig.firstPaymentDayOfMonth")
-  val lastPaymentDayOfMonth: Int = config.getInt("paymentDatesConfig.lastPaymentDayOfMonth")
+  val minimumLengthOfPaymentPlan: Int = config.minimumLengthOfPaymentPlan
+  val maximumLengthOfPaymentPlan: Int = config.maximumLengthOfPaymentPlan
+  val daysToProcessUpfrontPayment: Int = config.daysToProcessUpfrontPayment
+  val minGapBetweenPayments: Int = config.minGapBetweenPayments
+  val firstPaymentDayOfMonth: Int = config.firstPaymentDayOfMonth
+  val lastPaymentDayOfMonth: Int = config.lastPaymentDayOfMonth
 
 
   // TODO OPS-9610: deal with upfront payment (or lack there of)
@@ -51,9 +49,8 @@ class PaymentDatesService @Inject() (
                         maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth]
                       )(
     implicit request: Request[_],
-    config: ServicesConfig
+    config: AppConfig
   ): PaymentsCalendar = {
-    val validLengthOfPaymentPlan = minimumLengthOfPaymentPlan to maximumLengthOfPaymentPlan
     val today = clockProvider.nowDate()
 
     val defaultRegularPaymentsDay = today
