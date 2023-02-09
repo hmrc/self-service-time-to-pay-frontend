@@ -16,28 +16,25 @@
 
 package ssttpcalculator
 
+import config.AppConfig
 import journey.PaymentToday
 import play.api.Logger
-import play.api.mvc.Request
 import play.api.test.FakeRequest
 import testsupport.ItSpec
 import times.ClockProvider
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
-import java.time.ZoneId.systemDefault
-import java.time.ZoneOffset.UTC
-import java.time.{Clock, LocalDate, LocalDateTime}
+import java.time.LocalDate
 
 class PaymentDatesServiceSpec extends ItSpec {
   private val logger = Logger(getClass)
 
   val clockProvider: ClockProvider = fakeApplication().injector.instanceOf[ClockProvider]
-  val servicesConfig: ServicesConfig = fakeApplication().injector.instanceOf[ServicesConfig]
+  val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
   val paymentDatesService: PaymentDatesService = fakeApplication().injector.instanceOf[PaymentDatesService]
 
-  val daysFromCreatedDateToProcessFirstPayment: Int = servicesConfig.getInt("paymentDatesConfig.daysToProcessPayment")
-  val minGapBetweenPayments: Int = servicesConfig.getInt("paymentDatesConfig.minGapBetweenPayments")
+  val daysFromCreatedDateToProcessFirstPayment: Int = appConfig.daysToProcessUpfrontPayment
+  val minGapBetweenPayments: Int = appConfig.minGapBetweenPayments
 
   def date(date: String): LocalDate = LocalDate.parse(date)
 
@@ -51,7 +48,7 @@ class PaymentDatesServiceSpec extends ItSpec {
           val noArrangementDayOfMonth = None
 
           val result = paymentDatesService
-            .paymentsCalendar(noPaymentToday, noArrangementDayOfMonth)(fakeRequest, servicesConfig)
+            .paymentsCalendar(noPaymentToday, noArrangementDayOfMonth)(fakeRequest, appConfig)
 
           "created on date of journey" in {
             result.planStartDate shouldBe dateOfJourney
@@ -72,7 +69,7 @@ class PaymentDatesServiceSpec extends ItSpec {
           val noArrangementDayOfMonth = None
 
           val result = paymentDatesService
-            .paymentsCalendar(paymentToday, noArrangementDayOfMonth)(fakeRequest, servicesConfig)
+            .paymentsCalendar(paymentToday, noArrangementDayOfMonth)(fakeRequest, appConfig)
           "created on date of journey" in {
             result.planStartDate shouldBe dateOfJourney
           }
@@ -93,7 +90,7 @@ class PaymentDatesServiceSpec extends ItSpec {
           val preferredRegularPaymentDay = Some(ArrangementDayOfMonth(1))
 
           val result = paymentDatesService
-            .paymentsCalendar(noPaymentToday, preferredRegularPaymentDay)(fakeRequest, servicesConfig)
+            .paymentsCalendar(noPaymentToday, preferredRegularPaymentDay)(fakeRequest, appConfig)
 
           "created on date of journey" in {
             result.planStartDate shouldBe dateOfJourney
@@ -116,7 +113,7 @@ class PaymentDatesServiceSpec extends ItSpec {
           val preferredRegularPaymentDay = Some(ArrangementDayOfMonth(1))
 
           val result = paymentDatesService
-            .paymentsCalendar(paymentToday, preferredRegularPaymentDay)(fakeRequest, servicesConfig)
+            .paymentsCalendar(paymentToday, preferredRegularPaymentDay)(fakeRequest, appConfig)
 
           "created on date of journey" in {
             result.planStartDate shouldBe dateOfJourney

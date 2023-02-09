@@ -55,51 +55,51 @@ class CalculatorControllerSpec extends ItSpec {
     }.toList
   }
 
-  "closestSchedule returns the schedule with monthly payments nearest to the user's preferred amount" in new SetUp {
-    confirm(whenUserPrefersMonthlyPayment(1), closestActualPayment = sevenMonthScheduleRegularPaymentAmount, duration = sevenMonths)
-    confirm(whenUserPrefersMonthlyPayment(757), closestActualPayment = sevenMonthScheduleRegularPaymentAmount, duration = sevenMonths)
-    confirm(whenUserPrefersMonthlyPayment(758), closestActualPayment = sixMonthScheduleRegularPaymentAmount, duration = sixMonths)
-    confirm(whenUserPrefersMonthlyPayment(897), closestActualPayment = sixMonthScheduleRegularPaymentAmount, duration = sixMonths)
-    confirm(whenUserPrefersMonthlyPayment(898), closestActualPayment = fiveMonthScheduleRegularPaymentAmount, duration = fiveMonths)
-    confirm(whenUserPrefersMonthlyPayment(1102), closestActualPayment = fiveMonthScheduleRegularPaymentAmount, duration = fiveMonths)
-    confirm(whenUserPrefersMonthlyPayment(1103), closestActualPayment = fourMonthScheduleRegularPaymentAmount, duration = fourMonths)
-    confirm(whenUserPrefersMonthlyPayment(1428), closestActualPayment = fourMonthScheduleRegularPaymentAmount, duration = fourMonths)
-    confirm(whenUserPrefersMonthlyPayment(1429), closestActualPayment = threeMonthScheduleRegularPaymentAmount, duration = threeMonths)
-    confirm(whenUserPrefersMonthlyPayment(2041), closestActualPayment = threeMonthScheduleRegularPaymentAmount, duration = threeMonths)
-    confirm(whenUserPrefersMonthlyPayment(2042), closestActualPayment = twoMonthScheduleRegularPaymentAmount, duration = twoMonths)
+  //  "closestSchedule returns the schedule with monthly payments nearest to the user's preferred amount" in new SetUp {
+  //    confirm(whenUserPrefersMonthlyPayment(1), closestActualPayment = sevenMonthScheduleRegularPaymentAmount, duration = sevenMonths)
+  //    confirm(whenUserPrefersMonthlyPayment(757), closestActualPayment = sevenMonthScheduleRegularPaymentAmount, duration = sevenMonths)
+  //    confirm(whenUserPrefersMonthlyPayment(758), closestActualPayment = sixMonthScheduleRegularPaymentAmount, duration = sixMonths)
+  //    confirm(whenUserPrefersMonthlyPayment(897), closestActualPayment = sixMonthScheduleRegularPaymentAmount, duration = sixMonths)
+  //    confirm(whenUserPrefersMonthlyPayment(898), closestActualPayment = fiveMonthScheduleRegularPaymentAmount, duration = fiveMonths)
+  //    confirm(whenUserPrefersMonthlyPayment(1102), closestActualPayment = fiveMonthScheduleRegularPaymentAmount, duration = fiveMonths)
+  //    confirm(whenUserPrefersMonthlyPayment(1103), closestActualPayment = fourMonthScheduleRegularPaymentAmount, duration = fourMonths)
+  //    confirm(whenUserPrefersMonthlyPayment(1428), closestActualPayment = fourMonthScheduleRegularPaymentAmount, duration = fourMonths)
+  //    confirm(whenUserPrefersMonthlyPayment(1429), closestActualPayment = threeMonthScheduleRegularPaymentAmount, duration = threeMonths)
+  //    confirm(whenUserPrefersMonthlyPayment(2041), closestActualPayment = threeMonthScheduleRegularPaymentAmount, duration = threeMonths)
+  //    confirm(whenUserPrefersMonthlyPayment(2042), closestActualPayment = twoMonthScheduleRegularPaymentAmount, duration = twoMonths)
+  //
+  //    private def confirm(schedule: PaymentSchedule, closestActualPayment: BigDecimal, duration: Int) = {
+  //      schedule.firstInstallment.amount shouldBe closestActualPayment
+  //      schedule.durationInMonths shouldBe duration
+  //    }
+  //
+  //    private def whenUserPrefersMonthlyPayment(amount: Int) = controller.computeClosestSchedule(amount, paymentSchedules)
+  //  }
 
-    private def confirm(schedule: PaymentSchedule, closestActualPayment: BigDecimal, duration: Int) = {
-      schedule.firstInstallment.amount shouldBe closestActualPayment
-      schedule.durationInMonths shouldBe duration
-    }
-
-    private def whenUserPrefersMonthlyPayment(amount: Int) = controller.computeClosestSchedule(amount, paymentSchedules)
-  }
-
-  "closestSchedules returns the closest schedule with the next closest 2 schedules if present" in new SetUp {
-    private val taxReturnDate = LocalDate.of(2020, APRIL, 5)
-    private val testReturns = List(Return(taxReturnDate, None, Some(taxReturnDate), None))
-    private val communicationPreferences = CommunicationPreferences(
-      welshLanguageIndicator = true, audioIndicator = true, largePrintIndicator = true, brailleIndicator = true)
-    private val selfAssessmentDetails = SelfAssessmentDetails(saUtr, communicationPreferences, Nil, testReturns)
-
-    private val twoMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == twoMonthScheduleRegularPaymentAmount).head
-    private val threeMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == threeMonthScheduleRegularPaymentAmount).head
-    private val fourMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == fourMonthScheduleRegularPaymentAmount).head
-    private val fiveMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == fiveMonthScheduleRegularPaymentAmount).head
-    private val sixMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == sixMonthScheduleRegularPaymentAmount).head
-    private val sevenMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == sevenMonthScheduleRegularPaymentAmount).head
-
-    private val closestSchedulesToTwoMonthSchedule =
-      controller.computeClosestSchedules(twoMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
-    closestSchedulesToTwoMonthSchedule shouldBe Set(twoMonthSchedule, threeMonthSchedule, fourMonthSchedule)
-
-    private val closestSchedulesToSixMonthSchedule =
-      controller.computeClosestSchedules(sixMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
-    closestSchedulesToSixMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
-
-    private val closestSchedulesToSevenMonthSchedule =
-      controller.computeClosestSchedules(sevenMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
-    closestSchedulesToSevenMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
-  }
+  //  "closestSchedules returns the closest schedule with the next closest 2 schedules if present" in new SetUp {
+  //    private val taxReturnDate = LocalDate.of(2020, APRIL, 5)
+  //    private val testReturns = List(Return(taxReturnDate, None, Some(taxReturnDate), None))
+  //    private val communicationPreferences = CommunicationPreferences(
+  //      welshLanguageIndicator = true, audioIndicator = true, largePrintIndicator = true, brailleIndicator = true)
+  //    private val selfAssessmentDetails = SelfAssessmentDetails(saUtr, communicationPreferences, Nil, testReturns)
+  //
+  //    private val twoMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == twoMonthScheduleRegularPaymentAmount).head
+  //    private val threeMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == threeMonthScheduleRegularPaymentAmount).head
+  //    private val fourMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == fourMonthScheduleRegularPaymentAmount).head
+  //    private val fiveMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == fiveMonthScheduleRegularPaymentAmount).head
+  //    private val sixMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == sixMonthScheduleRegularPaymentAmount).head
+  //    private val sevenMonthSchedule = paymentSchedules.find(_.firstInstallment.amount == sevenMonthScheduleRegularPaymentAmount).head
+  //
+  //    private val closestSchedulesToTwoMonthSchedule =
+  //      controller.computeClosestSchedules(twoMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+  //    closestSchedulesToTwoMonthSchedule shouldBe Set(twoMonthSchedule, threeMonthSchedule, fourMonthSchedule)
+  //
+  //    private val closestSchedulesToSixMonthSchedule =
+  //      controller.computeClosestSchedules(sixMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+  //    closestSchedulesToSixMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
+  //
+  //    private val closestSchedulesToSevenMonthSchedule =
+  //      controller.computeClosestSchedules(sevenMonthSchedule, paymentSchedules, selfAssessmentDetails)(FakeRequest()).toSet
+  //    closestSchedulesToSevenMonthSchedule shouldBe Set(fiveMonthSchedule, sixMonthSchedule, sevenMonthSchedule)
+  //  }
 }

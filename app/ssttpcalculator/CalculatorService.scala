@@ -25,7 +25,6 @@ import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
 import model.{FixedInterestPeriod, Instalment, InterestRate, LatePayment, LatePaymentInterest, Payable, Payables, Payment, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import java.time.LocalDate.now
@@ -33,10 +32,7 @@ import java.time.temporal.ChronoUnit.DAYS
 import java.time.{Clock, LocalDate, Year}
 import javax.inject.Inject
 import scala.annotation.tailrec
-import scala.collection.immutable
 import scala.concurrent.ExecutionContext
-import scala.math.BigDecimal
-import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class CalculatorService @Inject() (
     clockProvider:   ClockProvider,

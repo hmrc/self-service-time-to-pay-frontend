@@ -16,11 +16,10 @@
 
 package ssttpcalculator
 
+import config.AppConfig
 import play.api.Logger
-import play.libs.Scala.Tuple
-import ssttpcalculator.model.{Instalment, InterestRate, LatePaymentInterest, Payables, Payment, PaymentsCalendar, TaxLiability}
+import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, PaymentsCalendar, TaxLiability}
 import testsupport.ItSpec
-import testsupport.testdata.CalculatorDataGenerator.newCalculatorModel.date
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.{LocalDate, Year}
@@ -32,7 +31,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
   val durationService: DurationService = fakeApplication().injector.instanceOf[DurationService]
   val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
-  implicit val servicesConfig: ServicesConfig = fakeApplication().injector.instanceOf[ServicesConfig]
+  implicit val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
 
   def date(date: String): LocalDate = LocalDate.parse(date)
 
@@ -117,20 +116,16 @@ class CalculatorServiceSpec2023 extends ItSpec {
       "returns a copy of payables with the upfront payment removed" - {
         "where the upfront payment is 0, payables is returned unchanged" in {
           calculatorService.payablesLessUpfrontPayment(
-            paymentsCalendar     = paymentsCalendar,
             upfrontPaymentAmount = 0,
             payables             = payablesWithOne2000LiabilityNoDueDate,
-            dateToRate           = fixedInterestRate()
           ) shouldBe payablesWithOne2000LiabilityNoDueDate
         }
         "where no interest is payable on any liabilities" - {
           "if upfront payment is less the first liability" - {
             "returns a copy of payables with first reduced by upfront payment" in {
               val result = calculatorService.payablesLessUpfrontPayment(
-                paymentsCalendar     = paymentsCalendar,
                 upfrontPaymentAmount = 500,
                 payables             = payablesWithOne2000LiabilityNoDueDate,
-                dateToRate           = fixedInterestRate()
               )
 
               result.liabilities.length shouldEqual (payablesWithOne2000LiabilityNoDueDate.liabilities.length)
@@ -140,10 +135,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
           "if upfront payment is more than the first liability but less than first two" - {
             "returns a copy of payables with first removed and second reduced by the remainder" in {
               calculatorService.payablesLessUpfrontPayment(
-                paymentsCalendar     = paymentsCalendar,
                 upfrontPaymentAmount = 2000,
                 payables             = payablesWithTwoLiabilitiesNoDueDate,
-                dateToRate           = fixedZeroInterest
               ) shouldBe Payables(Seq(
                 anotherPaymentOnAccountNoInterestPayable.copy(amount = 1000)
               ))
@@ -152,10 +145,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
           "if upfront payment covers all the liabilities" - {
             "returns a payables with no liabilities" in {
               calculatorService.payablesLessUpfrontPayment(
-                paymentsCalendar     = paymentsCalendar,
                 upfrontPaymentAmount = 3000,
                 payables             = payablesWithTwoLiabilitiesNoDueDate,
-                dateToRate           = fixedZeroInterest
               ) shouldBe Payables(Seq())
             }
           }
@@ -171,10 +162,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val payablesInitially = Payables(Seq(taxLiability))
 
               val result = calculatorService.payablesLessUpfrontPayment(
-                paymentsCalendar,
                 upfrontPaymentAmount,
                 payablesInitially,
-                dateToRate = fixedInterestRate()
               )
 
               result.liabilities.head shouldEqual taxLiability.copy(amount = taxLiability.amount - upfrontPaymentAmount)
@@ -207,10 +196,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val expectedInterestAccruedOnSecondDebt = interestSincePlanStartDate(fixedInterestRate())(secondDebtDueDate, upfrontPaymentAgainstSecondDebt)
 
               val result = calculatorService.payablesLessUpfrontPayment(
-                paymentsCalendar,
                 upfrontPaymentAmount,
                 payablesInitially,
-                dateToRate = fixedInterestRate()
               )
 
               result.liabilities.length shouldEqual payablesInitially.liabilities.length

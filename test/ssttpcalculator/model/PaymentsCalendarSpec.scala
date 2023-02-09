@@ -16,19 +16,19 @@
 
 package ssttpcalculator.model
 
+import config.AppConfig
 import play.api.Logger
 import testsupport.ItSpec
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.LocalDate
 
 class PaymentsCalendarSpec extends ItSpec {
   private val logger = Logger(getClass)
 
-  implicit val servicesConfig: ServicesConfig = fakeApplication().injector.instanceOf[ServicesConfig]
-  val daysFromCreatedDateToProcessFirstPayment: Int = servicesConfig.getInt("paymentDatesConfig.daysToProcessPayment")
-  val minGapBetweenPayments: Int = servicesConfig.getInt("paymentDatesConfig.minGapBetweenPayments")
-  val maximumLengthOfPaymentPlan: Int = servicesConfig.getInt("paymentDatesConfig.maximumLengthOfPaymentPlan")
+  implicit val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
+  val daysFromCreatedDateToProcessFirstPayment: Int = appConfig.daysToProcessUpfrontPayment
+  val minGapBetweenPayments: Int = appConfig.minGapBetweenPayments
+  val maximumLengthOfPaymentPlan: Int = appConfig.maximumLengthOfPaymentPlan
 
   def date(date: String): LocalDate = LocalDate.parse(date)
 
