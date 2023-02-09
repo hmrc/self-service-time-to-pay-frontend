@@ -51,7 +51,7 @@ class CalculatorService @Inject() (
   val DebitDueAndCalculationDatesWithinRate: (Boolean, Boolean) = Tuple2(true, true)
   val DebitDueDateWithinRate: (Boolean, Boolean) = Tuple2(true, false)
   val CalculationDateWithinRate: (Boolean, Boolean) = Tuple2(false, true)
-  val defaultInitialPaymentDays: Int = 10
+  val defaultInitialPaymentDays: Int = 11
   val `14 day gap between the initial payment date and the first scheduled payment date`: Int = 14
   val LastPaymentDelayDays = 7
 
