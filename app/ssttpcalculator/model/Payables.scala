@@ -24,17 +24,17 @@ case class Payables(liabilities: Seq[Payable]) {
   // TODO [OPS-9610] ensure payables are ordered by their due dates, earliest first, otherwise this method won't work
   def inDate(date: LocalDate): Boolean = liabilities.head match {
     case TaxLiability(_, dueDate) => dueDate.isAfter(date)
-    case LatePaymentInterest(_) => true
+    case LatePaymentInterest(_)   => true
   }
 }
 
 object Payables {
   def latePayments(paymentAmount: BigDecimal, paymentDate: LocalDate, payables: Payables): List[LatePayment] = {
     payables.liabilities.foldLeft((paymentAmount, List.empty[LatePayment])) {
-      case ((p, l), LatePaymentInterest(_)) => (p, l)
+      case ((p, l), LatePaymentInterest(_))                                     => (p, l)
       case ((p, l), lt) if lt.amount <= 0 || !lt.hasInterestCharge(paymentDate) => (p, l)
-      case ((p, l), TaxLiability(a, d)) if a >= p => (0, LatePayment(d, Payment(paymentDate, p)) :: l)
-      case ((p, l), TaxLiability(a, d)) => (p - a, LatePayment(d, Payment(paymentDate, a)) :: l)
+      case ((p, l), TaxLiability(a, d)) if a >= p                               => (0, LatePayment(d, Payment(paymentDate, p)) :: l)
+      case ((p, l), TaxLiability(a, d))                                         => (p - a, LatePayment(d, Payment(paymentDate, a)) :: l)
     }._2
   }
 

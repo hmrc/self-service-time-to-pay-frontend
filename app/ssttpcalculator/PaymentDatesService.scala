@@ -28,9 +28,9 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 class PaymentDatesService @Inject() (
-                                    clockProvider: ClockProvider,
-                                    config: AppConfig
-                                    ){
+    clockProvider: ClockProvider,
+    config:        AppConfig
+) {
   val logger: Logger = Logger(getClass)
 
   val minimumLengthOfPaymentPlan: Int = config.minimumLengthOfPaymentPlan
@@ -40,16 +40,16 @@ class PaymentDatesService @Inject() (
   val firstPaymentDayOfMonth: Int = config.firstPaymentDayOfMonth
   val lastPaymentDayOfMonth: Int = config.lastPaymentDayOfMonth
 
-
   // TODO OPS-9610: deal with upfront payment (or lack there of)
   // TODO OPS-9610: consider change to defaultRegularPaymentsDay if no upfront payment
   // TODO OPS-9610: deal with payment date that is more than 28
   def paymentsCalendar(
-                        maybePaymentToday: Option[PaymentToday],
-                        maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth]
-                      )(
-    implicit request: Request[_],
-    config: AppConfig
+      maybePaymentToday:          Option[PaymentToday],
+      maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth]
+  )(
+      implicit
+      request: Request[_],
+      config:  AppConfig
   ): PaymentsCalendar = {
     val today = clockProvider.nowDate()
 
@@ -59,24 +59,24 @@ class PaymentDatesService @Inject() (
       .getDayOfMonth
 
     PaymentsCalendar(
-      planStartDate = today,
+      planStartDate           = today,
       maybeUpfrontPaymentDate = maybePaymentToday
         .map(_ => dateWithValidPaymentDay(
           today.plusDays(daysToProcessUpfrontPayment),
           firstPaymentDayOfMonth,
           lastPaymentDayOfMonth
         )),
-      regularPaymentsDay = maybeArrangementDayOfMonth.map(_.dayOfMonth).getOrElse(defaultRegularPaymentsDay)
+      regularPaymentsDay      = maybeArrangementDayOfMonth.map(_.dayOfMonth).getOrElse(defaultRegularPaymentsDay)
     )
   }
 
   private def dateWithValidPaymentDay(
-                                       date: LocalDate,
-                                       firstPaymentDayOfMonth: Int,
-                                       lastPaymentDayOfMonth: Int
-                                     ): LocalDate = {
+      date:                   LocalDate,
+      firstPaymentDayOfMonth: Int,
+      lastPaymentDayOfMonth:  Int
+  ): LocalDate = {
     val dayOfMonth = date.getDayOfMonth
-    if (dayOfMonth >= firstPaymentDayOfMonth && dayOfMonth <= lastPaymentDayOfMonth ) {
+    if (dayOfMonth >= firstPaymentDayOfMonth && dayOfMonth <= lastPaymentDayOfMonth) {
       date
     } else if (dayOfMonth < firstPaymentDayOfMonth) {
       date.withDayOfMonth(firstPaymentDayOfMonth)

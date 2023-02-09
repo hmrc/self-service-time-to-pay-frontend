@@ -21,9 +21,9 @@ import config.AppConfig
 import java.time.LocalDate
 
 case class PaymentsCalendar(
-                             planStartDate: LocalDate,
-                             maybeUpfrontPaymentDate: Option[LocalDate],
-                             regularPaymentsDay: Int
+    planStartDate:           LocalDate,
+    maybeUpfrontPaymentDate: Option[LocalDate],
+    regularPaymentsDay:      Int
 )(implicit config: AppConfig) {
 
   lazy val regularPaymentDates: Seq[LocalDate] = {
@@ -36,12 +36,10 @@ case class PaymentsCalendar(
     }
   }
 
-
   private def regularPaymentDatesFromNextMonth(baselineDate: LocalDate): Seq[LocalDate] = {
     (config.minimumLengthOfPaymentPlan to config.maximumLengthOfPaymentPlan)
       .map(baselineDate.plusMonths(_).withDayOfMonth(regularPaymentsDay))
   }
-
 
   // TODO OPS-9610 check old implementation. About how long the first regular payment is compared to:
   // - createdOn date when no upfront payment
