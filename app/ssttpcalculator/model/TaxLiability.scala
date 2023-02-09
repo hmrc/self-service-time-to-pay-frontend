@@ -18,6 +18,7 @@ package ssttpcalculator.model
 
 import java.time.{LocalDate, Year}
 import play.api.libs.json.{Json, OFormat}
+import timetopaytaxpayer.cor.model.Debit
 
 import scala.math.BigDecimal
 
@@ -29,6 +30,11 @@ sealed trait Payable {
   def amount: BigDecimal
 
   def hasInterestCharge(paymentDate: LocalDate): Boolean
+}
+
+object Payable {
+
+  )
 }
 
 case class LatePaymentInterest(amount: BigDecimal) extends Payable {
@@ -47,6 +53,11 @@ case class TaxLiability(
 
 object TaxLiability {
   implicit val format: OFormat[TaxLiability] = Json.format[TaxLiability]
+
+  def apply(selfAssessmentDebit: Debit): TaxLiability = TaxLiability(
+    amount = selfAssessmentDebit.amount,
+    dueDate = selfAssessmentDebit.dueDate
+  )
 
   def amortizedLiabilities(liabilities: Seq[TaxLiability], payment: BigDecimal): Seq[TaxLiability] = {
     val result = liabilities.foldLeft((payment, Seq.empty[TaxLiability])){

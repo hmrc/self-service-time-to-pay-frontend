@@ -17,14 +17,15 @@
 package ssttpcalculator
 
 import bankholidays.WorkingDaysService.addWorkingDays
-import journey.Journey
+import journey.{Journey, PaymentToday}
 import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.TaxLiability.{amortizedLiabilities, latePayments}
-import ssttpcalculator.model.{FixedInterestPeriod, Instalment, LatePaymentInterest, InterestRate, LatePayment,
+import model.{FixedInterestPeriod, Instalment, InterestRate, LatePayment, LatePaymentInterest,
   Payable, Payables, Payment, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import java.time.LocalDate.now
@@ -40,7 +41,8 @@ import scala.math.BigDecimal.RoundingMode.HALF_UP
 class CalculatorService @Inject() (
     clockProvider:   ClockProvider,
     durationService: DurationService,
-    interestService: InterestRateService
+    interestService: InterestRateService,
+    paymentDatesService: PaymentDatesService
 )
   (implicit ec: ExecutionContext) {
 
@@ -274,42 +276,41 @@ class CalculatorService @Inject() (
 //    schedule
 //  }
 
-  def availablePaymentSchedules(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0),
-                                maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth])
-    (implicit request: Request[_]): List[PaymentSchedule] = { ??? }
-//
-//    val rangeOfAvailableScheduleDurationsInMonths = minimumMonthsAllowedTTP to 13
-//
-//    val today: LocalDate = clockProvider.nowDate()
-//
-//    val isAfterTaxYearEndDate = today.isAfter(today.withMonth(4).withDayOfMonth(5))
-//    val thresholdDate = today
-//      .plusYears(if (isAfterTaxYearEndDate) 2 else 1)
-//      .withMonth(1)
-//      .withDayOfMonth(29) // the last available payment can happen on 28 Jan next year
-//
-//    val debits = sa.debits.map(asDebitInput)
-//    rangeOfAvailableScheduleDurationsInMonths.map { durationInMonths =>
-//
-//      val defaultPreferredDayOfMonth = today
-//        .plusDays(`14 day gap between the initial payment date and the first scheduled payment date`)
-//        .plusDays(defaultInitialPaymentDays)
-//        .getDayOfMonth
-//
-//      val dayOfMonth = maybeArrangementDayOfMonth.map(_.dayOfMonth).getOrElse(defaultPreferredDayOfMonth)
-//
-//      val calculatorInput: TaxPaymentPlan = CalculatorService.changePaymentPlan(
-//        durationInMonths,
-//        dayOfMonth,
-//        initialPayment,
-//        debits
-//      )
-//      buildSchedule(calculatorInput)
-//    }
-//      .filter(_.lastPaymentDate.isBefore(thresholdDate))
-//      .filter(_.instalments.length <= 12) //max 12 instalments
-//      .toList
-//  }
+  // TODO [OPS-9610] currently will always create three plans (and hit issues with more than 24 months.
+  // should only create plans for 60 and 80% if 50% is not one month long
+  // needs to handle not creating a plan if it's more than 24 months long
+  // proportions of netMonthlyIncome should be configurable
+  def availablePaymentSchedules(
+                                 sa: SelfAssessmentDetails,
+                                 initialPayment: BigDecimal = BigDecimal(0),
+                                 maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth],
+                                 netMonthlyIncome: BigDecimal,
+                                 maybePaymentToday: Option[PaymentToday]
+                               )(implicit request: Request[_],
+                                 config: ServicesConfig
+    ): List[PaymentSchedule] = {
+
+      val paymentsCalendar = paymentDatesService.paymentsCalendar(
+        maybePaymentToday,
+        maybeArrangementDayOfMonth
+      )
+
+      val payables = Payables(
+        liabilities = for {
+          selfAssessmentDebit <- sa.debits
+        } yield TaxLiability(selfAssessmentDebit)
+      )
+
+      for {
+        proportionOfNetMonthlyIncome <- List(0.5, 0.6, 0.7)
+        regularPaymentAmount = proportionOfNetMonthlyIncome * netMonthlyIncome
+      } yield buildScheduleNew(
+        paymentsCalendar = paymentsCalendar,
+        upfrontPaymentAmount = initialPayment,
+        regularPaymentAmount = regularPaymentAmount,
+        payables = payables
+      )
+  }
 
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 

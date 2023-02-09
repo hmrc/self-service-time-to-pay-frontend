@@ -29,10 +29,6 @@ case class FixedInterestPeriod(
 
   def historicDailyRate: BigDecimal = rate.rate / BigDecimal(Year.of(dueDate.getYear).length()) / BigDecimal(100)
 
-  def asDebitInput(debit: FixedInterestPeriod): TaxLiability = TaxLiability(
-    debit.amountAccruingInterest,
-    debit.dueDate
-  )
 }
 
 case class Interest(amountAccrued: BigDecimal, calculationDate: LocalDate)
