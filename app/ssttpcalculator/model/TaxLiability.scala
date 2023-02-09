@@ -32,11 +32,6 @@ sealed trait Payable {
   def hasInterestCharge(paymentDate: LocalDate): Boolean
 }
 
-object Payable {
-
-  )
-}
-
 case class LatePaymentInterest(amount: BigDecimal) extends Payable {
   def hasInterestCharge(paymentDate: LocalDate): Boolean = false
 
@@ -55,7 +50,7 @@ object TaxLiability {
   implicit val format: OFormat[TaxLiability] = Json.format[TaxLiability]
 
   def apply(selfAssessmentDebit: Debit): TaxLiability = TaxLiability(
-    amount = selfAssessmentDebit.amount,
+    amount  = selfAssessmentDebit.amount,
     dueDate = selfAssessmentDebit.dueDate
   )
 

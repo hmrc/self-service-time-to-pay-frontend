@@ -71,14 +71,15 @@ class CalculatorService @Inject() (
 
     val maybeInterestAccruedUpToStartDate: Option[LatePaymentInterest] = totalHistoricInterest(payables, paymentsCalendar, interestService.getRatesForPeriod)
 
-    val maybeUpfrontPaymentLateInterest: Option[LatePaymentInterest] = paymentsCalendar.maybeUpfrontPaymentDate.map(_ =>
-      latePaymentInterestFromUpfrontPayment(
+    val maybeUpfrontPaymentLateInterest: Option[LatePaymentInterest] = paymentsCalendar.maybeUpfrontPaymentDate match {
+      case Some(_) => latePaymentInterestFromUpfrontPayment(
         paymentsCalendar,
         upfrontPaymentAmount,
         payables,
         interestService.getRatesForPeriod
-      ).getOrElse(None)
-    )
+      )
+      case None => None
+    }
 
     val liabilitiesUpdated = Seq(maybeInterestAccruedUpToStartDate, maybeUpfrontPaymentLateInterest)
       .foldLeft(payables.liabilities)((ls, maybeInterest) => maybeInterest match {

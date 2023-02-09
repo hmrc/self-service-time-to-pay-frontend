@@ -61,9 +61,9 @@ class PaymentDatesServiceSpec extends ItSpec {
           }
           "with first regular payment date is at least " +
             s"${daysFromCreatedDateToProcessFirstPayment + minGapBetweenPayments} day/s from date of journey" in {
-            result.regularPaymentDates.head.minusDays(daysFromCreatedDateToProcessFirstPayment + minGapBetweenPayments - 1)
-              .isAfter(result.planStartDate)
-          }
+              result.regularPaymentDates.head.minusDays(daysFromCreatedDateToProcessFirstPayment + minGapBetweenPayments - 1)
+                .isAfter(result.planStartDate)
+            }
         }
         "upfront payment but no payment day preference returns Payment Calendar" - {
           implicit val fakeRequest: FakeRequest[Any] = FakeRequest()
@@ -138,6 +138,5 @@ class PaymentDatesServiceSpec extends ItSpec {
       }
     }
   }
-
 
 }

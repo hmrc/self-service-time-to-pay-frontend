@@ -39,8 +39,8 @@ POST        /calculator/payment-today                                     ssttpc
 
 GET         /calculator/payment-summary                                   ssttpcalculator.CalculatorController.getPaymentSummary()
 
-GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getCalculateInstalments()
-POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitCalculateInstalments()
+GET         /calculator/instalments                                       ssttpcalculator.CalculatorController.getPaymentPlanOptions()
+POST        /calculator/instalments                                       ssttpcalculator.CalculatorController.submitPaymentPlanOptions()
 
 GET         /arrangement/instalment-summary/select-date                   ssttparrangement.ArrangementController.getChangeSchedulePaymentDay()
 POST        /arrangement/instalment-summary/select-date                   ssttparrangement.ArrangementController.submitChangeSchedulePaymentDay()

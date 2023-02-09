@@ -32,24 +32,22 @@ class PaymentsCalendarSpec extends ItSpec {
 
   def date(date: String): LocalDate = LocalDate.parse(date)
 
-
-
   "PaymentsCalendar" - {
     ".regularPaymentDates" - {
       s"generates $maximumLengthOfPaymentPlan months' worth of dates" in {
         PaymentsCalendar(
-          planStartDate = date("2023-01-15"),
+          planStartDate           = date("2023-01-15"),
           maybeUpfrontPaymentDate = None,
-          regularPaymentsDay = 28
+          regularPaymentsDay      = 28
         ).regularPaymentDates.length shouldBe maximumLengthOfPaymentPlan
       }
       "each on the regular payments day" in {
         val journeyPreferredPaymentDay = 28
 
         val paymentsCalendar = PaymentsCalendar(
-          planStartDate = date("2023-01-15"),
+          planStartDate           = date("2023-01-15"),
           maybeUpfrontPaymentDate = None,
-          regularPaymentsDay = journeyPreferredPaymentDay
+          regularPaymentsDay      = journeyPreferredPaymentDay
         )
 
         paymentsCalendar.regularPaymentDates.foreach(
@@ -59,32 +57,31 @@ class PaymentsCalendarSpec extends ItSpec {
       "starting on the first regular payment day" +
         s" at least $minGapBetweenPayments day/s after the upfront payment date" +
         ", when there is one" - {
-        "works with regular payments day late in month" in {
-          val journeyPreferredPaymentDay = 15
-          val upfrontPaymentDate = date("2023-01-27")
+          "works with regular payments day late in month" in {
+            val journeyPreferredPaymentDay = 15
+            val upfrontPaymentDate = date("2023-01-27")
 
-          val firstRegularPaymentDate = PaymentsCalendar(
-            planStartDate = date("2023-01-15"),
-            maybeUpfrontPaymentDate = Some(upfrontPaymentDate),
-            regularPaymentsDay = journeyPreferredPaymentDay
-          ).regularPaymentDates.head
+            val firstRegularPaymentDate = PaymentsCalendar(
+              planStartDate           = date("2023-01-15"),
+              maybeUpfrontPaymentDate = Some(upfrontPaymentDate),
+              regularPaymentsDay      = journeyPreferredPaymentDay
+            ).regularPaymentDates.head
 
-          firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1).isAfter(upfrontPaymentDate) shouldBe true
+            firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1).isAfter(upfrontPaymentDate) shouldBe true
+          }
+          "works with regular payments day early in month" in {
+            val journeyPreferredPaymentDay = 1
+            val upfrontPaymentDate = date("2023-01-27")
+
+            val firstRegularPaymentDate = PaymentsCalendar(
+              planStartDate           = date("2023-01-15"),
+              maybeUpfrontPaymentDate = Some(upfrontPaymentDate),
+              regularPaymentsDay      = journeyPreferredPaymentDay
+            ).regularPaymentDates.head
+
+            firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1).isAfter(upfrontPaymentDate) shouldBe true
+          }
         }
-        "works with regular payments day early in month" in {
-          val journeyPreferredPaymentDay = 1
-          val upfrontPaymentDate = date("2023-01-27")
-
-
-          val firstRegularPaymentDate = PaymentsCalendar(
-            planStartDate = date("2023-01-15"),
-            maybeUpfrontPaymentDate = Some(upfrontPaymentDate),
-            regularPaymentsDay = journeyPreferredPaymentDay
-          ).regularPaymentDates.head
-
-          firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1).isAfter(upfrontPaymentDate) shouldBe true
-        }
-      }
       "starting on the first regular payment day" +
         s" at least $daysFromCreatedDateToProcessFirstPayment day/s after calendar's date of creation" +
         ", if there is no upfront payment" - {
@@ -93,9 +90,9 @@ class PaymentsCalendarSpec extends ItSpec {
             val journeyPreferredPaymentDay = 15
 
             val firstRegularPaymentDate = PaymentsCalendar(
-              planStartDate = dateAtTimeOfJourney,
+              planStartDate           = dateAtTimeOfJourney,
               maybeUpfrontPaymentDate = None,
-              regularPaymentsDay = journeyPreferredPaymentDay
+              regularPaymentsDay      = journeyPreferredPaymentDay
             ).regularPaymentDates.head
 
             firstRegularPaymentDate
@@ -106,21 +103,18 @@ class PaymentsCalendarSpec extends ItSpec {
             val dateAtTimeOfJourney = date("2023-01-27")
             val journeyPreferredPaymentDay = 1
 
-
             val firstRegularPaymentDate = PaymentsCalendar(
-              planStartDate = dateAtTimeOfJourney,
+              planStartDate           = dateAtTimeOfJourney,
               maybeUpfrontPaymentDate = None,
-              regularPaymentsDay = journeyPreferredPaymentDay
+              regularPaymentsDay      = journeyPreferredPaymentDay
             ).regularPaymentDates.head
 
             firstRegularPaymentDate
               .minusDays(daysFromCreatedDateToProcessFirstPayment - 1)
               .isAfter(dateAtTimeOfJourney) shouldBe true
           }
-      }
+        }
     }
   }
 }
-
-
 

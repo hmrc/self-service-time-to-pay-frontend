@@ -134,14 +134,11 @@ object CalculatorDataGenerator extends Status with DateSupport {
 
   object newCalculatorModel {
 
-
     def date(date: String): LocalDate = LocalDate.parse(date)
 
-
-
-    val aPaymentOnAccountNoInterestPayable: TaxLiability = TaxLiability(amount = 1000, dueDate = date("2100-01-01"))
-    val anotherPaymentOnAccountNoInterestPayable: TaxLiability = TaxLiability(amount = 2000, dueDate = date("2100-01-01"))
-    val aDebtWithInterestPayable: TaxLiability = TaxLiability(amount = 1000, dueDate = date("2022-03-17"))
+    val aPaymentOnAccountNoInterestPayable: TaxLiability = TaxLiability(amount  = 1000, dueDate = date("2100-01-01"))
+    val anotherPaymentOnAccountNoInterestPayable: TaxLiability = TaxLiability(amount  = 2000, dueDate = date("2100-01-01"))
+    val aDebtWithInterestPayable: TaxLiability = TaxLiability(amount  = 1000, dueDate = date("2022-03-17"))
 
     val payablesWithOne2000LiabilityNoDueDate: Payables = Payables(liabilities = Seq(anotherPaymentOnAccountNoInterestPayable))
     val payablesWithTwoLiabilitiesNoDueDate: Payables = Payables(liabilities = Seq(aPaymentOnAccountNoInterestPayable, anotherPaymentOnAccountNoInterestPayable))
@@ -155,18 +152,19 @@ object CalculatorDataGenerator extends Status with DateSupport {
 
     def fixedInterestRate(rate: BigDecimal = 1): LocalDate => InterestRate = (_: LocalDate) => InterestRate(
       startDate = date("1900-01-01"),
-      endDate = date("2100-12-31"),
-      rate = rate
+      endDate   = date("2100-12-31"),
+      rate      = rate
     )
 
     def fixedInterestRates(rate: BigDecimal = 1): (LocalDate, LocalDate) => Seq[InterestRate] = {
-      (startDate: LocalDate, endDate: LocalDate) => {
-        Seq(InterestRate(
-          startDate = startDate,
-          endDate = endDate,
-          rate = rate
-        ))
-      }
+      (startDate: LocalDate, endDate: LocalDate) =>
+        {
+          Seq(InterestRate(
+            startDate = startDate,
+            endDate   = endDate,
+            rate      = rate
+          ))
+        }
     }
 
     def testPayables(liabilities: (BigDecimal, LocalDate)*): Payables = {
