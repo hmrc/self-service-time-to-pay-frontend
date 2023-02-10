@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ class CalculatorService @Inject() (
   val DebitDueAndCalculationDatesWithinRate: (Boolean, Boolean) = Tuple2(true, true)
   val DebitDueDateWithinRate: (Boolean, Boolean) = Tuple2(true, false)
   val CalculationDateWithinRate: (Boolean, Boolean) = Tuple2(false, true)
-  val defaultInitialPaymentDays: Int = 12
+  val defaultInitialPaymentDays: Int = 11
   val `14 day gap between the initial payment date and the first scheduled payment date`: Int = 14
   val LastPaymentDelayDays = 7
 
