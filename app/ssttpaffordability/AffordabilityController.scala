@@ -105,8 +105,8 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { journey =>
       val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
       val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
-      val totalLeftOverIncome = journey.remainingIncomeAfterSpending
-      Future.successful(Ok(views.how_much_you_could_afford(income, spending, totalLeftOverIncome)))
+      val remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
+      Future.successful(Ok(views.how_much_you_could_afford(income, spending, remainingIncomeAfterSpending)))
     }
   }
 

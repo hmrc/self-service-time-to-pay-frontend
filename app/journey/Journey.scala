@@ -88,7 +88,7 @@ final case class Journey(
 ) extends HasId[JourneyId] {
 
   def remainingIncomeAfterSpending: BigDecimal = maybeRemainingIncomeAfterSpending.getOrElse(
-    throw new RuntimeException(s"Expected 'total left over income' to be there but was not found. [${_id}] [$this]")
+    throw new RuntimeException(s"Expected 'remaining income after spending' to be there but was not found. [${_id}] [$this]")
   )
 
   def amount: BigDecimal = maybeMonthlyPaymentAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [$this]"))
