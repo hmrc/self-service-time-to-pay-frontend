@@ -30,6 +30,12 @@ class PaymentsCalendarSpec extends ItSpec {
   val minGapBetweenPayments: Int = appConfig.minGapBetweenPayments
   val maximumLengthOfPaymentPlan: Int = appConfig.maximumLengthOfPaymentPlan
 
+  // TODO OPS-9610: rename minGapBetweenPayments to minGapBeforeFirstRegularPayment once PaymentsCalendar confirmed
+  object LongestGapBetweenStartAndFirstRegularPayment {
+    val yesUpfrontPayment = daysFromCreatedDateToProcessFirstPayment + minGapBetweenPayments + 31 - 1
+    val noUpfrontPayment = minGapBetweenPayments + 31 - 1
+  }
+
   def date(date: String): LocalDate = LocalDate.parse(date)
 
   "PaymentsCalendar" - {
@@ -68,6 +74,7 @@ class PaymentsCalendarSpec extends ItSpec {
             ).regularPaymentDates.head
 
             firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1).isAfter(upfrontPaymentDate) shouldBe true
+            firstRegularPaymentDate.compareTo(upfrontPaymentDate) < LongestGapBetweenStartAndFirstRegularPayment.yesUpfrontPayment shouldBe true
           }
           "works with regular payments day early in month" in {
             val journeyPreferredPaymentDay = 1
@@ -79,40 +86,54 @@ class PaymentsCalendarSpec extends ItSpec {
               regularPaymentsDay      = journeyPreferredPaymentDay
             ).regularPaymentDates.head
 
+            println("works with regular payments day early in month - first regular payment date: " + firstRegularPaymentDate)
+            println("works with regular payments day early in month - upfront payment date: " + upfrontPaymentDate)
+            println("works with regular payments day early in month - gap between payments: " + minGapBetweenPayments)
+            println("works with regular payments day early in month - first regular payment day minus 13 days: " + firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1))
+
             firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1).isAfter(upfrontPaymentDate) shouldBe true
+            firstRegularPaymentDate.compareTo(upfrontPaymentDate) < LongestGapBetweenStartAndFirstRegularPayment.yesUpfrontPayment shouldBe true
           }
-        }
-      "starting on the first regular payment day" +
-        s" at least $daysFromCreatedDateToProcessFirstPayment day/s after calendar's date of creation" +
-        ", if there is no upfront payment" - {
-          "works with regular payments day late in month" in {
-            val dateAtTimeOfJourney = date("2023-01-27")
-            val journeyPreferredPaymentDay = 15
+          "starting on the first regular payment day" +
+            s" at least $daysFromCreatedDateToProcessFirstPayment day/s after calendar's date of creation" +
+            ", if there is no upfront payment" - {
+              "works with regular payments day late in month" in {
+                val dateAtTimeOfJourney = date("2023-01-27")
+                val journeyPreferredPaymentDay = 15
 
-            val firstRegularPaymentDate = PaymentsCalendar(
-              planStartDate           = dateAtTimeOfJourney,
-              maybeUpfrontPaymentDate = None,
-              regularPaymentsDay      = journeyPreferredPaymentDay
-            ).regularPaymentDates.head
+                val firstRegularPaymentDate = PaymentsCalendar(
+                  planStartDate           = dateAtTimeOfJourney,
+                  maybeUpfrontPaymentDate = None,
+                  regularPaymentsDay      = journeyPreferredPaymentDay
+                ).regularPaymentDates.head
 
-            firstRegularPaymentDate
-              .minusDays(daysFromCreatedDateToProcessFirstPayment - 1)
-              .isAfter(dateAtTimeOfJourney) shouldBe true
-          }
-          "works with regular payments day early in month" in {
-            val dateAtTimeOfJourney = date("2023-01-27")
-            val journeyPreferredPaymentDay = 1
+                firstRegularPaymentDate
+                  .minusDays(daysFromCreatedDateToProcessFirstPayment - 1)
+                  .isAfter(dateAtTimeOfJourney) shouldBe true
+                firstRegularPaymentDate.compareTo(dateAtTimeOfJourney) < LongestGapBetweenStartAndFirstRegularPayment.noUpfrontPayment shouldBe true
+              }
+              "works with regular payments day early in month" in {
+                val dateAtTimeOfJourney = date("2023-01-27")
+                val journeyPreferredPaymentDay = 1
 
-            val firstRegularPaymentDate = PaymentsCalendar(
-              planStartDate           = dateAtTimeOfJourney,
-              maybeUpfrontPaymentDate = None,
-              regularPaymentsDay      = journeyPreferredPaymentDay
-            ).regularPaymentDates.head
+                val firstRegularPaymentDate = PaymentsCalendar(
+                  planStartDate           = dateAtTimeOfJourney,
+                  maybeUpfrontPaymentDate = None,
+                  regularPaymentsDay      = journeyPreferredPaymentDay
+                ).regularPaymentDates.head
 
-            firstRegularPaymentDate
-              .minusDays(daysFromCreatedDateToProcessFirstPayment - 1)
-              .isAfter(dateAtTimeOfJourney) shouldBe true
-          }
+                println("no upfront payment - works with regular payments day early in month - first regular payment date: " + firstRegularPaymentDate)
+                println("no upfront payment - works with regular payments day early in month - start date: " + dateAtTimeOfJourney)
+                println("no upfront payment - works with regular payments day early in month - gap between payments: " + minGapBetweenPayments)
+                println("no upfront payment - works with regular payments day early in month - first regular payment day minus 13 days: " + firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1))
+
+                firstRegularPaymentDate
+                  .minusDays(daysFromCreatedDateToProcessFirstPayment - 1)
+                  .isAfter(dateAtTimeOfJourney) shouldBe true
+
+                firstRegularPaymentDate.compareTo(dateAtTimeOfJourney) < LongestGapBetweenStartAndFirstRegularPayment.noUpfrontPayment shouldBe true
+              }
+            }
         }
     }
   }

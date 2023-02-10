@@ -114,7 +114,7 @@ class CalculatorService @Inject() (
     buildScheduleNew(
       paymentsCalendar     = paymentsCalendar,
       upfrontPaymentAmount = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
-      regularPaymentAmount = journey.amount,
+      regularPaymentAmount = journey.regularPaymentAmount,
       payables             = payables
     )
   }

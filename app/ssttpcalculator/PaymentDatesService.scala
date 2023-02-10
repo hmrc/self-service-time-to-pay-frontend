@@ -46,10 +46,10 @@ class PaymentDatesService @Inject() (
   def paymentsCalendar(
       maybePaymentToday:          Option[PaymentToday],
       maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth],
-      dateToday: LocalDate
+      dateToday:                  LocalDate
   )(
       implicit
-      config:  AppConfig
+      config: AppConfig
   ): PaymentsCalendar = {
     val defaultRegularPaymentsDay = dateToday
       .plusDays(daysToProcessUpfrontPayment)

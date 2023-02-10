@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.timetopaycalculator.services
+package ssttpcalculator
 
 import config.AppConfig
 import journey.PaymentToday
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.api.Logger
-import ssttpcalculator.model.{Payables, PaymentSchedule, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
-import ssttpcalculator.{CalculatorService, DurationService, InterestRateService, PaymentDatesService}
+import ssttpcalculator.model.{Payables, PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import testsupport.ItSpec
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
@@ -42,10 +41,10 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
   val interestCalculationScenarios = Table[String, Seq[TaxLiability], LocalDate, LocalDate, LocalDate, Option[ArrangementDayOfMonth], Option[PaymentToday], Int, Int, Double, Double, Double, Double](
     ("id", "debits", "startDate", "endDate", "firstPaymentDate", "maybeArrangementDayOfMonth", "maybePaymentToday", "initialPayment", "duration", "totalPayable", "totalInterestCharged", "regularInstalmentAmount", "finalInstalmentAmount"),
-    ("1.a.i.c", Seq(debit(2000.00, "2017-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 10, 2032.59, 32.59, 200.00, 232.59),
+    ("1.a.i.c", Seq(debit(2000.00, "2017-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 0, 10, 2032.59, 32.59, 200.00, 232.59),
     ("1.a.ii.c", Seq(debit(2000.00, "2015-01-31")), date("2016-03-14"), date("2017-01-20"), date("2016-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 10, 2095.45, 95.45, 200.00, 295.45),
     ("1.b.ii.c", Seq(debit(2000.00, "2016-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 10, 2090.24, 90.24, 200.00, 290.24),
-//    ("1.d", Seq(debit(2000.00, "2017-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 10, 2019.54, 19.54, 100.00, 119.54),
+    ("1.d", Seq(debit(2000.00, "2017-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 10, 2019.54, 19.54, 100.00, 119.54),
     ("1.e", Seq(debit(2000.00, "2017-01-31"), debit(1000.00, "2017-02-01")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 2000, 10, 3023.76, 23.76, 100.00, 123.76),
     ("1.f", Seq(debit(2000.00, "2017-01-31"), debit(2000.00, "2017-02-01")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 2500, 10, 4032.92, 32.92, 150.00, 182.92),
     ("2.a", Seq(debit(2000.00, "2017-03-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 10, 2023.7, 23.7, 200.00, 223.7),
@@ -90,33 +89,33 @@ class CalculatorServiceSpecAlternate extends ItSpec {
   }
 
   val regularPaymentDateScenarios = Table(
-    ("id", "debits", "startDate", "endDate", "firstPaymentDate", "initialPayment", "duration"),
-    ("1.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2017-12-21"), date("2017-03-21"), 0, 10),
-    ("1.ii", Seq(debit(2000.00, "2015-01-31")), date("2015-03-14"), date("2015-12-21"), date("2015-03-21"), 0, 10),
-    ("1.iii", Seq(debit(2000.00, "2016-01-31")), date("2016-03-14"), date("2016-12-21"), date("2016-03-21"), 0, 10),
-    ("2.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), 0, 10),
-    ("2.ii", Seq(debit(2000.00, "2015-01-31")), date("2016-03-14"), date("2017-01-02"), date("2016-04-02"), 0, 10),
-    ("2.iii", Seq(debit(2000.00, "2016-01-31")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), 0, 10),
-    ("3.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2017-12-21"), date("2017-03-21"), 1000, 10),
-    ("3.ii", Seq(debit(2000.00, "2017-01-31"), debit(1000.00, "2017-02-01")), date("2017-03-14"), date("2018-01-21"), date("2017-04-21"), 2000, 10),
-    ("3.iii", Seq(debit(2000.00, "2017-01-31"), debit(2000.00, "2017-02-01")), date("2017-03-14"), date("2018-01-21"), date("2017-04-21"), 2500, 10),
-    ("4.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), 1000, 10),
-    ("4.ii", Seq(debit(2000.00, "2017-01-31"), debit(1000.00, "2017-02-01")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), 2000, 10),
-    ("4.iii", Seq(debit(2000.00, "2017-01-31"), debit(2000.00, "2017-02-01")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), 2500, 10),
-    ("5.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2018-01-14"), date("2017-04-14"), 1000, 10),
-    ("6.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), 1000, 10),
-    ("7.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2018-01-21"), date("2017-04-21"), 1000, 10)
+    ("id", "debits", "startDate", "endDate", "firstPaymentDate", "maybeArrangementDayOfMonth", "maybePaymentToday", "initialPayment", "duration"),
+    ("1.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2017-12-21"), date("2017-03-21"), Some(ArrangementDayOfMonth(21)), None, 0, 10),
+    ("1.ii", Seq(debit(2000.00, "2015-01-31")), date("2015-03-14"), date("2015-12-21"), date("2015-03-21"), Some(ArrangementDayOfMonth(21)), None, 0, 10),
+    ("1.iii", Seq(debit(2000.00, "2016-01-31")), date("2016-03-14"), date("2016-12-21"), date("2016-03-21"), Some(ArrangementDayOfMonth(21)), None, 0, 10),
+    ("2.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), Some(ArrangementDayOfMonth(2)), None, 0, 10),
+    ("2.ii", Seq(debit(2000.00, "2015-01-31")), date("2016-03-14"), date("2017-01-02"), date("2016-04-02"), Some(ArrangementDayOfMonth(2)), None, 0, 10),
+    ("2.iii", Seq(debit(2000.00, "2016-01-31")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), Some(ArrangementDayOfMonth(2)), None, 0, 10),
+    ("3.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2017-12-21"), date("2017-03-21"), Some(ArrangementDayOfMonth(21)), Some(PaymentToday(true)), 1000, 10),
+    ("3.ii", Seq(debit(2000.00, "2017-01-31"), debit(1000.00, "2017-02-01")), date("2017-03-14"), date("2018-01-21"), date("2017-04-21"), Some(ArrangementDayOfMonth(21)), Some(PaymentToday(true)), 2000, 10),
+    ("3.iii", Seq(debit(2000.00, "2017-01-31"), debit(2000.00, "2017-02-01")), date("2017-03-14"), date("2018-01-21"), date("2017-04-21"), Some(ArrangementDayOfMonth(21)), Some(PaymentToday(true)), 2500, 10),
+    ("4.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), Some(ArrangementDayOfMonth(2)), Some(PaymentToday(true)), 1000, 10),
+    ("4.ii", Seq(debit(2000.00, "2017-01-31"), debit(1000.00, "2017-02-01")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), Some(ArrangementDayOfMonth(2)), Some(PaymentToday(true)), 2000, 10),
+    ("4.iii", Seq(debit(2000.00, "2017-01-31"), debit(2000.00, "2017-02-01")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), Some(ArrangementDayOfMonth(2)), Some(PaymentToday(true)), 2500, 10),
+    ("5.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2018-01-14"), date("2017-04-14"), Some(ArrangementDayOfMonth(14)), Some(PaymentToday(true)), 1000, 10),
+    ("6.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2018-01-02"), date("2017-04-02"), Some(ArrangementDayOfMonth(2)), Some(PaymentToday(true)), 1000, 10),
+    ("7.i", Seq(debit(2000.00, "2017-01-31")), date("2017-03-14"), date("2018-01-21"), date("2017-04-21"), Some(ArrangementDayOfMonth(21)), Some(PaymentToday(true)), 1000, 10)
   )
 
-  forAll(regularPaymentDateScenarios) { (id, debits, startDate, endDate, firstPaymentDate, initialPayment, duration) =>
+  forAll(regularPaymentDateScenarios) { (id, debits, startDate, endDate, firstPaymentDate, mayBeArrangementDayOfMonth, maybePaymentToday, initialPayment, duration) =>
     s"The calculator service should, for $id calculate a duration of $duration" in {
 
       val calculation = TaxPaymentPlan(debits, initialPayment, startDate, endDate, Some(firstPaymentDate))
 
-      val paymentsCalendar = ???
-      val upfrontPaymentAmount = ???
-      val regularPaymentAmount = ???
-      val payables = ???
+      val paymentsCalendar = paymentDatesService.paymentsCalendar(maybePaymentToday, mayBeArrangementDayOfMonth, startDate)(appConfig)
+      val upfrontPaymentAmount = initialPayment
+      val regularPaymentAmount = 220
+      val payables = Payables(liabilities = debits)
 
       val schedule: PaymentSchedule = calculatorService.buildScheduleNew(
         paymentsCalendar,

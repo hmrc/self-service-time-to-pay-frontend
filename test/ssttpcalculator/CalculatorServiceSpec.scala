@@ -1,19 +1,19 @@
-/*
- * Copyright 2023 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+///*
+// * Copyright 2023 HM Revenue & Customs
+// *
+// * Licensed under the Apache License, Version 2.0 (the "License");
+// * you may not use this file except in compliance with the License.
+// * You may obtain a copy of the License at
+// *
+// *     http://www.apache.org/licenses/LICENSE-2.0
+// *
+// * Unless required by applicable law or agreed to in writing, software
+// * distributed under the License is distributed on an "AS IS" BASIS,
+// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// * See the License for the specific language governing permissions and
+// * limitations under the License.
+// */
+//
 //
 //package ssttpcalculator
 //
@@ -630,51 +630,51 @@
 //    }
 //  }
 //
-//  //  "availablePaymentSchedules with an endDate" should {
-//  //    implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
-//  //    val LastPaymentDelayDays = 7
-//  //
-//  //    "return a payment schedule with endDate" when {
-//  //      "matching last payment date plush seven days" in {
-//  //        val startDate = LocalDate.now
-//  //        val endDate = startDate.plusMonths(3)
-//  //
-//  //        val taxPaymentPlan = TaxPaymentPlan(
-//  //          Seq(
-//  //            TaxLiability(1000, startDate)
-//  //          ),
-//  //          0,
-//  //          startDate,
-//  //          endDate,
-//  //          None)
-//  //
-//  //        val calculatorService = new CalculatorService(new ClockProvider(), new DurationService(), new InterestRateService())
-//  //
-//  //        val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
-//  //
-//  //        result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
-//  //      }
-//  //
-//  //      "ignoring public holidays,  last payment date plush seven days" in {
-//  //        val startDate = LocalDate.of(2022, 6, 1)
-//  //        val endDate = startDate.plusMonths(6)
-//  //
-//  //        val taxPaymentPlan = TaxPaymentPlan(
-//  //          Seq(
-//  //            TaxLiability(1000, startDate)
-//  //          ),
-//  //          0,
-//  //          startDate,
-//  //          endDate,
-//  //          None)
-//  //
-//  //        val calculatorService = new CalculatorService(new ClockProvider(), new DurationService(), new InterestRateService())
-//  //
-//  //        val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
-//  //
-//  //        result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
-//  //      }
-//  //    }
-//  //  }
+//    "availablePaymentSchedules with an endDate" should {
+//      implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+//      val LastPaymentDelayDays = 7
+//
+//      "return a payment schedule with endDate" when {
+//        "matching last payment date plush seven days" in {
+//          val startDate = LocalDate.now
+//          val endDate = startDate.plusMonths(3)
+//
+//          val taxPaymentPlan = TaxPaymentPlan(
+//            Seq(
+//              TaxLiability(1000, startDate)
+//            ),
+//            0,
+//            startDate,
+//            endDate,
+//            None)
+//
+//          val calculatorService = new CalculatorService(new ClockProvider(), new DurationService(), new InterestRateService())
+//
+//          val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
+//
+//          result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
+//        }
+//
+//        "ignoring public holidays,  last payment date plush seven days" in {
+//          val startDate = LocalDate.of(2022, 6, 1)
+//          val endDate = startDate.plusMonths(6)
+//
+//          val taxPaymentPlan = TaxPaymentPlan(
+//            Seq(
+//              TaxLiability(1000, startDate)
+//            ),
+//            0,
+//            startDate,
+//            endDate,
+//            None)
+//
+//          val calculatorService = new CalculatorService(new ClockProvider(), new DurationService(), new InterestRateService())
+//
+//          val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
+//
+//          result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
+//        }
+//      }
+//    }
 //
 //}

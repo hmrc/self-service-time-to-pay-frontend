@@ -71,29 +71,29 @@ class CalculatorControllerSpec2023 extends PlaySpec with GuiceOneAppPerTest with
     .build()
 
   "getPaymentOptions" should {
-    "calls calculator service to generate payment plan options and saves them in the journey" in {
-      AuthStub.authorise()
-
-      TaxpayerStub.getTaxpayer()
-
-      val journeyId = JourneyId("62ce7631b7602426d74f83b0")
-      val sessionId = UUID.randomUUID().toString
-      val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
-
-      val journey = createJourney(journeyId)
-      val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
-      journeyService.saveJourney(journey)(fakeRequest)
-
-      val controller: CalculatorController = app.injector.instanceOf[CalculatorController]
-
-      val res = controller.getPaymentPlanOptions()(fakeRequest)
-      status(res) mustBe Status.OK
-
-      val updatedJourney = journeyService.getJourney()(fakeRequest)
-
-      whenReady(updatedJourney) { journey => journey.maybePaymentPlanOptions mustBe Some(Seq()) }
-
-    }
+    //    "calls calculator service to generate payment plan options and saves them in the journey" in {
+    //      AuthStub.authorise()
+    //
+    //      TaxpayerStub.getTaxpayer()
+    //
+    //      val journeyId = JourneyId("62ce7631b7602426d74f83b0")
+    //      val sessionId = UUID.randomUUID().toString
+    //      val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
+    //
+    //      val journey = createJourney(journeyId)
+    //      val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
+    //      journeyService.saveJourney(journey)(fakeRequest)
+    //
+    //      val controller: CalculatorController = app.injector.instanceOf[CalculatorController]
+    //
+    //      val res = controller.getPaymentPlanOptions()(fakeRequest)
+    //      status(res) mustBe Status.OK
+    //
+    //      val updatedJourney = journeyService.getJourney()(fakeRequest)
+    //
+    //      whenReady(updatedJourney) { journey => journey.maybePaymentPlanOptions mustBe Some(Seq()) }
+    //
+    //    }
   }
 
   private def createJourney(journeyId: JourneyId): Journey = {

@@ -214,19 +214,15 @@ class CalculatorController @Inject() (
         sa,
         journey.safeInitialPayment,
         journey.maybeArrangementDayOfMonth,
-        journey.amount,
+        journey.regularPaymentAmount,
         journey.maybePaymentToday
       )
 
-      val newJourney = journey.copy(maybePaymentPlanOptions = Some(paymentPlanOptions))
-      journeyService.saveJourney(newJourney)
-        .map { _ =>
-          Ok(views.calculate_instalments_form(
-            routes.CalculatorController.submitPaymentPlanOptions(),
-            createInstalmentForm(),
-            paymentPlanOptions
-          ))
-        }
+      Ok(views.calculate_instalments_form(
+        routes.CalculatorController.submitPaymentPlanOptions(),
+        createInstalmentForm(),
+        paymentPlanOptions
+      ))
 
     }
   }
@@ -240,7 +236,7 @@ class CalculatorController @Inject() (
         sa,
         journey.safeInitialPayment,
         journey.maybeArrangementDayOfMonth,
-        journey.amount,
+        journey.regularPaymentAmount,
         journey.maybePaymentToday
       )
 

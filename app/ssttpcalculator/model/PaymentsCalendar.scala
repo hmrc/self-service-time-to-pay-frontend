@@ -30,7 +30,11 @@ case class PaymentsCalendar(
     val baselineDate = maybeUpfrontPaymentDate.getOrElse(planStartDate)
 
     if (noTimeForRegularPaymentDateThisMonth(baselineDate)) {
-      regularPaymentDatesFromNextMonth(baselineDate)
+      if (regularPaymentsDay >= baselineDate.getDayOfMonth) {
+        regularPaymentDatesFromNextMonth(baselineDate)
+      } else {
+        regularPaymentDatesFromNextMonth(baselineDate.plusMonths(1))
+      }
     } else {
       regularPaymentDatesFromNextMonth(baselineDate.minusMonths(1))
     }
