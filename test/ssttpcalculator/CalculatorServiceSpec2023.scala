@@ -52,282 +52,298 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
   "CalculatorService" - {
     ".buildSchedule returns a valid payment schedule or nothing if none is possible" - {
-      "single liability, no upfront payment, one instalment, no late payment interest, first instalment at end of starting month" in {
-        val liabilityAmount = 1000
-        val liabilityDueDate = fixedToday.plusMonths(12)
-        val liability = TaxLiability(liabilityAmount, liabilityDueDate)
-        val payables = Payables(Seq(liability))
-        val sumOfPayables = payables.liabilities.map(_.amount).sum
+      "no late payment interest" - {
+        "single liability" - {
+          "no upfront payment" - {
+            "one instalment" in {
+              val liabilityAmount = 1000
+              val liabilityDueDate = fixedToday.plusMonths(12)
+              val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val payables = Payables(Seq(liability))
+              val sumOfPayables = payables.liabilities.map(_.amount).sum
 
-        val upfrontPaymentAmount = 0
-        val regularPaymentAmount = 1000
+              val upfrontPaymentAmount = 0
+              val regularPaymentAmount = 1000
 
-        val regularPaymentsDayWithinFirstMonth = fixedToday
-          .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
-          .getDayOfMonth
+              val regularPaymentsDayWithinFirstMonth = fixedToday
+                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .getDayOfMonth
 
-        val paymentsCalendar = PaymentsCalendar(
-          planStartDate = fixedToday,
-          maybeUpfrontPaymentDate = None,
-          regularPaymentsDay = regularPaymentsDayWithinFirstMonth
-        )
+              val paymentsCalendar = PaymentsCalendar(
+                planStartDate = fixedToday,
+                maybeUpfrontPaymentDate = None,
+                regularPaymentsDay = regularPaymentsDayWithinFirstMonth
+              )
 
-        val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
 
-        result.startDate shouldBe fixedToday
-        result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
-        result.initialPayment shouldBe upfrontPaymentAmount
-        result.amountToPay shouldBe sumOfPayables
-        result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
-        result.totalInterestCharged shouldBe 0
-        result.totalPayable shouldBe sumOfPayables
-        result.instalments shouldBe
-          Seq(Instalment(paymentDate = fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth), amount = 1000, interest = 0))
+              result.startDate shouldBe fixedToday
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.initialPayment shouldBe upfrontPaymentAmount
+              result.amountToPay shouldBe sumOfPayables
+              result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
+              result.totalInterestCharged shouldBe 0
+              result.totalPayable shouldBe sumOfPayables
+              result.instalments shouldBe
+                Seq(Instalment(paymentDate = fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth), amount = 1000, interest = 0))
+            }
+            "multiple instalments" in {
+              val liabilityAmount = 1000
+              val liabilityDueDate = fixedToday.plusMonths(12)
+              val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val payables = Payables(Seq(liability))
+              val sumOfPayables = payables.liabilities.map(_.amount).sum
+
+              val upfrontPaymentAmount = 0
+              val regularPaymentAmount = 100
+
+              val regularPaymentsDayWithinFirstMonth = fixedToday
+                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .getDayOfMonth
+
+              val paymentsCalendar = PaymentsCalendar(
+                planStartDate = fixedToday,
+                maybeUpfrontPaymentDate = None,
+                regularPaymentsDay = regularPaymentsDayWithinFirstMonth
+              )
+
+              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+
+              result.startDate shouldBe fixedToday
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9)
+              result.initialPayment shouldBe upfrontPaymentAmount
+              result.amountToPay shouldBe sumOfPayables
+              result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
+              result.totalInterestCharged shouldBe 0
+              result.totalPayable shouldBe sumOfPayables
+              result.instalments.length shouldBe 10
+              result.instalments.headOption.get.paymentDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.instalments.foreach(instalment => {
+                instalment.paymentDate.getDayOfMonth shouldBe regularPaymentsDayWithinFirstMonth
+                instalment.amount shouldBe 100
+                instalment.interest shouldBe 0
+              })
+            }
+
+          }
+          "upfront payment" - {
+            "one instalment" in {
+              val liabilityAmount = 1000
+              val liabilityDueDate = fixedToday.plusMonths(12)
+              val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val payables = Payables(Seq(liability))
+              val sumOfPayables = payables.liabilities.map(_.amount).sum
+
+              val upfrontPaymentAmount = 500
+              val regularPaymentAmount = 1000
+
+              val regularPaymentsDayWithinFirstMonth = fixedToday
+                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .getDayOfMonth
+
+              val paymentsCalendar = PaymentsCalendar(
+                planStartDate = fixedToday,
+                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+                regularPaymentsDay = regularPaymentsDayWithinFirstMonth
+              )
+
+              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+
+              result.startDate shouldBe fixedToday
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.initialPayment shouldBe upfrontPaymentAmount
+              result.amountToPay shouldBe sumOfPayables
+              result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
+              result.totalInterestCharged shouldBe 0
+              result.totalPayable shouldBe sumOfPayables
+              result.instalments shouldBe
+                Seq(Instalment(paymentDate = fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth), amount = 500, interest = 0))
+            }
+            "multiple instalments" in {
+              val liabilityAmount = 1000
+              val liabilityDueDate = fixedToday.plusMonths(12)
+              val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val payables = Payables(Seq(liability))
+              val sumOfPayables = payables.liabilities.map(_.amount).sum
+
+              val upfrontPaymentAmount = 200
+              val regularPaymentAmount = 100
+
+              val regularPaymentsDayWithinFirstMonth = fixedToday
+                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .getDayOfMonth
+
+              val paymentsCalendar = PaymentsCalendar(
+                planStartDate = fixedToday,
+                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+                regularPaymentsDay = regularPaymentsDayWithinFirstMonth
+              )
+
+              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+
+              result.startDate shouldBe fixedToday
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7)
+              result.initialPayment shouldBe upfrontPaymentAmount
+              result.amountToPay shouldBe sumOfPayables
+              result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
+              result.totalInterestCharged shouldBe 0
+              result.totalPayable shouldBe sumOfPayables
+              result.instalments.length shouldBe 8
+              result.instalments.headOption.get.paymentDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.instalments.foreach(instalment => {
+                instalment.paymentDate.getDayOfMonth shouldBe regularPaymentsDayWithinFirstMonth
+                instalment.amount shouldBe 100
+                instalment.interest shouldBe 0
+              })
+            }
+          }
+        }
+        "multiple liabilities" - {
+          "no upfront payment" - {
+            "one instalment" in {
+              val liabilityAmount = 250
+              val liabilityDueDate = fixedToday.plusMonths(12)
+              val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val payables = Payables((1 to 4).map(_ => liability))
+              val sumOfPayables = payables.liabilities.map(_.amount).sum
+
+              val upfrontPaymentAmount = 0
+              val regularPaymentAmount = 1000
+
+              val regularPaymentsDayWithinFirstMonth = fixedToday
+                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .getDayOfMonth
+
+              val paymentsCalendar = PaymentsCalendar(
+                planStartDate = fixedToday,
+                maybeUpfrontPaymentDate = None,
+                regularPaymentsDay = regularPaymentsDayWithinFirstMonth
+              )
+
+              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+
+              result.startDate shouldBe fixedToday
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.initialPayment shouldBe upfrontPaymentAmount
+              result.amountToPay shouldBe sumOfPayables
+              result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
+              result.totalInterestCharged shouldBe 0
+              result.totalPayable shouldBe sumOfPayables
+              result.instalments shouldBe
+                Seq(Instalment(paymentDate = fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth), amount = 1000, interest = 0))
+            }
+            "multiple instalments" in {
+              val liabilityAmount = 250
+              val liabilityDueDate = fixedToday.plusMonths(12)
+              val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val payables = Payables((1 to 4).map(_ => liability))
+              val sumOfPayables = payables.liabilities.map(_.amount).sum
+
+              val upfrontPaymentAmount = 0
+              val regularPaymentAmount = 100
+
+              val regularPaymentsDayWithinFirstMonth = fixedToday
+                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .getDayOfMonth
+
+              val paymentsCalendar = PaymentsCalendar(
+                planStartDate = fixedToday,
+                maybeUpfrontPaymentDate = None,
+                regularPaymentsDay = regularPaymentsDayWithinFirstMonth
+              )
+
+              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+
+              result.startDate shouldBe fixedToday
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9)
+              result.initialPayment shouldBe upfrontPaymentAmount
+              result.amountToPay shouldBe sumOfPayables
+              result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
+              result.totalInterestCharged shouldBe 0
+              result.totalPayable shouldBe sumOfPayables
+              result.instalments.length shouldBe 10
+              result.instalments.headOption.get.paymentDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.instalments.foreach(instalment => {
+                instalment.paymentDate.getDayOfMonth shouldBe regularPaymentsDayWithinFirstMonth
+                instalment.amount shouldBe 100
+                instalment.interest shouldBe 0
+              })
+            }
+          }
+          "upfront payment" - {
+            "one instalment" in {
+              val liabilityAmount = 250
+              val liabilityDueDate = fixedToday.plusMonths(12)
+              val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val payables = Payables((1 to 4).map(_ => liability))
+              val sumOfPayables = payables.liabilities.map(_.amount).sum
+
+              val upfrontPaymentAmount = 500
+              val regularPaymentAmount = 1000
+
+              val regularPaymentsDayWithinFirstMonth = fixedToday
+                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .getDayOfMonth
+
+              val paymentsCalendar = PaymentsCalendar(
+                planStartDate = fixedToday,
+                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+                regularPaymentsDay = regularPaymentsDayWithinFirstMonth
+              )
+
+              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+
+              result.startDate shouldBe fixedToday
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.initialPayment shouldBe upfrontPaymentAmount
+              result.amountToPay shouldBe sumOfPayables
+              result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
+              result.totalInterestCharged shouldBe 0
+              result.totalPayable shouldBe sumOfPayables
+              result.instalments shouldBe
+                Seq(Instalment(paymentDate = fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth), amount = 500, interest = 0))
+            }
+            "multiple instalments" in {
+              val liabilityAmount = 250
+              val liabilityDueDate = fixedToday.plusMonths(12)
+              val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val payables = Payables((1 to 4).map(_ => liability))
+              val sumOfPayables = payables.liabilities.map(_.amount).sum
+
+              val upfrontPaymentAmount = 200
+              val regularPaymentAmount = 100
+
+              val regularPaymentsDayWithinFirstMonth = fixedToday
+                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .getDayOfMonth
+
+              val paymentsCalendar = PaymentsCalendar(
+                planStartDate = fixedToday,
+                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+                regularPaymentsDay = regularPaymentsDayWithinFirstMonth
+              )
+
+              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+
+              result.startDate shouldBe fixedToday
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7)
+              result.initialPayment shouldBe upfrontPaymentAmount
+              result.amountToPay shouldBe sumOfPayables
+              result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
+              result.totalInterestCharged shouldBe 0
+              result.totalPayable shouldBe sumOfPayables
+              result.instalments.length shouldBe 8
+              result.instalments.headOption.get.paymentDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.instalments.foreach(instalment => {
+                instalment.paymentDate.getDayOfMonth shouldBe regularPaymentsDayWithinFirstMonth
+                instalment.amount shouldBe 100
+                instalment.interest shouldBe 0
+              })
+            }
+          }
+        }
       }
-      "single liability, upfront payment, one instalment, no late payment interest, first instalment at end of starting month" in {
-        val liabilityAmount = 1000
-        val liabilityDueDate = fixedToday.plusMonths(12)
-        val liability = TaxLiability(liabilityAmount, liabilityDueDate)
-        val payables = Payables(Seq(liability))
-        val sumOfPayables = payables.liabilities.map(_.amount).sum
 
-        val upfrontPaymentAmount = 500
-        val regularPaymentAmount = 1000
-
-        val regularPaymentsDayWithinFirstMonth = fixedToday
-          .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
-          .getDayOfMonth
-
-        val paymentsCalendar = PaymentsCalendar(
-          planStartDate = fixedToday,
-          maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
-          regularPaymentsDay = regularPaymentsDayWithinFirstMonth
-        )
-
-        val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
-
-        result.startDate shouldBe fixedToday
-        result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
-        result.initialPayment shouldBe upfrontPaymentAmount
-        result.amountToPay shouldBe sumOfPayables
-        result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
-        result.totalInterestCharged shouldBe 0
-        result.totalPayable shouldBe sumOfPayables
-        result.instalments shouldBe
-          Seq(Instalment(paymentDate = fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth), amount = 500, interest = 0))
-      }
-      "single liability, no upfront payment, multiple instalments, no late payment interest, first instalment at end of starting month" in {
-        val liabilityAmount = 1000
-        val liabilityDueDate = fixedToday.plusMonths(12)
-        val liability = TaxLiability(liabilityAmount, liabilityDueDate)
-        val payables = Payables(Seq(liability))
-        val sumOfPayables = payables.liabilities.map(_.amount).sum
-
-        val upfrontPaymentAmount = 0
-        val regularPaymentAmount = 100
-
-        val regularPaymentsDayWithinFirstMonth = fixedToday
-          .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
-          .getDayOfMonth
-
-        val paymentsCalendar = PaymentsCalendar(
-          planStartDate = fixedToday,
-          maybeUpfrontPaymentDate = None,
-          regularPaymentsDay = regularPaymentsDayWithinFirstMonth
-        )
-
-        val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
-
-        result.startDate shouldBe fixedToday
-        result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9)
-        result.initialPayment shouldBe upfrontPaymentAmount
-        result.amountToPay shouldBe sumOfPayables
-        result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
-        result.totalInterestCharged shouldBe 0
-        result.totalPayable shouldBe sumOfPayables
-        result.instalments.length shouldBe 10
-        result.instalments.headOption.get.paymentDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
-        result.instalments.foreach(instalment => {
-          instalment.paymentDate.getDayOfMonth shouldBe regularPaymentsDayWithinFirstMonth
-          instalment.amount shouldBe 100
-          instalment.interest shouldBe 0
-        })
-      }
-      "single liability, upfront payment, multiple instalments, no late payment interest, first instalment at end of starting month" in {
-        val liabilityAmount = 1000
-        val liabilityDueDate = fixedToday.plusMonths(12)
-        val liability = TaxLiability(liabilityAmount, liabilityDueDate)
-        val payables = Payables(Seq(liability))
-        val sumOfPayables = payables.liabilities.map(_.amount).sum
-
-        val upfrontPaymentAmount = 200
-        val regularPaymentAmount = 100
-
-        val regularPaymentsDayWithinFirstMonth = fixedToday
-          .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
-          .getDayOfMonth
-
-        val paymentsCalendar = PaymentsCalendar(
-          planStartDate = fixedToday,
-          maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
-          regularPaymentsDay = regularPaymentsDayWithinFirstMonth
-        )
-
-        val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
-
-        result.startDate shouldBe fixedToday
-        result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7)
-        result.initialPayment shouldBe upfrontPaymentAmount
-        result.amountToPay shouldBe sumOfPayables
-        result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
-        result.totalInterestCharged shouldBe 0
-        result.totalPayable shouldBe sumOfPayables
-        result.instalments.length shouldBe 8
-        result.instalments.headOption.get.paymentDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
-        result.instalments.foreach(instalment => {
-          instalment.paymentDate.getDayOfMonth shouldBe regularPaymentsDayWithinFirstMonth
-          instalment.amount shouldBe 100
-          instalment.interest shouldBe 0
-        })
-      }
-      "multiple liabilities, no upfront payment, one instalment, no late payment interest, first instalment at end of starting month" in {
-        val liabilityAmount = 250
-        val liabilityDueDate = fixedToday.plusMonths(12)
-        val liability = TaxLiability(liabilityAmount, liabilityDueDate)
-        val payables = Payables((1 to 4).map(_ => liability))
-        val sumOfPayables = payables.liabilities.map(_.amount).sum
-
-        val upfrontPaymentAmount = 0
-        val regularPaymentAmount = 1000
-
-        val regularPaymentsDayWithinFirstMonth = fixedToday
-          .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
-          .getDayOfMonth
-
-        val paymentsCalendar = PaymentsCalendar(
-          planStartDate = fixedToday,
-          maybeUpfrontPaymentDate = None,
-          regularPaymentsDay = regularPaymentsDayWithinFirstMonth
-        )
-
-        val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
-
-        result.startDate shouldBe fixedToday
-        result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
-        result.initialPayment shouldBe upfrontPaymentAmount
-        result.amountToPay shouldBe sumOfPayables
-        result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
-        result.totalInterestCharged shouldBe 0
-        result.totalPayable shouldBe sumOfPayables
-        result.instalments shouldBe
-          Seq(Instalment(paymentDate = fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth), amount = 1000, interest = 0))
-      }
-      "multiple liabilities, upfront payment, one instalment, no late payment interest, first instalment at end of starting month" in {
-        val liabilityAmount = 250
-        val liabilityDueDate = fixedToday.plusMonths(12)
-        val liability = TaxLiability(liabilityAmount, liabilityDueDate)
-        val payables = Payables((1 to 4).map(_ => liability))
-        val sumOfPayables = payables.liabilities.map(_.amount).sum
-
-        val upfrontPaymentAmount = 500
-        val regularPaymentAmount = 1000
-
-        val regularPaymentsDayWithinFirstMonth = fixedToday
-          .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
-          .getDayOfMonth
-
-        val paymentsCalendar = PaymentsCalendar(
-          planStartDate = fixedToday,
-          maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
-          regularPaymentsDay = regularPaymentsDayWithinFirstMonth
-        )
-
-        val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
-
-        result.startDate shouldBe fixedToday
-        result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
-        result.initialPayment shouldBe upfrontPaymentAmount
-        result.amountToPay shouldBe sumOfPayables
-        result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
-        result.totalInterestCharged shouldBe 0
-        result.totalPayable shouldBe sumOfPayables
-        result.instalments shouldBe
-          Seq(Instalment(paymentDate = fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth), amount = 500, interest = 0))
-      }
-      "multiple liabilities, no upfront payment, multiple instalments, no late payment interest, first instalment at end of starting month" in {
-        val liabilityAmount = 250
-        val liabilityDueDate = fixedToday.plusMonths(12)
-        val liability = TaxLiability(liabilityAmount, liabilityDueDate)
-        val payables = Payables((1 to 4).map(_ => liability))
-        val sumOfPayables = payables.liabilities.map(_.amount).sum
-
-        val upfrontPaymentAmount = 0
-        val regularPaymentAmount = 100
-
-        val regularPaymentsDayWithinFirstMonth = fixedToday
-          .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
-          .getDayOfMonth
-
-        val paymentsCalendar = PaymentsCalendar(
-          planStartDate = fixedToday,
-          maybeUpfrontPaymentDate = None,
-          regularPaymentsDay = regularPaymentsDayWithinFirstMonth
-        )
-
-        val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
-
-        result.startDate shouldBe fixedToday
-        result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9)
-        result.initialPayment shouldBe upfrontPaymentAmount
-        result.amountToPay shouldBe sumOfPayables
-        result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
-        result.totalInterestCharged shouldBe 0
-        result.totalPayable shouldBe sumOfPayables
-        result.instalments.length shouldBe 10
-        result.instalments.headOption.get.paymentDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
-        result.instalments.foreach(instalment => {
-          instalment.paymentDate.getDayOfMonth shouldBe regularPaymentsDayWithinFirstMonth
-          instalment.amount shouldBe 100
-          instalment.interest shouldBe 0
-        })
-      }
-      "multiple liabilities, upfront payment, multiple instalments, no late payment interest, first instalment at end of starting month" in {
-        val liabilityAmount = 250
-        val liabilityDueDate = fixedToday.plusMonths(12)
-        val liability = TaxLiability(liabilityAmount, liabilityDueDate)
-        val payables = Payables((1 to 4).map(_ => liability))
-        val sumOfPayables = payables.liabilities.map(_.amount).sum
-
-        val upfrontPaymentAmount = 200
-        val regularPaymentAmount = 100
-
-        val regularPaymentsDayWithinFirstMonth = fixedToday
-          .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
-          .getDayOfMonth
-
-        val paymentsCalendar = PaymentsCalendar(
-          planStartDate = fixedToday,
-          maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
-          regularPaymentsDay = regularPaymentsDayWithinFirstMonth
-        )
-
-        val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
-
-        result.startDate shouldBe fixedToday
-        result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7)
-        result.initialPayment shouldBe upfrontPaymentAmount
-        result.amountToPay shouldBe sumOfPayables
-        result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
-        result.totalInterestCharged shouldBe 0
-        result.totalPayable shouldBe sumOfPayables
-        result.instalments.length shouldBe 8
-        result.instalments.headOption.get.paymentDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
-        result.instalments.foreach(instalment => {
-          instalment.paymentDate.getDayOfMonth shouldBe regularPaymentsDayWithinFirstMonth
-          instalment.amount shouldBe 100
-          instalment.interest shouldBe 0
-        })
-      }
       "late payment interest" - {
         "two instalments" in {
           val liabilityAmount = 1000
