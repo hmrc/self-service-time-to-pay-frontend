@@ -24,6 +24,7 @@ import repo.HasId
 import ssttpaffordability.model.Income
 import ssttpaffordability.model.Expense
 import ssttpaffordability.model.Spending
+import ssttpcalculator.model.PaymentSchedule
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -78,6 +79,7 @@ final case class Journey(
     maybeIncome:                Option[Income]                = None,
     maybeSpending:              Option[Spending]              = None,
     maybeTotalLeftOverIncome:   Option[BigDecimal]            = None,
+    maybePaymentPlanOptions: Option[Seq[PaymentSchedule]]     = None,
     maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
 
