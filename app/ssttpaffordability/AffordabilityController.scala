@@ -88,21 +88,14 @@ class AffordabilityController @Inject() (
       val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
       val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
       if (spending.nonEmpty && income.nonEmpty) {
-        Redirect(ssttpaffordability.routes.AffordabilityController.saveTotalLeftOverIncome())
+
+        val remainingIncomeAfterSpending = income.map(_.amount).sum - spending.map(_.amount).sum
+        val newJourney = journey.copy(maybeRemainingIncomeAfterSpending = Some(remainingIncomeAfterSpending))
+        journeyService.saveJourney(newJourney)
+
+        Redirect(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford())
       } else {
         Future.successful(Ok(views.add_income_spending(income, spending)))
-      }
-    }
-  }
-
-  def saveTotalLeftOverIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"AffordabilityController.getHowMuchYouCouldAfford: $request")
-    journeyService.authorizedForSsttp { journey =>
-      val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
-      val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
-      val totalLeftOverIncome = income.map(_.amount).sum - spending.map(_.amount).sum
-      storeLeftOverIncomeToJourney(totalLeftOverIncome, journey).map { _ =>
-        Redirect(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford())
       }
     }
   }
@@ -112,7 +105,7 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { journey =>
       val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
       val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
-      val totalLeftOverIncome = journey.totalLeftOverIncome
+      val totalLeftOverIncome = journey.remainingIncomeAfterSpending
       Future.successful(Ok(views.how_much_you_could_afford(income, spending, totalLeftOverIncome)))
     }
   }
@@ -158,12 +151,6 @@ class AffordabilityController @Inject() (
         }
       )
     }
-  }
-
-  private def storeLeftOverIncomeToJourney(totalLeftOverIncome: BigDecimal, journey: Journey)
-    (implicit request: AuthorisedSaUserRequest[AnyContent]) = {
-    val newJourney = journey.copy(maybeTotalLeftOverIncome = Some(totalLeftOverIncome))
-    journeyService.saveJourney(newJourney)
   }
 
   private def storeIncomeInputToJourney(

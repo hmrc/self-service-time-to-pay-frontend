@@ -71,15 +71,15 @@ final case class Journey(
     maybeBankDetails:          Option[BankDetails]             = None,
     existingDDBanks:           Option[DirectDebitInstructions] = None,
 
-    maybeTaxpayer:              Option[Taxpayer]              = None,
-    maybePaymentToday:          Option[PaymentToday]          = None,
-    maybePaymentTodayAmount:    Option[PaymentTodayAmount]    = None,
-    maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
-    maybeIncome:                Option[Income]                = None,
-    maybeSpending:              Option[Spending]              = None,
-    maybeTotalLeftOverIncome:   Option[BigDecimal]            = None,
-    maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
-    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
+    maybeTaxpayer:                     Option[Taxpayer]              = None,
+    maybePaymentToday:                 Option[PaymentToday]          = None,
+    maybePaymentTodayAmount:           Option[PaymentTodayAmount]    = None,
+    maybeMonthlyPaymentAmount:         Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
+    maybeIncome:                       Option[Income]                = None,
+    maybeSpending:                     Option[Spending]              = None,
+    maybeRemainingIncomeAfterSpending: Option[BigDecimal]            = None,
+    maybeCalculatorDuration:           Option[CalculatorDuration]    = None,
+    maybeArrangementDayOfMonth:        Option[ArrangementDayOfMonth] = None,
 
     maybeEligibilityStatus: Option[EligibilityStatus] = None,
     debitDate:              Option[LocalDate]         = None,
@@ -87,7 +87,7 @@ final case class Journey(
     maybeSaUtr:             Option[String]            = None
 ) extends HasId[JourneyId] {
 
-  def totalLeftOverIncome: BigDecimal = maybeTotalLeftOverIncome.getOrElse(
+  def remainingIncomeAfterSpending: BigDecimal = maybeRemainingIncomeAfterSpending.getOrElse(
     throw new RuntimeException(s"Expected 'total left over income' to be there but was not found. [${_id}] [$this]")
   )
 
