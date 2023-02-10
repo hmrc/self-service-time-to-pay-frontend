@@ -77,6 +77,7 @@ final case class Journey(
     maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
     maybeIncome:                Option[Income]                = None,
     maybeSpending:              Option[Spending]              = None,
+    maybeTotalLeftOverIncome:   Option[BigDecimal]            = None,
     maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
 
@@ -85,6 +86,10 @@ final case class Journey(
     ddRef:                  Option[String]            = None,
     maybeSaUtr:             Option[String]            = None
 ) extends HasId[JourneyId] {
+
+  def totalLeftOverIncome: BigDecimal = maybeTotalLeftOverIncome.getOrElse(
+    throw new RuntimeException(s"Expected 'total left over income' to be there but was not found. [${_id}] [$this]")
+  )
 
   def amount: BigDecimal = maybeMonthlyPaymentAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [$this]"))
   def taxpayer: Taxpayer = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [$this]"))
