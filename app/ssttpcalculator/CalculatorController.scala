@@ -218,13 +218,16 @@ class CalculatorController @Inject() (
         journey.maybePaymentToday
       )
 
-      Ok(
-        views.calculate_instalments_form(
-          routes.CalculatorController.submitPaymentPlanOptions(),
-          createInstalmentForm(),
-          paymentPlanOptions
-        )
-      )
+      val newJourney = journey.copy(maybePaymentPlanOptions = Some(paymentPlanOptions))
+      journeyService.saveJourney(newJourney)
+        .map { _ =>
+          Ok(views.calculate_instalments_form(
+            routes.CalculatorController.submitPaymentPlanOptions(),
+            createInstalmentForm(),
+            paymentPlanOptions
+          ))
+        }
+
     }
   }
 

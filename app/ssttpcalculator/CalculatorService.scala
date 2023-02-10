@@ -33,6 +33,7 @@ import java.time.{Clock, LocalDate, Year}
 import javax.inject.Inject
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class CalculatorService @Inject() (
     clockProvider:       ClockProvider,
@@ -93,9 +94,9 @@ class CalculatorService @Inject() (
             .getOrElse(throw new IllegalArgumentException("no instalments found to create the schedule")),
           initialPayment       = upfrontPaymentAmount,
           amountToPay          = principal,
-          instalmentBalance    = principal - upfrontPaymentAmount,
+          instalmentBalance    = (principal - upfrontPaymentAmount),
           totalInterestCharged = totalInterestCharged,
-          totalPayable         = principal + totalInterestCharged,
+          totalPayable         = (principal + totalInterestCharged),
           instalments          = instalments
         ))
     }
@@ -183,8 +184,8 @@ class CalculatorService @Inject() (
 
           val instalment = Instalment(
             paymentDate = nextPaymentDate,
-            amount      = min(maxPaymentAmount, balance + latePaymentInterestAmount),
-            interest    = latePaymentInterestAmount
+            amount      = min(maxPaymentAmount, balance + latePaymentInterestAmount).setScale(10, HALF_UP),
+            interest    = latePaymentInterestAmount.setScale(10, HALF_UP)
           )
           val updatedInstalments = instalmentsAggregator :+ instalment
 

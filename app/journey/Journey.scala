@@ -79,7 +79,7 @@ final case class Journey(
     maybeIncome:                Option[Income]                = None,
     maybeSpending:              Option[Spending]              = None,
     maybeTotalLeftOverIncome:   Option[BigDecimal]            = None,
-    maybePaymentPlanOptions: Option[Seq[PaymentSchedule]]     = None,
+    maybePaymentPlanOptions:    Option[List[PaymentSchedule]] = None,
     maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
 

@@ -93,25 +93,24 @@ class CalculatorControllerSpec2023 extends PlaySpec with GuiceOneAppPerTest with
 
       whenReady(updatedJourney) { journey => journey.maybePaymentPlanOptions mustBe Some(Seq())}
 
-
     }
   }
 
   private def createJourney(journeyId: JourneyId): Journey = {
     Journey(
-      _id = journeyId,
-      status = InProgress,
-      createdOn = LocalDateTime.now(),
-      maybeTaxpayer = Some(TdAll.taxpayer),
-      maybePaymentToday = Some(PaymentToday(true)),
-      maybePaymentTodayAmount = Some(PaymentTodayAmount(200)),
-      maybeMonthlyPaymentAmount = Some(2000),
-      maybeIncome = Some(Income(
+      _id                        = journeyId,
+      status                     = InProgress,
+      createdOn                  = LocalDateTime.now(),
+      maybeTaxpayer              = Some(TdAll.taxpayer),
+      maybePaymentToday          = Some(PaymentToday(true)),
+      maybePaymentTodayAmount    = Some(PaymentTodayAmount(200)),
+      maybeMonthlyPaymentAmount  = Some(2000),
+      maybeIncome                = Some(Income(
         IncomeBudgetLine(MonthlyIncome, 2000),
         IncomeBudgetLine(Benefits, 0),
         IncomeBudgetLine(OtherIncome, 0)
       )),
-      maybeSpending = Some(Spending(
+      maybeSpending              = Some(Spending(
         Expenses(HousingExp, 1000),
         Expenses(PensionContributionsExp, 0),
         Expenses(CouncilTaxExp, 0),
@@ -124,7 +123,7 @@ class CalculatorControllerSpec2023 extends PlaySpec with GuiceOneAppPerTest with
         Expenses(HealthExp, 0)
       )),
       maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(28)),
-      maybeEligibilityStatus = Some(EligibilityStatus(Seq.empty))
+      maybeEligibilityStatus     = Some(EligibilityStatus(Seq.empty))
     )
   }
 }
