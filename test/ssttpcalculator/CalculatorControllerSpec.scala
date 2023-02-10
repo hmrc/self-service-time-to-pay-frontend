@@ -49,10 +49,10 @@ class CalculatorControllerSpec extends ItSpec {
     lazy val controller: CalculatorController = app.injector.instanceOf[CalculatorController]
     lazy val service: CalculatorService = app.injector.instanceOf[CalculatorService]
 
-    lazy val paymentSchedules: List[PaymentSchedule] = Range(twoMonths, sevenMonths).inclusive.map { duration =>
-      service.buildSchedule(calculatorInput(
-        startDate.plus(duration, MONTHS), 2))
-    }.toList
+//    lazy val paymentSchedules: List[PaymentSchedule] = Range(twoMonths, sevenMonths).inclusive.map { duration =>
+////      service.buildScheduleNew(calculatorInput(
+////        startDate.plus(duration, MONTHS), 2))
+//    }.toList
   }
 
   //  "closestSchedule returns the schedule with monthly payments nearest to the user's preferred amount" in new SetUp {

@@ -91,7 +91,7 @@ class CalculatorControllerSpec2023 extends PlaySpec with GuiceOneAppPerTest with
 
       val updatedJourney = journeyService.getJourney()(fakeRequest)
 
-      whenReady(updatedJourney) { journey => journey.maybePaymentPlanOptions mustBe Some(Seq())}
+      whenReady(updatedJourney) { journey => journey.maybePaymentPlanOptions mustBe Some(Seq()) }
 
     }
   }

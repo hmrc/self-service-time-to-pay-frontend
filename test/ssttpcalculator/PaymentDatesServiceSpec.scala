@@ -48,7 +48,7 @@ class PaymentDatesServiceSpec extends ItSpec {
           val noArrangementDayOfMonth = None
 
           val result = paymentDatesService
-            .paymentsCalendar(noPaymentToday, noArrangementDayOfMonth)(fakeRequest, appConfig)
+            .paymentsCalendar(noPaymentToday, noArrangementDayOfMonth, dateOfJourney)(appConfig)
 
           "created on date of journey" in {
             result.planStartDate shouldBe dateOfJourney
@@ -69,7 +69,7 @@ class PaymentDatesServiceSpec extends ItSpec {
           val noArrangementDayOfMonth = None
 
           val result = paymentDatesService
-            .paymentsCalendar(paymentToday, noArrangementDayOfMonth)(fakeRequest, appConfig)
+            .paymentsCalendar(paymentToday, noArrangementDayOfMonth, dateOfJourney)(appConfig)
           "created on date of journey" in {
             result.planStartDate shouldBe dateOfJourney
           }
@@ -90,7 +90,7 @@ class PaymentDatesServiceSpec extends ItSpec {
           val preferredRegularPaymentDay = Some(ArrangementDayOfMonth(1))
 
           val result = paymentDatesService
-            .paymentsCalendar(noPaymentToday, preferredRegularPaymentDay)(fakeRequest, appConfig)
+            .paymentsCalendar(noPaymentToday, preferredRegularPaymentDay, dateOfJourney)(appConfig)
 
           "created on date of journey" in {
             result.planStartDate shouldBe dateOfJourney
@@ -113,7 +113,7 @@ class PaymentDatesServiceSpec extends ItSpec {
           val preferredRegularPaymentDay = Some(ArrangementDayOfMonth(1))
 
           val result = paymentDatesService
-            .paymentsCalendar(paymentToday, preferredRegularPaymentDay)(fakeRequest, appConfig)
+            .paymentsCalendar(paymentToday, preferredRegularPaymentDay, dateOfJourney)(appConfig)
 
           "created on date of journey" in {
             result.planStartDate shouldBe dateOfJourney

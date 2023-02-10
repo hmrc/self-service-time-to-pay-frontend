@@ -45,24 +45,22 @@ class PaymentDatesService @Inject() (
   // TODO OPS-9610: deal with payment date that is more than 28
   def paymentsCalendar(
       maybePaymentToday:          Option[PaymentToday],
-      maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth]
+      maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth],
+      dateToday: LocalDate
   )(
       implicit
-      request: Request[_],
       config:  AppConfig
   ): PaymentsCalendar = {
-    val today = clockProvider.nowDate()
-
-    val defaultRegularPaymentsDay = today
+    val defaultRegularPaymentsDay = dateToday
       .plusDays(daysToProcessUpfrontPayment)
       .plusDays(minGapBetweenPayments)
       .getDayOfMonth
 
     PaymentsCalendar(
-      planStartDate           = today,
+      planStartDate           = dateToday,
       maybeUpfrontPaymentDate = maybePaymentToday
         .map(_ => dateWithValidPaymentDay(
-          today.plusDays(daysToProcessUpfrontPayment),
+          dateToday.plusDays(daysToProcessUpfrontPayment),
           firstPaymentDayOfMonth,
           lastPaymentDayOfMonth
         )),
