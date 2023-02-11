@@ -514,6 +514,108 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
         result shouldBe None
       }
+//      "return a payment schedule request with no initial payment when the user tries to make a payment which would leave less than £32 balance when" - {
+//        "the current date is Friday 1st May with upcoming bank holiday" in {
+//          val clock = clockForMay(_1st)
+//          val currentDate = LocalDate.now(clock)
+//          val firstPaymentDate = Some(june(_11th))
+//
+//          makeTaxPaymentPlan(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+//            debits, noInitialPayment, currentDate, endDate = july(_1st), firstPaymentDate)
+//          makeTaxPaymentPlan(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+//            debits, noInitialPayment, currentDate, endDate = august(_1st), firstPaymentDate)
+//        }
+//
+//        "the current date is Thursday 7th May with upcoming bank holiday" in {
+//          val clock = clockForMay(_7th)
+//          val currentDate = LocalDate.now(clock)
+//          val firstPaymentDate = Some(june(_15th))
+//
+//          makeTaxPaymentPlan(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+//            debits, noInitialPayment, currentDate, endDate = july(_7th), firstPaymentDate)
+//          makeTaxPaymentPlan(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+//            debits, noInitialPayment, currentDate, endDate = august(_7th), firstPaymentDate)
+//        }
+//
+//        "the current date is bank holiday Friday 8th May" in {
+//          val clock = clockForMay(_8th)
+//          val currentDate = LocalDate.now(clock)
+//          val firstPaymentDate = Some(june(_15th))
+//
+//          makeTaxPaymentPlan(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+//            debits, noInitialPayment, currentDate, endDate = july(_8th), firstPaymentDate)
+//          makeTaxPaymentPlan(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+//            debits, noInitialPayment, currentDate, endDate = august(_8th), firstPaymentDate)
+//        }
+//
+//        "the current date is Monday 11th May" in {
+//          val clock = clockForMay(_11th)
+//          val currentDate = LocalDate.now(clock)
+//          val firstPaymentDate = Some(june(_18th))
+//
+//          makeTaxPaymentPlan(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+//            debits, noInitialPayment, currentDate, endDate = july(_11th), firstPaymentDate)
+//          makeTaxPaymentPlan(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+//            debits, noInitialPayment, currentDate, endDate = august(_11th), firstPaymentDate)
+//        }
+//
+//        "the current date is the Monday 25th May so the payment dates roll into the next month" in {
+//          val clock = clockForMay(_25th)
+//          val currentDate = may(_25th)
+//          val firstPaymentDate = july(_1st)
+//
+//          makeTaxPaymentPlan(debits, initialPaymentTooLarge, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
+//            debits, noInitialPayment, currentDate, endDate = july(_25th), firstPaymentDate = Some(firstPaymentDate))
+//          makeTaxPaymentPlan(debits, initialPaymentTooLarge, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
+//            debits, noInitialPayment, currentDate, endDate = august(_25th), firstPaymentDate = Some(firstPaymentDate))
+//        }
+//      }
+//      "availablePaymentSchedules with an endDate" should {
+//        implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+//        val LastPaymentDelayDays = 7
+//
+//        "return a payment schedule with endDate" when {
+//          "matching last payment date plush seven days" in {
+//            val startDate = LocalDate.now
+//            val endDate = startDate.plusMonths(3)
+//
+//            val taxPaymentPlan = TaxPaymentPlan(
+//              Seq(
+//                TaxLiability(1000, startDate)
+//              ),
+//              0,
+//              startDate,
+//              endDate,
+//              None)
+//
+//            val calculatorService = new CalculatorService(new ClockProvider(), new DurationService(), new InterestRateService())
+//
+//            val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
+//
+//            result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
+//          }
+//
+//          "ignoring public holidays,  last payment date plush seven days" in {
+//            val startDate = LocalDate.of(2022, 6, 1)
+//            val endDate = startDate.plusMonths(6)
+//
+//            val taxPaymentPlan = TaxPaymentPlan(
+//              Seq(
+//                TaxLiability(1000, startDate)
+//              ),
+//              0,
+//              startDate,
+//              endDate,
+//              None)
+//
+//            val calculatorService = new CalculatorService(new ClockProvider(), new DurationService(), new InterestRateService())
+//
+//            val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
+//
+//            result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
+//          }
+//        }
+//      }
     }
   }
 }

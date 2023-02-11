@@ -46,12 +46,7 @@ class PaymentDatesService @Inject() (
       dateToday:                  LocalDate
   )(implicit config: AppConfig): PaymentsCalendar = {
 
-    val defaultRegularPaymentsDay = dateToday
-      .plusDays(daysToProcessUpfrontPayment)
-      .plusDays(minGapBetweenPayments)
-      .getDayOfMonth
-
-    val maybeUpfrontPayment = maybePaymentToday.map(_ => {
+    val maybeUpfrontPaymentDate: Option[LocalDate] = maybePaymentToday.map(_ => {
       dateWithValidPaymentDay(
         date = dateToday.plusDays(daysToProcessUpfrontPayment),
         firstPaymentDayOfMonth = firstPaymentDayOfMonth,
@@ -59,10 +54,28 @@ class PaymentDatesService @Inject() (
       )
     })
 
+    val validDefaultRegularPaymentsDay: Int = {
+      dateWithValidPaymentDay(
+        dateToday.plusDays(daysToProcessUpfrontPayment).plusDays(minGapBetweenPayments),
+        firstPaymentDayOfMonth,
+        lastPaymentDayOfMonth
+      ).getDayOfMonth
+    }
+
+    val validCustomerPreferredRegularPaymentDay: Option[Int] = {
+      maybeArrangementDayOfMonth.map( arrangementDayOfMonth => {
+        dateWithValidPaymentDay(
+          dateToday.withDayOfMonth(arrangementDayOfMonth.dayOfMonth),
+          firstPaymentDayOfMonth,
+          lastPaymentDayOfMonth
+        ).getDayOfMonth
+      })
+    }
+
     PaymentsCalendar(
       planStartDate           = dateToday,
-      maybeUpfrontPaymentDate = maybeUpfrontPayment,
-      regularPaymentsDay      = maybeArrangementDayOfMonth.map(_.dayOfMonth).getOrElse(defaultRegularPaymentsDay)
+      maybeUpfrontPaymentDate = maybeUpfrontPaymentDate,
+      regularPaymentsDay      = validCustomerPreferredRegularPaymentDay.getOrElse(validDefaultRegularPaymentsDay)
     )
   }
 
