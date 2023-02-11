@@ -20,9 +20,10 @@ import com.github.nscala_time.time.Imports.LocalDateTime
 import com.github.nscala_time.time.StaticDateTimeZone.UTC
 import config.AppConfig
 import journey.PaymentToday
+import org.scalatest.Assertion
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.api.Logger
-import ssttpcalculator.model.{Payables, PaymentSchedule, TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{Instalment, Payables, PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import testsupport.ItSpec
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, Debit, SaUtr, SelfAssessmentDetails}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
@@ -94,7 +95,7 @@ class CalculatorServiceSpecAlternate extends ItSpec {
     }
   }
 
-  val paymentPlanOptionsInputs = Table[String, Seq[TaxLiability], Option[ArrangementDayOfMonth], Option[PaymentToday], Double, Double, Seq[Tuple2[Double, Int]]](
+  val paymentPlanOptions = Table[String, Seq[TaxLiability], Option[ArrangementDayOfMonth], Option[PaymentToday], Double, Double, Seq[Tuple2[Double, Int]]](
     ("id", "debits", "maybeArrangementDayOfMonth", "maybePaymentToday", "initialPayment", "remainingIncomeAfterSpending", "instalmentsAmountsDurations"),
     ("1.i", Seq(debit(2000.00, "2017-01-31")), Some(ArrangementDayOfMonth(21)), None, 0, 1000, Seq((500, 5), (600, 4), (800, 3))),
     ("1.ii", Seq(debit(2000.00, "2015-01-31")), Some(ArrangementDayOfMonth(21)), None, 0, 1000, Seq((500, 5), (600, 4), (800, 3))),
@@ -113,8 +114,11 @@ class CalculatorServiceSpecAlternate extends ItSpec {
     ("7.i", Seq(debit(2000.00, "2017-01-31")), Some(ArrangementDayOfMonth(21)), Some(PaymentToday(true)), 1000, 1000, Seq((500, 3), (600, 2), (800, 2)))
   )
 
-  forAll(paymentPlanOptionsInputs) { (id, debits, mayBeArrangementDayOfMonth, maybePaymentToday, initialPayment, remainingIncomeAfterSpending, instalmentsAmountsDurations) =>
-    s"The calculator service should, for $id, generate payment plan options" in {
+  forAll(paymentPlanOptions) { (id, debits, mayBeArrangementDayOfMonth, maybePaymentToday, initialPayment, remainingIncomeAfterSpending, instalmentsAmountsDurations) =>
+    s"""The calculator service should, for $id, generate payment plan options:
+       |1. paying ${instalmentsAmountsDurations(0)._1} per month over ${instalmentsAmountsDurations(0)._2} months,
+       |2. paying ${instalmentsAmountsDurations(1)._1} per month over ${instalmentsAmountsDurations(1)._2} months
+       |3. paying ${instalmentsAmountsDurations(2)._1} per month over ${instalmentsAmountsDurations(0)._2} months""".stripMargin in {
 
       val selfAssessmentDetails = SelfAssessmentDetails(
         SaUtr("***"),
@@ -140,17 +144,26 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
       val resultsZippedWithExpectation = result.map(_.instalments).zip(instalmentsAmountsDurations)
 
-      logger.info(
-        s"""Payment Plans Options:
-            |First option instalments: startDate: ${result(0).instalments}
-            |Second option instalments: ${result(1).instalments}
-            |Third option instalments: ${result(2).instalments}
-    """)
-
-      resultsZippedWithExpectation.foreach(pair => {
-        pair._1.head.amount shouldBe pair._2._1
-        pair._1.length shouldBe pair._2._2
+      (1 to 3).zip(result).foreach( noSched => {
+        val amountPaid = noSched._2.instalments.map { _.amount }.sum
+        val totalPaid = amountPaid + noSched._2.initialPayment
+        logger.info(s"${noSched._1}. Initial: ${noSched._2.initialPayment}, Over ${noSched._2.instalments.size}, Regular: ${noSched._2.instalments.head.amount}, Final: ${noSched._2.instalments.last.amount}, Total: $totalPaid"
+        )
       })
+
+      resultsZippedWithExpectation.foreach(resultsExpectionPair => {
+        assertAmountMatches(resultsExpectionPair._1, resultsExpectionPair._2)
+        assertDurationMatches(resultsExpectionPair._1, resultsExpectionPair._2)
+      })
+
+      def assertAmountMatches(results: Seq[Instalment], expectation: (Double, Int)): Assertion = {
+        results.head.amount shouldBe expectation._1
+      }
+
+      def assertDurationMatches(results: Seq[Instalment], expectation: (Double, Int)): Assertion = {
+        results.length shouldBe expectation._2
+
+      }
     }
   }
 }
