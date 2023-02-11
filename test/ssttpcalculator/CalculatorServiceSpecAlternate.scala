@@ -30,6 +30,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDate, LocalDateTime}
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class CalculatorServiceSpecAlternate extends ItSpec {
   private val logger = Logger(getClass)
@@ -46,17 +47,17 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
   val interestCalculationScenarios = Table[String, Seq[TaxLiability], LocalDate, LocalDate, LocalDate, Option[ArrangementDayOfMonth], Option[PaymentToday], Int, Int, Double, Double, Double, Double](
     ("id", "debits", "startDate", "endDate", "firstPaymentDate", "maybeArrangementDayOfMonth", "maybePaymentToday", "initialPayment", "duration", "totalPayable", "totalInterestCharged", "regularInstalmentAmount", "finalInstalmentAmount"),
-    ("1.a.i.c", Seq(debit(2000.00, "2017-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 11, 2032.59, 32.59, 200.00, 232.59),
-    ("1.a.ii.c", Seq(debit(2000.00, "2015-01-31")), date("2016-03-14"), date("2017-01-20"), date("2016-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 11, 2095.45, 95.45, 200.00, 295.45),
-    ("1.b.ii.c", Seq(debit(2000.00, "2016-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 11, 2090.24, 90.24, 200.00, 290.24),
-    ("1.d", Seq(debit(2000.00, "2017-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 21, 2019.54, 19.54, 100.00, 119.54),
-    ("1.e", Seq(debit(2000.00, "2017-01-31"), debit(1000.00, "2017-02-01")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 2000, 11, 3023.76, 23.76, 100.00, 123.76),
-    ("1.f", Seq(debit(2000.00, "2017-01-31"), debit(2000.00, "2017-02-01")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 2500, 11, 4032.92, 32.92, 150.00, 182.92),
-    ("2.a", Seq(debit(2000.00, "2017-03-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 11, 2023.7, 23.7, 200.00, 223.7),
-    ("2.b", Seq(debit(2000.00, "2017-03-18")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 1000, 11, 2012.83, 12.83, 100.00, 112.83),
-    ("2.c", Seq(debit(2000.00, "2017-03-18"), debit(2000.00, "2017-03-19")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 2000, 11, 4025.51, 25.51, 200.00, 225.51),
-    ("2.d", Seq(debit(2000.00, "2017-03-18"), debit(2000.00, "2017-03-19")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 2500, 11, 4019.13, 19.13, 150.00, 169.13),
-    ("2.e", Seq(debit(2000.00, "2017-03-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 1000, 11, 2011.85, 11.85, 100.00, 111.85)
+    ("1.a.i.c", Seq(debit(2000.00, "2017-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 11, 2032.59, 32.59, 200.00, 32.59),
+    ("1.a.ii.c", Seq(debit(2000.00, "2015-01-31")), date("2016-03-14"), date("2017-01-20"), date("2016-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 11, 2095.45, 95.45, 200.00, 95.45),
+    ("1.b.ii.c", Seq(debit(2000.00, "2016-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 11, 2090.24, 90.24, 200.00, 90.24),
+    ("1.d", Seq(debit(2000.00, "2017-01-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 1000, 11, 2019.54, 19.54, 100.00, 19.54),
+    ("1.e", Seq(debit(2000.00, "2017-01-31"), debit(1000.00, "2017-02-01")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 2000, 11, 3023.76, 23.76, 100.00, 23.76),
+    ("1.f", Seq(debit(2000.00, "2017-01-31"), debit(2000.00, "2017-02-01")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 2500, 11, 4032.92, 32.92, 150.00, 32.92),
+    ("2.a", Seq(debit(2000.00, "2017-03-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), None, 0, 11, 2023.7, 23.7, 200.00, 23.7),
+    ("2.b", Seq(debit(2000.00, "2017-03-18")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 1000, 11, 2012.83, 12.83, 100.00, 12.83),
+    ("2.c", Seq(debit(2000.00, "2017-03-18"), debit(2000.00, "2017-03-19")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 2000, 11, 4025.51, 25.51, 200.00, 25.51),
+    ("2.d", Seq(debit(2000.00, "2017-03-18"), debit(2000.00, "2017-03-19")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 2500, 11, 4019.13, 19.13, 150.00, 19.13),
+    ("2.e", Seq(debit(2000.00, "2017-03-31")), date("2017-03-11"), date("2018-01-20"), date("2017-04-20"), Some(ArrangementDayOfMonth(20)), Some(PaymentToday(true)), 1000, 11, 2011.85, 11.85, 100.00, 11.85)
   )
 
   forAll(interestCalculationScenarios) { (id, debits, startDate, endDate, firstPaymentDate, maybeArrangementDayOfMonth, maybePaymentToday, initialPayment, duration, totalPayable, totalInterestCharged, regularInstalmentAmount, finalInstalmentAmount) =>
@@ -82,14 +83,14 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
       logger.info(s"Payment Schedule: Initial: ${schedule.initialPayment}, Over ${schedule.instalments.size}, Regular: ${schedule.instalments.head.amount}, Final: ${schedule.instalments.last.amount}, Total: $totalPaid")
 
-      //      totalPaid.doubleValue() shouldBe totalPayable.doubleValue()
-      //      schedule.totalInterestCharged.doubleValue() shouldBe totalInterestCharged.doubleValue()
+      //      totalPaid.setScale(2, HALF_UP).doubleValue() shouldBe totalPayable.doubleValue()
+      //      schedule.totalInterestCharged.setScale(2, HALF_UP).doubleValue() shouldBe totalInterestCharged.doubleValue()
 
       val instalments = schedule.instalments
 
       instalments.size shouldBe duration
       instalments.head.amount shouldBe regularInstalmentAmount
-      //      instalments.last.amount.doubleValue() shouldBe finalInstalmentAmount.doubleValue()
+            instalments.last.amount.setScale(2, HALF_UP).doubleValue() shouldBe finalInstalmentAmount.doubleValue()
     }
   }
 
