@@ -214,7 +214,7 @@ class CalculatorController @Inject() (
         sa,
         journey.safeInitialPayment,
         journey.maybeArrangementDayOfMonth,
-        journey.regularPaymentAmount,
+        journey.remainingIncomeAfterSpending,
         journey.maybePaymentToday
       )
 
@@ -236,7 +236,7 @@ class CalculatorController @Inject() (
         sa,
         journey.safeInitialPayment,
         journey.maybeArrangementDayOfMonth,
-        journey.regularPaymentAmount,
+        journey.planAmountSelection,
         journey.maybePaymentToday
       )
 

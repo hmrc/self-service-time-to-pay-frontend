@@ -78,7 +78,7 @@ final case class Journey(
     maybeIncome:                Option[Income]                = None,
     maybeSpending:              Option[Spending]              = None,
     maybePaymentPlanOptions:    Option[List[PaymentSchedule]] = None,
-    maybeRegularPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-8654 - connect to calculator form, then set default to None: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration
+    maybePlanAmountSelection:   Option[BigDecimal]            = Some(2000), // TODO OPS-8654 - connect to calculator form, then set default to None: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration
     maybeCalculatorDuration:    Option[CalculatorDuration]    = None, // TODO OPS-8654 - remove: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
 
@@ -88,7 +88,7 @@ final case class Journey(
     maybeSaUtr:             Option[String]            = None
 ) extends HasId[JourneyId] {
 
-  def regularPaymentAmount: BigDecimal = maybeRegularPaymentAmount.getOrElse(
+  def planAmountSelection: BigDecimal = maybePlanAmountSelection.getOrElse(
     throw new RuntimeException(s"Expected 'regular payment amount' selected by customer but was not found. [${_id}] [$this]")
   )
   def taxpayer: Taxpayer = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [$this]"))

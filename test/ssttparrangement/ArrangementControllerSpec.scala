@@ -99,7 +99,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       existingDDBanks            = None,
       maybeTaxpayer              = Some(TdAll.taxpayer),
       maybePaymentToday          = Some(PaymentToday(true)),
-      maybeRegularPaymentAmount  = Some(TdAll.selectedRegularPaymentAmount300),
+      maybePlanAmountSelection  = Some(TdAll.selectedRegularPaymentAmount300),
       maybeCalculatorDuration    = Some(CalculatorDuration(3)),
       maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(3)),
       maybeEligibilityStatus     = Some(EligibilityStatus(Seq.empty))
