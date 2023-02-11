@@ -33,7 +33,7 @@ class PaymentDatesServiceSpec extends ItSpec {
   val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
   val paymentDatesService: PaymentDatesService = fakeApplication().injector.instanceOf[PaymentDatesService]
 
-  val daysFromCreatedDateToProcessFirstPayment: Int = appConfig.daysToProcessUpfrontPayment
+  val daysFromCreatedDateToProcessFirstPayment: Int = appConfig.daysToProcessFirstPayment
   val minGapBetweenPayments: Int = appConfig.minGapBetweenPayments
 
   def date(date: String): LocalDate = LocalDate.parse(date)

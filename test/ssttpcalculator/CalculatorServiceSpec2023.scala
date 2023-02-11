@@ -62,7 +62,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val regularPaymentAmount = 1000
 
               val regularPaymentsDayWithinFirstMonth = fixedToday
-                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar(
@@ -94,7 +94,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val regularPaymentAmount = 100
 
               val regularPaymentsDayWithinFirstMonth = fixedToday
-                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar(
@@ -134,12 +134,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val regularPaymentAmount = 1000
 
               val regularPaymentsDayWithinFirstMonth = fixedToday
-                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar(
                 planStartDate           = fixedToday,
-                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessFirstPayment)),
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
@@ -166,12 +166,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val regularPaymentAmount = 100
 
               val regularPaymentsDayWithinFirstMonth = fixedToday
-                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar(
                 planStartDate           = fixedToday,
-                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessFirstPayment)),
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
@@ -207,7 +207,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val regularPaymentAmount = 1000
 
               val regularPaymentsDayWithinFirstMonth = fixedToday
-                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar(
@@ -239,7 +239,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val regularPaymentAmount = 100
 
               val regularPaymentsDayWithinFirstMonth = fixedToday
-                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar(
@@ -278,12 +278,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val regularPaymentAmount = 1000
 
               val regularPaymentsDayWithinFirstMonth = fixedToday
-                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar(
                 planStartDate           = fixedToday,
-                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessFirstPayment)),
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
@@ -310,12 +310,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val regularPaymentAmount = 100
 
               val regularPaymentsDayWithinFirstMonth = fixedToday
-                .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+                .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar(
                 planStartDate           = fixedToday,
-                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+                maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessFirstPayment)),
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
@@ -352,7 +352,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val regularPaymentAmount = 1000
 
           val regularPaymentsDayWithinFirstMonth = fixedToday
-            .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+            .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
             .getDayOfMonth
 
           val paymentsCalendar = PaymentsCalendar(
@@ -397,7 +397,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val regularPaymentAmount = 250
 
           val regularPaymentsDayWithinFirstMonth = fixedToday
-            .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments)
+            .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
             .getDayOfMonth
 
           val paymentsCalendar = PaymentsCalendar(
@@ -441,12 +441,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val upfrontPaymentAmount = 0
           val regularPaymentAmount = 100
           val preferredPaymentDay = fixedToday
-            .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments - 1)
+            .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments - 1)
             .getDayOfMonth
 
           val paymentsCalendar = PaymentsCalendar(
             planStartDate           = fixedToday,
-            maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+            maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessFirstPayment)),
             regularPaymentsDay      = preferredPaymentDay
           )
 
@@ -466,12 +466,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val upfrontPaymentAmount = 200
         val regularPaymentAmount = 100
         val preferredPaymentDay = fixedToday
-          .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments - 1)
+          .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments - 1)
           .getDayOfMonth
 
         val paymentsCalendar = PaymentsCalendar(
           planStartDate           = fixedToday,
-          maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+          maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessFirstPayment)),
           regularPaymentsDay      = preferredPaymentDay
         )
 
@@ -501,12 +501,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val upfrontPaymentAmount = 0
         val regularPaymentAmount = 100
         val preferredPaymentDay = fixedToday
-          .plusDays(appConfig.daysToProcessUpfrontPayment + appConfig.minGapBetweenPayments - 1)
+          .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments - 1)
           .getDayOfMonth
 
         val paymentsCalendar = PaymentsCalendar(
           planStartDate           = fixedToday,
-          maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessUpfrontPayment)),
+          maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessFirstPayment)),
           regularPaymentsDay      = preferredPaymentDay
         )
 

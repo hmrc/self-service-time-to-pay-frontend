@@ -26,7 +26,7 @@ class PaymentsCalendarSpec extends ItSpec {
   private val logger = Logger(getClass)
 
   implicit val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
-  val daysFromCreatedDateToProcessFirstPayment: Int = appConfig.daysToProcessUpfrontPayment
+  val daysFromCreatedDateToProcessFirstPayment: Int = appConfig.daysToProcessFirstPayment
   val minGapBetweenPayments: Int = appConfig.minGapBetweenPayments
   val maximumLengthOfPaymentPlan: Int = appConfig.maximumLengthOfPaymentPlan
 

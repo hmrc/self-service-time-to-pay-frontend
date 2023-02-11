@@ -27,14 +27,20 @@ case class PaymentsCalendar(
 )(implicit config: AppConfig) {
 
   lazy val regularPaymentDates: Seq[LocalDate] = {
-    val baselineDate = maybeUpfrontPaymentDate.getOrElse(planStartDate)
+    maybeUpfrontPaymentDate match {
+      case Some(upfrontPaymentDate) =>
+        calibrateStartOfRegularPayment(upfrontPaymentDate, timeForRegularPaymentThisMonthAfterUpfrontPayment)
+      case None =>
+        calibrateStartOfRegularPayment(planStartDate, timeForRegularPaymentThisMonthAfterStartDate)
+    }
+  }
 
-    if (noTimeForRegularPaymentDateThisMonth(baselineDate)) {
-      if (regularPaymentsDay >= baselineDate.getDayOfMonth) {
+  private def calibrateStartOfRegularPayment(
+                                              baselineDate: LocalDate,
+                                              timeForRegularPaymentThisMonth: LocalDate => Boolean
+                                            ): Seq[LocalDate] = {
+    if (!timeForRegularPaymentThisMonth(baselineDate)) {
         regularPaymentDatesFromNextMonth(baselineDate)
-      } else {
-        regularPaymentDatesFromNextMonth(baselineDate.plusMonths(1))
-      }
     } else {
       regularPaymentDatesFromNextMonth(baselineDate.minusMonths(1))
     }
@@ -45,15 +51,12 @@ case class PaymentsCalendar(
       .map(baselineDate.plusMonths(_).withDayOfMonth(regularPaymentsDay))
   }
 
-  // TODO OPS-9610 check old implementation. About how long the first regular payment is compared to:
-  // - createdOn date when no upfront payment
-  // - upfront payment when there is one.
-  // this implementation ensures there's at least 14 days (max of 10 and 14)
-  // but old implementation maybe went for 24 days from createdOn regardless of whether there's an upfront payment
-  private def noTimeForRegularPaymentDateThisMonth(date: LocalDate): Boolean = {
-    date.withDayOfMonth(regularPaymentsDay).minusDays(Math.max(
-      config.daysToProcessUpfrontPayment,
-      config.minGapBetweenPayments)).isBefore(date)
+  private def timeForRegularPaymentThisMonthAfterStartDate(startDate: LocalDate): Boolean = {
+    !startDate.withDayOfMonth(regularPaymentsDay).minusDays(config.daysToProcessFirstPayment).isBefore(startDate)
+  }
+
+  private def timeForRegularPaymentThisMonthAfterUpfrontPayment(upfrontPaymentDate: LocalDate): Boolean = {
+    !upfrontPaymentDate.withDayOfMonth(regularPaymentsDay).minusDays(config.minGapBetweenPayments).isBefore(upfrontPaymentDate)
   }
 }
 

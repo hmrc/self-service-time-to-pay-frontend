@@ -32,7 +32,7 @@ class PaymentDatesService @Inject() (
 ) {
   val logger: Logger = Logger(getClass)
 
-  val daysToProcessUpfrontPayment: Int = config.daysToProcessUpfrontPayment
+  val daysToProcessUpfrontPayment: Int = config.daysToProcessFirstPayment
   val minGapBetweenPayments: Int = config.minGapBetweenPayments
   val firstPaymentDayOfMonth: Int = config.firstPaymentDayOfMonth
   val lastPaymentDayOfMonth: Int = config.lastPaymentDayOfMonth
