@@ -91,7 +91,7 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
       instalments.size shouldBe duration
       instalments.head.amount shouldBe regularInstalmentAmount
-            instalments.last.amount.setScale(2, HALF_UP).doubleValue() shouldBe finalInstalmentAmount.doubleValue()
+      instalments.last.amount.setScale(2, HALF_UP).doubleValue() shouldBe finalInstalmentAmount.doubleValue()
     }
   }
 
@@ -144,7 +144,7 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
       val resultsZippedWithExpectation = result.map(_.instalments).zip(instalmentsAmountsDurations)
 
-      (1 to 3).zip(result).foreach( noSched => {
+      (1 to 3).zip(result).foreach(noSched => {
         val amountPaid = noSched._2.instalments.map { _.amount }.sum
         val totalPaid = amountPaid + noSched._2.initialPayment
         logger.info(s"${noSched._1}. Initial: ${noSched._2.initialPayment}, Over ${noSched._2.instalments.size}, Regular: ${noSched._2.instalments.head.amount}, Final: ${noSched._2.instalments.last.amount}, Total: $totalPaid"
@@ -156,14 +156,14 @@ class CalculatorServiceSpecAlternate extends ItSpec {
         assertDurationMatches(resultsExpectionPair._1, resultsExpectionPair._2)
       })
 
-      def assertAmountMatches(results: Seq[Instalment], expectation: (Double, Int)): Assertion = {
-        results.head.amount shouldBe expectation._1
-      }
+        def assertAmountMatches(results: Seq[Instalment], expectation: (Double, Int)): Assertion = {
+          results.head.amount shouldBe expectation._1
+        }
 
-      def assertDurationMatches(results: Seq[Instalment], expectation: (Double, Int)): Assertion = {
-        results.length shouldBe expectation._2
+        def assertDurationMatches(results: Seq[Instalment], expectation: (Double, Int)): Assertion = {
+          results.length shouldBe expectation._2
 
-      }
+        }
     }
   }
 }

@@ -113,14 +113,14 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
           maybePaymentToday          = None,
-          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_11th)),
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_12th)),
           dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
         paymentsCalendar.maybeUpfrontPaymentDate shouldBe None
-        paymentsCalendar.regularPaymentsDay shouldBe _11th
-        paymentsCalendar.regularPaymentDates.head shouldBe may(_11th)
+        paymentsCalendar.regularPaymentsDay shouldBe _12th
+        paymentsCalendar.regularPaymentDates.head shouldBe may(_12th)
       }
 
       "the current date is Thursday 7th May with upcoming bank holiday" in {
@@ -195,14 +195,14 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
           maybePaymentToday          = Some(PaymentToday(true)),
-          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_11th)),
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_12th)),
           dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
-        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_11th))
-        paymentsCalendar.regularPaymentsDay shouldBe _11th
-        paymentsCalendar.regularPaymentDates.head shouldBe june(_11th)
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_12th))
+        paymentsCalendar.regularPaymentsDay shouldBe _12th
+        paymentsCalendar.regularPaymentDates.head shouldBe june(_12th)
       }
 
       "the current date is Thursday 7th May with upcoming bank holiday" in {
@@ -216,7 +216,7 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
-        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_17th))
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_18th))
         paymentsCalendar.regularPaymentsDay shouldBe _15th
         paymentsCalendar.regularPaymentDates.head shouldBe june(_15th)
       }
@@ -232,7 +232,7 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
-        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_18th))
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_19th))
         paymentsCalendar.regularPaymentsDay shouldBe _15th
         paymentsCalendar.regularPaymentDates.head shouldBe june(_15th)
       }
@@ -248,7 +248,7 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
-        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_21st))
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_22nd))
         paymentsCalendar.regularPaymentsDay shouldBe _18th
         paymentsCalendar.regularPaymentDates.head shouldBe june(_18th)
       }
@@ -264,7 +264,7 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
-        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(june(_4th))
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(june(_5th))
         paymentsCalendar.regularPaymentsDay shouldBe _1st
         paymentsCalendar.regularPaymentDates.head shouldBe july(_1st)
       }
