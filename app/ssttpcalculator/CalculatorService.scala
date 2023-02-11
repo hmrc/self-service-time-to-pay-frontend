@@ -63,19 +63,18 @@ class CalculatorService @Inject() (
   // needs to handle not creating a plan if it's more than 24 months long
   // proportions of netMonthlyIncome should be configurable
   def paymentPlanOptions(
-      sa:                         SelfAssessmentDetails,
-      initialPayment:             BigDecimal                    = BigDecimal(0),
-      maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth],
-      netMonthlyIncome:           BigDecimal,
-      maybePaymentToday:          Option[PaymentToday]
-  )(implicit request: Request[_],
-    config: AppConfig
-  ): List[PaymentSchedule] = {
+      sa:                           SelfAssessmentDetails,
+      initialPayment:               BigDecimal                    = BigDecimal(0),
+      maybeArrangementDayOfMonth:   Option[ArrangementDayOfMonth],
+      remainingIncomeAfterSpending: BigDecimal,
+      maybePaymentToday:            Option[PaymentToday],
+      dateToday:                    LocalDate
+  )(implicit config: AppConfig): List[PaymentSchedule] = {
 
     val paymentsCalendar = paymentDatesService.paymentsCalendar(
       maybePaymentToday,
       maybeArrangementDayOfMonth,
-      clockProvider.nowDate()
+      dateToday
     )(appConfig)
 
     val payables = Payables(
@@ -85,8 +84,8 @@ class CalculatorService @Inject() (
     )
 
     val schedules = for {
-      proportionOfNetMonthlyIncome <- List(0.5, 0.6, 0.7)
-      regularPaymentAmount = proportionOfNetMonthlyIncome * netMonthlyIncome
+      proportionOfNetMonthlyIncome <- List(0.5, 0.6, 0.8)
+      regularPaymentAmount = proportionOfNetMonthlyIncome * remainingIncomeAfterSpending
       schedule = buildScheduleNew(
         paymentsCalendar     = paymentsCalendar,
         upfrontPaymentAmount = initialPayment,

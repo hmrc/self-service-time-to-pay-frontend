@@ -215,7 +215,8 @@ class CalculatorController @Inject() (
         journey.safeInitialPayment,
         journey.maybeArrangementDayOfMonth,
         journey.remainingIncomeAfterSpending,
-        journey.maybePaymentToday
+        journey.maybePaymentToday,
+        clockProvider.nowDate()
       )
 
       Ok(views.calculate_instalments_form(
@@ -237,7 +238,8 @@ class CalculatorController @Inject() (
         journey.safeInitialPayment,
         journey.maybeArrangementDayOfMonth,
         journey.planAmountSelection,
-        journey.maybePaymentToday
+        journey.maybePaymentToday,
+        clockProvider.nowDate()
       )
 
       createInstalmentForm().bindFromRequest().fold(
