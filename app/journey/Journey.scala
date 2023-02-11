@@ -77,7 +77,6 @@ final case class Journey(
     maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
     maybeIncome:                Option[Income]                = None,
     maybeSpending:              Option[Spending]              = None,
-    maybePaymentPlanOptions:    Option[List[PaymentSchedule]] = None,
     maybePlanAmountSelection:   Option[BigDecimal]            = Some(2000), // TODO OPS-8654 - connect to calculator form, then set default to None: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration
     maybeCalculatorDuration:    Option[CalculatorDuration]    = None, // TODO OPS-8654 - remove: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,

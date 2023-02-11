@@ -19,7 +19,6 @@ package ssttpcalculator
 import config.AppConfig
 import journey.PaymentToday
 import play.api.Logger
-import play.api.mvc.Request
 import ssttpcalculator.model.PaymentsCalendar
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
@@ -33,8 +32,6 @@ class PaymentDatesService @Inject() (
 ) {
   val logger: Logger = Logger(getClass)
 
-  val minimumLengthOfPaymentPlan: Int = config.minimumLengthOfPaymentPlan
-  val maximumLengthOfPaymentPlan: Int = config.maximumLengthOfPaymentPlan
   val daysToProcessUpfrontPayment: Int = config.daysToProcessUpfrontPayment
   val minGapBetweenPayments: Int = config.minGapBetweenPayments
   val firstPaymentDayOfMonth: Int = config.firstPaymentDayOfMonth
@@ -47,23 +44,24 @@ class PaymentDatesService @Inject() (
       maybePaymentToday:          Option[PaymentToday],
       maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth],
       dateToday:                  LocalDate
-  )(
-      implicit
-      config: AppConfig
-  ): PaymentsCalendar = {
+  )(implicit config: AppConfig): PaymentsCalendar = {
+
     val defaultRegularPaymentsDay = dateToday
       .plusDays(daysToProcessUpfrontPayment)
       .plusDays(minGapBetweenPayments)
       .getDayOfMonth
 
+    val maybeUpfrontPayment = maybePaymentToday.map(_ => {
+      dateWithValidPaymentDay(
+        date = dateToday.plusDays(daysToProcessUpfrontPayment),
+        firstPaymentDayOfMonth = firstPaymentDayOfMonth,
+        lastPaymentDayOfMonth = lastPaymentDayOfMonth
+      )
+    })
+
     PaymentsCalendar(
       planStartDate           = dateToday,
-      maybeUpfrontPaymentDate = maybePaymentToday
-        .map(_ => dateWithValidPaymentDay(
-          dateToday.plusDays(daysToProcessUpfrontPayment),
-          firstPaymentDayOfMonth,
-          lastPaymentDayOfMonth
-        )),
+      maybeUpfrontPaymentDate = maybeUpfrontPayment,
       regularPaymentsDay      = maybeArrangementDayOfMonth.map(_.dayOfMonth).getOrElse(defaultRegularPaymentsDay)
     )
   }
@@ -74,12 +72,8 @@ class PaymentDatesService @Inject() (
       lastPaymentDayOfMonth:  Int
   ): LocalDate = {
     val dayOfMonth = date.getDayOfMonth
-    if (dayOfMonth >= firstPaymentDayOfMonth && dayOfMonth <= lastPaymentDayOfMonth) {
-      date
-    } else if (dayOfMonth < firstPaymentDayOfMonth) {
-      date.withDayOfMonth(firstPaymentDayOfMonth)
-    } else {
-      date.plusMonths(1).withDayOfMonth(1)
-    }
+    if (dayOfMonth >= firstPaymentDayOfMonth && dayOfMonth <= lastPaymentDayOfMonth) { date }
+    else if (dayOfMonth < firstPaymentDayOfMonth) { date.withDayOfMonth(firstPaymentDayOfMonth) }
+    else { date.plusMonths(1).withDayOfMonth(1) }
   }
 }
