@@ -32,8 +32,8 @@ class PaymentsCalendarSpec extends ItSpec {
 
   // TODO OPS-9610: rename minGapBetweenPayments to minGapBeforeFirstRegularPayment once PaymentsCalendar confirmed
   object LongestGapBetweenStartAndFirstRegularPayment {
-    val yesUpfrontPayment = daysFromCreatedDateToProcessFirstPayment + minGapBetweenPayments + 31 - 1
-    val noUpfrontPayment = minGapBetweenPayments + 31 - 1
+    val yesUpfrontPayment: Int = daysFromCreatedDateToProcessFirstPayment + minGapBetweenPayments + 31 - 1
+    val noUpfrontPayment: Int = minGapBetweenPayments + 31 - 1
   }
 
   def date(date: String): LocalDate = LocalDate.parse(date)

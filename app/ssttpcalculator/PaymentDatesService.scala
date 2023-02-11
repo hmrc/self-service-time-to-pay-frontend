@@ -71,11 +71,9 @@ class PaymentDatesService @Inject() (
     val dayOfMonth = date.getDayOfMonth
     if (dayOfMonth >= firstPaymentDayOfMonth && dayOfMonth <= lastPaymentDayOfMonth) {
       date
-    }
-    else if (dayOfMonth < firstPaymentDayOfMonth) {
+    } else if (dayOfMonth < firstPaymentDayOfMonth) {
       date.withDayOfMonth(firstPaymentDayOfMonth)
-    }
-    else {
+    } else {
       date.plusMonths(1).withDayOfMonth(1)
     }
   }

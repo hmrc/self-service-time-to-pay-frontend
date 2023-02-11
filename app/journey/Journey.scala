@@ -99,13 +99,10 @@ final case class Journey(
     require(eligibilityStatus.eligible, s"taxpayer has to be eligible [$this]")
   }
 
+  // TODO OPS-9464: change to when old journey removed '.getOrElse(throw new IllegalArgumentException("attempted to retrieve total spending when there was no spending"))`
   def remainingIncomeAfterSpending: BigDecimal = {
-    val totalIncome = maybeIncome.map(_.totalIncome).getOrElse(
-      throw new IllegalArgumentException("attempted to retrieve total income when there was no income")
-    )
-    val totalSpending = maybeSpending.map(_.totalSpending).getOrElse(
-      throw new IllegalArgumentException("attempted to retrieve total spending when there was no spending")
-    )
+    val totalIncome = maybeIncome.map(_.totalIncome).getOrElse(BigDecimal(1000))
+    val totalSpending = maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(500))
     totalIncome - totalSpending
   }
 
