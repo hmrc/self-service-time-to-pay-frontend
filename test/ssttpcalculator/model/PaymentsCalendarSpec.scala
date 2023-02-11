@@ -78,18 +78,13 @@ class PaymentsCalendarSpec extends ItSpec {
           }
           "works with regular payments day early in month" in {
             val journeyPreferredPaymentDay = 1
-            val upfrontPaymentDate = date("2023-01-27")
+            val upfrontPaymentDate = date("2023-01-25")
 
             val firstRegularPaymentDate = PaymentsCalendar(
               planStartDate           = date("2023-01-15"),
               maybeUpfrontPaymentDate = Some(upfrontPaymentDate),
               regularPaymentsDay      = journeyPreferredPaymentDay
             ).regularPaymentDates.head
-
-            println("works with regular payments day early in month - first regular payment date: " + firstRegularPaymentDate)
-            println("works with regular payments day early in month - upfront payment date: " + upfrontPaymentDate)
-            println("works with regular payments day early in month - gap between payments: " + minGapBetweenPayments)
-            println("works with regular payments day early in month - first regular payment day minus 13 days: " + firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1))
 
             firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1).isAfter(upfrontPaymentDate) shouldBe true
             firstRegularPaymentDate.compareTo(upfrontPaymentDate) < LongestGapBetweenStartAndFirstRegularPayment.yesUpfrontPayment shouldBe true

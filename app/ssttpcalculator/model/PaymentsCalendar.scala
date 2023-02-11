@@ -41,7 +41,11 @@ case class PaymentsCalendar(
           if (regularPaymentDateFirstMonth.isAfter(upfrontPaymentDate.plusDays(minGapBetweenPayments - 1))) {
             regularPaymentDateFirstMonth.plusMonths(i - 1)
           } else {
-            regularPaymentDateFirstMonth.plusMonths(i)
+            if (regularPaymentDateFirstMonth.plusMonths(1).isAfter(upfrontPaymentDate.plusDays(minGapBetweenPayments - 1))) {
+              regularPaymentDateFirstMonth.plusMonths(i)
+            } else {
+              regularPaymentDateFirstMonth.plusMonths(i + 1)
+            }
           }
         case None =>
           val validBaselineDate = validPaymentDate(planStartDate)
