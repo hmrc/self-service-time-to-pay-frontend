@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package ssttpcalculator
 
 import config.AppConfig
@@ -64,9 +63,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = None,
+          maybePaymentToday          = None,
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(today.getDayOfMonth)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
@@ -81,9 +80,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
       val today = LocalDate.now(clock)
 
       val paymentsCalendar = paymentDatesService.paymentsCalendar(
-        maybePaymentToday = None,
+        maybePaymentToday          = None,
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(today.getDayOfMonth)),
-        dateToday = today
+        dateToday                  = today
       )(appConfig)
 
       paymentsCalendar.planStartDate shouldBe today
@@ -97,9 +96,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
       val today = LocalDate.now(clock)
 
       val paymentsCalendar = paymentDatesService.paymentsCalendar(
-        maybePaymentToday = None,
+        maybePaymentToday          = None,
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(today.getDayOfMonth)),
-        dateToday = today
+        dateToday                  = today
       )(appConfig)
 
       paymentsCalendar.planStartDate shouldBe today
@@ -113,9 +112,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = None,
+          maybePaymentToday          = None,
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_11th)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
@@ -129,9 +128,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = None,
+          maybePaymentToday          = None,
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_15th)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
@@ -146,9 +145,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = None,
+          maybePaymentToday          = None,
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_15th)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
@@ -162,9 +161,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = None,
+          maybePaymentToday          = None,
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_18th)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
@@ -178,9 +177,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = None,
+          maybePaymentToday          = None,
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_1st)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
@@ -195,9 +194,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = Some(PaymentToday(true)),
+          maybePaymentToday          = Some(PaymentToday(true)),
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_11th)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
@@ -211,9 +210,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = Some(PaymentToday(true)),
+          maybePaymentToday          = Some(PaymentToday(true)),
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_15th)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
@@ -227,9 +226,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = Some(PaymentToday(true)),
+          maybePaymentToday          = Some(PaymentToday(true)),
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_15th)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
@@ -243,9 +242,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = Some(PaymentToday(true)),
+          maybePaymentToday          = Some(PaymentToday(true)),
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_18th)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today
@@ -259,9 +258,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val today = LocalDate.now(clock)
 
         val paymentsCalendar = paymentDatesService.paymentsCalendar(
-          maybePaymentToday = Some(PaymentToday(true)),
+          maybePaymentToday          = Some(PaymentToday(true)),
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_1st)),
-          dateToday = today
+          dateToday                  = today
         )(appConfig)
 
         paymentsCalendar.planStartDate shouldBe today

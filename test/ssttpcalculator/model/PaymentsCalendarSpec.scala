@@ -122,11 +122,6 @@ class PaymentsCalendarSpec extends ItSpec {
                   regularPaymentsDay      = journeyPreferredPaymentDay
                 ).regularPaymentDates.head
 
-                println("no upfront payment - works with regular payments day early in month - first regular payment date: " + firstRegularPaymentDate)
-                println("no upfront payment - works with regular payments day early in month - start date: " + dateAtTimeOfJourney)
-                println("no upfront payment - works with regular payments day early in month - gap between payments: " + minGapBetweenPayments)
-                println("no upfront payment - works with regular payments day early in month - first regular payment day minus 13 days: " + firstRegularPaymentDate.minusDays(minGapBetweenPayments - 1))
-
                 firstRegularPaymentDate
                   .minusDays(daysFromCreatedDateToProcessFirstPayment - 1)
                   .isAfter(dateAtTimeOfJourney) shouldBe true

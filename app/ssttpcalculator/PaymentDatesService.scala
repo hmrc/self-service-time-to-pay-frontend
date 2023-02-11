@@ -47,28 +47,16 @@ class PaymentDatesService @Inject() (
   )(implicit config: AppConfig): PaymentsCalendar = {
 
     val maybeUpfrontPaymentDate: Option[LocalDate] = maybePaymentToday.map(_ => {
-      dateWithValidPaymentDay(
-        date = dateToday.plusDays(daysToProcessUpfrontPayment),
-        firstPaymentDayOfMonth = firstPaymentDayOfMonth,
-        lastPaymentDayOfMonth = lastPaymentDayOfMonth
-      )
+      validPaymentDate(dateToday.plusDays(daysToProcessUpfrontPayment))
     })
 
     val validDefaultRegularPaymentsDay: Int = {
-      dateWithValidPaymentDay(
-        dateToday.plusDays(daysToProcessUpfrontPayment).plusDays(minGapBetweenPayments),
-        firstPaymentDayOfMonth,
-        lastPaymentDayOfMonth
-      ).getDayOfMonth
+      validPaymentDate(dateToday.plusDays(daysToProcessUpfrontPayment).plusDays(minGapBetweenPayments)).getDayOfMonth
     }
 
     val validCustomerPreferredRegularPaymentDay: Option[Int] = {
-      maybeArrangementDayOfMonth.map( arrangementDayOfMonth => {
-        dateWithValidPaymentDay(
-          dateToday.withDayOfMonth(arrangementDayOfMonth.dayOfMonth),
-          firstPaymentDayOfMonth,
-          lastPaymentDayOfMonth
-        ).getDayOfMonth
+      maybeArrangementDayOfMonth.map(arrangementDayOfMonth => {
+        validPaymentDate(dateToday.withDayOfMonth(arrangementDayOfMonth.dayOfMonth)).getDayOfMonth
       })
     }
 
@@ -79,14 +67,16 @@ class PaymentDatesService @Inject() (
     )
   }
 
-  private def dateWithValidPaymentDay(
-      date:                   LocalDate,
-      firstPaymentDayOfMonth: Int,
-      lastPaymentDayOfMonth:  Int
-  ): LocalDate = {
+  private def validPaymentDate(date: LocalDate): LocalDate = {
     val dayOfMonth = date.getDayOfMonth
-    if (dayOfMonth >= firstPaymentDayOfMonth && dayOfMonth <= lastPaymentDayOfMonth) { date }
-    else if (dayOfMonth < firstPaymentDayOfMonth) { date.withDayOfMonth(firstPaymentDayOfMonth) }
-    else { date.plusMonths(1).withDayOfMonth(1) }
+    if (dayOfMonth >= firstPaymentDayOfMonth && dayOfMonth <= lastPaymentDayOfMonth) {
+      date
+    }
+    else if (dayOfMonth < firstPaymentDayOfMonth) {
+      date.withDayOfMonth(firstPaymentDayOfMonth)
+    }
+    else {
+      date.plusMonths(1).withDayOfMonth(1)
+    }
   }
 }

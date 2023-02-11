@@ -26,37 +26,47 @@ case class PaymentsCalendar(
     regularPaymentsDay:      Int
 )(implicit config: AppConfig) {
 
-  lazy val regularPaymentDates: Seq[LocalDate] = {
-    maybeUpfrontPaymentDate match {
-      case Some(upfrontPaymentDate) =>
-        calibrateStartOfRegularPayment(upfrontPaymentDate, timeForRegularPaymentThisMonthAfterUpfrontPayment)
-      case None =>
-        calibrateStartOfRegularPayment(planStartDate, timeForRegularPaymentThisMonthAfterStartDate)
-    }
+  private val minimumLengthOfPaymentPlan = config.minimumLengthOfPaymentPlan
+  private val maximumLengthOfPaymentPlan = config.maximumLengthOfPaymentPlan
+  private val minGapBetweenPayments = config.minGapBetweenPayments
+  private val daysToProcessFirstPayment = config.daysToProcessFirstPayment
+  private val firstPaymentDayOfMonth = config.firstPaymentDayOfMonth
+  private val lastPaymentDayOfMonth = config.lastPaymentDayOfMonth
+
+  def regularPaymentDates: Seq[LocalDate] = {
+    (minimumLengthOfPaymentPlan to maximumLengthOfPaymentPlan)
+      .map(i => maybeUpfrontPaymentDate match {
+        case Some(upfrontPaymentDate) =>
+          val regularPaymentDateFirstMonth = upfrontPaymentDate.withDayOfMonth(regularPaymentsDay)
+          if (regularPaymentDateFirstMonth.isAfter(upfrontPaymentDate.plusDays(minGapBetweenPayments - 1))) {
+            regularPaymentDateFirstMonth.plusMonths(i - 1)
+          } else {
+            regularPaymentDateFirstMonth.plusMonths(i)
+          }
+        case None =>
+          val validBaselineDate = validPaymentDate(planStartDate)
+          val validRegularPaymentDateFirstMonth = validBaselineDate.withDayOfMonth(regularPaymentsDay)
+          if (validRegularPaymentDateFirstMonth.isAfter(validBaselineDate.plusDays(daysToProcessFirstPayment - 1))) {
+            validRegularPaymentDateFirstMonth.plusMonths(i - 1)
+          } else {
+            if (validRegularPaymentDateFirstMonth.plusMonths(i).isAfter(validBaselineDate.plusDays(daysToProcessFirstPayment - 1))) {
+              validRegularPaymentDateFirstMonth.plusMonths(i)
+            } else {
+              validRegularPaymentDateFirstMonth.plusMonths(i + 1)
+            }
+          }
+      })
   }
 
-  private def calibrateStartOfRegularPayment(
-                                              baselineDate: LocalDate,
-                                              timeForRegularPaymentThisMonth: LocalDate => Boolean
-                                            ): Seq[LocalDate] = {
-    if (!timeForRegularPaymentThisMonth(baselineDate)) {
-        regularPaymentDatesFromNextMonth(baselineDate)
-    } else {
-      regularPaymentDatesFromNextMonth(baselineDate.minusMonths(1))
-    }
+  def validPaymentDate(date: LocalDate): LocalDate = {
+    val dayOfMonth = date.getDayOfMonth
+    if (dayOfMonth >= firstPaymentDayOfMonth && dayOfMonth <= lastPaymentDayOfMonth) { date }
+    else if (dayOfMonth < firstPaymentDayOfMonth) { date.withDayOfMonth(firstPaymentDayOfMonth) }
+    else { date.plusMonths(1).withDayOfMonth(1) }
   }
+}
 
-  private def regularPaymentDatesFromNextMonth(baselineDate: LocalDate): Seq[LocalDate] = {
-    (config.minimumLengthOfPaymentPlan to config.maximumLengthOfPaymentPlan)
-      .map(baselineDate.plusMonths(_).withDayOfMonth(regularPaymentsDay))
-  }
+object PaymentsCalendar {
 
-  private def timeForRegularPaymentThisMonthAfterStartDate(startDate: LocalDate): Boolean = {
-    !startDate.withDayOfMonth(regularPaymentsDay).minusDays(config.daysToProcessFirstPayment).isBefore(startDate)
-  }
-
-  private def timeForRegularPaymentThisMonthAfterUpfrontPayment(upfrontPaymentDate: LocalDate): Boolean = {
-    !upfrontPaymentDate.withDayOfMonth(regularPaymentsDay).minusDays(config.minGapBetweenPayments).isBefore(upfrontPaymentDate)
-  }
 }
 
