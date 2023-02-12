@@ -53,7 +53,7 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
       val calculation = TaxPaymentPlan(debits, initialPayment, startDate, endDate, Some(firstPaymentDate))
 
-      val schedule: PaymentSchedule = calculatorService.buildSchedule(calculation)
+      val schedule: PaymentSchedule = calculatorService.buildScheduleNew(calculation).get
 
       val amountPaid = schedule.instalments.map { _.amount }.sum
 
@@ -96,7 +96,7 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
       val calculation = TaxPaymentPlan(debits, initialPayment, startDate, endDate, Some(firstPaymentDate))
 
-      val schedule: PaymentSchedule = calculatorService.buildSchedule(calculation)
+      val schedule: PaymentSchedule = calculatorService.buildScheduleNew(calculation).get
 
       val amountPaid = schedule.instalments.map { _.amount }.sum
 

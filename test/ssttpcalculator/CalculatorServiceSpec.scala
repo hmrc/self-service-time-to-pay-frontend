@@ -18,11 +18,9 @@ package ssttpcalculator
 
 import config.AppConfig
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
 import ssttpcalculator.CalculatorService._
 import ssttpcalculator.model.{PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import testsupport.{DateSupport, ItSpec}
-import times.ClockProvider
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
@@ -652,7 +650,7 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
           endDate,
           None)
 
-        val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
+        val result: PaymentSchedule = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
         result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
       }
@@ -670,7 +668,7 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
           endDate,
           None)
 
-        val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
+        val result: PaymentSchedule = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
         result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
       }

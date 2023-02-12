@@ -18,16 +18,19 @@ package ssttpcalculator.model
 
 import java.time.LocalDate
 import play.api.libs.json.{Json, JsonValidationError, OFormat, OWrites}
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import scala.math.BigDecimal
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 case class TaxPaymentPlan(
-    liabilities:      Seq[TaxLiability],
-    initialPayment:   BigDecimal,
-    startDate:        LocalDate,
-    endDate:          LocalDate,
-    firstPaymentDate: Option[LocalDate] = None
+    liabilities:                Seq[TaxLiability],
+    initialPayment:             BigDecimal,
+    startDate:                  LocalDate,
+    endDate:                    LocalDate,
+    firstPaymentDate:           Option[LocalDate]             = None,
+    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
+    regularPaymentAmount:       BigDecimal                    = 0
 ) {
   import TaxPaymentPlan._
 

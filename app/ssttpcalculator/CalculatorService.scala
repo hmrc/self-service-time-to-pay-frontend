@@ -59,6 +59,8 @@ class CalculatorService @Inject() (
   val `14 day gap between the initial payment date and the first scheduled payment date`: Int = 14
   val LastPaymentDelayDays = 7
 
+  val proportionsOfNetMonthlyIncome = List(0.5, 0.6, 0.8)
+
   // TODO [OPS-9610] currently will always create three plans (and hit issues with more than 24 months.
   // should only create plans for 60 and 80% if 50% is not one month long
   // needs to handle not creating a plan if it's more than 24 months long
@@ -85,14 +87,18 @@ class CalculatorService @Inject() (
     )
 
     val schedules = for {
-      proportionOfNetMonthlyIncome <- List(0.5, 0.6, 0.8)
-      regularPaymentAmount = proportionOfNetMonthlyIncome * remainingIncomeAfterSpending
-      schedule = buildScheduleNew(
-        paymentsCalendar     = paymentsCalendar,
-        upfrontPaymentAmount = initialPayment,
-        regularPaymentAmount = regularPaymentAmount,
-        payables             = payables
-      )
+      proportionOfNetMonthlyIncome <- proportionsOfNetMonthlyIncome
+
+      taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
+        payables.liabilities.map(Payable.payableToTaxLiability),
+        initialPayment,
+        paymentsCalendar.planStartDate,
+        LocalDate.parse("2017-03-11"),
+        paymentsCalendar.maybeUpfrontPaymentDate,
+        maybeArrangementDayOfMonth,
+        proportionOfNetMonthlyIncome)
+
+      schedule = buildScheduleNew(taxPaymentPlan)
     } yield schedule
 
     schedules.flatten
@@ -111,33 +117,32 @@ class CalculatorService @Inject() (
       } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
     )
 
-    buildScheduleNew(
-      paymentsCalendar     = paymentsCalendar,
-      upfrontPaymentAmount = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
-      regularPaymentAmount = journey.planAmountSelection,
-      payables             = payables
+    val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
+      payables.liabilities.map(Payable.payableToTaxLiability),
+      journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
+      paymentsCalendar.planStartDate,
+      LocalDate.parse("2017-03-11"),
+      paymentsCalendar.maybeUpfrontPaymentDate,
+      journey.maybeArrangementDayOfMonth,
+      journey.maybePlanAmountSelection.getOrElse(throw new IllegalArgumentException("could not find plan amount selection but there should be one"))
     )
+
+    buildScheduleNew(taxPaymentPlan)
   }
 
-  def buildScheduleNew(
-      paymentsCalendar:     PaymentsCalendar,
-      upfrontPaymentAmount: BigDecimal,
-      regularPaymentAmount: BigDecimal,
-      payables:             Payables
-  ): Option[PaymentSchedule] = {
+  def buildScheduleNew(implicit taxPaymentPlan: TaxPaymentPlan): Option[PaymentSchedule] = {
+    val payables: Payables = Payables(taxPaymentPlan.liabilities)
     val principal = payables.liabilities.map(_.amount).sum
+
+    val paymentsCalendar = paymentDatesService.paymentsCalendar(
+      maybePaymentToday          = taxPaymentPlan.firstPaymentDate.map(_ => PaymentToday(true)),
+      maybeArrangementDayOfMonth = taxPaymentPlan.maybeArrangementDayOfMonth,
+      dateToday                  = taxPaymentPlan.startDate
+    )
 
     val maybeInterestAccruedUpToStartDate: Option[LatePaymentInterest] = {
       totalHistoricInterest(payables, paymentsCalendar, interestService.getRatesForPeriod)
     }
-
-    implicit val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
-      payables.liabilities.map(Payable.payableToTaxLiability),
-      upfrontPaymentAmount,
-      paymentsCalendar.planStartDate,
-      LocalDate.parse("2017-03-11"),
-      paymentsCalendar.maybeUpfrontPaymentDate
-    )
 
     val hasAnInitialPayment: Boolean = taxPaymentPlan.initialPayment > 0
     val upfrontPaymentLateInterest: BigDecimal = if (hasAnInitialPayment) {
@@ -172,7 +177,7 @@ class CalculatorService @Inject() (
       }
 
     val resultPayablesResetLessUpfrontAlternative = payablesResetLessUpfrontPayment(
-      upfrontPaymentAmount,
+      taxPaymentPlan.initialPayment,
       payables.liabilities.map(Payable.payableToTaxLiability),
       paymentsCalendar.planStartDate
     )
@@ -183,7 +188,7 @@ class CalculatorService @Inject() (
       })
 
     val payablesUpdated = Payables(liabilitiesUpdated)
-    val instalments = regularInstalments(paymentsCalendar, regularPaymentAmount, payablesUpdated, interestService.rateOn)
+    val instalments = regularInstalments(paymentsCalendar, taxPaymentPlan.regularPaymentAmount, payablesUpdated, interestService.rateOn)
     instalments match {
       case None => None
       case Some(instalments) =>
@@ -195,9 +200,9 @@ class CalculatorService @Inject() (
           endDate              = instalments
             .lastOption.map(_.paymentDate)
             .getOrElse(throw new IllegalArgumentException("no instalments found to create the schedule")),
-          initialPayment       = upfrontPaymentAmount,
+          initialPayment       = taxPaymentPlan.initialPayment,
           amountToPay          = principal,
-          instalmentBalance    = (principal - upfrontPaymentAmount),
+          instalmentBalance    = (principal - taxPaymentPlan.initialPayment),
           totalInterestCharged = totalInterestCharged,
           totalPayable         = (principal + totalInterestCharged),
           instalments          = instalments

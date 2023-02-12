@@ -18,8 +18,9 @@ package ssttpcalculator
 
 import config.AppConfig
 import play.api.Logger
-import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, PaymentsCalendar, TaxLiability}
+import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import testsupport.ItSpec
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import java.time.{LocalDate, Year}
 
@@ -56,6 +57,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val liabilityAmount = 1000
               val liabilityDueDate = fixedToday.plusMonths(12)
               val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val liabilities = Seq(liability)
               val payables = Payables(Seq(liability))
               val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -72,7 +74,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
-              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+              val taxPaymentPlan = TaxPaymentPlan(
+                liabilities,
+                upfrontPaymentAmount,
+                fixedToday,
+                LocalDate.parse("2017-03-11"),
+                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
+                regularPaymentAmount
+              )
+
+              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
@@ -88,6 +100,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val liabilityAmount = 1000
               val liabilityDueDate = fixedToday.plusMonths(12)
               val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val liabilities = Seq(liability)
               val payables = Payables(Seq(liability))
               val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -104,7 +117,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
-              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+              val taxPaymentPlan = TaxPaymentPlan(
+                liabilities,
+                upfrontPaymentAmount,
+                fixedToday,
+                LocalDate.parse("2017-03-11"),
+                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
+                regularPaymentAmount
+              )
+
+              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9)
@@ -128,6 +151,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val liabilityAmount = 1000
               val liabilityDueDate = fixedToday.plusMonths(12)
               val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val liabilities = Seq(liability)
               val payables = Payables(Seq(liability))
               val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -144,7 +168,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
-              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+              val taxPaymentPlan = TaxPaymentPlan(
+                liabilities,
+                upfrontPaymentAmount,
+                fixedToday,
+                LocalDate.parse("2017-03-11"),
+                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
+                regularPaymentAmount
+              )
+
+              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
@@ -160,6 +194,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val liabilityAmount = 1000
               val liabilityDueDate = fixedToday.plusMonths(12)
               val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val liabilities = Seq(liability)
               val payables = Payables(Seq(liability))
               val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -176,7 +211,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
-              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+              val taxPaymentPlan = TaxPaymentPlan(
+                liabilities,
+                upfrontPaymentAmount,
+                fixedToday,
+                LocalDate.parse("2017-03-11"),
+                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
+                regularPaymentAmount
+              )
+
+              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7)
@@ -201,6 +246,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val liabilityAmount = 250
               val liabilityDueDate = fixedToday.plusMonths(12)
               val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val liabilities = (1 to 4).map(_ => liability)
               val payables = Payables((1 to 4).map(_ => liability))
               val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -217,7 +263,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
-              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+              val taxPaymentPlan = TaxPaymentPlan(
+                liabilities,
+                upfrontPaymentAmount,
+                fixedToday,
+                LocalDate.parse("2017-03-11"),
+                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
+                regularPaymentAmount
+              )
+
+              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
@@ -233,6 +289,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val liabilityAmount = 250
               val liabilityDueDate = fixedToday.plusMonths(12)
               val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val liabilities = (1 to 4).map(_ => liability)
               val payables = Payables((1 to 4).map(_ => liability))
               val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -249,7 +306,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
-              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+              val taxPaymentPlan = TaxPaymentPlan(
+                liabilities,
+                upfrontPaymentAmount,
+                fixedToday,
+                LocalDate.parse("2017-03-11"),
+                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
+                regularPaymentAmount
+              )
+
+              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9)
@@ -272,6 +339,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val liabilityAmount = 250
               val liabilityDueDate = fixedToday.plusMonths(12)
               val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val liabilities = (1 to 4).map(_ => liability)
               val payables = Payables((1 to 4).map(_ => liability))
               val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -288,7 +356,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
-              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+              val taxPaymentPlan = TaxPaymentPlan(
+                liabilities,
+                upfrontPaymentAmount,
+                fixedToday,
+                LocalDate.parse("2017-03-11"),
+                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
+                regularPaymentAmount
+              )
+
+              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
@@ -304,6 +382,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val liabilityAmount = 250
               val liabilityDueDate = fixedToday.plusMonths(12)
               val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+              val liabilities = (1 to 4).map(_ => liability)
               val payables = Payables((1 to 4).map(_ => liability))
               val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -320,7 +399,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
-              val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+              val taxPaymentPlan = TaxPaymentPlan(
+                liabilities,
+                upfrontPaymentAmount,
+                fixedToday,
+                LocalDate.parse("2017-03-11"),
+                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
+                regularPaymentAmount
+              )
+
+              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7)
@@ -346,6 +435,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val liabilityAmount = 1000
           val liabilityDueDate = fixedToday.minusMonths(6)
           val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+          val liabilities = Seq(liability)
           val payables = Payables(Seq(liability))
           val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -362,7 +452,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
             regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
           )
 
-          val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+          val taxPaymentPlan = TaxPaymentPlan(
+            liabilities,
+            upfrontPaymentAmount,
+            fixedToday,
+            LocalDate.parse("2017-03-11"),
+            paymentsCalendar.maybeUpfrontPaymentDate,
+            Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
+            regularPaymentAmount
+          )
+
+          val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
           result.startDate shouldBe fixedToday
           result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(1)
@@ -391,6 +491,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val liabilityAmount = 1000
           val liabilityDueDate = fixedToday.minusMonths(6)
           val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+          val liabilities = Seq(liability)
           val payables = Payables(Seq(liability))
           val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -407,7 +508,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
             regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
           )
 
-          val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+          val taxPaymentPlan = TaxPaymentPlan(
+            liabilities,
+            upfrontPaymentAmount,
+            fixedToday,
+            LocalDate.parse("2017-03-11"),
+            paymentsCalendar.maybeUpfrontPaymentDate,
+            Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
+            regularPaymentAmount
+          )
+
+          val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
           result.startDate shouldBe fixedToday
           result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(4)
@@ -437,6 +548,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val liabilityAmount = 2400
           val liabilityDueDate = fixedToday
           val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+          val liabilities = Seq(liability)
           val payables = Payables(Seq(liability))
 
           val upfrontPaymentAmount = 0
@@ -451,7 +563,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
             regularPaymentsDay      = preferredPaymentDay
           )
 
-          val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables)
+          val taxPaymentPlan = TaxPaymentPlan(
+            liabilities,
+            upfrontPaymentAmount,
+            fixedToday,
+            LocalDate.parse("2017-03-11"),
+            paymentsCalendar.maybeUpfrontPaymentDate,
+            Some(ArrangementDayOfMonth(preferredPaymentDay)),
+            regularPaymentAmount
+          )
+
+          val result = calculatorService.buildScheduleNew(taxPaymentPlan)
 
           result shouldBe None
 
@@ -461,6 +583,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val liabilityAmount = 1000
         val liabilityDueDate = fixedToday.plusMonths(12)
         val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+        val liabilities = Seq(liability)
         val payables = Payables(Seq(liability))
         val sumOfPayables = payables.liabilities.map(_.amount).sum
 
@@ -476,7 +599,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
           regularPaymentsDay      = preferredPaymentDay
         )
 
-        val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables).get
+        val taxPaymentPlan = TaxPaymentPlan(
+          liabilities,
+          upfrontPaymentAmount,
+          fixedToday,
+          LocalDate.parse("2017-03-11"),
+          paymentsCalendar.maybeUpfrontPaymentDate,
+          Some(ArrangementDayOfMonth(preferredPaymentDay)),
+          regularPaymentAmount
+        )
+
+        val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
         result.startDate shouldBe fixedToday
         result.endDate shouldBe fixedToday.withDayOfMonth(preferredPaymentDay).plusMonths(8)
@@ -497,6 +630,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val liabilityAmount = 2500
         val liabilityDueDate = fixedToday.plusMonths(26)
         val liability = TaxLiability(liabilityAmount, liabilityDueDate)
+        val liabilities = Seq(liability)
         val payables = Payables(Seq(liability))
 
         val upfrontPaymentAmount = 0
@@ -511,7 +645,17 @@ class CalculatorServiceSpec2023 extends ItSpec {
           regularPaymentsDay      = preferredPaymentDay
         )
 
-        val result = calculatorService.buildScheduleNew(paymentsCalendar, upfrontPaymentAmount, regularPaymentAmount, payables)
+        val taxPaymentPlan = TaxPaymentPlan(
+          liabilities,
+          upfrontPaymentAmount,
+          fixedToday,
+          LocalDate.parse("2017-03-11"),
+          paymentsCalendar.maybeUpfrontPaymentDate,
+          Some(ArrangementDayOfMonth(preferredPaymentDay)),
+          regularPaymentAmount
+        )
+
+        val result = calculatorService.buildScheduleNew(taxPaymentPlan)
 
         result shouldBe None
       }
