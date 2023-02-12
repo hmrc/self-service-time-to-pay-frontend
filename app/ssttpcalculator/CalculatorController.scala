@@ -151,43 +151,6 @@ class CalculatorController @Inject() (
         throw e
     }
 
-  def computeClosestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule])(implicit hc: HeaderCarrier): PaymentSchedule = {
-      def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
-
-      def closest(min: PaymentSchedule, next: PaymentSchedule) = if (difference(next) < difference(min)) next else min
-
-    Try(schedules.reduceOption(closest).getOrElse(throw new RuntimeException(s"No schedules for [$schedules]"))) match {
-      case Success(s) => s
-      case Failure(e) =>
-        JourneyLogger.info(s"CalculatorController.closestSchedule: ERROR [$e]")
-        throw e
-    }
-  }
-
-  def computeClosestSchedules(closestSchedule: PaymentSchedule, schedules: List[PaymentSchedule], sa: SelfAssessmentDetails)
-    (implicit request: Request[_]): List[PaymentSchedule] = {
-    val closestScheduleIndex = schedules.indexOf(closestSchedule)
-
-      def scheduleMonthsLater(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
-        case -1                           => None
-        case i if i + n >= schedules.size => None
-        case m                            => Some(schedules(m + n))
-      }
-
-      def scheduleMonthsBefore(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
-        case -1             => None
-        case i if i - n < 0 => None
-        case m              => Some(schedules(m - n))
-      }
-
-    if (closestScheduleIndex == 0)
-      List(Some(closestSchedule), scheduleMonthsLater(1), scheduleMonthsLater(2))
-    else if (closestScheduleIndex == schedules.size - 1)
-      List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
-    else
-      List(scheduleMonthsBefore(1), Some(closestSchedule), scheduleMonthsLater(1))
-  }.flatten
-
   def getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getPaymentSummary: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
@@ -210,17 +173,20 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info("CalculatorController.getCalculateInstalments", journey)
       val sa = journey.taxpayer.selfAssessment
-      val availablePaymentSchedules = calculatorService.availablePaymentSchedules(sa, journey.safeInitialPayment, journey.maybeArrangementDayOfMonth)
-      val closestSchedule = computeClosestSchedule(journey.amount, availablePaymentSchedules)
-      val closestSchedules = computeClosestSchedules(closestSchedule, availablePaymentSchedules, sa)
-
-      Ok(
-        views.calculate_instalments_form(
-          routes.CalculatorController.submitCalculateInstalments(),
-          createInstalmentForm(),
-          closestSchedules
-        )
+      val paymentPlanOptions = calculatorService.paymentPlanOptions(
+        sa,
+        journey.safeInitialPayment,
+        journey.maybeArrangementDayOfMonth,
+        journey.remainingIncomeAfterSpending,
+        journey.maybePaymentToday,
+        clockProvider.nowDate()
       )
+
+      Ok(views.calculate_instalments_form(
+        routes.CalculatorController.submitCalculateInstalments(),
+        createInstalmentForm(),
+        paymentPlanOptions
+      ))
     }
   }
 
@@ -229,9 +195,14 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info("CalculatorController.submitCalculateInstalments", journey)
       val sa = journey.taxpayer.selfAssessment
-      val availablePaymentSchedules = calculatorService.availablePaymentSchedules(sa, journey.safeInitialPayment, journey.maybeArrangementDayOfMonth)
-      lazy val closestSchedule = computeClosestSchedule(journey.amount, availablePaymentSchedules)
-      lazy val closestSchedules = computeClosestSchedules(closestSchedule, availablePaymentSchedules, sa)
+      val paymentPlanOptions = calculatorService.paymentPlanOptions(
+        sa,
+        journey.safeInitialPayment,
+        journey.maybeArrangementDayOfMonth,
+        journey.planAmountSelection,
+        journey.maybePaymentToday,
+        clockProvider.nowDate()
+      )
 
       createInstalmentForm().bindFromRequest().fold(
         formWithErrors => {
@@ -240,7 +211,7 @@ class CalculatorController @Inject() (
               views.calculate_instalments_form(
                 ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                 formWithErrors,
-                closestSchedules))
+                paymentPlanOptions))
           )
         },
         (validFormData: CalculatorDuration) =>

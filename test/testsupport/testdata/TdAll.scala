@@ -121,6 +121,8 @@ todays date: 2019-11-25
 
   val unactivatedSaEnrolment: Enrolment = saEnrolment.copy(state = "Not Activated")
 
+  val selectedRegularPaymentAmount300 = 300
+
   implicit def toSome[T](t: T): Option[T] = Some(t)
 
   implicit def toLocalDate(s: String): LocalDate = LocalDate.parse(s)

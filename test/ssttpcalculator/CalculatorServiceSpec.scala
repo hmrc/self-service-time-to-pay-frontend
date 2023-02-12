@@ -16,18 +16,19 @@
 
 package ssttpcalculator
 
+import config.AppConfig
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import ssttpcalculator.CalculatorService._
 import ssttpcalculator.model.{PaymentSchedule, TaxLiability, TaxPaymentPlan}
-import testsupport.DateSupport
+import testsupport.{DateSupport, ItSpec}
 import times.ClockProvider
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDate, LocalDateTime}
 
-class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
+class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
   private def date(month: Int, day: Int): LocalDate = LocalDate.of(_2020, month, day)
   private def may(day: Int): LocalDate = date(may, day)
   private def june(day: Int): LocalDate = date(june, day)
@@ -51,8 +52,12 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
     Clock.fixed(currentDateTime, systemDefault)
   }
 
-  "payTodayRequest" should {
-    "return a payment schedule request" when {
+  val paymentDatesService: PaymentDatesService = fakeApplication().injector.instanceOf[PaymentDatesService]
+  val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
+  val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
+
+  "payTodayRequest should" - {
+    "return a payment schedule request when" - {
       "the current date is the 1st" in {
         val clock = clockForMay(_1st)
 
@@ -76,8 +81,8 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
     }
   }
 
-  "paymentScheduleRequest" should {
-    "return a payment schedule request without an initial payment" when {
+  "paymentScheduleRequest should" - {
+    "return a payment schedule request without an initial payment when" - {
       "the current date is Friday 1st May with upcoming bank holiday" in {
         val clock = clockForMay(_1st)
         val currentDate = LocalDate.now(clock)
@@ -134,7 +139,7 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
       }
     }
 
-    "return a payment schedule request with an initial payment" when {
+    "return a payment schedule request with an initial payment when" - {
       "the current date is Friday 1st May with upcoming bank holiday" in {
         val clock = clockForMay(_1st)
         val currentDate = LocalDate.now(clock)
@@ -191,7 +196,7 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
       }
     }
 
-    "return a payment schedule request with no initial payment when the user tries to make a payment which would leave less than £32 balance" when {
+    "return a payment schedule request with no initial payment when the user tries to make a payment which would leave less than £32 balance when" - {
       "the current date is Friday 1st May with upcoming bank holiday" in {
         val clock = clockForMay(_1st)
         val currentDate = LocalDate.now(clock)
@@ -249,8 +254,8 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
     }
   }
 
-  "changeScheduleRequest with zero duration and no initial payment" should {
-    "return a payment schedule request" when {
+  "changeScheduleRequest with zero duration and no initial payment should" - {
+    "return a payment schedule request when" - {
       "the required day of the month and the current date are the 1st" in {
         val clock = clockForMay(_1st)
 
@@ -344,8 +349,8 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
     }
   }
 
-  "changeScheduleRequest with a duration of one month and no initial payment" should {
-    "return a payment schedule request" when {
+  "changeScheduleRequest with a duration of one month and no initial payment should" - {
+    "return a payment schedule request when" - {
       "the required day of the month and the current date are the 1st" in {
         val clock = clockForMay(_1st)
 
@@ -439,8 +444,8 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
     }
   }
 
-  "changeScheduleRequest with zero duration and an initial payment" should {
-    "return a payment schedule request" when {
+  "changeScheduleRequest with zero duration and an initial payment should" - {
+    "return a payment schedule request when" - {
       "the required day of the month and the current date are the 1st" in {
         val clock = clockForMay(_1st)
 
@@ -534,8 +539,8 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
     }
   }
 
-  "changeScheduleRequest with a months duration and an initial payment" should {
-    "return a payment schedule request" when {
+  "changeScheduleRequest with a months duration and an initial payment should" - {
+    "return a payment schedule request when" - {
       "the required day of the month and the current date are the 1st" in {
         val clock = clockForMay(_1st)
 
@@ -629,11 +634,11 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
     }
   }
 
-  "availablePaymentSchedules with an endDate" should {
+  "availablePaymentSchedules with an endDate should" - {
     implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
     val LastPaymentDelayDays = 7
 
-    "return a payment schedule with endDate" when {
+    "return a payment schedule with endDate when" - {
       "matching last payment date plush seven days" in {
         val startDate = LocalDate.now
         val endDate = startDate.plusMonths(3)
@@ -646,8 +651,6 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
           startDate,
           endDate,
           None)
-
-        val calculatorService = new CalculatorService(new ClockProvider(), new DurationService(), new InterestRateService())
 
         val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
 
@@ -666,8 +669,6 @@ class CalculatorServiceSpec extends AnyWordSpec with Matchers with DateSupport {
           startDate,
           endDate,
           None)
-
-        val calculatorService = new CalculatorService(new ClockProvider(), new DurationService(), new InterestRateService())
 
         val result: PaymentSchedule = calculatorService.buildSchedule(taxPaymentPlan)
 
