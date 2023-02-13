@@ -672,7 +672,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
     }
 
     "paymentPlanOptions generates up to three schedules" - {
-      "three, if neither 50% nor 60% of remaining income after spending covers total to pay" in {
+      "three, if neither first two cover total to pay in a single month" in {
         val sa = SelfAssessmentDetails(
           SaUtr("saUtr"),
           CommunicationPreferences(false, false, false, false),
@@ -689,6 +689,26 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
 
         result.length shouldBe 3
+      }
+      "plans for  50%, 60% and 80% of remaining income after spending" in {
+        val sa = SelfAssessmentDetails(
+          SaUtr("saUtr"),
+          CommunicationPreferences(false, false, false, false),
+          Seq(Debit("originCode", 5000, date("2023-07-31"), None, date("2022-04-05"))),
+          Seq()
+        )
+
+        val initialPayment = 0
+        val preferredPaymentDay = None
+        val remainingIncomeAfterSpending = 1000
+        val paymentToday = None
+        val dateToday = fixedToday
+
+        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+
+        result.head.instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.5)
+        result(1).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.6)
+        result(2).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.8)
       }
       "only one, if 50% of remaining income after spending covers total to pay" in {
         val sa = SelfAssessmentDetails(

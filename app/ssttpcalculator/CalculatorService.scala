@@ -81,54 +81,32 @@ class CalculatorService @Inject() (
         selfAssessmentDebit <- sa.debits
       } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
     )
-    val firstSchedule = {
-      val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
-        liabilities                = payables.liabilities.map(Payable.payableToTaxLiability),
-        initialPayment             = initialPayment,
-        startDate                  = paymentsCalendar.planStartDate,
-        endDate                    = LocalDate.parse("2060-03-11"),
-        firstPaymentDate           = Some(paymentsCalendar.regularPaymentDates.headOption
-          .getOrElse(throw new IllegalArgumentException("could not find first regular payment date, but there should be one"))
-        ),
-        maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
-        regularPaymentAmount       = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending,
-        maybePaymentToday)
-      schedule(taxPaymentPlan)
-    }
+
+    val firstTaxPaymentPlan = TaxPaymentPlan(
+      liabilities                = payables.liabilities.map(Payable.payableToTaxLiability),
+      initialPayment             = initialPayment,
+      startDate                  = paymentsCalendar.planStartDate,
+      endDate                    = LocalDate.parse("2060-03-11"),
+      firstPaymentDate           = Some(paymentsCalendar.regularPaymentDates.headOption
+        .getOrElse(throw new IllegalArgumentException("could not find first regular payment date, but there should be one"))
+      ),
+      maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
+      regularPaymentAmount       = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending,
+      maybePaymentToday)
+
+    val firstSchedule = schedule(firstTaxPaymentPlan)
     firstSchedule match {
       case Some(schedule) if (schedule.instalments.length <= 1) => List(firstSchedule).flatten
       case _ =>
-        val secondSchedule = {
-          val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
-            liabilities                = payables.liabilities.map(Payable.payableToTaxLiability),
-            initialPayment             = initialPayment,
-            startDate                  = paymentsCalendar.planStartDate,
-            endDate                    = LocalDate.parse("2060-03-11"),
-            firstPaymentDate           = Some(paymentsCalendar.regularPaymentDates.headOption
-              .getOrElse(throw new IllegalArgumentException("could not find first regular payment date, but there should be one"))
-            ),
-            maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
-            regularPaymentAmount       = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending,
-            maybePaymentToday)
-          schedule(taxPaymentPlan)
-        }
+        val secondTaxPaymentPlan = firstTaxPaymentPlan
+          .copy(regularPaymentAmount = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending)
+        val secondSchedule = schedule(secondTaxPaymentPlan)
         secondSchedule match {
           case Some(schedule) if (schedule.instalments.length <= 1) => List(firstSchedule, secondSchedule).flatten
           case _ =>
-            val thirdSchedule = {
-              val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
-                liabilities                = payables.liabilities.map(Payable.payableToTaxLiability),
-                initialPayment             = initialPayment,
-                startDate                  = paymentsCalendar.planStartDate,
-                endDate                    = LocalDate.parse("2060-03-11"),
-                firstPaymentDate           = Some(paymentsCalendar.regularPaymentDates.headOption
-                  .getOrElse(throw new IllegalArgumentException("could not find first regular payment date, but there should be one"))
-                ),
-                maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
-                regularPaymentAmount       = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending,
-                maybePaymentToday)
-              schedule(taxPaymentPlan)
-            }
+            val thirdTaxPaymentPlan = secondTaxPaymentPlan
+              .copy(regularPaymentAmount = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending)
+            val thirdSchedule = schedule(thirdTaxPaymentPlan)
             List(firstSchedule, secondSchedule, thirdSchedule).flatten
         }
     }
