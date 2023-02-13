@@ -134,7 +134,7 @@ class CalculatorService @Inject() (
     }
   }
 
-  def computeScheduleNew(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = {
+  def computeSchedule(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = {
     val paymentsCalendar = paymentDatesService.paymentsCalendar(
       journey.maybePaymentToday,
       journey.maybeArrangementDayOfMonth,
@@ -510,7 +510,7 @@ class CalculatorService @Inject() (
     }
   }
 
-  def computeSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
+  def computeScheduleOld(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
     val availableSchedules: Seq[PaymentSchedule] = availablePaymentSchedules(
       journey.taxpayer.selfAssessment,
       journey.safeInitialPayment,
