@@ -21,6 +21,7 @@ import journey.PaymentToday
 import play.api.Logger
 import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import testsupport.ItSpec
+import timetopaytaxpayer.cor.model.{CommunicationPreferences, Debit, SaUtr, SelfAssessmentDetails}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import java.time.{LocalDate, Year}
@@ -667,6 +668,102 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val result = calculatorService.buildScheduleNew(taxPaymentPlan)
 
         result shouldBe None
+      }
+    }
+
+    "paymentPlanOptions generates up to three schedules" - {
+      "three, if neither 50% nor 60% of remaining income after spending covers total to pay" in {
+        val sa = SelfAssessmentDetails(
+          SaUtr("saUtr"),
+          CommunicationPreferences(false, false, false, false),
+          Seq(Debit("originCode", 5000, date("2023-07-31"), None, date("2022-04-05"))),
+          Seq()
+        )
+
+        val initialPayment = 0
+        val preferredPaymentDay = None
+        val remainingIncomeAfterSpending = 1000
+        val paymentToday = None
+        val dateToday = fixedToday
+
+        val result = calculatorService.paymentPlanOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+
+        result.length shouldBe 3
+      }
+      "only one, if 50% of remaining income after spending covers total to pay" in {
+        val sa = SelfAssessmentDetails(
+          SaUtr("saUtr"),
+          CommunicationPreferences(false, false, false, false),
+          Seq(Debit("originCode", 500, date("2023-07-31"), None, date("2022-04-05"))),
+          Seq()
+        )
+
+        val initialPayment = 0
+        val preferredPaymentDay = None
+        val remainingIncomeAfterSpending = 1000
+        val paymentToday = None
+        val dateToday = fixedToday
+
+        val result = calculatorService.paymentPlanOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+
+        result.length shouldBe 1
+      }
+      "two, if 60% of remaining income after spending covers total to pay, but not 50%" in {
+        val sa = SelfAssessmentDetails(
+          SaUtr("saUtr"),
+          CommunicationPreferences(false, false, false, false),
+          Seq(Debit("originCode", 600, date("2023-07-31"), None, date("2022-04-05"))),
+          Seq()
+        )
+
+        val initialPayment = 0
+        val preferredPaymentDay = None
+        val remainingIncomeAfterSpending = 1000
+        val paymentToday = None
+        val dateToday = fixedToday
+
+        val result = calculatorService.paymentPlanOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+
+        result.length shouldBe 2
+      }
+      "considers late payment interest in total to pay" - {
+        "50% covers everything, one plan" in {
+          val sa = SelfAssessmentDetails(
+            SaUtr("saUtr"),
+            CommunicationPreferences(false, false, false, false),
+            Seq(Debit("originCode", 500, date("2023-01-31"), None, date("2022-04-05"))),
+            Seq()
+          )
+
+          val initialPayment = 0
+          val preferredPaymentDay = None
+          val remainingIncomeAfterSpending = 1100
+          val paymentToday = None
+          val dateToday = fixedToday
+
+          val result = calculatorService.paymentPlanOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+
+          result.length shouldBe 1
+        }
+        "60% but not 50% covers, two plans" in {
+          val sa = SelfAssessmentDetails(
+            SaUtr("saUtr"),
+            CommunicationPreferences(false, false, false, false),
+            Seq(Debit("originCode", 550, date("2023-01-31"), None, date("2022-04-05"))),
+            Seq()
+          )
+
+          val initialPayment = 0
+          val preferredPaymentDay = None
+          val remainingIncomeAfterSpending = 1000
+          val paymentToday = None
+          val dateToday = fixedToday
+
+          val result = calculatorService.paymentPlanOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+
+          result.length shouldBe 2
+
+        }
       }
     }
   }
