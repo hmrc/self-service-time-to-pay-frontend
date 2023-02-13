@@ -27,8 +27,8 @@ case class TaxPaymentPlan(
     taxLiabilities:             Seq[TaxLiability],
     upfrontPayment:             BigDecimal,
     planStartDate:              LocalDate,
+    regularPaymentAmount:       BigDecimal,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
-    regularPaymentAmount:       BigDecimal                    = 0,
     maybePaymentToday:          Option[PaymentToday]          = None
 )(implicit config: AppConfig) {
   import TaxPaymentPlan._

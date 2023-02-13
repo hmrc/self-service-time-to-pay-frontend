@@ -74,8 +74,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
-                regularPaymentAmount
+                regularPaymentAmount,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
               val result = calculatorService.schedule(taxPaymentPlan).get
@@ -109,8 +109,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
-                regularPaymentAmount
+                regularPaymentAmount,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
               val result = calculatorService.schedule(taxPaymentPlan).get
@@ -152,8 +152,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 maybePaymentToday = Some(PaymentToday(true))
               )
 
@@ -188,8 +188,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
-                regularPaymentAmount
+                regularPaymentAmount,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
               val result = calculatorService.schedule(taxPaymentPlan).get
@@ -232,8 +232,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
-                regularPaymentAmount
+                regularPaymentAmount,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
               val result = calculatorService.schedule(taxPaymentPlan).get
@@ -267,8 +267,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
-                regularPaymentAmount
+                regularPaymentAmount,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
               val result = calculatorService.schedule(taxPaymentPlan).get
@@ -309,8 +309,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
-                regularPaymentAmount
+                regularPaymentAmount,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
               val result = calculatorService.schedule(taxPaymentPlan).get
@@ -344,8 +344,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
-                regularPaymentAmount
+                regularPaymentAmount,
+                Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
               val result = calculatorService.schedule(taxPaymentPlan).get
@@ -389,8 +389,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
             liabilities,
             upfrontPaymentAmount,
             fixedToday,
-            Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
-            regularPaymentAmount
+            regularPaymentAmount,
+            Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
           )
 
           val result = calculatorService.schedule(taxPaymentPlan).get
@@ -437,8 +437,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
             liabilities,
             upfrontPaymentAmount,
             fixedToday,
-            Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
-            regularPaymentAmount
+            regularPaymentAmount,
+            Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
           )
 
           val result = calculatorService.schedule(taxPaymentPlan).get
@@ -484,8 +484,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
             liabilities,
             upfrontPaymentAmount,
             fixedToday,
-            Some(ArrangementDayOfMonth(preferredPaymentDay)),
-            regularPaymentAmount
+            regularPaymentAmount,
+            Some(ArrangementDayOfMonth(preferredPaymentDay))
           )
 
           val result = calculatorService.schedule(taxPaymentPlan)
@@ -512,8 +512,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
           liabilities,
           upfrontPaymentAmount,
           fixedToday,
-          Some(ArrangementDayOfMonth(preferredPaymentDay)),
           regularPaymentAmount,
+          Some(ArrangementDayOfMonth(preferredPaymentDay)),
           Some(PaymentToday((true)))
         )
 
@@ -551,8 +551,8 @@ class CalculatorServiceSpec2023 extends ItSpec {
           liabilities,
           upfrontPaymentAmount,
           fixedToday,
-          Some(ArrangementDayOfMonth(preferredPaymentDay)),
-          regularPaymentAmount
+          regularPaymentAmount,
+          Some(ArrangementDayOfMonth(preferredPaymentDay))
         )
 
         val result = calculatorService.schedule(taxPaymentPlan)
