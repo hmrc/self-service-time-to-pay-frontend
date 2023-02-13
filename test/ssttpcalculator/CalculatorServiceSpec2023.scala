@@ -17,6 +17,7 @@
 package ssttpcalculator
 
 import config.AppConfig
+import journey.PaymentToday
 import play.api.Logger
 import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
 import testsupport.ItSpec
@@ -87,7 +88,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
-              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
               result.initialPayment shouldBe upfrontPaymentAmount
               result.amountToPay shouldBe sumOfPayables
               result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
@@ -130,7 +131,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
-              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9)
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9).plusDays(appConfig.lastPaymentDelayDays)
               result.initialPayment shouldBe upfrontPaymentAmount
               result.amountToPay shouldBe sumOfPayables
               result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
@@ -162,26 +163,33 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 .plusDays(appConfig.daysToProcessFirstPayment + appConfig.minGapBetweenPayments)
                 .getDayOfMonth
 
+              println(s"regular payments day within first month: $regularPaymentsDayWithinFirstMonth")
+
               val paymentsCalendar = PaymentsCalendar(
                 planStartDate           = fixedToday,
                 maybeUpfrontPaymentDate = Some(fixedToday.plusDays(appConfig.daysToProcessFirstPayment)),
                 regularPaymentsDay      = regularPaymentsDayWithinFirstMonth
               )
 
+              println(s"paymentsCalendar.regularPaymentDates: ${paymentsCalendar.regularPaymentDates}")
+
               val taxPaymentPlan = TaxPaymentPlan(
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
                 LocalDate.parse("2017-03-11"),
-                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(paymentsCalendar.regularPaymentDates.head),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
-                regularPaymentAmount
+                regularPaymentAmount,
+                maybePaymentToday = Some(PaymentToday(true))
               )
 
               val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
+              println(s"result: $result")
+
               result.startDate shouldBe fixedToday
-              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
               result.initialPayment shouldBe upfrontPaymentAmount
               result.amountToPay shouldBe sumOfPayables
               result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
@@ -216,7 +224,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 upfrontPaymentAmount,
                 fixedToday,
                 LocalDate.parse("2017-03-11"),
-                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(paymentsCalendar.regularPaymentDates.head),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount
               )
@@ -224,7 +232,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
-              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7)
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7).plusDays(appConfig.lastPaymentDelayDays)
               result.initialPayment shouldBe upfrontPaymentAmount
               result.amountToPay shouldBe sumOfPayables
               result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
@@ -276,7 +284,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
-              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
               result.initialPayment shouldBe upfrontPaymentAmount
               result.amountToPay shouldBe sumOfPayables
               result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
@@ -319,7 +327,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
-              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9)
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9).plusDays(appConfig.lastPaymentDelayDays)
               result.initialPayment shouldBe upfrontPaymentAmount
               result.amountToPay shouldBe sumOfPayables
               result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
@@ -361,7 +369,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 upfrontPaymentAmount,
                 fixedToday,
                 LocalDate.parse("2017-03-11"),
-                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(paymentsCalendar.regularPaymentDates.head),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount
               )
@@ -369,7 +377,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
-              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth)
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
               result.initialPayment shouldBe upfrontPaymentAmount
               result.amountToPay shouldBe sumOfPayables
               result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
@@ -404,7 +412,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 upfrontPaymentAmount,
                 fixedToday,
                 LocalDate.parse("2017-03-11"),
-                paymentsCalendar.maybeUpfrontPaymentDate,
+                Some(paymentsCalendar.regularPaymentDates.head),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount
               )
@@ -412,7 +420,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
               val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
-              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7)
+              result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7).plusDays(appConfig.lastPaymentDelayDays)
               result.initialPayment shouldBe upfrontPaymentAmount
               result.amountToPay shouldBe sumOfPayables
               result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
@@ -465,7 +473,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
           result.startDate shouldBe fixedToday
-          result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(1)
+          result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(1).plusDays(appConfig.lastPaymentDelayDays)
           result.initialPayment shouldBe upfrontPaymentAmount
           result.amountToPay shouldBe sumOfPayables
           result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
@@ -521,7 +529,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
           result.startDate shouldBe fixedToday
-          result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(4)
+          result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(4).plusDays(appConfig.lastPaymentDelayDays)
           result.initialPayment shouldBe upfrontPaymentAmount
           result.amountToPay shouldBe sumOfPayables
           result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
@@ -604,15 +612,16 @@ class CalculatorServiceSpec2023 extends ItSpec {
           upfrontPaymentAmount,
           fixedToday,
           LocalDate.parse("2017-03-11"),
-          paymentsCalendar.maybeUpfrontPaymentDate,
+          Some(paymentsCalendar.regularPaymentDates.head),
           Some(ArrangementDayOfMonth(preferredPaymentDay)),
-          regularPaymentAmount
+          regularPaymentAmount,
+          Some(PaymentToday((true)))
         )
 
         val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
         result.startDate shouldBe fixedToday
-        result.endDate shouldBe fixedToday.withDayOfMonth(preferredPaymentDay).plusMonths(8)
+        result.endDate shouldBe fixedToday.withDayOfMonth(preferredPaymentDay).plusMonths(8).plusDays(appConfig.lastPaymentDelayDays)
         result.initialPayment shouldBe upfrontPaymentAmount
         result.amountToPay shouldBe sumOfPayables
         result.instalmentBalance shouldBe sumOfPayables - upfrontPaymentAmount
