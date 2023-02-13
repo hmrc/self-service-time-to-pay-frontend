@@ -20,7 +20,7 @@ import config.AppConfig
 
 import java.time.LocalDate
 
-case class PaymentsCalendar(
+case class git PaymentsCalendar(
     planStartDate:           LocalDate,
     maybeUpfrontPaymentDate: Option[LocalDate],
     regularPaymentsDay:      Int

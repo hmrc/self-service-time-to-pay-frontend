@@ -488,9 +488,6 @@ class CalculatorService @Inject() (
 
   private def historicRateEndDateNew(debitEndDate: LocalDate)(implicit paymentsCalendar: PaymentsCalendar): LocalDate =
     if (debitEndDate.getYear.equals(paymentsCalendar.planStartDate.getYear)) paymentsCalendar.planStartDate else debitEndDate
-
-  private def historicRateEndDate(debitEndDate: LocalDate)(implicit calculation: TaxPaymentPlan): LocalDate =
-    if (debitEndDate.getYear.equals(calculation.startDate.getYear)) calculation.startDate else debitEndDate
 }
 
 object CalculatorService {

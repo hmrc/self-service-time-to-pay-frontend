@@ -17,10 +17,12 @@
 package ssttpcalculator
 
 import config.AppConfig
+import journey.PaymentToday
 import org.scalatest.matchers.should.Matchers
 import ssttpcalculator.CalculatorService._
 import ssttpcalculator.model.{PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import testsupport.{DateSupport, ItSpec}
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
@@ -54,143 +56,217 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
   val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
   val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
-  "payTodayRequest should" - {
-    "return a payment schedule request when" - {
-      "the current date is the 1st" in {
+  "paymentDatesService.paymentsCalendar should" - {
+    "return a payments calendar" - {
+      "when the current date is the 1st" in {
         val clock = clockForMay(_1st)
+        val today = LocalDate.now(clock)
 
-        makeCalculatorInputForPayToday(debits)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, startDate = may(_1st), endDate = may(_31st), firstPaymentDate = Some(june(_1st)))
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = None,
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(today.getDayOfMonth)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe None
+        paymentsCalendar.regularPaymentsDay shouldBe _1st
+        paymentsCalendar.regularPaymentDates.head shouldBe june(_1st)
       }
     }
 
-    "the current date is the 28th" in {
+    "when the current date is the 28th" in {
       val clock = clockForMay(_28th)
+      val today = LocalDate.now(clock)
 
-      makeCalculatorInputForPayToday(debits)(clock) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, startDate = may(_28th), endDate = june(_27th), firstPaymentDate = Some(june(_28th)))
+      val paymentsCalendar = paymentDatesService.paymentsCalendar(
+        maybePaymentToday          = None,
+        maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(today.getDayOfMonth)),
+        dateToday                  = today
+      )(appConfig)
+
+      paymentsCalendar.planStartDate shouldBe today
+      paymentsCalendar.maybeUpfrontPaymentDate shouldBe None
+      paymentsCalendar.regularPaymentsDay shouldBe _28th
+      paymentsCalendar.regularPaymentDates.head shouldBe june(_28th)
     }
 
-    "the current date is the 29th" in {
+    "when the current date is the 29th" in {
       val clock = clockForMay(_29th)
+      val today = LocalDate.now(clock)
 
-      makeCalculatorInputForPayToday(debits)(clock) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, startDate = may(_29th), endDate = june(_30th), firstPaymentDate = Some(july(_1st)))
+      val paymentsCalendar = paymentDatesService.paymentsCalendar(
+        maybePaymentToday          = None,
+        maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(today.getDayOfMonth)),
+        dateToday                  = today
+      )(appConfig)
+
+      paymentsCalendar.planStartDate shouldBe today
+      paymentsCalendar.maybeUpfrontPaymentDate shouldBe None
+      paymentsCalendar.regularPaymentsDay shouldBe _1st
+      paymentsCalendar.regularPaymentDates.head shouldBe july(_1st)
     }
-  }
-
-  "paymentScheduleRequest should" - {
-    "return a payment schedule request without an initial payment when" - {
+    "without an initial payment when" - {
       "the current date is Friday 1st May with upcoming bank holiday" in {
         val clock = clockForMay(_1st)
-        val currentDate = LocalDate.now(clock)
-        val firstPaymentDate = Some(may(_11th))
+        val today = LocalDate.now(clock)
 
-        makeTaxPaymentPlan(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, currentDate, endDate = june(_1st), firstPaymentDate)
-        makeTaxPaymentPlan(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, currentDate, endDate = july(_1st), firstPaymentDate)
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = None,
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_12th)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe None
+        paymentsCalendar.regularPaymentsDay shouldBe _12th
+        paymentsCalendar.regularPaymentDates.head shouldBe may(_12th)
       }
 
       "the current date is Thursday 7th May with upcoming bank holiday" in {
         val clock = clockForMay(_7th)
-        val currentDate = LocalDate.now(clock)
-        val firstPaymentDate = Some(may(_15th))
+        val today = LocalDate.now(clock)
 
-        makeTaxPaymentPlan(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, currentDate, endDate = june(_7th), firstPaymentDate)
-        makeTaxPaymentPlan(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, currentDate, endDate = july(_7th), firstPaymentDate)
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = None,
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_15th)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe None
+        paymentsCalendar.regularPaymentsDay shouldBe _15th
+        paymentsCalendar.regularPaymentDates.head shouldBe june(_15th)
+
       }
 
       "the current date is bank holiday Friday 8th May" in {
         val clock = clockForMay(_8th)
-        val currentDate = LocalDate.now(clock)
-        val firstPaymentDate = Some(may(_15th))
+        val today = LocalDate.now(clock)
 
-        makeTaxPaymentPlan(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, currentDate, endDate = june(_8th), firstPaymentDate)
-        makeTaxPaymentPlan(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, currentDate, endDate = july(_8th), firstPaymentDate)
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = None,
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_15th)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe None
+        paymentsCalendar.regularPaymentsDay shouldBe _15th
+        paymentsCalendar.regularPaymentDates.head shouldBe june(_15th)
       }
 
       "the current date is Monday 11th May" in {
         val clock = clockForMay(_11th)
-        val currentDate = LocalDate.now(clock)
-        val firstPaymentDate = Some(may(_18th))
+        val today = LocalDate.now(clock)
 
-        makeTaxPaymentPlan(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, currentDate, endDate = june(_11th), firstPaymentDate)
-        makeTaxPaymentPlan(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, currentDate, endDate = july(_11th), firstPaymentDate)
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = None,
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_18th)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe None
+        paymentsCalendar.regularPaymentsDay shouldBe _18th
+        paymentsCalendar.regularPaymentDates.head shouldBe june(_18th)
       }
 
       "the current date is the Monday 25th May so the payment dates roll into the next month" in {
         val clock = clockForMay(_25th)
-        val currentDate = may(_25th)
-        val firstPaymentDate = june(_1st)
+        val today = LocalDate.now(clock)
 
-        makeTaxPaymentPlan(debits, noInitialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, currentDate, endDate = june(_25th), firstPaymentDate = Some(firstPaymentDate))
-        makeTaxPaymentPlan(debits, noInitialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, currentDate, endDate = july(_25th), firstPaymentDate = Some(firstPaymentDate))
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = None,
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_1st)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe None
+        paymentsCalendar.regularPaymentsDay shouldBe _1st
+        paymentsCalendar.regularPaymentDates.head shouldBe july(_1st)
       }
     }
-
     "return a payment schedule request with an initial payment when" - {
       "the current date is Friday 1st May with upcoming bank holiday" in {
         val clock = clockForMay(_1st)
-        val currentDate = LocalDate.now(clock)
-        val firstPaymentDate = Some(june(_11th))
+        val today = LocalDate.now(clock)
 
-        makeTaxPaymentPlan(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, initialPayment, currentDate, endDate = july(_1st), firstPaymentDate)
-        makeTaxPaymentPlan(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, initialPayment, currentDate, endDate = august(_1st), firstPaymentDate)
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = Some(PaymentToday(true)),
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_12th)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_12th))
+        paymentsCalendar.regularPaymentsDay shouldBe _12th
+        paymentsCalendar.regularPaymentDates.head shouldBe june(_12th)
       }
 
       "the current date is Thursday 7th May with upcoming bank holiday" in {
         val clock = clockForMay(_7th)
-        val currentDate = LocalDate.now(clock)
-        val firstPaymentDate = Some(june(_15th))
+        val today = LocalDate.now(clock)
 
-        makeTaxPaymentPlan(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, initialPayment, currentDate, endDate = july(_7th), firstPaymentDate)
-        makeTaxPaymentPlan(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, initialPayment, currentDate, endDate = august(_7th), firstPaymentDate)
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = Some(PaymentToday(true)),
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_15th)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_18th))
+        paymentsCalendar.regularPaymentsDay shouldBe _15th
+        paymentsCalendar.regularPaymentDates.head shouldBe june(_15th)
       }
 
       "the current date is bank holiday Friday 8th May" in {
         val clock = clockForMay(_8th)
-        val currentDate = LocalDate.now(clock)
-        val firstPaymentDate = Some(june(_15th))
+        val today = LocalDate.now(clock)
 
-        makeTaxPaymentPlan(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, initialPayment, currentDate, endDate = july(_8th), firstPaymentDate)
-        makeTaxPaymentPlan(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, initialPayment, currentDate, endDate = august(_8th), firstPaymentDate)
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = Some(PaymentToday(true)),
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_15th)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_19th))
+        paymentsCalendar.regularPaymentsDay shouldBe _15th
+        paymentsCalendar.regularPaymentDates.head shouldBe june(_15th)
       }
 
       "the current date is Monday 11th May" in {
         val clock = clockForMay(_11th)
-        val currentDate = LocalDate.now(clock)
-        val firstPaymentDate = Some(june(_18th))
+        val today = LocalDate.now(clock)
 
-        makeTaxPaymentPlan(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, initialPayment, currentDate, endDate = july(_11th), firstPaymentDate)
-        makeTaxPaymentPlan(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, initialPayment, currentDate, endDate = august(_11th), firstPaymentDate)
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = Some(PaymentToday(true)),
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_18th)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_22nd))
+        paymentsCalendar.regularPaymentsDay shouldBe _18th
+        paymentsCalendar.regularPaymentDates.head shouldBe june(_18th)
       }
 
       "the current date is the Monday 25th May so the payment dates roll into the next month" in {
         val clock = clockForMay(_25th)
-        val currentDate = may(_25th)
-        val firstPaymentDate = july(_1st)
+        val today = LocalDate.now(clock)
 
-        makeTaxPaymentPlan(debits, initialPayment, oneMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, initialPayment, currentDate, endDate = july(_25th), firstPaymentDate = Some(firstPaymentDate))
-        makeTaxPaymentPlan(debits, initialPayment, twoMonthDuration)(clock) shouldBe TaxPaymentPlan(
-          debits, initialPayment, currentDate, endDate = august(_25th), firstPaymentDate = Some(firstPaymentDate))
+        val paymentsCalendar = paymentDatesService.paymentsCalendar(
+          maybePaymentToday          = Some(PaymentToday(true)),
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_1st)),
+          dateToday                  = today
+        )(appConfig)
+
+        paymentsCalendar.planStartDate shouldBe today
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(june(_5th))
+        paymentsCalendar.regularPaymentsDay shouldBe _1st
+        paymentsCalendar.regularPaymentDates.head shouldBe july(_1st)
       }
     }
 
