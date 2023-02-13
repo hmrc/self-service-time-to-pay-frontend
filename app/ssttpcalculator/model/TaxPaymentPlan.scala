@@ -41,6 +41,10 @@ case class TaxPaymentPlan(
   private val firstPaymentDayOfMonth = config.firstPaymentDayOfMonth
   private val lastPaymentDayOfMonth = config.lastPaymentDayOfMonth
 
+  val maybeUpfrontPaymentDate: Option[LocalDate] = maybePaymentToday.map(_ => {
+    validPaymentDate(startDate.plusDays(daysToProcessFirstPayment))
+  })
+
   val firstRegularPaymentDate: Option[LocalDate] = regularPaymentDates.headOption
 
   def remainingLiability: BigDecimal = liabilities.map(_.amount).sum - upfrontPayment
@@ -58,24 +62,13 @@ case class TaxPaymentPlan(
     }
     result._2
   }
-
-  val maybeUpfrontPaymentDate: Option[LocalDate] = maybePaymentToday.map(_ => {
-    validPaymentDate(startDate.plusDays(daysToProcessFirstPayment))
-  })
-
-  val validCustomerPreferredRegularPaymentDay: Option[Int] = {
-    maybeArrangementDayOfMonth.map(arrangementDayOfMonth => {
-      validPaymentDate(startDate.withDayOfMonth(arrangementDayOfMonth.dayOfMonth)).getDayOfMonth
-    })
-  }
-
-  val validDefaultRegularPaymentsDay: Int = {
-    validPaymentDate(startDate.plusDays(daysToProcessFirstPayment).plusDays(minGapBetweenPayments)).getDayOfMonth
-  }
-
-  val regularPaymentsDay: Int = validCustomerPreferredRegularPaymentDay.getOrElse(validDefaultRegularPaymentsDay)
+  def regularPaymentsDay: Int = validCustomerPreferredRegularPaymentDay.getOrElse(validDefaultRegularPaymentsDay)
 
   def regularPaymentDates: Seq[LocalDate] = {
+    println(s"regularPaymentsDay: $regularPaymentsDay")
+    println(s"validDefaultRegularPaymentsDay: $validDefaultRegularPaymentsDay")
+    println(s"THIS: ${validPaymentDate(startDate.plusDays(daysToProcessFirstPayment).plusDays(minGapBetweenPayments))}")
+
     (minimumLengthOfPaymentPlan to maximumLengthOfPaymentPlan)
       .map(i => maybeUpfrontPaymentDate match {
         case Some(upfrontPaymentDate) =>
@@ -102,6 +95,16 @@ case class TaxPaymentPlan(
             }
           }
       })
+  }
+
+  private def validCustomerPreferredRegularPaymentDay: Option[Int] = {
+    maybeArrangementDayOfMonth.map(arrangementDayOfMonth => {
+      validPaymentDate(startDate.withDayOfMonth(arrangementDayOfMonth.dayOfMonth)).getDayOfMonth
+    })
+  }
+
+  private def validDefaultRegularPaymentsDay: Int = {
+    validPaymentDate(startDate.plusDays(daysToProcessFirstPayment).plusDays(minGapBetweenPayments)).getDayOfMonth
   }
 
   private def validPaymentDate(date: LocalDate): LocalDate = {
