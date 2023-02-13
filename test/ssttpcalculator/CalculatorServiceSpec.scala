@@ -652,7 +652,7 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
           maybePaymentToday          = None
         )
 
-        val result: PaymentSchedule = calculatorService.buildScheduleNew(taxPaymentPlan).get
+        val result: PaymentSchedule = calculatorService.schedule(taxPaymentPlan).get
 
         result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
       }
@@ -672,7 +672,7 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
           maybePaymentToday          = None
         )
 
-        val result: PaymentSchedule = calculatorService.buildScheduleNew(taxPaymentPlan).get
+        val result: PaymentSchedule = calculatorService.schedule(taxPaymentPlan).get
 
         result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
       }

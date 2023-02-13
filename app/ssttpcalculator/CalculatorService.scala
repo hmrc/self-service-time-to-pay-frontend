@@ -61,7 +61,7 @@ class CalculatorService @Inject() (
 
   val proportionsOfNetMonthlyIncome = List(0.5, 0.6, 0.8)
 
-  def paymentPlanOptions(
+  def scheduleOptions(
       sa:                           SelfAssessmentDetails,
       initialPayment:               BigDecimal                    = BigDecimal(0),
       maybeArrangementDayOfMonth:   Option[ArrangementDayOfMonth],
@@ -93,7 +93,7 @@ class CalculatorService @Inject() (
         maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
         regularPaymentAmount       = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending,
         maybePaymentToday)
-      buildScheduleNew(taxPaymentPlan)
+      schedule(taxPaymentPlan)
     }
     firstSchedule match {
       case Some(schedule) if (schedule.instalments.length <= 1) => List(firstSchedule).flatten
@@ -110,7 +110,7 @@ class CalculatorService @Inject() (
             maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
             regularPaymentAmount       = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending,
             maybePaymentToday)
-          buildScheduleNew(taxPaymentPlan)
+          schedule(taxPaymentPlan)
         }
         secondSchedule match {
           case Some(schedule) if (schedule.instalments.length <= 1) => List(firstSchedule, secondSchedule).flatten
@@ -127,14 +127,14 @@ class CalculatorService @Inject() (
                 maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
                 regularPaymentAmount       = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending,
                 maybePaymentToday)
-              buildScheduleNew(taxPaymentPlan)
+              schedule(taxPaymentPlan)
             }
             List(firstSchedule, secondSchedule, thirdSchedule).flatten
         }
     }
   }
 
-  def computeSchedule(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = {
+  def selectedSchedule(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = {
     val paymentsCalendar = paymentDatesService.paymentsCalendar(
       journey.maybePaymentToday,
       journey.maybeArrangementDayOfMonth,
@@ -159,10 +159,10 @@ class CalculatorService @Inject() (
       journey.maybePaymentToday
     )
 
-    buildScheduleNew(taxPaymentPlan)
+    schedule(taxPaymentPlan)
   }
 
-  def buildScheduleNew(implicit taxPaymentPlan: TaxPaymentPlan): Option[PaymentSchedule] = {
+  def schedule(implicit taxPaymentPlan: TaxPaymentPlan): Option[PaymentSchedule] = {
     val payables: Payables = Payables(taxPaymentPlan.liabilities)
     val principal = payables.liabilities.map(_.amount).sum
 
@@ -508,24 +508,6 @@ class CalculatorService @Inject() (
     } else {
       amountB
     }
-  }
-
-  def computeScheduleOld(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
-    val availableSchedules: Seq[PaymentSchedule] = availablePaymentSchedules(
-      journey.taxpayer.selfAssessment,
-      journey.safeInitialPayment,
-      journey.maybeArrangementDayOfMonth
-    )
-
-    val durationInMonths: Int = journey.calculatorDuration
-
-    val schedule: PaymentSchedule = availableSchedules.find(_.instalments.length == durationInMonths)
-      .orElse(
-        availableSchedules.find(_.instalments.length == durationInMonths - 1)
-      ).getOrElse(
-          throw new RuntimeException(s"Could not find schedule corresponding to $durationInMonths [${journey}] [${availableSchedules}]")
-        )
-    schedule
   }
 
   def availablePaymentSchedules(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0),

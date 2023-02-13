@@ -86,7 +86,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentAmount
               )
 
-              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+              val result = calculatorService.schedule(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
@@ -129,7 +129,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentAmount
               )
 
-              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+              val result = calculatorService.schedule(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9).plusDays(appConfig.lastPaymentDelayDays)
@@ -185,7 +185,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 maybePaymentToday = Some(PaymentToday(true))
               )
 
-              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+              val result = calculatorService.schedule(taxPaymentPlan).get
 
               println(s"result: $result")
 
@@ -230,7 +230,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentAmount
               )
 
-              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+              val result = calculatorService.schedule(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7).plusDays(appConfig.lastPaymentDelayDays)
@@ -282,7 +282,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentAmount
               )
 
-              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+              val result = calculatorService.schedule(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
@@ -325,7 +325,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentAmount
               )
 
-              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+              val result = calculatorService.schedule(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9).plusDays(appConfig.lastPaymentDelayDays)
@@ -375,7 +375,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentAmount
               )
 
-              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+              val result = calculatorService.schedule(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
@@ -418,7 +418,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 regularPaymentAmount
               )
 
-              val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+              val result = calculatorService.schedule(taxPaymentPlan).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7).plusDays(appConfig.lastPaymentDelayDays)
@@ -471,7 +471,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
             regularPaymentAmount
           )
 
-          val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+          val result = calculatorService.schedule(taxPaymentPlan).get
 
           result.startDate shouldBe fixedToday
           result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(1).plusDays(appConfig.lastPaymentDelayDays)
@@ -527,7 +527,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
             regularPaymentAmount
           )
 
-          val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+          val result = calculatorService.schedule(taxPaymentPlan).get
 
           result.startDate shouldBe fixedToday
           result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(4).plusDays(appConfig.lastPaymentDelayDays)
@@ -582,7 +582,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
             regularPaymentAmount
           )
 
-          val result = calculatorService.buildScheduleNew(taxPaymentPlan)
+          val result = calculatorService.schedule(taxPaymentPlan)
 
           result shouldBe None
 
@@ -619,7 +619,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           Some(PaymentToday((true)))
         )
 
-        val result = calculatorService.buildScheduleNew(taxPaymentPlan).get
+        val result = calculatorService.schedule(taxPaymentPlan).get
 
         result.startDate shouldBe fixedToday
         result.endDate shouldBe fixedToday.withDayOfMonth(preferredPaymentDay).plusMonths(8).plusDays(appConfig.lastPaymentDelayDays)
@@ -665,7 +665,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           regularPaymentAmount
         )
 
-        val result = calculatorService.buildScheduleNew(taxPaymentPlan)
+        val result = calculatorService.schedule(taxPaymentPlan)
 
         result shouldBe None
       }
@@ -686,7 +686,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val paymentToday = None
         val dateToday = fixedToday
 
-        val result = calculatorService.paymentPlanOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
 
         result.length shouldBe 3
       }
@@ -704,7 +704,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val paymentToday = None
         val dateToday = fixedToday
 
-        val result = calculatorService.paymentPlanOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
 
         result.length shouldBe 1
       }
@@ -722,7 +722,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val paymentToday = None
         val dateToday = fixedToday
 
-        val result = calculatorService.paymentPlanOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
 
         result.length shouldBe 2
       }
@@ -741,7 +741,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val paymentToday = None
           val dateToday = fixedToday
 
-          val result = calculatorService.paymentPlanOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
 
           result.length shouldBe 1
         }
@@ -759,7 +759,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val paymentToday = None
           val dateToday = fixedToday
 
-          val result = calculatorService.paymentPlanOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
+          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending, paymentToday, dateToday)
 
           result.length shouldBe 2
 
