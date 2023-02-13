@@ -455,3 +455,136 @@ class CalculatorService @Inject() (
   private def historicRateEndDateNew(debitEndDate: LocalDate, planStartDate: LocalDate): LocalDate =
     if (debitEndDate.getYear.equals(planStartDate.getYear)) planStartDate else debitEndDate
 }
+
+object CalculatorService {
+  private val latestValidPaymentDayOfMonth = 28
+
+  def makeCalculatorInputForPayToday(debits: Seq[TaxLiability])(implicit clock: Clock): TaxPaymentPlan = {
+
+    val taxPaymentPlan =
+      changePaymentPlan(
+        durationInMonths           = 0,
+        preferredPaymentDayOfMonth = now(clock).getDayOfMonth,
+        initialPayment             = 0,
+        debits                     = debits
+      )
+    taxPaymentPlan
+  }
+
+  def makeTaxPaymentPlan(debits: Seq[TaxLiability], initialPayment: BigDecimal, durationInMonths: Int)
+                        (implicit clock: Clock): TaxPaymentPlan = {
+
+    val noInitialPayment = BigDecimal(0)
+    val workingDaysInAWeek = 5
+
+    val currentDate = now(clock)
+    val endDate = currentDate.plusMonths(durationInMonths)
+    val possibleFirstPaymentDate = addWorkingDays(currentDate, workingDaysInAWeek)
+
+    val firstPaymentDate: LocalDate =
+      if (possibleFirstPaymentDate.getDayOfMonth > latestValidPaymentDayOfMonth)
+        possibleFirstPaymentDate.withDayOfMonth(1).plusMonths(1)
+      else
+        possibleFirstPaymentDate
+
+    if (initialPayment > 0) {
+      val deferredEndDate = endDate.plusMonths(1)
+      val deferredFirstPaymentDate = firstPaymentDate.plusMonths(1)
+
+      if ((debits.map(_.amount).sum - initialPayment) < BigDecimal.exact("32.00")) {
+        TaxPaymentPlan(
+          startDate        = currentDate,
+          initialPayment   = noInitialPayment,
+          firstPaymentDate = Some(deferredFirstPaymentDate),
+          endDate          = deferredEndDate,
+          liabilities      = debits)
+      } else {
+        TaxPaymentPlan(
+          startDate        = currentDate,
+          initialPayment   = initialPayment,
+          firstPaymentDate = Some(deferredFirstPaymentDate),
+          endDate          = deferredEndDate,
+          liabilities      = debits)
+      }
+    } else //no initial payment
+      TaxPaymentPlan(
+        startDate        = currentDate,
+        initialPayment   = noInitialPayment,
+        endDate          = endDate,
+        firstPaymentDate = Some(firstPaymentDate),
+        liabilities      = debits
+      )
+  }
+
+  /**
+   * As the user can change which day of the month they wish to make their payments, then a recalculation
+   * must be made as this would effect the interest amounts. Rules here must be applied and this function
+   * calculates the first payment date and the last payment date by applying these rules.
+   *
+   * Rules:
+   * - First payment must be at least 7 days from today's date
+   * - The day of the month cannot be greater than 28, if it is then use the 1st of the following month
+   * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
+   */
+  def changePaymentPlan(
+                         durationInMonths:           Int,
+                         preferredPaymentDayOfMonth: Int,
+                         initialPayment:             BigDecimal,
+                         debits:                     Seq[TaxLiability])
+                       (implicit clock: Clock): TaxPaymentPlan = {
+
+    /*
+     * We add 10 days extra capacity just in case if there are 3 bank holidays within the 10 days
+     * so ETMP still has chance to create direct debit instruction within 2 working days
+     * (it's assumed that weekends aren't working days)
+     */
+    val fewDays = 10
+
+    val oneWeek = 7
+    val twoWeeks = oneWeek * 2
+
+    val startDate = now(clock)
+    val startDatePlusOneWeek = startDate.plusWeeks(1)
+
+    val bestMatchingPaymentDayOfMonth = if (preferredPaymentDayOfMonth > latestValidPaymentDayOfMonth) 1 else preferredPaymentDayOfMonth
+    val defaultPaymentDate = startDate.withDayOfMonth(bestMatchingPaymentDayOfMonth)
+    val defaultPaymentDatePlusOneMonth = defaultPaymentDate.plusMonths(1)
+    val defaultPaymentDatePlusTwoMonths = defaultPaymentDate.plusMonths(2)
+
+    val defaultEndDate = defaultPaymentDate.plusMonths(durationInMonths)
+    val defaultEndDatePlusOneMonth = defaultEndDate.plusMonths(1)
+    val defaultEndDatePlusTwoMonths = defaultEndDate.plusMonths(2)
+
+    val (firstPaymentDate: LocalDate, endDate: LocalDate) =
+      if (initialPayment.equals(BigDecimal(0))) {
+        val daysBetweenStartAndPaymentDates = DAYS.between(startDate, defaultPaymentDate)
+
+        if (daysBetweenStartAndPaymentDates < fewDays && DAYS.between(startDate, defaultPaymentDatePlusOneMonth) < fewDays)
+          (defaultPaymentDatePlusTwoMonths, defaultEndDatePlusTwoMonths)
+        else if (daysBetweenStartAndPaymentDates < fewDays)
+          (defaultPaymentDatePlusOneMonth, defaultEndDatePlusOneMonth)
+        else
+          (defaultPaymentDate, defaultEndDate)
+      } else {
+        val paymentDateWithinAWeekOfStartDate = defaultPaymentDate.isBefore(startDatePlusOneWeek)
+
+        if (paymentDateWithinAWeekOfStartDate && DAYS.between(startDatePlusOneWeek, defaultPaymentDatePlusOneMonth) < twoWeeks)
+          (defaultPaymentDatePlusTwoMonths, defaultEndDatePlusTwoMonths)
+        else if (paymentDateWithinAWeekOfStartDate)
+          (defaultPaymentDatePlusOneMonth, defaultEndDatePlusOneMonth)
+        else if (DAYS.between(startDatePlusOneWeek, defaultPaymentDate) < twoWeeks)
+          (defaultPaymentDatePlusOneMonth, defaultEndDatePlusOneMonth)
+        else
+          (defaultPaymentDate, defaultEndDate)
+      }
+
+    TaxPaymentPlan(debits, initialPayment, startDate, endDate.minusDays(1), Some(firstPaymentDate))
+  }
+
+  val minimumMonthsAllowedTTP = 2
+
+  implicit def ordered[A](implicit ev$1: A => Comparable[_ >: A]): Ordering[A] = new Ordering[A] {
+    def compare(x: A, y: A): Int = x compareTo y
+  }
+
+}
