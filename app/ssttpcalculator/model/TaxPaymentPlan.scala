@@ -46,8 +46,6 @@ case class TaxPaymentPlan(
     validPaymentDate(planStartDate.plusDays(daysToProcessFirstPayment))
   })
 
-  val firstRegularPaymentDate: Option[LocalDate] = regularPaymentDates.headOption
-
   def remainingLiability: BigDecimal = taxLiabilities.map(_.amount).sum - upfrontPayment
 
   def actualStartDate: LocalDate = planStartDate

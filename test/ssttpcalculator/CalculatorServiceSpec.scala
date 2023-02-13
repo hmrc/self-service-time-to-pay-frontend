@@ -31,10 +31,6 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
   private def june(day: Int): LocalDate = date(june, day)
   private def july(day: Int): LocalDate = date(july, day)
 
-  private val zeroDuration = 0
-  private val oneMonthDuration = 1
-  private val twoMonthDuration = 2
-
   private val debt = 500
   private val minimumBalanceAfterInitialPayment = 32
   private val debits = Seq(TaxLiability(debt, july(_31st)))

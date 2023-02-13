@@ -345,7 +345,7 @@ class ArrangementController @Inject() (
     )
 
     val initialPayment = if (schedule.initialPayment > exact(0)) Some(schedule.initialPayment.toString()) else None
-    val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.startDate.plusDays(calculatorService.defaultInitialPaymentDays)))
+    val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.startDate.plusDays(appConfig.daysToProcessFirstPayment)))
 
     val lastInstalment: Instalment = schedule.lastInstallment
     val firstInstalment: Instalment = schedule.firstInstallment

@@ -124,8 +124,6 @@ final case class Journey(
   def paymentToday: Boolean = maybePaymentToday.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'maybePaymentToday' to be there but was not found. [${_id}] [$this]"))
   def initialPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'paymentTodayAmount' to be there but was not found. [${_id}] [$this]"))
   def safeUpfrontPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(0)
-  def calculatorDuration: Int = maybeCalculatorDuration.map(_.chosenMonths).getOrElse(throw new RuntimeException(s"Expected 'maybeCalculatorDuration' to be there but was not found. [${_id}] [$this]"))
-
   def eligibilityStatus: EligibilityStatus =
     maybeEligibilityStatus.getOrElse(throw new RuntimeException(s"Expected 'EligibilityStatus' to be there but was not found. [${_id}] [$this]"))
 

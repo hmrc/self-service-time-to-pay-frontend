@@ -419,8 +419,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
           finalInstalment.paymentDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(1)
           finalInstalment.amount > 0 shouldBe true
           finalInstalment.amount <= 1000 shouldBe true
-          println("finalInstalment.amount: " + finalInstalment.amount)
-          println("result.totalInterestCharged" + result.totalInterestCharged)
           approximatelyEqual(finalInstalment.amount, result.totalInterestCharged) shouldBe true
           finalInstalment.interest shouldBe 0
         }
@@ -468,8 +466,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
           finalInstalment.paymentDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(4)
           finalInstalment.amount > 0 shouldBe true
           finalInstalment.amount <= 250 shouldBe true
-          println("finalInstalment.amount: " + finalInstalment.amount)
-          println("result.totalInterestCharged" + result.totalInterestCharged)
           approximatelyEqual(finalInstalment.amount, result.totalInterestCharged) shouldBe true
           finalInstalment.interest shouldBe 0
         }

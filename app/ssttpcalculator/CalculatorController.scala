@@ -16,27 +16,19 @@
 
 package ssttpcalculator
 
-import java.time.LocalDate
-
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
 import javax.inject._
-import journey.Statuses.InProgress
 import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
 import play.api.mvc.{AnyContent, _}
 import req.RequestSupport
-import ssttpcalculator.CalculatorForm.{createInstalmentForm, createMonthlyAmountForm, createPaymentTodayForm, payTodayForm}
+import ssttpcalculator.CalculatorForm.{createInstalmentForm, createPaymentTodayForm, payTodayForm}
 import times.ClockProvider
-import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
-import _root_.model._
-
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
 class CalculatorController @Inject() (
     mcc:               MessagesControllerComponents,
