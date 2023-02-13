@@ -16,17 +16,12 @@
 
 @import _root_.testonly.TestUserForm
 @import views.html.helpers.forms._
-@import scala.language.postfixOps
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.{Radios, RadioItem}
-@import uk.gov.hmrc.govukfrontend.views.Implicits._
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
         main: views.html.main,
-        radios: uk.gov.hmrc.govukfrontend.views.html.components.GovukRadios,
+        radios: GovukRadios,
         textinput: views.html.helpers.forms.textinput,
         viewsHelpers: views.ViewsHelpers
 )
@@ -104,8 +99,8 @@
 
             @radios(Radios(
                 items = List(
-                    RadioItem(content = Text("Yes"), value = Some("true")),
-                    RadioItem(content = Text("No"), value = Some("true"))
+                    RadioItem(content = Text("Yes"), value = Some("true"), checked=false),
+                    RadioItem(content = Text("No"), value = Some("false"), checked=false)
                 )
             ).withFormField(dataForm("isOnIA")))
 
@@ -128,8 +123,8 @@
             @radios(Radios(
                 hint = Some(Hint(content = HtmlContent("If <em>No</em> then below setup will be ignored"))),
                 items = List(
-                    RadioItem(content = Text("Yes"), value = Some("true")),
-                    RadioItem(content = Text("No"), value = Some("false"))
+                    RadioItem(content = Text("Yes"), value = Some("true"), checked=false),
+                    RadioItem(content = Text("No"), value = Some("false"), checked=false)
                 ),
                 classes = "govuk-radios--inline"
             ).withFormField(dataForm("has-sa-enrolment")))
@@ -144,8 +139,8 @@
 
                 )),
                 items = List(
-                    RadioItem(content = Text("Yes"), value = Some("true")),
-                    RadioItem(content = Text("No"), value = Some("true"))
+                    RadioItem(content = Text("Yes"), value = Some("true"), checked=false),
+                    RadioItem(content = Text("No"), value = Some("false"), checked=false)
                 ),
                 classes = "govuk-radios--inline"
             ).withFormField(dataForm("over200")))
@@ -155,10 +150,11 @@
             <span class="flush--ends form-field--hint"></span>
 
             @radios(Radios(
+                name = "Hello",
                 hint = Some(Hint(content = HtmlContent("If <em>Yes</em> then the CredId/authority-id will be ignored"))),
                 items = List(
-                    RadioItem(content = Text("Yes"), value = Some("true")),
-                    RadioItem(content = Text("No"), value = Some("true"))
+                    RadioItem(content = Text("Yes"), value = Some("true"), checked=false),
+                    RadioItem(content = Text("No"), value = Some("false"), checked=false)
                 ),
                 classes = "govuk-radios--inline"
             ).withFormField(dataForm("hasExistingDirectDebit")))
@@ -186,7 +182,7 @@
             <label class="govuk-label" for="returns-response-body">returns json response</label>
             <textarea
             class="govuk-textarea @{
-                if(dataForm(" returns-response-body") hasErrors) "error-field govuk-textarea--error" else ""
+                if(dataForm(" returns-response-body").hasErrors) "error-field govuk-textarea--error" else ""
             }"
             rows="20"
             style="width: 100%;
@@ -206,7 +202,7 @@
             <label class="govuk-label" for="debits-response-body">debits json response</label>
             <textarea
             class="govuk-textarea @{
-                if(dataForm(" debits-response-body") hasErrors) "error-field govuk-textarea--error" else ""
+                if(dataForm(" debits-response-body").hasErrors) "error-field govuk-textarea--error" else ""
             }"
             rows="20"
             style="width: 100%;
@@ -227,7 +223,7 @@
             <label class="govuk-label" for="sa-taxpayer-response-body">Taxpayer definition in SA json response</label>
             <textarea
             class="govuk-textarea @{
-                if(dataForm(" sa-taxpayer-response-body") hasErrors) " govuk-textarea--error" else ""
+                if(dataForm(" sa-taxpayer-response-body").hasErrors) " govuk-textarea--error" else ""
             }"
             rows="20"
             style="width: 100%;
