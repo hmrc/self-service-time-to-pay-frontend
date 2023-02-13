@@ -133,24 +133,6 @@ class CalculatorController @Inject() (
     }
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.TraversableOps"))
-  private def monthlyPaymentBound(sa:                         SelfAssessmentDetails,
-                                  initialPayment:             BigDecimal,
-                                  maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth])(implicit request: Request[_]): (BigDecimal, BigDecimal) =
-    Try {
-      val schedules = calculatorService.availablePaymentSchedules(sa, initialPayment, maybeArrangementDayOfMonth)
-      val lowestPossibleMonthlyAmount = schedules.head.firstInstallment.amount
-      val largestPossibleMonthlyAmount = schedules.last.firstInstallment.amount
-      (BigDecimalUtil.roundUpToNearestTen(largestPossibleMonthlyAmount), BigDecimalUtil.roundUpToNearestTen(lowestPossibleMonthlyAmount))
-    } match {
-      case Success(s) =>
-        JourneyLogger.info(s"CalculatorController.lowerMonthlyPaymentBound: [$s]")
-        s
-      case Failure(e) =>
-        JourneyLogger.info(s"CalculatorController.lowerMonthlyPaymentBound: ERROR [${e.toString}]")
-        throw e
-    }
-
   def getPaymentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.getPaymentSummary: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
