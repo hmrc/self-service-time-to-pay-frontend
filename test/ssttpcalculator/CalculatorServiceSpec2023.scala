@@ -74,7 +74,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                LocalDate.parse("2017-03-11"),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount
               )
@@ -110,7 +109,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                LocalDate.parse("2017-03-11"),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount
               )
@@ -154,7 +152,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                LocalDate.parse("2017-03-11"),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount,
                 maybePaymentToday = Some(PaymentToday(true))
@@ -191,7 +188,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                LocalDate.parse("2017-03-11"),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount
               )
@@ -236,7 +232,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                LocalDate.parse("2017-03-11"),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount
               )
@@ -272,7 +267,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                LocalDate.parse("2017-03-11"),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount
               )
@@ -315,7 +309,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                LocalDate.parse("2017-03-11"),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount
               )
@@ -351,7 +344,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
                 liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
-                LocalDate.parse("2017-03-11"),
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 regularPaymentAmount
               )
@@ -397,7 +389,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
             liabilities,
             upfrontPaymentAmount,
             fixedToday,
-            LocalDate.parse("2017-03-11"),
             Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
             regularPaymentAmount
           )
@@ -446,7 +437,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
             liabilities,
             upfrontPaymentAmount,
             fixedToday,
-            LocalDate.parse("2017-03-11"),
             Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
             regularPaymentAmount
           )
@@ -494,7 +484,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
             liabilities,
             upfrontPaymentAmount,
             fixedToday,
-            LocalDate.parse("2017-03-11"),
             Some(ArrangementDayOfMonth(preferredPaymentDay)),
             regularPaymentAmount
           )
@@ -523,7 +512,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
           liabilities,
           upfrontPaymentAmount,
           fixedToday,
-          LocalDate.parse("2017-03-11"),
           Some(ArrangementDayOfMonth(preferredPaymentDay)),
           regularPaymentAmount,
           Some(PaymentToday((true)))
@@ -563,7 +551,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
           liabilities,
           upfrontPaymentAmount,
           fixedToday,
-          LocalDate.parse("2017-03-11"),
           Some(ArrangementDayOfMonth(preferredPaymentDay)),
           regularPaymentAmount
         )

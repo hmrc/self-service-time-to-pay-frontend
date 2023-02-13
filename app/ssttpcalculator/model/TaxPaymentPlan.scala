@@ -27,7 +27,6 @@ case class TaxPaymentPlan(
     taxLiabilities:             Seq[TaxLiability],
     upfrontPayment:             BigDecimal,
     planStartDate:              LocalDate,
-    endDate:                    LocalDate,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
     regularPaymentAmount:       BigDecimal                    = 0,
     maybePaymentToday:          Option[PaymentToday]          = None

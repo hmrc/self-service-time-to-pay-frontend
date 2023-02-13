@@ -61,7 +61,6 @@ class CalculatorServiceSpecAlternate extends ItSpec {
         taxLiabilities             = debits,
         upfrontPayment             = initialPayment,
         planStartDate              = startDate,
-        endDate                    = endDate,
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(firstPaymentDate.getDayOfMonth)),
         regularPaymentAmount       = regularInstalmentAmount,
         maybePaymentToday          = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })(appConfig)
@@ -111,7 +110,6 @@ class CalculatorServiceSpecAlternate extends ItSpec {
         taxLiabilities             = debits,
         upfrontPayment             = initialPayment,
         planStartDate              = startDate,
-        endDate                    = endDate,
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(firstPaymentDate.getDayOfMonth)),
         regularPaymentAmount       = regularInstalmentAmount,
         maybePaymentToday          = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })(appConfig)

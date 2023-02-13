@@ -65,7 +65,6 @@ class CalculatorService @Inject() (
       taxLiabilities             = taxLiabilities,
       upfrontPayment             = initialPayment,
       planStartDate              = dateToday,
-      endDate                    = LocalDate.parse("2060-03-11"),
       maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
       regularPaymentAmount       = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending,
       maybePaymentToday)(appConfig)
@@ -97,7 +96,6 @@ class CalculatorService @Inject() (
       taxLiabilities,
       journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
       clockProvider.nowDate(),
-      LocalDate.parse("2060-03-11"),
       journey.maybeArrangementDayOfMonth,
       journey.maybePlanAmountSelection.getOrElse(
         throw new IllegalArgumentException("could not find plan amount selection but there should be one")

@@ -116,9 +116,7 @@ object CalculatorDataGenerator extends ItSpec with Status with DateSupport {
     TaxPaymentPlan(
       taxLiabilities = Seq(TaxLiability(debit1Value, startDate), TaxLiability(debit2Value, startDate)),
       upfrontPayment = initialPayment,
-      planStartDate  = startDate,
-      endDate        = endDate
-    )(appConfig)
+      planStartDate  = startDate)(appConfig)
 
   private def paymentSchedule(regularInstalments: List[LocalDate], regularPayment: BigDecimal, finalInstalment: LocalDate) = {
     val finalPayment = totalDebt - (regularPayment * regularInstalments.size)

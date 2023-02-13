@@ -64,8 +64,8 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
       val plan = TaxPaymentPlan(
         liabilities,
         upfrontPayment,
-        LocalDate.of(2021, Month.OCTOBER, 28),
-        LocalDate.of(2022, Month.FEBRUARY, 28))(appConfig)
+        LocalDate.of(2021, Month.OCTOBER, 28)
+      )(appConfig)
       "remove liabilities covered by the initial payment" in {
         plan.outstandingLiabilities.size shouldBe 2
       }
@@ -90,7 +90,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(today.getDayOfMonth)),
             regularPaymentAmount,
             None
@@ -111,7 +110,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
           taxLiabilities             = liabilities,
           upfrontPayment             = upfrontPayment,
           planStartDate              = today,
-          endDate                    = date("2060-12-31"),
           maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(today.getDayOfMonth)),
           regularPaymentAmount       = regularPaymentAmount,
           maybePaymentToday          = None
@@ -131,7 +129,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
           taxLiabilities = liabilities,
           upfrontPayment = upfrontPayment,
           planStartDate  = today,
-          endDate        = date("2060-12-31"),
           Some(ArrangementDayOfMonth(today.getDayOfMonth)),
           regularPaymentAmount,
           None
@@ -151,7 +148,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(_12th)),
             regularPaymentAmount,
             None
@@ -171,7 +167,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(_15th)),
             regularPaymentAmount,
             None
@@ -192,7 +187,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(_15th)),
             regularPaymentAmount,
             None
@@ -212,7 +206,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(_18th)),
             regularPaymentAmount,
             None
@@ -232,7 +225,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(_1st)),
             regularPaymentAmount,
             None
@@ -253,7 +245,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(_12th)),
             regularPaymentAmount,
             Some(PaymentToday(true))
@@ -274,7 +265,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(_15th)),
             regularPaymentAmount,
             Some(PaymentToday(true))
@@ -294,7 +284,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(_15th)),
             regularPaymentAmount,
             Some(PaymentToday(true))
@@ -314,7 +303,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(_18th)),
             regularPaymentAmount,
             Some(PaymentToday(true))
@@ -334,7 +322,6 @@ class TaxPaymentPlanSpec extends ItSpec with Matchers with DateSupport {
             taxLiabilities = liabilities,
             upfrontPayment = upfrontPayment,
             planStartDate  = today,
-            endDate        = date("2060-12-31"),
             Some(ArrangementDayOfMonth(_1st)),
             regularPaymentAmount,
             Some(PaymentToday(true))

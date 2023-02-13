@@ -17,11 +17,9 @@
 package ssttpcalculator
 
 import config.AppConfig
-import journey.PaymentToday
 import org.scalatest.matchers.should.Matchers
 import ssttpcalculator.model.{PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import testsupport.{DateSupport, ItSpec}
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
@@ -505,7 +503,6 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
           taxLiabilities             = Seq(TaxLiability(1000, startDate)),
           upfrontPayment             = 0,
           planStartDate              = startDate,
-          endDate                    = endDate,
           maybeArrangementDayOfMonth = None,
           regularPaymentAmount       = 500,
           maybePaymentToday          = None
@@ -524,7 +521,6 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
           taxLiabilities             = Seq(TaxLiability(1000, startDate)),
           upfrontPayment             = 0,
           planStartDate              = startDate,
-          endDate                    = endDate,
           maybeArrangementDayOfMonth = None,
           regularPaymentAmount       = 200,
           maybePaymentToday          = None
