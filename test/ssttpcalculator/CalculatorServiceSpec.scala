@@ -109,7 +109,6 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
     }
   }
 
-
   "changeScheduleRequest with zero duration and no initial payment should" - {
     "return a payment schedule request when" - {
       "the required day of the month and the current date are the 1st" in {

@@ -25,7 +25,7 @@ import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
-import java.time.{LocalDate, Year}
+import java.time.{Clock, LocalDate, Year}
 import javax.inject.Inject
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext
@@ -459,7 +459,7 @@ class CalculatorService @Inject() (
 object CalculatorService {
   private val latestValidPaymentDayOfMonth = 28
 
-  def makeCalculatorInputForPayToday(debits: Seq[TaxLiability])(implicit clock: Clock): TaxPaymentPlan = {
+  def makeCalculatorInputForPayToday(debits: Seq[TaxLiability])(implicit clock: Clock, appConfig: AppConfig): TaxPaymentPlan = {
 
     val taxPaymentPlan =
       changePaymentPlan(
@@ -472,7 +472,7 @@ object CalculatorService {
   }
 
   def makeTaxPaymentPlan(debits: Seq[TaxLiability], initialPayment: BigDecimal, durationInMonths: Int)
-                        (implicit clock: Clock): TaxPaymentPlan = {
+    (implicit clock: Clock): TaxPaymentPlan = {
 
     val noInitialPayment = BigDecimal(0)
     val workingDaysInAWeek = 5
@@ -527,11 +527,12 @@ object CalculatorService {
    * - There must be at least a 14 day gap between the initial payment date and the first scheduled payment date
    */
   def changePaymentPlan(
-                         durationInMonths:           Int,
-                         preferredPaymentDayOfMonth: Int,
-                         initialPayment:             BigDecimal,
-                         debits:                     Seq[TaxLiability])
-                       (implicit clock: Clock): TaxPaymentPlan = {
+      durationInMonths:           Int,
+      preferredPaymentDayOfMonth: Int,
+      initialPayment:             BigDecimal,
+      debits:                     Seq[TaxLiability])
+    (implicit clock: Clock,
+     appConfig: AppConfig): TaxPaymentPlan = {
 
     /*
      * We add 10 days extra capacity just in case if there are 3 bank holidays within the 10 days
@@ -578,7 +579,8 @@ object CalculatorService {
           (defaultPaymentDate, defaultEndDate)
       }
 
-    TaxPaymentPlan(debits, initialPayment, startDate, endDate.minusDays(1), Some(firstPaymentDate))
+    TaxPaymentPlan(
+      debits, initialPayment, startDate, Some(ArrangementDayOfMonth(preferredPaymentDayOfMonth)))
   }
 
   val minimumMonthsAllowedTTP = 2
