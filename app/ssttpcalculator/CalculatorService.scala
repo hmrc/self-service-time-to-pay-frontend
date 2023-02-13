@@ -61,10 +61,6 @@ class CalculatorService @Inject() (
 
   val proportionsOfNetMonthlyIncome = List(0.5, 0.6, 0.8)
 
-  // TODO [OPS-9610] currently will always create three plans (and hit issues with more than 24 months.
-  // should only create plans for 60 and 80% if 50% is not one month long
-  // needs to handle not creating a plan if it's more than 24 months long
-  // proportions of netMonthlyIncome should be configurable
   def paymentPlanOptions(
       sa:                           SelfAssessmentDetails,
       initialPayment:               BigDecimal                    = BigDecimal(0),
@@ -87,15 +83,15 @@ class CalculatorService @Inject() (
     )
     val firstSchedule = {
       val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
-        liabilities = payables.liabilities.map(Payable.payableToTaxLiability),
-        initialPayment = initialPayment,
-        startDate = paymentsCalendar.planStartDate,
-        endDate = LocalDate.parse("2060-03-11"),
-        firstPaymentDate = Some(paymentsCalendar.regularPaymentDates.headOption
+        liabilities                = payables.liabilities.map(Payable.payableToTaxLiability),
+        initialPayment             = initialPayment,
+        startDate                  = paymentsCalendar.planStartDate,
+        endDate                    = LocalDate.parse("2060-03-11"),
+        firstPaymentDate           = Some(paymentsCalendar.regularPaymentDates.headOption
           .getOrElse(throw new IllegalArgumentException("could not find first regular payment date, but there should be one"))
         ),
         maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
-        regularPaymentAmount = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending,
+        regularPaymentAmount       = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending,
         maybePaymentToday)
       buildScheduleNew(taxPaymentPlan)
     }
@@ -104,15 +100,15 @@ class CalculatorService @Inject() (
       case _ =>
         val secondSchedule = {
           val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
-            liabilities = payables.liabilities.map(Payable.payableToTaxLiability),
-            initialPayment = initialPayment,
-            startDate = paymentsCalendar.planStartDate,
-            endDate = LocalDate.parse("2060-03-11"),
-            firstPaymentDate = Some(paymentsCalendar.regularPaymentDates.headOption
+            liabilities                = payables.liabilities.map(Payable.payableToTaxLiability),
+            initialPayment             = initialPayment,
+            startDate                  = paymentsCalendar.planStartDate,
+            endDate                    = LocalDate.parse("2060-03-11"),
+            firstPaymentDate           = Some(paymentsCalendar.regularPaymentDates.headOption
               .getOrElse(throw new IllegalArgumentException("could not find first regular payment date, but there should be one"))
             ),
             maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
-            regularPaymentAmount = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending,
+            regularPaymentAmount       = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending,
             maybePaymentToday)
           buildScheduleNew(taxPaymentPlan)
         }
@@ -121,15 +117,15 @@ class CalculatorService @Inject() (
           case _ =>
             val thirdSchedule = {
               val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
-                liabilities = payables.liabilities.map(Payable.payableToTaxLiability),
-                initialPayment = initialPayment,
-                startDate = paymentsCalendar.planStartDate,
-                endDate = LocalDate.parse("2060-03-11"),
-                firstPaymentDate = Some(paymentsCalendar.regularPaymentDates.headOption
+                liabilities                = payables.liabilities.map(Payable.payableToTaxLiability),
+                initialPayment             = initialPayment,
+                startDate                  = paymentsCalendar.planStartDate,
+                endDate                    = LocalDate.parse("2060-03-11"),
+                firstPaymentDate           = Some(paymentsCalendar.regularPaymentDates.headOption
                   .getOrElse(throw new IllegalArgumentException("could not find first regular payment date, but there should be one"))
                 ),
                 maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
-                regularPaymentAmount = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending,
+                regularPaymentAmount       = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending,
                 maybePaymentToday)
               buildScheduleNew(taxPaymentPlan)
             }
