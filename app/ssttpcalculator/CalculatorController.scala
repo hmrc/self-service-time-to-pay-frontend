@@ -156,11 +156,9 @@ class CalculatorController @Inject() (
       val sa = journey.taxpayer.selfAssessment
       val paymentPlanOptions = calculatorService.scheduleOptions(
         sa,
-        journey.safeInitialPayment,
+        journey.safeUpfrontPayment,
         journey.maybeArrangementDayOfMonth,
-        journey.remainingIncomeAfterSpending,
-        journey.maybePaymentToday,
-        clockProvider.nowDate()
+        journey.remainingIncomeAfterSpending
       )
 
       Ok(views.calculate_instalments_form(
@@ -178,11 +176,9 @@ class CalculatorController @Inject() (
       val sa = journey.taxpayer.selfAssessment
       val paymentPlanOptions = calculatorService.scheduleOptions(
         sa,
-        journey.safeInitialPayment,
+        journey.safeUpfrontPayment,
         journey.maybeArrangementDayOfMonth,
-        journey.planAmountSelection,
-        journey.maybePaymentToday,
-        clockProvider.nowDate()
+        journey.planAmountSelection
       )
 
       createInstalmentForm().bindFromRequest().fold(

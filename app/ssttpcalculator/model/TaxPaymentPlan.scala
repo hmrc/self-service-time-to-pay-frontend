@@ -19,9 +19,11 @@ package ssttpcalculator.model
 import config.AppConfig
 import journey.PaymentToday
 
-import java.time.LocalDate
-import play.api.libs.json.{Json, JsonValidationError, OFormat, OWrites}
+import java.time.{Clock, LocalDate}
+import play.api.libs.json.{Json, JsonValidationError, OFormat, OWrites, Reads}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
+
+import java.time.LocalDate.now
 
 case class TaxPaymentPlan(
     taxLiabilities:             Seq[TaxLiability],
@@ -116,8 +118,31 @@ case class TaxPaymentPlan(
 }
 
 object TaxPaymentPlan {
+  def safeNew(
+      taxLiabilities:             Seq[TaxLiability],
+      upfrontPayment:             BigDecimal,
+      regularPaymentAmount:       BigDecimal,
+      maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None
+  )(implicit clock: Clock, appConfig: AppConfig): TaxPaymentPlan = {
+    val currentDate = now(clock)
+    val maybePaymentToday: Option[PaymentToday] = if (upfrontPayment > 0) Some(PaymentToday(true)) else None
+    val noUpfrontPayment = BigDecimal(0)
 
-  private def reads(implicit config: AppConfig) = Json.reads[TaxPaymentPlan]
+    val taxPaymentPlanNoUpfront = TaxPaymentPlan(
+      taxLiabilities             = taxLiabilities,
+      upfrontPayment             = noUpfrontPayment,
+      planStartDate              = currentDate,
+      maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
+      regularPaymentAmount       = regularPaymentAmount,
+      maybePaymentToday          = None
+    )(appConfig)
+
+    if (upfrontPayment > 0 && !((taxLiabilities.map(_.amount).sum - upfrontPayment) < BigDecimal.exact("32.00"))) {
+      taxPaymentPlanNoUpfront.copy(upfrontPayment    = upfrontPayment, maybePaymentToday = maybePaymentToday)
+    } else taxPaymentPlanNoUpfront
+  }
+
+  private def reads(implicit config: AppConfig): Reads[TaxPaymentPlan] = Json.reads[TaxPaymentPlan]
     .filter(JsonValidationError("'debits' was empty, it should have at least one debit."))(_.taxLiabilities.nonEmpty)
     .filter(JsonValidationError("The 'initialPayment' can't be less than 0"))(_.upfrontPayment >= 0)
 

@@ -18,10 +18,8 @@ package ssttpcalculator
 
 import config.AppConfig
 import org.scalatest.matchers.should.Matchers
-import ssttpcalculator.CalculatorService.{changePaymentPlan, makeTaxPaymentPlan}
 import ssttpcalculator.model.{PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import testsupport.{DateSupport, ItSpec}
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
@@ -59,442 +57,50 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
       val clock = clockForMay(_1st)
       val currentDate = LocalDate.now(clock)
 
-      makeTaxPaymentPlan(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      makeTaxPaymentPlan(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
     }
 
     "the current date is Thursday 7th May with upcoming bank holiday" in {
       val clock = clockForMay(_7th)
       val currentDate = LocalDate.now(clock)
-      val firstPaymentDate = Some(june(_15th))
 
-      makeTaxPaymentPlan(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      makeTaxPaymentPlan(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
     }
 
     "the current date is bank holiday Friday 8th May" in {
       val clock = clockForMay(_8th)
       val currentDate = LocalDate.now(clock)
-      val firstPaymentDate = Some(june(_15th))
 
-      makeTaxPaymentPlan(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      makeTaxPaymentPlan(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
     }
 
     "the current date is Monday 11th May" in {
       val clock = clockForMay(_11th)
       val currentDate = LocalDate.now(clock)
-      val firstPaymentDate = Some(june(_18th))
 
-      makeTaxPaymentPlan(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      makeTaxPaymentPlan(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
     }
 
     "the current date is the Monday 25th May so the payment dates roll into the next month" in {
       val clock = clockForMay(_25th)
       val currentDate = may(_25th)
-      val firstPaymentDate = july(_1st)
 
-      makeTaxPaymentPlan(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      makeTaxPaymentPlan(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-    }
-  }
-
-  "changeScheduleRequest with zero duration and no initial payment should" - {
-    "return a payment schedule request when" - {
-      "the required day of the month and the current date are the 1st" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(zeroDuration, _1st, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(1)))(appConfig)
-      }
-
-      "the required day of the month is 20 days after the current date" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(zeroDuration, _21st, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(21)))(appConfig)
-      }
-
-      "the required day of the month is more than 20 days after the current date" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(zeroDuration, _22nd, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(22)))(appConfig)
-      }
-
-      "the required day of the month and the current date are the 28th" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(zeroDuration, _28th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-      }
-
-      "the required day of the month and the current date are the 29th" in {
-        val clock = clockForMay(_29th)
-
-        changePaymentPlan(zeroDuration, _29th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_29th), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is the 28th which is in less than seven days time" in {
-        val clock = clockForMay(_22nd)
-
-        changePaymentPlan(zeroDuration, _28th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_22nd), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-      }
-
-      "the required day of the month is the 29th which is in less than seven days time" in {
-        val clock = clockForMay(_23rd)
-
-        changePaymentPlan(zeroDuration, _29th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_23rd), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is the 28th which is in 10 days time" in {
-        val clock = clockForMay(_21st)
-
-        changePaymentPlan(zeroDuration, _28th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_21st), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-      }
-
-      "the required day of the month is the 29th which is in 10 days time" in {
-        val clock = clockForMay(_22nd)
-
-        changePaymentPlan(zeroDuration, _29th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_22nd), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is less than 10 days from the current date and in the same month" in {
-        val clock = clockForMay(_15th)
-
-        changePaymentPlan(zeroDuration, _21st, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_15th), regularPaymentAmount, Some(ArrangementDayOfMonth(21)))(appConfig)
-      }
-
-      "the required day of the month is less than 10 days from the current date and in the next month" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(zeroDuration, _3rd, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(3)))(appConfig)
-      }
-
-      "the required day of the month is 10 days or more from the current date in the same month" in {
-        val clock = clockForMay(_15th)
-
-        changePaymentPlan(zeroDuration, _22nd, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_15th), regularPaymentAmount, Some(ArrangementDayOfMonth(22)))(appConfig)
-      }
-
-      "the required day of the month is 10 days or more from the current date in the next month" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(zeroDuration, _4th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(4)))(appConfig)
-      }
-    }
-  }
-
-  "changeScheduleRequest with a duration of one month and no initial payment should" - {
-    "return a payment schedule request when" - {
-      "the required day of the month and the current date are the 1st" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(oneMonthDuration, _1st, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(1)))(appConfig)
-      }
-
-      "the required day of the month is 20 days after the current date" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(oneMonthDuration, _21st, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(21)))(appConfig)
-      }
-
-      "the required day of the month is more than 20 days after the current date" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(oneMonthDuration, _22nd, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(22)))(appConfig)
-      }
-
-      "the required day of the month and the current date are the 28th" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(oneMonthDuration, _28th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-      }
-
-      "the required day of the month and the current date are the 29th" in {
-        val clock = clockForMay(_29th)
-
-        changePaymentPlan(oneMonthDuration, _29th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_29th), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is the 28th which is in less than 10 days time" in {
-        val clock = clockForMay(_22nd)
-
-        changePaymentPlan(oneMonthDuration, _28th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_22nd), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-      }
-
-      "the required day of the month is the 29th which is in less than 10 days time" in {
-        val clock = clockForMay(_23rd)
-
-        changePaymentPlan(oneMonthDuration, _29th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_23rd), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is the 28th which is in 10 days time" in {
-        val clock = clockForMay(_21st)
-
-        changePaymentPlan(oneMonthDuration, _28th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_21st), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-      }
-
-      "the required day of the month is the 29th which is in 10 days time" in {
-        val clock = clockForMay(_22nd)
-
-        changePaymentPlan(oneMonthDuration, _29th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_22nd), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is less than 10 days from the current date and in the same month" in {
-        val clock = clockForMay(_15th)
-
-        changePaymentPlan(oneMonthDuration, _21st, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_15th), regularPaymentAmount, Some(ArrangementDayOfMonth(21)))(appConfig)
-      }
-
-      "the required day of the month is less than 10 days from the current date and in the next month" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(oneMonthDuration, _3rd, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(3)))(appConfig)
-      }
-
-      "the required day of the month is 10 days or more from the current date in the same month" in {
-        val clock = clockForMay(_15th)
-
-        changePaymentPlan(oneMonthDuration, _22nd, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_15th), regularPaymentAmount, Some(ArrangementDayOfMonth(22)))(appConfig)
-      }
-
-      "the required day of the month is 10 days or more from the current date in the next month" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(oneMonthDuration, _4th, noInitialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, noInitialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(4)))(appConfig)
-      }
-    }
-  }
-
-  "changeScheduleRequest with zero duration and an initial payment should" - {
-    "return a payment schedule request when" - {
-      "the required day of the month and the current date are the 1st" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(zeroDuration, _1st, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(1)))(appConfig)
-      }
-
-      "the required day of the month is 20 days after the current date" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(zeroDuration, _21st, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(21)))(appConfig)
-      }
-
-      "the required day of the month is more than 20 days after the current date" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(zeroDuration, _22nd, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(22)))(appConfig)
-      }
-
-      "the required day of the month and the current date are the 28th" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(zeroDuration, _28th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-      }
-
-      "the required day of the month and the current date are the 29th" in {
-        val clock = clockForMay(_29th)
-
-        changePaymentPlan(zeroDuration, _29th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_29th), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is the 28th which is in less than seven days time" in {
-        val clock = clockForMay(_22nd)
-
-        changePaymentPlan(zeroDuration, _28th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_22nd), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-      }
-
-      "the required day of the month is the 29th which is in less than seven days time" in {
-        val clock = clockForMay(_23rd)
-
-        changePaymentPlan(zeroDuration, _29th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_23rd), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is the 28th which is in seven days time" in {
-        val clock = clockForMay(_21st)
-
-        changePaymentPlan(zeroDuration, _28th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_21st), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-      }
-
-      "the required day of the month is the 29th which is in seven days time" in {
-        val clock = clockForMay(_22nd)
-
-        changePaymentPlan(zeroDuration, _29th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_22nd), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is less than seven days from the current date and in the same month" in {
-        val clock = clockForMay(_15th)
-
-        changePaymentPlan(zeroDuration, _21st, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_15th), regularPaymentAmount, Some(ArrangementDayOfMonth(21)))(appConfig)
-      }
-
-      "the required day of the month is less than seven days from the current date and in the next month" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(zeroDuration, _3rd, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(3)))(appConfig)
-      }
-
-      "the required day of the month is seven days or more from the current date in the same month" in {
-        val clock = clockForMay(_15th)
-
-        changePaymentPlan(zeroDuration, _22nd, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_15th), regularPaymentAmount, Some(ArrangementDayOfMonth(22)))(appConfig)
-
-      }
-
-      "the required day of the month is seven days or more from the current date in the next month" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(zeroDuration, _4th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(4)))(appConfig)
-      }
-    }
-  }
-
-  "changeScheduleRequest with a months duration and an initial payment should" - {
-    "return a payment schedule request when" - {
-      "the required day of the month and the current date are the 1st" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(oneMonthDuration, _1st, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(1)))(appConfig)
-      }
-
-      "the required day of the month is 20 days after the current date" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(oneMonthDuration, _21st, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(21)))(appConfig)
-      }
-
-      "the required day of the month is more than 20 days after the current date" in {
-        val clock = clockForMay(_1st)
-
-        changePaymentPlan(oneMonthDuration, _22nd, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_1st), regularPaymentAmount, Some(ArrangementDayOfMonth(22)))(appConfig)
-      }
-
-      "the required day of the month and the current date are the 28th" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(oneMonthDuration, _28th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-
-      }
-
-      "the required day of the month and the current date are the 29th" in {
-        val clock = clockForMay(_29th)
-
-        changePaymentPlan(oneMonthDuration, _29th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_29th), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is the 28th which is in less than seven days time" in {
-        val clock = clockForMay(_22nd)
-
-        changePaymentPlan(oneMonthDuration, _28th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_22nd), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-
-      }
-
-      "the required day of the month is the 29th which is in less than seven days time" in {
-        val clock = clockForMay(_23rd)
-
-        changePaymentPlan(oneMonthDuration, _29th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_23rd), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is the 28th which is in seven days time" in {
-        val clock = clockForMay(_21st)
-
-        changePaymentPlan(oneMonthDuration, _28th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_21st), regularPaymentAmount, Some(ArrangementDayOfMonth(28)))(appConfig)
-
-      }
-
-      "the required day of the month is the 29th which is in seven days time" in {
-        val clock = clockForMay(_22nd)
-
-        changePaymentPlan(oneMonthDuration, _29th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_22nd), regularPaymentAmount, Some(ArrangementDayOfMonth(29)))(appConfig)
-      }
-
-      "the required day of the month is less than seven days from the current date and in the same month" in {
-        val clock = clockForMay(_15th)
-
-        changePaymentPlan(oneMonthDuration, _21st, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_15th), regularPaymentAmount, Some(ArrangementDayOfMonth(21)))(appConfig)
-
-      }
-
-      "the required day of the month is less than seven days from the current date and in the next month" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(oneMonthDuration, _3rd, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(3)))(appConfig)
-
-      }
-
-      "the required day of the month is seven days or more from the current date in the same month" in {
-        val clock = clockForMay(_15th)
-
-        changePaymentPlan(oneMonthDuration, _22nd, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_15th), regularPaymentAmount, Some(ArrangementDayOfMonth(22)))(appConfig)
-
-      }
-
-      "the required day of the month is seven days or more from the current date in the next month" in {
-        val clock = clockForMay(_28th)
-
-        changePaymentPlan(oneMonthDuration, _4th, initialPayment, debits, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
-          debits, initialPayment, planStartDate = may(_28th), regularPaymentAmount, Some(ArrangementDayOfMonth(4)))(appConfig)
-
-      }
     }
   }
 

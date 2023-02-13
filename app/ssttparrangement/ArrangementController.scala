@@ -124,7 +124,7 @@ class ArrangementController @Inject() (
       )
       Future.successful(Ok(views.instalment_plan_summary(
         journey.taxpayer.selfAssessment.debits,
-        journey.safeInitialPayment,
+        journey.safeUpfrontPayment,
         schedule
       )))
     }
