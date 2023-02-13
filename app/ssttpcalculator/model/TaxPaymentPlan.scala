@@ -16,6 +16,8 @@
 
 package ssttpcalculator.model
 
+import journey.PaymentToday
+
 import java.time.LocalDate
 import play.api.libs.json.{Json, JsonValidationError, OFormat, OWrites}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
@@ -30,7 +32,8 @@ case class TaxPaymentPlan(
     endDate:                    LocalDate,
     firstPaymentDate:           Option[LocalDate]             = None,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
-    regularPaymentAmount:       BigDecimal                    = 0
+    regularPaymentAmount:       BigDecimal                    = 0,
+    maybePaymentToday: Option[PaymentToday] = None
 ) {
   import TaxPaymentPlan._
 

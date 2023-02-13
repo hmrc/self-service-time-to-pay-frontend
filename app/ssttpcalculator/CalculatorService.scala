@@ -96,7 +96,8 @@ class CalculatorService @Inject() (
         LocalDate.parse("2017-03-11"),
         paymentsCalendar.maybeUpfrontPaymentDate,
         maybeArrangementDayOfMonth,
-        proportionOfNetMonthlyIncome)
+        proportionOfNetMonthlyIncome,
+        maybePaymentToday)
 
       schedule = buildScheduleNew(taxPaymentPlan)
     } yield schedule
@@ -124,7 +125,8 @@ class CalculatorService @Inject() (
       LocalDate.parse("2017-03-11"),
       paymentsCalendar.maybeUpfrontPaymentDate,
       journey.maybeArrangementDayOfMonth,
-      journey.maybePlanAmountSelection.getOrElse(throw new IllegalArgumentException("could not find plan amount selection but there should be one"))
+      journey.maybePlanAmountSelection.getOrElse(throw new IllegalArgumentException("could not find plan amount selection but there should be one")),
+      journey.maybePaymentToday
     )
 
     buildScheduleNew(taxPaymentPlan)
@@ -134,15 +136,22 @@ class CalculatorService @Inject() (
     val payables: Payables = Payables(taxPaymentPlan.liabilities)
     val principal = payables.liabilities.map(_.amount).sum
 
+    logger.info(s"payables: $payables")
+    logger.info(s"principal: $principal")
+
     val paymentsCalendar = paymentDatesService.paymentsCalendar(
-      maybePaymentToday          = taxPaymentPlan.firstPaymentDate.map(_ => PaymentToday(true)),
-      maybeArrangementDayOfMonth = taxPaymentPlan.maybeArrangementDayOfMonth,
+      maybePaymentToday          = taxPaymentPlan.maybePaymentToday,
+      maybeArrangementDayOfMonth = taxPaymentPlan.firstPaymentDate.map(date => ArrangementDayOfMonth(date.getDayOfMonth)),
       dateToday                  = taxPaymentPlan.startDate
     )
+
+    logger.info(s"payments:Calendar: $paymentsCalendar")
 
     val maybeInterestAccruedUpToStartDate: Option[LatePaymentInterest] = {
       totalHistoricInterest(payables, paymentsCalendar, interestService.getRatesForPeriod)
     }
+
+    logger.info(s"maybeInterestAcccruedToStartDate: $maybeInterestAccruedUpToStartDate")
 
     val hasAnInitialPayment: Boolean = taxPaymentPlan.initialPayment > 0
     val upfrontPaymentLateInterest: BigDecimal = if (hasAnInitialPayment) {
@@ -153,15 +162,21 @@ class CalculatorService @Inject() (
       BigDecimal(0)
     }
 
+    logger.info(s"hasAnInitialPayment: $hasAnInitialPayment")
+    logger.info(s"upfrontPaymentLateInterest: $upfrontPaymentLateInterest")
+
     val maybeUpfrontPaymentLateInterest: Option[LatePaymentInterest] = paymentsCalendar.maybeUpfrontPaymentDate match {
       case Some(_) => Option(LatePaymentInterest(upfrontPaymentLateInterest))
       case None    => None
     }
 
-      def payablesResetLessUpfrontPayment(
-          initialPayment: BigDecimal,
-          liabilities:    Seq[TaxLiability],
-          startDate:      LocalDate): Seq[Payable] = {
+    logger.info(s"maybeUpFrontPaymentLateInterest: $maybeUpfrontPaymentLateInterest")
+
+     def payablesResetLessUpfrontPayment(
+                                          initialPayment: BigDecimal,
+                                          liabilities:    Seq[TaxLiability],
+                                          startDate:      LocalDate
+                                        ): Seq[Payable] = {
         val result = liabilities.sortBy(_.dueDate).foldLeft((initialPayment, Seq.empty[TaxLiability])) {
           case ((p, s), lt) if p <= 0         => (p, s :+ lt.copy(dueDate = if (startDate.isBefore(lt.dueDate)) lt.dueDate else startDate))
           case ((p, s), lt) if p >= lt.amount => (p - lt.amount, s)
@@ -181,14 +196,27 @@ class CalculatorService @Inject() (
       payables.liabilities.map(Payable.payableToTaxLiability),
       paymentsCalendar.planStartDate
     )
+
+    logger.info(s"resultPayablesResetLessUpfrontAlternative: $resultPayablesResetLessUpfrontAlternative")
+
     val liabilitiesUpdated: Seq[Payable] = Seq[Option[Payable]](maybeInterestAccruedUpToStartDate, maybeUpfrontPaymentLateInterest)
       .foldLeft(resultPayablesResetLessUpfrontAlternative)((ls, maybeInterest) => maybeInterest match {
         case Some(interest) => ls :+ interest
         case None           => ls
       })
 
+    logger.info(s"liabilitiesUpdated: $liabilitiesUpdated")
+
     val payablesUpdated = Payables(liabilitiesUpdated)
+
+    logger.info(s"payablesUpdated: $payablesUpdated")
+
+    logger.info(s"tax payment plan: $taxPaymentPlan")
+
     val instalments = regularInstalments(paymentsCalendar, taxPaymentPlan.regularPaymentAmount, payablesUpdated, interestService.rateOn)
+
+    logger.info(s"instalments: $instalments")
+
     instalments match {
       case None => None
       case Some(instalments) =>
