@@ -64,4 +64,5 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val minGapBetweenPayments: Int = servicesConfig.getInt("paymentDatesConfig.minGapBetweenPayments")
   lazy val firstPaymentDayOfMonth: Int = servicesConfig.getInt("paymentDatesConfig.firstPaymentDayOfMonth")
   lazy val lastPaymentDayOfMonth: Int = servicesConfig.getInt("paymentDatesConfig.lastPaymentDayOfMonth")
+  lazy val lastPaymentDelayDays: Int = servicesConfig.getInt("paymentDatesConfig.lastPaymentDelayDays")
 }

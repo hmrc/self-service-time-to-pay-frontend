@@ -33,7 +33,7 @@ case class TaxPaymentPlan(
     firstPaymentDate:           Option[LocalDate]             = None,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
     regularPaymentAmount:       BigDecimal                    = 0,
-    maybePaymentToday: Option[PaymentToday] = None
+    maybePaymentToday:          Option[PaymentToday]          = None
 ) {
   import TaxPaymentPlan._
 

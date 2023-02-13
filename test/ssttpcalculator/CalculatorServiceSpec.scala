@@ -642,13 +642,15 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val endDate = startDate.plusMonths(3)
 
         val taxPaymentPlan = TaxPaymentPlan(
-          Seq(
-            TaxLiability(1000, startDate)
-          ),
-          0,
-          startDate,
-          endDate,
-          None)
+          liabilities = Seq(TaxLiability(1000, startDate)),
+          initialPayment = 0,
+          startDate = startDate,
+          endDate = endDate,
+          firstPaymentDate = None,
+          maybeArrangementDayOfMonth = None,
+          regularPaymentAmount = 500,
+          maybePaymentToday = None
+        )
 
         val result: PaymentSchedule = calculatorService.buildScheduleNew(taxPaymentPlan).get
 
@@ -660,13 +662,15 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         val endDate = startDate.plusMonths(6)
 
         val taxPaymentPlan = TaxPaymentPlan(
-          Seq(
-            TaxLiability(1000, startDate)
-          ),
-          0,
-          startDate,
-          endDate,
-          None)
+          liabilities = Seq(TaxLiability(1000, startDate)),
+          initialPayment = 0,
+          startDate = startDate,
+          endDate = endDate,
+          firstPaymentDate = None,
+          maybeArrangementDayOfMonth = None,
+          regularPaymentAmount = 200,
+          maybePaymentToday = None
+        )
 
         val result: PaymentSchedule = calculatorService.buildScheduleNew(taxPaymentPlan).get
 

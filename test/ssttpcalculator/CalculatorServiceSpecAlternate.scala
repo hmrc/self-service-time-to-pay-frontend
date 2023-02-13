@@ -56,14 +56,14 @@ class CalculatorServiceSpecAlternate extends ItSpec {
     s"The calculator service should, for $id calculate totalInterestCharged of $totalInterestCharged with totalPayable of $totalPayable, regularInstalmentAmount of $regularInstalmentAmount and finalInstalmentAmount of $finalInstalmentAmount" in {
 
       val calculation = TaxPaymentPlan(
-        liabilities = debits,
-        initialPayment = initialPayment,
-        startDate = startDate,
-        endDate = endDate,
-        firstPaymentDate = Some(firstPaymentDate),
+        liabilities                = debits,
+        initialPayment             = initialPayment,
+        startDate                  = startDate,
+        endDate                    = endDate,
+        firstPaymentDate           = Some(firstPaymentDate),
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(firstPaymentDate.getDayOfMonth)),
-        regularPaymentAmount = regularInstalmentAmount,
-        maybePaymentToday = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })
+        regularPaymentAmount       = regularInstalmentAmount,
+        maybePaymentToday          = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })
 
       val schedule: PaymentSchedule = calculatorService.buildScheduleNew(calculation).get
 
@@ -107,14 +107,14 @@ class CalculatorServiceSpecAlternate extends ItSpec {
     s"The calculator service should, for $id calculate a duration of $duration" in {
 
       val calculation = TaxPaymentPlan(
-        liabilities = debits,
-        initialPayment = initialPayment,
-        startDate = startDate,
-        endDate = endDate,
-        firstPaymentDate = Some(firstPaymentDate),
+        liabilities                = debits,
+        initialPayment             = initialPayment,
+        startDate                  = startDate,
+        endDate                    = endDate,
+        firstPaymentDate           = Some(firstPaymentDate),
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(firstPaymentDate.getDayOfMonth)),
-        regularPaymentAmount = regularInstalmentAmount,
-        maybePaymentToday = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })
+        regularPaymentAmount       = regularInstalmentAmount,
+        maybePaymentToday          = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })
       val schedule: PaymentSchedule = calculatorService.buildScheduleNew(calculation).get
 
       val amountPaid = schedule.instalments.map { _.amount }.sum

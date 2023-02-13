@@ -172,11 +172,11 @@ class CalculatorService @Inject() (
 
     logger.info(s"maybeUpFrontPaymentLateInterest: $maybeUpfrontPaymentLateInterest")
 
-     def payablesResetLessUpfrontPayment(
-                                          initialPayment: BigDecimal,
-                                          liabilities:    Seq[TaxLiability],
-                                          startDate:      LocalDate
-                                        ): Seq[Payable] = {
+      def payablesResetLessUpfrontPayment(
+          initialPayment: BigDecimal,
+          liabilities:    Seq[TaxLiability],
+          startDate:      LocalDate
+      ): Seq[Payable] = {
         val result = liabilities.sortBy(_.dueDate).foldLeft((initialPayment, Seq.empty[TaxLiability])) {
           case ((p, s), lt) if p <= 0         => (p, s :+ lt.copy(dueDate = if (startDate.isBefore(lt.dueDate)) lt.dueDate else startDate))
           case ((p, s), lt) if p >= lt.amount => (p - lt.amount, s)
@@ -226,7 +226,7 @@ class CalculatorService @Inject() (
         Some(PaymentSchedule(
           startDate            = paymentsCalendar.planStartDate,
           endDate              = instalments
-            .lastOption.map(_.paymentDate)
+            .lastOption.map(_.paymentDate.plusDays(appConfig.lastPaymentDelayDays))
             .getOrElse(throw new IllegalArgumentException("no instalments found to create the schedule")),
           initialPayment       = taxPaymentPlan.initialPayment,
           amountToPay          = principal,
