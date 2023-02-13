@@ -19,7 +19,7 @@ package ssttpcalculator
 import config.AppConfig
 import journey.PaymentToday
 import play.api.Logger
-import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, PaymentsCalendar, TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, TaxLiability, TaxPaymentPlan}
 import testsupport.ItSpec
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, Debit, SaUtr, SelfAssessmentDetails}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth

@@ -58,9 +58,9 @@ class CalculatorServiceSpecAlternate extends ItSpec {
     s"The calculator service should, for $id calculate totalInterestCharged of $totalInterestCharged with totalPayable of $totalPayable, regularInstalmentAmount of $regularInstalmentAmount and finalInstalmentAmount of $finalInstalmentAmount" in {
 
       val calculation = TaxPaymentPlan(
-        liabilities                = debits,
+        taxLiabilities             = debits,
         upfrontPayment             = initialPayment,
-        startDate                  = startDate,
+        planStartDate              = startDate,
         endDate                    = endDate,
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(firstPaymentDate.getDayOfMonth)),
         regularPaymentAmount       = regularInstalmentAmount,
@@ -108,9 +108,9 @@ class CalculatorServiceSpecAlternate extends ItSpec {
     s"The calculator service should, for $id calculate a duration of $duration" in {
 
       val calculation = TaxPaymentPlan(
-        liabilities                = debits,
+        taxLiabilities             = debits,
         upfrontPayment             = initialPayment,
-        startDate                  = startDate,
+        planStartDate              = startDate,
         endDate                    = endDate,
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(firstPaymentDate.getDayOfMonth)),
         regularPaymentAmount       = regularInstalmentAmount,

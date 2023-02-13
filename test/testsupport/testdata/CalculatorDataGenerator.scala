@@ -114,9 +114,9 @@ object CalculatorDataGenerator extends ItSpec with Status with DateSupport {
 
   def calculatorInput(endDate: LocalDate, firstPaymentDayOfMonth: Int): TaxPaymentPlan =
     TaxPaymentPlan(
-      liabilities    = Seq(TaxLiability(debit1Value, startDate), TaxLiability(debit2Value, startDate)),
+      taxLiabilities = Seq(TaxLiability(debit1Value, startDate), TaxLiability(debit2Value, startDate)),
       upfrontPayment = initialPayment,
-      startDate      = startDate,
+      planStartDate  = startDate,
       endDate        = endDate
     )(appConfig)
 
