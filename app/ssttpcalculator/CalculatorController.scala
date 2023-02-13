@@ -24,7 +24,6 @@ import controllers.action.Actions
 import javax.inject._
 import journey.Statuses.InProgress
 import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
-import model.{TaxPaymentPlan, PaymentSchedule}
 import play.api.mvc.{AnyContent, _}
 import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createInstalmentForm, createMonthlyAmountForm, createPaymentTodayForm, payTodayForm}

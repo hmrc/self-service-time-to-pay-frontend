@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.timetopaycalculator.services
 
+import config.AppConfig
 import journey.PaymentToday
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.api.Logger
@@ -30,9 +31,10 @@ import scala.math.BigDecimal.RoundingMode.HALF_UP
 class CalculatorServiceSpecAlternate extends ItSpec {
   private val logger = Logger(getClass)
 
-  val interestRateService = fakeApplication().injector.instanceOf[InterestRateService]
-  val durationService = fakeApplication().injector.instanceOf[DurationService]
-  val calculatorService = fakeApplication().injector.instanceOf[CalculatorService]
+  val interestRateService: InterestRateService = fakeApplication().injector.instanceOf[InterestRateService]
+  val durationService: DurationService = fakeApplication().injector.instanceOf[DurationService]
+  val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
+  val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
 
   def debit(amt: BigDecimal, due: String) = TaxLiability(amount  = amt.setScale(2), dueDate = LocalDate.parse(due))
   def date(date: String): LocalDate = LocalDate.parse(date)
@@ -57,13 +59,12 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
       val calculation = TaxPaymentPlan(
         liabilities                = debits,
-        initialPayment             = initialPayment,
+        upfrontPayment             = initialPayment,
         startDate                  = startDate,
         endDate                    = endDate,
-        firstPaymentDate           = Some(firstPaymentDate),
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(firstPaymentDate.getDayOfMonth)),
         regularPaymentAmount       = regularInstalmentAmount,
-        maybePaymentToday          = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })
+        maybePaymentToday          = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })(appConfig)
 
       val schedule: PaymentSchedule = calculatorService.schedule(calculation).get
 
@@ -108,13 +109,12 @@ class CalculatorServiceSpecAlternate extends ItSpec {
 
       val calculation = TaxPaymentPlan(
         liabilities                = debits,
-        initialPayment             = initialPayment,
+        upfrontPayment             = initialPayment,
         startDate                  = startDate,
         endDate                    = endDate,
-        firstPaymentDate           = Some(firstPaymentDate),
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(firstPaymentDate.getDayOfMonth)),
         regularPaymentAmount       = regularInstalmentAmount,
-        maybePaymentToday          = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })
+        maybePaymentToday          = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })(appConfig)
       val schedule: PaymentSchedule = calculatorService.schedule(calculation).get
 
       val amountPaid = schedule.instalments.map { _.amount }.sum

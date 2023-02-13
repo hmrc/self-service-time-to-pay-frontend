@@ -17,15 +17,16 @@
 package testsupport.testdata
 
 import java.time.LocalDate
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import config.AppConfig
 import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, stringify, toJson}
-import ssttpcalculator.model.{TaxPaymentPlan, TaxLiability, Instalment, PaymentSchedule}
-import testsupport.DateSupport
+import ssttpcalculator.model.{Instalment, PaymentSchedule, TaxLiability, TaxPaymentPlan}
+import testsupport.{DateSupport, ItSpec}
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
-object CalculatorDataGenerator extends Status with DateSupport {
+object CalculatorDataGenerator extends ItSpec with Status with DateSupport {
   val eightMonthScheduleRegularPaymentAmount = 637
   val sevenMonthScheduleRegularPaymentAmount = 700
   val sixMonthScheduleRegularPaymentAmount = 816.67
@@ -47,74 +48,77 @@ object CalculatorDataGenerator extends Status with DateSupport {
 
   private val LastPaymentDelayDays = 7
 
-  def generateSchedules(paymentDayOfMonth: Int = _25th, firstPaymentDayOfMonth: Int = _2nd): StubMapping = {
-      def paymentDate(month: Int) = LocalDate.of(nextYear, month, paymentDayOfMonth)
+  val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
 
-    val firstPaymentDate = LocalDate.of(thisYear, december, paymentDayOfMonth)
-    val januaryPaymentDate = paymentDate(january)
-    val februaryPaymentDate = paymentDate(february)
-    val marchPaymentDate = paymentDate(march)
-    val aprilPaymentDate = paymentDate(april)
-    val mayPaymentDate = paymentDate(may)
-    val junePaymentDate = paymentDate(june)
-    val julyPaymentDate = paymentDate(july)
-
-    generateSchedule(
-      paymentSchedule(List(firstPaymentDate), twoMonthScheduleRegularPaymentAmount, finalInstalment = januaryPaymentDate),
-      firstPaymentDayOfMonth)
-    generateSchedule(
-      paymentSchedule(
-        List(firstPaymentDate, januaryPaymentDate), threeMonthScheduleRegularPaymentAmount, finalInstalment = februaryPaymentDate),
-      firstPaymentDayOfMonth)
-    generateSchedule(
-      paymentSchedule(
-        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate),
-        fourMonthScheduleRegularPaymentAmount,
-        finalInstalment = marchPaymentDate),
-      firstPaymentDayOfMonth)
-    generateSchedule(
-      paymentSchedule(
-        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate),
-        fiveMonthScheduleRegularPaymentAmount,
-        finalInstalment = aprilPaymentDate),
-      firstPaymentDayOfMonth)
-    generateSchedule(
-      paymentSchedule(
-        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate, aprilPaymentDate),
-        sixMonthScheduleRegularPaymentAmount,
-        finalInstalment = mayPaymentDate),
-      firstPaymentDayOfMonth)
-    generateSchedule(
-      paymentSchedule(
-        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate, aprilPaymentDate, mayPaymentDate),
-        sevenMonthScheduleRegularPaymentAmount,
-        finalInstalment = junePaymentDate),
-      firstPaymentDayOfMonth)
-    generateSchedule(
-      paymentSchedule(
-        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate, aprilPaymentDate, mayPaymentDate, junePaymentDate),
-        eightMonthScheduleRegularPaymentAmount,
-        finalInstalment = julyPaymentDate),
-      firstPaymentDayOfMonth)
-  }
-
-  private def generateSchedule(schedule: PaymentSchedule, firstPaymentDayOfMonth: Int) =
-    stubFor(
-      post(urlPathEqualTo("/time-to-pay-calculator/paymentschedule"))
-        .withRequestBody(equalToJson(stringify(toJson(calculatorInput(schedule.endDate, firstPaymentDayOfMonth)))))
-        .willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(prettyPrint(toJson(schedule))))
-    )
+  // TODO [OPS-8650]: Not used in new journey - update or remove when finalising new journey
+  //  def generateSchedules(paymentDayOfMonth: Int = _25th, firstPaymentDayOfMonth: Int = _2nd): StubMapping = {
+  //      def paymentDate(month: Int) = LocalDate.of(nextYear, month, paymentDayOfMonth)
+  //
+  //    val firstPaymentDate = LocalDate.of(thisYear, december, paymentDayOfMonth)
+  //    val januaryPaymentDate = paymentDate(january)
+  //    val februaryPaymentDate = paymentDate(february)
+  //    val marchPaymentDate = paymentDate(march)
+  //    val aprilPaymentDate = paymentDate(april)
+  //    val mayPaymentDate = paymentDate(may)
+  //    val junePaymentDate = paymentDate(june)
+  //    val julyPaymentDate = paymentDate(july)
+  //
+  //    generateSchedule(
+  //      paymentSchedule(List(firstPaymentDate), twoMonthScheduleRegularPaymentAmount, finalInstalment = januaryPaymentDate),
+  //      firstPaymentDayOfMonth)
+  //    generateSchedule(
+  //      paymentSchedule(
+  //        List(firstPaymentDate, januaryPaymentDate), threeMonthScheduleRegularPaymentAmount, finalInstalment = februaryPaymentDate),
+  //      firstPaymentDayOfMonth)
+  //    generateSchedule(
+  //      paymentSchedule(
+  //        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate),
+  //        fourMonthScheduleRegularPaymentAmount,
+  //        finalInstalment = marchPaymentDate),
+  //      firstPaymentDayOfMonth)
+  //    generateSchedule(
+  //      paymentSchedule(
+  //        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate),
+  //        fiveMonthScheduleRegularPaymentAmount,
+  //        finalInstalment = aprilPaymentDate),
+  //      firstPaymentDayOfMonth)
+  //    generateSchedule(
+  //      paymentSchedule(
+  //        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate, aprilPaymentDate),
+  //        sixMonthScheduleRegularPaymentAmount,
+  //        finalInstalment = mayPaymentDate),
+  //      firstPaymentDayOfMonth)
+  //    generateSchedule(
+  //      paymentSchedule(
+  //        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate, aprilPaymentDate, mayPaymentDate),
+  //        sevenMonthScheduleRegularPaymentAmount,
+  //        finalInstalment = junePaymentDate),
+  //      firstPaymentDayOfMonth)
+  //    generateSchedule(
+  //      paymentSchedule(
+  //        List(firstPaymentDate, januaryPaymentDate, februaryPaymentDate, marchPaymentDate, aprilPaymentDate, mayPaymentDate, junePaymentDate),
+  //        eightMonthScheduleRegularPaymentAmount,
+  //        finalInstalment = julyPaymentDate),
+  //      firstPaymentDayOfMonth)
+  //  }
+  //
+  //  private def generateSchedule(schedule: PaymentSchedule, firstPaymentDayOfMonth: Int) =
+  //    stubFor(
+  //      post(urlPathEqualTo("/time-to-pay-calculator/paymentschedule"))
+  //        .withRequestBody(equalToJson(stringify(toJson(calculatorInput(schedule.endDate, firstPaymentDayOfMonth))))
+  //        .willReturn(
+  //          aResponse()
+  //            .withStatus(OK)
+  //            .withBody(prettyPrint(toJson(schedule))))
+  //    ))
 
   def calculatorInput(endDate: LocalDate, firstPaymentDayOfMonth: Int): TaxPaymentPlan =
     TaxPaymentPlan(
-      Seq(TaxLiability(debit1Value, startDate), TaxLiability(debit2Value, startDate)),
-      initialPayment,
-      startDate,
-      endDate,
-      Some(LocalDate.of(thisYear, december, firstPaymentDayOfMonth)))
+      liabilities    = Seq(TaxLiability(debit1Value, startDate), TaxLiability(debit2Value, startDate)),
+      upfrontPayment = initialPayment,
+      startDate      = startDate,
+      endDate        = endDate
+    )(appConfig)
 
   private def paymentSchedule(regularInstalments: List[LocalDate], regularPayment: BigDecimal, finalInstalment: LocalDate) = {
     val finalPayment = totalDebt - (regularPayment * regularInstalments.size)

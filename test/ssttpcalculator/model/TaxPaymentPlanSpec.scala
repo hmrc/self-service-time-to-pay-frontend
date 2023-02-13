@@ -16,20 +16,27 @@
 
 package ssttpcalculator.model
 
+import config.AppConfig
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import testsupport.ItSpec
 
 import java.time.Month
 import java.time.LocalDate
 
-class TaxPaymentPlanSpec extends AnyWordSpec with Matchers {
+class TaxPaymentPlanSpec extends ItSpec with Matchers {
 
-  "A TaxPaymentPlan" when {
-    "the plan has an initial payment and has not provide an initial payment date" should {
+  val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
+
+  "A TaxPaymentPlan when" - {
+    "the plan has an initial payment and has not provide an initial payment date should" - {
       val liabilities = List(TaxLiability(BigDecimal(3559.20), LocalDate.of(2022, Month.JANUARY, 31)),
                              TaxLiability(BigDecimal(1779.60), LocalDate.of(2022, Month.JANUARY, 31)),
                              TaxLiability(BigDecimal(1779.60), LocalDate.of(2022, Month.JULY, 31)))
-      val plan = TaxPaymentPlan(liabilities, BigDecimal(4000.00), LocalDate.of(2021, Month.OCTOBER, 28), LocalDate.of(2022, Month.FEBRUARY, 28))
+      val plan = TaxPaymentPlan(
+        liabilities,
+        BigDecimal(4000.00),
+        LocalDate.of(2021, Month.OCTOBER, 28),
+        LocalDate.of(2022, Month.FEBRUARY, 28))(appConfig)
       "remove liabilities covered by the initial payment" in {
         plan.outstandingLiabilities.size shouldBe 2
       }
