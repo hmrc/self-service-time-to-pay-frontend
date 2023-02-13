@@ -90,17 +90,21 @@ class CalculatorService @Inject() (
       proportionOfNetMonthlyIncome <- proportionsOfNetMonthlyIncome
 
       taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
-        payables.liabilities.map(Payable.payableToTaxLiability),
-        initialPayment,
-        paymentsCalendar.planStartDate,
-        LocalDate.parse("2017-03-11"),
-        paymentsCalendar.maybeUpfrontPaymentDate,
-        maybeArrangementDayOfMonth,
-        proportionOfNetMonthlyIncome,
+        liabilities                = payables.liabilities.map(Payable.payableToTaxLiability),
+        initialPayment             = initialPayment,
+        startDate                  = paymentsCalendar.planStartDate,
+        endDate                    = LocalDate.parse("2060-03-11"),
+        firstPaymentDate           = Some(paymentsCalendar.regularPaymentDates.headOption
+          .getOrElse(throw new IllegalArgumentException("could not find first regular payment date, but there should be one"))
+        ),
+        maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
+        regularPaymentAmount       = proportionOfNetMonthlyIncome * remainingIncomeAfterSpending,
         maybePaymentToday)
 
       schedule = buildScheduleNew(taxPaymentPlan)
     } yield schedule
+
+    logger.info(s"HERE HERE HERE HERE schedules: $schedules")
 
     schedules.flatten
   }
@@ -122,9 +126,10 @@ class CalculatorService @Inject() (
       payables.liabilities.map(Payable.payableToTaxLiability),
       journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
       paymentsCalendar.planStartDate,
-      LocalDate.parse("2017-03-11"),
-      paymentsCalendar.maybeUpfrontPaymentDate,
-      journey.maybeArrangementDayOfMonth,
+      LocalDate.parse("2060-03-11"),
+      Some(paymentsCalendar.regularPaymentDates.headOption
+        .getOrElse(throw new IllegalArgumentException("could not find first regular payment date, but there should be one"))
+      ), journey.maybeArrangementDayOfMonth,
       journey.maybePlanAmountSelection.getOrElse(throw new IllegalArgumentException("could not find plan amount selection but there should be one")),
       journey.maybePaymentToday
     )
