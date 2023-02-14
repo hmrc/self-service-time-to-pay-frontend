@@ -273,7 +273,7 @@ ssttp.arrangement.sole_signatory.error = Dewiswch ‘Iawn’ os mai chi yw deili
 
 ssttp.arrangement.change_day.title = Ar ba ddiwrnod a ydych eisiau talu bob mis?
 ssttp.arrangement.change_day.error.summary.title = Mae problem wedi codi
-ssttp.arrangement.change_day.payment-day.required = Dewiswch ar ba ddiwrnod rydych am dalu bob mis
+ssttp.arrangement.change_day.payment-day.required = Nodwch rif rhwng 1 a 28
 ssttp.arrangement.change_day.payment-day.out-of-range = Nodwch rif rhwng 1 a 28
 ssttp.arrangement.change_day.payment-day.continue = Yn eich blaen
 ssttp.arrangement.change_day.payment-day.change.take-payment-on = Newid dydd
