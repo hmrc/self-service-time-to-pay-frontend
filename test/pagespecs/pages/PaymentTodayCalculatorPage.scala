@@ -44,12 +44,6 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
 
   def assertErrorIsDisplayed: Assertion = probing {
     readPath() shouldBe path
-
-    println("actual")
-    println(readMain().stripSpaces)
-    println("expected")
-    println(Expected.TextError())
-
     readMain().stripSpaces shouldBe Expected.TextError().stripSpaces()
   }
 

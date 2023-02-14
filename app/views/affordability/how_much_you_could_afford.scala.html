@@ -94,7 +94,7 @@
                         else if (total < 0) {Html(messages("ssttp.affordability.how-much-you-could-afford.leftover-negative.p"))})
                 </p>
 
-        @viewsHelpers.form(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford(), 'id -> "how-much-you-could-afford") {
+        @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getCalculateInstalments(), 'id -> "how-much-you-could-afford") {
             @viewsHelpers.continue()
         }
     }

@@ -54,7 +54,7 @@ class InspectorController @Inject() (
       List(
         "debitDate" -> maybeJourney.flatMap(_.debitDate).json,
         "taxpayer" -> maybeJourney.flatMap(_.maybeTaxpayer).json,
-        "schedule" -> Try(maybeJourney.map(calculatorService.computeSchedule(_))).toOption.json,
+        "schedule" -> Try(maybeJourney.map(calculatorService.selectedSchedule(_))).toOption.json,
         "bankDetails" -> maybeJourney.flatMap(_.maybeBankDetails).json,
         "existingDDBanks" -> maybeJourney.flatMap(_.existingDDBanks).json,
         "eligibilityStatus" -> maybeJourney.map(_.maybeEligibilityStatus).json
