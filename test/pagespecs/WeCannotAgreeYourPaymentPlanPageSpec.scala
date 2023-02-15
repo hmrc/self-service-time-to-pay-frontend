@@ -120,6 +120,20 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    startAffordabilityPage.backButtonHref shouldBe Some(s"${baseUrl.value}${startAffordabilityPage.path}")
+    addIncomeSpendingPage.assertPageIsDisplayed
+
+    addIncomeSpendingPage.clickOnWelshLink()
+    addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
+
+    addIncomeSpendingPage.clickOnEnglishLink()
+    addIncomeSpendingPage.assertPageIsDisplayed(English)
+
+    addIncomeSpendingPage.enterIncome("1000")
+    addIncomeSpendingPage.enterSpending("2000")
+
+    howMuchYouCouldAffordPage.clickContinue()
+
+    weCannotAgreeYourPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
   }
 }
