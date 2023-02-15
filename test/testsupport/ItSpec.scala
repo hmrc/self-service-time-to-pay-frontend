@@ -116,6 +116,7 @@ class ItSpec
   lazy val addIncomeSpendingPage: AddIncomeSpendingPage = wire[AddIncomeSpendingPage]
   lazy val yourMonthlySpendingPage: YourMonthlySpendingPage = wire[YourMonthlySpendingPage]
   lazy val howMuchYouCouldAffordPage: HowMuchYouCouldAffordPage = wire[HowMuchYouCouldAffordPage]
+  lazy val weCannotAgreeYourPaymentPlanPage: WeCannotAgreeYourPaymentPlanPage= wire[WeCannotAgreeYourPaymentPlanPage]
   lazy val calculatorInstalmentsPage28thDay: CalculatorInstalmentsPage28thDay = wire[CalculatorInstalmentsPage28thDay]
   lazy val calculatorInstalmentsPage11thDay: CalculatorInstalmentsPage11thDay = wire[CalculatorInstalmentsPage11thDay]
   lazy val selectDatePage: InstalmentSummarySelectDatePage = wire[InstalmentSummarySelectDatePage]
