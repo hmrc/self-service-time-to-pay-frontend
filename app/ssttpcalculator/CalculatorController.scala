@@ -153,11 +153,15 @@ class CalculatorController @Inject() (
         journey.remainingIncomeAfterSpending
       )
 
-      Ok(views.calculate_instalments_form(
-        routes.CalculatorController.submitCalculateInstalments(),
-        createInstalmentForm(),
-        paymentPlanOptions
-      ))
+      if (paymentPlanOptions.isEmpty) {
+        Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
+      } else {
+        Ok(views.calculate_instalments_form(
+          routes.CalculatorController.submitCalculateInstalments(),
+          createInstalmentForm(),
+          paymentPlanOptions
+        ))
+      }
     }
   }
 
