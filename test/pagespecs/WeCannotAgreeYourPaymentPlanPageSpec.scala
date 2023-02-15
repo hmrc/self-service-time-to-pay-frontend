@@ -109,6 +109,28 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
       addIncomeSpendingPage.clickOnEnglishLink()
       addIncomeSpendingPage.assertPageIsDisplayed(English)
 
+      addIncomeSpendingPage.enterIncome("10")
+      addIncomeSpendingPage.enterSpending("2")
+
+      howMuchYouCouldAffordPage.clickContinue()
+
+      weCannotAgreeYourPaymentPlanPage.assertPageIsDisplayed()
+    }
+  }
+
+  "when the payment plan is longer than 24 months" - {
+    "language" in {
+      beginJourney()
+
+      addIncomeSpendingPage.assertPageIsDisplayed
+
+      addIncomeSpendingPage.clickOnWelshLink()
+      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
+
+      addIncomeSpendingPage.clickOnEnglishLink()
+      addIncomeSpendingPage.assertPageIsDisplayed(English)
+
       addIncomeSpendingPage.enterIncome("1000")
       addIncomeSpendingPage.enterSpending("2000")
 
