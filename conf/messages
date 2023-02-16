@@ -158,6 +158,22 @@ ssttp.affordability.how-much-you-could-afford.leftover-zero.p = As your spending
 ssttp.affordability.how-much-you-could-afford.leftover-negative.h2 = Your spending is higher than your income
 ssttp.affordability.how-much-you-could-afford.leftover-negative.p = As your spending is higher than your income, call the Payment Support Service on <strong>0300 200 3835</strong> to discuss your debt. You may also want to seek independent debt advice.
 
+ssttp.affordability.we-cannot-agree-your-pp.h1 = We cannot agree your payment plan online
+ssttp.affordability.we-cannot-agree-your-pp.p1 = The amounts you have entered for your income and spending mean you cannot set up a payment plan online.
+ssttp.affordability.we-cannot-agree-your-pp.p2 = Have you entered the information correctly? You can
+ssttp.affordability.we-cannot-agree-your-pp.p2-link = change your income and spending.
+ssttp.affordability.we-cannot-agree-your-pp.p3 = You may be able to set up a payment plan over the phone. Call us on <strong>0300 123 1813</strong> to discuss your options.
+ssttp.affordability.we-cannot-agree-your-pp.p4 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
+ssttp.affordability.we-cannot-agree-your-pp.h2 = If you need extra support
+ssttp.affordability.we-cannot-agree-your-pp.p5 = Find out the different ways to
+ssttp.affordability.we-cannot-agree-your-pp.p5-link = deal with HMRC if you need some help.
+ssttp.affordability.we-cannot-agree-your-pp.p6a = You can also use
+ssttp.affordability.we-cannot-agree-your-pp.p6-link = Relay UK
+ssttp.affordability.we-cannot-agree-your-pp.p6b = if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
+ssttp.affordability.we-cannot-agree-your-pp.p7 = If you are outside the UK: <strong>+44 2890 538 192</strong>
+ssttp.affordability.we-cannot-agree-your-pp.go-to-tax-account = Go to tax account
+
+
 #calculator
 
 ssttp.calculator.form.payment_summary.title = Payment summary

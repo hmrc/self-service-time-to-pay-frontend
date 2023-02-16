@@ -94,7 +94,12 @@
                         else if (total < 0) {Html(messages("ssttp.affordability.how-much-you-could-afford.leftover-negative.p"))})
                 </p>
 
-        @viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getCalculateInstalments(), 'id -> "how-much-you-could-afford") {
-            @viewsHelpers.continue()
+    @(if (total <= 0) {
+        viewsHelpers.form(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP(), 'id -> "we-cannot-agree-your-pp") {
+            viewsHelpers.continue()
         }
+            } else { viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getCalculateInstalments(), 'id -> "how-much-you-could-afford") {
+            viewsHelpers.continue()
+        }
+        })
     }

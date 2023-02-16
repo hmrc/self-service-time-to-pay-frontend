@@ -210,4 +210,9 @@ class AffordabilityController @Inject() (
     }
   }
 
+  def getWeCannotAgreeYourPP: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"getWeCannotAgreeYourPP: $request")
+    Ok(views.we_cannot_agree_your_pp(isSignedIn, isWelsh))
+  }
+
 }
