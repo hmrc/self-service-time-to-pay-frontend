@@ -75,7 +75,7 @@
             attributes = Map("id" -> "chosen-month"),
             items = schedules.map ( schedule => {
                 RadioItem(
-                    id = Some(schedule.durationInMonths.toString),
+                    id = Some(schedule.getMonthlyInstalment.toString),
                     value = Some((if (schedule.durationInMonths < 0) 12 + schedule.durationInMonths else schedule.durationInMonths).toString),
                     content = HtmlContent(
                         instalment_by_month_label(schedule)
