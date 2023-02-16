@@ -129,8 +129,21 @@
             <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.results.title")</h1>
         </legend>
 
+<<<<<<< HEAD
         <p class="govuk-body">@messages("ssttp.calculator.results.p1")</p>
         <p class="govuk-body">@messages("ssttp.calculator.results.p2")</p>
+=======
+        @radios(Radios(
+            name = "chosen-month",
+            attributes = Map("id" -> "chosen-month"),
+            items = schedules.map ( schedule => {
+                RadioItem(
+                    id = Some(schedule.getMonthlyInstalment.toString),
+                    value = Some((if (schedule.durationInMonths < 0) 12 + schedule.durationInMonths else schedule.durationInMonths).toString),
+                    content = HtmlContent(
+                        instalment_by_month_label(schedule)
+                    ),
+>>>>>>> 61a531e3 ([AM][OPS-8650] change payment plan option radio button id to monthly instalment to fix drop down bug)
 
         @radios(Radios(
             name = "plan-selection",
