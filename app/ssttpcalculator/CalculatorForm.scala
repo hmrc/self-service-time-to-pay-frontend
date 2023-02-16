@@ -69,27 +69,26 @@ object CalculatorForm {
           Try(BigDecimal(i)).isFailure || BigDecimal(i) >= min && BigDecimal(i) <= max
         }))(text => MonthlyAmountForm(text))(bd => Some(bd.amount.toString)))
 
-  private val chosenMonthFormatter: Formatter[String] = new Formatter[String] {
+  private val chosenRegularAmountFormatter: Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
-      val month = data.get(key) match {
+      val amount = data.get(key) match {
         case None => data.get(key + ".value")
         case x    => x
       }
 
-      //todo add in values for max allowed months in here
-      month match {
+      amount match {
         case Some(value) if Try(BigDecimal(value)).isSuccess => Right(value)
-        case _ => Left(Seq(FormError(key, "ssttp.calculator.results.month.required")))
+        case _ => Left(Seq(FormError(key, "ssttp.calculator.results.amount.required")))
       }
     }
 
     override def unbind(key: String, value: String): Map[String, String] = Map(key + ".value" -> value.toString)
   }
 
-  val chosenMonthMapping: Mapping[String] = Forms.of[String](chosenMonthFormatter)
+  val chosenRegularAmountMapping: Mapping[String] = Forms.of[String](chosenRegularAmountFormatter)
 
-  def createInstalmentForm(): Form[CalculatorDuration] =
-    Form(mapping("chosen-month" -> chosenMonthMapping)(text => CalculatorDuration(text.toInt))(_ => Some(text.toString)))
+  def createInstalmentForm(): Form[PlanRegularAmountSelection] =
+    Form(mapping("chosen-regular-amount" -> chosenRegularAmountMapping)(text => PlanRegularAmountSelection(text.toInt))(_ => Some(text.toString)))
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)

@@ -174,7 +174,7 @@ class CalculatorController @Inject() (
         sa,
         journey.safeUpfrontPayment,
         journey.maybeArrangementDayOfMonth,
-        journey.planAmountSelection
+        journey.remainingIncomeAfterSpending
       )
 
       createInstalmentForm().bindFromRequest().fold(
@@ -187,8 +187,8 @@ class CalculatorController @Inject() (
                 paymentPlanOptions))
           )
         },
-        (validFormData: CalculatorDuration) =>
-          journeyService.saveJourney(journey.copy(maybeCalculatorDuration = Some(validFormData))).map { _ =>
+        (validFormData: PlanRegularAmountSelection) =>
+          journeyService.saveJourney(journey.copy(maybeRegularPlanAmountSelection = Some(validFormData))).map { _ =>
             Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
           }
       )

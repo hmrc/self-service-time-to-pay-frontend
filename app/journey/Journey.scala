@@ -70,22 +70,22 @@ final case class Journey(
     maybeBankDetails:          Option[BankDetails]             = None,
     existingDDBanks:           Option[DirectDebitInstructions] = None,
 
-    maybeTaxpayer:              Option[Taxpayer]              = None,
-    maybePaymentToday:          Option[PaymentToday]          = None,
-    maybePaymentTodayAmount:    Option[PaymentTodayAmount]    = None,
-    maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
-    maybeIncome:                Option[Income]                = None,
-    maybeSpending:              Option[Spending]              = None,
-    maybePlanAmountSelection:   Option[BigDecimal]            = Some(2000), // TODO OPS-8654 - connect to calculator form, then set default to None: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration
-    maybeCalculatorDuration:    Option[CalculatorDuration]    = None, // TODO OPS-8654 - remove: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
-    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
-    maybeEligibilityStatus:     Option[EligibilityStatus]     = None,
-    debitDate:                  Option[LocalDate]             = None,
-    ddRef:                      Option[String]                = None,
-    maybeSaUtr:                 Option[String]                = None
+    maybeTaxpayer:                   Option[Taxpayer]                   = None,
+    maybePaymentToday:               Option[PaymentToday]               = None,
+    maybePaymentTodayAmount:         Option[PaymentTodayAmount]         = None,
+    maybeMonthlyPaymentAmount:       Option[BigDecimal]                 = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
+    maybeIncome:                     Option[Income]                     = None,
+    maybeSpending:                   Option[Spending]                   = None,
+    maybeRegularPlanAmountSelection: Option[PlanRegularAmountSelection] = Some(PlanRegularAmountSelection(2000)), // TODO OPS-8654 - connect to calculator form, then set default to None: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration
+    maybeCalculatorDuration:         Option[CalculatorDuration]         = None, // TODO OPS-8654 - remove: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
+    maybeArrangementDayOfMonth:      Option[ArrangementDayOfMonth]      = None,
+    maybeEligibilityStatus:          Option[EligibilityStatus]          = None,
+    debitDate:                       Option[LocalDate]                  = None,
+    ddRef:                           Option[String]                     = None,
+    maybeSaUtr:                      Option[String]                     = None
 ) extends HasId[JourneyId] {
 
-  def planAmountSelection: BigDecimal = maybePlanAmountSelection.getOrElse(
+  def planRegularAmountSelection: PlanRegularAmountSelection = maybeRegularPlanAmountSelection.getOrElse(
     throw new RuntimeException(s"Expected 'regular payment amount' selected by customer but was not found. [${_id}] [$this]")
   )
   def taxpayer: Taxpayer = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [$this]"))
@@ -112,7 +112,7 @@ final case class Journey(
     require(maybeTaxpayer.isDefined, s"'taxpayer' has to be defined at this stage of a journey [$this]")
     require(maybePaymentToday.isDefined, s"'maybePaymentToday' has to be defined at this stage of a journey [$this]")
     require(maybeMonthlyPaymentAmount.isDefined, s"'maybeMonthlyPaymentAmount' has to be defined at this stage of a journey [$this]")
-    require(maybeCalculatorDuration.isDefined, s"'maybeCalculatorDuration' has to be defined at this stage of a journey [$this]")
+    require(maybeRegularPlanAmountSelection.isDefined, s"'maybeRegularPlanAmountSelection' has to be defined at this stage of a journey [$this]")
     require(maybeArrangementDayOfMonth.isDefined, s"'maybeArrangementDayOfMonth' has to be defined at this stage of a journey [$this]")
   }
 
