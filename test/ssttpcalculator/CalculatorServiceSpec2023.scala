@@ -37,7 +37,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
   implicit val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
 
   private def fixedClock = {
-    val currentDateTime = LocalDateTime.parse("2020-05-01T00:00:00.880").toInstant(UTC)
+    val currentDateTime = LocalDateTime.parse("2020-05-02T00:00:00.880").toInstant(UTC)
     Clock.fixed(currentDateTime, systemDefault)
   }
 
@@ -46,13 +46,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
   def approximatelyEqual(a: BigDecimal, b: BigDecimal): Boolean = (a - b) < threshold && (b - a) < threshold
 
   val threshold = 0.000001
-
-  def interestSincePlanStartDate(interestRateCalculator: LocalDate => InterestRate)(startDate: LocalDate, payment: Payment): BigDecimal = {
-    val currentInterestRate = interestRateCalculator(startDate).rate
-    val currentDailyRate = currentInterestRate / BigDecimal(Year.of(startDate.getYear).length()) / BigDecimal(100)
-    val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(startDate, payment.date))
-    payment.amount * currentDailyRate * daysInterestToCharge
-  }
 
   val fixedToday: LocalDate = date("2023-03-01")
 
@@ -662,9 +655,53 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
 
           result.length shouldBe 2
+        }
+      }
+      "if a plan at 50% of remaining income would be more than 24 months, return no plans at all" - {
+        "for example £3000 to pay, with £200 left over income" in {
+          val sa = SelfAssessmentDetails(
+            SaUtr("saUtr"),
+            CommunicationPreferences(false, false, false, false),
+            Seq(
+              Debit("originCode", 1000, date("2020-01-31"), None, date("2019-04-05")),
+              Debit("originCode", 1000, date("2020-01-31"), None, date("2020-04-01")),
+              Debit("originCode", 1000, date("2020-07-31"), None, date("2020-04-05"))
+            ),
+            Seq()
+          )
+
+          val initialPayment = 0
+          val preferredPaymentDay = Some(ArrangementDayOfMonth(28))
+          val remainingIncomeAfterSpending = 200
+
+          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
+
+          result.length shouldBe 0
+        }
+        "for example £3000 to pay, with £220 left over income" in {
+          val sa = SelfAssessmentDetails(
+            SaUtr("saUtr"),
+            CommunicationPreferences(false, false, false, false),
+            Seq(
+              Debit("originCode", 1000, date("2020-01-31"), None, date("2019-04-05")),
+              Debit("originCode", 1000, date("2020-01-31"), None, date("2020-04-01")),
+              Debit("originCode", 1000, date("2020-07-31"), None, date("2020-04-05"))
+            ),
+            Seq()
+          )
+
+          val initialPayment = 0
+          val preferredPaymentDay = Some(ArrangementDayOfMonth(28))
+          val remainingIncomeAfterSpending = 220
+
+          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
+
+          result.length shouldBe 0
 
         }
       }
+
+
     }
   }
 }

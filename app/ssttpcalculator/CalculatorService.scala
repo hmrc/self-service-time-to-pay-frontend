@@ -62,6 +62,8 @@ class CalculatorService @Inject() (
       selfAssessmentDebit <- sa.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
 
+    logger.info(s"$this tax liabilities: $taxLiabilities")
+
     val firstTaxPaymentPlan = TaxPaymentPlan.safeNew(
       taxLiabilities             = taxLiabilities,
       upfrontPayment             = upfrontPayment,
@@ -69,19 +71,25 @@ class CalculatorService @Inject() (
       maybeArrangementDayOfMonth = maybeArrangementDayOfMonth
     )(clock, appConfig)
 
+    logger.info(s"$this tax liabilities: $taxLiabilities")
+
     val firstSchedule = schedule(firstTaxPaymentPlan)
+    logger.info(s"$this first schedule (50%): $firstSchedule")
     firstSchedule match {
+      case None => List()
       case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule).flatten
       case _ =>
         val secondTaxPaymentPlan = firstTaxPaymentPlan
           .copy(regularPaymentAmount = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending)(appConfig)
         val secondSchedule = schedule(secondTaxPaymentPlan)
+        logger.info(s"$this second schedule (60%): $secondSchedule")
         secondSchedule match {
           case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule, secondSchedule).flatten
           case _ =>
             val thirdTaxPaymentPlan = secondTaxPaymentPlan
               .copy(regularPaymentAmount = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending)(appConfig)
             val thirdSchedule = schedule(thirdTaxPaymentPlan)
+            logger.info(s"$this third schedule (80%): $thirdSchedule")
             List(firstSchedule, secondSchedule, thirdSchedule).flatten
         }
     }
