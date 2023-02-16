@@ -62,8 +62,6 @@ class CalculatorService @Inject() (
       selfAssessmentDebit <- sa.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
 
-    logger.info(s"$this tax liabilities: $taxLiabilities")
-
     val firstTaxPaymentPlan = TaxPaymentPlan.safeNew(
       taxLiabilities             = taxLiabilities,
       upfrontPayment             = upfrontPayment,

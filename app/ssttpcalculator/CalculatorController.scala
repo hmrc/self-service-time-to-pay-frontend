@@ -152,6 +152,7 @@ class CalculatorController @Inject() (
         journey.maybeArrangementDayOfMonth,
         journey.remainingIncomeAfterSpending
       )
+
       if (paymentPlanOptions.isEmpty) {
         Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
       } else {
