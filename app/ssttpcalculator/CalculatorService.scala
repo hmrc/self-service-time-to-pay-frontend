@@ -71,6 +71,7 @@ class CalculatorService @Inject() (
 
     val firstSchedule = schedule(firstTaxPaymentPlan)
     firstSchedule match {
+      case None => List()
       case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule).flatten
       case _ =>
         val secondTaxPaymentPlan = firstTaxPaymentPlan
