@@ -152,13 +152,6 @@ class CalculatorController @Inject() (
         journey.maybeArrangementDayOfMonth,
         journey.remainingIncomeAfterSpending
       )
-
-      JourneyLogger.info(s"Self Assessment Details: ${sa}")
-      JourneyLogger.info(s"Safe Upfront Payment: ${journey.safeUpfrontPayment}")
-      JourneyLogger.info(s"Arrangment Day of Month: ${journey.maybeArrangementDayOfMonth}")
-      JourneyLogger.info(s"Remaining Income After Spending: ${journey.remainingIncomeAfterSpending}")
-      JourneyLogger.info(s"Payment Plan Options: $paymentPlanOptions")
-
       if (paymentPlanOptions.isEmpty) {
         Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
       } else {

@@ -122,6 +122,7 @@ class ArrangementController @Inject() (
       val schedule: PaymentSchedule = calculatorService.selectedSchedule(journey).getOrElse(
         throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
       )
+      JourneyLogger.info(s"$this schedule: $schedule")
       Future.successful(Ok(views.instalment_plan_summary(
         journey.taxpayer.selfAssessment.debits,
         journey.safeUpfrontPayment,
