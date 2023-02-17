@@ -46,6 +46,7 @@ import javax.inject._
 import scala.concurrent.Future.successful
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.math.BigDecimal.exact
 
 class ArrangementController @Inject() (
@@ -351,7 +352,7 @@ class ArrangementController @Inject() (
     val lastInstalment: Instalment = schedule.lastInstallment
     val firstInstalment: Instalment = schedule.firstInstallment
 
-    val totalLiability = schedule.instalments.map(_.amount).sum + schedule.initialPayment
+    val totalLiability = (schedule.instalments.map(_.amount).sum + schedule.initialPayment).setScale(2, HALF_UP)
 
     val pp = PaymentPlan(ppType                    = "Time to Pay",
                          paymentReference          = s"${journey.taxpayer.selfAssessment.utr.value}K",
@@ -363,7 +364,7 @@ class ArrangementController @Inject() (
                          scheduledPaymentStartDate = firstInstalment.paymentDate,
                          scheduledPaymentEndDate   = lastInstalment.paymentDate,
                          scheduledPaymentFrequency = paymentFrequency,
-                         balancingPaymentAmount    = lastInstalment.amount.toString(),
+                         balancingPaymentAmount    = lastInstalment.amount.setScale(2, HALF_UP).toString(),
                          balancingPaymentDate      = lastInstalment.paymentDate,
                          totalLiability            = totalLiability.toString())
 
