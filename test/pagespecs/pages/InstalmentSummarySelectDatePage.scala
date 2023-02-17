@@ -137,7 +137,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
       private def errorText =
         s"""Which day do you want to pay each month?
            |There is a problem
-           |Select which day you want to pay each
+           |Select which day you want to pay each month
            |28th or next working day
            |A different day
            |Enter a day between 1 and 28
