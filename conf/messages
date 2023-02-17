@@ -346,7 +346,7 @@ ssttp.arrangement.sole_signatory.error = Select yes if you are the account holde
 
 ssttp.arrangement.change_day.title = Which day do you want to pay each month?
 ssttp.arrangement.change_day.error.summary.title = There is a problem
-ssttp.arrangement.change_day.payment-day.required = Select which day you want to pay each
+ssttp.arrangement.change_day.payment-day.required =
 ssttp.arrangement.change_day.payment-day.out-of-range = Enter a number between 1 and 28
 ssttp.arrangement.change_day.payment-day.continue = Continue
 ssttp.arrangement.change_day.payment-day.change.take-payment-on = Change Day
