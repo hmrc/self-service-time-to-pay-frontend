@@ -22,7 +22,6 @@ import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
 import play.api.libs.json.{Format, Json, OFormat}
 import repo.HasId
 import ssttpaffordability.model.Income
-import ssttpaffordability.model.Expense
 import ssttpaffordability.model.Spending
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -77,16 +76,18 @@ final case class Journey(
     maybeMonthlyPaymentAmount:  Option[BigDecimal]            = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
     maybeIncome:                Option[Income]                = None,
     maybeSpending:              Option[Spending]              = None,
-    maybeCalculatorDuration:    Option[CalculatorDuration]    = None,
+    maybePlanAmountSelection:   Option[BigDecimal]            = Some(2000), // TODO OPS-8654 - connect to calculator form, then set default to None: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration
+    maybeCalculatorDuration:    Option[CalculatorDuration]    = None, // TODO OPS-8654 - remove: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
-
-    maybeEligibilityStatus: Option[EligibilityStatus] = None,
-    debitDate:              Option[LocalDate]         = None,
-    ddRef:                  Option[String]            = None,
-    maybeSaUtr:             Option[String]            = None
+    maybeEligibilityStatus:     Option[EligibilityStatus]     = None,
+    debitDate:                  Option[LocalDate]             = None,
+    ddRef:                      Option[String]                = None,
+    maybeSaUtr:                 Option[String]                = None
 ) extends HasId[JourneyId] {
 
-  def amount: BigDecimal = maybeMonthlyPaymentAmount.getOrElse(throw new RuntimeException(s"Expected 'amount' to be there but was not found. [${_id}] [$this]"))
+  def planAmountSelection: BigDecimal = maybePlanAmountSelection.getOrElse(
+    throw new RuntimeException(s"Expected 'regular payment amount' selected by customer but was not found. [${_id}] [$this]")
+  )
   def taxpayer: Taxpayer = maybeTaxpayer.getOrElse(throw new RuntimeException(s"Expected 'Taxpayer' to be there but was not found. [${_id}] [$this]"))
   def debits: Seq[Debit] = taxpayer.selfAssessment.debits
   def requireIsInProgress(): Unit = {
@@ -96,6 +97,14 @@ final case class Journey(
     require(eligibilityStatus.eligible, s"taxpayer has to be eligible [$this]")
   }
 
+  // TODO OPS-9464: change to when old journey removed '.getOrElse(throw new IllegalArgumentException("attempted to retrieve total spending when there was no spending"))`
+  def remainingIncomeAfterSpending: BigDecimal = {
+    val totalIncome = maybeIncome.map(_.totalIncome).getOrElse(BigDecimal(1000))
+    val totalSpending = maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(500))
+    totalIncome - totalSpending
+  }
+
+  //TODO OPS-9610 update this
   def requireScheduleIsDefined(): Unit = {
     requireIsInProgress()
     requireIsEligible()
@@ -114,9 +123,7 @@ final case class Journey(
 
   def paymentToday: Boolean = maybePaymentToday.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'maybePaymentToday' to be there but was not found. [${_id}] [$this]"))
   def initialPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'paymentTodayAmount' to be there but was not found. [${_id}] [$this]"))
-  def safeInitialPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(0)
-  def calculatorDuration: Int = maybeCalculatorDuration.map(_.chosenMonths).getOrElse(throw new RuntimeException(s"Expected 'maybeCalculatorDuration' to be there but was not found. [${_id}] [$this]"))
-
+  def safeUpfrontPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(0)
   def eligibilityStatus: EligibilityStatus =
     maybeEligibilityStatus.getOrElse(throw new RuntimeException(s"Expected 'EligibilityStatus' to be there but was not found. [${_id}] [$this]"))
 

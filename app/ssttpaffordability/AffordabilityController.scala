@@ -100,8 +100,8 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { journey =>
       val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
       val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
-      val total = income.map(_.amount).sum - spending.map(_.amount).sum
-      Future.successful(Ok(views.how_much_you_could_afford(income, spending, total)))
+      val remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
+      Future.successful(Ok(views.how_much_you_could_afford(income, spending, remainingIncomeAfterSpending)))
     }
   }
 
@@ -208,6 +208,11 @@ class AffordabilityController @Inject() (
         }
       )
     }
+  }
+
+  def getWeCannotAgreeYourPP: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"getWeCannotAgreeYourPP: $request")
+    Ok(views.we_cannot_agree_your_pp(isSignedIn, isWelsh))
   }
 
 }

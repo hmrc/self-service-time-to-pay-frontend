@@ -27,6 +27,7 @@ class Views @Inject() (
     val your_monthly_income:                           views.html.affordability.your_monthly_income,
     val your_monthly_spending:                         views.html.affordability.your_monthly_spending,
     val how_much_you_could_afford:                     views.html.affordability.how_much_you_could_afford,
+    val we_cannot_agree_your_pp:                       views.html.affordability.we_cannot_agree_your_pp,
     val calculate_instalments_form:                    views.html.calculator.calculate_instalments_form,
     val payment_summary:                               views.html.calculator.payment_summary,
     val tax_liabilities:                               views.html.calculator.tax_liabilities,
