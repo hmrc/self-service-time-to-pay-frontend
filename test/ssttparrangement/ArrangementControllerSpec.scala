@@ -31,9 +31,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import testsupport.WireMockSupport
 import testsupport.stubs.{ArrangementStub, AuthStub, DirectDebitStub, TaxpayerStub}
+import testsupport.testdata.TdAll.selectedRegularPaymentAmount300
 import testsupport.testdata.{TdAll, TdRequest}
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, CalculatorDuration, EligibilityStatus, TypeOfAccountDetails}
+import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, CalculatorDuration, EligibilityStatus, PlanRegularAmountSelection, TypeOfAccountDetails}
 
 import java.time.LocalDateTime
 import java.util.UUID
@@ -99,7 +100,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       existingDDBanks            = None,
       maybeTaxpayer              = Some(TdAll.taxpayer),
       maybePaymentToday          = Some(PaymentToday(true)),
-      maybeRegularPlanAmountSelection   = Some(TdAll.selectedRegularPaymentAmount300),
+      maybeRegularPlanAmountSelection   = Some(PlanRegularAmountSelection(selectedRegularPaymentAmount300)),
       maybeCalculatorDuration    = Some(CalculatorDuration(3)),
       maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(3)),
       maybeEligibilityStatus     = Some(EligibilityStatus(Seq.empty))

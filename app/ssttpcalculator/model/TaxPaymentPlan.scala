@@ -120,23 +120,23 @@ object TaxPaymentPlan {
       taxLiabilities:             Seq[TaxLiability],
       upfrontPayment:             BigDecimal,
       regularPaymentAmount:       BigDecimal,
+      dateNow:                    LocalDate,
       maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None
-  )(implicit clock: Clock, appConfig: AppConfig): TaxPaymentPlan = {
-    val currentDate = now(clock)
+  )(appConfig: AppConfig): TaxPaymentPlan = {
     val maybePaymentToday: Option[PaymentToday] = if (upfrontPayment > 0) Some(PaymentToday(true)) else None
     val noUpfrontPayment = BigDecimal(0)
 
     val taxPaymentPlanNoUpfront = TaxPaymentPlan(
       taxLiabilities             = taxLiabilities,
       upfrontPayment             = noUpfrontPayment,
-      planStartDate              = currentDate,
+      planStartDate              = dateNow,
       maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
       regularPaymentAmount       = regularPaymentAmount,
       maybePaymentToday          = None
     )(appConfig)
 
     if (upfrontPayment > 0 && !((taxLiabilities.map(_.amount).sum - upfrontPayment) < BigDecimal.exact("32.00"))) {
-      taxPaymentPlanNoUpfront.copy(upfrontPayment    = upfrontPayment, maybePaymentToday = maybePaymentToday)
+      taxPaymentPlanNoUpfront.copy(upfrontPayment    = upfrontPayment, maybePaymentToday = maybePaymentToday)(appConfig)
     } else taxPaymentPlanNoUpfront
   }
 
