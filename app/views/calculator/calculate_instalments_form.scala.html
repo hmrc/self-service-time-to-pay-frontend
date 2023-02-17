@@ -76,7 +76,7 @@
             items = schedules.map ( schedule => {
                 RadioItem(
                     id = Some(schedule.getMonthlyInstalment.toString),
-                    value = Some((if (schedule.durationInMonths < 0) 12 + schedule.durationInMonths else schedule.durationInMonths).toString),
+                    value = Some(schedule.getMonthlyInstalment.toString),
                     content = HtmlContent(
                         instalment_by_month_label(schedule)
                     ),

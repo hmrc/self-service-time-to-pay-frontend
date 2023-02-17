@@ -119,6 +119,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.getInstalmentSummary: $request")
     journeyService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
+      JourneyLogger.info(s"$this.getInstalmentSummary - journey: $journey")
       val schedule: PaymentSchedule = calculatorService.selectedSchedule(journey).getOrElse(
         throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
       )

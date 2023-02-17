@@ -187,10 +187,13 @@ class CalculatorController @Inject() (
                 paymentPlanOptions))
           )
         },
-        (validFormData: PlanRegularAmountSelection) =>
+        (validFormData: PlanRegularAmountSelection) => {
+          JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data - $validFormData")
           journeyService.saveJourney(journey.copy(maybeRegularPlanAmountSelection = Some(validFormData))).map { _ =>
             Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
           }
+        }
+
       )
 
     }
