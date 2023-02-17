@@ -58,7 +58,7 @@ class CalculatorService @Inject() (
       upfrontPayment:               BigDecimal,
       maybeArrangementDayOfMonth:   Option[ArrangementDayOfMonth],
       remainingIncomeAfterSpending: BigDecimal
-  )(implicit clock: Clock, config: AppConfig): List[PaymentSchedule] = {
+  )(implicit request: Request[_], config: AppConfig): List[PaymentSchedule] = {
     val taxLiabilities: Seq[TaxLiability] = for {
       selfAssessmentDebit <- sa.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
@@ -67,7 +67,7 @@ class CalculatorService @Inject() (
       taxLiabilities             = taxLiabilities,
       upfrontPayment             = upfrontPayment,
       regularPaymentAmount       = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending,
-      dateNow                    = now(clock),
+      dateNow                    = clockProvider.nowDate(),
       maybeArrangementDayOfMonth = maybeArrangementDayOfMonth
     )(appConfig)
 
@@ -101,7 +101,7 @@ class CalculatorService @Inject() (
       journey.maybeRegularPlanAmountSelection.map(_.chosenRegularAmount).getOrElse(
         throw new IllegalArgumentException("could not find plan amount selection but there should be one")
       ),
-      journey.createdOn.toLocalDate,
+      clockProvider.nowDate(),
       journey.maybeArrangementDayOfMonth)(appConfig)
 
     schedule(taxPaymentPlan)

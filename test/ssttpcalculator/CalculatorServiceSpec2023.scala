@@ -23,6 +23,7 @@ import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, TaxLi
 import testsupport.ItSpec
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, Debit, SaUtr, SelfAssessmentDetails}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
+import play.api.test.FakeRequest
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
@@ -569,7 +570,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val preferredPaymentDay = None
         val remainingIncomeAfterSpending = 1000
 
-        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
+        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
 
         result.length shouldBe 3
       }
@@ -585,7 +586,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val preferredPaymentDay = None
         val remainingIncomeAfterSpending = 1000
 
-        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
+        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
 
         result.head.instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.5)
         result(1).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.6)
@@ -603,7 +604,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val preferredPaymentDay = None
         val remainingIncomeAfterSpending = 1000
 
-        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
+        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
 
         result.length shouldBe 1
       }
@@ -619,7 +620,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val preferredPaymentDay = None
         val remainingIncomeAfterSpending = 1000
 
-        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
+        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
 
         result.length shouldBe 2
       }
@@ -636,7 +637,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val preferredPaymentDay = None
           val remainingIncomeAfterSpending = 1100
 
-          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
+          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
 
           result.length shouldBe 1
         }
@@ -652,7 +653,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val preferredPaymentDay = None
           val remainingIncomeAfterSpending = 1000
 
-          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
+          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
 
           result.length shouldBe 2
         }
@@ -674,7 +675,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val preferredPaymentDay = Some(ArrangementDayOfMonth(28))
           val remainingIncomeAfterSpending = 200
 
-          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
+          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
 
           result.length shouldBe 0
         }
@@ -694,7 +695,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val preferredPaymentDay = Some(ArrangementDayOfMonth(28))
           val remainingIncomeAfterSpending = 220
 
-          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(fixedClock, appConfig)
+          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
 
           result.length shouldBe 0
 
