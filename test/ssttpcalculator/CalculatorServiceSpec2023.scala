@@ -701,7 +701,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
         }
       }
 
-
     }
   }
 }

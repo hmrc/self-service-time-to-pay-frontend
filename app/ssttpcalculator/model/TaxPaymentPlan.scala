@@ -63,7 +63,7 @@ case class TaxPaymentPlan(
   }
   def regularPaymentsDay: Int = validCustomerPreferredRegularPaymentDay.getOrElse(validDefaultRegularPaymentsDay)
 
-  def regularPaymentDates: Seq[LocalDate] = {
+  val regularPaymentDates: Seq[LocalDate] = {
 
     (minimumLengthOfPaymentPlan to maximumLengthOfPaymentPlan)
       .map(i => maybeUpfrontPaymentDate match {
