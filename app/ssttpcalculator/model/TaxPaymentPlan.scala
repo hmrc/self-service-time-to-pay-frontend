@@ -63,33 +63,24 @@ case class TaxPaymentPlan(
   }
   def regularPaymentsDay: Int = validCustomerPreferredRegularPaymentDay.getOrElse(validDefaultRegularPaymentsDay)
 
-  val regularPaymentDates: Seq[LocalDate] = {
+  val regularPaymentDates: Seq[LocalDate] = maybeUpfrontPaymentDate match {
+    case Some(upfrontPaymentDate) => validRegularMonthlyDatesFrom(upfrontPaymentDate: LocalDate, minGapBetweenPayments)
+    case None                     => validRegularMonthlyDatesFrom(planStartDate: LocalDate, daysToProcessFirstPayment)
+  }
 
+  def validRegularMonthlyDatesFrom(date: LocalDate, setUpPeriod: Int): Seq[LocalDate] = {
     (minimumLengthOfPaymentPlan to maximumLengthOfPaymentPlan)
-      .map(i => maybeUpfrontPaymentDate match {
-        case Some(upfrontPaymentDate) =>
-          val regularPaymentDateFirstMonth = upfrontPaymentDate.withDayOfMonth(regularPaymentsDay)
-          if (regularPaymentDateFirstMonth.isAfter(upfrontPaymentDate.plusDays(minGapBetweenPayments - 1))) {
-            regularPaymentDateFirstMonth.plusMonths(i - 1)
+      .map(i => {
+        val regularPaymentDateFirstMonth = date.withDayOfMonth(regularPaymentsDay)
+        if (regularPaymentDateFirstMonth.isAfter(date.plusDays(setUpPeriod - 1))) {
+          regularPaymentDateFirstMonth.plusMonths(i - 1)
+        } else {
+          if (regularPaymentDateFirstMonth.plusMonths(1).isAfter(date.plusDays(setUpPeriod - 1))) {
+            regularPaymentDateFirstMonth.plusMonths(i)
           } else {
-            if (regularPaymentDateFirstMonth.plusMonths(1).isAfter(upfrontPaymentDate.plusDays(minGapBetweenPayments - 1))) {
-              regularPaymentDateFirstMonth.plusMonths(i)
-            } else {
-              regularPaymentDateFirstMonth.plusMonths(i + 1)
-            }
+            regularPaymentDateFirstMonth.plusMonths(i + 1)
           }
-        case None =>
-          val validBaselineDate = validPaymentDate(planStartDate)
-          val validRegularPaymentDateFirstMonth = validBaselineDate.withDayOfMonth(regularPaymentsDay)
-          if (validRegularPaymentDateFirstMonth.isAfter(validBaselineDate.plusDays(daysToProcessFirstPayment - 1))) {
-            validRegularPaymentDateFirstMonth.plusMonths(i - 1)
-          } else {
-            if (validRegularPaymentDateFirstMonth.plusMonths(i).isAfter(validBaselineDate.plusDays(daysToProcessFirstPayment - 1))) {
-              validRegularPaymentDateFirstMonth.plusMonths(i)
-            } else {
-              validRegularPaymentDateFirstMonth.plusMonths(i + 1)
-            }
-          }
+        }
       })
   }
 
