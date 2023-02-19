@@ -406,6 +406,7 @@ ssttp.arrangement.check-payment-plan.payment-schedule = Payment schedule
 ssttp.arrangement.check-payment-plan.estimated-interest = Estimated total interest
 ssttp.arrangement.check-payment-plan.estimated-interest.hint = included in monthly payments
 ssttp.arrangement.check-payment-plan.total-to-pay = Total to pay
+ssttp.arrangement.check-payment-plan.warning = You are choosing a payment plan where your monthly payments are over half of your left over income. Make sure you can afford to pay.
 ssttp.arrangement.check-payment-plan.agree = Agree and continue
 
 ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Your payment plan

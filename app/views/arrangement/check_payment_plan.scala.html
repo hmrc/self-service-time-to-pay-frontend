@@ -161,6 +161,14 @@
         </div>
     </dl>
 
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            @messages("ssttp.arrangement.check-payment-plan.warning")
+        </strong>
+    </div>
+
     @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount()) {
         @viewsHelpers.continue(Messages("ssttp.arrangement.check-payment-plan.agree"))
     }

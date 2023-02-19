@@ -330,6 +330,7 @@ ssttp.arrangement.check-payment-plan.payment-schedule = Amserlen ar gyfer talu
 ssttp.arrangement.check-payment-plan.estimated-interest = Amcangyfrif o gyfanswm y llog
 ssttp.arrangement.check-payment-plan.estimated-interest.hint = wedi’i gynnwys yn y taliadau misol
 ssttp.arrangement.check-payment-plan.total-to-pay = Y cyfanswm i’w dalu
+ssttp.arrangement.check-payment-plan.warning = Rydych yn dewis cynllun talu lle mae’ch taliadau misol dros hanner eich incwm sydd dros ben. Gwnewch yn siŵr eich bod yn gallu fforddio talu.
 ssttp.arrangement.check-payment-plan.agree = Cytuno ac yn eich blaen
 
 ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Eich cynllun talu
