@@ -45,12 +45,14 @@ POST        /calculator/instalments                                       ssttpc
 GET         /arrangement/instalment-summary/select-date                   ssttparrangement.ArrangementController.getChangeSchedulePaymentDay()
 POST        /arrangement/instalment-summary/select-date                   ssttparrangement.ArrangementController.submitChangeSchedulePaymentDay()
 
-GET         /arrangement/instalment-summary                               ssttparrangement.ArrangementController.getInstalmentSummary()
-POST        /arrangement/instalment-summary                               ssttparrangement.ArrangementController.submitInstalmentSummary()
+#GET         /arrangement/instalment-summary                               ssttparrangement.ArrangementController.getInstalmentSummary()
+#POST        /arrangement/instalment-summary                               ssttparrangement.ArrangementController.submitInstalmentSummary()
 
 
 # Arrangement
 POST        /arrangement                                                  ssttparrangement.ArrangementController.start()
+GET         /check-your-payment-plan                                      ssttparrangement.ArrangementController.getCheckPaymentPlan()
+POST        /check-your-payment-plan                                      ssttparrangement.ArrangementController.submitCheckPaymentPlan()
 GET         /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.aboutBankAccount()
 POST        /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.submitAboutBankAccount()
 GET         /arrangement/terms-and-conditions                             ssttparrangement.ArrangementController.getTermsAndConditions()

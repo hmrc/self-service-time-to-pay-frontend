@@ -137,6 +137,23 @@ class ArrangementController @Inject() (
     journeyService.authorizedForSsttp(_ => Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())))
   }
 
+  def getCheckPaymentPlan: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.getInstalmentSummary: $request")
+    journeyService.authorizedForSsttp { journey =>
+      journey.requireScheduleIsDefined()
+      val schedule: PaymentSchedule = calculatorService.selectedSchedule(journey).getOrElse(
+        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
+      )
+      Future.successful(Ok(views.check_payment_plan(schedule))
+      )
+    }
+  }
+
+  def submitCheckPaymentPlan: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    JourneyLogger.info(s"ArrangementController.submitInstalmentSummary: $request")
+    journeyService.authorizedForSsttp(_ => Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())))
+  }
+
   def getChangeSchedulePaymentDay: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.getChangeSchedulePaymentDay: $request")
     journeyService.authorizedForSsttp { journey =>
