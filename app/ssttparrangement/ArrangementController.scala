@@ -144,7 +144,11 @@ class ArrangementController @Inject() (
       val schedule: PaymentSchedule = calculatorService.selectedSchedule(journey).getOrElse(
         throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
       )
-      Future.successful(Ok(views.check_payment_plan(schedule))
+      val leftOverIncome: BigDecimal = journey.remainingIncomeAfterSpending
+      val monthlyPaymentAmountChosen = journey.maybeMonthlyPaymentAmount.getOrElse(
+        throw new IllegalArgumentException("a selection should have been made of monthly payment")
+      )
+      Future.successful(Ok(views.check_payment_plan(schedule, leftOverIncome, monthlyPaymentAmountChosen))
       )
     }
   }

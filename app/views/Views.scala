@@ -36,7 +36,7 @@ class Views @Inject() (
     val application_complete:                          views.html.arrangement.application_complete,
     val direct_debit_assistance:                       views.html.arrangement.direct_debit_assistance,
     val change_day:                                    views.html.arrangement.change_day,
-    val instalment_plan_summary:                       views.html.arrangement.instalment_plan_summary, //delete
+    val instalment_plan_summary:                       views.html.arrangement.instalment_plan_summary, //delete after completing OPS-8645
     val check_payment_plan:                            views.html.arrangement.check_payment_plan,
     val direct_debit_form:                             views.html.arrangement.direct_debit_form,
     val direct_debit_unauthorised:                     views.html.arrangement.direct_debit_unauthorised,
