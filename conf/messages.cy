@@ -311,6 +311,27 @@ ssttp.arrangement.instalment-summary.payment-date.ending = neu’r diwrnod gwait
 ssttp.arrangement.instalment-summary.payment-date.change = Newid
 ssttp.arrangement.instalment-summary.schedule.final-payment-interest = Llog wedi’i ychwanegu at y taliad terfynol
 
+ssttp.arrangement.check-payment-plan.h1 = Gwirio’ch cynllun talu
+ssttp.arrangement.check-payment-plan.upfront-payment.question = A allwch wneud taliad ymlaen llaw?
+ssttp.arrangement.check-payment-plan.yes = Iawn
+ssttp.arrangement.check-payment-plan.no = Na
+ssttp.arrangement.check-payment-plan.change = Newid
+ssttp.arrangement.check-payment-plan.upfront-payment.change-hidden = p’un a allwch wneud taliad ymlaen llaw
+ssttp.arrangement.check-payment-plan.upfront-payment.amount = Taliad ymlaen llaw
+ssttp.arrangement.check-payment-plan.upfront-payment.amount.change-hidden = swm y taliad ymlaen llaw
+ssttp.arrangement.check-payment-plan.upfront-payment.hint = I’w gymryd cyn pen 10 diwrnod gwaith
+ssttp.arrangement.check-payment-plan.monthly-payments.h2 = Taliadau misol
+ssttp.arrangement.check-payment-plan.payments-collected-on = Mae taliadau’n cael eu casglu ar
+ssttp.arrangement.check-payment-plan.payments-collected-on.change-hidden = the day of the month that payments will be collected on
+ssttp.arrangement.check-payment-plan.payment-date.ending = yr {0} neu’r diwrnod gwaith nesaf
+ssttp.arrangement.check-payment-plan.number-of-payments = taliad misol o
+ssttp.arrangement.check-payment-plan.number-of-payments.change-hidden = how much you can afford to pay each month
+ssttp.arrangement.check-payment-plan.payment-schedule = Amserlen ar gyfer talu
+ssttp.arrangement.check-payment-plan.estimated-interest = Amcangyfrif o gyfanswm y llog
+ssttp.arrangement.check-payment-plan.estimated-interest.hint = wedi’i gynnwys yn y taliadau misol
+ssttp.arrangement.check-payment-plan.total-to-pay = Y cyfanswm i’w dalu
+ssttp.arrangement.check-payment-plan.agree = Cytuno ac yn eich blaen
+
 ssttp.arrangement.print-summary.schedule.payment-plan.h1 = Eich cynllun talu
 ssttp.arrangement.print-summary.schedule.payment-plan.monthly-payments.h2 = Taliadau misol
 ssttp.arrangement.print-summary.schedule.up-front-payment = Swm y taliad ymlaen llaw

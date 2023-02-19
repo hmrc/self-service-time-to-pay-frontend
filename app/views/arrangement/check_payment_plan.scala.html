@@ -87,7 +87,7 @@
                 @messages("ssttp.arrangement.check-payment-plan.payments-collected-on")
             </dt>
             <dd class="govuk-summary-list__value">
-                @getDayOfMonthOrdinal(paymentSchedule.ps.firstInstallment.paymentDate) @messages("ssttp.arrangement.check-payment-plan.payment-date.ending")
+                @messages("ssttp.arrangement.check-payment-plan.payment-date.ending", getDayOfMonthOrdinal(paymentSchedule.ps.firstInstallment.paymentDate))
             </dd>
             <dd class="govuk-summary-list__actions">
                 <a href="@ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()">
