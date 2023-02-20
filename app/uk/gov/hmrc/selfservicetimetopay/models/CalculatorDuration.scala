@@ -25,8 +25,8 @@ object CalculatorDuration {
 
 }
 
-final case class PlanRegularAmountSelection(chosenRegularAmount: BigDecimal)
+final case class SelectedPlanAmount(chosenRegularAmount: BigDecimal)
 
-object PlanRegularAmountSelection {
-  implicit val format: Format[PlanRegularAmountSelection] = Json.format[PlanRegularAmountSelection]
+object SelectedPlanAmount {
+  implicit val format: Format[SelectedPlanAmount] = Json.format[SelectedPlanAmount]
 }

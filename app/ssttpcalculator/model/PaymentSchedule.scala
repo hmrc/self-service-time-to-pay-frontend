@@ -30,6 +30,8 @@ final case class PaymentSchedule(
     totalPayable:         BigDecimal,
     instalments:          Seq[Instalment]
 ) {
+  def regularMonthlyAmount: BigDecimal = instalments.headOption.map(_.amount).getOrElse(throw new RuntimeException(s"No installments for [$this]"))
+
   def firstInstallment: Instalment =
     instalments.reduceOption(first).getOrElse(throw new RuntimeException(s"No installments for [$this]"))
 
