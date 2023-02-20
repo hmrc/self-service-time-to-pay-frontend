@@ -174,7 +174,7 @@ class CalculatorController @Inject() (
         sa,
         journey.safeUpfrontPayment,
         journey.maybeArrangementDayOfMonth,
-        journey.planAmountSelection
+        journey.remainingIncomeAfterSpending
       )
 
       createInstalmentForm().bindFromRequest().fold(
@@ -188,10 +188,13 @@ class CalculatorController @Inject() (
               ))
           )
         },
-        (validFormData: CalculatorDuration) =>
-          journeyService.saveJourney(journey.copy(maybeCalculatorDuration = Some(validFormData))).map { _ =>
+        (validFormData: PlanRegularAmountSelection) => {
+          JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data - $validFormData")
+          journeyService.saveJourney(journey.copy(maybeRegularPlanAmountSelection = Some(validFormData))).map { _ =>
             Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
           }
+        }
+
       )
 
     }

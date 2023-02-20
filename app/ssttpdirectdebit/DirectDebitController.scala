@@ -31,6 +31,7 @@ import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorService
 import ssttpdirectdebit.DirectDebitForm._
+import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails, TypeOfAccountDetails}
 import views.Views
@@ -46,12 +47,14 @@ class DirectDebitController @Inject() (
     submissionService: JourneyService,
     requestSupport:    RequestSupport,
     calculatorService: CalculatorService,
-    views:             Views
+    views:             Views,
+    clockProvider:     ClockProvider
 )(
     implicit
     appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendBaseController(mcc) {
 
+  import clockProvider._
   import requestSupport._
 
   implicit val config: ViewConfig = viewConfig
