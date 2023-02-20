@@ -15,7 +15,7 @@
  *@
 
 @import partials._
-@import uk.gov.hmrc.selfservicetimetopay.models.CalculatorDuration
+@import uk.gov.hmrc.selfservicetimetopay.models.PlanRegularAmountSelection
 @import ssttpcalculator.model._
 @import model._
 @import helpers.forms.submit
@@ -36,7 +36,7 @@
 
 @(
         redirectCall: Call,
-        durationForm: Form[CalculatorDuration],
+        regularAmountForm: Form[PlanRegularAmountSelection],
         schedules: List[PaymentSchedule])(
         implicit
         messages: play.api.i18n.Messages,
@@ -51,11 +51,11 @@
 
 <section class="govuk-body">
 
-@if(durationForm.hasErrors) {
+@if(regularAmountForm.hasErrors) {
     @errorSummary(
         ErrorSummary(
             title = Text(Messages("ssttp.calculator.results.error.title")),
-            errorList = durationForm.errors.asTextErrorLinks.map {error =>
+            errorList = regularAmountForm.errors.asTextErrorLinks.map {error =>
                 if(error.href.forall(_.contains("chosen-month"))) error.copy (
                     href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("chosen-month", s.durationInMonths.toString)))
                 ) else error
@@ -71,12 +71,12 @@
         </legend>
 
         @radios(Radios(
-            name = "chosen-month",
-            attributes = Map("id" -> "chosen-month"),
+            name = "chosen-regular-amount",
+            attributes = Map("id" -> "chosen-regular-amount"),
             items = schedules.map ( schedule => {
                 RadioItem(
-                    id = Some(schedule.durationInMonths.toString),
-                    value = Some((if (schedule.durationInMonths < 0) 12 + schedule.durationInMonths else schedule.durationInMonths).toString),
+                    id = Some(schedule.getMonthlyInstalment.toString),
+                    value = Some(schedule.getMonthlyInstalment.toString),
                     content = HtmlContent(
                         instalment_by_month_label(schedule)
                     ),

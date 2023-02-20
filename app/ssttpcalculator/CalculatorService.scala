@@ -39,6 +39,8 @@ import javax.inject.Inject
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext
 
+import java.time.LocalDate.now
+
 class CalculatorService @Inject() (
     clockProvider:   ClockProvider,
     durationService: DurationService,
@@ -56,8 +58,7 @@ class CalculatorService @Inject() (
       upfrontPayment:               BigDecimal,
       maybeArrangementDayOfMonth:   Option[ArrangementDayOfMonth],
       remainingIncomeAfterSpending: BigDecimal
-  )(implicit clock: Clock, config: AppConfig): List[PaymentSchedule] = {
-
+  )(implicit request: Request[_], config: AppConfig): List[PaymentSchedule] = {
     val taxLiabilities: Seq[TaxLiability] = for {
       selfAssessmentDebit <- sa.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
@@ -66,8 +67,9 @@ class CalculatorService @Inject() (
       taxLiabilities             = taxLiabilities,
       upfrontPayment             = upfrontPayment,
       regularPaymentAmount       = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending,
+      dateNow                    = clockProvider.nowDate(),
       maybeArrangementDayOfMonth = maybeArrangementDayOfMonth
-    )(clock, appConfig)
+    )(appConfig)
 
     val firstSchedule = schedule(firstTaxPaymentPlan)
     firstSchedule match {
@@ -93,15 +95,14 @@ class CalculatorService @Inject() (
       selfAssessmentDebit <- journey.taxpayer.selfAssessment.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
 
-    val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan(
+    val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.safeNew(
       taxLiabilities,
       journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
-      clockProvider.nowDate(), journey.maybePlanAmountSelection.getOrElse(
+      journey.maybeRegularPlanAmountSelection.map(_.chosenRegularAmount).getOrElse(
         throw new IllegalArgumentException("could not find plan amount selection but there should be one")
       ),
-      journey.maybeArrangementDayOfMonth,
-      journey.maybePaymentToday
-    )
+      clockProvider.nowDate(),
+      journey.maybeArrangementDayOfMonth)(appConfig)
 
     schedule(taxPaymentPlan)
   }

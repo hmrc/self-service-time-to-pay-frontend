@@ -20,10 +20,13 @@ import config.AppConfig
 import org.scalatest.matchers.should.Matchers
 import ssttpcalculator.model.{PaymentSchedule, TaxLiability, TaxPaymentPlan}
 import testsupport.{DateSupport, ItSpec}
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDate, LocalDateTime}
+
+import java.time.LocalDate.now
 
 class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
   private def date(month: Int, day: Int): LocalDate = LocalDate.of(_2020, month, day)
@@ -53,9 +56,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
       val clock = clockForMay(_1st)
       val currentDate = LocalDate.now(clock)
 
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
     }
 
@@ -63,9 +66,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
       val clock = clockForMay(_7th)
       val currentDate = LocalDate.now(clock)
 
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
     }
 
@@ -73,9 +76,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
       val clock = clockForMay(_8th)
       val currentDate = LocalDate.now(clock)
 
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
     }
 
@@ -83,9 +86,9 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
       val clock = clockForMay(_11th)
       val currentDate = LocalDate.now(clock)
 
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
     }
 
@@ -93,10 +96,21 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
       val clock = clockForMay(_25th)
       val currentDate = may(_25th)
 
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount)(clock, appConfig) shouldBe TaxPaymentPlan(
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
         debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
+    }
+    "the current date is 17th February so without an upfront payment the first regular payment date is 28th February" in {
+      val clock = Clock.fixed(
+        LocalDateTime.parse(s"2023-02-17T00:00:00.880") toInstant (UTC),
+        systemDefault()
+      )
+
+      val result = TaxPaymentPlan.safeNew(debits, noInitialPayment, regularPaymentAmount, now(clock), Some(ArrangementDayOfMonth(28)))(appConfig)
+
+      result.regularPaymentDates.head shouldBe (LocalDate.of(2023, 2, 28))
+
     }
   }
 
