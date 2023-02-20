@@ -28,8 +28,8 @@ abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: W
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "How many months do you want to pay over?"
-    case Languages.Welsh   => "Dros sawl mis yr hoffech dalu?"
+    case Languages.English => "How much can you pay each month?"
+    case Languages.Welsh   => "Faint y gallwch ei dalu bob mis?"
   }
 
   def selectAnOption(): Unit = probing {
@@ -76,66 +76,34 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
         case Welsh   => mainTextWelsh
       }
 
-      private val mainTextEnglishNew =
-        s"""How many months do you want to pay over?
-           |21 months at £250
-           |Total interest: £138.16
-           |Base rate + 2.5%	added to the final payment
-           |Total paid:	£5,038.16
-           |17 months at £300
-           |Total interest:	£116.53
-           |Base rate + 2.5%	added to the final payment
-           |Total paid:	£5,016.53
-           |13 months at £400
-           |Total interest:	£89.39
-           |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,989.39
-           |How we calculate interest
-           |We only charge interest on overdue amounts.
-           |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
-           |If the interest rate changes during your plan, your monthly payments will not change. If we need to, we'll settle the difference at the end of the plan.
-           |Continue
-        """.stripMargin
-
       private val mainTextEnglish =
-        s"""How many months do you want to pay over?
-           |21 months at £250
-           |Total interest: £138.16
-           |Base rate + 2.5%	added to the final payment
-           |Total paid:	£5,038.16
-           |17 months at £300
-           |Total interest:	£116.53
-           |Base rate + 2.5%	added to the final payment
-           |Total paid:	£5,016.53
-           |13 months at £400
-           |Total interest:	£89.39
-           |Base rate + 2.5%	added to the final payment
-           |Total paid:	£4,989.39
-           |How we calculate interest
-           |We only charge interest on overdue amounts.
-           |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
-           |If the interest rate changes during your plan, your monthly payments will not change. If we need to, we'll settle the difference at the end of the plan.
+        s"""How much can you pay each month?
+           |Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
+           |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+           |£250 per month over 21 months
+           |Includes total interest estimated at £138.16
+           |or
+           |£300 per month over 17 months
+           |Includes total interest estimated at £116.53
+           |£400 per month over 13 months
+           |Includes total interest estimated at £89.39
+           |I cannot afford to make these payments
+           |You may still be able to set up a payment plan over the phone. Call us on 0300 123 1813 to discuss your debt.
            |Continue
         """.stripMargin
 
       private val mainTextWelsh =
-        s"""Dros sawl mis yr hoffech dalu?
-           |21 o fisoedd ar £250
-           |Cyfanswm y llog: £138.16
-           |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£5,038.16
-           |17 o fisoedd ar £300
-           |Cyfanswm y llog:	£116.53
-           |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£5,016.53
-           |13 o fisoedd ar £400
-           |Cyfanswm y llog:	£89.39
-           |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-           |Cyfanswm a dalwyd:	£4,989.39
-           |Sut rydym yn cyfrifo llog
-           |Rydym yn codi llog ar symiau hwyr yn unig.
-           |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
-           |Os bydd y gyfradd llog yn newid yn ystod eich cynllun, ni fydd eich taliadau misol yn newid. Os bydd angen, byddwn yn setlo’r gwahaniaeth ar ddiwedd y cynllun.
+        s"""Faint y gallwch ei dalu bob mis?
+           |Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+           |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
+           |£250 y mis, am 21 mis
+           |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £138.16
+           |£300 y mis, am 17 mis
+           |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £116.53
+           |£400 y mis, am 13 mis
+           |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £89.39
+           |Nid wyf yn gallu fforddio’r taliadau hyn
+           |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i drafod eich opsiynau.
            |Yn eich blaen
         """.stripMargin
     }
