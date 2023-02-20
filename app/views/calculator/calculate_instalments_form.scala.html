@@ -78,15 +78,17 @@
         @radios(Radios(
             name = "chosen-regular-amount",
             attributes = Map("id" -> "chosen-regular-amount"),
-            items = schedules.toSeq.map ( schedule => {
+            items =  schedules.toSeq.map ( schedule => {
                 RadioItem(
                     id = Some(schedule._1.toString),
                     value = Some(schedule._2.getMonthlyInstalment.toString),
-                    content = HtmlContent(
-                        instalment_by_amount_label(schedule._2)
-                    )
+                    content = HtmlContent(instalment_by_amount_label(schedule._2))
                 )
-            })
+            }) :+ RadioItem(
+                id = Some("otherAmount"),
+                value = Some("500"),
+                content = HtmlContent(Messages("ssttp.calculator.results.option.other.label"))
+            )
         ))
     </fieldset>
 

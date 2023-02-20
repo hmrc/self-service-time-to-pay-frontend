@@ -82,11 +82,12 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
              |£250 per month over 21 months
              |Includes total interest estimated at £138.16
-             |or
              |£300 per month over 17 months
              |Includes total interest estimated at £116.53
              |£400 per month over 13 months
              |Includes total interest estimated at £89.39
+             |A different monthly amount
+             |Enter an amount that is at least £250 but no more than
              |I cannot afford to make these payments
              |You may still be able to set up a payment plan over the phone. Call us on 0300 123 1813 to discuss your debt.
              |Continue
@@ -102,6 +103,8 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £116.53
              |£400 y mis, am 13 mis
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £89.39
+             |Swm misol gwahanol
+             |Rhowch swm sydd o leiaf {£1,000} ond heb fod yn fwy na
              |Nid wyf yn gallu fforddio’r taliadau hyn
              |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i drafod eich opsiynau.
              |Yn eich blaen
