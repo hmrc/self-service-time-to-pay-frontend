@@ -61,8 +61,8 @@ class DirectDebitPageSpec extends ItSpec {
     calculatorInstalmentsPage28thDay.selectAnOption()
     calculatorInstalmentsPage28thDay.clickContinue()
 
-    instalmentSummaryPage.assertPageIsDisplayed()
-    instalmentSummaryPage.clickContinue()
+    checkYourPaymentPlanPage.assertPageIsDisplayed()
+    checkYourPaymentPlanPage.clickContinue()
 
     directDebitPage.assertPageIsDisplayed()
   }
@@ -79,7 +79,7 @@ class DirectDebitPageSpec extends ItSpec {
 
   "back button" ignore {
     beginJourney()
-    directDebitPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttparrangement.routes.ArrangementController.getInstalmentSummary()}")
+    directDebitPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttparrangement.routes.ArrangementController.getCheckPaymentPlan()}")
   }
 
   "enter invalid Account Name" ignore {

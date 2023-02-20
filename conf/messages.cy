@@ -297,20 +297,6 @@ ssttp.arrangement.change_day.payment-day.out-of-range = Nodwch rif rhwng 1 a 28
 ssttp.arrangement.change_day.payment-day.continue = Yn eich blaen
 ssttp.arrangement.change_day.payment-day.change.take-payment-on = Newid dydd
 
-ssttp.arrangement.instalment-summary.title = Gwiriwch fanylion eich amserlen talu
-ssttp.arrangement.instalment-summary.up-front-payment = Taliad ymlaen llaw i’w gymryd cyn pen 7 diwrnod gwaith
-ssttp.arrangement.instalment-summary.up-front-payment.change = Newid
-ssttp.arrangement.instalment-summary-table.title = Eich cynllun talu
-ssttp.arrangement.instalment-summary-table.monthly-instalments = Rhandaliadau misol
-ssttp.arrangement.instalment-summary-table.total-interest-hint = Wedi’u casglu dros {0} o fisoedd
-ssttp.arrangement.instalment-summary-table.monthly-instalments-change = Newid
-ssttp.arrangement.instalment-summary-table.total-interest = Cyfanswm y llog
-ssttp.arrangement.instalment-summary-table.hint = Wedi’i ychwanegu at y taliad terfynol
-ssttp.arrangement.instalment-summary.payment-date.title = Dyddiad casglu rhandaliadau misol
-ssttp.arrangement.instalment-summary.payment-date.ending = neu’r diwrnod gwaith nesaf
-ssttp.arrangement.instalment-summary.payment-date.change = Newid
-ssttp.arrangement.instalment-summary.schedule.final-payment-interest = Llog wedi’i ychwanegu at y taliad terfynol
-
 ssttp.arrangement.check-payment-plan.h1 = Gwirio’ch cynllun talu
 ssttp.arrangement.check-payment-plan.upfront-payment.question = A allwch wneud taliad ymlaen llaw?
 ssttp.arrangement.check-payment-plan.yes = Iawn

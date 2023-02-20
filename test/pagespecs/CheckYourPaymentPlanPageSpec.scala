@@ -22,7 +22,7 @@ import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.CalculatorDataGenerator
 
-class InstalmentSummaryPageSpec extends ItSpec {
+class CheckYourPaymentPlanPageSpec extends ItSpec {
 
   def beginJourney(): Unit = {
     AuthStub.authorise()
@@ -50,47 +50,46 @@ class InstalmentSummaryPageSpec extends ItSpec {
     calculatorInstalmentsPage28thDay.selectAnOption()
     calculatorInstalmentsPage28thDay.clickContinue()
 
-    instalmentSummaryPage.assertPageIsDisplayed()
+    checkYourPaymentPlanPage.assertPageIsDisplayed()
   }
 
   "language" in {
     beginJourney()
 
-    instalmentSummaryPage.clickOnWelshLink()
-    instalmentSummaryPage.assertPageIsDisplayed(Welsh)
+    checkYourPaymentPlanPage.clickOnWelshLink()
+    checkYourPaymentPlanPage.assertPageIsDisplayed(Welsh)
 
-    instalmentSummaryPage.clickOnEnglishLink()
+    checkYourPaymentPlanPage.clickOnEnglishLink()
 
-    instalmentSummaryPage.assertPageIsDisplayed(English)
+    checkYourPaymentPlanPage.assertPageIsDisplayed(English)
   }
 
   "back button" in {
     beginJourney()
-    instalmentSummaryPage.backButtonHref shouldBe Some(s"${baseUrl.value}${calculatorInstalmentsPage28thDay.path}")
+    checkYourPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${calculatorInstalmentsPage28thDay.path}")
   }
 
   "change monthly instalments" in {
     beginJourney()
-    instalmentSummaryPage.assertPageIsDisplayed()
-    instalmentSummaryPage.clickInstalmentsChange()
+    checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
     calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
   }
 
   "change collection day" in {
     beginJourney()
-    instalmentSummaryPage.clickCollectionDayChange()
+    checkYourPaymentPlanPage.clickChangeCollectionDayLink()
     selectDatePage.assertPageIsDisplayed
   }
 
   "change upfront payment" in {
     beginJourney()
-    instalmentSummaryPage.clickUpfrontPaymentChange()
+    checkYourPaymentPlanPage.clickChangeUpfrontPaymentLink()
     paymentTodayQuestionPage.assertPageIsDisplayed
   }
 
   "continue to the next page" in {
     beginJourney()
-    instalmentSummaryPage.clickContinue()
+    checkYourPaymentPlanPage.clickContinue()
     aboutBankAccountPage.assertPageIsDisplayed
   }
 }

@@ -25,36 +25,38 @@ import testsupport.RichMatchers._
 
 import java.time.LocalDate
 
-abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: String, paymentDayOfMonthWelsh: String)
+class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: String, paymentDayOfMonthWelsh: String)
   (implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
 
-  override def path: String = "/pay-what-you-owe-in-instalments/arrangement/instalment-summary"
+  override def path: String = "/pay-what-you-owe-in-instalments/arrangement/check-your-payment-plan"
 
   override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
     //    TODO [OPS-8650]: Update Expected.MainText to reflect change to payment plan calculations and reinstate test
-    //    val expectedLines = Expected.MainText().stripSpaces().split("\n")
-    //    assertContentMatchesExpectedLines(expectedLines)
+    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
     ()
   }
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Check your payment plan"
-    case Languages.Welsh   => "Gwiriwch fanylion eich amserlen talu"
+    case Languages.Welsh   => "Gwirio’ch cynllun talu"
   }
 
-  def clickInstalmentsChange(): Unit = probing {
-    val changeLink = xpath("""//*[@id="id_payment"]/dl/div[3]/dd[2]/a""")
-    click on changeLink
+  def clickChangeUpfrontPaymentLink(): Unit = {
+    click on id("upfront-payment")
   }
 
-  def clickCollectionDayChange(): Unit = {
-    val changeLink = xpath("""//*[@id="id_payment"]/dl/div[2]/dd[2]/a""")
-    click on changeLink
+  def clickChangeCollectionDayLink(): Unit = {
+    click on id("collection-day")
+  }
+
+  def clickChangeMonthlyAmountLink(): Unit = {
+    click on id("monthly-payment")
   }
 
   def clickContinue(): Unit = {
@@ -67,6 +69,7 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
   }
 
   def clickOnBackButton(): Unit = click on id("back-link")
+
 
   object Expected {
 
@@ -94,22 +97,23 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
         val z = if (paymentDayOfMonth.equals("11th")) "4,914.18" else "4,921.16"
 
         s"""Check your payment plan
-           |Upfront payment taken within 7 working days
+           |Can you make an upfront payment?
+           |No
+           |Change
+           |Upfront payment
+           |Taken within 10 working days
            |£0
-           |Change Monthly payments
-           |Payments collected on
-           |$paymentDayOfMonth or next working day
            |Change
            |Monthly payments
+           |Payments collected on
+           |or next working day
+           |Change
            |December 2019
-           |£2,450
            |January 2020
-           |£$y
-           |including interest of £$x added to the final payment
-           |Change Monthly payments
+           |Estimated total interest
+           |included in monthly payments
            |Total to pay
-           |£$z
-           |Continue
+           |Agree and continue
         """.stripMargin
       }
 
@@ -118,31 +122,25 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
         val y = if (paymentDayOfMonth.equals("11eg")) "2,464.18" else "2,471.16"
         val z = if (paymentDayOfMonth.equals("11eg")) "4,914.18" else "4,921.16"
 
-        s"""Gwiriwch fanylion eich amserlen talu
-           |Taliad ymlaen llaw
+        s"""Gwirio’ch cynllun talu
+           |A allwch wneud taliad ymlaen llaw?
+           |Na
            |£0
-           |Newid Rhandaliadau misol
-           |Dyddiad casglu rhandaliadau misol
-           |$paymentDayOfMonth neu’r diwrnod gwaith nesaf
+           |Taliad ymlaen llaw
+           |I’w gymryd cyn pen 10 diwrnod gwaith
+           |£0
            |Newid
-           |Rhandaliadau misol
+           |Taliadau misol
+           |Mae taliadau’n cael eu casglu ar
+           |Newid
            |Rhagfyr 2019
-           |£2,450
            |Ionawr 2020
-           |£$y
-           |Wedi’u casglu dros £$x o fisoedd
-           |Newid Rhandaliadau misol
-           |Cyfanswm yr ad-daliad
-           |£$z
-           |Yn eich blaen
+           |Amcangyfrif o gyfanswm y llog
+           |wedi’i gynnwys yn y taliadau misol
+           |Y cyfanswm i’w dalu
+           |Cytuno ac yn eich blaen
         """.stripMargin
       }
     }
   }
 }
-
-class InstalmentSummaryPageForPaymentDayOfMonth27th(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
-  extends InstalmentSummaryPage(baseUrl, paymentDayOfMonthEnglish = "28th", paymentDayOfMonthWelsh = "28ain")(webDriver)
-
-class InstalmentSummaryPageForPaymentDayOfMonth11th(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
-  extends InstalmentSummaryPage(baseUrl, paymentDayOfMonthEnglish = "11th", paymentDayOfMonthWelsh = "11eg")(webDriver)

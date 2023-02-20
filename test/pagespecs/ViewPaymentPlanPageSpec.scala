@@ -53,8 +53,8 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     calculatorInstalmentsPage28thDay.selectAnOption()
     calculatorInstalmentsPage28thDay.clickContinue()
 
-    instalmentSummaryPage.assertPageIsDisplayed()
-    instalmentSummaryPage.clickContinue()
+    checkYourPaymentPlanPage.assertPageIsDisplayed()
+    checkYourPaymentPlanPage.clickContinue()
 
     aboutBankAccountPage.assertPageIsDisplayed()
     aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
