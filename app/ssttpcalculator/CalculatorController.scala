@@ -159,7 +159,7 @@ class CalculatorController @Inject() (
         Ok(views.calculate_instalments_form(
           routes.CalculatorController.submitCalculateInstalments(),
           createInstalmentForm(),
-          paymentPlanOptions
+          paymentPlanOptions.values.toList
         ))
       }
     }
@@ -184,7 +184,8 @@ class CalculatorController @Inject() (
               views.calculate_instalments_form(
                 ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                 formWithErrors,
-                paymentPlanOptions))
+                paymentPlanOptions.values.toList
+              ))
           )
         },
         (validFormData: CalculatorDuration) =>

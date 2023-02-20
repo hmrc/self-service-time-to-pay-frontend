@@ -56,7 +56,7 @@ class CalculatorService @Inject() (
       upfrontPayment:               BigDecimal,
       maybeArrangementDayOfMonth:   Option[ArrangementDayOfMonth],
       remainingIncomeAfterSpending: BigDecimal
-  )(implicit clock: Clock, config: AppConfig): List[PaymentSchedule] = {
+  )(implicit clock: Clock, config: AppConfig): Map[Int, PaymentSchedule] = {
 
     val taxLiabilities: Seq[TaxLiability] = for {
       selfAssessmentDebit <- sa.debits
@@ -70,7 +70,7 @@ class CalculatorService @Inject() (
     )(clock, appConfig)
 
     val firstSchedule = schedule(firstTaxPaymentPlan)
-    firstSchedule match {
+    val scheduleList = firstSchedule match {
       case None => List()
       case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule).flatten
       case _ =>
@@ -86,6 +86,7 @@ class CalculatorService @Inject() (
             List(firstSchedule, secondSchedule, thirdSchedule).flatten
         }
     }
+    proportionsOfNetMonthlyIncome.map(p => (p * 100).toInt).zip(scheduleList).toMap
   }
 
   def selectedSchedule(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = {
