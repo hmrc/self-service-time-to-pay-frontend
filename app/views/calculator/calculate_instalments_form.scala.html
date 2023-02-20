@@ -37,7 +37,7 @@
 @(
         redirectCall: Call,
         regularAmountForm: Form[PlanRegularAmountSelection],
-        schedules: List[PaymentSchedule])(
+        schedules: Map[Int, PaymentSchedule])(
         implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
@@ -56,8 +56,8 @@
         ErrorSummary(
             title = Text(Messages("ssttp.calculator.results.error.title")),
             errorList = regularAmountForm.errors.asTextErrorLinks.map {error =>
-                if(error.href.forall(_.contains("chosen-month"))) error.copy (
-                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("chosen-month", s.durationInMonths.toString)))
+                if(error.href.forall(_.contains("chosen-regular-amount"))) error.copy (
+                    href = schedules.values.headOption.fold(error.href)(s => error.href.map(_.replaceAll("chosen-regular-amount", s.regularMonthlyAmount.toString)))
                 ) else error
             }
         )
@@ -73,15 +73,15 @@
         @radios(Radios(
             name = "chosen-regular-amount",
             attributes = Map("id" -> "chosen-regular-amount"),
-            items = schedules.map ( schedule => {
+            items = schedules.toSeq.map ( schedule => {
                 RadioItem(
-                    id = Some(schedule.getMonthlyInstalment.toString),
-                    value = Some(schedule.getMonthlyInstalment.toString),
+                    id = Some(schedule._1.toString),
+                    value = Some(schedule._2.getMonthlyInstalment.toString),
                     content = HtmlContent(
-                        instalment_by_month_label(schedule)
+                        instalment_by_month_label(schedule._2)
                     ),
 
-                    conditionalHtml = Some(instalment_by_month_conditional(schedule))
+                    conditionalHtml = Some(instalment_by_month_conditional(schedule._2))
                 )
             })
         ))

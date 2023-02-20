@@ -228,7 +228,7 @@ ssttp.calculator.results.section.p1 = Rydym yn codi llog ar symiau hwyr yn unig.
 ssttp.calculator.results.section.p2 = Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
 ssttp.calculator.results.section.p3 = Os bydd y gyfradd llog yn newid yn ystod eich cynllun, ni fydd eich taliadau misol yn newid. Os bydd angen, byddwn yn setlo’r gwahaniaeth ar ddiwedd y cynllun.
 ssttp.calculator.results.error.title = Mae problem wedi cod
-ssttp.calculator.results.month.required = Dewiswch gynllun talu
+ssttp.calculator.results.amount.required = Dewiswch gynllun talu
 ssttp.calculator.results.month.greater-then-six.header = A oes angen cynllun talu hirach arnoch?
 ssttp.calculator.results.month.greater-then-six.intro = Bydd y gyfradd llog a’r ad-daliad cyffredinol yn uwch pan fyddwch yn dewis cynllun talu hirach.
 
