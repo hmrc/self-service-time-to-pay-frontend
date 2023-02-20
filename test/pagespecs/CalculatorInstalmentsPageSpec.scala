@@ -24,7 +24,8 @@ import testsupport.testdata.CalculatorDataGenerator
 
 class CalculatorInstalmentsPageSpec extends ItSpec {
 
-  def beginJourney(): Unit = {
+  // TODO OPS-8650: remove this entirely
+  def beginOldJourney(): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -48,8 +49,51 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
   }
 
+  def beginNewJourney(): Unit = {
+    AuthStub.authorise()
+    TaxpayerStub.getTaxpayer()
+    IaStub.successfulIaCheck
+    GgStub.signInPage(port)
+    getBanksIsSuccessful()
+    startPage.open()
+    startPage.assertPageIsDisplayed()
+    startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.selectRadioButton(false)
+    paymentTodayQuestionPage.clickContinue()
+
+    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.selectFirstOption28thDay()
+    selectDatePage.clickOnTempButton()
+
+    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.clickContinue()
+
+    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.clickOnAddChangeIncome()
+
+    yourMonthlyIncomePage.assertPageIsDisplayed
+    yourMonthlyIncomePage.enterMonthlyIncome("1000")
+    yourMonthlyIncomePage.clickContinue()
+
+    addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
+    addIncomeSpendingPage.clickOnAddChangeSpending()
+
+    yourMonthlySpendingPage.assertPageIsDisplayed
+    yourMonthlySpendingPage.enterHousing("500")
+    yourMonthlySpendingPage.clickContinue()
+
+    howMuchYouCouldAffordPage.clickContinue()
+
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
+  }
+
   "language" in {
-    beginJourney()
+    beginNewJourney()
 
     calculatorInstalmentsPage28thDay.assertPageIsDisplayed
 
@@ -61,12 +105,12 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
   }
 
   "back button" in {
-    beginJourney()
+    beginNewJourney()
     calculatorInstalmentsPage28thDay.backButtonHref shouldBe Some(s"${baseUrl.value}${selectDatePage.path}")
   }
 
   "select an option and continue" in {
-    beginJourney()
+    beginNewJourney()
     calculatorInstalmentsPage28thDay.selectAnOption()
     calculatorInstalmentsPage28thDay.clickContinue()
     instalmentSummaryPage.assertPageIsDisplayed()
