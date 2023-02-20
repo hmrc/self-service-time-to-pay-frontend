@@ -15,7 +15,7 @@
  *@
 
 @import partials._
-@import uk.gov.hmrc.selfservicetimetopay.models.PlanRegularAmountSelection
+@import uk.gov.hmrc.selfservicetimetopay.models.SelectedPlanAmount
 @import ssttpcalculator.model._
 @import model._
 @import helpers.forms.submit
@@ -36,7 +36,7 @@
 
 @(
         redirectCall: Call,
-        regularAmountForm: Form[PlanRegularAmountSelection],
+        regularAmountForm: Form[SelectedPlanAmount],
         schedules: Map[Int, PaymentSchedule])(
         implicit
         messages: play.api.i18n.Messages,

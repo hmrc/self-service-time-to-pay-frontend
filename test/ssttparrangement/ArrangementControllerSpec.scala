@@ -34,7 +34,7 @@ import testsupport.stubs.{ArrangementStub, AuthStub, DirectDebitStub, TaxpayerSt
 import testsupport.testdata.TdAll.selectedRegularPaymentAmount300
 import testsupport.testdata.{TdAll, TdRequest}
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, CalculatorDuration, EligibilityStatus, PlanRegularAmountSelection, TypeOfAccountDetails}
+import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, CalculatorDuration, EligibilityStatus, SelectedPlanAmount, TypeOfAccountDetails}
 
 import java.time.LocalDateTime
 import java.util.UUID
@@ -92,18 +92,18 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
   private def createJourney(journeyId: JourneyId): Journey = {
     Journey(
-      _id                             = journeyId,
-      status                          = InProgress,
-      createdOn                       = LocalDateTime.now(),
-      maybeTypeOfAccountDetails       = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
-      maybeBankDetails                = Some(BankDetails(Some(Personal), "111111", "12345678", "Darth Vader", None)),
-      existingDDBanks                 = None,
-      maybeTaxpayer                   = Some(TdAll.taxpayer),
-      maybePaymentToday               = Some(PaymentToday(true)),
-      maybeRegularPlanAmountSelection = Some(PlanRegularAmountSelection(selectedRegularPaymentAmount300)),
-      maybeCalculatorDuration         = Some(CalculatorDuration(3)),
-      maybeArrangementDayOfMonth      = Some(ArrangementDayOfMonth(3)),
-      maybeEligibilityStatus          = Some(EligibilityStatus(Seq.empty))
+      _id                        = journeyId,
+      status                     = InProgress,
+      createdOn                  = LocalDateTime.now(),
+      maybeTypeOfAccountDetails  = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
+      maybeBankDetails           = Some(BankDetails(Some(Personal), "111111", "12345678", "Darth Vader", None)),
+      existingDDBanks            = None,
+      maybeTaxpayer              = Some(TdAll.taxpayer),
+      maybePaymentToday          = Some(PaymentToday(true)),
+      maybeSelectedPlanAmount    = Some(SelectedPlanAmount(selectedRegularPaymentAmount300)),
+      maybeCalculatorDuration    = Some(CalculatorDuration(3)),
+      maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(3)),
+      maybeEligibilityStatus     = Some(EligibilityStatus(Seq.empty))
     )
   }
 }

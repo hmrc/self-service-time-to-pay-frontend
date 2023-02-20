@@ -99,7 +99,7 @@ class CalculatorService @Inject() (
     val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.safeNew(
       taxLiabilities,
       journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
-      journey.maybeRegularPlanAmountSelection.map(_.chosenRegularAmount).getOrElse(
+      journey.maybeSelectedPlanAmount.map(_.chosenRegularAmount).getOrElse(
         throw new IllegalArgumentException("could not find plan amount selection but there should be one")
       ),
       clockProvider.nowDate(),

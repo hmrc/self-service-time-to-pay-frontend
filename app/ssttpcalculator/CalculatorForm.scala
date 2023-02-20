@@ -87,9 +87,9 @@ object CalculatorForm {
 
   val chosenRegularAmountMapping: Mapping[String] = Forms.of[String](chosenRegularAmountFormatter)
 
-  def createInstalmentForm(): Form[PlanRegularAmountSelection] =
+  def createInstalmentForm(): Form[SelectedPlanAmount] =
     Form(
-      mapping("chosen-regular-amount" -> chosenRegularAmountMapping) (text => PlanRegularAmountSelection(BigDecimal(text))) (_ => Some(text.toString))
+      mapping("chosen-regular-amount" -> chosenRegularAmountMapping) (text => SelectedPlanAmount(BigDecimal(text))) (_ => Some(text.toString))
     )
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(
