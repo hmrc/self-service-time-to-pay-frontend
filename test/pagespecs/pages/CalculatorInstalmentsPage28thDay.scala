@@ -51,11 +51,10 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText.DefaultCalculations().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }
-
   object Expected {
 
     object GlobalHeaderText {
@@ -71,41 +70,82 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
     }
 
     object MainText {
-      def apply()(implicit language: Language): String = language match {
-        case English => mainTextEnglish
-        case Welsh   => mainTextWelsh
+      object DefaultCalculations {
+        def apply()(implicit language: Language): String = language match {
+          case English => mainTextEnglish
+          case Welsh => mainTextWelsh
+        }
+
+        private val mainTextEnglish =
+          s"""How much can you pay each month?
+             |Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
+             |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+             |£250 per month over 21 months
+             |Includes total interest estimated at £138.16
+             |or
+             |£300 per month over 17 months
+             |Includes total interest estimated at £116.53
+             |£400 per month over 13 months
+             |Includes total interest estimated at £89.39
+             |I cannot afford to make these payments
+             |You may still be able to set up a payment plan over the phone. Call us on 0300 123 1813 to discuss your debt.
+             |Continue
+          """.stripMargin
+
+        private val mainTextWelsh =
+          s"""Faint y gallwch ei dalu bob mis?
+             |Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+             |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
+             |£250 y mis, am 21 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £138.16
+             |£300 y mis, am 17 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £116.53
+             |£400 y mis, am 13 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £89.39
+             |Nid wyf yn gallu fforddio’r taliadau hyn
+             |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i drafod eich opsiynau.
+             |Yn eich blaen
+          """.stripMargin
+      }
+      object NotAllRadioButtons {
+        def apply(numberOfPaymentPlanOptions: Int)(implicit language: Language): String = language match {
+          case English => mainTextEnglish
+          case Welsh => mainTextWelsh
+        }
+
+        private val mainTextEnglish =
+          s"""How much can you pay each month?
+             |Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
+             |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+             |£250 per month over 21 months
+             |Includes total interest estimated at £138.16
+             |or
+             |£300 per month over 17 months
+             |Includes total interest estimated at £116.53
+             |£400 per month over 13 months
+             |Includes total interest estimated at £89.39
+             |I cannot afford to make these payments
+             |You may still be able to set up a payment plan over the phone. Call us on 0300 123 1813 to discuss your debt.
+             |Continue
+          """.stripMargin
+
+        private val mainTextWelsh =
+          s"""Faint y gallwch ei dalu bob mis?
+             |Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+             |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
+             |£250 y mis, am 21 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £138.16
+             |£300 y mis, am 17 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £116.53
+             |£400 y mis, am 13 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £89.39
+             |Nid wyf yn gallu fforddio’r taliadau hyn
+             |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i drafod eich opsiynau.
+             |Yn eich blaen
+          """.stripMargin
+
       }
 
-      private val mainTextEnglish =
-        s"""How much can you pay each month?
-           |Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
-           |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
-           |£250 per month over 21 months
-           |Includes total interest estimated at £138.16
-           |or
-           |£300 per month over 17 months
-           |Includes total interest estimated at £116.53
-           |£400 per month over 13 months
-           |Includes total interest estimated at £89.39
-           |I cannot afford to make these payments
-           |You may still be able to set up a payment plan over the phone. Call us on 0300 123 1813 to discuss your debt.
-           |Continue
-        """.stripMargin
-
-      private val mainTextWelsh =
-        s"""Faint y gallwch ei dalu bob mis?
-           |Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
-           |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
-           |£250 y mis, am 21 mis
-           |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £138.16
-           |£300 y mis, am 17 mis
-           |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £116.53
-           |£400 y mis, am 13 mis
-           |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £89.39
-           |Nid wyf yn gallu fforddio’r taliadau hyn
-           |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i drafod eich opsiynau.
-           |Yn eich blaen
-        """.stripMargin
     }
   }
 }

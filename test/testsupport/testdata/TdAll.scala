@@ -123,6 +123,10 @@ todays date: 2019-11-25
 
   val selectedRegularPaymentAmount300 = 300
 
+  val defaultRemainingIncomeAfterSpending = 1000
+
+  val remainingIncomeAfterSpendingTooSmallForPlan = 50
+
   implicit def toSome[T](t: T): Option[T] = Some(t)
 
   implicit def toLocalDate(s: String): LocalDate = LocalDate.parse(s)

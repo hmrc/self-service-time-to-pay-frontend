@@ -20,7 +20,7 @@ import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.CalculatorDataGenerator
+import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, remainingIncomeAfterSpendingTooSmallForPlan}
 
 class CalculatorInstalmentsPageSpec extends ItSpec {
 
@@ -49,7 +49,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
   }
 
-  def beginNewJourney(): Unit = {
+  def beginNewJourney(remainingIncomeAfterSpending: Int = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -77,7 +77,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     addIncomeSpendingPage.clickOnAddChangeIncome()
 
     yourMonthlyIncomePage.assertPageIsDisplayed
-    yourMonthlyIncomePage.enterMonthlyIncome("1000")
+    yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
     yourMonthlyIncomePage.clickContinue()
 
     addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
@@ -88,14 +88,30 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
+  }
 
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
+  "goes to kick out page " +
+    "if 50% of remaining income after spending cannot cover amount remaining to pay including interest in 24 months of less" in {
+    beginNewJourney(remainingIncomeAfterSpendingTooSmallForPlan)
+    weCannotAgreeYourPaymentPlanPage.assertPagePathCorrect
+  }
+
+  "display default options" - {
+    "if 50% of remaining income after spending covers amount remaining to pay including interest in one month " +
+      "displays only 50% default option" in {
+    }
+    "if 60% of remaining income after spending covers amount remaining to pay including interest in one month " +
+      "displays only 50% and 60% default options" in {
+    }
+    "displays three options otherwise" in {
+      beginNewJourney()
+
+      calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+    }
   }
 
   "language" in {
     beginNewJourney()
-
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed
 
     calculatorInstalmentsPage28thDay.clickOnWelshLink()
     calculatorInstalmentsPage28thDay.assertPageIsDisplayed(Welsh)
@@ -106,7 +122,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
   "back button" in {
     beginNewJourney()
-    calculatorInstalmentsPage28thDay.backButtonHref shouldBe Some(s"${baseUrl.value}${selectDatePage.path}")
+    calculatorInstalmentsPage28thDay.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
   }
 
   "select an option and continue" in {
