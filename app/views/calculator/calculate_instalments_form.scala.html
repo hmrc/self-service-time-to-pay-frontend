@@ -39,8 +39,7 @@
         selectPlanForm: Form[PlanSelection],
         schedules: Map[Int, PaymentSchedule],
         minCustomAmount: BigDecimal,
-        maxCustomAmount: BigDecimal,
-        customAmount: Option[BigDecimal] = None)(
+        maxCustomAmount: BigDecimal)(
         implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
@@ -102,10 +101,6 @@
                     content = HtmlContent(instalment_by_amount_label(schedule._2))
                 )
             }) :+ RadioItem(
-                id = Some("otherAmountOption"),
-                value = customAmount.map(_.toString),
-                content = Text("Some text")
-            ) :+ RadioItem(
                 id = Some("customAmountOption"),
                 value = None,
                 content = Text(Messages("ssttp.calculator.results.option.other.label")),

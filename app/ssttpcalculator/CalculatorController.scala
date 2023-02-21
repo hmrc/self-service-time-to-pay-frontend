@@ -24,7 +24,8 @@ import javax.inject._
 import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
 import play.api.mvc._
 import req.RequestSupport
-import ssttpcalculator.CalculatorForm.{selectPlanForm, createPaymentTodayForm, payTodayForm}
+import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
+import ssttpcalculator.model.PaymentSchedule
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -185,12 +186,12 @@ class CalculatorController @Inject() (
         journey.maybeArrangementDayOfMonth,
         journey.remainingIncomeAfterSpending
       )
+      val minCustomAmount = paymentPlanOptions.values
+        .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
+      val maxCustomAmount = BigDecimal(10000)
 
       selectPlanForm().bindFromRequest().fold(
         formWithErrors => {
-          val minCustomAmount = paymentPlanOptions.values
-            .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
-          val maxCustomAmount = BigDecimal(10000)
           Future.successful(
             BadRequest(
               views.calculate_instalments_form(
@@ -206,17 +207,20 @@ class CalculatorController @Inject() (
           JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data before check of selected plan amount - $validFormData")
           validFormData.selectedPlanAmount match {
             case None =>
-              val minCustomAmount = paymentPlanOptions.values
-                .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
-              val maxCustomAmount = BigDecimal(10000)
+              val customSchedule: PaymentSchedule = calculatorService.customSchedule(
+                sa,
+                journey.safeUpfrontPayment,
+                journey.maybeArrangementDayOfMonth,
+                validFormData.customAmountInput.getOrElse(throw new IllegalArgumentException("tried to build a custom schedule without custom amount input"))
+              ).getOrElse(throw new IllegalArgumentException("tried to build a custom schedule without custom amount input"))
+
               Future.successful(
                 Ok(views.calculate_instalments_form(
                   routes.CalculatorController.submitCalculateInstalments(),
                   selectPlanForm(),
-                  paymentPlanOptions,
+                  paymentPlanOptions + Tuple2(0, customSchedule),
                   minCustomAmount,
-                  maxCustomAmount,
-                  validFormData.customAmountInput
+                  maxCustomAmount
                 ))
               )
             case Some(_) =>

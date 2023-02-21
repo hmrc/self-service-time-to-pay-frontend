@@ -110,6 +110,27 @@ class CalculatorService @Inject() (
     schedule(taxPaymentPlan)
   }
 
+  def customSchedule(
+      sa:                         SelfAssessmentDetails,
+      upfrontPayment:             BigDecimal,
+      maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth],
+      customAmount:               BigDecimal
+  )(implicit request: Request[_], config: AppConfig): Option[PaymentSchedule] = {
+    val taxLiabilities: Seq[TaxLiability] = for {
+      selfAssessmentDebit <- sa.debits
+    } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
+
+    schedule(
+      TaxPaymentPlan.safeNew(
+        taxLiabilities             = taxLiabilities,
+        upfrontPayment             = upfrontPayment,
+        regularPaymentAmount       = customAmount,
+        dateNow                    = clockProvider.nowDate(),
+        maybeArrangementDayOfMonth = maybeArrangementDayOfMonth
+      )(appConfig)
+    )
+  }
+
   def schedule(implicit taxPaymentPlan: TaxPaymentPlan): Option[PaymentSchedule] = {
     val payables = Payables(taxPaymentPlan.taxLiabilities)
     val principal = payables.liabilities.map(_.amount).sum
