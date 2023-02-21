@@ -157,6 +157,17 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
       calculatorInstalmentsPage28thDay.assertBelowMinimumErrorIsDisplayed
     }
+    "more than maximum displays error message" in {
+      beginNewJourney()
+
+      val customAmountBelowMinimum = 7000
+
+      calculatorInstalmentsPage28thDay.selectCustomAmountOption()
+      calculatorInstalmentsPage28thDay.enterCustomAmount(customAmountBelowMinimum.toString)
+      calculatorInstalmentsPage28thDay.clickContinue()
+
+      calculatorInstalmentsPage28thDay.assertAboveMaximumErrorIsDisplayed
+    }
   }
 
   "language" in {

@@ -105,6 +105,11 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
     readMain().stripSpaces() should include(Expected.ErrorText.BelowMinimum().stripSpaces())
   }
 
+  def assertAboveMaximumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.ErrorText.AboveMaximum().stripSpaces())
+  }
+
   object Expected {
 
     object GlobalHeaderText {
@@ -224,14 +229,30 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
         private val belowMinimumTextEnglish =
           s"""There is a problem
-             |That amount is too low. Enter an amount that is at least £250 but no more than £4900.
+             |That amount is too low, enter an amount that is at least £250 but no more than £4,900
       """.stripMargin
 
         private val belowMinimumTextWelsh =
+          s"""Mae problem wedi codi
+             |Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,900
+      """.stripMargin
+      }
+
+      object AboveMaximum {
+        def apply()(implicit language: Language): String = language match {
+          case English => aboveMaximumTextEnglish
+          case Welsh => aboveMaximumTextWelsh
+        }
+
+        private val aboveMaximumTextEnglish =
           s"""There is a problem
-             |That amount is too low. Enter an amount that is at least £250 but no more than £4900.
+             |That amount is too high, enter an amount that is at least £250 but no more than £4,900
       """.stripMargin
 
+        private val aboveMaximumTextWelsh =
+          s"""Mae problem wedi codi
+             |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,900
+      """.stripMargin
       }
     }
   }

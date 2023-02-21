@@ -112,10 +112,13 @@ object CalculatorForm {
       minCustomAmout:  BigDecimal,
       maxCustomAmount: BigDecimal
   ): Mapping[String] = {
-
-    mappingStr.verifying("ssttp.calculator.results.option.other.error.below-minimum", { i: String =>
-      if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= minCustomAmout else true
-    })
+    mappingStr
+      .verifying("ssttp.calculator.results.option.other.error.below-minimum", { i: String =>
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= minCustomAmout else true
+      })
+      .verifying("ssttp.calculator.results.option.other.error.above-maximum", { i: String =>
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) <= maxCustomAmount else true
+      })
   }
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(
