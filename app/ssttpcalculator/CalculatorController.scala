@@ -157,13 +157,13 @@ class CalculatorController @Inject() (
         journey.remainingIncomeAfterSpending
       )
 
+      val minCustomAmount = paymentPlanOptions.values
+        .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
+      val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
+
       if (paymentPlanOptions.isEmpty) {
         Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
       } else {
-        val minCustomAmount = paymentPlanOptions.values
-          .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
-        val maxCustomAmount = BigDecimal(10000)
-
         Ok(views.calculate_instalments_form(
           routes.CalculatorController.submitCalculateInstalments(),
           selectPlanForm(),
@@ -188,7 +188,7 @@ class CalculatorController @Inject() (
       )
       val minCustomAmount = paymentPlanOptions.values
         .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
-      val maxCustomAmount = BigDecimal(10000)
+      val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey)
 
       selectPlanForm().bindFromRequest().fold(
         formWithErrors => {
