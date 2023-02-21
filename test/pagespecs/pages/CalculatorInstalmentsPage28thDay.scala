@@ -73,10 +73,10 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
                          interest: Option[String] = None
                        )(implicit language: Language = Languages.English): Unit = (months, interest) match {
     case (Some(months), Some(interest)) =>
-      val expectedLines = Expected.MainText.OptionsText(amount, months, interest).stripSpaces().split("\n")
+      val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).stripSpaces().split("\n")
       assertContentMatchesExpectedLines(expectedLines)
     case _ =>
-      val expectedLines = Expected.MainText.OptionsText(amount).stripSpaces().split("\n")
+      val expectedLines = Expected.MainText.DefaultOptionsText(amount).stripSpaces().split("\n")
       assertContentMatchesExpectedLines(expectedLines)
   }
 
@@ -86,11 +86,17 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
                             interest: Option[String] = None
                           )(implicit language: Language = Languages.English): Unit = (months, interest) match {
     case (Some(months), Some(interest)) =>
-      val expectedLines = Expected.MainText.OptionsText(amount, months, interest).stripSpaces().split("\n")
+      val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).stripSpaces().split("\n")
       assertContentDoesNotContainLines(expectedLines)
     case _ =>
-      val expectedLines = Expected.MainText.OptionsText(amount).stripSpaces().split("\n")
+      val expectedLines = Expected.MainText.DefaultOptionsText(amount).stripSpaces().split("\n")
       assertContentDoesNotContainLines(expectedLines)
+  }
+
+  def customAmountOptionIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+    val expectedLines = Expected.MainText.CustomAmountOption().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+    ()
   }
 
   object Expected {
@@ -149,7 +155,25 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
           """.stripMargin
       }
 
-      object OptionsText {
+      object CustomAmountOption {
+        def apply()(implicit language: Language): String = language match {
+          case English => customAmountOptionTextEnglish
+          case Welsh => customAmountOptionTextWelsh
+        }
+
+        private val customAmountOptionTextEnglish =
+          s"""A different monthly amount
+             |Enter an amount that is at least £250 but no more than £4,900
+          """.stripMargin
+
+        private val customAmountOptionTextWelsh =
+          s"""Swm misol gwahanol
+             |Rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,900
+          """.stripMargin
+
+      }
+
+      object DefaultOptionsText {
 
         def apply(amount: String)(implicit language: Language): String = {
           language match {

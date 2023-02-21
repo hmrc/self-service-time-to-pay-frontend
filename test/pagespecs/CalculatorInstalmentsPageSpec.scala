@@ -17,7 +17,6 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import ssttpcalculator.CalculatorService
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -121,7 +120,20 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
     }
   }
-  "displays custom entry option" in {
+  "displays custom amount option" - {
+    "in English" in {
+      beginNewJourney()
+
+      calculatorInstalmentsPage28thDay.customAmountOptionIsDisplayed
+    }
+    "in Welsh" in {
+      beginNewJourney()
+
+      calculatorInstalmentsPage28thDay.clickOnWelshLink()
+
+      calculatorInstalmentsPage28thDay.customAmountOptionIsDisplayed(Welsh)
+    }
+
 
   }
   "custom amount entry" - {
