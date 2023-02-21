@@ -102,7 +102,7 @@ object CalculatorForm {
 
   def selectPlanForm(): Form[PlanSelection] =
     Form(mapping(
-      "selected-plan-amount" -> mandatoryIfFalse("customAmountInput", selectedPlanAmountMapping),
+      "selected-plan-amount" -> optional(selectedPlanAmountMapping),
       "customAmountInput" -> optional(customAmountInputMapping)
     )(coerce)(uncoerce))
 
