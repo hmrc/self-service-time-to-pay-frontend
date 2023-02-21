@@ -69,7 +69,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
   def optionIsDisplayed(amount: BigDecimal, months: Int, interest: BigDecimal)(implicit language: Language = Languages.English): Unit = {
     val expectedLines = Expected.MainText.OptionsText(amount, months, interest).stripSpaces().split("\n")
-      assertContentMatchesExpectedLines(expectedLines)
+    assertContentMatchesExpectedLines(expectedLines)
   }
   object Expected {
 
@@ -131,7 +131,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
         def apply(amount: BigDecimal, months: Int, interest: BigDecimal)(implicit language: Language): String = language match {
           case English => optionsTextEnglish(amount, months, interest)
-          case Welsh => optionsTextWelsh(amount, months, interest)
+          case Welsh   => optionsTextWelsh(amount, months, interest)
         }
         private def optionsTextEnglish(amount: BigDecimal, months: Int, interest: BigDecimal): String =
           s"""£$amount per month over $months months
@@ -143,7 +143,6 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £$interest
           """.stripMargin
       }
-
 
     }
   }

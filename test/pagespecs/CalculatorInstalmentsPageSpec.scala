@@ -120,12 +120,14 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
 
       val customAmount = 280
+      val planMonths = 18
+      val planInterest = 124.26
 
-      calculatorInstalmentsPage28thDay.selectCustomAmountOption
+      calculatorInstalmentsPage28thDay.selectCustomAmountOption()
       calculatorInstalmentsPage28thDay.enterCustomAmount(customAmount.toString)
       calculatorInstalmentsPage28thDay.clickContinue()
 
-      calculatorInstalmentsPage28thDay.optionIsDisplayed(280, 20, 155)
+      calculatorInstalmentsPage28thDay.optionIsDisplayed(customAmount, planMonths, planInterest)
     }
   }
 
