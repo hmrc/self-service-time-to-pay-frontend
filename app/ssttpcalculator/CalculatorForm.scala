@@ -23,6 +23,7 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.voa.play.form.Condition
 import uk.gov.voa.play.form.ConditionalMappings.{mandatoryIf, mandatoryIfFalse}
 
+import scala.BigDecimal
 import scala.util.Try
 
 object CalculatorForm {
@@ -103,8 +104,14 @@ object CalculatorForm {
   def selectPlanForm(): Form[PlanSelection] =
     Form(mapping(
       "selected-plan-amount" -> optional(selectedPlanAmountMapping),
-      "customAmountInput" -> optional(customAmountInputMapping)
+      "customAmountInput" -> optional(validateCustomAmountInput(customAmountInputMapping))
     )(coerce)(uncoerce))
+
+  private def validateCustomAmountInput(mappingStr: Mapping[String]): Mapping[String] = {
+    mappingStr.verifying("ssttp.calculator.results.option.other.error.below-minimum", { i: String =>
+      if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= 250 else true
+    })
+  }
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)

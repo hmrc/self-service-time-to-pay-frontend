@@ -19,6 +19,7 @@ package pagespecs.pages
 import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
+import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
@@ -97,6 +98,11 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
     val expectedLines = Expected.MainText.CustomAmountOption().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
     ()
+  }
+
+  def assertBelowMinimumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.ErrorText.BelowMinimum().stripSpaces())
   }
 
   object Expected {
@@ -207,7 +213,26 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £$interest
           """.stripMargin
       }
+    }
 
+    object ErrorText {
+      object BelowMinimum {
+        def apply()(implicit language: Language): String = language match {
+          case English => belowMinimumTextEnglish
+          case Welsh => belowMinimumTextWelsh
+        }
+
+        private val belowMinimumTextEnglish =
+          s"""There is a problem
+             |That amount is too low. Enter an amount that is at least £X but no more than £Y.
+      """.stripMargin
+
+        private val belowMinimumTextWelsh =
+          s"""There is a problem
+             |That amount is too low. Enter an amount that is at least £X but no more than £Y.
+      """.stripMargin
+
+      }
     }
   }
 }

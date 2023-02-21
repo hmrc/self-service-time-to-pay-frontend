@@ -246,6 +246,7 @@ ssttp.calculator.results.section.cannot-afford.title = I cannot afford to make t
 ssttp.calculator.results.section.cannot-afford.p.1 = You may still be able to set up a payment plan over the phone. Call us on
 ssttp.calculator.results.section.cannot-afford.p.2 = 0300 123 1813
 ssttp.calculator.results.section.cannot-afford.p.3 =  to discuss your debt.
+ssttp.calculator.results.option.other.error.below-minimum = That amount is too low. Enter an amount that is at least £{0} but no more than £{1}.
 
 
 

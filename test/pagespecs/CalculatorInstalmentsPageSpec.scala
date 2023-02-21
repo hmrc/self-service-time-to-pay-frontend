@@ -116,25 +116,19 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     }
     "displays three default options otherwise" in {
       beginNewJourney()
-
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
     }
   }
   "displays custom amount option" - {
     "in English" in {
       beginNewJourney()
-
       calculatorInstalmentsPage28thDay.customAmountOptionIsDisplayed
     }
     "in Welsh" in {
       beginNewJourney()
-
       calculatorInstalmentsPage28thDay.clickOnWelshLink()
-
       calculatorInstalmentsPage28thDay.customAmountOptionIsDisplayed(Welsh)
     }
-
-
   }
   "custom amount entry" - {
     "displays page with customer option at top when custom amount entered and continue pressed" in {
@@ -151,6 +145,17 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.clickContinue()
 
       calculatorInstalmentsPage28thDay.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+    }
+    "less than minimum displays error message" in {
+      beginNewJourney()
+
+      val customAmountBelowMinimum = 200
+
+      calculatorInstalmentsPage28thDay.selectCustomAmountOption()
+      calculatorInstalmentsPage28thDay.enterCustomAmount(customAmountBelowMinimum.toString)
+      calculatorInstalmentsPage28thDay.clickContinue()
+
+      calculatorInstalmentsPage28thDay.assertBelowMinimumErrorIsDisplayed
     }
   }
 

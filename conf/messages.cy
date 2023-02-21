@@ -230,6 +230,8 @@ ssttp.calculator.results.section.cannot-afford.title = Nid wyf yn gallu fforddio
 ssttp.calculator.results.section.cannot-afford.p.1 = Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar
 ssttp.calculator.results.section.cannot-afford.p.2 = 0300 200 1900
 ssttp.calculator.results.section.cannot-afford.p.3 = i drafod eich opsiynau.
+ssttp.calculator.results.option.other.error.below-minimum = That amount is too low. Enter an amount that is at least £{0} but no more than £{1}.
+
 
 
 ssttp.calculator.results.month.instalments = Rhandaliadau
