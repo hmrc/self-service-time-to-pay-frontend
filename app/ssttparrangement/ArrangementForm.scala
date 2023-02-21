@@ -43,7 +43,7 @@ object ArrangementForm {
       def isInt(input: String): Boolean = (catching(classOf[NumberFormatException]) opt input.toInt).nonEmpty
 
     val dayOfMonth = text
-      .verifying("ssttp.arrangement.change_day.payment-day.required", { i: String => i.nonEmpty })
+      .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i: String => i.nonEmpty })
       .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
       .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt >= 1)) })
       .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt <= 28)) })
