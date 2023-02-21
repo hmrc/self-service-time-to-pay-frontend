@@ -20,6 +20,8 @@ import play.api.data.Forms.{text, _}
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms, Mapping}
 import uk.gov.hmrc.selfservicetimetopay.models._
+import uk.gov.voa.play.form.Condition
+import uk.gov.voa.play.form.ConditionalMappings.{mandatoryIf, mandatoryIfFalse}
 
 import scala.util.Try
 
@@ -69,7 +71,7 @@ object CalculatorForm {
           Try(BigDecimal(i)).isFailure || BigDecimal(i) >= min && BigDecimal(i) <= max
         }))(text => MonthlyAmountForm(text))(bd => Some(bd.amount.toString)))
 
-  private val chosenRegularAmountFormatter: Formatter[String] = new Formatter[String] {
+  private val selectedPlanAmountFormatter: Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
       val amount = data.get(key) match {
         case None => data.get(key + ".value")
@@ -85,12 +87,24 @@ object CalculatorForm {
     override def unbind(key: String, value: String): Map[String, String] = Map(key + ".value" -> value.toString)
   }
 
-  val chosenRegularAmountMapping: Mapping[String] = Forms.of[String](chosenRegularAmountFormatter)
+  val selectedPlanAmountMapping: Mapping[String] = Forms.of[String](selectedPlanAmountFormatter)
 
-  def createInstalmentForm(): Form[SelectedPlanAmount] =
-    Form(
-      mapping("chosen-regular-amount" -> chosenRegularAmountMapping) (text => SelectedPlanAmount(BigDecimal(text))) (_ => Some(text.toString))
+  val customAmountInputMapping: Mapping[String] = text
+
+  def coerce(selectedPlanAmount: Option[String], customAmountInput: Option[String]): PlanSelection = {
+    PlanSelection(selectedPlanAmount.map(BigDecimal(_)), customAmountInput.map(BigDecimal(_))
     )
+  }
+
+  def uncoerce(data: PlanSelection): Option[(Option[String], Option[String])] = Option {
+    (data.selectedPlanAmount.map(_.toString), data.customAmountInput.map(_.toString))
+  }
+
+  def selectPlanForm(): Form[PlanSelection] =
+    Form(mapping(
+      "selected-plan-amount" -> mandatoryIfFalse("customAmountInput", selectedPlanAmountMapping),
+      "customAmountInput" -> optional(customAmountInputMapping)
+    )(coerce)(uncoerce))
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)

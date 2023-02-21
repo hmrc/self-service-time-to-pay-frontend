@@ -22,9 +22,9 @@ import controllers.action.Actions
 
 import javax.inject._
 import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
-import play.api.mvc.{AnyContent, _}
+import play.api.mvc._
 import req.RequestSupport
-import ssttpcalculator.CalculatorForm.{createInstalmentForm, createPaymentTodayForm, payTodayForm}
+import ssttpcalculator.CalculatorForm.{selectPlanForm, createPaymentTodayForm, payTodayForm}
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -165,7 +165,7 @@ class CalculatorController @Inject() (
 
         Ok(views.calculate_instalments_form(
           routes.CalculatorController.submitCalculateInstalments(),
-          createInstalmentForm(),
+          selectPlanForm(),
           paymentPlanOptions,
           minCustomAmount,
           maxCustomAmount
@@ -186,7 +186,7 @@ class CalculatorController @Inject() (
         journey.remainingIncomeAfterSpending
       )
 
-      createInstalmentForm().bindFromRequest().fold(
+      selectPlanForm().bindFromRequest().fold(
         formWithErrors => {
           val minCustomAmount = paymentPlanOptions.values
             .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
@@ -202,11 +202,30 @@ class CalculatorController @Inject() (
               ))
           )
         },
-        (validFormData: SelectedPlanAmount) => {
-          JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data - $validFormData")
-          journeyService.saveJourney(journey.copy(maybeSelectedPlanAmount = Some(validFormData))).map { _ =>
-            Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
+        (validFormData: PlanSelection) => {
+          JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data before check of selected plan amount - $validFormData")
+          validFormData.selectedPlanAmount match {
+            case None =>
+              val minCustomAmount = paymentPlanOptions.values
+                .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
+              val maxCustomAmount = BigDecimal(10000)
+              Future.successful(
+                Ok(views.calculate_instalments_form(
+                  routes.CalculatorController.submitCalculateInstalments(),
+                  selectPlanForm(),
+                  paymentPlanOptions,
+                  minCustomAmount,
+                  maxCustomAmount,
+                  validFormData.customAmountInput
+                ))
+              )
+            case Some(_) =>
+              JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data when there is a selected plan amount - $validFormData")
+              journeyService.saveJourney(journey.copy(maybeSelectedPlanAmount = Some(validFormData))).map { _ =>
+                Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
+              }
           }
+
         }
 
       )

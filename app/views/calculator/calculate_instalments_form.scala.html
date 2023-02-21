@@ -15,7 +15,7 @@
  *@
 
 @import partials._
-@import uk.gov.hmrc.selfservicetimetopay.models.SelectedPlanAmount
+@import uk.gov.hmrc.selfservicetimetopay.models.PlanSelection
 @import ssttpcalculator.model._
 @import model._
 @import helpers.forms.submit
@@ -36,10 +36,11 @@
 
 @(
         redirectCall: Call,
-        regularAmountForm: Form[SelectedPlanAmount],
+        selectPlanForm: Form[PlanSelection],
         schedules: Map[Int, PaymentSchedule],
         minCustomAmount: BigDecimal,
-        maxCustomAmount: BigDecimal)(
+        maxCustomAmount: BigDecimal,
+        customAmount: Option[BigDecimal] = None)(
         implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
@@ -47,8 +48,8 @@
 )
 
 @enterCustomAmountPanel = {
-<div id="customAmount" class="govuk-form-group">
-    <div class="govuk-hint" for="customAmount" >@messages(
+<div id="customAmountField" class="govuk-form-group">
+    <div class="govuk-hint" for="customAmountField" >@messages(
         "ssttp.calculator.results.option.other.enter.amount",
         minCustomAmount,
         maxCustomAmount
@@ -67,13 +68,13 @@
 
 <section class="govuk-body">
 
-@if(regularAmountForm.hasErrors) {
+@if(selectPlanForm.hasErrors) {
     @errorSummary(
         ErrorSummary(
             title = Text(Messages("ssttp.calculator.results.error.title")),
-            errorList = regularAmountForm.errors.asTextErrorLinks.map {error =>
-                if(error.href.forall(_.contains("chosen-regular-amount"))) error.copy (
-                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("chosen-regular-amount", s._1.toString)))
+            errorList = selectPlanForm.errors.asTextErrorLinks.map {error =>
+                if(error.href.forall(_.contains("selected-plan-amount"))) error.copy (
+                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("selected-plan-amount", s._1.toString)))
                 ) else error
             }
         )
@@ -92,8 +93,8 @@
         <p class="govuk-body">@messages("ssttp.calculator.results.p2")</p>
 
         @radios(Radios(
-            name = "chosen-regular-amount",
-            attributes = Map("id" -> "chosen-regular-amount"),
+            name = "selected-plan-amount",
+            attributes = Map("id" -> "selected-plan-amount"),
             items =  schedules.toSeq.map ( schedule => {
                 RadioItem(
                     id = Some(schedule._1.toString),
@@ -101,8 +102,12 @@
                     content = HtmlContent(instalment_by_amount_label(schedule._2))
                 )
             }) :+ RadioItem(
+                id = Some("otherAmountOption"),
+                value = customAmount.map(_.toString),
+                content = Text("Some text")
+            ) :+ RadioItem(
                 id = Some("customAmountOption"),
-                value = Some("500"),
+                value = None,
                 content = Text(Messages("ssttp.calculator.results.option.other.label")),
                 conditionalHtml = Some(enterCustomAmountPanel)
             )
