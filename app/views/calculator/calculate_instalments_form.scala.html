@@ -53,7 +53,10 @@
         minCustomAmount,
         maxCustomAmount
     )</div>
-    <input type="text" class="govuk-input govuk-!-width-one-quarter" id="dayOfMonth" name="dayOfMonth">
+    <div class="govuk-input__wrapper">
+        <div class="govuk-input__prefix" aria-hidden="true">£</div>
+        <input class="govuk-input govuk-input--width-5" id="customAmountInput" name="customAmountInput" type="text" step="0.01" spellcheck="false">
+    </div>
 </div>
 }
 
@@ -98,7 +101,7 @@
                     content = HtmlContent(instalment_by_amount_label(schedule._2))
                 )
             }) :+ RadioItem(
-                id = Some("otherAmount"),
+                id = Some("customAmountOption"),
                 value = Some("500"),
                 content = Text(Messages("ssttp.calculator.results.option.other.label")),
                 conditionalHtml = Some(enterCustomAmountPanel)

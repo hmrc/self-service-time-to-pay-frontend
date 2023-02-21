@@ -17,6 +17,7 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
+import ssttpcalculator.CalculatorService
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -103,10 +104,28 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     "if 60% of remaining income after spending covers amount remaining to pay including interest in one month " +
       "displays only 50% and 60% default options" in {
       }
-    "displays three options otherwise" in {
+    "displays three default options otherwise" in {
       beginNewJourney()
 
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+    }
+  }
+  "displays custom entry option" in {
+
+  }
+  "custom amount entry" - {
+    "displays page with customer option at top when custom amount entered and continue pressed" in {
+      beginNewJourney()
+
+      calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+
+      val customAmount = 280
+
+      calculatorInstalmentsPage28thDay.selectCustomAmountOption
+      calculatorInstalmentsPage28thDay.enterCustomAmount(customAmount.toString)
+      calculatorInstalmentsPage28thDay.clickContinue()
+
+      calculatorInstalmentsPage28thDay.optionIsDisplayed(280, 20, 155)
     }
   }
 
