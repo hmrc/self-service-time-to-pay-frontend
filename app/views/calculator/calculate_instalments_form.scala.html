@@ -37,12 +37,25 @@
 @(
         redirectCall: Call,
         regularAmountForm: Form[SelectedPlanAmount],
-        schedules: Map[Int, PaymentSchedule])(
+        schedules: Map[Int, PaymentSchedule],
+        minCustomAmount: BigDecimal,
+        maxCustomAmount: BigDecimal)(
         implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
 )
+
+@enterCustomAmountPanel = {
+<div id="customAmount" class="govuk-form-group">
+    <div class="govuk-hint" for="customAmount" >@messages(
+        "ssttp.calculator.results.option.other.enter.amount",
+        minCustomAmount,
+        maxCustomAmount
+    )</div>
+    <input type="text" class="govuk-input govuk-!-width-one-quarter" id="dayOfMonth" name="dayOfMonth">
+</div>
+}
 
 @main(
     title = Messages("ssttp.calculator.results.title"),
@@ -87,7 +100,8 @@
             }) :+ RadioItem(
                 id = Some("otherAmount"),
                 value = Some("500"),
-                content = HtmlContent(Messages("ssttp.calculator.results.option.other.label"))
+                content = Text(Messages("ssttp.calculator.results.option.other.label")),
+                conditionalHtml = Some(enterCustomAmountPanel)
             )
         ))
     </fieldset>

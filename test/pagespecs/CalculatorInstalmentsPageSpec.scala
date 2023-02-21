@@ -92,17 +92,17 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
   "goes to kick out page " +
     "if 50% of remaining income after spending cannot cover amount remaining to pay including interest in 24 months of less" in {
-    beginNewJourney(remainingIncomeAfterSpendingTooSmallForPlan)
-    weCannotAgreeYourPaymentPlanPage.assertPagePathCorrect
-  }
+      beginNewJourney(remainingIncomeAfterSpendingTooSmallForPlan)
+      weCannotAgreeYourPaymentPlanPage.assertPagePathCorrect
+    }
 
   "display default options" - {
     "if 50% of remaining income after spending covers amount remaining to pay including interest in one month " +
       "displays only 50% default option" in {
-    }
+      }
     "if 60% of remaining income after spending covers amount remaining to pay including interest in one month " +
       "displays only 50% and 60% default options" in {
-    }
+      }
     "displays three options otherwise" in {
       beginNewJourney()
 

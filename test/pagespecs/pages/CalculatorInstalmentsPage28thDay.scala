@@ -73,7 +73,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       object DefaultCalculations {
         def apply()(implicit language: Language): String = language match {
           case English => mainTextEnglish
-          case Welsh => mainTextWelsh
+          case Welsh   => mainTextWelsh
         }
 
         private val mainTextEnglish =
@@ -104,7 +104,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
              |£400 y mis, am 13 mis
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £89.39
              |Swm misol gwahanol
-             |Rhowch swm sydd o leiaf {£1,000} ond heb fod yn fwy na
+             |Rhowch swm sydd o leiaf £250 ond heb fod yn fwy na
              |Nid wyf yn gallu fforddio’r taliadau hyn
              |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i drafod eich opsiynau.
              |Yn eich blaen
@@ -113,7 +113,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       object NotAllRadioButtons {
         def apply(numberOfPaymentPlanOptions: Int)(implicit language: Language): String = language match {
           case English => mainTextEnglish
-          case Welsh => mainTextWelsh
+          case Welsh   => mainTextWelsh
         }
 
         private val mainTextEnglish =

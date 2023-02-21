@@ -64,7 +64,7 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
       addIncomeSpendingPage.assertPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("2000")
-      addIncomeSpendingPage.enterSpending("1000")
+      addIncomeSpendingPage.enterSpending("1500")
 
       howMuchYouCouldAffordPage.assertPageIsDisplayed()
 

@@ -19,6 +19,7 @@ package ssttpcalculator
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
+
 import javax.inject._
 import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
 import play.api.mvc.{AnyContent, _}
@@ -28,7 +29,9 @@ import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
+
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class CalculatorController @Inject() (
     mcc:               MessagesControllerComponents,
@@ -156,10 +159,16 @@ class CalculatorController @Inject() (
       if (paymentPlanOptions.isEmpty) {
         Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
       } else {
+        val minCustomAmount = paymentPlanOptions.values
+          .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
+        val maxCustomAmount = BigDecimal(10000)
+
         Ok(views.calculate_instalments_form(
           routes.CalculatorController.submitCalculateInstalments(),
           createInstalmentForm(),
-          paymentPlanOptions
+          paymentPlanOptions,
+          minCustomAmount,
+          maxCustomAmount
         ))
       }
     }
@@ -179,12 +188,17 @@ class CalculatorController @Inject() (
 
       createInstalmentForm().bindFromRequest().fold(
         formWithErrors => {
+          val minCustomAmount = paymentPlanOptions.values
+            .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
+          val maxCustomAmount = BigDecimal(10000)
           Future.successful(
             BadRequest(
               views.calculate_instalments_form(
                 ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                 formWithErrors,
-                paymentPlanOptions
+                paymentPlanOptions,
+                minCustomAmount,
+                maxCustomAmount
               ))
           )
         },
