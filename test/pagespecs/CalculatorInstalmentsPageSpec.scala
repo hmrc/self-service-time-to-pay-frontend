@@ -21,7 +21,7 @@ import ssttpcalculator.CalculatorService
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, remainingIncomeAfterSpendingTooSmallForPlan}
+import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
 
 class CalculatorInstalmentsPageSpec extends ItSpec {
 
@@ -85,7 +85,6 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     addIncomeSpendingPage.clickOnAddChangeSpending()
 
     yourMonthlySpendingPage.assertPageIsDisplayed
-    yourMonthlySpendingPage.enterHousing("500")
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
@@ -93,17 +92,29 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
   "goes to kick out page " +
     "if 50% of remaining income after spending cannot cover amount remaining to pay including interest in 24 months of less" in {
-      beginNewJourney(remainingIncomeAfterSpendingTooSmallForPlan)
+      beginNewJourney(netIncomeTooSmallForPlan)
       weCannotAgreeYourPaymentPlanPage.assertPagePathCorrect
     }
 
   "display default options" - {
     "if 50% of remaining income after spending covers amount remaining to pay including interest in one month " +
       "displays only 50% default option" in {
-      }
+      beginNewJourney(netIncomeLargeEnoughForSingleDefaultPlan)
+
+      calculatorInstalmentsPage28thDay.optionIsDisplayed("4,914.40")
+      calculatorInstalmentsPage28thDay.optionIsNotDisplayed("6,250")
+      calculatorInstalmentsPage28thDay.optionIsNotDisplayed("7,500")
+      calculatorInstalmentsPage28thDay.optionIsNotDisplayed("10,000")
+    }
     "if 60% of remaining income after spending covers amount remaining to pay including interest in one month " +
       "displays only 50% and 60% default options" in {
-      }
+      beginNewJourney(netIncomeLargeEnoughForTwoDefaultPlans)
+
+      calculatorInstalmentsPage28thDay.optionIsDisplayed("4,750")
+      calculatorInstalmentsPage28thDay.optionIsDisplayed("4,914.40", Some("1"), Some("14.40"))
+      calculatorInstalmentsPage28thDay.optionIsNotDisplayed("5,700")
+      calculatorInstalmentsPage28thDay.optionIsNotDisplayed("7,600")
+    }
     "displays three default options otherwise" in {
       beginNewJourney()
 
@@ -127,7 +138,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.enterCustomAmount(customAmount.toString)
       calculatorInstalmentsPage28thDay.clickContinue()
 
-      calculatorInstalmentsPage28thDay.optionIsDisplayed(customAmount, planMonths, planInterest)
+      calculatorInstalmentsPage28thDay.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
     }
   }
 

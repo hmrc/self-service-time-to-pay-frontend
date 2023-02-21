@@ -67,10 +67,32 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
     ()
   }
 
-  def optionIsDisplayed(amount: BigDecimal, months: Int, interest: BigDecimal)(implicit language: Language = Languages.English): Unit = {
-    val expectedLines = Expected.MainText.OptionsText(amount, months, interest).stripSpaces().split("\n")
-    assertContentMatchesExpectedLines(expectedLines)
+  def optionIsDisplayed(
+                         amount: String,
+                         months: Option[String] = None,
+                         interest: Option[String] = None
+                       )(implicit language: Language = Languages.English): Unit = (months, interest) match {
+    case (Some(months), Some(interest)) =>
+      val expectedLines = Expected.MainText.OptionsText(amount, months, interest).stripSpaces().split("\n")
+      assertContentMatchesExpectedLines(expectedLines)
+    case _ =>
+      val expectedLines = Expected.MainText.OptionsText(amount).stripSpaces().split("\n")
+      assertContentMatchesExpectedLines(expectedLines)
   }
+
+  def optionIsNotDisplayed(
+                            amount: String,
+                            months: Option[String] = None,
+                            interest: Option[String] = None
+                          )(implicit language: Language = Languages.English): Unit = (months, interest) match {
+    case (Some(months), Some(interest)) =>
+      val expectedLines = Expected.MainText.OptionsText(amount, months, interest).stripSpaces().split("\n")
+      assertContentDoesNotContainLines(expectedLines)
+    case _ =>
+      val expectedLines = Expected.MainText.OptionsText(amount).stripSpaces().split("\n")
+      assertContentDoesNotContainLines(expectedLines)
+  }
+
   object Expected {
 
     object GlobalHeaderText {
@@ -129,16 +151,34 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
       object OptionsText {
 
-        def apply(amount: BigDecimal, months: Int, interest: BigDecimal)(implicit language: Language): String = language match {
-          case English => optionsTextEnglish(amount, months, interest)
-          case Welsh   => optionsTextWelsh(amount, months, interest)
+        def apply(amount: String)(implicit language: Language): String = {
+          language match {
+            case English => partialOptionsTextEnglish(amount)
+            case Welsh   => partialOptionsTextWelsh(amount)
+          }
         }
-        private def optionsTextEnglish(amount: BigDecimal, months: Int, interest: BigDecimal): String =
+
+        private def partialOptionsTextEnglish(amount: String): String =
+          s"""£$amount per month over
+          """.stripMargin
+
+        private def partialOptionsTextWelsh(amount: String): String =
+          s"""£$amount y mis, am
+          """.stripMargin
+
+        def apply(amount: String, months: String, interest: String)(implicit language: Language): String = {
+          language match {
+            case English => optionsTextEnglish(amount, months, interest)
+            case Welsh => optionsTextWelsh(amount, months, interest)
+          }
+        }
+
+        private def optionsTextEnglish(amount: String, months: String, interest: String): String =
           s"""£$amount per month over $months months
              |Includes total interest estimated at £$interest
           """.stripMargin
 
-        private def optionsTextWelsh(amount: BigDecimal, months: Int, interest: BigDecimal): String =
+        private def optionsTextWelsh(amount: String, months: String, interest: String): String =
           s"""£$amount y mis, am $months mis
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £$interest
           """.stripMargin

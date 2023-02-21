@@ -123,9 +123,11 @@ todays date: 2019-11-25
 
   val selectedRegularPaymentAmount300 = 300
 
-  val defaultRemainingIncomeAfterSpending = 1000
+  val defaultRemainingIncomeAfterSpending = 500
+  val netIncomeTooSmallForPlan = 50
+  val netIncomeLargeEnoughForSingleDefaultPlan = 12500
+  val netIncomeLargeEnoughForTwoDefaultPlans = 9500
 
-  val remainingIncomeAfterSpendingTooSmallForPlan = 50
 
   implicit def toSome[T](t: T): Option[T] = Some(t)
 

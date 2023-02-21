@@ -34,12 +34,10 @@ import ssttpcalculator.model.{
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
-import java.time.{Clock, LocalDate, Year}
+import java.time.{LocalDate, Year}
 import javax.inject.Inject
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext
-
-import java.time.LocalDate.now
 
 class CalculatorService @Inject() (
     clockProvider:   ClockProvider,
@@ -203,7 +201,6 @@ class CalculatorService @Inject() (
       journey.maybeArrangementDayOfMonth)(appConfig)
 
     val payables = Payables(taxPaymentPlan.taxLiabilities)
-    val principal = payables.liabilities.map(_.amount).sum
 
     val maybeInterestAccruedUpToStartDate = totalHistoricInterest(payables, taxPaymentPlan.planStartDate, interestService.getRatesForPeriod)
 
