@@ -224,12 +224,12 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
         private val belowMinimumTextEnglish =
           s"""There is a problem
-             |That amount is too low. Enter an amount that is at least £X but no more than £Y.
+             |That amount is too low. Enter an amount that is at least £250 but no more than £4900.
       """.stripMargin
 
         private val belowMinimumTextWelsh =
           s"""There is a problem
-             |That amount is too low. Enter an amount that is at least £X but no more than £Y.
+             |That amount is too low. Enter an amount that is at least £250 but no more than £4900.
       """.stripMargin
 
       }

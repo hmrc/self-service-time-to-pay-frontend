@@ -101,15 +101,20 @@ object CalculatorForm {
     (data.selectedPlanAmount.map(_.toString), data.customAmountInput.map(_.toString))
   }
 
-  def selectPlanForm(): Form[PlanSelection] =
+  def selectPlanForm(minCustomAmount: BigDecimal, maxCustomAmount: BigDecimal): Form[PlanSelection] =
     Form(mapping(
       "selected-plan-amount" -> optional(selectedPlanAmountMapping),
-      "customAmountInput" -> optional(validateCustomAmountInput(customAmountInputMapping))
+      "customAmountInput" -> optional(validateCustomAmountInput(customAmountInputMapping, minCustomAmount, maxCustomAmount))
     )(coerce)(uncoerce))
 
-  private def validateCustomAmountInput(mappingStr: Mapping[String]): Mapping[String] = {
+  private def validateCustomAmountInput(
+      mappingStr:      Mapping[String],
+      minCustomAmout:  BigDecimal,
+      maxCustomAmount: BigDecimal
+  ): Mapping[String] = {
+
     mappingStr.verifying("ssttp.calculator.results.option.other.error.below-minimum", { i: String =>
-      if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= 250 else true
+      if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= minCustomAmout else true
     })
   }
 

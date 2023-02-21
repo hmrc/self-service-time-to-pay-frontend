@@ -166,7 +166,7 @@ class CalculatorController @Inject() (
       } else {
         Ok(views.calculate_instalments_form(
           routes.CalculatorController.submitCalculateInstalments(),
-          selectPlanForm(),
+          selectPlanForm(minCustomAmount, maxCustomAmount),
           paymentPlanOptions,
           minCustomAmount,
           maxCustomAmount
@@ -190,7 +190,7 @@ class CalculatorController @Inject() (
         .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
       val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey)
 
-      selectPlanForm().bindFromRequest().fold(
+      selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
         formWithErrors => {
           Future.successful(
             BadRequest(
@@ -217,7 +217,7 @@ class CalculatorController @Inject() (
               Future.successful(
                 Ok(views.calculate_instalments_form(
                   routes.CalculatorController.submitCalculateInstalments(),
-                  selectPlanForm(),
+                  selectPlanForm(minCustomAmount, maxCustomAmount),
                   paymentPlanOptions + Tuple2(0, customSchedule),
                   minCustomAmount,
                   maxCustomAmount
