@@ -168,6 +168,15 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
       calculatorInstalmentsPage28thDay.assertAboveMaximumErrorIsDisplayed
     }
+    "not filled in displays error message" in {
+      beginNewJourney()
+
+      calculatorInstalmentsPage28thDay.selectCustomAmountOption()
+      calculatorInstalmentsPage28thDay.enterCustomAmount()
+      calculatorInstalmentsPage28thDay.clickContinue()
+
+      calculatorInstalmentsPage28thDay.assertNoInputErrorIsDisplayed
+    }
   }
 
   "language" in {

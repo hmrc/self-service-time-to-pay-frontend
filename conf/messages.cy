@@ -232,7 +232,7 @@ ssttp.calculator.results.section.cannot-afford.p.2 = 0300 200 1900
 ssttp.calculator.results.section.cannot-afford.p.3 = i drafod eich opsiynau.
 ssttp.calculator.results.option.other.error.below-minimum = Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf {0} ond heb fod yn fwy na {1}
 ssttp.calculator.results.option.other.error.above-maximum = Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf {0} ond heb fod yn fwy na {0}
-
+ssttp.calculator.results.option.other.error.no-input = Rhowch swm sydd o leiaf {0} ond heb fod yn fwy na {1}
 
 ssttp.calculator.results.month.instalments = Rhandaliadau
 ssttp.calculator.results.month.option.1 = o fisoedd ar

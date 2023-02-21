@@ -109,12 +109,13 @@ object CalculatorForm {
 
   private def validateCustomAmountInput(
       mappingStr:      Mapping[String],
-      minCustomAmout:  BigDecimal,
+      minCustomAmount:  BigDecimal,
       maxCustomAmount: BigDecimal
   ): Mapping[String] = {
     mappingStr
+      .verifying("ssttp.calculator.results.option.other.error.no-input", { i: String => i.nonEmpty })
       .verifying("ssttp.calculator.results.option.other.error.below-minimum", { i: String =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= minCustomAmout else true
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= minCustomAmount else true
       })
       .verifying("ssttp.calculator.results.option.other.error.above-maximum", { i: String =>
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) <= maxCustomAmount else true

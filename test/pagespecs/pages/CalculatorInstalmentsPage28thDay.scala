@@ -48,7 +48,7 @@ abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: W
     click on customAmountOptionRadioButton
   }
 
-  def enterCustomAmount(value: String): Unit = {
+  def enterCustomAmount(value: String = ""): Unit = {
     val customAmountInputField = xpath("//*[@id=\"customAmountInput\"]")
     click on customAmountInputField
     enter(value)
@@ -108,6 +108,11 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
   def assertAboveMaximumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
     readMain().stripSpaces() should include(Expected.ErrorText.AboveMaximum().stripSpaces())
+  }
+
+  def assertNoInputErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.ErrorText.NoInput().stripSpaces())
   }
 
   object Expected {
@@ -252,6 +257,23 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
         private val aboveMaximumTextWelsh =
           s"""Mae problem wedi codi
              |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,900
+      """.stripMargin
+      }
+
+      object NoInput {
+        def apply()(implicit language: Language): String = language match {
+          case English => noInputTextEnglish
+          case Welsh => noInputTextWelsh
+        }
+
+        private val noInputTextEnglish =
+          s"""There is a problem
+             |Enter an amount that is at least £250 but no more than £4,900
+      """.stripMargin
+
+        private val noInputTextWelsh =
+          s"""Mae problem wedi codi
+             |Rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,900
       """.stripMargin
       }
     }
