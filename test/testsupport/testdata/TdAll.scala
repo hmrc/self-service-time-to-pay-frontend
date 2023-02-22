@@ -128,7 +128,6 @@ todays date: 2019-11-25
   val netIncomeLargeEnoughForSingleDefaultPlan = 12500
   val netIncomeLargeEnoughForTwoDefaultPlans = 9500
 
-
   implicit def toSome[T](t: T): Option[T] = Some(t)
 
   implicit def toLocalDate(s: String): LocalDate = LocalDate.parse(s)

@@ -205,13 +205,13 @@ class CalculatorController @Inject() (
         },
         (validFormData: PlanSelection) => {
           JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data before check of selected plan amount - $validFormData")
-          validFormData.selectedPlanAmount match {
-            case None =>
+          validFormData.selection match {
+            case Right(CustomPlanRequest(customAmount)) =>
               val customSchedule: PaymentSchedule = calculatorService.customSchedule(
                 sa,
                 journey.safeUpfrontPayment,
                 journey.maybeArrangementDayOfMonth,
-                validFormData.customAmountInput.getOrElse(throw new IllegalArgumentException("tried to build a custom schedule without custom amount input"))
+                customAmount
               ).getOrElse(throw new IllegalArgumentException("tried to build a custom schedule without custom amount input"))
 
               Future.successful(
@@ -223,9 +223,9 @@ class CalculatorController @Inject() (
                   maxCustomAmount
                 ))
               )
-            case Some(_) =>
+            case Left(SelectedPlan(instalmentAmount)) =>
               JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data when there is a selected plan amount - $validFormData")
-              journeyService.saveJourney(journey.copy(maybeSelectedPlanAmount = Some(validFormData))).map { _ =>
+              journeyService.saveJourney(journey.copy(maybeSelectedPlanAmount = Some(instalmentAmount))).map { _ =>
                 Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
               }
           }

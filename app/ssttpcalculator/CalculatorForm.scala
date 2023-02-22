@@ -92,28 +92,35 @@ object CalculatorForm {
 
   val customAmountInputMapping: Mapping[String] = text
 
-  def coerce(selectedPlanAmount: Option[String], customAmountInput: Option[String]): PlanSelection = {
-    PlanSelection(selectedPlanAmount.map(BigDecimal(_)), customAmountInput.map(BigDecimal(_))
-    )
+  def coerce(radioSelection: String, customAmountInput: String): PlanSelection = {
+    if (radioSelection == "customAmountOption") {
+      PlanSelection(Right(CustomPlanRequest(BigDecimal(customAmountInput))))
+    } else {
+      PlanSelection(Left(SelectedPlan(BigDecimal(radioSelection))))
+    }
   }
 
-  def uncoerce(data: PlanSelection): Option[(Option[String], Option[String])] = Option {
-    (data.selectedPlanAmount.map(_.toString), data.customAmountInput.map(_.toString))
+  def uncoerce(data: PlanSelection): Option[(String, String)] = Option {
+    data.selection match {
+      case Left(SelectedPlan(instalmentAmount))   => (instalmentAmount.toString, "")
+      case Right(CustomPlanRequest(customAmount)) => ("customAmountOption", customAmount.toString())
+    }
+
   }
 
   def selectPlanForm(minCustomAmount: BigDecimal, maxCustomAmount: BigDecimal): Form[PlanSelection] =
     Form(mapping(
-      "selected-plan-amount" -> optional(selectedPlanAmountMapping),
-      "customAmountInput" -> optional(validateCustomAmountInput(customAmountInputMapping, minCustomAmount, maxCustomAmount))
+      "selected-plan-amount" -> selectedPlanAmountMapping,
+      "customAmountInput" -> validateCustomAmountInput(customAmountInputMapping, minCustomAmount, maxCustomAmount)
     )(coerce)(uncoerce))
 
   private def validateCustomAmountInput(
       mappingStr:      Mapping[String],
-      minCustomAmount:  BigDecimal,
+      minCustomAmount: BigDecimal,
       maxCustomAmount: BigDecimal
   ): Mapping[String] = {
     mappingStr
-      .verifying("ssttp.calculator.results.option.other.error.no-input", { i: String => i.nonEmpty })
+      //      .verifying("ssttp.calculator.results.option.other.error.no-input", { i: String => i.nonEmpty })
       .verifying("ssttp.calculator.results.option.other.error.below-minimum", { i: String =>
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= minCustomAmount else true
       })

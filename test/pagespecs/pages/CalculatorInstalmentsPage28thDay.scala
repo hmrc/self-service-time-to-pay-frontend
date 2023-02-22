@@ -69,10 +69,10 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
   }
 
   def optionIsDisplayed(
-                         amount: String,
-                         months: Option[String] = None,
-                         interest: Option[String] = None
-                       )(implicit language: Language = Languages.English): Unit = (months, interest) match {
+      amount:   String,
+      months:   Option[String] = None,
+      interest: Option[String] = None
+  )(implicit language: Language = Languages.English): Unit = (months, interest) match {
     case (Some(months), Some(interest)) =>
       val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).stripSpaces().split("\n")
       assertContentMatchesExpectedLines(expectedLines)
@@ -82,10 +82,10 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
   }
 
   def optionIsNotDisplayed(
-                            amount: String,
-                            months: Option[String] = None,
-                            interest: Option[String] = None
-                          )(implicit language: Language = Languages.English): Unit = (months, interest) match {
+      amount:   String,
+      months:   Option[String] = None,
+      interest: Option[String] = None
+  )(implicit language: Language = Languages.English): Unit = (months, interest) match {
     case (Some(months), Some(interest)) =>
       val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).stripSpaces().split("\n")
       assertContentDoesNotContainLines(expectedLines)
@@ -174,7 +174,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       object CustomAmountOption {
         def apply()(implicit language: Language): String = language match {
           case English => customAmountOptionTextEnglish
-          case Welsh => customAmountOptionTextWelsh
+          case Welsh   => customAmountOptionTextWelsh
         }
 
         private val customAmountOptionTextEnglish =
@@ -209,7 +209,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
         def apply(amount: String, months: String, interest: String)(implicit language: Language): String = {
           language match {
             case English => optionsTextEnglish(amount, months, interest)
-            case Welsh => optionsTextWelsh(amount, months, interest)
+            case Welsh   => optionsTextWelsh(amount, months, interest)
           }
         }
 
@@ -229,7 +229,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       object BelowMinimum {
         def apply()(implicit language: Language): String = language match {
           case English => belowMinimumTextEnglish
-          case Welsh => belowMinimumTextWelsh
+          case Welsh   => belowMinimumTextWelsh
         }
 
         private val belowMinimumTextEnglish =
@@ -246,7 +246,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       object AboveMaximum {
         def apply()(implicit language: Language): String = language match {
           case English => aboveMaximumTextEnglish
-          case Welsh => aboveMaximumTextWelsh
+          case Welsh   => aboveMaximumTextWelsh
         }
 
         private val aboveMaximumTextEnglish =
@@ -263,7 +263,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       object NoInput {
         def apply()(implicit language: Language): String = language match {
           case English => noInputTextEnglish
-          case Welsh => noInputTextWelsh
+          case Welsh   => noInputTextWelsh
         }
 
         private val noInputTextEnglish =

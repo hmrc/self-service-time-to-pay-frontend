@@ -98,22 +98,22 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
   "display default options" - {
     "if 50% of remaining income after spending covers amount remaining to pay including interest in one month " +
       "displays only 50% default option" in {
-      beginNewJourney(netIncomeLargeEnoughForSingleDefaultPlan)
+        beginNewJourney(netIncomeLargeEnoughForSingleDefaultPlan)
 
-      calculatorInstalmentsPage28thDay.optionIsDisplayed("4,914.40")
-      calculatorInstalmentsPage28thDay.optionIsNotDisplayed("6,250")
-      calculatorInstalmentsPage28thDay.optionIsNotDisplayed("7,500")
-      calculatorInstalmentsPage28thDay.optionIsNotDisplayed("10,000")
-    }
+        calculatorInstalmentsPage28thDay.optionIsDisplayed("4,914.40")
+        calculatorInstalmentsPage28thDay.optionIsNotDisplayed("6,250")
+        calculatorInstalmentsPage28thDay.optionIsNotDisplayed("7,500")
+        calculatorInstalmentsPage28thDay.optionIsNotDisplayed("10,000")
+      }
     "if 60% of remaining income after spending covers amount remaining to pay including interest in one month " +
       "displays only 50% and 60% default options" in {
-      beginNewJourney(netIncomeLargeEnoughForTwoDefaultPlans)
+        beginNewJourney(netIncomeLargeEnoughForTwoDefaultPlans)
 
-      calculatorInstalmentsPage28thDay.optionIsDisplayed("4,750")
-      calculatorInstalmentsPage28thDay.optionIsDisplayed("4,914.40", Some("1"), Some("14.40"))
-      calculatorInstalmentsPage28thDay.optionIsNotDisplayed("5,700")
-      calculatorInstalmentsPage28thDay.optionIsNotDisplayed("7,600")
-    }
+        calculatorInstalmentsPage28thDay.optionIsDisplayed("4,750")
+        calculatorInstalmentsPage28thDay.optionIsDisplayed("4,914.40", Some("1"), Some("14.40"))
+        calculatorInstalmentsPage28thDay.optionIsNotDisplayed("5,700")
+        calculatorInstalmentsPage28thDay.optionIsNotDisplayed("7,600")
+      }
     "displays three default options otherwise" in {
       beginNewJourney()
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
