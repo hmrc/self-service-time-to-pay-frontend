@@ -178,7 +178,7 @@ class CalculatorController @Inject() (
   def submitCalculateInstalments(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.submitCalculateInstalments: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
-      JourneyLogger.info("CalculatorController.submitCalculateInstalments", journey)
+      JourneyLogger.info(s"CalculatorController.submitCalculateInstalments journey: $journey")
       val sa = journey.taxpayer.selfAssessment
       val paymentPlanOptions = calculatorService.scheduleOptions(
         sa,
@@ -192,6 +192,7 @@ class CalculatorController @Inject() (
 
       selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
         formWithErrors => {
+          JourneyLogger.info(s"$this.submitCalculateInstalments - form with errors - $formWithErrors")
           Future.successful(
             BadRequest(
               views.calculate_instalments_form(

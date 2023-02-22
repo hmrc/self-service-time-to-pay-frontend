@@ -72,7 +72,7 @@ object CalculatorForm {
           Try(BigDecimal(i)).isFailure || BigDecimal(i) >= min && BigDecimal(i) <= max
         }))(text => MonthlyAmountForm(text))(bd => Some(bd.amount.toString)))
 
-  private val selectedPlanAmountFormatter: Formatter[String] = new Formatter[String] {
+  private val planSelectionFormatter: Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
       val amount = data.get(key) match {
         case None => data.get(key + ".value")
@@ -88,7 +88,10 @@ object CalculatorForm {
     override def unbind(key: String, value: String): Map[String, String] = Map(key + ".value" -> value.toString)
   }
 
-  val selectedPlanAmountMapping: Mapping[String] = Forms.of[String](selectedPlanAmountFormatter)
+  val planSelectionMapping: Mapping[String] = {
+    text
+    //    Forms.of[String](planSelectionFormatter)
+  }
 
   val customAmountInputMapping: Mapping[String] = text
 
@@ -110,7 +113,7 @@ object CalculatorForm {
 
   def selectPlanForm(minCustomAmount: BigDecimal, maxCustomAmount: BigDecimal): Form[PlanSelection] =
     Form(mapping(
-      "selected-plan-amount" -> selectedPlanAmountMapping,
+      "selected-plan-amount" -> planSelectionMapping,
       "customAmountInput" -> validateCustomAmountInput(customAmountInputMapping, minCustomAmount, maxCustomAmount)
     )(coerce)(uncoerce))
 

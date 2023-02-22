@@ -124,7 +124,7 @@
                 )
             }) :+ RadioItem(
                 id = Some("customAmountOption"),
-                value = None,
+                value = Some("customAmountOption"),
                 content = Text(Messages("ssttp.calculator.results.option.other.label")),
                 conditionalHtml = Some(enterCustomAmountPanel)
             )
