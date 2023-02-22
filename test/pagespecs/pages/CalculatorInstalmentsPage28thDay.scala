@@ -120,6 +120,11 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
     readMain().stripSpaces() should include(Expected.ErrorText.NonNumeric().stripSpaces())
   }
 
+  def assertNegativeAmountErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.ErrorText.NegativeAmount().stripSpaces())
+  }
+
   object Expected {
 
     object GlobalHeaderText {
@@ -296,6 +301,23 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
         private val nonNumericTextWelsh =
           s"""Mae problem wedi codi
              |Nodwch rifau yn unig
+      """.stripMargin
+      }
+
+      object NegativeAmount {
+        def apply()(implicit language: Language): String = language match {
+          case English => negativeAmountTextEnglish
+          case Welsh => negativeAmountTextWelsh
+        }
+
+        private val negativeAmountTextEnglish =
+          s"""There is a problem
+             |Enter a positive number only
+      """.stripMargin
+
+        private val negativeAmountTextWelsh =
+          s"""Mae problem wedi codi
+             |Nodwch rif positif yn uni
       """.stripMargin
       }
     }

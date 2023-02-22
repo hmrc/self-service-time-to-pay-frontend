@@ -186,6 +186,15 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
       calculatorInstalmentsPage28thDay.assertNonNumericErrorIsDisplayed
     }
+    "filled with negative amount displays error message" in {
+      beginNewJourney()
+
+      calculatorInstalmentsPage28thDay.selectCustomAmountOption()
+      calculatorInstalmentsPage28thDay.enterCustomAmount("-1")
+      calculatorInstalmentsPage28thDay.clickContinue()
+
+      calculatorInstalmentsPage28thDay.assertNegativeAmountErrorIsDisplayed
+    }
   }
 
   "language" in {

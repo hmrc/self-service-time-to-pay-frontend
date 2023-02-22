@@ -132,8 +132,11 @@ object CalculatorForm {
       .verifying("ssttp.calculator.results.option.other.error.non-numeric", { i: String =>
         if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
       })
+      .verifying("ssttp.calculator.results.option.other.error.negative-amount", { i: String =>
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= 0 else true
+      })
       .verifying("ssttp.calculator.results.option.other.error.below-minimum", { i: String =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= minCustomAmount else true
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) < 0 || BigDecimal(i) >= minCustomAmount else true
       })
       .verifying("ssttp.calculator.results.option.other.error.above-maximum", { i: String =>
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) <= maxCustomAmount else true

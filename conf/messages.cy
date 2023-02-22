@@ -234,6 +234,7 @@ ssttp.calculator.results.option.other.error.below-minimum = Mae’r swm hwnnw’
 ssttp.calculator.results.option.other.error.above-maximum = Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf {0} ond heb fod yn fwy na {0}
 ssttp.calculator.results.option.other.error.no-input = Nodwch swm
 ssttp.calculator.results.option.other.error.non-numeric = Nodwch rifau yn unig
+ssttp.calculator.results.option.other.error.negative-amount = Nodwch rif positif yn unig
 
 
 ssttp.calculator.results.month.instalments = Rhandaliadau
