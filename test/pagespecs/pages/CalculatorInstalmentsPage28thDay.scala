@@ -49,7 +49,7 @@ abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: W
   }
 
   def enterCustomAmount(value: String = ""): Unit = {
-    val customAmountInputField = xpath("//*[@id=\"customAmountInput\"]")
+    val customAmountInputField = xpath("//*[@id=\"custom-amount-input\"]")
     click on customAmountInputField
     enter(value)
   }

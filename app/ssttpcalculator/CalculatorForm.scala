@@ -21,7 +21,7 @@ import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms, Mapping}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.voa.play.form.Condition
-import uk.gov.voa.play.form.ConditionalMappings.{mandatoryIf, mandatoryIfFalse}
+import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf, mandatoryIfFalse}
 
 import scala.BigDecimal
 import scala.util.Try
@@ -95,26 +95,31 @@ object CalculatorForm {
 
   val customAmountInputMapping: Mapping[String] = text
 
-  def coerce(radioSelection: String, customAmountInput: String): PlanSelection = {
+  def coerce(radioSelection: String, customAmountInput: Option[String]): PlanSelection = {
     if (radioSelection == "customAmountOption") {
-      PlanSelection(Right(CustomPlanRequest(BigDecimal(customAmountInput))))
+      PlanSelection(Right(CustomPlanRequest(BigDecimal(customAmountInput.getOrElse(
+        throw new IllegalArgumentException("custom amount option radio selected but no custom amount input")
+      )))))
     } else {
       PlanSelection(Left(SelectedPlan(BigDecimal(radioSelection))))
     }
   }
 
-  def uncoerce(data: PlanSelection): Option[(String, String)] = Option {
+  def uncoerce(data: PlanSelection): Option[(String, Option[String])] = Option {
     data.selection match {
-      case Left(SelectedPlan(instalmentAmount))   => (instalmentAmount.toString, "")
-      case Right(CustomPlanRequest(customAmount)) => ("customAmountOption", customAmount.toString())
+      case Left(SelectedPlan(instalmentAmount))   => (instalmentAmount.toString, None)
+      case Right(CustomPlanRequest(customAmount)) => ("customAmountOption", Some(customAmount.toString()))
     }
 
   }
 
   def selectPlanForm(minCustomAmount: BigDecimal, maxCustomAmount: BigDecimal): Form[PlanSelection] =
     Form(mapping(
-      "selected-plan-amount" -> planSelectionMapping,
-      "customAmountInput" -> validateCustomAmountInput(customAmountInputMapping, minCustomAmount, maxCustomAmount)
+      "plan-selection" -> planSelectionMapping,
+      "custom-amount-input" -> mandatoryIf(
+        isEqual("plan-selection", "customAmountOption"),
+        validateCustomAmountInput(customAmountInputMapping, minCustomAmount, maxCustomAmount)
+      )
     )(coerce)(uncoerce))
 
   private def validateCustomAmountInput(
@@ -123,7 +128,7 @@ object CalculatorForm {
       maxCustomAmount: BigDecimal
   ): Mapping[String] = {
     mappingStr
-      //      .verifying("ssttp.calculator.results.option.other.error.no-input", { i: String => i.nonEmpty })
+      .verifying("ssttp.calculator.results.option.other.error.no-input", { i: String => i.nonEmpty })
       .verifying("ssttp.calculator.results.option.other.error.below-minimum", { i: String =>
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= minCustomAmount else true
       })
