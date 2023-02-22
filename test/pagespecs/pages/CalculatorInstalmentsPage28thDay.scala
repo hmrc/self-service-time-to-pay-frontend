@@ -115,6 +115,11 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
     readMain().stripSpaces() should include(Expected.ErrorText.NoInput().stripSpaces())
   }
 
+  def assertNonNumericErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.ErrorText.NonNumeric().stripSpaces())
+  }
+
   object Expected {
 
     object GlobalHeaderText {
@@ -268,12 +273,29 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
 
         private val noInputTextEnglish =
           s"""There is a problem
-             |Enter an amount that is at least £250 but no more than £4,900
+             |Enter an amount
       """.stripMargin
 
         private val noInputTextWelsh =
           s"""Mae problem wedi codi
-             |Rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,900
+             |Nodwch swm
+      """.stripMargin
+      }
+
+      object NonNumeric {
+        def apply()(implicit language: Language): String = language match {
+          case English => nonNumericTextEnglish
+          case Welsh => nonNumericTextWelsh
+        }
+
+        private val nonNumericTextEnglish =
+          s"""There is a problem
+             |Enter numbers only
+      """.stripMargin
+
+        private val nonNumericTextWelsh =
+          s"""Mae problem wedi codi
+             |Nodwch rifau yn unig
       """.stripMargin
       }
     }

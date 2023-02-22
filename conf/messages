@@ -248,7 +248,8 @@ ssttp.calculator.results.section.cannot-afford.p.2 = 0300 123 1813
 ssttp.calculator.results.section.cannot-afford.p.3 =  to discuss your debt.
 ssttp.calculator.results.option.other.error.below-minimum = That amount is too low. Enter an amount that is at least {0} but no more than {1}
 ssttp.calculator.results.option.other.error.above-maximum = That amount is too high, enter an amount that is at least {0} but no more than {1}
-ssttp.calculator.results.option.other.error.no-input = Enter an amount that is at least {0} but no more than {1}
+ssttp.calculator.results.option.other.error.no-input = Enter an amount
+ssttp.calculator.results.option.other.error.non-numeric = Enter numbers only
 
 
 ssttp.calculator.results.month.instalments = Instalments

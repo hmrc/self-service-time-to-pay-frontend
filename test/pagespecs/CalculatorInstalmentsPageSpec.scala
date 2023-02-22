@@ -177,6 +177,15 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
       calculatorInstalmentsPage28thDay.assertNoInputErrorIsDisplayed
     }
+    "filled with non-numeric displays error message" in {
+      beginNewJourney()
+
+      calculatorInstalmentsPage28thDay.selectCustomAmountOption()
+      calculatorInstalmentsPage28thDay.enterCustomAmount("non-numeric")
+      calculatorInstalmentsPage28thDay.clickContinue()
+
+      calculatorInstalmentsPage28thDay.assertNonNumericErrorIsDisplayed
+    }
   }
 
   "language" in {

@@ -129,6 +129,9 @@ object CalculatorForm {
   ): Mapping[String] = {
     mappingStr
       .verifying("ssttp.calculator.results.option.other.error.no-input", { i: String => i.nonEmpty })
+      .verifying("ssttp.calculator.results.option.other.error.non-numeric", { i: String =>
+        if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+      })
       .verifying("ssttp.calculator.results.option.other.error.below-minimum", { i: String =>
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= minCustomAmount else true
       })
