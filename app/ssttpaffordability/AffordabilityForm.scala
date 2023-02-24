@@ -69,23 +69,29 @@ object AffordabilityForm {
 
   val spendingForm: Form[SpendingInput] = Form(
     mapping(
-      "housing" -> validateSpending(text),
-      "pension-contributions" -> validateSpending(text),
-      "council-tax" -> validateSpending(text),
-      "utilities" -> validateSpending(text),
-      "debt-repayments" -> validateSpending(text),
-      "travel" -> validateSpending(text),
-      "childcare" -> validateSpending(text),
-      "insurance" -> validateSpending(text),
-      "groceries" -> validateSpending(text),
-      "health" -> validateSpending(text)
+      "housing" -> validateSpending(text, "housing"),
+      "pension-contributions" -> validateSpending(text, "pension-contributions"),
+      "council-tax" -> validateSpending(text, "council-tax"),
+      "utilities" -> validateSpending(text, "utilities"),
+      "debt-repayments" -> validateSpending(text, "debt-repayments"),
+      "travel" -> validateSpending(text, "travel"),
+      "childcare" -> validateSpending(text, "childcare"),
+      "insurance" -> validateSpending(text, "insurance"),
+      "groceries" -> validateSpending(text, "groceries"),
+      "health" -> validateSpending(text, "health")
     )(SpendingInput.apply)(SpendingInput.unapply)
   )
 
-  private def validateSpending(mappingStr: Mapping[String]) = {
-    mappingStr.verifying("ssttp.affordability.your-monthly-spending.error.non-numerals", { i: String =>
+  private def validateSpending(mappingStr: Mapping[String], key: String) = {
+    mappingStr.verifying(s"ssttp.affordability.your-monthly-spending.error.non-numerals.$key", { i: String =>
       if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
     })
+      .verifying(s"ssttp.affordability.your-monthly-spending.error.two-decimals-only.$key", { i =>
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
+      })
+      .verifying(s"ssttp.affordability.your-monthly-spending.error.not-negative.$key", { i: String =>
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).toInt >= 0 else true
+      })
   }
 
   def parseStringToBigDecimal(string: String): BigDecimal = string match {

@@ -146,8 +146,49 @@ ssttp.affordability.your-monthly-spending.form.groceries = Groceries
 ssttp.affordability.your-monthly-spending.form.health = Health
 ssttp.affordability.your-monthly-spending.form.health.hint = For example, prescriptions, private healthcare
 ssttp.affordability.your-monthly-spending.error.title = There is a problem
-ssttp.affordability.your-monthly-spending.error.non-numerals = Enter numbers only
 ssttp.affordability.your-monthly-spending.total = Total spending
+
+#Errors for spending form
+ssttp.affordability.your-monthly-spending.error.non-numerals.housing = Enter numbers only for housing
+ssttp.affordability.your-monthly-spending.error.not-negative.housing= Enter a positive number only for housing
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.housing = Amount must not contain more than 2 decimal places for housing
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.pension-contributions = Enter numbers only for pension contributions
+ssttp.affordability.your-monthly-spending.error.not-negative.pension-contributions = Enter a positive number only for pension contributions
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.pension-contributions = Amount must not contain more than 2 decimal places for pension contributions
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.council-tax = Enter numbers only for council tax
+ssttp.affordability.your-monthly-spending.error.not-negative.council-tax = Enter a positive number only for council tax
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.council-tax = Amount must not contain more than 2 decimal places for council tax
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.utilities = Enter numbers only for utilities
+ssttp.affordability.your-monthly-spending.error.not-negative.utilities = Enter a positive number only for utilities
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.utilities = Amount must not contain more than 2 decimal places for utilities
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.debt-repayments = Enter numbers only for debt repayments
+ssttp.affordability.your-monthly-spending.error.not-negative.debt-repayments = Enter a positive number only for debt repayments
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.debt-repayments = Amount must not contain more than 2 decimal places for debt repayments
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.travel = Enter numbers only for travel
+ssttp.affordability.your-monthly-spending.error.not-negative.travel= Enter a positive number only for travel
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.travel = Amount must not contain more than 2 decimal places for travel
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.childcare = Enter numbers only for childcare costs
+ssttp.affordability.your-monthly-spending.error.not-negative.childcare= Enter a positive number only for childcare costs
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.childcare = Amount must not contain more than 2 decimal places for childcare costs
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.insurance = Enter numbers only for insurance
+ssttp.affordability.your-monthly-spending.error.not-negative.insurance= Enter a positive number only for insurance
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.insurance = Amount must not contain more than 2 decimal places for insurance
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.groceries = Enter numbers only for groceries
+ssttp.affordability.your-monthly-spending.error.not-negative.groceries= Enter a positive number only for groceries
+ssttp.affordability.your-monthly-spending.error.two-decimals-groceries.housing = Amount must not contain more than 2 decimal places for groceries
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.health = Enter numbers only for health
+ssttp.affordability.your-monthly-spending.error.not-negative.health= Enter a positive number only for health
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.health = Amount must not contain more than 2 decimal places for health
+
 
 ssttp.affordability.how-much-you-could-afford.h1 = How much you could afford
 ssttp.affordability.how-much-you-could-afford.left-over-income = Left over income
