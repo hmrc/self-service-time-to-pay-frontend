@@ -150,7 +150,7 @@ ssttp.affordability.your-monthly-spending.total = Total spending
 
 #Errors for spending form
 ssttp.affordability.your-monthly-spending.error.non-numerals.housing = Enter numbers only for housing
-ssttp.affordability.your-monthly-spending.error.not-negative.housing= Enter a positive number only for housing
+ssttp.affordability.your-monthly-spending.error.not-negative.housing = Enter a positive number only for housing
 ssttp.affordability.your-monthly-spending.error.two-decimals-only.housing = Amount must not contain more than 2 decimal places for housing
 
 ssttp.affordability.your-monthly-spending.error.non-numerals.pension-contributions = Enter numbers only for pension contributions
