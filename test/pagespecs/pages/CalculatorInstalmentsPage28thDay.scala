@@ -38,6 +38,11 @@ abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: W
     click on radioButton
   }
 
+  def selectASpecificOption(id: String) = probing {
+    val specificRadioButton = xpath(s"//*[@id=$id]")
+    click on specificRadioButton
+  }
+
   def clickContinue(): Unit = probing{
     val button = xpath("//*[@id=\"next\"]")
     click on button
