@@ -71,9 +71,19 @@ class YourMonthlySpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) e
     housing.value shouldBe value
   }
 
-  def assertErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+  def assertNonNumericErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
     readMain().stripSpaces() should include(Expected.NonNumericErrorText().stripSpaces())
+  }
+
+  def assertNegativeNumberErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.NegativeNumberErrorText().stripSpaces())
+  }
+
+  def assertTooManyDecimalsErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.TooManyDecimalsErrorText().stripSpaces())
   }
 
   object Expected {
@@ -155,13 +165,49 @@ class YourMonthlySpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) e
 
       private val errorTextEnglish =
         """There is a problem
-          |Enter numbers only
+          |Enter numbers only for housing
         """.stripMargin
 
       private val errorTextWelsh =
         """Mae problem wedi codi
-          |Rhowch rifau yn unig
+          |Nodwch rifau yn unig ar gyfer tai
+        """.stripMargin
+    }
+
+
+    object NegativeNumberErrorText {
+      def apply()(implicit language: Language): String = language match {
+        case English => errorTextEnglish
+        case Welsh => errorTextWelsh
+      }
+
+      private val errorTextEnglish =
+        """There is a problem
+          |Enter a positive number only for housing
+        """.stripMargin
+
+      private val errorTextWelsh =
+        """Mae problem wedi codi
+          |Nodwch rif positif yn unig ar gyfer tai
+        """.stripMargin
+    }
+
+    object TooManyDecimalsErrorText {
+      def apply()(implicit language: Language): String = language match {
+        case English => errorTextEnglish
+        case Welsh => errorTextWelsh
+      }
+
+      private val errorTextEnglish =
+        """There is a problem
+          |Amount must not contain more than 2 decimal places for housing
+        """.stripMargin
+
+      private val errorTextWelsh =
+        """Mae problem wedi codi
+          |Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfertai
         """.stripMargin
     }
   }
 }
+

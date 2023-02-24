@@ -71,7 +71,7 @@ class YourSpendingPageSpec extends ItSpec {
         yourMonthlySpendingPage.assertPageIsDisplayed
         yourMonthlySpendingPage.enterHousing("nonNumerals")
         yourMonthlySpendingPage.clickContinue()
-        yourMonthlySpendingPage.assertErrorIsDisplayed
+        yourMonthlySpendingPage.assertNonNumericErrorIsDisplayed
       }
       "retains value entered" in {
         beginJourney()
@@ -79,6 +79,46 @@ class YourSpendingPageSpec extends ItSpec {
         yourMonthlySpendingPage.enterHousing("nonNumerals")
         yourMonthlySpendingPage.clickContinue()
         yourMonthlySpendingPage.assertHousingValueIsDisplayed("nonNumerals")
+      }
+
+    }
+  }
+
+  "add negative input and press continue stays on page" - {
+    "negative housing spending" - {
+      "displays error message" in {
+        beginJourney()
+        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.enterHousing("-10")
+        yourMonthlySpendingPage.clickContinue()
+        yourMonthlySpendingPage.assertNegativeNumberErrorIsDisplayed
+      }
+      "retains value entered" in {
+        beginJourney()
+        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.enterHousing("-10")
+        yourMonthlySpendingPage.clickContinue()
+        yourMonthlySpendingPage.assertHousingValueIsDisplayed("-10")
+      }
+
+    }
+  }
+
+  "add too many decimals and press continue stays on page" - {
+    "too many decimals in housing spending" - {
+      "displays error message" in {
+        beginJourney()
+        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.enterHousing("10.123")
+        yourMonthlySpendingPage.clickContinue()
+        yourMonthlySpendingPage.assertTooManyDecimalsErrorIsDisplayed
+      }
+      "retains value entered" in {
+        beginJourney()
+        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.enterHousing("10.123")
+        yourMonthlySpendingPage.clickContinue()
+        yourMonthlySpendingPage.assertHousingValueIsDisplayed("10.123")
       }
 
     }
