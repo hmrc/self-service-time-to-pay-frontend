@@ -19,16 +19,20 @@ package ssttpcalculator
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
+
 import javax.inject._
 import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
-import play.api.mvc.{AnyContent, _}
+import play.api.mvc._
 import req.RequestSupport
-import ssttpcalculator.CalculatorForm.{createInstalmentForm, createPaymentTodayForm, payTodayForm}
+import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
+import ssttpcalculator.model.PaymentSchedule
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
+
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class CalculatorController @Inject() (
     mcc:               MessagesControllerComponents,
@@ -153,13 +157,19 @@ class CalculatorController @Inject() (
         journey.remainingIncomeAfterSpending
       )
 
+      val minCustomAmount = paymentPlanOptions.values
+        .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
+      val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
+
       if (paymentPlanOptions.isEmpty) {
         Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
       } else {
         Ok(views.calculate_instalments_form(
           routes.CalculatorController.submitCalculateInstalments(),
-          createInstalmentForm(),
-          paymentPlanOptions
+          selectPlanForm(minCustomAmount, maxCustomAmount),
+          paymentPlanOptions,
+          minCustomAmount,
+          maxCustomAmount
         ))
       }
     }
@@ -168,7 +178,7 @@ class CalculatorController @Inject() (
   def submitCalculateInstalments(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"CalculatorController.submitCalculateInstalments: $request")
     journeyService.authorizedForSsttp { journey: Journey =>
-      JourneyLogger.info("CalculatorController.submitCalculateInstalments", journey)
+      JourneyLogger.info(s"CalculatorController.submitCalculateInstalments journey: $journey")
       val sa = journey.taxpayer.selfAssessment
       val paymentPlanOptions = calculatorService.scheduleOptions(
         sa,
@@ -176,23 +186,51 @@ class CalculatorController @Inject() (
         journey.maybeArrangementDayOfMonth,
         journey.remainingIncomeAfterSpending
       )
+      val minCustomAmount = paymentPlanOptions.values
+        .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
+      val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey)
 
-      createInstalmentForm().bindFromRequest().fold(
+      selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
         formWithErrors => {
+          JourneyLogger.info(s"$this.submitCalculateInstalments - form with errors - $formWithErrors")
           Future.successful(
             BadRequest(
               views.calculate_instalments_form(
                 ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                 formWithErrors,
-                paymentPlanOptions
+                paymentPlanOptions,
+                minCustomAmount,
+                maxCustomAmount
               ))
           )
         },
-        (validFormData: SelectedPlanAmount) => {
-          JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data - $validFormData")
-          journeyService.saveJourney(journey.copy(maybeSelectedPlanAmount = Some(validFormData))).map { _ =>
-            Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
+        (validFormData: PlanSelection) => {
+          JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data before check of selected plan amount - $validFormData")
+          validFormData.selection match {
+            case Right(CustomPlanRequest(customAmount)) =>
+              val customSchedule: PaymentSchedule = calculatorService.customSchedule(
+                sa,
+                journey.safeUpfrontPayment,
+                journey.maybeArrangementDayOfMonth,
+                customAmount
+              ).getOrElse(throw new IllegalArgumentException("tried to build a custom schedule without custom amount input"))
+
+              Future.successful(
+                Ok(views.calculate_instalments_form(
+                  routes.CalculatorController.submitCalculateInstalments(),
+                  selectPlanForm(minCustomAmount, maxCustomAmount),
+                  Map((0, customSchedule)) ++ paymentPlanOptions,
+                  minCustomAmount,
+                  maxCustomAmount
+                ))
+              )
+            case Left(SelectedPlan(instalmentAmount)) =>
+              JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data when there is a selected plan amount - $validFormData")
+              journeyService.saveJourney(journey.copy(maybeSelectedPlanAmount = Some(instalmentAmount))).map { _ =>
+                Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
+              }
           }
+
         }
 
       )

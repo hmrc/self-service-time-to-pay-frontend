@@ -15,10 +15,11 @@
  *@
 
 @import partials._
-@import uk.gov.hmrc.selfservicetimetopay.models.SelectedPlanAmount
+@import uk.gov.hmrc.selfservicetimetopay.models.PlanSelection
 @import ssttpcalculator.model._
 @import model._
 @import helpers.forms.submit
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Radios
 @import uk.gov.hmrc.govukfrontend.views.Aliases.RadioItem
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -36,73 +37,110 @@
 
 @(
         redirectCall: Call,
-        regularAmountForm: Form[SelectedPlanAmount],
-        schedules: Map[Int, PaymentSchedule])(
+        selectPlanForm: Form[PlanSelection],
+        schedules: Map[Int, PaymentSchedule],
+        minCustomAmount: BigDecimal,
+        maxCustomAmount: BigDecimal)(
         implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
 )
 
+@scheduleOptionsSequence = @{schedules.toSeq.map ( schedule => {
+RadioItem(
+id = Some(schedule._1.toString),
+value = Some(schedule._2.getMonthlyInstalment.toString),
+content = HtmlContent(instalment_by_amount_label(schedule._2))
+)
+})}
+
+@customAmountHasErrors = @{selectPlanForm("customAmountInput").value.contains("true")}
+
+@customAmountSelected() = @{
+    if(customAmountHasErrors){
+        "checked"
+    }
+}
+
+@errorFocus(key: String) = @{
+    if(customAmountHasErrors){
+        "customAmountOption"
+    }else{
+        key
+    }
+}
+
+@enterCustomAmountPanel = {
+    <div id="custom-amount-field" class="govuk-form-group">
+        <div class="govuk-hint" for="custom-amount-field" >@messages(
+            "ssttp.calculator.results.option.other.enter.amount",
+            minCustomAmount,
+            maxCustomAmount
+        )</div>
+        @if(customAmountHasErrors) {
+            <span id="custom-amount-error" class="govuk-error-message">
+                <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
+                @selectPlanForm.error("customAmountInput").map(formError => Html(messages(formError.message, currency(minCustomAmount), currency(maxCustomAmount))))
+            </span>
+        }
+        <div class="govuk-input__wrapper">
+            <div class="govuk-input__prefix" aria-hidden="true">£</div>
+            <input class="govuk-input govuk-input--width-5" id="custom-amount-input" name="custom-amount-input" type="text" step="0.01" spellcheck="false">
+        </div>
+    </div>
+}
+
 @main(
     title = Messages("ssttp.calculator.results.title"),
-    backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay())
+    backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford())
 ) {
 
 <section class="govuk-body">
 
-@if(regularAmountForm.hasErrors) {
+@if(selectPlanForm.hasErrors) {
     @errorSummary(
         ErrorSummary(
             title = Text(Messages("ssttp.calculator.results.error.title")),
-            errorList = regularAmountForm.errors.asTextErrorLinks.map {error =>
-                if(error.href.forall(_.contains("chosen-regular-amount"))) error.copy (
-                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("chosen-regular-amount", s._1.toString)))
+            errorList = selectPlanForm.errors.asTextErrorLinks.map {error =>
+                if(error.href.forall(_.contains("selected-plan-amount"))) error.copy (
+                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("selected-plan-amount", s._1.toString)))
                 ) else error
             }
         )
     )
 }
 
+
+
 @viewsHelpers.form(redirectCall, 'id -> "paymentTodayForm") {
     <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-fieldset__heading">@Messages("ssttp.calculator.results.title")</h1>
+            <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.results.title")</h1>
         </legend>
 
-        @radios(Radios(
-            name = "chosen-regular-amount",
-            attributes = Map("id" -> "chosen-regular-amount"),
-            items = schedules.toSeq.map ( schedule => {
-                RadioItem(
-                    id = Some(schedule._1.toString),
-                    value = Some(schedule._2.getMonthlyInstalment.toString),
-                    content = HtmlContent(
-                        instalment_by_month_label(schedule._2)
-                    ),
+        <p class="govuk-body">@messages("ssttp.calculator.results.p1")</p>
+        <p class="govuk-body">@messages("ssttp.calculator.results.p2")</p>
 
-                    conditionalHtml = Some(instalment_by_month_conditional(schedule._2))
-                )
-            })
+        @radios(Radios(
+            name = "plan-selection",
+            attributes = Map("id" -> "selected-plan-amount"),
+            items =  Seq(scheduleOptionsSequence.headOption.getOrElse(throw new IllegalArgumentException("Could not find any valid schedule options")),
+            RadioItem(
+                divider = Some(Messages("ssttp.calculator.results.or"))
+            ))   ++ scheduleOptionsSequence.drop(1) :+ RadioItem(
+                id = Some("customAmountOption"),
+                value = Some("customAmountOption"),
+                content = Text(Messages("ssttp.calculator.results.option.other.label")),
+                conditionalHtml = Some(enterCustomAmountPanel)
+            )
         ))
     </fieldset>
-<details class="govuk-details">
- <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.results.section.title")</span></summary>
- <div class="govuk-details__text">
-  <p>@Messages("ssttp.calculator.results.section.p1")</p>
-  <p>@Messages("ssttp.calculator.results.section.p2")</p>
-  <p>@Messages("ssttp.calculator.results.section.p3")</p>
- </div>
-</details>
 
 <details class="govuk-details">
-  <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.check-calculation.cant-afford")</span></summary>
+  <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.results.section.cannot-afford.title")</span></summary>
   <div class="govuk-details__text">
-    <p>@Messages("ssttp.calculator.check-calculation.cant-afford.p1")</p>
-    <p>@Messages("ssttp.calculator.check-calculation.cant-afford.p2.1") <strong class="bold">@Messages("ssttp.calculator.check-calculation.cant-afford.p2.2")</strong> @Messages("ssttp.calculator.check-calculation.cant-afford.p2.3")</p>
-      <p>@{Html(Messages("ssttp.calculator.check-calculation.cant-afford.p3"))}</p>
-      <p>@{Html(Messages("ssttp.calculator.check-calculation.cant-afford.p4"))}</p>
-      <p>@{Html(Messages("ssttp.calculator.check-calculation.cant-afford.p5"))}</p>
+    <p>@Messages("ssttp.calculator.results.section.cannot-afford.p.1") <strong class="bold">@Messages("ssttp.calculator.results.section.cannot-afford.p.2")</strong> @Messages("ssttp.calculator.results.section.cannot-afford.p.3")</p>
   </div>
 </details>
 

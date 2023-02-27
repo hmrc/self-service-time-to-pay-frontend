@@ -34,12 +34,10 @@ import ssttpcalculator.model.{
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
-import java.time.{Clock, LocalDate, Year}
+import java.time.{LocalDate, Year}
 import javax.inject.Inject
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext
-
-import java.time.LocalDate.now
 
 class CalculatorService @Inject() (
     clockProvider:   ClockProvider,
@@ -99,13 +97,32 @@ class CalculatorService @Inject() (
     val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.safeNew(
       taxLiabilities,
       journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
-      journey.maybeSelectedPlanAmount.map(_.chosenRegularAmount).getOrElse(
-        throw new IllegalArgumentException("could not find plan amount selection but there should be one")
-      ),
+      journey.selectedPlanAmount,
       clockProvider.nowDate(),
       journey.maybeArrangementDayOfMonth)(appConfig)
 
     schedule(taxPaymentPlan)
+  }
+
+  def customSchedule(
+      sa:                         SelfAssessmentDetails,
+      upfrontPayment:             BigDecimal,
+      maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth],
+      customAmount:               BigDecimal
+  )(implicit request: Request[_], config: AppConfig): Option[PaymentSchedule] = {
+    val taxLiabilities: Seq[TaxLiability] = for {
+      selfAssessmentDebit <- sa.debits
+    } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
+
+    schedule(
+      TaxPaymentPlan.safeNew(
+        taxLiabilities             = taxLiabilities,
+        upfrontPayment             = upfrontPayment,
+        regularPaymentAmount       = customAmount,
+        dateNow                    = clockProvider.nowDate(),
+        maybeArrangementDayOfMonth = maybeArrangementDayOfMonth
+      )(appConfig)
+    )
   }
 
   def schedule(implicit taxPaymentPlan: TaxPaymentPlan): Option[PaymentSchedule] = {
@@ -161,6 +178,49 @@ class CalculatorService @Inject() (
           totalPayable         = principal + totalInterestCharged,
           instalments          = instalments))
     }
+  }
+
+  def maximumPossibleInstalmentAmount(journey: Journey)(implicit request: Request[_]): BigDecimal = {
+    val taxLiabilities: Seq[TaxLiability] = for {
+      selfAssessmentDebit <- journey.taxpayer.selfAssessment.debits
+    } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
+
+    val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.safeNew(
+      taxLiabilities,
+      journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
+      journey.selectedPlanAmount,
+      clockProvider.nowDate(),
+      journey.maybeArrangementDayOfMonth)(appConfig)
+
+    val payables = Payables(taxPaymentPlan.taxLiabilities)
+
+    val maybeInterestAccruedUpToStartDate = totalHistoricInterest(payables, taxPaymentPlan.planStartDate, interestService.getRatesForPeriod)
+
+    val hasAnUpfrontPayment = taxPaymentPlan.upfrontPayment > 0
+    val upfrontPaymentLateInterest = if (hasAnUpfrontPayment) {
+      val initialPaymentDate = taxPaymentPlan.planStartDate.plusDays(appConfig.daysToProcessFirstPayment)
+      val debitsDueBeforeInitialPayment = taxPaymentPlan.taxLiabilities.filter(_.dueDate.isBefore(initialPaymentDate))
+      calculateInitialPaymentInterest(debitsDueBeforeInitialPayment)(taxPaymentPlan)
+    } else {
+      BigDecimal(0)
+    }
+    val maybeUpfrontPaymentLateInterest = taxPaymentPlan.maybeUpfrontPaymentDate match {
+      case Some(_) => Option(LatePaymentInterest(upfrontPaymentLateInterest))
+      case None    => None
+    }
+
+    val payablesFromPlanStartDateLessUpfrontPayment = payablesResetLessUpfrontPayment(
+      taxPaymentPlan.upfrontPayment,
+      payables.liabilities.map(Payable.payableToTaxLiability),
+      taxPaymentPlan.planStartDate)
+    val liabilitiesUpdated = Seq[Option[Payable]](maybeInterestAccruedUpToStartDate, maybeUpfrontPaymentLateInterest)
+      .foldLeft(payablesFromPlanStartDateLessUpfrontPayment)((ls, maybeInterest) => maybeInterest match {
+        case Some(interest) => ls :+ interest
+        case None           => ls
+      })
+    val payablesUpdatedWithHistoricAndUpfrontPaymentLateInterest = Payables(liabilitiesUpdated)
+
+    payablesUpdatedWithHistoricAndUpfrontPaymentLateInterest.balance
   }
 
   private def payablesResetLessUpfrontPayment(

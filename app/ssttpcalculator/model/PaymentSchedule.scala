@@ -17,8 +17,9 @@
 package ssttpcalculator.model
 
 import java.time.LocalDate
-
 import play.api.libs.json.{Json, OFormat}
+
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 final case class PaymentSchedule(
     startDate:            LocalDate,
@@ -34,6 +35,8 @@ final case class PaymentSchedule(
 
   def firstInstallment: Instalment =
     instalments.reduceOption(first).getOrElse(throw new RuntimeException(s"No installments for [$this]"))
+
+  def totalInterestMessage: String = s"£${totalInterestCharged.setScale(2, HALF_UP)}"
 
   private def first(earliest: Instalment, next: Instalment): Instalment =
     if (next.paymentDate.toEpochDay < earliest.paymentDate.toEpochDay) next else earliest

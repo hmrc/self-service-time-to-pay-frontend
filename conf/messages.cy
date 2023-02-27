@@ -216,7 +216,27 @@ ssttp.calculator.form.payment_today.update = Diweddaru
 
 ssttp.calculator.form.continue = Yn eich blaen
 
-ssttp.calculator.results.title = Dros sawl mis yr hoffech dalu?
+ssttp.calculator.results.title = Faint y gallwch ei dalu bob mis?
+ssttp.calculator.results.p1 = Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+ssttp.calculator.results.p2 = Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
+ssttp.calculator.results.amount.option.1 =  y mis,
+ssttp.calculator.results.amount.option.2 =  am
+ssttp.calculator.results.amount.option.3 =  mis
+ssttp.calculator.results.amount.option.interest-hint = Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef
+ssttp.calculator.results.option.other.label = Swm misol gwahanol
+ssttp.calculator.results.option.other.enter.amount = Rhowch swm sydd o leiaf £{0} ond heb fod yn fwy na £{1}
+ssttp.calculator.results.or = neu
+ssttp.calculator.results.section.cannot-afford.title = Nid wyf yn gallu fforddio’r taliadau hyn
+ssttp.calculator.results.section.cannot-afford.p.1 = Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar
+ssttp.calculator.results.section.cannot-afford.p.2 = 0300 200 1900
+ssttp.calculator.results.section.cannot-afford.p.3 = i drafod eich opsiynau.
+ssttp.calculator.results.option.other.error.below-minimum = Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £{0} ond heb fod yn fwy na £{1}
+ssttp.calculator.results.option.other.error.above-maximum = Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £{0} ond heb fod yn fwy na £{0}
+ssttp.calculator.results.option.other.error.no-input = Nodwch swm
+ssttp.calculator.results.option.other.error.non-numeric = Nodwch rifau yn unig
+ssttp.calculator.results.option.other.error.negative-amount = Nodwch rif positif yn unig
+
+
 ssttp.calculator.results.month.instalments = Rhandaliadau
 ssttp.calculator.results.month.option.1 = o fisoedd ar
 ssttp.calculator.results.month.option.table.total.interest = Cyfanswm y llog:
