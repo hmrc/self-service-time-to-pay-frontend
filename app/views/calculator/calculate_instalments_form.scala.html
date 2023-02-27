@@ -116,13 +116,22 @@
         @radios(Radios(
             name = "plan-selection",
             attributes = Map("id" -> "selected-plan-amount"),
-            items =  schedules.toSeq.map ( schedule => {
+            items =  Seq(schedules.toSeq.map ( schedule => {
                 RadioItem(
                     id = Some(schedule._1.toString),
                     value = Some(schedule._2.getMonthlyInstalment.toString),
                     content = HtmlContent(instalment_by_amount_label(schedule._2))
                 )
-            }) :+ RadioItem(
+            }).headOption.getOrElse(throw new IllegalArgumentException("Could not find any valid schedule options")),
+            RadioItem(
+                divider = Some(Messages("ssttp.calculator.results.or"))
+            ))   ++ schedules.toSeq.map ( schedule => {
+                RadioItem(
+                    id = Some(schedule._1.toString),
+                    value = Some(schedule._2.getMonthlyInstalment.toString),
+                    content = HtmlContent(instalment_by_amount_label(schedule._2))
+                )
+            }).drop(1) :+ RadioItem(
                 id = Some("customAmountOption"),
                 value = Some("customAmountOption"),
                 content = Text(Messages("ssttp.calculator.results.option.other.label")),
