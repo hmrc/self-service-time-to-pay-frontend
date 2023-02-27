@@ -63,7 +63,7 @@ class DebtTooLargePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends 
       private val mainTextEnglish =
         """Please call us
           |To be eligible to set up a payment plan online the tax you owe must be £30,000 or less.
-          |For further support you can contact the Payment Support Service and speak to an adviser on 0300 200 3835.
+          |For further support, you can contact us on 0300 123 1813 to speak to an adviser.
           |Before you call, make sure you have:
           |information on any savings or investments you have
           |your bank details

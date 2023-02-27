@@ -119,7 +119,7 @@ ssttp.affordability.your-monthly-income.form.benefits.hint = For example, Univer
 ssttp.affordability.your-monthly-income.form.other-income = Other monthly income
 ssttp.affordability.your-monthly-income.form.other-income.hint = For example, rental income, dividends
 ssttp.affordability.your-monthly-income.error.title = There is a problem
-ssttp.affordability.your-monthly-income.error.required = You must enter an income figure. If you do not have any income call us on 0300 200 3835
+ssttp.affordability.your-monthly-income.error.required = You must enter your income. If you do not have any income call us on 0300 123 1813
 ssttp.affordability.your-monthly-income.error.non-numerals = Enter numbers only
 ssttp.affordability.your-monthly-income.error.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.affordability.your-monthly-income.continue = Continue
@@ -154,9 +154,9 @@ ssttp.affordability.how-much-you-could-afford.left-over-income = Left over incom
 ssttp.affordability.how-much-you-could-afford.total = Total left over income
 ssttp.affordability.how-much-you-could-afford.half-of-total = Half of left over income
 ssttp.affordability.how-much-you-could-afford.leftover-zero.h2 = Your spending is the same as your income
-ssttp.affordability.how-much-you-could-afford.leftover-zero.p = As your spending is the same as your income, call the Payment Support Service on <strong>0300 200 3835</strong> to discuss your debt. You may also want to seek independent debt advice.
+ssttp.affordability.how-much-you-could-afford.leftover-zero.p = As your spending is the same as your income, call us on <strong>0300 123 1813</strong> to discuss your debt. You may also want to seek independent debt advice.
 ssttp.affordability.how-much-you-could-afford.leftover-negative.h2 = Your spending is higher than your income
-ssttp.affordability.how-much-you-could-afford.leftover-negative.p = As your spending is higher than your income, call the Payment Support Service on <strong>0300 200 3835</strong> to discuss your debt. You may also want to seek independent debt advice.
+ssttp.affordability.how-much-you-could-afford.leftover-negative.p = As your spending is higher than your income, call us on <strong>0300 123 1813</strong> to discuss your debt. You may also want to seek independent debt advice.
 
 ssttp.affordability.we-cannot-agree-your-pp.h1 = We cannot agree your payment plan online
 ssttp.affordability.we-cannot-agree-your-pp.p1 = The amounts you have entered for your income and spending mean you cannot set up a payment plan online.
@@ -306,7 +306,7 @@ ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less t
 
 ssttp.call-us.title = Please call us
 ssttp.call-us.p1 = You are not eligible to set up a payment plan online.
-ssttp.call-us.p2 = For further support you can contact the Payment Support Service and speak to an adviser on <strong>0300 200 3835</strong>.
+ssttp.call-us.p2 = For further support you can contact us on <strong>0300 123 1813</strong> to speak to an adviser.
 ssttp.call-us.before-call.heading = Before you call, make sure you have:
 ssttp.call-us.before-call.l1 = information on any savings or investments you have
 ssttp.call-us.before-call.l2 = your bank details
@@ -329,7 +329,7 @@ ssttp.you-need-to-file.intro = To be eligible to set up a payment plan online yo
 ssttp.you-need-to-file.check-account.link = Go to your tax account
 ssttp.you-need-to-file.check-account = to file your Self Assessment tax return.
 
-ssttp.you-need-to-file..phone-number = For further support you can contact the Payment Support Service and speak to an adviser on <strong>0300 200 3835</strong>.
+ssttp.you-need-to-file..phone-number = For further support, you can contact us on <strong>0300 123 1813</strong> to speak to an adviser.
 
 ssttp.arrangement.type_of_account.title = About your bank account
 ssttp.arrangement.type_of_account.details = What type of account details are you providing?
@@ -496,18 +496,17 @@ ssttp.not.enrolled.tax-account = , then you can use this service to set up a pay
 
 #not-enrolled-please-call-us
 ssttp.please-call-us.p1 = You may still be able to set up a payment plan over the phone, but you are not eligible for an online payment plan.
-ssttp.please-call-us.p2-part1 = We recommend you speak to an adviser on <strong>0300 200 3835</strong> at the Payment Support Service to talk about your payment options.
+ssttp.please-call-us.p2-part1 = For further support, you can contact us on <strong>0300 123 1813</strong> to speak to an adviser.
 
 #not-sole-signatory
 ssttp.not-sole-signatory.title = You cannot set up a Direct Debit online
 ssttp.not-sole-signatory.p1 = You need a named account holder or someone with authorisation to set up a Direct Debit.
-ssttp.not-sole-signatory.p2a = If you are not the account holder or you wish to set up a Direct Debit with a multi-signature account, we recommend you speak to an adviser on
-ssttp.not-sole-signatory.p2b = at the Payment Support Service. You must ensure all account holders are present when calling.
+ssttp.not-sole-signatory.p2 = If you are not the account holder or you wish to set up a Direct Debit with a multi-signature account, speak to an adviser on <strong>0300 123 1813</strong>. You must ensure all account holders are present when calling.
 ssttp.not-sole-signatory.go-to-account = Go to tax account
 
 ssttp.debt-too-large.h1 = Please call us
 ssttp.debt-too-large.p1 = To be eligible to set up a payment plan online the tax you owe must be £{0} or less.
-ssttp.debt-too-large.p2 = For further support you can contact the Payment Support Service and speak to an adviser on <strong>0300 200 3835</strong>.
+ssttp.debt-too-large.p2 = For further support, you can contact us on <strong>0300 123 1813</strong> to speak to an adviser.
 ssttp.debt-too-large.before.you.call.h1 = Before you call, make sure you have:
 ssttp.debt-too-large.before.you.call.l1 = information on any savings or investments you have
 ssttp.debt-too-large.before.you.call.l2 = your bank details
@@ -618,7 +617,7 @@ delete-answers.message = We did not save your answers.
 
 
 # telephone numbers
-ssttp.support-service.tel = 0300 200 3835
+ssttp.support-service.tel = 0300 123 1813
 
 
 # dates
