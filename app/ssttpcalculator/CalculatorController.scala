@@ -158,7 +158,7 @@ class CalculatorController @Inject() (
       )
 
       val minCustomAmount = paymentPlanOptions.values
-        .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
+        .headOption.fold(BigDecimal(1))(_.firstInstallment.amount).setScale(2, HALF_UP)
       val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
 
       if (paymentPlanOptions.isEmpty) {
@@ -187,8 +187,8 @@ class CalculatorController @Inject() (
         journey.remainingIncomeAfterSpending
       )
       val minCustomAmount = paymentPlanOptions.values
-        .headOption.fold(BigDecimal(1))(_.firstInstallment.amount)
-      val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey)
+        .headOption.fold(BigDecimal(1))(_.firstInstallment.amount).setScale(2, HALF_UP)
+      val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
 
       selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
         formWithErrors => {

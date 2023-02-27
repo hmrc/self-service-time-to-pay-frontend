@@ -55,7 +55,11 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
 )
 })}
 
+<<<<<<< HEAD
 @customAmountHasErrors = @{selectPlanForm("customAmountInput").value.contains("true")}
+=======
+@customAmountHasErrors = @{selectPlanForm("plan-selection").value.contains("customAmountOption")}
+>>>>>>> alexis/ops-8650-custom-amount-error-messages
 
 @customAmountSelected() = @{
     if(customAmountHasErrors){
@@ -65,23 +69,23 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
 
 @errorFocus(key: String) = @{
     if(customAmountHasErrors){
+<<<<<<< HEAD
         "customAmountOption"
+=======
+        "custom-amount-option"
+>>>>>>> alexis/ops-8650-custom-amount-error-messages
     }else{
         key
     }
 }
 
 @enterCustomAmountPanel = {
-    <div id="custom-amount-field" class="govuk-form-group">
-        <div class="govuk-hint" for="custom-amount-field" >@messages(
-            "ssttp.calculator.results.option.other.enter.amount",
-            minCustomAmount,
-            maxCustomAmount
-        )</div>
+    <div id="custom-amount-field" class="govuk-form-group @if(customAmountHasErrors){govuk-form-group--error}">
+        <div class="govuk-hint">@Html(messages("ssttp.calculator.results.option.other.enter.amount", currency(minCustomAmount), currency(maxCustomAmount)))</div>
         @if(customAmountHasErrors) {
             <span id="custom-amount-error" class="govuk-error-message">
                 <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
-                @selectPlanForm.error("customAmountInput").map(formError => Html(messages(formError.message, currency(minCustomAmount), currency(maxCustomAmount))))
+                @selectPlanForm.error("custom-amount-input").map(formError => Html(messages(formError.message, minCustomAmount, maxCustomAmount)))
             </span>
         }
         <div class="govuk-input__wrapper">
@@ -131,6 +135,10 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
             ))   ++ scheduleOptionsSequence.drop(1) :+ RadioItem(
                 id = Some("customAmountOption"),
                 value = Some("customAmountOption"),
+<<<<<<< HEAD
+=======
+                checked = selectPlanForm("plan-selection").value.contains("customAmountOption"),
+>>>>>>> alexis/ops-8650-custom-amount-error-messages
                 content = Text(Messages("ssttp.calculator.results.option.other.label")),
                 conditionalHtml = Some(enterCustomAmountPanel)
             )
