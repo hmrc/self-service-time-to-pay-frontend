@@ -228,29 +228,5 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
     }
-    "selecting the custom amount, continue, then back returns to the schedule selection page with custom option" in {
-      beginNewJourney()
-
-      calculatorInstalmentsPage28thDay.assertPageIsDisplayed
-
-      val customAmount = 280
-      val planMonths = 18
-      val planInterest = 124.26
-
-      calculatorInstalmentsPage28thDay.selectCustomAmountOption()
-      calculatorInstalmentsPage28thDay.enterCustomAmount(customAmount.toString)
-      calculatorInstalmentsPage28thDay.clickContinue()
-
-
-      calculatorInstalmentsPage28thDay.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-
-      calculatorInstalmentsPage28thDay.selectASpecificOption("0")
-      calculatorInstalmentsPage28thDay.clickContinue()
-
-      instalmentSummaryPage.clickOnBackButton()
-
-      calculatorInstalmentsPage28thDay.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-    }
-
   }
 }

@@ -295,7 +295,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       object NonNumeric {
         def apply()(implicit language: Language): String = language match {
           case English => nonNumericTextEnglish
-          case Welsh => nonNumericTextWelsh
+          case Welsh   => nonNumericTextWelsh
         }
 
         private val nonNumericTextEnglish =
@@ -312,7 +312,7 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
       object NegativeAmount {
         def apply()(implicit language: Language): String = language match {
           case English => negativeAmountTextEnglish
-          case Welsh => negativeAmountTextWelsh
+          case Welsh   => negativeAmountTextWelsh
         }
 
         private val negativeAmountTextEnglish =

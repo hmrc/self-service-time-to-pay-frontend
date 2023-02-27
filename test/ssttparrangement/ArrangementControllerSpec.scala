@@ -37,7 +37,6 @@ import uk.gov.hmrc.http.SessionKeys
 
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, CalculatorDuration, EligibilityStatus, PlanSelection, TypeOfAccountDetails}
 
-
 import java.time.LocalDateTime
 import java.util.UUID
 

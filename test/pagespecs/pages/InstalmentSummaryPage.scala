@@ -68,7 +68,6 @@ abstract class InstalmentSummaryPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish:
 
   def clickOnBackButton(): Unit = click on id("back-link")
 
-
   object Expected {
 
     object GlobalHeaderText {
