@@ -99,12 +99,14 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
     @errorSummary(
         ErrorSummary(
             title = Text(Messages("ssttp.calculator.results.error.title")),
-            errorList = selectPlanForm.errors.asTextErrorLinks
+            errorList = selectPlanForm.errors.asTextErrorLinks.map {error =>
+                if(error.content == Text(messages("ssttp.calculator.results.option.error.no-selection"))) error.copy (
+                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("plan-selection", s._1.toString)))
+                ) else error
+            }
         )
     )
 }
-
-
 
 @viewsHelpers.form(redirectCall, 'id -> "paymentTodayForm") {
     <fieldset class="govuk-fieldset">
