@@ -19,20 +19,16 @@
 
 @(schedule: PaymentSchedule)(implicit messages: play.api.i18n.Messages)
 
-<label class="govuk-label govuk-radios__label">
+<strong class="bold">
+ @currency(schedule.firstInstallment.amount)
+ @Messages("ssttp.calculator.results.amount.option.1")
+</strong>
+@Messages("ssttp.calculator.results.amount.option.2")
+@{if (schedule.durationInMonths < 0) 12 + schedule.durationInMonths else schedule.durationInMonths}
+@Messages("ssttp.calculator.results.amount.option.3")
 
- <strong class="bold">
-  @currency(schedule.firstInstallment.amount)
-  @Messages("ssttp.calculator.results.amount.option.1")
- </strong>
- @Messages("ssttp.calculator.results.amount.option.2")
- @{if (schedule.durationInMonths < 0) 12 + schedule.durationInMonths else schedule.durationInMonths}
- @Messages("ssttp.calculator.results.amount.option.3")
-
-</label>
 
 <div id="payment-plan-item-hint" class="govuk-hint govuk-radios__hint">
  @Messages("ssttp.calculator.results.amount.option.interest-hint")
  @{schedule.totalInterestMessage}
- <br>
 </div>
