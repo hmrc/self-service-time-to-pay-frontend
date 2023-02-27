@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import partials._
+@import partials.currency
 @import uk.gov.hmrc.selfservicetimetopay.models.PlanSelection
 @import ssttpcalculator.model._
 @import model._
@@ -49,11 +49,19 @@
 )
 
 @scheduleOptionsSequence = @{schedules.toSeq.map ( schedule => {
-RadioItem(
-id = Some(schedule._1.toString),
-value = Some(schedule._2.getMonthlyInstalment.toString),
-content = HtmlContent(instalment_by_amount_label(schedule._2))
-)
+    RadioItem(
+        id = Some(schedule._1.toString),
+        value = Some(schedule._2.getMonthlyInstalment.toString),
+        content = HtmlContent(Messages(
+            "ssttp.calculator.results.amount.option",
+            currency(schedule._2.firstInstallment.amount),
+            if (schedule._2.durationInMonths < 0) 12 + schedule._2.durationInMonths else schedule._2.durationInMonths
+        )),
+        hint = Some(Hint(content = HtmlContent(Messages(
+            "ssttp.calculator.results.amount.option.interest-hint",
+            currency(schedule._2.totalInterestCharged)
+        ))))
+    )
 })}
 
 @customAmountHasErrors = @{selectPlanForm("plan-selection").value.contains("customAmountOption")}
