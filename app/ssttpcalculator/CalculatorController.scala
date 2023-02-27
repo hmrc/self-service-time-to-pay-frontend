@@ -205,7 +205,6 @@ class CalculatorController @Inject() (
           )
         },
         (validFormData: PlanSelection) => {
-          JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data before check of selected plan amount - $validFormData")
           validFormData.selection match {
             case Right(CustomPlanRequest(customAmount)) =>
               val customSchedule: PaymentSchedule = calculatorService.customSchedule(
@@ -224,9 +223,8 @@ class CalculatorController @Inject() (
                   maxCustomAmount
                 ))
               )
-            case Left(SelectedPlan(instalmentAmount)) =>
-              JourneyLogger.info(s"$this.submitCalculateInstalments - valid form data when there is a selected plan amount - $validFormData")
-              journeyService.saveJourney(journey.copy(maybeSelectedPlanAmount = Some(instalmentAmount))).map { _ =>
+            case Left(SelectedPlan(_)) =>
+              journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData))).map { _ =>
                 Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
               }
           }

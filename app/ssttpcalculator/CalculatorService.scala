@@ -185,10 +185,9 @@ class CalculatorService @Inject() (
       selfAssessmentDebit <- journey.taxpayer.selfAssessment.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
 
-    val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.safeNew(
+    val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.singleInstalment(
       taxLiabilities,
       journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
-      journey.selectedPlanAmount,
       clockProvider.nowDate(),
       journey.maybeArrangementDayOfMonth)(appConfig)
 

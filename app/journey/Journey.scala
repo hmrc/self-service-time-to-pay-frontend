@@ -63,26 +63,32 @@ object MonthlyPaymentAmount {
 }
 
 final case class Journey(
-    _id:                        JourneyId,
-    status:                     Status                          = InProgress,
-    createdOn:                  LocalDateTime,
-    maybeTypeOfAccountDetails:  Option[TypeOfAccountDetails]    = None,
-    maybeBankDetails:           Option[BankDetails]             = None,
-    existingDDBanks:            Option[DirectDebitInstructions] = None,
-    maybeTaxpayer:              Option[Taxpayer]                = None,
-    maybePaymentToday:          Option[PaymentToday]            = None,
-    maybePaymentTodayAmount:    Option[PaymentTodayAmount]      = None,
-    maybeMonthlyPaymentAmount:  Option[BigDecimal]              = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
-    maybeIncome:                Option[Income]                  = None,
-    maybeSpending:              Option[Spending]                = None,
-    maybeSelectedPlanAmount:    Option[BigDecimal]              = Some(2000), // TODO OPS-8654 - connect to calculator form, then set default to None: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration
-    maybeCalculatorDuration:    Option[CalculatorDuration]      = None, // TODO OPS-8654 - remove: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
-    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth]   = None,
-    maybeEligibilityStatus:     Option[EligibilityStatus]       = None,
-    debitDate:                  Option[LocalDate]               = None,
-    ddRef:                      Option[String]                  = None,
-    maybeSaUtr:                 Option[String]                  = None
+    _id:                       JourneyId,
+    status:                    Status                          = InProgress,
+    createdOn:                 LocalDateTime,
+    maybeTypeOfAccountDetails: Option[TypeOfAccountDetails]    = None,
+    maybeBankDetails:          Option[BankDetails]             = None,
+    existingDDBanks:           Option[DirectDebitInstructions] = None,
+    maybeTaxpayer:             Option[Taxpayer]                = None,
+    maybePaymentToday:         Option[PaymentToday]            = None,
+    maybePaymentTodayAmount:   Option[PaymentTodayAmount]      = None,
+    maybeMonthlyPaymentAmount: Option[BigDecimal]              = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
+    maybeIncome:               Option[Income]                  = None,
+    maybeSpending:             Option[Spending]                = None,
+    maybePlanSelection:        Option[PlanSelection]           = None,
+    //    maybeSelectedPlanAmount:    Option[BigDecimal]              = Some(2000), // TODO OPS-8654 - connect to calculator form, then set default to None: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration
+    maybeCalculatorDuration:    Option[CalculatorDuration]    = None, // TODO OPS-8654 - remove: because of chances to they way payment plan options are generated, customer selection should now be based on regular payment amount, not duration    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
+    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
+    maybeEligibilityStatus:     Option[EligibilityStatus]     = None,
+    debitDate:                  Option[LocalDate]             = None,
+    ddRef:                      Option[String]                = None,
+    maybeSaUtr:                 Option[String]                = None
 ) extends HasId[JourneyId] {
+
+  def maybeSelectedPlanAmount: Option[BigDecimal] = maybePlanSelection.fold(None: Option[BigDecimal])(_.selection match {
+    case Right(CustomPlanRequest(_)) => None
+    case Left(SelectedPlan(amount))  => Some(amount)
+  })
 
   def selectedPlanAmount: BigDecimal = maybeSelectedPlanAmount.getOrElse(
     throw new RuntimeException(s"Expected selected plan amount but none found. [${_id}] [$this]")

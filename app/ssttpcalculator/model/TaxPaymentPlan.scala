@@ -131,6 +131,19 @@ object TaxPaymentPlan {
     } else taxPaymentPlanNoUpfront
   }
 
+  def singleInstalment(
+      taxLiabilities:             Seq[TaxLiability],
+      upfrontPayment:             BigDecimal,
+      dateNow:                    LocalDate,
+      maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None
+  )(appConfig: AppConfig): TaxPaymentPlan = safeNew(
+    taxLiabilities,
+    upfrontPayment,
+    taxLiabilities.map(_.amount).sum * 10,
+    dateNow,
+    maybeArrangementDayOfMonth,
+  )(appConfig)
+
   private def reads(implicit config: AppConfig): Reads[TaxPaymentPlan] = Json.reads[TaxPaymentPlan]
     .filter(JsonValidationError("'debits' was empty, it should have at least one debit."))(_.taxLiabilities.nonEmpty)
     .filter(JsonValidationError("The 'initialPayment' can't be less than 0"))(_.upfrontPayment >= 0)
