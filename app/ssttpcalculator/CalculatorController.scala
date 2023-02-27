@@ -169,7 +169,8 @@ class CalculatorController @Inject() (
           selectPlanForm(minCustomAmount, maxCustomAmount),
           paymentPlanOptions,
           minCustomAmount,
-          maxCustomAmount
+          maxCustomAmount,
+          journey.maybePlanSelection
         ))
       }
     }
@@ -200,7 +201,8 @@ class CalculatorController @Inject() (
                 formWithErrors,
                 paymentPlanOptions,
                 minCustomAmount,
-                maxCustomAmount
+                maxCustomAmount,
+                journey.maybePlanSelection
               ))
           )
         },
@@ -220,7 +222,8 @@ class CalculatorController @Inject() (
                   selectPlanForm(minCustomAmount, maxCustomAmount),
                   Map((0, customSchedule)) ++ paymentPlanOptions,
                   minCustomAmount,
-                  maxCustomAmount
+                  maxCustomAmount,
+                  Some(validFormData)
                 ))
               )
             case Left(SelectedPlan(_)) =>

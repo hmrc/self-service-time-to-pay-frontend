@@ -15,7 +15,7 @@
  *@
 
 @import partials.currency
-@import uk.gov.hmrc.selfservicetimetopay.models.PlanSelection
+@import uk.gov.hmrc.selfservicetimetopay.models.{PlanSelection, SelectedPlan, CustomPlanRequest}
 @import ssttpcalculator.model._
 @import model._
 @import helpers.forms.submit
@@ -41,7 +41,8 @@
         selectPlanForm: Form[PlanSelection],
         schedules: Map[Int, PaymentSchedule],
         minCustomAmount: BigDecimal,
-        maxCustomAmount: BigDecimal)(
+        maxCustomAmount: BigDecimal,
+        previousFormSubmission: Option[PlanSelection])(
         implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
@@ -60,7 +61,11 @@
         hint = Some(Hint(content = HtmlContent(Messages(
             "ssttp.calculator.results.amount.option.interest-hint",
             currency(schedule._2.totalInterestCharged)
-        ))))
+        )))),
+        checked = previousFormSubmission.fold(false)(_.selection match {
+            case Left(SelectedPlan(amount)) => amount == schedule._2.getMonthlyInstalment
+            case Right(CustomPlanRequest(_)) => false
+        })
     )
 })}
 
