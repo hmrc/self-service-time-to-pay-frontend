@@ -27,6 +27,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
 @import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 
 @this(
   main: views.html.main,
@@ -55,11 +56,7 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
 )
 })}
 
-<<<<<<< HEAD
-@customAmountHasErrors = @{selectPlanForm("customAmountInput").value.contains("true")}
-=======
 @customAmountHasErrors = @{selectPlanForm("plan-selection").value.contains("customAmountOption")}
->>>>>>> alexis/ops-8650-custom-amount-error-messages
 
 @customAmountSelected() = @{
     if(customAmountHasErrors){
@@ -69,11 +66,7 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
 
 @errorFocus(key: String) = @{
     if(customAmountHasErrors){
-<<<<<<< HEAD
-        "customAmountOption"
-=======
         "custom-amount-option"
->>>>>>> alexis/ops-8650-custom-amount-error-messages
     }else{
         key
     }
@@ -106,11 +99,7 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
     @errorSummary(
         ErrorSummary(
             title = Text(Messages("ssttp.calculator.results.error.title")),
-            errorList = selectPlanForm.errors.asTextErrorLinks.map {error =>
-                if(error.href.forall(_.contains("selected-plan-amount"))) error.copy (
-                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("selected-plan-amount", s._1.toString)))
-                ) else error
-            }
+            errorList = selectPlanForm.errors.asTextErrorLinks
         )
     )
 }
@@ -129,16 +118,14 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
         @radios(Radios(
             name = "plan-selection",
             attributes = Map("id" -> "selected-plan-amount"),
+            errorMessage = selectPlanForm.error("plan-selection").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages("ssttp.calculator.results.option.error.no-selection")))),
             items =  Seq(scheduleOptionsSequence.headOption.getOrElse(throw new IllegalArgumentException("Could not find any valid schedule options")),
             RadioItem(
                 divider = Some(Messages("ssttp.calculator.results.or"))
             ))   ++ scheduleOptionsSequence.drop(1) :+ RadioItem(
                 id = Some("customAmountOption"),
                 value = Some("customAmountOption"),
-<<<<<<< HEAD
-=======
                 checked = selectPlanForm("plan-selection").value.contains("customAmountOption"),
->>>>>>> alexis/ops-8650-custom-amount-error-messages
                 content = Text(Messages("ssttp.calculator.results.option.other.label")),
                 conditionalHtml = Some(enterCustomAmountPanel)
             )

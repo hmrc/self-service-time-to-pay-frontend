@@ -82,8 +82,9 @@ object CalculatorForm {
       }
 
       amount match {
+        case Some(customAmountOption) if Try(customAmountOption == "customAmountOption").isSuccess => Right(customAmountOption)
         case Some(value) if Try(BigDecimal(value)).isSuccess => Right(value)
-        case _ => Left(Seq(FormError(key, "ssttp.calculator.results.amount.required")))
+        case _ => Left(Seq(FormError(key, "ssttp.calculator.results.option.error.no-selection")))
       }
     }
 
@@ -91,8 +92,8 @@ object CalculatorForm {
   }
 
   val planSelectionMapping: Mapping[String] = {
-    text
-    //    Forms.of[String](planSelectionFormatter)
+    //    text
+    Forms.of[String](planSelectionFormatter)
   }
 
   val customAmountInputMapping: Mapping[String] = text
