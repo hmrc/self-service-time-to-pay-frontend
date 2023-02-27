@@ -74,7 +74,7 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
 
 @enterCustomAmountPanel = {
     <div id="custom-amount-field" class="govuk-form-group @if(customAmountHasErrors){govuk-form-group--error}">
-        <div class="govuk-hint">@Html(messages("ssttp.calculator.results.option.other.enter.amount", currency(minCustomAmount), currency(maxCustomAmount)))</div>
+        <div class="govuk-hint">@Html(messages("ssttp.calculator.results.option.other.enter.amount", minCustomAmount, maxCustomAmount))</div>
         @if(customAmountHasErrors) {
             <span id="custom-amount-error" class="govuk-error-message">
                 <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
@@ -107,6 +107,8 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
         )
     )
 }
+
+
 
 @viewsHelpers.form(redirectCall, 'id -> "paymentTodayForm") {
     <fieldset class="govuk-fieldset">
