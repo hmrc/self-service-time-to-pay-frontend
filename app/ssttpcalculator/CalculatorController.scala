@@ -219,7 +219,7 @@ class CalculatorController @Inject() (
                 Ok(views.calculate_instalments_form(
                   routes.CalculatorController.submitCalculateInstalments(),
                   selectPlanForm(minCustomAmount, maxCustomAmount),
-                  paymentPlanOptions + Tuple2(0, customSchedule),
+                  Map((0, customSchedule)) ++ paymentPlanOptions,
                   minCustomAmount,
                   maxCustomAmount
                 ))
