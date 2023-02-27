@@ -18,12 +18,14 @@ package ssttpcalculator
 
 import play.api.data.Forms.{text, _}
 import play.api.data.format.Formatter
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{Form, FormError, Forms, Mapping}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.voa.play.form.Condition
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf, mandatoryIfFalse}
 
 import scala.BigDecimal
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.util.Try
 
 object CalculatorForm {
@@ -135,12 +137,24 @@ object CalculatorForm {
       .verifying("ssttp.calculator.results.option.other.error.negative-amount", { i: String =>
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= 0 else true
       })
-      .verifying("ssttp.calculator.results.option.other.error.below-minimum", { i: String =>
+      .verifying(Constraint((i: String) => if ({
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) < 0 || BigDecimal(i) >= minCustomAmount else true
-      })
-      .verifying("ssttp.calculator.results.option.other.error.above-maximum", { i: String =>
+      }) Valid else {
+        Invalid(Seq(ValidationError(
+          "ssttp.calculator.results.option.other.error.below-minimum",
+          minCustomAmount.setScale(2, HALF_UP),
+          maxCustomAmount.setScale(2, HALF_UP)
+        )))
+      }))
+      .verifying(Constraint((i: String) => if ({
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) <= maxCustomAmount else true
-      })
+      }) Valid else {
+        Invalid(Seq(ValidationError(
+          "ssttp.calculator.results.option.other.error.above-maximum",
+          minCustomAmount.setScale(2, HALF_UP),
+          maxCustomAmount.setScale(2, HALF_UP)
+        )))
+      }))
   }
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(

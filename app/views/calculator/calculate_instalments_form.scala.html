@@ -19,6 +19,7 @@
 @import ssttpcalculator.model._
 @import model._
 @import helpers.forms.submit
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Radios
 @import uk.gov.hmrc.govukfrontend.views.Aliases.RadioItem
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -107,7 +108,7 @@
 @viewsHelpers.form(redirectCall, 'id -> "paymentTodayForm") {
     <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-fieldset__heading">@Messages("ssttp.calculator.results.title")</h1>
+            <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.results.title")</h1>
         </legend>
 
         <p class="govuk-body">@messages("ssttp.calculator.results.p1")</p>
