@@ -7,7 +7,6 @@ object AppDependencies {
     "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % "5.12.0",
     "uk.gov.hmrc" %% "play-frontend-hmrc" % "5.5.0-play-28",
 
-
     "uk.gov.hmrc" %%  "play-conditional-form-mapping" % "1.9.0-play-28",
 
     "com.beachape" %% "enumeratum" % "1.6.1",

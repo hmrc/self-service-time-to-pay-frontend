@@ -69,7 +69,6 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
 
   def clickOnBackButton(): Unit = click on id("back-link")
 
-
   object Expected {
 
     object GlobalHeaderText {
@@ -107,11 +106,57 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Payments collected on
            |$paymentDayOfMonthEnglish or next working day
            |Change
+           21 monthly payments of
+           |£250
+           |Change the day of the month that payments will be collected on
+           |Payment schedule
            |December 2019
+           |£250
            |January 2020
+           |£250
+           |February 2020
+           |£250
+           |March 2020
+           |£250
+           |April 2020
+           |£250
+           |May 2020
+           |£250
+           |June 2020
+           |£250
+           |July 2020
+           |£250
+           |August 2020
+           |£250
+           |September 2020
+           |£250
+           |October 2020
+           |£250
+           |November 2020
+           |£250
+           |December 2020
+           |£250
+           |January 2021
+           |£250
+           |February 2021
+           |£250
+           |March 2021
+           |£250
+           |April 2021
+           |£250
+           |May 2021
+           |£250
+           |June 2021
+           |£250
+           |July 2021
+           |£250
+           |August 2021
+           |£38.16
            |Estimated total interest
            |included in monthly payments
+           |£5,038.16
            |Total to pay
+           |£5,038.16
            |Agree and continue
         """.stripMargin
       }

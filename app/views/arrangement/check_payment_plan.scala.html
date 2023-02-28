@@ -25,7 +25,7 @@
 @(
         paymentSchedule: PaymentSchedule,
         leftOverIncome: BigDecimal,
-        monthlyPaymentAmountChosen: BigDecimal
+        selectedPlanAmount: BigDecimal
 )(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
@@ -162,7 +162,7 @@
     </dl>
 
 @* Warning *@
-    @if(leftOverIncome < monthlyPaymentAmountChosen) {
+    @if((leftOverIncome / 2)  < selectedPlanAmount) {
         <div class="govuk-warning-text">
             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                 <strong class="govuk-warning-text__text">
