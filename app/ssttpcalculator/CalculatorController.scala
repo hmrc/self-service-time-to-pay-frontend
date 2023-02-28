@@ -150,24 +150,49 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info("CalculatorController.getCalculateInstalments", journey)
       val sa = journey.taxpayer.selfAssessment
-      val paymentPlanOptions = calculatorService.scheduleOptions(
+      val defaultPlanOptions = calculatorService.scheduleOptions(
         sa,
         journey.safeUpfrontPayment,
         journey.maybeArrangementDayOfMonth,
         journey.remainingIncomeAfterSpending
       )
 
-      val minCustomAmount = paymentPlanOptions.values
+      val minCustomAmount = defaultPlanOptions.values
         .headOption.fold(BigDecimal(1))(_.firstInstallment.amount).setScale(2, HALF_UP)
       val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
 
-      if (paymentPlanOptions.isEmpty) {
+      val maybePreviousCustomSelection = journey.maybePlanSelection.map(_.selection match {
+        case Right(CustomPlanRequest(_)) => None
+        case Left(SelectedPlan(amount)) =>
+          val isDefaultPlan = defaultPlanOptions.map(_._2.instalments.headOption.fold(BigDecimal(0))(_.amount)).toList.contains(amount)
+          if (isDefaultPlan) {
+            None
+          } else {
+            calculatorService.customSchedule(
+              sa,
+              journey.safeUpfrontPayment,
+              journey.maybeArrangementDayOfMonth,
+              amount
+            )
+          }
+
+      })
+
+      val allPlanOptions = maybePreviousCustomSelection match {
+        case None => defaultPlanOptions
+        case Some(maybeCustomSchedule) => maybeCustomSchedule match {
+          case None                 => defaultPlanOptions
+          case Some(customSchedule) => Map((0, customSchedule)) ++ defaultPlanOptions
+        }
+      }
+
+      if (defaultPlanOptions.isEmpty) {
         Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
       } else {
         Ok(views.calculate_instalments_form(
           routes.CalculatorController.submitCalculateInstalments(),
           selectPlanForm(minCustomAmount, maxCustomAmount),
-          paymentPlanOptions,
+          allPlanOptions,
           minCustomAmount,
           maxCustomAmount,
           journey.maybePlanSelection
