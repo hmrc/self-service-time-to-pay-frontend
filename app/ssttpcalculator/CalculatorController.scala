@@ -210,7 +210,6 @@ class CalculatorController @Inject() (
           )
         },
         (validFormData: PlanSelection) => {
-          JourneyLogger.info(s"reached valid form. form: $validFormData")
           journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData.mongoSafe))).map { _ =>
             validFormData.selection match {
               case Right(CustomPlanRequest(_)) => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())

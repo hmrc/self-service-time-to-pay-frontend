@@ -92,7 +92,6 @@ object CalculatorForm {
   }
 
   val planSelectionMapping: Mapping[String] = {
-    //    text
     Forms.of[String](planSelectionFormatter)
   }
 
