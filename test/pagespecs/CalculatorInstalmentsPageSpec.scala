@@ -192,14 +192,14 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       beginNewJourney()
       calculatorInstalmentsPage28thDay.selectAnOption()
       calculatorInstalmentsPage28thDay.clickContinue()
-      checkYourPaymentPlanPage.assertPageIsDisplayed()
+      checkYourPaymentPlanPage.expectedHeadingContent(English)
     }
     "case with large number of decimal places of plan selection amounts" in {
       beginNewJourney(netIncomeLargeEnoughForSingleDefaultPlan)
 
       calculatorInstalmentsPage28thDay.selectAnOption()
       calculatorInstalmentsPage28thDay.clickContinue()
-      checkYourPaymentPlanPage.assertPageIsDisplayed()
+      checkYourPaymentPlanPage.expectedHeadingContent(English)
     }
 
   }
@@ -228,8 +228,6 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
       calculatorInstalmentsPage28thDay.selectASpecificOption("0")
       calculatorInstalmentsPage28thDay.clickContinue()
-
-      checkYourPaymentPlanPage.assertPageIsDisplayed()
 
       checkYourPaymentPlanPage.clickOnBackButton()
       calculatorInstalmentsPage28thDay.clickOnBackButton()

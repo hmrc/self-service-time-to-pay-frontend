@@ -98,9 +98,15 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     selectDatePage.assertPageIsDisplayed
   }
 
-  "change upfront payment" in {
+  "change upfront payment amount" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickChangeUpfrontPaymentLink()
+    checkYourPaymentPlanPage.clickChangeUpfrontPaymentAnswerLink()
+    paymentTodayQuestionPage.assertPageIsDisplayed
+  }
+
+  "change upfront answer" in {
+    beginJourney()
+    checkYourPaymentPlanPage.clickChangeUpfrontPaymentAmountLink()
     paymentTodayQuestionPage.assertPageIsDisplayed
   }
 
@@ -108,5 +114,16 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     beginJourney()
     checkYourPaymentPlanPage.clickContinue()
     aboutBankAccountPage.assertPageIsDisplayed
+  }
+
+  "shows warning" in {
+    beginJourney()
+    checkYourPaymentPlanPage.assertPageIsDisplayed
+    checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
+    calculatorInstalmentsPage28thDay.selectASpecificOption("60")
+    calculatorInstalmentsPage28thDay.clickContinue()
+    checkYourPaymentPlanPage.assertWarningIsDisplayed(English)
+    checkYourPaymentPlanPage.clickOnWelshLink()
+    checkYourPaymentPlanPage.assertWarningIsDisplayed(Welsh)
   }
 }

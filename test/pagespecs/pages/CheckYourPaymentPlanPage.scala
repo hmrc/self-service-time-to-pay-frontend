@@ -46,8 +46,12 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
     case Languages.Welsh   => "Gwirio’ch cynllun talu"
   }
 
-  def clickChangeUpfrontPaymentLink(): Unit = {
+  def clickChangeUpfrontPaymentAnswerLink(): Unit = {
     click on id("upfront-payment")
+  }
+
+  def clickChangeUpfrontPaymentAmountLink(): Unit = {
+    click on id("upfront-payment-amount")
   }
 
   def clickChangeCollectionDayLink(): Unit = {
@@ -187,7 +191,29 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
 """.stripMargin
       }
     }
+
+    object WarningText {
+      def apply()(implicit language: Language): String = language match {
+        case English => warningTextEnglish
+        case Welsh   => warningTextWelsh
+      }
+    }
   }
+
+  def assertWarningIsDisplayed(implicit lang: Language): Unit = probing {
+    val expectedLines = Expected.WarningText().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+    ()
+  }
+
+  private def warningTextEnglish: String = s"""You are choosing a payment plan where your monthly payments are over half of your left over income.
+      |Make sure you can afford to pay.
+      """.stripMargin
+
+  private def warningTextWelsh: String = s"""Rydych yn dewis cynllun talu lle mae’ch taliadau misol dros hanner eich incwm sydd dros ben.
+      |Gwnewch yn siŵr eich bod yn gallu fforddio talu.
+      """.stripMargin
+
 }
 
 class CheckYourPaymentPlanPageForPaymentDay28thOfMonth(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
