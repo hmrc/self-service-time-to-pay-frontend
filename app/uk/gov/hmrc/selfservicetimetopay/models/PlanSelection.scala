@@ -53,10 +53,3 @@ final case class CustomPlanRequest(customAmount: BigDecimal)
 object CustomPlanRequest {
   implicit val format: Format[CustomPlanRequest] = Json.format[CustomPlanRequest]
 }
-
-final case class CalculatorDuration(chosenMonths: Int)
-
-object CalculatorDuration {
-  implicit val format: Format[CalculatorDuration] = Json.format[CalculatorDuration]
-
-}
