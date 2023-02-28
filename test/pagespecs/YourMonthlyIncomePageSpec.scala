@@ -17,6 +17,7 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
+import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
@@ -206,35 +207,98 @@ class YourMonthlyIncomePageSpec extends ItSpec {
     }
 
   }
-  // TODO: OPS-9325 Add validation for negative values
-  //  "- negative value for monthly income -" - {
-  //    "displays error message" in {
-  //      beginJourney()
-  //
-  //      yourMonthlyIncomePage.assertPageIsDisplayed
-  //
-  //      yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
-  //      yourMonthlyIncomePage.clickContinue()
-  //
-  //      yourMonthlyIncomePage.assertErrorIsDisplayed
-  //    }
-  //    "retains values entered" in {
-  //      beginJourney()
-  //
-  //      yourMonthlyIncomePage.assertPageIsDisplayed
-  //
-  //      yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
-  //      yourMonthlyIncomePage.enterBenefits("0.01")
-  //      yourMonthlyIncomePage.enterOtherIncome("0.01")
-  //
-  //      yourMonthlyIncomePage.clickContinue()
-  //
-  //      yourMonthlyIncomePage.assertErrorIsDisplayed
-  //      yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("-0.01")
-  //      yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
-  //      yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
-  //    }
-  //  }
+  "Negative value for on any field displays error message" - {
+    "monthly income" - {
+      "error message" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+        yourMonthlyIncomePage.enterOtherIncome("0.01")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(MonthlyIncome)
+      }
+      "retains values entered" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+        yourMonthlyIncomePage.enterOtherIncome("0.01")
+
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(MonthlyIncome)
+        yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("-0.01")
+        yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
+        yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
+      }
+    }
+    "benefits" - {
+      "error message" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterBenefits("-0.01")
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterOtherIncome("0.01")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(Benefits)
+      }
+      "retains values entered" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterBenefits("-0.01")
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterOtherIncome("0.01")
+
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(Benefits)
+        yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("0.01")
+        yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("-0.01")
+        yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
+      }
+    }
+    "other income" - {
+      "error message" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterOtherIncome("-0.01")
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(OtherIncome)
+      }
+      "retains values entered" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterOtherIncome("-0.01")
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(OtherIncome)
+        yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("0.01")
+        yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
+        yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("-0.01")
+      }
+    }
+  }
   "inputs not adding up to positive income and press continue stays on page" - {
     "and displays error message" in {
       beginJourney()
