@@ -29,7 +29,6 @@ case class TaxPaymentPlan(
     taxLiabilities:             Seq[TaxLiability],
     upfrontPayment:             BigDecimal,
     planStartDate:              LocalDate,
-    regularPaymentAmount:       BigDecimal,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
     maybePaymentToday:          Option[PaymentToday]          = None
 )(implicit config: AppConfig) {
@@ -110,7 +109,6 @@ object TaxPaymentPlan {
   def safeNew(
       taxLiabilities:             Seq[TaxLiability],
       upfrontPayment:             BigDecimal,
-      regularPaymentAmount:       BigDecimal,
       dateNow:                    LocalDate,
       maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None
   )(appConfig: AppConfig): TaxPaymentPlan = {
@@ -122,7 +120,6 @@ object TaxPaymentPlan {
       upfrontPayment             = noUpfrontPayment,
       planStartDate              = dateNow,
       maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
-      regularPaymentAmount       = regularPaymentAmount,
       maybePaymentToday          = None
     )(appConfig)
 
@@ -139,7 +136,6 @@ object TaxPaymentPlan {
   )(appConfig: AppConfig): TaxPaymentPlan = safeNew(
     taxLiabilities,
     upfrontPayment,
-    taxLiabilities.map(_.amount).sum * 10,
     dateNow,
     maybeArrangementDayOfMonth,
   )(appConfig)

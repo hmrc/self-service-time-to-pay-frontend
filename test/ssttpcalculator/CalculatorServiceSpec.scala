@@ -56,50 +56,50 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
       val clock = clockForMay(_1st)
       val currentDate = LocalDate.now(clock)
 
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+        debits, noInitialPayment, currentDate)(appConfig)
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+        debits, noInitialPayment, currentDate)(appConfig)
     }
 
     "the current date is Thursday 7th May with upcoming bank holiday" in {
       val clock = clockForMay(_7th)
       val currentDate = LocalDate.now(clock)
 
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+        debits, noInitialPayment, currentDate)(appConfig)
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+        debits, noInitialPayment, currentDate)(appConfig)
     }
 
     "the current date is bank holiday Friday 8th May" in {
       val clock = clockForMay(_8th)
       val currentDate = LocalDate.now(clock)
 
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+        debits, noInitialPayment, currentDate)(appConfig)
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+        debits, noInitialPayment, currentDate)(appConfig)
     }
 
     "the current date is Monday 11th May" in {
       val clock = clockForMay(_11th)
       val currentDate = LocalDate.now(clock)
 
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+        debits, noInitialPayment, currentDate)(appConfig)
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+        debits, noInitialPayment, currentDate)(appConfig)
     }
 
     "the current date is the Monday 25th May so the payment dates roll into the next month" in {
       val clock = clockForMay(_25th)
       val currentDate = may(_25th)
 
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
-      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, regularPaymentAmount, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-        debits, noInitialPayment, currentDate, regularPaymentAmount)(appConfig)
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+        debits, noInitialPayment, currentDate)(appConfig)
+      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+        debits, noInitialPayment, currentDate)(appConfig)
     }
     "the current date is 17th February so without an upfront payment the first regular payment date is 28th February" in {
       val clock = Clock.fixed(
@@ -107,7 +107,7 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         systemDefault()
       )
 
-      val result = TaxPaymentPlan.safeNew(debits, noInitialPayment, regularPaymentAmount, now(clock), Some(ArrangementDayOfMonth(28)))(appConfig)
+      val result = TaxPaymentPlan.safeNew(debits, noInitialPayment, now(clock), Some(ArrangementDayOfMonth(28)))(appConfig)
 
       result.regularPaymentDates.head shouldBe (LocalDate.of(2023, 2, 28))
 
@@ -128,11 +128,10 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
           upfrontPayment             = 0,
           planStartDate              = startDate,
           maybeArrangementDayOfMonth = None,
-          regularPaymentAmount       = 500,
           maybePaymentToday          = None
         )(appConfig)
 
-        val result: PaymentSchedule = calculatorService.schedule(taxPaymentPlan).get
+        val result: PaymentSchedule = calculatorService.schedule(500)(taxPaymentPlan).get
 
         result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
       }
@@ -146,11 +145,10 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
           upfrontPayment             = 0,
           planStartDate              = startDate,
           maybeArrangementDayOfMonth = None,
-          regularPaymentAmount       = 200,
           maybePaymentToday          = None
         )(appConfig)
 
-        val result: PaymentSchedule = calculatorService.schedule(taxPaymentPlan).get
+        val result: PaymentSchedule = calculatorService.schedule(200)(taxPaymentPlan).get
 
         result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
       }
