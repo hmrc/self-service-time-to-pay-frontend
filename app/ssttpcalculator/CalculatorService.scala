@@ -61,28 +61,26 @@ class CalculatorService @Inject() (
       selfAssessmentDebit <- sa.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
 
-    val firstTaxPaymentPlan = TaxPaymentPlan.safeNew(
+    val taxPaymentPlan = TaxPaymentPlan.safeNew(
       taxLiabilities             = taxLiabilities,
       upfrontPayment             = upfrontPayment,
-      regularPaymentAmount       = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending,
       dateNow                    = clockProvider.nowDate(),
       maybeArrangementDayOfMonth = maybeArrangementDayOfMonth
     )(appConfig)
 
-    val firstSchedule = schedule(firstTaxPaymentPlan)
+    val firstPlanAmount = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending
+    val firstSchedule = schedule(firstPlanAmount)(taxPaymentPlan)
     val scheduleList = firstSchedule match {
       case None => List()
       case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule).flatten
       case _ =>
-        val secondTaxPaymentPlan = firstTaxPaymentPlan
-          .copy(regularPaymentAmount = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending)(appConfig)
-        val secondSchedule = schedule(secondTaxPaymentPlan)
+        val secondPlanAmount = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending
+        val secondSchedule = schedule(secondPlanAmount)(taxPaymentPlan)
         secondSchedule match {
           case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule, secondSchedule).flatten
           case _ =>
-            val thirdTaxPaymentPlan = secondTaxPaymentPlan
-              .copy(regularPaymentAmount = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending)(appConfig)
-            val thirdSchedule = schedule(thirdTaxPaymentPlan)
+            val thirdPlanAmount = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending
+            val thirdSchedule = schedule(thirdPlanAmount)(taxPaymentPlan)
             List(firstSchedule, secondSchedule, thirdSchedule).flatten
         }
     }
@@ -97,11 +95,10 @@ class CalculatorService @Inject() (
     val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.safeNew(
       taxLiabilities,
       journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
-      journey.selectedPlanAmount,
       clockProvider.nowDate(),
       journey.maybeArrangementDayOfMonth)(appConfig)
 
-    schedule(taxPaymentPlan)
+    schedule(journey.selectedPlanAmount)(taxPaymentPlan)
   }
 
   def customSchedule(
@@ -114,18 +111,17 @@ class CalculatorService @Inject() (
       selfAssessmentDebit <- sa.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
 
-    schedule(
+    schedule(customAmount)(
       TaxPaymentPlan.safeNew(
         taxLiabilities             = taxLiabilities,
         upfrontPayment             = upfrontPayment,
-        regularPaymentAmount       = customAmount,
         dateNow                    = clockProvider.nowDate(),
         maybeArrangementDayOfMonth = maybeArrangementDayOfMonth
       )(appConfig)
     )
   }
 
-  def schedule(implicit taxPaymentPlan: TaxPaymentPlan): Option[PaymentSchedule] = {
+  def schedule(regularPaymentAmount: BigDecimal)(implicit taxPaymentPlan: TaxPaymentPlan): Option[PaymentSchedule] = {
     val payables = Payables(taxPaymentPlan.taxLiabilities)
     val principal = payables.liabilities.map(_.amount).sum
 
@@ -155,7 +151,7 @@ class CalculatorService @Inject() (
 
     val instalments = regularInstalments(
       taxPaymentPlan.planStartDate,
-      taxPaymentPlan.regularPaymentAmount,
+      regularPaymentAmount,
       taxPaymentPlan.regularPaymentDates,
       payablesUpdatedWithHistoricAndUpfrontPaymentLateInterest,
       interestService.rateOn)
@@ -185,10 +181,9 @@ class CalculatorService @Inject() (
       selfAssessmentDebit <- journey.taxpayer.selfAssessment.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
 
-    val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.safeNew(
+    val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.singleInstalment(
       taxLiabilities,
       journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
-      journey.selectedPlanAmount,
       clockProvider.nowDate(),
       journey.maybeArrangementDayOfMonth)(appConfig)
 

@@ -36,8 +36,6 @@ final case class PaymentSchedule(
   def firstInstallment: Instalment =
     instalments.reduceOption(first).getOrElse(throw new RuntimeException(s"No installments for [$this]"))
 
-  def totalInterestMessage: String = s"£${totalInterestCharged.setScale(2, HALF_UP)}"
-
   private def first(earliest: Instalment, next: Instalment): Instalment =
     if (next.paymentDate.toEpochDay < earliest.paymentDate.toEpochDay) next else earliest
 

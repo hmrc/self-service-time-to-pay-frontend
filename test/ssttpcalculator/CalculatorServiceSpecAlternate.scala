@@ -62,10 +62,9 @@ class CalculatorServiceSpecAlternate extends ItSpec {
         upfrontPayment             = initialPayment,
         planStartDate              = startDate,
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(firstPaymentDate.getDayOfMonth)),
-        regularPaymentAmount       = regularInstalmentAmount,
         maybePaymentToday          = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })(appConfig)
 
-      val schedule: PaymentSchedule = calculatorService.schedule(calculation).get
+      val schedule: PaymentSchedule = calculatorService.schedule(regularInstalmentAmount)(calculation).get
 
       val amountPaid = schedule.instalments.map { _.amount }.sum
 
@@ -111,9 +110,8 @@ class CalculatorServiceSpecAlternate extends ItSpec {
         upfrontPayment             = initialPayment,
         planStartDate              = startDate,
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(firstPaymentDate.getDayOfMonth)),
-        regularPaymentAmount       = regularInstalmentAmount,
         maybePaymentToday          = if (initialPayment > 0) { Some(PaymentToday(true)) } else { None })(appConfig)
-      val schedule: PaymentSchedule = calculatorService.schedule(calculation).get
+      val schedule: PaymentSchedule = calculatorService.schedule(regularInstalmentAmount)(calculation).get
 
       val amountPaid = schedule.instalments.map { _.amount }.sum
 

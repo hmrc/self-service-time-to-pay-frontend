@@ -58,6 +58,9 @@ abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: W
     click on customAmountInputField
     enter(value)
   }
+
+  def clickOnBackButton(): Unit = click on id("back-link")
+
 }
 
 class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends CalculatorInstalmentsPage(baseUrl) {

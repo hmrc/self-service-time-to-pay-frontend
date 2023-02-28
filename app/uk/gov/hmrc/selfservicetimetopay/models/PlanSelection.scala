@@ -17,9 +17,19 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.functional.syntax.toAlternativeOps
-import play.api.libs.json.{Format, JsValue, Json, Reads, Writes, __}
+import play.api.libs.json.{Format, Json, Reads, Writes, __}
 
-final case class PlanSelection(selection: Either[SelectedPlan, CustomPlanRequest])
+import scala.math.BigDecimal.RoundingMode.HALF_UP
+
+final case class PlanSelection(selection: Either[SelectedPlan, CustomPlanRequest]) {
+  def mongoSafe: PlanSelection = {
+    val safeDecimal128Precision = 10
+    this.copy(selection = this.selection match {
+      case Left(SelectedPlan(amount))       => Left(SelectedPlan(amount.setScale(safeDecimal128Precision, HALF_UP)))
+      case Right(CustomPlanRequest(amount)) => Right(CustomPlanRequest(amount.setScale(safeDecimal128Precision, HALF_UP)))
+    })
+  }
+}
 
 object PlanSelection {
   def apply(selectedPlan: SelectedPlan): PlanSelection = PlanSelection(Left(selectedPlan))
@@ -30,14 +40,12 @@ object PlanSelection {
       (__ \ "customPlanRequest").read[BigDecimal].map(amount => PlanSelection(Right(new CustomPlanRequest(amount))))
   }
 
-  val writes: Writes[PlanSelection] = new Writes[PlanSelection] {
-    override def writes(o: PlanSelection): JsValue = Json.obj(
-      o.selection.fold(
-        selectedPlan => "selectedPlan" -> selectedPlan.instalmentAmount,
-        customPlanRequest => "customPlanRequest" -> customPlanRequest.customAmount
-      )
+  val writes: Writes[PlanSelection] = (o: PlanSelection) => Json.obj(
+    o.selection.fold(
+      selectedPlan => "selectedPlan" -> selectedPlan.instalmentAmount,
+      customPlanRequest => "customPlanRequest" -> customPlanRequest.customAmount
     )
-  }
+  )
 
   implicit val format: Format[PlanSelection] = Format(reads, writes)
 }
@@ -52,11 +60,4 @@ final case class CustomPlanRequest(customAmount: BigDecimal)
 
 object CustomPlanRequest {
   implicit val format: Format[CustomPlanRequest] = Json.format[CustomPlanRequest]
-}
-
-final case class CalculatorDuration(chosenMonths: Int)
-
-object CalculatorDuration {
-  implicit val format: Format[CalculatorDuration] = Json.format[CalculatorDuration]
-
 }

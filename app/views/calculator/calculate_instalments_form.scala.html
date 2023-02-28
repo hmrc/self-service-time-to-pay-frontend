@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@import partials._
-@import uk.gov.hmrc.selfservicetimetopay.models.PlanSelection
+@import partials.currency
+@import uk.gov.hmrc.selfservicetimetopay.models.{PlanSelection, SelectedPlan, CustomPlanRequest}
 @import ssttpcalculator.model._
 @import model._
 @import helpers.forms.submit
@@ -27,6 +27,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
 @import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 
 @this(
   main: views.html.main,
@@ -40,7 +41,8 @@
         selectPlanForm: Form[PlanSelection],
         schedules: Map[Int, PaymentSchedule],
         minCustomAmount: BigDecimal,
-        maxCustomAmount: BigDecimal)(
+        maxCustomAmount: BigDecimal,
+        previousFormSubmission: Option[PlanSelection])(
         implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
@@ -48,14 +50,26 @@
 )
 
 @scheduleOptionsSequence = @{schedules.toSeq.map ( schedule => {
-RadioItem(
-id = Some(schedule._1.toString),
-value = Some(schedule._2.getMonthlyInstalment.toString),
-content = HtmlContent(instalment_by_amount_label(schedule._2))
-)
+    RadioItem(
+        id = Some(schedule._1.toString),
+        value = Some(schedule._2.getMonthlyInstalment.toString),
+        content = HtmlContent(Messages(
+            "ssttp.calculator.results.amount.option",
+            currency(schedule._2.firstInstallment.amount),
+            if (schedule._2.durationInMonths < 0) 12 + schedule._2.durationInMonths else schedule._2.durationInMonths
+        )),
+        hint = Some(Hint(content = HtmlContent(Messages(
+            "ssttp.calculator.results.amount.option.interest-hint",
+            currency(schedule._2.totalInterestCharged)
+        )))),
+        checked = previousFormSubmission.fold(false)(_.selection match {
+            case Left(SelectedPlan(amount)) => amount == schedule._2.getMonthlyInstalment
+            case Right(CustomPlanRequest(_)) => false
+        })
+    )
 })}
 
-@customAmountHasErrors = @{selectPlanForm("customAmountInput").value.contains("true")}
+@customAmountHasErrors = @{selectPlanForm("plan-selection").value.contains("customAmountOption")}
 
 @customAmountSelected() = @{
     if(customAmountHasErrors){
@@ -65,23 +79,19 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
 
 @errorFocus(key: String) = @{
     if(customAmountHasErrors){
-        "customAmountOption"
+        "custom-amount-option"
     }else{
         key
     }
 }
 
 @enterCustomAmountPanel = {
-    <div id="custom-amount-field" class="govuk-form-group">
-        <div class="govuk-hint" for="custom-amount-field" >@messages(
-            "ssttp.calculator.results.option.other.enter.amount",
-            minCustomAmount,
-            maxCustomAmount
-        )</div>
+    <div id="custom-amount-field" class="govuk-form-group @if(customAmountHasErrors){govuk-form-group--error}">
+        <div class="govuk-hint">@Html(messages("ssttp.calculator.results.option.other.enter.amount", minCustomAmount, maxCustomAmount))</div>
         @if(customAmountHasErrors) {
             <span id="custom-amount-error" class="govuk-error-message">
                 <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
-                @selectPlanForm.error("customAmountInput").map(formError => Html(messages(formError.message, currency(minCustomAmount), currency(maxCustomAmount))))
+                @selectPlanForm.error("custom-amount-input").map(formError => Html(messages(formError.message, minCustomAmount, maxCustomAmount)))
             </span>
         }
         <div class="govuk-input__wrapper">
@@ -103,8 +113,8 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
         ErrorSummary(
             title = Text(Messages("ssttp.calculator.results.error.title")),
             errorList = selectPlanForm.errors.asTextErrorLinks.map {error =>
-                if(error.href.forall(_.contains("selected-plan-amount"))) error.copy (
-                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("selected-plan-amount", s._1.toString)))
+                if(error.content == Text(messages("ssttp.calculator.results.option.error.no-selection"))) error.copy (
+                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("plan-selection", s._1.toString)))
                 ) else error
             }
         )
@@ -125,12 +135,14 @@ content = HtmlContent(instalment_by_amount_label(schedule._2))
         @radios(Radios(
             name = "plan-selection",
             attributes = Map("id" -> "selected-plan-amount"),
+            errorMessage = selectPlanForm.error("plan-selection").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages("ssttp.calculator.results.option.error.no-selection")))),
             items =  Seq(scheduleOptionsSequence.headOption.getOrElse(throw new IllegalArgumentException("Could not find any valid schedule options")),
             RadioItem(
                 divider = Some(Messages("ssttp.calculator.results.or"))
             ))   ++ scheduleOptionsSequence.drop(1) :+ RadioItem(
                 id = Some("customAmountOption"),
                 value = Some("customAmountOption"),
+                checked = selectPlanForm("plan-selection").value.contains("customAmountOption"),
                 content = Text(Messages("ssttp.calculator.results.option.other.label")),
                 conditionalHtml = Some(enterCustomAmountPanel)
             )

@@ -19,17 +19,14 @@ package ssttpcalculator.model
 import config.AppConfig
 import journey.PaymentToday
 
-import java.time.{Clock, LocalDate}
+import java.time.LocalDate
 import play.api.libs.json.{Json, JsonValidationError, OFormat, OWrites, Reads}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
-
-import java.time.LocalDate.now
 
 case class TaxPaymentPlan(
     taxLiabilities:             Seq[TaxLiability],
     upfrontPayment:             BigDecimal,
     planStartDate:              LocalDate,
-    regularPaymentAmount:       BigDecimal,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
     maybePaymentToday:          Option[PaymentToday]          = None
 )(implicit config: AppConfig) {
@@ -110,7 +107,6 @@ object TaxPaymentPlan {
   def safeNew(
       taxLiabilities:             Seq[TaxLiability],
       upfrontPayment:             BigDecimal,
-      regularPaymentAmount:       BigDecimal,
       dateNow:                    LocalDate,
       maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None
   )(appConfig: AppConfig): TaxPaymentPlan = {
@@ -122,13 +118,21 @@ object TaxPaymentPlan {
       upfrontPayment             = noUpfrontPayment,
       planStartDate              = dateNow,
       maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
-      regularPaymentAmount       = regularPaymentAmount,
       maybePaymentToday          = None
     )(appConfig)
 
     if (upfrontPayment > 0 && !((taxLiabilities.map(_.amount).sum - upfrontPayment) < BigDecimal.exact("32.00"))) {
       taxPaymentPlanNoUpfront.copy(upfrontPayment    = upfrontPayment, maybePaymentToday = maybePaymentToday)(appConfig)
     } else taxPaymentPlanNoUpfront
+  }
+
+  def singleInstalment(
+      taxLiabilities:             Seq[TaxLiability],
+      upfrontPayment:             BigDecimal,
+      dateNow:                    LocalDate,
+      maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None
+  )(appConfig: AppConfig): TaxPaymentPlan = {
+    safeNew(taxLiabilities, upfrontPayment, dateNow, maybeArrangementDayOfMonth)(appConfig)
   }
 
   private def reads(implicit config: AppConfig): Reads[TaxPaymentPlan] = Json.reads[TaxPaymentPlan]

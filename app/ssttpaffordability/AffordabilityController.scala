@@ -36,7 +36,6 @@ import views.Views
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.reflect.internal.Depth
 
 class AffordabilityController @Inject() (
     mcc:                  MessagesControllerComponents,
@@ -153,11 +152,12 @@ class AffordabilityController @Inject() (
       journey: Journey
   )(implicit request: AuthorisedSaUserRequest[AnyContent]) = {
     val newJourney = journey.copy(
-      maybeIncome = Some(Income(
+      maybeIncome        = Some(Income(
         IncomeBudgetLine(MonthlyIncome, input.monthlyIncome),
         IncomeBudgetLine(Benefits, input.benefits),
         IncomeBudgetLine(OtherIncome, input.otherIncome)
-      ))
+      )),
+      maybePlanSelection = None
     )
     journeyService.saveJourney(newJourney)
   }
@@ -190,7 +190,7 @@ class AffordabilityController @Inject() (
         formWithErrors => Future.successful(BadRequest(views.your_monthly_spending(formWithErrors, isSignedIn))),
         (form: SpendingInput) => {
           val newJourney = journey.copy(
-            maybeSpending = Some(Spending(
+            maybeSpending      = Some(Spending(
               Expenses(HousingExp, form.housing),
               Expenses(PensionContributionsExp, form.pensionContributions),
               Expenses(CouncilTaxExp, form.councilTax),
@@ -201,7 +201,8 @@ class AffordabilityController @Inject() (
               Expenses(InsuranceExp, form.insurance),
               Expenses(GroceriesExp, form.groceries),
               Expenses(HealthExp, form.health)
-            )))
+            )),
+            maybePlanSelection = None)
           journeyService.saveJourney(newJourney).map { _ =>
             Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
           }
