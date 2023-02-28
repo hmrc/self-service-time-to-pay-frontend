@@ -89,15 +89,11 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
 
     object MainText {
       def apply()(implicit language: Language): String = language match {
-        case English => mainTextEnglish(paymentDayOfMonthEnglish)
-        case Welsh   => mainTextWelsh(paymentDayOfMonthWelsh)
+        case English => mainTextEnglish
+        case Welsh   => mainTextWelsh
       }
 
-      private def mainTextEnglish(paymentDayOfMonth: String): String = {
-        val x = if (paymentDayOfMonth.equals("11th")) "14.18" else "21.16"
-        val y = if (paymentDayOfMonth.equals("11th")) "2,464.18" else "2,471.16"
-        val z = if (paymentDayOfMonth.equals("11th")) "4,914.18" else "4,921.16"
-
+      private def mainTextEnglish: String = {
         s"""Check your payment plan
            |Can you make an upfront payment?
            |No
@@ -165,11 +161,7 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
         """.stripMargin
       }
 
-      private def mainTextWelsh(paymentDayOfMonth: String): String = {
-        val x = if (paymentDayOfMonth.equals("11eg")) "14.18" else "21.16"
-        val y = if (paymentDayOfMonth.equals("11eg")) "2,464.18" else "2,471.16"
-        val z = if (paymentDayOfMonth.equals("11eg")) "4,914.18" else "4,921.16"
-
+      private def mainTextWelsh: String = {
         s"""Gwirio’ch cynllun talu
            |A allwch wneud taliad ymlaen llaw?
            |Na
@@ -182,11 +174,53 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Mae taliadau’n cael eu casglu ar
            |yr $paymentDayOfMonthWelsh neu’r diwrnod gwaith nesaf
            |Newid
-           |Rhagfyr 2019
+           Rhagfyr 2019
+           |£250
            |Ionawr 2020
+           |£250
+           |Chwefror 2020
+           |£250
+           |Mawrth 2020
+           |£250
+           |Ebrill 2020
+           |£250
+           |Mai 2020
+           |£250
+           |Mehefin 2020
+           |£250
+           |Gorffennaf 2020
+           |£250
+           |Awst 2020
+           |£250
+           |Medi 2020
+           |£250
+           |Hydref 2020
+           |£250
+           |Tachwedd 2020
+           |£250
+           |Rhagfyr 2020
+           |£250
+           |Ionawr 2021
+           |£250
+           |Chwefror 2021
+           |£250
+           |Mawrth 2021
+           |£250
+           |Ebrill 2021
+           |£250
+           |Mai 2021
+           |£250
+           |Mehefin 2021
+           |£250
+           |Gorffennaf 2021
+           |£250
+           |Awst 2021
+           |£38.16
            |Amcangyfrif o gyfanswm y llog
            |wedi’i gynnwys yn y taliadau misol
+           |£5,038.16
            |Y cyfanswm i’w dalu
+           |£5,038.16
            |Cytuno ac yn eich blaen
 """.stripMargin
       }
