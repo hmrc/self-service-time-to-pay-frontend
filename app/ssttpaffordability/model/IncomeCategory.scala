@@ -19,12 +19,14 @@ package ssttpaffordability.model
 import enumeratum._
 import play.api.libs.json.{Json, OFormat}
 
+import scala.collection.immutable
+
 sealed trait IncomeCategory extends EnumEntry with EnumEntry.Uncapitalised {
   val messageKey: String
 }
 
 object IncomeCategory extends Enum[IncomeCategory] with PlayInsensitiveJsonEnum[IncomeCategory] {
-  val values = findValues
+  val values: immutable.IndexedSeq[IncomeCategory] = findValues
 
   case object MonthlyIncome extends IncomeCategory {
     val messageKey = "ssttp.affordability.your-monthly-income.form.monthly-income"

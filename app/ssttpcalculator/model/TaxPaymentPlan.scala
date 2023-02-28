@@ -19,11 +19,9 @@ package ssttpcalculator.model
 import config.AppConfig
 import journey.PaymentToday
 
-import java.time.{Clock, LocalDate}
+import java.time.LocalDate
 import play.api.libs.json.{Json, JsonValidationError, OFormat, OWrites, Reads}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
-
-import java.time.LocalDate.now
 
 case class TaxPaymentPlan(
     taxLiabilities:             Seq[TaxLiability],
@@ -133,12 +131,9 @@ object TaxPaymentPlan {
       upfrontPayment:             BigDecimal,
       dateNow:                    LocalDate,
       maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None
-  )(appConfig: AppConfig): TaxPaymentPlan = safeNew(
-    taxLiabilities,
-    upfrontPayment,
-    dateNow,
-    maybeArrangementDayOfMonth,
-  )(appConfig)
+  )(appConfig: AppConfig): TaxPaymentPlan = {
+    safeNew(taxLiabilities, upfrontPayment, dateNow, maybeArrangementDayOfMonth)(appConfig)
+  }
 
   private def reads(implicit config: AppConfig): Reads[TaxPaymentPlan] = Json.reads[TaxPaymentPlan]
     .filter(JsonValidationError("'debits' was empty, it should have at least one debit."))(_.taxLiabilities.nonEmpty)

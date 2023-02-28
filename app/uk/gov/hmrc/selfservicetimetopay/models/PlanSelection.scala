@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.functional.syntax.toAlternativeOps
-import play.api.libs.json.{Format, JsValue, Json, Reads, Writes, __}
+import play.api.libs.json.{Format, Json, Reads, Writes, __}
 
 final case class PlanSelection(selection: Either[SelectedPlan, CustomPlanRequest])
 
@@ -30,14 +30,12 @@ object PlanSelection {
       (__ \ "customPlanRequest").read[BigDecimal].map(amount => PlanSelection(Right(new CustomPlanRequest(amount))))
   }
 
-  val writes: Writes[PlanSelection] = new Writes[PlanSelection] {
-    override def writes(o: PlanSelection): JsValue = Json.obj(
-      o.selection.fold(
-        selectedPlan => "selectedPlan" -> selectedPlan.instalmentAmount,
-        customPlanRequest => "customPlanRequest" -> customPlanRequest.customAmount
-      )
+  val writes: Writes[PlanSelection] = (o: PlanSelection) => Json.obj(
+    o.selection.fold(
+      selectedPlan => "selectedPlan" -> selectedPlan.instalmentAmount,
+      customPlanRequest => "customPlanRequest" -> customPlanRequest.customAmount
     )
-  }
+  )
 
   implicit val format: Format[PlanSelection] = Format(reads, writes)
 }

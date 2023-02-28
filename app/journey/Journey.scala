@@ -56,12 +56,6 @@ object PaymentTodayAmount {
   implicit val format: OFormat[PaymentTodayAmount] = Json.format[PaymentTodayAmount]
 }
 
-final case class MonthlyPaymentAmount(value: BigDecimal)
-
-object MonthlyPaymentAmount {
-  implicit val format: OFormat[MonthlyPaymentAmount] = Json.format[MonthlyPaymentAmount]
-}
-
 final case class Journey(
     _id:                        JourneyId,
     status:                     Status                          = InProgress,
@@ -125,7 +119,7 @@ final case class Journey(
   }
 
   def paymentToday: Boolean = maybePaymentToday.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'maybePaymentToday' to be there but was not found. [${_id}] [$this]"))
-  def initialPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'paymentTodayAmount' to be there but was not found. [${_id}] [$this]"))
+  def upfrontPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'paymentTodayAmount' to be there but was not found. [${_id}] [$this]"))
   def safeUpfrontPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(0)
   def eligibilityStatus: EligibilityStatus =
     maybeEligibilityStatus.getOrElse(throw new RuntimeException(s"Expected 'EligibilityStatus' to be there but was not found. [${_id}] [$this]"))

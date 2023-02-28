@@ -24,7 +24,7 @@ import javax.inject._
 import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
 import play.api.mvc._
 import req.RequestSupport
-import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, planSelectionMapping, selectPlanForm}
+import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
 import ssttpcalculator.model.PaymentSchedule
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -43,7 +43,6 @@ class CalculatorController @Inject() (
     views:             Views,
     clockProvider:     ClockProvider)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(mcc) {
 
-  import clockProvider._
   import requestSupport._
 
   def getTaxLiabilities: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
@@ -134,7 +133,7 @@ class CalculatorController @Inject() (
       journey.maybePaymentToday match {
         case Some(PaymentToday(true)) =>
           val payToday = journey.paymentToday
-          Ok(views.payment_summary(journey.taxpayer.selfAssessment.debits, payToday, journey.initialPayment))
+          Ok(views.payment_summary(journey.taxpayer.selfAssessment.debits, payToday, journey.upfrontPayment))
         case Some(PaymentToday(false)) =>
           Redirect(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
         case None =>
