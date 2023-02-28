@@ -106,7 +106,7 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Payments collected on
            |$paymentDayOfMonthEnglish or next working day
            |Change
-           21 monthly payments of
+           |21 monthly payments of
            |£250
            |Change the day of the month that payments will be collected on
            |Payment schedule

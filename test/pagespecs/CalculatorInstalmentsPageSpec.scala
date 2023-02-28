@@ -24,31 +24,6 @@ import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncom
 
 class CalculatorInstalmentsPageSpec extends ItSpec {
 
-  // TODO OPS-8650: remove this entirely
-  def beginOldJourney(): Unit = {
-    AuthStub.authorise()
-    TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
-    GgStub.signInPage(port)
-    getBanksIsSuccessful()
-    startPage.open()
-    startPage.assertPageIsDisplayed()
-    startPage.clickOnStartNowButton()
-
-    taxLiabilitiesPage.assertPageIsDisplayed()
-    taxLiabilitiesPage.clickOnStartNowButton()
-
-    paymentTodayQuestionPage.assertPageIsDisplayed()
-    paymentTodayQuestionPage.selectRadioButton(false)
-    paymentTodayQuestionPage.clickContinue()
-
-    selectDatePage.assertPageIsDisplayed()
-    selectDatePage.selectFirstOption28thDay()
-    selectDatePage.clickContinue()
-
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
-  }
-
   def beginNewJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
