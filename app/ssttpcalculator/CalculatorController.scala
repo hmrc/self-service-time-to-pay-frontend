@@ -24,7 +24,7 @@ import javax.inject._
 import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
 import play.api.mvc._
 import req.RequestSupport
-import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
+import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, planSelectionMapping, selectPlanForm}
 import ssttpcalculator.model.PaymentSchedule
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -161,35 +161,9 @@ class CalculatorController @Inject() (
         .headOption.fold(BigDecimal(1))(_.firstInstallment.amount).setScale(2, HALF_UP)
       val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
 
-      val maybePreviousCustomSelection: Option[Option[PaymentSchedule]] = journey.maybePlanSelection.map(_.selection match {
-        case Right(CustomPlanRequest(customAmount)) =>
-          calculatorService.customSchedule(
-            sa,
-            journey.safeUpfrontPayment,
-            journey.maybeArrangementDayOfMonth,
-            customAmount
-          )
-        case Left(SelectedPlan(amount)) =>
-          val isDefaultPlan = defaultPlanOptions.map(_._2.instalments.headOption.fold(BigDecimal(0))(_.amount)).toList.contains(amount)
-          if (isDefaultPlan) {
-            None
-          } else {
-            calculatorService.customSchedule(
-              sa,
-              journey.safeUpfrontPayment,
-              journey.maybeArrangementDayOfMonth,
-              amount
-            )
-          }
-
-      })
-
-      val allPlanOptions = maybePreviousCustomSelection match {
-        case None => defaultPlanOptions
-        case Some(maybeCustomSchedule) => maybeCustomSchedule match {
-          case None                 => defaultPlanOptions
-          case Some(customSchedule) => Map((0, customSchedule)) ++ defaultPlanOptions
-        }
+      val allPlanOptions = maybePreviousCustomSelection(journey, defaultPlanOptions) match {
+        case None                 => defaultPlanOptions
+        case Some(customSchedule) => Map((0, customSchedule)) ++ defaultPlanOptions
       }
 
       if (defaultPlanOptions.isEmpty) {
@@ -249,5 +223,32 @@ class CalculatorController @Inject() (
       )
 
     }
+  }
+
+  private def maybePreviousCustomSelection(
+      journey:            Journey,
+      defaultPlanOptions: Map[Int, PaymentSchedule]
+  )(implicit request: Request[_]): Option[PaymentSchedule] = {
+    journey.maybePlanSelection.foldLeft(None: Option[PaymentSchedule])((_, planSelection) => planSelection.selection match {
+      case Right(CustomPlanRequest(customAmount)) =>
+        calculatorService.customSchedule(
+          journey.taxpayer.selfAssessment,
+          journey.safeUpfrontPayment,
+          journey.maybeArrangementDayOfMonth,
+          customAmount
+        )
+      case Left(SelectedPlan(amount)) if !isDefaultPlan(amount, defaultPlanOptions) =>
+        calculatorService.customSchedule(
+          journey.taxpayer.selfAssessment,
+          journey.safeUpfrontPayment,
+          journey.maybeArrangementDayOfMonth,
+          amount
+        )
+      case _ => None
+    })
+  }
+
+  private def isDefaultPlan(planAmount: BigDecimal, defaultPlanOptions: Map[Int, PaymentSchedule]): Boolean = {
+    defaultPlanOptions.map(_._2.instalments.headOption.fold(BigDecimal(0))(_.amount)).toList.contains(planAmount)
   }
 }
