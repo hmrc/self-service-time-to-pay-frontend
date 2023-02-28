@@ -161,8 +161,14 @@ class CalculatorController @Inject() (
         .headOption.fold(BigDecimal(1))(_.firstInstallment.amount).setScale(2, HALF_UP)
       val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
 
-      val maybePreviousCustomSelection = journey.maybePlanSelection.map(_.selection match {
-        case Right(CustomPlanRequest(_)) => None
+      val maybePreviousCustomSelection: Option[Option[PaymentSchedule]] = journey.maybePlanSelection.map(_.selection match {
+        case Right(CustomPlanRequest(customAmount)) =>
+          calculatorService.customSchedule(
+            sa,
+            journey.safeUpfrontPayment,
+            journey.maybeArrangementDayOfMonth,
+            customAmount
+          )
         case Left(SelectedPlan(amount)) =>
           val isDefaultPlan = defaultPlanOptions.map(_._2.instalments.headOption.fold(BigDecimal(0))(_.amount)).toList.contains(amount)
           if (isDefaultPlan) {
@@ -232,31 +238,12 @@ class CalculatorController @Inject() (
           )
         },
         (validFormData: PlanSelection) => {
-          validFormData.selection match {
-            case Right(CustomPlanRequest(customAmount)) =>
-              val customSchedule: PaymentSchedule = calculatorService.customSchedule(
-                sa,
-                journey.safeUpfrontPayment,
-                journey.maybeArrangementDayOfMonth,
-                customAmount
-              ).getOrElse(throw new IllegalArgumentException("tried to build a custom schedule without custom amount input"))
-
-              Future.successful(
-                Ok(views.calculate_instalments_form(
-                  routes.CalculatorController.submitCalculateInstalments(),
-                  selectPlanForm(minCustomAmount, maxCustomAmount),
-                  Map((0, customSchedule)) ++ paymentPlanOptions,
-                  minCustomAmount,
-                  maxCustomAmount,
-                  Some(validFormData)
-                ))
-              )
-            case Left(SelectedPlan(_)) =>
-              journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData))).map { _ =>
-                Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
-              }
+          journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData))).map { _ =>
+            validFormData.selection match {
+              case Right(CustomPlanRequest(_)) => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
+              case Left(SelectedPlan(_))       => Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
+            }
           }
-
         }
 
       )
