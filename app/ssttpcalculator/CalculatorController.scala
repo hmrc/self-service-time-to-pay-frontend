@@ -197,7 +197,6 @@ class CalculatorController @Inject() (
 
       selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
         formWithErrors => {
-          JourneyLogger.info(s"$this.submitCalculateInstalments - form with errors - $formWithErrors")
           Future.successful(
             BadRequest(
               views.calculate_instalments_form(
@@ -211,7 +210,8 @@ class CalculatorController @Inject() (
           )
         },
         (validFormData: PlanSelection) => {
-          journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData))).map { _ =>
+          JourneyLogger.info(s"reached valid form. form: $validFormData")
+          journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData.mongoSafe))).map { _ =>
             validFormData.selection match {
               case Right(CustomPlanRequest(_)) => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
               case Left(SelectedPlan(_))       => Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())

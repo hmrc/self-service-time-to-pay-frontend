@@ -49,7 +49,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
   }
 
-  def beginNewJourney(remainingIncomeAfterSpending: Int = defaultRemainingIncomeAfterSpending): Unit = {
+  def beginNewJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -212,11 +212,21 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     calculatorInstalmentsPage28thDay.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
   }
 
-  "select an option and continue" in {
-    beginNewJourney()
-    calculatorInstalmentsPage28thDay.selectAnOption()
-    calculatorInstalmentsPage28thDay.clickContinue()
-    instalmentSummaryPage.assertPageIsDisplayed()
+  "select an option and continue" - {
+    "basic case" in {
+      beginNewJourney()
+      calculatorInstalmentsPage28thDay.selectAnOption()
+      calculatorInstalmentsPage28thDay.clickContinue()
+      instalmentSummaryPage.assertPageIsDisplayed()
+    }
+    "case with large number of decimal places of plan selection amounts" in {
+      beginNewJourney(netIncomeLargeEnoughForSingleDefaultPlan)
+
+      calculatorInstalmentsPage28thDay.selectAnOption()
+      calculatorInstalmentsPage28thDay.clickContinue()
+      instalmentSummaryPage.assertPageIsDisplayed()
+    }
+
   }
 
   "returning to the page" - {
@@ -227,6 +237,36 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       instalmentSummaryPage.clickOnBackButton()
 
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+    }
+    "selecting an option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
+      beginNewJourney()
+
+      val customAmount = 280
+      val planMonths = 18
+      val planInterest = 124.26
+
+      calculatorInstalmentsPage28thDay.selectCustomAmountOption()
+      calculatorInstalmentsPage28thDay.enterCustomAmount(customAmount.toString)
+      calculatorInstalmentsPage28thDay.clickContinue()
+
+      calculatorInstalmentsPage28thDay.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+
+      calculatorInstalmentsPage28thDay.selectASpecificOption("0")
+      calculatorInstalmentsPage28thDay.clickContinue()
+
+      instalmentSummaryPage.assertPageIsDisplayed()
+
+      instalmentSummaryPage.clickOnBackButton()
+      calculatorInstalmentsPage28thDay.clickOnBackButton()
+
+      howMuchYouCouldAffordPage.clickOnAddChangeIncome()
+      yourMonthlyIncomePage.enterMonthlyIncome("501")
+      yourMonthlyIncomePage.clickContinue()
+
+      howMuchYouCouldAffordPage.clickContinue()
+
+      calculatorInstalmentsPage28thDay.optionIsNotDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+
     }
   }
 }

@@ -19,7 +19,17 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import play.api.libs.functional.syntax.toAlternativeOps
 import play.api.libs.json.{Format, Json, Reads, Writes, __}
 
-final case class PlanSelection(selection: Either[SelectedPlan, CustomPlanRequest])
+import scala.math.BigDecimal.RoundingMode.HALF_UP
+
+final case class PlanSelection(selection: Either[SelectedPlan, CustomPlanRequest]) {
+  def mongoSafe: PlanSelection = {
+    val safeDecimal128Precision = 10
+    this.copy(selection = this.selection match {
+      case Left(SelectedPlan(amount))       => Left(SelectedPlan(amount.setScale(safeDecimal128Precision, HALF_UP)))
+      case Right(CustomPlanRequest(amount)) => Right(CustomPlanRequest(amount.setScale(safeDecimal128Precision, HALF_UP)))
+    })
+  }
+}
 
 object PlanSelection {
   def apply(selectedPlan: SelectedPlan): PlanSelection = PlanSelection(Left(selectedPlan))
