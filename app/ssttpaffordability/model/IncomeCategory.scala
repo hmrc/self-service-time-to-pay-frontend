@@ -23,6 +23,7 @@ import scala.collection.immutable
 
 sealed trait IncomeCategory extends EnumEntry with EnumEntry.Uncapitalised {
   val messageKey: String
+  val messageSuffix: String
 }
 
 object IncomeCategory extends Enum[IncomeCategory] with PlayInsensitiveJsonEnum[IncomeCategory] {
@@ -30,14 +31,19 @@ object IncomeCategory extends Enum[IncomeCategory] with PlayInsensitiveJsonEnum[
 
   case object MonthlyIncome extends IncomeCategory {
     val messageKey = "ssttp.affordability.your-monthly-income.form.monthly-income"
+    val messageSuffix = "monthly-income"
   }
 
   case object Benefits extends IncomeCategory {
     val messageKey = "ssttp.affordability.your-monthly-income.form.benefits"
+    val messageSuffix = "benefits"
+
   }
 
   case object OtherIncome extends IncomeCategory {
     val messageKey = "ssttp.affordability.your-monthly-income.form.other-income"
+    val messageSuffix = "other-income"
+
   }
 }
 

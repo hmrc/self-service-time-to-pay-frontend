@@ -20,25 +20,29 @@ import play.api.data.Forms.text.key
 import play.api.data.Forms.{text, _}
 import play.api.data.validation.ValidationError
 import play.api.data.{Form, FormError, Mapping}
+import ssttpaffordability.model.IncomeCategory
+import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model.forms.helper.FormErrorWithFieldMessageOverrides
-
 import scala.util.Try
 
 object AffordabilityForm {
 
   val incomeForm: Form[IncomeInput] = Form(
     mapping(
-      "monthlyIncome" -> validateIncome(text),
-      "benefits" -> validateIncome(text),
-      "otherIncome" -> validateIncome(text)
+      "monthlyIncome" -> validateIncome(text, MonthlyIncome),
+      "benefits" -> validateIncome(text, Benefits),
+      "otherIncome" -> validateIncome(text, OtherIncome)
     )(IncomeInput.apply)(IncomeInput.unapply)
   )
 
-  private def validateIncome(mappingStr: Mapping[String]) = {
-    mappingStr.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
+  private def validateIncome(mappingStr: Mapping[String], incomeCategory: IncomeCategory): Mapping[String] = {
+    mappingStr.verifying(s"ssttp.affordability.your-monthly-income.error.non-numerals.${incomeCategory.messageSuffix}", { i: String =>
       if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
     })
-      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
+      .verifying(s"ssttp.affordability.your-monthly-income.error.negative.${incomeCategory.messageSuffix}", { i: String =>
+        if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.00 else true
+      })
+      .verifying(s"ssttp.affordability.your-monthly-income.error.decimal-places.${incomeCategory.messageSuffix}", { i =>
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
       })
   }

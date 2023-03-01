@@ -21,6 +21,8 @@ import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
+import ssttpaffordability.model.IncomeCategory
+import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import testsupport.RichMatchers.{convertToAnyShouldWrapper, include}
 
 class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -87,9 +89,19 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     readMain().stripSpaces() should include(Expected.SpecificErrorText().stripSpaces())
   }
 
-  def assertNonNumeralErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+  def assertNonNumeralErrorIsDisplayed(incomeCategory: IncomeCategory)(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
-    readMain().stripSpaces() should include(Expected.NonNumericErrorText().stripSpaces())
+    readMain().stripSpaces() should include(Expected.NonNumericErrorText(incomeCategory).stripSpaces())
+  }
+
+  def assertNegativeValueErrorIsDisplayed(incomeCategory: IncomeCategory)(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.NegativeValueError(incomeCategory).stripSpaces())
+  }
+
+  def assertMoreThanTwoDecimalPlacesErrorIsDisplayed(incomeCategory: IncomeCategory)(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.MoreThanTwoDecimalPlaces(incomeCategory).stripSpaces())
   }
 
   object Expected {
@@ -136,6 +148,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
 
     object SpecificErrorText {
+
       def apply()(implicit language: Language): String = language match {
         case English => errorTextEnglish
         case Welsh   => errorTextWelsh
@@ -143,30 +156,104 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
       private val errorTextEnglish =
         """There is a problem
-          |You must enter your income. If you do not have any income call us on 0300 123 1813
+          |You must enter your income
+          |If you do not have any income, call us on 0300 200 3835
         """.stripMargin
 
       private val errorTextWelsh =
         """Mae problem wedi codi
-          |Mae’n rhaid i chi nodi ffigur ar gyfer yr incwm. Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
+          |Mae’n rhaid i chi nodi’ch incwm
+          |Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
         """.stripMargin
     }
 
     object NonNumericErrorText {
-      def apply()(implicit language: Language): String = language match {
-        case English => errorTextEnglish
-        case Welsh   => errorTextWelsh
+
+      def apply(incomeCategory: IncomeCategory)(implicit language: Language): String = language match {
+        case English => errorTextEnglish(incomeCategory)
+        case Welsh   => errorTextWelsh(incomeCategory)
       }
 
-      private val errorTextEnglish =
-        """There is a problem
-          |Enter numbers only
-        """.stripMargin
+      private def errorTextEnglish(incomeCategory: IncomeCategory) = {
+        val incomeCategoryString = incomeCategory match {
+          case MonthlyIncome => "monthly income after tax"
+          case Benefits      => "benefits"
+          case OtherIncome   => "other monthly income"
+        }
+        s"""There is a problem
+          |Enter numbers only for $incomeCategoryString
+          """.stripMargin
+      }
 
-      private val errorTextWelsh =
-        """Mae problem wedi codi
-          |Rhowch rifau yn unig
+      private def errorTextWelsh(incomeCategory: IncomeCategory) = {
+        val incomeCategoryString = incomeCategory match {
+          case MonthlyIncome => "incwm misol ar ôl treth"
+          case Benefits      => "budd-daliadau"
+          case OtherIncome   => "incwm misol arall"
+        }
+        s"""Mae problem wedi codi
+          |Nodwch rifau yn unig ar gyfer $incomeCategoryString
         """.stripMargin
+      }
+    }
+
+    object NegativeValueError {
+      def apply(incomeCategory: IncomeCategory)(implicit language: Language): String = language match {
+        case English => errorTextEnglish(incomeCategory)
+        case Welsh   => errorTextWelsh(incomeCategory)
+      }
+
+      private def errorTextEnglish(incomeCategory: IncomeCategory) = {
+        val incomeCategoryString = incomeCategory match {
+          case MonthlyIncome => "monthly income after tax"
+          case Benefits      => "benefits"
+          case OtherIncome   => "other monthly income"
+        }
+        s"""There is a problem
+           |Enter a positive number only for $incomeCategoryString
+        """.stripMargin
+      }
+
+      private def errorTextWelsh(incomeCategory: IncomeCategory) = {
+        val incomeCategoryString = incomeCategory match {
+          case MonthlyIncome => "incwm misol ar ôl treth"
+          case Benefits      => "budd-daliadau"
+          case OtherIncome   => "incwm misol arall"
+        }
+        s"""Mae problem wedi codi
+           |	Nodwch rifau yn unig ar gyfer for $incomeCategoryString
+        """.stripMargin
+      }
+    }
+
+    object MoreThanTwoDecimalPlaces {
+      def apply(incomeCategory: IncomeCategory)(implicit language: Language): String = language match {
+        case English => errorTextEnglish(incomeCategory)
+        case Welsh   => errorTextWelsh(incomeCategory)
+      }
+
+      private def errorTextEnglish(incomeCategory: IncomeCategory) = {
+        val incomeCategoryString = incomeCategory match {
+          case MonthlyIncome => "monthly income after tax"
+          case Benefits      => "benefits"
+          case OtherIncome   => "other monthly income"
+        }
+        s"""There is a problem
+           |Amount must not contain more than 2 decimal places for $incomeCategoryString
+        """.stripMargin
+      }
+
+      private def errorTextWelsh(incomeCategory: IncomeCategory) = {
+        val incomeCategoryString = incomeCategory match {
+          case MonthlyIncome => "incwm misol ar ôl treth"
+          case Benefits      => "budd-daliadau"
+          case OtherIncome   => "incwm misol arall"
+        }
+        s"""Mae problem wedi codi
+           |Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer $incomeCategoryString
+        """.stripMargin
+      }
     }
   }
+
 }

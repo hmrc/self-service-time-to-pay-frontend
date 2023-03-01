@@ -26,6 +26,8 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
 @import partials.currency
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+
 
 @this(
     main: views.html.main,
@@ -74,7 +76,7 @@
 ){
     @if(dataForm.hasErrors){
         @errorSummary(ErrorSummary(
-            errorList = dataForm.errors.asTextErrorLinks,
+            errorList = dataForm.errors.asHtmlErrorLinks,
             title = Text(messages("ssttp.affordability.your-monthly-income.error.title"))
         ))
     }
@@ -92,14 +94,14 @@
     ){
 
         @defining(incomeInputTotalFormError) { incomeInputTotalError =>
-            <fieldset class="govuk-fieldset long-word-wrap" aria-describedby="@if(incomeInputTotalError.isDefined) {total-invalid-error}">
+            <fieldset class="govuk-fieldset long-word-wrap" aria-describedby="@if(incomeInputTotalError.isDefined) {income-input-total-invalid-error} else {income-input-fields}">
                 <legend class="govuk-label govuk-visually-hidden">@messages("ssttp.affordability.your-monthly-income.hidden")</legend>
 
                 <div id="total-invalid" class="form-field @incomeInputTotalError.map { error => govuk-form-group--error }">
                     @incomeInputTotalError.map { error =>
                         <span class="govuk-error-message" id="income-invalid-error">
                             <span class="govuk-visually-hidden">@Messages("ssttp.common.title-prefix")</span>
-                            @messages("ssttp.affordability.your-monthly-income.error.required")
+                            @Html(messages("ssttp.affordability.your-monthly-income.error.required"))
                         </span>
                     }
 
