@@ -116,23 +116,23 @@ class ArrangementController @Inject() (
 
   }
 
-  def getInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def getCheckPaymentPlan: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.getInstalmentSummary: $request")
     journeyService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
-      JourneyLogger.info(s"$this.getInstalmentSummary - journey: $journey")
       val schedule: PaymentSchedule = calculatorService.selectedSchedule(journey).getOrElse(
         throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
       )
-      Future.successful(Ok(views.instalment_plan_summary(
-        journey.taxpayer.selfAssessment.debits,
-        journey.safeUpfrontPayment,
-        schedule
-      )))
+      val leftOverIncome: BigDecimal = journey.remainingIncomeAfterSpending
+      val monthlyPaymentAmountChosen = journey.maybeSelectedPlanAmount.getOrElse(
+        throw new IllegalArgumentException("a selection should have been made of monthly payment")
+      )
+      Future.successful(Ok(views.check_payment_plan(schedule, leftOverIncome, monthlyPaymentAmountChosen))
+      )
     }
   }
 
-  def submitInstalmentSummary: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+  def submitCheckPaymentPlan: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.submitInstalmentSummary: $request")
     journeyService.authorizedForSsttp(_ => Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())))
   }

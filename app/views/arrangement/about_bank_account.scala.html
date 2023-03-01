@@ -114,7 +114,7 @@
     title = title,
     hasErrors = form.hasErrors,
     welshToggleEnabled = true,
-    backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
+    backButtonUrl = Some(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())
 ) {
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(
