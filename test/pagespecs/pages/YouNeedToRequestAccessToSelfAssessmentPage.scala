@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.Languages.{English, Welsh}
 import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
-import org.scalatestplus.selenium.WebBrowser.xpath
 import testsupport.RichMatchers._
 
 class YouNeedToRequestAccessToSelfAssessmentPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {

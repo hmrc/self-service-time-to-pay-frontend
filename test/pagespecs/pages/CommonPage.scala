@@ -23,8 +23,6 @@ import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import play.api.Logger
 import testsupport.RichMatchers
-
-import scala.collection.immutable.List
 import scala.util.Random
 
 abstract class CommonPage(implicit webDriver: WebDriver) extends RichMatchers with WebBrowser { self =>

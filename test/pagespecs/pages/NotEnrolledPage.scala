@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
-import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
 
 class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {

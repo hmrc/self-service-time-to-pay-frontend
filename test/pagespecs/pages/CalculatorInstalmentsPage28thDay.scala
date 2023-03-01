@@ -21,7 +21,6 @@ import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
-import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
 
 abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
