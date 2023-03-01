@@ -63,7 +63,7 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         """Please call us
           |You may still be able to set up a payment plan over the phone, but you are not eligible for an online payment plan.
           |
-          |We recommend you speak to an adviser on 0300 200 3835 at the Payment Support Service to talk about your payment options.
+          |For further support, you can contact us on 0300 123 1813 to speak to an adviser.
           |
           |Before you call, make sure you have:
           |information on any savings or investments you have
