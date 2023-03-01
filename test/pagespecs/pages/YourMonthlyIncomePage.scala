@@ -156,12 +156,14 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
       private val errorTextEnglish =
         """There is a problem
-          |You must enter your income. If you do not have any income, call us on 0300 200 3835
+          |You must enter your income
+          |If you do not have any income, call us on 0300 200 3835
         """.stripMargin
 
       private val errorTextWelsh =
         """Mae problem wedi codi
-          |Mae’n rhaid i chi nodi’ch incwm. Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
+          |Mae’n rhaid i chi nodi’ch incwm
+          |Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
         """.stripMargin
     }
 

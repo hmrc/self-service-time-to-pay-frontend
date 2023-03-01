@@ -26,6 +26,8 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
 @import partials.currency
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+
 
 @this(
     main: views.html.main,
@@ -74,7 +76,7 @@
 ){
     @if(dataForm.hasErrors){
         @errorSummary(ErrorSummary(
-            errorList = dataForm.errors.asTextErrorLinks,
+            errorList = dataForm.errors.asHtmlErrorLinks,
             title = Text(messages("ssttp.affordability.your-monthly-income.error.title"))
         ))
     }
@@ -99,7 +101,7 @@
                     @incomeInputTotalError.map { error =>
                         <span class="govuk-error-message" id="income-invalid-error">
                             <span class="govuk-visually-hidden">@Messages("ssttp.common.title-prefix")</span>
-                            @messages("ssttp.affordability.your-monthly-income.error.required")
+                            @Html(messages("ssttp.affordability.your-monthly-income.error.required"))
                         </span>
                     }
 
