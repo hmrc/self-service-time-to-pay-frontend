@@ -146,7 +146,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
         yourMonthlyIncomePage.enterMonthlyIncome("word")
         yourMonthlyIncomePage.clickContinue()
 
-        yourMonthlyIncomePage.assertNonNumeralErrorIsDisplayed
+        yourMonthlyIncomePage.assertNonNumeralErrorIsDisplayed(MonthlyIncome)
       }
       "retains value entered" in {
         beginJourney()
@@ -169,7 +169,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
         yourMonthlyIncomePage.enterBenefits("word")
         yourMonthlyIncomePage.clickContinue()
 
-        yourMonthlyIncomePage.assertNonNumeralErrorIsDisplayed
+        yourMonthlyIncomePage.assertNonNumeralErrorIsDisplayed(Benefits)
       }
       "retains value entered" in {
         beginJourney()
@@ -191,7 +191,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
         yourMonthlyIncomePage.enterOtherIncome("word")
         yourMonthlyIncomePage.clickContinue()
 
-        yourMonthlyIncomePage.assertNonNumeralErrorIsDisplayed
+        yourMonthlyIncomePage.assertNonNumeralErrorIsDisplayed(OtherIncome)
 
       }
       "retains value entered" in {
@@ -219,7 +219,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
         yourMonthlyIncomePage.enterOtherIncome("0.01")
         yourMonthlyIncomePage.clickContinue()
 
-        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(MonthlyIncome)
+        yourMonthlyIncomePage.assertNegativeValueErrorIsDisplayed(MonthlyIncome)
       }
       "retains values entered" in {
         beginJourney()
@@ -232,7 +232,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
 
         yourMonthlyIncomePage.clickContinue()
 
-        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(MonthlyIncome)
+        yourMonthlyIncomePage.assertNegativeValueErrorIsDisplayed(MonthlyIncome)
         yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("-0.01")
         yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
         yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
@@ -249,7 +249,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
         yourMonthlyIncomePage.enterOtherIncome("0.01")
         yourMonthlyIncomePage.clickContinue()
 
-        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(Benefits)
+        yourMonthlyIncomePage.assertNegativeValueErrorIsDisplayed(Benefits)
       }
       "retains values entered" in {
         beginJourney()
@@ -262,7 +262,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
 
         yourMonthlyIncomePage.clickContinue()
 
-        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(Benefits)
+        yourMonthlyIncomePage.assertNegativeValueErrorIsDisplayed(Benefits)
         yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("0.01")
         yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("-0.01")
         yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
@@ -279,7 +279,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
         yourMonthlyIncomePage.enterBenefits("0.01")
         yourMonthlyIncomePage.clickContinue()
 
-        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(OtherIncome)
+        yourMonthlyIncomePage.assertNegativeValueErrorIsDisplayed(OtherIncome)
       }
       "retains values entered" in {
         beginJourney()
@@ -292,10 +292,102 @@ class YourMonthlyIncomePageSpec extends ItSpec {
 
         yourMonthlyIncomePage.clickContinue()
 
-        yourMonthlyIncomePage.assertNegativeValueIsDisplayed(OtherIncome)
+        yourMonthlyIncomePage.assertNegativeValueErrorIsDisplayed(OtherIncome)
         yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("0.01")
         yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
         yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("-0.01")
+      }
+    }
+  }
+  "More than two decimal places on any field displays error message" - {
+    "monthly income" - {
+      "error message" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterMonthlyIncome("0.0111")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+        yourMonthlyIncomePage.enterOtherIncome("0.01")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertMoreThanTwoDecimalPlacesErrorIsDisplayed(MonthlyIncome)
+      }
+      "retains values entered" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterMonthlyIncome("0.011")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+        yourMonthlyIncomePage.enterOtherIncome("0.01")
+
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertMoreThanTwoDecimalPlacesErrorIsDisplayed(MonthlyIncome)
+        yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("0.011")
+        yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
+        yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
+      }
+    }
+    "benefits" - {
+      "error message" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterBenefits("0.011")
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterOtherIncome("0.01")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertMoreThanTwoDecimalPlacesErrorIsDisplayed(Benefits)
+      }
+      "retains values entered" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterBenefits("0.011")
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterOtherIncome("0.01")
+
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertMoreThanTwoDecimalPlacesErrorIsDisplayed(Benefits)
+        yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("0.01")
+        yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.011")
+        yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
+      }
+    }
+    "other income" - {
+      "error message" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterOtherIncome("0.011")
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertMoreThanTwoDecimalPlacesErrorIsDisplayed(OtherIncome)
+      }
+      "retains values entered" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertPageIsDisplayed
+
+        yourMonthlyIncomePage.enterOtherIncome("0.011")
+        yourMonthlyIncomePage.enterMonthlyIncome("0.01")
+        yourMonthlyIncomePage.enterBenefits("0.01")
+
+        yourMonthlyIncomePage.clickContinue()
+
+        yourMonthlyIncomePage.assertMoreThanTwoDecimalPlacesErrorIsDisplayed(OtherIncome)
+        yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("0.01")
+        yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0.01")
+        yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.011")
       }
     }
   }
@@ -305,9 +397,9 @@ class YourMonthlyIncomePageSpec extends ItSpec {
 
       yourMonthlyIncomePage.assertPageIsDisplayed
 
-      yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
-      yourMonthlyIncomePage.enterBenefits("-0.01")
-      yourMonthlyIncomePage.enterOtherIncome("0.01")
+      yourMonthlyIncomePage.enterMonthlyIncome("0")
+      yourMonthlyIncomePage.enterBenefits("0")
+      yourMonthlyIncomePage.enterOtherIncome("0")
 
       yourMonthlyIncomePage.clickContinue()
 

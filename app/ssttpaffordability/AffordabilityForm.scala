@@ -17,14 +17,10 @@
 package ssttpaffordability
 
 import play.api.data.Forms.{text, _}
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{Form, FormError, Mapping}
 import ssttpaffordability.model.IncomeCategory
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model.forms.helper.FormErrorWithFieldMessageOverrides
-import play.api.i18n.{Messages, MessagesProvider}
-
-import javax.inject.Inject
 import scala.util.Try
 
 object AffordabilityForm {
@@ -38,20 +34,13 @@ object AffordabilityForm {
   )
 
   private def validateIncome(mappingStr: Mapping[String])(incomeCategory: IncomeCategory) = {
-    mappingStr.verifying("ssttp.affordability.your-monthly-income.error.non-numerals", { i: String =>
+    mappingStr.verifying(s"ssttp.affordability.your-monthly-income.error.non-numerals.${incomeCategory.messageSuffix}", { i: String =>
       if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
     })
-    mappingStr.verifying(s"ssttp.affordability.your-monthly-income.error.negative.${incomeCategory.messageSuffix}", { i: String =>
-      if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.00 else true
-    })
-      //      .verifying(Constraint((i: String) => if ( {
-      //        if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.00 else true
-      //      }) Valid else {
-      //        Invalid(Seq(ValidationError(
-      //          s"ssttp.affordability.your-monthly-income.error.negative.${incomeCategory.messageSuffix}",
-      //        )))
-      //      }))
-      .verifying("ssttp.affordability.your-monthly-income.error.decimal-places", { i =>
+      .verifying(s"ssttp.affordability.your-monthly-income.error.negative.${incomeCategory.messageSuffix}", { i: String =>
+        if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.00 else true
+      })
+      .verifying(s"ssttp.affordability.your-monthly-income.error.decimal-places.${incomeCategory.messageSuffix}", { i =>
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
       })
   }
