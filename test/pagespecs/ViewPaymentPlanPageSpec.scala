@@ -22,10 +22,11 @@ import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
 class ViewPaymentPlanPageSpec extends ItSpec {
 
-  def beginJourney(): Unit = {
+  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -49,8 +50,25 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
-    calculatorInstalmentsPage28thDay.selectAnOption()
+    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.clickContinue()
+
+    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.clickOnAddChangeIncome()
+
+    yourMonthlyIncomePage.assertPageIsDisplayed
+    yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
+    yourMonthlyIncomePage.clickContinue()
+
+    addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
+    addIncomeSpendingPage.clickOnAddChangeSpending()
+
+    yourMonthlySpendingPage.assertPageIsDisplayed
+    yourMonthlySpendingPage.clickContinue()
+
+    howMuchYouCouldAffordPage.clickContinue()
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+    calculatorInstalmentsPage28thDay.selectASpecificOption("50")
     calculatorInstalmentsPage28thDay.clickContinue()
 
     checkYourPaymentPlanPage.assertPageIsDisplayed()
@@ -64,6 +82,7 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     directDebitPage.assertPageIsDisplayed()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanksIsSuccessful()
     directDebitPage.clickContinue()
 
     directDebitConfirmationPage.assertPageIsDisplayed()
