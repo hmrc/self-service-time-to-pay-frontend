@@ -94,7 +94,7 @@
     ){
 
         @defining(incomeInputTotalFormError) { incomeInputTotalError =>
-            <fieldset class="govuk-fieldset long-word-wrap" aria-describedby="@if(incomeInputTotalError.isDefined) {total-invalid-error}">
+            <fieldset class="govuk-fieldset long-word-wrap" aria-describedby="@if(incomeInputTotalError.isDefined) {income-input-total-invalid-error} else {income-input-fields}">
                 <legend class="govuk-label govuk-visually-hidden">@messages("ssttp.affordability.your-monthly-income.hidden")</legend>
 
                 <div id="total-invalid" class="form-field @incomeInputTotalError.map { error => govuk-form-group--error }">

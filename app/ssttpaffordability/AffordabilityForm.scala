@@ -27,13 +27,13 @@ object AffordabilityForm {
 
   val incomeForm: Form[IncomeInput] = Form(
     mapping(
-      "monthlyIncome" -> validateIncome(text)(MonthlyIncome),
-      "benefits" -> validateIncome(text)(Benefits),
-      "otherIncome" -> validateIncome(text)(OtherIncome)
+      "monthlyIncome" -> validateIncome(text, MonthlyIncome),
+      "benefits" -> validateIncome(text, Benefits),
+      "otherIncome" -> validateIncome(text, OtherIncome)
     )(IncomeInput.apply)(IncomeInput.unapply)
   )
 
-  private def validateIncome(mappingStr: Mapping[String])(incomeCategory: IncomeCategory) = {
+  private def validateIncome(mappingStr: Mapping[String], incomeCategory: IncomeCategory): Mapping[String] = {
     mappingStr.verifying(s"ssttp.affordability.your-monthly-income.error.non-numerals.${incomeCategory.messageSuffix}", { i: String =>
       if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
     })
