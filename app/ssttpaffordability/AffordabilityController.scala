@@ -51,27 +51,6 @@ class AffordabilityController @Inject() (
 
   import requestSupport._
 
-  //TODO This method is duplicated in ArrangementController as def submitChangeSchedulePaymentDay.
-  // Delete from here and direct it to getCheckYouCanAfford, when the journey incorporates affordability
-  def submitChooseDay(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"AffordabilityController.submitChooseDay: $request")
-    journeyService.authorizedForSsttp {
-      journey =>
-        dayOfMonthForm.bindFromRequest().fold(
-          formWithErrors => {
-            Future.successful(BadRequest(views.change_day(formWithErrors)))
-          },
-          (validFormData: ArrangementForm) => {
-            JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
-            val updatedJourney = journey.copy(maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(validFormData.dayOfMonth)))
-            journeyService.saveJourney(updatedJourney).map {
-              _ => Redirect(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())
-            }
-          }
-        )
-    }
-  }
-
   def getCheckYouCanAfford: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"AffordabilityController.getCheckYouCanAfford: $request")
     journeyService.authorizedForSsttp { journey =>

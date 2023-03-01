@@ -47,6 +47,9 @@ class TermsAndConditionsPageSpec extends ItSpec {
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
+    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.clickContinue()
+
     calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
     calculatorInstalmentsPage28thDay.selectAnOption()
     calculatorInstalmentsPage28thDay.clickContinue()
