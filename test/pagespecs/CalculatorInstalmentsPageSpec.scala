@@ -24,31 +24,6 @@ import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncom
 
 class CalculatorInstalmentsPageSpec extends ItSpec {
 
-  // TODO OPS-8650: remove this entirely
-  def beginOldJourney(): Unit = {
-    AuthStub.authorise()
-    TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
-    GgStub.signInPage(port)
-    getBanksIsSuccessful()
-    startPage.open()
-    startPage.assertPageIsDisplayed()
-    startPage.clickOnStartNowButton()
-
-    taxLiabilitiesPage.assertPageIsDisplayed()
-    taxLiabilitiesPage.clickOnStartNowButton()
-
-    paymentTodayQuestionPage.assertPageIsDisplayed()
-    paymentTodayQuestionPage.selectRadioButton(false)
-    paymentTodayQuestionPage.clickContinue()
-
-    selectDatePage.assertPageIsDisplayed()
-    selectDatePage.selectFirstOption28thDay()
-    selectDatePage.clickContinue()
-
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
-  }
-
   def beginNewJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
@@ -217,14 +192,14 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       beginNewJourney()
       calculatorInstalmentsPage28thDay.selectAnOption()
       calculatorInstalmentsPage28thDay.clickContinue()
-      instalmentSummaryPage.assertPageIsDisplayed()
+      checkYourPaymentPlanPage.expectedHeadingContent(English)
     }
     "case with large number of decimal places of plan selection amounts" in {
       beginNewJourney(netIncomeLargeEnoughForSingleDefaultPlan)
 
       calculatorInstalmentsPage28thDay.selectAnOption()
       calculatorInstalmentsPage28thDay.clickContinue()
-      instalmentSummaryPage.assertPageIsDisplayed()
+      checkYourPaymentPlanPage.expectedHeadingContent(English)
     }
 
   }
@@ -234,7 +209,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       beginNewJourney()
       calculatorInstalmentsPage28thDay.selectAnOption()
       calculatorInstalmentsPage28thDay.clickContinue()
-      instalmentSummaryPage.clickOnBackButton()
+      checkYourPaymentPlanPage.clickOnBackButton()
 
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
     }
@@ -254,9 +229,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.selectASpecificOption("0")
       calculatorInstalmentsPage28thDay.clickContinue()
 
-      instalmentSummaryPage.assertPageIsDisplayed()
-
-      instalmentSummaryPage.clickOnBackButton()
+      checkYourPaymentPlanPage.clickOnBackButton()
       calculatorInstalmentsPage28thDay.clickOnBackButton()
 
       howMuchYouCouldAffordPage.clickOnAddChangeIncome()

@@ -213,7 +213,7 @@ class CalculatorController @Inject() (
           journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData.mongoSafe))).map { _ =>
             validFormData.selection match {
               case Right(CustomPlanRequest(_)) => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
-              case Left(SelectedPlan(_))       => Redirect(ssttparrangement.routes.ArrangementController.getInstalmentSummary())
+              case Left(SelectedPlan(_))       => Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())
             }
           }
         }
