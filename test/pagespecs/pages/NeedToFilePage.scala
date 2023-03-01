@@ -66,7 +66,7 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
           |
           |Go to your tax account to file your Self Assessment tax return.
           |
-          |For further support you can contact the Payment Support Service and speak to an adviser on 0300 200 3835.
+          |For further support, you can contact us on 0300 123 1813 to speak to an adviser.
           |
           |If you cannot use speech recognition software
           |Our opening times are:

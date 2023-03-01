@@ -132,7 +132,7 @@ class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
       private val mainTextEnglish =
         s"""Your spending is the same as your income
-            |As your spending is the same as your income, call the Payment Support Service on 0300 200 3835 to discuss your debt. You may also want to seek independent debt advice.
+            |As your spending is the same as your income, call us on 0300 123 1813 to discuss your debt. You may also want to seek independent debt advice.
       """.stripMargin
 
       private val mainTextWelsh =
@@ -149,7 +149,7 @@ class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
       private val mainTextEnglish =
         s"""Your spending is higher than your income
-            |As your spending is higher than your income, call the Payment Support Service on 0300 200 3835 to discuss your debt. You may also want to seek independent debt advice.
+            |As your spending is higher than your income, call us on 0300 123 1813 to discuss your debt. You may also want to seek independent debt advice.
       """.stripMargin
 
       private val mainTextWelsh =

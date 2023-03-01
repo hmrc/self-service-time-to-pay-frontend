@@ -464,8 +464,7 @@ ssttp.please-call-us.p2-part1 = Rydym yn argymell eich bod yn siarad ag ymgyngho
 #not-sole-signatory
 ssttp.not-sole-signatory.title = Ni allwch drefnu Debyd Uniongyrchol ar-lein
 ssttp.not-sole-signatory.p1 = Mae angen rhywun sydd wedi’i enwi’n ddeiliad y cyfrif, neu rywun ag awdurdod, er mwyn trefnu Debyd Uniongyrchol.
-ssttp.not-sole-signatory.p2a = Os nad chi yw deiliad y cyfrif, neu os ydych yn dymuno trefnu Debyd Uniongyrchol gyda chyfrif aml-lofnod, rydym yn argymell eich bod yn siarad ag ymgynghorydd ar
-ssttp.not-sole-signatory.p2b = yn y Gwasanaeth Cwsmeriaid Cymraeg. Rhaid i chi sicrhau bod holl ddeiliaid y cyfrif yn bresennol wrth ffonio.
+ssttp.not-sole-signatory.p2 = Os nad chi yw deiliad y cyfrif, neu os ydych yn dymuno trefnu Debyd Uniongyrchol gyda chyfrif aml-lofnod, rydym yn argymell eich bod yn siarad ag ymgynghorydd ar <strong>0300 200 1900</strong> yn y Gwasanaeth Cwsmeriaid Cymraeg. Rhaid i chi sicrhau bod holl ddeiliaid y cyfrif yn bresennol wrth ffonio.
 ssttp.not-sole-signatory.go-to-account = Ewch i’r cyfrif treth
 
 ssttp.debt-too-large.h1 = Ffoniwch ni

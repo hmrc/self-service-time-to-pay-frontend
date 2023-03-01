@@ -63,9 +63,8 @@ class NotSoleSignatoryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exte
       private val mainTextEnglish =
         """You need a named account holder or someone with authorisation to set up a Direct Debit.
           |
-          |If you are not the account holder or you wish to set up a Direct Debit with a multi-signature account, we recommend you speak to an adviser on
-          |0300 200 3835 at the Payment Support Service. You must ensure all account holders are present when calling."""
-          .stripMargin
+          |If you are not the account holder or you wish to set up a Direct Debit with a multi-signature account, speak to an adviser on 0300 123 1813. You must ensure all account holders are present when calling
+        """.stripMargin
 
       private val mainTextWelsh =
         """Mae angen rhywun sydd wedi’i enwi’n ddeiliad y cyfrif, neu rywun ag awdurdod, er mwyn trefnu Debyd Uniongyrchol.
