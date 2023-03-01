@@ -66,7 +66,6 @@ final case class Journey(
     maybeTaxpayer:              Option[Taxpayer]                = None,
     maybePaymentToday:          Option[PaymentToday]            = None,
     maybePaymentTodayAmount:    Option[PaymentTodayAmount]      = None,
-    maybeMonthlyPaymentAmount:  Option[BigDecimal]              = Some(2000), // TODO OPS-9464 Return the default to None. This is temporary so the journey does not break, whilst the affidrabilty pages are introduced
     maybeIncome:                Option[Income]                  = None,
     maybeSpending:              Option[Spending]                = None,
     maybePlanSelection:         Option[PlanSelection]           = None,
@@ -94,21 +93,18 @@ final case class Journey(
     require(eligibilityStatus.eligible, s"taxpayer has to be eligible [$this]")
   }
 
-  // TODO OPS-9464: change to when old journey removed '.getOrElse(throw new IllegalArgumentException("attempted to retrieve total spending when there was no spending"))`
   def remainingIncomeAfterSpending: BigDecimal = {
-    val totalIncome = maybeIncome.map(_.totalIncome).getOrElse(BigDecimal(1000))
-    val totalSpending = maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(500))
+    val totalIncome = maybeIncome.map(_.totalIncome).getOrElse(throw new IllegalArgumentException("attempted to retrieve total income when there was no income"))
+    val totalSpending = maybeSpending.map(_.totalSpending).getOrElse(throw new IllegalArgumentException("attempted to retrieve total spending when there was no spending"))
     totalIncome - totalSpending
   }
 
-  //TODO OPS-9610 update this
   def requireScheduleIsDefined(): Unit = {
     requireIsInProgress()
     requireIsEligible()
 
     require(maybeTaxpayer.isDefined, s"'taxpayer' has to be defined at this stage of a journey [$this]")
     require(maybePaymentToday.isDefined, s"'maybePaymentToday' has to be defined at this stage of a journey [$this]")
-    require(maybeMonthlyPaymentAmount.isDefined, s"'maybeMonthlyPaymentAmount' has to be defined at this stage of a journey [$this]")
     require(maybeSelectedPlanAmount.isDefined, s"'maybeRegularPlanAmountSelection' has to be defined at this stage of a journey [$this]")
     require(maybeArrangementDayOfMonth.isDefined, s"'maybeArrangementDayOfMonth' has to be defined at this stage of a journey [$this]")
   }
@@ -135,17 +131,23 @@ final case class Journey(
   def isFinished: Boolean = status == FinishedApplicationSuccessful
 
   def obfuscate: Journey = Journey(
-    _id                       = _id,
-    status                    = status,
-    createdOn                 = createdOn,
-    maybeMonthlyPaymentAmount = maybeMonthlyPaymentAmount,
-    maybeBankDetails          = maybeBankDetails.map(_.obfuscate),
-    existingDDBanks           = existingDDBanks.map(_.obfuscate),
-    maybeTaxpayer             = maybeTaxpayer.map(_.obfuscate),
-    maybeEligibilityStatus    = maybeEligibilityStatus,
-    debitDate                 = debitDate,
-    ddRef                     = ddRef.map(_ => "***"),
-    maybeSaUtr                = maybeSaUtr.map(_ => "***")
+    _id                        = _id,
+    status                     = status,
+    createdOn                  = createdOn,
+    maybeTypeOfAccountDetails  = maybeTypeOfAccountDetails,
+    maybeBankDetails           = maybeBankDetails.map(_.obfuscate),
+    existingDDBanks            = existingDDBanks.map(_.obfuscate),
+    maybeTaxpayer              = maybeTaxpayer.map(_.obfuscate),
+    maybePaymentToday          = maybePaymentToday,
+    maybePaymentTodayAmount    = maybePaymentTodayAmount,
+    maybeIncome                = maybeIncome,
+    maybeSpending              = maybeSpending,
+    maybePlanSelection         = maybePlanSelection,
+    maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
+    maybeEligibilityStatus     = maybeEligibilityStatus,
+    debitDate                  = debitDate,
+    ddRef                      = ddRef.map(_ => "***"),
+    maybeSaUtr                 = maybeSaUtr.map(_ => "***")
   )
 
   override def toString: String = {

@@ -24,7 +24,7 @@ import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncom
 
 class CalculatorInstalmentsPageSpec extends ItSpec {
 
-  def beginNewJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
+  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -66,14 +66,14 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
   "goes to kick out page " +
     "if 50% of remaining income after spending cannot cover amount remaining to pay including interest in 24 months of less" in {
-      beginNewJourney(netIncomeTooSmallForPlan)
+      beginJourney(netIncomeTooSmallForPlan)
       weCannotAgreeYourPaymentPlanPage.assertPagePathCorrect
     }
 
   "display default options" - {
     "if 50% of remaining income after spending covers amount remaining to pay including interest in one month " +
       "displays only 50% default option" in {
-        beginNewJourney(netIncomeLargeEnoughForSingleDefaultPlan)
+        beginJourney(netIncomeLargeEnoughForSingleDefaultPlan)
 
         calculatorInstalmentsPage28thDay.optionIsDisplayed("4,914.40")
         calculatorInstalmentsPage28thDay.optionIsNotDisplayed("6,250")
@@ -82,7 +82,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       }
     "if 60% of remaining income after spending covers amount remaining to pay including interest in one month " +
       "displays only 50% and 60% default options" in {
-        beginNewJourney(netIncomeLargeEnoughForTwoDefaultPlans)
+        beginJourney(netIncomeLargeEnoughForTwoDefaultPlans)
 
         calculatorInstalmentsPage28thDay.optionIsDisplayed("4,750")
         calculatorInstalmentsPage28thDay.optionIsDisplayed("4,914.40", Some("1"), Some("14.40"))
@@ -90,24 +90,24 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
         calculatorInstalmentsPage28thDay.optionIsNotDisplayed("7,600")
       }
     "displays three default options otherwise" in {
-      beginNewJourney()
+      beginJourney()
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
     }
   }
   "displays custom amount option" - {
     "in English" in {
-      beginNewJourney()
+      beginJourney()
       calculatorInstalmentsPage28thDay.customAmountOptionIsDisplayed
     }
     "in Welsh" in {
-      beginNewJourney()
+      beginJourney()
       calculatorInstalmentsPage28thDay.clickOnWelshLink()
       calculatorInstalmentsPage28thDay.customAmountOptionIsDisplayed(Welsh)
     }
   }
   "custom amount entry" - {
     "displays page with customer option at top when custom amount entered and continue pressed" in {
-      beginNewJourney()
+      beginJourney()
 
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
 
@@ -122,7 +122,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
     }
     "less than minimum displays error message" in {
-      beginNewJourney()
+      beginJourney()
 
       val customAmountBelowMinimum = 200
 
@@ -133,7 +133,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.assertBelowMinimumErrorIsDisplayed
     }
     "more than maximum displays error message" in {
-      beginNewJourney()
+      beginJourney()
 
       val customAmountBelowMinimum = 7000
 
@@ -144,7 +144,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.assertAboveMaximumErrorIsDisplayed
     }
     "not filled in displays error message" in {
-      beginNewJourney()
+      beginJourney()
 
       calculatorInstalmentsPage28thDay.selectCustomAmountOption()
       calculatorInstalmentsPage28thDay.enterCustomAmount()
@@ -153,7 +153,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.assertNoInputErrorIsDisplayed
     }
     "filled with non-numeric displays error message" in {
-      beginNewJourney()
+      beginJourney()
 
       calculatorInstalmentsPage28thDay.selectCustomAmountOption()
       calculatorInstalmentsPage28thDay.enterCustomAmount("non-numeric")
@@ -162,7 +162,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.assertNonNumericErrorIsDisplayed
     }
     "filled with negative amount displays error message" in {
-      beginNewJourney()
+      beginJourney()
 
       calculatorInstalmentsPage28thDay.selectCustomAmountOption()
       calculatorInstalmentsPage28thDay.enterCustomAmount("-1")
@@ -173,7 +173,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
   }
 
   "language" in {
-    beginNewJourney()
+    beginJourney()
 
     calculatorInstalmentsPage28thDay.clickOnWelshLink()
     calculatorInstalmentsPage28thDay.assertPageIsDisplayed(Welsh)
@@ -183,19 +183,19 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
   }
 
   "back button" in {
-    beginNewJourney()
+    beginJourney()
     calculatorInstalmentsPage28thDay.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
   }
 
   "select an option and continue" - {
     "basic case" in {
-      beginNewJourney()
+      beginJourney()
       calculatorInstalmentsPage28thDay.selectAnOption()
       calculatorInstalmentsPage28thDay.clickContinue()
       checkYourPaymentPlanPage.expectedHeadingContent(English)
     }
     "case with large number of decimal places of plan selection amounts" in {
-      beginNewJourney(netIncomeLargeEnoughForSingleDefaultPlan)
+      beginJourney(netIncomeLargeEnoughForSingleDefaultPlan)
 
       calculatorInstalmentsPage28thDay.selectAnOption()
       calculatorInstalmentsPage28thDay.clickContinue()
@@ -206,7 +206,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
 
   "returning to the page" - {
     "selecting a default option, continue, then back, returns to the schedule selection page" in {
-      beginNewJourney()
+      beginJourney()
       calculatorInstalmentsPage28thDay.selectAnOption()
       calculatorInstalmentsPage28thDay.clickContinue()
       checkYourPaymentPlanPage.clickOnBackButton()
@@ -214,7 +214,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.assertPageIsDisplayed
     }
     "selecting an option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
-      beginNewJourney()
+      beginJourney()
 
       val customAmount = 280
       val planMonths = 18
