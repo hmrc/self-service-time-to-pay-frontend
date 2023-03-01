@@ -21,11 +21,12 @@ import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
+import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 import testsupport.testdata.{CalculatorDataGenerator, DirectDebitTd}
 
 class TermsAndConditionsPageSpec extends ItSpec {
 
-  def beginJourney(): Unit = {
+  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -50,8 +51,22 @@ class TermsAndConditionsPageSpec extends ItSpec {
     startAffordabilityPage.assertPageIsDisplayed()
     startAffordabilityPage.clickContinue()
 
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
-    calculatorInstalmentsPage28thDay.selectAnOption()
+    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.clickOnAddChangeIncome()
+
+    yourMonthlyIncomePage.assertPageIsDisplayed
+    yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
+    yourMonthlyIncomePage.clickContinue()
+
+    addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
+    addIncomeSpendingPage.clickOnAddChangeSpending()
+
+    yourMonthlySpendingPage.assertPageIsDisplayed
+    yourMonthlySpendingPage.clickContinue()
+
+    howMuchYouCouldAffordPage.clickContinue()
+    calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+    calculatorInstalmentsPage28thDay.selectASpecificOption("50")
     calculatorInstalmentsPage28thDay.clickContinue()
 
     checkYourPaymentPlanPage.assertPageIsDisplayed()
