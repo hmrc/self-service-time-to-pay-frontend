@@ -85,7 +85,9 @@
 }
 
 @beforeContentBlock = {
-    @hmrcLanguageSelectHelper()
+    <div class="govuk-!-display-none-print">
+        @hmrcLanguageSelectHelper()
+    </div>
 
     @backButtonUrl.map{ call =>
         @partials.back_button(call)
