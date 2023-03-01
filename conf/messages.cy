@@ -188,7 +188,7 @@ ssttp.affordability.your-monthly-spending.error.two-decimals-only.insurance = Rh
 
 ssttp.affordability.your-monthly-spending.error.non-numerals.groceries = Nodwch rifau yn unig ar gyfer nwyddau groser
 ssttp.affordability.your-monthly-spending.error.not-negative.groceries= Nodwch rif positif yn unig ar gyfer nwyddau groser
-ssttp.affordability.your-monthly-spending.error.two-decimals-groceries.housing = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyferg nwyddau groser
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.groceries = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyferg nwyddau groser
 
 ssttp.affordability.your-monthly-spending.error.non-numerals.health = Nodwch rifau yn unig ar gyfer iechyd
 ssttp.affordability.your-monthly-spending.error.not-negative.health= Nodwch rif positif yn unig ar gyfer iechyd
