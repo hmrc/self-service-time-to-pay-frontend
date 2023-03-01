@@ -174,11 +174,10 @@ class YourMonthlySpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) e
         """.stripMargin
     }
 
-
     object NegativeNumberErrorText {
       def apply()(implicit language: Language): String = language match {
         case English => errorTextEnglish
-        case Welsh => errorTextWelsh
+        case Welsh   => errorTextWelsh
       }
 
       private val errorTextEnglish =
@@ -195,7 +194,7 @@ class YourMonthlySpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) e
     object TooManyDecimalsErrorText {
       def apply()(implicit language: Language): String = language match {
         case English => errorTextEnglish
-        case Welsh => errorTextWelsh
+        case Welsh   => errorTextWelsh
       }
 
       private val errorTextEnglish =
