@@ -39,7 +39,6 @@ import javax.inject.Inject
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext
 
-import java.time.LocalDate.now
 
 class CalculatorService @Inject() (
     clockProvider:   ClockProvider,
