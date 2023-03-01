@@ -153,6 +153,48 @@ ssttp.affordability.your-monthly-spending.error.title = Mae problem wedi codi
 ssttp.affordability.your-monthly-spending.error.non-numerals = Enter numbers only
 ssttp.affordability.your-monthly-spending.total = Cyfanswm y gwariant
 
+#Errors for spending form
+ssttp.affordability.your-monthly-spending.error.non-numerals.housing = Nodwch rifau yn unig ar gyfer tai
+ssttp.affordability.your-monthly-spending.error.not-negative.housing = Nodwch rif positif yn unig ar gyfer tai
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.housing = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfertai
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.pension-contributions = Nodwch rifau yn unig ar gyfer cyfraniadau pensiwn
+ssttp.affordability.your-monthly-spending.error.not-negative.pension-contributions = Nodwch rif positif yn unig ar gyfer cyfraniadau pensiwn
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.pension-contributions = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar cyfraniadau pensiwn
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.council-tax = Nodwch rifau yn unig ar gyfer Treth Gyngor
+ssttp.affordability.your-monthly-spending.error.not-negative.council-tax = Nodwch rif positif yn unig ar gyfer Treth Gyngor
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.council-tax = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer Treth Gyngor
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.utilities = Nodwch rifau yn unig ar gyfer cyfleustodau
+ssttp.affordability.your-monthly-spending.error.not-negative.utilities = Nodwch rif positif yn unig ar gyfer cyfleustodau
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.utilities = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer cyfleustodau
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.debt-repayments = Nodwch rifau yn unig ar gyfer ad-daliadau dyledion
+ssttp.affordability.your-monthly-spending.error.not-negative.debt-repayments = Nodwch rif positif yn unig ar gyfer ad-daliadau dyledion
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.debt-repayments = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer ad-daliadau dyledion
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.travel = Nodwch rifau yn unig ar gyfer teithio
+ssttp.affordability.your-monthly-spending.error.not-negative.travel= Nodwch rif positif yn unig ar gyfer teithio
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.travel = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer teithio
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.childcare = Nodwch rifau yn unig ar gyfer costau gofal plant
+ssttp.affordability.your-monthly-spending.error.not-negative.childcare= Nodwch rif positif yn unig ar gyfer costau gofal plant
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.childcare = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer costau gofal plant
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.insurance = Nodwch rifau yn unig ar gyfer yswiriant
+ssttp.affordability.your-monthly-spending.error.not-negative.insurance= Nodwch rif positif yn unig ar gyfer yswiriant
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.insurance = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer yswiriant
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.groceries = Nodwch rifau yn unig ar gyfer nwyddau groser
+ssttp.affordability.your-monthly-spending.error.not-negative.groceries= Nodwch rif positif yn unig ar gyfer nwyddau groser
+ssttp.affordability.your-monthly-spending.error.two-decimals-groceries.housing = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyferg nwyddau groser
+
+ssttp.affordability.your-monthly-spending.error.non-numerals.health = Nodwch rifau yn unig ar gyfer iechyd
+ssttp.affordability.your-monthly-spending.error.not-negative.health= Nodwch rif positif yn unig ar gyfer iechyd
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.health = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer iechyd
+
+
 ssttp.affordability.how-much-you-could-afford.h1 = Faint y gallech ei fforddio
 ssttp.affordability.how-much-you-could-afford.left-over-income = Incwm sydd dros ben
 ssttp.affordability.how-much-you-could-afford.total = Cyfanswm yr incwm sydd dros ben
