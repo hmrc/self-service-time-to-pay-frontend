@@ -18,12 +18,9 @@ package pagespecs.pages
 
 import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
-import language.Dates
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
-
-import java.time.LocalDate
 
 class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: String, paymentDayOfMonthWelsh: String)
   (implicit webDriver: WebDriver) extends BasePage(baseUrl) {

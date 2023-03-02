@@ -75,8 +75,6 @@ GET         /delete-answers                                           controller
 
 
 # Affordability
-
-POST        /start-affordability/                                         ssttpaffordability.AffordabilityController.submitChooseDay()
 GET         /start-affordability                                          ssttpaffordability.AffordabilityController.getCheckYouCanAfford()
 GET         /add-income-spending                                          ssttpaffordability.AffordabilityController.getAddIncomeAndSpending()
 GET         /monthly-income                                               ssttpaffordability.AffordabilityController.getYourMonthlyIncome()

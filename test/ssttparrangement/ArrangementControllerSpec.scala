@@ -29,6 +29,9 @@ import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
+import ssttpaffordability.model.Expense.HousingExp
+import ssttpaffordability.model.IncomeCategory.MonthlyIncome
+import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import testsupport.WireMockSupport
 import testsupport.stubs.{ArrangementStub, AuthStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.TdAll.selectedRegularPaymentAmount300
@@ -100,6 +103,8 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       existingDDBanks            = None,
       maybeTaxpayer              = Some(TdAll.taxpayer),
       maybePaymentToday          = Some(PaymentToday(true)),
+      maybeIncome                = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
+      maybeSpending              = Some(Spending(Expenses(HousingExp, 500))),
       maybePlanSelection         = Some(PlanSelection(Left(SelectedPlan(selectedRegularPaymentAmount300)))),
       maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(3)),
       maybeEligibilityStatus     = Some(EligibilityStatus(Seq.empty))

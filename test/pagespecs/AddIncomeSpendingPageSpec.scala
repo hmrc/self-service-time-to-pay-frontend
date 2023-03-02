@@ -46,7 +46,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
     selectDatePage.assertPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
-    selectDatePage.clickOnTempButton()
+    selectDatePage.clickContinue()
 
     startAffordabilityPage.assertPageIsDisplayed()
     startAffordabilityPage.clickContinue()

@@ -55,10 +55,10 @@
 
     <tr class="govuk-table__row">
         <th class="govuk-table__header">
-        @messages("ssttp.arrangement.instalment-summary.payment-date.title")
+        @messages("ssttp.arrangement.print-summary.payment-date.title")
         </th>
         <td class="govuk-table__cell">
-            @getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @messages("ssttp.arrangement.instalment-summary.payment-date.ending")
+            @getDayOfMonthOrdinal(schedule.ps.firstInstallment.paymentDate) @messages("ssttp.arrangement.print-summary.payment-date.ending")
         </td>
     </tr>
 
@@ -77,7 +77,7 @@
         <tr class="govuk-table__row">
             <th class="govuk-table__header">
                 <strong class="bold">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest")</strong>
-                <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.instalment-summary.schedule.interest-included")</p>
+                <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.check-payment-plan.estimated-interest.hint")</p>
             </th>
             <td class="govuk-table__cell">
                 @partials.currency(schedule.totalInterestCharged)

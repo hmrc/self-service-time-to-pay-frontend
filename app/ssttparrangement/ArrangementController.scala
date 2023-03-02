@@ -82,7 +82,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.start: $request")
 
     journeyService.getJourney.flatMap {
-      case journey if journey.inProgress && journey.maybeMonthlyPaymentAmount.isDefined =>
+      case journey if journey.inProgress && journey.maybeSelectedPlanAmount.isDefined =>
         eligibilityCheck(journey)
       case j =>
         val msg = "Illegal state, journey must be in progress with defined payment amount"
@@ -165,7 +165,7 @@ class ArrangementController @Inject() (
             JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
             val updatedJourney = journey.copy(maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(validFormData.dayOfMonth)))
             journeyService.saveJourney(updatedJourney).map {
-              _ => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
+              _ => Redirect(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())
             }
           }
         )

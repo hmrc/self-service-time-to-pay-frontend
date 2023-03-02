@@ -80,7 +80,7 @@ class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exten
           |Mae taliadau’n cael eu casglu ar	28ain neu ar y diwrnod gwaith nesaf
           |
           |Amcangyfrif o gyfanswm y llog
-          |wedi’i gynnwys yn eich taliadau misol
+          |wedi’i gynnwys yn y taliadau misol
           |
           |Y cyfanswm i’w dalu
           |Argraffwch gopi o’ch cynllun talu

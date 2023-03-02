@@ -19,7 +19,6 @@ package pagespecs.pages
 import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
-import org.scalatest.Assertion
 import testsupport._
 import testsupport.RichMatchers._
 
