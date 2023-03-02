@@ -139,7 +139,7 @@ ssttp.affordability.your-monthly-spending.form.council-tax = Treth Gyngor
 ssttp.affordability.your-monthly-spending.form.utilities = Cyfleustodau
 ssttp.affordability.your-monthly-spending.form.utilities.hint = Er enghraifft, ynni, dŵr, ffôn, band eang
 ssttp.affordability.your-monthly-spending.form.debt-repayments = Ad-daliadau dyledion
-ssttp.affordability.your-monthly-spending.form.debt-repayments.hint = Er enghraifft, cerdyn credyd, benthyciad, taliadau Gorchymyn Llys
+ssttp.affordability.your-monthly-spending.form.debt-repayments.hint = Er enghraifft, benthyciad, taliadau Gorchymyn Llys
 ssttp.affordability.your-monthly-spending.form.travel = Teithio
 ssttp.affordability.your-monthly-spending.form.travel.hint = Er enghraifft, cerbydau, tanwydd, tocynnau tymor
 ssttp.affordability.your-monthly-spending.form.childcare = Costau gofal plant
@@ -504,7 +504,7 @@ ssttp.arrangement.complete.next-payment = Caiff eich taliad nesaf ei gymryd ar {
 ssttp.arrangement.complete.24h = Bydd eich cyfrif treth yn cael ei ddiweddaru gyda’ch cynllun talu cyn pen 24 awr.
 ssttp.arrangement.complete.feedback = Beth oedd eich barn am y gwasanaeth hwn?
 ssttp.arrangement.complete.help.h2 = Os oes angen i chi newid eich cynllun talu
-ssttp.arrangement.complete.help.p1 = Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900.
+ssttp.arrangement.complete.help.p1 = Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong>.
 ssttp.arrangement.complete.help.p2 = (mae’n cymryd 30 eiliad)
 ssttp.arrangement.complete.go-to-tax-account = Ewch i’r cyfrif treth
 

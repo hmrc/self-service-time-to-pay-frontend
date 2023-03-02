@@ -67,7 +67,7 @@
                 </p>
 
                 <p class="govuk-heading-m">@messages("ssttp.arrangement.complete.help.h2")</p>
-                <p class="govuk-body">@messages("ssttp.arrangement.complete.help.p1")</p>
+                <p class="govuk-body">@{Html(messages("ssttp.arrangement.complete.help.p1"))}</p>
 
             <a class="govuk-button" href=@{s"${appConfig.backToTaxAccountUrl}"} role="button">
             @messages("ssttp.arrangement.complete.go-to-tax-account")

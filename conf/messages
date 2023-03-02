@@ -142,7 +142,7 @@ ssttp.affordability.your-monthly-spending.form.council-tax = Council tax
 ssttp.affordability.your-monthly-spending.form.utilities = Utilities
 ssttp.affordability.your-monthly-spending.form.utilities.hint = For example, energy, water, phone, broadband
 ssttp.affordability.your-monthly-spending.form.debt-repayments = Debt repayments
-ssttp.affordability.your-monthly-spending.form.debt-repayments.hint = For example, credit card, loan, court order payments
+ssttp.affordability.your-monthly-spending.form.debt-repayments.hint = For example, loan, court order payments
 ssttp.affordability.your-monthly-spending.form.travel = Travel
 ssttp.affordability.your-monthly-spending.form.travel.hint = For example, vehicles, fuel, season ticket
 ssttp.affordability.your-monthly-spending.form.childcare = Childcare costs
@@ -555,7 +555,7 @@ ssttp.arrangement.complete.next-payment = Your next payment will be taken on {0}
 ssttp.arrangement.complete.24h = Your tax account will be updated with your payment plan within 24 hours.
 ssttp.arrangement.complete.feedback = What did you think of this service?
 ssttp.arrangement.complete.help.h2 = If you need to change your payment plan
-ssttp.arrangement.complete.help.p1 = Call the HMRC Helpline on 0300 123 1813.
+ssttp.arrangement.complete.help.p1 = Call the HMRC Helpline on <strong>0300 123 1813</strong>.
 ssttp.arrangement.complete.help.p2 = (takes 30 seconds)
 ssttp.arrangement.complete.go-to-tax-account = Go to tax account
 
