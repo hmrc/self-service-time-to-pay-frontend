@@ -374,7 +374,7 @@ ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less t
 
 ssttp.call-us.title = Please call us
 ssttp.call-us.p1 = You are not eligible to set up a payment plan online.
-ssttp.call-us.p2 = For further support you can contact us on <strong>0300 123 1813</strong> to speak to an adviser.
+ssttp.call-us.p2 = For further support, you can contact us on <strong>0300 123 1813</strong> to speak to an adviser.
 ssttp.call-us.before-call.heading = Before you call, make sure you have:
 ssttp.call-us.before-call.l1 = information on any savings or investments you have
 ssttp.call-us.before-call.l2 = your bank details
