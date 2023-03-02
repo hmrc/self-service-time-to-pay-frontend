@@ -32,53 +32,53 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     getBanksIsSuccessful()
 
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
     startAffordabilityPage.clickContinue()
 
-    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
     addIncomeSpendingPage.clickOnAddChangeIncome()
 
-    yourMonthlyIncomePage.assertPageIsDisplayed
+    yourMonthlyIncomePage.assertInitialPageIsDisplayed
     yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
     yourMonthlyIncomePage.clickContinue()
 
     addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
     addIncomeSpendingPage.clickOnAddChangeSpending()
 
-    yourMonthlySpendingPage.assertPageIsDisplayed
+    yourMonthlySpendingPage.assertInitialPageIsDisplayed
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed
     calculatorInstalmentsPage28thDay.selectASpecificOption("50")
     calculatorInstalmentsPage28thDay.clickContinue()
 
-    checkYourPaymentPlanPage.assertPageIsDisplayed()
+    checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
   }
 
   "language" in {
     beginJourney()
 
     checkYourPaymentPlanPage.clickOnWelshLink()
-    checkYourPaymentPlanPage.assertPageIsDisplayed(Welsh)
+    checkYourPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
 
     checkYourPaymentPlanPage.clickOnEnglishLink()
 
-    checkYourPaymentPlanPage.assertPageIsDisplayed(English)
+    checkYourPaymentPlanPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {
@@ -89,36 +89,36 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
   "change monthly instalments" in {
     beginJourney()
     checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
+    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed()
   }
 
   "change collection day" in {
     beginJourney()
     checkYourPaymentPlanPage.clickChangeCollectionDayLink()
-    selectDatePage.assertPageIsDisplayed
+    selectDatePage.assertInitialPageIsDisplayed
   }
 
   "change upfront payment amount" in {
     beginJourney()
     checkYourPaymentPlanPage.clickChangeUpfrontPaymentAnswerLink()
-    paymentTodayQuestionPage.assertPageIsDisplayed
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed
   }
 
   "change upfront answer" in {
     beginJourney()
     checkYourPaymentPlanPage.clickChangeUpfrontPaymentAmountLink()
-    paymentTodayQuestionPage.assertPageIsDisplayed
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed
   }
 
   "continue to the next page" in {
     beginJourney()
     checkYourPaymentPlanPage.clickContinue()
-    aboutBankAccountPage.assertPageIsDisplayed
+    aboutBankAccountPage.assertInitialPageIsDisplayed
   }
 
   "shows warning" in {
     beginJourney()
-    checkYourPaymentPlanPage.assertPageIsDisplayed
+    checkYourPaymentPlanPage.assertInitialPageIsDisplayed
     checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
     calculatorInstalmentsPage28thDay.selectASpecificOption("60")
     calculatorInstalmentsPage28thDay.clickContinue()

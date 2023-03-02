@@ -29,7 +29,7 @@ class AboutBankAccountPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exte
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/about-your-bank-account"
 
-  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
+  override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)

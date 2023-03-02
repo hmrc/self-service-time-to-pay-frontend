@@ -56,7 +56,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def path: String
 
-  def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit
+  def assertInitialPageIsDisplayed(implicit lang: Language = Languages.English): Unit
 
   def assertContentMatchesExpectedLines(expectedLines: Seq[String]): Unit = probing {
     //we replace `\n` with spaces so the tests can run both in intellij and in sbt.

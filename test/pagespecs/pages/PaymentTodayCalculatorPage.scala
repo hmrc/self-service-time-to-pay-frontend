@@ -29,7 +29,7 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
 
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/payment-today"
 
-  override def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  override def assertInitialPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)

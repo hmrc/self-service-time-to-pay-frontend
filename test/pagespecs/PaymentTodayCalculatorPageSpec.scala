@@ -30,27 +30,27 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
     getBanksIsSuccessful()
 
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(true)
     paymentTodayQuestionPage.clickContinue()
-    paymentTodayCalculatorPage.assertPageIsDisplayed()
+    paymentTodayCalculatorPage.assertInitialPageIsDisplayed()
   }
 
   "language" in {
     beginJourney()
-    paymentTodayCalculatorPage.assertPageIsDisplayed
+    paymentTodayCalculatorPage.assertInitialPageIsDisplayed
 
     paymentTodayCalculatorPage.clickOnWelshLink()
-    paymentTodayCalculatorPage.assertPageIsDisplayed(Welsh)
+    paymentTodayCalculatorPage.assertInitialPageIsDisplayed(Welsh)
 
     paymentTodayCalculatorPage.clickOnEnglishLink()
-    paymentTodayCalculatorPage.assertPageIsDisplayed(English)
+    paymentTodayCalculatorPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {
@@ -69,6 +69,6 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
     beginJourney()
     paymentTodayCalculatorPage.enterAmount("123")
     paymentTodayCalculatorPage.clickContinue()
-    paymentSummaryPage.assertPageIsDisplayed
+    paymentSummaryPage.assertInitialPageIsDisplayed
   }
 }

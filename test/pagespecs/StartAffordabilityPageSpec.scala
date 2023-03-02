@@ -30,33 +30,33 @@ class StartAffordabilityPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
   }
 
   "language" in {
     beginJourney()
 
-    startAffordabilityPage.assertPageIsDisplayed
+    startAffordabilityPage.assertInitialPageIsDisplayed
 
     startAffordabilityPage.clickOnWelshLink()
-    startAffordabilityPage.assertPageIsDisplayed(Welsh)
+    startAffordabilityPage.assertInitialPageIsDisplayed(Welsh)
 
     startAffordabilityPage.clickOnEnglishLink()
-    startAffordabilityPage.assertPageIsDisplayed(English)
+    startAffordabilityPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {

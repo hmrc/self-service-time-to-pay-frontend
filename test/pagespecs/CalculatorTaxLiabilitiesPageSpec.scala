@@ -39,13 +39,13 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
 
   "language" in {
     beginJourney()
-    taxLiabilitiesPage.assertPageIsDisplayed
+    taxLiabilitiesPage.assertInitialPageIsDisplayed
 
     taxLiabilitiesPage.clickOnWelshLink()
-    taxLiabilitiesPage.assertPageIsDisplayed(Welsh)
+    taxLiabilitiesPage.assertInitialPageIsDisplayed(Welsh)
 
     taxLiabilitiesPage.clickOnEnglishLink()
-    taxLiabilitiesPage.assertPageIsDisplayed(English)
+    taxLiabilitiesPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {
@@ -55,10 +55,10 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
 
   "continue to payment-today" in {
     beginJourney()
-    taxLiabilitiesPage.assertPageIsDisplayed
+    taxLiabilitiesPage.assertInitialPageIsDisplayed
 
     taxLiabilitiesPage.clickOnStartNowButton()
-    paymentTodayQuestionPage.assertPageIsDisplayed
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed
   }
 
   object LateDebitCase {
