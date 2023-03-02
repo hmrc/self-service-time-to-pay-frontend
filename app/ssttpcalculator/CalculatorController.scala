@@ -168,7 +168,7 @@ class CalculatorController @Inject() (
       if (defaultPlanOptions.isEmpty) {
         Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
       } else {
-        Ok(views.calculate_instalments_form(
+        Ok(views.how_much_can_you_pay_each_month_form(
           routes.CalculatorController.submitCalculateInstalments(),
           selectPlanForm(minCustomAmount, maxCustomAmount),
           allPlanOptions,
@@ -198,7 +198,7 @@ class CalculatorController @Inject() (
         formWithErrors => {
           Future.successful(
             BadRequest(
-              views.calculate_instalments_form(
+              views.how_much_can_you_pay_each_month_form(
                 ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                 formWithErrors,
                 paymentPlanOptions,

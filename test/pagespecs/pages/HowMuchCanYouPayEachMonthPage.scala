@@ -23,7 +23,7 @@ import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
 
@@ -59,11 +59,6 @@ abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: W
   }
 
   def clickOnBackButton(): Unit = click on id("back-link")
-
-}
-
-class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends CalculatorInstalmentsPage(baseUrl) {
-  import WebBrowser._
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
