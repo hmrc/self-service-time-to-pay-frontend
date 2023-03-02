@@ -104,9 +104,9 @@ final case class Journey(
     requireIsEligible()
 
     require(maybeTaxpayer.isDefined, s"'taxpayer' has to be defined at this stage of a journey [$this]")
+    require(maybePaymentToday.isDefined, s"'maybePaymentToday' has to be defined at this stage of a journey [$this]")
     require(maybeIncome.isDefined, s"'maybeIncome' has to be defined at this stage of a journey [$this]")
     require(maybeSpending.isDefined, s"'maybeSpending has to be defined at this stage of a journey [$this]")
-    require(maybePaymentToday.isDefined, s"'maybePaymentToday' has to be defined at this stage of a journey [$this]")
     require(maybeSelectedPlanAmount.isDefined, s"'maybeRegularPlanAmountSelection' has to be defined at this stage of a journey [$this]")
     require(maybeArrangementDayOfMonth.isDefined, s"'maybeArrangementDayOfMonth' has to be defined at this stage of a journey [$this]")
   }
