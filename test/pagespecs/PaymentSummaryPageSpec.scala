@@ -40,13 +40,13 @@ class PaymentSummaryPageSpec extends ItSpec {
 
   "language" in {
     beginJourney()
-    paymentSummaryPage.assertPageIsDisplayed
+    paymentSummaryPage.assertInitialPageIsDisplayed
 
     paymentSummaryPage.clickOnWelshLink()
-    paymentSummaryPage.assertPageIsDisplayed(Welsh)
+    paymentSummaryPage.assertInitialPageIsDisplayed(Welsh)
 
     paymentSummaryPage.clickOnEnglishLink()
-    paymentSummaryPage.assertPageIsDisplayed(English)
+    paymentSummaryPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {
@@ -56,9 +56,9 @@ class PaymentSummaryPageSpec extends ItSpec {
 
   "continue to monthly payment amount" in {
     beginJourney()
-    paymentSummaryPage.assertPageIsDisplayed
+    paymentSummaryPage.assertInitialPageIsDisplayed
 
     paymentSummaryPage.clickContinue()
-    selectDatePage.assertPageIsDisplayed
+    selectDatePage.assertInitialPageIsDisplayed
   }
 }

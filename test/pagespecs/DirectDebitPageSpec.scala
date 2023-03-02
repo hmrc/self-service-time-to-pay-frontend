@@ -43,38 +43,38 @@ class DirectDebitPageSpec extends ItSpec {
     getBanksIsSuccessful()
 
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
+    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed()
     calculatorInstalmentsPage28thDay.selectAnOption()
     calculatorInstalmentsPage28thDay.clickContinue()
 
-    checkYourPaymentPlanPage.assertPageIsDisplayed()
+    checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
     checkYourPaymentPlanPage.clickContinue()
 
-    directDebitPage.assertPageIsDisplayed()
+    directDebitPage.assertInitialPageIsDisplayed()
   }
 
   "language" ignore {
     beginJourney()
 
     directDebitPage.clickOnWelshLink()
-    directDebitPage.assertPageIsDisplayed(Welsh)
+    directDebitPage.assertInitialPageIsDisplayed(Welsh)
 
     directDebitPage.clickOnEnglishLink()
-    directDebitPage.assertPageIsDisplayed(English)
+    directDebitPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" ignore {
@@ -129,7 +129,7 @@ class DirectDebitPageSpec extends ItSpec {
     BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBanksIsSuccessful()
     directDebitPage.clickContinue()
-    directDebitConfirmationPage.assertPageIsDisplayed()
+    directDebitConfirmationPage.assertInitialPageIsDisplayed()
   }
 
   "enter valid bank account given business partner not found succeeds" ignore {
@@ -138,6 +138,6 @@ class DirectDebitPageSpec extends ItSpec {
     BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     DirectDebitStub.getBanksBPNotFound(saUtr)
     directDebitPage.clickContinue()
-    directDebitConfirmationPage.assertPageIsDisplayed()
+    directDebitConfirmationPage.assertInitialPageIsDisplayed()
   }
 }

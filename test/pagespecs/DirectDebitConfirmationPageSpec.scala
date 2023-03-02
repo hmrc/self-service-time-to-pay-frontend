@@ -34,66 +34,66 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     getBanksIsSuccessful()
 
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
     startAffordabilityPage.clickContinue()
 
-    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
     addIncomeSpendingPage.clickOnAddChangeIncome()
 
-    yourMonthlyIncomePage.assertPageIsDisplayed
+    yourMonthlyIncomePage.assertInitialPageIsDisplayed
     yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
     yourMonthlyIncomePage.clickContinue()
 
     addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
     addIncomeSpendingPage.clickOnAddChangeSpending()
 
-    yourMonthlySpendingPage.assertPageIsDisplayed
+    yourMonthlySpendingPage.assertInitialPageIsDisplayed
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed
     calculatorInstalmentsPage28thDay.selectASpecificOption("50")
     calculatorInstalmentsPage28thDay.clickContinue()
 
-    checkYourPaymentPlanPage.assertPageIsDisplayed()
+    checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
     checkYourPaymentPlanPage.clickContinue()
 
-    aboutBankAccountPage.assertPageIsDisplayed()
+    aboutBankAccountPage.assertInitialPageIsDisplayed()
     aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
     aboutBankAccountPage.selectIsAccountHolderRadioButton(IsSoleSignatory.Yes)
     aboutBankAccountPage.clickContinue()
 
-    directDebitPage.assertPageIsDisplayed()
+    directDebitPage.assertInitialPageIsDisplayed()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
 
-    directDebitConfirmationPage.assertPageIsDisplayed()
+    directDebitConfirmationPage.assertInitialPageIsDisplayed()
   }
 
   "language" in {
     beginJourney()
-    directDebitConfirmationPage.assertPageIsDisplayed
+    directDebitConfirmationPage.assertInitialPageIsDisplayed
 
     directDebitConfirmationPage.clickOnWelshLink()
-    directDebitConfirmationPage.assertPageIsDisplayed(Welsh)
+    directDebitConfirmationPage.assertInitialPageIsDisplayed(Welsh)
 
     directDebitConfirmationPage.clickOnEnglishLink()
-    directDebitConfirmationPage.assertPageIsDisplayed(English)
+    directDebitConfirmationPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {
@@ -104,7 +104,7 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
   "change bank details" in {
     beginJourney()
     directDebitConfirmationPage.clickChangeButton()
-    aboutBankAccountPage.assertPageIsDisplayed
+    aboutBankAccountPage.assertInitialPageIsDisplayed
   }
 
   "click continue" in {
@@ -112,6 +112,6 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     DirectDebitStub.postPaymentPlan
     ArrangementStub.postTtpArrangement
     directDebitConfirmationPage.clickContinue()
-    termsAndConditionsPage.assertPageIsDisplayed
+    termsAndConditionsPage.assertInitialPageIsDisplayed
   }
 }

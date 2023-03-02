@@ -31,34 +31,34 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
     startAffordabilityPage.clickContinue()
 
-    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
     addIncomeSpendingPage.clickOnAddChangeIncome()
 
-    yourMonthlyIncomePage.assertPageIsDisplayed
+    yourMonthlyIncomePage.assertInitialPageIsDisplayed
     yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
     yourMonthlyIncomePage.clickContinue()
 
     addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
     addIncomeSpendingPage.clickOnAddChangeSpending()
 
-    yourMonthlySpendingPage.assertPageIsDisplayed
+    yourMonthlySpendingPage.assertInitialPageIsDisplayed
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
@@ -91,7 +91,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       }
     "displays three default options otherwise" in {
       beginJourney()
-      calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+      calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed
     }
   }
   "displays custom amount option" - {
@@ -106,10 +106,10 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     }
   }
   "custom amount entry" - {
-    "displays page with customer option at top when custom amount entered and continue pressed" in {
+    "displays page with custom option at top when custom amount entered and continue pressed" in {
       beginJourney()
 
-      calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+      calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed
 
       val customAmount = 280
       val planMonths = 18
@@ -119,7 +119,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.enterCustomAmount(customAmount.toString)
       calculatorInstalmentsPage28thDay.clickContinue()
 
-      calculatorInstalmentsPage28thDay.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+      calculatorInstalmentsPage28thDay.assertPageWithCustomAmountIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
     }
     "less than minimum displays error message" in {
       beginJourney()
@@ -176,10 +176,10 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
     beginJourney()
 
     calculatorInstalmentsPage28thDay.clickOnWelshLink()
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed(Welsh)
+    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed(Welsh)
 
     calculatorInstalmentsPage28thDay.clickOnEnglishLink()
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed(English)
+    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {
@@ -211,7 +211,7 @@ class CalculatorInstalmentsPageSpec extends ItSpec {
       calculatorInstalmentsPage28thDay.clickContinue()
       checkYourPaymentPlanPage.clickOnBackButton()
 
-      calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+      calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed
     }
     "selecting an option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
       beginJourney()

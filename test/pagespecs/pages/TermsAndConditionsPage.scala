@@ -28,7 +28,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
 
   override def path: String = "/pay-what-you-owe-in-instalments/arrangement/terms-and-conditions"
 
-  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
+  override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)

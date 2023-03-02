@@ -38,7 +38,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
     case Languages.Welsh   => s"Trefnu cynllun talu - GOV.UK"
   }
 
-  def assertPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+  def assertInitialPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
     pageTitle shouldBe expectedTitleStartPageOnly(expectedHeadingContent(lang), lang)
     val expectedLines = Expected.MainText().stripSpaces().split("\n")

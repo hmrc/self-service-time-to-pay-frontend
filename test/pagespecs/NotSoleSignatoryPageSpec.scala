@@ -24,13 +24,13 @@ class NotSoleSignatoryPageSpec extends ItSpec {
   "language" in {
 
     notSoleSignatoryPage.open()
-    notSoleSignatoryPage.assertPageIsDisplayed
+    notSoleSignatoryPage.assertInitialPageIsDisplayed
 
     notSoleSignatoryPage.clickOnWelshLink()
-    notSoleSignatoryPage.assertPageIsDisplayed(Welsh)
+    notSoleSignatoryPage.assertInitialPageIsDisplayed(Welsh)
 
     notSoleSignatoryPage.clickOnEnglishLink()
-    notSoleSignatoryPage.assertPageIsDisplayed(English)
+    notSoleSignatoryPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {

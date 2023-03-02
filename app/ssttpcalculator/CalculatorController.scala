@@ -160,7 +160,7 @@ class CalculatorController @Inject() (
         .headOption.fold(BigDecimal(1))(_.firstInstallment.amount).setScale(2, HALF_UP)
       val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
 
-      val allPlanOptions = maybePreviousCustomSelection(journey, defaultPlanOptions) match {
+      val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
         case None                 => defaultPlanOptions
         case Some(customSchedule) => Map((0, customSchedule)) ++ defaultPlanOptions
       }
@@ -174,8 +174,7 @@ class CalculatorController @Inject() (
           allPlanOptions,
           minCustomAmount,
           maxCustomAmount,
-          journey.maybePlanSelection
-        ))
+          journey.maybePlanSelection))
       }
     }
   }
@@ -205,8 +204,7 @@ class CalculatorController @Inject() (
                 paymentPlanOptions,
                 minCustomAmount,
                 maxCustomAmount,
-                journey.maybePlanSelection
-              ))
+                journey.maybePlanSelection))
           )
         },
         (validFormData: PlanSelection) => {
@@ -223,7 +221,7 @@ class CalculatorController @Inject() (
     }
   }
 
-  private def maybePreviousCustomSelection(
+  private def maybePreviousCustomAmount(
       journey:            Journey,
       defaultPlanOptions: Map[Int, PaymentSchedule]
   )(implicit request: Request[_]): Option[PaymentSchedule] = {

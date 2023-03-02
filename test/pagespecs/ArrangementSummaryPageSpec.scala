@@ -36,76 +36,76 @@ class ArrangementSummaryPageSpec extends ItSpec {
     ArrangementStub.postTtpArrangement
 
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
     startAffordabilityPage.clickContinue()
 
-    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
     addIncomeSpendingPage.clickOnAddChangeIncome()
 
-    yourMonthlyIncomePage.assertPageIsDisplayed
+    yourMonthlyIncomePage.assertInitialPageIsDisplayed
     yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
     yourMonthlyIncomePage.clickContinue()
 
     addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
     addIncomeSpendingPage.clickOnAddChangeSpending()
 
-    yourMonthlySpendingPage.assertPageIsDisplayed
+    yourMonthlySpendingPage.assertInitialPageIsDisplayed
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
-    calculatorInstalmentsPage28thDay.assertPageIsDisplayed
+    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed
     calculatorInstalmentsPage28thDay.selectASpecificOption("50")
     calculatorInstalmentsPage28thDay.clickContinue()
 
-    checkYourPaymentPlanPage.assertPageIsDisplayed()
+    checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
     checkYourPaymentPlanPage.clickContinue()
 
-    aboutBankAccountPage.assertPageIsDisplayed()
+    aboutBankAccountPage.assertInitialPageIsDisplayed()
     aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
     aboutBankAccountPage.selectIsAccountHolderRadioButton(IsSoleSignatory.Yes)
     aboutBankAccountPage.clickContinue()
 
-    directDebitPage.assertPageIsDisplayed()
+    directDebitPage.assertInitialPageIsDisplayed()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
 
-    directDebitConfirmationPage.assertPageIsDisplayed()
+    directDebitConfirmationPage.assertInitialPageIsDisplayed()
     directDebitConfirmationPage.clickContinue()
-    termsAndConditionsPage.assertPageIsDisplayed()
+    termsAndConditionsPage.assertInitialPageIsDisplayed()
   }
 
   "redirect user to summary page if user returns to calculator" in {
     beginJourney()
     termsAndConditionsPage.clickContinue()
     taxLiabilitiesPage.open()
-    arrangementSummaryPage.assertPageIsDisplayed()
+    arrangementSummaryPage.assertInitialPageIsDisplayed()
   }
 
   "language English" in {
     beginJourney()
     termsAndConditionsPage.clickContinue()
-    arrangementSummaryPage.assertPageIsDisplayed(English)
+    arrangementSummaryPage.assertInitialPageIsDisplayed(English)
   }
 
   "language Welsh" in {
     beginJourney()
     termsAndConditionsPage.clickOnWelshLink()
     termsAndConditionsPage.clickContinue()
-    arrangementSummaryPage.assertPageIsDisplayed(Welsh)
+    arrangementSummaryPage.assertInitialPageIsDisplayed(Welsh)
   }
 }

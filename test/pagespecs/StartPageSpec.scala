@@ -25,13 +25,13 @@ import uk.gov.hmrc.selfservicetimetopay.models.TotalDebtIsTooHigh
 class StartPageSpec extends ItSpec {
   "language" in {
     startPage.open()
-    startPage.assertPageIsDisplayed
+    startPage.assertInitialPageIsDisplayed
 
     startPage.clickOnWelshLink()
-    startPage.assertPageIsDisplayed(Welsh)
+    startPage.assertInitialPageIsDisplayed(Welsh)
 
     startPage.clickOnEnglishLink()
-    startPage.assertPageIsDisplayed(English)
+    startPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {
@@ -44,7 +44,7 @@ class StartPageSpec extends ItSpec {
     GgStub.signInPage(port)
     startPage.open()
     startPage.clickOnStartNowButton()
-    ggSignInPage.assertPageIsDisplayed
+    ggSignInPage.assertInitialPageIsDisplayed
   }
 
   "eligible" in {
@@ -56,7 +56,7 @@ class StartPageSpec extends ItSpec {
 
     startPage.open()
     startPage.clickOnStartNowButton()
-    taxLiabilitiesPage.assertPageIsDisplayed
+    taxLiabilitiesPage.assertInitialPageIsDisplayed
   }
 
   "not eligible (debt too large)" in {
@@ -67,6 +67,6 @@ class StartPageSpec extends ItSpec {
 
     startPage.open()
     startPage.clickOnStartNowButton()
-    debtTooLargePage.assertPageIsDisplayed
+    debtTooLargePage.assertInitialPageIsDisplayed
   }
 }

@@ -30,24 +30,24 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
     startAffordabilityPage.clickContinue()
 
-    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
   }
 
   "page is displayed when both income and spending are filled in" in {
@@ -79,19 +79,19 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
     "language" in {
       beginJourney()
 
-      addIncomeSpendingPage.assertPageIsDisplayed
+      addIncomeSpendingPage.assertInitialPageIsDisplayed
 
       addIncomeSpendingPage.clickOnWelshLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
       addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
       addIncomeSpendingPage.clickOnEnglishLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(English)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("2000")
       addIncomeSpendingPage.enterSpending("1500")
 
-      howMuchYouCouldAffordPage.assertPageIsDisplayed()
+      howMuchYouCouldAffordPage.assertInitialPageIsDisplayed()
     }
   }
 
@@ -99,14 +99,14 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
     "language" in {
       beginJourney()
 
-      addIncomeSpendingPage.assertPageIsDisplayed
+      addIncomeSpendingPage.assertInitialPageIsDisplayed
 
       addIncomeSpendingPage.clickOnWelshLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
       addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
       addIncomeSpendingPage.clickOnEnglishLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(English)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("2000")
       addIncomeSpendingPage.enterSpending("2000")
@@ -121,14 +121,14 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
     "language" in {
       beginJourney()
 
-      addIncomeSpendingPage.assertPageIsDisplayed
+      addIncomeSpendingPage.assertInitialPageIsDisplayed
 
       addIncomeSpendingPage.clickOnWelshLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
       addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
       addIncomeSpendingPage.clickOnEnglishLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(English)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("1000")
       addIncomeSpendingPage.enterSpending("2000")

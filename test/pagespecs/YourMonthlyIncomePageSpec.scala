@@ -31,24 +31,24 @@ class YourMonthlyIncomePageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
     startAffordabilityPage.clickContinue()
 
-    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
     addIncomeSpendingPage.clickOnAddChangeIncome()
   }
 
@@ -57,81 +57,81 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "without filling out benefits or other income" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("00.01")
         yourMonthlyIncomePage.clickContinue()
 
-        addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertInitialPageIsDisplayed()
       }
       "and filling out non-zero positive benefits but not other income" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
         yourMonthlyIncomePage.enterBenefits("0.01")
         yourMonthlyIncomePage.clickContinue()
 
-        addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertInitialPageIsDisplayed()
       }
       "and filling out non-zero positive other income but not benefits" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
         yourMonthlyIncomePage.enterOtherIncome("0.01")
         yourMonthlyIncomePage.clickContinue()
 
-        addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertInitialPageIsDisplayed()
       }
       "and filling out both non-zero positive benefits and other income" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("00.01")
         yourMonthlyIncomePage.enterBenefits("0.01")
         yourMonthlyIncomePage.enterOtherIncome("0.01")
         yourMonthlyIncomePage.clickContinue()
 
-        addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertInitialPageIsDisplayed()
       }
     }
     "adding benefit" - {
       "without filling out monthly income or other income" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterBenefits("00.01")
         yourMonthlyIncomePage.clickContinue()
 
-        addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertInitialPageIsDisplayed()
       }
       "and filling out non-zero positive other income but not monthly income" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
         yourMonthlyIncomePage.enterBenefits("0.01")
         yourMonthlyIncomePage.clickContinue()
 
-        addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertInitialPageIsDisplayed()
       }
     }
     "adding other income" - {
       "without filling out monthly income or benefits" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterOtherIncome("00.01")
         yourMonthlyIncomePage.clickContinue()
 
-        addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertInitialPageIsDisplayed()
       }
     }
   }
@@ -141,7 +141,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "displays error message" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("word")
         yourMonthlyIncomePage.clickContinue()
@@ -151,7 +151,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "retains value entered" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("word")
         yourMonthlyIncomePage.clickContinue()
@@ -164,7 +164,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "displays error message" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterBenefits("word")
         yourMonthlyIncomePage.clickContinue()
@@ -174,7 +174,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "retains value entered" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterBenefits("word")
         yourMonthlyIncomePage.clickContinue()
@@ -186,7 +186,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "displays error message" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterOtherIncome("word")
         yourMonthlyIncomePage.clickContinue()
@@ -197,7 +197,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "retains value entered" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterOtherIncome("word")
         yourMonthlyIncomePage.clickContinue()
@@ -212,7 +212,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "error message" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
         yourMonthlyIncomePage.enterBenefits("0.01")
@@ -224,7 +224,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "retains values entered" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
         yourMonthlyIncomePage.enterBenefits("0.01")
@@ -242,7 +242,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "error message" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterBenefits("-0.01")
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
@@ -254,7 +254,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "retains values entered" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterBenefits("-0.01")
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
@@ -272,7 +272,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "error message" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterOtherIncome("-0.01")
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
@@ -284,7 +284,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "retains values entered" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterOtherIncome("-0.01")
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
@@ -304,7 +304,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "error message" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("0.0111")
         yourMonthlyIncomePage.enterBenefits("0.01")
@@ -316,7 +316,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "retains values entered" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterMonthlyIncome("0.011")
         yourMonthlyIncomePage.enterBenefits("0.01")
@@ -334,7 +334,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "error message" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterBenefits("0.011")
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
@@ -346,7 +346,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "retains values entered" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterBenefits("0.011")
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
@@ -364,7 +364,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "error message" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterOtherIncome("0.011")
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
@@ -376,7 +376,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       "retains values entered" in {
         beginJourney()
 
-        yourMonthlyIncomePage.assertPageIsDisplayed
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
         yourMonthlyIncomePage.enterOtherIncome("0.011")
         yourMonthlyIncomePage.enterMonthlyIncome("0.01")
@@ -395,7 +395,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
     "and displays error message" in {
       beginJourney()
 
-      yourMonthlyIncomePage.assertPageIsDisplayed
+      yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
       yourMonthlyIncomePage.enterMonthlyIncome("0")
       yourMonthlyIncomePage.enterBenefits("0")
@@ -408,7 +408,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
     "retains values entered" in {
       beginJourney()
 
-      yourMonthlyIncomePage.assertPageIsDisplayed
+      yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
       yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
       yourMonthlyIncomePage.enterBenefits("-0.01")
@@ -424,13 +424,13 @@ class YourMonthlyIncomePageSpec extends ItSpec {
   "language" in {
     beginJourney()
 
-    yourMonthlyIncomePage.assertPageIsDisplayed
+    yourMonthlyIncomePage.assertInitialPageIsDisplayed
 
     yourMonthlyIncomePage.clickOnWelshLink()
-    yourMonthlyIncomePage.assertPageIsDisplayed(Welsh)
+    yourMonthlyIncomePage.assertInitialPageIsDisplayed(Welsh)
 
     yourMonthlyIncomePage.clickOnEnglishLink()
-    yourMonthlyIncomePage.assertPageIsDisplayed(English)
+    yourMonthlyIncomePage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {

@@ -65,20 +65,20 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     TableDrivenPropertyChecks.forAll(listOfIneligibleReasons) { (reason, reasonObject, pageAsString, page) =>
       s"$pageAsString should be displayed when user has ineligible reason: [$reason]" in {
         beginJourney(reasonObject)
-        page.assertPageIsDisplayed
+        page.assertInitialPageIsDisplayed
         page.backButtonHref shouldBe None
       }
 
       s"OPS-5822: User can go back from the /call-us page (via browser back button) and try again but still end up on the /call-us page [$reason]" in {
         beginJourney(reasonObject)
-        page.assertPageIsDisplayed
+        page.assertInitialPageIsDisplayed
 
         webDriver.navigate().back()
         startPage.clickOnStartNowButton()
 
         // Bug OPS-5822 would have shown a technical difficulties page here rather than /call-us because of a
         // failure to deserialise the reason in the journey object in the db
-        page.assertPageIsDisplayed
+        page.assertInitialPageIsDisplayed
       }
     }
   }
@@ -91,7 +91,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
+      youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed
     }
 
     "show you_need_to_request_access_to_self_assessment page when the user has no activated sa enrolments" in {
@@ -100,7 +100,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
       GgStub.signInPage(port)
       startPage.open()
       startPage.clickOnStartNowButton()
-      youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed
+      youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed
     }
   }
 }
