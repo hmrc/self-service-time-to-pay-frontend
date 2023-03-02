@@ -16,8 +16,7 @@
 
 package testsupport.testdata
 
-import java.time.LocalDate
-
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import play.api.libs.json.JsObject
 import timetopaytaxpayer.cor.model._
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
@@ -33,6 +32,10 @@ object TdAll {
   val frozenDateString: String = "2019-11-25"
   val aYearAgo: String = "2018-11-25"
   val almostAYearAgo: String = "2018-11-26"
+
+  val frozenDateStringLong: String = "2019-11-25T13:41:01.666"
+  val localDateTime: LocalDateTime = LocalDateTime.parse(frozenDateStringLong)
+  val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
 
   private val debit1Amount = 2500
   private val debit2Amount = 2400
