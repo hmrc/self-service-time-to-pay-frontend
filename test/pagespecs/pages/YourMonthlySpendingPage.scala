@@ -117,7 +117,7 @@ class YourMonthlySpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) e
            |Utilities
            |For example, energy, water, phone, broadband
            |Debt repayments
-           |For example, credit card, loan, court order payments
+           |For example, loan, court order payments
            |Travel
            |For example, vehicles, fuel, season ticket
            |Childcare costs
@@ -142,7 +142,7 @@ class YourMonthlySpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) e
            |Cyfleustodau
            |Er enghraifft, ynni, dŵr, ffôn, band eang
            |Ad-daliadau dyledion
-           |Er enghraifft, cerdyn credyd, benthyciad, taliadau Gorchymyn Llys
+           |Er enghraifft, benthyciad, taliadau Gorchymyn Llys
            |Teithio
            |Er enghraifft, cerbydau, tanwydd, tocynnau tymor
            |Costau gofal plant
