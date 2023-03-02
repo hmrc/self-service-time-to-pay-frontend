@@ -190,7 +190,7 @@ ssttp.affordability.your-monthly-spending.error.two-decimals-only.insurance = Am
 
 ssttp.affordability.your-monthly-spending.error.non-numerals.groceries = Enter numbers only for groceries
 ssttp.affordability.your-monthly-spending.error.not-negative.groceries= Enter a positive number only for groceries
-ssttp.affordability.your-monthly-spending.error.two-decimals-groceries.housing = Amount must not contain more than 2 decimal places for groceries
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.groceries = Amount must not contain more than 2 decimal places for groceries
 
 ssttp.affordability.your-monthly-spending.error.non-numerals.health = Enter numbers only for health
 ssttp.affordability.your-monthly-spending.error.not-negative.health= Enter a positive number only for health

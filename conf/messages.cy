@@ -156,11 +156,11 @@ ssttp.affordability.your-monthly-spending.total = Cyfanswm y gwariant
 #Errors for spending form
 ssttp.affordability.your-monthly-spending.error.non-numerals.housing = Nodwch rifau yn unig ar gyfer tai
 ssttp.affordability.your-monthly-spending.error.not-negative.housing = Nodwch rif positif yn unig ar gyfer tai
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.housing = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfertai
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.housing = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer tai
 
 ssttp.affordability.your-monthly-spending.error.non-numerals.pension-contributions = Nodwch rifau yn unig ar gyfer cyfraniadau pensiwn
 ssttp.affordability.your-monthly-spending.error.not-negative.pension-contributions = Nodwch rif positif yn unig ar gyfer cyfraniadau pensiwn
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.pension-contributions = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar cyfraniadau pensiwn
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.pension-contributions = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer cyfraniadau pensiwn
 
 ssttp.affordability.your-monthly-spending.error.non-numerals.council-tax = Nodwch rifau yn unig ar gyfer Treth Gyngor
 ssttp.affordability.your-monthly-spending.error.not-negative.council-tax = Nodwch rif positif yn unig ar gyfer Treth Gyngor
@@ -188,7 +188,7 @@ ssttp.affordability.your-monthly-spending.error.two-decimals-only.insurance = Rh
 
 ssttp.affordability.your-monthly-spending.error.non-numerals.groceries = Nodwch rifau yn unig ar gyfer nwyddau groser
 ssttp.affordability.your-monthly-spending.error.not-negative.groceries= Nodwch rif positif yn unig ar gyfer nwyddau groser
-ssttp.affordability.your-monthly-spending.error.two-decimals-groceries.housing = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyferg nwyddau groser
+ssttp.affordability.your-monthly-spending.error.two-decimals-only.groceries = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer nwyddau groser
 
 ssttp.affordability.your-monthly-spending.error.non-numerals.health = Nodwch rifau yn unig ar gyfer iechyd
 ssttp.affordability.your-monthly-spending.error.not-negative.health= Nodwch rif positif yn unig ar gyfer iechyd
