@@ -114,7 +114,7 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
 
       howMuchYouCouldAffordPage.clickContinue()
 
-      weCannotAgreeYourPaymentPlanPage.assertPageIsDisplayed()
+      weCannotAgreeYourPaymentPlanPage.assertPageIsDisplayed(English)
     }
   }
 
@@ -136,7 +136,8 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
 
       howMuchYouCouldAffordPage.clickContinue()
 
-      weCannotAgreeYourPaymentPlanPage.assertPageIsDisplayed()
+      weCannotAgreeYourPaymentPlanPage.clickOnWelshLink()
+      weCannotAgreeYourPaymentPlanPage.assertPageIsDisplayed(Welsh)
     }
   }
 
