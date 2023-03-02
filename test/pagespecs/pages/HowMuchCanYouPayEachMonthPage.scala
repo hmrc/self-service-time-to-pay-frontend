@@ -23,7 +23,7 @@ import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers._
 
-abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
 
@@ -60,12 +60,7 @@ abstract class CalculatorInstalmentsPage(baseUrl: BaseUrl)(implicit webDriver: W
 
   def clickOnBackButton(): Unit = click on id("back-link")
 
-}
-
-class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends CalculatorInstalmentsPage(baseUrl) {
-  import WebBrowser._
-
-  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
+  override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
@@ -102,8 +97,23 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
   }
 
   def customAmountOptionIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
-    val expectedLines = Expected.MainText.CustomAmountOption().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText.CustomOption().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
+    ()
+  }
+
+  def assertPageWithCustomAmountIsDisplayed(amount:   String,
+                                            months:   Option[String] = None,
+                                            interest: Option[String] = None
+  )(implicit lang: Language = English): Unit = probing {
+    readPath() shouldBe path
+    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
+
+    val expectedLines = Expected.MainText.CustomAmountDisplayed(amount).stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+
+    optionIsDisplayed(amount, months, interest)
     ()
   }
 
@@ -188,18 +198,18 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
           """.stripMargin
       }
 
-      object CustomAmountOption {
+      object CustomOption {
         def apply()(implicit language: Language): String = language match {
-          case English => customAmountOptionTextEnglish
-          case Welsh   => customAmountOptionTextWelsh
+          case English => customtOptionTextEnglish
+          case Welsh   => customOptionTextWelsh
         }
 
-        private val customAmountOptionTextEnglish =
+        private val customtOptionTextEnglish =
           s"""A different monthly amount
              |Enter an amount that is at least £250 but no more than £4,900
           """.stripMargin
 
-        private val customAmountOptionTextWelsh =
+        private val customOptionTextWelsh =
           s"""Swm misol gwahanol
              |Rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,900
           """.stripMargin
@@ -239,6 +249,21 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
           s"""£$amount y mis, am $months mis
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £$interest
           """.stripMargin
+      }
+
+      object CustomAmountDisplayed {
+        def apply(amount: String)(implicit language: Language): String = language match {
+          case English => customAmountTextEnglish(amount)
+          case Welsh   => customAmountTextWelsh(amount)
+        }
+
+        private def customAmountTextEnglish(amount: String) =
+          s"""You have chosen to pay £$amount per month. Your final monthly payment may be more or less if the interest rate changes.
+      """.stripMargin
+
+        private def customAmountTextWelsh(amount: String) =
+          s"""Rydych wedi dewis talu £$amount y mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+      """.stripMargin
       }
     }
 
@@ -330,83 +355,3 @@ class CalculatorInstalmentsPage28thDay(baseUrl: BaseUrl)(implicit webDriver: Web
     }
   }
 }
-
-//class CalculatorInstalmentsPage11thDay(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends CalculatorInstalmentsPage(baseUrl) {
-//
-//  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
-//    readPath() shouldBe path
-//    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-//    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-//
-//    // TODO [OPS-8650]: Update Expected.MainText to reflect change to payment plan calculations and reinstate test
-//    //    val expectedLines = Expected.MainText().stripSpaces().split("\n")
-//    //    assertContentMatchesExpectedLines(expectedLines)
-//    ()
-//  }
-//
-//  object Expected {
-//
-//    object GlobalHeaderText {
-//
-//      def apply()(implicit language: Language): String = language match {
-//        case English => globalHeaderTextEnglish
-//        case Welsh   => globalHeaderTextWelsh
-//      }
-//
-//      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
-//
-//      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
-//    }
-//
-//    object MainText {
-//      def apply()(implicit language: Language): String = language match {
-//        case English => mainTextEnglish
-//        case Welsh   => mainTextWelsh
-//      }
-//
-//      private val mainTextEnglish =
-//        s"""How many months do you want to pay over?
-//           |2 months at £2,450
-//           |Total interest:	£13.74
-//           |Base rate + 2.5%	added to the final payment
-//           |Total paid:	£4,913.74
-//           |3 months at £1,633.33
-//           |Total interest:	£20.51
-//           |Base rate + 2.5%	added to the final payment
-//           |Total paid:	£4,920.51
-//           |4 months at £1,225
-//           |Total interest:	£27.05
-//           |Base rate + 2.5%	added to the final payment
-//           |Total paid:	£4,927.05
-//           |How we calculate interest
-//           |We only charge interest on overdue amounts.
-//           |We charge the Bank of England base rate plus 2.5%, calculated as simple interest.
-//           |If the interest rate changes during your plan, your monthly payments will not change. If we need to, we'll settle the difference at the end of the plan.
-//           |Continue
-//           """.stripMargin
-//
-//      private val mainTextWelsh =
-//        s"""Dros sawl mis yr hoffech dalu?
-//           |2 o fisoedd ar £2,450
-//           |Cyfanswm y llog:	£13.74
-//           |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-//           |Cyfanswm a dalwyd:	£4,913.74
-//           |3 o fisoedd ar £1,633.33
-//           |Cyfanswm y llog:	£20.51
-//           |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-//           |Cyfanswm a dalwyd:	£4,920.51
-//           |4 o fisoedd ar £1,225
-//           |Cyfanswm y llog:	£27.05
-//           |Cyfradd sylfaenol + 2.5%	wedi’i ychwanegu at y taliad terfynol
-//           |Cyfanswm a dalwyd:	£4,927.05
-//           |Sut rydym yn cyfrifo llog
-//           |Rydym yn codi llog ar symiau hwyr yn unig.
-//           |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
-//           |Os bydd y gyfradd llog yn newid yn ystod eich cynllun, ni fydd eich taliadau misol yn newid. Os bydd angen, byddwn yn setlo’r gwahaniaeth ar ddiwedd y cynllun.
-//           |Yn eich blaen
-//        """.stripMargin
-//    }
-//
-//
-//  }
-//}

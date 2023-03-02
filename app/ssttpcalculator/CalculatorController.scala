@@ -160,7 +160,7 @@ class CalculatorController @Inject() (
         .headOption.fold(BigDecimal(1))(_.firstInstallment.amount).setScale(2, HALF_UP)
       val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
 
-      val allPlanOptions = maybePreviousCustomSelection(journey, defaultPlanOptions) match {
+      val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
         case None                 => defaultPlanOptions
         case Some(customSchedule) => Map((0, customSchedule)) ++ defaultPlanOptions
       }
@@ -168,14 +168,13 @@ class CalculatorController @Inject() (
       if (defaultPlanOptions.isEmpty) {
         Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
       } else {
-        Ok(views.calculate_instalments_form(
+        Ok(views.how_much_can_you_pay_each_month_form(
           routes.CalculatorController.submitCalculateInstalments(),
           selectPlanForm(minCustomAmount, maxCustomAmount),
           allPlanOptions,
           minCustomAmount,
           maxCustomAmount,
-          journey.maybePlanSelection
-        ))
+          journey.maybePlanSelection))
       }
     }
   }
@@ -199,14 +198,13 @@ class CalculatorController @Inject() (
         formWithErrors => {
           Future.successful(
             BadRequest(
-              views.calculate_instalments_form(
+              views.how_much_can_you_pay_each_month_form(
                 ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                 formWithErrors,
                 paymentPlanOptions,
                 minCustomAmount,
                 maxCustomAmount,
-                journey.maybePlanSelection
-              ))
+                journey.maybePlanSelection))
           )
         },
         (validFormData: PlanSelection) => {
@@ -223,7 +221,7 @@ class CalculatorController @Inject() (
     }
   }
 
-  private def maybePreviousCustomSelection(
+  private def maybePreviousCustomAmount(
       journey:            Journey,
       defaultPlanOptions: Map[Int, PaymentSchedule]
   )(implicit request: Request[_]): Option[PaymentSchedule] = {

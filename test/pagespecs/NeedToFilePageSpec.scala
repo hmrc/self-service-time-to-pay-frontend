@@ -24,13 +24,13 @@ class NeedToFilePageSpec extends ItSpec {
   "language" in {
 
     needToFilePage.open()
-    needToFilePage.assertPageIsDisplayed
+    needToFilePage.assertInitialPageIsDisplayed
 
     needToFilePage.clickOnWelshLink()
-    needToFilePage.assertPageIsDisplayed(Welsh)
+    needToFilePage.assertInitialPageIsDisplayed(Welsh)
 
     needToFilePage.clickOnEnglishLink()
-    needToFilePage.assertPageIsDisplayed(English)
+    needToFilePage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {

@@ -30,24 +30,24 @@ class YourSpendingPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
     startAffordabilityPage.clickContinue()
 
-    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
     addIncomeSpendingPage.clickOnAddChangeSpending()
   }
 
@@ -55,11 +55,11 @@ class YourSpendingPageSpec extends ItSpec {
     "adding housing" - {
       "without filling out any other field" in {
         beginJourney()
-        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.assertInitialPageIsDisplayed
         yourMonthlySpendingPage.enterHousing("0.01")
         yourMonthlySpendingPage.clickContinue()
 
-        addIncomeSpendingPage.assertPageIsDisplayed()
+        addIncomeSpendingPage.assertInitialPageIsDisplayed()
       }
     }
   }
@@ -68,14 +68,14 @@ class YourSpendingPageSpec extends ItSpec {
     "non-numeric housing spending" - {
       "displays error message" in {
         beginJourney()
-        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.assertInitialPageIsDisplayed
         yourMonthlySpendingPage.enterHousing("nonNumerals")
         yourMonthlySpendingPage.clickContinue()
         yourMonthlySpendingPage.assertNonNumericErrorIsDisplayed
       }
       "retains value entered" in {
         beginJourney()
-        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.assertInitialPageIsDisplayed
         yourMonthlySpendingPage.enterHousing("nonNumerals")
         yourMonthlySpendingPage.clickContinue()
         yourMonthlySpendingPage.assertHousingValueIsDisplayed("nonNumerals")
@@ -88,14 +88,14 @@ class YourSpendingPageSpec extends ItSpec {
     "negative housing spending" - {
       "displays error message" in {
         beginJourney()
-        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.assertInitialPageIsDisplayed
         yourMonthlySpendingPage.enterHousing("-10")
         yourMonthlySpendingPage.clickContinue()
         yourMonthlySpendingPage.assertNegativeNumberErrorIsDisplayed
       }
       "retains value entered" in {
         beginJourney()
-        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.assertInitialPageIsDisplayed
         yourMonthlySpendingPage.enterHousing("-10")
         yourMonthlySpendingPage.clickContinue()
         yourMonthlySpendingPage.assertHousingValueIsDisplayed("-10")
@@ -108,14 +108,14 @@ class YourSpendingPageSpec extends ItSpec {
     "too many decimals in housing spending" - {
       "displays error message" in {
         beginJourney()
-        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.assertInitialPageIsDisplayed
         yourMonthlySpendingPage.enterHousing("10.123")
         yourMonthlySpendingPage.clickContinue()
         yourMonthlySpendingPage.assertTooManyDecimalsErrorIsDisplayed
       }
       "retains value entered" in {
         beginJourney()
-        yourMonthlySpendingPage.assertPageIsDisplayed
+        yourMonthlySpendingPage.assertInitialPageIsDisplayed
         yourMonthlySpendingPage.enterHousing("10.123")
         yourMonthlySpendingPage.clickContinue()
         yourMonthlySpendingPage.assertHousingValueIsDisplayed("10.123")
@@ -126,11 +126,11 @@ class YourSpendingPageSpec extends ItSpec {
 
   "language" in {
     beginJourney()
-    yourMonthlySpendingPage.assertPageIsDisplayed
+    yourMonthlySpendingPage.assertInitialPageIsDisplayed
     yourMonthlySpendingPage.clickOnWelshLink()
-    yourMonthlySpendingPage.assertPageIsDisplayed(Welsh)
+    yourMonthlySpendingPage.assertInitialPageIsDisplayed(Welsh)
     yourMonthlySpendingPage.clickOnEnglishLink()
-    yourMonthlySpendingPage.assertPageIsDisplayed(English)
+    yourMonthlySpendingPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {

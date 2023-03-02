@@ -34,24 +34,24 @@ class AddIncomeSpendingPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
     startAffordabilityPage.clickContinue()
 
-    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
     addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed
     addIncomeSpendingPage.assertAddSpendingLinkIsDisplayed
   }
@@ -73,7 +73,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
   "add income button goes to 'Your monthly income' page" in {
     beginJourney()
 
-    addIncomeSpendingPage.assertPageIsDisplayed
+    addIncomeSpendingPage.assertInitialPageIsDisplayed
     addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed
 
     addIncomeSpendingPage.clickOnAddChangeIncome()
@@ -220,7 +220,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
   "add spending button goes to 'Your monthly spending' page" in {
     beginJourney()
 
-    addIncomeSpendingPage.assertPageIsDisplayed
+    addIncomeSpendingPage.assertInitialPageIsDisplayed
     addIncomeSpendingPage.assertAddSpendingLinkIsDisplayed
 
     addIncomeSpendingPage.clickOnAddChangeSpending()
@@ -245,14 +245,14 @@ class AddIncomeSpendingPageSpec extends ItSpec {
   "language" in {
     beginJourney()
 
-    addIncomeSpendingPage.assertPageIsDisplayed
+    addIncomeSpendingPage.assertInitialPageIsDisplayed
 
     addIncomeSpendingPage.clickOnWelshLink()
-    addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+    addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
     addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
     addIncomeSpendingPage.clickOnEnglishLink()
-    addIncomeSpendingPage.assertPageIsDisplayed(English)
+    addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
     addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(English)
 
   }

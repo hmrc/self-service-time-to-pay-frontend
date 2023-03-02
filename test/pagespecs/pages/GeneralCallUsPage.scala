@@ -26,7 +26,7 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
 
   override def path: String = "/pay-what-you-owe-in-instalments/eligibility/call-us"
 
-  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
+  override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
@@ -64,7 +64,7 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
         """Please call us
           |You are not eligible to set up a payment plan online.
           |
-          |For further support you can contact us on 0300 123 1813 to speak to an adviser.
+          |For further support, you can contact us on 0300 123 1813 to speak to an adviser.
           |
           |Before you call, make sure you have:
           |information on any savings or investments you have

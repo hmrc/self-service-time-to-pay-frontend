@@ -30,47 +30,47 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
     GgStub.signInPage(port)
     getBanksIsSuccessful()
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed()
+    selectDatePage.assertInitialPageIsDisplayed()
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    startAffordabilityPage.assertPageIsDisplayed()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
     startAffordabilityPage.clickContinue()
 
-    addIncomeSpendingPage.assertPageIsDisplayed()
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
   }
 
   "when income is higher than spending" - {
     "language" in {
       beginJourney()
 
-      addIncomeSpendingPage.assertPageIsDisplayed
+      addIncomeSpendingPage.assertInitialPageIsDisplayed
 
       addIncomeSpendingPage.clickOnWelshLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
       addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
       addIncomeSpendingPage.clickOnEnglishLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(English)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("2000")
       addIncomeSpendingPage.enterSpending("1500")
 
-      howMuchYouCouldAffordPage.assertPageIsDisplayed()
+      howMuchYouCouldAffordPage.assertInitialPageIsDisplayed()
 
       howMuchYouCouldAffordPage.clickContinue()
 
-      calculatorInstalmentsPage28thDay.assertPageIsDisplayed()
+      calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed()
     }
   }
 
@@ -78,21 +78,21 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
     "language" in {
       beginJourney()
 
-      addIncomeSpendingPage.assertPageIsDisplayed
+      addIncomeSpendingPage.assertInitialPageIsDisplayed
 
       addIncomeSpendingPage.clickOnWelshLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
       addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
       addIncomeSpendingPage.clickOnEnglishLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(English)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("2000")
       addIncomeSpendingPage.enterSpending("2000")
 
       howMuchYouCouldAffordPage.clickContinue()
 
-      weCannotAgreeYourPaymentPlanPage.assertPageIsDisplayed()
+      weCannotAgreeYourPaymentPlanPage.assertInitialPageIsDisplayed()
     }
   }
 
@@ -100,21 +100,21 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
     "language" in {
       beginJourney()
 
-      addIncomeSpendingPage.assertPageIsDisplayed
+      addIncomeSpendingPage.assertInitialPageIsDisplayed
 
       addIncomeSpendingPage.clickOnWelshLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
       addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
       addIncomeSpendingPage.clickOnEnglishLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(English)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("10")
       addIncomeSpendingPage.enterSpending("2")
 
       howMuchYouCouldAffordPage.clickContinue()
 
-      weCannotAgreeYourPaymentPlanPage.assertPageIsDisplayed(English)
+      weCannotAgreeYourPaymentPlanPage.assertInitialPageIsDisplayed()
     }
   }
 
@@ -122,14 +122,14 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
     "language" in {
       beginJourney()
 
-      addIncomeSpendingPage.assertPageIsDisplayed
+      addIncomeSpendingPage.assertInitialPageIsDisplayed
 
       addIncomeSpendingPage.clickOnWelshLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
       addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
       addIncomeSpendingPage.clickOnEnglishLink()
-      addIncomeSpendingPage.assertPageIsDisplayed(English)
+      addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("1000")
       addIncomeSpendingPage.enterSpending("2000")
@@ -137,20 +137,20 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
       howMuchYouCouldAffordPage.clickContinue()
 
       weCannotAgreeYourPaymentPlanPage.clickOnWelshLink()
-      weCannotAgreeYourPaymentPlanPage.assertPageIsDisplayed(Welsh)
+      weCannotAgreeYourPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
     }
   }
 
   "back button" in {
     beginJourney()
-    addIncomeSpendingPage.assertPageIsDisplayed
+    addIncomeSpendingPage.assertInitialPageIsDisplayed
 
     addIncomeSpendingPage.clickOnWelshLink()
-    addIncomeSpendingPage.assertPageIsDisplayed(Welsh)
+    addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
     addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
 
     addIncomeSpendingPage.clickOnEnglishLink()
-    addIncomeSpendingPage.assertPageIsDisplayed(English)
+    addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
     addIncomeSpendingPage.enterIncome("1000")
     addIncomeSpendingPage.enterSpending("2000")

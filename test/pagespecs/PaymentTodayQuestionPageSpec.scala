@@ -36,13 +36,13 @@ class PaymentTodayQuestionPageSpec extends ItSpec {
 
   "language" in {
     beginJourney()
-    paymentTodayQuestionPage.assertPageIsDisplayed
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed
 
     paymentTodayQuestionPage.clickOnWelshLink()
-    paymentTodayQuestionPage.assertPageIsDisplayed(Welsh)
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed(Welsh)
 
     paymentTodayQuestionPage.clickOnEnglishLink()
-    paymentTodayQuestionPage.assertPageIsDisplayed(English)
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {
@@ -52,22 +52,22 @@ class PaymentTodayQuestionPageSpec extends ItSpec {
 
   "select yes and go to calculator payment-today" in {
     beginJourney()
-    paymentTodayQuestionPage.assertPageIsDisplayed
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed
 
     paymentTodayQuestionPage.selectRadioButton(true)
     paymentTodayQuestionPage.clickContinue()
 
-    paymentTodayCalculatorPage.assertPageIsDisplayed
+    paymentTodayCalculatorPage.assertInitialPageIsDisplayed
   }
 
   "select no and go to monthlyPaymentAmount" in {
     beginJourney()
-    paymentTodayQuestionPage.assertPageIsDisplayed
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed
 
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
-    selectDatePage.assertPageIsDisplayed
+    selectDatePage.assertInitialPageIsDisplayed
   }
 }
 

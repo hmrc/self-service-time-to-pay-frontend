@@ -30,7 +30,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
       allEnrolments: Option[Set[Enrolment]] = Some(Set(TdAll.saEnrolment))
   ): Unit = {
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     AuthStub.authorise(utr, allEnrolments)
 
     ()
@@ -49,7 +49,7 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
 
   def startNowAndAssertRequestToSA(): Unit = {
     startPage.clickOnStartNowButton()
-    youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed()
+    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed()
   }
 
   private val requestSaScenarios = List(
@@ -63,9 +63,9 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     begin()
     startNowAndAssertRequestToSA()
     youNeedToRequestAccessToSelfAssessment.clickOnWelshLink()
-    youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed(Languages.Welsh)
+    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed(Languages.Welsh)
     youNeedToRequestAccessToSelfAssessment.clickOnEnglishLink()
-    youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed(Languages.English)
+    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed(Languages.English)
   }
 
   "back button" in {
@@ -91,18 +91,18 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
       AddTaxesFeStub.enrolForSaStubbedPage()
 
       youNeedToRequestAccessToSelfAssessment.clickTheButton()
-      enrolForSaPage.assertPageIsDisplayed()
+      enrolForSaPage.assertInitialPageIsDisplayed()
     }
   }
 
   "click on the call to action and navigate call us page if auth sends no credentials/providerId" in {
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     AuthStub.authorise(allEnrolments = None, credentials = None)
     startPage.clickOnStartNowButton()
-    youNeedToRequestAccessToSelfAssessment.assertPageIsDisplayed()
+    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed()
     youNeedToRequestAccessToSelfAssessment.clickTheButton()
-    notEnrolledPage.assertPageIsDisplayed()
+    notEnrolledPage.assertInitialPageIsDisplayed()
   }
 
   private implicit def toOption[T](t: T): Option[T] = Some(t)

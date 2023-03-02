@@ -24,13 +24,13 @@ class DebtTooLargePageSpec extends ItSpec {
   "language" in {
 
     debtTooLargePage.open()
-    debtTooLargePage.assertPageIsDisplayed
+    debtTooLargePage.assertInitialPageIsDisplayed
 
     debtTooLargePage.clickOnWelshLink()
-    debtTooLargePage.assertPageIsDisplayed(Welsh)
+    debtTooLargePage.assertInitialPageIsDisplayed(Welsh)
 
     debtTooLargePage.clickOnEnglishLink()
-    debtTooLargePage.assertPageIsDisplayed(English)
+    debtTooLargePage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {

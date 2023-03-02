@@ -32,13 +32,13 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     getBanksIsSuccessful()
 
     startPage.open()
-    startPage.assertPageIsDisplayed()
+    startPage.assertInitialPageIsDisplayed()
     startPage.clickOnStartNowButton()
 
-    taxLiabilitiesPage.assertPageIsDisplayed()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed()
     taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertPageIsDisplayed()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
@@ -46,13 +46,13 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
 
   "language" in {
     beginJourney()
-    selectDatePage.assertPageIsDisplayed(English)
+    selectDatePage.assertInitialPageIsDisplayed(English)
 
     selectDatePage.clickOnWelshLink()
-    selectDatePage.assertPageIsDisplayed(Welsh)
+    selectDatePage.assertInitialPageIsDisplayed(Welsh)
 
     selectDatePage.clickOnEnglishLink()
-    selectDatePage.assertPageIsDisplayed(English)
+    selectDatePage.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {

@@ -32,7 +32,7 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
   import WebBrowser._
   override def path: String = "/pay-what-you-owe-in-instalments/add-income-spending"
 
-  override def assertPageIsDisplayed(implicit lang: Language): Unit = probing {
+  override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
