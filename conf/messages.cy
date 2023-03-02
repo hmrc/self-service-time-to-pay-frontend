@@ -277,6 +277,7 @@ ssttp.calculator.results.section.cannot-afford.title = Nid wyf yn gallu fforddio
 ssttp.calculator.results.section.cannot-afford.p.1 = Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar
 ssttp.calculator.results.section.cannot-afford.p.2 = 0300 200 1900
 ssttp.calculator.results.section.cannot-afford.p.3 = i drafod eich opsiynau.
+ssttp.calculator.results.p1.custom-amount = Rydych wedi dewis talu {0} y mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
 ssttp.calculator.results.option.other.error.below-minimum = Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £{0} ond heb fod yn fwy na £{1}
 ssttp.calculator.results.option.other.error.above-maximum = Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £{0} ond heb fod yn fwy na £{0}
 ssttp.calculator.results.option.other.error.no-input = Nodwch swm

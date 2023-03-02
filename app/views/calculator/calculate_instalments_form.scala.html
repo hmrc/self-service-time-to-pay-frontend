@@ -129,7 +129,12 @@
             <h1 class="govuk-heading-xl">@Messages("ssttp.calculator.results.title")</h1>
         </legend>
 
-        <p class="govuk-body">@messages("ssttp.calculator.results.p1")</p>
+        <p class="govuk-body">
+            @{previousFormSubmission.fold(messages("ssttp.calculator.results.p1"))(_.selection match {
+                case Left(SelectedPlan(amount)) => messages("ssttp.calculator.results.p1.custom-amount", currency(amount))
+                case Right(CustomPlanRequest(amount)) => messages("ssttp.calculator.results.p1.custom-amount", currency(amount))
+            })}
+        </p>
         <p class="govuk-body">@messages("ssttp.calculator.results.p2")</p>
 
         @radios(Radios(
