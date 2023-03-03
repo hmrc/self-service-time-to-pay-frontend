@@ -17,26 +17,57 @@
 package audit
 
 import journey.Journey
-import play.api.libs.json.{JsObject, Json, OWrites}
+import play.api.libs.json.Json
 import play.api.mvc.Request
+import ssttpcalculator.CalculatorService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
-object DataEventFactory {
+import javax.inject.{Inject, Singleton}
+
+@Singleton
+class DataEventFactory @Inject() (
+                                 calculatorService: CalculatorService
+                                 ) {
   def manualAffordabilityCheck(journey: Journey): ExtendedDataEvent = {
     val detail = Json.obj(
-      "totalDebt" -> "5000",
-      "spending" -> "9001.56",
-      "income" -> "5000",
-      "halfDisposalIncome" -> "-4001.56",
-      "status" -> "Negative Disposable Income",
-      "utr"  -> "012324729"
+      "totalDebt" -> journey.debits.map(_.amount).sum,
+      "spending" -> journey.maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(0)),
+      "income" -> journey.maybeIncome.map(_.totalIncome).getOrElse(BigDecimal(0)),
+      "halfDisposableIncome" -> journey.remainingIncomeAfterSpending / 2,
+      "status" -> notAffordableStatus(journey.remainingIncomeAfterSpending),
+      "utr"  -> journey.taxpayer.selfAssessment.utr
     )
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
       auditType = "ManualAffordabilityCheck",
-      detail = detail,
-
+      detail = detail
     )
   }
-  def manualAffordabilityPlanSetUp(): ExtendedDataEvent = ???
+
+  private def notAffordableStatus(insufficientRemainingIncomeAfterSpending: BigDecimal): String = {
+    if (insufficientRemainingIncomeAfterSpending < 0) "Negative Disposable Income"
+    else if (insufficientRemainingIncomeAfterSpending == 0) "Zero Disposable Income"
+    else "Total Tax Bill Income Greater than 24 Months"
+  }
+  def manualAffordabilityPlanSetUp(journey: Journey)(implicit request: Request[_]): ExtendedDataEvent = {
+    val bankDetails = Json.obj(
+      "accountNumber" -> journey.bankDetails.accountNumber,
+      "name" -> journey.bankDetails.accountName,
+      "sortCode" -> journey.bankDetails.sortCode
+    )
+    val detail = Json.obj(
+      "bankDetails" -> bankDetails,
+      "halfDisposableIncome" -> journey.remainingIncomeAfterSpending / 2,
+      "selectionType" -> ???,
+      "schedule" -> calculatorService.selectedSchedule(journey),
+      "status" -> "Success",
+      "paymentReference" -> journey.ddRef,
+      "utr" -> journey.taxpayer.selfAssessment.utr
+    )
+    ExtendedDataEvent(
+      auditSource = "pay-what-you-owe",
+      auditType = "ManualAffordabilityPlanSetUp",
+      detail = detail
+    )
+  }
 }
