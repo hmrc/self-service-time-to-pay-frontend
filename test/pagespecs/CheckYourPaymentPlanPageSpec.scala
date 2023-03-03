@@ -63,9 +63,9 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
-    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed
-    calculatorInstalmentsPage28thDay.selectASpecificOption("50")
-    calculatorInstalmentsPage28thDay.clickContinue()
+    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+    howMuchCanYouPayEachMonthPage.selectASpecificOption("50")
+    howMuchCanYouPayEachMonthPage.clickContinue()
 
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
   }
@@ -83,13 +83,13 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
 
   "back button" in {
     beginJourney()
-    checkYourPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${calculatorInstalmentsPage28thDay.path}")
+    checkYourPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchCanYouPayEachMonthPage.path}")
   }
 
   "change monthly instalments" in {
     beginJourney()
     checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
-    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed()
+    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed()
   }
 
   "change collection day" in {
@@ -120,8 +120,8 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     beginJourney()
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed
     checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
-    calculatorInstalmentsPage28thDay.selectASpecificOption("60")
-    calculatorInstalmentsPage28thDay.clickContinue()
+    howMuchCanYouPayEachMonthPage.selectASpecificOption("60")
+    howMuchCanYouPayEachMonthPage.clickContinue()
     checkYourPaymentPlanPage.assertWarningIsDisplayed(English)
     checkYourPaymentPlanPage.clickOnWelshLink()
     checkYourPaymentPlanPage.assertWarningIsDisplayed(Welsh)
