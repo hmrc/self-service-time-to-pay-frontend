@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package audit
 
@@ -11,7 +26,7 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 class DataEventFactorySpec extends UnitSpec {
   private val td = TdAll
   private val tdRequest = TdRequest
-//  private val origin = Origin.SdilDdf
+  //  private val origin = Origin.SdilDdf
   private implicit val request: FakeRequest[AnyContentAsEmpty.type] = tdRequest.request
 
   private def splunkEventTags(transName: String) = Map(
@@ -32,23 +47,23 @@ class DataEventFactorySpec extends UnitSpec {
 
       val expectedDataEvent = ExtendedDataEvent(
         auditSource = "pay-what-you-owe",
-        auditType = "ManualAffordabilityCheck",
-        eventId = "event-id",
-        tags = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
-        detail = Json.parse(
+        auditType   = "ManualAffordabilityCheck",
+        eventId     = "event-id",
+        tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
+        detail      = Json.parse(
           s"""
             {
               "totalDebt": "5000",
               "spending": "9001.56",
               "income": "5000",
               "halfDisposalIncome": "-4001.56",
-              "status": "Negative Disposable Income".
-              "utr: "012324729"
+              "status": "Negative Disposable Income",
+              "utr": "012324729"
             }
             """)
       )
 
-      computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+      computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
     }
 
     s"manualAffordabilityPlanSetUp" in {
@@ -56,10 +71,10 @@ class DataEventFactorySpec extends UnitSpec {
 
       val expectedDataEvent = ExtendedDataEvent(
         auditSource = "pay-what-you-owe",
-        auditType = "ManualAffordabilityPlanSetUp",
-        eventId = "event-id",
-        tags = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-        detail = Json.parse(
+        auditType   = "ManualAffordabilityPlanSetUp",
+        eventId     = "event-id",
+        tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
+        detail      = Json.parse(
           s"""
           {
             "bankDetails": {
@@ -117,7 +132,7 @@ class DataEventFactorySpec extends UnitSpec {
           }
           """)
       )
-      computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+      computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
     }
   }
 }
