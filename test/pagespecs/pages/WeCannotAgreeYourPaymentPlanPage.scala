@@ -48,7 +48,7 @@ class WeCannotAgreeYourPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: Web
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "We cannot agree your payment plan online"
-    case Languages.Welsh   => "We cannot agree your payment plan online"
+    case Languages.Welsh   => "Ni allwn gytuno ar eich cynllun talu ar-lein"
   }
 
   object Expected {
@@ -102,7 +102,7 @@ class WeCannotAgreeYourPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: Web
            |Os oes angen cymorth ychwanegol arnoch chi
            |Dysgwch am y ffyrdd gwahanol o ddelio â CThEF os oes angen help arnoch chi.
            |
-           |You can also use Relay UK os na allwch glywed na siarad dros y ffôn: deialwch 18001 ac yna 0345 300 3900.
+           |Gallwch hefyd ddefnyddio Relay UK os na allwch glywed na siarad dros y ffôn: deialwch 18001 ac yna 0345 300 3900.
            |
            |Os ydych y tu allan i’r DU: +44 300 200 1900.
       """.stripMargin
