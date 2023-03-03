@@ -27,11 +27,8 @@ import ssttpaffordability.AffordabilityForm.{incomeForm, incomeInputTotalNotPosi
 import ssttpaffordability.model.Expense._
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
-import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttparrangement.ArrangementForm
 import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 import views.Views
 
 import javax.inject.Inject
