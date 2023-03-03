@@ -57,9 +57,9 @@ class DirectDebitPageSpec extends ItSpec {
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed()
-    calculatorInstalmentsPage28thDay.selectAnOption()
-    calculatorInstalmentsPage28thDay.clickContinue()
+    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed()
+    howMuchCanYouPayEachMonthPage.selectAnOption()
+    howMuchCanYouPayEachMonthPage.clickContinue()
 
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
     checkYourPaymentPlanPage.clickContinue()

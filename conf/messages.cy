@@ -91,7 +91,7 @@ ssttp.landing.before-you-start.p2 = Er mwyn sefydlu’r cynllun talu, bydd angen
 ssttp.affordability.start.h1 = Mae angen i ni wirio eich bod yn gallu fforddio’r cynllun talu
 ssttp.affordability.start.p1 = I wneud yn siŵr eich bod yn gallu fforddio’r cynllun talu ar gyfer y <strong>{0}</strong> sy’n weddill, mae angen i ni ofyn i chi am eich incwm a’ch gwariant. Byddwn yn defnyddio’r wybodaeth hon i wirio faint o incwm sy’n weddill gennych yn dilyn eich gwariant misol hanfodol.
 ssttp.affordability.start.p2 = Mae’n bosibl y bydd angen i chi edrych ar gyfriflenni banc neu filiau cyfleustodau cyn i chi fynd yn eich blaen. Mae’n bosibl y bydd CThEF yn gofyn am dystiolaeth o’ch incwm a’ch gwariant.
-ssttp.affordability.start.p3 = Os byddwch yn penderfynu ein ffonio, byddwn yn dal i ofyn i chi am eich incwm a’ch gwariant.
+ssttp.affordability.start.p3 = <strong>Os byddwch yn penderfynu ein ffonio, byddwn yn dal i ofyn i chi am eich incwm a’ch gwariant.</strong>
 ssttp.affordability.start.detail = Sut yr ydym yn cyfrifo’ch cynllun
 ssttp.affordability.start.detail.text1 = Rydym yn disgwyl i chi ddefnyddio tua hanner yr incwm sy’n weddill gennych i dalu’r dreth sydd arnoch. Mae hyn i’ch helpu i:
 ssttp.affordability.start.detail.list1 = fforddio’ch taliadau misol
@@ -139,7 +139,7 @@ ssttp.affordability.your-monthly-spending.form.council-tax = Treth Gyngor
 ssttp.affordability.your-monthly-spending.form.utilities = Cyfleustodau
 ssttp.affordability.your-monthly-spending.form.utilities.hint = Er enghraifft, ynni, dŵr, ffôn, band eang
 ssttp.affordability.your-monthly-spending.form.debt-repayments = Ad-daliadau dyledion
-ssttp.affordability.your-monthly-spending.form.debt-repayments.hint = Er enghraifft, cerdyn credyd, benthyciad, taliadau Gorchymyn Llys
+ssttp.affordability.your-monthly-spending.form.debt-repayments.hint = Er enghraifft, benthyciad, taliadau Gorchymyn Llys
 ssttp.affordability.your-monthly-spending.form.travel = Teithio
 ssttp.affordability.your-monthly-spending.form.travel.hint = Er enghraifft, cerbydau, tanwydd, tocynnau tymor
 ssttp.affordability.your-monthly-spending.form.childcare = Costau gofal plant
@@ -294,10 +294,11 @@ ssttp.calculator.results.section.cannot-afford.p.2 = 0300 200 1900
 ssttp.calculator.results.section.cannot-afford.p.3 = i drafod eich opsiynau.
 ssttp.calculator.results.p1.custom-amount = Rydych wedi dewis talu {0} y mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
 ssttp.calculator.results.option.other.error.below-minimum = Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £{0} ond heb fod yn fwy na £{1}
-ssttp.calculator.results.option.other.error.above-maximum = Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £{0} ond heb fod yn fwy na £{0}
+ssttp.calculator.results.option.other.error.above-maximum = Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £{0} ond heb fod yn fwy na £{1}
 ssttp.calculator.results.option.other.error.no-input = Nodwch swm
 ssttp.calculator.results.option.other.error.non-numeric = Nodwch rifau yn unig
 ssttp.calculator.results.option.other.error.negative-amount = Nodwch rif positif yn unig
+ssttp.calculator.results.option.other.error.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.calculator.results.option.error.no-selection = Dewiswch opsiwn
 
 
@@ -311,7 +312,7 @@ ssttp.calculator.results.section.title = Sut rydym yn cyfrifo llog
 ssttp.calculator.results.section.p1 = Rydym yn codi llog ar symiau hwyr yn unig.
 ssttp.calculator.results.section.p2 = Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%, a gyfrifir fel llog syml.
 ssttp.calculator.results.section.p3 = Os bydd y gyfradd llog yn newid yn ystod eich cynllun, ni fydd eich taliadau misol yn newid. Os bydd angen, byddwn yn setlo’r gwahaniaeth ar ddiwedd y cynllun.
-ssttp.calculator.results.error.title = Mae problem wedi cod
+ssttp.calculator.results.error.title = Mae problem wedi codi
 ssttp.calculator.results.amount.required = Dewiswch gynllun talu
 ssttp.calculator.results.month.greater-then-six.header = A oes angen cynllun talu hirach arnoch?
 ssttp.calculator.results.month.greater-then-six.intro = Bydd y gyfradd llog a’r ad-daliad cyffredinol yn uwch pan fyddwch yn dewis cynllun talu hirach.
@@ -505,7 +506,7 @@ ssttp.arrangement.complete.next-payment = Caiff eich taliad nesaf ei gymryd ar {
 ssttp.arrangement.complete.24h = Bydd eich cyfrif treth yn cael ei ddiweddaru gyda’ch cynllun talu cyn pen 24 awr.
 ssttp.arrangement.complete.feedback = Beth oedd eich barn am y gwasanaeth hwn?
 ssttp.arrangement.complete.help.h2 = Os oes angen i chi newid eich cynllun talu
-ssttp.arrangement.complete.help.p1 = Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900.
+ssttp.arrangement.complete.help.p1 = Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong>.
 ssttp.arrangement.complete.help.p2 = (mae’n cymryd 30 eiliad)
 ssttp.arrangement.complete.go-to-tax-account = Ewch i’r cyfrif treth
 
@@ -629,7 +630,6 @@ ssttp.you-need-to-request-access-to-self-assessment.button-label = Gwneud cais i
 ssttp.calculator.check-calculation.cant-afford = Nid wyf yn gallu fforddio’r taliad isaf
 ssttp.calculator.check-calculation.cant-afford.p1 = Mae’n bosibl y gallwch drefnu cynllun talu dros y ffôn o hyd, ond nid ydych yn gymwys i gael cynllun talu ar-lein.
 ssttp.calculator.check-calculation.cant-afford.p2.1 = Rydym yn argymell eich bod yn siarad ag ymgynghorydd ar
-ssttp.calculator.check-calculation.cant-afford.p2.2 = 0300 200 3835
 ssttp.calculator.check-calculation.cant-afford.p2.3 = yng Ngwasanaeth Cwsmeriaid Cymraeg CThEF i drafod eich opsiynau talu.
 
 ssttp.calculator.check-calculation.cant-afford.p3 = Os na allwch ddefnyddio meddalwedd adnabod lleferydd, dysgwch sut i <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEF os oes angen cymorth ychwanegol arnoch.</a>

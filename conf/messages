@@ -94,7 +94,7 @@ ssttp.landing.before-you-start.p2 = To set up the payment plan, you’ll need to
 ssttp.affordability.start.h1 = We need to check you can afford the payment plan
 ssttp.affordability.start.p1 = To make sure you can afford your payment plan for the remaining <strong>{0}</strong>, we need to ask about your income and spending. We will use this information to check how much income you have left over after your essential monthly spending.
 ssttp.affordability.start.p2 = You may need to look at bank statements or utility bills before you continue. HMRC may ask for proof of your income and spending.
-ssttp.affordability.start.p3 = If you decide to call us, we will still ask you about your income and spending.
+ssttp.affordability.start.p3 = <strong>If you decide to call us, we will still ask you about your income and spending.</strong>
 ssttp.affordability.start.detail = How we work out your plan
 ssttp.affordability.start.detail.text1 = We expect you to pay around half of your left over income towards the tax you owe. This is to help you:
 ssttp.affordability.start.detail.list1 = afford your monthly payments
@@ -142,7 +142,7 @@ ssttp.affordability.your-monthly-spending.form.council-tax = Council tax
 ssttp.affordability.your-monthly-spending.form.utilities = Utilities
 ssttp.affordability.your-monthly-spending.form.utilities.hint = For example, energy, water, phone, broadband
 ssttp.affordability.your-monthly-spending.form.debt-repayments = Debt repayments
-ssttp.affordability.your-monthly-spending.form.debt-repayments.hint = For example, credit card, loan, court order payments
+ssttp.affordability.your-monthly-spending.form.debt-repayments.hint = For example, loan, court order payments
 ssttp.affordability.your-monthly-spending.form.travel = Travel
 ssttp.affordability.your-monthly-spending.form.travel.hint = For example, vehicles, fuel, season ticket
 ssttp.affordability.your-monthly-spending.form.childcare = Childcare costs
@@ -298,6 +298,7 @@ ssttp.calculator.results.option.other.error.above-maximum = That amount is too h
 ssttp.calculator.results.option.other.error.no-input = Enter an amount
 ssttp.calculator.results.option.other.error.non-numeric = Enter numbers only
 ssttp.calculator.results.option.other.error.negative-amount = Enter a positive number only
+ssttp.calculator.results.option.other.error.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.calculator.results.option.error.no-selection = Select an option
 
 
@@ -346,7 +347,6 @@ ssttp.calculator.check-calculation.how-we-calculate-interest.p3 = If the interes
 ssttp.calculator.check-calculation.cant-afford = I cannot afford the minimum payment
 ssttp.calculator.check-calculation.cant-afford.p1 = You may still be able to set up a payment plan over the phone, but you are not eligible for an online payment plan.
 ssttp.calculator.check-calculation.cant-afford.p2.1 = We recommend you speak to an adviser on
-ssttp.calculator.check-calculation.cant-afford.p2.2 = 0300 200 3835
 ssttp.calculator.check-calculation.cant-afford.p2.3 = at the Business Support Service to talk about your payment options.
 ssttp.calculator.check-calculation.cant-afford.p3 = If you cannot use speech recognition software, find out how to <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">deal with HMRC if you need extra support.</a>
 ssttp.calculator.check-calculation.cant-afford.p4 = You can also use <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
@@ -374,7 +374,7 @@ ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less t
 
 ssttp.call-us.title = Please call us
 ssttp.call-us.p1 = You are not eligible to set up a payment plan online.
-ssttp.call-us.p2 = For further support you can contact us on <strong>0300 123 1813</strong> to speak to an adviser.
+ssttp.call-us.p2 = For further support, you can contact us on <strong>0300 123 1813</strong> to speak to an adviser.
 ssttp.call-us.before-call.heading = Before you call, make sure you have:
 ssttp.call-us.before-call.l1 = information on any savings or investments you have
 ssttp.call-us.before-call.l2 = your bank details
@@ -556,7 +556,7 @@ ssttp.arrangement.complete.next-payment = Your next payment will be taken on {0}
 ssttp.arrangement.complete.24h = Your tax account will be updated with your payment plan within 24 hours.
 ssttp.arrangement.complete.feedback = What did you think of this service?
 ssttp.arrangement.complete.help.h2 = If you need to change your payment plan
-ssttp.arrangement.complete.help.p1 = Call the HMRC Helpline on 0300 123 1813.
+ssttp.arrangement.complete.help.p1 = Call the HMRC Helpline on <strong>0300 123 1813</strong>.
 ssttp.arrangement.complete.help.p2 = (takes 30 seconds)
 ssttp.arrangement.complete.go-to-tax-account = Go to tax account
 

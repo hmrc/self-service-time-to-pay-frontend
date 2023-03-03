@@ -142,6 +142,11 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     readMain().stripSpaces() should include(Expected.ErrorText.NegativeAmount().stripSpaces())
   }
 
+  def assertDecimalPlacesErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.ErrorText.DecimalPlaces().stripSpaces())
+  }
+
   object Expected {
 
     object GlobalHeaderText {
@@ -350,6 +355,23 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
         private val negativeAmountTextWelsh =
           s"""Mae problem wedi codi
              |Nodwch rif positif yn uni
+      """.stripMargin
+      }
+
+      object DecimalPlaces {
+        def apply()(implicit language: Language): String = language match {
+          case English => belowMinimumTextEnglish
+          case Welsh   => belowMinimumTextWelsh
+        }
+
+        private val belowMinimumTextEnglish =
+          s"""There is a problem
+             |Amount must not contain more than 2 decimal places
+      """.stripMargin
+
+        private val belowMinimumTextWelsh =
+          s"""Mae problem wedi codi
+             |Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
       """.stripMargin
       }
     }
