@@ -629,7 +629,6 @@ ssttp.you-need-to-request-access-to-self-assessment.button-label = Gwneud cais i
 ssttp.calculator.check-calculation.cant-afford = Nid wyf yn gallu fforddio’r taliad isaf
 ssttp.calculator.check-calculation.cant-afford.p1 = Mae’n bosibl y gallwch drefnu cynllun talu dros y ffôn o hyd, ond nid ydych yn gymwys i gael cynllun talu ar-lein.
 ssttp.calculator.check-calculation.cant-afford.p2.1 = Rydym yn argymell eich bod yn siarad ag ymgynghorydd ar
-ssttp.calculator.check-calculation.cant-afford.p2.2 = 0300 200 3835
 ssttp.calculator.check-calculation.cant-afford.p2.3 = yng Ngwasanaeth Cwsmeriaid Cymraeg CThEF i drafod eich opsiynau talu.
 
 ssttp.calculator.check-calculation.cant-afford.p3 = Os na allwch ddefnyddio meddalwedd adnabod lleferydd, dysgwch sut i <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEF os oes angen cymorth ychwanegol arnoch.</a>

@@ -346,7 +346,6 @@ ssttp.calculator.check-calculation.how-we-calculate-interest.p3 = If the interes
 ssttp.calculator.check-calculation.cant-afford = I cannot afford the minimum payment
 ssttp.calculator.check-calculation.cant-afford.p1 = You may still be able to set up a payment plan over the phone, but you are not eligible for an online payment plan.
 ssttp.calculator.check-calculation.cant-afford.p2.1 = We recommend you speak to an adviser on
-ssttp.calculator.check-calculation.cant-afford.p2.2 = 0300 200 3835
 ssttp.calculator.check-calculation.cant-afford.p2.3 = at the Business Support Service to talk about your payment options.
 ssttp.calculator.check-calculation.cant-afford.p3 = If you cannot use speech recognition software, find out how to <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">deal with HMRC if you need extra support.</a>
 ssttp.calculator.check-calculation.cant-afford.p4 = You can also use <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
