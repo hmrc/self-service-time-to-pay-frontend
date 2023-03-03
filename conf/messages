@@ -298,6 +298,7 @@ ssttp.calculator.results.option.other.error.above-maximum = That amount is too h
 ssttp.calculator.results.option.other.error.no-input = Enter an amount
 ssttp.calculator.results.option.other.error.non-numeric = Enter numbers only
 ssttp.calculator.results.option.other.error.negative-amount = Enter a positive number only
+ssttp.calculator.results.option.other.error.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.calculator.results.option.error.no-selection = Select an option
 
 

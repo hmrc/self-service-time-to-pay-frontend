@@ -155,6 +155,9 @@ object CalculatorForm {
           maxCustomAmount.setScale(2, HALF_UP)
         )))
       }))
+      .verifying("ssttp.calculator.results.option.other.error.decimal-places", { i =>
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
+      })
   }
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(

@@ -70,7 +70,7 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
 
       howMuchYouCouldAffordPage.clickContinue()
 
-      calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed()
+      howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed()
     }
   }
 

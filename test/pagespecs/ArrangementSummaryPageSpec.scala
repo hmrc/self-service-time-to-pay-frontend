@@ -67,9 +67,9 @@ class ArrangementSummaryPageSpec extends ItSpec {
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
-    calculatorInstalmentsPage28thDay.assertInitialPageIsDisplayed
-    calculatorInstalmentsPage28thDay.selectASpecificOption("50")
-    calculatorInstalmentsPage28thDay.clickContinue()
+    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+    howMuchCanYouPayEachMonthPage.selectASpecificOption("50")
+    howMuchCanYouPayEachMonthPage.clickContinue()
 
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
     checkYourPaymentPlanPage.clickContinue()
