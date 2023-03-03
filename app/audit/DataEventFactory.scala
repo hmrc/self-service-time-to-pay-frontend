@@ -26,21 +26,21 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class DataEventFactory @Inject() (
-                                 calculatorService: CalculatorService
-                                 ) {
+    calculatorService: CalculatorService
+) {
   def manualAffordabilityCheck(journey: Journey): ExtendedDataEvent = {
     val detail = Json.obj(
       "totalDebt" -> journey.debits.map(_.amount).sum,
-      "spending" -> journey.maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(0)),
-      "income" -> journey.maybeIncome.map(_.totalIncome).getOrElse(BigDecimal(0)),
+      "spending" -> journey.maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(0)).toString,
+      "income" -> journey.maybeIncome.map(_.totalIncome).getOrElse(BigDecimal(0)).toString,
       "halfDisposableIncome" -> journey.remainingIncomeAfterSpending / 2,
       "status" -> notAffordableStatus(journey.remainingIncomeAfterSpending),
-      "utr"  -> journey.taxpayer.selfAssessment.utr
+      "utr" -> journey.taxpayer.selfAssessment.utr
     )
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
-      auditType = "ManualAffordabilityCheck",
-      detail = detail
+      auditType   = "ManualAffordabilityCheck",
+      detail      = detail
     )
   }
 
@@ -49,6 +49,7 @@ class DataEventFactory @Inject() (
     else if (insufficientRemainingIncomeAfterSpending == 0) "Zero Disposable Income"
     else "Total Tax Bill Income Greater than 24 Months"
   }
+
   def manualAffordabilityPlanSetUp(journey: Journey)(implicit request: Request[_]): ExtendedDataEvent = {
     val bankDetails = Json.obj(
       "accountNumber" -> journey.bankDetails.accountNumber,
@@ -58,7 +59,10 @@ class DataEventFactory @Inject() (
     val detail = Json.obj(
       "bankDetails" -> bankDetails,
       "halfDisposableIncome" -> journey.remainingIncomeAfterSpending / 2,
-      "selectionType" -> ???,
+      "selectionType" -> selectionType(
+        maybeSelectedPlanAmount      = journey.maybeSelectedPlanAmount,
+        remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
+      ),
       "schedule" -> calculatorService.selectedSchedule(journey),
       "status" -> "Success",
       "paymentReference" -> journey.ddRef,
@@ -66,8 +70,18 @@ class DataEventFactory @Inject() (
     )
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
-      auditType = "ManualAffordabilityPlanSetUp",
-      detail = detail
+      auditType   = "ManualAffordabilityPlanSetUp",
+      detail      = detail
     )
+  }
+
+  private def selectionType(maybeSelectedPlanAmount: Option[BigDecimal], remainingIncomeAfterSpending: BigDecimal): String = {
+    maybeSelectedPlanAmount.fold("None")(amount => {
+      if (amount == remainingIncomeAfterSpending * 0.5) "fiftyPercent"
+      else if (amount == remainingIncomeAfterSpending * 0.6) "sixtyPercent"
+      else if (amount == remainingIncomeAfterSpending * 0.8) "eightyPercent"
+      else "customAmount"
+    })
+
   }
 }
