@@ -27,7 +27,7 @@ import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import testsupport.ItSpec
 import testsupport.testdata.{DirectDebitTd, TdAll, TdRequest}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import uk.gov.hmrc.selfservicetimetopay.models.BankDetails
+import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, PlanSelection, SelectedPlan}
 
 import java.time.ZoneId.systemDefault
 import java.time.{Clock, LocalDateTime}
@@ -64,23 +64,23 @@ class DataEventFactorySpec extends ItSpec {
   "Splunk audit events" - {
 
     "manualAffordabilityCheck" - {
-      val _500amount = 500
-      val _600amount = 600
+      val _500Amount = 500
+      val _600Amount = 600
 
       "negative disposable income case" in {
         val journeyNegativeRemainingIncome = journey.copy(
-          maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, _500amount))),
-          maybeSpending = Some(Spending(Expenses(HousingExp, _600amount)))
+          maybeIncome   = Some(Income(IncomeBudgetLine(MonthlyIncome, _500Amount))),
+          maybeSpending = Some(Spending(Expenses(HousingExp, _600Amount)))
         )
 
         val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyNegativeRemainingIncome)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType = "ManualAffordabilityCheck",
-          eventId = "event-id",
-          tags = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
-          detail = Json.parse(
+          auditType   = "ManualAffordabilityCheck",
+          eventId     = "event-id",
+          tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
+          detail      = Json.parse(
             s"""
               {
                 "totalDebt": "4900",
@@ -93,22 +93,22 @@ class DataEventFactorySpec extends ItSpec {
               """)
         )
 
-        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
       "zero disposable income case" in {
         val journeyZeroRemainingIncome = journey.copy(
-          maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, _500amount))),
-          maybeSpending = Some(Spending(Expenses(HousingExp, _500amount)))
+          maybeIncome   = Some(Income(IncomeBudgetLine(MonthlyIncome, _500Amount))),
+          maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
         val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyZeroRemainingIncome)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType = "ManualAffordabilityCheck",
-          eventId = "event-id",
-          tags = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
-          detail = Json.parse(
+          auditType   = "ManualAffordabilityCheck",
+          eventId     = "event-id",
+          tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
+          detail      = Json.parse(
             s"""
               {
                 "totalDebt": "4900",
@@ -121,22 +121,22 @@ class DataEventFactorySpec extends ItSpec {
               """)
         )
 
-        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
       "no plan no longer than 24 months" in {
         val journeyNoPlanWithin24Months = journey.copy(
-          maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, _600amount))),
-          maybeSpending = Some(Spending(Expenses(HousingExp, _500amount)))
+          maybeIncome   = Some(Income(IncomeBudgetLine(MonthlyIncome, _600Amount))),
+          maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
         val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyNoPlanWithin24Months)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType = "ManualAffordabilityCheck",
-          eventId = "event-id",
-          tags = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
-          detail = Json.parse(
+          auditType   = "ManualAffordabilityCheck",
+          eventId     = "event-id",
+          tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
+          detail      = Json.parse(
             s"""
               {
                 "totalDebt": "4900",
@@ -149,88 +149,171 @@ class DataEventFactorySpec extends ItSpec {
               """)
         )
 
-        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe
-          expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
     }
 
     "manualAffordabilityPlanSetUp" - {
+      val _1000Amount = 1000
+      val _500Amount = 500
+      val _250Amount = 250
+      val _28DayOfMonth = 28
+
       "50% case" in {
         val journey50PerCent = journey.copy(
-          maybeBankDetails = Some(BankDetails(
-            sortCode = directDebitTd.sortCode,
-            accountNumber = directDebitTd.accountNumber,
-            accountName = directDebitTd.accountName,
-            maybeDDIRefNumber = Some(directDebitTd.dDIRefNumber)))
+          maybeBankDetails           = Some(BankDetails(
+            sortCode          = directDebitTd.sortCode,
+            accountNumber     = directDebitTd.accountNumber,
+            accountName       = directDebitTd.accountName,
+            maybeDDIRefNumber = Some(directDebitTd.dDIRefNumber))),
+          maybeIncome                = Some(Income(IncomeBudgetLine(MonthlyIncome, _1000Amount))),
+          maybeSpending              = Some(Spending(Expenses(HousingExp, _500Amount))),
+          maybePlanSelection         = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
+          maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_28DayOfMonth)),
+          ddRef = Some(directDebitTd.dDIRefNumber)
         )
 
         val computedDataEvent = dataEventFactory.manualAffordabilityPlanSetUp(journey50PerCent)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType = "ManualAffordabilityPlanSetUp",
-          eventId = "event-id",
-          tags = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-          detail = Json.parse(
+          auditType   = "ManualAffordabilityPlanSetUp",
+          eventId     = "event-id",
+          tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
+          detail      = Json.parse(
             s"""
             {
               "bankDetails": {
                 "accountNumber": "12345678",
                 "name": "Mr John Campbell",
-                "sortCode": "12-34-56",
+                "sortCode": "12-34-56"
               },
-              "halfDisposalIncome: "41000.00",
-              "selectionType: "fiftyPercent",
+              "halfDisposableIncome": "250",
+              "selectionType": "fiftyPercent",
               "schedule": {
-                totalPayable": "9001.56",
-                     "installmentDate": "28",
-                     "installments": [
-                        {
-                          "amount": "1500",
-                          "installmentNumber": "1",
-                          "paymentDate": "2023-08-28",
-                        },
-                        {
-                          "amount": "1500",
-                          "installmentNumber": 2",
-                          "paymentDate": "2023-07-28",
-                        },
-                        {
-                          "amount": "1500",
-                           "installmentNumber": "3",
-                           "paymentDate": "2023-06-28",
-                        },
-                        {
-                          "amount": "1500",
-                          "installmentNumber": "4",
-                           "paymentDate": "2023-05-28"
-                        },
-                        {
-                          "amount": "1500",
-                          "installmentNumber": "5",
-                           "paymentDate": "2023-04-28"
-                        },
-                        {
-                          "amount": "1500",
-                           "installmentNumber": "6",
-                           "paymentDate": "2023-03-28"
-                        }
-                     ],
-                     "initialPaymentAmount": "0",
-                     "totalNoPayments": "6",
-                     "totalInterestCharged": "1.56",
-                     "totalPayable": "9001.56",
-                     "totalPaymentWithoutInterest": "9000"
+                "totalPayable": 5038.16,
+                "instalmentDate": 28,
+                "instalments": [
+                  {
+                    "amount":250,
+                    "instalmentNumber":1,
+                    "paymentDate":"2019-12-28"
                   },
-                  "status": "Success",
-                  "paymentReference": "paymentReference",
-                  "utr": "012324729"
-               }
-            }
-            """)
+                  {
+                    "amount":250,
+                    "instalmentNumber":2,
+                    "paymentDate":"2020-01-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":3,
+                    "paymentDate":"2020-02-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":4,
+                    "paymentDate":"2020-03-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":5,
+                    "paymentDate":"2020-04-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":6,
+                    "paymentDate":"2020-05-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":7,
+                    "paymentDate":"2020-06-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":8,
+                    "paymentDate":"2020-07-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":9,
+                    "paymentDate":"2020-08-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":10,
+                    "paymentDate":"2020-09-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":11,
+                    "paymentDate":"2020-10-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":12,
+                    "paymentDate":"2020-11-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":13,
+                    "paymentDate":"2020-12-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":14,
+                    "paymentDate":"2021-01-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":15,
+                    "paymentDate":"2021-02-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":16,
+                    "paymentDate":"2021-03-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":17,
+                    "paymentDate":"2021-04-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":18,
+                    "paymentDate":"2021-05-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":19,
+                    "paymentDate":"2021-06-28"
+                  },
+                  {
+                    "amount":250,
+                    "instalmentNumber":20,
+                    "paymentDate":"2021-07-28"
+                  },
+                  {
+                    "amount":38.16,
+                    "instalmentNumber":21,
+                    "paymentDate":"2021-08-28"
+                  }
+                ],
+                "initialPaymentAmount": 0,
+                "totalNoPayments": 21,
+                "totalInterestCharged": 138.16,
+                "totalPaymentWithoutInterest": 4900
+              },
+              "status": "Success",
+              "paymentReference": "123ABC123",
+              "utr": "6573196998"
+          }"""
+          )
         )
-        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe
-          expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
     }
   }

@@ -16,6 +16,7 @@
 
 package audit
 
+import audit.model.AuditPaymentSchedule
 import journey.Journey
 import play.api.libs.json.Json
 import play.api.mvc.Request
@@ -42,7 +43,7 @@ class DataEventFactory @Inject() (
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
       auditType   = "ManualAffordabilityCheck",
-      tags = hcTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
+      tags        = hcTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
       detail      = detail
     )
   }
@@ -59,14 +60,17 @@ class DataEventFactory @Inject() (
       "name" -> journey.bankDetails.accountName,
       "sortCode" -> journey.bankDetails.sortCode
     )
+    val auditPaymentSchedule = Json.toJson(AuditPaymentSchedule(calculatorService.selectedSchedule(journey).getOrElse(
+      throw new IllegalArgumentException("could not generate selected schedule")
+    )))
     val detail = Json.obj(
       "bankDetails" -> bankDetails,
-      "halfDisposableIncome" -> journey.remainingIncomeAfterSpending / 2,
+      "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
       "selectionType" -> selectionType(
         maybeSelectedPlanAmount      = journey.maybeSelectedPlanAmount,
         remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
       ),
-      "schedule" -> calculatorService.selectedSchedule(journey),
+      "schedule" -> auditPaymentSchedule,
       "status" -> "Success",
       "paymentReference" -> journey.ddRef,
       "utr" -> journey.taxpayer.selfAssessment.utr
@@ -74,6 +78,7 @@ class DataEventFactory @Inject() (
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
       auditType   = "ManualAffordabilityPlanSetUp",
+      tags        = hcTags("setup-new-self-assessment-time-to-pay-plan"),
       detail      = detail
     )
   }
