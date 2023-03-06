@@ -61,32 +61,88 @@ class DataEventFactorySpec extends ItSpec {
 
   "Splunk audit events" - {
 
-    s"manualAffordabilityCheck" in {
-      val journeyNegativeRemainingIncome = journey.copy(
-        maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, 500))),
-        maybeSpending = Some(Spending(Expenses(HousingExp, 600)))
-      )
-      val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyNegativeRemainingIncome)
+    s"manualAffordabilityCheck" - {
+      "negative disposable income case" in {
+        val journeyNegativeRemainingIncome = journey.copy(
+          maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, 500))),
+          maybeSpending = Some(Spending(Expenses(HousingExp, 600)))
+        )
+        val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyNegativeRemainingIncome)
 
-      val expectedDataEvent = ExtendedDataEvent(
-        auditSource = "pay-what-you-owe",
-        auditType   = "ManualAffordabilityCheck",
-        eventId     = "event-id",
-        tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
-        detail      = Json.parse(
-          s"""
-            {
-              "totalDebt": "4900",
-              "spending": "600",
-              "income": "500",
-              "halfDisposableIncome": "-50",
-              "status": "Negative Disposable Income",
-              "utr": "6573196998"
-            }
-            """)
-      )
+        val expectedDataEvent = ExtendedDataEvent(
+          auditSource = "pay-what-you-owe",
+          auditType = "ManualAffordabilityCheck",
+          eventId = "event-id",
+          tags = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
+          detail = Json.parse(
+            s"""
+              {
+                "totalDebt": "4900",
+                "spending": "600",
+                "income": "500",
+                "halfDisposableIncome": "-50",
+                "status": "Negative Disposable Income",
+                "utr": "6573196998"
+              }
+              """)
+        )
 
-      computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
+        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+      }
+      "zero disposable income case" in {
+        val journeyNegativeRemainingIncome = journey.copy(
+          maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, 500))),
+          maybeSpending = Some(Spending(Expenses(HousingExp, 500)))
+        )
+        val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyNegativeRemainingIncome)
+
+        val expectedDataEvent = ExtendedDataEvent(
+          auditSource = "pay-what-you-owe",
+          auditType = "ManualAffordabilityCheck",
+          eventId = "event-id",
+          tags = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
+          detail = Json.parse(
+            s"""
+              {
+                "totalDebt": "4900",
+                "spending": "500",
+                "income": "500",
+                "halfDisposableIncome": "0",
+                "status": "Zero Disposable Income",
+                "utr": "6573196998"
+              }
+              """)
+        )
+
+        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+      }
+      "no plan no longer than 24 months" in {
+        val journeyNegativeRemainingIncome = journey.copy(
+          maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, 600))),
+          maybeSpending = Some(Spending(Expenses(HousingExp, 500)))
+        )
+        val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyNegativeRemainingIncome)
+
+        val expectedDataEvent = ExtendedDataEvent(
+          auditSource = "pay-what-you-owe",
+          auditType = "ManualAffordabilityCheck",
+          eventId = "event-id",
+          tags = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
+          detail = Json.parse(
+            s"""
+              {
+                "totalDebt": "4900",
+                "spending": "500",
+                "income": "600",
+                "halfDisposableIncome": "50",
+                "status": "Total Tax Bill Income Greater than 24 Months",
+                "utr": "6573196998"
+              }
+              """)
+        )
+
+        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+      }
     }
 
     s"manualAffordabilityPlanSetUp" in {
