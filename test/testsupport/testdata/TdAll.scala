@@ -18,6 +18,8 @@ package testsupport.testdata
 
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import play.api.libs.json.JsObject
+import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome}
+import ssttpaffordability.model.{Income, IncomeBudgetLine}
 import timetopaytaxpayer.cor.model._
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import testsupport.JsonSyntax._

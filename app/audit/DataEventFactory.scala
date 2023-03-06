@@ -21,6 +21,8 @@ import play.api.libs.json.Json
 import play.api.mvc.Request
 import ssttpcalculator.CalculatorService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import req.RequestSupport._
+import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 
@@ -28,18 +30,19 @@ import javax.inject.{Inject, Singleton}
 class DataEventFactory @Inject() (
     calculatorService: CalculatorService
 ) {
-  def manualAffordabilityCheck(journey: Journey): ExtendedDataEvent = {
+  def manualAffordabilityCheck(journey: Journey)(implicit request: Request[_]): ExtendedDataEvent = {
     val detail = Json.obj(
-      "totalDebt" -> journey.debits.map(_.amount).sum,
+      "totalDebt" -> journey.debits.map(_.amount).sum.toString,
       "spending" -> journey.maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(0)).toString,
       "income" -> journey.maybeIncome.map(_.totalIncome).getOrElse(BigDecimal(0)).toString,
-      "halfDisposableIncome" -> journey.remainingIncomeAfterSpending / 2,
+      "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
       "status" -> notAffordableStatus(journey.remainingIncomeAfterSpending),
       "utr" -> journey.taxpayer.selfAssessment.utr
     )
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
       auditType   = "ManualAffordabilityCheck",
+      tags = hcTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
       detail      = detail
     )
   }
@@ -82,6 +85,10 @@ class DataEventFactory @Inject() (
       else if (amount == remainingIncomeAfterSpending * 0.8) "eightyPercent"
       else "customAmount"
     })
+  }
 
+  private def hcTags(transactionName: String)(implicit request: Request[_]) = {
+    hc.toAuditTags(transactionName, request.path) ++
+      Map(hc.names.deviceID -> hc.deviceID.getOrElse("-"))
   }
 }

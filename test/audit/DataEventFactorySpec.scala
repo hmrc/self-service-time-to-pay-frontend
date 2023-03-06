@@ -21,6 +21,9 @@ import journey.Journey
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import ssttpaffordability.model.Expense.HousingExp
+import ssttpaffordability.model.IncomeCategory.MonthlyIncome
+import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import testsupport.ItSpec
 import testsupport.testdata.{TdAll, TdRequest}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
@@ -41,6 +44,9 @@ class DataEventFactorySpec extends ItSpec {
   }
 
   val journey: Journey = Journey.newJourney(fixedClock)
+    .copy(
+      maybeTaxpayer = Some(td.taxpayer),
+    )
 
   private def splunkEventTags(transName: String) = Map(
     "clientIP" -> tdRequest.trueClientIp,
@@ -56,7 +62,11 @@ class DataEventFactorySpec extends ItSpec {
   "Splunk audit events" - {
 
     s"manualAffordabilityCheck" in {
-      val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journey)
+      val journeyNegativeRemainingIncome = journey.copy(
+        maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, 500))),
+        maybeSpending = Some(Spending(Expenses(HousingExp, 600)))
+      )
+      val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyNegativeRemainingIncome)
 
       val expectedDataEvent = ExtendedDataEvent(
         auditSource = "pay-what-you-owe",
@@ -66,12 +76,12 @@ class DataEventFactorySpec extends ItSpec {
         detail      = Json.parse(
           s"""
             {
-              "totalDebt": "5000",
-              "spending": "9001.56",
-              "income": "5000",
-              "halfDisposalIncome": "-4001.56",
+              "totalDebt": "4900",
+              "spending": "600",
+              "income": "500",
+              "halfDisposableIncome": "-50",
               "status": "Negative Disposable Income",
-              "utr": "012324729"
+              "utr": "6573196998"
             }
             """)
       )

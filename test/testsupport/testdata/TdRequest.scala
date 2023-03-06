@@ -35,13 +35,13 @@ object TdRequest {
   val requestMethod: String = "GET"
   val requestPath: String = "/fake-path"
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(requestMethod, requestPath)
-  //    .withSessionId()
-  //    .withAuthToken()
-  //    .withAkamaiReputationHeader()
-  //    .withRequestId()
-  //    .withTrueClientIp()
-  //    .withTrueClientPort()
-  //    .withDeviceId()
+      .withSessionId()
+      .withAuthToken()
+      .withAkamaiReputationHeader()
+      .withRequestId()
+      .withTrueClientIp()
+      .withTrueClientPort()
+      .withDeviceId()
 
   implicit class FakeRequestOps[T](r: FakeRequest[T]) {
     def withLang(lang: Language = English): FakeRequest[T] = r.withCookies(Cookie("PLAY_LANG", lang.code))
