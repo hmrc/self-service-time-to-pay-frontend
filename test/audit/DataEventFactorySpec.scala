@@ -93,7 +93,8 @@ class DataEventFactorySpec extends ItSpec {
               """)
         )
 
-        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
       "zero disposable income case" in {
         val journeyZeroRemainingIncome = journey.copy(
@@ -121,7 +122,8 @@ class DataEventFactorySpec extends ItSpec {
               """)
         )
 
-        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
       "no plan no longer than 24 months" in {
         val journeyNoPlanWithin24Months = journey.copy(
@@ -163,20 +165,20 @@ class DataEventFactorySpec extends ItSpec {
       val _28DayOfMonth = 28
 
       val journeySuccessfulSetUp = journey.copy(
-        maybeBankDetails = Some(BankDetails(
-          sortCode = directDebitTd.sortCode,
-          accountNumber = directDebitTd.accountNumber,
-          accountName = directDebitTd.accountName,
+        maybeBankDetails           = Some(BankDetails(
+          sortCode          = directDebitTd.sortCode,
+          accountNumber     = directDebitTd.accountNumber,
+          accountName       = directDebitTd.accountName,
           maybeDDIRefNumber = Some(directDebitTd.dDIRefNumber))),
-        maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, _1000Amount))),
-        maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount))),
+        maybeIncome                = Some(Income(IncomeBudgetLine(MonthlyIncome, _1000Amount))),
+        maybeSpending              = Some(Spending(Expenses(HousingExp, _500Amount))),
         maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_28DayOfMonth)),
-        ddRef = Some(directDebitTd.dDIRefNumber)
+        ddRef                      = Some(directDebitTd.dDIRefNumber)
       )
 
       "50% case (more than 12 months)" in {
         val journey50PerCent = journeySuccessfulSetUp.copy(
-          maybePlanSelection         = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
+          maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
         )
 
         val computedDataEvent = dataEventFactory.manualAffordabilityPlanSetUp(journey50PerCent)
@@ -330,10 +332,10 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType = "ManualAffordabilityPlanSetUp",
-          eventId = "event-id",
-          tags = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-          detail = Json.parse(
+          auditType   = "ManualAffordabilityPlanSetUp",
+          eventId     = "event-id",
+          tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
+          detail      = Json.parse(
             s"""
             {
               "bankDetails": {
@@ -445,8 +447,8 @@ class DataEventFactorySpec extends ItSpec {
           }"""
           )
         )
-        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe
-          expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
       "80% case (more than twelve months)" in {
         val journey80PerCent = journeySuccessfulSetUp.copy(
@@ -457,10 +459,10 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType = "ManualAffordabilityPlanSetUp",
-          eventId = "event-id",
-          tags = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-          detail = Json.parse(
+          auditType   = "ManualAffordabilityPlanSetUp",
+          eventId     = "event-id",
+          tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
+          detail      = Json.parse(
             s"""
             {
               "bankDetails": {
@@ -552,8 +554,8 @@ class DataEventFactorySpec extends ItSpec {
           }"""
           )
         )
-        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe
-          expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
       "custom amount (twelve months or less)" in {
         val customAmount = 500
@@ -566,10 +568,10 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType = "ManualAffordabilityPlanSetUp",
-          eventId = "event-id",
-          tags = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-          detail = Json.parse(
+          auditType   = "ManualAffordabilityPlanSetUp",
+          eventId     = "event-id",
+          tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
+          detail      = Json.parse(
             s"""
             {
               "bankDetails": {
@@ -646,10 +648,10 @@ class DataEventFactorySpec extends ItSpec {
           }"""
           )
         )
-        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe
-          expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
 
-      }
+    }
   }
 }

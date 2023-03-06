@@ -19,7 +19,6 @@ package audit.model
 import play.api.libs.json.{Json, OFormat, Writes}
 
 import java.time.LocalDate
-import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 case class AuditInstalment(
     amount:           BigDecimal,

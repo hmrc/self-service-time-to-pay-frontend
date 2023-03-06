@@ -17,7 +17,7 @@
 package audit.model
 
 import play.api.libs.json.{Json, OFormat, Writes}
-import ssttpcalculator.model.{Instalment, PaymentSchedule}
+import ssttpcalculator.model.PaymentSchedule
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
@@ -35,22 +35,10 @@ object AuditPaymentSchedule {
 
   def apply(paymentSchedule: PaymentSchedule): AuditPaymentSchedule = AuditPaymentSchedule(
     totalPayable                = paymentSchedule.totalPayable.setScale(2, HALF_UP),
-    instalmentDate              = paymentSchedule.instalments.headOption.map(_.paymentDate.getDayOfMonth).getOrElse(throw new IllegalArgumentException(
-      "could not find first instalment in payment schedule"
-    )),
-    instalments                 = (1 to paymentSchedule.instalments.length).zip(paymentSchedule.instalments)
-      .map(
-        i => AuditInstalment(
-          i._2.amount.setScale(2, HALF_UP),
-          i._1,
-          i._2.paymentDate
-        )
-      ),
+    instalmentDate              = instalmentDate(paymentSchedule),
+    instalments                 = instalments(paymentSchedule),
     initialPaymentAmount        = paymentSchedule.initialPayment,
-    totalNoPayments             = {
-      if (paymentSchedule.initialPayment == 0) paymentSchedule.instalments.length
-      else paymentSchedule.instalments.length + 1
-    },
+    totalNoPayments             = totalNoPayments(paymentSchedule),
     totalInterestCharged        = paymentSchedule.totalInterestCharged.setScale(2, HALF_UP),
     totalPaymentWithoutInterest = paymentSchedule.amountToPay
   )
@@ -66,4 +54,21 @@ object AuditPaymentSchedule {
   )
 
   implicit val format: OFormat[AuditPaymentSchedule] = Json.format[AuditPaymentSchedule]
+
+  private def instalmentDate(paymentSchedule: PaymentSchedule): Int = {
+    paymentSchedule.instalments.headOption
+      .map(_.paymentDate.getDayOfMonth)
+      .getOrElse(throw new IllegalArgumentException("could not find first instalment in payment schedule"))
+  }
+
+  private def instalments(paymentSchedule: PaymentSchedule): Seq[AuditInstalment] = {
+    (1 to paymentSchedule.instalments.length).zip(paymentSchedule.instalments)
+      .map(i => AuditInstalment(i._2.amount.setScale(2, HALF_UP), i._1, i._2.paymentDate))
+  }
+
+  private def totalNoPayments(paymentSchedule: PaymentSchedule): Int = {
+    if (paymentSchedule.initialPayment == 0) paymentSchedule.instalments.length
+    else paymentSchedule.instalments.length + 1
+  }
+
 }
