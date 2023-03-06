@@ -23,6 +23,7 @@ import play.api.mvc.Request
 import ssttpcalculator.CalculatorService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import req.RequestSupport._
+import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -55,14 +56,18 @@ class DataEventFactory @Inject() (
   }
 
   def manualAffordabilityPlanSetUp(journey: Journey)(implicit request: Request[_]): ExtendedDataEvent = {
+    val selectedSchedule = calculatorService.selectedSchedule(journey).getOrElse(
+      throw new IllegalArgumentException("could not generate selected schedule")
+    )
+
     val bankDetails = Json.obj(
       "accountNumber" -> journey.bankDetails.accountNumber,
       "name" -> journey.bankDetails.accountName,
       "sortCode" -> journey.bankDetails.sortCode
     )
-    val auditPaymentSchedule = Json.toJson(AuditPaymentSchedule(calculatorService.selectedSchedule(journey).getOrElse(
-      throw new IllegalArgumentException("could not generate selected schedule")
-    )))
+
+    val auditPaymentSchedule = Json.toJson(AuditPaymentSchedule(selectedSchedule))
+
     val detail = Json.obj(
       "bankDetails" -> bankDetails,
       "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
@@ -70,6 +75,7 @@ class DataEventFactory @Inject() (
         maybeSelectedPlanAmount      = journey.maybeSelectedPlanAmount,
         remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
       ),
+      "lessThanOrMoreThanTwelveMonths" -> lessThanOrMoreThanTwelveMonths(selectedSchedule),
       "schedule" -> auditPaymentSchedule,
       "status" -> "Success",
       "paymentReference" -> journey.ddRef,
@@ -90,6 +96,10 @@ class DataEventFactory @Inject() (
       else if (amount == remainingIncomeAfterSpending * 0.8) "eightyPercent"
       else "customAmount"
     })
+  }
+
+  private def lessThanOrMoreThanTwelveMonths(selectedSchedule: PaymentSchedule): String = {
+    if (selectedSchedule.instalments.length <= 12) "twelveMonthsOrLess" else "moreThanTwelveMonths"
   }
 
   private def hcTags(transactionName: String)(implicit request: Request[_]) = {
