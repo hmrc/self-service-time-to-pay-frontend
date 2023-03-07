@@ -24,6 +24,7 @@ import play.api.test.FakeRequest
 import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
+import ssttpcalculator.CalculatorService
 import testsupport.ItSpec
 import testsupport.testdata.{DirectDebitTd, TdAll, TdRequest}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
@@ -39,6 +40,7 @@ class DataEventFactorySpec extends ItSpec {
   private implicit val request: FakeRequest[AnyContentAsEmpty.type] = tdRequest.request
 
   private val dataEventFactory: DataEventFactory = fakeApplication().injector.instanceOf[DataEventFactory]
+  private val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
   private def fixedClock: Clock = {
     val currentDateTime = LocalDateTime.parse("2020-05-02T00:00:00.880").toInstant(UTC)
@@ -181,7 +183,9 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
         )
 
-        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey50PerCent)
+        val schedule = calculatorService.selectedSchedule(journey50PerCent)(request).get
+
+        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey50PerCent, schedule)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -328,7 +332,9 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_300Amount)))),
         )
 
-        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey60PerCent)
+        val schedule = calculatorService.selectedSchedule(journey60PerCent)(request).get
+
+        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey60PerCent, schedule)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -455,7 +461,9 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_400Amount)))),
         )
 
-        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey80PerCent)
+        val schedule = calculatorService.selectedSchedule(journey80PerCent)(request).get
+
+        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey80PerCent, schedule)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -560,11 +568,13 @@ class DataEventFactorySpec extends ItSpec {
       "custom amount (twelve months or less)" in {
         val customAmount = 500
 
-        val journeycustomAmount = journeySuccessfulSetUp.copy(
+        val journeyCustomAmount = journeySuccessfulSetUp.copy(
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(customAmount)))),
         )
 
-        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journeycustomAmount)
+        val schedule = calculatorService.selectedSchedule(journeyCustomAmount)(request).get
+
+        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journeyCustomAmount, schedule)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",

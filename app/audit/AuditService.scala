@@ -33,16 +33,15 @@ import scala.util.Failure
 
 @Singleton()
 class AuditService @Inject() (
-                               dataEventFactory: DataEventFactory,
-                               auditConnector: AuditConnector
-                             )(implicit ec: ExecutionContext) extends ApplicationLogging {
-
+    dataEventFactory: DataEventFactory,
+    auditConnector:   AuditConnector
+)(implicit ec: ExecutionContext) extends ApplicationLogging {
 
   def sendDirectDebitSubmissionFailedEvent(
-                                            journey:         Journey,
-                                            schedule:        PaymentSchedule,
-                                            submissionError: SubmissionError
-                                          )(implicit request: Request[_]): Unit = {
+      journey:         Journey,
+      schedule:        PaymentSchedule,
+      submissionError: SubmissionError
+  )(implicit request: Request[_]): Unit = {
     val event = dataEventFactory.directDebitSubmissionFailedEvent(journey, schedule, submissionError)
     sendEvent(event)
     ()
@@ -62,7 +61,7 @@ class AuditService @Inject() (
     val checkEventResult = auditConnector.sendExtendedEvent(event)
     checkEventResult.onComplete {
       case Failure(NonFatal(e)) ⇒ logger.error(s"Unable to post audit event of type ${event.auditType} to audit connector - ${e.getMessage}", e)
-      case _ ⇒ logger.info(s"Event audited ${event.auditType}")
+      case _                    ⇒ logger.info(s"Event audited ${event.auditType}")
     }
   }
 }

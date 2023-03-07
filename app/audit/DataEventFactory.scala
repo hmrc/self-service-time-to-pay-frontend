@@ -35,10 +35,10 @@ class DataEventFactory @Inject() (
     calculatorService: CalculatorService
 ) {
   def directDebitSubmissionFailedEvent(
-                                        journey: Journey,
-                                        schedule: PaymentSchedule,
-                                        submissionError: SubmissionError
-                                      )(implicit request: Request[_]): ExtendedDataEvent = {
+      journey:         Journey,
+      schedule:        PaymentSchedule,
+      submissionError: SubmissionError
+  )(implicit request: Request[_]): ExtendedDataEvent = {
     val detail = Json.obj(
       "status" -> "failed to submit direct debit didnt bothered to submit TTP Arrangement",
       "submissionError" -> submissionError,
@@ -56,9 +56,9 @@ class DataEventFactory @Inject() (
 
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
-      auditType = "directDebitSetup",
-      tags = hcTags("self-assessment-time-to-pay-plan-direct-debit-submission-failed"),
-      detail = detail
+      auditType   = "directDebitSetup",
+      tags        = hcTags("self-assessment-time-to-pay-plan-direct-debit-submission-failed"),
+      detail      = detail
     )
 
   }
@@ -87,9 +87,9 @@ class DataEventFactory @Inject() (
     else "Total Tax Bill Income Greater than 24 Months"
   }
 
-  def planSetUpSuccessEvent(journey: Journey,
+  def planSetUpSuccessEvent(journey:  Journey,
                             schedule: PaymentSchedule
-                           )(implicit request: Request[_]): ExtendedDataEvent = {
+  )(implicit request: Request[_]): ExtendedDataEvent = {
     val detail = Json.obj(
       "bankDetails" -> bankDetails(journey),
       "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
