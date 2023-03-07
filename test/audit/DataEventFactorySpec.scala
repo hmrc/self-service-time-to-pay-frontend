@@ -73,7 +73,7 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _600Amount)))
         )
 
-        val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyNegativeRemainingIncome)
+        val computedDataEvent = dataEventFactory.planNotAffordableEvent(journeyNegativeRemainingIncome)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -102,7 +102,7 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
-        val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyZeroRemainingIncome)
+        val computedDataEvent = dataEventFactory.planNotAffordableEvent(journeyZeroRemainingIncome)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -131,7 +131,7 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
-        val computedDataEvent = dataEventFactory.manualAffordabilityCheck(journeyNoPlanWithin24Months)
+        val computedDataEvent = dataEventFactory.planNotAffordableEvent(journeyNoPlanWithin24Months)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -181,7 +181,7 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
         )
 
-        val computedDataEvent = dataEventFactory.manualAffordabilityPlanSetUp(journey50PerCent)
+        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey50PerCent)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -328,7 +328,7 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_300Amount)))),
         )
 
-        val computedDataEvent = dataEventFactory.manualAffordabilityPlanSetUp(journey60PerCent)
+        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey60PerCent)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -455,7 +455,7 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_400Amount)))),
         )
 
-        val computedDataEvent = dataEventFactory.manualAffordabilityPlanSetUp(journey80PerCent)
+        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey80PerCent)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -564,7 +564,7 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(customAmount)))),
         )
 
-        val computedDataEvent = dataEventFactory.manualAffordabilityPlanSetUp(journeycustomAmount)
+        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journeycustomAmount)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",

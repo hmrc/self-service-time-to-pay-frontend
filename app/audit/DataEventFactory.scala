@@ -16,6 +16,7 @@
 
 package audit
 
+import java.time.temporal.ChronoUnit
 import audit.model.AuditPaymentSchedule
 import journey.Journey
 import play.api.libs.json.Json
@@ -23,6 +24,7 @@ import play.api.mvc.Request
 import ssttpcalculator.CalculatorService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import req.RequestSupport._
+import ssttparrangement.SubmissionError
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 
@@ -32,7 +34,40 @@ import javax.inject.{Inject, Singleton}
 class DataEventFactory @Inject() (
     calculatorService: CalculatorService
 ) {
-  def manualAffordabilityCheck(journey: Journey)(implicit request: Request[_]): ExtendedDataEvent = {
+  def directDebitSubmissionFailedEvent(
+                                        journey: Journey,
+                                        schedule: PaymentSchedule,
+                                        submissionError: SubmissionError
+                                      )(implicit request: Request[_]): ExtendedDataEvent = {
+    val detail = Json.obj(
+      "status" -> "failed to submit direct debit didnt bothered to submit TTP Arrangement",
+      "submissionError" -> submissionError,
+      "utr" -> journey.taxpayer.selfAssessment.utr.value,
+      "bankDetails" -> Json.obj(
+        "name" -> journey.bankDetails.accountName,
+        "accountNumber" -> journey.bankDetails.accountNumber,
+        "sortCode" -> journey.bankDetails.sortCode
+      ),
+      "schedule" -> Json.obj(
+        "initialPaymentAmount" -> schedule.initialPayment,
+        "installments" -> Json.toJson(schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
+        "numberOfInstallments" -> schedule.instalments.length,
+        "installmentLengthCalendarMonths" -> (ChronoUnit.MONTHS.between(schedule.startDate, schedule.endDate)),
+        "totalPaymentWithoutInterest" -> schedule.amountToPay,
+        "totalInterestCharged" -> schedule.totalInterestCharged,
+        "totalPayable" -> schedule.totalPayable)
+    )
+
+    ExtendedDataEvent(
+      auditSource = "pay-what-you-owe",
+      auditType = "directDebitSetup",
+      tags = hcTags("self-assessment-time-to-pay-plan-direct-debit-submission-failed"),
+      detail = detail
+    )
+
+  }
+
+  def planNotAffordableEvent(journey: Journey)(implicit request: Request[_]): ExtendedDataEvent = {
     val detail = Json.obj(
       "totalDebt" -> journey.debits.map(_.amount).sum.toString,
       "spending" -> journey.maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(0)).toString,
@@ -55,7 +90,7 @@ class DataEventFactory @Inject() (
     else "Total Tax Bill Income Greater than 24 Months"
   }
 
-  def manualAffordabilityPlanSetUp(journey: Journey)(implicit request: Request[_]): ExtendedDataEvent = {
+  def planSetUpSuccessEvent(journey: Journey)(implicit request: Request[_]): ExtendedDataEvent = {
     val selectedSchedule = calculatorService.selectedSchedule(journey).getOrElse(
       throw new IllegalArgumentException("could not generate selected schedule")
     )
@@ -102,7 +137,7 @@ class DataEventFactory @Inject() (
     if (selectedSchedule.instalments.length <= 12) "twelveMonthsOrLess" else "moreThanTwelveMonths"
   }
 
-  private def hcTags(transactionName: String)(implicit request: Request[_]) = {
+  private def hcTags(transactionName: String)(implicit request: Request[_]): Map[String, String] = {
     hc.toAuditTags(transactionName, request.path) ++
       Map(hc.names.deviceID -> hc.deviceID.getOrElse("-"))
   }
