@@ -36,7 +36,7 @@ object ArrangementForm {
   }
 
   def unapply(data: ArrangementForm): Option[(Option[String], Option[Boolean])] = Option {
-    (data.dayOfMonthOpt.map(_.toString), Some(false))
+    (data.dayOfMonthOpt.map(_.toString), data.dayOfMonthOpt.map(day => if (day == 28) { false } else { true }))
   }
 
   val dayOfMonthForm: Form[ArrangementForm] = {
