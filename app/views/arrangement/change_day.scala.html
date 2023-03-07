@@ -58,15 +58,14 @@
 
 @enterCustomDayPanel = {
     <div id="customDate" class="govuk-form-group @if(customDateHasErrors){govuk-form-group--error}">
-        <label class="govuk-label" for="dayOfMonth" >@messages("ssttp.arrangement.changeday.enter.date")</label>
-        <br>
+        <div class="govuk-hint" for="dayOfMonth" >@messages("ssttp.arrangement.changeday.enter.date")</div>
         @if(customDateHasErrors) {
             <span id="other-error" class="govuk-error-message">
                 <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
                 @dayForm.error("dayOfMonth").map(formError => messages(formError.message))
             </span>
         }
-        <input type="text" class="govuk-input govuk-!-width-one-quarter" id="dayOfMonth" name="dayOfMonth">
+        <input type="text" class="govuk-input govuk-input--width-2" id="dayOfMonth" name="dayOfMonth">
     </div>
 }
 
@@ -100,14 +99,14 @@
             errorMessage = dayForm.error("other").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
             items = Seq(
                 RadioItem(
-                    content = Text(messages("ssttp.arrangement.changeday.default")),
                     id = Some("28th"),
+                    content = Text(messages("ssttp.arrangement.changeday.default")),
                     value = Some("false"),
                     checked = dayForm("dayOfMonth").value.contains("28")
                 ),
                 RadioItem(
-                    content = Text(messages("ssttp.arrangement.changeday.different")),
                     id = Some("other"),
+                    content = Text(messages("ssttp.arrangement.changeday.different")),
                     value = Some("true"),
                     checked = dayForm("other").value.contains("true"),
                     conditionalHtml = Some(enterCustomDayPanel)

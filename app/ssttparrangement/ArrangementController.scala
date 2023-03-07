@@ -142,9 +142,8 @@ class ArrangementController @Inject() (
     journeyService.authorizedForSsttp { journey =>
       val form = dayOfMonthForm
       val formWithData = journey.maybeArrangementDayOfMonth
-        .map(arrangmentDayOfMonth => form.fill(ArrangementForm(None)))
-        .getOrElse(form)
-      Future.successful(Ok(views.change_day(formWithData)))
+        .map(arrangementDayOfMonth => form.fill(ArrangementForm.apply(Some(arrangementDayOfMonth.dayOfMonth.toString), Some(false))))
+      Future.successful(Ok(views.change_day(formWithData.getOrElse(dayOfMonthForm))))
     }
   }
 

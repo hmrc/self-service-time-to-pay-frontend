@@ -31,12 +31,12 @@ final case class ArrangementForm(
 
 object ArrangementForm {
 
-  def coerce(dayOfMonth: Option[String], customDaySelected: Option[Boolean]): ArrangementForm = {
+  def apply(dayOfMonth: Option[String], customDaySelected: Option[Boolean]): ArrangementForm = {
     ArrangementForm(dayOfMonth.map(_.toInt))
   }
 
-  def uncoerce(data: ArrangementForm): Option[(Option[String], Option[Boolean])] = Option {
-    (data.dayOfMonthOpt.map(_.toString), data.dayOfMonthOpt.map(_ => true))
+  def unapply(data: ArrangementForm): Option[(Option[String], Option[Boolean])] = Option {
+    (data.dayOfMonthOpt.map(_.toString), Some(false))
   }
 
   val dayOfMonthForm: Form[ArrangementForm] = {
@@ -52,7 +52,7 @@ object ArrangementForm {
       "dayOfMonth" -> mandatoryIfTrue("other", dayOfMonth),
       "other" -> optional(boolean)
         .verifying("ssttp.arrangement.change_day.payment-day.required", { _.isDefined })
-    )(coerce) (uncoerce))
+    )(apply) (unapply))
   }
 
   implicit val format: Format[ArrangementForm] = Json.format[ArrangementForm]
