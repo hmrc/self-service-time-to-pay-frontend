@@ -39,9 +39,10 @@ class AuditService @Inject() (
 
 
   def sendDirectDebitSubmissionFailedEvent(
-      journey:         Journey,
-      schedule:        PaymentSchedule,
-      submissionError: SubmissionError)(implicit request: Request[_]): Unit = {
+                                            journey:         Journey,
+                                            schedule:        PaymentSchedule,
+                                            submissionError: SubmissionError
+                                          )(implicit request: Request[_]): Unit = {
     val event = dataEventFactory.directDebitSubmissionFailedEvent(journey, schedule, submissionError)
     sendEvent(event)
     ()
@@ -52,8 +53,8 @@ class AuditService @Inject() (
     sendEvent(event)
   }
 
-  def sendPlanSetUpSuccessEvent(journey: Journey)(implicit request: Request[_]): Unit = {
-    val event = dataEventFactory.planSetUpSuccessEvent(journey)
+  def sendPlanSetUpSuccessEvent(journey: Journey, schedule: PaymentSchedule)(implicit request: Request[_]): Unit = {
+    val event = dataEventFactory.planSetUpSuccessEvent(journey, schedule)
     sendEvent(event)
   }
 

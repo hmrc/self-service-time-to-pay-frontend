@@ -19,7 +19,7 @@ package audit
 import java.time.temporal.ChronoUnit
 import audit.model.AuditPaymentSchedule
 import journey.Journey
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Request
 import ssttpcalculator.CalculatorService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
@@ -43,16 +43,12 @@ class DataEventFactory @Inject() (
       "status" -> "failed to submit direct debit didnt bothered to submit TTP Arrangement",
       "submissionError" -> submissionError,
       "utr" -> journey.taxpayer.selfAssessment.utr.value,
-      "bankDetails" -> Json.obj(
-        "name" -> journey.bankDetails.accountName,
-        "accountNumber" -> journey.bankDetails.accountNumber,
-        "sortCode" -> journey.bankDetails.sortCode
-      ),
+      "bankDetails" -> bankDetails(journey),
       "schedule" -> Json.obj(
         "initialPaymentAmount" -> schedule.initialPayment,
         "installments" -> Json.toJson(schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
         "numberOfInstallments" -> schedule.instalments.length,
-        "installmentLengthCalendarMonths" -> (ChronoUnit.MONTHS.between(schedule.startDate, schedule.endDate)),
+        "installmentLengthCalendarMonths" -> ChronoUnit.MONTHS.between(schedule.startDate, schedule.endDate),
         "totalPaymentWithoutInterest" -> schedule.amountToPay,
         "totalInterestCharged" -> schedule.totalInterestCharged,
         "totalPayable" -> schedule.totalPayable)
@@ -76,6 +72,7 @@ class DataEventFactory @Inject() (
       "status" -> notAffordableStatus(journey.remainingIncomeAfterSpending),
       "utr" -> journey.taxpayer.selfAssessment.utr
     )
+
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
       auditType   = "ManualAffordabilityCheck",
@@ -90,32 +87,20 @@ class DataEventFactory @Inject() (
     else "Total Tax Bill Income Greater than 24 Months"
   }
 
-  def planSetUpSuccessEvent(journey: Journey)(implicit request: Request[_]): ExtendedDataEvent = {
-    val selectedSchedule = calculatorService.selectedSchedule(journey).getOrElse(
-      throw new IllegalArgumentException("could not generate selected schedule")
-    )
-
-    val bankDetails = Json.obj(
-      "accountNumber" -> journey.bankDetails.accountNumber,
-      "name" -> journey.bankDetails.accountName,
-      "sortCode" -> journey.bankDetails.sortCode
-    )
-
-    val auditPaymentSchedule = Json.toJson(AuditPaymentSchedule(selectedSchedule))
-
+  def planSetUpSuccessEvent(journey: Journey,
+                            schedule: PaymentSchedule
+                           )(implicit request: Request[_]): ExtendedDataEvent = {
     val detail = Json.obj(
-      "bankDetails" -> bankDetails,
+      "bankDetails" -> bankDetails(journey),
       "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
-      "selectionType" -> selectionType(
-        maybeSelectedPlanAmount      = journey.maybeSelectedPlanAmount,
-        remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
-      ),
-      "lessThanOrMoreThanTwelveMonths" -> lessThanOrMoreThanTwelveMonths(selectedSchedule),
-      "schedule" -> auditPaymentSchedule,
+      "selectionType" -> typeOfPlan(journey),
+      "lessThanOrMoreThanTwelveMonths" -> lessThanOrMoreThanTwelveMonths(schedule),
+      "schedule" -> Json.toJson(AuditPaymentSchedule(schedule)),
       "status" -> "Success",
       "paymentReference" -> journey.ddRef,
       "utr" -> journey.taxpayer.selfAssessment.utr
     )
+
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
       auditType   = "ManualAffordabilityPlanSetUp",
@@ -124,7 +109,10 @@ class DataEventFactory @Inject() (
     )
   }
 
-  private def selectionType(maybeSelectedPlanAmount: Option[BigDecimal], remainingIncomeAfterSpending: BigDecimal): String = {
+  private def typeOfPlan(journey: Journey): String = {
+    val maybeSelectedPlanAmount = journey.maybeSelectedPlanAmount
+    val remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
+
     maybeSelectedPlanAmount.fold("None")(amount => {
       if (amount == remainingIncomeAfterSpending * 0.5) "fiftyPercent"
       else if (amount == remainingIncomeAfterSpending * 0.6) "sixtyPercent"
@@ -136,6 +124,12 @@ class DataEventFactory @Inject() (
   private def lessThanOrMoreThanTwelveMonths(selectedSchedule: PaymentSchedule): String = {
     if (selectedSchedule.instalments.length <= 12) "twelveMonthsOrLess" else "moreThanTwelveMonths"
   }
+
+  private def bankDetails(journey: Journey): JsObject = Json.obj(
+    "name" -> journey.bankDetails.accountName,
+    "accountNumber" -> journey.bankDetails.accountNumber,
+    "sortCode" -> journey.bankDetails.sortCode
+  )
 
   private def hcTags(transactionName: String)(implicit request: Request[_]): Map[String, String] = {
     hc.toAuditTags(transactionName, request.path) ++
