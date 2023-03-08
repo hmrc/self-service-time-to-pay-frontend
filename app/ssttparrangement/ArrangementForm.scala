@@ -16,7 +16,7 @@
 
 package ssttparrangement
 
-import play.api.data.Form
+import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 import play.api.libs.json.{Format, Json}
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
@@ -39,21 +39,22 @@ object ArrangementForm {
     (data.dayOfMonthOpt.map(_.toString), data.dayOfMonthOpt.map(day => if (day == 28) { false } else { true }))
   }
 
-  val dayOfMonthForm: Form[ArrangementForm] = {
-      def isInt(input: String): Boolean = (catching(classOf[NumberFormatException]) opt input.toInt).nonEmpty
-
-    val dayOfMonth = text
-      .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i: String => i.nonEmpty })
-      .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
-      .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt >= 1)) })
-      .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt <= 28)) })
-
-    Form(mapping(
+  def dayOfMonthForm: Form[ArrangementForm] = Form(
+    mapping(
       "dayOfMonth" -> mandatoryIfTrue("other", dayOfMonth),
       "other" -> optional(boolean)
-        .verifying("ssttp.arrangement.change_day.payment-day.required", { _.isDefined })
-    )(apply) (unapply))
-  }
+        .verifying("ssttp.arrangement.change_day.payment-day.required", {
+          _.isDefined
+        })
+    )(ArrangementForm.apply)(ArrangementForm.unapply))
+
+  val dayOfMonth: Mapping[String] = text
+    .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i: String => i.nonEmpty })
+    .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => i.isEmpty || (i.nonEmpty && isInt(i)) })
+    .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt >= 1)) })
+    .verifying("ssttp.arrangement.change_day.payment-day.out-of-range", { i => !isInt(i) || (isInt(i) && (i.toInt <= 28)) })
+
+  def isInt(input: String): Boolean = (catching(classOf[NumberFormatException]) opt input.toInt).nonEmpty
 
   implicit val format: Format[ArrangementForm] = Json.format[ArrangementForm]
 }
