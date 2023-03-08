@@ -37,7 +37,7 @@ import testsupport.stubs.{ArrangementStub, AuthStub, DirectDebitStub, TaxpayerSt
 import testsupport.testdata.TdAll.selectedRegularPaymentAmount300
 import testsupport.testdata.{TdAll, TdRequest}
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, EligibilityStatus, PlanSelection, SelectedPlan, TypeOfAccountDetails}
+import uk.gov.hmrc.selfservicetimetopay.models.{RegularPaymentDay, BankDetails, EligibilityStatus, PlanSelection, SelectedPlan, TypeOfAccountDetails}
 
 import java.time.LocalDateTime
 import java.util.UUID
@@ -106,7 +106,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       maybeIncome                = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
       maybeSpending              = Some(Spending(Expenses(HousingExp, 500))),
       maybePlanSelection         = Some(PlanSelection(Left(SelectedPlan(selectedRegularPaymentAmount300)))),
-      maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(3)),
+      maybeArrangementDayOfMonth = Some(RegularPaymentDay(3)),
       maybeEligibilityStatus     = Some(EligibilityStatus(Seq.empty))
     )
   }

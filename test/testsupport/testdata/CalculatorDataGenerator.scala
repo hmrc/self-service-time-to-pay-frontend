@@ -22,9 +22,9 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.AppConfig
 import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, stringify, toJson}
-import ssttpcalculator.model.{Instalment, PaymentSchedule, TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{Instalment, PaymentSchedule, TaxLiability, PaymentsCalendar}
 import testsupport.{DateSupport, ItSpec}
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
+import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
 
 object CalculatorDataGenerator extends ItSpec with Status with DateSupport {
   val eightMonthScheduleRegularPaymentAmount = 637
@@ -112,12 +112,12 @@ object CalculatorDataGenerator extends ItSpec with Status with DateSupport {
   //            .withBody(prettyPrint(toJson(schedule))))
   //    ))
 
-//  def calculatorInput(endDate: LocalDate, firstPaymentDayOfMonth: Int, regularPaymentAmount: BigDecimal): TaxPaymentPlan =
-//    TaxPaymentPlan(
-//      taxLiabilities     = Seq(TaxLiability(debit1Value, startDate), TaxLiability(debit2Value, startDate)),
-//      withUpfrontPayment = if (initialPayment == 0) false else true,
-//      planStartDate      = startDate,
-//    )(appConfig)
+  //  def calculatorInput(endDate: LocalDate, firstPaymentDayOfMonth: Int, regularPaymentAmount: BigDecimal): TaxPaymentPlan =
+  //    TaxPaymentPlan(
+  //      taxLiabilities     = Seq(TaxLiability(debit1Value, startDate), TaxLiability(debit2Value, startDate)),
+  //      withUpfrontPayment = if (initialPayment == 0) false else true,
+  //      planStartDate      = startDate,
+  //    )(appConfig)
 
   private def paymentSchedule(regularInstalments: List[LocalDate], regularPayment: BigDecimal, finalInstalment: LocalDate) = {
     val finalPayment = totalDebt - (regularPayment * regularInstalments.size)

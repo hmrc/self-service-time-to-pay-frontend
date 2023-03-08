@@ -163,7 +163,7 @@ class ArrangementController @Inject() (
           },
           (validFormData: ArrangementForm) => {
             JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
-            val updatedJourney = journey.copy(maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(validFormData.dayOfMonth)))
+            val updatedJourney = journey.copy(maybeArrangementDayOfMonth = Some(RegularPaymentDay(validFormData.dayOfMonth)))
             journeyService.saveJourney(updatedJourney).map {
               _ => Redirect(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())
             }

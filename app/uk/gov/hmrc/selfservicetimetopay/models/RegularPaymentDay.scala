@@ -18,8 +18,8 @@ package uk.gov.hmrc.selfservicetimetopay.models
 
 import play.api.libs.json.{Format, Json}
 
-final case class ArrangementDayOfMonth(dayOfMonth: Int)
+final case class RegularPaymentDay(dayOfMonth: Int)
 
-object ArrangementDayOfMonth {
-  implicit val format: Format[ArrangementDayOfMonth] = Json.format[ArrangementDayOfMonth]
+object RegularPaymentDay {
+  implicit val format: Format[RegularPaymentDay] = Json.format[RegularPaymentDay]
 }

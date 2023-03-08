@@ -19,10 +19,10 @@ package ssttpcalculator
 import config.AppConfig
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import ssttpcalculator.model.{TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{TaxLiability, PaymentsCalendar}
 import testsupport.{DateSupport, ItSpec}
 import org.scalatest.prop.Tables._
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
+import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
 
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
@@ -58,8 +58,7 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
   def date(date: String): LocalDate = LocalDate.parse(date)
 
   val customDateNow = now(Clock.fixed(LocalDateTime.parse(s"2023-02-17T00:00:00.880") toInstant (UTC), systemDefault()))
-  val standardArrangementDayOfMonth = Some(ArrangementDayOfMonth(28))
-
+  val standardArrangementDayOfMonth = Some(RegularPaymentDay(28))
 
   "NEW return a payment schedule request with no initial payment when the user tries to make a payment which would leave less than £32 balance when" - {
     val testCases = Table(
@@ -92,16 +91,14 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         None, customDateNow, None, 28, date("2023-02-28"))
     )
 
-
     forAll(testCases) { (caseDescription,
-                         inpurDebits, inputUpfrontPayment, inputDateNow, inputMaybeArrangementDayOfMonth,
-                         expectedMaybeUpfrontPaymentDate, expectedPlanStartDate, expectedMaybePaymentToday, expectedRegularPaymentsDay, expectedFirstRegularPaymentDay) =>
+      inpurDebits, inputUpfrontPayment, inputDateNow, inputMaybeArrangementDayOfMonth,
+      expectedMaybeUpfrontPaymentDate, expectedPlanStartDate, expectedMaybePaymentToday, expectedRegularPaymentsDay, expectedFirstRegularPaymentDay) =>
       s"$caseDescription" in {
-        val taxPaymentPlan = TaxPaymentPlan.safeNew(inpurDebits, inputUpfrontPayment, inputDateNow, inputMaybeArrangementDayOfMonth)(appConfig)
+        val taxPaymentPlan = PaymentsCalendar.generate(inpurDebits, inputUpfrontPayment, inputDateNow, inputMaybeArrangementDayOfMonth)(appConfig)
 
         taxPaymentPlan.maybeUpfrontPaymentDate shouldBe expectedMaybeUpfrontPaymentDate
         taxPaymentPlan.planStartDate shouldBe expectedPlanStartDate
-        taxPaymentPlan.maybePaymentToday shouldBe expectedMaybePaymentToday
         taxPaymentPlan.regularPaymentsDay shouldBe expectedRegularPaymentsDay
         taxPaymentPlan.regularPaymentDates.head shouldBe expectedFirstRegularPaymentDay
       }
@@ -114,35 +111,35 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         "expectedMaybeUpfrontPaymentDate", "expectedPlanStartDate", "expectedRegularPaymentsDay", "expectedFirstRegularPaymentDate"),
 
       ("1", "no upfront payment, regular payment day selected 11 days away so first regular payment in starting month",
-        debits, zeroInitialPayment, date("2023-01-01"), Some(ArrangementDayOfMonth(12)),
+        debits, zeroInitialPayment, date("2023-01-01"), Some(RegularPaymentDay(12)),
         None, date("2023-01-01"), 12, date("2023-01-12")),
 
       ("2", "no upfront payment, regular payment day selected 10 days away so first regular payment next month from starting month",
-        debits, zeroInitialPayment, date("2023-01-01"), Some(ArrangementDayOfMonth(11)),
+        debits, zeroInitialPayment, date("2023-01-01"), Some(RegularPaymentDay(11)),
         None, date("2023-01-01"), 11, date("2023-02-11")),
 
       ("3", "with upfront payment, regular payment day selected 25 days away so even given gap between payments, first regular payment in starting month",
-        debits, BigDecimal(100), date("2023-01-01"), Some(ArrangementDayOfMonth(26)),
+        debits, BigDecimal(100), date("2023-01-01"), Some(RegularPaymentDay(26)),
         Some(date("2023-01-12")), date("2023-01-01"), 26, date("2023-01-26")),
 
       ("4", "with upfront payment, regular payment day selected 24 days away so given gap between payments, first regular payment next month from starting month",
-        debits, BigDecimal(100), date("2023-01-01"), Some(ArrangementDayOfMonth(25)),
+        debits, BigDecimal(100), date("2023-01-01"), Some(RegularPaymentDay(25)),
         Some(date("2023-01-12")), date("2023-01-01"), 25, date("2023-02-25")),
 
       ("5", "with upfront payment, regular payment day selected 10 days away so given gap between payments, first regular payment next month from starting month",
-        debits, BigDecimal(100), date("2023-01-01"), Some(ArrangementDayOfMonth(11)),
+        debits, BigDecimal(100), date("2023-01-01"), Some(RegularPaymentDay(11)),
         Some(date("2023-01-12")), date("2023-01-01"), 11, date("2023-02-11")),
-      
+
       ("6", "with upfront payment, regular payment day selected 11 days away so given gap between payments, first regular payment next month from starting month",
-        debits, BigDecimal(100), date("2023-01-01"), Some(ArrangementDayOfMonth(12)),
+        debits, BigDecimal(100), date("2023-01-01"), Some(RegularPaymentDay(12)),
         Some(date("2023-01-12")), date("2023-01-01"), 12, date("2023-02-12")),
 
       ("7", "no upfront payment, regular payment day selected 25 days away so first regular payment in starting month",
-        debits, zeroInitialPayment, date("2023-01-01"), Some(ArrangementDayOfMonth(26)),
+        debits, zeroInitialPayment, date("2023-01-01"), Some(RegularPaymentDay(26)),
         None, date("2023-01-01"), 26, date("2023-01-26")),
 
       ("8", "no upfront payment, regular payment day selected 24 days away so first regular payment in starting month",
-        debits, zeroInitialPayment, date("2023-01-01"), Some(ArrangementDayOfMonth(25)),
+        debits, zeroInitialPayment, date("2023-01-01"), Some(RegularPaymentDay(25)),
         None, date("2023-01-01"), 25, date("2023-01-25")),
 
       ("9", "no upfront payment, no regular payment day preference so defaults to 28 so first regular payment in starting month",
@@ -154,12 +151,11 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
         Some(date("2023-01-12")), date("2023-01-01"), 28, date("2023-01-28")),
     )
 
-
     forAll(testCases) { (id, caseDescription,
-                         inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeArrangementDayOfMonth,
-                         expectedMaybeUpfrontPaymentDate, expectedPlanStartDate, expectedRegularPaymentsDay, expectedFirstRegularPaymentDay) =>
+      inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeArrangementDayOfMonth,
+      expectedMaybeUpfrontPaymentDate, expectedPlanStartDate, expectedRegularPaymentsDay, expectedFirstRegularPaymentDay) =>
       s"$id. $caseDescription" in {
-        val taxPaymentPlan = TaxPaymentPlan.safeNew(inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeArrangementDayOfMonth)(appConfig)
+        val taxPaymentPlan = PaymentsCalendar.generate(inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeArrangementDayOfMonth)(appConfig)
 
         taxPaymentPlan.maybeUpfrontPaymentDate shouldBe expectedMaybeUpfrontPaymentDate
         taxPaymentPlan.planStartDate shouldBe expectedPlanStartDate
@@ -169,101 +165,101 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
     }
   }
 
-//  "return a payment schedule request with no initial payment when the user tries to make a payment which would leave less than £32 balance when" - {
-//    "the current date is Friday 1st May with upcoming bank holiday" in {
-//      val clock = clockForMay(_1st)
-//      val currentDate = LocalDate.now(clock)
-//
-//      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-//        debits, initialPaymentFalse, currentDate)(appConfig)
-//    }
-//
-//    "the current date is Thursday 7th May with upcoming bank holiday" in {
-//      val clock = clockForMay(_7th)
-//      val currentDate = LocalDate.now(clock)
-//
-//      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-//        debits, initialPaymentFalse, currentDate)(appConfig)
-//    }
-//
-//    "the current date is bank holiday Friday 8th May" in {
-//      val clock = clockForMay(_8th)
-//      val currentDate = LocalDate.now(clock)
-//
-//      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-//        debits, initialPaymentFalse, currentDate)(appConfig)
-//    }
-//
-//    "the current date is Monday 11th May" in {
-//      val clock = clockForMay(_11th)
-//      val currentDate = LocalDate.now(clock)
-//
-//      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-//        debits, initialPaymentFalse, currentDate)(appConfig)
-//    }
-//
-//    "the current date is the Monday 25th May so the payment dates roll into the next month" in {
-//      val clock = clockForMay(_25th)
-//      val currentDate = may(_25th)
-//
-//      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
-//        debits, initialPaymentFalse, currentDate)(appConfig)
-//    }
-//    "the current date is 17th February so without an upfront payment the first regular payment date is 28th February" in {
-//      val clock = Clock.fixed(
-//        LocalDateTime.parse(s"2023-02-17T00:00:00.880") toInstant (UTC),
-//        systemDefault()
-//      )
-//
-//      val result = TaxPaymentPlan.safeNew(debits, zeroInitialPayment, now(clock), Some(ArrangementDayOfMonth(28)))(appConfig)
-//
-//      result.regularPaymentDates.head shouldBe (LocalDate.of(2023, 2, 28))
-//
-//    }
-//  }
+  //  "return a payment schedule request with no initial payment when the user tries to make a payment which would leave less than £32 balance when" - {
+  //    "the current date is Friday 1st May with upcoming bank holiday" in {
+  //      val clock = clockForMay(_1st)
+  //      val currentDate = LocalDate.now(clock)
+  //
+  //      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+  //        debits, initialPaymentFalse, currentDate)(appConfig)
+  //    }
+  //
+  //    "the current date is Thursday 7th May with upcoming bank holiday" in {
+  //      val clock = clockForMay(_7th)
+  //      val currentDate = LocalDate.now(clock)
+  //
+  //      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+  //        debits, initialPaymentFalse, currentDate)(appConfig)
+  //    }
+  //
+  //    "the current date is bank holiday Friday 8th May" in {
+  //      val clock = clockForMay(_8th)
+  //      val currentDate = LocalDate.now(clock)
+  //
+  //      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+  //        debits, initialPaymentFalse, currentDate)(appConfig)
+  //    }
+  //
+  //    "the current date is Monday 11th May" in {
+  //      val clock = clockForMay(_11th)
+  //      val currentDate = LocalDate.now(clock)
+  //
+  //      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+  //        debits, initialPaymentFalse, currentDate)(appConfig)
+  //    }
+  //
+  //    "the current date is the Monday 25th May so the payment dates roll into the next month" in {
+  //      val clock = clockForMay(_25th)
+  //      val currentDate = may(_25th)
+  //
+  //      TaxPaymentPlan.safeNew(debits, initialPaymentTooLarge, currentDate)(appConfig) shouldBe TaxPaymentPlan(
+  //        debits, initialPaymentFalse, currentDate)(appConfig)
+  //    }
+  //    "the current date is 17th February so without an upfront payment the first regular payment date is 28th February" in {
+  //      val clock = Clock.fixed(
+  //        LocalDateTime.parse(s"2023-02-17T00:00:00.880") toInstant (UTC),
+  //        systemDefault()
+  //      )
+  //
+  //      val result = TaxPaymentPlan.safeNew(debits, zeroInitialPayment, now(clock), Some(ArrangementDayOfMonth(28)))(appConfig)
+  //
+  //      result.regularPaymentDates.head shouldBe (LocalDate.of(2023, 2, 28))
+  //
+  //    }
+  //  }
 
-//  "availablePaymentSchedules with an endDate should" - {
-//    implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
-//    val LastPaymentDelayDays = 7
-//
-//    "return a payment schedule with endDate when" - {
-//      "matching last payment date plush seven days" in {
-//        val startDate = LocalDate.now
-//        val endDate = startDate.plusMonths(3)
-//
-//        val upfrontPayment = 0
-//
-//        val taxPaymentPlan = TaxPaymentPlan(
-//          taxLiabilities             = Seq(TaxLiability(1000, startDate)),
-//          withUpfrontPayment         = false,
-//          planStartDate              = startDate,
-//          maybeArrangementDayOfMonth = None,
-//          maybePaymentToday          = None
-//        )(appConfig)
-//
-//        val result: PaymentSchedule = calculatorService.schedule(500, taxPaymentPlan, upfrontPayment).get
-//
-//        result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
-//      }
-//
-//      "ignoring public holidays,  last payment date plush seven days" in {
-//        val startDate = LocalDate.of(2022, 6, 1)
-//        val endDate = startDate.plusMonths(6)
-//
-//        val upfrontPayment = 0
-//
-//        val taxPaymentPlan = TaxPaymentPlan(
-//          taxLiabilities             = Seq(TaxLiability(1000, startDate)),
-//          withUpfrontPayment         = false,
-//          planStartDate              = startDate,
-//          maybeArrangementDayOfMonth = None,
-//          maybePaymentToday          = None
-//        )(appConfig)
-//
-//        val result: PaymentSchedule = calculatorService.schedule(200, taxPaymentPlan, upfrontPayment).get
-//
-//        result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
-//      }
-//    }
-//  }
+  //  "availablePaymentSchedules with an endDate should" - {
+  //    implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+  //    val LastPaymentDelayDays = 7
+  //
+  //    "return a payment schedule with endDate when" - {
+  //      "matching last payment date plush seven days" in {
+  //        val startDate = LocalDate.now
+  //        val endDate = startDate.plusMonths(3)
+  //
+  //        val upfrontPayment = 0
+  //
+  //        val taxPaymentPlan = TaxPaymentPlan(
+  //          taxLiabilities             = Seq(TaxLiability(1000, startDate)),
+  //          withUpfrontPayment         = false,
+  //          planStartDate              = startDate,
+  //          maybeArrangementDayOfMonth = None,
+  //          maybePaymentToday          = None
+  //        )(appConfig)
+  //
+  //        val result: PaymentSchedule = calculatorService.schedule(500, taxPaymentPlan, upfrontPayment).get
+  //
+  //        result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
+  //      }
+  //
+  //      "ignoring public holidays,  last payment date plush seven days" in {
+  //        val startDate = LocalDate.of(2022, 6, 1)
+  //        val endDate = startDate.plusMonths(6)
+  //
+  //        val upfrontPayment = 0
+  //
+  //        val taxPaymentPlan = TaxPaymentPlan(
+  //          taxLiabilities             = Seq(TaxLiability(1000, startDate)),
+  //          withUpfrontPayment         = false,
+  //          planStartDate              = startDate,
+  //          maybeArrangementDayOfMonth = None,
+  //          maybePaymentToday          = None
+  //        )(appConfig)
+  //
+  //        val result: PaymentSchedule = calculatorService.schedule(200, taxPaymentPlan, upfrontPayment).get
+  //
+  //        result.endDate shouldBe result.instalments.last.paymentDate.plusDays(LastPaymentDelayDays)
+  //      }
+  //    }
+  //  }
 }

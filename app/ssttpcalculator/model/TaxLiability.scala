@@ -16,8 +16,11 @@
 
 package ssttpcalculator.model
 
+import journey.Journey
+
 import java.time.LocalDate
 import play.api.libs.json.{Json, OFormat}
+import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 
 import scala.math.BigDecimal
 
@@ -35,6 +38,15 @@ object Payable {
       case LatePaymentInterest(_)        => throw new IllegalArgumentException("cannot convert late payment interest to tax liability")
       case TaxLiability(amount, dueDate) => TaxLiability(amount, dueDate)
     }
+  }
+
+  def taxLiabilities(sa: SelfAssessmentDetails): Seq[TaxLiability] = for {
+    debit <- sa.debits
+  } yield TaxLiability(debit.amount, debit.dueDate)
+
+  def taxLiabilities(journey: Journey): Seq[TaxLiability] = {
+    val sa = journey.taxpayer.selfAssessment
+    taxLiabilities(sa)
   }
 }
 

@@ -21,10 +21,10 @@ import journey.PaymentToday
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor11
 import play.api.Logger
-import ssttpcalculator.model.{PaymentSchedule, TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{PaymentSchedule, TaxLiability, PaymentsCalendar}
 import ssttpcalculator.{CalculatorService, DurationService, InterestRateService}
 import testsupport.ItSpec
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
+import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
 
 import java.time.LocalDate
 import scala.math.BigDecimal.RoundingMode.HALF_UP

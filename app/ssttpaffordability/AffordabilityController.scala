@@ -31,7 +31,7 @@ import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementForm
 import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
+import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
 import views.Views
 
 import javax.inject.Inject
