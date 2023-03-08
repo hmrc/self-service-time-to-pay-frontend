@@ -18,18 +18,30 @@ package testsupport.testdata
 
 import langswitch.Language
 import langswitch.Languages.{English, Welsh}
-import play.api.mvc.Cookie
+import play.api.mvc.{AnyContentAsEmpty, Cookie}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{HeaderNames, SessionKeys}
 
 object TdRequest {
-  private val authToken = "authorization-value"
-  private val akamaiReputationValue = "akamai-reputation-value"
-  private val requestId = "request-id-value"
-  private val sessionId = "TestSession-4b87460d-6f43-4c4c-b810-d6f87c774854"
-  private val trueClientIp = "client-ip"
-  private val trueClientPort = "client-port"
-  private val deviceId = "device-id"
+  val authToken = "authorization-value"
+  val akamaiReputationValue = "akamai-reputation-value"
+  val requestId = "request-id-value"
+  val sessionId = "TestSession-4b87460d-6f43-4c4c-b810-d6f87c774854"
+  val trueClientIp = "client-ip"
+  val trueClientPort = "client-port"
+  val deviceId = "device-id"
+  val rawSessionId: String = "TestSession-4b87460d-6f43-4c4c-b810-d6f87c774854"
+
+  val requestMethod: String = "GET"
+  val requestPath: String = "/fake-path"
+  val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(requestMethod, requestPath)
+    .withSessionId()
+    .withAuthToken()
+    .withAkamaiReputationHeader()
+    .withRequestId()
+    .withTrueClientIp()
+    .withTrueClientPort()
+    .withDeviceId()
 
   implicit class FakeRequestOps[T](r: FakeRequest[T]) {
     def withLang(lang: Language = English): FakeRequest[T] = r.withCookies(Cookie("PLAY_LANG", lang.code))

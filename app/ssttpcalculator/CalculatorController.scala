@@ -16,6 +16,7 @@
 
 package ssttpcalculator
 
+import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions

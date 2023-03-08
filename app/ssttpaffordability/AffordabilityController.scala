@@ -21,17 +21,14 @@ import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import req.RequestSupport
 import ssttpaffordability.AffordabilityForm.{incomeForm, incomeInputTotalNotPositiveOverride, spendingForm, validateIncomeInputTotal}
 import ssttpaffordability.model.Expense._
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
-import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttparrangement.ArrangementForm
 import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 import views.Views
 
 import javax.inject.Inject
@@ -189,10 +186,9 @@ class AffordabilityController @Inject() (
       )
     }
   }
-
   def getWeCannotAgreeYourPP: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"getWeCannotAgreeYourPP: $request")
+    journeyService.getJourney().map(auditService.sendPlanNotAffordableEvent)
     Ok(views.we_cannot_agree_your_pp(isSignedIn, isWelsh))
   }
-
 }

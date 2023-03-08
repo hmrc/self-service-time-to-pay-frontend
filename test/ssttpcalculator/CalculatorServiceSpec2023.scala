@@ -18,29 +18,18 @@ package ssttpcalculator
 
 import config.AppConfig
 import journey.PaymentToday
-import play.api.Logger
-import ssttpcalculator.model.{Instalment, InterestRate, Payables, Payment, TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{Instalment, Payables, TaxLiability, TaxPaymentPlan}
 import testsupport.ItSpec
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, Debit, SaUtr, SelfAssessmentDetails}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 import play.api.test.FakeRequest
 
-import java.time.ZoneId.systemDefault
-import java.time.ZoneOffset.UTC
-import java.time.{Clock, LocalDate, LocalDateTime, Year}
+import java.time.LocalDate
 class CalculatorServiceSpec2023 extends ItSpec {
-  private val logger = Logger(getClass)
 
-  val interestRateService: InterestRateService = fakeApplication().injector.instanceOf[InterestRateService]
-  val durationService: DurationService = fakeApplication().injector.instanceOf[DurationService]
   val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
   implicit val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
-
-  private def fixedClock = {
-    val currentDateTime = LocalDateTime.parse("2020-05-02T00:00:00.880").toInstant(UTC)
-    Clock.fixed(currentDateTime, systemDefault)
-  }
 
   def date(date: String): LocalDate = LocalDate.parse(date)
 
