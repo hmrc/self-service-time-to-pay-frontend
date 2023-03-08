@@ -40,7 +40,7 @@
   appConfig: config.AppConfig
 )
 
-@customDateHasErrors = @{dayForm("other").value.contains("true")}
+@customDateHasErrors = @{dayForm("other").value.contains("true") && dayForm("dayOfMonth").hasErrors}
 
 @customDaySelected() = @{
     if(customDateHasErrors){
