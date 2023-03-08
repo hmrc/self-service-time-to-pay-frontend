@@ -65,7 +65,7 @@
                 @dayForm.error("dayOfMonth").map(formError => messages(formError.message))
             </span>
         }
-        <input type="text" class="govuk-input govuk-input--width-2" id="dayOfMonth" name="dayOfMonth" value="@{dayForm.data.get("dayOfMonth")}">
+        <input type="text" class="govuk-input govuk-input--width-2 @if(customDateHasErrors){govuk-input--error}" id="dayOfMonth" name="dayOfMonth" value="@{dayForm.data.get("dayOfMonth")}">
     </div>
 }
 
