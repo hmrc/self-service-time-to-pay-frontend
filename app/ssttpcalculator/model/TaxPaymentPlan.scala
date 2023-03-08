@@ -25,7 +25,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 case class TaxPaymentPlan(
     taxLiabilities:             Seq[TaxLiability],
-    withUpfrontPayment:         Boolean,
+    maybeUpfrontPaymentDate:    Option[LocalDate],
     planStartDate:              LocalDate,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
     maybePaymentToday:          Option[PaymentToday]          = None
@@ -37,10 +37,7 @@ case class TaxPaymentPlan(
   private val daysToProcessFirstPayment = config.daysToProcessFirstPayment
   private val firstPaymentDayOfMonth = config.firstPaymentDayOfMonth
   private val lastPaymentDayOfMonth = config.lastPaymentDayOfMonth
-
-  val maybeUpfrontPaymentDate: Option[LocalDate] = maybePaymentToday.map(_ => {
-    validPaymentDate(planStartDate.plusDays(daysToProcessFirstPayment))
-  })
+  private val defaultRegularPaymentDay = 28
 
   //  def remainingLiability: BigDecimal = taxLiabilities.map(_.amount).sum - upfrontPayment
 
@@ -57,7 +54,7 @@ case class TaxPaymentPlan(
   //    }
   //    result._2
   //  }
-  def regularPaymentsDay: Int = validCustomerPreferredRegularPaymentDay.getOrElse(validDefaultRegularPaymentsDay)
+  def regularPaymentsDay: Int = validCustomerPreferredRegularPaymentDay.getOrElse(defaultRegularPaymentDay)
 
   val regularPaymentDates: Seq[LocalDate] = maybeUpfrontPaymentDate match {
     case Some(upfrontPaymentDate) => validRegularMonthlyDatesFrom(upfrontPaymentDate: LocalDate, minGapBetweenPayments)
@@ -86,10 +83,6 @@ case class TaxPaymentPlan(
     })
   }
 
-  private def validDefaultRegularPaymentsDay: Int = {
-    validPaymentDate(planStartDate.plusDays(daysToProcessFirstPayment).plusDays(minGapBetweenPayments)).getDayOfMonth
-  }
-
   private def validPaymentDate(date: LocalDate): LocalDate = {
     val dayOfMonth = date.getDayOfMonth
     if (dayOfMonth >= firstPaymentDayOfMonth && dayOfMonth <= lastPaymentDayOfMonth) {
@@ -109,19 +102,45 @@ object TaxPaymentPlan {
       dateNow:                    LocalDate,
       maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None
   )(appConfig: AppConfig): TaxPaymentPlan = {
-    val maybePaymentToday: Option[PaymentToday] = if (upfrontPayment > 0) Some(PaymentToday(true)) else None
 
-    val taxPaymentPlanNoUpfront = TaxPaymentPlan(
+    val minimumLengthOfPaymentPlan = appConfig.minimumLengthOfPaymentPlan
+    val maximumLengthOfPaymentPlan = appConfig.maximumLengthOfPaymentPlan
+    val minGapBetweenPayments = appConfig.minGapBetweenPayments
+    val daysToProcessFirstPayment = appConfig.daysToProcessFirstPayment
+    val firstPaymentDayOfMonth = appConfig.firstPaymentDayOfMonth
+    val lastPaymentDayOfMonth = appConfig.lastPaymentDayOfMonth
+
+    val planStartDate = dateNow
+
+    val withUpfrontPayment: Boolean = upfrontPayment > 0 && !((taxLiabilities.map(_.amount).sum - upfrontPayment) < BigDecimal.exact("32.00"))
+
+    println(s"remaining liabilities after upfront payment: ${taxLiabilities.map(_.amount).sum - upfrontPayment}")
+    println(s"withUpfrontPayment?: $withUpfrontPayment")
+
+    val maybePaymentToday: Option[PaymentToday] = if (withUpfrontPayment) Some(PaymentToday(true)) else None
+
+      def validPaymentDate(date: LocalDate): LocalDate = {
+        val dayOfMonth = date.getDayOfMonth
+        if (dayOfMonth >= firstPaymentDayOfMonth && dayOfMonth <= lastPaymentDayOfMonth) {
+          date
+        } else if (dayOfMonth < firstPaymentDayOfMonth) {
+          date.withDayOfMonth(firstPaymentDayOfMonth)
+        } else {
+          date.plusMonths(1).withDayOfMonth(1)
+        }
+      }
+
+    val maybeUpfrontPaymentDate: Option[LocalDate] = maybePaymentToday.map(_ => {
+      validPaymentDate(planStartDate.plusDays(daysToProcessFirstPayment))
+    })
+
+    TaxPaymentPlan(
       taxLiabilities             = taxLiabilities,
-      withUpfrontPayment         = false,
+      maybeUpfrontPaymentDate    = maybeUpfrontPaymentDate,
       planStartDate              = dateNow,
       maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
-      maybePaymentToday          = None
+      maybePaymentToday          = maybePaymentToday
     )(appConfig)
-
-    if (upfrontPayment > 0 && !((taxLiabilities.map(_.amount).sum - upfrontPayment) < BigDecimal.exact("32.00"))) {
-      taxPaymentPlanNoUpfront.copy(withUpfrontPayment = true, maybePaymentToday = maybePaymentToday)(appConfig)
-    } else taxPaymentPlanNoUpfront
   }
 
   def singleInstalment(
