@@ -21,19 +21,13 @@ import audit.model.AuditPaymentSchedule
 import journey.Journey
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Request
-import ssttpcalculator.CalculatorService
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import req.RequestSupport._
 import ssttparrangement.SubmissionError
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 
-import javax.inject.{Inject, Singleton}
-
-@Singleton
-class DataEventFactory @Inject() (
-    calculatorService: CalculatorService
-) {
+object DataEventFactory {
   def directDebitSubmissionFailedEvent(
       journey:         Journey,
       schedule:        PaymentSchedule,

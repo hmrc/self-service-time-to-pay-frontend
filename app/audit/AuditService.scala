@@ -33,7 +33,6 @@ import scala.util.Failure
 
 @Singleton()
 class AuditService @Inject() (
-    dataEventFactory: DataEventFactory,
     auditConnector:   AuditConnector
 )(implicit ec: ExecutionContext) extends ApplicationLogging {
 
@@ -42,18 +41,18 @@ class AuditService @Inject() (
       schedule:        PaymentSchedule,
       submissionError: SubmissionError
   )(implicit request: Request[_]): Unit = {
-    val event = dataEventFactory.directDebitSubmissionFailedEvent(journey, schedule, submissionError)
+    val event = DataEventFactory.directDebitSubmissionFailedEvent(journey, schedule, submissionError)
     sendEvent(event)
     ()
   }
 
   def sendPlanNotAffordableEvent(journey: Journey)(implicit request: Request[_]): Unit = {
-    val event = dataEventFactory.planNotAffordableEvent(journey)
+    val event = DataEventFactory.planNotAffordableEvent(journey)
     sendEvent(event)
   }
 
   def sendPlanSetUpSuccessEvent(journey: Journey, schedule: PaymentSchedule)(implicit request: Request[_]): Unit = {
-    val event = dataEventFactory.planSetUpSuccessEvent(journey, schedule)
+    val event = DataEventFactory.planSetUpSuccessEvent(journey, schedule)
     sendEvent(event)
   }
 
