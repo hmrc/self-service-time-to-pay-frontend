@@ -72,12 +72,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
               val taxPaymentPlan = TaxPaymentPlan(
                 liabilities,
-                upfrontPaymentAmount,
+                false,
                 fixedToday,
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
-              val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+              val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
@@ -106,12 +106,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
               val taxPaymentPlan = TaxPaymentPlan(
                 liabilities,
-                upfrontPaymentAmount,
+                false,
                 fixedToday,
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
-              val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+              val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9).plusDays(appConfig.lastPaymentDelayDays)
@@ -148,13 +148,13 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
               val taxPaymentPlan = TaxPaymentPlan(
                 liabilities,
-                upfrontPaymentAmount,
+                true,
                 fixedToday,
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth)),
                 maybePaymentToday = Some(PaymentToday(true))
               )
 
-              val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+              val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
@@ -183,12 +183,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
               val taxPaymentPlan = TaxPaymentPlan(
                 liabilities,
-                upfrontPaymentAmount,
+                true,
                 fixedToday,
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
-              val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+              val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7).plusDays(appConfig.lastPaymentDelayDays)
@@ -226,12 +226,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
               val taxPaymentPlan = TaxPaymentPlan(
                 liabilities,
-                upfrontPaymentAmount,
+                false,
                 fixedToday,
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
-              val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+              val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
@@ -260,12 +260,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
               val taxPaymentPlan = TaxPaymentPlan(
                 liabilities,
-                upfrontPaymentAmount,
+                false,
                 fixedToday,
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
-              val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+              val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(9).plusDays(appConfig.lastPaymentDelayDays)
@@ -301,12 +301,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
               val taxPaymentPlan = TaxPaymentPlan(
                 liabilities,
-                upfrontPaymentAmount,
+                true,
                 fixedToday,
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
-              val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+              val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusDays(appConfig.lastPaymentDelayDays)
@@ -335,12 +335,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
               val taxPaymentPlan = TaxPaymentPlan(
                 liabilities,
-                upfrontPaymentAmount,
+                true,
                 fixedToday,
                 Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
               )
 
-              val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+              val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
               result.startDate shouldBe fixedToday
               result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(7).plusDays(appConfig.lastPaymentDelayDays)
@@ -379,12 +379,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
           val taxPaymentPlan = TaxPaymentPlan(
             liabilities,
-            upfrontPaymentAmount,
+            false,
             fixedToday,
             Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
           )
 
-          val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+          val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
           result.startDate shouldBe fixedToday
           result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(1).plusDays(appConfig.lastPaymentDelayDays)
@@ -424,12 +424,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
           val taxPaymentPlan = TaxPaymentPlan(
             liabilities,
-            upfrontPaymentAmount,
+            false,
             fixedToday,
             Some(ArrangementDayOfMonth(regularPaymentsDayWithinFirstMonth))
           )
 
-          val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+          val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
           result.startDate shouldBe fixedToday
           result.endDate shouldBe fixedToday.withDayOfMonth(regularPaymentsDayWithinFirstMonth).plusMonths(4).plusDays(appConfig.lastPaymentDelayDays)
@@ -468,12 +468,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
           val taxPaymentPlan = TaxPaymentPlan(
             liabilities,
-            upfrontPaymentAmount,
+            false,
             fixedToday,
             Some(ArrangementDayOfMonth(preferredPaymentDay))
           )
 
-          val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan)
+          val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount)
 
           result shouldBe None
 
@@ -495,13 +495,13 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
         val taxPaymentPlan = TaxPaymentPlan(
           liabilities,
-          upfrontPaymentAmount,
+          true,
           fixedToday,
           Some(ArrangementDayOfMonth(preferredPaymentDay)),
           Some(PaymentToday((true)))
         )
 
-        val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan).get
+        val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount).get
 
         result.startDate shouldBe fixedToday
         result.endDate shouldBe fixedToday.withDayOfMonth(preferredPaymentDay).plusMonths(8).plusDays(appConfig.lastPaymentDelayDays)
@@ -533,12 +533,12 @@ class CalculatorServiceSpec2023 extends ItSpec {
 
         val taxPaymentPlan = TaxPaymentPlan(
           liabilities,
-          upfrontPaymentAmount,
+          false,
           fixedToday,
           Some(ArrangementDayOfMonth(preferredPaymentDay))
         )
 
-        val result = calculatorService.schedule(regularPaymentAmount)(taxPaymentPlan)
+        val result = calculatorService.schedule(regularPaymentAmount, taxPaymentPlan, upfrontPaymentAmount)
 
         result shouldBe None
       }
@@ -558,8 +558,6 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val remainingIncomeAfterSpending = 1000
 
         val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
-
-        println(result)
 
         result.size shouldBe 3
       }

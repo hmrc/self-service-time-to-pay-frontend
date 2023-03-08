@@ -25,12 +25,11 @@ import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDayOfMonth
 
 case class TaxPaymentPlan(
     taxLiabilities:             Seq[TaxLiability],
-    upfrontPayment:             BigDecimal,
+    withUpfrontPayment:         Boolean,
     planStartDate:              LocalDate,
     maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None,
     maybePaymentToday:          Option[PaymentToday]          = None
 )(implicit config: AppConfig) {
-  import TaxPaymentPlan._
 
   private val minimumLengthOfPaymentPlan = config.minimumLengthOfPaymentPlan
   private val maximumLengthOfPaymentPlan = config.maximumLengthOfPaymentPlan
@@ -43,21 +42,21 @@ case class TaxPaymentPlan(
     validPaymentDate(planStartDate.plusDays(daysToProcessFirstPayment))
   })
 
-  def remainingLiability: BigDecimal = taxLiabilities.map(_.amount).sum - upfrontPayment
+  //  def remainingLiability: BigDecimal = taxLiabilities.map(_.amount).sum - upfrontPayment
 
   def actualStartDate: LocalDate = planStartDate
 
-  def outstandingLiabilities: Seq[TaxLiability] = {
-    val result = taxLiabilities.sortBy(_.dueDate).foldLeft((upfrontPayment, Seq.empty[TaxLiability])){
-      case ((p, s), lt) if p <= 0         => (p, s :+ lt.copy(dueDate = if (planStartDate.isBefore(lt.dueDate)) lt.dueDate else planStartDate))
-
-      case ((p, s), lt) if p >= lt.amount => (p - lt.amount, s)
-
-      case ((p, s), lt) => (0, s :+ lt.copy(amount  = lt.amount - p,
-                                            dueDate = if (planStartDate.plusWeeks(1).isBefore(lt.dueDate)) lt.dueDate else planStartDate.plusWeeks(1)))
-    }
-    result._2
-  }
+  //  def outstandingLiabilities: Seq[TaxLiability] = {
+  //    val result = taxLiabilities.sortBy(_.dueDate).foldLeft((upfrontPayment, Seq.empty[TaxLiability])){
+  //      case ((p, s), lt) if p <= 0         => (p, s :+ lt.copy(dueDate = if (planStartDate.isBefore(lt.dueDate)) lt.dueDate else planStartDate))
+  //
+  //      case ((p, s), lt) if p >= lt.amount => (p - lt.amount, s)
+  //
+  //      case ((p, s), lt) => (0, s :+ lt.copy(amount  = lt.amount - p,
+  //                                            dueDate = if (planStartDate.plusWeeks(1).isBefore(lt.dueDate)) lt.dueDate else planStartDate.plusWeeks(1)))
+  //    }
+  //    result._2
+  //  }
   def regularPaymentsDay: Int = validCustomerPreferredRegularPaymentDay.getOrElse(validDefaultRegularPaymentsDay)
 
   val regularPaymentDates: Seq[LocalDate] = maybeUpfrontPaymentDate match {
@@ -111,18 +110,17 @@ object TaxPaymentPlan {
       maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth] = None
   )(appConfig: AppConfig): TaxPaymentPlan = {
     val maybePaymentToday: Option[PaymentToday] = if (upfrontPayment > 0) Some(PaymentToday(true)) else None
-    val noUpfrontPayment = BigDecimal(0)
 
     val taxPaymentPlanNoUpfront = TaxPaymentPlan(
       taxLiabilities             = taxLiabilities,
-      upfrontPayment             = noUpfrontPayment,
+      withUpfrontPayment         = false,
       planStartDate              = dateNow,
       maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
       maybePaymentToday          = None
     )(appConfig)
 
     if (upfrontPayment > 0 && !((taxLiabilities.map(_.amount).sum - upfrontPayment) < BigDecimal.exact("32.00"))) {
-      taxPaymentPlanNoUpfront.copy(upfrontPayment    = upfrontPayment, maybePaymentToday = maybePaymentToday)(appConfig)
+      taxPaymentPlanNoUpfront.copy(withUpfrontPayment = true, maybePaymentToday = maybePaymentToday)(appConfig)
     } else taxPaymentPlanNoUpfront
   }
 
@@ -137,7 +135,6 @@ object TaxPaymentPlan {
 
   private def reads(implicit config: AppConfig): Reads[TaxPaymentPlan] = Json.reads[TaxPaymentPlan]
     .filter(JsonValidationError("'debits' was empty, it should have at least one debit."))(_.taxLiabilities.nonEmpty)
-    .filter(JsonValidationError("The 'initialPayment' can't be less than 0"))(_.upfrontPayment >= 0)
 
   private def writes(implicit config: AppConfig): OWrites[TaxPaymentPlan] = Json.writes[TaxPaymentPlan]
 

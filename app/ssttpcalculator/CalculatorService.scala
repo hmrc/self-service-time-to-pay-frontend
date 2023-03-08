@@ -69,18 +69,18 @@ class CalculatorService @Inject() (
     )(appConfig)
 
     val firstPlanAmount = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending
-    val firstSchedule = schedule(firstPlanAmount)(taxPaymentPlan)
+    val firstSchedule = schedule(firstPlanAmount, taxPaymentPlan, upfrontPayment)
     val scheduleList = firstSchedule match {
       case None => List()
       case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule).flatten
       case _ =>
         val secondPlanAmount = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending
-        val secondSchedule = schedule(secondPlanAmount)(taxPaymentPlan)
+        val secondSchedule = schedule(secondPlanAmount, taxPaymentPlan, upfrontPayment)
         secondSchedule match {
           case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule, secondSchedule).flatten
           case _ =>
             val thirdPlanAmount = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending
-            val thirdSchedule = schedule(thirdPlanAmount)(taxPaymentPlan)
+            val thirdSchedule = schedule(thirdPlanAmount, taxPaymentPlan, upfrontPayment)
             List(firstSchedule, secondSchedule, thirdSchedule).flatten
         }
     }
@@ -92,13 +92,15 @@ class CalculatorService @Inject() (
       selfAssessmentDebit <- journey.taxpayer.selfAssessment.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
 
+    val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
+
     val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.safeNew(
       taxLiabilities,
-      journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
+      upfrontPayment,
       clockProvider.nowDate(),
       journey.maybeArrangementDayOfMonth)(appConfig)
 
-    schedule(journey.selectedPlanAmount)(taxPaymentPlan)
+    schedule(journey.selectedPlanAmount, taxPaymentPlan, upfrontPayment)
   }
 
   def customSchedule(
@@ -111,27 +113,26 @@ class CalculatorService @Inject() (
       selfAssessmentDebit <- sa.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
 
-    schedule(customAmount)(
-      TaxPaymentPlan.safeNew(
-        taxLiabilities             = taxLiabilities,
-        upfrontPayment             = upfrontPayment,
-        dateNow                    = clockProvider.nowDate(),
-        maybeArrangementDayOfMonth = maybeArrangementDayOfMonth
-      )(appConfig)
-    )
+    val taxPaymentPlan = TaxPaymentPlan.safeNew(
+      taxLiabilities             = taxLiabilities,
+      upfrontPayment             = upfrontPayment,
+      dateNow                    = clockProvider.nowDate(),
+      maybeArrangementDayOfMonth = maybeArrangementDayOfMonth)(config)
+
+    schedule(customAmount, taxPaymentPlan, upfrontPayment)
   }
 
-  def schedule(regularPaymentAmount: BigDecimal)(implicit taxPaymentPlan: TaxPaymentPlan): Option[PaymentSchedule] = {
+  def schedule(regularPaymentAmount: BigDecimal, taxPaymentPlan: TaxPaymentPlan, upfrontPayment: BigDecimal): Option[PaymentSchedule] = {
     val payables = Payables(taxPaymentPlan.taxLiabilities)
     val principal = payables.liabilities.map(_.amount).sum
 
     val maybeInterestAccruedUpToStartDate = totalHistoricInterest(payables, taxPaymentPlan.planStartDate, interestService.getRatesForPeriod)
 
-    val hasAnUpfrontPayment = taxPaymentPlan.upfrontPayment > 0
+    val hasAnUpfrontPayment = upfrontPayment > 0
     val upfrontPaymentLateInterest = if (hasAnUpfrontPayment) {
       val initialPaymentDate = taxPaymentPlan.planStartDate.plusDays(appConfig.daysToProcessFirstPayment)
       val debitsDueBeforeInitialPayment = taxPaymentPlan.taxLiabilities.filter(_.dueDate.isBefore(initialPaymentDate))
-      calculateInitialPaymentInterest(debitsDueBeforeInitialPayment)
+      calculateUpfrontPaymentInterest(debitsDueBeforeInitialPayment, taxPaymentPlan, upfrontPayment)
     } else { BigDecimal(0) }
     val maybeUpfrontPaymentLateInterest = taxPaymentPlan.maybeUpfrontPaymentDate match {
       case Some(_) => Option(LatePaymentInterest(upfrontPaymentLateInterest))
@@ -139,7 +140,7 @@ class CalculatorService @Inject() (
     }
 
     val payablesFromPlanStartDateLessUpfrontPayment = payablesResetLessUpfrontPayment(
-      taxPaymentPlan.upfrontPayment,
+      upfrontPayment,
       payables.liabilities.map(Payable.payableToTaxLiability),
       taxPaymentPlan.planStartDate)
     val liabilitiesUpdated = Seq[Option[Payable]](maybeInterestAccruedUpToStartDate, maybeUpfrontPaymentLateInterest)
@@ -167,9 +168,9 @@ class CalculatorService @Inject() (
           endDate              = instalments
             .lastOption.map(_.paymentDate.plusDays(appConfig.lastPaymentDelayDays))
             .getOrElse(throw new IllegalArgumentException("no instalments found to create the schedule")),
-          initialPayment       = taxPaymentPlan.upfrontPayment,
+          initialPayment       = upfrontPayment,
           amountToPay          = principal,
-          instalmentBalance    = principal - taxPaymentPlan.upfrontPayment,
+          instalmentBalance    = principal - upfrontPayment,
           totalInterestCharged = totalInterestCharged,
           totalPayable         = principal + totalInterestCharged,
           instalments          = instalments))
@@ -181,9 +182,11 @@ class CalculatorService @Inject() (
       selfAssessmentDebit <- journey.taxpayer.selfAssessment.debits
     } yield TaxLiability(selfAssessmentDebit.amount, selfAssessmentDebit.dueDate)
 
+    val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
+
     val taxPaymentPlan: TaxPaymentPlan = TaxPaymentPlan.singleInstalment(
       taxLiabilities,
-      journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0)),
+      upfrontPayment,
       clockProvider.nowDate(),
       journey.maybeArrangementDayOfMonth)(appConfig)
 
@@ -191,11 +194,11 @@ class CalculatorService @Inject() (
 
     val maybeInterestAccruedUpToStartDate = totalHistoricInterest(payables, taxPaymentPlan.planStartDate, interestService.getRatesForPeriod)
 
-    val hasAnUpfrontPayment = taxPaymentPlan.upfrontPayment > 0
+    val hasAnUpfrontPayment = upfrontPayment > 0
     val upfrontPaymentLateInterest = if (hasAnUpfrontPayment) {
       val initialPaymentDate = taxPaymentPlan.planStartDate.plusDays(appConfig.daysToProcessFirstPayment)
       val debitsDueBeforeInitialPayment = taxPaymentPlan.taxLiabilities.filter(_.dueDate.isBefore(initialPaymentDate))
-      calculateInitialPaymentInterest(debitsDueBeforeInitialPayment)(taxPaymentPlan)
+      calculateUpfrontPaymentInterest(debitsDueBeforeInitialPayment, taxPaymentPlan, upfrontPayment)
     } else {
       BigDecimal(0)
     }
@@ -205,7 +208,7 @@ class CalculatorService @Inject() (
     }
 
     val payablesFromPlanStartDateLessUpfrontPayment = payablesResetLessUpfrontPayment(
-      taxPaymentPlan.upfrontPayment,
+      upfrontPayment,
       payables.liabilities.map(Payable.payableToTaxLiability),
       taxPaymentPlan.planStartDate)
     val liabilitiesUpdated = Seq[Option[Payable]](maybeInterestAccruedUpToStartDate, maybeUpfrontPaymentLateInterest)
@@ -417,7 +420,11 @@ class CalculatorService @Inject() (
    * @param debits - only debits that are not after calculation date plus a week
    */
   @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
-  private def calculateInitialPaymentInterest(debits: Seq[TaxLiability])(implicit calculation: TaxPaymentPlan): BigDecimal = {
+  private def calculateUpfrontPaymentInterest(
+      debits:         Seq[TaxLiability],
+      calculation:    TaxPaymentPlan,
+      upfrontPayment: BigDecimal
+  ): BigDecimal = {
     val currentInterestRate =
       interestService
         .rateOn(calculation.planStartDate)
@@ -452,7 +459,7 @@ class CalculatorService @Inject() (
         }
       }
 
-    val initPaymentInterest = processDebits(calculation.upfrontPayment, sortedDebits)
+    val initPaymentInterest = processDebits(upfrontPayment, sortedDebits)
     logger.info(s"InitialPayment Interest: $initPaymentInterest")
     initPaymentInterest
   }
