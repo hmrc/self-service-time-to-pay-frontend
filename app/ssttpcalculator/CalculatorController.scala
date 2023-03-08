@@ -40,7 +40,6 @@ class CalculatorController @Inject() (
     calculatorService: CalculatorService,
     as:                Actions,
     journeyService:    JourneyService,
-    auditService:      AuditService,
     requestSupport:    RequestSupport,
     views:             Views,
     clockProvider:     ClockProvider)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(mcc) {
