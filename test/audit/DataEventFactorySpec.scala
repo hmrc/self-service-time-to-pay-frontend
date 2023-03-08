@@ -39,7 +39,6 @@ class DataEventFactorySpec extends ItSpec {
   private val directDebitTd = DirectDebitTd
   private implicit val request: FakeRequest[AnyContentAsEmpty.type] = tdRequest.request
 
-  private val dataEventFactory: DataEventFactory = fakeApplication().injector.instanceOf[DataEventFactory]
   private val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
   private def fixedClock: Clock = {
@@ -75,7 +74,7 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _600Amount)))
         )
 
-        val computedDataEvent = dataEventFactory.planNotAffordableEvent(journeyNegativeRemainingIncome)
+        val computedDataEvent = DataEventFactory.planNotAffordableEvent(journeyNegativeRemainingIncome)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -104,7 +103,7 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
-        val computedDataEvent = dataEventFactory.planNotAffordableEvent(journeyZeroRemainingIncome)
+        val computedDataEvent = DataEventFactory.planNotAffordableEvent(journeyZeroRemainingIncome)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -133,7 +132,7 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
-        val computedDataEvent = dataEventFactory.planNotAffordableEvent(journeyNoPlanWithin24Months)
+        val computedDataEvent = DataEventFactory.planNotAffordableEvent(journeyNoPlanWithin24Months)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -185,7 +184,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val schedule = calculatorService.selectedSchedule(journey50PerCent)(request).get
 
-        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey50PerCent, schedule)
+        val computedDataEvent = DataEventFactory.planSetUpSuccessEvent(journey50PerCent, schedule)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -334,7 +333,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val schedule = calculatorService.selectedSchedule(journey60PerCent)(request).get
 
-        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey60PerCent, schedule)
+        val computedDataEvent = DataEventFactory.planSetUpSuccessEvent(journey60PerCent, schedule)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -463,7 +462,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val schedule = calculatorService.selectedSchedule(journey80PerCent)(request).get
 
-        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journey80PerCent, schedule)
+        val computedDataEvent = DataEventFactory.planSetUpSuccessEvent(journey80PerCent, schedule)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -574,7 +573,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val schedule = calculatorService.selectedSchedule(journeyCustomAmount)(request).get
 
-        val computedDataEvent = dataEventFactory.planSetUpSuccessEvent(journeyCustomAmount, schedule)
+        val computedDataEvent = DataEventFactory.planSetUpSuccessEvent(journeyCustomAmount, schedule)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",

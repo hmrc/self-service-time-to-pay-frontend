@@ -33,7 +33,7 @@ import scala.util.Failure
 
 @Singleton()
 class AuditService @Inject() (
-    auditConnector:   AuditConnector
+    auditConnector: AuditConnector
 )(implicit ec: ExecutionContext) extends ApplicationLogging {
 
   def sendDirectDebitSubmissionFailedEvent(
