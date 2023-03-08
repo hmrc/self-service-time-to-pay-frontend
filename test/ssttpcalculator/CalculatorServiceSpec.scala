@@ -107,6 +107,67 @@ class CalculatorServiceSpec extends ItSpec with Matchers with DateSupport {
       }
     }
   }
+  "With 1/1/23 day of journey" - {
+    val testCases = Table(
+      ("id", "caseDescription",
+        "inputDebits", "inputUpfrontPayment", "inputDateNow", "inputMaybeArrangementDayOfMonth",
+        "expectedMaybeUpfrontPaymentDate", "expectedPlanStartDate", "expectedRegularPaymentsDay", "expectedFirstRegularPaymentDate"),
+
+      ("1", "no upfront payment, regular payment day selected 11 days away so first regular payment in starting month",
+        debits, zeroInitialPayment, date("2023-01-01"), Some(ArrangementDayOfMonth(12)),
+        None, date("2023-01-01"), 12, date("2023-01-12")),
+
+      ("2", "no upfront payment, regular payment day selected 10 days away so first regular payment next month from starting month",
+        debits, zeroInitialPayment, date("2023-01-01"), Some(ArrangementDayOfMonth(11)),
+        None, date("2023-01-01"), 11, date("2023-02-11")),
+
+      ("3", "with upfront payment, regular payment day selected 25 days away so even given gap between payments, first regular payment in starting month",
+        debits, BigDecimal(100), date("2023-01-01"), Some(ArrangementDayOfMonth(26)),
+        Some(date("2023-01-12")), date("2023-01-01"), 26, date("2023-01-26")),
+
+      ("4", "with upfront payment, regular payment day selected 24 days away so given gap between payments, first regular payment next month from starting month",
+        debits, BigDecimal(100), date("2023-01-01"), Some(ArrangementDayOfMonth(25)),
+        Some(date("2023-01-12")), date("2023-01-01"), 25, date("2023-02-25")),
+
+      ("5", "with upfront payment, regular payment day selected 10 days away so given gap between payments, first regular payment next month from starting month",
+        debits, BigDecimal(100), date("2023-01-01"), Some(ArrangementDayOfMonth(11)),
+        Some(date("2023-01-12")), date("2023-01-01"), 11, date("2023-02-11")),
+      
+      ("6", "with upfront payment, regular payment day selected 11 days away so given gap between payments, first regular payment next month from starting month",
+        debits, BigDecimal(100), date("2023-01-01"), Some(ArrangementDayOfMonth(12)),
+        Some(date("2023-01-12")), date("2023-01-01"), 12, date("2023-02-12")),
+
+      ("7", "no upfront payment, regular payment day selected 25 days away so first regular payment in starting month",
+        debits, zeroInitialPayment, date("2023-01-01"), Some(ArrangementDayOfMonth(26)),
+        None, date("2023-01-01"), 26, date("2023-01-26")),
+
+      ("8", "no upfront payment, regular payment day selected 24 days away so first regular payment in starting month",
+        debits, zeroInitialPayment, date("2023-01-01"), Some(ArrangementDayOfMonth(25)),
+        None, date("2023-01-01"), 25, date("2023-01-25")),
+
+      ("9", "no upfront payment, no regular payment day preference so defaults to 28 so first regular payment in starting month",
+        debits, zeroInitialPayment, date("2023-01-01"), None,
+        None, date("2023-01-01"), 28, date("2023-01-28")),
+
+      ("10", "upfront payment, no regular payment day preference so defaults to 28 so first regular payment in starting month",
+        debits, BigDecimal(100), date("2023-01-01"), None,
+        Some(date("2023-01-12")), date("2023-01-01"), 28, date("2023-01-28")),
+    )
+
+
+    forAll(testCases) { (id, caseDescription,
+                         inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeArrangementDayOfMonth,
+                         expectedMaybeUpfrontPaymentDate, expectedPlanStartDate, expectedRegularPaymentsDay, expectedFirstRegularPaymentDay) =>
+      s"$id. $caseDescription" in {
+        val taxPaymentPlan = TaxPaymentPlan.safeNew(inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeArrangementDayOfMonth)(appConfig)
+
+        taxPaymentPlan.maybeUpfrontPaymentDate shouldBe expectedMaybeUpfrontPaymentDate
+        taxPaymentPlan.planStartDate shouldBe expectedPlanStartDate
+        taxPaymentPlan.regularPaymentsDay shouldBe expectedRegularPaymentsDay
+        taxPaymentPlan.regularPaymentDates.head shouldBe expectedFirstRegularPaymentDay
+      }
+    }
+  }
 
 //  "return a payment schedule request with no initial payment when the user tries to make a payment which would leave less than £32 balance when" - {
 //    "the current date is Friday 1st May with upcoming bank holiday" in {
