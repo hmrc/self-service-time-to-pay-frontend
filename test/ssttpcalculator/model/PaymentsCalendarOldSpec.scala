@@ -19,6 +19,9 @@ package ssttpcalculator.model
 import config.AppConfig
 import journey.PaymentToday
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableFor10
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import org.scalatest.prop.Tables._
 import ssttpcalculator.CalculatorService
 import testsupport.{DateSupport, ItSpec}
 import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
@@ -48,6 +51,28 @@ class PaymentsCalendarOldSpec extends ItSpec with Matchers with DateSupport {
   }
 
   def date(date: String): LocalDate = LocalDate.parse(date)
+
+  def testPaymentsCalendar(testCases: TableFor10[String, String,
+    Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay],
+    Option[LocalDate], LocalDate, Int, LocalDate]): Unit = {
+
+    forAll(testCases) { (id, caseDescription,
+                         inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeRegularPaymentDay,
+                         expectedMaybeUpfrontPaymentDate, expectedPlanStartDate, expectedRegularPaymentsDay, expectedFirstRegularPaymentDay) =>
+      s"$id. $caseDescription" in {
+
+        val taxPaymentPlan = PaymentsCalendar.generate(inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeRegularPaymentDay)(config)
+
+        taxPaymentPlan.maybeUpfrontPaymentDate shouldBe expectedMaybeUpfrontPaymentDate
+        taxPaymentPlan.planStartDate shouldBe expectedPlanStartDate
+        taxPaymentPlan.regularPaymentsDay shouldBe expectedRegularPaymentsDay
+        taxPaymentPlan.regularPaymentDates.head shouldBe expectedFirstRegularPaymentDay
+      }
+    }
+  }
+
+  val upfrontPaymentAmount = BigDecimal(4000.00)
+
 
   "CalculatorService.schedule" - {
 
@@ -91,246 +116,92 @@ class PaymentsCalendarOldSpec extends ItSpec with Matchers with DateSupport {
       }
     }
 
-    //    "PaymentsCalendar should" - {
-    //      "include correct payments calendar information" - {
-    //        "when the current date is the 1st" in {
-    //          val clock = clockForMay(_1st)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(today.getDayOfMonth)),
-    //            None
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe None
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _1st
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe june(_1st)
-    //        }
-    //      }
-    //
-    //      "when the current date is the 28th" in {
-    //        val clock = clockForMay(_28th)
-    //        val today = LocalDate.now(clock)
-    //
-    //        val PaymentsCalendar = PaymentsCalendar(
-    //          taxLiabilities             = liabilities,
-    //          withUpfrontPayment         = withUpfrontPaymentTrue,
-    //          planStartDate              = today,
-    //          maybeRegularPaymentDay = Some(RegularPaymentDay(today.getDayOfMonth)),
-    //          maybePaymentToday          = None
-    //        )(config)
-    //
-    //        PaymentsCalendar.planStartDate shouldBe today
-    //        PaymentsCalendar.maybeUpfrontPaymentDate shouldBe None
-    //        PaymentsCalendar.regularPaymentsDay shouldBe _28th
-    //        PaymentsCalendar.regularPaymentDates.head shouldBe june(_28th)
-    //      }
-    //
-    //      "when the current date is the 29th" in {
-    //        val clock = clockForMay(_29th)
-    //        val today = LocalDate.now(clock)
-    //
-    //        val PaymentsCalendar = PaymentsCalendar(
-    //          taxLiabilities     = liabilities,
-    //          withUpfrontPayment = withUpfrontPaymentTrue,
-    //          planStartDate      = today,
-    //          Some(RegularPaymentDay(today.getDayOfMonth)),
-    //          None
-    //        )(config)
-    //
-    //        PaymentsCalendar.planStartDate shouldBe today
-    //        PaymentsCalendar.maybeUpfrontPaymentDate shouldBe None
-    //        PaymentsCalendar.regularPaymentsDay shouldBe _1st
-    //        PaymentsCalendar.regularPaymentDates.head shouldBe july(_1st)
-    //      }
-    //      "without an initial payment when" - {
-    //        "the current date is Friday 1st May with upcoming bank holiday" in {
-    //          val clock = clockForMay(_1st)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(_12th)),
-    //            None
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe None
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _12th
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe may(_12th)
-    //        }
-    //
-    //        "the current date is Thursday 7th May with upcoming bank holiday" in {
-    //          val clock = clockForMay(_7th)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(_15th)),
-    //            None
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe None
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _15th
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe june(_15th)
-    //
-    //        }
-    //
-    //        "the current date is bank holiday Friday 8th May" in {
-    //          val clock = clockForMay(_8th)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(_15th)),
-    //            None
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe None
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _15th
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe june(_15th)
-    //        }
-    //
-    //        "the current date is Monday 11th May" in {
-    //          val clock = clockForMay(_11th)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(_18th)),
-    //            None
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe None
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _18th
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe june(_18th)
-    //        }
-    //
-    //        "the current date is the Monday 25th May so the payment dates roll into the next month" in {
-    //          val clock = clockForMay(_25th)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(_1st)),
-    //            None
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe None
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _1st
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe july(_1st)
-    //        }
-    //      }
-    //      "return a payment schedule request with an initial payment when" - {
-    //        "the current date is Friday 1st May with upcoming bank holiday" in {
-    //          val clock = clockForMay(_1st)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(_12th)),
-    //            Some(PaymentToday(true))
-    //
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_12th))
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _12th
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe june(_12th)
-    //        }
-    //
-    //        "the current date is Thursday 7th May with upcoming bank holiday" in {
-    //          val clock = clockForMay(_7th)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(_15th)),
-    //            Some(PaymentToday(true))
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_18th))
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _15th
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe june(_15th)
-    //        }
-    //
-    //        "the current date is bank holiday Friday 8th May" in {
-    //          val clock = clockForMay(_8th)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(_15th)),
-    //            Some(PaymentToday(true))
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_19th))
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _15th
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe june(_15th)
-    //        }
-    //
-    //        "the current date is Monday 11th May" in {
-    //          val clock = clockForMay(_11th)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(_18th)),
-    //            Some(PaymentToday(true))
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(may(_22nd))
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _18th
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe june(_18th)
-    //        }
-    //
-    //        "the current date is the Monday 25th May so the payment dates roll into the next month" in {
-    //          val clock = clockForMay(_25th)
-    //          val today = LocalDate.now(clock)
-    //
-    //          val PaymentsCalendar = PaymentsCalendar(
-    //            taxLiabilities     = liabilities,
-    //            withUpfrontPayment = withUpfrontPaymentTrue,
-    //            planStartDate      = today,
-    //            Some(RegularPaymentDay(_1st)),
-    //            Some(PaymentToday(true))
-    //          )(config)
-    //
-    //          PaymentsCalendar.planStartDate shouldBe today
-    //          PaymentsCalendar.maybeUpfrontPaymentDate shouldBe Some(june(_5th))
-    //          PaymentsCalendar.regularPaymentsDay shouldBe _1st
-    //          PaymentsCalendar.regularPaymentDates.head shouldBe july(_1st)
-    //        }
-    //      }
-    //    }
+    "PaymentsCalendar should" - {
+      "1. include correct payments calendar information" - {
+
+        val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
+
+          ("id", "caseDescription",
+            "inputDebits", "inputUpfrontPayment", "inputDateNow", "inputMaybeRegularPaymentDay",
+            "expectedMaybeUpfrontPaymentDate", "expectedPlanStartDate", "expectedRegularPaymentsDay", "expectedFirstRegularPaymentDate"),
+
+          (".1", "when the current date is the 1st",
+            liabilities, 0, date("2020-05-01"), Some(RegularPaymentDay(1)),
+            None, date("2020-05-01"), 1, date("2020-06-01")),
+
+          (".2", "when the current date is the 28th",
+            liabilities, 0, date("2020-05-28"), Some(RegularPaymentDay(28)),
+            None, date("2020-05-28"), 28, date("2020-06-28")),
+
+          (".3", "when the current date is the 29th",
+            liabilities, 0, date("2020-05-29"), Some(RegularPaymentDay(29)),
+            None, date("2020-05-29"), 28, date("2020-06-28")),
+        )
+
+        testPaymentsCalendar(testCases)
+      }
+
+      "2. without an initial payment when" - {
+
+        val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
+
+          ("id", "caseDescription",
+            "inputDebits", "inputUpfrontPayment", "inputDateNow", "inputMaybeRegularPaymentDay",
+            "expectedMaybeUpfrontPaymentDate", "expectedPlanStartDate", "expectedRegularPaymentsDay", "expectedFirstRegularPaymentDate"),
+
+          (".1", "the current date is Friday 1st May with upcoming bank holiday",
+            liabilities, 0, date("2020-05-01"), Some(RegularPaymentDay(12)),
+            None, date("2020-05-01"), 12, date("2020-05-12")),
+
+          (".2", "the current date is Thursday 7th May with upcoming bank holiday",
+            liabilities, 0, date("2020-05-07"), Some(RegularPaymentDay(15)),
+            None, date("2020-05-07"), 15, date("2020-06-15")),
+
+          (".3", "the current date is bank holiday Friday 8th May",
+            liabilities, 0, date("2020-05-08"), Some(RegularPaymentDay(15)),
+            None, date("2020-05-08"), 15, date("2020-06-15")),
+
+          (".4", "the current date is Monday 11th May",
+            liabilities, 0, date("2020-05-11"), Some(RegularPaymentDay(18)),
+            None, date("2020-05-11"), 18, date("2020-06-18")),
+
+          (".5", "the current date is the Monday 25th May so the payment dates roll into the next month",
+            liabilities, 0, date("2020-05-25"), Some(RegularPaymentDay(1)),
+            None, date("2020-05-25"), 1, date("2020-07-01")),
+        )
+
+        testPaymentsCalendar(testCases)
+      }
+      "3. return a payment schedule request with an initial payment when" - {
+        val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
+
+          ("id", "caseDescription",
+            "inputDebits", "inputUpfrontPayment", "inputDateNow", "inputMaybeRegularPaymentDay",
+            "expectedMaybeUpfrontPaymentDate", "expectedPlanStartDate", "expectedRegularPaymentsDay", "expectedFirstRegularPaymentDate"),
+
+          (".1", "the current date is Friday 1st May with upcoming bank holiday",
+            liabilities, upfrontPaymentAmount, date("2020-05-01"), Some(RegularPaymentDay(12)),
+            Some(date("2020-05-12")), date("2020-05-01"), 12, date("2020-06-12")),
+
+          (".2", "the current date is Thursday 7th May with upcoming bank holiday",
+            liabilities, upfrontPaymentAmount, date("2020-05-07"), Some(RegularPaymentDay(15)),
+            Some(date("2020-05-18")), date("2020-05-07"), 15, date("2020-06-15")),
+
+          (".3", "the current date is bank holiday Friday 8th May",
+            liabilities, upfrontPaymentAmount, date("2020-05-08"), Some(RegularPaymentDay(15)),
+            Some(date("2020-05-19")), date("2020-05-08"), 15, date("2020-06-15")),
+
+          (".4", "the current date is Monday 11th May",
+            liabilities, upfrontPaymentAmount, date("2020-05-11"), Some(RegularPaymentDay(18)),
+            Some(date("2020-05-22")), date("2020-05-11"), 18, date("2020-06-18")),
+
+          (".5", "the current date is the Monday 25th May so the payment dates roll into the next month",
+            liabilities, upfrontPaymentAmount, date("2020-05-25"), Some(RegularPaymentDay(1)),
+            Some(date("2020-06-05")), date("2020-05-25"), 1, date("2020-07-01"))
+        )
+
+        testPaymentsCalendar(testCases)
+      }
+    }
   }
 }
