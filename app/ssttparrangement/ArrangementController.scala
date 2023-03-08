@@ -144,11 +144,7 @@ class ArrangementController @Inject() (
       val form = dayOfMonthForm
       val formWithData: Form[ArrangementForm] = journey.maybeArrangementDayOfMonth match {
         case _: Option[ArrangementDayOfMonth] =>
-          if (journey.selectedDay.contains(28)) {
-            form.fill(ArrangementForm(Some(28)))
-          } else {
-            form.fill(ArrangementForm(journey.selectedDay))
-          }
+          form.fill(ArrangementForm(journey.selectedDay))
         case _ => form.fill(ArrangementForm(None))
       }
       Future.successful(Ok(views.change_day(formWithData)))
