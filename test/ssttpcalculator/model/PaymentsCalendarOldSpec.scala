@@ -52,13 +52,11 @@ class PaymentsCalendarOldSpec extends ItSpec with Matchers with DateSupport {
 
   def date(date: String): LocalDate = LocalDate.parse(date)
 
-  def testPaymentsCalendar(testCases: TableFor10[String, String,
-    Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay],
-    Option[LocalDate], LocalDate, Int, LocalDate]): Unit = {
+  def testPaymentsCalendar(testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay], Option[LocalDate], LocalDate, Int, LocalDate]): Unit = {
 
     forAll(testCases) { (id, caseDescription,
-                         inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeRegularPaymentDay,
-                         expectedMaybeUpfrontPaymentDate, expectedPlanStartDate, expectedRegularPaymentsDay, expectedFirstRegularPaymentDay) =>
+      inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeRegularPaymentDay,
+      expectedMaybeUpfrontPaymentDate, expectedPlanStartDate, expectedRegularPaymentsDay, expectedFirstRegularPaymentDay) =>
       s"$id. $caseDescription" in {
 
         val taxPaymentPlan = PaymentsCalendar.generate(inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeRegularPaymentDay)(config)
@@ -72,7 +70,6 @@ class PaymentsCalendarOldSpec extends ItSpec with Matchers with DateSupport {
   }
 
   val upfrontPaymentAmount = BigDecimal(4000.00)
-
 
   "CalculatorService.schedule" - {
 
@@ -135,7 +132,7 @@ class PaymentsCalendarOldSpec extends ItSpec with Matchers with DateSupport {
 
           (".3", "when the current date is the 29th",
             liabilities, 0, date("2020-05-29"), Some(RegularPaymentDay(29)),
-            None, date("2020-05-29"), 28, date("2020-06-28")),
+            None, date("2020-05-29"), 1, date("2020-07-01")),
         )
 
         testPaymentsCalendar(testCases)

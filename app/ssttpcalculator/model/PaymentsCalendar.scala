@@ -68,7 +68,9 @@ object PaymentsCalendar {
   }
 
   private def safeRegularPaymentsDay(maybeRegularPaymentDay: Option[RegularPaymentDay])(implicit config: AppConfig): Int = {
-    maybeRegularPaymentDay.fold(defaultRegularPaymentDay)(rpd => if (rpd.dayOfMonth <= defaultRegularPaymentDay) rpd.dayOfMonth else defaultRegularPaymentDay)
+    maybeRegularPaymentDay.fold(defaultRegularPaymentDay)(rpd =>
+      if (rpd.dayOfMonth <= config.lastPaymentDayOfMonth) rpd.dayOfMonth else config.firstPaymentDayOfMonth
+    )
   }
 
   private def validMonthlyDatesFrom(
