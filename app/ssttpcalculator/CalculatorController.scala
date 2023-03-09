@@ -149,7 +149,7 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info("CalculatorController.getCalculateInstalments", journey)
       val sa = journey.taxpayer.selfAssessment
-      val defaultPlanOptions = calculatorService.scheduleOptions(
+      val defaultPlanOptions = calculatorService.defaultSchedules(
         sa,
         journey.safeUpfrontPayment,
         journey.maybeRegularPaymentDay,
@@ -184,7 +184,7 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info(s"CalculatorController.submitCalculateInstalments journey: $journey")
       val sa = journey.taxpayer.selfAssessment
-      val paymentPlanOptions = calculatorService.scheduleOptions(
+      val paymentPlanOptions = calculatorService.defaultSchedules(
         sa,
         journey.safeUpfrontPayment,
         journey.maybeRegularPaymentDay,

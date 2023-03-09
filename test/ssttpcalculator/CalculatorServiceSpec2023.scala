@@ -555,7 +555,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val preferredPaymentDay = None
         val remainingIncomeAfterSpending = 1000
 
-        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
+        val result = calculatorService.defaultSchedules(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest())
 
         result.size shouldBe 3
       }
@@ -571,7 +571,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val preferredPaymentDay = None
         val remainingIncomeAfterSpending = 1000
 
-        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
+        val result = calculatorService.defaultSchedules(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest())
 
         println(result)
 
@@ -594,7 +594,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val preferredPaymentDay = None
         val remainingIncomeAfterSpending = 1000
 
-        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
+        val result = calculatorService.defaultSchedules(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest())
 
         result(50).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.5)
         result(60).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.6)
@@ -612,7 +612,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val preferredPaymentDay = None
         val remainingIncomeAfterSpending = 1000
 
-        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
+        val result = calculatorService.defaultSchedules(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest())
 
         result.size shouldBe 1
       }
@@ -628,7 +628,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
         val preferredPaymentDay = None
         val remainingIncomeAfterSpending = 1000
 
-        val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
+        val result = calculatorService.defaultSchedules(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest())
 
         result.size shouldBe 2
       }
@@ -645,7 +645,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val preferredPaymentDay = None
           val remainingIncomeAfterSpending = 1100
 
-          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
+          val result = calculatorService.defaultSchedules(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest())
 
           result.size shouldBe 1
         }
@@ -661,7 +661,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val preferredPaymentDay = None
           val remainingIncomeAfterSpending = 1000
 
-          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
+          val result = calculatorService.defaultSchedules(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest())
 
           result.size shouldBe 2
         }
@@ -683,7 +683,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val preferredPaymentDay = Some(RegularPaymentDay(28))
           val remainingIncomeAfterSpending = 200
 
-          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
+          val result = calculatorService.defaultSchedules(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest())
 
           result.size shouldBe 0
         }
@@ -703,7 +703,7 @@ class CalculatorServiceSpec2023 extends ItSpec {
           val preferredPaymentDay = Some(RegularPaymentDay(28))
           val remainingIncomeAfterSpending = 220
 
-          val result = calculatorService.scheduleOptions(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest(), appConfig)
+          val result = calculatorService.defaultSchedules(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest())
 
           result.size shouldBe 0
 
