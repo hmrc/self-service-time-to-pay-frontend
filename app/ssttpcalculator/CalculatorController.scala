@@ -152,7 +152,7 @@ class CalculatorController @Inject() (
       val defaultPlanOptions = calculatorService.scheduleOptions(
         sa,
         journey.safeUpfrontPayment,
-        journey.maybeArrangementDayOfMonth,
+        journey.maybeRegularPaymentDay,
         journey.remainingIncomeAfterSpending
       )
 
@@ -187,7 +187,7 @@ class CalculatorController @Inject() (
       val paymentPlanOptions = calculatorService.scheduleOptions(
         sa,
         journey.safeUpfrontPayment,
-        journey.maybeArrangementDayOfMonth,
+        journey.maybeRegularPaymentDay,
         journey.remainingIncomeAfterSpending
       )
       val minCustomAmount = paymentPlanOptions.values
@@ -230,14 +230,14 @@ class CalculatorController @Inject() (
         calculatorService.customSchedule(
           journey.taxpayer.selfAssessment,
           journey.safeUpfrontPayment,
-          journey.maybeArrangementDayOfMonth,
+          journey.maybeRegularPaymentDay,
           customAmount
         )
       case Left(SelectedPlan(amount)) if !isDefaultPlan(amount, defaultPlanOptions) =>
         calculatorService.customSchedule(
           journey.taxpayer.selfAssessment,
           journey.safeUpfrontPayment,
-          journey.maybeArrangementDayOfMonth,
+          journey.maybeRegularPaymentDay,
           amount
         )
       case _ => None

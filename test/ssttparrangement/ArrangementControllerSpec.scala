@@ -95,19 +95,19 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
   private def createJourney(journeyId: JourneyId): Journey = {
     Journey(
-      _id                        = journeyId,
-      status                     = InProgress,
-      createdOn                  = LocalDateTime.now(),
-      maybeTypeOfAccountDetails  = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
-      maybeBankDetails           = Some(BankDetails(Some(Personal), "111111", "12345678", "Darth Vader", None)),
-      existingDDBanks            = None,
-      maybeTaxpayer              = Some(TdAll.taxpayer),
-      maybePaymentToday          = Some(PaymentToday(true)),
-      maybeIncome                = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
-      maybeSpending              = Some(Spending(Expenses(HousingExp, 500))),
-      maybePlanSelection         = Some(PlanSelection(Left(SelectedPlan(selectedRegularPaymentAmount300)))),
-      maybeArrangementDayOfMonth = Some(RegularPaymentDay(3)),
-      maybeEligibilityStatus     = Some(EligibilityStatus(Seq.empty))
+      _id                       = journeyId,
+      status                    = InProgress,
+      createdOn                 = LocalDateTime.now(),
+      maybeTypeOfAccountDetails = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
+      maybeBankDetails          = Some(BankDetails(Some(Personal), "111111", "12345678", "Darth Vader", None)),
+      existingDDBanks           = None,
+      maybeTaxpayer             = Some(TdAll.taxpayer),
+      maybePaymentToday         = Some(PaymentToday(true)),
+      maybeIncome               = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
+      maybeSpending             = Some(Spending(Expenses(HousingExp, 500))),
+      maybePlanSelection        = Some(PlanSelection(Left(SelectedPlan(selectedRegularPaymentAmount300)))),
+      maybeRegularPaymentDay    = Some(RegularPaymentDay(3)),
+      maybeEligibilityStatus    = Some(EligibilityStatus(Seq.empty))
     )
   }
 }
