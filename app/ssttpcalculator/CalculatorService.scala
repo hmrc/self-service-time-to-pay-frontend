@@ -52,6 +52,7 @@ class CalculatorService @Inject() (
   val logger: Logger = Logger(getClass)
 
   val proportionsOfNetMonthlyIncome: Seq[Double] = List(0.5, 0.6, 0.8)
+  val _100 = 100
 
   def defaultSchedules(
       sa:                           SelfAssessmentDetails,
@@ -107,14 +108,14 @@ class CalculatorService @Inject() (
       taxLiabilities:       Seq[TaxLiability],
       regularPaymentAmount: BigDecimal,
       paymentsCalendar:     PaymentsCalendar,
-      upfrontPaymentAmount: BigDecimal
+      upfrontPayment:       BigDecimal
   ): Option[PaymentSchedule] = {
 
     regularInstalments(
       paymentsCalendar.planStartDate,
       regularPaymentAmount,
       paymentsCalendar.regularPaymentDates,
-      payablesForInstalments(taxLiabilities, paymentsCalendar, upfrontPaymentAmount),
+      payablesForInstalments(taxLiabilities, paymentsCalendar, upfrontPayment),
       interestService.rateOn
     ) match {
         case None => None
@@ -125,7 +126,7 @@ class CalculatorService @Inject() (
           val instalmentLatePaymentInterest = instalments.map(_.interest).sum
           val totalInterestCharged = {
             totalHistoricInterest(Payables(taxLiabilities), paymentsCalendar.planStartDate, interestService.getRatesForPeriod) +
-              upfrontPaymentLateInterest(taxLiabilities, paymentsCalendar, upfrontPaymentAmount) +
+              upfrontPaymentLateInterest(taxLiabilities, paymentsCalendar, upfrontPayment) +
               instalmentLatePaymentInterest
           }
 
@@ -134,9 +135,9 @@ class CalculatorService @Inject() (
             endDate              = instalments
               .lastOption.map(_.paymentDate.plusDays(appConfig.lastPaymentDelayDays))
               .getOrElse(throw new IllegalArgumentException("no instalments found to create the schedule")),
-            initialPayment       = upfrontPaymentAmount,
+            initialPayment       = upfrontPayment,
             amountToPay          = principal,
-            instalmentBalance    = principal - upfrontPaymentAmount,
+            instalmentBalance    = principal - upfrontPayment,
             totalInterestCharged = totalInterestCharged,
             totalPayable         = principal + totalInterestCharged,
             instalments          = instalments))
@@ -147,9 +148,9 @@ class CalculatorService @Inject() (
     val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(journey)
     val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
     payablesForInstalments(
-      taxLiabilities       = taxLiabilities,
-      paymentsCalendar     = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, clockProvider.nowDate(), journey.maybeRegularPaymentDay),
-      upfrontPaymentAmount = upfrontPayment
+      liabilities      = taxLiabilities,
+      paymentsCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, clockProvider.nowDate(), journey.maybeRegularPaymentDay),
+      upfrontPayment   = upfrontPayment
     ).balance
   }
 
@@ -159,30 +160,32 @@ class CalculatorService @Inject() (
       periodToRates: (LocalDate, LocalDate) => Seq[InterestRate]
   ): BigDecimal = maybeTotalHistoricInterest(payables, planStartDate, periodToRates).map(_.amount).getOrElse(BigDecimal(0))
 
+  private def maybeUpfrontPaymentLateInterest(
+      liabilities:      Seq[TaxLiability],
+      paymentsCalendar: PaymentsCalendar,
+      upfrontPayment:   BigDecimal
+  ): Option[LatePaymentInterest] = paymentsCalendar.maybeUpfrontPaymentDate match {
+    case Some(_) => Option(LatePaymentInterest(upfrontPaymentLateInterest(liabilities, paymentsCalendar, upfrontPayment)))
+    case None    => None
+  }
+
   private def payablesForInstalments(
-      taxLiabilities:       Seq[TaxLiability],
-      paymentsCalendar:     PaymentsCalendar,
-      upfrontPaymentAmount: BigDecimal
+      liabilities:      Seq[TaxLiability],
+      paymentsCalendar: PaymentsCalendar,
+      upfrontPayment:   BigDecimal
   ): Payables = {
-    val maybeInterestAccruedUpToStartDate = maybeTotalHistoricInterest(Payables(taxLiabilities), paymentsCalendar.planStartDate, interestService.getRatesForPeriod)
-
-    val maybeUpfrontPaymentLateInterest = paymentsCalendar.maybeUpfrontPaymentDate match {
-      case Some(_) => Option(LatePaymentInterest(upfrontPaymentLateInterest(taxLiabilities, paymentsCalendar, upfrontPaymentAmount)))
-      case None    => None
-    }
-
-    val payablesFromPlanStartDateLessUpfrontPayment = payablesResetLessUpfrontPayment(
-      upfrontPaymentAmount,
-      taxLiabilities,
-      paymentsCalendar.planStartDate)
-
-    val liabilitiesUpdated = Seq[Option[Payable]](maybeInterestAccruedUpToStartDate, maybeUpfrontPaymentLateInterest)
-      .foldLeft(payablesFromPlanStartDateLessUpfrontPayment)((ls, maybeInterest) => maybeInterest match {
-        case Some(interest) => ls :+ interest
-        case None           => ls
-      })
-
-    Payables(liabilitiesUpdated)
+    Payables(
+      Seq[Option[Payable]](
+        maybeTotalHistoricInterest(Payables(liabilities), paymentsCalendar.planStartDate, interestService.getRatesForPeriod),
+        maybeUpfrontPaymentLateInterest(liabilities, paymentsCalendar, upfrontPayment)
+      )
+        .foldLeft(payablesFromPlanStartDateLessUpfrontPayment(upfrontPayment, liabilities, paymentsCalendar.planStartDate))(
+          (ls, maybeInterest) => maybeInterest match {
+            case Some(interest) => ls :+ interest
+            case None           => ls
+          }
+        )
+    )
   }
 
   private def maybeTotalHistoricInterest(
@@ -204,7 +207,7 @@ class CalculatorService @Inject() (
     }
   }
 
-  private def payablesResetLessUpfrontPayment(
+  private def payablesFromPlanStartDateLessUpfrontPayment(
       initialPayment: BigDecimal,
       liabilities:    Seq[TaxLiability],
       startDate:      LocalDate
@@ -220,50 +223,6 @@ class CalculatorService @Inject() (
         }))
     }
     result._2
-  }
-
-  private def historicalFixedInterestPeriods(
-      payable:       Payable,
-      planStartDate: LocalDate,
-      periodToRates: (LocalDate, LocalDate) => Seq[InterestRate]
-  ): Seq[FixedInterestPeriod] = {
-    val DebitDueAndCalculationDatesWithinRate: (Boolean, Boolean) = Tuple2(true, true)
-    val DebitDueDateWithinRate: (Boolean, Boolean) = Tuple2(true, false)
-    val CalculationDateWithinRate: (Boolean, Boolean) = Tuple2(false, true)
-
-    payable match {
-      case LatePaymentInterest(_) => Seq()
-      case TaxLiability(amount, dueDate) =>
-        periodToRates(dueDate, planStartDate)
-          .map { rate =>
-            (rate.containsDate(dueDate), rate.containsDate(planStartDate)) match {
-              case DebitDueAndCalculationDatesWithinRate => FixedInterestPeriod(
-                amountAccruingInterest = amount,
-                dueDate                = dueDate,
-                endDate                = planStartDate,
-                rate                   = rate
-              )
-              case DebitDueDateWithinRate => FixedInterestPeriod(
-                amountAccruingInterest = amount,
-                dueDate                = dueDate,
-                endDate                = rate.endDate,
-                rate                   = rate
-              )
-              case CalculationDateWithinRate => FixedInterestPeriod(
-                amountAccruingInterest = amount,
-                dueDate                = rate.startDate,
-                endDate                = planStartDate,
-                rate                   = rate
-              )
-              case _ => FixedInterestPeriod(
-                amountAccruingInterest = amount,
-                dueDate                = rate.startDate,
-                endDate                = rate.endDate,
-                rate                   = rate
-              )
-            }
-          }
-    }
   }
 
   private def regularInstalments(planStartDate:          LocalDate,
@@ -311,7 +270,7 @@ class CalculatorService @Inject() (
           val updatedInstalments = instalmentsAggregator :+ instalment
 
           val remainingPaymentDates = regularPaymentDates.drop(1)
-          val remainingBalance = payablesUpdated(maxPaymentAmount, payables, maybeLatePaymentInterest).balance
+          val remainingBalance = payablesUpdatedLessPayment(maxPaymentAmount, payables, maybeLatePaymentInterest).balance
 
           if (remainingBalance > 0 && remainingPaymentDates.isEmpty) {
             None
@@ -320,7 +279,7 @@ class CalculatorService @Inject() (
               planStartDate,
               remainingPaymentDates,
               maxPaymentAmount,
-              payablesUpdated(maxPaymentAmount, payables, maybeLatePaymentInterest),
+              payablesUpdatedLessPayment(maxPaymentAmount, payables, maybeLatePaymentInterest),
               dateToRate,
               updatedInstalments
             )
@@ -338,7 +297,7 @@ class CalculatorService @Inject() (
 
       val latePaymentsInterestTotal = latePayments.map { p =>
         val currentInterestRate = dateToRate(p.dueDate).rate
-        val currentDailyRate = currentInterestRate / BigDecimal(Year.of(p.dueDate.getYear).length()) / BigDecimal(100)
+        val currentDailyRate = currentInterestRate / BigDecimal(Year.of(p.dueDate.getYear).length()) / BigDecimal(_100)
         val daysInterestToCharge = BigDecimal(durationService.getDaysBetween(p.dueDate, p.payment.date))
         p.payment.amount * currentDailyRate * daysInterestToCharge
       }.sum
@@ -347,7 +306,7 @@ class CalculatorService @Inject() (
     }
   }
 
-  private def payablesUpdated(paymentAmount: BigDecimal, payables: Payables, maybeInterest: Option[LatePaymentInterest]): Payables = {
+  private def payablesUpdatedLessPayment(paymentAmount: BigDecimal, payables: Payables, maybeInterest: Option[LatePaymentInterest]): Payables = {
     val liabilitiesWithLatePaymentInterest = maybeInterest match {
       case Some(interest) => payables.liabilities :+ interest
       case None           => payables.liabilities
@@ -368,30 +327,64 @@ class CalculatorService @Inject() (
     Payables(updatedLiabilities)
   }
 
-  private def min(amountA: BigDecimal, amountB: BigDecimal): BigDecimal = {
-    if (amountA < amountB) {
-      amountA
-    } else {
-      amountB
+  private def historicalFixedInterestPeriods(
+      payable:       Payable,
+      planStartDate: LocalDate,
+      periodToRates: (LocalDate, LocalDate) => Seq[InterestRate]
+  ): Seq[FixedInterestPeriod] = {
+    val DebitDueAndCalculationDatesWithinRate: (Boolean, Boolean) = Tuple2(true, true)
+    val DebitDueDateWithinRate: (Boolean, Boolean) = Tuple2(true, false)
+    val CalculationDateWithinRate: (Boolean, Boolean) = Tuple2(false, true)
+
+    payable match {
+      case LatePaymentInterest(_) => Seq()
+      case TaxLiability(amount, dueDate) =>
+        periodToRates(dueDate, planStartDate)
+          .map { rate =>
+            (rate.containsDate(dueDate), rate.containsDate(planStartDate)) match {
+              case DebitDueAndCalculationDatesWithinRate => FixedInterestPeriod(
+                amountAccruingInterest = amount,
+                dueDate                = dueDate,
+                endDate                = planStartDate,
+                rate                   = rate
+              )
+              case DebitDueDateWithinRate => FixedInterestPeriod(
+                amountAccruingInterest = amount,
+                dueDate                = dueDate,
+                endDate                = rate.endDate,
+                rate                   = rate
+              )
+              case CalculationDateWithinRate => FixedInterestPeriod(
+                amountAccruingInterest = amount,
+                dueDate                = rate.startDate,
+                endDate                = planStartDate,
+                rate                   = rate
+              )
+              case _ => FixedInterestPeriod(
+                amountAccruingInterest = amount,
+                dueDate                = rate.startDate,
+                endDate                = rate.endDate,
+                rate                   = rate
+              )
+            }
+          }
     }
   }
 
-  implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
-
   @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
   private def upfrontPaymentLateInterest(
-      taxLiabilities:       Seq[TaxLiability],
-      paymentsCalendar:     PaymentsCalendar,
-      upfrontPaymentAmount: BigDecimal
+      liabilities:      Seq[TaxLiability],
+      paymentsCalendar: PaymentsCalendar,
+      upfrontPayment:   BigDecimal
   ): BigDecimal = {
-    if (upfrontPaymentAmount == 0) BigDecimal(0) else {
+    if (upfrontPayment == 0) BigDecimal(0) else {
       val currentInterestRate =
         interestService
           .rateOn(paymentsCalendar.planStartDate)
           .rate
 
-      val currentDailyRate = currentInterestRate / BigDecimal(Year.of(paymentsCalendar.planStartDate.getYear).length()) / BigDecimal(100)
-      val sortedDebits: Seq[TaxLiability] = taxLiabilities.sortBy(_.dueDate)
+      val currentDailyRate = currentInterestRate / BigDecimal(Year.of(paymentsCalendar.planStartDate.getYear).length()) / BigDecimal(_100)
+      val sortedDebits: Seq[TaxLiability] = liabilities.sortBy(_.dueDate)
 
         def processDebits(amount: BigDecimal, debits: Seq[TaxLiability]): BigDecimal = {
           debits.toList match {
@@ -419,7 +412,7 @@ class CalculatorService @Inject() (
           }
         }
 
-      val initPaymentInterest = processDebits(upfrontPaymentAmount, sortedDebits)
+      val initPaymentInterest = processDebits(upfrontPayment, sortedDebits)
       logger.info(s"InitialPayment Interest: $initPaymentInterest")
       initPaymentInterest
     }
@@ -445,4 +438,8 @@ class CalculatorService @Inject() (
 
   private def historicRateEndDateNew(debitEndDate: LocalDate, planStartDate: LocalDate): LocalDate =
     if (debitEndDate.getYear.equals(planStartDate.getYear)) planStartDate else debitEndDate
+
+  private def min(amountA: BigDecimal, amountB: BigDecimal): BigDecimal = if (amountA < amountB) amountA else amountB
+
+  implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 }
