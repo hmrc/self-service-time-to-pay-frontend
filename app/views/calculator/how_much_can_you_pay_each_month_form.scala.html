@@ -103,6 +103,7 @@
 
 @main(
     title = Messages("ssttp.calculator.results.title"),
+    hasErrors = selectPlanForm.hasErrors,
     backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford())
 ) {
 
