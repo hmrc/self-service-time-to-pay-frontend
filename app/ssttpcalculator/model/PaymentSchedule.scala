@@ -31,15 +31,13 @@ final case class PaymentSchedule(
     totalPayable:         BigDecimal,
     instalments:          Seq[Instalment]
 ) {
-  def regularMonthlyAmount: BigDecimal = instalments.headOption.map(_.amount).getOrElse(throw new RuntimeException(s"No installments for [$this]"))
-
-  def firstInstallment: Instalment =
-    instalments.reduceOption(first).getOrElse(throw new RuntimeException(s"No installments for [$this]"))
+  def firstInstalment: Instalment =
+    instalments.reduceOption(first).getOrElse(throw new RuntimeException(s"No instalments for [$this]"))
 
   private def first(earliest: Instalment, next: Instalment): Instalment =
     if (next.paymentDate.toEpochDay < earliest.paymentDate.toEpochDay) next else earliest
 
-  def initialPaymentScheduleDate: LocalDate = firstInstallment.paymentDate
+  def initialPaymentScheduleDate: LocalDate = firstInstalment.paymentDate
 
   lazy val lastPaymentDate: LocalDate = instalments.map(_.paymentDate).reduceLeftOption((a, b) => if (a.isAfter(b)) a else b).getOrElse(
     throw new UnsupportedOperationException(s"Instalments were empty [${this}]")
@@ -47,5 +45,5 @@ final case class PaymentSchedule(
 }
 
 object PaymentSchedule {
-  implicit val foramt: OFormat[PaymentSchedule] = Json.format[PaymentSchedule]
+  implicit val format: OFormat[PaymentSchedule] = Json.format[PaymentSchedule]
 }

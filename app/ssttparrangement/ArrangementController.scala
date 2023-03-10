@@ -350,7 +350,7 @@ class ArrangementController @Inject() (
     val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.startDate.plusDays(appConfig.daysToProcessFirstPayment)))
 
     val lastInstalment: Instalment = schedule.lastInstallment
-    val firstInstalment: Instalment = schedule.firstInstallment
+    val firstInstalment: Instalment = schedule.firstInstalment
 
     val totalLiability = (schedule.instalments.map(_.amount).sum + schedule.initialPayment).setScale(2, HALF_UP)
 

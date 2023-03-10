@@ -108,7 +108,7 @@ final case class Journey(
     require(maybeIncome.isDefined, s"'maybeIncome' has to be defined at this stage of a journey [$this]")
     require(maybeSpending.isDefined, s"'maybeSpending has to be defined at this stage of a journey [$this]")
     require(maybeSelectedPlanAmount.isDefined, s"'maybeRegularPlanAmountSelection' has to be defined at this stage of a journey [$this]")
-    require(maybeRegularPaymentDay.isDefined, s"'maybeArrangementDayOfMonth' has to be defined at this stage of a journey [$this]")
+    require(maybeRegularPaymentDay.isDefined, s"'maybeRegularPaymentDay' has to be defined at this stage of a journey [$this]")
   }
 
   def requireDdIsDefined(): Unit = {
