@@ -26,22 +26,22 @@ case class PaymentsCalendar(
     planStartDate:           LocalDate,
     maybeUpfrontPaymentDate: Option[LocalDate],
     regularPaymentDates:     Seq[LocalDate],
-    regularPaymentsDay:      Int
+    paymentDayOfMonth:       Int
 )(implicit config: AppConfig)
 
 object PaymentsCalendar {
-  val defaultRegularPaymentDay = 28
+  val defaultPaymentDayOfMonth = 28
 
   def generate(
       taxLiabilities:         Seq[TaxLiability],
       upfrontPaymentAmount:   BigDecimal,
       dateNow:                LocalDate,
-      maybeRegularPaymentDay: Option[PaymentDayOfMonth] = None
+      maybePaymentDayOfMonth: Option[PaymentDayOfMonth] = None
   )(implicit config: AppConfig): PaymentsCalendar = PaymentsCalendar(
     maybeUpfrontPaymentDate = upfrontPaymentDateIfViable(dateNow, upfrontPaymentAmount, taxLiabilities),
     planStartDate           = dateNow,
-    regularPaymentDates     = regularPaymentDates(dateNow, upfrontPaymentAmount, taxLiabilities, maybeRegularPaymentDay),
-    regularPaymentsDay      = safeRegularPaymentsDay(maybeRegularPaymentDay),
+    regularPaymentDates     = regularPaymentDates(dateNow, upfrontPaymentAmount, taxLiabilities, maybePaymentDayOfMonth),
+    paymentDayOfMonth       = safePaymentDayOfMonth(maybePaymentDayOfMonth),
   )
 
   private def upfrontPaymentDateIfViable(
@@ -59,16 +59,16 @@ object PaymentsCalendar {
       dateNow:                LocalDate,
       upfrontPaymentAmount:   BigDecimal,
       taxLiabilities:         Seq[TaxLiability],
-      maybeRegularPaymentDay: Option[PaymentDayOfMonth]
+      maybePaymentDayOfMonth: Option[PaymentDayOfMonth]
   )(implicit config: AppConfig): Seq[LocalDate] = {
     upfrontPaymentDateIfViable(dateNow, upfrontPaymentAmount, taxLiabilities)(config) match {
-      case Some(upfrontPaymentDate) => validMonthlyDatesFrom(upfrontPaymentDate, config.minGapBetweenPayments, maybeRegularPaymentDay)
-      case None                     => validMonthlyDatesFrom(dateNow, config.daysToProcessFirstPayment, maybeRegularPaymentDay)
+      case Some(upfrontPaymentDate) => validMonthlyDatesFrom(upfrontPaymentDate, config.minGapBetweenPayments, maybePaymentDayOfMonth)
+      case None                     => validMonthlyDatesFrom(dateNow, config.daysToProcessFirstPayment, maybePaymentDayOfMonth)
     }
   }
 
-  private def safeRegularPaymentsDay(maybeRegularPaymentDay: Option[PaymentDayOfMonth])(implicit config: AppConfig): Int = {
-    maybeRegularPaymentDay.fold(defaultRegularPaymentDay)(rpd =>
+  private def safePaymentDayOfMonth(maybePaymentDayOfMonth: Option[PaymentDayOfMonth])(implicit config: AppConfig): Int = {
+    maybePaymentDayOfMonth.fold(defaultPaymentDayOfMonth)(rpd =>
       if (rpd.dayOfMonth <= config.lastPaymentDayOfMonth) rpd.dayOfMonth else config.firstPaymentDayOfMonth
     )
   }
@@ -76,10 +76,10 @@ object PaymentsCalendar {
   private def validMonthlyDatesFrom(
       date:                   LocalDate,
       setUpPeriod:            Int,
-      maybeRegularPaymentDay: Option[PaymentDayOfMonth])(implicit config: AppConfig): Seq[LocalDate] = {
+      maybePaymentDayOfMonth: Option[PaymentDayOfMonth])(implicit config: AppConfig): Seq[LocalDate] = {
     (config.minimumLengthOfPaymentPlan to config.maximumLengthOfPaymentPlan)
       .map(i => {
-        val regularPaymentDateFirstMonth = date.withDayOfMonth(safeRegularPaymentsDay(maybeRegularPaymentDay))
+        val regularPaymentDateFirstMonth = date.withDayOfMonth(safePaymentDayOfMonth(maybePaymentDayOfMonth))
         if (regularPaymentDateFirstMonth.isAfter(date.plusDays(setUpPeriod - 1))) {
           regularPaymentDateFirstMonth.plusMonths(i - 1)
         } else {

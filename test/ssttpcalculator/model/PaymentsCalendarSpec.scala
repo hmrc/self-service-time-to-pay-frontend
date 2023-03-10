@@ -38,7 +38,7 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
   private val debits = Seq(TaxLiability(debt, july(_31st)))
   private val zeroInitialPayment = BigDecimal(0)
   private val initialPaymentTooLarge = BigDecimal(468.01)
-  private val defaultRegularPaymentDay = 28
+  private val defaultPaymentDayOfMonth = 28
 
   private def clockForMay(dayInMay: Int) = {
     val formattedDay = dayInMay.formatted("%02d")
@@ -54,7 +54,7 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
   def date(date: String): LocalDate = LocalDate.parse(date)
 
   val customDateNow: LocalDate = now(Clock.fixed(LocalDateTime.parse(s"2023-02-17T00:00:00.880") toInstant UTC, systemDefault()))
-  val standardRegularPaymentDay: Option[PaymentDayOfMonth] = Some(PaymentDayOfMonth(defaultRegularPaymentDay))
+  val standardPaymentDayOfMonth: Option[PaymentDayOfMonth] = Some(PaymentDayOfMonth(defaultPaymentDayOfMonth))
 
   def testPaymentsCalendar(testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[PaymentDayOfMonth], Option[LocalDate], LocalDate, Int, LocalDate]): Unit = {
 
@@ -63,12 +63,12 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
       expectedMaybeUpfrontPaymentDate, expectedPlanStartDate, expectedRegularPaymentsDay, expectedFirstRegularPaymentDay) =>
       s"$id. $caseDescription" in {
 
-        val taxPaymentPlan = PaymentsCalendar.generate(inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeRegularPaymentDay)(appConfig)
+        val paymentsCalendar = PaymentsCalendar.generate(inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeRegularPaymentDay)(appConfig)
 
-        taxPaymentPlan.maybeUpfrontPaymentDate shouldBe expectedMaybeUpfrontPaymentDate
-        taxPaymentPlan.planStartDate shouldBe expectedPlanStartDate
-        taxPaymentPlan.regularPaymentsDay shouldBe expectedRegularPaymentsDay
-        taxPaymentPlan.regularPaymentDates.head shouldBe expectedFirstRegularPaymentDay
+        paymentsCalendar.maybeUpfrontPaymentDate shouldBe expectedMaybeUpfrontPaymentDate
+        paymentsCalendar.planStartDate shouldBe expectedPlanStartDate
+        paymentsCalendar.paymentDayOfMonth shouldBe expectedRegularPaymentsDay
+        paymentsCalendar.regularPaymentDates.head shouldBe expectedFirstRegularPaymentDay
       }
     }
   }
@@ -152,7 +152,7 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
 
       ("6", "the current date is 17th February so without an upfront payment" +
         " the first regular payment date is 28th February",
-        debits, zeroInitialPayment, date("2023-02-17"), standardRegularPaymentDay,
+        debits, zeroInitialPayment, date("2023-02-17"), standardPaymentDayOfMonth,
         None, customDateNow, 28, date("2023-02-28"))
     )
 

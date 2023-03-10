@@ -63,7 +63,7 @@ class PaymentsCalendarOldSpec extends ItSpec with Matchers with DateSupport {
 
         taxPaymentPlan.maybeUpfrontPaymentDate shouldBe expectedMaybeUpfrontPaymentDate
         taxPaymentPlan.planStartDate shouldBe expectedPlanStartDate
-        taxPaymentPlan.regularPaymentsDay shouldBe expectedRegularPaymentsDay
+        taxPaymentPlan.paymentDayOfMonth shouldBe expectedRegularPaymentsDay
         taxPaymentPlan.regularPaymentDates.head shouldBe expectedFirstRegularPaymentDay
       }
     }

@@ -67,7 +67,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
@@ -90,7 +90,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
@@ -115,7 +115,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
@@ -138,7 +138,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
@@ -178,7 +178,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
@@ -199,7 +199,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
