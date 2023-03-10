@@ -274,7 +274,10 @@ class ArrangementController @Inject() (
     }
   }
 
-  private def applicationSuccessful = successful(Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
+  private def applicationSuccessful(journey: Journey, schedule: PaymentSchedule)(implicit request: Request[_]): Future[Result] = {
+    auditService.sendPlanSetUpSuccessEvent(journey, schedule)
+    successful(Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
+  }
 
   /**
    * Submits a payment plan to the direct-debit service and then submits the arrangement to the arrangement service.
@@ -309,11 +312,11 @@ class ArrangementController @Inject() (
           submitArrangementResult.flatMap {
             _.fold(submissionError => {
               logger.error(s"Exception: ${submissionError.code} + ${submissionError.message}")
-              JourneyLogger.info(s"ArrangementController.arrangementSetUp: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to $applicationSuccessful", arrangement)
-              applicationSuccessful
+              JourneyLogger.info(s"ArrangementController.arrangementSetUp: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to application successful", arrangement)
+              applicationSuccessful(journey, paymentSchedule)
             }, _ => {
               JourneyLogger.info(s"ArrangementController.arrangementSetUp: Arrangement submission Succeeded!", arrangement)
-              applicationSuccessful
+              applicationSuccessful(journey, paymentSchedule)
             }
             )
           }

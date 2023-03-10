@@ -16,85 +16,51 @@
 
 package audit
 
-import java.time.temporal.ChronoUnit
 import javax.inject.{Inject, Singleton}
 import journey.Journey
-import play.api.Logger
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Request
-import req.RequestSupport
 import ssttparrangement.SubmissionError
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
 import req.RequestSupport._
-import uk.gov.hmrc.http.HeaderCarrier
+import util.ApplicationLogging
+
+import scala.util.Failure
 
 @Singleton()
-class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: ExecutionContext) {
+class AuditService @Inject() (
+    auditConnector: AuditConnector
+)(implicit ec: ExecutionContext) extends ApplicationLogging {
 
   def sendDirectDebitSubmissionFailedEvent(
       journey:         Journey,
       schedule:        PaymentSchedule,
-      submissionError: SubmissionError)(implicit request: Request[_]): Unit = {
-    val event = makeEvent(
-      journey,
-      schedule,
-      Json.obj(
-        "status" -> "failed to submit direct debit didnt bothered to submit TTP Arrangement",
-        "submissionError" -> submissionError
-      ))
-    auditConnector.sendExtendedEvent(event)
+      submissionError: SubmissionError
+  )(implicit request: Request[_]): Unit = {
+    val event = DataEventFactory.directDebitSubmissionFailedEvent(journey, schedule, submissionError)
+    sendEvent(event)
     ()
   }
 
-  private def makeEvent(
-      journey:   Journey,
-      schedule:  PaymentSchedule,
-      extraInfo: JsObject)(implicit request: Request[_]) = ExtendedDataEvent(
-    auditSource = "pay-what-you-owe",
-    //`directDebitSetup` was provided at the beginning.
-    // I'm not changing it to make splunk events consistent with what we already have stored
-    auditType = "directDebitSetup",
-    tags      = AuditService.auditTags,
-    detail    = extraInfo ++ makeDetails(journey, schedule)
-  )
+  def sendPlanNotAffordableEvent(journey: Journey)(implicit request: Request[_]): Unit = {
+    val event = DataEventFactory.planNotAffordableEvent(journey)
+    sendEvent(event)
+  }
 
-  private def makeDetails(journey: Journey, schedule: PaymentSchedule) = Json.obj(
-    "utr" -> journey.taxpayer.selfAssessment.utr.value,
-    "bankDetails" -> Json.obj(
-      "name" -> journey.bankDetails.accountName,
-      "accountNumber" -> journey.bankDetails.accountNumber,
-      "sortCode" -> journey.bankDetails.sortCode
-    ),
-    "schedule" -> Json.obj(
-      "initialPaymentAmount" -> schedule.initialPayment,
-      "installments" -> Json.toJson(schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
-      "numberOfInstallments" -> schedule.instalments.length,
-      "installmentLengthCalendarMonths" -> (ChronoUnit.MONTHS.between(schedule.startDate, schedule.endDate)),
-      "totalPaymentWithoutInterest" -> schedule.amountToPay,
-      "totalInterestCharged" -> schedule.totalInterestCharged,
-      "totalPayable" -> schedule.totalPayable)
-  )
+  def sendPlanSetUpSuccessEvent(journey: Journey, schedule: PaymentSchedule)(implicit request: Request[_]): Unit = {
+    val event = DataEventFactory.planSetUpSuccessEvent(journey, schedule)
+    sendEvent(event)
+  }
 
-}
-
-object AuditService {
-  def auditTags(implicit request: Request[_]): Map[String, String] = {
-
-    val hc: HeaderCarrier = RequestSupport.hc(request)
-    Map(
-      "Akamai-Reputation" -> hc.akamaiReputation.map(_.value).getOrElse("-"),
-      "X-Request-ID" -> hc.requestId.map(_.value).getOrElse("-"),
-      "X-Session-ID" -> hc.sessionId.map(_.value).getOrElse("-"),
-      "clientIP" -> hc.trueClientIp.getOrElse("-"),
-      "clientPort" -> hc.trueClientPort.getOrElse("-"),
-      "path" -> request.path,
-      "deviceID" -> hc.deviceID.getOrElse("-")
-    )
+  private def sendEvent(event: ExtendedDataEvent)(implicit request: Request[_]): Unit = {
+    val checkEventResult = auditConnector.sendExtendedEvent(event)
+    checkEventResult.onComplete {
+      case Failure(NonFatal(e)) ⇒ logger.error(s"Unable to post audit event of type ${event.auditType} to audit connector - ${e.getMessage}", e)
+      case _                    ⇒ logger.info(s"Event audited ${event.auditType}")
+    }
   }
 }

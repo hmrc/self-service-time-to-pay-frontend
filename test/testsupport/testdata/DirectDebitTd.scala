@@ -25,6 +25,8 @@ object DirectDebitTd {
   val accountNumber = "12345678"
   val accountName = "Mr John Campbell"
 
+  val dDIRefNumber = "123ABC123"
+
   private def directDebitInstructionJson(creationDate: String) =
     s"""{
           "sortCode":"12-34-56",
