@@ -179,7 +179,7 @@ class CalculatorService @Inject() (
         maybeTotalHistoricInterest(Payables(liabilities), paymentsCalendar.planStartDate, interestService.getRatesForPeriod),
         maybeUpfrontPaymentLateInterest(liabilities, paymentsCalendar, upfrontPayment)
       )
-        .foldLeft(payablesFromPlanStartDateLessUpfrontPayment(upfrontPayment, liabilities, paymentsCalendar.planStartDate))(
+        .foldLeft(liabilitiesFromPlanStartDateLessUpfrontPayment(upfrontPayment, liabilities, paymentsCalendar.planStartDate))(
           (ls, maybeInterest) => maybeInterest match {
             case Some(interest) => ls :+ interest
             case None           => ls
@@ -207,7 +207,7 @@ class CalculatorService @Inject() (
     }
   }
 
-  private def payablesFromPlanStartDateLessUpfrontPayment(
+  private def liabilitiesFromPlanStartDateLessUpfrontPayment(
       initialPayment: BigDecimal,
       liabilities:    Seq[TaxLiability],
       startDate:      LocalDate
