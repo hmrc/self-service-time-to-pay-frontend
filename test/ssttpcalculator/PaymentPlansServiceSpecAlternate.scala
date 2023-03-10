@@ -26,11 +26,11 @@ import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
 import java.time.LocalDate
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
-class CalculatorServiceSpecAlternate extends ItSpec {
+class PaymentPlansServiceSpecAlternate extends ItSpec {
 
   val interestRateService: InterestRateService = fakeApplication().injector.instanceOf[InterestRateService]
   val durationService: DurationService = fakeApplication().injector.instanceOf[DurationService]
-  val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
+  val calculatorService: PaymentPlansService = fakeApplication().injector.instanceOf[PaymentPlansService]
   val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
 
   def debit(amt: BigDecimal, due: String): TaxLiability = TaxLiability(amount  = amt.setScale(2), dueDate = LocalDate.parse(due))

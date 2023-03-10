@@ -21,7 +21,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableFor10
 import org.scalatest.prop.Tables._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import ssttpcalculator.CalculatorService
+import ssttpcalculator.PaymentPlansService
 import testsupport.{DateSupport, ItSpec}
 import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
 
@@ -47,7 +47,7 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
   }
 
   val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
-  val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
+  val calculatorService: PaymentPlansService = fakeApplication().injector.instanceOf[PaymentPlansService]
 
   def dateInMayTwentyTwenty(dayOfMonth: Int): LocalDate = LocalDate.now(clockForMay(dayOfMonth))
 

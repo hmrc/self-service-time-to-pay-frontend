@@ -35,13 +35,14 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class CalculatorController @Inject() (
-    mcc:               MessagesControllerComponents,
-    calculatorService: CalculatorService,
-    as:                Actions,
-    journeyService:    JourneyService,
-    requestSupport:    RequestSupport,
-    views:             Views,
-    clockProvider:     ClockProvider)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(mcc) {
+    mcc:                MessagesControllerComponents,
+    calculatorService:  PaymentPlansService,
+    instalmentsService: InstalmentsService,
+    as:                 Actions,
+    journeyService:     JourneyService,
+    requestSupport:     RequestSupport,
+    views:              Views,
+    clockProvider:      ClockProvider)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(mcc) {
 
   import requestSupport._
 
@@ -158,7 +159,7 @@ class CalculatorController @Inject() (
 
       val minCustomAmount = defaultPlanOptions.values
         .headOption.fold(BigDecimal(1))(_.firstInstalment.amount).setScale(2, HALF_UP)
-      val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
+      val maxCustomAmount = instalmentsService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
 
       val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
         case None                 => defaultPlanOptions
@@ -192,7 +193,7 @@ class CalculatorController @Inject() (
       )
       val minCustomAmount = paymentPlanOptions.values
         .headOption.fold(BigDecimal(1))(_.firstInstalment.amount).setScale(2, HALF_UP)
-      val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
+      val maxCustomAmount = instalmentsService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
 
       selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
         formWithErrors => {

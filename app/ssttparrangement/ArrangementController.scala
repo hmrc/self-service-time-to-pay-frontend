@@ -28,7 +28,7 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttpcalculator.CalculatorService
+import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
@@ -53,7 +53,7 @@ class ArrangementController @Inject() (
     mcc:                  MessagesControllerComponents,
     ddConnector:          DirectDebitConnector,
     arrangementConnector: ArrangementConnector,
-    calculatorService:    CalculatorService,
+    calculatorService:    PaymentPlansService,
     eligibilityService:   EligibilityService,
     taxPayerConnector:    TaxpayerConnector,
     auditService:         AuditService,

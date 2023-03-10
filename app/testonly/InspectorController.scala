@@ -24,7 +24,7 @@ import journey.{Journey, JourneyService}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpcalculator.CalculatorService
+import ssttpcalculator.PaymentPlansService
 import timetopaytaxpayer.cor.TaxpayerConnector
 import views.Views
 
@@ -33,7 +33,7 @@ import scala.util.Try
 
 class InspectorController @Inject() (
     ddConnector:       BarsConnector,
-    calculatorService: CalculatorService,
+    calculatorService: PaymentPlansService,
     taxPayerConnector: TaxpayerConnector,
     cc:                MessagesControllerComponents,
     journeyService:    JourneyService,

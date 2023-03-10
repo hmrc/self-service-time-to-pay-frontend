@@ -22,7 +22,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableFor10
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import org.scalatest.prop.Tables._
-import ssttpcalculator.CalculatorService
+import ssttpcalculator.PaymentPlansService
 import testsupport.{DateSupport, ItSpec}
 import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
 
@@ -32,7 +32,7 @@ import java.time.ZoneOffset.UTC
 
 class PaymentsCalendarOldSpec extends ItSpec with Matchers with DateSupport {
 
-  val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
+  val calculatorService: PaymentPlansService = fakeApplication().injector.instanceOf[PaymentPlansService]
 
   val config: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
 

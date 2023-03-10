@@ -28,12 +28,12 @@ import play.api.test.FakeRequest
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDate, LocalDateTime, Year}
-class CalculatorServiceSpec2023 extends ItSpec {
+class PaymentPlansServiceSpec2023 extends ItSpec {
   private val logger = Logger(getClass)
 
   val interestRateService: InterestRateService = fakeApplication().injector.instanceOf[InterestRateService]
   val durationService: DurationService = fakeApplication().injector.instanceOf[DurationService]
-  val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
+  val calculatorService: PaymentPlansService = fakeApplication().injector.instanceOf[PaymentPlansService]
 
   implicit val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
 
