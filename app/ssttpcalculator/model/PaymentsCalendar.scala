@@ -20,7 +20,7 @@ import config.AppConfig
 
 import java.time.LocalDate
 import play.api.libs.json.{Json, OFormat, OWrites, Reads}
-import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
+import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 
 case class PaymentsCalendar(
     planStartDate:           LocalDate,
@@ -36,7 +36,7 @@ object PaymentsCalendar {
       taxLiabilities:         Seq[TaxLiability],
       upfrontPaymentAmount:   BigDecimal,
       dateNow:                LocalDate,
-      maybeRegularPaymentDay: Option[RegularPaymentDay] = None
+      maybeRegularPaymentDay: Option[PaymentDayOfMonth] = None
   )(implicit config: AppConfig): PaymentsCalendar = PaymentsCalendar(
     maybeUpfrontPaymentDate = upfrontPaymentDateIfViable(dateNow, upfrontPaymentAmount, taxLiabilities),
     planStartDate           = dateNow,
@@ -59,7 +59,7 @@ object PaymentsCalendar {
       dateNow:                LocalDate,
       upfrontPaymentAmount:   BigDecimal,
       taxLiabilities:         Seq[TaxLiability],
-      maybeRegularPaymentDay: Option[RegularPaymentDay]
+      maybeRegularPaymentDay: Option[PaymentDayOfMonth]
   )(implicit config: AppConfig): Seq[LocalDate] = {
     upfrontPaymentDateIfViable(dateNow, upfrontPaymentAmount, taxLiabilities)(config) match {
       case Some(upfrontPaymentDate) => validMonthlyDatesFrom(upfrontPaymentDate, config.minGapBetweenPayments, maybeRegularPaymentDay)
@@ -67,7 +67,7 @@ object PaymentsCalendar {
     }
   }
 
-  private def safeRegularPaymentsDay(maybeRegularPaymentDay: Option[RegularPaymentDay])(implicit config: AppConfig): Int = {
+  private def safeRegularPaymentsDay(maybeRegularPaymentDay: Option[PaymentDayOfMonth])(implicit config: AppConfig): Int = {
     maybeRegularPaymentDay.fold(defaultRegularPaymentDay)(rpd =>
       if (rpd.dayOfMonth <= config.lastPaymentDayOfMonth) rpd.dayOfMonth else config.firstPaymentDayOfMonth
     )
@@ -76,7 +76,7 @@ object PaymentsCalendar {
   private def validMonthlyDatesFrom(
       date:                   LocalDate,
       setUpPeriod:            Int,
-      maybeRegularPaymentDay: Option[RegularPaymentDay])(implicit config: AppConfig): Seq[LocalDate] = {
+      maybeRegularPaymentDay: Option[PaymentDayOfMonth])(implicit config: AppConfig): Seq[LocalDate] = {
     (config.minimumLengthOfPaymentPlan to config.maximumLengthOfPaymentPlan)
       .map(i => {
         val regularPaymentDateFirstMonth = date.withDayOfMonth(safeRegularPaymentsDay(maybeRegularPaymentDay))

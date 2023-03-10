@@ -141,7 +141,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.getChangeSchedulePaymentDay: $request")
     journeyService.authorizedForSsttp { journey =>
       val form = dayOfMonthForm
-      val formWithData = journey.maybeRegularPaymentDay
+      val formWithData = journey.maybePaymentDayOfMonth
         .map(arrangmentDayOfMonth => form.fill(ArrangementForm(None)))
         .getOrElse(form)
       Future.successful(Ok(views.change_day(formWithData)))
@@ -163,7 +163,7 @@ class ArrangementController @Inject() (
           },
           (validFormData: ArrangementForm) => {
             JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
-            val updatedJourney = journey.copy(maybeRegularPaymentDay = Some(RegularPaymentDay(validFormData.dayOfMonth)))
+            val updatedJourney = journey.copy(maybePaymentDayOfMonth = Some(PaymentDayOfMonth(validFormData.dayOfMonth)))
             journeyService.saveJourney(updatedJourney).map {
               _ => Redirect(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())
             }

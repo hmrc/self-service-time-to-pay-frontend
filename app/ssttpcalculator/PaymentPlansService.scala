@@ -29,7 +29,7 @@ import ssttpcalculator.model.{
 }
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
-import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
+import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -42,19 +42,17 @@ class PaymentPlansService @Inject() (
 )(implicit ec: ExecutionContext, appConfig: AppConfig) {
 
   val logger: Logger = Logger(getClass)
-
   val proportionsOfNetMonthlyIncome: Seq[Double] = List(0.5, 0.6, 0.8)
-  val _100 = 100
 
   def defaultSchedules(
       sa:                           SelfAssessmentDetails,
       upfrontPayment:               BigDecimal,
-      maybeRegularPaymentDay:       Option[RegularPaymentDay],
+      maybePaymentDayOfMonth:       Option[PaymentDayOfMonth],
       remainingIncomeAfterSpending: BigDecimal
   )(implicit request: Request[_]): Map[Int, PaymentSchedule] = {
     val dateNow = clockProvider.nowDate()
     val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(sa)
-    val paymentsCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybeRegularPaymentDay)
+    val paymentsCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybePaymentDayOfMonth)
 
     val firstPlanAmount = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending
     val firstSchedule = schedule(taxLiabilities, firstPlanAmount, paymentsCalendar, upfrontPayment)
@@ -78,12 +76,12 @@ class PaymentPlansService @Inject() (
   def customSchedule(
       sa:                     SelfAssessmentDetails,
       upfrontPayment:         BigDecimal,
-      maybeRegularPaymentDay: Option[RegularPaymentDay],
+      maybePaymentDayOfMonth: Option[PaymentDayOfMonth],
       customAmount:           BigDecimal
   )(implicit request: Request[_]): Option[PaymentSchedule] = {
     val dateNow = clockProvider.nowDate()
     val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(sa)
-    val paymentCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybeRegularPaymentDay)
+    val paymentCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybePaymentDayOfMonth)
     schedule(taxLiabilities, customAmount, paymentCalendar, upfrontPayment)
   }
 
@@ -91,21 +89,21 @@ class PaymentPlansService @Inject() (
     val dateNow = clockProvider.nowDate()
     val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(journey)
     val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
-    val maybeRegularPaymentDay = journey.maybeRegularPaymentDay
-    val paymentsCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybeRegularPaymentDay)
+    val maybePaymentDayOfMonth = journey.maybePaymentDayOfMonth
+    val paymentsCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybePaymentDayOfMonth)
     schedule(taxLiabilities, journey.selectedPlanAmount, paymentsCalendar, upfrontPayment)
   }
 
   def schedule(
-      taxLiabilities:       Seq[TaxLiability],
-      regularPaymentAmount: BigDecimal,
-      paymentsCalendar:     PaymentsCalendar,
-      upfrontPayment:       BigDecimal
+      taxLiabilities:    Seq[TaxLiability],
+      paymentDayOfMonth: BigDecimal,
+      paymentsCalendar:  PaymentsCalendar,
+      upfrontPayment:    BigDecimal
   ): Option[PaymentSchedule] = {
 
     instalmentsService.regularInstalments(
       paymentsCalendar.planStartDate,
-      regularPaymentAmount,
+      paymentDayOfMonth,
       paymentsCalendar.regularPaymentDates,
       instalmentsService.payablesForInstalments(taxLiabilities, paymentsCalendar, upfrontPayment),
       interestRateService.rateOn

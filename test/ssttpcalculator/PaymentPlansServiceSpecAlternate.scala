@@ -17,11 +17,11 @@
 package ssttpcalculator
 
 import config.AppConfig
-import org.scalatest.prop.TableDrivenPropertyChecks.{forAll, _}
+import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor11
 import ssttpcalculator.model.{PaymentSchedule, PaymentsCalendar, TaxLiability}
 import testsupport.ItSpec
-import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
+import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 
 import java.time.LocalDate
 import scala.math.BigDecimal.RoundingMode.HALF_UP
@@ -67,7 +67,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(RegularPaymentDay(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
@@ -90,7 +90,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(RegularPaymentDay(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
@@ -115,7 +115,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(RegularPaymentDay(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
@@ -138,7 +138,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(RegularPaymentDay(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
@@ -178,7 +178,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(RegularPaymentDay(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get
@@ -199,7 +199,7 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
               taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
-              maybeRegularPaymentDay = Some(RegularPaymentDay(inputFirstRegularPaymentDate.getDayOfMonth))
+              maybeRegularPaymentDay = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
             )(appConfig)
 
             val schedule: PaymentSchedule = calculatorService.schedule(inputDebits, inputRegularInstalmentAmount, paymentsCalendar, inputUpfrontPaymentAmount).get

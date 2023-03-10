@@ -69,7 +69,7 @@ final case class Journey(
     maybeIncome:               Option[Income]                  = None,
     maybeSpending:             Option[Spending]                = None,
     maybePlanSelection:        Option[PlanSelection]           = None,
-    maybeRegularPaymentDay:    Option[RegularPaymentDay]       = None,
+    maybePaymentDayOfMonth:    Option[PaymentDayOfMonth]       = None,
     maybeEligibilityStatus:    Option[EligibilityStatus]       = None,
     debitDate:                 Option[LocalDate]               = None,
     ddRef:                     Option[String]                  = None,
@@ -107,8 +107,8 @@ final case class Journey(
     require(maybePaymentToday.isDefined, s"'maybePaymentToday' has to be defined at this stage of a journey [$this]")
     require(maybeIncome.isDefined, s"'maybeIncome' has to be defined at this stage of a journey [$this]")
     require(maybeSpending.isDefined, s"'maybeSpending has to be defined at this stage of a journey [$this]")
-    require(maybeSelectedPlanAmount.isDefined, s"'maybeRegularPlanAmountSelection' has to be defined at this stage of a journey [$this]")
-    require(maybeRegularPaymentDay.isDefined, s"'maybeRegularPaymentDay' has to be defined at this stage of a journey [$this]")
+    require(maybeSelectedPlanAmount.isDefined, s"'maybeSelectedPlanAmount' has to be defined at this stage of a journey [$this]")
+    require(maybePaymentDayOfMonth.isDefined, s"'maybePaymentDayOfMonth' has to be defined at this stage of a journey [$this]")
   }
 
   def requireDdIsDefined(): Unit = {
@@ -145,7 +145,7 @@ final case class Journey(
     maybeIncome               = maybeIncome,
     maybeSpending             = maybeSpending,
     maybePlanSelection        = maybePlanSelection,
-    maybeRegularPaymentDay    = maybeRegularPaymentDay,
+    maybePaymentDayOfMonth    = maybePaymentDayOfMonth,
     maybeEligibilityStatus    = maybeEligibilityStatus,
     debitDate                 = debitDate,
     ddRef                     = ddRef.map(_ => "***"),

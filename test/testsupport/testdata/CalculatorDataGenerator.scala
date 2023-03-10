@@ -24,7 +24,7 @@ import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, stringify, toJson}
 import ssttpcalculator.model.{Instalment, PaymentSchedule, TaxLiability, PaymentsCalendar}
 import testsupport.{DateSupport, ItSpec}
-import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
+import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 
 object CalculatorDataGenerator extends ItSpec with Status with DateSupport {
   val eightMonthScheduleRegularPaymentAmount = 637

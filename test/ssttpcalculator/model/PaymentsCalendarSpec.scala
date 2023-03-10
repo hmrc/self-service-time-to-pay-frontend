@@ -23,7 +23,7 @@ import org.scalatest.prop.Tables._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import ssttpcalculator.PaymentPlansService
 import testsupport.{DateSupport, ItSpec}
-import uk.gov.hmrc.selfservicetimetopay.models.RegularPaymentDay
+import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 
 import java.time.LocalDate.now
 import java.time.ZoneId.systemDefault
@@ -54,9 +54,9 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
   def date(date: String): LocalDate = LocalDate.parse(date)
 
   val customDateNow: LocalDate = now(Clock.fixed(LocalDateTime.parse(s"2023-02-17T00:00:00.880") toInstant UTC, systemDefault()))
-  val standardRegularPaymentDay: Option[RegularPaymentDay] = Some(RegularPaymentDay(defaultRegularPaymentDay))
+  val standardRegularPaymentDay: Option[PaymentDayOfMonth] = Some(PaymentDayOfMonth(defaultRegularPaymentDay))
 
-  def testPaymentsCalendar(testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay], Option[LocalDate], LocalDate, Int, LocalDate]): Unit = {
+  def testPaymentsCalendar(testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[PaymentDayOfMonth], Option[LocalDate], LocalDate, Int, LocalDate]): Unit = {
 
     forAll(testCases) { (id, caseDescription,
       inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeRegularPaymentDay,
@@ -74,7 +74,7 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
   }
 
   "1. Boundary of when first regular payment is in starting month or next month" - {
-    val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
+    val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[PaymentDayOfMonth], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
 
       ("id", "caseDescription",
         "inputDebits", "inputUpfrontPayment", "inputDateNow", "inputMaybeRegularPaymentDay",
@@ -82,22 +82,22 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
 
       (".1", "without upfront payment, regular payment day selected far enough away" +
         " to cover days to process first payment so first regular payment in starting month",
-        debits, zeroInitialPayment, date("2023-01-01"), Some(RegularPaymentDay(12)),
+        debits, zeroInitialPayment, date("2023-01-01"), Some(PaymentDayOfMonth(12)),
         None, date("2023-01-01"), 12, date("2023-01-12")),
 
       (".2", "without upfront payment, regular payment day NOT selected far enough away" +
         " to cover days to process first payment so first regular payment next month from starting month",
-        debits, zeroInitialPayment, date("2023-01-01"), Some(RegularPaymentDay(11)),
+        debits, zeroInitialPayment, date("2023-01-01"), Some(PaymentDayOfMonth(11)),
         None, date("2023-01-01"), 11, date("2023-02-11")),
 
       (".3", "with upfront payment, regular payment day selected far enough away" +
         " to cover days to process first payment so  first regular payment in starting month",
-        debits, BigDecimal(100), date("2023-01-01"), Some(RegularPaymentDay(26)),
+        debits, BigDecimal(100), date("2023-01-01"), Some(PaymentDayOfMonth(26)),
         Some(date("2023-01-12")), date("2023-01-01"), 26, date("2023-01-26")),
 
       (".4", "with upfront payment, regular payment day NOT selected far enough away" +
         " to cover days to process first payment so first regular payment next month from starting month",
-        debits, BigDecimal(100), date("2023-01-01"), Some(RegularPaymentDay(25)),
+        debits, BigDecimal(100), date("2023-01-01"), Some(PaymentDayOfMonth(25)),
         Some(date("2023-01-12")), date("2023-01-01"), 25, date("2023-02-25"))
     )
 
@@ -105,7 +105,7 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
 
   }
   "2. When no regular payment day preference is given" - {
-    val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
+    val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[PaymentDayOfMonth], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
 
       ("id", "caseDescription",
         "inputDebits", "inputUpfrontPayment", "inputDateNow", "inputMaybeRegularPaymentDay",
@@ -124,7 +124,7 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
 
   }
   "3. Other cases" - {
-    val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
+    val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[PaymentDayOfMonth], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
 
       ("id", "caseDescription",
         "inputDebits", "inputUpfrontPayment", "inputDateNow", "inputMaybeRegularPaymentDay",
@@ -132,22 +132,22 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
 
       (".1", "with upfront payment, regular payment day selected 10 days away" +
         " so given gap between payments, first regular payment next month from starting month",
-        debits, BigDecimal(100), date("2023-01-01"), Some(RegularPaymentDay(11)),
+        debits, BigDecimal(100), date("2023-01-01"), Some(PaymentDayOfMonth(11)),
         Some(date("2023-01-12")), date("2023-01-01"), 11, date("2023-02-11")),
 
       (".2", "with upfront payment, regular payment day selected 11 days away" +
         " so given gap between payments, first regular payment next month from starting month",
-        debits, BigDecimal(100), date("2023-01-01"), Some(RegularPaymentDay(12)),
+        debits, BigDecimal(100), date("2023-01-01"), Some(PaymentDayOfMonth(12)),
         Some(date("2023-01-12")), date("2023-01-01"), 12, date("2023-02-12")),
 
       (".3", "no upfront payment, regular payment day selected 25 days away" +
         " so first regular payment in starting month",
-        debits, zeroInitialPayment, date("2023-01-01"), Some(RegularPaymentDay(26)),
+        debits, zeroInitialPayment, date("2023-01-01"), Some(PaymentDayOfMonth(26)),
         None, date("2023-01-01"), 26, date("2023-01-26")),
 
       (".4", "no upfront payment, regular payment day selected 24 days away" +
         " so first regular payment in starting month",
-        debits, zeroInitialPayment, date("2023-01-01"), Some(RegularPaymentDay(25)),
+        debits, zeroInitialPayment, date("2023-01-01"), Some(PaymentDayOfMonth(25)),
         None, date("2023-01-01"), 25, date("2023-01-25")),
 
       ("6", "the current date is 17th February so without an upfront payment" +
@@ -160,7 +160,7 @@ class PaymentsCalendarSpec extends ItSpec with Matchers with DateSupport {
 
   }
   "4. return a payment schedule request with no initial payment when the user tries to make a payment which would leave less than £32 balance when" - {
-    val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[RegularPaymentDay], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
+    val testCases: TableFor10[String, String, Seq[TaxLiability], BigDecimal, LocalDate, Option[PaymentDayOfMonth], Option[LocalDate], LocalDate, Int, LocalDate] = Table(
 
       ("id", "caseDescription",
         "inputDebits", "inputUpfrontPayment", "inputDateNow", "inputMaybeRegularPaymentDay",
