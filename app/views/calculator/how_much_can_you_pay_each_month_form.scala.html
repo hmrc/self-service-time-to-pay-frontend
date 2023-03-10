@@ -96,7 +96,7 @@
         }
         <div class="govuk-input__wrapper">
             <div class="govuk-input__prefix" aria-hidden="true">£</div>
-            <input class="govuk-input govuk-input--width-5" id="custom-amount-input" name="custom-amount-input" type="text" spellcheck="false" value="@{selectPlanForm.data.get("custom-amount-input")}">
+            <input class="govuk-input govuk-input--width-5 @if(customAmountHasErrors){govuk-input--error}" id="custom-amount-input" name="custom-amount-input" type="text" spellcheck="false" value="@{selectPlanForm.data.get("custom-amount-input")}">
         </div>
     </div>
 }
