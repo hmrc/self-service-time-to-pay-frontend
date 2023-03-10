@@ -33,11 +33,12 @@ class InstalmentsService @Inject() (
 )(implicit appConfig: AppConfig) {
 
   def maximumPossibleInstalmentAmount(journey: Journey)(implicit request: Request[_]): BigDecimal = {
-    val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(journey)
+    val liabilities: Seq[TaxLiability] = Payable.taxLiabilities(journey)
     val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
+    val dateNow = clockProvider.nowDate()
     payablesForInstalments(
-      liabilities      = taxLiabilities,
-      paymentsCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, clockProvider.nowDate(), journey.maybePaymentDayOfMonth),
+      liabilities      = liabilities,
+      paymentsCalendar = PaymentsCalendar.generate(liabilities, upfrontPayment, dateNow, journey.maybePaymentDayOfMonth),
       upfrontPayment   = upfrontPayment
     ).balance
   }
@@ -48,16 +49,9 @@ class InstalmentsService @Inject() (
       upfrontPayment:   BigDecimal
   ): Payables = {
     Payables(
-      Seq[Option[Payable]](
-        latePaymentInterestService.maybeTotalHistoricInterest(Payables(liabilities), paymentsCalendar.planStartDate, interestRateService.getRatesForPeriod),
+      liabilitiesFromPlanStartDateLessUpfrontPayment(upfrontPayment, liabilities, paymentsCalendar.planStartDate) ++
+        latePaymentInterestService.maybeTotalHistoricInterest(liabilities, paymentsCalendar.planStartDate, interestRateService.getRatesForPeriod) ++
         latePaymentInterestService.maybeUpfrontPaymentLateInterest(liabilities, paymentsCalendar, upfrontPayment)
-      )
-        .foldLeft(liabilitiesFromPlanStartDateLessUpfrontPayment(upfrontPayment, liabilities, paymentsCalendar.planStartDate))(
-          (ls, maybeInterest) => maybeInterest match {
-            case Some(interest) => ls :+ interest
-            case None           => ls
-          }
-        )
     )
   }
 

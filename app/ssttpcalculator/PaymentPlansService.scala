@@ -82,6 +82,7 @@ class PaymentPlansService @Inject() (
     val dateNow = clockProvider.nowDate()
     val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(sa)
     val paymentCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybePaymentDayOfMonth)
+
     schedule(taxLiabilities, customAmount, paymentCalendar, upfrontPayment)
   }
 
@@ -91,11 +92,12 @@ class PaymentPlansService @Inject() (
     val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
     val maybePaymentDayOfMonth = journey.maybePaymentDayOfMonth
     val paymentsCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybePaymentDayOfMonth)
+
     schedule(taxLiabilities, journey.selectedPlanAmount, paymentsCalendar, upfrontPayment)
   }
 
   def schedule(
-      taxLiabilities:    Seq[TaxLiability],
+      liabilities:       Seq[TaxLiability],
       paymentDayOfMonth: BigDecimal,
       paymentsCalendar:  PaymentsCalendar,
       upfrontPayment:    BigDecimal
@@ -105,18 +107,19 @@ class PaymentPlansService @Inject() (
       paymentsCalendar.planStartDate,
       paymentDayOfMonth,
       paymentsCalendar.regularPaymentDates,
-      instalmentsService.payablesForInstalments(taxLiabilities, paymentsCalendar, upfrontPayment),
+      instalmentsService.payablesForInstalments(liabilities, paymentsCalendar, upfrontPayment),
       interestRateService.rateOn
     ) match {
         case None => None
 
         case Some(instalments) =>
-          val principal = taxLiabilities.map(_.amount).sum
+          val planStartDate = paymentsCalendar.planStartDate
+          val principal = liabilities.map(_.amount).sum
 
           val instalmentLatePaymentInterest = instalments.map(_.interest).sum
           val totalInterestCharged = {
-            latePaymentInterestService.totalHistoricInterest(Payables(taxLiabilities), paymentsCalendar.planStartDate, interestRateService.getRatesForPeriod) +
-              latePaymentInterestService.upfrontPaymentLateInterest(taxLiabilities, paymentsCalendar, upfrontPayment) +
+            latePaymentInterestService.totalHistoricInterest(liabilities, planStartDate, interestRateService.getRatesForPeriod) +
+              latePaymentInterestService.upfrontPaymentLateInterest(liabilities, planStartDate, upfrontPayment) +
               instalmentLatePaymentInterest
           }
 
