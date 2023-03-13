@@ -24,11 +24,11 @@ import play.api.test.FakeRequest
 import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
-import ssttpcalculator.CalculatorService
+import ssttpcalculator.PaymentPlansService
 import testsupport.ItSpec
 import testsupport.testdata.{DirectDebitTd, TdAll, TdRequest}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, PlanSelection, SelectedPlan}
+import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, PaymentDayOfMonth, PlanSelection, SelectedPlan}
 
 import java.time.ZoneId.systemDefault
 import java.time.{Clock, LocalDateTime}
@@ -39,7 +39,7 @@ class DataEventFactorySpec extends ItSpec {
   private val directDebitTd = DirectDebitTd
   private implicit val request: FakeRequest[AnyContentAsEmpty.type] = tdRequest.request
 
-  private val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
+  private val paymentPlansService: PaymentPlansService = fakeApplication().injector.instanceOf[PaymentPlansService]
 
   private def fixedClock: Clock = {
     val currentDateTime = LocalDateTime.parse("2020-05-02T00:00:00.880").toInstant(UTC)
@@ -166,15 +166,15 @@ class DataEventFactorySpec extends ItSpec {
       val _28DayOfMonth = 28
 
       val journeySuccessfulSetUp = journey.copy(
-        maybeBankDetails           = Some(BankDetails(
+        maybeBankDetails       = Some(BankDetails(
           sortCode          = directDebitTd.sortCode,
           accountNumber     = directDebitTd.accountNumber,
           accountName       = directDebitTd.accountName,
           maybeDDIRefNumber = Some(directDebitTd.dDIRefNumber))),
-        maybeIncome                = Some(Income(IncomeBudgetLine(MonthlyIncome, _1000Amount))),
-        maybeSpending              = Some(Spending(Expenses(HousingExp, _500Amount))),
-        maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(_28DayOfMonth)),
-        ddRef                      = Some(directDebitTd.dDIRefNumber)
+        maybeIncome            = Some(Income(IncomeBudgetLine(MonthlyIncome, _1000Amount))),
+        maybeSpending          = Some(Spending(Expenses(HousingExp, _500Amount))),
+        maybePaymentDayOfMonth = Some(PaymentDayOfMonth(_28DayOfMonth)),
+        ddRef                  = Some(directDebitTd.dDIRefNumber)
       )
 
       "50% case (more than 12 months)" in {
@@ -182,7 +182,7 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
         )
 
-        val schedule = calculatorService.selectedSchedule(journey50PerCent)(request).get
+        val schedule = paymentPlansService.selectedSchedule(journey50PerCent)(request).get
 
         val computedDataEvent = DataEventFactory.planSetUpSuccessEvent(journey50PerCent, schedule)
 
@@ -331,7 +331,7 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_300Amount)))),
         )
 
-        val schedule = calculatorService.selectedSchedule(journey60PerCent)(request).get
+        val schedule = paymentPlansService.selectedSchedule(journey60PerCent)(request).get
 
         val computedDataEvent = DataEventFactory.planSetUpSuccessEvent(journey60PerCent, schedule)
 
@@ -460,7 +460,7 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_400Amount)))),
         )
 
-        val schedule = calculatorService.selectedSchedule(journey80PerCent)(request).get
+        val schedule = paymentPlansService.selectedSchedule(journey80PerCent)(request).get
 
         val computedDataEvent = DataEventFactory.planSetUpSuccessEvent(journey80PerCent, schedule)
 
@@ -571,7 +571,7 @@ class DataEventFactorySpec extends ItSpec {
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(customAmount)))),
         )
 
-        val schedule = calculatorService.selectedSchedule(journeyCustomAmount)(request).get
+        val schedule = paymentPlansService.selectedSchedule(journeyCustomAmount)(request).get
 
         val computedDataEvent = DataEventFactory.planSetUpSuccessEvent(journeyCustomAmount, schedule)
 

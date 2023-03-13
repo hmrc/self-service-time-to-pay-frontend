@@ -16,10 +16,11 @@
 
 package ssttpcalculator.model
 
+import journey.Journey
+
 import java.time.LocalDate
 import play.api.libs.json.{Json, OFormat}
-
-import scala.math.BigDecimal
+import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 
 sealed trait Payable {
   def amount: BigDecimal
@@ -30,11 +31,14 @@ sealed trait Payable {
 }
 
 object Payable {
-  def payableToTaxLiability(payable: Payable): TaxLiability = {
-    payable match {
-      case LatePaymentInterest(_)        => throw new IllegalArgumentException("cannot convert late payment interest to tax liability")
-      case TaxLiability(amount, dueDate) => TaxLiability(amount, dueDate)
-    }
+
+  def taxLiabilities(sa: SelfAssessmentDetails): Seq[TaxLiability] = for {
+    debit <- sa.debits
+  } yield TaxLiability(debit.amount, debit.dueDate)
+
+  def taxLiabilities(journey: Journey): Seq[TaxLiability] = {
+    val sa = journey.taxpayer.selfAssessment
+    taxLiabilities(sa)
   }
 }
 
@@ -69,7 +73,7 @@ object TaxLiability {
     result._2
   }
 
-  def latePayments(payment: Payment)(ls: Seq[TaxLiability]) = ls.foldLeft((payment, List.empty[LatePayment])){
+  def latePayments(payment: Payment)(ls: Seq[TaxLiability]): List[LatePayment] = ls.foldLeft((payment, List.empty[LatePayment])){
     case ((p, l), lt) if p.amount <= 0 || !lt.hasInterestCharge(payment) => (p, l)
     case ((p, l), lt) if lt.amount >= p.amount => (p.copy(amount = 0), LatePayment(lt.dueDate, p) :: l)
     case ((p, l), lt) => (p.copy(amount = p.amount - lt.amount), LatePayment(lt.dueDate, p.copy(amount = lt.amount)) :: l)

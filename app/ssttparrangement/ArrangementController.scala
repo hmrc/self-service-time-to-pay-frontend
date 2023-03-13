@@ -28,7 +28,7 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttpcalculator.CalculatorService
+import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
@@ -53,7 +53,7 @@ class ArrangementController @Inject() (
     mcc:                  MessagesControllerComponents,
     ddConnector:          DirectDebitConnector,
     arrangementConnector: ArrangementConnector,
-    calculatorService:    CalculatorService,
+    calculatorService:    PaymentPlansService,
     eligibilityService:   EligibilityService,
     taxPayerConnector:    TaxpayerConnector,
     auditService:         AuditService,
@@ -141,7 +141,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.getChangeSchedulePaymentDay: $request")
     journeyService.authorizedForSsttp { journey =>
       val form = dayOfMonthForm
-      val formWithData = journey.maybeArrangementDayOfMonth
+      val formWithData = journey.maybePaymentDayOfMonth
         .map(arrangmentDayOfMonth => form.fill(ArrangementForm(None)))
         .getOrElse(form)
       Future.successful(Ok(views.change_day(formWithData)))
@@ -163,7 +163,7 @@ class ArrangementController @Inject() (
           },
           (validFormData: ArrangementForm) => {
             JourneyLogger.info(s"changing schedule day to [${validFormData.dayOfMonth}]")
-            val updatedJourney = journey.copy(maybeArrangementDayOfMonth = Some(ArrangementDayOfMonth(validFormData.dayOfMonth)))
+            val updatedJourney = journey.copy(maybePaymentDayOfMonth = Some(PaymentDayOfMonth(validFormData.dayOfMonth)))
             journeyService.saveJourney(updatedJourney).map {
               _ => Redirect(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())
             }
@@ -353,7 +353,7 @@ class ArrangementController @Inject() (
     val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.startDate.plusDays(appConfig.daysToProcessFirstPayment)))
 
     val lastInstalment: Instalment = schedule.lastInstallment
-    val firstInstalment: Instalment = schedule.firstInstallment
+    val firstInstalment: Instalment = schedule.firstInstalment
 
     val totalLiability = (schedule.instalments.map(_.amount).sum + schedule.initialPayment).setScale(2, HALF_UP)
 

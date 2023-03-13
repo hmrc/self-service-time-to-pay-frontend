@@ -89,14 +89,4 @@ class InterestRateService {
     }
   }
 
-  def getEarliestDate(dateOne: LocalDate, dateTwo: LocalDate, dateThree: LocalDate): LocalDate = {
-    val earliestOfFirstTwoDates = if (dateOne.isBefore(dateTwo)) dateOne else dateTwo
-    if (earliestOfFirstTwoDates.isBefore(dateThree)) earliestOfFirstTwoDates else dateThree
-  }
-
-  def getLatestDate(dateOne: LocalDate, dateTwo: LocalDate, dateThree: LocalDate): LocalDate = {
-    val latestOfFirstTwoDates = if (dateOne.isAfter(dateTwo)) dateOne else dateTwo
-    if (latestOfFirstTwoDates.isAfter(dateThree)) latestOfFirstTwoDates else dateThree
-  }
-
 }

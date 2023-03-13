@@ -17,12 +17,12 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import model.enumsforforms.{IsSoleSignatory, TypeOfBankAccount, TypesOfBankAccount}
+import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
-import testsupport.testdata.{CalculatorDataGenerator, DirectDebitTd}
+import testsupport.testdata.DirectDebitTd
 
 class DirectDebitConfirmationPageSpec extends ItSpec {
 
