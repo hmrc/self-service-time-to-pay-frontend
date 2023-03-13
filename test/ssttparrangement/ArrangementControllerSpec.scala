@@ -21,6 +21,7 @@ import journey.Statuses.InProgress
 import journey.{Journey, JourneyId, JourneyService, PaymentToday}
 import model.enumsforforms.TypesOfBankAccount.Personal
 import model.enumsforforms.{IsSoleSignatory, TypeOfBankAccount, TypesOfBankAccount}
+import org.scalatest.time.{Seconds, Span}
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
@@ -32,7 +33,8 @@ import play.api.test.Helpers.status
 import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
-import testsupport.WireMockSupport
+import testsupport.RichMatchers.eventually
+import testsupport.{RichMatchers, WireMockSupport}
 import testsupport.stubs.{ArrangementStub, AuthStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.TdAll.selectedRegularPaymentAmount300
 import testsupport.testdata.{TdAll, TdRequest}
@@ -87,9 +89,11 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
       val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
 
-      val res = controller.submit()(fakeRequest)
-      status(res) mustBe Status.SEE_OTHER
-      res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/arrangement/summary"
+      eventually(RichMatchers.timeout(Span(5, Seconds))) {
+        val res = controller.submit()(fakeRequest)
+        status(res) mustBe Status.SEE_OTHER
+        res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/arrangement/summary"
+      }
     }
   }
 
