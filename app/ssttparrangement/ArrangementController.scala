@@ -127,6 +127,9 @@ class ArrangementController @Inject() (
       val monthlyPaymentAmountChosen = journey.maybeSelectedPlanAmount.getOrElse(
         throw new IllegalArgumentException("a selection should have been made of monthly payment")
       )
+      JourneyLogger.info(s"controller.getCheckPaymentPlan monthlyPaymentAmountChosen: $monthlyPaymentAmountChosen")
+      JourneyLogger.info(s"controller.getCheckPaymentPlan schedule: $schedule")
+
       Future.successful(Ok(views.check_payment_plan(schedule, leftOverIncome, monthlyPaymentAmountChosen))
       )
     }

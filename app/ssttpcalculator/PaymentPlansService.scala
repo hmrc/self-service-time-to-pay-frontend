@@ -44,6 +44,29 @@ class PaymentPlansService @Inject() (
   val logger: Logger = Logger(getClass)
   val proportionsOfNetMonthlyIncome: Seq[Double] = List(0.5, 0.6, 0.8)
 
+  def maximumPossibleInstalmentAmount(journey: Journey)(implicit request: Request[_]): BigDecimal = {
+    val sa = journey.taxpayer.selfAssessment
+    val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
+    val maybePaymentDayOfMonth = journey.maybePaymentDayOfMonth
+    val principal = sa.debits.map(_.amount).sum
+    val intermediatePlan = customSchedule(
+      sa,
+      upfrontPayment,
+      maybePaymentDayOfMonth,
+      principal
+    )
+    intermediatePlan.map(_.totalPayable).getOrElse(throw new IllegalArgumentException("could not generate plan"))
+
+    //    val liabilities: Seq[TaxLiability] = Payable.taxLiabilities(journey)
+    //    val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
+    //    val dateNow = clockProvider.nowDate()
+    //    payablesForInstalments(
+    //      liabilities      = liabilities,
+    //      paymentsCalendar = PaymentsCalendar.generate(liabilities, upfrontPayment, dateNow, journey.maybePaymentDayOfMonth),
+    //      upfrontPayment   = upfrontPayment
+    //    ).balance
+  }
+
   def defaultSchedules(
       sa:                           SelfAssessmentDetails,
       upfrontPayment:               BigDecimal,

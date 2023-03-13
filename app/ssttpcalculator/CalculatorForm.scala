@@ -23,7 +23,7 @@ import play.api.data.{Form, FormError, Forms, Mapping}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
-import scala.math.BigDecimal.RoundingMode.HALF_UP
+import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
 import scala.util.Try
 
 object CalculatorForm {
@@ -72,13 +72,17 @@ object CalculatorForm {
 
   val customAmountInputMapping: Mapping[String] = text
 
-  def coerce(radioSelection: String, customAmountInput: Option[String]): PlanSelection = {
+  def coerce(maxCustomAmount: BigDecimal)(radioSelection: String, customAmountInput: Option[String]): PlanSelection = {
+    println(s"COERCE: max custom amount: $maxCustomAmount, customAmountInput: $customAmountInput, radioSelection: $radioSelection")
     if (radioSelection == "customAmountOption") {
-      PlanSelection(Right(CustomPlanRequest(BigDecimal(customAmountInput.getOrElse(
+      val someCustomAmountInput = customAmountInput.getOrElse(
         throw new IllegalArgumentException("custom amount option radio selected but no custom amount input")
-      )))))
+      )
+      val customAmountInputWithCeiling = if (BigDecimal(someCustomAmountInput) == maxCustomAmount) maxCustomAmount.setScale(0, CEILING) else BigDecimal(someCustomAmountInput)
+      PlanSelection(Right(CustomPlanRequest(customAmountInputWithCeiling)))
     } else {
-      PlanSelection(Left(SelectedPlan(BigDecimal(radioSelection))))
+      val radioSelectionAmountWithCeiling = if (BigDecimal(radioSelection).setScale(0, CEILING) == maxCustomAmount) BigDecimal(radioSelection).setScale(0, CEILING) else BigDecimal(radioSelection)
+      PlanSelection(Left(SelectedPlan(radioSelectionAmountWithCeiling)))
     }
   }
 
@@ -97,7 +101,7 @@ object CalculatorForm {
         isEqual("plan-selection", "customAmountOption"),
         validateCustomAmountInput(customAmountInputMapping, minCustomAmount, maxCustomAmount)
       )
-    )(coerce)(uncoerce))
+    )(coerce(maxCustomAmount))(uncoerce))
 
   private def validateCustomAmountInput(
       mappingStr:      Mapping[String],

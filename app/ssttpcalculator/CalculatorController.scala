@@ -33,17 +33,18 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.math.BigDecimal.RoundingMode.HALF_UP
+import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
 
 class CalculatorController @Inject() (
-    mcc:                MessagesControllerComponents,
-    calculatorService:  PaymentPlansService,
-    instalmentsService: InstalmentsService,
-    as:                 Actions,
-    journeyService:     JourneyService,
-    requestSupport:     RequestSupport,
-    views:              Views,
-    clockProvider:      ClockProvider)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(mcc) {
+    mcc:                 MessagesControllerComponents,
+    paymentPlansService: PaymentPlansService,
+    instalmentsService:  InstalmentsService,
+    as:                  Actions,
+    journeyService:      JourneyService,
+    requestSupport:      RequestSupport,
+    views:               Views,
+    clockProvider:       ClockProvider
+)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(mcc) {
 
   import requestSupport._
 
@@ -151,7 +152,7 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info("CalculatorController.getCalculateInstalments", journey)
       val sa = journey.taxpayer.selfAssessment
-      val defaultPlanOptions = calculatorService.defaultSchedules(
+      val defaultPlanOptions = paymentPlansService.defaultSchedules(
         sa,
         journey.safeUpfrontPayment,
         journey.maybePaymentDayOfMonth,
@@ -160,7 +161,7 @@ class CalculatorController @Inject() (
 
       val minCustomAmount = defaultPlanOptions.values
         .headOption.fold(BigDecimal(1))(_.firstInstalment.amount).setScale(2, HALF_UP)
-      val maxCustomAmount = instalmentsService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
+      val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey).setScale(0, CEILING)
 
       val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
         case None                 => defaultPlanOptions
@@ -186,7 +187,7 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info(s"CalculatorController.submitCalculateInstalments journey: $journey")
       val sa = journey.taxpayer.selfAssessment
-      val paymentPlanOptions = calculatorService.defaultSchedules(
+      val paymentPlanOptions = paymentPlansService.defaultSchedules(
         sa,
         journey.safeUpfrontPayment,
         journey.maybePaymentDayOfMonth,
@@ -194,7 +195,7 @@ class CalculatorController @Inject() (
       )
       val minCustomAmount = paymentPlanOptions.values
         .headOption.fold(BigDecimal(1))(_.firstInstalment.amount).setScale(2, HALF_UP)
-      val maxCustomAmount = instalmentsService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
+      val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey).setScale(0, CEILING)
 
       selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
         formWithErrors => {
@@ -229,14 +230,14 @@ class CalculatorController @Inject() (
   )(implicit request: Request[_]): Option[PaymentSchedule] = {
     journey.maybePlanSelection.foldLeft(None: Option[PaymentSchedule])((_, planSelection) => planSelection.selection match {
       case Right(CustomPlanRequest(customAmount)) =>
-        calculatorService.customSchedule(
+        paymentPlansService.customSchedule(
           journey.taxpayer.selfAssessment,
           journey.safeUpfrontPayment,
           journey.maybePaymentDayOfMonth,
           customAmount
         )
       case Left(SelectedPlan(amount)) if !isDefaultPlan(amount, defaultPlanOptions) =>
-        calculatorService.customSchedule(
+        paymentPlansService.customSchedule(
           journey.taxpayer.selfAssessment,
           journey.safeUpfrontPayment,
           journey.maybePaymentDayOfMonth,
