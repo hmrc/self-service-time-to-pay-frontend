@@ -139,7 +139,7 @@ class PaymentPlansService @Inject() (
     val principal = sa.debits.map(_.amount).sum
 
     customSchedule(sa, upfrontPayment, maybePaymentDayOfMonth, principal)
-      .map(_.totalPayable)
+      .map(schedule => schedule.instalmentBalance + schedule.totalInterestCharged)
       .getOrElse(throw new IllegalArgumentException("could not generate plan"))
   }
 
