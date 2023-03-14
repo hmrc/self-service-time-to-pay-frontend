@@ -84,19 +84,11 @@ class PaymentPlansService @Inject() (
 
   def selectedSchedule(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = {
     val dateNow = clockProvider.nowDate()
-    val sa = journey.taxpayer.selfAssessment
     val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(journey)
     val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
     val maybePaymentDayOfMonth = journey.maybePaymentDayOfMonth
     val paymentsCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybePaymentDayOfMonth)
-    val selectedPlanAmountSafeMax = {
-      val singleInstalmentAmount = maximumPossibleInstalmentAmount(sa, upfrontPayment, maybePaymentDayOfMonth)
-      if (journey.selectedPlanAmount.setScale(2, CEILING) == singleInstalmentAmount.setScale(2, CEILING)) {
-        singleInstalmentAmount
-      } else journey.selectedPlanAmount
-    }
-
-    schedule(taxLiabilities, selectedPlanAmountSafeMax, paymentsCalendar, upfrontPayment)
+    schedule(taxLiabilities, journey.selectedPlanAmount, paymentsCalendar, upfrontPayment)
   }
 
   def schedule(
@@ -144,22 +136,11 @@ class PaymentPlansService @Inject() (
     val sa = journey.taxpayer.selfAssessment
     val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
     val maybePaymentDayOfMonth = journey.maybePaymentDayOfMonth
-    maximumPossibleInstalmentAmount(sa, upfrontPayment, maybePaymentDayOfMonth)
-  }
-
-  def maximumPossibleInstalmentAmount(
-      sa:                     SelfAssessmentDetails,
-      upfrontPayment:         BigDecimal,
-      maybePaymentDayOfMonth: Option[PaymentDayOfMonth]
-  )(implicit request: Request[_]): BigDecimal = {
     val principal = sa.debits.map(_.amount).sum
-    val intermediatePlan = customSchedule(
-      sa,
-      upfrontPayment,
-      maybePaymentDayOfMonth,
-      principal
-    )
-    intermediatePlan.map(_.totalPayable).getOrElse(throw new IllegalArgumentException("could not generate plan"))
+
+    customSchedule(sa, upfrontPayment, maybePaymentDayOfMonth, principal)
+      .map(_.totalPayable)
+      .getOrElse(throw new IllegalArgumentException("could not generate plan"))
   }
 
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
