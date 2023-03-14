@@ -159,8 +159,8 @@ class CalculatorController @Inject() (
       )
 
       val minCustomAmount = defaultPlanOptions.values
-        .headOption.fold(BigDecimal(1))(_.firstInstalment.amount).setScale(2, HALF_UP)
-      val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey).setScale(2, CEILING)
+        .headOption.fold(BigDecimal(1))(_.firstInstalment.amount)
+      val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
 
       val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
         case None                 => defaultPlanOptions
@@ -174,8 +174,8 @@ class CalculatorController @Inject() (
           routes.CalculatorController.submitCalculateInstalments(),
           selectPlanForm(minCustomAmount, maxCustomAmount),
           allPlanOptions,
-          minCustomAmount,
-          maxCustomAmount,
+          minCustomAmount.setScale(2, HALF_UP),
+          maxCustomAmount.setScale(2, HALF_UP),
           journey.maybePlanSelection))
       }
     }
@@ -193,8 +193,8 @@ class CalculatorController @Inject() (
         journey.remainingIncomeAfterSpending
       )
       val minCustomAmount = paymentPlanOptions.values
-        .headOption.fold(BigDecimal(1))(_.firstInstalment.amount).setScale(2, HALF_UP)
-      val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey).setScale(2, CEILING)
+        .headOption.fold(BigDecimal(1))(_.firstInstalment.amount)
+      val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
 
       selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
         formWithErrors => {
@@ -204,8 +204,8 @@ class CalculatorController @Inject() (
                 ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                 formWithErrors,
                 paymentPlanOptions,
-                minCustomAmount,
-                maxCustomAmount,
+                minCustomAmount.setScale(2, HALF_UP),
+                maxCustomAmount.setScale(2, HALF_UP),
                 journey.maybePlanSelection))
           )
         },

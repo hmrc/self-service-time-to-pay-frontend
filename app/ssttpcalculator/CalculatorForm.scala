@@ -81,16 +81,28 @@ object CalculatorForm {
   }
 
   private def customAmountWithSafeMax(customAmountInput: Option[String], maxCustomAmount: BigDecimal): BigDecimal = {
+
     customAmountInput
-      .map(input => { if (BigDecimal(input) == maxCustomAmount) maxCustomAmount.setScale(2, CEILING) else BigDecimal(input) })
+      .map(input => {
+        println(s"INPUT: ${BigDecimal(input)}")
+        println(s"MAXCUSTOMAMOUNT: ${maxCustomAmount.setScale(2, HALF_UP)}")
+        println(s"MAX AMOUNT RAW: $maxCustomAmount")
+        if (BigDecimal(input) == maxCustomAmount.setScale(2, HALF_UP)) {
+          println(s"TRUE")
+          maxCustomAmount
+        } else {
+          println(s"FALSE")
+          BigDecimal(input)
+        }
+      })
       .getOrElse(
         throw new IllegalArgumentException("custom amount option radio selected but no custom amount input found")
       )
   }
 
   private def customSelectionWithSafeMax(radioSelection: String, maxCustomAmount: BigDecimal): BigDecimal = {
-    if (BigDecimal(radioSelection).setScale(2, CEILING) == maxCustomAmount) {
-      BigDecimal(radioSelection).setScale(2, CEILING)
+    if (BigDecimal(radioSelection) == maxCustomAmount.setScale(2, HALF_UP)) {
+      maxCustomAmount
     } else BigDecimal(radioSelection)
   }
 
