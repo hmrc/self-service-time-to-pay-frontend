@@ -138,7 +138,7 @@ object CalculatorForm {
         )))
       }))
       .verifying(Constraint((i: String) => if ({
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) <= maxCustomAmount else true
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) <= maxCustomAmount.setScale(2, CEILING) else true
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.above-maximum",
