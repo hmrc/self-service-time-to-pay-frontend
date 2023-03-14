@@ -363,7 +363,7 @@ class ArrangementController @Inject() (
                          paymentCurrency           = paymentCurrency,
                          initialPaymentAmount      = initialPayment,
                          initialPaymentStartDate   = initialStartDate,
-                         scheduledPaymentAmount    = firstInstalment.amount.toString(),
+                         scheduledPaymentAmount    = firstInstalment.amount.setScale(2, HALF_UP).toString(),
                          scheduledPaymentStartDate = firstInstalment.paymentDate,
                          scheduledPaymentEndDate   = lastInstalment.paymentDate,
                          scheduledPaymentFrequency = paymentFrequency,
