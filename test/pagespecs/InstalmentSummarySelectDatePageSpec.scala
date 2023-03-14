@@ -20,7 +20,6 @@ import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.CalculatorDataGenerator
 
 class InstalmentSummarySelectDatePageSpec extends ItSpec {
 

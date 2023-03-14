@@ -52,26 +52,26 @@ class PaymentScheduleExtSpec extends AnyWordSpec with Matchers {
   "firstInstallment" should {
     "return the installment with the earliest payment date" when {
       "there are multiple installments with different payment dates" in {
-        scheduleWithInstallmentsWithDifferentPaymentDates.firstInstallment shouldBe firstInstalment
+        scheduleWithInstallmentsWithDifferentPaymentDates.firstInstalment shouldBe firstInstalment
       }
     }
 
     "return an installment" when {
       "there are multiple installments with the same payment date" in {
-        scheduleWithInstallmentsWithIdenticalPaymentDates.firstInstallment.paymentDate shouldBe firstInstalment.paymentDate
+        scheduleWithInstallmentsWithIdenticalPaymentDates.firstInstalment.paymentDate shouldBe firstInstalment.paymentDate
       }
     }
 
     "return the installment" when {
       "there is a single installment" in {
-        scheduleWithASingleInstallment.firstInstallment shouldBe firstInstalment
+        scheduleWithASingleInstallment.firstInstalment shouldBe firstInstalment
       }
     }
 
     "throw an exception" when {
       "there are no installments" in {
         intercept[RuntimeException] {
-          scheduleWithoutInstallments.firstInstallment
+          scheduleWithoutInstallments.firstInstalment
         }
       }
     }

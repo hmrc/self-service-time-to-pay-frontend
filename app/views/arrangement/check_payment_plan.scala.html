@@ -87,7 +87,7 @@
                 @messages("ssttp.arrangement.check-payment-plan.payments-collected-on")
             </dt>
             <dd class="govuk-summary-list__value">
-                @messages("ssttp.arrangement.check-payment-plan.payment-date.ending", getDayOfMonthOrdinal(paymentSchedule.firstInstallment.paymentDate))
+                @messages("ssttp.arrangement.check-payment-plan.payment-date.ending", getDayOfMonthOrdinal(paymentSchedule.firstInstalment.paymentDate))
             </dd>
             <dd class="govuk-summary-list__actions">
                 <a id="collection-day" href="@ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()">
@@ -106,7 +106,7 @@
             @paymentSchedule.instalments.size <span>@messages("ssttp.arrangement.check-payment-plan.number-of-payments")</span>
             </dt>
             <dd class="govuk-summary-list__value">
-                @partials.currency(paymentSchedule.firstInstallment.amount)
+                @partials.currency(paymentSchedule.firstInstalment.amount)
             </dd>
             <dd class="govuk-summary-list__actions">
                 <a id="monthly-payment" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">

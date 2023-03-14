@@ -29,7 +29,7 @@ import model.forms.TypeOfAccountForm
 import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
-import ssttpcalculator.CalculatorService
+import ssttpcalculator.PaymentPlansService
 import ssttpdirectdebit.DirectDebitForm._
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -46,7 +46,7 @@ class DirectDebitController @Inject() (
     actions:           Actions,
     submissionService: JourneyService,
     requestSupport:    RequestSupport,
-    calculatorService: CalculatorService,
+    calculatorService: PaymentPlansService,
     views:             Views,
     clockProvider:     ClockProvider
 )(

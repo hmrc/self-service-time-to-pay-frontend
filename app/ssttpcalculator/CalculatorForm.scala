@@ -21,10 +21,8 @@ import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{Form, FormError, Forms, Mapping}
 import uk.gov.hmrc.selfservicetimetopay.models._
-import uk.gov.voa.play.form.Condition
-import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf, mandatoryIfFalse}
+import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
-import scala.BigDecimal
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.util.Try
 
@@ -51,29 +49,6 @@ object CalculatorForm {
         })
     )(text => CalculatorPaymentTodayForm(text))(bd => Some(bd.amount.toString)))
 
-  def createAmountDueForm(): Form[CalculatorSinglePayment] =
-    Form(mapping(
-      "amount" -> text
-        .verifying("ssttp.calculator.form.amount-due.required", { i: String => Try(BigDecimal(i)).isSuccess })
-        .verifying("ssttp.calculator.form.amount-due.required.min", { i: String =>
-          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 32.00 else true
-        })
-        .verifying("ssttp.calculator.form.amount-due.less-than-maxval", { i: String =>
-          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
-        })
-        .verifying("ssttp.calculator.form.amount-due.decimal-places", { i =>
-          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-        })
-    )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
-
-  def createMonthlyAmountForm(min: Int, max: Int): Form[MonthlyAmountForm] =
-    Form(mapping(
-      "amount" -> text
-        .verifying("ssttp.monthly.amount.numbers-only", { i: String => Try(BigDecimal(i)).isSuccess })
-        .verifying("ssttp.monthly.amount.out-of-bounds", { i: String =>
-          Try(BigDecimal(i)).isFailure || BigDecimal(i) >= min && BigDecimal(i) <= max
-        }))(text => MonthlyAmountForm(text))(bd => Some(bd.amount.toString)))
-
   private val planSelectionFormatter: Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
       val amount = data.get(key) match {
@@ -88,7 +63,7 @@ object CalculatorForm {
       }
     }
 
-    override def unbind(key: String, value: String): Map[String, String] = Map(key + ".value" -> value.toString)
+    override def unbind(key: String, value: String): Map[String, String] = Map(key + ".value" -> value)
   }
 
   val planSelectionMapping: Mapping[String] = {

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import ssttpcalculator.model.PaymentSchedule
+package uk.gov.hmrc.selfservicetimetopay.models
 
-@(monthsToSchedule: List[PaymentSchedule])(implicit messages: play.api.i18n.Messages)
+import play.api.libs.json.{Format, Json}
 
-<details class="margin-top-40 margin-bottom-30">
-  <summary onclick="click"><span class="summary">@Messages("ssttp.calculator.results.month.greater-then-six.header")</span></summary>
-  <div>
-    <p>@Messages("ssttp.calculator.results.month.greater-then-six.intro")</p>
-    @monthsToSchedule.map { greaterThenSix: PaymentSchedule => @partials.instalment_by_month(greaterThenSix)}
-  </div>
-</details>
+final case class PaymentDayOfMonth(dayOfMonth: Int)
+
+object PaymentDayOfMonth {
+  implicit val format: Format[PaymentDayOfMonth] = Json.format[PaymentDayOfMonth]
+}
