@@ -136,6 +136,21 @@ class PaymentPlansService @Inject() (
             instalments          = instalments))
       }
   }
+
+  def maximumPossibleInstalmentAmount(journey: Journey)(implicit request: Request[_]): BigDecimal = {
+    val sa = journey.taxpayer.selfAssessment
+    val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
+    val maybePaymentDayOfMonth = journey.maybePaymentDayOfMonth
+    val principal = sa.debits.map(_.amount).sum
+    val intermediatePlan = customSchedule(
+      sa,
+      upfrontPayment,
+      maybePaymentDayOfMonth,
+      principal
+    )
+    intermediatePlan.map(_.totalPayable).getOrElse(throw new IllegalArgumentException("could not generate plan"))
+  }
+
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 
 }

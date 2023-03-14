@@ -211,12 +211,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val customtOptionTextEnglish =
           s"""A different monthly amount
-             |Enter an amount that is at least £250 but no more than £4,900
+             |Enter an amount that is at least £250 but no more than £4,914.40
           """.stripMargin
 
         private val customOptionTextWelsh =
           s"""Swm misol gwahanol
-             |Rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,900
+             |Rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,914.40
           """.stripMargin
 
       }
@@ -281,12 +281,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val belowMinimumTextEnglish =
           s"""There is a problem
-             |That amount is too low, enter an amount that is at least £250 but no more than £4,900
+             |That amount is too low, enter an amount that is at least £250 but no more than £4,914.40
       """.stripMargin
 
         private val belowMinimumTextWelsh =
           s"""Mae problem wedi codi
-             |Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,900
+             |Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,914.40
       """.stripMargin
       }
 
@@ -298,12 +298,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val aboveMaximumTextEnglish =
           s"""There is a problem
-             |That amount is too high, enter an amount that is at least £250 but no more than £4,900
+             |That amount is too high, enter an amount that is at least £250 but no more than £4,914.40
       """.stripMargin
 
         private val aboveMaximumTextWelsh =
           s"""Mae problem wedi codi
-             |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,900
+             |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,914.40
       """.stripMargin
       }
 

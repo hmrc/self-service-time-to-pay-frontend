@@ -86,12 +86,13 @@
 }
 
 @enterCustomAmountPanel = {
-    <div id="custom-amount-field" class="govuk-form-group @if(customAmountHasErrors){govuk-form-group--error}">
-        <div class="govuk-hint">@Html(messages("ssttp.calculator.results.option.other.enter.amount", minCustomAmount, maxCustomAmount))</div>
+<div id="custom-amount-field" class="govuk-form-group @if(customAmountHasErrors){govuk-form-group--error}"
+     xmlns="http://www.w3.org/1999/html">
+        <div class="govuk-hint">@Html(messages("ssttp.calculator.results.option.other.enter.amount", currency(minCustomAmount), currency(maxCustomAmount)))</div>
         @if(customAmountHasErrors) {
             <span id="custom-amount-error" class="govuk-error-message">
                 <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
-                @selectPlanForm.error("custom-amount-input").map(formError => Html(messages(formError.message, minCustomAmount, maxCustomAmount)))
+                @selectPlanForm.error("custom-amount-input").map(formError => Html(messages(formError.message, currency(minCustomAmount), currency(maxCustomAmount))))
             </span>
         }
         <div class="govuk-input__wrapper">

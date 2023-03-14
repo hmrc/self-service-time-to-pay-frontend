@@ -23,7 +23,7 @@ import play.api.data.{Form, FormError, Forms, Mapping}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
-import scala.math.BigDecimal.RoundingMode.HALF_UP
+import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
 import scala.util.Try
 
 object CalculatorForm {
@@ -72,17 +72,20 @@ object CalculatorForm {
 
   val customAmountInputMapping: Mapping[String] = text
 
-  def coerce(radioSelection: String, customAmountInput: Option[String]): PlanSelection = {
+  def apply(maxCustomAmount: BigDecimal)(radioSelection: String, customAmountInput: Option[String]): PlanSelection = {
     if (radioSelection == "customAmountOption") {
-      PlanSelection(Right(CustomPlanRequest(BigDecimal(customAmountInput.getOrElse(
+      val someCustomAmountInput = customAmountInput.getOrElse(
         throw new IllegalArgumentException("custom amount option radio selected but no custom amount input")
-      )))))
+      )
+      val customAmountInputWithCeiling = if (BigDecimal(someCustomAmountInput) == maxCustomAmount) maxCustomAmount.setScale(0, CEILING) else BigDecimal(someCustomAmountInput)
+      PlanSelection(Right(CustomPlanRequest(customAmountInputWithCeiling)))
     } else {
-      PlanSelection(Left(SelectedPlan(BigDecimal(radioSelection))))
+      val radioSelectionAmountWithCeiling = if (BigDecimal(radioSelection).setScale(0, CEILING) == maxCustomAmount) BigDecimal(radioSelection).setScale(0, CEILING) else BigDecimal(radioSelection)
+      PlanSelection(Left(SelectedPlan(radioSelectionAmountWithCeiling)))
     }
   }
 
-  def uncoerce(data: PlanSelection): Option[(String, Option[String])] = Option {
+  def unapply(data: PlanSelection): Option[(String, Option[String])] = Option {
     data.selection match {
       case Left(SelectedPlan(instalmentAmount))   => (instalmentAmount.toString, None)
       case Right(CustomPlanRequest(customAmount)) => ("customAmountOption", Some(customAmount.toString()))
@@ -97,7 +100,7 @@ object CalculatorForm {
         isEqual("plan-selection", "customAmountOption"),
         validateCustomAmountInput(customAmountInputMapping, minCustomAmount, maxCustomAmount)
       )
-    )(coerce)(uncoerce))
+    )(apply(maxCustomAmount))(unapply))
 
   private def validateCustomAmountInput(
       mappingStr:      Mapping[String],
@@ -120,8 +123,8 @@ object CalculatorForm {
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.below-minimum",
-          minCustomAmount.setScale(2, HALF_UP),
-          maxCustomAmount.setScale(2, HALF_UP)
+          minCustomAmount.formatted("%,1.2f").stripSuffix(".00"),
+          maxCustomAmount.formatted("%,1.2f").stripSuffix(".00")
         )))
       }))
       .verifying(Constraint((i: String) => if ({
@@ -129,8 +132,8 @@ object CalculatorForm {
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.above-maximum",
-          minCustomAmount.setScale(2, HALF_UP),
-          maxCustomAmount.setScale(2, HALF_UP)
+          minCustomAmount.formatted("%,1.2f").stripSuffix(".00"),
+          maxCustomAmount.formatted("%,1.2f").stripSuffix(".00")
         )))
       }))
 
