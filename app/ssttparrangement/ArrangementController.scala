@@ -24,6 +24,7 @@ import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.Statuses.FinishedApplicationSuccessful
 import journey.{Journey, JourneyService}
 import play.api.Logger
+import play.api.data.Form
 import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
@@ -141,9 +142,11 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.getChangeSchedulePaymentDay: $request")
     journeyService.authorizedForSsttp { journey =>
       val form = dayOfMonthForm
-      val formWithData = journey.maybePaymentDayOfMonth
-        .map(arrangmentDayOfMonth => form.fill(ArrangementForm(None)))
-        .getOrElse(form)
+      val formWithData: Form[ArrangementForm] = journey.maybePaymentDayOfMonth match {
+        case _: Option[PaymentDayOfMonth] =>
+          form.fill(ArrangementForm(journey.selectedDay))
+        case _ => form.fill(ArrangementForm(None))
+      }
       Future.successful(Ok(views.change_day(formWithData)))
     }
   }
