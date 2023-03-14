@@ -22,7 +22,6 @@ import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.{
   Payable,
-  Payables,
   PaymentSchedule,
   TaxLiability,
   PaymentsCalendar
@@ -51,8 +50,8 @@ class PaymentPlansService @Inject() (
       remainingIncomeAfterSpending: BigDecimal
   )(implicit request: Request[_]): Map[Int, PaymentSchedule] = {
     val dateNow = clockProvider.nowDate()
+    val paymentsCalendar = PaymentsCalendar.generate(upfrontPayment, dateNow, maybePaymentDayOfMonth)
     val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(sa)
-    val paymentsCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybePaymentDayOfMonth)
 
     val firstPlanAmount = proportionsOfNetMonthlyIncome(0) * remainingIncomeAfterSpending
     val firstSchedule = schedule(taxLiabilities, firstPlanAmount, paymentsCalendar, upfrontPayment)
@@ -80,18 +79,18 @@ class PaymentPlansService @Inject() (
       customAmount:           BigDecimal
   )(implicit request: Request[_]): Option[PaymentSchedule] = {
     val dateNow = clockProvider.nowDate()
+    val paymentCalendar = PaymentsCalendar.generate(upfrontPayment, dateNow, maybePaymentDayOfMonth)
     val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(sa)
-    val paymentCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybePaymentDayOfMonth)
 
     schedule(taxLiabilities, customAmount, paymentCalendar, upfrontPayment)
   }
 
   def selectedSchedule(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = {
     val dateNow = clockProvider.nowDate()
-    val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(journey)
     val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
     val maybePaymentDayOfMonth = journey.maybePaymentDayOfMonth
-    val paymentsCalendar = PaymentsCalendar.generate(taxLiabilities, upfrontPayment, dateNow, maybePaymentDayOfMonth)
+    val paymentsCalendar = PaymentsCalendar.generate(upfrontPayment, dateNow, maybePaymentDayOfMonth)
+    val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(journey)
 
     schedule(taxLiabilities, journey.selectedPlanAmount, paymentsCalendar, upfrontPayment)
   }

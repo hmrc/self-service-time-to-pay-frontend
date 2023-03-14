@@ -59,7 +59,7 @@ class PaymentsCalendarOldSpec extends ItSpec with Matchers with DateSupport {
       expectedMaybeUpfrontPaymentDate, expectedPlanStartDate, expectedRegularPaymentsDay, expectedFirstRegularPaymentDay) =>
       s"$id. $caseDescription" in {
 
-        val taxPaymentPlan = PaymentsCalendar.generate(inputDebits, inputUpfrontPayment, inputDateNow, inputMaybeRegularPaymentDay)(config)
+        val taxPaymentPlan = PaymentsCalendar.generate(inputUpfrontPayment, inputDateNow, inputMaybeRegularPaymentDay)(config)
 
         taxPaymentPlan.maybeUpfrontPaymentDate shouldBe expectedMaybeUpfrontPaymentDate
         taxPaymentPlan.planStartDate shouldBe expectedPlanStartDate
@@ -72,19 +72,17 @@ class PaymentsCalendarOldSpec extends ItSpec with Matchers with DateSupport {
   val upfrontPaymentAmount = BigDecimal(4000.00)
 
   "CalculatorService.schedule" - {
+    val upfrontPaymentAmount = BigDecimal(4000.00)
+    val clock = clockForMay(_1st)
+    val today = LocalDate.now(clock)
+
+    val paymentsCalendar = PaymentsCalendar.generate(upfrontPaymentAmount, today)(config)
+
+    val regularPaymentAmount = 500
 
     val liabilities = List(TaxLiability(BigDecimal(3559.20), LocalDate.of(2022, Month.JANUARY, 31)),
                            TaxLiability(BigDecimal(1779.60), LocalDate.of(2022, Month.JANUARY, 31)),
                            TaxLiability(BigDecimal(1779.60), LocalDate.of(2022, Month.JULY, 31)))
-
-    val upfrontPaymentAmount = BigDecimal(4000.00)
-
-    val regularPaymentAmount = 500
-
-    val clock = clockForMay(_1st)
-    val today = LocalDate.now(clock)
-
-    val paymentsCalendar = PaymentsCalendar.generate(liabilities, upfrontPaymentAmount, today)(config)
 
     "when passed an upfront payment amount that is more than 0 and where the remaining liabilities are more than £32 returns a schedule with" - {
 

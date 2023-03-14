@@ -38,7 +38,7 @@ class InstalmentsService @Inject() (
     val dateNow = clockProvider.nowDate()
     payablesForInstalments(
       liabilities      = liabilities,
-      paymentsCalendar = PaymentsCalendar.generate(liabilities, upfrontPayment, dateNow, journey.maybePaymentDayOfMonth),
+      paymentsCalendar = PaymentsCalendar.generate(upfrontPayment, dateNow, journey.maybePaymentDayOfMonth),
       upfrontPayment   = upfrontPayment
     ).balance
   }
