@@ -32,17 +32,6 @@ class InstalmentsService @Inject() (
     latePaymentInterestService: LatePaymentInterestService
 )(implicit appConfig: AppConfig) {
 
-  //  def maximumPossibleInstalmentAmount(journey: Journey)(implicit request: Request[_]): BigDecimal = {
-  //    val liabilities: Seq[TaxLiability] = Payable.taxLiabilities(journey)
-  //    val upfrontPayment = journey.maybePaymentTodayAmount.map(_.value).getOrElse(BigDecimal(0))
-  //    val dateNow = clockProvider.nowDate()
-  //    payablesForInstalments(
-  //      liabilities      = liabilities,
-  //      paymentsCalendar = PaymentsCalendar.generate(liabilities, upfrontPayment, dateNow, journey.maybePaymentDayOfMonth),
-  //      upfrontPayment   = upfrontPayment
-  //    ).balance
-  //  }
-
   def payablesForInstalments(
       liabilities:      Seq[TaxLiability],
       paymentsCalendar: PaymentsCalendar,
