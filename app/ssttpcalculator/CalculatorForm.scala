@@ -74,15 +74,24 @@ object CalculatorForm {
 
   def apply(maxCustomAmount: BigDecimal)(radioSelection: String, customAmountInput: Option[String]): PlanSelection = {
     if (radioSelection == "customAmountOption") {
-      val someCustomAmountInput = customAmountInput.getOrElse(
-        throw new IllegalArgumentException("custom amount option radio selected but no custom amount input")
-      )
-      val customAmountInputWithCeiling = if (BigDecimal(someCustomAmountInput) == maxCustomAmount) maxCustomAmount.setScale(0, CEILING) else BigDecimal(someCustomAmountInput)
-      PlanSelection(Right(CustomPlanRequest(customAmountInputWithCeiling)))
+      PlanSelection(Right(CustomPlanRequest(customAmountWithSafeMax(customAmountInput, maxCustomAmount))))
     } else {
-      val radioSelectionAmountWithCeiling = if (BigDecimal(radioSelection).setScale(0, CEILING) == maxCustomAmount) BigDecimal(radioSelection).setScale(0, CEILING) else BigDecimal(radioSelection)
-      PlanSelection(Left(SelectedPlan(radioSelectionAmountWithCeiling)))
+      PlanSelection(Left(SelectedPlan(customSelectionWithSafeMax(radioSelection, maxCustomAmount))))
     }
+  }
+
+  private def customAmountWithSafeMax(customAmountInput: Option[String], maxCustomAmount: BigDecimal): BigDecimal = {
+    customAmountInput
+      .map(input => { if (BigDecimal(input) == maxCustomAmount) maxCustomAmount.setScale(2, CEILING) else BigDecimal(input) })
+      .getOrElse(
+        throw new IllegalArgumentException("custom amount option radio selected but no custom amount input found")
+      )
+  }
+
+  private def customSelectionWithSafeMax(radioSelection: String, maxCustomAmount: BigDecimal): BigDecimal = {
+    if (BigDecimal(radioSelection).setScale(2, CEILING) == maxCustomAmount) {
+      BigDecimal(radioSelection).setScale(2, CEILING)
+    } else BigDecimal(radioSelection)
   }
 
   def unapply(data: PlanSelection): Option[(String, Option[String])] = Option {
