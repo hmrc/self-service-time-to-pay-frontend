@@ -21,11 +21,9 @@ import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{Form, FormError, Forms, Mapping}
 import uk.gov.hmrc.selfservicetimetopay.models._
-import uk.gov.voa.play.form.Condition
-import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf, mandatoryIfFalse}
+import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
-import scala.BigDecimal
-import scala.math.BigDecimal.RoundingMode.HALF_UP
+import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
 import scala.util.Try
 
 object CalculatorForm {
@@ -51,29 +49,6 @@ object CalculatorForm {
         })
     )(text => CalculatorPaymentTodayForm(text))(bd => Some(bd.amount.toString)))
 
-  def createAmountDueForm(): Form[CalculatorSinglePayment] =
-    Form(mapping(
-      "amount" -> text
-        .verifying("ssttp.calculator.form.amount-due.required", { i: String => Try(BigDecimal(i)).isSuccess })
-        .verifying("ssttp.calculator.form.amount-due.required.min", { i: String =>
-          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 32.00 else true
-        })
-        .verifying("ssttp.calculator.form.amount-due.less-than-maxval", { i: String =>
-          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
-        })
-        .verifying("ssttp.calculator.form.amount-due.decimal-places", { i =>
-          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-        })
-    )(text => CalculatorSinglePayment(text))(bd => Some(bd.amount.toString)))
-
-  def createMonthlyAmountForm(min: Int, max: Int): Form[MonthlyAmountForm] =
-    Form(mapping(
-      "amount" -> text
-        .verifying("ssttp.monthly.amount.numbers-only", { i: String => Try(BigDecimal(i)).isSuccess })
-        .verifying("ssttp.monthly.amount.out-of-bounds", { i: String =>
-          Try(BigDecimal(i)).isFailure || BigDecimal(i) >= min && BigDecimal(i) <= max
-        }))(text => MonthlyAmountForm(text))(bd => Some(bd.amount.toString)))
-
   private val planSelectionFormatter: Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
       val amount = data.get(key) match {
@@ -88,7 +63,7 @@ object CalculatorForm {
       }
     }
 
-    override def unbind(key: String, value: String): Map[String, String] = Map(key + ".value" -> value.toString)
+    override def unbind(key: String, value: String): Map[String, String] = Map(key + ".value" -> value)
   }
 
   val planSelectionMapping: Mapping[String] = {
@@ -97,17 +72,30 @@ object CalculatorForm {
 
   val customAmountInputMapping: Mapping[String] = text
 
-  def coerce(radioSelection: String, customAmountInput: Option[String]): PlanSelection = {
+  def apply(maxCustomAmount: BigDecimal)(radioSelection: String, customAmountInput: Option[String]): PlanSelection = {
     if (radioSelection == "customAmountOption") {
-      PlanSelection(Right(CustomPlanRequest(BigDecimal(customAmountInput.getOrElse(
-        throw new IllegalArgumentException("custom amount option radio selected but no custom amount input")
-      )))))
+      PlanSelection(Right(CustomPlanRequest(customAmountWithSafeMax(customAmountInput, maxCustomAmount))))
     } else {
-      PlanSelection(Left(SelectedPlan(BigDecimal(radioSelection))))
+      PlanSelection(Left(SelectedPlan(customSelectionWithSafeMax(radioSelection, maxCustomAmount))))
     }
   }
 
-  def uncoerce(data: PlanSelection): Option[(String, Option[String])] = Option {
+  private def customAmountWithSafeMax(customAmountInput: Option[String], maxCustomAmount: BigDecimal): BigDecimal = {
+
+    customAmountInput
+      .map(input => { if (BigDecimal(input) == maxCustomAmount.setScale(2, HALF_UP)) maxCustomAmount else BigDecimal(input) })
+      .getOrElse(
+        throw new IllegalArgumentException("custom amount option radio selected but no custom amount input found")
+      )
+  }
+
+  private def customSelectionWithSafeMax(radioSelection: String, maxCustomAmount: BigDecimal): BigDecimal = {
+    if (BigDecimal(radioSelection) == maxCustomAmount.setScale(2, HALF_UP)) {
+      maxCustomAmount
+    } else BigDecimal(radioSelection)
+  }
+
+  def unapply(data: PlanSelection): Option[(String, Option[String])] = Option {
     data.selection match {
       case Left(SelectedPlan(instalmentAmount))   => (instalmentAmount.toString, None)
       case Right(CustomPlanRequest(customAmount)) => ("customAmountOption", Some(customAmount.toString()))
@@ -122,7 +110,7 @@ object CalculatorForm {
         isEqual("plan-selection", "customAmountOption"),
         validateCustomAmountInput(customAmountInputMapping, minCustomAmount, maxCustomAmount)
       )
-    )(coerce)(uncoerce))
+    )(apply(maxCustomAmount))(unapply))
 
   private def validateCustomAmountInput(
       mappingStr:      Mapping[String],
@@ -145,8 +133,8 @@ object CalculatorForm {
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.below-minimum",
-          minCustomAmount.setScale(2, HALF_UP),
-          maxCustomAmount.setScale(2, HALF_UP)
+          minCustomAmount.formatted("%,1.2f").stripSuffix(".00"),
+          maxCustomAmount.formatted("%,1.2f").stripSuffix(".00")
         )))
       }))
       .verifying(Constraint((i: String) => if ({
@@ -154,8 +142,8 @@ object CalculatorForm {
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.above-maximum",
-          minCustomAmount.setScale(2, HALF_UP),
-          maxCustomAmount.setScale(2, HALF_UP)
+          minCustomAmount.formatted("%,1.2f").stripSuffix(".00"),
+          maxCustomAmount.formatted("%,1.2f").stripSuffix(".00")
         )))
       }))
 

@@ -57,23 +57,23 @@ object PaymentTodayAmount {
 }
 
 final case class Journey(
-    _id:                        JourneyId,
-    status:                     Status                          = InProgress,
-    createdOn:                  LocalDateTime,
-    maybeTypeOfAccountDetails:  Option[TypeOfAccountDetails]    = None,
-    maybeBankDetails:           Option[BankDetails]             = None,
-    existingDDBanks:            Option[DirectDebitInstructions] = None,
-    maybeTaxpayer:              Option[Taxpayer]                = None,
-    maybePaymentToday:          Option[PaymentToday]            = None,
-    maybePaymentTodayAmount:    Option[PaymentTodayAmount]      = None,
-    maybeIncome:                Option[Income]                  = None,
-    maybeSpending:              Option[Spending]                = None,
-    maybePlanSelection:         Option[PlanSelection]           = None,
-    maybeArrangementDayOfMonth: Option[ArrangementDayOfMonth]   = None,
-    maybeEligibilityStatus:     Option[EligibilityStatus]       = None,
-    debitDate:                  Option[LocalDate]               = None,
-    ddRef:                      Option[String]                  = None,
-    maybeSaUtr:                 Option[String]                  = None
+    _id:                       JourneyId,
+    status:                    Status                          = InProgress,
+    createdOn:                 LocalDateTime,
+    maybeTypeOfAccountDetails: Option[TypeOfAccountDetails]    = None,
+    maybeBankDetails:          Option[BankDetails]             = None,
+    existingDDBanks:           Option[DirectDebitInstructions] = None,
+    maybeTaxpayer:             Option[Taxpayer]                = None,
+    maybePaymentToday:         Option[PaymentToday]            = None,
+    maybePaymentTodayAmount:   Option[PaymentTodayAmount]      = None,
+    maybeIncome:               Option[Income]                  = None,
+    maybeSpending:             Option[Spending]                = None,
+    maybePlanSelection:        Option[PlanSelection]           = None,
+    maybePaymentDayOfMonth:    Option[PaymentDayOfMonth]       = None,
+    maybeEligibilityStatus:    Option[EligibilityStatus]       = None,
+    debitDate:                 Option[LocalDate]               = None,
+    ddRef:                     Option[String]                  = None,
+    maybeSaUtr:                Option[String]                  = None
 ) extends HasId[JourneyId] {
 
   def maybeSelectedPlanAmount: Option[BigDecimal] = maybePlanSelection.fold(None: Option[BigDecimal])(_.selection match {
@@ -93,7 +93,7 @@ final case class Journey(
     require(eligibilityStatus.eligible, s"taxpayer has to be eligible [$this]")
   }
 
-  def selectedDay: Option[Int] = maybeArrangementDayOfMonth.map(_.dayOfMonth)
+  def selectedDay: Option[Int] = maybePaymentDayOfMonth.map(_.dayOfMonth)
 
   def remainingIncomeAfterSpending: BigDecimal = {
     val totalIncome = maybeIncome.map(_.totalIncome).getOrElse(throw new IllegalArgumentException("attempted to retrieve total income when there was no income"))
@@ -109,8 +109,8 @@ final case class Journey(
     require(maybePaymentToday.isDefined, s"'maybePaymentToday' has to be defined at this stage of a journey [$this]")
     require(maybeIncome.isDefined, s"'maybeIncome' has to be defined at this stage of a journey [$this]")
     require(maybeSpending.isDefined, s"'maybeSpending has to be defined at this stage of a journey [$this]")
-    require(maybeSelectedPlanAmount.isDefined, s"'maybeRegularPlanAmountSelection' has to be defined at this stage of a journey [$this]")
-    require(maybeArrangementDayOfMonth.isDefined, s"'maybeArrangementDayOfMonth' has to be defined at this stage of a journey [$this]")
+    require(maybeSelectedPlanAmount.isDefined, s"'maybeSelectedPlanAmount' has to be defined at this stage of a journey [$this]")
+    require(maybePaymentDayOfMonth.isDefined, s"'maybePaymentDayOfMonth' has to be defined at this stage of a journey [$this]")
   }
 
   def requireDdIsDefined(): Unit = {
@@ -135,23 +135,23 @@ final case class Journey(
   def isFinished: Boolean = status == FinishedApplicationSuccessful
 
   def obfuscate: Journey = Journey(
-    _id                        = _id,
-    status                     = status,
-    createdOn                  = createdOn,
-    maybeTypeOfAccountDetails  = maybeTypeOfAccountDetails,
-    maybeBankDetails           = maybeBankDetails.map(_.obfuscate),
-    existingDDBanks            = existingDDBanks.map(_.obfuscate),
-    maybeTaxpayer              = maybeTaxpayer.map(_.obfuscate),
-    maybePaymentToday          = maybePaymentToday,
-    maybePaymentTodayAmount    = maybePaymentTodayAmount,
-    maybeIncome                = maybeIncome,
-    maybeSpending              = maybeSpending,
-    maybePlanSelection         = maybePlanSelection,
-    maybeArrangementDayOfMonth = maybeArrangementDayOfMonth,
-    maybeEligibilityStatus     = maybeEligibilityStatus,
-    debitDate                  = debitDate,
-    ddRef                      = ddRef.map(_ => "***"),
-    maybeSaUtr                 = maybeSaUtr.map(_ => "***")
+    _id                       = _id,
+    status                    = status,
+    createdOn                 = createdOn,
+    maybeTypeOfAccountDetails = maybeTypeOfAccountDetails,
+    maybeBankDetails          = maybeBankDetails.map(_.obfuscate),
+    existingDDBanks           = existingDDBanks.map(_.obfuscate),
+    maybeTaxpayer             = maybeTaxpayer.map(_.obfuscate),
+    maybePaymentToday         = maybePaymentToday,
+    maybePaymentTodayAmount   = maybePaymentTodayAmount,
+    maybeIncome               = maybeIncome,
+    maybeSpending             = maybeSpending,
+    maybePlanSelection        = maybePlanSelection,
+    maybePaymentDayOfMonth    = maybePaymentDayOfMonth,
+    maybeEligibilityStatus    = maybeEligibilityStatus,
+    debitDate                 = debitDate,
+    ddRef                     = ddRef.map(_ => "***"),
+    maybeSaUtr                = maybeSaUtr.map(_ => "***")
   )
 
   override def toString: String = {

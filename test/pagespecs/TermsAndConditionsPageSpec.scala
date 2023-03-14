@@ -22,7 +22,7 @@ import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
-import testsupport.testdata.{CalculatorDataGenerator, DirectDebitTd}
+import testsupport.testdata.DirectDebitTd
 
 class TermsAndConditionsPageSpec extends ItSpec {
 

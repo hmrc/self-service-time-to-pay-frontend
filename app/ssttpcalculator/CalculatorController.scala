@@ -33,16 +33,17 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.math.BigDecimal.RoundingMode.HALF_UP
+import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
 
 class CalculatorController @Inject() (
-    mcc:               MessagesControllerComponents,
-    calculatorService: CalculatorService,
-    as:                Actions,
-    journeyService:    JourneyService,
-    requestSupport:    RequestSupport,
-    views:             Views,
-    clockProvider:     ClockProvider)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(mcc) {
+    mcc:                 MessagesControllerComponents,
+    paymentPlansService: PaymentPlansService,
+    instalmentsService:  InstalmentsService,
+    as:                  Actions,
+    journeyService:      JourneyService,
+    requestSupport:      RequestSupport,
+    views:               Views,
+    clockProvider:       ClockProvider)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(mcc) {
 
   import requestSupport._
 
@@ -150,16 +151,16 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info("CalculatorController.getCalculateInstalments", journey)
       val sa = journey.taxpayer.selfAssessment
-      val defaultPlanOptions = calculatorService.scheduleOptions(
+      val defaultPlanOptions = paymentPlansService.defaultSchedules(
         sa,
         journey.safeUpfrontPayment,
-        journey.maybeArrangementDayOfMonth,
+        journey.maybePaymentDayOfMonth,
         journey.remainingIncomeAfterSpending
       )
 
       val minCustomAmount = defaultPlanOptions.values
-        .headOption.fold(BigDecimal(1))(_.firstInstallment.amount).setScale(2, HALF_UP)
-      val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
+        .headOption.fold(BigDecimal(1))(_.firstInstalment.amount)
+      val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
 
       val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
         case None                 => defaultPlanOptions
@@ -173,8 +174,8 @@ class CalculatorController @Inject() (
           routes.CalculatorController.submitCalculateInstalments(),
           selectPlanForm(minCustomAmount, maxCustomAmount),
           allPlanOptions,
-          minCustomAmount,
-          maxCustomAmount,
+          minCustomAmount.setScale(2, HALF_UP),
+          maxCustomAmount.setScale(2, HALF_UP),
           journey.maybePlanSelection))
       }
     }
@@ -185,15 +186,15 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info(s"CalculatorController.submitCalculateInstalments journey: $journey")
       val sa = journey.taxpayer.selfAssessment
-      val paymentPlanOptions = calculatorService.scheduleOptions(
+      val paymentPlanOptions = paymentPlansService.defaultSchedules(
         sa,
         journey.safeUpfrontPayment,
-        journey.maybeArrangementDayOfMonth,
+        journey.maybePaymentDayOfMonth,
         journey.remainingIncomeAfterSpending
       )
       val minCustomAmount = paymentPlanOptions.values
-        .headOption.fold(BigDecimal(1))(_.firstInstallment.amount).setScale(2, HALF_UP)
-      val maxCustomAmount = calculatorService.maximumPossibleInstalmentAmount(journey).setScale(2, HALF_UP)
+        .headOption.fold(BigDecimal(1))(_.firstInstalment.amount)
+      val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
 
       selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
         formWithErrors => {
@@ -203,8 +204,8 @@ class CalculatorController @Inject() (
                 ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                 formWithErrors,
                 paymentPlanOptions,
-                minCustomAmount,
-                maxCustomAmount,
+                minCustomAmount.setScale(2, HALF_UP),
+                maxCustomAmount.setScale(2, HALF_UP),
                 journey.maybePlanSelection))
           )
         },
@@ -228,17 +229,17 @@ class CalculatorController @Inject() (
   )(implicit request: Request[_]): Option[PaymentSchedule] = {
     journey.maybePlanSelection.foldLeft(None: Option[PaymentSchedule])((_, planSelection) => planSelection.selection match {
       case Right(CustomPlanRequest(customAmount)) =>
-        calculatorService.customSchedule(
+        paymentPlansService.customSchedule(
           journey.taxpayer.selfAssessment,
           journey.safeUpfrontPayment,
-          journey.maybeArrangementDayOfMonth,
+          journey.maybePaymentDayOfMonth,
           customAmount
         )
       case Left(SelectedPlan(amount)) if !isDefaultPlan(amount, defaultPlanOptions) =>
-        calculatorService.customSchedule(
+        paymentPlansService.customSchedule(
           journey.taxpayer.selfAssessment,
           journey.safeUpfrontPayment,
-          journey.maybeArrangementDayOfMonth,
+          journey.maybePaymentDayOfMonth,
           amount
         )
       case _ => None
