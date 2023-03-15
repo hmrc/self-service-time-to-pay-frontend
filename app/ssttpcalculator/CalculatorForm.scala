@@ -23,7 +23,7 @@ import play.api.data.{Form, FormError, Forms, Mapping}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
-import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
+import scala.math.BigDecimal.RoundingMode.{CEILING, FLOOR, HALF_UP}
 import scala.util.Try
 
 object CalculatorForm {
@@ -129,7 +129,7 @@ object CalculatorForm {
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= 0 else true
       })
       .verifying(Constraint((i: String) => if ({
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) < 0 || BigDecimal(i) >= minCustomAmount else true
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) < 0 || BigDecimal(i) >= minCustomAmount.setScale(2, FLOOR) else true
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.below-minimum",
