@@ -90,7 +90,7 @@ object CalculatorForm {
   }
 
   private def customSelectionWithSafeMax(radioSelection: String, maxCustomAmount: BigDecimal): BigDecimal = {
-    if (BigDecimal(radioSelection) == maxCustomAmount.setScale(2, HALF_UP)) {
+    if (BigDecimal(radioSelection).setScale(2, HALF_UP) == maxCustomAmount.setScale(2, HALF_UP)) {
       maxCustomAmount
     } else BigDecimal(radioSelection)
   }
@@ -100,7 +100,6 @@ object CalculatorForm {
       case Left(SelectedPlan(instalmentAmount))   => (instalmentAmount.toString, None)
       case Right(CustomPlanRequest(customAmount)) => ("customAmountOption", Some(customAmount.toString()))
     }
-
   }
 
   def selectPlanForm(minCustomAmount: BigDecimal, maxCustomAmount: BigDecimal): Form[PlanSelection] =
@@ -129,7 +128,7 @@ object CalculatorForm {
         if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= 0 else true
       })
       .verifying(Constraint((i: String) => if ({
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) < 0 || BigDecimal(i) >= minCustomAmount.setScale(2, FLOOR) else true
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) < 0 || BigDecimal(i) >= minCustomAmount.setScale(2, HALF_UP) else true
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.below-minimum",
@@ -138,7 +137,7 @@ object CalculatorForm {
         )))
       }))
       .verifying(Constraint((i: String) => if ({
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) <= maxCustomAmount.setScale(2, CEILING) else true
+        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) <= maxCustomAmount.setScale(2, HALF_UP) else true
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.above-maximum",
