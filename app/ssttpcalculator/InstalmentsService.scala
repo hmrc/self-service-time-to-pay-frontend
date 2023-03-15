@@ -17,8 +17,6 @@
 package ssttpcalculator
 
 import config.AppConfig
-import journey.Journey
-import play.api.mvc.Request
 import ssttpcalculator.model.{Instalment, InterestRate, LatePaymentInterest, Payable, Payables, PaymentsCalendar, TaxLiability}
 import times.ClockProvider
 

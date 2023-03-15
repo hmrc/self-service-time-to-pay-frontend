@@ -33,24 +33,20 @@ object PaymentsCalendar {
   val defaultPaymentDayOfMonth = 28
 
   def generate(
-      taxLiabilities:         Seq[TaxLiability],
       upfrontPaymentAmount:   BigDecimal,
       dateNow:                LocalDate,
       maybePaymentDayOfMonth: Option[PaymentDayOfMonth] = None
   )(implicit config: AppConfig): PaymentsCalendar = PaymentsCalendar(
-    maybeUpfrontPaymentDate = upfrontPaymentDateIfViable(dateNow, upfrontPaymentAmount, taxLiabilities),
+    maybeUpfrontPaymentDate = upfrontPaymentDateIfViable(dateNow, upfrontPaymentAmount),
     planStartDate           = dateNow,
-    regularPaymentDates     = regularPaymentDates(dateNow, upfrontPaymentAmount, taxLiabilities, maybePaymentDayOfMonth),
+    regularPaymentDates     = regularPaymentDates(dateNow, upfrontPaymentAmount, maybePaymentDayOfMonth),
     paymentDayOfMonth       = safePaymentDayOfMonth(maybePaymentDayOfMonth),
   )
 
   private def upfrontPaymentDateIfViable(
       dateNow:              LocalDate,
-      upfrontPaymentAmount: BigDecimal,
-      taxLiabilities:       Seq[TaxLiability]
-  )(implicit config: AppConfig): Option[LocalDate] = {
-    if (upfrontPaymentAmount > 0 &&
-      !((taxLiabilities.map(_.amount).sum - upfrontPaymentAmount) < BigDecimal.exact("32.00"))) {
+      upfrontPaymentAmount: BigDecimal)(implicit config: AppConfig): Option[LocalDate] = {
+    if (upfrontPaymentAmount > 0) {
       Some(validPaymentDate(dateNow.plusDays(config.daysToProcessFirstPayment))(config))
     } else None
   }
@@ -58,10 +54,9 @@ object PaymentsCalendar {
   private def regularPaymentDates(
       dateNow:                LocalDate,
       upfrontPaymentAmount:   BigDecimal,
-      taxLiabilities:         Seq[TaxLiability],
       maybePaymentDayOfMonth: Option[PaymentDayOfMonth]
   )(implicit config: AppConfig): Seq[LocalDate] = {
-    upfrontPaymentDateIfViable(dateNow, upfrontPaymentAmount, taxLiabilities)(config) match {
+    upfrontPaymentDateIfViable(dateNow, upfrontPaymentAmount)(config) match {
       case Some(upfrontPaymentDate) => validMonthlyDatesFrom(upfrontPaymentDate, config.minGapBetweenPayments, maybePaymentDayOfMonth)
       case None                     => validMonthlyDatesFrom(dateNow, config.daysToProcessFirstPayment, maybePaymentDayOfMonth)
     }

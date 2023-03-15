@@ -20,7 +20,7 @@ import akka.util.Timeout
 import journey.Statuses.InProgress
 import journey.{Journey, JourneyId, JourneyService, PaymentToday, PaymentTodayAmount}
 import model.enumsforforms.TypesOfBankAccount.Personal
-import model.enumsforforms.{IsSoleSignatory, TypeOfBankAccount, TypesOfBankAccount}
+import model.enumsforforms.TypesOfBankAccount
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.play.PlaySpec

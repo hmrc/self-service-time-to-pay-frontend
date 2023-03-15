@@ -64,7 +64,6 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
 
           s"$id. total interest charged of $expectedTotalInterestCharged as part of total payable of $expectedTotalPayable" in {
             val paymentsCalendar = PaymentsCalendar.generate(
-              taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
               maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
@@ -87,7 +86,6 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
 
           s"$id. upfront payment of $inputUpfrontPaymentAmount, regular instalments of $inputRegularInstalmentAmount and a final instalment of $expectedFinalInstalmentAmount" in {
             val paymentsCalendar = PaymentsCalendar.generate(
-              taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
               maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
@@ -112,7 +110,6 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
 
           s"$id. first instalment on $inputFirstRegularPaymentDate and last instalment on $expectedLastPaymentDate" in {
             val paymentsCalendar = PaymentsCalendar.generate(
-              taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
               maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
@@ -135,7 +132,6 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
 
           s"$id. number of instalments $expectedDuration" in {
             val paymentsCalendar = PaymentsCalendar.generate(
-              taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
               maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
@@ -175,7 +171,6 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
           s"$id. first instalment on $inputFirstRegularPaymentDate and last instalment on $expectedLastPaymentDate" in {
 
             val paymentsCalendar = PaymentsCalendar.generate(
-              taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
               maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))
@@ -196,7 +191,6 @@ class PaymentPlansServiceSpecAlternate extends ItSpec {
 
           s"$id. number of instalments $expectedDuration" in {
             val paymentsCalendar = PaymentsCalendar.generate(
-              taxLiabilities         = inputDebits,
               upfrontPaymentAmount   = inputUpfrontPaymentAmount,
               dateNow                = inputStartDate,
               maybePaymentDayOfMonth = Some(PaymentDayOfMonth(inputFirstRegularPaymentDate.getDayOfMonth))

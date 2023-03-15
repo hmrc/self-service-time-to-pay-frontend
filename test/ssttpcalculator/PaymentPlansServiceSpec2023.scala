@@ -17,7 +17,6 @@
 package ssttpcalculator
 
 import config.AppConfig
-import play.api.Logger
 import ssttpcalculator.model.{Instalment, Payables, TaxLiability, PaymentsCalendar}
 import testsupport.ItSpec
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, Debit, SaUtr, SelfAssessmentDetails}
@@ -26,7 +25,6 @@ import play.api.test.FakeRequest
 import java.time.LocalDate
 
 class PaymentPlansServiceSpec2023 extends ItSpec {
-  private val logger = Logger(getClass)
 
   val interestRateService: InterestRateService = fakeApplication().injector.instanceOf[InterestRateService]
   val durationService: DurationService = fakeApplication().injector.instanceOf[DurationService]
@@ -63,7 +61,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar.generate(
-                liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
                 Some(PaymentDayOfMonth(regularPaymentsDayWithinFirstMonth))
@@ -97,7 +94,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar.generate(
-                liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
                 Some(PaymentDayOfMonth(regularPaymentsDayWithinFirstMonth))
@@ -139,7 +135,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar.generate(
-                liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
                 Some(PaymentDayOfMonth(regularPaymentsDayWithinFirstMonth))
@@ -173,7 +168,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar.generate(
-                liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
                 Some(PaymentDayOfMonth(regularPaymentsDayWithinFirstMonth))
@@ -216,7 +210,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar.generate(
-                liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
                 Some(PaymentDayOfMonth(regularPaymentsDayWithinFirstMonth))
@@ -250,7 +243,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar.generate(
-                liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
                 Some(PaymentDayOfMonth(regularPaymentsDayWithinFirstMonth))
@@ -291,7 +283,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar.generate(
-                liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
                 Some(PaymentDayOfMonth(regularPaymentsDayWithinFirstMonth))
@@ -325,7 +316,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
                 .getDayOfMonth
 
               val paymentsCalendar = PaymentsCalendar.generate(
-                liabilities,
                 upfrontPaymentAmount,
                 fixedToday,
                 Some(PaymentDayOfMonth(regularPaymentsDayWithinFirstMonth))
@@ -369,7 +359,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
             .getDayOfMonth
 
           val paymentsCalendar = PaymentsCalendar.generate(
-            liabilities,
             upfrontPaymentAmount,
             fixedToday,
             Some(PaymentDayOfMonth(regularPaymentsDayWithinFirstMonth))
@@ -414,7 +403,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
             .getDayOfMonth
 
           val paymentsCalendar = PaymentsCalendar.generate(
-            liabilities,
             upfrontPaymentAmount,
             fixedToday,
             Some(PaymentDayOfMonth(regularPaymentsDayWithinFirstMonth))
@@ -449,7 +437,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
           val liabilityDueDate = fixedToday
           val liability = TaxLiability(liabilityAmount, liabilityDueDate)
           val liabilities = Seq(liability)
-          val payables = Payables(Seq(liability))
 
           val upfrontPaymentAmount = 0
           val regularPaymentAmount = 100
@@ -458,7 +445,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
             .getDayOfMonth
 
           val paymentsCalendar = PaymentsCalendar.generate(
-            liabilities,
             upfrontPaymentAmount,
             fixedToday,
             Some(PaymentDayOfMonth(preferredPaymentDay))
@@ -485,7 +471,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
           .getDayOfMonth
 
         val paymentsCalendar = PaymentsCalendar.generate(
-          liabilities,
           upfrontPaymentAmount,
           fixedToday,
           Some(PaymentDayOfMonth(preferredPaymentDay))
@@ -513,7 +498,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
         val liabilityDueDate = fixedToday.plusMonths(26)
         val liability = TaxLiability(liabilityAmount, liabilityDueDate)
         val liabilities = Seq(liability)
-        val payables = Payables(Seq(liability))
 
         val upfrontPaymentAmount = 0
         val regularPaymentAmount = 100
@@ -522,7 +506,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
           .getDayOfMonth
 
         val paymentsCalendar = PaymentsCalendar.generate(
-          liabilities,
           upfrontPaymentAmount,
           fixedToday,
           Some(PaymentDayOfMonth(preferredPaymentDay))
