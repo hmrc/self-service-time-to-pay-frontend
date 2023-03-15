@@ -40,35 +40,47 @@
 
     <h1 class="govuk-heading-xl">@messages("ssttp.affordability.how-much-you-could-afford.h1")</h1>
 
-    <ol class="app-task-list govuk-!-padding-left-5">
-        <li>
-            <span class="pull-right">
-                <a class="govuk-link govuk-body-m" id="monthly-income" href="monthly-income">
-                    @messages("ssttp.affordability.income-spending.change-income")
-                </a>
-                <span class="govuk-visually-hidden"> @messages("ssttp.affordability.income-spending.hidden")</span>
-            </span>
-            <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">1.</span>@messages("ssttp.affordability.income-spending.income")
-            </h2>
-                @income_list(income)
-        </li>
-        <li>
-            <span class="pull-right">
-                <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
-                    @messages("ssttp.affordability.income-spending.change-spending")
-                </a>
-                <span class="govuk-visually-hidden"> @messages("ssttp.affordability.income-spending.hidden")</span>
-            </span>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
-                </h2>
-                    @spending_list(spending)
-        </li>
-        <li>
-            <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">3.</span>@messages("ssttp.affordability.how-much-you-could-afford.left-over-income")
-            </h2>
+    <div class="govuk-!-padding-left-5">
+        <dl class="govuk-summary-list govuk-!-margin-0">
+            <div class="govuk-summary-list__row no_bottom_line">
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">
+                    <h2 class="app-task-list__section">
+                        <span class="app-task-list__section-number">1.</span>@messages("ssttp.affordability.income-spending.income")
+                    </h2>
+                </dt>
+                <dd class="govuk-summary-list__value govuk-!-text-align-right">
+                    <a class="govuk-link govuk-body-m" id="monthly-income" href="monthly-income">
+                        @messages("ssttp.affordability.income-spending.change-income")
+                    </a>
+                </dd>
+            </div>
+        </dl>
+            @income_list(income)
+
+        <dl class="govuk-summary-list govuk-!-margin-0">
+            <div class="govuk-summary-list__row no_bottom_line">
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">
+                    <h2 class="app-task-list__section">
+                        <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
+                    </h2>
+                </dt>
+                <dd class="govuk-summary-list__value govuk-!-text-align-right">
+                    <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
+                        @messages("ssttp.affordability.income-spending.change-spending")
+                    </a>
+                </dd>
+            </div>
+        </dl>
+            @spending_list(spending)
+
+        <dl class="govuk-summary-list govuk-!-margin-0">
+            <div class="govuk-summary-list__row no_bottom_line">
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">
+                    <h2 class="app-task-list__section">
+                        <span class="app-task-list__section-number">3.</span>@messages("ssttp.affordability.how-much-you-could-afford.left-over-income")
+                    </h2>
+                </dt>
+            </div>
             <div class="govuk-!-padding-left-6 govuk-!-margin-bottom-9">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
@@ -81,8 +93,8 @@
                     </div>
                 </dl>
             </div>
-        </li>
-    </ol>
+        </dl>
+    </div>
 
             @if(total == 0) {
                 <h2 class="govuk-heading-m">
