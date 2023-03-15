@@ -37,8 +37,8 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Can you make an upfront payment?"
-    case Languages.Welsh   => "A allwch wneud taliad ymlaen llaw?"
+    case Languages.English => "Upfront payment"
+    case Languages.Welsh   => "Taliad ymlaen llaw"
   }
 
   def selectRadioButton(yesOrNo: Boolean): Unit = {
@@ -76,19 +76,21 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
       }
 
       private val mainTextEnglish =
-        """Can you make an upfront payment?
+        """Upfront payment
           |Your monthly payments will be lower if you can make an upfront payment. This payment will be taken from your bank account within 10 working days.
           |If you have savings, consider using them to make a payment now.
+          |Can you make an upfront payment?
           |Yes
           |No
           |Continue
         """.stripMargin
 
       private val mainTextWelsh =
-        """A allwch wneud taliad ymlaen llaw?
+        """Taliad ymlaen llaw
           |Bydd eich taliadau misol yn is os gallwch wneud taliad ymlaen llaw. Caiff y taliad hwn ei gymryd o’ch cyfrif banc cyn pen 10 diwrnod gwaith.
           |
           |Os oes gennych gynilion, dylech ystyried eu defnyddio i wneud taliad nawr.
+          |A allwch wneud taliad ymlaen llaw?
           |Iawn
           |Na
           |Yn eich blaen

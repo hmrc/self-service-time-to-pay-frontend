@@ -260,15 +260,16 @@ ssttp.calculator.form.payment_today.amount.required.min = Nodwch swm o £1 neu f
 ssttp.calculator.form.payment_today.amount.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.calculator.form.payment_today.amount.less-than-maxval = Rhaid i’r cyfansymiau fod yn llai na £1,000,000,000,000
 
-ssttp.calculator.form.payment_today_question.title = A allwch wneud taliad ymlaen llaw?
+ssttp.calculator.form.payment_today_question.title = Taliad ymlaen llaw
 ssttp.calculator.form.payment_today_question.error.summary.title = A allwch wneud taliad ymlaen llaw?
-ssttp.calculator.form.payment_today_question.have-savings = Os oes gennych gynilion, dylech ystyried eu defnyddio i wneud taliad nawr.
 ssttp.calculator.form.payment_today_question.required.title = Mae problem wedi codi
-ssttp.calculator.form.payment_today_question.required = Dewiswch ‘Iawn’ os ydych am wneud taliad ymlaen llaw
+ssttp.calculator.form.payment_today_question.required = Dewiswch a allwch wneud taliad ymlaen llaw
 ssttp.calculator.form.payment_today_question.yes_label = Iawn
 ssttp.calculator.form.payment_today_question.no_label = Na
 
-ssttp.calculatorform.payment_today_question.why_pay_today.info = Bydd eich taliadau misol yn is os gallwch wneud taliad ymlaen llaw. Caiff y taliad hwn ei gymryd o’ch cyfrif banc cyn pen 10 diwrnod gwaith.
+ssttp.calculatorform.payment_today_question.why_pay_today.p1 = Bydd eich taliadau misol yn is os gallwch wneud taliad ymlaen llaw. Caiff y taliad hwn ei gymryd o’ch cyfrif banc cyn pen 10 diwrnod gwaith.
+ssttp.calculatorform.payment_today_question.why_pay_today.p2 = Os oes gennych gynilion, dylech ystyried eu defnyddio i wneud taliad nawr.
+ssttp.calculator.form.payment_today_question.legend = A allwch wneud taliad ymlaen llaw?
 ssttp.calculator.payment_today_question.button-continue = Yn eich blaen
 
 ssttp.calculator.form.duration.months.required = Nodwch nifer dilys o fisoedd
