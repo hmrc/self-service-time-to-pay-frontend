@@ -105,7 +105,6 @@ ssttp.affordability.income-spending.add-income = Ychwanegu incwm
 ssttp.affordability.income-spending.change-income = Newid incwm
 ssttp.affordability.income-spending.add-spending = Ychwanegu gwariant
 ssttp.affordability.income-spending.change-spending = Newid gwariant
-ssttp.affordability.income-spending.hidden = manylion
 
 ssttp.affordability.your-monthly-income.h1 = Eich incwm misol
 ssttp.affordability.your-monthly-income.instruction = Ychwanegwch wybodaeth amdanoch chi’ch hun yn unig.
@@ -420,6 +419,7 @@ ssttp.arrangement.declaration.contact.address.ln5 = BX9 1ST
 ssttp.arrangement.declaration.title = Datganiad
 ssttp.arrangement.declaration.p1 = Cytunaf â thelerau ac amodau’r cynllun talu hwn. Cadarnhaf mai dyma’r cynharaf y gallaf setlo’r ddyled hon.
 ssttp.arrangement.declaration.agreement.confirm = Cytuno ac yn eich blaen
+ssttp.arrangement.declaration.agreement.warning = Rhybudd
 
 
 
