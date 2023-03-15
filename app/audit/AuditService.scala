@@ -29,7 +29,7 @@ import scala.util.control.NonFatal
 import req.RequestSupport._
 import util.ApplicationLogging
 
-import scala.util.Failure
+import scala.util.{Failure, Success}
 
 @Singleton()
 class AuditService @Inject() (
@@ -59,6 +59,7 @@ class AuditService @Inject() (
   private def sendEvent(event: ExtendedDataEvent)(implicit request: Request[_]): Unit = {
     val checkEventResult = auditConnector.sendExtendedEvent(event)
     checkEventResult.onComplete {
+      case Success(value) => logger.error(s"Audit event ${event.auditType} successfully posted - ${value.toString}")
       case Failure(NonFatal(e)) ⇒ logger.error(s"Unable to post audit event of type ${event.auditType} to audit connector - ${e.getMessage}", e)
       case _                    ⇒ logger.info(s"Event audited ${event.auditType}")
     }
