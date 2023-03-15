@@ -91,7 +91,7 @@
     @if(customAmountHasErrors) {
         <span id="custom-amount-error" class="govuk-error-message">
             <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
-            @selectPlanForm.error("custom-amount-input").map(formError => Html(messages(formError.message, currency(minCustomAmount), currency(maxCustomAmount))))
+            @selectPlanForm.error("custom-amount-input").map(formError => Html(messages(formError.message, minCustomAmount, maxCustomAmount)))
         </span>
     }
     <div class="govuk-input__wrapper">
