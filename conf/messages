@@ -475,7 +475,7 @@ ssttp.arrangement.declaration.contact.address.ln5 = United Kingdom
 ssttp.arrangement.declaration.title = Declaration
 ssttp.arrangement.declaration.p1 = I agree to the terms and conditions of this payment plan. I confirm that this is the earliest I am able to settle this debt.
 ssttp.arrangement.declaration.agreement.confirm = Agree and continue
-
+ssttp.arrangement.declaration.agreement.warning = Warning
 
 
 ssttp.direct-debit-assistance.initial-payment-of = An initial payment of:
