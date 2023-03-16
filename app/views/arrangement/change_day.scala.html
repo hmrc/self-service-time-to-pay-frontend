@@ -58,7 +58,7 @@
 
 @enterCustomDayPanel = {
     <div id="customDate" class="govuk-form-group @if(customDateHasErrors){govuk-form-group--error}">
-        <div class="govuk-hint" for="dayOfMonth" >@messages("ssttp.arrangement.changeday.enter.date")</div>
+        <div class="govuk-hint">@messages("ssttp.arrangement.changeday.enter.date")</div>
         @if(customDateHasErrors) {
             <span id="other-error" class="govuk-error-message">
                 <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
