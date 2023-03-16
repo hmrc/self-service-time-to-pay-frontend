@@ -43,9 +43,9 @@
     <div class="govuk-!-padding-left-5">
         <dl class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-font-weight-regular">
-                <h2 class="app-task-list__section">
+                <div class="app-task-list__section">
                     <span class="app-task-list__section-number">1.</span>@messages("ssttp.affordability.income-spending.income")
-                </h2>
+                </div>
             </dt>
             <dd class="govuk-summary-list__actions govuk-!-text-align-right">
                 <a class="govuk-link govuk-body-m" id="monthly-income" href="monthly-income">
@@ -57,9 +57,9 @@
 
         <dl class="govuk-summary-list govuk-!-margin-0">
             <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">
-                <h2 class="app-task-list__section">
+                <div class="app-task-list__section">
                     <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
-                </h2>
+                </div>
             </dt>
             <dd class="govuk-summary-list__actions govuk-!-text-align-right">
                 <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
@@ -69,13 +69,13 @@
         </dl>
             @spending_list(spending)
 
-        <div class="govuk-summary-list__row no_bottom_line">
+        <dl class="govuk-summary-list__row no_bottom_line">
             <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">
-                <h2 class="app-task-list__section">
+                <div class="app-task-list__section">
                     <span class="app-task-list__section-number">3.</span>@messages("ssttp.affordability.how-much-you-could-afford.left-over-income")
-                </h2>
+                </div>
             </dt>
-        </div>
+        </dl>
         <div class="govuk-!-padding-left-6 govuk-!-margin-bottom-9">
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
