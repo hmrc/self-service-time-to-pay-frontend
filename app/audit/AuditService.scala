@@ -59,7 +59,7 @@ class AuditService @Inject() (
   private def sendEvent(event: ExtendedDataEvent)(implicit request: Request[_]): Unit = {
     val checkEventResult = auditConnector.sendExtendedEvent(event)
     checkEventResult.onComplete {
-      case Success(value) => logger.info(s"Audit event ${event.auditType} successfully posted - ${value.toString}")
+      case Success(value)       => logger.info(s"Audit event ${event.auditType} successfully posted - ${value.toString}")
       case Failure(NonFatal(e)) ⇒ logger.error(s"Unable to post audit event of type ${event.auditType} to audit connector - ${e.getMessage}", e)
       case _                    ⇒ logger.info(s"Event audited ${event.auditType}")
     }
