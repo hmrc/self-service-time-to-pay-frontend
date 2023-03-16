@@ -168,6 +168,7 @@ class DirectDebitController @Inject() (
 
     submissionService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
+      journey.requireIsAccountHolder()
       val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
         throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
       )
