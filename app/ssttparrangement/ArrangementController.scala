@@ -256,6 +256,7 @@ class ArrangementController @Inject() (
         val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
           throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
         )
+        auditService.sendPlanSetUpSuccessEvent(journey, schedule)
         Ok(views.application_complete(
           debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
           transactionId = journey.taxpayer.selfAssessment.utr + clockProvider.now.toString,
@@ -278,7 +279,6 @@ class ArrangementController @Inject() (
   }
 
   private def applicationSuccessful(journey: Journey, schedule: PaymentSchedule)(implicit request: Request[_]): Future[Result] = {
-    auditService.sendPlanSetUpSuccessEvent(journey, schedule)
     successful(Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
   }
 
