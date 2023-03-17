@@ -146,7 +146,7 @@ class DataEventFactorySpec extends ItSpec {
                 "spending": "500",
                 "income": "600",
                 "halfDisposableIncome": "50",
-                "status": "Total Tax Bill Income Greater than 24 Months",
+                "status": "Plan duration would exceed maximum",
                 "utr": "6573196998"
               }
               """)
