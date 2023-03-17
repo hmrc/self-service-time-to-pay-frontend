@@ -323,7 +323,6 @@ class DataEventFactorySpec extends ItSpec {
           }"""
           )
         )
-        println(s"COMPUTED DATE EVENT - $computedDataEvent")
         computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
           expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
