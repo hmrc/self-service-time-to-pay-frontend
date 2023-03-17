@@ -78,7 +78,7 @@ object DataEventFactory {
   private def notAffordableStatus(insufficientRemainingIncomeAfterSpending: BigDecimal): String = {
     if (insufficientRemainingIncomeAfterSpending < 0) "Negative Disposable Income"
     else if (insufficientRemainingIncomeAfterSpending == 0) "Zero Disposable Income"
-    else "Total Tax Bill Income Greater than 24 Months"
+    else "Plan duration would exceed maximum"
   }
 
   def planSetUpSuccessEvent(journey:  Journey,
