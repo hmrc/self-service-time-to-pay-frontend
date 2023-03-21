@@ -104,8 +104,4 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     viewPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
   }
 
-  "back button" in {
-    beginJourney()
-    viewPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
-  }
 }

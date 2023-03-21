@@ -93,7 +93,6 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
   def readGlobalHeaderText(): String = className("hmrc-header__service-name").element.text
 
   def href(id: String): Option[String] = find(IdQuery(id)).fold(Option.empty[String])(e => e.attribute("href"))
-  def backButtonHref: Option[String] = href("back-link")
 
   def readPath(): String = new java.net.URL(webDriver.getCurrentUrl).getPath
 
@@ -102,8 +101,6 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
   def clickOnWelshLink(): Unit = click on className("govuk-link")
 
   def clickOnContinue(): Unit = click on id("continue")
-
-  def clickOnTempButton(): Unit = click on id("temp")
 
   /**
    * Probing tries to run `probingF` until until it succeeds. If it doesn't it:

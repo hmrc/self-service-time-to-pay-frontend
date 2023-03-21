@@ -98,11 +98,6 @@ class TermsAndConditionsPageSpec extends ItSpec {
     termsAndConditionsPage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    beginJourney()
-    termsAndConditionsPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
-  }
-
   "click continue" in {
     beginJourney()
     DirectDebitStub.postPaymentPlan

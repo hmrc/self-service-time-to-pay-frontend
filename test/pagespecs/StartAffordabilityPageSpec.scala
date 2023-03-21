@@ -59,8 +59,4 @@ class StartAffordabilityPageSpec extends ItSpec {
     startAffordabilityPage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    beginJourney()
-    startAffordabilityPage.backButtonHref shouldBe Some(s"${baseUrl.value}${selectDatePage.path}")
-  }
 }

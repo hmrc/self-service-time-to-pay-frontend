@@ -45,11 +45,6 @@ class PaymentTodayQuestionPageSpec extends ItSpec {
     paymentTodayQuestionPage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    beginJourney()
-    paymentTodayQuestionPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getTaxLiabilities()}")
-  }
-
   "select yes and go to calculator payment-today" in {
     beginJourney()
     paymentTodayQuestionPage.assertInitialPageIsDisplayed

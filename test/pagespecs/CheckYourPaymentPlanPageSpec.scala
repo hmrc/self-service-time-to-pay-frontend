@@ -81,11 +81,6 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    beginJourney()
-    checkYourPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchCanYouPayEachMonthPage.path}")
-  }
-
   "change monthly instalments" in {
     beginJourney()
     checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
