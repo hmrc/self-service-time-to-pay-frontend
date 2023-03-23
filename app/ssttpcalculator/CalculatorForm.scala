@@ -33,10 +33,10 @@ object CalculatorForm {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => i.nonEmpty })
-        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals", { i: String => i.nonEmpty | i.matches("[0-9]{6,8}")})
-        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals", { i: String =>
-          if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-        })
+        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals", { i: String => i.isEmpty | i.matches("^\\£(?:[ ]*)((?:\\d\\s*){1,3}(?:[ ]*)(\\,(?:[ ]*)(?:\\d\\s*){3})*|(\\d+))((?:[ ]*)\\.(?:[ ]*)(?:\\d\\s*){2}(?:[ ]*))?$")})
+        //        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals", { i: String =>
+        //          if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+        //        })
         .verifying("ssttp.calculator.form.payment_today.amount.required.min", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 1.00 else true
         })
@@ -48,7 +48,13 @@ object CalculatorForm {
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })
-    )(text => CalculatorPaymentTodayForm(text))(bd => Some(bd.amount.toString)))
+    )(text => CalculatorPaymentTodayForm(cleanAmount(text)))(bd => Some(bd.amount.toString)))
+
+  def cleanAmount(text: String): String = text
+    .replace("£", "")
+    .replaceAll(" ", "")
+    .replaceAll(",", "")
+    .trim
 
   private val planSelectionFormatter: Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
