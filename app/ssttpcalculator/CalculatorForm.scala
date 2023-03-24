@@ -33,7 +33,7 @@ object CalculatorForm {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => i.nonEmpty })
-        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals", { i: String => i.isEmpty | i.matches("^\\£(?:[ ]*)((?:\\d\\s*){1,3}(?:[ ]*)(\\,(?:[ ]*)(?:\\d\\s*){3})*|(\\d+))((?:[ ]*)\\.(?:[ ]*)(?:\\d\\s*){2}(?:[ ]*))?$")})
+        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals", { i: String => i.isEmpty | i.matches("^(?:[ ]*)(\\£?(?:[ ]*))((?:\\d\\s*){1,3}(?:[ ]*)(\\,(?:[ ]*)(?:\\d\\s*){3})*|(\\d+))?((?:[ ]*)\\.(?:[ ]*)(?:\\d\\s*){2}(?:[ ]*))?$") })
         //        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals", { i: String =>
         //          if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
         //        })
