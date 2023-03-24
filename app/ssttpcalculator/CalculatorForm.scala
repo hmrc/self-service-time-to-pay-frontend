@@ -33,20 +33,18 @@ object CalculatorForm {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => i.nonEmpty })
-        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals", { i: String => i.isEmpty | i.matches("^(?:[ ]*)(\\£?(?:[ ]*))((?:\\d\\s*){1,3}(?:[ ]*)(\\,(?:[ ]*)(?:\\d\\s*){3})*|(\\d+))?((?:[ ]*)\\.(?:[ ]*)(?:\\d\\s*){2}(?:[ ]*))?$") })
-        //        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals", { i: String =>
-        //          if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-        //        })
+        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals",
+          { i: String => i.nonEmpty | i.matches("^(?:[ ]*)(\\£?(?:[ ]*))((?:\\d\\s*){1,3}(?:[ ]*)(\\,(?:[ ]*)(?:\\d\\s*){3})*|(\\d+))?((?:[ ]*)\\.(?:[ ]*)(?:\\d\\s*)*(?:[ ]*))?$") })
         .verifying("ssttp.calculator.form.payment_today.amount.required.min", { i: String =>
-          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 1.00 else true
+          if (i.nonEmpty && Try(BigDecimal(cleanAmount(i))).isSuccess && BigDecimal(cleanAmount(i)).scale <= 2) BigDecimal(cleanAmount(i)) >= 1.00 else true
         })
         .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
-          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
+          if (Try(BigDecimal(cleanAmount(i))).isSuccess) BigDecimal(cleanAmount(i)).scale <= 2 else true
         })
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", i =>
-          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < totalDue else true)
+          if (i.nonEmpty && Try(BigDecimal(cleanAmount(i))).isSuccess) BigDecimal(cleanAmount(i)) < totalDue else true)
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
-          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
+          if (i.nonEmpty && Try(BigDecimal(cleanAmount(i))).isSuccess) BigDecimal(cleanAmount(i)) < MaxCurrencyValue else true
         })
     )(text => CalculatorPaymentTodayForm(cleanAmount(text)))(bd => Some(bd.amount.toString)))
 
