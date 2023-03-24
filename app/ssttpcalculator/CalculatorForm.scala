@@ -22,8 +22,9 @@ import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{Form, FormError, Forms, Mapping}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
+import util.CurrencyUtil
 
-import scala.math.BigDecimal.RoundingMode.{CEILING, FLOOR, HALF_UP}
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.util.Try
 
 object CalculatorForm {
@@ -34,25 +35,19 @@ object CalculatorForm {
       "amount" -> text
         .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => i.nonEmpty })
         .verifying("ssttp.calculator.form.payment_today.amount.non-numerals",
-          { i: String => i.nonEmpty | i.matches("^(?:[ ]*)(\\£?(?:[ ]*))((?:\\d\\s*){1,3}(?:[ ]*)(\\,(?:[ ]*)(?:\\d\\s*){3})*|(\\d+))?((?:[ ]*)\\.(?:[ ]*)(?:\\d\\s*)*(?:[ ]*))?$") })
+          { i: String => i.isEmpty | i.matches(CurrencyUtil.regex) })
         .verifying("ssttp.calculator.form.payment_today.amount.required.min", { i: String =>
-          if (i.nonEmpty && Try(BigDecimal(cleanAmount(i))).isSuccess && BigDecimal(cleanAmount(i)).scale <= 2) BigDecimal(cleanAmount(i)) >= 1.00 else true
+          if (i.nonEmpty && Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess && BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2) BigDecimal(CurrencyUtil.cleanAmount(i)) >= 1.00 else true
         })
         .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
-          if (Try(BigDecimal(cleanAmount(i))).isSuccess) BigDecimal(cleanAmount(i)).scale <= 2 else true
+          if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2 else true
         })
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", i =>
-          if (i.nonEmpty && Try(BigDecimal(cleanAmount(i))).isSuccess) BigDecimal(cleanAmount(i)) < totalDue else true)
+          if (i.nonEmpty && Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)) < totalDue else true)
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
-          if (i.nonEmpty && Try(BigDecimal(cleanAmount(i))).isSuccess) BigDecimal(cleanAmount(i)) < MaxCurrencyValue else true
+          if (i.nonEmpty && Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)) < MaxCurrencyValue else true
         })
-    )(text => CalculatorPaymentTodayForm(cleanAmount(text)))(bd => Some(bd.amount.toString)))
-
-  def cleanAmount(text: String): String = text
-    .replace("£", "")
-    .replaceAll(" ", "")
-    .replaceAll(",", "")
-    .trim
+    )(text => CalculatorPaymentTodayForm(CurrencyUtil.cleanAmount(text)))(bd => Some(bd.amount.toString)))
 
   private val planSelectionFormatter: Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {

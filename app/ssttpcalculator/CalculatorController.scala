@@ -16,7 +16,6 @@
 
 package ssttpcalculator
 
-import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
@@ -33,7 +32,7 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class CalculatorController @Inject() (
     mcc:                 MessagesControllerComponents,
