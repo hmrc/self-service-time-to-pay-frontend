@@ -118,6 +118,10 @@ final case class Journey(
     require(maybeBankDetails.isDefined, s"'maybeBankDetails' has to be defined at this stage of a journey [$this]")
   }
 
+  def requireIsAccountHolder(): Unit = {
+    require(maybeTypeOfAccountDetails.map(_.isAccountHolder).contains(true), s"isAccountHolder must be true to continue at this stage of the journey")
+  }
+
   def paymentToday: Boolean = maybePaymentToday.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'maybePaymentToday' to be there but was not found. [${_id}] [$this]"))
   def upfrontPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(throw new RuntimeException(s"Expected 'paymentTodayAmount' to be there but was not found. [${_id}] [$this]"))
   def safeUpfrontPayment: BigDecimal = maybePaymentTodayAmount.map(_.value).getOrElse(0)
