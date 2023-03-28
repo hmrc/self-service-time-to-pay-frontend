@@ -39,9 +39,7 @@
 
 @main(
   title = Messages("ssttp.arrangement.direct-debit.assistance.title"),
-  backButtonUrl =
-    if (!showErrorNotification) Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
-    else None
+  showBackLink = !showErrorNotification
 ){
   @if(showErrorNotification) {
     <div>

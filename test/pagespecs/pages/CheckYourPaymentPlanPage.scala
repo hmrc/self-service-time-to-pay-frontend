@@ -68,8 +68,6 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
     click on button
   }
 
-  def clickOnBackButton(): Unit = click on id("back-link")
-
   object Expected {
 
     object GlobalHeaderText {

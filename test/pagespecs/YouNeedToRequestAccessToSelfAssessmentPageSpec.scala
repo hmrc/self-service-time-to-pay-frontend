@@ -68,12 +68,6 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed(Languages.English)
   }
 
-  "back button" in {
-    begin()
-    startNowAndAssertRequestToSA()
-    youNeedToRequestAccessToSelfAssessment.backButtonHref.value shouldBe s"${baseUrl.value}${startPage.path}"
-  }
-
   "take the user to request page" in {
     requestSaScenarios.foreach { s =>
       begin(s.maybeSaUtr, s.allEnrolments)

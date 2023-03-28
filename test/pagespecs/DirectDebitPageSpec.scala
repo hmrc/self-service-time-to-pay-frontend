@@ -77,11 +77,6 @@ class DirectDebitPageSpec extends ItSpec {
     directDebitPage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" ignore {
-    beginJourney()
-    directDebitPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttparrangement.routes.ArrangementController.getCheckPaymentPlan()}")
-  }
-
   "enter invalid Account Name" ignore {
     beginJourney()
     directDebitPage.fillOutForm("123ede23efr4efr4ew32ef3r4", DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
