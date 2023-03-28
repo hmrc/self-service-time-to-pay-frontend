@@ -226,7 +226,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       beginJourney()
       howMuchCanYouPayEachMonthPage.selectAnOption()
       howMuchCanYouPayEachMonthPage.clickContinue()
-      checkYourPaymentPlanPage.clickOnBackLink()
+      checkYourPaymentPlanPage.goBack()
 
       howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
     }
@@ -246,7 +246,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.selectASpecificOption("0")
       howMuchCanYouPayEachMonthPage.clickContinue()
 
-      checkYourPaymentPlanPage.clickOnBackLink()
+      checkYourPaymentPlanPage.goBack()
       howMuchCanYouPayEachMonthPage.clickOnBackLink()
 
       howMuchYouCouldAffordPage.clickOnAddChangeIncome()

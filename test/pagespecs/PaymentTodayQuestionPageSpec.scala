@@ -64,5 +64,12 @@ class PaymentTodayQuestionPageSpec extends ItSpec {
 
     selectDatePage.assertInitialPageIsDisplayed
   }
+
+  "back link goes to previous page" in {
+    beginJourney()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed
+    paymentTodayQuestionPage.goBack()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed
+  }
 }
 

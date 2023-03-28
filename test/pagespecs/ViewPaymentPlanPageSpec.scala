@@ -104,4 +104,11 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     viewPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
   }
 
+  "back link goes to previous page" in {
+    beginJourney()
+    termsAndConditionsPage.clickContinue()
+    arrangementSummaryPage.clickLink()
+    viewPaymentPlanPage.goBack()
+    arrangementSummaryPage.assertInitialPageIsDisplayed
+  }
 }

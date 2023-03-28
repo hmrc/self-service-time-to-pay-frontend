@@ -102,6 +102,10 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
 
   def clickOnContinue(): Unit = click on id("continue")
 
+  def goBack()(implicit driver: WebDriver): Unit = {
+    driver.navigate.back()
+  }
+
   /**
    * Probing tries to run `probingF` until until it succeeds. If it doesn't it:
    * reports what was the page source

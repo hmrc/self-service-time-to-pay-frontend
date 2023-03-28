@@ -59,4 +59,10 @@ class StartAffordabilityPageSpec extends ItSpec {
     startAffordabilityPage.assertInitialPageIsDisplayed(English)
   }
 
+  "back link goes to previous page" in {
+    beginJourney()
+    startAffordabilityPage.assertInitialPageIsDisplayed
+    startAffordabilityPage.goBack()
+    selectDatePage.assertInitialPageIsDisplayed
+  }
 }

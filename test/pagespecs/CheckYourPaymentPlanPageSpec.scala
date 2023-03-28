@@ -121,4 +121,11 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     checkYourPaymentPlanPage.clickOnWelshLink()
     checkYourPaymentPlanPage.assertWarningIsDisplayed(Welsh)
   }
+
+  "back link goes to previous page" in {
+    beginJourney()
+    checkYourPaymentPlanPage.assertInitialPageIsDisplayed
+    checkYourPaymentPlanPage.goBack()
+    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+  }
 }

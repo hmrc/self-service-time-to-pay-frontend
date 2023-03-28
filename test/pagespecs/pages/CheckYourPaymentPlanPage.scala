@@ -68,8 +68,6 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
     click on button
   }
 
-  def clickOnBackLink(): Unit = WebBrowser.goTo("http://localhost:19001/pay-what-you-owe-in-instalments/calculator/instalments")
-
   object Expected {
 
     object GlobalHeaderText {
