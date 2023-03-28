@@ -63,7 +63,8 @@
     }
 
    <h1 class="govuk-heading-xl">@messages("ssttp.calculator.form.payment_today_question.title")</h1>
-    <p class="govuk-body">@messages("ssttp.calculatorform.payment_today_question.why_pay_today.info")</p>
+    <p class="govuk-body">@messages("ssttp.calculatorform.payment_today_question.why_pay_today.p1")</p>
+    <p class="govuk-body">@messages("ssttp.calculatorform.payment_today_question.why_pay_today.p2")</p>
     @formWithCsrf(
         action = ssttpcalculator.routes.CalculatorController.submitPayTodayQuestion(),
         'id -> "paytoday-form",'class -> "form-group inline"
@@ -76,8 +77,8 @@
 
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                      content = Text(messages("ssttp.calculator.form.payment_today_question.have-savings")),
-                        classes = "govuk-fieldset__legend--1",
+                      content = Text(messages("ssttp.calculator.form.payment_today_question.legend")),
+                        classes = "govuk-fieldset__legend--s",
                         isPageHeading = false
                     ))
                 )),
