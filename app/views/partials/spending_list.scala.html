@@ -21,7 +21,7 @@
 <div class="govuk-!-padding-left-6 govuk-!-margin-bottom-9">
     <dl class="govuk-summary-list">
 
-        @{spending.map( expense => if (expense.amount > 0)
+        @{spending.map( expense =>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages(expense.category.messageKey)}</dt>
                 <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(expense.amount)}</dd>

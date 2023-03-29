@@ -97,7 +97,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           addIncomeSpendingPage.assertIncomeTableDisplayed(
             IncomeBudgetLine(MonthlyIncome, monthlyIncomeAmount)
           )
-          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Benefits, OtherIncome)
+          addIncomeSpendingPage.assertZeroIncomeCategoriesDisplayed(Benefits, OtherIncome)
         }
         "only benefits filled out" in {
           beginJourney()
@@ -110,7 +110,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           addIncomeSpendingPage.assertIncomeTableDisplayed(
             IncomeBudgetLine(Benefits, benefitsAmount)
           )
-          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome, OtherIncome)
+          addIncomeSpendingPage.assertZeroIncomeCategoriesDisplayed(MonthlyIncome, OtherIncome)
         }
         "only other income filled out" in {
           beginJourney()
@@ -123,7 +123,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           addIncomeSpendingPage.assertIncomeTableDisplayed(
             IncomeBudgetLine(OtherIncome, otherIncomeAmount)
           )
-          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome, Benefits)
+          addIncomeSpendingPage.assertZeroIncomeCategoriesDisplayed(MonthlyIncome, Benefits)
         }
         "all categories filled out" in {
           beginJourney()
@@ -184,7 +184,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
             Expenses(HousingExp, housingAmount),
             Expenses(PensionContributionsExp, pensionContributionsAmount)
           )
-          addIncomeSpendingPage.assertZeroSpendingCategoriesNotDisplayed(
+          addIncomeSpendingPage.assertZeroSpendingCategoriesDisplayed(
             Expenses(CouncilTaxExp),
             Expenses(UtilitiesExp),
             Expenses(DebtRepaymentsExp),
