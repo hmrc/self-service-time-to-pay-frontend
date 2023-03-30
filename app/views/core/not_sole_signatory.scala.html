@@ -28,7 +28,8 @@
 )
 
 @main(
-    title = messages("ssttp.not-sole-signatory.title")
+    title = messages("ssttp.not-sole-signatory.title"),
+    backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount())
 ){
         <h1 class="govuk-heading-xl">@messages("ssttp.not-sole-signatory.title")</h1>
 

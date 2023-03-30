@@ -30,7 +30,8 @@
 )
 
 @main(
-    title = messages("ssttp.you-need-to-request-access-to-self-assessment.title")
+    title = messages("ssttp.you-need-to-request-access-to-self-assessment.title"),
+    backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
 ){
     <h1 class="govuk-heading-xl">@messages("ssttp.you-need-to-request-access-to-self-assessment.title")</h1>
 

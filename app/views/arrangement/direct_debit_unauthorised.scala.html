@@ -30,7 +30,8 @@
 )
 
 @main(
-    title = Messages("ssttp.direct-debit.unauthorized.title")
+    title = Messages("ssttp.direct-debit.unauthorized.title"),
+    backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
 ){
     <h1 class="govuk-heading-l">@Messages("ssttp.direct-debit.unauthorized.title")</h1>
     <section class="govuk-body">

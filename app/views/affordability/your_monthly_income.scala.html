@@ -66,7 +66,9 @@
 
 @main(
     title = messages("ssttp.affordability.your-monthly-income.h1"),
-    hasErrors = dataForm.hasErrors
+    hasErrors = dataForm.hasErrors,
+    backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+
 ){
     @if(dataForm.hasErrors){
         @errorSummary(ErrorSummary(

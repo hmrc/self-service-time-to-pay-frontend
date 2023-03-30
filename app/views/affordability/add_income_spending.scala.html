@@ -34,7 +34,8 @@
 
 
 @main(
-    title = messages("ssttp.affordability.income-spending.h1")) {
+    title = messages("ssttp.affordability.income-spending.h1"),
+    backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())) {
 
     <h1 class="govuk-heading-xl">@messages("ssttp.affordability.income-spending.h1")</h1>
 

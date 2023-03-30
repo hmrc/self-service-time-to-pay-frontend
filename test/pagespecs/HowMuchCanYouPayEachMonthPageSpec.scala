@@ -204,6 +204,11 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
     howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed(English)
   }
 
+  "back button" in {
+    beginJourney()
+    howMuchCanYouPayEachMonthPage.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
+  }
+
   "select an option and continue" - {
     "basic case" in {
       beginJourney()
@@ -226,7 +231,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       beginJourney()
       howMuchCanYouPayEachMonthPage.selectAnOption()
       howMuchCanYouPayEachMonthPage.clickContinue()
-      checkYourPaymentPlanPage.goBack()
+      checkYourPaymentPlanPage.clickOnBackButton()
 
       howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
     }
@@ -246,8 +251,8 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.selectASpecificOption("0")
       howMuchCanYouPayEachMonthPage.clickContinue()
 
-      checkYourPaymentPlanPage.goBack()
-      howMuchCanYouPayEachMonthPage.clickOnBackLink()
+      checkYourPaymentPlanPage.clickOnBackButton()
+      howMuchCanYouPayEachMonthPage.clickOnBackButton()
 
       howMuchYouCouldAffordPage.clickOnAddChangeIncome()
       yourMonthlyIncomePage.enterMonthlyIncome("501")
