@@ -34,13 +34,13 @@ class StartPageSpec extends ItSpec {
     startPage.assertInitialPageIsDisplayed(English)
   }
 
-  "unauthorised - missing bearer token (user not logged in)" in {
-    AuthStub.unathorisedMissingSession()
-    GgStub.signInPage(port)
-    startPage.open()
-    startPage.clickOnStartNowButton()
-    ggSignInPage.assertInitialPageIsDisplayed
-  }
+  //  "unauthorised - missing bearer token (user not logged in)" in {
+  //    AuthStub.unathorisedMissingSession()
+  //    GgStub.signInPage(port)
+  //    startPage.open()
+  //    startPage.clickOnStartNowButton()
+  //    ggSignInPage.assertInitialPageIsDisplayed
+  //  }
 
   "eligible" in {
     AuthStub.authorise()

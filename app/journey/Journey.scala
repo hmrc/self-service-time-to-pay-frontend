@@ -19,7 +19,7 @@ package journey
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
-import play.api.libs.json.{Format, Json, OFormat}
+import play.api.libs.json.{Format, Json, OFormat, Reads, Writes, __}
 import repo.HasId
 import ssttpaffordability.model.Income
 import ssttpaffordability.model.Spending
@@ -27,7 +27,7 @@ import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.selfservicetimetopay.models._
 
-import java.time.{Clock, LocalDate, LocalDateTime}
+import java.time.{Clock, Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.collection.immutable
 
 sealed trait Status extends EnumEntry
@@ -164,7 +164,18 @@ final case class Journey(
 }
 
 object Journey {
-  implicit val localDateTimeFormat: Format[LocalDateTime] = MongoJavatimeFormats.localDateTimeFormat
+  final val localDateTimeReads: Reads[LocalDateTime] =
+    Reads.at[String](__ \ "$date" \ "$numberLong")
+      .map(dateTime => Instant.ofEpochMilli(dateTime.toLong).atZone(ZoneOffset.UTC).toLocalDateTime)
+
+  final val localDateTimeWrites: Writes[LocalDateTime] =
+    Writes.at[String](__ \ "$date" \ "$numberLong")
+      .contramap(_.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
+
+  final val localDateTimeFormatX: Format[LocalDateTime] =
+    Format(localDateTimeReads, localDateTimeWrites)
+
+  implicit val localDateTimeFormat: Format[LocalDateTime] = localDateTimeFormatX
 
   implicit val format: OFormat[Journey] = Json.format[Journey]
 

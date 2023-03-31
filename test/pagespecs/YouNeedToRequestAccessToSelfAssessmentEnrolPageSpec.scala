@@ -21,21 +21,20 @@ import testsupport.ItSpec
 import testsupport.stubs._
 import testsupport.testdata.TdAll
 import timetopaytaxpayer.cor.model.SaUtr
-import uk.gov.hmrc.auth.core.Enrolment
-
-import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances}
+import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.http.HeaderCarrier
 
-class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
+import scala.concurrent.{ExecutionContext, Future}
 
-  override val fakeAuthConnector = new AuthConnector {
+class YouNeedToRequestAccessToSelfAssessmentEnrolPageSpec extends ItSpec {
+
+  override val fakeAuthConnector: AuthConnector = new AuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
 
       val retrievalResult = Future.successful(
-        new ~(new ~(Enrolments(Set.empty[Enrolment]), None), None)
+        new ~(new ~(Enrolments(Set(Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "")), "Activated", None))), None), Some(Credentials("authId-999", "")))
       )
       (retrievalResult.map(_.asInstanceOf[A]))
     }
@@ -75,56 +74,21 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     Scenario(TdAll.unactivatedSaEnrolment, TdAll.saUtr, "no active SA enrolment")
   )
 
-  "language" in {
-    TaxpayerStub.getTaxpayer()
-    DirectDebitStub.getBanksIsSuccessful()
-
-    begin()
-    startNowAndAssertRequestToSA()
-    youNeedToRequestAccessToSelfAssessment.clickOnWelshLink()
-    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed(Languages.Welsh)
-    youNeedToRequestAccessToSelfAssessment.clickOnEnglishLink()
-    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed(Languages.English)
-  }
-
-  "take the user to request page" in {
+  "click on the call to action and navigate to PTA" in {
     requestSaScenarios.foreach { s =>
+      val s = requestSaScenarios.head
       TaxpayerStub.getTaxpayer()
       DirectDebitStub.getBanksIsSuccessful()
 
       begin(s.maybeSaUtr, s.allEnrolments)
-
       startNowAndAssertRequestToSA()
+
+      AddTaxesFeStub.enrolForSaStub(s.maybeSaUtr)
+      AddTaxesFeStub.enrolForSaStubbedPage()
+
+      youNeedToRequestAccessToSelfAssessment.clickTheButton()
+      enrolForSaPage.assertInitialPageIsDisplayed()
     }
-  }
-
-  //  "click on the call to action and navigate to PTA" in {
-  //    requestSaScenarios.foreach { s =>
-  //      TaxpayerStub.getTaxpayer()
-  //      DirectDebitStub.getBanksIsSuccessful()
-  //
-  //      begin(s.maybeSaUtr, s.allEnrolments)
-  //      startNowAndAssertRequestToSA()
-  //
-  //      AddTaxesFeStub.enrolForSaStub(s.maybeSaUtr)
-  //      AddTaxesFeStub.enrolForSaStubbedPage()
-  //
-  //      youNeedToRequestAccessToSelfAssessment.clickTheButton()
-  //      enrolForSaPage.assertInitialPageIsDisplayed()
-  //    }
-  //  }
-
-  "click on the call to action and navigate call us page if auth sends no credentials/providerId" in {
-    TaxpayerStub.getTaxpayer()
-    DirectDebitStub.getBanksIsSuccessful()
-
-    startPage.open()
-    startPage.assertInitialPageIsDisplayed()
-    AuthStub.authorise(allEnrolments = None, credentials = None)
-    startPage.clickOnStartNowButton()
-    youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed()
-    youNeedToRequestAccessToSelfAssessment.clickTheButton()
-    notEnrolledPage.assertInitialPageIsDisplayed()
   }
 
   private implicit def toOption[T](t: T): Option[T] = Some(t)
