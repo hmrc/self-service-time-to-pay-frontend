@@ -4,7 +4,7 @@ import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.defaultSettings
 
 val appName = "self-service-time-to-pay-frontend"
-val scalaV = "2.12.17" // "2.13.10"
+val scalaV = "2.12.13" // "2.13.10"
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests map { test =>
