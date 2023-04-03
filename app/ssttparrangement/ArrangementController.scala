@@ -291,7 +291,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info("ArrangementController.arrangementSetUp: (create a DD and make an Arrangement)")
     val paymentPlanRequest: PaymentPlanRequest = makePaymentPlanRequest(journey)
     val utr = journey.taxpayer.selfAssessment.utr
-
+    JourneyLogger.info(s"ArrangementController.arrangementSetUp: sending this payment plan request for DD setup: $paymentPlanRequest")
     ddConnector.submitPaymentPlan(paymentPlanRequest, utr).flatMap[Result] {
       _.fold(submissionError => {
         JourneyLogger.info(s"ArrangementController.arrangementSetUp: dd setup failed, redirecting to error [$submissionError]")
@@ -301,6 +301,7 @@ class ArrangementController @Inject() (
         directDebitInstructionPaymentPlan => {
           JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup succeeded, now creating arrangement")
           val arrangement: TTPArrangement = makeArrangement(directDebitInstructionPaymentPlan, journey)
+          JourneyLogger.info(s"ArrangementController.arrangementSetUp: submitting TTPArrangement: $arrangement")
           val submitArrangementResult: Future[arrangementConnector.SubmissionResult] = for {
             submissionResult <- arrangementConnector.submitArrangement(arrangement)
             newJourney = journey

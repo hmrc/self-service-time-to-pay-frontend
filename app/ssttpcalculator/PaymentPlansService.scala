@@ -93,15 +93,15 @@ class PaymentPlansService @Inject() (
   }
 
   def schedule(
-      liabilities:       Seq[TaxLiability],
-      paymentDayOfMonth: BigDecimal,
-      paymentsCalendar:  PaymentsCalendar,
-      upfrontPayment:    BigDecimal
+      liabilities:          Seq[TaxLiability],
+      regularPaymentAmount: BigDecimal,
+      paymentsCalendar:     PaymentsCalendar,
+      upfrontPayment:       BigDecimal
   ): Option[PaymentSchedule] = {
 
     instalmentsService.regularInstalments(
       paymentsCalendar.planStartDate,
-      paymentDayOfMonth,
+      regularPaymentAmount,
       paymentsCalendar.regularPaymentDates,
       instalmentsService.payablesForInstalments(liabilities, paymentsCalendar, upfrontPayment),
       interestRateService.rateOn

@@ -82,7 +82,7 @@ class InstalmentsService @Inject() (
 
           val instalment = Instalment(
             paymentDate = nextPaymentDate,
-            amount      = min(maxPaymentAmount, balance + latePaymentInterestAmount).setScale(2, HALF_UP),
+            amount      = min(maxPaymentAmount, (balance + latePaymentInterestAmount).setScale(2, HALF_UP)),
             interest    = latePaymentInterestAmount
           )
           val updatedInstalments = instalmentsAggregator :+ instalment
