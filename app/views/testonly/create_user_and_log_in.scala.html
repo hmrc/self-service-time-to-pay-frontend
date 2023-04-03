@@ -145,7 +145,7 @@
                 )),
                 items = List(
                     RadioItem(content = Text("Yes"), value = Some("true")),
-                    RadioItem(content = Text("No"), value = Some("true"))
+                    RadioItem(content = Text("No"), value = Some("false"))
                 ),
                 classes = "govuk-radios--inline"
             ).withFormField(dataForm("over200")))
@@ -158,7 +158,7 @@
                 hint = Some(Hint(content = HtmlContent("If <em>Yes</em> then the CredId/authority-id will be ignored"))),
                 items = List(
                     RadioItem(content = Text("Yes"), value = Some("true")),
-                    RadioItem(content = Text("No"), value = Some("true"))
+                    RadioItem(content = Text("No"), value = Some("false"))
                 ),
                 classes = "govuk-radios--inline"
             ).withFormField(dataForm("hasExistingDirectDebit")))
