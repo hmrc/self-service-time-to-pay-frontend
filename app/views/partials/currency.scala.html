@@ -16,4 +16,4 @@
 
 @(value:Number)(implicit messages: play.api.i18n.Messages)
 
-@Messages("ssttp.common.currency.symbol")@value.formatted("%,1.2f").stripSuffix(".00")
+@Messages("ssttp.common.currency.symbol")@("%,1.2f".format(value.floatValue()).stripSuffix(".00"))

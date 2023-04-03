@@ -11,7 +11,7 @@ addSbtPlugin("io.github.irundaia" % "sbt-sassify" % "1.5.2")
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.8.2")
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
-addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.4.15")
+addSbtPlugin("org.wartremover" % "sbt-wartremover" % "3.0.14")
 
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.10.0-RC1")
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.3")

@@ -1,7 +1,8 @@
 import sbt.Compile
 import sbt.Keys.compile
 import wartremover.Wart._
-import wartremover.{wartremoverErrors, wartremoverWarnings}
+//import wartremover.{wartremoverErrors, wartremoverWarnings}
+import wartremover.WartRemover.autoImport.{wartremoverErrors, wartremoverWarnings}
 
 object  WartRemoverSettings {
 
@@ -28,7 +29,7 @@ object  WartRemoverSettings {
       OptionPartial,
       Recursion,
       Return,
-      TraversableOps,
+//      TraversableOps,  // not in v3
       TryPartial,
       Var,
       While

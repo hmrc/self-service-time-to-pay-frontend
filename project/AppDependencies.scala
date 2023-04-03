@@ -30,7 +30,7 @@ object AppDependencies {
     "org.scalatest" %% "scalatest" % "3.2.15" % "test",
     "com.vladsch.flexmark" %  "flexmark-all" % "0.64.0" % "test",
     "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % "test",
-    "org.scalatestplus" %% "scalacheck-1-15" % "3.2.9.0" % "test",
+    "org.scalatestplus" %% "scalacheck-1-15" % "3.2.11.0" % "test",
     "com.softwaremill.macwire" %% "macros" % "2.5.8" % "test"
   )
 }
