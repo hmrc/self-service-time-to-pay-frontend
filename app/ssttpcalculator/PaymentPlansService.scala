@@ -28,6 +28,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class PaymentPlansService @Inject() (
     clockProvider:              ClockProvider,
@@ -116,7 +117,7 @@ class PaymentPlansService @Inject() (
             latePaymentInterestService.totalHistoricInterest(liabilities, planStartDate, interestRateService.getRatesForPeriod) +
               latePaymentInterestService.upfrontPaymentLateInterest(liabilities, planStartDate, upfrontPayment) +
               instalmentLatePaymentInterest
-          }
+          }.setScale(2, HALF_UP)
 
           Some(PaymentSchedule(
             startDate            = paymentsCalendar.planStartDate,
