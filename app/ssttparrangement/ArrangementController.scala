@@ -301,6 +301,7 @@ class ArrangementController @Inject() (
         directDebitInstructionPaymentPlan => {
           JourneyLogger.info("ArrangementController.arrangementSetUp: dd setup succeeded, now creating arrangement")
           val arrangement: TTPArrangement = makeArrangement(directDebitInstructionPaymentPlan, journey)
+          JourneyLogger.info(s"ArrangementController.arrangementSetUp: arrangement to submit: $arrangement")
           val submitArrangementResult: Future[arrangementConnector.SubmissionResult] = for {
             submissionResult <- arrangementConnector.submitArrangement(arrangement)
             newJourney = journey
