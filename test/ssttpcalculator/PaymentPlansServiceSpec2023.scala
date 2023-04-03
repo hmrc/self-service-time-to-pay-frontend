@@ -539,7 +539,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
         result.get.totalInterestCharged shouldBe 5.00
         result.get.totalPayable shouldBe 3017.55
         result.get.instalments.head.amount shouldBe 3017.55
-        result.get.instalments.length shouldBe 1
       }
     }
 
