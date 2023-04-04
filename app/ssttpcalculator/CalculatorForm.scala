@@ -102,7 +102,7 @@ object CalculatorForm {
     }
   }
 
-  def selectPlanForm(minCustomAmount: BigDecimal, maxCustomAmount: BigDecimal): Form[PlanSelection] =
+  def selectPlanForm(minCustomAmount: BigDecimal = 0, maxCustomAmount: BigDecimal = 0): Form[PlanSelection] =
     Form(mapping(
       "plan-selection" -> planSelectionMapping,
       "custom-amount-input" -> mandatoryIf(

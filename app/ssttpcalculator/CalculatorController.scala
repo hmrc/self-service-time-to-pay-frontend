@@ -158,33 +158,28 @@ class CalculatorController @Inject() (
         journey.remainingIncomeAfterSpending
       )
 
-      appConfig.calculatorType match {
-        case CalculatorType.Legacy =>
-          if (defaultPlanOptions.isEmpty) {
-            Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
-          } else {
+      if (defaultPlanOptions.isEmpty) {
+        Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
+      } else {
+        appConfig.calculatorType match {
+
+          case CalculatorType.Legacy =>
             Ok(views.how_much_can_you_pay_each_month_form_legacy(
               routes.CalculatorController.submitCalculateInstalments(),
-              selectPlanForm(BigDecimal(0), BigDecimal(1000000000)),
+              selectPlanForm(),
               defaultPlanOptions,
-              BigDecimal(0),
-              BigDecimal(1000000000),
               journey.maybePlanSelection))
-          }
 
-        case CalculatorType.PaymentOptimised =>
-          val minCustomAmount = defaultPlanOptions.values
-            .headOption.fold(BigDecimal(1))(_.firstInstalment.amount)
-          val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
+          case CalculatorType.PaymentOptimised =>
+            val minCustomAmount = defaultPlanOptions.values
+              .headOption.fold(BigDecimal(1))(_.firstInstalment.amount)
+            val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
 
-          val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
-            case None                 => defaultPlanOptions
-            case Some(customSchedule) => Map((0, customSchedule)) ++ defaultPlanOptions
-          }
+            val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
+              case None                 => defaultPlanOptions
+              case Some(customSchedule) => Map((0, customSchedule)) ++ defaultPlanOptions
+            }
 
-          if (defaultPlanOptions.isEmpty) {
-            Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
-          } else {
             Ok(views.how_much_can_you_pay_each_month_form(
               routes.CalculatorController.submitCalculateInstalments(),
               selectPlanForm(minCustomAmount, maxCustomAmount),
@@ -192,7 +187,7 @@ class CalculatorController @Inject() (
               minCustomAmount.setScale(2, HALF_UP),
               maxCustomAmount.setScale(2, HALF_UP),
               journey.maybePlanSelection))
-          }
+        }
       }
 
     }
