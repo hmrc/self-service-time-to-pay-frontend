@@ -48,6 +48,8 @@ class ItSpec
   implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds)))
 
+  val overrideConfig: Map[String, Any] = Map.empty
+
   protected lazy val configMap: Map[String, Any] = Map(
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
@@ -62,7 +64,7 @@ class ItSpec
     "microservice.services.identity-verification-frontend.uplift-url" -> s"http://localhost:${WireMockSupport.port}/mdtp/uplift",
     "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:${testPort}",
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
-    "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled")
+    "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled") ++ overrideConfig
 
   //in tests use `app`
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
@@ -118,7 +120,6 @@ class ItSpec
   lazy val howMuchYouCouldAffordPage: HowMuchYouCouldAffordPage = wire[HowMuchYouCouldAffordPage]
   lazy val weCannotAgreeYourPaymentPlanPage: WeCannotAgreeYourPaymentPlanPage = wire[WeCannotAgreeYourPaymentPlanPage]
   lazy val howMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = wire[HowMuchCanYouPayEachMonthPage]
-  //  lazy val calculatorInstalmentsPage11thDay: CalculatorInstalmentsPage11thDay = wire[CalculatorInstalmentsPage11thDay]
   lazy val selectDatePage: InstalmentSummarySelectDatePage = wire[InstalmentSummarySelectDatePage]
   lazy val checkYourPaymentPlanPage: CheckYourPaymentPlanPageForPaymentDay28thOfMonth =
     wire[CheckYourPaymentPlanPageForPaymentDay28thOfMonth]

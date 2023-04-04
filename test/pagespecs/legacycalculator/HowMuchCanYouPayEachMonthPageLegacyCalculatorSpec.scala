@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package pagespecs
+package pagespecs.legacycalculator
 
 import langswitch.Languages.{English, Welsh}
-import ssttpcalculator.CalculatorType.PaymentOptimised
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
 
-class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
+class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec {
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
@@ -99,103 +94,15 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
     }
   }
-  "displays custom amount option" - {
+  "does not display a custom amount option" - {
     "in English" in {
       beginJourney()
-      howMuchCanYouPayEachMonthPage.customAmountOptionIsDisplayed
+      howMuchCanYouPayEachMonthPage.customAmountOptionNotDisplayed
     }
     "in Welsh" in {
       beginJourney()
       howMuchCanYouPayEachMonthPage.clickOnWelshLink()
-      howMuchCanYouPayEachMonthPage.customAmountOptionIsDisplayed(Welsh)
-    }
-  }
-  "custom amount entry" - {
-    "displays page with custom option at top when custom amount entered and continue pressed" in {
-      beginJourney()
-
-      howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-
-      val customAmount = 280
-      val planMonths = 18
-      val planInterest = 124.26
-
-      howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
-      howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmount.toString)
-      howMuchCanYouPayEachMonthPage.clickContinue()
-
-      howMuchCanYouPayEachMonthPage.assertPageWithCustomAmountIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-    }
-    "less than minimum displays error message" in {
-      beginJourney()
-
-      val customAmountBelowMinimum = 200
-
-      howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
-      howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmountBelowMinimum.toString)
-      howMuchCanYouPayEachMonthPage.clickContinue()
-
-      howMuchCanYouPayEachMonthPage.assertBelowMinimumErrorIsDisplayed
-    }
-    "more than maximum displays error message" in {
-      beginJourney()
-
-      val customAmountBelowMinimum = 7000
-
-      howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
-      howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmountBelowMinimum.toString)
-      howMuchCanYouPayEachMonthPage.clickContinue()
-
-      howMuchCanYouPayEachMonthPage.assertAboveMaximumErrorIsDisplayed
-    }
-    "not filled in displays error message" in {
-      beginJourney()
-
-      howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
-      howMuchCanYouPayEachMonthPage.enterCustomAmount()
-      howMuchCanYouPayEachMonthPage.clickContinue()
-
-      howMuchCanYouPayEachMonthPage.assertNoInputErrorIsDisplayed
-    }
-    "filled with non-numeric displays error message" in {
-      beginJourney()
-
-      howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
-      howMuchCanYouPayEachMonthPage.enterCustomAmount("non-numeric")
-      howMuchCanYouPayEachMonthPage.clickContinue()
-
-      howMuchCanYouPayEachMonthPage.assertNonNumericErrorIsDisplayed
-    }
-    "filled with negative amount displays error message" in {
-      beginJourney()
-
-      howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
-      howMuchCanYouPayEachMonthPage.enterCustomAmount("-1")
-      howMuchCanYouPayEachMonthPage.clickContinue()
-
-      howMuchCanYouPayEachMonthPage.assertNegativeAmountErrorIsDisplayed
-    }
-    "filled with more than two decimal places" - {
-      "in English" in {
-        beginJourney()
-
-        howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
-        howMuchCanYouPayEachMonthPage.enterCustomAmount("280.111")
-        howMuchCanYouPayEachMonthPage.clickContinue()
-
-        howMuchCanYouPayEachMonthPage.assertDecimalPlacesErrorIsDisplayed
-      }
-      "in Welsh" in {
-        beginJourney()
-
-        howMuchCanYouPayEachMonthPage.clickOnWelshLink()
-        howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
-        howMuchCanYouPayEachMonthPage.enterCustomAmount("280.111")
-        howMuchCanYouPayEachMonthPage.clickContinue()
-
-        howMuchCanYouPayEachMonthPage.assertDecimalPlacesErrorIsDisplayed(Welsh)
-      }
-
+      howMuchCanYouPayEachMonthPage.customAmountOptionNotDisplayed(Welsh)
     }
   }
 
@@ -234,34 +141,6 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       checkYourPaymentPlanPage.goBack()
 
       howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-    }
-    "selecting a custom option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
-      beginJourney()
-
-      val customAmount = 280
-      val planMonths = 18
-      val planInterest = 124.26
-
-      howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
-      howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmount.toString)
-      howMuchCanYouPayEachMonthPage.clickContinue()
-
-      howMuchCanYouPayEachMonthPage.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-
-      howMuchCanYouPayEachMonthPage.selectASpecificOption("0")
-      howMuchCanYouPayEachMonthPage.clickContinue()
-
-      checkYourPaymentPlanPage.goBack()
-      howMuchCanYouPayEachMonthPage.clickOnBackLink()
-
-      howMuchYouCouldAffordPage.clickOnAddChangeIncome()
-      yourMonthlyIncomePage.enterMonthlyIncome("501")
-      yourMonthlyIncomePage.clickContinue()
-
-      howMuchYouCouldAffordPage.clickContinue()
-
-      howMuchCanYouPayEachMonthPage.optionIsNotDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-
     }
   }
 }
