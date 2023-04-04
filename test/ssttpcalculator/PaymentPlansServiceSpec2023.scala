@@ -41,7 +41,7 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
   val fixedToday: LocalDate = date("2023-03-01")
 
   "PaymentPlansService" - {
-    ".buildSchedule returns a valid payment schedule or nothing if none is possible" - {
+    ".schedule returns a valid payment schedule or nothing if none is possible" - {
       "no late payment interest" - {
         "single liability" - {
           "no upfront payment" - {
@@ -116,7 +116,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
                 instalment.interest shouldBe 0
               })
             }
-
           }
           "upfront payment" - {
             "one instalment" in {
@@ -341,7 +340,6 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
           }
         }
       }
-
       "late payment interest" - {
         "two instalments" in {
           val liabilityAmount = 1000
@@ -515,9 +513,65 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
 
         result shouldBe None
       }
+      "total interest charged and total payable are rounded (half up) to the nearest pence" in {
+        val liabilities = Seq(
+          TaxLiability(1012.55, date("2020-01-31")),
+          TaxLiability(1000, date("2020-01-31")),
+          TaxLiability(1000, date("2020-07-31"))
+        )
+
+        val upfrontPaymentAmount = 0
+        val preferredPaymentDay = Some(PaymentDayOfMonth(28))
+        val remainingIncomeAfterSpending = 10000
+
+        val paymentsCalendar = PaymentsCalendar.generate(
+          upfrontPaymentAmount,
+          date("2020-02-05"),
+          preferredPaymentDay
+        )
+
+        val result = paymentPlansService.schedule(
+          liabilities,
+          remainingIncomeAfterSpending * 0.50,
+          paymentsCalendar,
+          upfrontPaymentAmount
+        )
+
+        result.get.totalInterestCharged shouldBe 5.00
+        result.get.totalPayable shouldBe 3017.55
+        result.get.instalments.head.amount shouldBe 3017.55
+      }
+      "when setting up instalments, if balance remaining is close to 0.00 (0.00 rounding half up)" +
+        "do not add further instalment" in {
+        val liabilities = Seq(
+          TaxLiability(1012.55, date("2020-01-31")),
+          TaxLiability(1000, date("2020-01-31")),
+          TaxLiability(1000, date("2020-07-31"))
+        )
+
+        val upfrontPaymentAmount = 0
+        val preferredPaymentDay = Some(PaymentDayOfMonth(28))
+        val regularPaymentAmnout = 3017.55
+
+        val paymentsCalendar = PaymentsCalendar.generate(
+          upfrontPaymentAmount,
+          date("2020-02-05"),
+          preferredPaymentDay
+        )
+
+        val result = paymentPlansService.schedule(
+          liabilities,
+          regularPaymentAmnout,
+          paymentsCalendar,
+          upfrontPaymentAmount
+        )
+
+        result.get.instalments.length shouldBe 1
+
+      }
     }
 
-    "paymentPlanOptions generates based on remaining income after spending up to three schedules in a map" - {
+    ".defaultSchedules generates based on remaining income after spending up to three schedules in a map" - {
       "three (50%, 60% and 80% of remaining income), if neither first two cover total to pay in a single month" in {
         val sa = SelfAssessmentDetails(
           SaUtr("saUtr"),
