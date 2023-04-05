@@ -11,7 +11,7 @@ The following diagram shows the overview of the SSTTP architecture.
 
 <a href="https://github.com/hmrc/self-service-time-to-pay-frontend">
     <p align="center">
-      <img src="https://raw.githubusercontent.com/hmrc/self-service-time-to-pay-frontend/master/docs/ServiceOverview.png" alt="ServiceOverview">
+      <img src="docs/ServiceOverview.png" alt="ServiceOverview">
     </p>
 </a>
 
