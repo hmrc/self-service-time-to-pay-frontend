@@ -16,7 +16,6 @@
 
 package ssttpcalculator
 
-import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.Actions
@@ -33,7 +32,7 @@ import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.math.BigDecimal.RoundingMode.{CEILING, HALF_UP}
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class CalculatorController @Inject() (
     mcc:                 MessagesControllerComponents,
@@ -158,26 +157,39 @@ class CalculatorController @Inject() (
         journey.remainingIncomeAfterSpending
       )
 
-      val minCustomAmount = defaultPlanOptions.values
-        .headOption.fold(BigDecimal(1))(_.firstInstalment.amount)
-      val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
+      defaultPlanOptions.values.toSeq.sortBy(_.instalmentAmount).headOption match {
+        case None =>
+          Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
 
-      val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
-        case None                 => defaultPlanOptions
-        case Some(customSchedule) => Map((0, customSchedule)) ++ defaultPlanOptions
+        case Some(scheduleWithSmallestInstalmentAmount) =>
+          appConfig.calculatorType match {
+
+            case CalculatorType.Legacy =>
+              Ok(views.how_much_can_you_pay_each_month_form_legacy(
+                routes.CalculatorController.submitCalculateInstalments(),
+                selectPlanForm(),
+                defaultPlanOptions,
+                journey.maybePlanSelection))
+
+            case CalculatorType.PaymentOptimised =>
+              val minCustomAmount = scheduleWithSmallestInstalmentAmount.instalmentAmount
+              val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
+
+              val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
+                case None                 => defaultPlanOptions
+                case Some(customSchedule) => Map((0, customSchedule)) ++ defaultPlanOptions
+              }
+
+              Ok(views.how_much_can_you_pay_each_month_form(
+                routes.CalculatorController.submitCalculateInstalments(),
+                selectPlanForm(minCustomAmount, maxCustomAmount),
+                allPlanOptions,
+                minCustomAmount.setScale(2, HALF_UP),
+                maxCustomAmount.setScale(2, HALF_UP),
+                journey.maybePlanSelection))
+          }
       }
 
-      if (defaultPlanOptions.isEmpty) {
-        Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
-      } else {
-        Ok(views.how_much_can_you_pay_each_month_form(
-          routes.CalculatorController.submitCalculateInstalments(),
-          selectPlanForm(minCustomAmount, maxCustomAmount),
-          allPlanOptions,
-          minCustomAmount.setScale(2, HALF_UP),
-          maxCustomAmount.setScale(2, HALF_UP),
-          journey.maybePlanSelection))
-      }
     }
   }
 
@@ -192,8 +204,9 @@ class CalculatorController @Inject() (
         journey.maybePaymentDayOfMonth,
         journey.remainingIncomeAfterSpending
       )
-      val minCustomAmount = paymentPlanOptions.values
-        .headOption.fold(BigDecimal(1))(_.firstInstalment.amount)
+      val minCustomAmount = paymentPlanOptions.values.toSeq
+        .sortBy(_.instalmentAmount)
+        .headOption.fold(BigDecimal(1))(_.instalmentAmount)
       val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
 
       selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
