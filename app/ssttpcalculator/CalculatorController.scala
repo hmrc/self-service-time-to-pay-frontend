@@ -284,43 +284,47 @@ class CalculatorController @Inject() (
   }
 
   // only used in legacy calculator feature
-  private def computeClosestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule])(implicit hc: HeaderCarrier): PaymentSchedule = {
+  private def computeClosestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule])(implicit hc: HeaderCarrier): Option[PaymentSchedule] = {
       def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
 
       def closest(min: PaymentSchedule, next: PaymentSchedule) = if (difference(next) < difference(min)) next else min
 
-    Try(schedules.reduceOption(closest).getOrElse(throw new RuntimeException(s"No schedules for [$schedules]"))) match {
-      case Success(s) => s
-      case Failure(e) =>
-        JourneyLogger.info(s"CalculatorController.closestSchedule: ERROR [$e]")
-        throw e
-    }
+      def lessThan(schedule: PaymentSchedule): Boolean = amount - schedule.instalmentAmount >= 0
+
+    schedules.filter(lessThan).reduceOption(closest)
   }
 
-  private def computeClosestSchedules(closestSchedule: PaymentSchedule, schedules: List[PaymentSchedule], sa: SelfAssessmentDetails)
+  private def computeClosestSchedules(maybeClosestSchedule: Option[PaymentSchedule], schedules: List[PaymentSchedule], sa: SelfAssessmentDetails)
     (implicit request: Request[_]): Map[Int, PaymentSchedule] = {
-    val scheduleList = {
-      val closestScheduleIndex = schedules.indexOf(closestSchedule)
+      maybeClosestSchedule match
+        case None => List()
+        case Some(closestSchedule) => {
+        val scheduleList = {
+          val closestScheduleIndex = schedules.indexOf(closestSchedule)
 
-        def scheduleMonthsLater(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
-          case -1                           => None
-          case i if i + n >= schedules.size => None
-          case m                            => Some(schedules(m + n))
-        }
+          def scheduleMonthsLater(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
+            case -1 => None
+            case i if i + n >= schedules.size => None
+            case m => Some(schedules(m + n))
+          }
 
-        def scheduleMonthsBefore(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
-          case -1             => None
-          case i if i - n < 0 => None
-          case m              => Some(schedules(m - n))
-        }
+          def scheduleMonthsBefore(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
+            case -1 => None
+            case i if i - n < 0 => None
+            case m => Some(schedules(m - n))
+          }
 
-      if (closestScheduleIndex == 0)
-        List(Some(closestSchedule), scheduleMonthsLater(1), scheduleMonthsLater(2))
-      else if (closestScheduleIndex == schedules.size - 1)
-        List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
-      else
-        List(scheduleMonthsBefore(1), Some(closestSchedule), scheduleMonthsLater(1))
-    }.flatten
+          if (closestScheduleIndex == 0)
+            List(Some(closestSchedule), scheduleMonthsLater(1), scheduleMonthsLater(2))
+          else if (closestScheduleIndex == schedules.size - 1)
+            List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
+          else
+            List(scheduleMonthsBefore(1), Some(closestSchedule), scheduleMonthsLater(1))
+        }.flatten
+      }
+
+
+
 
     val indicesConsistentWithPaymentsOptimised: Seq[Int] = List(50, 60, 80)
 
