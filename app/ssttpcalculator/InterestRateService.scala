@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Singleton
 import play.api.Logger
-import ssttpcalculator.model.{InterestRate, LatePayment}
+import ssttpcalculator.model.InterestRate
 
 import scala.io.Source
 
@@ -87,6 +87,16 @@ class InterestRateService {
         ir
       }
     }
+  }
+
+  def getEarliestDate(dateOne: LocalDate, dateTwo: LocalDate, dateThree: LocalDate): LocalDate = {
+    val earliestOfFirstTwoDates = if (dateOne.isBefore(dateTwo)) dateOne else dateTwo
+    if (earliestOfFirstTwoDates.isBefore(dateThree)) earliestOfFirstTwoDates else dateThree
+  }
+
+  def getLatestDate(dateOne: LocalDate, dateTwo: LocalDate, dateThree: LocalDate): LocalDate = {
+    val latestOfFirstTwoDates = if (dateOne.isAfter(dateTwo)) dateOne else dateTwo
+    if (latestOfFirstTwoDates.isAfter(dateThree)) latestOfFirstTwoDates else dateThree
   }
 
 }

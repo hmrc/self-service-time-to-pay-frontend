@@ -20,6 +20,7 @@ import bankholidays.WorkingDaysService.addWorkingDays
 import journey.Journey
 import play.api.Logger
 import play.api.mvc.Request
+import ssttpcalculator.{DurationService, InterestRateService}
 import ssttpcalculator.legacy.CalculatorService.asTaxLiability
 import ssttpcalculator.legacy.model.TaxPaymentPlan
 import ssttpcalculator.legacy.model.TaxLiability.{amortizedLiabilities, latePayments}

@@ -543,32 +543,32 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
       }
       "when setting up instalments, if balance remaining is close to 0.00 (0.00 rounding half up)" +
         "do not add further instalment" in {
-        val liabilities = Seq(
-          TaxLiability(1012.55, date("2020-01-31")),
-          TaxLiability(1000, date("2020-01-31")),
-          TaxLiability(1000, date("2020-07-31"))
-        )
+          val liabilities = Seq(
+            TaxLiability(1012.55, date("2020-01-31")),
+            TaxLiability(1000, date("2020-01-31")),
+            TaxLiability(1000, date("2020-07-31"))
+          )
 
-        val upfrontPaymentAmount = 0
-        val preferredPaymentDay = Some(PaymentDayOfMonth(28))
-        val regularPaymentAmnout = 3017.55
+          val upfrontPaymentAmount = 0
+          val preferredPaymentDay = Some(PaymentDayOfMonth(28))
+          val regularPaymentAmnout = 3017.55
 
-        val paymentsCalendar = PaymentsCalendar.generate(
-          upfrontPaymentAmount,
-          date("2020-02-05"),
-          preferredPaymentDay
-        )
+          val paymentsCalendar = PaymentsCalendar.generate(
+            upfrontPaymentAmount,
+            date("2020-02-05"),
+            preferredPaymentDay
+          )
 
-        val result = paymentPlansService.schedule(
-          liabilities,
-          regularPaymentAmnout,
-          paymentsCalendar,
-          upfrontPaymentAmount
-        )
+          val result = paymentPlansService.schedule(
+            liabilities,
+            regularPaymentAmnout,
+            paymentsCalendar,
+            upfrontPaymentAmount
+          )
 
-        result.get.instalments.length shouldBe 1
+          result.get.instalments.length shouldBe 1
 
-      }
+        }
     }
 
     ".defaultSchedules generates based on remaining income after spending up to three schedules in a map" - {
