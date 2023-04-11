@@ -139,4 +139,8 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
     }
   }
 
+  "back button" in {
+    beginJourney()
+    startAffordabilityPage.backButtonHref shouldBe Some(s"${baseUrl.value}${startAffordabilityPage.path}")
+  }
 }

@@ -96,6 +96,11 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     directDebitConfirmationPage.assertInitialPageIsDisplayed(English)
   }
 
+  "back button" in {
+    beginJourney()
+    directDebitConfirmationPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()}")
+  }
+
   "change bank details" in {
     beginJourney()
     directDebitConfirmationPage.clickChangeButton()

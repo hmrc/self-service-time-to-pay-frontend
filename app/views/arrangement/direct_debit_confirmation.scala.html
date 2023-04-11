@@ -38,7 +38,8 @@
 
 
 @main(
-    title = Messages("ssttp.arrangement.direct-debit.confirmation.title")
+    title = Messages("ssttp.arrangement.direct-debit.confirmation.title"),
+    backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())
 ) {
     <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.direct-debit.confirmation.title")</h1>
 

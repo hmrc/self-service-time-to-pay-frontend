@@ -34,6 +34,11 @@ class StartPageSpec extends ItSpec {
     startPage.assertInitialPageIsDisplayed(English)
   }
 
+  "back button" in {
+    startPage.open()
+    startPage.backButtonHref shouldBe None
+  }
+
   "unauthorised - missing bearer token (user not logged in)" in {
     AuthStub.unathorisedMissingSession()
     GgStub.signInPage(port)

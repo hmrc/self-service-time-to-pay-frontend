@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,29 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package pagespecs
+@import langswitch.Link
+@import langswitch.Language
+@import langswitch.Languages
 
-import langswitch.Languages.{English, Welsh}
-import testsupport.ItSpec
 
-class NeedToFilePageSpec extends ItSpec {
-
-  "language" in {
-
-    needToFilePage.open()
-    needToFilePage.assertInitialPageIsDisplayed
-
-    needToFilePage.clickOnWelshLink()
-    needToFilePage.assertInitialPageIsDisplayed(Welsh)
-
-    needToFilePage.clickOnEnglishLink()
-    needToFilePage.assertInitialPageIsDisplayed(English)
-  }
-
-  "back button" in {
-    needToFilePage.open()
-    needToFilePage.backButtonHref shouldBe None
-  }
-}
+@(backButtonUrl: play.api.mvc.Call)(implicit messages: Messages)
+<span class="govuk-!-display-none-print pull-left">
+ @Link.toInternalPage(
+  id      = Some("back-link"),
+  cssClasses = Some("govuk-back-link"),
+  url     = s"$backButtonUrl",
+  value   = Some(messages("ssttp.common.back"))).toHtml
+</span>

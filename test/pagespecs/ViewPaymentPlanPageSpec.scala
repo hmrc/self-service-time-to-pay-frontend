@@ -104,11 +104,8 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     viewPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
   }
 
-  "back link goes to previous page" in {
+  "back button" in {
     beginJourney()
-    termsAndConditionsPage.clickContinue()
-    arrangementSummaryPage.clickLink()
-    viewPaymentPlanPage.goBack()
-    arrangementSummaryPage.assertInitialPageIsDisplayed
+    viewPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
   }
 }
