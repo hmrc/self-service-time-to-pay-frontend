@@ -23,6 +23,7 @@ import play.api.libs.json.{Format, Json, OFormat}
 import repo.HasId
 import ssttpaffordability.model.Income
 import ssttpaffordability.model.Spending
+import ssttpcalculator.legacy.model.CalculatorDuration
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.selfservicetimetopay.models._
@@ -69,6 +70,7 @@ final case class Journey(
     maybeIncome:               Option[Income]                  = None,
     maybeSpending:             Option[Spending]                = None,
     maybePlanSelection:        Option[PlanSelection]           = None,
+    maybeCalculatorDuration:   Option[CalculatorDuration]      = None, // only used with Legacy calculator
     maybePaymentDayOfMonth:    Option[PaymentDayOfMonth]       = None,
     maybeEligibilityStatus:    Option[EligibilityStatus]       = None,
     debitDate:                 Option[LocalDate]               = None,
@@ -157,6 +159,9 @@ final case class Journey(
     ddRef                     = ddRef.map(_ => "***"),
     maybeSaUtr                = maybeSaUtr.map(_ => "***")
   )
+
+  // Only used with Legacy calculator
+  def calculatorDuration: Int = maybeCalculatorDuration.map(_.chosenMonths).getOrElse(throw new RuntimeException(s"Expected 'maybeCalculatorDuration' to be there but was not found. [${_id}] [$this]"))
 
   override def toString: String = {
     obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
