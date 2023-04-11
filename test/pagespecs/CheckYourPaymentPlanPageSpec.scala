@@ -81,6 +81,11 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed(English)
   }
 
+  "back button" in {
+    beginJourney()
+    checkYourPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchCanYouPayEachMonthPage.path}")
+  }
+
   "change monthly instalments" in {
     beginJourney()
     checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
@@ -120,12 +125,5 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     checkYourPaymentPlanPage.assertWarningIsDisplayed(English)
     checkYourPaymentPlanPage.clickOnWelshLink()
     checkYourPaymentPlanPage.assertWarningIsDisplayed(Welsh)
-  }
-
-  "back link goes to previous page" in {
-    beginJourney()
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed
-    checkYourPaymentPlanPage.goBack()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
   }
 }

@@ -58,7 +58,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     enter(value)
   }
 
-  def clickOnBackLink(): Unit = WebBrowser.goTo("http://localhost:19001/pay-what-you-owe-in-instalments/how-much-you-could-afford")
+  def clickOnBackButton(): Unit = click on id("back-link")
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path

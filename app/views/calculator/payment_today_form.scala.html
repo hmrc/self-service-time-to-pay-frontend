@@ -47,7 +47,9 @@
 
 @main(
   title = messages("ssttp.calculator.form.payment_today.title"),
-  hasErrors = dataForm.hasErrors
+  hasErrors = dataForm.hasErrors,
+  backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
+
 ){
     @if(dataForm.hasErrors){
         @errorSummary(ErrorSummary(

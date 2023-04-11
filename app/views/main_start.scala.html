@@ -14,14 +14,17 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.Aliases.{Header, FooterItem, Meta, Footer}
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.FooterItem
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.{Header, ReportTechnicalIssue}
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En}
+@import config.ViewConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+
 @import req.RequestSupport.isLoggedIn
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.Meta
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.Footer
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-@import uk.gov.hmrc.govukfrontend.views.html.components.BackLink
 
 @this(
         govukLayout: uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout,
@@ -60,7 +63,8 @@
         allowTimeoutDialog: Boolean = true,
         welshToggleEnabled:Boolean = true,
         hasUserPanel: Boolean = false,
-        navTitle: String = "ssttp.common.title"
+        navTitle: String = "ssttp.common.title",
+        backButtonUrl: Option[play.api.mvc.Call] = None
 )(
         mainContent: Html)(implicit messages: play.api.i18n.Messages, request: Request[_])
 
@@ -83,7 +87,9 @@
 @beforeContentBlock = {
     @hmrcLanguageSelectHelper()
 
-@govukBackLink(BackLink(href = "#", classes = "js-visible", content = Text(messages("ssttp.common.back"))))
+    @backButtonUrl.map{ call =>
+        @partials.back_button(call)
+    }
 
 
 }
