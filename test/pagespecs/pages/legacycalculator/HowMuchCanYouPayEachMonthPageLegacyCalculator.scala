@@ -26,7 +26,7 @@ import ssttpcalculator.CalculatorType
 import ssttpcalculator.CalculatorType.{Legacy, PaymentOptimised}
 import testsupport.RichMatchers._
 
-class HowMuchCanYouPayEachMonthLegacyPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
   override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
 

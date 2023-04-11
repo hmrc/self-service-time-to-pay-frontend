@@ -17,9 +17,17 @@
 package testsupport.legacycalculator
 
 import com.softwaremill.macwire.wire
-import pagespecs.pages.legacycalculator.HowMuchCanYouPayEachMonthLegacyPage
+import pagespecs.pages.legacycalculator.{
+  CheckYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator,
+  CheckYourPaymentPlanPageForPaymentDay28thOfMonthLegacyCalculator,
+  CheckYourPaymentPlanPageLegacyCalculator,
+  HowMuchCanYouPayEachMonthPageLegacyCalculator
+}
 import testsupport.ItSpec
 
 trait CalculatorTypeFeatureHelper extends ItSpec {
-  lazy val howMuchCanYouPayEachMonthLegacyPage: HowMuchCanYouPayEachMonthLegacyPage = wire[HowMuchCanYouPayEachMonthLegacyPage]
-}
+  lazy val howMuchCanYouPayEachMonthPageLegacyCalculator: HowMuchCanYouPayEachMonthPageLegacyCalculator = wire[HowMuchCanYouPayEachMonthPageLegacyCalculator]
+  lazy val checkYourPaymentPlanPageLegacyCalculator: CheckYourPaymentPlanPageForPaymentDay28thOfMonthLegacyCalculator =
+    wire[CheckYourPaymentPlanPageForPaymentDay28thOfMonthLegacyCalculator]
+  lazy val checkYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator: CheckYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator =
+    wire[CheckYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator]}

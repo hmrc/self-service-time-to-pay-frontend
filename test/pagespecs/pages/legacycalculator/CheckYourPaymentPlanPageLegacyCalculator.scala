@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package pagespecs.pages
+package pagespecs.pages.legacycalculator
 
-import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
+import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
+import pagespecs.pages.{BasePage, BaseUrl}
 import testsupport.RichMatchers._
 
-class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: String, paymentDayOfMonthWelsh: String)
+class CheckYourPaymentPlanPageLegacyCalculator(baseUrl: BaseUrl, paymentDayOfMonthEnglish: String, paymentDayOfMonthWelsh: String)
   (implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   import WebBrowser._
@@ -102,34 +103,34 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |$paymentDayOfMonthEnglish or next working day
            |Change
            |10 monthly payments of
-           |£500
+           |£490
            |Change the day of the month that payments will be collected on
            |Payment schedule
            |December 2019
-           |£500
+           |£490
            |January 2020
-           |£500
+           |£490
            |February 2020
-           |£500
+           |£490
            |March 2020
-           |£500
+           |£490
            |April 2020
-           |£500
+           |£490
            |May 2020
-           |£500
+           |£490
            |June 2020
-           |£500
+           |£490
            |July 2020
-           |£500
+           |£490
            |August 2020
-           |£500
+           |£490
            |September 2020
-           |£473.08
+           |£564.30
            |Estimated total interest
            |included in monthly payments
-           |£73.08
+           |£74.30
            |Total to pay
-           |£4,973.08
+           |£4,974.30
            |Agree and continue
         """.stripMargin
       }
@@ -148,30 +149,30 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |yr $paymentDayOfMonthWelsh neu’r diwrnod gwaith nesaf
            |Newid
            Rhagfyr 2019
-           |£500
+           |£490
            |Ionawr 2020
-           |£500
+           |£490
            |Chwefror 2020
-           |£500
+           |£490
            |Mawrth 2020
-           |£500
+           |£490
            |Ebrill 2020
-           |£500
+           |£490
            |Mai 2020
-           |£500
+           |£490
            |Mehefin 2020
-           |£500
+           |£490
            |Gorffennaf 2020
-           |£500
+           |£490
            |Awst 2020
-           |£500
+           |£490
            |Medi 2020
-           |£473.08
+           |£564.30
            |Amcangyfrif o gyfanswm y llog
            |wedi’i gynnwys yn y taliadau misol
-           |£73.08
+           |£74.30
            |Y cyfanswm i’w dalu
-           |£4,973.08
+           |£4,974.30
            |Cytuno ac yn eich blaen
 """.stripMargin
       }
@@ -201,8 +202,8 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
 
 }
 
-class CheckYourPaymentPlanPageForPaymentDay28thOfMonth(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
-  extends CheckYourPaymentPlanPage(baseUrl, paymentDayOfMonthEnglish = "28th", paymentDayOfMonthWelsh = "28ain")(webDriver)
+class CheckYourPaymentPlanPageForPaymentDay28thOfMonthLegacyCalculator(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
+  extends CheckYourPaymentPlanPageLegacyCalculator(baseUrl, paymentDayOfMonthEnglish = "28th", paymentDayOfMonthWelsh = "28ain")(webDriver)
 
-class CheckYourPaymentPlanPageForPaymentDay11thOfMonth(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
-  extends CheckYourPaymentPlanPage(baseUrl, paymentDayOfMonthEnglish = "11th", paymentDayOfMonthWelsh = "11eg")(webDriver)
+class CheckYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
+  extends CheckYourPaymentPlanPageLegacyCalculator(baseUrl, paymentDayOfMonthEnglish = "11th", paymentDayOfMonthWelsh = "11eg")(webDriver)

@@ -30,7 +30,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Calc
     "calculatorType" -> Legacy.value
   )
 
-  def beginJourney(remainingIncomeAfterSpending: BigDecimal = 1000): Unit = {
+  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -121,10 +121,10 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Calc
     beginJourney()
 
     howMuchCanYouPayEachMonthPage.clickOnWelshLink()
-    howMuchCanYouPayEachMonthLegacyPage.assertInitialPageIsDisplayed(Welsh)
+    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed(Welsh)
 
     howMuchCanYouPayEachMonthPage.clickOnEnglishLink()
-    howMuchCanYouPayEachMonthLegacyPage.assertInitialPageIsDisplayed(English)
+    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed(English)
   }
 
   "select an option and continue" - {
@@ -151,7 +151,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Calc
       howMuchCanYouPayEachMonthPage.clickContinue()
       checkYourPaymentPlanPage.goBack()
 
-      howMuchCanYouPayEachMonthLegacyPage.assertInitialPageIsDisplayed
+      howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
     }
   }
 }

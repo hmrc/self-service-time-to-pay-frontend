@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package pagespecs
+package pagespecs.legacycalculator
 
 import langswitch.Languages.{English, Welsh}
-import ssttpcalculator.CalculatorType.PaymentOptimised
+import ssttpcalculator.CalculatorType.Legacy
 import testsupport.ItSpec
+import testsupport.legacycalculator.CalculatorTypeFeatureHelper
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
-class CheckYourPaymentPlanPageSpec extends ItSpec {
+class CheckYourPaymentPlanPageLegacyCalculatorSpec extends ItSpec with CalculatorTypeFeatureHelper {
 
   override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
+    "calculatorType" -> Legacy.value
   )
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
@@ -68,69 +69,69 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPage.selectASpecificOption("50")
-    howMuchCanYouPayEachMonthPage.clickContinue()
+    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+    howMuchCanYouPayEachMonthPageLegacyCalculator.selectASpecificOption("50")
+    howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
 
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
+    checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed()
   }
 
   "language" in {
     beginJourney()
 
-    checkYourPaymentPlanPage.clickOnWelshLink()
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
+    checkYourPaymentPlanPageLegacyCalculator.clickOnWelshLink()
+    checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed(Welsh)
 
     checkYourPaymentPlanPage.clickOnEnglishLink()
 
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed(English)
+    checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed(English)
   }
 
   "change monthly instalments" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed()
+    checkYourPaymentPlanPageLegacyCalculator.clickChangeMonthlyAmountLink()
+    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed()
   }
 
   "change collection day" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickChangeCollectionDayLink()
+    checkYourPaymentPlanPageLegacyCalculator.clickChangeCollectionDayLink()
     selectDatePage.assertInitialPageIsDisplayed
   }
 
   "change upfront payment amount" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickChangeUpfrontPaymentAnswerLink()
+    checkYourPaymentPlanPageLegacyCalculator.clickChangeUpfrontPaymentAnswerLink()
     paymentTodayQuestionPage.assertInitialPageIsDisplayed
   }
 
   "change upfront answer" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickChangeUpfrontPaymentAmountLink()
+    checkYourPaymentPlanPageLegacyCalculator.clickChangeUpfrontPaymentAmountLink()
     paymentTodayQuestionPage.assertInitialPageIsDisplayed
   }
 
   "continue to the next page" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickContinue()
+    checkYourPaymentPlanPageLegacyCalculator.clickContinue()
     aboutBankAccountPage.assertInitialPageIsDisplayed
   }
 
   "shows warning" in {
     beginJourney()
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed
-    checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
-    howMuchCanYouPayEachMonthPage.selectASpecificOption("60")
-    howMuchCanYouPayEachMonthPage.clickContinue()
-    checkYourPaymentPlanPage.assertWarningIsDisplayed(English)
-    checkYourPaymentPlanPage.clickOnWelshLink()
-    checkYourPaymentPlanPage.assertWarningIsDisplayed(Welsh)
+    checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed
+    checkYourPaymentPlanPageLegacyCalculator.clickChangeMonthlyAmountLink()
+    howMuchCanYouPayEachMonthPageLegacyCalculator.selectASpecificOption("60")
+    howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+    checkYourPaymentPlanPageLegacyCalculator.assertWarningIsDisplayed(English)
+    checkYourPaymentPlanPageLegacyCalculator.clickOnWelshLink()
+    checkYourPaymentPlanPageLegacyCalculator.assertWarningIsDisplayed(Welsh)
   }
 
   "back link goes to previous page" in {
     beginJourney()
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed
-    checkYourPaymentPlanPage.goBack()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+    checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed
+    checkYourPaymentPlanPageLegacyCalculator.goBack()
+    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
   }
 }

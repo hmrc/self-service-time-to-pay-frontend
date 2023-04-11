@@ -23,7 +23,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import pagespecs.pages._
-import pagespecs.pages.legacycalculator.HowMuchCanYouPayEachMonthLegacyPage
+import pagespecs.pages.legacycalculator.HowMuchCanYouPayEachMonthPageLegacyCalculator
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
