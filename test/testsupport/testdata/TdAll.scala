@@ -128,7 +128,7 @@ todays date: 2019-11-25
 
   val selectedRegularPaymentAmount300 = 300
 
-  val defaultRemainingIncomeAfterSpending: BigDecimal = BigDecimal(500)
+  val defaultRemainingIncomeAfterSpending: BigDecimal = BigDecimal(1000)
   val netIncomeTooSmallForPlan = 50
   val netIncomeLargeEnoughForSingleDefaultPlan = 12500
   val netIncomeLargeEnoughForTwoDefaultPlans = 9500

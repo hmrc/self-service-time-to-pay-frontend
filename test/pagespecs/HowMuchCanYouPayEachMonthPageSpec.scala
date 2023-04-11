@@ -116,9 +116,9 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
 
       howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
 
-      val customAmount = 280
-      val planMonths = 18
-      val planInterest = 124.26
+      val customAmount = 700
+      val planMonths = 8
+      val planInterest = 54.35
 
       howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
       howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmount.toString)
@@ -238,9 +238,9 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
     "selecting a custom option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
       beginJourney()
 
-      val customAmount = 280
-      val planMonths = 18
-      val planInterest = 124.26
+      val customAmount = 700
+      val planMonths = 8
+      val planInterest = 54.35
 
       howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
       howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmount.toString)

@@ -156,7 +156,7 @@ class HowMuchCanYouPayEachMonthLegacyPage(baseUrl: BaseUrl)(implicit webDriver: 
     readMain().stripSpaces() should include(Expected.ErrorText.DecimalPlaces().stripSpaces())
   }
 
-   def assertContentDoesNotContainOrSeparator(implicit lang: Language = English): Unit = probing {
+  def assertContentDoesNotContainOrSeparator(implicit lang: Language = English): Unit = probing {
     val expectedLines = Expected.MainText.OrSeparator().stripSpaces().split("\n")
     assertContentDoesNotContainLines(expectedLines)
     ()
@@ -217,7 +217,7 @@ class HowMuchCanYouPayEachMonthLegacyPage(baseUrl: BaseUrl)(implicit webDriver: 
       object DefaultCalculationsLegacy {
         def apply()(implicit language: Language): String = language match {
           case English => mainTextEnglish
-          case Welsh => mainTextWelsh
+          case Welsh   => mainTextWelsh
         }
 
         private val mainTextEnglish =
@@ -254,7 +254,7 @@ class HowMuchCanYouPayEachMonthLegacyPage(baseUrl: BaseUrl)(implicit webDriver: 
       object OrSeparator {
         def apply()(implicit language: Language): String = language match {
           case English => orSeparatorTextEnglish
-          case Welsh => orSeparatorTextWelsh
+          case Welsh   => orSeparatorTextWelsh
         }
 
         private val orSeparatorTextEnglish =

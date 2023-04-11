@@ -78,14 +78,14 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Calc
 
   "display default options" - {
     "if a two-month plan is the closest monthly amount less than 50% of remaining income after spending, show only this option" in {
-        beginJourney(4900)
+      beginJourney(4900)
 
-        howMuchCanYouPayEachMonthPage.optionIsDisplayed("2,450")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("4,900")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("1,633.33")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("1,633.34")
-//        howMuchCanYouPayEachMonthLegacyPage.assertContentDoesNotContainOrSeparator
-      }
+      howMuchCanYouPayEachMonthPage.optionIsDisplayed("2,450")
+      howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("4,900")
+      howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("1,633.33")
+      howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("1,633.34")
+      //        howMuchCanYouPayEachMonthLegacyPage.assertContentDoesNotContainOrSeparator
+    }
     "if a three-month plan is the closest monthly amount less than 50% of remaining income after spending, " +
       "show three-month and two-month plans only" in {
         beginJourney(3267)
@@ -94,9 +94,9 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Calc
         howMuchCanYouPayEachMonthPage.optionIsDisplayed("2,450")
         howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("4,900")
         howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("1,225")
-//        howMuchCanYouPayEachMonthLegacyPage.assertContentDoesNotContainOrSeparator
+        //        howMuchCanYouPayEachMonthLegacyPage.assertContentDoesNotContainOrSeparator
 
-    }
+      }
     "displays three default options otherwise" in {
       beginJourney()
       howMuchCanYouPayEachMonthPage.optionIsDisplayed("490")
