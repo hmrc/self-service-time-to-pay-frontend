@@ -30,4 +30,5 @@ trait CalculatorTypeFeatureHelper extends ItSpec {
   lazy val checkYourPaymentPlanPageLegacyCalculator: CheckYourPaymentPlanPageForPaymentDay28thOfMonthLegacyCalculator =
     wire[CheckYourPaymentPlanPageForPaymentDay28thOfMonthLegacyCalculator]
   lazy val checkYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator: CheckYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator =
-    wire[CheckYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator]}
+    wire[CheckYourPaymentPlanPageForPaymentDay11thOfMonthLegacyCalculator]
+}
