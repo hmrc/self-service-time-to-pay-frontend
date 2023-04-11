@@ -54,12 +54,14 @@ class PaymentPlansService @Inject() (
     val firstSchedule = schedule(taxLiabilities, firstPlanAmount, paymentsCalendar, upfrontPayment)
     val scheduleList = firstSchedule match {
       case None => List()
-      case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule).flatten
+      case Some(schedule) if schedule.instalments.length <= appConfig.minimumLengthOfPaymentPlan =>
+        List(firstSchedule).flatten
       case _ =>
         val secondPlanAmount = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending
         val secondSchedule = schedule(taxLiabilities, secondPlanAmount, paymentsCalendar, upfrontPayment)
         secondSchedule match {
-          case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule, secondSchedule).flatten
+          case Some(schedule) if schedule.instalments.length <= appConfig.minimumLengthOfPaymentPlan =>
+            List(firstSchedule, secondSchedule).flatten
           case _ =>
             val thirdPlanAmount = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending
             val thirdSchedule = schedule(taxLiabilities, thirdPlanAmount, paymentsCalendar, upfrontPayment)

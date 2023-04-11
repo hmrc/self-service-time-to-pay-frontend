@@ -294,38 +294,32 @@ class CalculatorController @Inject() (
     schedules.filter(lessThan).reduceOption(closest)
   }
 
-  private def computeClosestSchedules(maybeClosestSchedule: Option[PaymentSchedule], schedules: List[PaymentSchedule], sa: SelfAssessmentDetails)
-    (implicit request: Request[_]): Map[Int, PaymentSchedule] = {
-      maybeClosestSchedule match
-        case None => List()
-        case Some(closestSchedule) => {
-        val scheduleList = {
-          val closestScheduleIndex = schedules.indexOf(closestSchedule)
+  private def computeClosestSchedules(
+      maybeClosestSchedule: Option[PaymentSchedule],
+      schedules:            List[PaymentSchedule],
+      sa:                   SelfAssessmentDetails)(
+      implicit
+      request: Request[_]
+  ): Map[Int, PaymentSchedule] = {
+    val scheduleList = maybeClosestSchedule match {
+      case None => List()
+      case Some(closestSchedule) => {
+        val closestScheduleIndex = schedules.indexOf(closestSchedule)
 
-          def scheduleMonthsLater(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
-            case -1 => None
-            case i if i + n >= schedules.size => None
-            case m => Some(schedules(m + n))
-          }
-
-          def scheduleMonthsBefore(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
-            case -1 => None
+          def scheduleMonthsShorter(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
+            case -1             => None
             case i if i - n < 0 => None
-            case m => Some(schedules(m - n))
+            case m              => Some(schedules(m - n))
           }
 
-          if (closestScheduleIndex == 0)
-            List(Some(closestSchedule), scheduleMonthsLater(1), scheduleMonthsLater(2))
-          else if (closestScheduleIndex == schedules.size - 1)
-            List(scheduleMonthsBefore(2), scheduleMonthsBefore(1), Some(closestSchedule))
-          else
-            List(scheduleMonthsBefore(1), Some(closestSchedule), scheduleMonthsLater(1))
-        }.flatten
-      }
-
-
-
-
+        if (closestScheduleIndex == 0) {
+          List(Some(closestSchedule))
+        } else if (closestScheduleIndex == 1)
+          List(Some(closestSchedule), scheduleMonthsShorter(1))
+        else
+          List(Some(closestSchedule), scheduleMonthsShorter(1), scheduleMonthsShorter(2))
+      }.flatten
+    }
     val indicesConsistentWithPaymentsOptimised: Seq[Int] = List(50, 60, 80)
 
     indicesConsistentWithPaymentsOptimised.zip(scheduleList).toMap

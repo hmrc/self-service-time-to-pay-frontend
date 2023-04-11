@@ -19,17 +19,18 @@ package pagespecs.legacycalculator
 import langswitch.Languages.{English, Welsh}
 import ssttpcalculator.CalculatorType.Legacy
 import testsupport.ItSpec
+import testsupport.legacycalculator.CalculatorTypeFeatureHelper
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
 
-class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec {
+class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with CalculatorTypeFeatureHelper {
 
   override val overrideConfig: Map[String, Any] = Map(
     "calculatorType" -> Legacy.value
   )
 
-  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
+  def beginJourney(remainingIncomeAfterSpending: BigDecimal = 1000): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
@@ -76,27 +77,32 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec {
     }
 
   "display default options" - {
-    "if 50% of remaining income after spending covers amount remaining to pay including interest in one month " +
-      "displays only 50% default option" in {
-        beginJourney(netIncomeLargeEnoughForSingleDefaultPlan)
+    "if a two-month plan is the closest monthly amount less than 50% of remaining income after spending, show only this option" in {
+        beginJourney(4900)
 
-        howMuchCanYouPayEachMonthPage.optionIsDisplayed("4,914.40")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("6,250")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("7,500")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("10,000")
+        howMuchCanYouPayEachMonthPage.optionIsDisplayed("2,450")
+        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("4,900")
+        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("1,633.33")
+        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("1,633.34")
+//        howMuchCanYouPayEachMonthLegacyPage.assertContentDoesNotContainOrSeparator
       }
-    "if 60% of remaining income after spending covers amount remaining to pay including interest in one month " +
-      "displays only 50% and 60% default options" in {
-        beginJourney(netIncomeLargeEnoughForTwoDefaultPlans)
+    "if a three-month plan is the closest monthly amount less than 50% of remaining income after spending, " +
+      "show three-month and two-month plans only" in {
+        beginJourney(3267)
 
-        howMuchCanYouPayEachMonthPage.optionIsDisplayed("4,750")
-        howMuchCanYouPayEachMonthPage.optionIsDisplayed("4,914.40", Some("1"), Some("14.40"))
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("5,700")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("7,600")
-      }
+        howMuchCanYouPayEachMonthPage.optionIsDisplayed("1,633.33")
+        howMuchCanYouPayEachMonthPage.optionIsDisplayed("2,450")
+        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("4,900")
+        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("1,225")
+//        howMuchCanYouPayEachMonthLegacyPage.assertContentDoesNotContainOrSeparator
+
+    }
     "displays three default options otherwise" in {
       beginJourney()
-      howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+      howMuchCanYouPayEachMonthPage.optionIsDisplayed("490")
+      howMuchCanYouPayEachMonthPage.optionIsDisplayed("544.44")
+      howMuchCanYouPayEachMonthPage.optionIsDisplayed("612.50")
+      howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("700")
     }
   }
   "does not display a custom amount option" - {
@@ -115,10 +121,10 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec {
     beginJourney()
 
     howMuchCanYouPayEachMonthPage.clickOnWelshLink()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed(Welsh)
+    howMuchCanYouPayEachMonthLegacyPage.assertInitialPageIsDisplayed(Welsh)
 
     howMuchCanYouPayEachMonthPage.clickOnEnglishLink()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed(English)
+    howMuchCanYouPayEachMonthLegacyPage.assertInitialPageIsDisplayed(English)
   }
 
   "select an option and continue" - {
@@ -140,12 +146,12 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec {
 
   "returning to the page" - {
     "selecting a default option, continue, then back, returns to the schedule selection page" in {
-      beginJourney()
+      beginJourney(1000)
       howMuchCanYouPayEachMonthPage.selectAnOption()
       howMuchCanYouPayEachMonthPage.clickContinue()
       checkYourPaymentPlanPage.goBack()
 
-      howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+      howMuchCanYouPayEachMonthLegacyPage.assertInitialPageIsDisplayed
     }
   }
 }
