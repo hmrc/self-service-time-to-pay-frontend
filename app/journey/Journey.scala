@@ -173,10 +173,7 @@ object Journey {
     Writes.at[String](__ \ "$date" \ "$numberLong")
       .contramap(_.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
 
-  final val localDateTimeFormatX: Format[LocalDateTime] =
-    Format(localDateTimeReads, localDateTimeWrites)
-
-  implicit val localDateTimeFormat: Format[LocalDateTime] = localDateTimeFormatX
+  implicit val localDateTimeFormat: Format[LocalDateTime] = Format(localDateTimeReads, localDateTimeWrites)
 
   implicit val format: OFormat[Journey] = Json.format[Journey]
 

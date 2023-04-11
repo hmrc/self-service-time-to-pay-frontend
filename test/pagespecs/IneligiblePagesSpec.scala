@@ -81,27 +81,4 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
       }
     }
   }
-
-  "authorisation based eligibility" - {
-
-    //    "show you_need_to_request_access_to_self_assessment page no sa enrolments" in {
-    //      AuthStub.authorise(allEnrolments = Some(Set()))
-    //      TaxpayerStub.getTaxpayer()
-    //      DirectDebitStub.getBanksIsSuccessful()
-    //      GgStub.signInPage(port)
-    //      startPage.open()
-    //      startPage.clickOnStartNowButton()
-    //      youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed
-    //    }
-
-    //    "show you_need_to_request_access_to_self_assessment page when the user has no activated sa enrolments" in {
-    //      AuthStub.authorise(allEnrolments = Some(Set(unactivatedSaEnrolment)))
-    //      TaxpayerStub.getTaxpayer()
-    //      DirectDebitStub.getBanksIsSuccessful()
-    //      GgStub.signInPage(port)
-    //      startPage.open()
-    //      startPage.clickOnStartNowButton()
-    //      youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed
-    //    }
-  }
 }

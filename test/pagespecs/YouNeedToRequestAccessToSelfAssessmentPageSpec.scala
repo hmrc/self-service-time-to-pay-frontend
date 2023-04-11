@@ -98,22 +98,6 @@ class YouNeedToRequestAccessToSelfAssessmentPageSpec extends ItSpec {
     }
   }
 
-  //  "click on the call to action and navigate to PTA" in {
-  //    requestSaScenarios.foreach { s =>
-  //      TaxpayerStub.getTaxpayer()
-  //      DirectDebitStub.getBanksIsSuccessful()
-  //
-  //      begin(s.maybeSaUtr, s.allEnrolments)
-  //      startNowAndAssertRequestToSA()
-  //
-  //      AddTaxesFeStub.enrolForSaStub(s.maybeSaUtr)
-  //      AddTaxesFeStub.enrolForSaStubbedPage()
-  //
-  //      youNeedToRequestAccessToSelfAssessment.clickTheButton()
-  //      enrolForSaPage.assertInitialPageIsDisplayed()
-  //    }
-  //  }
-
   "click on the call to action and navigate call us page if auth sends no credentials/providerId" in {
     TaxpayerStub.getTaxpayer()
     DirectDebitStub.getBanksIsSuccessful()

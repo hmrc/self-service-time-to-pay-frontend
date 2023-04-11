@@ -25,7 +25,6 @@ class YouNeedToRequestAccessToSelfAssessmentPage(baseUrl: BaseUrl)(implicit webD
   import org.scalatestplus.selenium.WebBrowser._
 
   override def path: String = "/pay-what-you-owe-in-instalments/eligibility/access-your-self-assessment-online"
-  //  override def path: String = "/pay-what-you-owe-in-instalments/calculator/tax-liabilities"
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
