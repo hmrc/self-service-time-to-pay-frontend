@@ -9,7 +9,7 @@ object AppDependencies {
 
     "uk.gov.hmrc" %%  "play-conditional-form-mapping" % "1.12.0-play-28",
 
-    "uk.gov.hmrc" %% "time" % "3.25.0",   // breakes on newer versions
+    "uk.gov.hmrc" %% "time" % "3.25.0",   // brakes on newer versions
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "1.1.0",
 
     "uk.gov.hmrc" %% "time-to-pay-taxpayer-cor" % "0.48.0",
@@ -25,7 +25,6 @@ object AppDependencies {
   )
 
   val test = Seq(
-//    "uk.gov.hmrc" %% "bootstrap-test-play-xx" % "7.15.0" % Test,
     "com.github.tomakehurst" % "wiremock-standalone" % "2.27.2" % "test",
     "org.scalatest" %% "scalatest" % "3.2.15" % "test",
     "com.vladsch.flexmark" %  "flexmark-all" % "0.62.2" % "test",

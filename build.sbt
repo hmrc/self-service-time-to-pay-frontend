@@ -29,7 +29,7 @@ lazy val microservice = Project(appName, file("."))
       Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
   .settings(ScalariformSettings())
   .settings(
-    unmanagedSourceDirectories in Test := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common")
+    Test / unmanagedSourceDirectories := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common")
   )
   .settings(publishingSettings: _*)
   .settings(resolvers ++= Seq(
@@ -40,8 +40,8 @@ lazy val microservice = Project(appName, file("."))
     routesImport ++= Seq(
       "langswitch.Language"
     ),
-    sources in (Compile,doc) := Seq.empty,
-    publishArtifact in packageDoc := false
+    Compile / doc / sources  := Seq.empty,
+    packageDoc / publishArtifact  := false
   )
   .settings(
     scalacOptions ++= Seq(
