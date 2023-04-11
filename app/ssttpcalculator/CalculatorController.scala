@@ -41,9 +41,9 @@ import scala.util.{Failure, Success, Try}
 
 class CalculatorController @Inject() (
     mcc:                 MessagesControllerComponents,
-    paymentPlansService: PaymentPlansService, // used by PaymentsOptimised calculator feature
-    instalmentsService:  InstalmentsService, // used by PaymentsOptimised calculator feature
-    calculatorService:   CalculatorService, // used by Legacy calculator feature
+    paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentsOptimised calculator feature
+    instalmentsService:  InstalmentsService, // calculator type feature flag: used by PaymentsOptimised calculator feature
+    calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
     as:                  Actions,
     journeyService:      JourneyService,
     requestSupport:      RequestSupport,

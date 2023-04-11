@@ -64,14 +64,12 @@ class CalculatorService @Inject() (
       journey.maybePaymentDayOfMonth
     )
 
-    val durationInMonths: Int = journey.calculatorDuration
+    val selectedPlanAmount = journey.selectedPlanAmount
 
-    val schedule: PaymentSchedule = availableSchedules.find(_.instalments.length == durationInMonths)
-      .orElse(
-        availableSchedules.find(_.instalments.length == durationInMonths - 1)
-      ).getOrElse(
-          throw new RuntimeException(s"Could not find schedule corresponding to $durationInMonths [${journey}] [${availableSchedules}]")
-        )
+    val schedule: PaymentSchedule = availableSchedules.find(_.instalmentAmount == selectedPlanAmount)
+      .getOrElse(
+        throw new RuntimeException(s"Could not find schedule corresponding to $selectedPlanAmount [${journey}] [${availableSchedules}]")
+      )
     schedule
   }
 
