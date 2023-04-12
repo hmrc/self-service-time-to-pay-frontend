@@ -66,6 +66,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
       s"$pageAsString should be displayed when user has ineligible reason: [$reason]" in {
         beginJourney(reasonObject)
         page.assertInitialPageIsDisplayed
+        page.backButtonHref shouldBe None
       }
 
       s"OPS-5822: User can go back from the /call-us page (via browser back button) and try again but still end up on the /call-us page [$reason]" in {

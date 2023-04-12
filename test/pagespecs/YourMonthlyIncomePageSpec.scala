@@ -433,4 +433,8 @@ class YourMonthlyIncomePageSpec extends ItSpec {
     yourMonthlyIncomePage.assertInitialPageIsDisplayed(English)
   }
 
+  "back button" in {
+    beginJourney()
+    yourMonthlyIncomePage.backButtonHref shouldBe Some(s"${baseUrl.value}${addIncomeSpendingPage.path}")
+  }
 }

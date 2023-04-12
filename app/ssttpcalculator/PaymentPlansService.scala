@@ -20,7 +20,8 @@ import config.AppConfig
 import journey.Journey
 import play.api.Logger
 import play.api.mvc.Request
-import ssttpcalculator.model.{Payable, PaymentSchedule, PaymentsCalendar, TaxLiability}
+import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
+import ssttpcalculator.model.{Payable, PaymentPlanOption, PaymentSchedule, PaymentsCalendar, TaxLiability}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
@@ -28,6 +29,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class PaymentPlansService @Inject() (
     clockProvider:              ClockProvider,
@@ -44,7 +46,7 @@ class PaymentPlansService @Inject() (
       upfrontPayment:               BigDecimal,
       maybePaymentDayOfMonth:       Option[PaymentDayOfMonth],
       remainingIncomeAfterSpending: BigDecimal
-  )(implicit request: Request[_]): Map[Int, PaymentSchedule] = {
+  )(implicit request: Request[_]): Map[PaymentPlanOption, PaymentSchedule] = {
     val dateNow = clockProvider.nowDate()
     val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(sa)
     val paymentsCalendar = PaymentsCalendar.generate(upfrontPayment, dateNow, maybePaymentDayOfMonth)
@@ -53,19 +55,22 @@ class PaymentPlansService @Inject() (
     val firstSchedule = schedule(taxLiabilities, firstPlanAmount, paymentsCalendar, upfrontPayment)
     val scheduleList = firstSchedule match {
       case None => List()
-      case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule).flatten
+      case Some(schedule) if schedule.instalments.length <= appConfig.minimumLengthOfPaymentPlan =>
+        List(firstSchedule).flatten
       case _ =>
         val secondPlanAmount = proportionsOfNetMonthlyIncome(1) * remainingIncomeAfterSpending
         val secondSchedule = schedule(taxLiabilities, secondPlanAmount, paymentsCalendar, upfrontPayment)
         secondSchedule match {
-          case Some(schedule) if schedule.instalments.length <= 1 => List(firstSchedule, secondSchedule).flatten
+          case Some(schedule) if schedule.instalments.length <= appConfig.minimumLengthOfPaymentPlan =>
+            List(firstSchedule, secondSchedule).flatten
           case _ =>
             val thirdPlanAmount = proportionsOfNetMonthlyIncome(2) * remainingIncomeAfterSpending
             val thirdSchedule = schedule(taxLiabilities, thirdPlanAmount, paymentsCalendar, upfrontPayment)
             List(firstSchedule, secondSchedule, thirdSchedule).flatten
         }
     }
-    proportionsOfNetMonthlyIncome.map(p => (p * 100).toInt).zip(scheduleList).toMap
+    val paymentPlanOptionReferences: Seq[PaymentPlanOption] = Seq(Basic, Higher, Additional)
+    paymentPlanOptionReferences.zip(scheduleList).toMap
   }
 
   def customSchedule(
@@ -92,15 +97,15 @@ class PaymentPlansService @Inject() (
   }
 
   def schedule(
-      liabilities:       Seq[TaxLiability],
-      paymentDayOfMonth: BigDecimal,
-      paymentsCalendar:  PaymentsCalendar,
-      upfrontPayment:    BigDecimal
+      liabilities:          Seq[TaxLiability],
+      regularPaymentAmount: BigDecimal,
+      paymentsCalendar:     PaymentsCalendar,
+      upfrontPayment:       BigDecimal
   ): Option[PaymentSchedule] = {
 
     instalmentsService.regularInstalments(
       paymentsCalendar.planStartDate,
-      paymentDayOfMonth,
+      regularPaymentAmount,
       paymentsCalendar.regularPaymentDates,
       instalmentsService.payablesForInstalments(liabilities, paymentsCalendar, upfrontPayment),
       interestRateService.rateOn
@@ -116,7 +121,7 @@ class PaymentPlansService @Inject() (
             latePaymentInterestService.totalHistoricInterest(liabilities, planStartDate, interestRateService.getRatesForPeriod) +
               latePaymentInterestService.upfrontPaymentLateInterest(liabilities, planStartDate, upfrontPayment) +
               instalmentLatePaymentInterest
-          }
+          }.setScale(2, HALF_UP)
 
           Some(PaymentSchedule(
             startDate            = paymentsCalendar.planStartDate,
