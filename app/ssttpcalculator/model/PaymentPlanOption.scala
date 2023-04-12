@@ -21,23 +21,16 @@ import enumeratum._
 import scala.collection.immutable
 
 sealed trait PaymentPlanOption extends EnumEntry with EnumEntry.Uncapitalised {
-  val idKey: String
 }
 
 object PaymentPlanOption extends Enum[PaymentPlanOption] with PlayInsensitiveJsonEnum[PaymentPlanOption] {
   val values: immutable.IndexedSeq[PaymentPlanOption] = findValues
 
-  case object Basic extends PaymentPlanOption {
-    val idKey = "basic"
-  }
+  case object Basic extends PaymentPlanOption
 
-  case object Higher extends PaymentPlanOption {
-    val idKey = "higher"
-  }
+  case object Higher extends PaymentPlanOption
 
-  case object Additional extends PaymentPlanOption {
-    val idKey = "additional"
-  }
+  case object Additional extends PaymentPlanOption
 
   case object Custom extends PaymentPlanOption {
     val idKey = "custom"

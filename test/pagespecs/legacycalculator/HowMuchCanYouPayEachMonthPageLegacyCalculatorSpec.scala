@@ -84,7 +84,6 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
       howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("4,900")
       howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,633.33")
       howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,633.34")
-      //        howMuchCanYouPayEachMonthPageLegacyCalculator.assertContentDoesNotContainOrSeparator
     }
     "if a three-month plan is the closest monthly amount less than 50% of remaining income after spending, " +
       "show three-month and two-month plans only" in {
@@ -94,8 +93,6 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
         howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("2,450")
         howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("4,900")
         howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,225")
-        //        howMuchCanYouPayEachMonthPageLegacyCalculator.assertContentDoesNotContainOrSeparator
-
       }
     "displays three default options otherwise" in {
       beginJourney()

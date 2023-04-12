@@ -39,7 +39,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
   }
 
   def selectASpecificOption(paymentPlanOption: PaymentPlanOption): Unit = probing {
-    val specificRadioButton = xpath(s"""//*[@id="${paymentPlanOption.idKey}"]""")
+    val specificRadioButton = xpath(s"""//*[@id="${paymentPlanOption.entryName}"]""")
     click on specificRadioButton
   }
 
