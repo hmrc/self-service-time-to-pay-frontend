@@ -19,6 +19,7 @@ package pagespecs.legacycalculator
 import langswitch.Languages.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import ssttpcalculator.CalculatorType.Legacy
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.legacycalculator.LegacyCalculatorPages
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
@@ -74,7 +75,7 @@ class ViewPaymentPlanPageLegacyCalculatorSpec extends ItSpec with LegacyCalculat
 
     howMuchYouCouldAffordPage.clickContinue()
     howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPageLegacyCalculator.selectASpecificOption("50")
+    howMuchCanYouPayEachMonthPageLegacyCalculator.selectASpecificOption(PaymentPlanOption.Basic)
     howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
 
     checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed()

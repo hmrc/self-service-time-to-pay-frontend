@@ -19,6 +19,7 @@ package pagespecs
 import langswitch.Languages.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
 import ssttpcalculator.CalculatorType.PaymentOptimised
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -71,7 +72,7 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
 
     howMuchYouCouldAffordPage.clickContinue()
     howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPage.selectASpecificOption("50")
+    howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
     howMuchCanYouPayEachMonthPage.clickContinue()
 
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed()

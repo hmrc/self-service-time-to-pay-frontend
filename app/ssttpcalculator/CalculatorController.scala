@@ -25,9 +25,10 @@ import journey.{Journey, JourneyService, PaymentToday, PaymentTodayAmount}
 import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
-import model.PaymentSchedule
+import model.{PaymentPlanOption, PaymentSchedule}
 import _root_.model.PaymentScheduleExt
 import ssttpcalculator.legacy.CalculatorService
+import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.http.HeaderCarrier
@@ -197,7 +198,7 @@ class CalculatorController @Inject() (
 
               val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
                 case None                 => defaultPlanOptions
-                case Some(customSchedule) => Map((0, customSchedule)) ++ defaultPlanOptions
+                case Some(customSchedule) => Map((PaymentPlanOption.Custom, customSchedule)) ++ defaultPlanOptions
               }
 
               Ok(views.how_much_can_you_pay_each_month_form(
@@ -258,7 +259,7 @@ class CalculatorController @Inject() (
 
   private def maybePreviousCustomAmount(
       journey:            Journey,
-      defaultPlanOptions: Map[Int, PaymentSchedule]
+      defaultPlanOptions: Map[PaymentPlanOption, PaymentSchedule]
   )(implicit request: Request[_]): Option[PaymentSchedule] = {
     journey.maybePlanSelection.foldLeft(None: Option[PaymentSchedule])((_, planSelection) => planSelection.selection match {
       case Right(CustomPlanRequest(customAmount)) =>
@@ -279,7 +280,7 @@ class CalculatorController @Inject() (
     })
   }
 
-  private def isDefaultPlan(planAmount: BigDecimal, defaultPlanOptions: Map[Int, PaymentSchedule]): Boolean = {
+  private def isDefaultPlan(planAmount: BigDecimal, defaultPlanOptions: Map[PaymentPlanOption, PaymentSchedule]): Boolean = {
     defaultPlanOptions.map(_._2.instalments.headOption.fold(BigDecimal(0))(_.amount)).toList.contains(planAmount)
   }
 
@@ -300,7 +301,7 @@ class CalculatorController @Inject() (
       sa:                   SelfAssessmentDetails)(
       implicit
       request: Request[_]
-  ): Map[Int, PaymentSchedule] = {
+  ): Map[PaymentPlanOption, PaymentSchedule] = {
     val scheduleList = maybeClosestSchedule match {
       case None => List()
       case Some(closestSchedule) => {
@@ -320,8 +321,8 @@ class CalculatorController @Inject() (
           List(Some(closestSchedule), scheduleMonthsShorter(1), scheduleMonthsShorter(2))
       }.flatten
     }
-    val indicesConsistentWithPaymentsOptimised: Seq[Int] = List(50, 60, 80)
+    val paymentPlanOptionReferences: Seq[PaymentPlanOption] = Seq(Basic, Higher, Additional)
 
-    indicesConsistentWithPaymentsOptimised.zip(scheduleList).toMap
+    paymentPlanOptionReferences.zip(scheduleList).toMap
   }
 }

@@ -18,6 +18,7 @@ package pagespecs.legacycalculator
 
 import langswitch.Languages.{English, Welsh}
 import ssttpcalculator.CalculatorType.Legacy
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.legacycalculator.LegacyCalculatorPages
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
@@ -70,7 +71,7 @@ class CheckYourPaymentPlanPageLegacyCalculatorSpec extends ItSpec with LegacyCal
 
     howMuchYouCouldAffordPage.clickContinue()
     howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPageLegacyCalculator.selectASpecificOption("50")
+    howMuchCanYouPayEachMonthPageLegacyCalculator.selectASpecificOption(PaymentPlanOption.Basic)
     howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
 
     checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed()
@@ -121,7 +122,7 @@ class CheckYourPaymentPlanPageLegacyCalculatorSpec extends ItSpec with LegacyCal
     beginJourney()
     checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed
     checkYourPaymentPlanPageLegacyCalculator.clickChangeMonthlyAmountLink()
-    howMuchCanYouPayEachMonthPageLegacyCalculator.selectASpecificOption("60")
+    howMuchCanYouPayEachMonthPageLegacyCalculator.selectASpecificOption(PaymentPlanOption.Higher)
     howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
     checkYourPaymentPlanPageLegacyCalculator.assertWarningIsDisplayed(English)
     checkYourPaymentPlanPageLegacyCalculator.clickOnWelshLink()

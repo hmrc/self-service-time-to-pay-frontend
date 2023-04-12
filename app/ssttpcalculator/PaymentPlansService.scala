@@ -20,7 +20,8 @@ import config.AppConfig
 import journey.Journey
 import play.api.Logger
 import play.api.mvc.Request
-import ssttpcalculator.model.{Payable, PaymentSchedule, PaymentsCalendar, TaxLiability}
+import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
+import ssttpcalculator.model.{Payable, PaymentPlanOption, PaymentSchedule, PaymentsCalendar, TaxLiability}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
@@ -45,7 +46,7 @@ class PaymentPlansService @Inject() (
       upfrontPayment:               BigDecimal,
       maybePaymentDayOfMonth:       Option[PaymentDayOfMonth],
       remainingIncomeAfterSpending: BigDecimal
-  )(implicit request: Request[_]): Map[Int, PaymentSchedule] = {
+  )(implicit request: Request[_]): Map[PaymentPlanOption, PaymentSchedule] = {
     val dateNow = clockProvider.nowDate()
     val taxLiabilities: Seq[TaxLiability] = Payable.taxLiabilities(sa)
     val paymentsCalendar = PaymentsCalendar.generate(upfrontPayment, dateNow, maybePaymentDayOfMonth)
@@ -68,7 +69,8 @@ class PaymentPlansService @Inject() (
             List(firstSchedule, secondSchedule, thirdSchedule).flatten
         }
     }
-    proportionsOfNetMonthlyIncome.map(p => (p * 100).toInt).zip(scheduleList).toMap
+    val paymentPlanOptionReferences: Seq[PaymentPlanOption] = Seq(Basic, Higher, Additional)
+    paymentPlanOptionReferences.zip(scheduleList).toMap
   }
 
   def customSchedule(

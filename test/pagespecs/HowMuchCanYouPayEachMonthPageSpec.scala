@@ -18,6 +18,7 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import ssttpcalculator.CalculatorType.PaymentOptimised
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -248,7 +249,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
 
       howMuchCanYouPayEachMonthPage.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
 
-      howMuchCanYouPayEachMonthPage.selectASpecificOption("0")
+      howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Custom)
       howMuchCanYouPayEachMonthPage.clickContinue()
 
       checkYourPaymentPlanPage.goBack()

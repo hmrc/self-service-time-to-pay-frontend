@@ -17,11 +17,12 @@
 package ssttpcalculator
 
 import config.AppConfig
-import ssttpcalculator.model.{Instalment, Payables, TaxLiability, PaymentsCalendar}
+import ssttpcalculator.model.{Instalment, Payables, PaymentPlanOption, PaymentsCalendar, TaxLiability}
 import testsupport.ItSpec
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, Debit, SaUtr, SelfAssessmentDetails}
 import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 import play.api.test.FakeRequest
+
 import java.time.LocalDate
 
 class PaymentPlansServiceSpec2023 extends ItSpec {
@@ -604,11 +605,11 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
 
         println(result)
 
-        result(50)
+        result(PaymentPlanOption.Basic)
           .instalments.head.amount shouldBe remainingIncomeAfterSpending * 0.5
-        result(60)
+        result(PaymentPlanOption.Higher)
           .instalments.head.amount shouldBe remainingIncomeAfterSpending * 0.6
-        result(80)
+        result(PaymentPlanOption.Additional)
           .instalments.head.amount shouldBe remainingIncomeAfterSpending * 0.8
       }
       "plans for  50%, 60% and 80% of remaining income after spending" in {
@@ -625,9 +626,9 @@ class PaymentPlansServiceSpec2023 extends ItSpec {
 
         val result = paymentPlansService.defaultSchedules(sa, initialPayment, preferredPaymentDay, remainingIncomeAfterSpending)(FakeRequest())
 
-        result(50).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.5)
-        result(60).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.6)
-        result(80).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.8)
+        result(PaymentPlanOption.Basic).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.5)
+        result(PaymentPlanOption.Higher).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.6)
+        result(PaymentPlanOption.Additional).instalments.init.foreach(instalment => instalment.amount shouldBe remainingIncomeAfterSpending * 0.8)
       }
       "only one, if 50% of remaining income after spending covers total to pay" in {
         val sa = SelfAssessmentDetails(

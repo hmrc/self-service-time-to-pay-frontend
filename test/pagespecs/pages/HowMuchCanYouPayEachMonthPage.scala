@@ -21,6 +21,7 @@ import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.RichMatchers._
 
 class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -37,8 +38,8 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     click on radioButton
   }
 
-  def selectASpecificOption(id: String): Unit = probing {
-    val specificRadioButton = xpath(s"//*[@id=$id]")
+  def selectASpecificOption(paymentPlanOption: PaymentPlanOption): Unit = probing {
+    val specificRadioButton = xpath(s"""//*[@id="${paymentPlanOption.idKey}"]""")
     click on specificRadioButton
   }
 
