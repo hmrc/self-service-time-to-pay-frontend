@@ -41,6 +41,8 @@ class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exten
     case Languages.Welsh   => "Eich cynllun talu"
   }
 
+  def clickOnBackButton(): Unit = click on id("back-link")
+
   object Expected {
 
     object GlobalHeaderText {

@@ -132,7 +132,7 @@ class CheckYourPaymentPlanPageLegacyCalculatorSpec extends ItSpec with LegacyCal
   "back link goes to previous page" in {
     beginJourney()
     checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed
-    checkYourPaymentPlanPageLegacyCalculator.goBack()
+    checkYourPaymentPlanPageLegacyCalculator.clickOnBackButton()
     howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
   }
 }
