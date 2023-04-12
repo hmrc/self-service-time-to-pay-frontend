@@ -59,15 +59,7 @@ class CalculatorService @Inject() (
   val `14 day gap between the initial payment date and the first scheduled payment date`: Int = 14
   val LastPaymentDelayDays = 7
 
-  def computeClosestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule]): Option[PaymentSchedule] = {
-      def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
-      def closest(min: PaymentSchedule, next: PaymentSchedule) = if (difference(next) < difference(min)) next else min
-      def lessThan(schedule: PaymentSchedule): Boolean = amount - schedule.instalmentAmount >= 0
-
-    schedules.filter(lessThan).reduceOption(closest)
-  }
-
-  def computeClosestSchedules(
+  def defaultSchedules(
       maybeClosestSchedule: Option[PaymentSchedule],
       schedules:            List[PaymentSchedule]
   ): Map[PaymentPlanOption, PaymentSchedule] = {
@@ -84,8 +76,8 @@ class CalculatorService @Inject() (
     Seq(Basic, Higher, Additional).zip(scheduleList).toMap
   }
 
-  def computeSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
-    val availableSchedules: Seq[PaymentSchedule] = availablePaymentSchedules(
+  def selectedSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
+    val availableSchedules: Seq[PaymentSchedule] = allAvailableSchedules(
       journey.taxpayer.selfAssessment,
       journey.safeUpfrontPayment,
       journey.maybePaymentDayOfMonth
@@ -100,8 +92,16 @@ class CalculatorService @Inject() (
     schedule
   }
 
-  def availablePaymentSchedules(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0),
-                                maybePaymentDayOfMonth: Option[PaymentDayOfMonth])
+  def closestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule]): Option[PaymentSchedule] = {
+      def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
+      def closest(min: PaymentSchedule, next: PaymentSchedule) = if (difference(next) < difference(min)) next else min
+      def lessThan(schedule: PaymentSchedule): Boolean = amount - schedule.instalmentAmount >= 0
+
+    schedules.filter(lessThan).reduceOption(closest)
+  }
+
+  def allAvailableSchedules(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0),
+                            maybePaymentDayOfMonth: Option[PaymentDayOfMonth])
     (implicit request: Request[_]): List[PaymentSchedule] = {
 
     val rangeOfAvailableScheduleDurationsInMonths = minimumMonthsAllowedTTP to 13

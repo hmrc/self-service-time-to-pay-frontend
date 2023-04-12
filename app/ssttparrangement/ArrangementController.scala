@@ -125,7 +125,7 @@ class ArrangementController @Inject() (
       journey.requireScheduleIsDefined()
 
       val schedule = appConfig.calculatorType match {
-        case CalculatorType.Legacy => calculatorService.computeSchedule(journey)
+        case CalculatorType.Legacy => calculatorService.selectedSchedule(journey)
         case CalculatorType.PaymentOptimised =>
           paymentPlansService.selectedSchedule(journey).getOrElse(
             throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
@@ -281,7 +281,7 @@ class ArrangementController @Inject() (
     journeyService.getJourney.flatMap { journey =>
 
       val schedule = appConfig.calculatorType match {
-        case CalculatorType.Legacy => calculatorService.computeSchedule(journey)
+        case CalculatorType.Legacy => calculatorService.selectedSchedule(journey)
         case CalculatorType.PaymentOptimised =>
           paymentPlansService.selectedSchedule(journey).getOrElse(
             throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")

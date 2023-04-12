@@ -156,9 +156,9 @@ class CalculatorController @Inject() (
       appConfig.calculatorType match {
 
         case CalculatorType.Legacy =>
-          val availablePaymentSchedules = calculatorService.availablePaymentSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
-          val closestSchedule = calculatorService.computeClosestSchedule(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
-          val defaultPlanOptions = calculatorService.computeClosestSchedules(closestSchedule, availablePaymentSchedules)
+          val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
+          val closestSchedule = calculatorService.closestSchedule(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
+          val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
 
           defaultPlanOptions.values.toSeq.sortBy(_.instalmentAmount).headOption match {
             case None =>
