@@ -48,6 +48,11 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
     taxLiabilitiesPage.assertInitialPageIsDisplayed(English)
   }
 
+  "back button" in {
+    beginJourney()
+    taxLiabilitiesPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpeligibility.routes.SelfServiceTimeToPayController.start()}")
+  }
+
   "continue to payment-today" in {
     beginJourney()
     taxLiabilitiesPage.assertInitialPageIsDisplayed

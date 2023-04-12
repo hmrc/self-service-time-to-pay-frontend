@@ -23,6 +23,8 @@ import play.api.data.{Form, FormError, Mapping}
 import ssttpaffordability.model.IncomeCategory
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model.forms.helper.FormErrorWithFieldMessageOverrides
+import util.CurrencyUtil
+
 import scala.util.Try
 
 object AffordabilityForm {
@@ -89,19 +91,20 @@ object AffordabilityForm {
   )
 
   private def validateSpending(mappingStr: Mapping[String], key: String) = {
-    mappingStr.verifying(s"ssttp.affordability.your-monthly-spending.error.non-numerals.$key", { i: String =>
-      if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-    })
+    mappingStr
+      .verifying(s"ssttp.affordability.your-monthly-spending.error.non-numerals.$key", { i: String =>
+        i.isEmpty | i.matches(CurrencyUtil.regex)
+      })
       .verifying(s"ssttp.affordability.your-monthly-spending.error.two-decimals-only.$key", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
+        if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2 else true
       })
       .verifying(s"ssttp.affordability.your-monthly-spending.error.not-negative.$key", { i: String =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).toInt >= 0 else true
+        if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)).toInt >= 0 else true
       })
   }
 
   def parseStringToBigDecimal(string: String): BigDecimal = string match {
     case s if s.isEmpty => BigDecimal(0)
-    case s              => BigDecimal(s)
+    case s              => BigDecimal(CurrencyUtil.cleanAmount(s))
   }
 }

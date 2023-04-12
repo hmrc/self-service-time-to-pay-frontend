@@ -54,6 +54,11 @@ class InstalmentSummarySelectDatePageSpec extends ItSpec {
     selectDatePage.assertInitialPageIsDisplayed(English)
   }
 
+  "back button" in {
+    beginJourney()
+    selectDatePage.backButtonHref shouldBe Some(s"${baseUrl.value}${paymentSummaryPage.path}")
+  }
+
   "enter an invalid day" in {
     beginJourney()
     selectDatePage.selectSecondOption()

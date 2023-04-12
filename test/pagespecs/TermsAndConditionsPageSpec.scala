@@ -18,6 +18,8 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
+import ssttpcalculator.CalculatorType.PaymentOptimised
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -25,6 +27,10 @@ import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 import testsupport.testdata.DirectDebitTd
 
 class TermsAndConditionsPageSpec extends ItSpec {
+
+  override val overrideConfig: Map[String, Any] = Map(
+    "calculatorType" -> PaymentOptimised.value
+  )
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
@@ -66,7 +72,7 @@ class TermsAndConditionsPageSpec extends ItSpec {
 
     howMuchYouCouldAffordPage.clickContinue()
     howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPage.selectASpecificOption("50")
+    howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
     howMuchCanYouPayEachMonthPage.clickContinue()
 
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
@@ -96,6 +102,11 @@ class TermsAndConditionsPageSpec extends ItSpec {
 
     termsAndConditionsPage.clickOnEnglishLink()
     termsAndConditionsPage.assertInitialPageIsDisplayed(English)
+  }
+
+  "back button" in {
+    beginJourney()
+    termsAndConditionsPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
   }
 
   "click continue" in {

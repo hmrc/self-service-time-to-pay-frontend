@@ -18,6 +18,8 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
+import ssttpcalculator.CalculatorType.PaymentOptimised
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
@@ -25,6 +27,10 @@ import testsupport.testdata.DirectDebitTd
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
 class ViewPaymentPlanPageSpec extends ItSpec {
+
+  override val overrideConfig: Map[String, Any] = Map(
+    "calculatorType" -> PaymentOptimised.value
+  )
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
@@ -68,7 +74,7 @@ class ViewPaymentPlanPageSpec extends ItSpec {
 
     howMuchYouCouldAffordPage.clickContinue()
     howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPage.selectASpecificOption("50")
+    howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
     howMuchCanYouPayEachMonthPage.clickContinue()
 
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
@@ -104,11 +110,8 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     viewPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
   }
 
-  "back link goes to previous page" in {
+  "back button" in {
     beginJourney()
-    termsAndConditionsPage.clickContinue()
-    arrangementSummaryPage.clickLink()
-    viewPaymentPlanPage.goBack()
-    arrangementSummaryPage.assertInitialPageIsDisplayed
+    viewPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
   }
 }

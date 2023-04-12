@@ -19,7 +19,7 @@ package ssttpdirectdebit
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
-import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit.cleanSortCode
+import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit.{cleanAccountNumber, cleanSortCode}
 
 object DirectDebitForm {
 
@@ -33,8 +33,8 @@ object DirectDebitForm {
       .verifying("ssttp.direct-debit.form.error.sortCode.required", _.trim != "")
       .verifying("ssttp.direct-debit.form.error.sortCode.not-valid", x => condTrue(x.trim != "", isValidSortCode(x))),
     "accountNumber" -> text.verifying("ssttp.direct-debit.form.error.accountNumber.required", _.trim != "")
-      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | x.matches("[0-9]{6,8}"))
-  )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, cleanSortCode(sc), acctNo) }
+      .verifying("ssttp.direct-debit.form.error.accountNumber.not-valid", x => (x.trim == "") | x.matches("^(?:[ ]*\\d[ ]*){6,8}$"))
+  )({ case (name, sc, acctNo) => ArrangementDirectDebit(name, cleanSortCode(sc), cleanAccountNumber(acctNo)) }
     )({ case arrangementDirectDebit => Some((arrangementDirectDebit.accountName, arrangementDirectDebit.sortCode, arrangementDirectDebit.accountNumber)) })
 
   def isValidSortCode(sortCode: String): Boolean = {
