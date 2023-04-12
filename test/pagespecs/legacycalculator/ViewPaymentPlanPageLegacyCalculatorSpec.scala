@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package pagespecs
+package pagespecs.legacycalculator
 
 import langswitch.Languages.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
-import ssttpcalculator.CalculatorType.PaymentOptimised
+import ssttpcalculator.CalculatorType.Legacy
 import testsupport.ItSpec
+import testsupport.legacycalculator.LegacyCalculatorPages
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.DirectDebitTd
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
-class ViewPaymentPlanPageSpec extends ItSpec {
+class ViewPaymentPlanPageLegacyCalculatorSpec extends ItSpec with LegacyCalculatorPages {
 
   override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
+    "calculatorType" -> Legacy.value
   )
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
@@ -72,12 +73,12 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPage.selectASpecificOption("50")
-    howMuchCanYouPayEachMonthPage.clickContinue()
+    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+    howMuchCanYouPayEachMonthPageLegacyCalculator.selectASpecificOption("50")
+    howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
 
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
-    checkYourPaymentPlanPage.clickContinue()
+    checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed()
+    checkYourPaymentPlanPageLegacyCalculator.clickContinue()
 
     aboutBankAccountPage.assertInitialPageIsDisplayed()
     aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
@@ -98,7 +99,7 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     beginJourney()
     termsAndConditionsPage.clickContinue()
     arrangementSummaryPage.clickLink()
-    viewPaymentPlanPage.assertInitialPageIsDisplayed(English)
+    viewPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed(English)
   }
 
   "language Welsh" in {
@@ -106,14 +107,14 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     termsAndConditionsPage.clickOnWelshLink()
     termsAndConditionsPage.clickContinue()
     arrangementSummaryPage.clickLink()
-    viewPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
+    viewPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed(Welsh)
   }
 
   "back link goes to previous page" in {
     beginJourney()
     termsAndConditionsPage.clickContinue()
     arrangementSummaryPage.clickLink()
-    viewPaymentPlanPage.goBack()
+    viewPaymentPlanPageLegacyCalculator.goBack()
     arrangementSummaryPage.assertInitialPageIsDisplayed
   }
 }

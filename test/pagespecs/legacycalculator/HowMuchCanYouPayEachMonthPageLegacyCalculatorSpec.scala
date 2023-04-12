@@ -19,12 +19,12 @@ package pagespecs.legacycalculator
 import langswitch.Languages.{English, Welsh}
 import ssttpcalculator.CalculatorType.Legacy
 import testsupport.ItSpec
-import testsupport.legacycalculator.CalculatorTypeFeatureHelper
+import testsupport.legacycalculator.LegacyCalculatorPages
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
 
-class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with CalculatorTypeFeatureHelper {
+class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with LegacyCalculatorPages {
 
   override val overrideConfig: Map[String, Any] = Map(
     "calculatorType" -> Legacy.value

@@ -55,7 +55,7 @@ class ArrangementController @Inject() (
     mcc:                  MessagesControllerComponents,
     ddConnector:          DirectDebitConnector,
     arrangementConnector: ArrangementConnector,
-    paymentPlansService:  PaymentPlansService, // calculator type feature flag: used by PaymentsOptimised calculator feature
+    paymentPlansService:  PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
     calculatorService:    CalculatorService, // calculator type feature flag: used by Legacy calculator feature
     eligibilityService:   EligibilityService,
     taxPayerConnector:    TaxpayerConnector,
