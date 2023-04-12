@@ -26,19 +26,14 @@ import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
 import model.{PaymentPlanOption, PaymentSchedule}
-import _root_.model.PaymentScheduleExt
 import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import times.ClockProvider
-import timetopaytaxpayer.cor.model.SelfAssessmentDetails
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode.HALF_UP
-import scala.util.{Failure, Success, Try}
 
 class CalculatorController @Inject() (
     mcc:                 MessagesControllerComponents,
@@ -160,10 +155,10 @@ class CalculatorController @Inject() (
 
       appConfig.calculatorType match {
 
-        case CalculatorType.Legacy => {
+        case CalculatorType.Legacy =>
           val availablePaymentSchedules = calculatorService.availablePaymentSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
-          val closestSchedule = computeClosestSchedule(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
-          val defaultPlanOptions = computeClosestSchedules(closestSchedule, availablePaymentSchedules, sa)
+          val closestSchedule = calculatorService.computeClosestSchedule(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
+          val defaultPlanOptions = calculatorService.computeClosestSchedules(closestSchedule, availablePaymentSchedules, sa)
 
           defaultPlanOptions.values.toSeq.sortBy(_.instalmentAmount).headOption match {
             case None =>
@@ -177,9 +172,8 @@ class CalculatorController @Inject() (
                 defaultPlanOptions,
                 journey.maybePlanSelection))
           }
-        }
 
-        case CalculatorType.PaymentOptimised => {
+        case CalculatorType.PaymentOptimised =>
           val defaultPlanOptions = paymentPlansService.defaultSchedules(
             sa,
             journey.safeUpfrontPayment,
@@ -209,7 +203,6 @@ class CalculatorController @Inject() (
                 maxCustomAmount.setScale(2, HALF_UP),
                 journey.maybePlanSelection))
           }
-        }
       }
     }
   }
@@ -284,45 +277,4 @@ class CalculatorController @Inject() (
     defaultPlanOptions.map(_._2.instalments.headOption.fold(BigDecimal(0))(_.amount)).toList.contains(planAmount)
   }
 
-  // only used in legacy calculator feature
-  private def computeClosestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule])(implicit hc: HeaderCarrier): Option[PaymentSchedule] = {
-      def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
-
-      def closest(min: PaymentSchedule, next: PaymentSchedule) = if (difference(next) < difference(min)) next else min
-
-      def lessThan(schedule: PaymentSchedule): Boolean = amount - schedule.instalmentAmount >= 0
-
-    schedules.filter(lessThan).reduceOption(closest)
-  }
-
-  private def computeClosestSchedules(
-      maybeClosestSchedule: Option[PaymentSchedule],
-      schedules:            List[PaymentSchedule],
-      sa:                   SelfAssessmentDetails)(
-      implicit
-      request: Request[_]
-  ): Map[PaymentPlanOption, PaymentSchedule] = {
-    val scheduleList = maybeClosestSchedule match {
-      case None => List()
-      case Some(closestSchedule) => {
-        val closestScheduleIndex = schedules.indexOf(closestSchedule)
-
-          def scheduleMonthsShorter(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
-            case -1             => None
-            case i if i - n < 0 => None
-            case m              => Some(schedules(m - n))
-          }
-
-        if (closestScheduleIndex == 0) {
-          List(Some(closestSchedule))
-        } else if (closestScheduleIndex == 1)
-          List(Some(closestSchedule), scheduleMonthsShorter(1))
-        else
-          List(Some(closestSchedule), scheduleMonthsShorter(1), scheduleMonthsShorter(2))
-      }.flatten
-    }
-    val paymentPlanOptionReferences: Seq[PaymentPlanOption] = Seq(Basic, Higher, Additional)
-
-    paymentPlanOptionReferences.zip(scheduleList).toMap
-  }
 }
