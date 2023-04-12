@@ -100,12 +100,12 @@ class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
            |Total income	£2,000
            |
            |2.Spending
-           |Housing	£1,500
-           |Total spending	£1,500
+           |Housing	£1,000
+           |Total spending	£1,000
            |
            |3.Left over income
-           |Total left over income	£500
-           |Half of left over income	£250
+           |Total left over income	£1,000
+           |Half of left over income	£500
       """.stripMargin
 
       private val mainTextWelsh =
@@ -115,12 +115,12 @@ class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
            |Cyfanswm eich incwm	£2,000
            |
            |2.Gwariant
-           |Tai	£1,500
-           |Cyfanswm y gwariant	£1,500
+           |Tai	£1,000
+           |Cyfanswm y gwariant	£1,000
            |
            |3.Incwm sydd dros ben
-           |Cyfanswm yr incwm sydd dros ben	£500
-           |Hanner yr incwm sydd dros ben	£250
+           |Cyfanswm yr incwm sydd dros ben	£1,000
+           |Hanner yr incwm sydd dros ben	£500
       """.stripMargin
     }
 

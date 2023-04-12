@@ -19,11 +19,12 @@ package pagespecs.legacycalculator
 import langswitch.Languages.{English, Welsh}
 import ssttpcalculator.CalculatorType.Legacy
 import testsupport.ItSpec
+import testsupport.legacycalculator.LegacyCalculatorPages
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
 
-class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec {
+class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with LegacyCalculatorPages {
 
   override val overrideConfig: Map[String, Any] = Map(
     "calculatorType" -> Legacy.value
@@ -76,64 +77,66 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec {
     }
 
   "display default options" - {
-    "if 50% of remaining income after spending covers amount remaining to pay including interest in one month " +
-      "displays only 50% default option" in {
-        beginJourney(netIncomeLargeEnoughForSingleDefaultPlan)
+    "if a two-month plan is the closest monthly amount less than 50% of remaining income after spending, show only this option" in {
+      beginJourney(4900)
 
-        howMuchCanYouPayEachMonthPage.optionIsDisplayed("4,914.40")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("6,250")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("7,500")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("10,000")
-      }
-    "if 60% of remaining income after spending covers amount remaining to pay including interest in one month " +
-      "displays only 50% and 60% default options" in {
-        beginJourney(netIncomeLargeEnoughForTwoDefaultPlans)
+      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("2,450")
+      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("4,900")
+      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,633.33")
+      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,633.34")
+    }
+    "if a three-month plan is the closest monthly amount less than 50% of remaining income after spending, " +
+      "show three-month and two-month plans only" in {
+        beginJourney(3267)
 
-        howMuchCanYouPayEachMonthPage.optionIsDisplayed("4,750")
-        howMuchCanYouPayEachMonthPage.optionIsDisplayed("4,914.40", Some("1"), Some("14.40"))
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("5,700")
-        howMuchCanYouPayEachMonthPage.optionIsNotDisplayed("7,600")
+        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("1,633.33")
+        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("2,450")
+        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("4,900")
+        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,225")
       }
     "displays three default options otherwise" in {
       beginJourney()
-      howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("490")
+      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("544.44")
+      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("612.50")
+      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("700")
     }
   }
   "does not display a custom amount option" - {
     "in English" in {
       beginJourney()
-      howMuchCanYouPayEachMonthPage.customAmountOptionNotDisplayed
+      howMuchCanYouPayEachMonthPageLegacyCalculator.customAmountOptionNotDisplayed
     }
     "in Welsh" in {
       beginJourney()
-      howMuchCanYouPayEachMonthPage.clickOnWelshLink()
-      howMuchCanYouPayEachMonthPage.customAmountOptionNotDisplayed(Welsh)
+      howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
+      howMuchCanYouPayEachMonthPageLegacyCalculator.customAmountOptionNotDisplayed(Welsh)
     }
   }
 
   "language" in {
     beginJourney()
 
-    howMuchCanYouPayEachMonthPage.clickOnWelshLink()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed(Welsh)
+    howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
+    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed(Welsh)
 
-    howMuchCanYouPayEachMonthPage.clickOnEnglishLink()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed(English)
+    howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnEnglishLink()
+    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed(English)
   }
 
   "select an option and continue" - {
     "basic case" in {
       beginJourney()
-      howMuchCanYouPayEachMonthPage.selectAnOption()
-      howMuchCanYouPayEachMonthPage.clickContinue()
-      checkYourPaymentPlanPage.expectedHeadingContent(English)
+      howMuchCanYouPayEachMonthPageLegacyCalculator.selectAnOption()
+      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+      checkYourPaymentPlanPageLegacyCalculator.expectedHeadingContent(English)
     }
     "case with large number of decimal places of plan selection amounts" in {
       beginJourney(netIncomeLargeEnoughForSingleDefaultPlan)
 
-      howMuchCanYouPayEachMonthPage.selectAnOption()
-      howMuchCanYouPayEachMonthPage.clickContinue()
-      checkYourPaymentPlanPage.expectedHeadingContent(English)
+      howMuchCanYouPayEachMonthPageLegacyCalculator.selectAnOption()
+      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+      checkYourPaymentPlanPageLegacyCalculator.expectedHeadingContent(English)
     }
 
   }
@@ -145,7 +148,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.clickContinue()
       checkYourPaymentPlanPage.clickOnBackButton()
 
-      howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+      howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
     }
   }
 }

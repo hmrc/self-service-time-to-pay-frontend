@@ -23,6 +23,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import pagespecs.pages._
+import pagespecs.pages.legacycalculator.HowMuchCanYouPayEachMonthPageLegacyCalculator
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
@@ -54,7 +55,6 @@ class ItSpec
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
-    "microservice.services.campaign-manager.port" -> WireMockSupport.port,
     "microservice.services.ia.port" -> WireMockSupport.port,
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",

@@ -103,57 +103,35 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Payments collected on
            |$paymentDayOfMonthEnglish or next working day
            |Change
-           |21 monthly payments of
-           |£250
+           |10 monthly payments of
+           |£500
            |Change the day of the month that payments will be collected on
            |Payment schedule
            |December 2019
-           |£250
+           |£500
            |January 2020
-           |£250
+           |£500
            |February 2020
-           |£250
+           |£500
            |March 2020
-           |£250
+           |£500
            |April 2020
-           |£250
+           |£500
            |May 2020
-           |£250
+           |£500
            |June 2020
-           |£250
+           |£500
            |July 2020
-           |£250
+           |£500
            |August 2020
-           |£250
+           |£500
            |September 2020
-           |£250
-           |October 2020
-           |£250
-           |November 2020
-           |£250
-           |December 2020
-           |£250
-           |January 2021
-           |£250
-           |February 2021
-           |£250
-           |March 2021
-           |£250
-           |April 2021
-           |£250
-           |May 2021
-           |£250
-           |June 2021
-           |£250
-           |July 2021
-           |£250
-           |August 2021
-           |£38.16
+           |£473.08
            |Estimated total interest
            |included in monthly payments
-           |£5,038.16
+           |£73.08
            |Total to pay
-           |£5,038.16
+           |£4,973.08
            |Agree and continue
         """.stripMargin
       }
@@ -172,54 +150,32 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |yr $paymentDayOfMonthWelsh neu’r diwrnod gwaith nesaf
            |Newid
            Rhagfyr 2019
-           |£250
+           |£500
            |Ionawr 2020
-           |£250
+           |£500
            |Chwefror 2020
-           |£250
+           |£500
            |Mawrth 2020
-           |£250
+           |£500
            |Ebrill 2020
-           |£250
+           |£500
            |Mai 2020
-           |£250
+           |£500
            |Mehefin 2020
-           |£250
+           |£500
            |Gorffennaf 2020
-           |£250
+           |£500
            |Awst 2020
-           |£250
+           |£500
            |Medi 2020
-           |£250
-           |Hydref 2020
-           |£250
-           |Tachwedd 2020
-           |£250
-           |Rhagfyr 2020
-           |£250
-           |Ionawr 2021
-           |£250
-           |Chwefror 2021
-           |£250
-           |Mawrth 2021
-           |£250
-           |Ebrill 2021
-           |£250
-           |Mai 2021
-           |£250
-           |Mehefin 2021
-           |£250
-           |Gorffennaf 2021
-           |£250
-           |Awst 2021
-           |£38.16
+           |£473.08
            |Amcangyfrif o gyfanswm y llog
            |wedi’i gynnwys yn y taliadau misol
-           |£5,038.16
+           |£73.08
            |Y cyfanswm i’w dalu
-           |£5,038.16
+           |£4,973.08
            |Cytuno ac yn eich blaen
-""".stripMargin
+        """.stripMargin
       }
     }
 

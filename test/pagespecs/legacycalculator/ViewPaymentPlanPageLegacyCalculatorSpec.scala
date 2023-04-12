@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package pagespecs
+package pagespecs.legacycalculator
 
 import langswitch.Languages.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
-import ssttpcalculator.CalculatorType.PaymentOptimised
+import ssttpcalculator.CalculatorType.Legacy
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
+import testsupport.legacycalculator.LegacyCalculatorPages
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
-import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 import testsupport.testdata.DirectDebitTd
+import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
-class DirectDebitConfirmationPageSpec extends ItSpec {
+class ViewPaymentPlanPageLegacyCalculatorSpec extends ItSpec with LegacyCalculatorPages {
 
   override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
+    "calculatorType" -> Legacy.value
   )
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
@@ -38,6 +39,8 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    DirectDebitStub.postPaymentPlan
+    ArrangementStub.postTtpArrangement
 
     startPage.open()
     startPage.assertInitialPageIsDisplayed()
@@ -71,12 +74,12 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
-    howMuchCanYouPayEachMonthPage.clickContinue()
+    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+    howMuchCanYouPayEachMonthPageLegacyCalculator.selectASpecificOption(PaymentPlanOption.Basic)
+    howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
 
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
-    checkYourPaymentPlanPage.clickContinue()
+    checkYourPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed()
+    checkYourPaymentPlanPageLegacyCalculator.clickContinue()
 
     aboutBankAccountPage.assertInitialPageIsDisplayed()
     aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
@@ -86,38 +89,33 @@ class DirectDebitConfirmationPageSpec extends ItSpec {
     directDebitPage.assertInitialPageIsDisplayed()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+    DirectDebitStub.getBanksIsSuccessful()
     directDebitPage.clickContinue()
 
     directDebitConfirmationPage.assertInitialPageIsDisplayed()
-  }
-
-  "language" in {
-    beginJourney()
-    directDebitConfirmationPage.assertInitialPageIsDisplayed
-
-    directDebitConfirmationPage.clickOnWelshLink()
-    directDebitConfirmationPage.assertInitialPageIsDisplayed(Welsh)
-
-    directDebitConfirmationPage.clickOnEnglishLink()
-    directDebitConfirmationPage.assertInitialPageIsDisplayed(English)
-  }
-
-  "back button" in {
-    beginJourney()
-    directDebitConfirmationPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()}")
-  }
-
-  "change bank details" in {
-    beginJourney()
-    directDebitConfirmationPage.clickChangeButton()
-    aboutBankAccountPage.assertInitialPageIsDisplayed
-  }
-
-  "click continue" in {
-    beginJourney()
-    DirectDebitStub.postPaymentPlan
-    ArrangementStub.postTtpArrangement
     directDebitConfirmationPage.clickContinue()
-    termsAndConditionsPage.assertInitialPageIsDisplayed
+  }
+
+  "language English" in {
+    beginJourney()
+    termsAndConditionsPage.clickContinue()
+    arrangementSummaryPage.clickLink()
+    viewPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed(English)
+  }
+
+  "language Welsh" in {
+    beginJourney()
+    termsAndConditionsPage.clickOnWelshLink()
+    termsAndConditionsPage.clickContinue()
+    arrangementSummaryPage.clickLink()
+    viewPaymentPlanPageLegacyCalculator.assertInitialPageIsDisplayed(Welsh)
+  }
+
+  "back link goes to previous page" in {
+    beginJourney()
+    termsAndConditionsPage.clickContinue()
+    arrangementSummaryPage.clickLink()
+    viewPaymentPlanPageLegacyCalculator.goBack()
+    arrangementSummaryPage.assertInitialPageIsDisplayed
   }
 }
