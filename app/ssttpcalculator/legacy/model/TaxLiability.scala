@@ -18,8 +18,7 @@ package ssttpcalculator.legacy.model
 
 import java.time.LocalDate
 import play.api.libs.json.{Json, OFormat}
-
-import scala.math.BigDecimal
+import ssttpcalculator.model.{LatePayment, Payment}
 
 final case class TaxLiability(
     amount:  BigDecimal,

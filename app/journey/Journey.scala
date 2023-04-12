@@ -23,7 +23,6 @@ import play.api.libs.json.{Format, Json, OFormat}
 import repo.HasId
 import ssttpaffordability.model.Income
 import ssttpaffordability.model.Spending
-import ssttpcalculator.legacy.model.CalculatorDuration
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.selfservicetimetopay.models._

@@ -24,8 +24,8 @@ import ssttpcalculator.{DurationService, InterestRateService}
 import ssttpcalculator.legacy.CalculatorService.asTaxLiability
 import ssttpcalculator.legacy.model.TaxPaymentPlan
 import ssttpcalculator.legacy.model.TaxLiability.{amortizedLiabilities, latePayments}
-import ssttpcalculator.model.{Debit, Instalment, PaymentPlanOption, PaymentSchedule}
-import ssttpcalculator.legacy.model.{LatePayment, Payment, TaxLiability}
+import ssttpcalculator.model.{Debit, Instalment, LatePayment, Payment, PaymentPlanOption, PaymentSchedule}
+import ssttpcalculator.legacy.model.TaxLiability
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import timetopaytaxpayer.cor.model.{Debit => CorDebit}
