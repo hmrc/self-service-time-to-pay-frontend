@@ -53,6 +53,11 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
     paymentTodayCalculatorPage.assertInitialPageIsDisplayed(English)
   }
 
+  "back button" in {
+    beginJourney()
+    paymentTodayCalculatorPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()}")
+  }
+
   "not valid amount" in {
     beginJourney()
     paymentTodayCalculatorPage.enterAmount("99999")

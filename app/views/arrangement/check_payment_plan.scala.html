@@ -32,7 +32,8 @@
         appConfig: config.AppConfig
 )
 @main(
-    title = messages("ssttp.arrangement.check-payment-plan.h1")
+    title = messages("ssttp.arrangement.check-payment-plan.h1"),
+    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
 ) {
 
     <h1 class="govuk-heading-xl">@messages("ssttp.arrangement.check-payment-plan.h1")</h1>

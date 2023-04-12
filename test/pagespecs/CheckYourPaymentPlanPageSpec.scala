@@ -17,12 +17,18 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
+import ssttpcalculator.CalculatorType.PaymentOptimised
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
 class CheckYourPaymentPlanPageSpec extends ItSpec {
+
+  override val overrideConfig: Map[String, Any] = Map(
+    "calculatorType" -> PaymentOptimised.value
+  )
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
@@ -64,7 +70,7 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
 
     howMuchYouCouldAffordPage.clickContinue()
     howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPage.selectASpecificOption("50")
+    howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
     howMuchCanYouPayEachMonthPage.clickContinue()
 
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
@@ -79,6 +85,11 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     checkYourPaymentPlanPage.clickOnEnglishLink()
 
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed(English)
+  }
+
+  "back button" in {
+    beginJourney()
+    checkYourPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchCanYouPayEachMonthPage.path}")
   }
 
   "change monthly instalments" in {
@@ -115,17 +126,10 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     beginJourney()
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed
     checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
-    howMuchCanYouPayEachMonthPage.selectASpecificOption("60")
+    howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Higher)
     howMuchCanYouPayEachMonthPage.clickContinue()
     checkYourPaymentPlanPage.assertWarningIsDisplayed(English)
     checkYourPaymentPlanPage.clickOnWelshLink()
     checkYourPaymentPlanPage.assertWarningIsDisplayed(Welsh)
-  }
-
-  "back link goes to previous page" in {
-    beginJourney()
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed
-    checkYourPaymentPlanPage.goBack()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
   }
 }
