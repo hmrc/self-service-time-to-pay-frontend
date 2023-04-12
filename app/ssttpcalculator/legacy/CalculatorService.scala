@@ -61,9 +61,7 @@ class CalculatorService @Inject() (
 
   def computeClosestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule]): Option[PaymentSchedule] = {
       def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
-
       def closest(min: PaymentSchedule, next: PaymentSchedule) = if (difference(next) < difference(min)) next else min
-
       def lessThan(schedule: PaymentSchedule): Boolean = amount - schedule.instalmentAmount >= 0
 
     schedules.filter(lessThan).reduceOption(closest)
@@ -71,30 +69,19 @@ class CalculatorService @Inject() (
 
   def computeClosestSchedules(
       maybeClosestSchedule: Option[PaymentSchedule],
-      schedules:            List[PaymentSchedule],
-      sa:                   SelfAssessmentDetails): Map[PaymentPlanOption, PaymentSchedule] = {
+      schedules:            List[PaymentSchedule]
+  ): Map[PaymentPlanOption, PaymentSchedule] = {
     val scheduleList = maybeClosestSchedule match {
       case None => List()
       case Some(closestSchedule) => {
-        val closestScheduleIndex = schedules.indexOf(closestSchedule)
-
-          def scheduleMonthsShorter(n: Int): Option[PaymentSchedule] = closestScheduleIndex match {
-            case -1             => None
-            case i if i - n < 0 => None
-            case m              => Some(schedules(m - n))
-          }
-
-        if (closestScheduleIndex == 0) {
-          List(Some(closestSchedule))
-        } else if (closestScheduleIndex == 1)
-          List(Some(closestSchedule), scheduleMonthsShorter(1))
-        else
-          List(Some(closestSchedule), scheduleMonthsShorter(1), scheduleMonthsShorter(2))
+        schedules.indexOf(closestSchedule) match {
+          case 0      => List(Some(closestSchedule))
+          case 1      => List(Some(closestSchedule), Some(schedules(0)))
+          case i: Int => List(Some(closestSchedule), Some(schedules(i - 1)), Some(schedules(i - 2)))
+        }
       }.flatten
     }
-    val paymentPlanOptionReferences: Seq[PaymentPlanOption] = Seq(Basic, Higher, Additional)
-
-    paymentPlanOptionReferences.zip(scheduleList).toMap
+    Seq(Basic, Higher, Additional).zip(scheduleList).toMap
   }
 
   def computeSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = {
