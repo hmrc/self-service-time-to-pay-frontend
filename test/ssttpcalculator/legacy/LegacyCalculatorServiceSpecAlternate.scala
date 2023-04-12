@@ -18,8 +18,8 @@ package ssttpcalculator.legacy
 
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.api.Logger
-import ssttpcalculator.model.PaymentSchedule
-import ssttpcalculator.legacy.model.{TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{PaymentSchedule, TaxLiability}
+import ssttpcalculator.legacy.model.TaxPaymentPlan
 import ssttpcalculator.{DurationService, InterestRateService}
 import testsupport.ItSpec
 

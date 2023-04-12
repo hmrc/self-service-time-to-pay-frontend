@@ -20,8 +20,8 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import ssttpcalculator.{DurationService, InterestRateService}
 import ssttpcalculator.legacy.CalculatorService._
-import ssttpcalculator.model.PaymentSchedule
-import ssttpcalculator.legacy.model.{TaxLiability, TaxPaymentPlan}
+import ssttpcalculator.model.{PaymentSchedule, TaxLiability}
+import ssttpcalculator.legacy.model.TaxPaymentPlan
 import testsupport.DateSupport
 import times.ClockProvider
 

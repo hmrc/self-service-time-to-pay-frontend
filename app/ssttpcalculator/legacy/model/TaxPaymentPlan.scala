@@ -18,6 +18,8 @@ package ssttpcalculator.legacy.model
 
 import java.time.LocalDate
 import play.api.libs.json.{Json, JsonValidationError, OFormat, OWrites}
+import ssttpcalculator.model.TaxLiability
+
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 case class TaxPaymentPlan(
