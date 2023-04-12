@@ -143,7 +143,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec {
       beginJourney()
       howMuchCanYouPayEachMonthPage.selectAnOption()
       howMuchCanYouPayEachMonthPage.clickContinue()
-      checkYourPaymentPlanPage.goBack()
+      checkYourPaymentPlanPage.clickOnBackButton()
 
       howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
     }
