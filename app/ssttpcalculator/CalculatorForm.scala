@@ -22,9 +22,8 @@ import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{Form, FormError, Forms, Mapping}
 import uk.gov.hmrc.selfservicetimetopay.models._
 import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
-import util.CurrencyUtil
 
-import scala.math.BigDecimal.RoundingMode.HALF_UP
+import scala.math.BigDecimal.RoundingMode.{CEILING, FLOOR, HALF_UP}
 import scala.util.Try
 
 object CalculatorForm {
@@ -34,20 +33,21 @@ object CalculatorForm {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => i.nonEmpty })
-        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals",
-          { i: String => i.isEmpty | i.matches(CurrencyUtil.regex) })
+        .verifying("ssttp.calculator.form.payment_today.amount.non-numerals", { i: String =>
+          if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
+        })
         .verifying("ssttp.calculator.form.payment_today.amount.required.min", { i: String =>
-          if (i.nonEmpty && Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess && BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2) BigDecimal(CurrencyUtil.cleanAmount(i)) >= 1.00 else true
+          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 1.00 else true
         })
         .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
-          if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2 else true
+          if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
         })
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", i =>
-          if (i.nonEmpty && Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)) < totalDue else true)
+          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < totalDue else true)
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
-          if (i.nonEmpty && Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)) < MaxCurrencyValue else true
+          if (i.nonEmpty && Try(BigDecimal(i)).isSuccess) BigDecimal(i) < MaxCurrencyValue else true
         })
-    )(text => CalculatorPaymentTodayForm(CurrencyUtil.cleanAmount(text)))(bd => Some(bd.amount.toString)))
+    )(text => CalculatorPaymentTodayForm(text))(bd => Some(bd.amount.toString)))
 
   private val planSelectionFormatter: Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
@@ -102,7 +102,7 @@ object CalculatorForm {
     }
   }
 
-  def selectPlanForm(minCustomAmount: BigDecimal = 0, maxCustomAmount: BigDecimal = 0): Form[PlanSelection] =
+  def selectPlanForm(minCustomAmount: BigDecimal, maxCustomAmount: BigDecimal): Form[PlanSelection] =
     Form(mapping(
       "plan-selection" -> planSelectionMapping,
       "custom-amount-input" -> mandatoryIf(

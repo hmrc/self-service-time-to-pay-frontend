@@ -28,7 +28,6 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
-@import ssttpcalculator.model.PaymentPlanOption.Custom
 
 @this(
   main: views.html.main,
@@ -40,7 +39,7 @@
 @(
         redirectCall: Call,
         selectPlanForm: Form[PlanSelection],
-        schedules: Map[PaymentPlanOption, PaymentSchedule],
+        schedules: Map[Int, PaymentSchedule],
         minCustomAmount: BigDecimal,
         maxCustomAmount: BigDecimal,
         previousFormSubmission: Option[PlanSelection])(
@@ -52,7 +51,7 @@
 
 @scheduleOptionsSequence = @{schedules.toSeq.map ( schedule => {
     RadioItem(
-        id = Some(schedule._1.entryName),
+        id = Some(schedule._1.toString),
         value = Some(schedule._2.getMonthlyInstalment.toString),
         content = HtmlContent(Messages(
             "ssttp.calculator.results.amount.option",
@@ -104,8 +103,7 @@
 
 @main(
     title = Messages("ssttp.calculator.results.title"),
-    hasErrors = selectPlanForm.hasErrors,
-    backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford())
+    hasErrors = selectPlanForm.hasErrors
 ) {
 
 <section class="govuk-body">
@@ -116,7 +114,7 @@
             title = Text(Messages("ssttp.calculator.results.error.title")),
             errorList = selectPlanForm.errors.asTextErrorLinks.map {error =>
                 if(error.content == Text(messages("ssttp.calculator.results.option.error.no-selection"))) error.copy (
-                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("plan-selection", s._1.entryName)))
+                    href = schedules.headOption.fold(error.href)(s => error.href.map(_.replaceAll("plan-selection", s._1.toString)))
                 ) else error
             }
         )
@@ -134,7 +132,7 @@
         <p class="govuk-body">
             @{previousFormSubmission.fold(messages("ssttp.calculator.results.p1"))(_.selection match {
                 case Right(CustomPlanRequest(amount)) => messages("ssttp.calculator.results.p1.custom-amount", currency(amount))
-                case Left(SelectedPlan(amount)) if schedules.headOption.fold(false)(_._1 == PaymentPlanOption.Custom) => messages("ssttp.calculator.results.p1.custom-amount", currency(amount))
+                case Left(SelectedPlan(amount)) if schedules.headOption.fold(false)(_._1 == 0) => messages("ssttp.calculator.results.p1.custom-amount", currency(amount))
                 case _ => messages("ssttp.calculator.results.p1")
             })}
         </p>

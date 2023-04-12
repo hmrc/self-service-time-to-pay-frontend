@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Singleton
 import play.api.Logger
-import ssttpcalculator.model.InterestRate
+import ssttpcalculator.model.{InterestRate, LatePayment}
 
 import scala.io.Source
 

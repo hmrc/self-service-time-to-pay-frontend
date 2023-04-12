@@ -29,10 +29,8 @@ object ArrangementDirectDebit {
     .replaceAll(" ", "")
     .trim
 
-  def cleanAccountNumber(accountNumber: String): String = accountNumber.replaceAll(" ", "").trim
-
   def from(bankDetails: BankDetails): ArrangementDirectDebit =
-    ArrangementDirectDebit(bankDetails.accountName, cleanSortCode(bankDetails.sortCode), cleanAccountNumber(bankDetails.accountNumber))
+    ArrangementDirectDebit(bankDetails.accountName, cleanSortCode(bankDetails.sortCode), bankDetails.accountNumber)
 
   def to(arrangementDirectDebit: ArrangementDirectDebit): Option[BankDetails] =
     Some(BankDetails(accountName   = arrangementDirectDebit.accountName,

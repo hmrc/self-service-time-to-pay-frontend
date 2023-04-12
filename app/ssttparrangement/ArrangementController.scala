@@ -29,8 +29,7 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.{CalculatorType, PaymentPlansService}
+import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
@@ -55,8 +54,7 @@ class ArrangementController @Inject() (
     mcc:                  MessagesControllerComponents,
     ddConnector:          DirectDebitConnector,
     arrangementConnector: ArrangementConnector,
-    paymentPlansService:  PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
-    calculatorService:    CalculatorService, // calculator type feature flag: used by Legacy calculator feature
+    paymentPlansService:  PaymentPlansService,
     eligibilityService:   EligibilityService,
     taxPayerConnector:    TaxpayerConnector,
     auditService:         AuditService,
@@ -123,15 +121,9 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.getInstalmentSummary: $request")
     journeyService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
-
-      val schedule = appConfig.calculatorType match {
-        case CalculatorType.Legacy => calculatorService.selectedSchedule(journey)
-        case CalculatorType.PaymentOptimised =>
-          paymentPlansService.selectedSchedule(journey).getOrElse(
-            throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-          )
-      }
-
+      val schedule: PaymentSchedule = paymentPlansService.selectedSchedule(journey).getOrElse(
+        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
+      )
       val leftOverIncome: BigDecimal = journey.remainingIncomeAfterSpending
       val monthlyPaymentAmountChosen = journey.maybeSelectedPlanAmount.getOrElse(
         throw new IllegalArgumentException("a selection should have been made of monthly payment")
@@ -279,14 +271,9 @@ class ArrangementController @Inject() (
   def viewPaymentPlan(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"ArrangementController.getDeclaration: $request")
     journeyService.getJourney.flatMap { journey =>
-
-      val schedule = appConfig.calculatorType match {
-        case CalculatorType.Legacy => calculatorService.selectedSchedule(journey)
-        case CalculatorType.PaymentOptimised =>
-          paymentPlansService.selectedSchedule(journey).getOrElse(
-            throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-          )
-      }
+      val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
+        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
+      )
       Future.successful(Ok(views.view_payment_plan(schedule, journey.ddRef)))
     }
   }

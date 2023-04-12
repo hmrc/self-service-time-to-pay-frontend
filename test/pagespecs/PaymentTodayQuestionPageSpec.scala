@@ -45,11 +45,6 @@ class PaymentTodayQuestionPageSpec extends ItSpec {
     paymentTodayQuestionPage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    beginJourney()
-    paymentTodayQuestionPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getTaxLiabilities()}")
-  }
-
   "select yes and go to calculator payment-today" in {
     beginJourney()
     paymentTodayQuestionPage.assertInitialPageIsDisplayed
@@ -68,6 +63,13 @@ class PaymentTodayQuestionPageSpec extends ItSpec {
     paymentTodayQuestionPage.clickContinue()
 
     selectDatePage.assertInitialPageIsDisplayed
+  }
+
+  "back link goes to previous page" in {
+    beginJourney()
+    paymentTodayQuestionPage.assertInitialPageIsDisplayed
+    paymentTodayQuestionPage.goBack()
+    taxLiabilitiesPage.assertInitialPageIsDisplayed
   }
 }
 

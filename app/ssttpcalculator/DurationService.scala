@@ -36,10 +36,4 @@ class DurationService {
       case _          => 0
     }
   }
-
-  def getRepaymentDates(startDate: LocalDate, endDate: LocalDate): Seq[LocalDate] = {
-    if (startDate.isAfter(endDate)) throw new IllegalArgumentException("Start date must be BEFORE end date")
-
-    Iterator.iterate(startDate)(_ plusMonths 1).takeWhile(_.compareTo(endDate) <= 0).toSeq
-  }
 }

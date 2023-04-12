@@ -97,7 +97,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           addIncomeSpendingPage.assertIncomeTableDisplayed(
             IncomeBudgetLine(MonthlyIncome, monthlyIncomeAmount)
           )
-          addIncomeSpendingPage.assertZeroIncomeCategoriesDisplayed(Benefits, OtherIncome)
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(Benefits, OtherIncome)
         }
         "only benefits filled out" in {
           beginJourney()
@@ -110,7 +110,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           addIncomeSpendingPage.assertIncomeTableDisplayed(
             IncomeBudgetLine(Benefits, benefitsAmount)
           )
-          addIncomeSpendingPage.assertZeroIncomeCategoriesDisplayed(MonthlyIncome, OtherIncome)
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome, OtherIncome)
         }
         "only other income filled out" in {
           beginJourney()
@@ -123,7 +123,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
           addIncomeSpendingPage.assertIncomeTableDisplayed(
             IncomeBudgetLine(OtherIncome, otherIncomeAmount)
           )
-          addIncomeSpendingPage.assertZeroIncomeCategoriesDisplayed(MonthlyIncome, Benefits)
+          addIncomeSpendingPage.assertZeroIncomeCategoriesNotDisplayed(MonthlyIncome, Benefits)
         }
         "all categories filled out" in {
           beginJourney()
@@ -184,7 +184,7 @@ class AddIncomeSpendingPageSpec extends ItSpec {
             Expenses(HousingExp, housingAmount),
             Expenses(PensionContributionsExp, pensionContributionsAmount)
           )
-          addIncomeSpendingPage.assertZeroSpendingCategoriesDisplayed(
+          addIncomeSpendingPage.assertZeroSpendingCategoriesNotDisplayed(
             Expenses(CouncilTaxExp),
             Expenses(UtilitiesExp),
             Expenses(DebtRepaymentsExp),
@@ -257,8 +257,4 @@ class AddIncomeSpendingPageSpec extends ItSpec {
 
   }
 
-  "back button" in {
-    beginJourney()
-    startAffordabilityPage.backButtonHref shouldBe Some(s"${baseUrl.value}${startAffordabilityPage.path}")
-  }
 }

@@ -17,7 +17,6 @@
 package config
 
 import play.api.libs.json.{Json, OFormat}
-import ssttpcalculator.CalculatorType
 import ssttpcalculator.model.TaxLiability
 
 import javax.inject.Inject
@@ -69,10 +68,4 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val firstPaymentDayOfMonth: Int = servicesConfig.getInt("paymentDatesConfig.firstPaymentDayOfMonth")
   lazy val lastPaymentDayOfMonth: Int = servicesConfig.getInt("paymentDatesConfig.lastPaymentDayOfMonth")
   lazy val lastPaymentDelayDays: Int = servicesConfig.getInt("paymentDatesConfig.lastPaymentDelayDays")
-
-  lazy val calculatorType: CalculatorType = servicesConfig.getString("calculatorType") match {
-    case CalculatorType.Legacy.value           => CalculatorType.Legacy
-    case CalculatorType.PaymentOptimised.value => CalculatorType.PaymentOptimised
-    case otherValue                            => throw new Exception(s"calculator type '$otherValue' in config not recognised")
-  }
 }

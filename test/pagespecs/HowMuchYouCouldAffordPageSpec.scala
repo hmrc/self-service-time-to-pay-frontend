@@ -89,7 +89,7 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
       addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("2000")
-      addIncomeSpendingPage.enterSpending("1000")
+      addIncomeSpendingPage.enterSpending("1500")
 
       howMuchYouCouldAffordPage.assertInitialPageIsDisplayed()
     }
@@ -139,8 +139,4 @@ class HowMuchYouCouldAffordPageSpec extends ItSpec {
     }
   }
 
-  "back button" in {
-    beginJourney()
-    startAffordabilityPage.backButtonHref shouldBe Some(s"${baseUrl.value}${startAffordabilityPage.path}")
-  }
 }

@@ -23,7 +23,6 @@ import times.ClockProvider
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.annotation.tailrec
-import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 class InstalmentsService @Inject() (
     clockProvider:              ClockProvider,
@@ -71,7 +70,7 @@ class InstalmentsService @Inject() (
     val paymentDate = regularPaymentDates.headOption
     val balance = payables.balance
 
-    if (balance.setScale(2, HALF_UP) <= 0) {
+    if (balance <= 0) {
       Some(instalmentsAggregator)
     } else {
       paymentDate match {
@@ -82,7 +81,7 @@ class InstalmentsService @Inject() (
 
           val instalment = Instalment(
             paymentDate = nextPaymentDate,
-            amount      = min(maxPaymentAmount, (balance + latePaymentInterestAmount).setScale(2, HALF_UP)),
+            amount      = min(maxPaymentAmount, balance + latePaymentInterestAmount),
             interest    = latePaymentInterestAmount
           )
           val updatedInstalments = instalmentsAggregator :+ instalment

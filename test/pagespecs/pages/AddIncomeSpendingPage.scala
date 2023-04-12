@@ -85,21 +85,21 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
     }
   }
 
-  def assertZeroIncomeCategoriesDisplayed(categoriesNotFilled: IncomeCategory*)(implicit lang: Language): Unit = {
-    val categoryHeadingsExpected = Expected.IncomeText.categoryHeadingsText(categoriesNotFilled)
-    val categoryAmountsExpected = Expected.IncomeText.categoryAmounts(categoriesNotFilled.map(IncomeBudgetLine(_)))
+  def assertZeroIncomeCategoriesNotDisplayed(categoriesNotFilled: IncomeCategory*)(implicit lang: Language): Unit = {
+    val categoryHeadingsNotExpected = Expected.IncomeText.categoryHeadingsText(categoriesNotFilled)
+    val categoryAmountsNotExpected = Expected.IncomeText.categoryAmounts(categoriesNotFilled.map(IncomeBudgetLine(_)))
 
     probing {
-      assertContentMatchesExpectedLines(categoryHeadingsExpected ++ categoryAmountsExpected)
+      assertContentDoesNotContainLines(categoryHeadingsNotExpected ++ categoryAmountsNotExpected)
     }
   }
 
-  def assertZeroSpendingCategoriesDisplayed(categoriesNotFilled: Expenses*)(implicit lang: Language): Unit = {
-    val categoryHeadingsExpected = Expected.SpendingText.categoryHeadingsText(categoriesNotFilled)
-    val categoryAmountsExpected = Expected.SpendingText.categoryAmounts(categoriesNotFilled)
+  def assertZeroSpendingCategoriesNotDisplayed(categoriesNotFilled: Expenses*)(implicit lang: Language): Unit = {
+    val categoryHeadingsNotExpected = Expected.SpendingText.categoryHeadingsText(categoriesNotFilled)
+    val categoryAmountsNotExpected = Expected.SpendingText.categoryAmounts(categoriesNotFilled)
 
     probing {
-      assertContentMatchesExpectedLines(categoryHeadingsExpected ++ categoryAmountsExpected)
+      assertContentDoesNotContainLines(categoryHeadingsNotExpected ++ categoryAmountsNotExpected)
     }
   }
 
@@ -334,12 +334,12 @@ class AddIncomeSpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
       }
 
       private def councilTaxText(implicit language: Language) = language match {
-        case English => "Council tax"
+        case English => "Council Tax"
         case Welsh   => "Treth Gyngor"
       }
 
       private def utilitiesText(implicit language: Language) = language match {
-        case English => "Utilities"
+        case English => "utilities"
         case Welsh   => "Cyfleustodau"
       }
 

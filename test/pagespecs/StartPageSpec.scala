@@ -34,11 +34,6 @@ class StartPageSpec extends ItSpec {
     startPage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    startPage.open()
-    startPage.backButtonHref shouldBe None
-  }
-
   "eligible" in {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()

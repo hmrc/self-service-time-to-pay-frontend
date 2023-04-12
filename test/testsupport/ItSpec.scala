@@ -23,7 +23,6 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import pagespecs.pages._
-import pagespecs.pages.legacycalculator.HowMuchCanYouPayEachMonthPageLegacyCalculator
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
@@ -54,12 +53,11 @@ class ItSpec
   implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout  = scaled(Span(300, Millis)), interval = scaled(Span(2, Seconds)))
 
-  val overrideConfig: Map[String, Any] = Map.empty
-
   protected lazy val configMap: Map[String, Any] = Map(
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
+    "microservice.services.campaign-manager.port" -> WireMockSupport.port,
     "microservice.services.ia.port" -> WireMockSupport.port,
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
@@ -69,7 +67,7 @@ class ItSpec
     "microservice.services.identity-verification-frontend.uplift-url" -> s"http://localhost:${WireMockSupport.port}/mdtp/uplift",
     "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:${testPort}",
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
-    "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled") ++ overrideConfig
+    "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled")
 
   val fakeAuthConnector = new AuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
@@ -137,6 +135,7 @@ class ItSpec
   lazy val howMuchYouCouldAffordPage: HowMuchYouCouldAffordPage = wire[HowMuchYouCouldAffordPage]
   lazy val weCannotAgreeYourPaymentPlanPage: WeCannotAgreeYourPaymentPlanPage = wire[WeCannotAgreeYourPaymentPlanPage]
   lazy val howMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = wire[HowMuchCanYouPayEachMonthPage]
+  //  lazy val calculatorInstalmentsPage11thDay: CalculatorInstalmentsPage11thDay = wire[CalculatorInstalmentsPage11thDay]
   lazy val selectDatePage: InstalmentSummarySelectDatePage = wire[InstalmentSummarySelectDatePage]
   lazy val checkYourPaymentPlanPage: CheckYourPaymentPlanPageForPaymentDay28thOfMonth =
     wire[CheckYourPaymentPlanPageForPaymentDay28thOfMonth]

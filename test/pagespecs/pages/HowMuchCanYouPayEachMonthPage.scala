@@ -21,7 +21,6 @@ import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
-import ssttpcalculator.model.PaymentPlanOption
 import testsupport.RichMatchers._
 
 class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
@@ -38,8 +37,8 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     click on radioButton
   }
 
-  def selectASpecificOption(paymentPlanOption: PaymentPlanOption): Unit = probing {
-    val specificRadioButton = xpath(s"""//*[@id="${paymentPlanOption.entryName}"]""")
+  def selectASpecificOption(id: String) = probing {
+    val specificRadioButton = xpath(s"//*[@id=$id]")
     click on specificRadioButton
   }
 
@@ -59,7 +58,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     enter(value)
   }
 
-  def clickOnBackButton(): Unit = click on id("back-link")
+  def clickOnBackLink(): Unit = WebBrowser.goTo("http://localhost:19001/pay-what-you-owe-in-instalments/how-much-you-could-afford")
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
@@ -100,12 +99,6 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
   def customAmountOptionIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     val expectedLines = Expected.MainText.CustomOption().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
-    ()
-  }
-
-  def customAmountOptionNotDisplayed(implicit lang: Language = Languages.English): Unit = probing {
-    val expectedLines = Expected.MainText.CustomOption().stripSpaces().split("\n")
-    assertContentDoesNotContainLines(expectedLines)
     ()
   }
 
@@ -179,12 +172,14 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
           s"""How much can you pay each month?
              |Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
-             |£500 per month over 10 months
-             |Includes total interest estimated at £73.08
-             |£600 per month over 9 months
-             |Includes total interest estimated at £62.20
-             |£800 per month over 7 months
-             |Includes total interest estimated at £48.65
+             |£250 per month over 21 months
+             |Includes total interest estimated at £138.16
+             |£300 per month over 17 months
+             |Includes total interest estimated at £116.53
+             |£400 per month over 13 months
+             |Includes total interest estimated at £89.39
+             |A different monthly amount
+             |Enter an amount that is at least £250 but no more than
              |I cannot afford to make these payments
              |You may still be able to set up a payment plan over the phone. Call us on 0300 123 1813 to discuss your debt.
              |Continue
@@ -194,12 +189,14 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
           s"""Faint y gallwch ei dalu bob mis?
              |Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
              |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
-             |£500 y mis, am 10 mis
-             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £73.08
-             |£600 y mis, am 9 mis
-             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £62.20
-             |£800 y mis, am 7 mis
-             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £48.65
+             |£250 y mis, am 21 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £138.16
+             |£300 y mis, am 17 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £116.53
+             |£400 y mis, am 13 mis
+             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £89.39
+             |Swm misol gwahanol
+             |Rhowch swm sydd o leiaf £250 ond heb fod yn fwy na
              |Nid wyf yn gallu fforddio’r taliadau hyn
              |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i drafod eich opsiynau.
              |Yn eich blaen
@@ -214,12 +211,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val customtOptionTextEnglish =
           s"""A different monthly amount
-             |Enter an amount that is at least £500 but no more than £4,914.40
+             |Enter an amount that is at least £250 but no more than £4,914.40
           """.stripMargin
 
         private val customOptionTextWelsh =
           s"""Swm misol gwahanol
-             |Rhowch swm sydd o leiaf £500 ond heb fod yn fwy na £4,914.40
+             |Rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,914.40
           """.stripMargin
 
       }
@@ -284,12 +281,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val belowMinimumTextEnglish =
           s"""There is a problem
-             |That amount is too low, enter an amount that is at least £500 but no more than £4,914.40
+             |That amount is too low, enter an amount that is at least £250 but no more than £4,914.40
       """.stripMargin
 
         private val belowMinimumTextWelsh =
           s"""Mae problem wedi codi
-             |Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £500 ond heb fod yn fwy na £4,914.40
+             |Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,914.40
       """.stripMargin
       }
 
@@ -301,12 +298,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val aboveMaximumTextEnglish =
           s"""There is a problem
-             |That amount is too high, enter an amount that is at least £500 but no more than £4,914.40
+             |That amount is too high, enter an amount that is at least £250 but no more than £4,914.40
       """.stripMargin
 
         private val aboveMaximumTextWelsh =
           s"""Mae problem wedi codi
-             |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £500 ond heb fod yn fwy na £4,914.40
+             |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,914.40
       """.stripMargin
       }
 

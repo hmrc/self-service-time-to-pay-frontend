@@ -32,8 +32,6 @@ final case class PaymentSchedule(
   def firstInstalment: Instalment =
     instalments.reduceOption(first).getOrElse(throw new RuntimeException(s"No instalments for [$this]"))
 
-  def instalmentAmount: BigDecimal = firstInstalment.amount
-
   private def first(earliest: Instalment, next: Instalment): Instalment =
     if (next.paymentDate.toEpochDay < earliest.paymentDate.toEpochDay) next else earliest
 

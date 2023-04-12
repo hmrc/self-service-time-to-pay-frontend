@@ -17,16 +17,11 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import ssttpcalculator.CalculatorType.PaymentOptimised
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 
 class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
 
   def beginJourney(): Unit = {
     AuthStub.authorise()
@@ -69,7 +64,7 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
       addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("2000")
-      addIncomeSpendingPage.enterSpending("1000")
+      addIncomeSpendingPage.enterSpending("1500")
 
       howMuchYouCouldAffordPage.assertInitialPageIsDisplayed()
 
@@ -146,22 +141,4 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
     }
   }
 
-  "back button" in {
-    beginJourney()
-    addIncomeSpendingPage.assertInitialPageIsDisplayed
-
-    addIncomeSpendingPage.clickOnWelshLink()
-    addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
-    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
-
-    addIncomeSpendingPage.clickOnEnglishLink()
-    addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
-
-    addIncomeSpendingPage.enterIncome("1000")
-    addIncomeSpendingPage.enterSpending("2000")
-
-    howMuchYouCouldAffordPage.clickContinue()
-
-    weCannotAgreeYourPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
-  }
 }

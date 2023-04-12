@@ -17,18 +17,12 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import ssttpcalculator.CalculatorType.PaymentOptimised
-import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
 
 class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
@@ -117,9 +111,9 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
 
       howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
 
-      val customAmount = 700
-      val planMonths = 8
-      val planInterest = 54.35
+      val customAmount = 280
+      val planMonths = 18
+      val planInterest = 124.26
 
       howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
       howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmount.toString)
@@ -210,11 +204,6 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
     howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    beginJourney()
-    howMuchCanYouPayEachMonthPage.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
-  }
-
   "select an option and continue" - {
     "basic case" in {
       beginJourney()
@@ -237,16 +226,16 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       beginJourney()
       howMuchCanYouPayEachMonthPage.selectAnOption()
       howMuchCanYouPayEachMonthPage.clickContinue()
-      checkYourPaymentPlanPage.clickOnBackButton()
+      checkYourPaymentPlanPage.goBack()
 
       howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
     }
-    "selecting a custom option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
+    "selecting an option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
       beginJourney()
 
-      val customAmount = 700
-      val planMonths = 8
-      val planInterest = 54.35
+      val customAmount = 280
+      val planMonths = 18
+      val planInterest = 124.26
 
       howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
       howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmount.toString)
@@ -254,11 +243,11 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
 
       howMuchCanYouPayEachMonthPage.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
 
-      howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Custom)
+      howMuchCanYouPayEachMonthPage.selectASpecificOption("0")
       howMuchCanYouPayEachMonthPage.clickContinue()
 
-      checkYourPaymentPlanPage.clickOnBackButton()
-      howMuchCanYouPayEachMonthPage.clickOnBackButton()
+      checkYourPaymentPlanPage.goBack()
+      howMuchCanYouPayEachMonthPage.clickOnBackLink()
 
       howMuchYouCouldAffordPage.clickOnAddChangeIncome()
       yourMonthlyIncomePage.enterMonthlyIncome("501")

@@ -33,8 +33,4 @@ class NeedToFilePageSpec extends ItSpec {
     needToFilePage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    needToFilePage.open()
-    needToFilePage.backButtonHref shouldBe None
-  }
 }

@@ -33,8 +33,4 @@ class DebtTooLargePageSpec extends ItSpec {
     debtTooLargePage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    debtTooLargePage.open()
-    debtTooLargePage.backButtonHref shouldBe None
-  }
 }
