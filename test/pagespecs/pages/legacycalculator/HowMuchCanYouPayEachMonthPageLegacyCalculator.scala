@@ -17,204 +17,37 @@
 package pagespecs.pages.legacycalculator
 
 import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import langswitch.Language
 import org.openqa.selenium.WebDriver
-import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
-import pagespecs.pages.{BasePage, BaseUrl}
-import ssttpcalculator.CalculatorType
-import ssttpcalculator.CalculatorType.{Legacy, PaymentOptimised}
+import pagespecs.pages.{BaseUrl, HowMuchCanYouPayEachMonthPage}
 import testsupport.RichMatchers._
 
-class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
+  extends HowMuchCanYouPayEachMonthPage(baseUrl)(webDriver) {
+
   import WebBrowser._
-  override def path: String = "/pay-what-you-owe-in-instalments/calculator/instalments"
-
-  def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "How much can you pay each month?"
-    case Languages.Welsh   => "Faint y gallwch ei dalu bob mis?"
-  }
-
-  def selectAnOption(): Unit = probing {
-    val radioButton = xpath("//*[@type=\"radio\"]")
-    click on radioButton
-  }
-
-  def selectASpecificOption(id: String) = probing {
-    val specificRadioButton = xpath(s"//*[@id=$id]")
-    click on specificRadioButton
-  }
-
-  def clickContinue(): Unit = probing{
-    val button = xpath("//*[@id=\"next\"]")
-    click on button
-  }
-
-  def selectCustomAmountOption(): Unit = probing {
-    val customAmountOptionRadioButton = xpath("//*[@id=\"customAmountOption\"]")
-    click on customAmountOptionRadioButton
-  }
-
-  def enterCustomAmount(value: String = ""): Unit = {
-    val customAmountInputField = xpath("//*[@id=\"custom-amount-input\"]")
-    click on customAmountInputField
-    enter(value)
-  }
-
-  def clickOnBackLink(): Unit = WebBrowser.goTo("http://localhost:19001/pay-what-you-owe-in-instalments/how-much-you-could-afford")
-
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
-    val expectedLines = Expected.MainText.DefaultCalculationsLegacy().stripSpaces().split("\n")
+    val expectedLines = ExpectedLegacyCalculator.MainText.DefaultCalculations().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
     ()
-  }
-
-  def optionIsDisplayed(
-      amount:   String,
-      months:   Option[String] = None,
-      interest: Option[String] = None
-  )(implicit language: Language = Languages.English): Unit = (months, interest) match {
-    case (Some(months), Some(interest)) =>
-      val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).stripSpaces().split("\n")
-      assertContentMatchesExpectedLines(expectedLines)
-    case _ =>
-      val expectedLines = Expected.MainText.DefaultOptionsText(amount).stripSpaces().split("\n")
-      assertContentMatchesExpectedLines(expectedLines)
-  }
-
-  def optionIsNotDisplayed(
-      amount:   String,
-      months:   Option[String] = None,
-      interest: Option[String] = None
-  )(implicit language: Language = Languages.English): Unit = (months, interest) match {
-    case (Some(months), Some(interest)) =>
-      val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).stripSpaces().split("\n")
-      assertContentDoesNotContainLines(expectedLines)
-    case _ =>
-      val expectedLines = Expected.MainText.DefaultOptionsText(amount).stripSpaces().split("\n")
-      assertContentDoesNotContainLines(expectedLines)
-  }
-
-  def customAmountOptionIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
-    val expectedLines = Expected.MainText.CustomOption().stripSpaces().split("\n")
-    assertContentMatchesExpectedLines(expectedLines)
-    ()
-  }
-
-  def customAmountOptionNotDisplayed(implicit lang: Language = Languages.English): Unit = probing {
-    val expectedLines = Expected.MainText.CustomOption().stripSpaces().split("\n")
-    assertContentDoesNotContainLines(expectedLines)
-    ()
-  }
-
-  def assertPageWithCustomAmountIsDisplayed(amount:   String,
-                                            months:   Option[String] = None,
-                                            interest: Option[String] = None
-  )(implicit lang: Language = English): Unit = probing {
-    readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-
-    val expectedLines = Expected.MainText.CustomAmountDisplayed(amount).stripSpaces().split("\n")
-    assertContentMatchesExpectedLines(expectedLines)
-
-    optionIsDisplayed(amount, months, interest)
-    ()
-  }
-
-  def assertBelowMinimumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
-    readPath() shouldBe path
-    readMain().stripSpaces() should include(Expected.ErrorText.BelowMinimum().stripSpaces())
-  }
-
-  def assertAboveMaximumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
-    readPath() shouldBe path
-    readMain().stripSpaces() should include(Expected.ErrorText.AboveMaximum().stripSpaces())
-  }
-
-  def assertNoInputErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
-    readPath() shouldBe path
-    readMain().stripSpaces() should include(Expected.ErrorText.NoInput().stripSpaces())
-  }
-
-  def assertNonNumericErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
-    readPath() shouldBe path
-    readMain().stripSpaces() should include(Expected.ErrorText.NonNumeric().stripSpaces())
-  }
-
-  def assertNegativeAmountErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
-    readPath() shouldBe path
-    readMain().stripSpaces() should include(Expected.ErrorText.NegativeAmount().stripSpaces())
-  }
-
-  def assertDecimalPlacesErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
-    readPath() shouldBe path
-    readMain().stripSpaces() should include(Expected.ErrorText.DecimalPlaces().stripSpaces())
   }
 
   def assertContentDoesNotContainOrSeparator(implicit lang: Language = English): Unit = probing {
-    val expectedLines = Expected.MainText.OrSeparator().stripSpaces().split("\n")
+    val expectedLines = ExpectedLegacyCalculator.MainText.OrSeparator().stripSpaces().split("\n")
     assertContentDoesNotContainLines(expectedLines)
     ()
   }
 
-  object Expected {
-
-    object GlobalHeaderText {
-
-      def apply()(implicit language: Language): String = language match {
-        case English => globalHeaderTextEnglish
-        case Welsh   => globalHeaderTextWelsh
-      }
-
-      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
-
-      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
-    }
+  object ExpectedLegacyCalculator {
 
     object MainText {
+
       object DefaultCalculations {
-        def apply()(implicit language: Language): String = language match {
-          case English => mainTextEnglish
-          case Welsh   => mainTextWelsh
-        }
-
-        private val mainTextEnglish =
-          s"""How much can you pay each month?
-             |Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
-             |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
-             |£250 per month over 21 months
-             |Includes total interest estimated at £138.16
-             |£300 per month over 17 months
-             |Includes total interest estimated at £116.53
-             |£400 per month over 13 months
-             |Includes total interest estimated at £89.39
-             |I cannot afford to make these payments
-             |You may still be able to set up a payment plan over the phone. Call us on 0300 123 1813 to discuss your debt.
-             |Continue
-          """.stripMargin
-
-        private val mainTextWelsh =
-          s"""Faint y gallwch ei dalu bob mis?
-             |Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
-             |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
-             |£250 y mis, am 21 mis
-             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £138.16
-             |£300 y mis, am 17 mis
-             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £116.53
-             |£400 y mis, am 13 mis
-             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £89.39
-             |Nid wyf yn gallu fforddio’r taliadau hyn
-             |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i drafod eich opsiynau.
-             |Yn eich blaen
-          """.stripMargin
-      }
-
-      object DefaultCalculationsLegacy {
         def apply()(implicit language: Language): String = language match {
           case English => mainTextEnglish
           case Welsh   => mainTextWelsh
@@ -262,178 +95,6 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
 
         private val orSeparatorTextWelsh =
           s"""neu""".stripMargin
-      }
-
-      object CustomOption {
-        def apply()(implicit language: Language): String = language match {
-          case English => customtOptionTextEnglish
-          case Welsh   => customOptionTextWelsh
-        }
-
-        private val customtOptionTextEnglish =
-          s"""A different monthly amount
-             |Enter an amount that is at least £250 but no more than £4,914.40
-          """.stripMargin
-
-        private val customOptionTextWelsh =
-          s"""Swm misol gwahanol
-             |Rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,914.40
-          """.stripMargin
-
-      }
-
-      object DefaultOptionsText {
-
-        def apply(amount: String)(implicit language: Language): String = {
-          language match {
-            case English => partialOptionsTextEnglish(amount)
-            case Welsh   => partialOptionsTextWelsh(amount)
-          }
-        }
-
-        private def partialOptionsTextEnglish(amount: String): String =
-          s"""£$amount per month over
-          """.stripMargin
-
-        private def partialOptionsTextWelsh(amount: String): String =
-          s"""£$amount y mis, am
-          """.stripMargin
-
-        def apply(amount: String, months: String, interest: String)(implicit language: Language): String = {
-          language match {
-            case English => optionsTextEnglish(amount, months, interest)
-            case Welsh   => optionsTextWelsh(amount, months, interest)
-          }
-        }
-
-        private def optionsTextEnglish(amount: String, months: String, interest: String): String =
-          s"""£$amount per month over $months months
-             |Includes total interest estimated at £$interest
-          """.stripMargin
-
-        private def optionsTextWelsh(amount: String, months: String, interest: String): String =
-          s"""£$amount y mis, am $months mis
-             |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £$interest
-          """.stripMargin
-      }
-
-      object CustomAmountDisplayed {
-        def apply(amount: String)(implicit language: Language): String = language match {
-          case English => customAmountTextEnglish(amount)
-          case Welsh   => customAmountTextWelsh(amount)
-        }
-
-        private def customAmountTextEnglish(amount: String) =
-          s"""You have chosen to pay £$amount per month. Your final monthly payment may be more or less if the interest rate changes.
-      """.stripMargin
-
-        private def customAmountTextWelsh(amount: String) =
-          s"""Rydych wedi dewis talu £$amount y mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
-      """.stripMargin
-      }
-    }
-
-    object ErrorText {
-      object BelowMinimum {
-        def apply()(implicit language: Language): String = language match {
-          case English => belowMinimumTextEnglish
-          case Welsh   => belowMinimumTextWelsh
-        }
-
-        private val belowMinimumTextEnglish =
-          s"""There is a problem
-             |That amount is too low, enter an amount that is at least £250 but no more than £4,914.40
-      """.stripMargin
-
-        private val belowMinimumTextWelsh =
-          s"""Mae problem wedi codi
-             |Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,914.40
-      """.stripMargin
-      }
-
-      object AboveMaximum {
-        def apply()(implicit language: Language): String = language match {
-          case English => aboveMaximumTextEnglish
-          case Welsh   => aboveMaximumTextWelsh
-        }
-
-        private val aboveMaximumTextEnglish =
-          s"""There is a problem
-             |That amount is too high, enter an amount that is at least £250 but no more than £4,914.40
-      """.stripMargin
-
-        private val aboveMaximumTextWelsh =
-          s"""Mae problem wedi codi
-             |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £250 ond heb fod yn fwy na £4,914.40
-      """.stripMargin
-      }
-
-      object NoInput {
-        def apply()(implicit language: Language): String = language match {
-          case English => noInputTextEnglish
-          case Welsh   => noInputTextWelsh
-        }
-
-        private val noInputTextEnglish =
-          s"""There is a problem
-             |Enter an amount
-      """.stripMargin
-
-        private val noInputTextWelsh =
-          s"""Mae problem wedi codi
-             |Nodwch swm
-      """.stripMargin
-      }
-
-      object NonNumeric {
-        def apply()(implicit language: Language): String = language match {
-          case English => nonNumericTextEnglish
-          case Welsh   => nonNumericTextWelsh
-        }
-
-        private val nonNumericTextEnglish =
-          s"""There is a problem
-             |Enter numbers only
-      """.stripMargin
-
-        private val nonNumericTextWelsh =
-          s"""Mae problem wedi codi
-             |Nodwch rifau yn unig
-      """.stripMargin
-      }
-
-      object NegativeAmount {
-        def apply()(implicit language: Language): String = language match {
-          case English => negativeAmountTextEnglish
-          case Welsh   => negativeAmountTextWelsh
-        }
-
-        private val negativeAmountTextEnglish =
-          s"""There is a problem
-             |Enter a positive number only
-      """.stripMargin
-
-        private val negativeAmountTextWelsh =
-          s"""Mae problem wedi codi
-             |Nodwch rif positif yn uni
-      """.stripMargin
-      }
-
-      object DecimalPlaces {
-        def apply()(implicit language: Language): String = language match {
-          case English => belowMinimumTextEnglish
-          case Welsh   => belowMinimumTextWelsh
-        }
-
-        private val belowMinimumTextEnglish =
-          s"""There is a problem
-             |Amount must not contain more than 2 decimal places
-      """.stripMargin
-
-        private val belowMinimumTextWelsh =
-          s"""Mae problem wedi codi
-             |Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
-      """.stripMargin
       }
     }
   }

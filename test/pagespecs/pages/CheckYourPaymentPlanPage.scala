@@ -173,7 +173,7 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Y cyfanswm i’w dalu
            |£4,973.08
            |Cytuno ac yn eich blaen
-""".stripMargin
+        """.stripMargin
       }
     }
 

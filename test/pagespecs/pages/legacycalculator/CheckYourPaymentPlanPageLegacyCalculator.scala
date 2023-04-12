@@ -17,72 +17,31 @@
 package pagespecs.pages.legacycalculator
 
 import langswitch.Languages.{English, Welsh}
-import langswitch.{Language, Languages}
+import langswitch.Language
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
-import pagespecs.pages.{BasePage, BaseUrl}
+import pagespecs.pages.{BaseUrl, CheckYourPaymentPlanPage}
 import testsupport.RichMatchers._
 
-class CheckYourPaymentPlanPageLegacyCalculator(baseUrl: BaseUrl, paymentDayOfMonthEnglish: String, paymentDayOfMonthWelsh: String)
-  (implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class CheckYourPaymentPlanPageLegacyCalculator(
+    baseUrl:                  BaseUrl,
+    paymentDayOfMonthEnglish: String,
+    paymentDayOfMonthWelsh:   String
+)(implicit webDriver: WebDriver)
+  extends CheckYourPaymentPlanPage(baseUrl, paymentDayOfMonthEnglish, paymentDayOfMonthWelsh)(webDriver) {
 
   import WebBrowser._
-
-  override def path: String = "/pay-what-you-owe-in-instalments/arrangement/check-your-payment-plan"
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    val expectedLines = ExpectedLegacyCalculator.MainText().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }
 
-  def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "Check your payment plan"
-    case Languages.Welsh   => "Gwirio’ch cynllun talu"
-  }
-
-  def clickChangeUpfrontPaymentAnswerLink(): Unit = {
-    click on id("upfront-payment")
-  }
-
-  def clickChangeUpfrontPaymentAmountLink(): Unit = {
-    click on id("upfront-payment-amount")
-  }
-
-  def clickChangeCollectionDayLink(): Unit = {
-    click on id("collection-day")
-  }
-
-  def clickChangeMonthlyAmountLink(): Unit = {
-    click on id("monthly-payment")
-  }
-
-  def clickContinue(): Unit = {
-    clickOnContinue()
-  }
-
-  def clickUpfrontPaymentChange(): Unit = {
-    val button = xpath("""//*[@id="id_payment"]/dl/div[1]/dd[2]/a""")
-    click on button
-  }
-
-  object Expected {
-
-    object GlobalHeaderText {
-
-      def apply()(implicit language: Language): String = language match {
-        case English => globalHeaderTextEnglish
-        case Welsh   => globalHeaderTextWelsh
-      }
-
-      private val globalHeaderTextEnglish = """Set up a Self Assessment payment plan"""
-
-      private val globalHeaderTextWelsh = """Trefnu cynllun talu"""
-    }
-
+  object ExpectedLegacyCalculator {
     object MainText {
       def apply()(implicit language: Language): String = language match {
         case English => mainTextEnglish
@@ -174,32 +133,10 @@ class CheckYourPaymentPlanPageLegacyCalculator(baseUrl: BaseUrl, paymentDayOfMon
            |Y cyfanswm i’w dalu
            |£4,974.30
            |Cytuno ac yn eich blaen
-""".stripMargin
-      }
-    }
-
-    object WarningText {
-      def apply()(implicit language: Language): String = language match {
-        case English => warningTextEnglish
-        case Welsh   => warningTextWelsh
+        """.stripMargin
       }
     }
   }
-
-  def assertWarningIsDisplayed(implicit lang: Language): Unit = probing {
-    val expectedLines = Expected.WarningText().stripSpaces().split("\n")
-    assertContentMatchesExpectedLines(expectedLines)
-    ()
-  }
-
-  private def warningTextEnglish: String = s"""You are choosing a payment plan where your monthly payments are over half of your left over income.
-      |Make sure you can afford to pay.
-      """.stripMargin
-
-  private def warningTextWelsh: String = s"""Rydych yn dewis cynllun talu lle mae’ch taliadau misol dros hanner eich incwm sydd dros ben.
-      |Gwnewch yn siŵr eich bod yn gallu fforddio talu.
-      """.stripMargin
-
 }
 
 class CheckYourPaymentPlanPageForPaymentDay28thOfMonthLegacyCalculator(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
