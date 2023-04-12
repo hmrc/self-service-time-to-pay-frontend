@@ -143,10 +143,10 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
 
   "returning to the page" - {
     "selecting a default option, continue, then back, returns to the schedule selection page" in {
-      beginJourney(1000)
+      beginJourney()
       howMuchCanYouPayEachMonthPageLegacyCalculator.selectAnOption()
       howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-      checkYourPaymentPlanPageLegacyCalculator.goBack()
+      checkYourPaymentPlanPageLegacyCalculator.clickOnBackButton()
 
       howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
     }

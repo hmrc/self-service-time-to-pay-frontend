@@ -115,7 +115,7 @@ class ViewPaymentPlanPageLegacyCalculatorSpec extends ItSpec with LegacyCalculat
     beginJourney()
     termsAndConditionsPage.clickContinue()
     arrangementSummaryPage.clickLink()
-    viewPaymentPlanPageLegacyCalculator.goBack()
+    viewPaymentPlanPageLegacyCalculator.clickOnBackButton()
     arrangementSummaryPage.assertInitialPageIsDisplayed
   }
 }
