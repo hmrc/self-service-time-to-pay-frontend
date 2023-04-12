@@ -17,11 +17,13 @@
 package journey
 
 import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
+import org.mongodb.scala.model.{Filters, Updates}
 import play.api.mvc.{Request, Result, Results}
 import req.RequestSupport
 import uk.gov.hmrc.play.http.logging.Mdc
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
+import java.time.{LocalDateTime, ZoneOffset}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,7 +38,15 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
   }
 
   def getMaybeJourney()(implicit request: Request[_]): Future[Option[Journey]] = Mdc.preservingMdc {
-    request.readJourneyId.fold[Future[Option[Journey]]](Future.successful(None))(journeyRepo.findById(_))
+    request.readJourneyId.fold[Future[Option[Journey]]](Future.successful(None)){ id =>
+      journeyRepo.findById(id).recoverWith{
+        case err: java.lang.RuntimeException if err.getMessage.contains("Failed to parse json as journey.Journey") && err.getMessage.contains("createdTTL") =>
+          JourneyLogger.info(s"Fixed Journey with missing 'createdTTL'")
+          journeyRepo.collection.updateOne(filter = Filters.equal("_id", id.value), Updates.set("createdTTL", LocalDateTime.now(ZoneOffset.UTC)))
+            .headOption()
+            .flatMap(_ => journeyRepo.findById(id))
+      }
+    }
   }
 
   def getJourney()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
