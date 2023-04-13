@@ -24,7 +24,6 @@ import repo.HasId
 import ssttpaffordability.model.Income
 import ssttpaffordability.model.Spending
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import java.time.{Clock, Instant, LocalDate, LocalDateTime, ZoneOffset}
