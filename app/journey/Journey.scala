@@ -73,8 +73,7 @@ final case class Journey(
     maybeEligibilityStatus:    Option[EligibilityStatus]       = None,
     debitDate:                 Option[LocalDate]               = None,
     ddRef:                     Option[String]                  = None,
-    maybeSaUtr:                Option[String]                  = None,
-    createdTTL:                LocalDateTime                   = LocalDateTime.now(ZoneOffset.UTC) // mongo is in UTC
+    maybeSaUtr:                Option[String]                  = None
 ) extends HasId[JourneyId] {
 
   def maybeSelectedPlanAmount: Option[BigDecimal] = maybePlanSelection.fold(None: Option[BigDecimal])(_.selection match {

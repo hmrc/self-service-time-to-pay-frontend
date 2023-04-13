@@ -17,11 +17,9 @@
 package journey
 
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
-import play.api.Logger
 import repo.Repo
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
@@ -30,8 +28,8 @@ import scala.concurrent.ExecutionContext
 object JourneyRepo {
   def indexes(cacheTtlInSeconds: Long): Seq[IndexModel] = Seq(
     IndexModel(
-      keys         = Indexes.ascending("createdTTL"),
-      indexOptions = IndexOptions().name("createdTTLIdx").expireAfter(cacheTtlInSeconds, TimeUnit.SECONDS)
+      keys         = Indexes.ascending("createdOn"),
+      indexOptions = IndexOptions().expireAfter(cacheTtlInSeconds, TimeUnit.SECONDS)
     )
   )
 }
@@ -43,12 +41,6 @@ final class JourneyRepo @Inject() (
   extends Repo[JourneyId, Journey](
     collectionName = "journey-new-mongo",
     mongoComponent = mongoComponent,
-    indexes        = {
-      val logger = Logger(getClass)
-      val ttl = config.getDuration("journey.ttl").toSeconds
-      logger.info(s"Mongo collection 'journey-new-mongo' ttl=$ttl seconds")
-      JourneyRepo.indexes(ttl)
-
-    },
+    indexes        = JourneyRepo.indexes(config.getDuration("journey.ttl").toSeconds),
     replaceIndexes = true
   )
