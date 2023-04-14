@@ -62,6 +62,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
     (s"$baseUrl$completePath", s"$baseUrl$failurePath")
   }
 
+  // Config for payment dates - PaymentOptimised calculator ONLY
   lazy val minimumLengthOfPaymentPlan: Int = servicesConfig.getInt("paymentDatesConfig.minimumLengthOfPaymentPlan")
   lazy val maximumLengthOfPaymentPlan: Int = servicesConfig.getInt("paymentDatesConfig.maximumLengthOfPaymentPlan")
   lazy val daysToProcessFirstPayment: Int = servicesConfig.getInt("paymentDatesConfig.daysToProcessPayment")
@@ -75,4 +76,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
     case CalculatorType.PaymentOptimised.value => CalculatorType.PaymentOptimised
     case otherValue                            => throw new Exception(s"calculator type '$otherValue' in config not recognised")
   }
+
+  //Config for Legacy calculator
+  lazy val legacyMaxLengthOfPaymentPlan: Int = servicesConfig.getInt("legacyCalculatorConfig.maximumLengthOfPaymentPlan")
 }

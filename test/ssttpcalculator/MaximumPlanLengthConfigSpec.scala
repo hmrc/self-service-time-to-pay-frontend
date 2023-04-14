@@ -22,13 +22,13 @@ import play.api.Application
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.FakeRequest
 import ssttpcalculator.model.PaymentsCalendar
-import testsupport.ItSpec
+import testsupport.{ConfigSpec, ItSpec}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, SaUtr, SelfAssessmentDetails, Debit => corDebit}
 
 import java.time.LocalDate
 
-class MaximumPaymentPlanLengthConfigSpec extends ItSpec {
+class MaximumPlanLengthConfigSpec extends ConfigSpec {
 
   val testConfigMaxLengths: Seq[Int] = Seq(6, 12, 24)
 
@@ -58,7 +58,7 @@ class MaximumPaymentPlanLengthConfigSpec extends ItSpec {
   }
 
   private def testPaymentsCalendarMaximumLength(configuredMaxLength: Int): Assertion = {
-    val config: AppConfig = fakeApplicationConfigOverride(
+    val config: AppConfig = appWithConfig(
       Map("paymentDatesConfig.maximumLengthOfPaymentPlan" -> configuredMaxLength)
     ).injector.instanceOf[AppConfig]
 
@@ -68,14 +68,14 @@ class MaximumPaymentPlanLengthConfigSpec extends ItSpec {
   }
 
   private def testDefaultSchedulesCanGenerateMaximumLength(configuredMaxLength: Int): Assertion = {
-    val paymentPlansService: PaymentPlansService = fakeApplicationConfigOverride(
-      Map("paymentDatesConfig.maximumLengthOfPaymentPlan" -> configuredMaxLength)
-    ).injector.instanceOf[PaymentPlansService]
+    val app = appWithConfig(Map("paymentDatesConfig.maximumLengthOfPaymentPlan" -> configuredMaxLength))
+
+    val paymentPlansService: PaymentPlansService = app.injector.instanceOf[PaymentPlansService]
 
     val request = FakeRequest()
 
     val clock = new ClockProvider
-    val nowDate = clock.nowDate()(request)
+    val nowDate = clock .nowDate()(request)
 
     val initialPayment = 0
     val preferredPaymentDay = None
@@ -96,7 +96,7 @@ class MaximumPaymentPlanLengthConfigSpec extends ItSpec {
   }
 
   private def testDefaultSchedulesWillNotExceedMaximumLength(configuredMaxLength: Int): Assertion = {
-    val paymentPlansService: PaymentPlansService = fakeApplicationConfigOverride(
+    val paymentPlansService: PaymentPlansService = appWithConfig(
       Map("paymentDatesConfig.maximumLengthOfPaymentPlan" -> configuredMaxLength)
     ).injector.instanceOf[PaymentPlansService]
 
@@ -125,11 +125,6 @@ class MaximumPaymentPlanLengthConfigSpec extends ItSpec {
     result.toSeq.length shouldBe 0
   }
 
-  private def fakeApplicationConfigOverride(overrideConfig: Map[String, Any]): Application = new GuiceApplicationBuilder()
-    .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
-    .configure(configMap ++ overrideConfig)
-    .build()
 
-  private def date(date: String): LocalDate = LocalDate.parse(date)
 
 }

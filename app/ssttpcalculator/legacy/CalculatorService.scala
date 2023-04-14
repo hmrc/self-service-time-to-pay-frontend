@@ -31,6 +31,7 @@ import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 import timetopaytaxpayer.cor.model.{Debit => CorDebit}
 import uk.gov.hmrc.selfservicetimetopay.models.PaymentDayOfMonth
 import _root_.model.PaymentScheduleExt
+import config.AppConfig
 import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 
 import java.time.LocalDate.now
@@ -45,7 +46,7 @@ class CalculatorService @Inject() (
     durationService: DurationService,
     interestService: InterestRateService
 )
-  (implicit ec: ExecutionContext) {
+  (implicit ec: ExecutionContext, appConfig: AppConfig) {
 
   import clockProvider._
 
@@ -87,7 +88,7 @@ class CalculatorService @Inject() (
 
     val schedule: PaymentSchedule = availableSchedules.find(_.instalmentAmount == selectedPlanAmount)
       .getOrElse(
-        throw new RuntimeException(s"Could not find schedule corresponding to $selectedPlanAmount [${journey}] [${availableSchedules}]")
+        throw new RuntimeException(s"Could not find schedule corresponding to $selectedPlanAmount [$journey] [$availableSchedules]")
       )
     schedule
   }
@@ -104,15 +105,9 @@ class CalculatorService @Inject() (
                             maybePaymentDayOfMonth: Option[PaymentDayOfMonth])
     (implicit request: Request[_]): List[PaymentSchedule] = {
 
-    val rangeOfAvailableScheduleDurationsInMonths = minimumMonthsAllowedTTP to 13
+    val rangeOfAvailableScheduleDurationsInMonths = minimumMonthsAllowedTTP to (appConfig.legacyMaxLengthOfPaymentPlan + 1)
 
     val today: LocalDate = clockProvider.nowDate()
-
-    val isAfterTaxYearEndDate = today.isAfter(today.withMonth(4).withDayOfMonth(5))
-    val thresholdDate = today
-      .plusYears(if (isAfterTaxYearEndDate) 2 else 1)
-      .withMonth(1)
-      .withDayOfMonth(29) // the last available payment can happen on 28 Jan next year
 
     val debits = sa.debits.map(debit => asTaxLiability(debit))
     rangeOfAvailableScheduleDurationsInMonths.map { durationInMonths =>
@@ -132,8 +127,7 @@ class CalculatorService @Inject() (
       )
       buildSchedule(calculatorInput)
     }
-      .filter(_.lastPaymentDate.isBefore(thresholdDate))
-      .filter(_.instalments.length <= 12) //max 12 instalments
+      .filter(_.instalments.length <= appConfig.legacyMaxLengthOfPaymentPlan)
       .toList
   }
 
