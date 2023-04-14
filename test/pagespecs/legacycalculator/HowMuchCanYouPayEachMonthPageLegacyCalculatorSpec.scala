@@ -124,6 +124,11 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
     howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed(English)
   }
 
+  "back button" in {
+    beginJourney()
+    howMuchCanYouPayEachMonthPageLegacyCalculator.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
+  }
+
   "select an option and continue" - {
     "basic case" in {
       beginJourney()
