@@ -17,7 +17,7 @@
 package testsupport
 
 import play.api.Application
-import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
+import play.api.inject.guice.GuiceApplicationBuilder
 
 import java.time.LocalDate
 

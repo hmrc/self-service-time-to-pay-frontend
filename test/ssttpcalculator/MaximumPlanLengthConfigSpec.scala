@@ -18,14 +18,16 @@ package ssttpcalculator
 
 import config.AppConfig
 import org.scalatest.Assertion
-
+import org.scalatest.time.{Seconds, Span}
+import play.api.mvc.Results.Status
 import play.api.test.FakeRequest
+import play.api.test.Helpers.status
 import ssttpcalculator.model.PaymentsCalendar
-import testsupport.ConfigSpec
+import testsupport.{ConfigSpec, RichMatchers}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, SaUtr, SelfAssessmentDetails, Debit => corDebit}
 
-class MaximumPlanLengthConfigSpec extends ConfigSpec {
+class MaximumPlanLengthConfigSpec extends ConfigSpec{
 
   val testConfigMaxLengths: Seq[Int] = Seq(6, 12, 24)
 
@@ -131,5 +133,4 @@ class MaximumPlanLengthConfigSpec extends ConfigSpec {
     )(request)
     result.toSeq.length shouldBe 0
   }
-
 }
