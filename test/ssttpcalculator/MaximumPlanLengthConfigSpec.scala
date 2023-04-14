@@ -27,7 +27,7 @@ import testsupport.{ConfigSpec, RichMatchers}
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, SaUtr, SelfAssessmentDetails, Debit => corDebit}
 
-class MaximumPlanLengthConfigSpec extends ConfigSpec{
+class MaximumPlanLengthConfigSpec extends ConfigSpec {
 
   val testConfigMaxLengths: Seq[Int] = Seq(6, 12, 24)
 
