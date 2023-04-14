@@ -63,7 +63,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
     //for some reasons webDeriver's `getText` returns text with extra new lines if you run it from intellij.
     val content = readMain().stripSpaces().replaceAll("\n", " ")
     expectedLines.foreach { expectedLine =>
-      withClue(s"The page content should include '$expectedLine'"){
+      withClue(s"\nThe page content should include '$expectedLine'"){
         content should include(expectedLine)
       }
     }
@@ -112,6 +112,7 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
    * and fails assertion
    */
   protected def probing[A](probingF: => A): A = eventually(probingF).withClue {
+    println(">>>probing: " + webDriver.getCurrentUrl)
     s"""
        |>>>url was: ${webDriver.getCurrentUrl}
        |>>>path is supposed to be: $path

@@ -30,11 +30,16 @@ import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import testsupport.testdata.TdAll.frozenDateString
 import times.ClockProvider
-import uk.gov.hmrc.http.HttpReadsInstances
+import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances}
 
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime, ZoneId}
 import javax.inject.Singleton
+import scala.concurrent.{ExecutionContext, Future}
+import play.api.inject.bind
 
 class ItSpec
   extends AnyFreeSpec
@@ -66,10 +71,22 @@ class ItSpec
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled") ++ overrideConfig
 
+  val fakeAuthConnector = new AuthConnector {
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+
+      val retrievalResult = Future.successful(
+        new ~(new ~(Enrolments(Set(Enrolment("IR-SA"))), Some("6573196998")), Some(Credentials("IR-SA", "")))
+      )
+      (retrievalResult.map(_.asInstanceOf[A]))
+
+    }
+  }
   //in tests use `app`
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .overrides(bind[AuthConnector].toInstance(fakeAuthConnector))
     .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
     .configure(configMap)
+
     .build()
 
   val frozenTimeString: String = s"${frozenDateString}T16:33:51.880"

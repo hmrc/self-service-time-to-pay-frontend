@@ -1,7 +1,7 @@
 import sbt.Compile
 import sbt.Keys.compile
 import wartremover.Wart._
-import wartremover.{wartremoverErrors, wartremoverWarnings}
+import wartremover.WartRemover.autoImport.{wartremoverErrors, wartremoverWarnings}
 
 object  WartRemoverSettings {
 
@@ -10,7 +10,7 @@ object  WartRemoverSettings {
       JavaSerializable,
       AsInstanceOf
     )
-    wartremoverWarnings in(Compile, compile) ++= warningWarts
+    Compile / compile / wartremoverWarnings ++= warningWarts
   }
   lazy val wartRemoverError = {
     val errorWarts = Seq(
@@ -28,12 +28,11 @@ object  WartRemoverSettings {
       OptionPartial,
       Recursion,
       Return,
-      TraversableOps,
       TryPartial,
       Var,
       While
     )
 
-    wartremoverErrors in(Compile, compile) ++= errorWarts
+    Compile / compile / wartremoverErrors ++= errorWarts
   }
 }

@@ -132,8 +132,8 @@ object CalculatorForm {
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.below-minimum",
-          minCustomAmount.formatted("%,1.2f").stripSuffix(".00"),
-          maxCustomAmount.formatted("%,1.2f").stripSuffix(".00")
+          "%,1.2f".format(minCustomAmount).stripSuffix(".00"),
+          "%,1.2f".format(maxCustomAmount).stripSuffix(".00")
         )))
       }))
       .verifying(Constraint((i: String) => if ({
@@ -141,8 +141,8 @@ object CalculatorForm {
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.above-maximum",
-          minCustomAmount.formatted("%,1.2f").stripSuffix(".00"),
-          maxCustomAmount.formatted("%,1.2f").stripSuffix(".00")
+          "%,1.2f".format(minCustomAmount).stripSuffix(".00"),
+          "%,1.2f".format(maxCustomAmount).stripSuffix(".00")
         )))
       }))
 

@@ -23,8 +23,24 @@ import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.{aYearAgo, almostAYearAgo, unactivatedSaEnrolment}
 import uk.gov.hmrc.selfservicetimetopay.models._
+import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReadsInstances}
 
-class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
+class IneligiblePagesNoEnrollSpec extends ItSpec with TableDrivenPropertyChecks {
+
+  override val fakeAuthConnector = new AuthConnector {
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+
+      val retrievalResult = Future.successful(
+        new ~(new ~(Enrolments(Set.empty[Enrolment]), None), None)
+      )
+      (retrievalResult.map(_.asInstanceOf[A]))
+    }
+  }
+
   /**
    * spec to test all of the ineligible pages
    *
@@ -61,25 +77,17 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     ()
   }
 
-  "Ineligible pages displayed correctly - ssttp eligibility" - {
-    TableDrivenPropertyChecks.forAll(listOfIneligibleReasons) { (reason, reasonObject, pageAsString, page) =>
-      s"$pageAsString should be displayed when user has ineligible reason: [$reason]" in {
-        beginJourney(reasonObject)
-        page.assertInitialPageIsDisplayed
-        page.backButtonHref shouldBe None
-      }
+  "authorisation based eligibility" - {
 
-      s"OPS-5822: User can go back from the /call-us page (via browser back button) and try again but still end up on the /call-us page [$reason]" in {
-        beginJourney(reasonObject)
-        page.assertInitialPageIsDisplayed
-
-        webDriver.navigate().back()
-        startPage.clickOnStartNowButton()
-
-        // Bug OPS-5822 would have shown a technical difficulties page here rather than /call-us because of a
-        // failure to deserialise the reason in the journey object in the db
-        page.assertInitialPageIsDisplayed
-      }
+    "show you_need_to_request_access_to_self_assessment page no sa enrolments" in {
+      AuthStub.authorise(allEnrolments = Some(Set()))
+      TaxpayerStub.getTaxpayer()
+      DirectDebitStub.getBanksIsSuccessful()
+      GgStub.signInPage(port)
+      startPage.open()
+      startPage.clickOnStartNowButton()
+      youNeedToRequestAccessToSelfAssessment.assertInitialPageIsDisplayed
     }
+
   }
 }
