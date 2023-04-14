@@ -20,8 +20,6 @@ import akka.util.Timeout
 import journey.Statuses.InProgress
 import journey.{Journey, JourneyId, JourneyService}
 import org.scalatest.time.{Seconds, Span}
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.http.Status
@@ -30,10 +28,9 @@ import play.api.test.Helpers.{redirectLocation, status}
 import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
-import testsupport.RichMatchers.eventually
 import testsupport.stubs.{ArrangementStub, AuthStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.{TdAll, TdRequest}
-import testsupport.{RichMatchers, WireMockSupport}
+import testsupport.{ItSpec, RichMatchers, WireMockSupport}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, EligibilityStatus, PaymentDayOfMonth, TypeOfAccountDetails}
 import _root_.model.enumsforforms.TypesOfBankAccount.Personal
@@ -61,7 +58,7 @@ class CalculatorControllerMaxLengthPlan12 extends CalculatorControllerSpec {
   }
 }
 
-class CalculatorControllerSpec extends PlaySpec with GuiceOneAppPerTest with WireMockSupport {
+class CalculatorControllerSpec extends ItSpec with WireMockSupport {
 
   def configuredMaxLengthOfPaymentPlan: Int = 24
 
@@ -69,28 +66,10 @@ class CalculatorControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wir
 
   implicit val timeout: Timeout = Timeout(5.seconds)
 
-  val testPort: Int = 19001
-
-  val overrideConfig: Map[String, Any] = Map(
+  override val overrideConfig: Map[String, Any] = Map(
     "calculatorType" -> CalculatorType.Legacy.value,
     "legacyCalculatorConfig.maximumLengthOfPaymentPlan" -> configuredMaxLengthOfPaymentPlan
   )
-
-  protected lazy val configMap: Map[String, Any] = Map(
-    "microservice.services.direct-debit.port" -> WireMockSupport.port,
-    "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
-    "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
-    "microservice.services.campaign-manager.port" -> WireMockSupport.port,
-    "microservice.services.ia.port" -> WireMockSupport.port,
-    "microservice.services.auth.port" -> WireMockSupport.port,
-    "microservice.services.company-auth.url" -> s"http://localhost:${WireMockSupport.port}",
-    "microservice.services.auth.login-callback.base-url" -> s"http://localhost:$testPort",
-    "microservice.services.add-taxes.port" -> WireMockSupport.port,
-    "microservice.services.bars.port" -> WireMockSupport.port,
-    "microservice.services.identity-verification-frontend.uplift-url" -> s"http://localhost:${WireMockSupport.port}/mdtp/uplift",
-    "microservice.services.identity-verification-frontend.callback.base-url" -> s"http://localhost:$testPort",
-    "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
-    "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled") ++ overrideConfig
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(configMap)
@@ -98,18 +77,18 @@ class CalculatorControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wir
 
   val requestTimeOut = 5
 
-  "CalculatorController.getCalculatorInstalments" should {
-    "display 'how much can you pay each month' page if at least one plan no longer than configurable maximum length" in {
+  "CalculatorController.getCalculatorInstalments" - {
+    "displays 'how much can you pay each month' page if at least one plan no longer than configurable maximum length" in {
       eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
         val res = testGetCalculateInstalments(createJourneyWithMaxLengthPlan)
-        status(res) mustBe Status.OK
+        status(res) shouldBe Status.OK
       }
     }
     "display 'we cannot agree your payment plan' page if no plan is within the configurable maximum length" in {
       eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
         val res = testGetCalculateInstalments(createJourneyNoAffordablePlan)
-        status(res) mustBe Status.SEE_OTHER
-        redirectLocation(res) mustBe Some("/pay-what-you-owe-in-instalments/we-cannot-agree-your-payment-plan")
+        status(res) shouldBe Status.SEE_OTHER
+        redirectLocation(res) shouldBe Some("/pay-what-you-owe-in-instalments/we-cannot-agree-your-payment-plan")
       }
     }
   }
