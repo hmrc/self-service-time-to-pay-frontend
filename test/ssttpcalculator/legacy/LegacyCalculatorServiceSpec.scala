@@ -46,7 +46,6 @@ class LegacyCalculatorServiceSpec extends ItSpec with Matchers with DateSupport 
 
   val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
-
   private def clockForMay(dayInMay: Int) = {
     val formattedDay = dayInMay.formatted("%02d")
     val currentDateTime = LocalDateTime.parse(s"${_2020}-05-${formattedDay}T00:00:00.880").toInstant(UTC)
