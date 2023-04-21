@@ -37,6 +37,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetai
 
 import java.time.LocalDateTime
 import java.util.UUID
+import scala.concurrent.Await
 
 class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with WireMockSupport {
   import TdRequest._
@@ -79,7 +80,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
       val journey = createJourney(journeyId)
       val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
-      journeyService.saveJourney(journey)(fakeRequest)
+      Await.ready(journeyService.saveJourney(journey)(fakeRequest), scala.concurrent.duration.Duration.Inf)
 
       val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
 
