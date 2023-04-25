@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import ssttpcalculator.CalculatorType.PaymentOptimised
 import ssttpcalculator.model.PaymentPlanOption
@@ -100,6 +101,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
     }
   }
+
   "displays custom amount option" - {
     "in English" in {
       beginJourney()
@@ -111,6 +113,25 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.customAmountOptionIsDisplayed(Welsh)
     }
   }
+
+  "displays error message if continue without selecting an option" - {
+    "in English" in {
+      beginJourney()
+      howMuchCanYouPayEachMonthPage.clickContinue()
+      howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix
+      howMuchCanYouPayEachMonthPage.assertNoOptionSelectedErrorIsDisplayed
+      howMuchCanYouPayEachMonthPage.assertInitialPageContentIsDisplayed
+    }
+    "in Welsh" in {
+      beginJourney()
+      howMuchCanYouPayEachMonthPage.clickOnWelshLink()
+      howMuchCanYouPayEachMonthPage.clickContinue()
+      howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix(Welsh)
+      howMuchCanYouPayEachMonthPage.assertNoOptionSelectedErrorIsDisplayed(Welsh)
+      howMuchCanYouPayEachMonthPage.assertInitialPageContentIsDisplayed(Welsh)
+    }
+  }
+
   "custom amount entry" - {
     "displays page with custom option at top when custom amount entered and continue pressed" in {
       beginJourney()
@@ -136,6 +157,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmountBelowMinimum.toString)
       howMuchCanYouPayEachMonthPage.clickContinue()
 
+      howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix
       howMuchCanYouPayEachMonthPage.assertBelowMinimumErrorIsDisplayed
     }
     "more than maximum displays error message" in {
@@ -147,6 +169,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmountBelowMinimum.toString)
       howMuchCanYouPayEachMonthPage.clickContinue()
 
+      howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix
       howMuchCanYouPayEachMonthPage.assertAboveMaximumErrorIsDisplayed
     }
     "not filled in displays error message" in {
@@ -156,6 +179,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.enterCustomAmount()
       howMuchCanYouPayEachMonthPage.clickContinue()
 
+      howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix
       howMuchCanYouPayEachMonthPage.assertNoInputErrorIsDisplayed
     }
     "filled with non-numeric displays error message" in {
@@ -165,6 +189,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.enterCustomAmount("non-numeric")
       howMuchCanYouPayEachMonthPage.clickContinue()
 
+      howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix
       howMuchCanYouPayEachMonthPage.assertNonNumericErrorIsDisplayed
     }
     "filled with negative amount displays error message" in {
@@ -174,6 +199,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.enterCustomAmount("-1")
       howMuchCanYouPayEachMonthPage.clickContinue()
 
+      howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix
       howMuchCanYouPayEachMonthPage.assertNegativeAmountErrorIsDisplayed
     }
     "filled with more than two decimal places" - {
@@ -184,6 +210,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
         howMuchCanYouPayEachMonthPage.enterCustomAmount("280.111")
         howMuchCanYouPayEachMonthPage.clickContinue()
 
+        howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix
         howMuchCanYouPayEachMonthPage.assertDecimalPlacesErrorIsDisplayed
       }
       "in Welsh" in {
@@ -194,6 +221,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
         howMuchCanYouPayEachMonthPage.enterCustomAmount("280.111")
         howMuchCanYouPayEachMonthPage.clickContinue()
 
+        howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix(Welsh)
         howMuchCanYouPayEachMonthPage.assertDecimalPlacesErrorIsDisplayed(Welsh)
       }
 

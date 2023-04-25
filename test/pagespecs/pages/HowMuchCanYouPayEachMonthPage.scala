@@ -33,6 +33,11 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     case Languages.Welsh   => "Faint y gallwch ei dalu bob mis?"
   }
 
+  def expectedHeadingContentWithErrorPrefix(language: Language): String = language match {
+    case Languages.English => "Error: " + expectedHeadingContent(English)
+    case Languages.Welsh => "Gwall: " + expectedHeadingContent(Welsh)
+  }
+
   def selectAnOption(): Unit = probing {
     val radioButton = xpath("//*[@type=\"radio\"]")
     click on radioButton
@@ -66,6 +71,10 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
+    assertInitialPageContentIsDisplayed(lang)
+  }
+
+  def assertInitialPageContentIsDisplayed(implicit lang: Language = English): Unit = probing {
     val expectedLines = Expected.MainText.DefaultCalculations().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
     ()
@@ -123,6 +132,16 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     optionIsDisplayed(amount, months, interest)
     ()
   }
+
+  def assertExpectedHeadingContentWithErrorPrefix(implicit lang: Language = English): Assertion = probing {
+    pageTitle shouldBe expectedTitle(expectedHeadingContentWithErrorPrefix(lang), lang)
+  }
+
+  def assertNoOptionSelectedErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(Expected.ErrorText.NoOptionSelected().stripSpaces())
+  }
+
 
   def assertBelowMinimumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
@@ -276,6 +295,24 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     }
 
     object ErrorText {
+
+      object NoOptionSelected {
+        def apply()(implicit language: Language): String = language match {
+          case English => noOptionSelectedTextEnglish
+          case Welsh => noOptionSelectedTextWelsh
+        }
+
+        private val noOptionSelectedTextEnglish =
+          s"""There is a problem
+             |Select an option
+      """.stripMargin
+
+        private val noOptionSelectedTextWelsh =
+          s"""Mae problem wedi codi
+             |Dewiswch opsiwn
+      """.stripMargin
+      }
+
       object BelowMinimum {
         def apply()(implicit language: Language): String = language match {
           case English => belowMinimumTextEnglish
