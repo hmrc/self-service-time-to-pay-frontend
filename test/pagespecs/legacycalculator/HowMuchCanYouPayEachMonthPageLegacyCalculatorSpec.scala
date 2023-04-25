@@ -114,6 +114,24 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
     }
   }
 
+  "displays error message if continue without selecting an option" - {
+    "in English" in {
+      beginJourney()
+      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+      howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
+      howMuchCanYouPayEachMonthPageLegacyCalculator.assertNoOptionSelectedErrorIsDisplayed
+      howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageContentIsDisplayed
+    }
+    "in Welsh" in {
+      beginJourney()
+      howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
+      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+      howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix(Welsh)
+      howMuchCanYouPayEachMonthPageLegacyCalculator.assertNoOptionSelectedErrorIsDisplayed(Welsh)
+      howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageContentIsDisplayed(Welsh)
+    }
+  }
+
   "language" in {
     beginJourney()
 

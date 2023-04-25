@@ -212,41 +212,46 @@ class CalculatorController @Inject() (
     journeyService.authorizedForSsttp { journey: Journey =>
       JourneyLogger.info(s"CalculatorController.submitCalculateInstalments journey: $journey")
       val sa = journey.taxpayer.selfAssessment
-      val paymentPlanOptions = paymentPlansService.defaultSchedules(
-        sa,
-        journey.safeUpfrontPayment,
-        journey.maybePaymentDayOfMonth,
-        journey.remainingIncomeAfterSpending
-      )
-      val minCustomAmount = paymentPlanOptions.values.toSeq
-        .sortBy(_.instalmentAmount)
-        .headOption.fold(BigDecimal(1))(_.instalmentAmount)
-      val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
 
-      selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
-        formWithErrors => {
-          Future.successful(
-            BadRequest(
-              views.how_much_can_you_pay_each_month_form(
-                ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
-                formWithErrors,
-                paymentPlanOptions,
-                minCustomAmount.setScale(2, HALF_UP),
-                maxCustomAmount.setScale(2, HALF_UP),
-                journey.maybePlanSelection))
+      appConfig.calculatorType match {
+
+        case CalculatorType.Legacy => ???
+
+        case CalculatorType.PaymentOptimised =>
+          val defaultPlanOptions = paymentPlansService.defaultSchedules(
+            sa,
+            journey.safeUpfrontPayment,
+            journey.maybePaymentDayOfMonth,
+            journey.remainingIncomeAfterSpending
           )
-        },
-        (validFormData: PlanSelection) => {
-          journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData.mongoSafe))).map { _ =>
-            validFormData.selection match {
-              case Right(CustomPlanRequest(_)) => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
-              case Left(SelectedPlan(_))       => Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())
+          val minCustomAmount = defaultPlanOptions.values.toSeq
+            .sortBy(_.instalmentAmount)
+            .headOption.fold(BigDecimal(1))(_.instalmentAmount)
+          val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
+
+          selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
+            formWithErrors => {
+              Future.successful(
+                BadRequest(
+                  views.how_much_can_you_pay_each_month_form(
+                    ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
+                    formWithErrors,
+                    defaultPlanOptions,
+                    minCustomAmount.setScale(2, HALF_UP),
+                    maxCustomAmount.setScale(2, HALF_UP),
+                    journey.maybePlanSelection))
+              )
+            },
+            (validFormData: PlanSelection) => {
+              journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData.mongoSafe))).map { _ =>
+                validFormData.selection match {
+                  case Right(CustomPlanRequest(_)) => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
+                  case Left(SelectedPlan(_)) => Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())
+                }
+              }
             }
-          }
-        }
-
-      )
-
+          )
+      }
     }
   }
 

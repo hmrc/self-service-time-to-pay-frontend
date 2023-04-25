@@ -27,11 +27,17 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
   extends HowMuchCanYouPayEachMonthPage(baseUrl)(webDriver) {
 
   import WebBrowser._
-  override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
+  override def assertInitialPageIsDisplayed(implicit lang: Language = English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
+    val expectedLines = ExpectedLegacyCalculator.MainText.DefaultCalculations().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+    ()
+  }
+
+  override def assertInitialPageContentIsDisplayed(implicit lang: Language = English): Unit = probing {
     val expectedLines = ExpectedLegacyCalculator.MainText.DefaultCalculations().stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
     ()
