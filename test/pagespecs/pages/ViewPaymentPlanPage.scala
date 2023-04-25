@@ -67,10 +67,9 @@ class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exten
         """Your payment plan
           |Payment reference	123ABC123
           |Upfront payment amount
-          |Monthly payments
           |
           |Estimated total interest
-          |included in monthly payments
+          |included in your plan
           |
           |Total to pay
           |Print a copy of your payment plan
