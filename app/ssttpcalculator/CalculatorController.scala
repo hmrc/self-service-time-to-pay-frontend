@@ -215,7 +215,24 @@ class CalculatorController @Inject() (
 
       appConfig.calculatorType match {
 
-        case CalculatorType.Legacy => ???
+        case CalculatorType.Legacy =>
+          val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
+          val closestSchedule = calculatorService.closestSchedule(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
+          val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
+
+          selectPlanForm().bindFromRequest().fold(
+            formWithErrors => {
+              Future.successful(
+                BadRequest(
+                  views.how_much_can_you_pay_each_month_form_legacy(
+                    ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
+                    formWithErrors,
+                    defaultPlanOptions,
+                    journey.maybePlanSelection))
+              )
+            },
+            validPlanSelectionFormRedirect(journey)
+          )
 
         case CalculatorType.PaymentOptimised =>
           val defaultPlanOptions = paymentPlansService.defaultSchedules(
@@ -242,17 +259,22 @@ class CalculatorController @Inject() (
                     journey.maybePlanSelection))
               )
             },
-            (validFormData: PlanSelection) => {
-              journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData.mongoSafe))).map { _ =>
-                validFormData.selection match {
-                  case Right(CustomPlanRequest(_)) => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
-                  case Left(SelectedPlan(_)) => Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())
-                }
-              }
-            }
+            validPlanSelectionFormRedirect(journey)
           )
       }
     }
+  }
+
+  private def validPlanSelectionFormRedirect(journey: Journey)(implicit request: Request[_]): PlanSelection => Future[Result] = {
+    (validFormData: PlanSelection) =>
+      {
+        journeyService.saveJourney(journey.copy(maybePlanSelection = Some(validFormData.mongoSafe))).map { _ =>
+          validFormData.selection match {
+            case Right(CustomPlanRequest(_)) => Redirect(ssttpcalculator.routes.CalculatorController.getCalculateInstalments())
+            case Left(SelectedPlan(_))       => Redirect(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())
+          }
+        }
+      }
   }
 
   private def maybePreviousCustomAmount(
@@ -281,5 +303,4 @@ class CalculatorController @Inject() (
   private def isDefaultPlan(planAmount: BigDecimal, defaultPlanOptions: Map[PaymentPlanOption, PaymentSchedule]): Boolean = {
     defaultPlanOptions.map(_._2.instalments.headOption.fold(BigDecimal(0))(_.amount)).toList.contains(planAmount)
   }
-
 }

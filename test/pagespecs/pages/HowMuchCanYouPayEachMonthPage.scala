@@ -35,7 +35,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
   def expectedHeadingContentWithErrorPrefix(language: Language): String = language match {
     case Languages.English => "Error: " + expectedHeadingContent(English)
-    case Languages.Welsh => "Gwall: " + expectedHeadingContent(Welsh)
+    case Languages.Welsh   => "Gwall: " + expectedHeadingContent(Welsh)
   }
 
   def selectAnOption(): Unit = probing {
@@ -141,7 +141,6 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     readPath() shouldBe path
     readMain().stripSpaces() should include(Expected.ErrorText.NoOptionSelected().stripSpaces())
   }
-
 
   def assertBelowMinimumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
@@ -299,7 +298,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
       object NoOptionSelected {
         def apply()(implicit language: Language): String = language match {
           case English => noOptionSelectedTextEnglish
-          case Welsh => noOptionSelectedTextWelsh
+          case Welsh   => noOptionSelectedTextWelsh
         }
 
         private val noOptionSelectedTextEnglish =
