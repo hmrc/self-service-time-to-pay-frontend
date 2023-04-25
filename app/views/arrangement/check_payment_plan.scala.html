@@ -99,44 +99,29 @@
         </div>
     </dl>
 
-@* monthly payments of *@
-    <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">
-            @paymentSchedule.instalments.size <span>@messages("ssttp.arrangement.check-payment-plan.number-of-payments")</span>
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @partials.currency(paymentSchedule.firstInstalment.amount)
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                <a id="monthly-payment" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">
-                    @messages("ssttp.arrangement.check-payment-plan.change")
-                    <span class="govuk-visually-hidden"> @messages("ssttp.arrangement.check-payment-plan.payments-collected-on.change-hidden")
-                    </span>
-                </a>
-            </dd>
-        </div>
-    </dl>
-
 @* Payments schedule *@
-    <details class="govuk-details govuk-!-margin-bottom-6">
-        <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.arrangement.check-payment-plan.payment-schedule")</span></summary>
-            <div class="govuk-details__text">
-                @paymentSchedule.instalments.map {instalment =>
-                    <dl class="govuk-summary-list govuk-!-margin-bottom-0">
-                        <div class="govuk-summary-list__row grouped-row no_bottom_line">
-                            <dt class="govuk-summary-list__key">
-                                <strong>@monthYear(instalment.paymentDate)</strong>
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                            @partials.currency(instalment.amount)
-                            </dd>
-                        </div>
-                    </dl>
-                }
-            </div>
-    </details>
-    <hr>
+   <dl class="govuk-summary-list govuk-!-margin-top-6">
+       <dt class="govuk-summary-list__key govuk-!-width-one-third"><strong>@Messages("ssttp.arrangement.check-payment-plan.payment-plan")</strong></dt>
+       <dd class="govuk-summary-list__value"></dd>
+           <dd class="govuk-summary-list__actions">
+               <a id="monthly-payment" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">
+                   @messages("ssttp.arrangement.check-payment-plan.change")
+               <span class="govuk-visually-hidden"> @messages("ssttp.arrangement.check-payment-plan.payments-collected-on.change-hidden")</span>
+               </a>
+           </dd>
+            @paymentSchedule.instalments.map {instalment =>
+                <div class="govuk-summary-list__row grouped-row no_bottom_line">
+                    <dt class="govuk-summary-list__key">
+                        <strong>@monthYear(instalment.paymentDate)</strong>
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @partials.currency(instalment.amount)
+                    </dd>
+                </div>
+            }
+   </dl>
+
+    <hr aria-hidden="true">
 
 @* Estimated total interest *@
     <dl class="govuk-summary-list govuk-!-margin-top-6">
