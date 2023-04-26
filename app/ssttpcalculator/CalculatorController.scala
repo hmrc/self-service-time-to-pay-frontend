@@ -33,6 +33,7 @@ import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
 import CalculatorType._
+import play.api.data.Form
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode.HALF_UP
@@ -213,20 +214,10 @@ class CalculatorController @Inject() (
           val minCustomAmount = defaultPlanOptions.values.toSeq.maxBy(_.instalmentAmount).instalmentAmount
           val maxCustomAmount = availablePaymentSchedules.maxBy(_.instalmentAmount).instalmentAmount
 
+          val planOptions: Map[PaymentPlanOption, PaymentSchedule] = allPlanOptions(defaultPlanOptions, journey)
+
           selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
-            formWithErrors => {
-              Future.successful(
-                BadRequest(
-                  views.how_much_can_you_pay_each_month_form(
-                    CalculatorType.Legacy,
-                    ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
-                    formWithErrors,
-                    defaultPlanOptions,
-                    minCustomAmount.setScale(2, HALF_UP),
-                    maxCustomAmount.setScale(2, HALF_UP),
-                    journey.maybePlanSelection))
-              )
-            },
+            invalidPlanSelectionFormBadRequest(Legacy, journey, planOptions, minCustomAmount, maxCustomAmount),
             validPlanSelectionFormRedirect(journey)
           )
 
@@ -245,20 +236,7 @@ class CalculatorController @Inject() (
           val planOptions: Map[PaymentPlanOption, PaymentSchedule] = allPlanOptions(defaultPlanOptions, journey)
 
           selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
-            formWithErrors => {
-              Future.successful(
-                BadRequest(
-                  views.how_much_can_you_pay_each_month_form(
-                    CalculatorType.PaymentOptimised,
-                    ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
-                    formWithErrors,
-                    planOptions,
-                    minCustomAmount.setScale(2, HALF_UP),
-                    maxCustomAmount.setScale(2, HALF_UP),
-                    journey.maybePlanSelection)
-                )
-              )
-            },
+            invalidPlanSelectionFormBadRequest(PaymentOptimised, journey, planOptions, minCustomAmount, maxCustomAmount),
             validPlanSelectionFormRedirect(journey)
           )
       }
@@ -281,6 +259,29 @@ class CalculatorController @Inject() (
       maxCustomAmount.setScale(2, HALF_UP),
       maybePlanSelection
     ))
+  }
+
+  private def invalidPlanSelectionFormBadRequest(
+                                                calculatorType: CalculatorType,
+      journey:         Journey,
+      planOptions:     Map[PaymentPlanOption, PaymentSchedule],
+      minCustomAmount: BigDecimal,
+      maxCustomAmount: BigDecimal
+  )(implicit request: Request[_]): Form[PlanSelection] => Future[Result] = {
+    formWithErrors =>
+      {
+        Future.successful(
+          BadRequest(
+            views.how_much_can_you_pay_each_month_form(
+              calculatorType,
+              ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
+              formWithErrors,
+              planOptions,
+              minCustomAmount.setScale(2, HALF_UP),
+              maxCustomAmount.setScale(2, HALF_UP),
+              journey.maybePlanSelection))
+        )
+      }
   }
 
   private def validPlanSelectionFormRedirect(journey: Journey)(implicit request: Request[_]): PlanSelection => Future[Result] = {
