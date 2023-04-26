@@ -135,8 +135,8 @@
 
         <p class="govuk-body">
             @{previousFormSubmission.fold(messages("ssttp.calculator.results.p1"))(_.selection match {
-                case Right(CustomPlanRequest(amount)) => messages("ssttp.calculator.results.p1.custom-amount", currency(amount))
-                case Left(SelectedPlan(amount)) if schedules.headOption.fold(false)(_._1 == PaymentPlanOption.Custom) => messages("ssttp.calculator.results.p1.custom-amount", currency(amount))
+                case Right(CustomPlanRequest(amount)) => messages(s"ssttp.calculator.results.p1.custom-amount.${calculatorType.messagesKeySuffix}", currency(amount))
+                case Left(SelectedPlan(amount)) if schedules.headOption.fold(false)(_._1 == PaymentPlanOption.Custom) => messages(s"ssttp.calculator.results.p1.custom-amount.${calculatorType.messagesKeySuffix}", currency(amount))
                 case _ => messages("ssttp.calculator.results.p1")
             })}
         </p>

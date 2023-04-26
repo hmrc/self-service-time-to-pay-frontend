@@ -163,17 +163,11 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
           howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
           howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
 
-//          howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(
-//            (customAmount - 10).toString,
-//            Some(planMonths.toString),
-//            Some(planInterest.toString)
-//          )
-          howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed(
+          howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(
             (customAmount - 10).toString,
             Some(planMonths.toString),
             Some(planInterest.toString)
           )
-
         }
         "plan instalment amount above custom amount input" in {
           beginJourney()
@@ -188,12 +182,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
           howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
           howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
 
-//          howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(
-//            (customAmount + 10).toString,
-//            Some(planMonths.toString),
-//            Some(planInterest.toString)
-//          )
-          howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed(
+          howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(
             (customAmount + 10).toString,
             Some(planMonths.toString),
             Some(planInterest.toString)
@@ -201,7 +190,6 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
         }
 
       }
-
 
     }
     //    "displays error message and options including custom option if press continue after custom option displayed without selecting an option" in {

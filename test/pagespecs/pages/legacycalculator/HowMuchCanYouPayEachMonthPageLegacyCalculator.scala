@@ -49,6 +49,16 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
     ()
   }
 
+  override def assertPageWithCustomAmountContentIsDisplayed(amount:   String,
+                                                            months:   Option[String] = None,
+                                                            interest: Option[String] = None
+  )(implicit lang: Language = English): Unit = probing {
+    val expectedLines = ExpectedLegacyCalculator.MainText.CustomAmountDisplayed(amount).stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+    optionIsDisplayed(amount, months, interest)
+    ()
+  }
+
   object ExpectedLegacyCalculator {
 
     object MainText {
@@ -105,6 +115,23 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
           s"""Pay more per month
              |Enter an amount between £612.50 and £2,450 to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
           """.stripMargin
+      }
+
+      object CustomAmountDisplayed {
+        def apply(amount: String)(implicit language: Language): String = language match {
+          case English => customAmountTextEnglish(amount)
+          case Welsh   => customAmountTextWelsh(amount)
+        }
+
+        private def customAmountTextEnglish(amount: String) =
+          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more to cover interest and any remaining tax you owe.
+              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+      """.stripMargin
+
+        private def customAmountTextWelsh(amount: String) =
+          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more to cover interest and any remaining tax you owe.
+              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+      """.stripMargin
       }
     }
   }
