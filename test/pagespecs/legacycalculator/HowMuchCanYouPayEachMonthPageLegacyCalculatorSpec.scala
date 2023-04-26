@@ -102,15 +102,15 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
       howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("700")
     }
   }
-  "does not display a custom amount option" - {
+  "displays custom amount option" - {
     "in English" in {
       beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.customAmountOptionNotDisplayed
+      howMuchCanYouPayEachMonthPageLegacyCalculator.customAmountOptionIsDisplayed
     }
     "in Welsh" in {
       beginJourney()
       howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.customAmountOptionNotDisplayed(Welsh)
+      howMuchCanYouPayEachMonthPageLegacyCalculator.customAmountOptionIsDisplayed(Welsh)
     }
   }
 

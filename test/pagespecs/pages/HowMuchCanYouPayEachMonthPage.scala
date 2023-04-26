@@ -130,10 +130,10 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     ()
   }
 
-  def assertPageWithCustomAmountContentIsDisplayed(amount: String,
-                                                   months: Option[String] = None,
+  def assertPageWithCustomAmountContentIsDisplayed(amount:   String,
+                                                   months:   Option[String] = None,
                                                    interest: Option[String] = None
-                                                  )(implicit lang: Language = English): Unit = probing {
+  )(implicit lang: Language = English): Unit = probing {
     val expectedLines = Expected.MainText.CustomAmountDisplayed(amount).stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
     optionIsDisplayed(amount, months, interest)
@@ -246,7 +246,6 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
           s"""Swm misol gwahanol
              |Rhowch swm sydd o leiaf £500 ond heb fod yn fwy na £4,914.40
           """.stripMargin
-
       }
 
       object DefaultOptionsText {

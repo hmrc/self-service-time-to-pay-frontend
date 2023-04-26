@@ -18,6 +18,7 @@ package ssttpcalculator
 
 sealed trait CalculatorType {
   val value: String
+  lazy val messagesKeySuffix: String = value.toLowerCase
 }
 
 object CalculatorType {

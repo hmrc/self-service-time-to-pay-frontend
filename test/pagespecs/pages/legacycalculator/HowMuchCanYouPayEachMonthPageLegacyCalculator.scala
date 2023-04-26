@@ -17,7 +17,7 @@
 package pagespecs.pages.legacycalculator
 
 import langswitch.Languages.{English, Welsh}
-import langswitch.Language
+import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser
 import pagespecs.pages.{BaseUrl, HowMuchCanYouPayEachMonthPage}
@@ -43,9 +43,9 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
     ()
   }
 
-  def assertContentDoesNotContainOrSeparator(implicit lang: Language = English): Unit = probing {
-    val expectedLines = ExpectedLegacyCalculator.MainText.OrSeparator().stripSpaces().split("\n")
-    assertContentDoesNotContainLines(expectedLines)
+  override def customAmountOptionIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+    val expectedLines = ExpectedLegacyCalculator.MainText.CustomOption().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
     ()
   }
 
@@ -90,17 +90,21 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
           """.stripMargin
       }
 
-      object OrSeparator {
+      object CustomOption {
         def apply()(implicit language: Language): String = language match {
-          case English => orSeparatorTextEnglish
-          case Welsh   => orSeparatorTextWelsh
+          case English => customtOptionTextEnglish
+          case Welsh   => customOptionTextWelsh
         }
 
-        private val orSeparatorTextEnglish =
-          s"""or""".stripMargin
+        private val customtOptionTextEnglish =
+          s"""Pay more per month
+             |Enter an amount between £612.50 and £2,450 to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
+          """.stripMargin
 
-        private val orSeparatorTextWelsh =
-          s"""neu""".stripMargin
+        private val customOptionTextWelsh =
+          s"""Pay more per month
+             |Enter an amount between £612.50 and £2,450 to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
+          """.stripMargin
       }
     }
   }

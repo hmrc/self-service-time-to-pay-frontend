@@ -29,6 +29,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 @import ssttpcalculator.model.PaymentPlanOption.Custom
+@import ssttpcalculator.CalculatorType
 
 @this(
   main: views.html.main,
@@ -38,6 +39,7 @@
 )
 
 @(
+        calculatorType: CalculatorType,
         redirectCall: Call,
         selectPlanForm: Form[PlanSelection],
         schedules: Map[PaymentPlanOption, PaymentSchedule],
@@ -88,7 +90,7 @@
 
 @enterCustomAmountPanel = {
 <div id="custom-amount-field" class="govuk-form-group @if(customAmountHasErrors){govuk-form-group--error}">
-    <div class="govuk-hint">@Html(messages("ssttp.calculator.results.option.other.enter.amount", currency(minCustomAmount), currency(maxCustomAmount)))</div>
+    <div class="govuk-hint">@Html(messages(s"ssttp.calculator.results.option.other.enter.amount.${calculatorType.messagesKeySuffix}", currency(minCustomAmount), currency(maxCustomAmount)))</div>
     @if(customAmountHasErrors) {
         <span id="custom-amount-error" class="govuk-error-message">
             <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
@@ -151,7 +153,7 @@
                 id = Some("customAmountOption"),
                 value = Some("customAmountOption"),
                 checked = selectPlanForm("plan-selection").value.contains("customAmountOption"),
-                content = Text(Messages("ssttp.calculator.results.option.other.label")),
+                content = Text(Messages(s"ssttp.calculator.results.option.other.label.${calculatorType.messagesKeySuffix}")),
                 conditionalHtml = Some(enterCustomAmountPanel)
             )
         ))
