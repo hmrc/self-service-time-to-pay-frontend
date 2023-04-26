@@ -26,11 +26,13 @@ import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
 import model.{PaymentPlanOption, PaymentSchedule}
+import play.api.i18n.Messages
 import ssttpcalculator.legacy.CalculatorService
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
 import views.Views
+import CalculatorType._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode.HALF_UP
@@ -155,7 +157,7 @@ class CalculatorController @Inject() (
 
       appConfig.calculatorType match {
 
-        case CalculatorType.Legacy =>
+        case Legacy =>
           val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
           val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
           val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
@@ -165,26 +167,14 @@ class CalculatorController @Inject() (
               Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
 
             case Some(_) =>
-
               val minCustomAmount = defaultPlanOptions.values.toSeq.maxBy(_.instalmentAmount).instalmentAmount
               val maxCustomAmount = availablePaymentSchedules.maxBy(_.instalmentAmount).instalmentAmount
+              val planOptions: Map[PaymentPlanOption, PaymentSchedule] = allPlanOptions(defaultPlanOptions, journey)
 
-              val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
-                case None                 => defaultPlanOptions
-                case Some(customSchedule) => Map((PaymentPlanOption.Custom, customSchedule)) ++ defaultPlanOptions
-              }
-
-              Ok(views.how_much_can_you_pay_each_month_form(
-                CalculatorType.Legacy,
-                routes.CalculatorController.submitCalculateInstalments(),
-                selectPlanForm(minCustomAmount, maxCustomAmount),
-                allPlanOptions,
-                minCustomAmount.setScale(2, HALF_UP),
-                maxCustomAmount.setScale(2, HALF_UP),
-                journey.maybePlanSelection))
+              okPlanForm(Legacy, minCustomAmount, maxCustomAmount, planOptions, journey.maybePlanSelection)
           }
 
-        case CalculatorType.PaymentOptimised =>
+        case PaymentOptimised =>
           val defaultPlanOptions = paymentPlansService.defaultSchedules(
             sa,
             journey.safeUpfrontPayment,
@@ -197,23 +187,11 @@ class CalculatorController @Inject() (
               Redirect(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP())
 
             case Some(scheduleWithSmallestInstalmentAmount) =>
-
               val minCustomAmount = scheduleWithSmallestInstalmentAmount.instalmentAmount
               val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
+              val planOptions: Map[PaymentPlanOption, PaymentSchedule] = allPlanOptions(defaultPlanOptions, journey)
 
-              val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
-                case None                 => defaultPlanOptions
-                case Some(customSchedule) => Map((PaymentPlanOption.Custom, customSchedule)) ++ defaultPlanOptions
-              }
-
-              Ok(views.how_much_can_you_pay_each_month_form(
-                CalculatorType.PaymentOptimised,
-                routes.CalculatorController.submitCalculateInstalments(),
-                selectPlanForm(minCustomAmount, maxCustomAmount),
-                allPlanOptions,
-                minCustomAmount.setScale(2, HALF_UP),
-                maxCustomAmount.setScale(2, HALF_UP),
-                journey.maybePlanSelection))
+              okPlanForm(PaymentOptimised, minCustomAmount, maxCustomAmount, planOptions, journey.maybePlanSelection)
           }
       }
     }
@@ -264,10 +242,7 @@ class CalculatorController @Inject() (
             .headOption.fold(BigDecimal(1))(_.instalmentAmount)
           val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
 
-          val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
-            case None                 => defaultPlanOptions
-            case Some(customSchedule) => Map((PaymentPlanOption.Custom, customSchedule)) ++ defaultPlanOptions
-          }
+          val planOptions: Map[PaymentPlanOption, PaymentSchedule] = allPlanOptions(defaultPlanOptions, journey)
 
           selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
             formWithErrors => {
@@ -277,7 +252,7 @@ class CalculatorController @Inject() (
                     CalculatorType.PaymentOptimised,
                     ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                     formWithErrors,
-                    allPlanOptions,
+                    planOptions,
                     minCustomAmount.setScale(2, HALF_UP),
                     maxCustomAmount.setScale(2, HALF_UP),
                     journey.maybePlanSelection)
@@ -290,6 +265,24 @@ class CalculatorController @Inject() (
     }
   }
 
+  private def okPlanForm(
+      calculatorType:     CalculatorType,
+      minCustomAmount:    BigDecimal,
+      maxCustomAmount:    BigDecimal,
+      allPlanOptions:     Map[PaymentPlanOption, PaymentSchedule],
+      maybePlanSelection: Option[PlanSelection]
+  )(implicit request: Request[_]): Result = {
+    Ok(views.how_much_can_you_pay_each_month_form(
+      calculatorType,
+      routes.CalculatorController.submitCalculateInstalments(),
+      selectPlanForm(minCustomAmount, maxCustomAmount),
+      allPlanOptions,
+      minCustomAmount.setScale(2, HALF_UP),
+      maxCustomAmount.setScale(2, HALF_UP),
+      maybePlanSelection
+    ))
+  }
+
   private def validPlanSelectionFormRedirect(journey: Journey)(implicit request: Request[_]): PlanSelection => Future[Result] = {
     (validFormData: PlanSelection) =>
       {
@@ -300,6 +293,16 @@ class CalculatorController @Inject() (
           }
         }
       }
+  }
+
+  private def allPlanOptions(
+      defaultPlanOptions: Map[PaymentPlanOption, PaymentSchedule],
+      journey:            Journey
+  )(implicit request: Request[_]): Map[PaymentPlanOption, PaymentSchedule] = {
+    maybePreviousCustomAmount(journey, defaultPlanOptions) match {
+      case None                 => defaultPlanOptions
+      case Some(customSchedule) => Map((PaymentPlanOption.Custom, customSchedule)) ++ defaultPlanOptions
+    }
   }
 
   private def maybePreviousCustomAmount(
