@@ -133,20 +133,76 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
   }
 
   "custom amount entry" - {
-    "displays page with custom option at top when custom amount entered and continue pressed" in {
-      beginJourney()
+    "displays page with custom option at top when custom amount entered and continue pressed" - {
+      "custom plan matching custom amount input exactly if available" in {
+        beginJourney()
 
-      howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
 
-      val customAmount = 700
-      val planMonths = 7
-      val planInterest = 54.35
+        val customAmount = 700
+        val planMonths = 7
+        val planInterest = 54.35
 
-      howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
+        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
 
-      howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+      }
+      "custom plan closest to custom amount input if exact plan not available" - {
+        "plan instalment amount below custom amount input" in {
+          beginJourney()
+
+          howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+
+          val customAmount = 710
+          val planMonths = 7
+          val planInterest = 54.35
+
+          howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+          howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
+          howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+
+//          howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(
+//            (customAmount - 10).toString,
+//            Some(planMonths.toString),
+//            Some(planInterest.toString)
+//          )
+          howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed(
+            (customAmount - 10).toString,
+            Some(planMonths.toString),
+            Some(planInterest.toString)
+          )
+
+        }
+        "plan instalment amount above custom amount input" in {
+          beginJourney()
+
+          howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+
+          val customAmount = 690
+          val planMonths = 7
+          val planInterest = 54.35
+
+          howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+          howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
+          howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+
+//          howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(
+//            (customAmount + 10).toString,
+//            Some(planMonths.toString),
+//            Some(planInterest.toString)
+//          )
+          howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed(
+            (customAmount + 10).toString,
+            Some(planMonths.toString),
+            Some(planInterest.toString)
+          )
+        }
+
+      }
+
+
     }
     //    "displays error message and options including custom option if press continue after custom option displayed without selecting an option" in {
     //      beginJourney()
