@@ -114,7 +114,7 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
     }
   }
 
-  "displays error message if continue without selecting an option" - {
+  "displays error message if press continue without selecting an option" - {
     "in English" in {
       beginJourney()
       howMuchCanYouPayEachMonthPage.clickContinue()
@@ -147,6 +147,24 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
       howMuchCanYouPayEachMonthPage.clickContinue()
 
       howMuchCanYouPayEachMonthPage.assertPageWithCustomAmountIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+    }
+    "displays error message and options including custom option if press continue after custom option displayed without selecting an option" in {
+      beginJourney()
+
+      howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+
+      val customAmount = 700
+      val planMonths = 8
+      val planInterest = 54.35
+
+      howMuchCanYouPayEachMonthPage.selectCustomAmountOption()
+      howMuchCanYouPayEachMonthPage.enterCustomAmount(customAmount.toString)
+      howMuchCanYouPayEachMonthPage.clickContinue()
+
+      howMuchCanYouPayEachMonthPage.clickContinue()
+      howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix
+      howMuchCanYouPayEachMonthPage.assertNoOptionSelectedErrorIsDisplayed
+      howMuchCanYouPayEachMonthPage.assertPageWithCustomAmountContentIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
     }
     "less than minimum displays error message" in {
       beginJourney()

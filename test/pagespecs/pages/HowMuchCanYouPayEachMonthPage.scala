@@ -126,9 +126,16 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
+    assertPageWithCustomAmountContentIsDisplayed(amount, months, interest)(lang)
+    ()
+  }
+
+  def assertPageWithCustomAmountContentIsDisplayed(amount: String,
+                                                   months: Option[String] = None,
+                                                   interest: Option[String] = None
+                                                  )(implicit lang: Language = English): Unit = probing {
     val expectedLines = Expected.MainText.CustomAmountDisplayed(amount).stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
-
     optionIsDisplayed(amount, months, interest)
     ()
   }

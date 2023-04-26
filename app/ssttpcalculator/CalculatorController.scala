@@ -246,6 +246,11 @@ class CalculatorController @Inject() (
             .headOption.fold(BigDecimal(1))(_.instalmentAmount)
           val maxCustomAmount = paymentPlansService.maximumPossibleInstalmentAmount(journey)
 
+          val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
+            case None => defaultPlanOptions
+            case Some(customSchedule) => Map((PaymentPlanOption.Custom, customSchedule)) ++ defaultPlanOptions
+          }
+
           selectPlanForm(minCustomAmount, maxCustomAmount).bindFromRequest().fold(
             formWithErrors => {
               Future.successful(
@@ -253,7 +258,7 @@ class CalculatorController @Inject() (
                   views.how_much_can_you_pay_each_month_form(
                     ssttpcalculator.routes.CalculatorController.submitCalculateInstalments(),
                     formWithErrors,
-                    defaultPlanOptions,
+                    allPlanOptions,
                     minCustomAmount.setScale(2, HALF_UP),
                     maxCustomAmount.setScale(2, HALF_UP),
                     journey.maybePlanSelection))
