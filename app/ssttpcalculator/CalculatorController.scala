@@ -169,11 +169,16 @@ class CalculatorController @Inject() (
               val minCustomAmount = defaultPlanOptions.values.toSeq.maxBy(_.instalmentAmount).instalmentAmount
               val maxCustomAmount = availablePaymentSchedules.maxBy(_.instalmentAmount).instalmentAmount
 
+              val allPlanOptions = maybePreviousCustomAmount(journey, defaultPlanOptions) match {
+                case None                 => defaultPlanOptions
+                case Some(customSchedule) => Map((PaymentPlanOption.Custom, customSchedule)) ++ defaultPlanOptions
+              }
+
               Ok(views.how_much_can_you_pay_each_month_form(
                 CalculatorType.Legacy,
                 routes.CalculatorController.submitCalculateInstalments(),
                 selectPlanForm(minCustomAmount, maxCustomAmount),
-                defaultPlanOptions,
+                allPlanOptions,
                 minCustomAmount.setScale(2, HALF_UP),
                 maxCustomAmount.setScale(2, HALF_UP),
                 journey.maybePlanSelection))
@@ -301,22 +306,50 @@ class CalculatorController @Inject() (
       journey:            Journey,
       defaultPlanOptions: Map[PaymentPlanOption, PaymentSchedule]
   )(implicit request: Request[_]): Option[PaymentSchedule] = {
-    journey.maybePlanSelection.foldLeft(None: Option[PaymentSchedule])((_, planSelection) => planSelection.selection match {
-      case Right(CustomPlanRequest(customAmount)) =>
-        paymentPlansService.customSchedule(
-          journey.taxpayer.selfAssessment,
-          journey.safeUpfrontPayment,
-          journey.maybePaymentDayOfMonth,
-          customAmount
-        )
-      case Left(SelectedPlan(amount)) if !isDefaultPlan(amount, defaultPlanOptions) =>
-        paymentPlansService.customSchedule(
-          journey.taxpayer.selfAssessment,
-          journey.safeUpfrontPayment,
-          journey.maybePaymentDayOfMonth,
-          amount
-        )
-      case _ => None
+    journey.maybePlanSelection.foldLeft(None: Option[PaymentSchedule])((_, planSelection) => {
+
+      appConfig.calculatorType match {
+        case CalculatorType.Legacy =>
+          planSelection.selection match {
+            case Right(CustomPlanRequest(customAmount)) =>
+              calculatorService.closestSchedule(
+                customAmount,
+                calculatorService.allAvailableSchedules(
+                  journey.taxpayer.selfAssessment,
+                  journey.safeUpfrontPayment,
+                  journey.maybePaymentDayOfMonth
+                )
+              )
+            case Left(SelectedPlan(amount)) if !isDefaultPlan(amount, defaultPlanOptions) =>
+              calculatorService.closestSchedule(
+                amount,
+                calculatorService.allAvailableSchedules(
+                  journey.taxpayer.selfAssessment,
+                  journey.safeUpfrontPayment,
+                  journey.maybePaymentDayOfMonth
+                )
+              )
+            case _ => None
+          }
+        case CalculatorType.PaymentOptimised =>
+          planSelection.selection match {
+            case Right(CustomPlanRequest(customAmount)) =>
+              paymentPlansService.customSchedule(
+                journey.taxpayer.selfAssessment,
+                journey.safeUpfrontPayment,
+                journey.maybePaymentDayOfMonth,
+                customAmount
+              )
+            case Left(SelectedPlan(amount)) if !isDefaultPlan(amount, defaultPlanOptions) =>
+              paymentPlansService.customSchedule(
+                journey.taxpayer.selfAssessment,
+                journey.safeUpfrontPayment,
+                journey.maybePaymentDayOfMonth,
+                amount
+              )
+            case _ => None
+          }
+      }
     })
   }
 

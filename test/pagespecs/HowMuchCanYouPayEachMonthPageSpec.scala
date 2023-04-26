@@ -242,7 +242,6 @@ class HowMuchCanYouPayEachMonthPageSpec extends ItSpec {
         howMuchCanYouPayEachMonthPage.assertExpectedHeadingContentWithErrorPrefix(Welsh)
         howMuchCanYouPayEachMonthPage.assertDecimalPlacesErrorIsDisplayed(Welsh)
       }
-
     }
   }
 
