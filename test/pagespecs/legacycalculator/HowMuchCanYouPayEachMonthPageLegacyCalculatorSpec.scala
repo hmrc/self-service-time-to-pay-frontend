@@ -190,102 +190,102 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
         }
 
       }
+      "displays error message and options including custom option if press continue after custom option displayed without selecting an option" in {
+        beginJourney()
 
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+
+        val customAmount = 700
+        val planMonths = 7
+        val planInterest = 54.35
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
+        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertNoOptionSelectedErrorIsDisplayed
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountContentIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+      }
+      "less than minimum displays error message" in {
+        beginJourney()
+
+        val customAmountBelowMinimum = 200
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmountBelowMinimum.toString)
+        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertBelowMinimumErrorIsDisplayed
+      }
+      "more than maximum displays error message" in {
+        beginJourney()
+
+        val customAmountBelowMinimum = 7000
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmountBelowMinimum.toString)
+        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertAboveMaximumErrorIsDisplayed
+      }
+      "not filled in displays error message" in {
+        beginJourney()
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount()
+        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertNoInputErrorIsDisplayed
+      }
+      "filled with non-numeric displays error message" in {
+        beginJourney()
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("non-numeric")
+        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertNonNumericErrorIsDisplayed
+      }
+      "filled with negative amount displays error message" in {
+        beginJourney()
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("-1")
+        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
+        howMuchCanYouPayEachMonthPageLegacyCalculator.assertNegativeAmountErrorIsDisplayed
+      }
+      "filled with more than two decimal places" - {
+        "in English" in {
+          beginJourney()
+
+          howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+          howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("280.111")
+          howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+
+          howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
+          howMuchCanYouPayEachMonthPageLegacyCalculator.assertDecimalPlacesErrorIsDisplayed
+        }
+        "in Welsh" in {
+          beginJourney()
+
+          howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
+          howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
+          howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("280.111")
+          howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+
+          howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix(Welsh)
+          howMuchCanYouPayEachMonthPageLegacyCalculator.assertDecimalPlacesErrorIsDisplayed(Welsh)
+        }
+      }
     }
-    //    "displays error message and options including custom option if press continue after custom option displayed without selecting an option" in {
-    //      beginJourney()
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
-    //
-    //      val customAmount = 700
-    //      val planMonths = 8
-    //      val planInterest = 54.35
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertNoOptionSelectedErrorIsDisplayed
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountContentIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-    //    }
-    //    "less than minimum displays error message" in {
-    //      beginJourney()
-    //
-    //      val customAmountBelowMinimum = 200
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmountBelowMinimum.toString)
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertBelowMinimumErrorIsDisplayed
-    //    }
-    //    "more than maximum displays error message" in {
-    //      beginJourney()
-    //
-    //      val customAmountBelowMinimum = 7000
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmountBelowMinimum.toString)
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertAboveMaximumErrorIsDisplayed
-    //    }
-    //    "not filled in displays error message" in {
-    //      beginJourney()
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount()
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertNoInputErrorIsDisplayed
-    //    }
-    //    "filled with non-numeric displays error message" in {
-    //      beginJourney()
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("non-numeric")
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertNonNumericErrorIsDisplayed
-    //    }
-    //    "filled with negative amount displays error message" in {
-    //      beginJourney()
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("-1")
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-    //
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-    //      howMuchCanYouPayEachMonthPageLegacyCalculator.assertNegativeAmountErrorIsDisplayed
-    //    }
-    //    "filled with more than two decimal places" - {
-    //      "in English" in {
-    //        beginJourney()
-    //
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("280.111")
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-    //
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.assertDecimalPlacesErrorIsDisplayed
-    //      }
-    //      "in Welsh" in {
-    //        beginJourney()
-    //
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("280.111")
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-    //
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix(Welsh)
-    //        howMuchCanYouPayEachMonthPageLegacyCalculator.assertDecimalPlacesErrorIsDisplayed(Welsh)
-    //      }
   }
 
   "language" in {

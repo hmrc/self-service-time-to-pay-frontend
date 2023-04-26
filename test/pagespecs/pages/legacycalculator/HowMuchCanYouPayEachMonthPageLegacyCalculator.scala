@@ -19,6 +19,7 @@ package pagespecs.pages.legacycalculator
 import langswitch.Languages.{English, Welsh}
 import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
+import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import pagespecs.pages.{BaseUrl, HowMuchCanYouPayEachMonthPage}
 import testsupport.RichMatchers._
@@ -49,6 +50,16 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
     ()
   }
 
+  override def assertBelowMinimumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(ExpectedLegacyCalculator.ErrorText.BelowMinimum().stripSpaces())
+  }
+
+  override def assertAboveMaximumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(ExpectedLegacyCalculator.ErrorText.AboveMaximum().stripSpaces())
+  }
+
   override def assertPageWithCustomAmountContentIsDisplayed(amount:   String,
                                                             months:   Option[String] = None,
                                                             interest: Option[String] = None
@@ -66,7 +77,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
       object DefaultCalculations {
         def apply()(implicit language: Language): String = language match {
           case English => mainTextEnglish
-          case Welsh   => mainTextWelsh
+          case Welsh => mainTextWelsh
         }
 
         private val mainTextEnglish =
@@ -103,7 +114,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
       object CustomOption {
         def apply()(implicit language: Language): String = language match {
           case English => customtOptionTextEnglish
-          case Welsh   => customOptionTextWelsh
+          case Welsh => customOptionTextWelsh
         }
 
         private val customtOptionTextEnglish =
@@ -120,17 +131,53 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
       object CustomAmountDisplayed {
         def apply(amount: String)(implicit language: Language): String = language match {
           case English => customAmountTextEnglish(amount)
-          case Welsh   => customAmountTextWelsh(amount)
+          case Welsh => customAmountTextWelsh(amount)
         }
 
         private def customAmountTextEnglish(amount: String) =
           s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more to cover interest and any remaining tax you owe.
-              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+             |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
       """.stripMargin
 
         private def customAmountTextWelsh(amount: String) =
           s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more to cover interest and any remaining tax you owe.
-              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+             |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+      """.stripMargin
+      }
+    }
+
+    object ErrorText {
+      object BelowMinimum {
+        def apply()(implicit language: Language): String = language match {
+          case English => belowMinimumTextEnglish
+          case Welsh => belowMinimumTextWelsh
+        }
+
+        private val belowMinimumTextEnglish =
+          s"""There is a problem
+             |That amount is too low, enter an amount that is at least £612.50 but no more than £2,450
+      """.stripMargin
+
+        private val belowMinimumTextWelsh =
+          s"""Mae problem wedi codi
+             |Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £612.50 ond heb fod yn fwy na £2,450
+      """.stripMargin
+      }
+
+      object AboveMaximum {
+        def apply()(implicit language: Language): String = language match {
+          case English => aboveMaximumTextEnglish
+          case Welsh => aboveMaximumTextWelsh
+        }
+
+        private val aboveMaximumTextEnglish =
+          s"""There is a problem
+             |That amount is too high, enter an amount that is at least £612.50 but no more than £2,450
+      """.stripMargin
+
+        private val aboveMaximumTextWelsh =
+          s"""Mae problem wedi codi
+             |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £612.50 ond heb fod yn fwy na £2,450
       """.stripMargin
       }
     }

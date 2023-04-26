@@ -26,7 +26,6 @@ import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.CalculatorForm.{createPaymentTodayForm, payTodayForm, selectPlanForm}
 import model.{PaymentPlanOption, PaymentSchedule}
-import play.api.i18n.Messages
 import ssttpcalculator.legacy.CalculatorService
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -88,7 +87,7 @@ class CalculatorController @Inject() (
           case PayTodayQuestion(Some(false)) =>
             val newJourney = journey.copy(
               maybePaymentToday       = Some(PaymentToday(false)),
-              maybePaymentTodayAmount = None //reseting payment this amount just in case if user goes back and overrides this value
+              maybePaymentTodayAmount = None //resetting payment this amount just in case if user goes back and overrides this value
             )
 
             journeyService.saveJourney(newJourney).map(
