@@ -33,6 +33,10 @@ class HowMuchCanYouPayEachMonthPageSpec extends HowMuchCanYouPayEachMonthPageBas
 
   lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
 
+  val customAmountInput = 700
+  val customAmountPlanMonthsOutput = 8
+  val customAmountPlanInterestOutput = 54.35
+
   s"${overrideConfig("calculatorType")} - display default options" - {
     "if 50% of remaining income after spending covers amount remaining to pay including interest in one month " +
       "displays only 50% default option" in {
@@ -57,76 +61,15 @@ class HowMuchCanYouPayEachMonthPageSpec extends HowMuchCanYouPayEachMonthPageBas
       pageUnderTest.assertInitialPageIsDisplayed
     }
   }
-
-  s"${overrideConfig("calculatorType")} - custom amount entry" - {
-    "displays page with custom option at top when custom amount entered and continue pressed" in {
-      beginJourney()
-
-      pageUnderTest.assertInitialPageIsDisplayed
-
-      val customAmount = 700
-      val planMonths = 8
-      val planInterest = 54.35
-
-      pageUnderTest.selectCustomAmountOption()
-      pageUnderTest.enterCustomAmount(customAmount.toString)
-      pageUnderTest.clickContinue()
-
-      pageUnderTest.assertPageWithCustomAmountIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-    }
-    "displays error message and options including custom option if press continue after custom option displayed without selecting an option" in {
-      beginJourney()
-
-      pageUnderTest.assertInitialPageIsDisplayed
-
-      val customAmount = 700
-      val planMonths = 8
-      val planInterest = 54.35
-
-      pageUnderTest.selectCustomAmountOption()
-      pageUnderTest.enterCustomAmount(customAmount.toString)
-      pageUnderTest.clickContinue()
-
-      pageUnderTest.clickContinue()
-      pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
-      pageUnderTest.assertNoOptionSelectedErrorIsDisplayed
-      pageUnderTest.assertPageWithCustomAmountContentIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-    }
-  }
-  s"${overrideConfig("calculatorType")} - returning to the page" - {
-    "selecting a custom option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
-      beginJourney()
-
-      val customAmount = 700
-      val planMonths = 8
-      val planInterest = 54.35
-
-      pageUnderTest.selectCustomAmountOption()
-      pageUnderTest.enterCustomAmount(customAmount.toString)
-      pageUnderTest.clickContinue()
-
-      pageUnderTest.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-
-      pageUnderTest.selectASpecificOption(PaymentPlanOption.Custom)
-      pageUnderTest.clickContinue()
-
-      checkYourPaymentPlanPage.clickOnBackButton()
-      pageUnderTest.clickOnBackButton()
-
-      howMuchYouCouldAffordPage.clickOnAddChangeIncome()
-      yourMonthlyIncomePage.enterMonthlyIncome("501")
-      yourMonthlyIncomePage.clickContinue()
-
-      howMuchYouCouldAffordPage.clickContinue()
-
-      pageUnderTest.optionIsNotDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-    }
-  }
 }
 
 trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
 
   val pageUnderTest: HowMuchCanYouPayEachMonthPage
+
+  val customAmountInput: BigDecimal
+  val customAmountPlanMonthsOutput: Int
+  val customAmountPlanInterestOutput: BigDecimal
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
@@ -205,6 +148,31 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
   }
 
   "custom amount entry" - {
+    "displays page with custom option at top when custom amount entered and continue pressed" in {
+      beginJourney()
+
+      pageUnderTest.assertInitialPageIsDisplayed
+
+      pageUnderTest.selectCustomAmountOption()
+      pageUnderTest.enterCustomAmount(customAmountInput.toString)
+      pageUnderTest.clickContinue()
+
+      pageUnderTest.assertPageWithCustomAmountIsDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
+    }
+    "displays error message and options including custom option if press continue after custom option displayed without selecting an option" in {
+      beginJourney()
+
+      pageUnderTest.assertInitialPageIsDisplayed
+
+      pageUnderTest.selectCustomAmountOption()
+      pageUnderTest.enterCustomAmount(customAmountInput.toString)
+      pageUnderTest.clickContinue()
+
+      pageUnderTest.clickContinue()
+      pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
+      pageUnderTest.assertNoOptionSelectedErrorIsDisplayed
+      pageUnderTest.assertPageWithCustomAmountContentIsDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
+    }
     "less than minimum displays error message" in {
       beginJourney()
 
@@ -325,6 +293,28 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
 
       pageUnderTest.assertInitialPageIsDisplayed
     }
+    "selecting a custom option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
+      beginJourney()
 
+      pageUnderTest.selectCustomAmountOption()
+      pageUnderTest.enterCustomAmount(customAmountInput.toString)
+      pageUnderTest.clickContinue()
+
+      pageUnderTest.optionIsDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
+
+      pageUnderTest.selectASpecificOption(PaymentPlanOption.Custom)
+      pageUnderTest.clickContinue()
+
+      checkYourPaymentPlanPage.clickOnBackButton()
+      pageUnderTest.clickOnBackButton()
+
+      howMuchYouCouldAffordPage.clickOnAddChangeIncome()
+      yourMonthlyIncomePage.enterMonthlyIncome("501")
+      yourMonthlyIncomePage.clickContinue()
+
+      howMuchYouCouldAffordPage.clickContinue()
+
+      pageUnderTest.optionIsNotDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
+    }
   }
 }

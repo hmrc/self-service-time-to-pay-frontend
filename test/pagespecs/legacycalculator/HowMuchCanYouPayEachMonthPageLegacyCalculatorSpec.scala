@@ -35,6 +35,9 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPay
 
   lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPageLegacyCalculator
 
+  val customAmountInput = 700
+  val customAmountPlanMonthsOutput = 7
+  val customAmountPlanInterestOutput = 54.35
 
   s"${overrideConfig("calculatorType")} - display default options" - {
     "if a two-month plan is the closest monthly amount less than 50% of remaining income after spending, show only this option" in {
@@ -65,21 +68,6 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPay
 
   s"${overrideConfig("calculatorType")} - custom amount entry" - {
     "displays page with custom option at top when custom amount entered and continue pressed" - {
-      "custom plan matching custom amount input exactly if available" in {
-        beginJourney()
-
-        pageUnderTest.assertInitialPageIsDisplayed
-
-        val customAmount = 700
-        val planMonths = 7
-        val planInterest = 54.35
-
-        pageUnderTest.selectCustomAmountOption()
-        pageUnderTest.enterCustomAmount(customAmount.toString)
-        pageUnderTest.clickContinue()
-
-        pageUnderTest.assertPageWithCustomAmountIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-      }
       "custom plan closest to custom amount input if exact plan not available" - {
         "plan instalment amount below custom amount input" in {
           beginJourney()
@@ -119,56 +107,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPay
             Some(planInterest.toString)
           )
         }
-
-      }
-      "displays error message and options including custom option if press continue after custom option displayed without selecting an option" in {
-        beginJourney()
-
-        pageUnderTest.assertInitialPageIsDisplayed
-
-        val customAmount = 700
-        val planMonths = 7
-        val planInterest = 54.35
-
-        pageUnderTest.selectCustomAmountOption()
-        pageUnderTest.enterCustomAmount(customAmount.toString)
-        pageUnderTest.clickContinue()
-
-        pageUnderTest.clickContinue()
-        pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
-        pageUnderTest.assertNoOptionSelectedErrorIsDisplayed
-        pageUnderTest.assertPageWithCustomAmountContentIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
       }
     }
   }
-  s"${overrideConfig("calculatorType")} - returning to the page" - {
-    "selecting a custom option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
-      beginJourney()
-
-      val customAmount = 700
-      val planMonths = 7
-      val planInterest = 54.35
-
-      pageUnderTest.selectCustomAmountOption()
-      pageUnderTest.enterCustomAmount(customAmount.toString)
-      pageUnderTest.clickContinue()
-
-      pageUnderTest.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-
-      pageUnderTest.selectASpecificOption(PaymentPlanOption.Custom)
-      pageUnderTest.clickContinue()
-
-      checkYourPaymentPlanPage.clickOnBackButton()
-      pageUnderTest.clickOnBackButton()
-
-      howMuchYouCouldAffordPage.clickOnAddChangeIncome()
-      yourMonthlyIncomePage.enterMonthlyIncome("501")
-      yourMonthlyIncomePage.clickContinue()
-
-      howMuchYouCouldAffordPage.clickContinue()
-
-      pageUnderTest.optionIsNotDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-    }
-  }
-
 }
