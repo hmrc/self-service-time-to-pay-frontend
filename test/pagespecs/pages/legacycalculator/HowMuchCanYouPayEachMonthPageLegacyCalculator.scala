@@ -77,7 +77,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
       object DefaultCalculations {
         def apply()(implicit language: Language): String = language match {
           case English => mainTextEnglish
-          case Welsh => mainTextWelsh
+          case Welsh   => mainTextWelsh
         }
 
         private val mainTextEnglish =
@@ -114,7 +114,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
       object CustomOption {
         def apply()(implicit language: Language): String = language match {
           case English => customtOptionTextEnglish
-          case Welsh => customOptionTextWelsh
+          case Welsh   => customOptionTextWelsh
         }
 
         private val customtOptionTextEnglish =
@@ -131,7 +131,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
       object CustomAmountDisplayed {
         def apply(amount: String)(implicit language: Language): String = language match {
           case English => customAmountTextEnglish(amount)
-          case Welsh => customAmountTextWelsh(amount)
+          case Welsh   => customAmountTextWelsh(amount)
         }
 
         private def customAmountTextEnglish(amount: String) =
@@ -150,7 +150,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
       object BelowMinimum {
         def apply()(implicit language: Language): String = language match {
           case English => belowMinimumTextEnglish
-          case Welsh => belowMinimumTextWelsh
+          case Welsh   => belowMinimumTextWelsh
         }
 
         private val belowMinimumTextEnglish =
@@ -167,7 +167,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
       object AboveMaximum {
         def apply()(implicit language: Language): String = language match {
           case English => aboveMaximumTextEnglish
-          case Welsh => aboveMaximumTextWelsh
+          case Welsh   => aboveMaximumTextWelsh
         }
 
         private val aboveMaximumTextEnglish =
