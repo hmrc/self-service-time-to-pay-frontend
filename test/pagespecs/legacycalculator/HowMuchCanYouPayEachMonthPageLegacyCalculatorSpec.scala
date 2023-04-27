@@ -17,153 +17,84 @@
 package pagespecs.legacycalculator
 
 import langswitch.Languages.{English, Welsh}
+import pagespecs.HowMuchCanYouPayEachMonthPageBaseSpec
+import pagespecs.pages.HowMuchCanYouPayEachMonthPage
 import ssttpcalculator.CalculatorType.Legacy
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.legacycalculator.LegacyCalculatorPages
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
 
-class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with LegacyCalculatorPages {
+class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPayEachMonthPageBaseSpec with LegacyCalculatorPages {
 
   override val overrideConfig: Map[String, Any] = Map(
     "calculatorType" -> Legacy.value
   )
 
-  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
-    AuthStub.authorise()
-    TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
-    GgStub.signInPage(port)
-    getBanksIsSuccessful()
-    startPage.open()
-    startPage.assertInitialPageIsDisplayed()
-    startPage.clickOnStartNowButton()
+  lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPageLegacyCalculator
 
-    taxLiabilitiesPage.assertInitialPageIsDisplayed()
-    taxLiabilitiesPage.clickOnStartNowButton()
 
-    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
-    paymentTodayQuestionPage.selectRadioButton(false)
-    paymentTodayQuestionPage.clickContinue()
-
-    selectDatePage.assertInitialPageIsDisplayed()
-    selectDatePage.selectFirstOption28thDay()
-    selectDatePage.clickContinue()
-
-    startAffordabilityPage.assertInitialPageIsDisplayed()
-    startAffordabilityPage.clickContinue()
-
-    addIncomeSpendingPage.assertInitialPageIsDisplayed()
-    addIncomeSpendingPage.clickOnAddChangeIncome()
-
-    yourMonthlyIncomePage.assertInitialPageIsDisplayed
-    yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
-    yourMonthlyIncomePage.clickContinue()
-
-    addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
-    addIncomeSpendingPage.clickOnAddChangeSpending()
-
-    yourMonthlySpendingPage.assertInitialPageIsDisplayed
-    yourMonthlySpendingPage.clickContinue()
-
-    howMuchYouCouldAffordPage.clickContinue()
-  }
-
-  "goes to kick out page " +
-    "if 50% of remaining income after spending cannot cover amount remaining to pay including interest in 24 months of less" in {
-      beginJourney(netIncomeTooSmallForPlan)
-      weCannotAgreeYourPaymentPlanPage.assertPagePathCorrect
-    }
-
-  "display default options" - {
+  s"${overrideConfig("calculatorType")} - display default options" - {
     "if a two-month plan is the closest monthly amount less than 50% of remaining income after spending, show only this option" in {
       beginJourney(4900)
 
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("2,450")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("4,900")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,633.33")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,633.34")
+      pageUnderTest.optionIsDisplayed("2,450")
+      pageUnderTest.optionIsNotDisplayed("4,900")
+      pageUnderTest.optionIsNotDisplayed("1,633.33")
+      pageUnderTest.optionIsNotDisplayed("1,633.34")
     }
     "if a three-month plan is the closest monthly amount less than 50% of remaining income after spending, " +
       "show three-month and two-month plans only" in {
         beginJourney(3267)
 
-        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("1,633.33")
-        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("2,450")
-        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("4,900")
-        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,225")
+        pageUnderTest.optionIsDisplayed("1,633.33")
+        pageUnderTest.optionIsDisplayed("2,450")
+        pageUnderTest.optionIsNotDisplayed("4,900")
+        pageUnderTest.optionIsNotDisplayed("1,225")
       }
     "displays three default options otherwise" in {
       beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("490")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("544.44")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("612.50")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("700")
-    }
-  }
-  "displays custom amount option" - {
-    "in English" in {
-      beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.customAmountOptionIsDisplayed
-    }
-    "in Welsh" in {
-      beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.customAmountOptionIsDisplayed(Welsh)
+      pageUnderTest.optionIsDisplayed("490")
+      pageUnderTest.optionIsDisplayed("544.44")
+      pageUnderTest.optionIsDisplayed("612.50")
+      pageUnderTest.optionIsNotDisplayed("700")
     }
   }
 
-  "displays error message if continue without selecting an option" - {
-    "in English" in {
-      beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-      howMuchCanYouPayEachMonthPageLegacyCalculator.assertNoOptionSelectedErrorIsDisplayed
-      howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageContentIsDisplayed
-    }
-    "in Welsh" in {
-      beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix(Welsh)
-      howMuchCanYouPayEachMonthPageLegacyCalculator.assertNoOptionSelectedErrorIsDisplayed(Welsh)
-      howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageContentIsDisplayed(Welsh)
-    }
-  }
-
-  "custom amount entry" - {
+  s"${overrideConfig("calculatorType")} - custom amount entry" - {
     "displays page with custom option at top when custom amount entered and continue pressed" - {
       "custom plan matching custom amount input exactly if available" in {
         beginJourney()
 
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+        pageUnderTest.assertInitialPageIsDisplayed
 
         val customAmount = 700
         val planMonths = 7
         val planInterest = 54.35
 
-        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
-        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+        pageUnderTest.selectCustomAmountOption()
+        pageUnderTest.enterCustomAmount(customAmount.toString)
+        pageUnderTest.clickContinue()
 
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+        pageUnderTest.assertPageWithCustomAmountIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
       }
       "custom plan closest to custom amount input if exact plan not available" - {
         "plan instalment amount below custom amount input" in {
           beginJourney()
 
-          howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+          pageUnderTest.assertInitialPageIsDisplayed
 
           val customAmount = 710
           val planMonths = 7
           val planInterest = 54.35
 
-          howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-          howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
-          howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+          pageUnderTest.selectCustomAmountOption()
+          pageUnderTest.enterCustomAmount(customAmount.toString)
+          pageUnderTest.clickContinue()
 
-          howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(
+          pageUnderTest.assertPageWithCustomAmountIsDisplayed(
             (customAmount - 10).toString,
             Some(planMonths.toString),
             Some(planInterest.toString)
@@ -172,17 +103,17 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
         "plan instalment amount above custom amount input" in {
           beginJourney()
 
-          howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+          pageUnderTest.assertInitialPageIsDisplayed
 
           val customAmount = 690
           val planMonths = 7
           val planInterest = 54.35
 
-          howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-          howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
-          howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+          pageUnderTest.selectCustomAmountOption()
+          pageUnderTest.enterCustomAmount(customAmount.toString)
+          pageUnderTest.clickContinue()
 
-          howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountIsDisplayed(
+          pageUnderTest.assertPageWithCustomAmountIsDisplayed(
             (customAmount + 10).toString,
             Some(planMonths.toString),
             Some(planInterest.toString)
@@ -193,141 +124,51 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with Lega
       "displays error message and options including custom option if press continue after custom option displayed without selecting an option" in {
         beginJourney()
 
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
+        pageUnderTest.assertInitialPageIsDisplayed
 
         val customAmount = 700
         val planMonths = 7
         val planInterest = 54.35
 
-        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmount.toString)
-        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
+        pageUnderTest.selectCustomAmountOption()
+        pageUnderTest.enterCustomAmount(customAmount.toString)
+        pageUnderTest.clickContinue()
 
-        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertNoOptionSelectedErrorIsDisplayed
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertPageWithCustomAmountContentIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
-      }
-      "less than minimum displays error message" in {
-        beginJourney()
-
-        val customAmountBelowMinimum = 200
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmountBelowMinimum.toString)
-        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertBelowMinimumErrorIsDisplayed
-      }
-      "more than maximum displays error message" in {
-        beginJourney()
-
-        val customAmountBelowMinimum = 7000
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount(customAmountBelowMinimum.toString)
-        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertAboveMaximumErrorIsDisplayed
-      }
-      "not filled in displays error message" in {
-        beginJourney()
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount()
-        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertNoInputErrorIsDisplayed
-      }
-      "filled with non-numeric displays error message" in {
-        beginJourney()
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("non-numeric")
-        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertNonNumericErrorIsDisplayed
-      }
-      "filled with negative amount displays error message" in {
-        beginJourney()
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-        howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("-1")
-        howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-        howMuchCanYouPayEachMonthPageLegacyCalculator.assertNegativeAmountErrorIsDisplayed
-      }
-      "filled with more than two decimal places" - {
-        "in English" in {
-          beginJourney()
-
-          howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-          howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("280.111")
-          howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-
-          howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix
-          howMuchCanYouPayEachMonthPageLegacyCalculator.assertDecimalPlacesErrorIsDisplayed
-        }
-        "in Welsh" in {
-          beginJourney()
-
-          howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
-          howMuchCanYouPayEachMonthPageLegacyCalculator.selectCustomAmountOption()
-          howMuchCanYouPayEachMonthPageLegacyCalculator.enterCustomAmount("280.111")
-          howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-
-          howMuchCanYouPayEachMonthPageLegacyCalculator.assertExpectedHeadingContentWithErrorPrefix(Welsh)
-          howMuchCanYouPayEachMonthPageLegacyCalculator.assertDecimalPlacesErrorIsDisplayed(Welsh)
-        }
+        pageUnderTest.clickContinue()
+        pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
+        pageUnderTest.assertNoOptionSelectedErrorIsDisplayed
+        pageUnderTest.assertPageWithCustomAmountContentIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
       }
     }
   }
-
-  "language" in {
-    beginJourney()
-
-    howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
-    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed(Welsh)
-
-    howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnEnglishLink()
-    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed(English)
-  }
-
-  "back button" in {
-    beginJourney()
-    howMuchCanYouPayEachMonthPageLegacyCalculator.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
-  }
-
-  "select an option and continue" - {
-    "basic case" in {
+  s"${overrideConfig("calculatorType")} - returning to the page" - {
+    "selecting a custom option, continue, back to change income or spending, resets previous plan selection - doesn't display previous selection" in {
       beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.selectAnOption()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-      checkYourPaymentPlanPageLegacyCalculator.expectedHeadingContent(English)
-    }
-    "case with large number of decimal places of plan selection amounts" in {
-      beginJourney(netIncomeLargeEnoughForSingleDefaultPlan)
 
-      howMuchCanYouPayEachMonthPageLegacyCalculator.selectAnOption()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-      checkYourPaymentPlanPageLegacyCalculator.expectedHeadingContent(English)
-    }
+      val customAmount = 700
+      val planMonths = 7
+      val planInterest = 54.35
 
+      pageUnderTest.selectCustomAmountOption()
+      pageUnderTest.enterCustomAmount(customAmount.toString)
+      pageUnderTest.clickContinue()
+
+      pageUnderTest.optionIsDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+
+      pageUnderTest.selectASpecificOption(PaymentPlanOption.Custom)
+      pageUnderTest.clickContinue()
+
+      checkYourPaymentPlanPage.clickOnBackButton()
+      pageUnderTest.clickOnBackButton()
+
+      howMuchYouCouldAffordPage.clickOnAddChangeIncome()
+      yourMonthlyIncomePage.enterMonthlyIncome("501")
+      yourMonthlyIncomePage.clickContinue()
+
+      howMuchYouCouldAffordPage.clickContinue()
+
+      pageUnderTest.optionIsNotDisplayed(customAmount.toString, Some(planMonths.toString), Some(planInterest.toString))
+    }
   }
 
-  "returning to the page" - {
-    "selecting a default option, continue, then back, returns to the schedule selection page" in {
-      beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.selectAnOption()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-      checkYourPaymentPlanPageLegacyCalculator.clickOnBackButton()
-
-      howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
-    }
-  }
 }
