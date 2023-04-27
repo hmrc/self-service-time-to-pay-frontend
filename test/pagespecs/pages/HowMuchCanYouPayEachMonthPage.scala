@@ -326,7 +326,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val belowMinimumTextEnglish =
           s"""There is a problem
-             |That amount is too low, enter an amount that is at least £500 but no more than £4,914.40
+             |Enter an amount that is at least £500 but no more than £4,914.40
       """.stripMargin
 
         private val belowMinimumTextWelsh =
@@ -343,7 +343,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val aboveMaximumTextEnglish =
           s"""There is a problem
-             |That amount is too high, enter an amount that is at least £500 but no more than £4,914.40
+             |Enter an amount that is at least £500 but no more than £4,914.40
       """.stripMargin
 
         private val aboveMaximumTextWelsh =

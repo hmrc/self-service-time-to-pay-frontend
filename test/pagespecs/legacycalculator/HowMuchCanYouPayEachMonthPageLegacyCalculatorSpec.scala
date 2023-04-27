@@ -16,16 +16,12 @@
 
 package pagespecs.legacycalculator
 
-import langswitch.Languages.{English, Welsh}
 import pagespecs.HowMuchCanYouPayEachMonthPageBaseSpec
 import pagespecs.pages.HowMuchCanYouPayEachMonthPage
 import ssttpcalculator.CalculatorType.Legacy
-import ssttpcalculator.model.PaymentPlanOption
-import testsupport.ItSpec
 import testsupport.legacycalculator.LegacyCalculatorPages
-import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs._
-import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
+import testsupport.testdata.DisplayDefaultPlanOptionsTd
+import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
 class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPayEachMonthPageBaseSpec with LegacyCalculatorPages {
 
@@ -35,36 +31,25 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPay
 
   lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPageLegacyCalculator
 
+  val displayOnePlan: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = 4900,
+    optionsDisplayed             = Seq("2,450"),
+    optionsNotDisplayed          = Seq("4,900", "1,633.33", "1,633.34")
+  )
+  val displayTwoPlans: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = 3267,
+    optionsDisplayed             = Seq("2,450", "1,633.33"),
+    optionsNotDisplayed          = Seq("4,900", "1,225")
+  )
+  val displayThreePlans: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = defaultRemainingIncomeAfterSpending,
+    optionsDisplayed             = Seq("490", "544.44", "612.50"),
+    optionsNotDisplayed          = Seq("700")
+  )
+
   val customAmountInput = 700
   val customAmountPlanMonthsOutput = 7
   val customAmountPlanInterestOutput = 54.35
-
-  s"${overrideConfig("calculatorType")} - display default options" - {
-    "if a two-month plan is the closest monthly amount less than 50% of remaining income after spending, show only this option" in {
-      beginJourney(4900)
-
-      pageUnderTest.optionIsDisplayed("2,450")
-      pageUnderTest.optionIsNotDisplayed("4,900")
-      pageUnderTest.optionIsNotDisplayed("1,633.33")
-      pageUnderTest.optionIsNotDisplayed("1,633.34")
-    }
-    "if a three-month plan is the closest monthly amount less than 50% of remaining income after spending, " +
-      "show three-month and two-month plans only" in {
-        beginJourney(3267)
-
-        pageUnderTest.optionIsDisplayed("1,633.33")
-        pageUnderTest.optionIsDisplayed("2,450")
-        pageUnderTest.optionIsNotDisplayed("4,900")
-        pageUnderTest.optionIsNotDisplayed("1,225")
-      }
-    "displays three default options otherwise" in {
-      beginJourney()
-      pageUnderTest.optionIsDisplayed("490")
-      pageUnderTest.optionIsDisplayed("544.44")
-      pageUnderTest.optionIsDisplayed("612.50")
-      pageUnderTest.optionIsNotDisplayed("700")
-    }
-  }
 
   s"${overrideConfig("calculatorType")} - custom amount entry" - {
     "displays page with custom option at top when custom amount entered and continue pressed" - {
@@ -74,18 +59,14 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPay
 
           pageUnderTest.assertInitialPageIsDisplayed
 
-          val customAmount = 710
-          val planMonths = 7
-          val planInterest = 54.35
-
           pageUnderTest.selectCustomAmountOption()
-          pageUnderTest.enterCustomAmount(customAmount.toString)
+          pageUnderTest.enterCustomAmount((customAmountInput + 10).toString)
           pageUnderTest.clickContinue()
 
           pageUnderTest.assertPageWithCustomAmountIsDisplayed(
-            (customAmount - 10).toString,
-            Some(planMonths.toString),
-            Some(planInterest.toString)
+            customAmountInput.toString,
+            Some(customAmountPlanMonthsOutput.toString),
+            Some(customAmountPlanInterestOutput.toString)
           )
         }
         "plan instalment amount above custom amount input" in {
@@ -93,18 +74,14 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPay
 
           pageUnderTest.assertInitialPageIsDisplayed
 
-          val customAmount = 690
-          val planMonths = 7
-          val planInterest = 54.35
-
           pageUnderTest.selectCustomAmountOption()
-          pageUnderTest.enterCustomAmount(customAmount.toString)
+          pageUnderTest.enterCustomAmount((customAmountInput - 10).toString)
           pageUnderTest.clickContinue()
 
           pageUnderTest.assertPageWithCustomAmountIsDisplayed(
-            (customAmount + 10).toString,
-            Some(planMonths.toString),
-            Some(planInterest.toString)
+            customAmountInput.toString,
+            Some(customAmountPlanMonthsOutput.toString),
+            Some(customAmountPlanInterestOutput.toString)
           )
         }
       }

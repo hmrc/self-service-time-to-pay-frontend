@@ -23,45 +23,8 @@ import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
+import testsupport.testdata.DisplayDefaultPlanOptionsTd
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
-
-class HowMuchCanYouPayEachMonthPageSpec extends HowMuchCanYouPayEachMonthPageBaseSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
-
-  lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
-
-  val customAmountInput = 700
-  val customAmountPlanMonthsOutput = 8
-  val customAmountPlanInterestOutput = 54.35
-
-  s"${overrideConfig("calculatorType")} - display default options" - {
-    "if 50% of remaining income after spending covers amount remaining to pay including interest in one month " +
-      "displays only 50% default option" in {
-      beginJourney(netIncomeLargeEnoughForSingleDefaultPlan)
-
-      pageUnderTest.optionIsDisplayed("4,914.40")
-      pageUnderTest.optionIsNotDisplayed("6,250")
-      pageUnderTest.optionIsNotDisplayed("7,500")
-      pageUnderTest.optionIsNotDisplayed("10,000")
-    }
-    "if 60% of remaining income after spending covers amount remaining to pay including interest in one month " +
-      "displays only 50% and 60% default options" in {
-      beginJourney(netIncomeLargeEnoughForTwoDefaultPlans)
-
-      pageUnderTest.optionIsDisplayed("4,750")
-      pageUnderTest.optionIsDisplayed("4,914.40", Some("1"), Some("14.40"))
-      pageUnderTest.optionIsNotDisplayed("5,700")
-      pageUnderTest.optionIsNotDisplayed("7,600")
-    }
-    "displays three default options otherwise" in {
-      beginJourney()
-      pageUnderTest.assertInitialPageIsDisplayed
-    }
-  }
-}
 
 trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
 
@@ -70,6 +33,10 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
   val customAmountInput: BigDecimal
   val customAmountPlanMonthsOutput: Int
   val customAmountPlanInterestOutput: BigDecimal
+
+  val displayOnePlan: DisplayDefaultPlanOptionsTd
+  val displayTwoPlans: DisplayDefaultPlanOptionsTd
+  val displayThreePlans: DisplayDefaultPlanOptionsTd
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
@@ -116,6 +83,29 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
       beginJourney(netIncomeTooSmallForPlan)
       weCannotAgreeYourPaymentPlanPage.assertPagePathCorrect
     }
+
+  s"display default options" - {
+    "if 50% of remaining income after spending covers amount remaining to pay including interest in one month " +
+      "displays only 50% default option" in {
+        beginJourney(displayOnePlan.remainingIncomeAfterSpending)
+
+        displayOnePlan.optionsDisplayed.foreach(pageUnderTest.optionIsDisplayed(_))
+        displayOnePlan.optionsNotDisplayed.foreach(pageUnderTest.optionIsNotDisplayed(_))
+      }
+    "if 60% of remaining income after spending covers amount remaining to pay including interest in one month " +
+      "displays only 50% and 60% default options" in {
+        beginJourney(displayTwoPlans.remainingIncomeAfterSpending)
+
+        displayTwoPlans.optionsDisplayed.foreach(pageUnderTest.optionIsDisplayed(_))
+        displayTwoPlans.optionsNotDisplayed.foreach(pageUnderTest.optionIsNotDisplayed(_))
+      }
+    "displays three default options otherwise" in {
+      beginJourney(displayThreePlans.remainingIncomeAfterSpending)
+
+      displayThreePlans.optionsDisplayed.foreach(pageUnderTest.optionIsDisplayed(_))
+      displayThreePlans.optionsNotDisplayed.foreach(pageUnderTest.optionIsNotDisplayed(_))
+    }
+  }
 
   "displays custom amount option" - {
     "in English" in {
@@ -317,4 +307,33 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
       pageUnderTest.optionIsNotDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
     }
   }
+}
+
+class HowMuchCanYouPayEachMonthPageSpec extends HowMuchCanYouPayEachMonthPageBaseSpec {
+
+  override val overrideConfig: Map[String, Any] = Map(
+    "calculatorType" -> PaymentOptimised.value
+  )
+
+  lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
+
+  val displayOnePlan: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = netIncomeLargeEnoughForSingleDefaultPlan,
+    optionsDisplayed             = Seq("4,914.40"),
+    optionsNotDisplayed          = Seq("6,250", "7,500", "10,000")
+  )
+  val displayTwoPlans: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = netIncomeLargeEnoughForTwoDefaultPlans,
+    optionsDisplayed             = Seq("4,750", "4,914.40"),
+    optionsNotDisplayed          = Seq("5,700", "7,600")
+  )
+  val displayThreePlans: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = defaultRemainingIncomeAfterSpending,
+    optionsDisplayed             = Seq("500", "600", "800"),
+    optionsNotDisplayed          = Seq.empty
+  )
+
+  val customAmountInput = 700
+  val customAmountPlanMonthsOutput = 8
+  val customAmountPlanInterestOutput = 54.35
 }

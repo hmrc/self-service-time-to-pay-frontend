@@ -155,7 +155,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
 
         private val belowMinimumTextEnglish =
           s"""There is a problem
-             |That amount is too low, enter an amount that is at least £612.50 but no more than £2,450
+             |Enter an amount that is at least £612.50 but no more than £2,450
       """.stripMargin
 
         private val belowMinimumTextWelsh =
@@ -172,7 +172,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
 
         private val aboveMaximumTextEnglish =
           s"""There is a problem
-             |That amount is too high, enter an amount that is at least £612.50 but no more than £2,450
+             |Enter an amount that is at least £612.50 but no more than £2,450
       """.stripMargin
 
         private val aboveMaximumTextWelsh =
