@@ -82,7 +82,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
 
         private val mainTextEnglish =
           s"""How much can you pay each month?
-             |Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
+             |Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
              |£490 per month over 10 months
              |Includes total interest estimated at £74.30
@@ -135,12 +135,12 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
         }
 
         private def customAmountTextEnglish(amount: String) =
-          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more to cover interest and any remaining tax you owe.
+          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
       """.stripMargin
 
         private def customAmountTextWelsh(amount: String) =
-          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more to cover interest and any remaining tax you owe.
+          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
       """.stripMargin
       }

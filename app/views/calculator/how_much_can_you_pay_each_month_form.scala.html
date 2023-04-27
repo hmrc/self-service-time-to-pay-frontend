@@ -134,10 +134,10 @@
         </legend>
 
         <p class="govuk-body">
-            @{previousFormSubmission.fold(messages("ssttp.calculator.results.p1"))(_.selection match {
+            @{previousFormSubmission.fold(messages(s"ssttp.calculator.results.p1.${calculatorType.messagesKeySuffix}"))(_.selection match {
                 case Right(CustomPlanRequest(amount)) => messages(s"ssttp.calculator.results.p1.custom-amount.${calculatorType.messagesKeySuffix}", currency(amount))
                 case Left(SelectedPlan(amount)) if schedules.headOption.fold(false)(_._1 == PaymentPlanOption.Custom) => messages(s"ssttp.calculator.results.p1.custom-amount.${calculatorType.messagesKeySuffix}", currency(amount))
-                case _ => messages("ssttp.calculator.results.p1")
+                case _ => messages(s"ssttp.calculator.results.p1.${calculatorType.messagesKeySuffix}")
             })}
         </p>
         <p class="govuk-body">@messages("ssttp.calculator.results.p2")</p>

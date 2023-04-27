@@ -26,6 +26,35 @@ import testsupport.stubs._
 import testsupport.testdata.DisplayDefaultPlanOptionsTd
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
 
+class HowMuchCanYouPayEachMonthPageSpec extends HowMuchCanYouPayEachMonthPageBaseSpec {
+
+  override val overrideConfig: Map[String, Any] = Map(
+    "calculatorType" -> PaymentOptimised.value
+  )
+
+  lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
+
+  val displayOnePlan: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = netIncomeLargeEnoughForSingleDefaultPlan,
+    optionsDisplayed             = Seq("4,914.40"),
+    optionsNotDisplayed          = Seq("6,250", "7,500", "10,000")
+  )
+  val displayTwoPlans: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = netIncomeLargeEnoughForTwoDefaultPlans,
+    optionsDisplayed             = Seq("4,750", "4,914.40"),
+    optionsNotDisplayed          = Seq("5,700", "7,600")
+  )
+  val displayThreePlans: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = defaultRemainingIncomeAfterSpending,
+    optionsDisplayed             = Seq("500", "600", "800"),
+    optionsNotDisplayed          = Seq.empty
+  )
+
+  val customAmountInput = 700
+  val customAmountPlanMonthsOutput = 8
+  val customAmountPlanInterestOutput = 54.35
+}
+
 trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
 
   val pageUnderTest: HowMuchCanYouPayEachMonthPage
@@ -307,33 +336,4 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
       pageUnderTest.optionIsNotDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
     }
   }
-}
-
-class HowMuchCanYouPayEachMonthPageSpec extends HowMuchCanYouPayEachMonthPageBaseSpec {
-
-  override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
-  )
-
-  lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
-
-  val displayOnePlan: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
-    remainingIncomeAfterSpending = netIncomeLargeEnoughForSingleDefaultPlan,
-    optionsDisplayed             = Seq("4,914.40"),
-    optionsNotDisplayed          = Seq("6,250", "7,500", "10,000")
-  )
-  val displayTwoPlans: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
-    remainingIncomeAfterSpending = netIncomeLargeEnoughForTwoDefaultPlans,
-    optionsDisplayed             = Seq("4,750", "4,914.40"),
-    optionsNotDisplayed          = Seq("5,700", "7,600")
-  )
-  val displayThreePlans: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
-    remainingIncomeAfterSpending = defaultRemainingIncomeAfterSpending,
-    optionsDisplayed             = Seq("500", "600", "800"),
-    optionsNotDisplayed          = Seq.empty
-  )
-
-  val customAmountInput = 700
-  val customAmountPlanMonthsOutput = 8
-  val customAmountPlanInterestOutput = 54.35
 }
