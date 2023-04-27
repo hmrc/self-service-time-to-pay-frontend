@@ -153,7 +153,7 @@
                 id = Some("customAmountOption"),
                 value = Some("customAmountOption"),
                 checked = selectPlanForm("plan-selection").value.contains("customAmountOption"),
-                content = Text(Messages(s"ssttp.calculator.results.option.other.label.${calculatorType.messagesKeySuffix}")),
+                content = HtmlContent(Messages(s"ssttp.calculator.results.option.other.label.${calculatorType.messagesKeySuffix}")),
                 conditionalHtml = Some(enterCustomAmountPanel)
             )
         ))
