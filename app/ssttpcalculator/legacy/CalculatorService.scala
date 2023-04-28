@@ -96,9 +96,12 @@ class CalculatorService @Inject() (
   def closestSchedule(amount: BigDecimal, schedules: Seq[PaymentSchedule]): Option[PaymentSchedule] = {
       def difference(schedule: PaymentSchedule) = math.abs(schedule.getMonthlyInstalment.toInt - amount.toInt)
       def closest(min: PaymentSchedule, next: PaymentSchedule) = if (difference(next) < difference(min)) next else min
-      def lessThan(schedule: PaymentSchedule): Boolean = amount - schedule.instalmentAmount >= 0
 
-    schedules.filter(lessThan).reduceOption(closest)
+    schedules.reduceOption(closest)
+  }
+
+  def closestScheduleEqualOrLessThan(amount: BigDecimal, schedules: Seq[PaymentSchedule]): Option[PaymentSchedule] = {
+    closestSchedule(amount, schedules.filter(schedule => amount - schedule.instalmentAmount >= 0))
   }
 
   def allAvailableSchedules(sa: SelfAssessmentDetails, initialPayment: BigDecimal = BigDecimal(0),

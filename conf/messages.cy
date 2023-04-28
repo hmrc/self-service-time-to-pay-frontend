@@ -4,6 +4,8 @@ ssttp.common.currency.symbol = £
 ssttp.common.print = Argraffu
 ssttp.common.sign-out = Allgofnodi
 ssttp.common.back = Yn ôl
+ssttp.common.title-prefix = Gwall:
+
 
 ssttp.common.continue = Yn eich blaen
 
@@ -41,7 +43,6 @@ ssttp.common.charge-code.SUP = Swm sydd heb ei gynnwys yn y cod treth mwyach
 ssttp.common.charge-code.SUR1 = Gordal cyntaf ar gyfer taliad hwyr
 ssttp.common.charge-code.SUR2 = Ail ordal ar gyfer taliad hwyr
 ssttp.common.charge-code.TTO = Trosglwyddo i OAS
-ssttp.common.title-prefix = Gwall:
 
 #what you owe partial
 ssttp.amounts_due.due = Yn ddyledus:
@@ -281,18 +282,22 @@ ssttp.calculator.form.payment_today.update = Diweddaru
 ssttp.calculator.form.continue = Yn eich blaen
 
 ssttp.calculator.results.title = Faint y gallwch ei dalu bob mis?
-ssttp.calculator.results.p1 = Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+ssttp.calculator.results.p1.paymentoptimised = Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+ssttp.calculator.results.p1.legacy = Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
 ssttp.calculator.results.p2 = Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
 ssttp.calculator.results.amount.option =  <strong>{0} y mis</strong>, am {1} mis
 ssttp.calculator.results.amount.option.interest-hint = Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef  {0}
-ssttp.calculator.results.option.other.label = Swm misol gwahanol
-ssttp.calculator.results.option.other.enter.amount = Rhowch swm sydd o leiaf {0} ond heb fod yn fwy na {1}
+ssttp.calculator.results.option.other.label.paymentoptimised = Swm misol gwahanol
+ssttp.calculator.results.option.other.label.legacy = Pay more per month
+ssttp.calculator.results.option.other.enter.amount.paymentoptimised = Rhowch swm sydd o leiaf {0} ond heb fod yn fwy na {1}
+ssttp.calculator.results.option.other.enter.amount.legacy = Enter an amount between {0} and {1} to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
 ssttp.calculator.results.or = neu
 ssttp.calculator.results.section.cannot-afford.title = Nid wyf yn gallu fforddio’r taliadau hyn
 ssttp.calculator.results.section.cannot-afford.p.1 = Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar
 ssttp.calculator.results.section.cannot-afford.p.2 = 0300 200 1900
 ssttp.calculator.results.section.cannot-afford.p.3 = i drafod eich opsiynau.
-ssttp.calculator.results.p1.custom-amount = Rydych wedi dewis talu {0} y mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+ssttp.calculator.results.p1.custom-amount.paymentoptimised = Rydych wedi dewis talu {0} y mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+ssttp.calculator.results.p1.custom-amount.legacy = Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
 ssttp.calculator.results.option.other.error.below-minimum = Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £{0} ond heb fod yn fwy na £{1}
 ssttp.calculator.results.option.other.error.above-maximum = Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £{0} ond heb fod yn fwy na £{1}
 ssttp.calculator.results.option.other.error.no-input = Nodwch swm

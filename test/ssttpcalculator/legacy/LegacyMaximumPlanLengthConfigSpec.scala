@@ -67,7 +67,7 @@ class LegacyMaximumPlanLengthConfigSpec extends ConfigSpec {
     )
 
     val allSchedules = calculatorService.allAvailableSchedules(sa, initialPayment, preferredPaymentDay)(request)
-    val closestSchedule = calculatorService.closestSchedule(remainingIncomeAfterSpending / 2, allSchedules)
+    val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(remainingIncomeAfterSpending / 2, allSchedules)
 
     val result = calculatorService.defaultSchedules(closestSchedule, allSchedules)
     result.toSeq.length shouldBe 3
@@ -102,7 +102,7 @@ class LegacyMaximumPlanLengthConfigSpec extends ConfigSpec {
 
     val allSchedules = calculatorService.allAvailableSchedules(sa, initialPayment, preferredPaymentDay)(request)
 
-    val closestSchedule = calculatorService.closestSchedule(remainingIncomeAfterSpending / 2, allSchedules)
+    val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(remainingIncomeAfterSpending / 2, allSchedules)
 
     val result = calculatorService.defaultSchedules(closestSchedule, allSchedules)
     result.toSeq.length shouldBe 0

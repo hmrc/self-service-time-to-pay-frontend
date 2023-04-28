@@ -17,8 +17,9 @@
 package pagespecs.pages.legacycalculator
 
 import langswitch.Languages.{English, Welsh}
-import langswitch.Language
+import langswitch.{Language, Languages}
 import org.openqa.selenium.WebDriver
+import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import pagespecs.pages.{BaseUrl, HowMuchCanYouPayEachMonthPage}
 import testsupport.RichMatchers._
@@ -27,7 +28,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
   extends HowMuchCanYouPayEachMonthPage(baseUrl)(webDriver) {
 
   import WebBrowser._
-  override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
+  override def assertInitialPageIsDisplayed(implicit lang: Language = English): Unit = probing {
     readPath() shouldBe path
     readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
@@ -37,9 +38,35 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
     ()
   }
 
-  def assertContentDoesNotContainOrSeparator(implicit lang: Language = English): Unit = probing {
-    val expectedLines = ExpectedLegacyCalculator.MainText.OrSeparator().stripSpaces().split("\n")
-    assertContentDoesNotContainLines(expectedLines)
+  override def assertInitialPageContentIsDisplayed(implicit lang: Language = English): Unit = probing {
+    val expectedLines = ExpectedLegacyCalculator.MainText.DefaultCalculations().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+    ()
+  }
+
+  override def customAmountOptionIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
+    val expectedLines = ExpectedLegacyCalculator.MainText.CustomOption().stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+    ()
+  }
+
+  override def assertBelowMinimumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(ExpectedLegacyCalculator.ErrorText.BelowMinimum().stripSpaces())
+  }
+
+  override def assertAboveMaximumErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces() should include(ExpectedLegacyCalculator.ErrorText.AboveMaximum().stripSpaces())
+  }
+
+  override def assertPageWithCustomAmountContentIsDisplayed(amount:   String,
+                                                            months:   Option[String] = None,
+                                                            interest: Option[String] = None
+  )(implicit lang: Language = English): Unit = probing {
+    val expectedLines = ExpectedLegacyCalculator.MainText.CustomAmountDisplayed(amount).stripSpaces().split("\n")
+    assertContentMatchesExpectedLines(expectedLines)
+    optionIsDisplayed(amount, months, interest)
     ()
   }
 
@@ -55,7 +82,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
 
         private val mainTextEnglish =
           s"""How much can you pay each month?
-             |Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
+             |Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
              |£490 per month over 10 months
              |Includes total interest estimated at £74.30
@@ -84,17 +111,74 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
           """.stripMargin
       }
 
-      object OrSeparator {
+      object CustomOption {
         def apply()(implicit language: Language): String = language match {
-          case English => orSeparatorTextEnglish
-          case Welsh   => orSeparatorTextWelsh
+          case English => customtOptionTextEnglish
+          case Welsh   => customOptionTextWelsh
         }
 
-        private val orSeparatorTextEnglish =
-          s"""or""".stripMargin
+        private val customtOptionTextEnglish =
+          s"""Pay more per month
+             |Enter an amount between £612.50 and £2,450 to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
+          """.stripMargin
 
-        private val orSeparatorTextWelsh =
-          s"""neu""".stripMargin
+        private val customOptionTextWelsh =
+          s"""Pay more per month
+             |Enter an amount between £612.50 and £2,450 to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
+          """.stripMargin
+      }
+
+      object CustomAmountDisplayed {
+        def apply(amount: String)(implicit language: Language): String = language match {
+          case English => customAmountTextEnglish(amount)
+          case Welsh   => customAmountTextWelsh(amount)
+        }
+
+        private def customAmountTextEnglish(amount: String) =
+          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
+             |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+      """.stripMargin
+
+        private def customAmountTextWelsh(amount: String) =
+          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
+             |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+      """.stripMargin
+      }
+    }
+
+    object ErrorText {
+      object BelowMinimum {
+        def apply()(implicit language: Language): String = language match {
+          case English => belowMinimumTextEnglish
+          case Welsh   => belowMinimumTextWelsh
+        }
+
+        private val belowMinimumTextEnglish =
+          s"""There is a problem
+             |Enter an amount that is at least £612.50 but no more than £2,450
+      """.stripMargin
+
+        private val belowMinimumTextWelsh =
+          s"""Mae problem wedi codi
+             |Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £612.50 ond heb fod yn fwy na £2,450
+      """.stripMargin
+      }
+
+      object AboveMaximum {
+        def apply()(implicit language: Language): String = language match {
+          case English => aboveMaximumTextEnglish
+          case Welsh   => aboveMaximumTextWelsh
+        }
+
+        private val aboveMaximumTextEnglish =
+          s"""There is a problem
+             |Enter an amount that is at least £612.50 but no more than £2,450
+      """.stripMargin
+
+        private val aboveMaximumTextWelsh =
+          s"""Mae problem wedi codi
+             |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £612.50 ond heb fod yn fwy na £2,450
+      """.stripMargin
       }
     }
   }

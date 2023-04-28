@@ -16,144 +16,75 @@
 
 package pagespecs.legacycalculator
 
-import langswitch.Languages.{English, Welsh}
+import pagespecs.HowMuchCanYouPayEachMonthPageBaseSpec
+import pagespecs.pages.HowMuchCanYouPayEachMonthPage
 import ssttpcalculator.CalculatorType.Legacy
-import testsupport.ItSpec
 import testsupport.legacycalculator.LegacyCalculatorPages
-import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs._
-import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
+import testsupport.testdata.DisplayDefaultPlanOptionsTd
+import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
-class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends ItSpec with LegacyCalculatorPages {
+class HowMuchCanYouPayEachMonthPageLegacyCalculatorSpec extends HowMuchCanYouPayEachMonthPageBaseSpec with LegacyCalculatorPages {
 
   override val overrideConfig: Map[String, Any] = Map(
     "calculatorType" -> Legacy.value
   )
 
-  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
-    AuthStub.authorise()
-    TaxpayerStub.getTaxpayer()
-    IaStub.successfulIaCheck
-    GgStub.signInPage(port)
-    getBanksIsSuccessful()
-    startPage.open()
-    startPage.assertInitialPageIsDisplayed()
-    startPage.clickOnStartNowButton()
+  lazy val pageUnderTest: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPageLegacyCalculator
 
-    taxLiabilitiesPage.assertInitialPageIsDisplayed()
-    taxLiabilitiesPage.clickOnStartNowButton()
+  val displayOnePlan: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = 4900,
+    optionsDisplayed             = Seq("2,450"),
+    optionsNotDisplayed          = Seq("4,900", "1,633.33", "1,633.34")
+  )
+  val displayTwoPlans: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = 3267,
+    optionsDisplayed             = Seq("2,450", "1,633.33"),
+    optionsNotDisplayed          = Seq("4,900", "1,225")
+  )
+  val displayThreePlans: DisplayDefaultPlanOptionsTd = DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending = defaultRemainingIncomeAfterSpending,
+    optionsDisplayed             = Seq("490", "544.44", "612.50"),
+    optionsNotDisplayed          = Seq("700")
+  )
 
-    paymentTodayQuestionPage.assertInitialPageIsDisplayed()
-    paymentTodayQuestionPage.selectRadioButton(false)
-    paymentTodayQuestionPage.clickContinue()
+  val customAmountInput = 700
+  val customAmountPlanMonthsOutput = 7
+  val customAmountPlanInterestOutput = 54.35
 
-    selectDatePage.assertInitialPageIsDisplayed()
-    selectDatePage.selectFirstOption28thDay()
-    selectDatePage.clickContinue()
+  s"${overrideConfig("calculatorType")} - custom amount entry" - {
+    "displays page with custom option at top when custom amount entered and continue pressed" - {
+      "custom plan closest to custom amount input if exact plan not available" - {
+        "plan instalment amount below custom amount input" in {
+          beginJourney()
 
-    startAffordabilityPage.assertInitialPageIsDisplayed()
-    startAffordabilityPage.clickContinue()
+          pageUnderTest.assertInitialPageIsDisplayed
 
-    addIncomeSpendingPage.assertInitialPageIsDisplayed()
-    addIncomeSpendingPage.clickOnAddChangeIncome()
+          pageUnderTest.selectCustomAmountOption()
+          pageUnderTest.enterCustomAmount((customAmountInput + 10).toString)
+          pageUnderTest.clickContinue()
 
-    yourMonthlyIncomePage.assertInitialPageIsDisplayed
-    yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
-    yourMonthlyIncomePage.clickContinue()
+          pageUnderTest.assertPageWithCustomAmountIsDisplayed(
+            customAmountInput.toString,
+            Some(customAmountPlanMonthsOutput.toString),
+            Some(customAmountPlanInterestOutput.toString)
+          )
+        }
+        "plan instalment amount above custom amount input" in {
+          beginJourney()
 
-    addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
-    addIncomeSpendingPage.clickOnAddChangeSpending()
+          pageUnderTest.assertInitialPageIsDisplayed
 
-    yourMonthlySpendingPage.assertInitialPageIsDisplayed
-    yourMonthlySpendingPage.clickContinue()
+          pageUnderTest.selectCustomAmountOption()
+          pageUnderTest.enterCustomAmount((customAmountInput - 10).toString)
+          pageUnderTest.clickContinue()
 
-    howMuchYouCouldAffordPage.clickContinue()
-  }
-
-  "goes to kick out page " +
-    "if 50% of remaining income after spending cannot cover amount remaining to pay including interest in 24 months of less" in {
-      beginJourney(netIncomeTooSmallForPlan)
-      weCannotAgreeYourPaymentPlanPage.assertPagePathCorrect
-    }
-
-  "display default options" - {
-    "if a two-month plan is the closest monthly amount less than 50% of remaining income after spending, show only this option" in {
-      beginJourney(4900)
-
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("2,450")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("4,900")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,633.33")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,633.34")
-    }
-    "if a three-month plan is the closest monthly amount less than 50% of remaining income after spending, " +
-      "show three-month and two-month plans only" in {
-        beginJourney(3267)
-
-        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("1,633.33")
-        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("2,450")
-        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("4,900")
-        howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("1,225")
+          pageUnderTest.assertPageWithCustomAmountIsDisplayed(
+            customAmountInput.toString,
+            Some(customAmountPlanMonthsOutput.toString),
+            Some(customAmountPlanInterestOutput.toString)
+          )
+        }
       }
-    "displays three default options otherwise" in {
-      beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("490")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("544.44")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsDisplayed("612.50")
-      howMuchCanYouPayEachMonthPageLegacyCalculator.optionIsNotDisplayed("700")
-    }
-  }
-  "does not display a custom amount option" - {
-    "in English" in {
-      beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.customAmountOptionNotDisplayed
-    }
-    "in Welsh" in {
-      beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.customAmountOptionNotDisplayed(Welsh)
-    }
-  }
-
-  "language" in {
-    beginJourney()
-
-    howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnWelshLink()
-    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed(Welsh)
-
-    howMuchCanYouPayEachMonthPageLegacyCalculator.clickOnEnglishLink()
-    howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed(English)
-  }
-
-  "back button" in {
-    beginJourney()
-    howMuchCanYouPayEachMonthPageLegacyCalculator.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
-  }
-
-  "select an option and continue" - {
-    "basic case" in {
-      beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.selectAnOption()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-      checkYourPaymentPlanPageLegacyCalculator.expectedHeadingContent(English)
-    }
-    "case with large number of decimal places of plan selection amounts" in {
-      beginJourney(netIncomeLargeEnoughForSingleDefaultPlan)
-
-      howMuchCanYouPayEachMonthPageLegacyCalculator.selectAnOption()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-      checkYourPaymentPlanPageLegacyCalculator.expectedHeadingContent(English)
-    }
-
-  }
-
-  "returning to the page" - {
-    "selecting a default option, continue, then back, returns to the schedule selection page" in {
-      beginJourney()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.selectAnOption()
-      howMuchCanYouPayEachMonthPageLegacyCalculator.clickContinue()
-      checkYourPaymentPlanPageLegacyCalculator.clickOnBackButton()
-
-      howMuchCanYouPayEachMonthPageLegacyCalculator.assertInitialPageIsDisplayed
     }
   }
 }

@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package ssttpcalculator
+package testsupport.testdata
 
-sealed trait CalculatorType {
-  val value: String
-  lazy val messagesKeySuffix: String = value.toLowerCase
-}
-
-object CalculatorType {
-  case object Legacy extends CalculatorType {
-    val value: String = "Legacy"
-  }
-
-  case object PaymentOptimised extends CalculatorType {
-    val value: String = "PaymentOptimised"
-  }
-}
-
+case class DisplayDefaultPlanOptionsTd(
+    remainingIncomeAfterSpending: BigDecimal,
+    optionsDisplayed:             Seq[String],
+    optionsNotDisplayed:          Seq[String]
+)
