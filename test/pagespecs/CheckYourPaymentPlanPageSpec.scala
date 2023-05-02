@@ -17,6 +17,7 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
+import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage}
 import ssttpcalculator.CalculatorType.PaymentOptimised
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
@@ -24,11 +25,20 @@ import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 import testsupport.stubs._
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
-class CheckYourPaymentPlanPageSpec extends ItSpec {
+class CheckYourPaymentPlanPageSpec extends CheckYourPaymentPlanPageBaseSpec {
 
   override val overrideConfig: Map[String, Any] = Map(
     "calculatorType" -> PaymentOptimised.value
   )
+
+  val pageUnderTest: CheckYourPaymentPlanPage = checkYourPaymentPlanPage
+  val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
+}
+
+trait CheckYourPaymentPlanPageBaseSpec extends ItSpec {
+
+  val pageUnderTest: CheckYourPaymentPlanPage
+  val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
@@ -69,67 +79,65 @@ class CheckYourPaymentPlanPageSpec extends ItSpec {
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
-    howMuchCanYouPayEachMonthPage.clickContinue()
-
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
+    inUseHowMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+    inUseHowMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
+    inUseHowMuchCanYouPayEachMonthPage.clickContinue()
   }
 
   "language" in {
     beginJourney()
 
-    checkYourPaymentPlanPage.clickOnWelshLink()
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
+    pageUnderTest.clickOnWelshLink()
+    pageUnderTest.assertInitialPageIsDisplayed(Welsh)
 
-    checkYourPaymentPlanPage.clickOnEnglishLink()
+    pageUnderTest.clickOnEnglishLink()
 
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed(English)
+    pageUnderTest.assertInitialPageIsDisplayed(English)
   }
 
   "back button" in {
     beginJourney()
-    checkYourPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchCanYouPayEachMonthPage.path}")
+    pageUnderTest.backButtonHref shouldBe Some(s"${baseUrl.value}${inUseHowMuchCanYouPayEachMonthPage.path}")
   }
 
   "change monthly instalments" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed()
+    pageUnderTest.clickChangeMonthlyAmountLink()
+    inUseHowMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed()
   }
 
   "change collection day" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickChangeCollectionDayLink()
+    pageUnderTest.clickChangeCollectionDayLink()
     selectDatePage.assertInitialPageIsDisplayed
   }
 
   "change upfront payment amount" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickChangeUpfrontPaymentAnswerLink()
+    pageUnderTest.clickChangeUpfrontPaymentAnswerLink()
     paymentTodayQuestionPage.assertInitialPageIsDisplayed
   }
 
   "change upfront answer" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickChangeUpfrontPaymentAmountLink()
+    pageUnderTest.clickChangeUpfrontPaymentAmountLink()
     paymentTodayQuestionPage.assertInitialPageIsDisplayed
   }
 
   "continue to the next page" in {
     beginJourney()
-    checkYourPaymentPlanPage.clickContinue()
+    pageUnderTest.clickContinue()
     aboutBankAccountPage.assertInitialPageIsDisplayed
   }
 
   "shows warning" in {
     beginJourney()
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed
-    checkYourPaymentPlanPage.clickChangeMonthlyAmountLink()
-    howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Higher)
-    howMuchCanYouPayEachMonthPage.clickContinue()
-    checkYourPaymentPlanPage.assertWarningIsDisplayed(English)
-    checkYourPaymentPlanPage.clickOnWelshLink()
-    checkYourPaymentPlanPage.assertWarningIsDisplayed(Welsh)
+    pageUnderTest.assertInitialPageIsDisplayed
+    pageUnderTest.clickChangeMonthlyAmountLink()
+    inUseHowMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Higher)
+    inUseHowMuchCanYouPayEachMonthPage.clickContinue()
+    pageUnderTest.assertWarningIsDisplayed(English)
+    pageUnderTest.clickOnWelshLink()
+    pageUnderTest.assertWarningIsDisplayed(Welsh)
   }
 }
