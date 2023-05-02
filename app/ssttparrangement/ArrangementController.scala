@@ -30,7 +30,8 @@ import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.{CalculatorType, PaymentPlansService}
+import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
+import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
@@ -52,25 +53,29 @@ import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.math.BigDecimal.exact
 
 class ArrangementController @Inject() (
-    mcc:                  MessagesControllerComponents,
-    ddConnector:          DirectDebitConnector,
-    arrangementConnector: ArrangementConnector,
-    paymentPlansService:  PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
-    calculatorService:    CalculatorService, // calculator type feature flag: used by Legacy calculator feature
-    eligibilityService:   EligibilityService,
-    taxPayerConnector:    TaxpayerConnector,
-    auditService:         AuditService,
-    journeyService:       JourneyService,
-    as:                   Actions,
-    requestSupport:       RequestSupport,
-    views:                Views,
-    clockProvider:        ClockProvider,
-    iaService:            IaService,
-    mongoLockRepository:  MongoLockRepository,
-    directDebitConnector: DirectDebitConnector)(
+    mcc:                     MessagesControllerComponents,
+    ddConnector:             DirectDebitConnector,
+    arrangementConnector:    ArrangementConnector,
+    val paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
+    val calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
+    eligibilityService:      EligibilityService,
+    taxPayerConnector:       TaxpayerConnector,
+    auditService:            AuditService,
+    journeyService:          JourneyService,
+    as:                      Actions,
+    requestSupport:          RequestSupport,
+    views:                   Views,
+    clockProvider:           ClockProvider,
+    iaService:               IaService,
+    mongoLockRepository:     MongoLockRepository,
+    directDebitConnector:    DirectDebitConnector
+)(
     implicit
-    appConfig: AppConfig,
-    ec:        ExecutionContext) extends FrontendBaseController(mcc) {
+    val appConfig: AppConfig,
+    ec:            ExecutionContext
+)
+  extends FrontendBaseController(mcc)
+  with CalculatorSwitchSelectedScheduleHelper {
 
   private val logger = Logger(getClass)
 
@@ -395,14 +400,6 @@ class ArrangementController @Inject() (
     val lockKeeper = LockService(mongoLockRepository, lockId = s"des-lock-" + lockName, ttl = 5.minutes)
 
     lockKeeper.withLock(body)
-  }
-
-  private def selectedSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = appConfig.calculatorType match {
-    case CalculatorType.Legacy => calculatorService.selectedSchedule(journey)
-    case CalculatorType.PaymentOptimised =>
-      paymentPlansService.selectedSchedule(journey).getOrElse(
-        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-      )
   }
 
 }

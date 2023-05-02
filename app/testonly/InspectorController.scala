@@ -21,29 +21,31 @@ import config.AppConfig
 import controllers.FrontendBaseController
 
 import javax.inject.Inject
-import journey.{Journey, JourneyService}
+import journey.JourneyService
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpcalculator.{CalculatorType, PaymentPlansService}
+import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.model.PaymentSchedule
+import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
 import timetopaytaxpayer.cor.TaxpayerConnector
 import views.Views
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.util.Try
 
 class InspectorController @Inject() (
-    ddConnector:         BarsConnector,
-    paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
-    calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
-    taxPayerConnector:   TaxpayerConnector,
-    cc:                  MessagesControllerComponents,
-    journeyService:      JourneyService,
-    views:               Views,
-    requestSupport:      RequestSupport
-)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(cc) {
+    ddConnector:             BarsConnector,
+    val paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
+    val calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
+    taxPayerConnector:       TaxpayerConnector,
+    cc:                      MessagesControllerComponents,
+    journeyService:          JourneyService,
+    views:                   Views,
+    requestSupport:          RequestSupport
+)(implicit val appConfig: AppConfig, ec: ExecutionContext)
+  extends FrontendBaseController(cc)
+  with CalculatorSwitchSelectedScheduleHelper {
 
   import requestSupport._
 
@@ -67,12 +69,6 @@ class InspectorController @Inject() (
       "not supported - todo remove it",
       request.headers.toSimpleMap.toSeq
     ))
-  }
-
-  private def maybeSelectedSchedule(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = appConfig.calculatorType match {
-    case CalculatorType.Legacy => Some(calculatorService.selectedSchedule(journey))
-    case CalculatorType.PaymentOptimised =>
-      paymentPlansService.selectedSchedule(journey)
   }
 
   implicit class JsonOps[A: Writes](a: A) {

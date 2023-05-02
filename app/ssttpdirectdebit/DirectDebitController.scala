@@ -30,7 +30,8 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
 import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.{CalculatorType, PaymentPlansService}
+import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
+import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.model.PaymentSchedule
 import ssttpdirectdebit.DirectDebitForm._
 import times.ClockProvider
@@ -42,20 +43,21 @@ import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectDebitController @Inject() (
-    mcc:                 MessagesControllerComponents,
-    barsService:         BarsService,
-    viewConfig:          ViewConfig,
-    actions:             Actions,
-    submissionService:   JourneyService,
-    requestSupport:      RequestSupport,
-    paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
-    calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
-    views:               Views,
-    clockProvider:       ClockProvider
+    mcc:                     MessagesControllerComponents,
+    barsService:             BarsService,
+    viewConfig:              ViewConfig,
+    actions:                 Actions,
+    submissionService:       JourneyService,
+    requestSupport:          RequestSupport,
+    val paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
+    val calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
+    views:                   Views,
+    clockProvider:           ClockProvider
 )(
     implicit
-    appConfig: AppConfig, ec: ExecutionContext)
-  extends FrontendBaseController(mcc) {
+    val appConfig: AppConfig, ec: ExecutionContext)
+  extends FrontendBaseController(mcc)
+  with CalculatorSwitchSelectedScheduleHelper {
 
   import clockProvider._
   import requestSupport._
@@ -200,13 +202,5 @@ class DirectDebitController @Inject() (
           }
       )
     }
-  }
-
-  private def selectedSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = appConfig.calculatorType match {
-    case CalculatorType.Legacy => calculatorService.selectedSchedule(journey)
-    case CalculatorType.PaymentOptimised =>
-      paymentPlansService.selectedSchedule(journey).getOrElse(
-        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-      )
   }
 }
