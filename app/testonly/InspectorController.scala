@@ -19,12 +19,15 @@ package testonly
 import bars.BarsConnector
 import config.AppConfig
 import controllers.FrontendBaseController
+
 import javax.inject.Inject
 import journey.{Journey, JourneyService}
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import req.RequestSupport
-import ssttpcalculator.PaymentPlansService
+import ssttpcalculator.{CalculatorType, PaymentPlansService}
+import ssttpcalculator.legacy.CalculatorService
+import ssttpcalculator.model.PaymentSchedule
 import timetopaytaxpayer.cor.TaxpayerConnector
 import views.Views
 
@@ -32,13 +35,15 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 class InspectorController @Inject() (
-    ddConnector:       BarsConnector,
-    calculatorService: PaymentPlansService,
-    taxPayerConnector: TaxpayerConnector,
-    cc:                MessagesControllerComponents,
-    journeyService:    JourneyService,
-    views:             Views,
-    requestSupport:    RequestSupport)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(cc) {
+    ddConnector:         BarsConnector,
+    paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
+    calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
+    taxPayerConnector:   TaxpayerConnector,
+    cc:                  MessagesControllerComponents,
+    journeyService:      JourneyService,
+    views:               Views,
+    requestSupport:      RequestSupport
+)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(cc) {
 
   import requestSupport._
 
@@ -54,7 +59,7 @@ class InspectorController @Inject() (
       List(
         "debitDate" -> maybeJourney.flatMap(_.debitDate).json,
         "taxpayer" -> maybeJourney.flatMap(_.maybeTaxpayer).json,
-        "schedule" -> Try(maybeJourney.map(calculatorService.selectedSchedule(_))).toOption.json,
+        "schedule" -> Try(maybeJourney.map(maybeSelectedSchedule(_))).toOption.json,
         "bankDetails" -> maybeJourney.flatMap(_.maybeBankDetails).json,
         "existingDDBanks" -> maybeJourney.flatMap(_.existingDDBanks).json,
         "eligibilityStatus" -> maybeJourney.map(_.maybeEligibilityStatus).json
@@ -62,6 +67,12 @@ class InspectorController @Inject() (
       "not supported - todo remove it",
       request.headers.toSimpleMap.toSeq
     ))
+  }
+
+  private def maybeSelectedSchedule(journey: Journey)(implicit request: Request[_]): Option[PaymentSchedule] = appConfig.calculatorType match {
+    case CalculatorType.Legacy => Some(calculatorService.selectedSchedule(journey))
+    case CalculatorType.PaymentOptimised =>
+      paymentPlansService.selectedSchedule(journey)
   }
 
   implicit class JsonOps[A: Writes](a: A) {

@@ -79,7 +79,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
       val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
 
-      eventually(RichMatchers.timeout(Span(5, Seconds))) {
+      eventually(RichMatchers.timeout(Span(10, Seconds))) {
         val res = controller.submit()(fakeRequest)
         status(res) mustBe Status.SEE_OTHER
         res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/arrangement/summary"

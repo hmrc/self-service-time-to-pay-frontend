@@ -29,7 +29,9 @@ import model.forms.TypeOfAccountForm
 import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
-import ssttpcalculator.PaymentPlansService
+import ssttpcalculator.legacy.CalculatorService
+import ssttpcalculator.{CalculatorType, PaymentPlansService}
+import ssttpcalculator.model.PaymentSchedule
 import ssttpdirectdebit.DirectDebitForm._
 import times.ClockProvider
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
@@ -46,7 +48,8 @@ class DirectDebitController @Inject() (
     actions:             Actions,
     submissionService:   JourneyService,
     requestSupport:      RequestSupport,
-    paymentPlansService: PaymentPlansService,
+    paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
+    calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
     views:               Views,
     clockProvider:       ClockProvider
 )(
@@ -114,9 +117,7 @@ class DirectDebitController @Inject() (
           else directDebitForm
         case None => directDebitForm
       }
-      val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
-        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-      )
+      val schedule: PaymentSchedule = selectedSchedule(journey)
       Future.successful(Ok(views.direct_debit_form(journey.taxpayer.selfAssessment.debits, schedule, formData, isSignedIn)))
     }
   }
@@ -127,9 +128,7 @@ class DirectDebitController @Inject() (
     submissionService.authorizedForSsttp { journey: Journey =>
       journey.requireScheduleIsDefined()
       journey.requireDdIsDefined()
-      val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
-        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-      )
+      val schedule: PaymentSchedule = selectedSchedule(journey)
       Future.successful(Ok(views.direct_debit_assistance(journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
     }
   }
@@ -138,9 +137,7 @@ class DirectDebitController @Inject() (
     submissionService.authorizedForSsttp { journey: Journey =>
       journey.requireScheduleIsDefined()
       journey.requireDdIsDefined()
-      val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
-        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-      )
+      val schedule: PaymentSchedule = selectedSchedule(journey)
       Future.successful(
         Ok(views.direct_debit_assistance(
           journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()), schedule, loggedIn = true, showErrorNotification = isSignedIn)))
@@ -153,9 +150,7 @@ class DirectDebitController @Inject() (
     submissionService.authorizedForSsttp { journey: Journey =>
       journey.requireScheduleIsDefined()
       journey.requireDdIsDefined()
-      val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
-        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-      )
+      val schedule: PaymentSchedule = selectedSchedule(journey)
       val directDebit = journey.arrangementDirectDebit.getOrElse(throw new RuntimeException(s"arrangement direct debit not found on submission [${journey}]"))
       Future.successful(Ok(views.direct_debit_confirmation(
         journey.taxpayer.selfAssessment.debits, schedule, directDebit, isSignedIn))
@@ -169,9 +164,7 @@ class DirectDebitController @Inject() (
     submissionService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
       journey.requireIsAccountHolder()
-      val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
-        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-      )
+      val schedule: PaymentSchedule = selectedSchedule(journey)
       directDebitForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(
           views.direct_debit_form(
@@ -207,5 +200,13 @@ class DirectDebitController @Inject() (
           }
       )
     }
+  }
+
+  private def selectedSchedule(journey: Journey)(implicit request: Request[_]): PaymentSchedule = appConfig.calculatorType match {
+    case CalculatorType.Legacy => calculatorService.selectedSchedule(journey)
+    case CalculatorType.PaymentOptimised =>
+      paymentPlansService.selectedSchedule(journey).getOrElse(
+        throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
+      )
   }
 }

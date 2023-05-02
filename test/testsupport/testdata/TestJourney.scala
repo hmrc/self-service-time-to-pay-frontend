@@ -18,13 +18,11 @@ package testsupport.testdata
 
 import journey.{Journey, JourneyId, PaymentToday, PaymentTodayAmount}
 import journey.Statuses.InProgress
-
 import model.enumsforforms.TypesOfBankAccount.Personal
 import model.enumsforforms.TypesOfBankAccount
 import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
-import testsupport.testdata.TdAll.selectedRegularPaymentAmount300
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, EligibilityStatus, PaymentDayOfMonth, PlanSelection, SelectedPlan, TypeOfAccountDetails}
 
 import java.time.LocalDateTime
@@ -43,7 +41,7 @@ object TestJourney {
       maybePaymentTodayAmount   = Some(PaymentTodayAmount(200)),
       maybeIncome               = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
       maybeSpending             = Some(Spending(Expenses(HousingExp, 500))),
-      maybePlanSelection        = Some(PlanSelection(Left(SelectedPlan(selectedRegularPaymentAmount300)))),
+      maybePlanSelection        = Some(PlanSelection(Left(SelectedPlan(470)))),
       maybePaymentDayOfMonth    = Some(PaymentDayOfMonth(3)),
       maybeEligibilityStatus    = Some(EligibilityStatus(Seq.empty))
     )
