@@ -18,6 +18,7 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
+import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage, ViewPaymentPlanPage}
 import ssttpcalculator.CalculatorType.PaymentOptimised
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
@@ -26,11 +27,21 @@ import testsupport.stubs._
 import testsupport.testdata.DirectDebitTd
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
-class ViewPaymentPlanPageSpec extends ItSpec {
-
+class ViewPaymentPlanPageSpec extends ViewPaymentPlanPageBaseSpec {
   override val overrideConfig: Map[String, Any] = Map(
     "calculatorType" -> PaymentOptimised.value
   )
+
+  val pageUnderTest: ViewPaymentPlanPage = viewPaymentPlanPage
+  val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
+  val inUseCheckYourPaymentPlanPage: CheckYourPaymentPlanPage = checkYourPaymentPlanPage
+
+}
+
+trait ViewPaymentPlanPageBaseSpec extends ItSpec {
+  val pageUnderTest: ViewPaymentPlanPage
+  val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage
+  val inUseCheckYourPaymentPlanPage: CheckYourPaymentPlanPage
 
   def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
@@ -73,12 +84,12 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     yourMonthlySpendingPage.clickContinue()
 
     howMuchYouCouldAffordPage.clickContinue()
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
-    howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
-    howMuchCanYouPayEachMonthPage.clickContinue()
+    inUseHowMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+    inUseHowMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
+    inUseHowMuchCanYouPayEachMonthPage.clickContinue()
 
-    checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
-    checkYourPaymentPlanPage.clickContinue()
+    inUseCheckYourPaymentPlanPage.assertInitialPageIsDisplayed()
+    inUseCheckYourPaymentPlanPage.clickContinue()
 
     aboutBankAccountPage.assertInitialPageIsDisplayed()
     aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
@@ -99,7 +110,7 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     beginJourney()
     termsAndConditionsPage.clickContinue()
     arrangementSummaryPage.clickLink()
-    viewPaymentPlanPage.assertInitialPageIsDisplayed(English)
+    pageUnderTest.assertInitialPageIsDisplayed(English)
   }
 
   "language Welsh" in {
@@ -107,11 +118,11 @@ class ViewPaymentPlanPageSpec extends ItSpec {
     termsAndConditionsPage.clickOnWelshLink()
     termsAndConditionsPage.clickContinue()
     arrangementSummaryPage.clickLink()
-    viewPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
+    pageUnderTest.assertInitialPageIsDisplayed(Welsh)
   }
 
   "back button" in {
     beginJourney()
-    viewPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
+    pageUnderTest.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
   }
 }
