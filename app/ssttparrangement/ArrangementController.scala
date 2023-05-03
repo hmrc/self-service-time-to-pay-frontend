@@ -30,7 +30,8 @@ import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttpcalculator.legacy.CalculatorService
-import ssttpcalculator.{CalculatorType, PaymentPlansService}
+import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
+import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
@@ -52,25 +53,29 @@ import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.math.BigDecimal.exact
 
 class ArrangementController @Inject() (
-    mcc:                  MessagesControllerComponents,
-    ddConnector:          DirectDebitConnector,
-    arrangementConnector: ArrangementConnector,
-    paymentPlansService:  PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
-    calculatorService:    CalculatorService, // calculator type feature flag: used by Legacy calculator feature
-    eligibilityService:   EligibilityService,
-    taxPayerConnector:    TaxpayerConnector,
-    auditService:         AuditService,
-    journeyService:       JourneyService,
-    as:                   Actions,
-    requestSupport:       RequestSupport,
-    views:                Views,
-    clockProvider:        ClockProvider,
-    iaService:            IaService,
-    mongoLockRepository:  MongoLockRepository,
-    directDebitConnector: DirectDebitConnector)(
+    mcc:                     MessagesControllerComponents,
+    ddConnector:             DirectDebitConnector,
+    arrangementConnector:    ArrangementConnector,
+    val paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
+    val calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
+    eligibilityService:      EligibilityService,
+    taxPayerConnector:       TaxpayerConnector,
+    auditService:            AuditService,
+    journeyService:          JourneyService,
+    as:                      Actions,
+    requestSupport:          RequestSupport,
+    views:                   Views,
+    clockProvider:           ClockProvider,
+    iaService:               IaService,
+    mongoLockRepository:     MongoLockRepository,
+    directDebitConnector:    DirectDebitConnector
+)(
     implicit
-    appConfig: AppConfig,
-    ec:        ExecutionContext) extends FrontendBaseController(mcc) {
+    val appConfig: AppConfig,
+    ec:            ExecutionContext
+)
+  extends FrontendBaseController(mcc)
+  with CalculatorSwitchSelectedScheduleHelper {
 
   private val logger = Logger(getClass)
 
@@ -124,13 +129,7 @@ class ArrangementController @Inject() (
     journeyService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
 
-      val schedule = appConfig.calculatorType match {
-        case CalculatorType.Legacy => calculatorService.selectedSchedule(journey)
-        case CalculatorType.PaymentOptimised =>
-          paymentPlansService.selectedSchedule(journey).getOrElse(
-            throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-          )
-      }
+      val schedule = selectedSchedule(journey)
 
       val leftOverIncome: BigDecimal = journey.remainingIncomeAfterSpending
       val monthlyPaymentAmountChosen = journey.maybeSelectedPlanAmount.getOrElse(
@@ -234,13 +233,11 @@ class ArrangementController @Inject() (
   def submit(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     tryLock(request.request.session.get(SessionKeys.sessionId).getOrElse("unknown-session")) {
       JourneyLogger.info(s"ArrangementController.submit: $request")
-      journeyService.authorizedForSsttp { ttp =>
-        ttp.requireScheduleIsDefined()
-        ttp.requireDdIsDefined()
-        val paymentSchedule = paymentPlansService.selectedSchedule(ttp).getOrElse(
-          throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-        )
-        arrangementSetUp(ttp, paymentSchedule)
+      journeyService.authorizedForSsttp { journey =>
+        journey.requireScheduleIsDefined()
+        journey.requireDdIsDefined()
+        val paymentSchedule = selectedSchedule(journey)
+        arrangementSetUp(journey, paymentSchedule)
       }
     }.map {
       case Some(res) =>
@@ -261,9 +258,7 @@ class ArrangementController @Inject() (
           journey.arrangementDirectDebit.getOrElse(
             throw new RuntimeException(s"arrangementDirectDebit not found for journey [$journey]"))
 
-        val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
-          throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-        )
+        val schedule = selectedSchedule(journey)
         auditService.sendPlanSetUpSuccessEvent(journey, schedule)
         Ok(views.application_complete(
           debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
@@ -280,13 +275,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.getDeclaration: $request")
     journeyService.getJourney.flatMap { journey =>
 
-      val schedule = appConfig.calculatorType match {
-        case CalculatorType.Legacy => calculatorService.selectedSchedule(journey)
-        case CalculatorType.PaymentOptimised =>
-          paymentPlansService.selectedSchedule(journey).getOrElse(
-            throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-          )
-      }
+      val schedule = selectedSchedule(journey)
       Future.successful(Ok(views.view_payment_plan(schedule, journey.ddRef)))
     }
   }
@@ -361,9 +350,7 @@ class ArrangementController @Inject() (
   private def paymentPlan(journey: Journey, ddInstruction: DirectDebitInstruction)(implicit request: Request[_]): PaymentPlanRequest = {
     val knownFact = List(KnownFact(cesa, journey.taxpayer.selfAssessment.utr.value))
 
-    val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
-      throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-    )
+    val schedule = selectedSchedule(journey)
 
     val initialPayment = if (schedule.initialPayment > exact(0)) Some(schedule.initialPayment.toString()) else None
     val initialStartDate = initialPayment.fold[Option[LocalDate]](None)(_ => Some(schedule.startDate.plusDays(appConfig.daysToProcessFirstPayment)))
@@ -404,9 +391,7 @@ class ArrangementController @Inject() (
         .ddiReferenceNo.getOrElse(throw new RuntimeException("ddReference not available"))
 
     val taxpayer = journey.taxpayer
-    val schedule = paymentPlansService.selectedSchedule(journey).getOrElse(
-      throw new IllegalArgumentException("could not calculate a valid schedule but there should be one")
-    )
+    val schedule = selectedSchedule(journey)
 
     TTPArrangement(ppReference, ddReference, taxpayer, journey.bankDetails, schedule)
   }

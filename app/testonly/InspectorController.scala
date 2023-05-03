@@ -19,26 +19,33 @@ package testonly
 import bars.BarsConnector
 import config.AppConfig
 import controllers.FrontendBaseController
+
 import javax.inject.Inject
-import journey.{Journey, JourneyService}
+import journey.JourneyService
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
 import ssttpcalculator.PaymentPlansService
+import ssttpcalculator.legacy.CalculatorService
+import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
 import timetopaytaxpayer.cor.TaxpayerConnector
 import views.Views
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 import scala.util.Try
 
 class InspectorController @Inject() (
-    ddConnector:       BarsConnector,
-    calculatorService: PaymentPlansService,
-    taxPayerConnector: TaxpayerConnector,
-    cc:                MessagesControllerComponents,
-    journeyService:    JourneyService,
-    views:             Views,
-    requestSupport:    RequestSupport)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendBaseController(cc) {
+    ddConnector:             BarsConnector,
+    val paymentPlansService: PaymentPlansService, // calculator type feature flag: used by PaymentOptimised calculator feature
+    val calculatorService:   CalculatorService, // calculator type feature flag: used by Legacy calculator feature
+    taxPayerConnector:       TaxpayerConnector,
+    cc:                      MessagesControllerComponents,
+    journeyService:          JourneyService,
+    views:                   Views,
+    requestSupport:          RequestSupport
+)(implicit val appConfig: AppConfig, ec: ExecutionContext)
+  extends FrontendBaseController(cc)
+  with CalculatorSwitchSelectedScheduleHelper {
 
   import requestSupport._
 
@@ -54,7 +61,7 @@ class InspectorController @Inject() (
       List(
         "debitDate" -> maybeJourney.flatMap(_.debitDate).json,
         "taxpayer" -> maybeJourney.flatMap(_.maybeTaxpayer).json,
-        "schedule" -> Try(maybeJourney.map(calculatorService.selectedSchedule(_))).toOption.json,
+        "schedule" -> Try(maybeJourney.map(maybeSelectedSchedule(_))).toOption.json,
         "bankDetails" -> maybeJourney.flatMap(_.maybeBankDetails).json,
         "existingDDBanks" -> maybeJourney.flatMap(_.existingDDBanks).json,
         "eligibilityStatus" -> maybeJourney.map(_.maybeEligibilityStatus).json

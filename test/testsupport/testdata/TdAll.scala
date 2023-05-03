@@ -126,8 +126,6 @@ todays date: 2019-11-25
 
   val unactivatedSaEnrolment: Enrolment = saEnrolment.copy(state = "Not Activated")
 
-  val selectedRegularPaymentAmount300 = 300
-
   val defaultRemainingIncomeAfterSpending: BigDecimal = BigDecimal(1000)
   val netIncomeTooSmallForPlan = 50
   val netIncomeLargeEnoughForSingleDefaultPlan = 12500
