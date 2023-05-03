@@ -67,11 +67,35 @@ class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exten
         """Your payment plan
           |Payment reference	123ABC123
           |Upfront payment amount
+          |Monthly payments
+          |Payments collected on
           |
+          |December 2019
+          |£500
+          |January 2020
+          |£500
+          |February 2020
+          |£500
+          |March 2020
+          |£500
+          |April 2020
+          |£500
+          |May 2020
+          |£500
+          |June 2020
+          |£500
+          |July 2020
+          |£500
+          |August 2020
+          |£500
+          |September 2020
+          |£473.08
           |Estimated total interest
           |included in your plan
-          |
+          |£73.08
           |Total to pay
+          |£4,973.08
+          |
           |Print a copy of your payment plan
         """.stripMargin
       private val mainTextWelsh =
