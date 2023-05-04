@@ -68,23 +68,64 @@ class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exten
           |Payment reference	123ABC123
           |Upfront payment amount
           |Monthly payments
+          |Payments collected on
           |
+          |December 2019
+          |£500
+          |January 2020
+          |£500
+          |February 2020
+          |£500
+          |March 2020
+          |£500
+          |April 2020
+          |£500
+          |May 2020
+          |£500
+          |June 2020
+          |£500
+          |July 2020
+          |£500
+          |August 2020
+          |£500
+          |September 2020
+          |£473.08
           |Estimated total interest
-          |included in monthly payments
-          |
+          |included in your plan
+          |£73.08
           |Total to pay
+          |£4,973.08
+          |
           |Print a copy of your payment plan
         """.stripMargin
       private val mainTextWelsh =
         """Eich cynllun talu
           |Cyfeirnod y taliad	123ABC123
           |Taliadau misol
-          |Mae taliadau’n cael eu casglu ar	28ain neu ar y diwrnod gwaith nesaf
-          |
+          |Rhagfyr 2019
+          |£500
+          |Ionawr 2020
+          |£500
+          |Chwefror 2020
+          |£500
+          |Mawrth 2020
+          |£500
+          |Ebrill 2020
+          |£500
+          |Mai 2020
+          |£500
+          |Mehefin 2020
+          |£500
+          |Gorffennaf 2020
+          |£500
+          |Awst 2020
+          |£500
+          |Medi 2020
+          |£473.08
           |Amcangyfrif o gyfanswm y llog
-          |wedi’i gynnwys yn y taliadau misol
-          |
-          |Y cyfanswm i’w dalu
+          |£73.08
+          |Yn gynwysedig yn eich cynllun
+          |£4,973.08
           |Argraffwch gopi o’ch cynllun talu
         """.stripMargin
     }

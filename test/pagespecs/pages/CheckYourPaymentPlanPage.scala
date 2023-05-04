@@ -99,14 +99,11 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Taken within 10 working days
            |£0
            |Change
-           |Monthly payments
            |Payments collected on
            |$paymentDayOfMonthEnglish or next working day
            |Change
-           |10 monthly payments of
-           |£500
            |Change the day of the month that payments will be collected on
-           |Payment schedule
+           |Payment plan
            |December 2019
            |£500
            |January 2020
@@ -128,7 +125,7 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |September 2020
            |£473.08
            |Estimated total interest
-           |included in monthly payments
+           |included in your plan
            |£73.08
            |Total to pay
            |£4,973.08
@@ -149,7 +146,8 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Mae taliadau’n cael eu casglu ar
            |yr $paymentDayOfMonthWelsh neu’r diwrnod gwaith nesaf
            |Newid
-           Rhagfyr 2019
+           |Cynllun talu
+           |Rhagfyr 2019
            |£500
            |Ionawr 2020
            |£500
@@ -170,7 +168,7 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Medi 2020
            |£473.08
            |Amcangyfrif o gyfanswm y llog
-           |wedi’i gynnwys yn y taliadau misol
+           |Yn gynwysedig yn eich cynllun
            |£73.08
            |Y cyfanswm i’w dalu
            |£4,973.08

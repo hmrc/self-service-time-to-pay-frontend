@@ -61,10 +61,8 @@ class CheckYourPaymentPlanPageLegacyCalculator(
            |Payments collected on
            |$paymentDayOfMonthEnglish or next working day
            |Change
-           |10 monthly payments of
-           |£490
            |Change the day of the month that payments will be collected on
-           |Payment schedule
+           |Payment plan
            |December 2019
            |£490
            |January 2020
@@ -86,7 +84,7 @@ class CheckYourPaymentPlanPageLegacyCalculator(
            |September 2020
            |£564.30
            |Estimated total interest
-           |included in monthly payments
+           |included in your plan
            |£74.30
            |Total to pay
            |£4,974.30
@@ -107,7 +105,8 @@ class CheckYourPaymentPlanPageLegacyCalculator(
            |Mae taliadau’n cael eu casglu ar
            |yr $paymentDayOfMonthWelsh neu’r diwrnod gwaith nesaf
            |Newid
-           Rhagfyr 2019
+           |Cynllun talu
+           |Rhagfyr 2019
            |£490
            |Ionawr 2020
            |£490
@@ -128,7 +127,7 @@ class CheckYourPaymentPlanPageLegacyCalculator(
            |Medi 2020
            |£564.30
            |Amcangyfrif o gyfanswm y llog
-           |wedi’i gynnwys yn y taliadau misol
+           |Yn gynwysedig yn eich cynllun
            |£74.30
            |Y cyfanswm i’w dalu
            |£4,974.30
