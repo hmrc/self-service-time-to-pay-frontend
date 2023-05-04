@@ -78,11 +78,11 @@
     <div class="govuk-!-margin-bottom-6">
         @schedule.instalments.map {instalment =>
         <dl class="govuk-summary-list govuk-!-margin-0">
-            <div class="govuk-summary-list__row grouped-row">
-                <dt class="govuk-summary-list__key no_bottom_line govuk-!-width-one-half">
+            <div class="govuk-summary-list__row grouped-row no_bottom_line">
+                <dt class="govuk-summary-list__key govuk-!-width-one-half">
                     <strong>@monthYear(instalment.paymentDate)</strong>
                 </dt>
-                <dd class="govuk-summary-list__value no_bottom_line">
+                <dd class="govuk-summary-list__value">
                     @partials.currency(instalment.amount)
                 </dd>
             </div>
