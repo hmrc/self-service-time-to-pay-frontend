@@ -26,6 +26,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorSummary
 @import partials.currency
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
+@import ssttpcalculator.CalculatorForm
 
 @this(
   main: views.html.main,
@@ -70,7 +71,7 @@
             name = "amount",
             value = dataForm.data.get("amount"),
             hint = Some(Hint(
-                content = Text(messages("ssttp.calculator.form.payment_today.hint", currency(debits.map(_.amount).sum - 2)))
+                content = Text(messages("ssttp.calculator.form.payment_today.hint", currency(debits.map(_.amount).sum - CalculatorForm.MinLeftOverAfterUpfrontPayment)))
             )),
             label = Label(
                 forAttr = Some("amount"),
@@ -78,7 +79,7 @@
                 classes = "govuk-!-font-weight-bold govuk-label--xl govuk-!-margin-bottom-9",
                 isPageHeading = true
             ),
-            errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message, currency(debits.map(_.amount).sum - 2))))),
+            errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message, error.args: _*)))),
             prefix = Some(PrefixOrSuffix(
                 content = Text("£")
             )),
