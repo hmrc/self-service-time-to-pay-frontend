@@ -29,8 +29,9 @@ import scala.util.Try
 
 object CalculatorForm {
   val MaxCurrencyValue: BigDecimal = BigDecimal.exact("1e5")
+  val MinLeftOverAfterUpfrontPayment = BigDecimal(2)
 
-  def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentTodayForm] =
+  def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentTodayForm] = {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => i.nonEmpty })
@@ -42,12 +43,18 @@ object CalculatorForm {
         .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
           if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2 else true
         })
-        .verifying("ssttp.calculator.form.payment_today.amount.less-than-owed", i =>
-          if (i.nonEmpty && Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)) < totalDue else true)
+        .verifying(Constraint((i: String) => if ({
+          if (i.nonEmpty && Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) totalDue - BigDecimal(CurrencyUtil.cleanAmount(i)) >= MinLeftOverAfterUpfrontPayment else true
+        }) Valid else {
+          Invalid(Seq(ValidationError(
+            "ssttp.calculator.form.payment_today.amount.less-than-owed", totalDue - MinLeftOverAfterUpfrontPayment
+          )))
+        }))
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
           if (i.nonEmpty && Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)) < MaxCurrencyValue else true
         })
     )(text => CalculatorPaymentTodayForm(CurrencyUtil.cleanAmount(text)))(bd => Some(bd.amount.toString)))
+  }
 
   private val planSelectionFormatter: Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {

@@ -16,7 +16,6 @@
 
 @import ssttpcalculator.CalculatorPaymentTodayForm
 @import timetopaytaxpayer.cor.model.Debit
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.Implicits._
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Input
@@ -24,6 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.PrefixOrSuffix
 @import views.html.helpers.forms.submit
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Hint
+@import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorSummary
 @import partials.currency
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 
@@ -51,12 +51,14 @@
   backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())
 
 ){
-    @if(dataForm.hasErrors){
-        @errorSummary(ErrorSummary(
-            errorList = dataForm.errors.asTextErrorLinks,
-            title = Text(messages("ssttp.calculator.form.payment_today.error.summary.title"))
-        ))
-    }
+
+@if(dataForm.hasErrors){
+    @errorSummary(
+        ErrorSummary(
+            title = Text(messages("ssttp.calculator.form.payment_today.error.summary.title")),
+            errorList = dataForm.errors.asTextErrorLinks
+    ))
+}
 
     <section class="govuk-body">
     @formWithCsrf(
@@ -68,7 +70,7 @@
             name = "amount",
             value = dataForm.data.get("amount"),
             hint = Some(Hint(
-                content = Text(messages("ssttp.calculator.form.payment_today.hint", currency(debits.map(_.amount).sum)))
+                content = Text(messages("ssttp.calculator.form.payment_today.hint", currency(debits.map(_.amount).sum - 2)))
             )),
             label = Label(
                 forAttr = Some("amount"),
@@ -76,7 +78,7 @@
                 classes = "govuk-!-font-weight-bold govuk-label--xl govuk-!-margin-bottom-9",
                 isPageHeading = true
             ),
-            errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message)))),
+            errorMessage = dataForm.error("amount").map(error => errorMessageWithDefaultStringsTranslated(content = Text(messages(error.message, currency(debits.map(_.amount).sum - 2))))),
             prefix = Some(PrefixOrSuffix(
                 content = Text("£")
             )),
