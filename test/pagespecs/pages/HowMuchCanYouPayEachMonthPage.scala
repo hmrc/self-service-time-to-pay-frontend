@@ -226,7 +226,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
              |£800 y mis, am 7 mis
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £48.65
              |Nid wyf yn gallu fforddio’r taliadau hyn
-             |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i drafod eich opsiynau.
+             |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch ni ar 0300 200 1900 i drafod eich dyled.
              |Yn eich blaen
           """.stripMargin
       }
@@ -331,7 +331,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val belowMinimumTextWelsh =
           s"""Mae problem wedi codi
-             |Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £500 ond heb fod yn fwy na £4,914.40
+             |Nodwch swm sydd o leiaf £500 ond sydd ddim mwy na £4,914.40
       """.stripMargin
       }
 
@@ -348,7 +348,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val aboveMaximumTextWelsh =
           s"""Mae problem wedi codi
-             |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £500 ond heb fod yn fwy na £4,914.40
+             |Nodwch swm sydd o leiaf £500 ond sydd ddim mwy na £4,914.40
       """.stripMargin
       }
 
@@ -399,7 +399,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val negativeAmountTextWelsh =
           s"""Mae problem wedi codi
-             |Nodwch rif positif yn uni
+             |Nodwch rif positif yn unig
       """.stripMargin
       }
 
