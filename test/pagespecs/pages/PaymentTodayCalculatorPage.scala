@@ -79,14 +79,14 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
       }
       private val mainTextEnglish =
         """How much can you pay upfront?
-          |Enter an amount between £1 and £4,900
+          |Enter an amount between £1 and £4,898
           |£
           |Continue
         """.stripMargin
 
       private val mainTextWelsh =
         """Faint y gallwch ei dalu ymlaen llaw?
-          |Nodwch swm sydd rhwng £1 a £4,900
+          |Nodwch swm sydd rhwng £1 a £4,898
           |£
           |Yn eich blaen
         """.stripMargin
@@ -95,10 +95,10 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
     object TextError {
       def apply(): String =
         """There is a problem
-          |You need to enter an amount less than the amount you owe
+          |Enter an amount that is at least £1 but no more than £4,898
           |How much can you pay upfront?
-          |Enter an amount between £1 and £4,900
-          |Error: You need to enter an amount less than the amount you owe
+          |Enter an amount between £1 and £4,898
+          |Error: Enter an amount that is at least £1 but no more than £4,898
           |£
           |Continue
         """.stripMargin
