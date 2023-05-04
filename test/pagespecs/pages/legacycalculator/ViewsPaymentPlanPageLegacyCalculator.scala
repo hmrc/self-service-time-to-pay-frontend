@@ -73,7 +73,7 @@ class ViewsPaymentPlanPageLegacyCalculator(baseUrl: BaseUrl)(implicit webDriver:
           |£564.30
           |
           |Estimated total interest
-          |included in your plan
+          |Included in your plan
           |£74.30
           |
           |Total to pay

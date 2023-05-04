@@ -91,7 +91,7 @@ class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exten
           |September 2020
           |£473.08
           |Estimated total interest
-          |included in your plan
+          |Included in your plan
           |£73.08
           |Total to pay
           |£4,973.08

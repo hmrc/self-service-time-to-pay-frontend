@@ -84,7 +84,7 @@ class CheckYourPaymentPlanPageLegacyCalculator(
            |September 2020
            |£564.30
            |Estimated total interest
-           |included in your plan
+           |Included in your plan
            |£74.30
            |Total to pay
            |£4,974.30
