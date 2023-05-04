@@ -97,7 +97,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
 
         private val mainTextWelsh =
           s"""Faint y gallwch ei dalu bob mis?
-             |Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+             |Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
              |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
              |£490 y mis, am 10 mis
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £74.30
@@ -106,7 +106,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
              |£612.50 y mis, am 8 mis
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £60.97
              |Nid wyf yn gallu fforddio’r taliadau hyn
-             |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i drafod eich opsiynau.
+             |Mae’n bosibl y byddwch yn dal i allu trefnu cynllun talu dros y ffôn. Ffoniwch ni ar 0300 200 1900 i drafod eich dyled.
              |Yn eich blaen
           """.stripMargin
       }
@@ -123,8 +123,8 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
           """.stripMargin
 
         private val customOptionTextWelsh =
-          s"""Pay more per month
-             |Enter an amount between £612.50 and £2,450 to pay over fewer months. We will suggest a plan that is closest to the amount you enter.
+          s"""Talu mwy bob mis
+             |Nodwch swm sydd rhwng £612.50 a £2,450 i’w dalu dros lai o fisoedd. Byddwn yn awgrymu cynllun sydd agosaf at y swm y byddwch yn ei nodi.
           """.stripMargin
       }
 
@@ -140,8 +140,8 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
       """.stripMargin
 
         private def customAmountTextWelsh(amount: String) =
-          s"""Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
-             |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
+          s"""Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
+             |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
       """.stripMargin
       }
     }
@@ -160,7 +160,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
 
         private val belowMinimumTextWelsh =
           s"""Mae problem wedi codi
-             |Mae’r swm hwnnw’n rhy isel, rhowch swm sydd o leiaf £612.50 ond heb fod yn fwy na £2,450
+             |Nodwch swm sydd o leiaf £612.50 ond sydd ddim mwy na £2,450
       """.stripMargin
       }
 
@@ -177,7 +177,7 @@ class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit w
 
         private val aboveMaximumTextWelsh =
           s"""Mae problem wedi codi
-             |Mae’r swm hwnnw’n rhy uchel, rhowch swm sydd o leiaf £612.50 ond heb fod yn fwy na £2,450
+             |Nodwch swm sydd o leiaf £612.50 ond sydd ddim mwy na £2,450
       """.stripMargin
       }
     }

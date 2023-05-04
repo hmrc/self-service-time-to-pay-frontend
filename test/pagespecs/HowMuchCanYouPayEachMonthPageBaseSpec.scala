@@ -167,16 +167,30 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
   }
 
   "custom amount entry" - {
-    "displays page with custom option at top when custom amount entered and continue pressed" in {
-      beginJourney()
+    "displays page with custom option at top when custom amount entered and continue pressed" - {
+      "in English" in {
+        beginJourney()
 
-      pageUnderTest.assertInitialPageIsDisplayed
+        pageUnderTest.assertInitialPageIsDisplayed
 
-      pageUnderTest.selectCustomAmountOption()
-      pageUnderTest.enterCustomAmount(customAmountInput.toString)
-      pageUnderTest.clickContinue()
+        pageUnderTest.selectCustomAmountOption()
+        pageUnderTest.enterCustomAmount(customAmountInput.toString)
+        pageUnderTest.clickContinue()
 
-      pageUnderTest.assertPageWithCustomAmountIsDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
+        pageUnderTest.assertPageWithCustomAmountIsDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
+      }
+      "in Welsh" in {
+        beginJourney()
+        pageUnderTest.clickOnWelshLink()
+
+        pageUnderTest.assertInitialPageIsDisplayed(Welsh)
+
+        pageUnderTest.selectCustomAmountOption()
+        pageUnderTest.enterCustomAmount(customAmountInput.toString)
+        pageUnderTest.clickContinue()
+
+        pageUnderTest.assertPageWithCustomAmountIsDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))(Welsh)
+      }
     }
     "displays error message and options including custom option if press continue after custom option displayed without selecting an option" in {
       beginJourney()
@@ -192,29 +206,59 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
       pageUnderTest.assertNoOptionSelectedErrorIsDisplayed
       pageUnderTest.assertPageWithCustomAmountContentIsDisplayed(customAmountInput.toString, Some(customAmountPlanMonthsOutput.toString), Some(customAmountPlanInterestOutput.toString))
     }
-    "less than minimum displays error message" in {
-      beginJourney()
+    "less than minimum displays error message" - {
+      "in English" in {
+        beginJourney()
 
-      val customAmountBelowMinimum = 200
+        val customAmountBelowMinimum = 200
 
-      pageUnderTest.selectCustomAmountOption()
-      pageUnderTest.enterCustomAmount(customAmountBelowMinimum.toString)
-      pageUnderTest.clickContinue()
+        pageUnderTest.selectCustomAmountOption()
+        pageUnderTest.enterCustomAmount(customAmountBelowMinimum.toString)
+        pageUnderTest.clickContinue()
 
-      pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
-      pageUnderTest.assertBelowMinimumErrorIsDisplayed
+        pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
+        pageUnderTest.assertBelowMinimumErrorIsDisplayed
+      }
+      "in Welsh" in {
+        beginJourney()
+        pageUnderTest.clickOnWelshLink()
+
+        val customAmountBelowMinimum = 200
+
+        pageUnderTest.selectCustomAmountOption()
+        pageUnderTest.enterCustomAmount(customAmountBelowMinimum.toString)
+        pageUnderTest.clickContinue()
+
+        pageUnderTest.assertExpectedHeadingContentWithErrorPrefix(Welsh)
+        pageUnderTest.assertBelowMinimumErrorIsDisplayed(Welsh)
+      }
     }
-    "more than maximum displays error message" in {
-      beginJourney()
+    "more than maximum displays error message" - {
+      "in English" in {
+        beginJourney()
 
-      val customAmountBelowMinimum = 7000
+        val customAmountBelowMinimum = 7000
 
-      pageUnderTest.selectCustomAmountOption()
-      pageUnderTest.enterCustomAmount(customAmountBelowMinimum.toString)
-      pageUnderTest.clickContinue()
+        pageUnderTest.selectCustomAmountOption()
+        pageUnderTest.enterCustomAmount(customAmountBelowMinimum.toString)
+        pageUnderTest.clickContinue()
 
-      pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
-      pageUnderTest.assertAboveMaximumErrorIsDisplayed
+        pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
+        pageUnderTest.assertAboveMaximumErrorIsDisplayed
+      }
+      "in Welsh" in {
+        beginJourney()
+        pageUnderTest.clickOnWelshLink()
+
+        val customAmountBelowMinimum = 7000
+
+        pageUnderTest.selectCustomAmountOption()
+        pageUnderTest.enterCustomAmount(customAmountBelowMinimum.toString)
+        pageUnderTest.clickContinue()
+
+        pageUnderTest.assertExpectedHeadingContentWithErrorPrefix(Welsh)
+        pageUnderTest.assertAboveMaximumErrorIsDisplayed(Welsh)
+      }
     }
     "not filled in displays error message" in {
       beginJourney()
