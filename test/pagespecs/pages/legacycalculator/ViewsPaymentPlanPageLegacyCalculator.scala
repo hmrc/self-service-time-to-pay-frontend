@@ -41,7 +41,7 @@ class ViewsPaymentPlanPageLegacyCalculator(baseUrl: BaseUrl)(implicit webDriver:
     object MainText {
       def apply()(implicit language: Language): String = language match {
         case English => mainTextEnglish
-        case Welsh => mainTextWelsh
+        case Welsh   => mainTextWelsh
       }
 
       private val mainTextEnglish =
@@ -85,12 +85,31 @@ class ViewsPaymentPlanPageLegacyCalculator(baseUrl: BaseUrl)(implicit webDriver:
         """Eich cynllun talu
           |Cyfeirnod y taliad	123ABC123
           |Taliadau misol
-          |Mae taliadau’n cael eu casglu ar	28ain neu ar y diwrnod gwaith nesaf
-          |
+          |Rhagfyr 2019
+          |£490
+          |Ionawr 2020
+          |£490
+          |Chwefror 2020
+          |£490
+          |Mawrth 2020
+          |£490
+          |Ebrill 2020
+          |£490
+          |Mai 2020
+          |£490
+          |Mehefin 2020
+          |£490
+          |Gorffennaf 2020
+          |£490
+          |Awst 2020
+          |£490
+          |Medi 2020
+          |£564.30
           |Amcangyfrif o gyfanswm y llog
-          |wedi’i gynnwys yn y taliadau misol
-          |
+          |Yn gynwysedig yn eich cynllun
+          |£74.30
           |Y cyfanswm i’w dalu
+          |£4,974.30
           |Argraffwch gopi o’ch cynllun talu
         """.stripMargin
     }

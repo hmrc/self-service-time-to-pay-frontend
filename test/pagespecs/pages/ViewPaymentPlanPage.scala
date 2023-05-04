@@ -102,12 +102,30 @@ class ViewPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exten
         """Eich cynllun talu
           |Cyfeirnod y taliad	123ABC123
           |Taliadau misol
-          |Mae taliadau’n cael eu casglu ar	28ain neu ar y diwrnod gwaith nesaf
-          |
+          |Rhagfyr 2019
+          |£500
+          |Ionawr 2020
+          |£500
+          |Chwefror 2020
+          |£500
+          |Mawrth 2020
+          |£500
+          |Ebrill 2020
+          |£500
+          |Mai 2020
+          |£500
+          |Mehefin 2020
+          |£500
+          |Gorffennaf 2020
+          |£500
+          |Awst 2020
+          |£500
+          |Medi 2020
+          |£473.08
           |Amcangyfrif o gyfanswm y llog
-          |wedi’i gynnwys yn y taliadau misol
-          |
-          |Y cyfanswm i’w dalu
+          |£73.08
+          |Yn gynwysedig yn eich cynllun
+          |£4,973.08
           |Argraffwch gopi o’ch cynllun talu
         """.stripMargin
     }

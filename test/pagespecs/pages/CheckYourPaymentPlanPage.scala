@@ -146,7 +146,8 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Mae taliadau’n cael eu casglu ar
            |yr $paymentDayOfMonthWelsh neu’r diwrnod gwaith nesaf
            |Newid
-           Rhagfyr 2019
+           |Cynllun talu
+           |Rhagfyr 2019
            |£500
            |Ionawr 2020
            |£500
@@ -167,7 +168,7 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
            |Medi 2020
            |£473.08
            |Amcangyfrif o gyfanswm y llog
-           |wedi’i gynnwys yn y taliadau misol
+           |Yn gynwysedig yn eich cynllun
            |£73.08
            |Y cyfanswm i’w dalu
            |£4,973.08

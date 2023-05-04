@@ -105,7 +105,8 @@ class CheckYourPaymentPlanPageLegacyCalculator(
            |Mae taliadau’n cael eu casglu ar
            |yr $paymentDayOfMonthWelsh neu’r diwrnod gwaith nesaf
            |Newid
-           Rhagfyr 2019
+           |Cynllun talu
+           |Rhagfyr 2019
            |£490
            |Ionawr 2020
            |£490
@@ -126,7 +127,7 @@ class CheckYourPaymentPlanPageLegacyCalculator(
            |Medi 2020
            |£564.30
            |Amcangyfrif o gyfanswm y llog
-           |wedi’i gynnwys yn y taliadau misol
+           |Yn gynwysedig yn eich cynllun
            |£74.30
            |Y cyfanswm i’w dalu
            |£4,974.30
