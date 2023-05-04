@@ -31,29 +31,51 @@ object CalculatorForm {
   val MaxCurrencyValue: BigDecimal = BigDecimal.exact("1e5")
   val MinLeftOverAfterUpfrontPayment = BigDecimal(2)
 
+  val formatter: Formatter[BigDecimal] = new Formatter[BigDecimal] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] = {
+      def formError(message: String, args: Any*) = Left(Seq(FormError(key, message, args)))
+
+      data.get(key).filter(_.nonEmpty) match {
+        case Some(value) =>
+          if(!value.matches(CurrencyUtil.regex))  formError("ssttp.calculator.form.payment_today.amount.non-numerals")
+          else {
+            val number =  BigDecimal(CurrencyUtil.cleanAmount(value))
+            if(number.scale > 2) formError("blah")
+            else Right(number)
+          }
+
+        case None =>
+          formError("ssttp.calculator.form.payment_today.amount.required")
+      }
+    }
+
+    override def unbind(key: String, value: BigDecimal): Map[String, String] = Map(key -> value.toString)
+  }
+
   def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentTodayForm] = {
     Form(mapping(
       "amount" -> text
         .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => i.nonEmpty })
         .verifying("ssttp.calculator.form.payment_today.amount.non-numerals",
           { i: String => i.isEmpty | i.matches(CurrencyUtil.regex) })
+        .transform[BigDecimal](s => BigDecimal(CurrencyUtil.cleanAmount(s)), _.toString)
         .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
-          if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2 else true
+          i.scale <= 2
         })
-        .verifying("ssttp.calculator.form.payment_today.amount.required.min", { i: String =>
-          if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)) >= 1.00 else true
+        .verifying("ssttp.calculator.form.payment_today.amount.required.min", { i =>
+          i >= 1.00
         })
-        .verifying(Constraint((i: String) => if ({
-          if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) totalDue - BigDecimal(CurrencyUtil.cleanAmount(i)) >= MinLeftOverAfterUpfrontPayment else true
-        }) Valid else {
+        .verifying(Constraint((i: BigDecimal) =>
+          if(totalDue - i >= MinLeftOverAfterUpfrontPayment) Valid
+          else {
           Invalid(Seq(ValidationError(
             "ssttp.calculator.form.payment_today.amount.less-than-owed", "£%,1.2f".format(totalDue - MinLeftOverAfterUpfrontPayment).stripSuffix(".00"),
           )))
         }))
-        .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
-          if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)) < MaxCurrencyValue else true
+        .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i =>
+          i < MaxCurrencyValue
         })
-    )(text => CalculatorPaymentTodayForm(CurrencyUtil.cleanAmount(text)))(bd => Some(bd.amount.toString)))
+    )(CalculatorPaymentTodayForm(_))(bd => Some(bd.amount)))
   }
 
   private val planSelectionFormatter: Formatter[String] = new Formatter[String] {
