@@ -47,7 +47,7 @@ object CalculatorForm {
           if (i.nonEmpty && Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) totalDue - BigDecimal(CurrencyUtil.cleanAmount(i)) >= MinLeftOverAfterUpfrontPayment else true
         }) Valid else {
           Invalid(Seq(ValidationError(
-            "ssttp.calculator.form.payment_today.amount.less-than-owed", totalDue - MinLeftOverAfterUpfrontPayment
+            "ssttp.calculator.form.payment_today.amount.less-than-owed", "£%,1.2f".format(totalDue - MinLeftOverAfterUpfrontPayment).stripSuffix(".00"),
           )))
         }))
         .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i: String =>
