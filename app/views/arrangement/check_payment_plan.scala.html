@@ -100,7 +100,7 @@
     </dl>
 
 @* Payments schedule *@
-   <dl class="govuk-summary-list govuk-!-margin-top-6">
+   <dl class="govuk-summary-list govuk-!-margin-top-6 govuk-!-margin-bottom-0">
        <dt class="govuk-summary-list__key govuk-!-width-one-third"><strong>@Messages("ssttp.arrangement.check-payment-plan.payment-plan")</strong></dt>
        <dd class="govuk-summary-list__value"></dd>
            <dd class="govuk-summary-list__actions">
@@ -109,17 +109,21 @@
                <span class="govuk-visually-hidden"> @messages("ssttp.arrangement.check-payment-plan.payments-collected-on.change-hidden")</span>
                </a>
            </dd>
-            @paymentSchedule.instalments.map {instalment =>
-                <div class="govuk-summary-list__row grouped-row no_bottom_line">
-                    <dt class="govuk-summary-list__key">
-                        <strong>@monthYear(instalment.paymentDate)</strong>
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @partials.currency(instalment.amount)
-                    </dd>
-                </div>
-            }
    </dl>
+       <div class="govuk-!-margin-bottom-6">
+           @paymentSchedule.instalments.map {instalment =>
+               <dl class="govuk-summary-list govuk-!-margin-0">
+                   <div class="govuk-summary-list__row grouped-row no_bottom_line">
+                       <dt class="govuk-summary-list__key govuk-!-width-one-third">
+                           <strong>@monthYear(instalment.paymentDate)</strong>
+                       </dt>
+                       <dd class="govuk-summary-list__value">
+                       @partials.currency(instalment.amount)
+                       </dd>
+                   </div>
+               </dl>
+           }
+       </div>
 
     <hr aria-hidden="true">
 
