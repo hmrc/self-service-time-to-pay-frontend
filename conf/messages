@@ -258,7 +258,6 @@ ssttp.calculator.form.payment_today.amount.non-numerals = Enter numbers only
 ssttp.calculator.form.payment_today.amount.required = Enter an amount of £1 or above
 ssttp.calculator.form.payment_today.amount.required.min = Enter an amount of £1 or above
 ssttp.calculator.form.payment_today.amount.decimal-places = Amount must not contain more than 2 decimal places
-ssttp.calculator.form.payment_today.amount.less-than-maxval = Total amounts must be less than £1,000,000,000,000
 
 ssttp.calculator.form.payment_today_question.title = Upfront payment
 ssttp.calculator.form.payment_today_question.error.summary.title = Can you make an upfront payment?

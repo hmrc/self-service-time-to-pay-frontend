@@ -51,9 +51,6 @@ object CalculatorForm {
               "ssttp.calculator.form.payment_today.amount.less-than-owed", "£%,1.2f".format(totalDue - MinLeftOverAfterUpfrontPayment).stripSuffix(".00"),
             )))
           }))
-        .verifying("ssttp.calculator.form.payment_today.amount.less-than-maxval", { i =>
-          i < MaxCurrencyValue
-        })
     )(CalculatorPaymentTodayForm(_))(bd => Some(bd.amount)))
   }
 
