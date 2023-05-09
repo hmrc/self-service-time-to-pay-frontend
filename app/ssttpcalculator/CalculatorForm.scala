@@ -28,7 +28,6 @@ import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.util.Try
 
 object CalculatorForm {
-  val MaxCurrencyValue: BigDecimal = BigDecimal.exact("1e5")
   val MinLeftOverAfterUpfrontPayment = BigDecimal(2)
 
   def createPaymentTodayForm(totalDue: BigDecimal): Form[CalculatorPaymentTodayForm] = {
