@@ -237,7 +237,7 @@ ssttp.calculator.form.payment_summary.amount.remaining.hint = Interest will be a
 ssttp.calculator.form.payment_summary.detail.title = How we calculate interest
 ssttp.calculator.form.payment_summary.detail.p1 = We charge interest on all overdue amounts.
 ssttp.calculator.form.payment_summary.detail.p2 = We charge the <strong>Bank of England base rate plus 2.5%</strong> per year.
-ssttp.calculator.form.payment_summary.detail.p3 = If the interest rate changes during your plan, your monthly payments will not change. If the interest rate goes up or down during your payment plan, we will adjust your final payment to settle any difference.
+ssttp.calculator.form.payment_summary.detail.p3 = If the interest rate changes during your payment plan, you may need to settle any difference at the end. We will contact you if this is the case.
 ssttp.calculator.form.payment_summary.continue = Continue
 
 

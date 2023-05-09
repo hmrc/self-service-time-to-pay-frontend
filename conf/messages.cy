@@ -236,7 +236,7 @@ ssttp.calculator.form.payment_summary.amount.remaining.hint = Bydd llog yn cael 
 ssttp.calculator.form.payment_summary.detail.title = Sut rydym yn cyfrifo llog
 ssttp.calculator.form.payment_summary.detail.p1 = Rydym yn codi llog ar bob swm sy’n hwyr.
 ssttp.calculator.form.payment_summary.detail.p2 = Rydym yn codi <strong>cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%</strong> y flwyddyn.
-ssttp.calculator.form.payment_summary.detail.p3 = Os bydd y gyfradd llog yn newid yn ystod eich cynllun, ni fydd eich taliadau misol yn newid. Os bydd y gyfradd llog yn cynyddu neu’n gostwng yn ystod eich cynllun talu, byddwn yn addasu’ch taliad terfynol i setlo unrhyw wahaniaeth.
+ssttp.calculator.form.payment_summary.detail.p3 = Os bydd y gyfradd llog yn newid yn ystod eich cynllun talu, efallai bydd yn rhaid i chi setlo unrhyw wahaniaeth ar y diwedd. Byddwn yn cysylltu â chi os yw hyn yn wir.
 ssttp.calculator.form.payment_summary.continue = Yn eich blaen
 
 
