@@ -75,6 +75,9 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
           |£4,777
           |Interest will be added to this amount
           |How we calculate interest
+          |We charge interest on all overdue amounts.
+          |We charge the Bank of England base rate plus 2.5% per year.
+          |If the interest rate changes during your payment plan, you may need to settle any difference at the end. We will contact you if this is the case.
         """.stripMargin
 
       private val mainTextWelsh =
@@ -88,6 +91,9 @@ class PaymentSummaryPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
           |£4,777
           |Bydd llog yn cael ei ychwanegu at y swm hwn
           |Sut rydym yn cyfrifo llog
+          |Rydym yn codi llog ar bob swm sy’n hwyr.
+          |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5% y flwyddyn.
+          |Os bydd y gyfradd llog yn newid yn ystod eich cynllun talu, efallai bydd yn rhaid i chi setlo unrhyw wahaniaeth ar y diwedd. Byddwn yn cysylltu â chi os yw hyn yn wir.
         """.stripMargin
     }
 
