@@ -259,7 +259,6 @@ ssttp.calculator.form.payment_today.amount.non-numerals = Rhowch rifau yn unig
 ssttp.calculator.form.payment_today.amount.required = Nodwch swm o £1 neu fwy
 ssttp.calculator.form.payment_today.amount.required.min = Nodwch swm o £1 neu fwy
 ssttp.calculator.form.payment_today.amount.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
-ssttp.calculator.form.payment_today.amount.less-than-maxval = Rhaid i’r cyfansymiau fod yn llai na £1,000,000,000,000
 
 ssttp.calculator.form.payment_today_question.title = Taliad ymlaen llaw
 ssttp.calculator.form.payment_today_question.error.summary.title = A allwch wneud taliad ymlaen llaw?
