@@ -169,7 +169,7 @@ class DataEventFactorySpec extends ItSpec {
       val _28DayOfMonth = 28
 
       val journeyPlanSetUp = journey.copy(
-        status = ApplicationComplete,
+        status                           = ApplicationComplete,
         maybeBankDetails                 = Some(BankDetails(
           sortCode          = directDebitTd.sortCode,
           accountNumber     = directDebitTd.accountNumber,
@@ -541,7 +541,7 @@ class DataEventFactorySpec extends ItSpec {
       "Arrangement submission status" - {
         "Not successful - queued for retry" in {
           val journeyArrangementNotSuccessfulQueued = journeyPlanSetUp.copy(
-            maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
+            maybePlanSelection               = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
             maybeArrangementSubmissionStatus = Some(NotSuccessfulQueuedForRetry)
           )
 
@@ -551,17 +551,17 @@ class DataEventFactorySpec extends ItSpec {
 
           val expectedDataEvent = ExtendedDataEvent(
             auditSource = "pay-what-you-owe",
-            auditType = "ManualAffordabilityPlanSetUp",
-            eventId = "event-id",
-            tags = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-            detail = detailFiftyPercent(ArrangementSubmissionStatus.NotSuccessfulQueuedForRetry)
+            auditType   = "ManualAffordabilityPlanSetUp",
+            eventId     = "event-id",
+            tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
+            detail      = detailFiftyPercent(ArrangementSubmissionStatus.NotSuccessfulQueuedForRetry)
           )
-          computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe
-            expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+          computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+            expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
         }
         "Permanent failure" in {
           val journeyArrangementNotSuccessfulQueued = journeyPlanSetUp.copy(
-            maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
+            maybePlanSelection               = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
             maybeArrangementSubmissionStatus = Some(PermanentFailure)
           )
 
@@ -571,13 +571,13 @@ class DataEventFactorySpec extends ItSpec {
 
           val expectedDataEvent = ExtendedDataEvent(
             auditSource = "pay-what-you-owe",
-            auditType = "ManualAffordabilityPlanSetUp",
-            eventId = "event-id",
-            tags = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-            detail = detailFiftyPercent(ArrangementSubmissionStatus.PermanentFailure)
+            auditType   = "ManualAffordabilityPlanSetUp",
+            eventId     = "event-id",
+            tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
+            detail      = detailFiftyPercent(ArrangementSubmissionStatus.PermanentFailure)
           )
-          computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe
-            expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
+          computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+            expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
 
         }
       }
