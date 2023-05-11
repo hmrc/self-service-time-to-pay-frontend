@@ -298,7 +298,6 @@ ssttp.calculator.results.p1.custom-amount.paymentoptimised = You have chosen to 
 ssttp.calculator.results.p1.custom-amount.legacy = Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
 ssttp.calculator.results.option.other.error.incorrect.amount = Enter an amount that is at least £{0} but no more than £{1}
 ssttp.calculator.results.option.other.error.no-input = Enter an amount
-ssttp.calculator.results.option.other.error.negative-amount = Enter a positive number only
 ssttp.calculator.results.option.other.error.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.calculator.results.option.error.no-selection = Select an option
 

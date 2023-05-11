@@ -299,7 +299,6 @@ ssttp.calculator.results.p1.custom-amount.paymentoptimised = Rydych wedi dewis t
 ssttp.calculator.results.p1.custom-amount.legacy = Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
 ssttp.calculator.results.option.other.error.incorrect.amount = Nodwch swm sydd o leiaf £{0} ond sydd ddim mwy na £{1}
 ssttp.calculator.results.option.other.error.no-input = Nodwch swm
-ssttp.calculator.results.option.other.error.negative-amount = Nodwch rif positif yn unig
 ssttp.calculator.results.option.other.error.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.calculator.results.option.error.no-selection = Dewiswch opsiwn
 

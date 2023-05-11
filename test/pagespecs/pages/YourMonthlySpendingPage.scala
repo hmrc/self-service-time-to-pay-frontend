@@ -165,12 +165,12 @@ class YourMonthlySpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) e
 
       private val errorTextEnglish =
         """There is a problem
-          |Enter numbers only for housing
+          |Housing must be an amount, like £100 or £250.75
         """.stripMargin
 
       private val errorTextWelsh =
         """Mae problem wedi codi
-          |Nodwch rifau yn unig ar gyfer tai
+          |Mae’n rhaid i daliadau tai fod yn swm, megis £100 neu £250.75
         """.stripMargin
     }
 

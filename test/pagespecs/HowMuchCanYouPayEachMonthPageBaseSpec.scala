@@ -237,10 +237,10 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
       "in English" in {
         beginJourney()
 
-        val customAmountBelowMinimum = 7000
+        val customAmountAboveMaximum = 7000
 
         pageUnderTest.selectCustomAmountOption()
-        pageUnderTest.enterCustomAmount(customAmountBelowMinimum.toString)
+        pageUnderTest.enterCustomAmount(customAmountAboveMaximum.toString)
         pageUnderTest.clickContinue()
 
         pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
@@ -280,22 +280,12 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
       pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
       pageUnderTest.assertNonNumericErrorIsDisplayed
     }
-    "filled with negative amount displays error message" in {
-      beginJourney()
-
-      pageUnderTest.selectCustomAmountOption()
-      pageUnderTest.enterCustomAmount("-1")
-      pageUnderTest.clickContinue()
-
-      pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
-      pageUnderTest.assertNegativeAmountErrorIsDisplayed
-    }
     "filled with more than two decimal places" - {
       "in English" in {
         beginJourney()
 
         pageUnderTest.selectCustomAmountOption()
-        pageUnderTest.enterCustomAmount("280.111")
+        pageUnderTest.enterCustomAmount("1280.111")
         pageUnderTest.clickContinue()
 
         pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
@@ -306,7 +296,7 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
 
         pageUnderTest.clickOnWelshLink()
         pageUnderTest.selectCustomAmountOption()
-        pageUnderTest.enterCustomAmount("280.111")
+        pageUnderTest.enterCustomAmount("1280.111")
         pageUnderTest.clickContinue()
 
         pageUnderTest.assertExpectedHeadingContentWithErrorPrefix(Welsh)

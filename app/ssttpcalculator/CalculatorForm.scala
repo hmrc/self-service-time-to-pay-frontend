@@ -121,13 +121,8 @@ object CalculatorForm {
   ): Mapping[String] = {
     mappingStr
       .verifying("ssttp.calculator.results.option.other.error.no-input", { i: String => i.nonEmpty })
-      .verifying("ssttp.calculator.results.option.other.error.decimal-places", { i =>
-        if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2 else true
-      })
       .verifying(Constraint((i: String) => if ({
-        i.isEmpty | i.matches(CurrencyUtil.regex) &&
-          BigDecimal(CurrencyUtil.cleanAmount(i)) >= minCustomAmount.setScale(2, HALF_UP) &&
-          BigDecimal(CurrencyUtil.cleanAmount(i)) <= maxCustomAmount.setScale(2, HALF_UP)
+        i.isEmpty | i.matches(CurrencyUtil.regex) && isWithinRange(i, minCustomAmount, maxCustomAmount)
       }) Valid else {
         Invalid(Seq(ValidationError(
           "ssttp.calculator.results.option.other.error.incorrect.amount",
@@ -135,7 +130,14 @@ object CalculatorForm {
           "%,1.2f".format(maxCustomAmount).stripSuffix(".00")
         )))
       }))
+      .verifying("ssttp.calculator.results.option.other.error.decimal-places", { i =>
+        if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess && isWithinRange(i, minCustomAmount, maxCustomAmount)) BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2 else true
+      })
   }
+
+  private def isWithinRange(amount: String, minCustomAmount: BigDecimal, maxCustomAmount: BigDecimal): Boolean =
+    BigDecimal(CurrencyUtil.cleanAmount(amount)) >= minCustomAmount.setScale(2, HALF_UP) &&
+      BigDecimal(CurrencyUtil.cleanAmount(amount)) <= maxCustomAmount.setScale(2, HALF_UP)
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)
