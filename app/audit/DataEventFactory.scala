@@ -81,8 +81,8 @@ object DataEventFactory {
     else "Plan duration would exceed maximum"
   }
 
-  def planSetUpSuccessEvent(journey:  Journey,
-                            schedule: PaymentSchedule
+  def planSetUpEvent(journey:  Journey,
+                     schedule: PaymentSchedule
   )(implicit request: Request[_]): ExtendedDataEvent = {
     val detail = Json.obj(
       "bankDetails" -> bankDetails(journey),
@@ -90,7 +90,8 @@ object DataEventFactory {
       "selectionType" -> typeOfPlan(journey),
       "lessThanOrMoreThanTwelveMonths" -> lessThanOrMoreThanTwelveMonths(schedule),
       "schedule" -> Json.toJson(AuditPaymentSchedule(schedule)),
-      "status" -> "Success",
+      "status" -> journey.status,
+      "arrangementSubmissionStatus" -> journey.maybeArrangementSubmissionStatus,
       "paymentReference" -> journey.ddRef,
       "utr" -> journey.taxpayer.selfAssessment.utr
     )

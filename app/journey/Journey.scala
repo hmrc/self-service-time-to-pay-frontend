@@ -18,11 +18,12 @@ package journey
 
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
-import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
+import journey.Statuses.{ApplicationComplete, InProgress}
 import play.api.libs.json.{Format, Json, OFormat, Reads, Writes, __}
 import repo.HasId
 import ssttpaffordability.model.Income
 import ssttpaffordability.model.Spending
+import ssttparrangement.ArrangementSubmissionStatus
 import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -38,7 +39,7 @@ object Status {
 object Statuses extends Enum[Status] {
 
   case object InProgress extends Status
-  case object FinishedApplicationSuccessful extends Status
+  case object ApplicationComplete extends Status
 
   override def values: immutable.IndexedSeq[Status] = findValues
 }
@@ -56,23 +57,24 @@ object PaymentTodayAmount {
 }
 
 final case class Journey(
-    _id:                       JourneyId,
-    status:                    Status                          = InProgress,
-    createdOn:                 LocalDateTime,
-    maybeTypeOfAccountDetails: Option[TypeOfAccountDetails]    = None,
-    maybeBankDetails:          Option[BankDetails]             = None,
-    existingDDBanks:           Option[DirectDebitInstructions] = None,
-    maybeTaxpayer:             Option[Taxpayer]                = None,
-    maybePaymentToday:         Option[PaymentToday]            = None,
-    maybePaymentTodayAmount:   Option[PaymentTodayAmount]      = None,
-    maybeIncome:               Option[Income]                  = None,
-    maybeSpending:             Option[Spending]                = None,
-    maybePlanSelection:        Option[PlanSelection]           = None,
-    maybePaymentDayOfMonth:    Option[PaymentDayOfMonth]       = None,
-    maybeEligibilityStatus:    Option[EligibilityStatus]       = None,
-    debitDate:                 Option[LocalDate]               = None,
-    ddRef:                     Option[String]                  = None,
-    maybeSaUtr:                Option[String]                  = None
+    _id:                              JourneyId,
+    status:                           Status                              = InProgress,
+    createdOn:                        LocalDateTime,
+    maybeTypeOfAccountDetails:        Option[TypeOfAccountDetails]        = None,
+    maybeBankDetails:                 Option[BankDetails]                 = None,
+    existingDDBanks:                  Option[DirectDebitInstructions]     = None,
+    maybeTaxpayer:                    Option[Taxpayer]                    = None,
+    maybePaymentToday:                Option[PaymentToday]                = None,
+    maybePaymentTodayAmount:          Option[PaymentTodayAmount]          = None,
+    maybeIncome:                      Option[Income]                      = None,
+    maybeSpending:                    Option[Spending]                    = None,
+    maybePlanSelection:               Option[PlanSelection]               = None,
+    maybePaymentDayOfMonth:           Option[PaymentDayOfMonth]           = None,
+    maybeEligibilityStatus:           Option[EligibilityStatus]           = None,
+    debitDate:                        Option[LocalDate]                   = None,
+    ddRef:                            Option[String]                      = None,
+    maybeSaUtr:                       Option[String]                      = None,
+    maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None
 ) extends HasId[JourneyId] {
 
   def maybeSelectedPlanAmount: Option[BigDecimal] = maybePlanSelection.fold(None: Option[BigDecimal])(_.selection match {
@@ -135,26 +137,27 @@ final case class Journey(
   def saUtr: String = maybeSaUtr.getOrElse(throw new RuntimeException(s"saUtr missing on submission [${_id}]"))
 
   def inProgress: Boolean = status == InProgress
-  def isFinished: Boolean = status == FinishedApplicationSuccessful
+  def isFinished: Boolean = status == ApplicationComplete
 
   def obfuscate: Journey = Journey(
-    _id                       = _id,
-    status                    = status,
-    createdOn                 = createdOn,
-    maybeTypeOfAccountDetails = maybeTypeOfAccountDetails,
-    maybeBankDetails          = maybeBankDetails.map(_.obfuscate),
-    existingDDBanks           = existingDDBanks.map(_.obfuscate),
-    maybeTaxpayer             = maybeTaxpayer.map(_.obfuscate),
-    maybePaymentToday         = maybePaymentToday,
-    maybePaymentTodayAmount   = maybePaymentTodayAmount,
-    maybeIncome               = maybeIncome,
-    maybeSpending             = maybeSpending,
-    maybePlanSelection        = maybePlanSelection,
-    maybePaymentDayOfMonth    = maybePaymentDayOfMonth,
-    maybeEligibilityStatus    = maybeEligibilityStatus,
-    debitDate                 = debitDate,
-    ddRef                     = ddRef.map(_ => "***"),
-    maybeSaUtr                = maybeSaUtr.map(_ => "***")
+    _id                              = _id,
+    status                           = status,
+    createdOn                        = createdOn,
+    maybeTypeOfAccountDetails        = maybeTypeOfAccountDetails,
+    maybeBankDetails                 = maybeBankDetails.map(_.obfuscate),
+    existingDDBanks                  = existingDDBanks.map(_.obfuscate),
+    maybeTaxpayer                    = maybeTaxpayer.map(_.obfuscate),
+    maybePaymentToday                = maybePaymentToday,
+    maybePaymentTodayAmount          = maybePaymentTodayAmount,
+    maybeIncome                      = maybeIncome,
+    maybeSpending                    = maybeSpending,
+    maybePlanSelection               = maybePlanSelection,
+    maybePaymentDayOfMonth           = maybePaymentDayOfMonth,
+    maybeEligibilityStatus           = maybeEligibilityStatus,
+    debitDate                        = debitDate,
+    ddRef                            = ddRef.map(_ => "***"),
+    maybeSaUtr                       = maybeSaUtr.map(_ => "***"),
+    maybeArrangementSubmissionStatus = maybeArrangementSubmissionStatus
   )
 
   override def toString: String = {

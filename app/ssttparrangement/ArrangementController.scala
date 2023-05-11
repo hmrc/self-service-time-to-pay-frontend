@@ -21,7 +21,7 @@ import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.{Actions, AuthorisedSaUserRequest}
-import journey.Statuses.FinishedApplicationSuccessful
+import journey.Statuses.ApplicationComplete
 import journey.{Journey, JourneyService}
 import play.api.Logger
 import play.api.data.Form
@@ -252,7 +252,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.applicationComplete: $request")
 
     journeyService.getJourney().map { journey =>
-      if (journey.status == FinishedApplicationSuccessful) {
+      if (journey.status == ApplicationComplete) {
         // to do a FinishedJourney class without Options would be nice
         val directDebit =
           journey.arrangementDirectDebit.getOrElse(
@@ -308,7 +308,7 @@ class ArrangementController @Inject() (
             newJourney = journey
               .copy(
                 ddRef  = Some(arrangement.directDebitReference),
-                status = FinishedApplicationSuccessful
+                status = ApplicationComplete
               )
             //we finish the journey regardless of the result ...
             _ <- journeyService.saveJourney(newJourney)
