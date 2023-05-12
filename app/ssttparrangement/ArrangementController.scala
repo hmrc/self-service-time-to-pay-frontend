@@ -29,7 +29,7 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
-import ssttparrangement.ArrangementSubmissionStatus.{NotSuccessfulQueuedForRetry, PermanentFailure, Success}
+import ssttparrangement.ArrangementSubmissionStatus.{QueuedForRetry, PermanentFailure, Success}
 import ssttpcalculator.legacy.CalculatorService
 import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
 import ssttpcalculator.PaymentPlansService
@@ -307,7 +307,7 @@ class ArrangementController @Inject() (
           val submitArrangementResult: Future[arrangementConnector.SubmissionResult] = for {
             submissionResult <- arrangementConnector.submitArrangement(arrangement)
             arrangementSubmissionStatus = submissionResult match {
-              case Left(submissionError) if submissionError.message.contains("Queued for retry: true") => NotSuccessfulQueuedForRetry
+              case Left(submissionError) if submissionError.message.contains("Queued for retry: true") => QueuedForRetry
               case Right(_) => Success
               case _ => PermanentFailure
             }

@@ -28,6 +28,6 @@ object ArrangementSubmissionStatus extends Enum[ArrangementSubmissionStatus]
   val values: immutable.IndexedSeq[ArrangementSubmissionStatus] = findValues
 
   case object Success extends ArrangementSubmissionStatus
-  case object NotSuccessfulQueuedForRetry extends ArrangementSubmissionStatus
+  case object QueuedForRetry extends ArrangementSubmissionStatus
   case object PermanentFailure extends ArrangementSubmissionStatus
 }

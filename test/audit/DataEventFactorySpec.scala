@@ -26,7 +26,7 @@ import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttparrangement.ArrangementSubmissionStatus
-import ssttparrangement.ArrangementSubmissionStatus.{NotSuccessfulQueuedForRetry, PermanentFailure}
+import ssttparrangement.ArrangementSubmissionStatus.{QueuedForRetry, PermanentFailure}
 import ssttpcalculator.PaymentPlansService
 import testsupport.ItSpec
 import testsupport.testdata.{DirectDebitTd, TdAll, TdRequest}
@@ -542,7 +542,7 @@ class DataEventFactorySpec extends ItSpec {
         "Not successful - queued for retry" in {
           val journeyArrangementNotSuccessfulQueued = journeyPlanSetUp.copy(
             maybePlanSelection               = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
-            maybeArrangementSubmissionStatus = Some(NotSuccessfulQueuedForRetry)
+            maybeArrangementSubmissionStatus = Some(QueuedForRetry)
           )
 
           val schedule = paymentPlansService.selectedSchedule(journeyArrangementNotSuccessfulQueued)(request).get
@@ -554,7 +554,7 @@ class DataEventFactorySpec extends ItSpec {
             auditType   = "ManualAffordabilityPlanSetUp",
             eventId     = "event-id",
             tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-            detail      = detailFiftyPercent(ArrangementSubmissionStatus.NotSuccessfulQueuedForRetry)
+            detail      = detailFiftyPercent(ArrangementSubmissionStatus.QueuedForRetry)
           )
           computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
             expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
