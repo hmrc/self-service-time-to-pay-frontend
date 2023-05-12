@@ -367,6 +367,15 @@ ssttp.calculator.please-call-us.cant-afford.p1 = Find out how to <a class="govuk
 ssttp.calculator.please-call-us.cant-afford.p2 = You can also use <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
 ssttp.calculator.please-call-us.cant-afford.p3= If you are outside the UK: <b>+44 2890 538 192</b>
 
+ssttp.direct-debit-assistance.h1 = Call us about a payment plan
+ssttp.direct-debit-assistance.p1 = We're having problems submitting your Direct Debit instruction.
+ssttp.call-us-on = Call us on <strong>0300 123 1813</strong> as you may be able to set up a plan over the phone.
+
+ssttp.opening-hours = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
+ssttp.extra-support.h2 = If you need extra support
+ssttp.extra-support.p1 = Find out the different ways to <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">deal with HMRC if you need some help</a>.
+ssttp.extra-support.p2 = You can also use <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
+ssttp.extra-support.p3= If you are outside the UK: <strong>+44 2890 538 192</strong>.
 
 ssttp.calculator.form.amount-due.required = Enter the amount you owe the HMRC
 ssttp.calculator.form.amount-due.required.min = The amount must be more than £32
