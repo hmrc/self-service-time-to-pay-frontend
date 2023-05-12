@@ -21,7 +21,7 @@ import audit.AuditService
 import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.{Actions, AuthorisedSaUserRequest}
-import journey.Statuses.FinishedApplicationSuccessful
+import journey.Statuses.ApplicationComplete
 import journey.{Journey, JourneyService}
 import play.api.Logger
 import play.api.data.Form
@@ -29,6 +29,7 @@ import play.api.mvc._
 import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
+import ssttparrangement.ArrangementSubmissionStatus.{QueuedForRetry, PermanentFailure, Success}
 import ssttpcalculator.legacy.CalculatorService
 import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
 import ssttpcalculator.PaymentPlansService
@@ -252,7 +253,7 @@ class ArrangementController @Inject() (
     JourneyLogger.info(s"ArrangementController.applicationComplete: $request")
 
     journeyService.getJourney().map { journey =>
-      if (journey.status == FinishedApplicationSuccessful) {
+      if (journey.status == ApplicationComplete) {
         // to do a FinishedJourney class without Options would be nice
         val directDebit =
           journey.arrangementDirectDebit.getOrElse(
@@ -305,10 +306,16 @@ class ArrangementController @Inject() (
           val arrangement: TTPArrangement = makeArrangement(directDebitInstructionPaymentPlan, journey)
           val submitArrangementResult: Future[arrangementConnector.SubmissionResult] = for {
             submissionResult <- arrangementConnector.submitArrangement(arrangement)
+            arrangementSubmissionStatus = submissionResult match {
+              case Left(submissionError) if submissionError.message.contains("Queued for retry: true") => QueuedForRetry
+              case Right(_) => Success
+              case _ => PermanentFailure
+            }
             newJourney = journey
               .copy(
-                ddRef  = Some(arrangement.directDebitReference),
-                status = FinishedApplicationSuccessful
+                ddRef                            = Some(arrangement.directDebitReference),
+                status                           = ApplicationComplete,
+                maybeArrangementSubmissionStatus = Some(arrangementSubmissionStatus)
               )
             //we finish the journey regardless of the result ...
             _ <- journeyService.saveJourney(newJourney)

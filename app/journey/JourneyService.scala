@@ -16,7 +16,7 @@
 
 package journey
 
-import journey.Statuses.{FinishedApplicationSuccessful, InProgress}
+import journey.Statuses.{ApplicationComplete, InProgress}
 import play.api.mvc.{Request, Result, Results}
 import req.RequestSupport
 import uk.gov.hmrc.play.http.logging.Mdc
@@ -57,7 +57,7 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
           journey.requireIsEligible()
           block(journey)
 
-        case journey if journey.status == FinishedApplicationSuccessful =>
+        case journey if journey.status == ApplicationComplete =>
           JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission (no eligible journey in progress)", journey)
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 

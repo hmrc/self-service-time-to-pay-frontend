@@ -19,6 +19,7 @@ package ssttparrangement
 import com.google.inject.Inject
 import play.api.Logger
 import play.api.http.Status
+import play.api.http.Status.CREATED
 import play.api.mvc.Request
 import uk.gov.hmrc.http.{HttpClient, HttpException, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -47,8 +48,11 @@ class ArrangementConnector @Inject() (
   def submitArrangement(ttpArrangement: TTPArrangement)(implicit request: Request[_]): Future[SubmissionResult] = {
     JourneyLogger.info(s"ArrangementConnector.submitArrangements")
 
-    httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/ttparrangements", ttpArrangement).map { _ =>
-      Right(SubmissionSuccess()) //todo OPS-3930
+    httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/ttparrangements", ttpArrangement).map { response =>
+      response.status match {
+        case CREATED        => Right(SubmissionSuccess())
+        case otherCode: Int => Left(SubmissionError(otherCode, response.body))
+      }
     }.recover {
       case e: Throwable =>
         JourneyLogger.info(s"ArrangementConnector.submitArrangements: Error, $e", ttpArrangement)
