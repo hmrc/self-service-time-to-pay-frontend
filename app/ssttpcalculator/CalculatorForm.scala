@@ -85,18 +85,17 @@ object CalculatorForm {
   }
 
   private def customAmountWithSafeMax(customAmountInput: Option[String], maxCustomAmount: BigDecimal): BigDecimal = {
-
     customAmountInput
-      .map(input => { if (BigDecimal(input) == maxCustomAmount.setScale(2, HALF_UP)) maxCustomAmount else BigDecimal(input) })
+      .map(input => { if (BigDecimal(CurrencyUtil.cleanAmount(input)) == maxCustomAmount.setScale(2, HALF_UP)) maxCustomAmount else BigDecimal(CurrencyUtil.cleanAmount(input)) })
       .getOrElse(
         throw new IllegalArgumentException("custom amount option radio selected but no custom amount input found")
       )
   }
 
   private def customSelectionWithSafeMax(radioSelection: String, maxCustomAmount: BigDecimal): BigDecimal = {
-    if (BigDecimal(radioSelection).setScale(2, HALF_UP) == maxCustomAmount.setScale(2, HALF_UP)) {
+    if (BigDecimal(CurrencyUtil.cleanAmount(radioSelection)).setScale(2, HALF_UP) == maxCustomAmount.setScale(2, HALF_UP)) {
       maxCustomAmount
-    } else BigDecimal(radioSelection)
+    } else BigDecimal(CurrencyUtil.cleanAmount(radioSelection))
   }
 
   def unapply(data: PlanSelection): Option[(String, Option[String])] = Option {
@@ -122,35 +121,23 @@ object CalculatorForm {
   ): Mapping[String] = {
     mappingStr
       .verifying("ssttp.calculator.results.option.other.error.no-input", { i: String => i.nonEmpty })
-      .verifying("ssttp.calculator.results.option.other.error.non-numeric", { i: String =>
-        if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-      })
+      .verifying(Constraint((i: String) => if ({
+        i.isEmpty | i.matches(CurrencyUtil.regex) && isWithinRange(i, minCustomAmount, maxCustomAmount)
+      }) Valid else {
+        Invalid(Seq(ValidationError(
+          "ssttp.calculator.results.option.other.error.incorrect.amount",
+          "%,1.2f".format(minCustomAmount).stripSuffix(".00"),
+          "%,1.2f".format(maxCustomAmount).stripSuffix(".00")
+        )))
+      }))
       .verifying("ssttp.calculator.results.option.other.error.decimal-places", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
+        if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess && isWithinRange(i, minCustomAmount, maxCustomAmount)) BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2 else true
       })
-      .verifying("ssttp.calculator.results.option.other.error.negative-amount", { i: String =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) >= 0 else true
-      })
-      .verifying(Constraint((i: String) => if ({
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) < 0 || BigDecimal(i) >= minCustomAmount.setScale(2, HALF_UP) else true
-      }) Valid else {
-        Invalid(Seq(ValidationError(
-          "ssttp.calculator.results.option.other.error.below-minimum",
-          "%,1.2f".format(minCustomAmount).stripSuffix(".00"),
-          "%,1.2f".format(maxCustomAmount).stripSuffix(".00")
-        )))
-      }))
-      .verifying(Constraint((i: String) => if ({
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i) <= maxCustomAmount.setScale(2, HALF_UP) else true
-      }) Valid else {
-        Invalid(Seq(ValidationError(
-          "ssttp.calculator.results.option.other.error.above-maximum",
-          "%,1.2f".format(minCustomAmount).stripSuffix(".00"),
-          "%,1.2f".format(maxCustomAmount).stripSuffix(".00")
-        )))
-      }))
-
   }
+
+  private def isWithinRange(amount: String, minCustomAmount: BigDecimal, maxCustomAmount: BigDecimal): Boolean =
+    BigDecimal(CurrencyUtil.cleanAmount(amount)) >= minCustomAmount.setScale(2, HALF_UP) &&
+      BigDecimal(CurrencyUtil.cleanAmount(amount)) <= maxCustomAmount.setScale(2, HALF_UP)
 
   def payTodayForm: Form[PayTodayQuestion] = Form(mapping(
     "paytoday" -> optional(boolean).verifying("ssttp.calculator.form.payment_today_question.required", _.nonEmpty)

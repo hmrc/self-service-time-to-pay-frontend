@@ -65,6 +65,13 @@ class PaymentTodayCalculatorPageSpec extends ItSpec {
     paymentTodayCalculatorPage.assertErrorIsDisplayed
   }
 
+  "not correctly formatted amount" in {
+    beginJourney()
+    paymentTodayCalculatorPage.enterAmount("ab -3")
+    paymentTodayCalculatorPage.clickContinue()
+    paymentTodayCalculatorPage.assertFormatErrorIsDisplayed
+  }
+
   "valid amount and continue" in {
     beginJourney()
     paymentTodayCalculatorPage.enterAmount("123")

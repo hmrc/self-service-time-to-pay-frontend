@@ -47,6 +47,11 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
     readMain().stripSpaces shouldBe Expected.TextError().stripSpaces()
   }
 
+  def assertFormatErrorIsDisplayed: Assertion = probing {
+    readPath() shouldBe path
+    readMain().stripSpaces shouldBe Expected.FormatTextError().stripSpaces()
+  }
+
   def enterAmount(value: String): Unit = {
     val amount = xpath("//*[@id=\"amount\"]")
     click on amount
@@ -99,6 +104,18 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
           |How much can you pay upfront?
           |Enter an amount between £1 and £4,898
           |Error: Enter an amount that is at least £1 but no more than £4,898
+          |£
+          |Continue
+        """.stripMargin
+    }
+
+    object FormatTextError {
+      def apply(): String =
+        """There is a problem
+          |Upfront payment must be an amount, like £100 or £250.75
+          |How much can you pay upfront?
+          |Enter an amount between £1 and £4,898
+          |Error: Upfront payment must be an amount, like £100 or £250.75
           |£
           |Continue
         """.stripMargin

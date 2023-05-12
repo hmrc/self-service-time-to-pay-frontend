@@ -16,11 +16,9 @@
 
 package ssttpaffordability
 
-import play.api.data.Forms.text.key
 import play.api.data.Forms.{text, _}
-import play.api.data.validation.ValidationError
 import play.api.data.{Form, FormError, Mapping}
-import ssttpaffordability.model.IncomeCategory
+import ssttpaffordability.model.IncomeSpendingEnum
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model.forms.helper.FormErrorWithFieldMessageOverrides
 import util.CurrencyUtil
@@ -31,23 +29,11 @@ object AffordabilityForm {
 
   val incomeForm: Form[IncomeInput] = Form(
     mapping(
-      "monthlyIncome" -> validateIncome(text, MonthlyIncome),
-      "benefits" -> validateIncome(text, Benefits),
-      "otherIncome" -> validateIncome(text, OtherIncome)
+      "monthlyIncome" -> validateFormField(text, MonthlyIncome.messageSuffix, IncomeSpendingEnum.Income),
+      "benefits" -> validateFormField(text, Benefits.messageSuffix, IncomeSpendingEnum.Income),
+      "otherIncome" -> validateFormField(text, OtherIncome.messageSuffix, IncomeSpendingEnum.Income)
     )(IncomeInput.apply)(IncomeInput.unapply)
   )
-
-  private def validateIncome(mappingStr: Mapping[String], incomeCategory: IncomeCategory): Mapping[String] = {
-    mappingStr.verifying(s"ssttp.affordability.your-monthly-income.error.non-numerals.${incomeCategory.messageSuffix}", { i: String =>
-      if (i.nonEmpty) Try(BigDecimal(i)).isSuccess else true
-    })
-      .verifying(s"ssttp.affordability.your-monthly-income.error.negative.${incomeCategory.messageSuffix}", { i: String =>
-        if (i.nonEmpty && Try(BigDecimal(i)).isSuccess && BigDecimal(i).scale <= 2) BigDecimal(i) >= 0.00 else true
-      })
-      .verifying(s"ssttp.affordability.your-monthly-income.error.decimal-places.${incomeCategory.messageSuffix}", { i =>
-        if (Try(BigDecimal(i)).isSuccess) BigDecimal(i).scale <= 2 else true
-      })
-  }
 
   def validateIncomeInputTotal(form: Form[IncomeInput]): Form[IncomeInput] = {
     if (!form.get.hasPositiveTotal) {
@@ -77,29 +63,29 @@ object AffordabilityForm {
 
   val spendingForm: Form[SpendingInput] = Form(
     mapping(
-      "housing" -> validateSpending(text, "housing"),
-      "pension-contributions" -> validateSpending(text, "pension-contributions"),
-      "council-tax" -> validateSpending(text, "council-tax"),
-      "utilities" -> validateSpending(text, "utilities"),
-      "debt-repayments" -> validateSpending(text, "debt-repayments"),
-      "travel" -> validateSpending(text, "travel"),
-      "childcare" -> validateSpending(text, "childcare"),
-      "insurance" -> validateSpending(text, "insurance"),
-      "groceries" -> validateSpending(text, "groceries"),
-      "health" -> validateSpending(text, "health")
+      "housing" -> validateFormField(text, "housing", IncomeSpendingEnum.Spending),
+      "pension-contributions" -> validateFormField(text, "pension-contributions", IncomeSpendingEnum.Spending),
+      "council-tax" -> validateFormField(text, "council-tax", IncomeSpendingEnum.Spending),
+      "utilities" -> validateFormField(text, "utilities", IncomeSpendingEnum.Spending),
+      "debt-repayments" -> validateFormField(text, "debt-repayments", IncomeSpendingEnum.Spending),
+      "travel" -> validateFormField(text, "travel", IncomeSpendingEnum.Spending),
+      "childcare" -> validateFormField(text, "childcare", IncomeSpendingEnum.Spending),
+      "insurance" -> validateFormField(text, "insurance", IncomeSpendingEnum.Spending),
+      "groceries" -> validateFormField(text, "groceries", IncomeSpendingEnum.Spending),
+      "health" -> validateFormField(text, "health", IncomeSpendingEnum.Spending)
     )(SpendingInput.apply)(SpendingInput.unapply)
   )
 
-  private def validateSpending(mappingStr: Mapping[String], key: String) = {
+  private def validateFormField(mappingStr: Mapping[String], inputField: String, category: IncomeSpendingEnum): Mapping[String] = {
     mappingStr
-      .verifying(s"ssttp.affordability.your-monthly-spending.error.non-numerals.$key", { i: String =>
+      .verifying(s"ssttp.affordability.your-monthly-${category.entryName}.error.non-numerals.$inputField", { i: String =>
         i.isEmpty | i.matches(CurrencyUtil.regex)
       })
-      .verifying(s"ssttp.affordability.your-monthly-spending.error.two-decimals-only.$key", { i =>
-        if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2 else true
+      .verifying(s"ssttp.affordability.your-monthly-${category.entryName}.error.negative.$inputField", { i: String =>
+        if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess && BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2) BigDecimal(CurrencyUtil.cleanAmount(i)) >= 0.00 else true
       })
-      .verifying(s"ssttp.affordability.your-monthly-spending.error.not-negative.$key", { i: String =>
-        if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)).toInt >= 0 else true
+      .verifying(s"ssttp.affordability.your-monthly-${category.entryName}.error.decimal-places.$inputField", { i: String =>
+        if (Try(BigDecimal(CurrencyUtil.cleanAmount(i))).isSuccess) BigDecimal(CurrencyUtil.cleanAmount(i)).scale <= 2 else true
       })
   }
 

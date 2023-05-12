@@ -169,11 +169,6 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     readMain().stripSpaces() should include(Expected.ErrorText.NonNumeric().stripSpaces())
   }
 
-  def assertNegativeAmountErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
-    readPath() shouldBe path
-    readMain().stripSpaces() should include(Expected.ErrorText.NegativeAmount().stripSpaces())
-  }
-
   def assertDecimalPlacesErrorIsDisplayed(implicit lang: Language = English): Assertion = probing {
     readPath() shouldBe path
     readMain().stripSpaces() should include(Expected.ErrorText.DecimalPlaces().stripSpaces())
@@ -379,29 +374,12 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val nonNumericTextEnglish =
           s"""There is a problem
-             |Enter numbers only
+             |Enter an amount that is at least £500 but no more than £4,914.40
       """.stripMargin
 
         private val nonNumericTextWelsh =
           s"""Mae problem wedi codi
-             |Nodwch rifau yn unig
-      """.stripMargin
-      }
-
-      object NegativeAmount {
-        def apply()(implicit language: Language): String = language match {
-          case English => negativeAmountTextEnglish
-          case Welsh   => negativeAmountTextWelsh
-        }
-
-        private val negativeAmountTextEnglish =
-          s"""There is a problem
-             |Enter a positive number only
-      """.stripMargin
-
-        private val negativeAmountTextWelsh =
-          s"""Mae problem wedi codi
-             |Nodwch rif positif yn unig
+             |Nodwch swm sydd o leiaf £500 ond sydd ddim mwy na £4,914.40
       """.stripMargin
       }
 

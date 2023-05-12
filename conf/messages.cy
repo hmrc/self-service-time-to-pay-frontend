@@ -117,9 +117,9 @@ ssttp.affordability.your-monthly-income.form.other-income = Incwm misol arall
 ssttp.affordability.your-monthly-income.form.other-income.hint = Er enghraifft, incwm rhent, difidendau
 ssttp.affordability.your-monthly-income.error.title = Mae problem wedi codi
 ssttp.affordability.your-monthly-income.error.required = Mae’n rhaid i chi nodi’ch incwm<br>Os nad oes gennych unrhyw incwm, ffoniwch ni ar 0300 200 1900
-ssttp.affordability.your-monthly-income.error.non-numerals.monthly-income = Nodwch rifau yn unig ar gyfer incwm misol ar ôl treth
-ssttp.affordability.your-monthly-income.error.non-numerals.benefits = Nodwch rifau yn unig ar gyfer budd-daliadau
-ssttp.affordability.your-monthly-income.error.non-numerals.other-income = Nodwch rifau yn unig ar gyfer incwm misol arall
+ssttp.affordability.your-monthly-income.error.non-numerals.monthly-income = Mae’n rhaid i incwm misol ar ôl treth fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-income.error.non-numerals.benefits = Mae’n rhaid i fuddiannau fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-income.error.non-numerals.other-income = Mae’n rhaid i incwm misol arall fod yn swm, megis £100 neu £250.75
 ssttp.affordability.your-monthly-income.error.negative.monthly-income = Nodwch rif positif yn unig ar gyfer incwm misol ar ôl treth
 ssttp.affordability.your-monthly-income.error.negative.benefits = Nodwch rif positif yn unig ar gyfer budd-daliadau
 ssttp.affordability.your-monthly-income.error.negative.other-income = Nodwch rif positif yn unig ar gyfer incwm misol arall
@@ -154,45 +154,45 @@ ssttp.affordability.your-monthly-spending.error.non-numerals = Enter numbers onl
 ssttp.affordability.your-monthly-spending.total = Cyfanswm y gwariant
 
 #Errors for spending form
-ssttp.affordability.your-monthly-spending.error.non-numerals.housing = Nodwch rifau yn unig ar gyfer tai
-ssttp.affordability.your-monthly-spending.error.not-negative.housing = Nodwch rif positif yn unig ar gyfer tai
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.housing = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer tai
+ssttp.affordability.your-monthly-spending.error.non-numerals.housing = Mae’n rhaid i daliadau tai fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-spending.error.negative.housing = Nodwch rif positif yn unig ar gyfer tai
+ssttp.affordability.your-monthly-spending.error.decimal-places.housing = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer tai
 
-ssttp.affordability.your-monthly-spending.error.non-numerals.pension-contributions = Nodwch rifau yn unig ar gyfer cyfraniadau pensiwn
-ssttp.affordability.your-monthly-spending.error.not-negative.pension-contributions = Nodwch rif positif yn unig ar gyfer cyfraniadau pensiwn
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.pension-contributions = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer cyfraniadau pensiwn
+ssttp.affordability.your-monthly-spending.error.non-numerals.pension-contributions = Mae’n rhaid i gyfraniadau pensiwn fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-spending.error.negative.pension-contributions = Nodwch rif positif yn unig ar gyfer cyfraniadau pensiwn
+ssttp.affordability.your-monthly-spending.error.decimal-places.pension-contributions = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer cyfraniadau pensiwn
 
-ssttp.affordability.your-monthly-spending.error.non-numerals.council-tax = Nodwch rifau yn unig ar gyfer Treth Gyngor
-ssttp.affordability.your-monthly-spending.error.not-negative.council-tax = Nodwch rif positif yn unig ar gyfer Treth Gyngor
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.council-tax = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer Treth Gyngor
+ssttp.affordability.your-monthly-spending.error.non-numerals.council-tax = Mae’n rhaid i dreth gyngor fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-spending.error.negative.council-tax = Nodwch rif positif yn unig ar gyfer Treth Gyngor
+ssttp.affordability.your-monthly-spending.error.decimal-places.council-tax = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer Treth Gyngor
 
-ssttp.affordability.your-monthly-spending.error.non-numerals.utilities = Nodwch rifau yn unig ar gyfer cyfleustodau
-ssttp.affordability.your-monthly-spending.error.not-negative.utilities = Nodwch rif positif yn unig ar gyfer cyfleustodau
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.utilities = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer cyfleustodau
+ssttp.affordability.your-monthly-spending.error.non-numerals.utilities = Mae’n rhaid i gyfleustodau fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-spending.error.negative.utilities = Nodwch rif positif yn unig ar gyfer cyfleustodau
+ssttp.affordability.your-monthly-spending.error.decimal-places.utilities = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer cyfleustodau
 
-ssttp.affordability.your-monthly-spending.error.non-numerals.debt-repayments = Nodwch rifau yn unig ar gyfer ad-daliadau dyledion
-ssttp.affordability.your-monthly-spending.error.not-negative.debt-repayments = Nodwch rif positif yn unig ar gyfer ad-daliadau dyledion
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.debt-repayments = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer ad-daliadau dyledion
+ssttp.affordability.your-monthly-spending.error.non-numerals.debt-repayments = Mae’n rhaid i ad-daliadau dyledion fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-spending.error.negative.debt-repayments = Nodwch rif positif yn unig ar gyfer ad-daliadau dyledion
+ssttp.affordability.your-monthly-spending.error.decimal-places.debt-repayments = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer ad-daliadau dyledion
 
-ssttp.affordability.your-monthly-spending.error.non-numerals.travel = Nodwch rifau yn unig ar gyfer teithio
-ssttp.affordability.your-monthly-spending.error.not-negative.travel= Nodwch rif positif yn unig ar gyfer teithio
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.travel = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer teithio
+ssttp.affordability.your-monthly-spending.error.non-numerals.travel = Mae’n rhaid i deithio fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-spending.error.negative.travel= Nodwch rif positif yn unig ar gyfer teithio
+ssttp.affordability.your-monthly-spending.error.decimal-places.travel = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer teithio
 
-ssttp.affordability.your-monthly-spending.error.non-numerals.childcare = Nodwch rifau yn unig ar gyfer costau gofal plant
-ssttp.affordability.your-monthly-spending.error.not-negative.childcare= Nodwch rif positif yn unig ar gyfer costau gofal plant
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.childcare = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer costau gofal plant
+ssttp.affordability.your-monthly-spending.error.non-numerals.childcare = Mae’n rhaid i gostau gofal plant fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-spending.error.negative.childcare= Nodwch rif positif yn unig ar gyfer costau gofal plant
+ssttp.affordability.your-monthly-spending.error.decimal-places.childcare = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer costau gofal plant
 
-ssttp.affordability.your-monthly-spending.error.non-numerals.insurance = Nodwch rifau yn unig ar gyfer yswiriant
-ssttp.affordability.your-monthly-spending.error.not-negative.insurance= Nodwch rif positif yn unig ar gyfer yswiriant
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.insurance = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer yswiriant
+ssttp.affordability.your-monthly-spending.error.non-numerals.insurance = Mae’n rhaid i yswiriant fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-spending.error.negative.insurance= Nodwch rif positif yn unig ar gyfer yswiriant
+ssttp.affordability.your-monthly-spending.error.decimal-places.insurance = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer yswiriant
 
-ssttp.affordability.your-monthly-spending.error.non-numerals.groceries = Nodwch rifau yn unig ar gyfer nwyddau groser
-ssttp.affordability.your-monthly-spending.error.not-negative.groceries= Nodwch rif positif yn unig ar gyfer nwyddau groser
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.groceries = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer nwyddau groser
+ssttp.affordability.your-monthly-spending.error.non-numerals.groceries = Mae’n rhaid i nwyddau groser fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-spending.error.negative.groceries= Nodwch rif positif yn unig ar gyfer nwyddau groser
+ssttp.affordability.your-monthly-spending.error.decimal-places.groceries = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer nwyddau groser
 
-ssttp.affordability.your-monthly-spending.error.non-numerals.health = Nodwch rifau yn unig ar gyfer iechyd
-ssttp.affordability.your-monthly-spending.error.not-negative.health= Nodwch rif positif yn unig ar gyfer iechyd
-ssttp.affordability.your-monthly-spending.error.two-decimals-only.health = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer iechyd
+ssttp.affordability.your-monthly-spending.error.non-numerals.health = Mae’n rhaid i iechyd fod yn swm, megis £100 neu £250.75
+ssttp.affordability.your-monthly-spending.error.negative.health= Nodwch rif positif yn unig ar gyfer iechyd
+ssttp.affordability.your-monthly-spending.error.decimal-places.health = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol ar gyfer iechyd
 
 
 ssttp.affordability.how-much-you-could-afford.h1 = Faint y gallech ei fforddio
@@ -255,7 +255,7 @@ ssttp.calculator.form.payment_today.title = Faint y gallwch ei dalu ymlaen llaw?
 ssttp.calculator.form.payment_today.hint = Nodwch swm sydd rhwng £1 a {0}
 ssttp.calculator.form.payment_today.error.summary.title = Mae problem wedi codi
 ssttp.calculator.form.payment_today.amount.less-than-owed = Nodwch swm sydd o leiaf £1 ond sydd ddim mwy na {0}
-ssttp.calculator.form.payment_today.amount.non-numerals = Rhowch rifau yn unig
+ssttp.calculator.form.payment_today.amount.non-numerals = Mae’n rhaid i daliad ymlaen llaw fod yn swm, megis £100 neu £250.75
 ssttp.calculator.form.payment_today.amount.required = Nodwch swm o £1 neu fwy
 ssttp.calculator.form.payment_today.amount.required.min = Nodwch swm o £1 neu fwy
 ssttp.calculator.form.payment_today.amount.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
@@ -297,12 +297,9 @@ ssttp.calculator.results.section.cannot-afford.p.1 = Mae’n bosibl y byddwch yn
 ssttp.calculator.results.section.cannot-afford.p.2 = 0300 200 1900
 ssttp.calculator.results.section.cannot-afford.p.3 =  i drafod eich dyled.
 ssttp.calculator.results.p1.custom-amount.paymentoptimised = Rydych wedi dewis talu {0} y mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
-ssttp.calculator.results.p1.custom-amount.legacy = Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn <strong>fwy</strong> oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
-ssttp.calculator.results.option.other.error.below-minimum = Nodwch swm sydd o leiaf £{0} ond sydd ddim mwy na £{1}
-ssttp.calculator.results.option.other.error.above-maximum = Nodwch swm sydd o leiaf £{0} ond sydd ddim mwy na £{1}
+ssttp.calculator.results.p1.custom-amount.legacy = Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
+ssttp.calculator.results.option.other.error.incorrect.amount = Nodwch swm sydd o leiaf £{0} ond sydd ddim mwy na £{1}
 ssttp.calculator.results.option.other.error.no-input = Nodwch swm
-ssttp.calculator.results.option.other.error.non-numeric = Nodwch rifau yn unig
-ssttp.calculator.results.option.other.error.negative-amount = Nodwch rif positif yn unig
 ssttp.calculator.results.option.other.error.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.calculator.results.option.error.no-selection = Dewiswch opsiwn
 

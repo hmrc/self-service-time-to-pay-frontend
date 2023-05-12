@@ -176,12 +176,12 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
 
       private def errorTextEnglish(incomeCategory: IncomeCategory) = {
         val incomeCategoryString = incomeCategory match {
-          case MonthlyIncome => "monthly income after tax"
-          case Benefits      => "benefits"
-          case OtherIncome   => "other monthly income"
+          case MonthlyIncome => "Monthly income after tax"
+          case Benefits      => "Benefits"
+          case OtherIncome   => "Other monthly income"
         }
         s"""There is a problem
-          |Enter numbers only for $incomeCategoryString
+          |$incomeCategoryString must be an amount, like £100 or £250.75
           """.stripMargin
       }
 
@@ -192,7 +192,7 @@ class YourMonthlyIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ext
           case OtherIncome   => "incwm misol arall"
         }
         s"""Mae problem wedi codi
-          |Nodwch rifau yn unig ar gyfer $incomeCategoryString
+          |Mae’n rhaid i $incomeCategoryString fod yn swm, megis £100 neu £250.75
         """.stripMargin
       }
     }
