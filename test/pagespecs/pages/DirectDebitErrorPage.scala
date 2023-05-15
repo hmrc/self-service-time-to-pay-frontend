@@ -67,8 +67,7 @@ class DirectDebitErrorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) exte
           |Find out the different ways to deal with HMRC if you need some help.
           |You can also use Relay UK if you cannot hear or speak on the phone: dial 18001 then 0345 300 3900.
           |If you are outside the UK: +44 2890 538 192
-          """
-          .stripMargin
+          """.stripMargin
 
       private val mainTextWelsh =
         """Ffoniwch ni ynghylch cynllun talu
