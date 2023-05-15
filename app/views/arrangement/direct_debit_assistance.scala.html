@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-@import timetopaytaxpayer.cor.model.Debit
-@import ssttpcalculator.model.PaymentSchedule
 @import partials.extra_support
 
 @this(
@@ -23,11 +21,7 @@
   viewsHelpers: views.ViewsHelpers
 )
 
-@(
-  debits:Seq[Debit],
-  schedule: PaymentSchedule,
-  loggedIn: Boolean = true,
-  showErrorNotification: Boolean = false)(
+@()(
   implicit
   messages: play.api.i18n.Messages,
   request: Request[_],

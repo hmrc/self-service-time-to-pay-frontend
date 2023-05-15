@@ -345,6 +345,10 @@ ssttp.you-need-to-file.check-account = er mwyn cyflwyno’ch Ffurflen Dreth Huna
 
 ssttp.you-need-to-file..phone-number = I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong> i siarad ag ymgynghorydd.
 
+ssttp.direct-debit-assistance.h1 = Ffoniwch ni ynghylch cynllun talu
+ssttp.direct-debit-assistance.p1 = Rydym yn cael anawsterau wrth gyflwyno’ch cyfarwyddyd Debyd Uniongyrchol.
+ssttp.call-us-on = 	Ffoniwch ni ar <strong>0300 200 1900</strong> oherwydd mae’n bosibl y gallwch drefnu cynllun dros y ffôn.
+
 ssttp.opening-hours = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
 ssttp.extra-support.h2 = Os oes angen cymorth ychwanegol arnoch chi
 ssttp.extra-support.p1 = Dysgwch am y ffyrdd gwahanol o <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEF os oes angen help arnoch chi</a>.
