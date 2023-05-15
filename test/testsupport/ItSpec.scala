@@ -148,6 +148,7 @@ class ItSpec
   lazy val arrangementSummaryPage: ArrangementSummaryPage = wire[ArrangementSummaryPage]
   lazy val viewPaymentPlanPage: ViewPaymentPlanPage = wire[ViewPaymentPlanPage]
   lazy val yourMonthlyIncomePage: YourMonthlyIncomePage = wire[YourMonthlyIncomePage]
+  lazy val directDebitErrorPage: DirectDebitErrorPage = wire[DirectDebitErrorPage]
 
   // not eligible pages
   lazy val debtTooLargePage: DebtTooLargePage = wire[DebtTooLargePage]

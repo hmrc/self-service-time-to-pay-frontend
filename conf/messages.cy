@@ -352,7 +352,7 @@ ssttp.call-us-on = 	Ffoniwch ni ar <strong>0300 200 1900</strong> oherwydd mae�
 ssttp.opening-hours = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
 ssttp.extra-support.h2 = Os oes angen cymorth ychwanegol arnoch chi
 ssttp.extra-support.p1 = Dysgwch am y ffyrdd gwahanol o <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEF os oes angen help arnoch chi</a>.
-ssttp.extra-support.p2 = Gallwch hefyd ddefnyddio <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> os na allwch glywed na siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>.
+ssttp.extra-support.p2 = Gallwch hefyd ddefnyddio <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> os na allwch glywed na siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>. Sylwer – dim ond galwadau ffôn Saesneg eu hiaith y mae Relay UK yn gallu ymdrin â nhw.
 ssttp.extra-support.p3= Os ydych y tu allan i’r DU: <strong>+44 300 200 1900</strong>.
 
 ssttp.arrangement.type_of_account.title = Ynglŷn â’ch cyfrif banc
