@@ -345,6 +345,16 @@ ssttp.you-need-to-file.check-account = er mwyn cyflwyno’ch Ffurflen Dreth Huna
 
 ssttp.you-need-to-file..phone-number = I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong> i siarad ag ymgynghorydd.
 
+ssttp.direct-debit-assistance.h1 = Ffoniwch ni ynghylch cynllun talu
+ssttp.direct-debit-assistance.p1 = Rydym yn cael anawsterau wrth gyflwyno’ch cyfarwyddyd Debyd Uniongyrchol.
+ssttp.call-us-on = 	Ffoniwch ni ar <strong>0300 200 1900</strong> oherwydd mae’n bosibl y gallwch drefnu cynllun dros y ffôn.
+
+ssttp.opening-hours = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
+ssttp.extra-support.h2 = Os oes angen cymorth ychwanegol arnoch chi
+ssttp.extra-support.p1 = Dysgwch am y ffyrdd gwahanol o <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEF os oes angen help arnoch chi</a>.
+ssttp.extra-support.p2 = Gallwch hefyd ddefnyddio <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> os na allwch glywed na siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>. Sylwer – dim ond galwadau ffôn Saesneg eu hiaith y mae Relay UK yn gallu ymdrin â nhw.
+ssttp.extra-support.p3= Os ydych y tu allan i’r DU: <strong>+44 300 200 1900</strong>.
+
 ssttp.arrangement.type_of_account.title = Ynglŷn â’ch cyfrif banc
 ssttp.arrangement.type_of_account.details = Pa fath o fanylion cyfrif yr ydych yn eu rhoi?
 ssttp.arrangement.type_of_account.business = Cyfrif banc busnes

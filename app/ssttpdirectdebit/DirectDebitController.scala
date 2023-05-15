@@ -131,7 +131,7 @@ class DirectDebitController @Inject() (
       journey.requireScheduleIsDefined()
       journey.requireDdIsDefined()
       val schedule: PaymentSchedule = selectedSchedule(journey)
-      Future.successful(Ok(views.direct_debit_assistance(journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()), schedule, isSignedIn)))
+      Future.successful(Ok(views.direct_debit_assistance()))
     }
   }
 
@@ -141,8 +141,7 @@ class DirectDebitController @Inject() (
       journey.requireDdIsDefined()
       val schedule: PaymentSchedule = selectedSchedule(journey)
       Future.successful(
-        Ok(views.direct_debit_assistance(
-          journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()), schedule, loggedIn = true, showErrorNotification = isSignedIn)))
+        Ok(views.direct_debit_assistance()))
     }
   }
 
