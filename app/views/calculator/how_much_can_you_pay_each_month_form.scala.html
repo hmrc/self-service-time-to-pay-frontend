@@ -30,6 +30,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage.errorMessageWithDefaultStringsTranslated
 @import ssttpcalculator.model.PaymentPlanOption.Custom
 @import ssttpcalculator.CalculatorType
+@import views.html.helper.CSPNonce
 
 @this(
   main: views.html.main,
@@ -169,7 +170,12 @@
 
 <div class="clear">
  <div class="form-group">
-  <button id="next" type="submit" class="govuk-button" onclick="continue()">@Messages("ssttp.calculator.form.continue")</button>
+    <button id="next" type="submit" class="govuk-button">@Messages("ssttp.calculator.form.continue")</button>
+    <script @{CSPNonce.attr}>
+        document.getElementById("next").addEventListener("click", function() {
+            continue();
+        });
+    </script>
  </div>
 </div>
 }
