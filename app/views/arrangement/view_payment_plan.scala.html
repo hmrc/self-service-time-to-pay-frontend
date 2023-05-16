@@ -18,6 +18,7 @@
 @import model._
 @import partials._
 @import language.Dates._
+@import views.html.helper.CSPNonce
 
 @this(
         main: views.html.main,
@@ -111,10 +112,23 @@
         </div>
     </dl>
 
+<!--    <p class="govuk-body">-->
+<!--       <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">-->
+<!--       @messages("ssttp.arrangement.print-summary.schedule.payment-plan.print")</a>-->
+<!--    </p>-->
+
     <p class="govuk-body">
-       <a class="govuk-link" href="javascript:window.print()" class="js-visible trackedPrintLink">
-       @messages("ssttp.arrangement.print-summary.schedule.payment-plan.print")</a>
+        <a id="print-summary-link" href="" class="govuk-link" class="js-visible trackedPrintLink">
+            @messages("ssttp.arrangement.print-summary.schedule.payment-plan.print")</a>
+        <script @{CSPNonce.attr}>
+            document.getElementById("print-summary-link").addEventListener("click", function() {
+                window.print();
+            });
+        </script>
     </p>
+
+
+
 </section>
 
     <div class="print-only">
