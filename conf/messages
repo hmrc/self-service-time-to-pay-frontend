@@ -508,6 +508,7 @@ ssttp.direct-debit.form.error.accountName.required = Enter an account name
 ssttp.direct-debit.form.error.accountName.check = Check your account name is correct
 ssttp.direct-debit.form.bank-not-found-heading = This isn''t a valid bank account
 ssttp.direct-debit.form.bank-not-found-info = Re-enter your bank details
+ssttp.direct-debit.form.invalid.combo = Enter a valid combo
 ssttp.direct-debit.form.error.accountNumber.required = Enter an account number
 ssttp.direct-debit.form.error.sortCode.required = Enter a sort code
 ssttp.direct-debit.form.error.sortCode.not-valid = Sort code must be a 6 digit number

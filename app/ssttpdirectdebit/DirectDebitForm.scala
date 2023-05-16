@@ -18,6 +18,7 @@ package ssttpdirectdebit
 
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
+import ssttpaffordability.model.forms.helper.FormErrorWithFieldMessageOverrides
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit.{cleanAccountNumber, cleanSortCode}
 
@@ -56,7 +57,23 @@ object DirectDebitForm {
     number.replaceAll("[^0-9]", "").length == length
   }
 
+  private val invalidSortCodeAndAccountNumberCombo: FormError = FormError(
+    key      = "sortCode",
+    messages = Seq("ssttp.direct-debit.form.invalid.combo")
+  )
+
+  private val sortCodeAndAccountNumberOverrides: Seq[FormError] = Seq(
+    FormError("sortCode", ""),
+    FormError("accountNumber", ""),
+    FormError("sortCodeAndAccountNumber", "ssttp.direct-debit.form.invalid.combo")
+  )
+  val invalidSortCodeAndAccountNumberComboOverride: FormErrorWithFieldMessageOverrides =
+    FormErrorWithFieldMessageOverrides(
+      formError             = invalidSortCodeAndAccountNumberCombo,
+      fieldMessageOverrides = sortCodeAndAccountNumberOverrides
+    )
+
   val directDebitForm = Form(directDebitMapping)
-  val directDebitFormWithBankAccountError = directDebitForm.copy(errors = Seq(FormError(" ", "ssttp.direct-debit.form.bank-not-found-info")))
+  val directDebitFormWithBankAccountError = directDebitForm.copy(errors = sortCodeAndAccountNumberOverrides)
 
 }
