@@ -65,7 +65,7 @@ object DirectDebitForm {
   private val sortCodeAndAccountNumberOverrides: Seq[FormError] = Seq(
     FormError("sortCode", ""),
     FormError("accountNumber", ""),
-    FormError("sortCodeAndAccountNumber", "ssttp.direct-debit.form.invalid.combo")
+    FormError("sortCode", "ssttp.direct-debit.form.invalid.combo")
   )
   val invalidSortCodeAndAccountNumberComboOverride: FormErrorWithFieldMessageOverrides =
     FormErrorWithFieldMessageOverrides(
