@@ -58,8 +58,6 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
   def clickContinue(): Unit = {
     clickOnContinue()
-    //    val button = xpath("""//*[@id="content"]/form/div[2]/button""")
-    //    click on button
   }
 
   object Expected {
@@ -96,9 +94,9 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         """Trefnu Debyd Uniongyrchol
           |Yr enw sydd ar y cyfrif
           |Cod didoli
-          |Must be 6 digits long
+          |Mae’n rhaid i hyn fod yn 6 digid o hyd
           |Rhif y cyfrif
-          |Mae’n rhaid i rif y cyfrif fod rhwng 6 ac 8 digid
+          |Mae’n rhaid iddo fod rhwng 6 ac 8 digid o hyd
           |Yn eich blaen
         """.stripMargin
     }
@@ -109,6 +107,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         case SortCode()           => sortCodeErrorText
         case AccountNumber()      => accountNumberErrorText
         case InvalidBankDetails() => invalidBankDetailsErrorText
+        case SortCodeOnDenyList() => sortCodeOnDenyListErrorText
       }
 
       private val accountNameErrorText =
@@ -117,10 +116,9 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Set up Direct Debit
           |Name on the account
           |Check your account name is correct
-          |123ede23efr4efr4ew32ef3r4
-          |Sort code 12-34-56
+          |Sort code
           |Must be 6 digits long
-          |Account number 12345678
+          |Account number
           |Must be between 6 and 8 digits long
           |Continue
       """.stripMargin
@@ -129,14 +127,11 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         """There is a problem
           |Sort code must be a 6 digit number
           |Set up Direct Debit
-          |Name on the account Mr John Campbell
+          |Name on the account
           |Sort code
           |Must be 6 digits long
-          |Sort code must be a 6 digit number
-          |fqe23fwef322few23r
-          |Account number 12345678
+          |Account number
           |Must be between 6 and 8 digits long
-          |Account number must be between 6 and 8 digits long
           |Continue
         """.stripMargin
 
@@ -144,24 +139,29 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
         """There is a problem
           |Account number must be between 6 and 8 digits
           |Set up Direct Debit
-          |Name on the account Mr John Campbell
-          |Sort code 12-34-56
+          |Name on the account
+          |Sort code
           |Account number
           |Must be between 6 and 8 digits long
-          |24wrgedf
           |Continue
         """.stripMargin
 
       private val invalidBankDetailsErrorText =
-        """This isn't a valid bank account
-          |Re-enter your bank details
+        """There is a problem
+          |Enter a valid combination of bank account number and sort code
           |Set up Direct Debit
-          |Name on the account Mr John Campbell
-          |Sort code 123456
+          |Name on the account
+          |Enter a valid combination of bank account number and sort code
+          |Sort code
           |Must be 6 digits long
-          |Account number 12345678
+          |Account number
           |Must be between 6 and 8 digits long
           |Continue
+        """.stripMargin
+
+      private val sortCodeOnDenyListErrorText =
+        """Sorry, we’re experiencing technical difficulties
+          |Please try again in a few minutes.
         """.stripMargin
     }
 

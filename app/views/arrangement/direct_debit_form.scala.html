@@ -17,10 +17,18 @@
 @import timetopaytaxpayer.cor.model.Debit
 @import uk.gov.hmrc.selfservicetimetopay.models.ArrangementDirectDebit
 @import ssttpcalculator.model.PaymentSchedule
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+
+
 
 @this(
   main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  viewsHelpers: views.ViewsHelpers,
+        textinput: views.html.helpers.forms.textinput,
+        input: uk.gov.hmrc.govukfrontend.views.html.components.GovukInput,
+        errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
 )
 
 @(
@@ -28,12 +36,21 @@
         schedule: PaymentSchedule,
         ddForm: Form[ArrangementDirectDebit],
         isBankError: Boolean = false,
+        errorMessageOverrides: Seq[FormError] = Seq.empty,
         loggedIn: Boolean = true)(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
 )
 
+@optComboError = @{
+    ddForm.error("combo-invalid")
+}
+
+@comboError= @{
+    errorMessageOverrides.find(_.key == "sortCode")
+            .orElse(optComboError)
+}
 
 @main(
     title = Messages("ssttp.arrangement.direct-debit.form.title"),
@@ -42,19 +59,54 @@
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount())
 ) {
     @if(ddForm.hasErrors) {
-        @if(isBankError) {
-            @viewsHelpers.errorSummary(Messages("ssttp.direct-debit.form.bank-not-found-heading"), ddForm)
-        } else {
-            @viewsHelpers.errorSummary(Messages("ssttp.arrangement.direct-debit.form.error.summary.title"), ddForm)
-        }
+        @errorSummary(ErrorSummary(
+            errorList = ddForm.errors.asHtmlErrorLinks,
+            title = Text(messages("ssttp.arrangement.direct-debit.form.error.summary.title"))
+        ))
     }
         <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
        @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.submitDirectDebit, 'autoComplete -> "off") {
 
-        <fieldset class="govuk-fieldset">
-            <legend><span class="govuk-visually-hidden">Enter your banking details</span></legend>
-            @viewsHelpers.direct_debit_fields(ddForm, ddForm("accountName"), ddForm("sortCode"), ddForm("accountNumber"))
-        </fieldset>
+            @textinput(ddForm("accountName"),
+                'label -> messages("ssttp.direct-debit.form.accountName"),
+                '_labelClass -> "govuk-label--m",
+                'autoComplete -> "name",
+                '_maxlength -> "39",
+                '_inputClass -> "govuk-!-width-two-thirds"
+            )
+
+        @defining(comboError) { comboSortCodeAccountNumber =>
+            <fieldset class="govuk-fieldset long-word-wrap">
+                <legend class="govuk-label govuk-visually-hidden">@messages("ssttp.direct-debit.form.invalid.combo")</legend>
+
+                <div id="combo-invalid" class="form-field @comboSortCodeAccountNumber.map { error => govuk-form-group--error }">
+                    @comboSortCodeAccountNumber.map { error =>
+                        <span class="govuk-error-message" id="combo-invalid">
+                            <span class="govuk-visually-hidden">@Messages("ssttp.common.title-prefix")</span>
+                            @Html(messages("ssttp.direct-debit.form.invalid.combo"))
+                        </span>
+                    }
+
+                        @textinput(ddForm("sortCode"),
+                            'label -> messages("ssttp.direct-debit.form.sortCode"),
+                            '_labelClass -> "govuk-label--m",
+                            'hint -> "sortCodeHint",
+                            'hintContent -> messages("ssttp.direct-debit.form.sortCode.hint"),
+                            'hintClass -> "",
+                            '_inputClass ->  "govuk-input--width-5"
+                        )
+                        @textinput(ddForm("accountNumber"),
+                            'label -> messages("ssttp.direct-debit.form.accountNumber"),
+                            '_labelClass -> "govuk-label--m",
+                            'hint -> "accountNumberHint",
+                            'hintContent -> messages("ssttp.direct-debit.form.accountNumber.hint"),
+                            'hintClass -> "",
+                            '_maxlength -> "8",
+                            '_inputClass ->  "govuk-!-width-two-thirds"
+                        )
+                    </div>
+                </fieldset>
+            }
 
         @viewsHelpers.continue(Messages("ssttp.arrangement.direct-debit.form.submit"))
     }

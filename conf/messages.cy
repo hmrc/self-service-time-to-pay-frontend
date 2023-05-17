@@ -457,6 +457,7 @@ ssttp.direct-debit.form.error.accountName.check = Gwiriwch fod enw eich cyfrif y
 ssttp.direct-debit.form.error.accountName.letter-start = Rhaid i enw’r cyfrif ddechrau â llythyren
 ssttp.direct-debit.form.bank-not-found-heading = Nid yw hwn yn gyfrif banc dilys
 ssttp.direct-debit.form.bank-not-found-info = Nodwch eich manylion banc eto
+ssttp.direct-debit.form.invalid.combo = Nodwch gyfuniad dilys o rif cyfrif banc a chod didoli
 ssttp.direct-debit.form.error.accountNumber.required = Nodwch rif y cyfrif
 ssttp.direct-debit.form.error.sortCode.required = Nodwch god didoli
 ssttp.direct-debit.form.error.sortCode.not-valid = Rhaid i’r cod didoli fod yn rhif 6 digid
