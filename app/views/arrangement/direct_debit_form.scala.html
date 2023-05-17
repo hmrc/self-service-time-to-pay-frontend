@@ -77,8 +77,6 @@
 
         @defining(comboError) { comboSortCodeAccountNumber =>
             <fieldset class="govuk-fieldset long-word-wrap">
-                <legend class="govuk-label govuk-visually-hidden">@messages("ssttp.direct-debit.form.invalid.combo")</legend>
-
                 <div id="combo-invalid" class="form-field @comboSortCodeAccountNumber.map { error => govuk-form-group--error }">
                     @comboSortCodeAccountNumber.map { error =>
                         <span class="govuk-error-message" id="combo-invalid">
