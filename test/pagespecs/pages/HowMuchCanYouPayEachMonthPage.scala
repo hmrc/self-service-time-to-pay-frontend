@@ -49,8 +49,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
   }
 
   def clickContinue(): Unit = probing{
-    val button = xpath("//*[@id=\"next\"]")
-    click on button
+    clickOnContinue()
   }
 
   def selectCustomAmountOption(): Unit = probing {

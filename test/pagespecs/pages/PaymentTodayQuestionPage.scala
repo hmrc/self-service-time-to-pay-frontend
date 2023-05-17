@@ -50,8 +50,7 @@ class PaymentTodayQuestionPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
   }
 
   def clickContinue(): Unit = probing {
-    val button = id("next")
-    click on button
+    clickOnContinue()
   }
 
   object Expected {
