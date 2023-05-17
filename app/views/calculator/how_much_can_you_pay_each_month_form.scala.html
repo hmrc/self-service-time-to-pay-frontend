@@ -36,7 +36,8 @@
   main: views.html.main,
   errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
   radios: uk.gov.hmrc.govukfrontend.views.html.components.GovukRadios,
-  viewsHelpers: views.ViewsHelpers
+  viewsHelpers: views.ViewsHelpers,
+  continue: views.html.helpers.forms.ssttpContinue
 )
 
 @(
@@ -161,23 +162,14 @@
         ))
     </fieldset>
 
-<details class="govuk-details">
-  <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.results.section.cannot-afford.title")</span></summary>
-  <div class="govuk-details__text">
-    <p>@Messages("ssttp.calculator.results.section.cannot-afford.p.1") <strong class="bold">@Messages("ssttp.calculator.results.section.cannot-afford.p.2")</strong> @Messages("ssttp.calculator.results.section.cannot-afford.p.3")</p>
-  </div>
-</details>
+    <details class="govuk-details">
+      <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@Messages("ssttp.calculator.results.section.cannot-afford.title")</span></summary>
+      <div class="govuk-details__text">
+        <p>@Messages("ssttp.calculator.results.section.cannot-afford.p.1") <strong class="bold">@Messages("ssttp.calculator.results.section.cannot-afford.p.2")</strong> @Messages("ssttp.calculator.results.section.cannot-afford.p.3")</p>
+      </div>
+    </details>
 
-<div class="clear">
- <div class="form-group">
-    <button id="next" type="submit" class="govuk-button">@Messages("ssttp.calculator.form.continue")</button>
-    <script @{CSPNonce.attr}>
-        document.getElementById("next").addEventListener("click", function() {
-            continue();
-        });
-    </script>
- </div>
-</div>
+    @continue(messages("ssttp.calculator.form.continue"))
 }
 
 </section>

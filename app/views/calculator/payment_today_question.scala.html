@@ -34,7 +34,8 @@
   radios: uk.gov.hmrc.govukfrontend.views.html.components.GovukRadios,
   formWithCsrf: uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF,
   errorSummary: uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary,
-  viewsHelpers: views.ViewsHelpers
+  viewsHelpers: views.ViewsHelpers,
+  continue: views.html.helpers.forms.ssttpContinue
 )
 
 @(
@@ -103,13 +104,6 @@
         )
 
         <br>
-        <div class="govuk-form-group">
-            <button id="next" type="submit" class="govuk-button">@messages("ssttp.calculator.payment_today_question.button-continue")</button>
-            <script @{CSPNonce.attr}>
-                document.getElementById("next").addEventListener("click", function() {
-                    continue();
-                });
-            </script>
-        </div>
+        @continue(messages("ssttp.calculator.payment_today_question.button-continue"))
     }
 }
