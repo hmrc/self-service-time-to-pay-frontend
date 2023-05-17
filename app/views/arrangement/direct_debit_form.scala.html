@@ -61,7 +61,7 @@
     @if(ddForm.hasErrors) {
         @errorSummary(ErrorSummary(
             errorList = ddForm.errors.asHtmlErrorLinks,
-            title = Text(messages("ssttp.affordability.your-monthly-income.error.title"))
+            title = Text(messages("ssttp.arrangement.direct-debit.form.error.summary.title"))
         ))
     }
         <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
@@ -75,12 +75,12 @@
                 '_inputClass -> "govuk-!-width-two-thirds"
             )
 
-        @defining(comboError) { comboSortCodeNumber =>
+        @defining(comboError) { comboSortCodeAccountNumber =>
             <fieldset class="govuk-fieldset long-word-wrap">
                 <legend class="govuk-label govuk-visually-hidden">@messages("ssttp.direct-debit.form.invalid.combo")</legend>
 
-                <div id="combo-invalid" class="form-field @comboSortCodeNumber.map { error => govuk-form-group--error }">
-                    @comboSortCodeNumber.map { error =>
+                <div id="combo-invalid" class="form-field @comboSortCodeAccountNumber.map { error => govuk-form-group--error }">
+                    @comboSortCodeAccountNumber.map { error =>
                         <span class="govuk-error-message" id="combo-invalid">
                             <span class="govuk-visually-hidden">@Messages("ssttp.common.title-prefix")</span>
                             @Html(messages("ssttp.direct-debit.form.invalid.combo"))

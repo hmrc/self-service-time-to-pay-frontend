@@ -18,29 +18,28 @@ package pagespecs
 
 import langswitch.Languages.{English, Welsh}
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
+import ssttpcalculator.CalculatorType.PaymentOptimised
+import model.enumsforforms.{IsSoleSignatory, TypesOfBankAccount}
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.stubs._
 import testsupport.testdata.DirectDebitTd
-import testsupport.testdata.TdAll.saUtr
+import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, saUtr}
 import testsupport.{AccountName, ItSpec, _}
 
 class DirectDebitPageSpec extends ItSpec {
 
-  /*
-  * TODO
-  *  This test works only when you run it from intellij.
-  *  For some reasons it fails when you run it from sbt.
-  *
-  * Reporter completed abruptly with an exception after receiving event: SuiteCompleted(Ordinal(0, 18),DirectDebitPageSpec,pagespecs.DirectDebitPageSpec,Some(pagespecs.DirectDebitPageSpec),Some(24245),Some(MotionToSuppress),Some(TopOfClass(pagespecs.DirectDebitPageSpec)),None,None,pool-1-thread-1,1608054753002).
-  * java.net.SocketException: Broken pipe (Write failed)
-  * ....
-  *
-  * */
-  def beginJourney(): Unit = {
+  override val overrideConfig: Map[String, Any] = Map(
+    "calculatorType" -> PaymentOptimised.value
+  )
+
+  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    DirectDebitStub.postPaymentPlan
+    ArrangementStub.postTtpArrangement
 
     startPage.open()
     startPage.assertInitialPageIsDisplayed()
@@ -57,17 +56,37 @@ class DirectDebitPageSpec extends ItSpec {
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
-    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed()
-    howMuchCanYouPayEachMonthPage.selectAnOption()
+    startAffordabilityPage.assertInitialPageIsDisplayed()
+    startAffordabilityPage.clickContinue()
+
+    addIncomeSpendingPage.assertInitialPageIsDisplayed()
+    addIncomeSpendingPage.clickOnAddChangeIncome()
+
+    yourMonthlyIncomePage.assertInitialPageIsDisplayed
+    yourMonthlyIncomePage.enterMonthlyIncome(remainingIncomeAfterSpending.toString)
+    yourMonthlyIncomePage.clickContinue()
+
+    addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
+    addIncomeSpendingPage.clickOnAddChangeSpending()
+
+    yourMonthlySpendingPage.assertInitialPageIsDisplayed
+    yourMonthlySpendingPage.clickContinue()
+
+    howMuchYouCouldAffordPage.clickContinue()
+    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed
+    howMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
     howMuchCanYouPayEachMonthPage.clickContinue()
 
     checkYourPaymentPlanPage.assertInitialPageIsDisplayed()
     checkYourPaymentPlanPage.clickContinue()
 
-    directDebitPage.assertInitialPageIsDisplayed()
+    aboutBankAccountPage.assertInitialPageIsDisplayed()
+    aboutBankAccountPage.selectTypeOfAccountRadioButton(TypesOfBankAccount.Personal)
+    aboutBankAccountPage.selectIsAccountHolderRadioButton(IsSoleSignatory.Yes)
+    aboutBankAccountPage.clickContinue()
   }
 
-  "language" ignore {
+  "language" in {
     beginJourney()
 
     directDebitPage.clickOnWelshLink()
@@ -77,33 +96,34 @@ class DirectDebitPageSpec extends ItSpec {
     directDebitPage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" ignore {
+  "back button" in {
     beginJourney()
-    directDebitPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttparrangement.routes.ArrangementController.getCheckPaymentPlan()}")
+    directDebitPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount()}")
   }
 
-  "enter invalid Account Name" ignore {
+  "enter invalid Account Name" in {
     beginJourney()
     directDebitPage.fillOutForm("123ede23efr4efr4ew32ef3r4", DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(AccountName())
   }
 
-  "enter invalid Sort Code " ignore {
+  "enter invalid Sort Code " in {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, "fqe23fwef322few23r", DirectDebitTd.accountNumber)
+    BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(SortCode())
   }
 
-  "enter invalid Account Number" ignore {
+  "enter invalid Account Number" in {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, "24wrgedfbgt423twergdfb")
     directDebitPage.clickContinue()
     directDebitPage.assertErrorPageIsDisplayed(AccountNumber())
   }
 
-  "enter invalid bank account " ignore {
+  "enter invalid bank account " in {
     beginJourney()
     directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
     BarsStub.validateBankFail(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
@@ -111,19 +131,15 @@ class DirectDebitPageSpec extends ItSpec {
     directDebitPage.assertErrorPageIsDisplayed(InvalidBankDetails())
   }
 
-  "enter invalid bank account - SortCodeOnDenyList " ignore {
+  "enter invalid Sort Code - SortCodeOnDenyList " in {
     beginJourney()
-    directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
+    directDebitPage.fillOutForm("Mr John Campbell", "201147", "12345678")
     BarsStub.validateBankFailSortCodeOnDenyList(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     directDebitPage.clickContinue()
-    directDebitPage.assertErrorPageIsDisplayed(InvalidBankDetails())
+    directDebitPage.assertErrorPageIsDisplayed(SortCodeOnDenyList())
   }
 
-  val sortCode = "12-34-56"
-  val accountNumber = "12345678"
-  val accountName = "Mr John Campbell"
-
-  "enter valid bank account " ignore {
+  "enter valid bank account " in {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
@@ -132,7 +148,7 @@ class DirectDebitPageSpec extends ItSpec {
     directDebitConfirmationPage.assertInitialPageIsDisplayed()
   }
 
-  "enter valid bank account given business partner not found succeeds" ignore {
+  "enter valid bank account given business partner not found succeeds" in {
     beginJourney()
     directDebitPage.fillOutForm(DirectDebitTd.accountName, DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
     BarsStub.validateBank(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
