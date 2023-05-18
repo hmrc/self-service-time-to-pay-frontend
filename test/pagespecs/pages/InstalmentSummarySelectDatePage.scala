@@ -69,8 +69,7 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
   }
 
   def clickContinue(): Unit = {
-    val button = xpath("//*[@id=\"next\"]")
-    click on button
+    clickOnContinue()
   }
 
   def enterDay(day: String): Unit = {
