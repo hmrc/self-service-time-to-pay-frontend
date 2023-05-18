@@ -42,8 +42,7 @@ class TermsAndConditionsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) ex
   }
 
   def clickContinue(): Unit = {
-    val button = id("continue_button")
-    click on button
+    clickOnContinue()
   }
 
   object Expected {

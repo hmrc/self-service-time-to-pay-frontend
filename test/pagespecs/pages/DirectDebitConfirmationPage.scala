@@ -47,8 +47,7 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
   }
 
   def clickContinue(): Unit = {
-    val button = id("continue_button")
-    click on button
+    clickOnContinue()
   }
 
   object Expected {
