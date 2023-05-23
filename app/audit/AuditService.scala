@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
 import req.RequestSupport._
+import ssttpcalculator.legacy.CalculatorService
 import util.ApplicationLogging
 
 import scala.util.{Failure, Success}
@@ -51,8 +52,8 @@ class AuditService @Inject() (
     sendEvent(event)
   }
 
-  def sendPlanSetUpSuccessEvent(journey: Journey, schedule: PaymentSchedule)(implicit request: Request[_]): Unit = {
-    val event = DataEventFactory.planSetUpEvent(journey, schedule)
+  def sendPlanSetUpSuccessEvent(journey: Journey, schedule: PaymentSchedule, calculatorService: CalculatorService)(implicit request: Request[_]): Unit = {
+    val event = DataEventFactory.planSetUpEvent(journey, schedule, calculatorService)
     sendEvent(event)
   }
 

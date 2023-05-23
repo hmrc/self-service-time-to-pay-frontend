@@ -28,6 +28,7 @@ import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttparrangement.ArrangementSubmissionStatus
 import ssttparrangement.ArrangementSubmissionStatus.{QueuedForRetry, PermanentFailure}
 import ssttpcalculator.PaymentPlansService
+import ssttpcalculator.legacy.CalculatorService
 import testsupport.ItSpec
 import testsupport.testdata.{DirectDebitTd, TdAll, TdRequest}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
@@ -36,7 +37,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, PaymentDayOfMonth, 
 import java.time.ZoneId.systemDefault
 import java.time.{Clock, LocalDateTime}
 
-class DataEventFactorySpec extends ItSpec {
+class DataEventFactorySpec(calculatorService: CalculatorService) extends ItSpec {
   private val td = TdAll
   private val tdRequest = TdRequest
   private val directDebitTd = DirectDebitTd
@@ -182,33 +183,33 @@ class DataEventFactorySpec extends ItSpec {
         maybeArrangementSubmissionStatus = Some(ArrangementSubmissionStatus.Success)
       )
 
-      "50% case (more than 12 months)" in {
-        val journey50PerCent = journeyPlanSetUp.copy(
+      "basic plan (more than 12 months)" in {
+        val journeyBasicPlan = journeyPlanSetUp.copy(
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
         )
 
-        val schedule = paymentPlansService.selectedSchedule(journey50PerCent)(request).get
+        val schedule = paymentPlansService.selectedSchedule(journeyBasicPlan)(request).get
 
-        val computedDataEvent = DataEventFactory.planSetUpEvent(journey50PerCent, schedule)
+        val computedDataEvent = DataEventFactory.planSetUpEvent(journeyBasicPlan, schedule, calculatorService)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
           auditType   = "ManualAffordabilityPlanSetUp",
           eventId     = "event-id",
           tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-          detail      = detailFiftyPercent(ArrangementSubmissionStatus.Success)
+          detail      = detailBasicPlan(ArrangementSubmissionStatus.Success)
         )
         computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
           expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
-      "60% case (more than twelve months)" in {
-        val journey60PerCent = journeyPlanSetUp.copy(
+      "higher plan (more than twelve months)" in {
+        val journeyHigherPlan = journeyPlanSetUp.copy(
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_300Amount)))),
         )
 
-        val schedule = paymentPlansService.selectedSchedule(journey60PerCent)(request).get
+        val schedule = paymentPlansService.selectedSchedule(journeyHigherPlan)(request).get
 
-        val computedDataEvent = DataEventFactory.planSetUpEvent(journey60PerCent, schedule)
+        val computedDataEvent = DataEventFactory.planSetUpEvent(journeyHigherPlan, schedule, calculatorService)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -224,7 +225,7 @@ class DataEventFactorySpec extends ItSpec {
                 "sortCode": "12-34-56"
               },
               "halfDisposableIncome": "250",
-              "selectionType": "sixtyPercent",
+              "selectionType": "higher",
               "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
               "schedule": {
                 "totalPayable": 5016.53,
@@ -331,14 +332,14 @@ class DataEventFactorySpec extends ItSpec {
         computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
           expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
-      "80% case (more than twelve months)" in {
-        val journey80PerCent = journeyPlanSetUp.copy(
+      "additional plan (more than twelve months)" in {
+        val journeyAdditionalPlan = journeyPlanSetUp.copy(
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_400Amount)))),
         )
 
-        val schedule = paymentPlansService.selectedSchedule(journey80PerCent)(request).get
+        val schedule = paymentPlansService.selectedSchedule(journeyAdditionalPlan)(request).get
 
-        val computedDataEvent = DataEventFactory.planSetUpEvent(journey80PerCent, schedule)
+        val computedDataEvent = DataEventFactory.planSetUpEvent(journeyAdditionalPlan, schedule, calculatorService)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -354,7 +355,7 @@ class DataEventFactorySpec extends ItSpec {
                 "sortCode": "12-34-56"
               },
               "halfDisposableIncome": "250",
-              "selectionType": "eightyPercent",
+              "selectionType": "additional",
               "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
               "schedule": {
                 "totalPayable": 4989.39,
@@ -441,16 +442,16 @@ class DataEventFactorySpec extends ItSpec {
         computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
           expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
-      "custom amount (twelve months or less)" in {
+      "payMorePerMonth plan (twelve months or less)" in {
         val customAmount = 500
 
-        val journeyCustomAmount = journeyPlanSetUp.copy(
+        val journeyPayMorePerMonth = journeyPlanSetUp.copy(
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(customAmount)))),
         )
 
-        val schedule = paymentPlansService.selectedSchedule(journeyCustomAmount)(request).get
+        val schedule = paymentPlansService.selectedSchedule(journeyPayMorePerMonth)(request).get
 
-        val computedDataEvent = DataEventFactory.planSetUpEvent(journeyCustomAmount, schedule)
+        val computedDataEvent = DataEventFactory.planSetUpEvent(journeyPayMorePerMonth, schedule, calculatorService)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -466,7 +467,7 @@ class DataEventFactorySpec extends ItSpec {
                 "sortCode": "12-34-56"
               },
               "halfDisposableIncome": "250",
-              "selectionType": "customAmount",
+              "selectionType": "payMorePerMonth",
               "lessThanOrMoreThanTwelveMonths": "twelveMonthsOrLess",
               "schedule": {
                 "totalPayable": 4973.08,
@@ -547,14 +548,14 @@ class DataEventFactorySpec extends ItSpec {
 
           val schedule = paymentPlansService.selectedSchedule(journeyArrangementNotSuccessfulQueued)(request).get
 
-          val computedDataEvent = DataEventFactory.planSetUpEvent(journeyArrangementNotSuccessfulQueued, schedule)
+          val computedDataEvent = DataEventFactory.planSetUpEvent(journeyArrangementNotSuccessfulQueued, schedule, calculatorService)
 
           val expectedDataEvent = ExtendedDataEvent(
             auditSource = "pay-what-you-owe",
             auditType   = "ManualAffordabilityPlanSetUp",
             eventId     = "event-id",
             tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-            detail      = detailFiftyPercent(ArrangementSubmissionStatus.QueuedForRetry)
+            detail      = detailBasicPlan(ArrangementSubmissionStatus.QueuedForRetry)
           )
           computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
             expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
@@ -567,14 +568,14 @@ class DataEventFactorySpec extends ItSpec {
 
           val schedule = paymentPlansService.selectedSchedule(journeyArrangementNotSuccessfulQueued)(request).get
 
-          val computedDataEvent = DataEventFactory.planSetUpEvent(journeyArrangementNotSuccessfulQueued, schedule)
+          val computedDataEvent = DataEventFactory.planSetUpEvent(journeyArrangementNotSuccessfulQueued, schedule, calculatorService)
 
           val expectedDataEvent = ExtendedDataEvent(
             auditSource = "pay-what-you-owe",
             auditType   = "ManualAffordabilityPlanSetUp",
             eventId     = "event-id",
             tags        = splunkEventTags("setup-new-self-assessment-time-to-pay-plan"),
-            detail      = detailFiftyPercent(ArrangementSubmissionStatus.PermanentFailure)
+            detail      = detailBasicPlan(ArrangementSubmissionStatus.PermanentFailure)
           )
           computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
             expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
@@ -584,7 +585,7 @@ class DataEventFactorySpec extends ItSpec {
     }
   }
 
-  def detailFiftyPercent(arrangementSubmissionStatus: ArrangementSubmissionStatus): JsValue = Json.parse(
+  def detailBasicPlan(arrangementSubmissionStatus: ArrangementSubmissionStatus): JsValue = Json.parse(
     s"""
               {
                 "bankDetails": {
@@ -593,7 +594,7 @@ class DataEventFactorySpec extends ItSpec {
                   "sortCode": "12-34-56"
                 },
                 "halfDisposableIncome": "250",
-                "selectionType": "fiftyPercent",
+                "selectionType": "basic",
                 "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
                 "schedule": {
                   "totalPayable": 5038.16,
