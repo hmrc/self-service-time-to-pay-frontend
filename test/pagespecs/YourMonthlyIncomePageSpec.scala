@@ -391,8 +391,16 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       }
     }
   }
-  "inputs not adding up to positive income and press continue stays on page" - {
-    "and displays error message" in {
+  "No income and press continue goes to 'Call us about a payment plan' page" - {
+    "fields left empty" in {
+      beginJourney()
+
+      yourMonthlyIncomePage.assertInitialPageIsDisplayed
+      yourMonthlyIncomePage.clickContinue()
+
+      callUsAboutAPaymentPlanPage.assertPagePathCorrect
+    }
+    "zero inputs" in {
       beginJourney()
 
       yourMonthlyIncomePage.assertInitialPageIsDisplayed
@@ -403,21 +411,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
 
       yourMonthlyIncomePage.clickContinue()
 
-      yourMonthlyIncomePage.assertErrorIsDisplayed
-    }
-    "retains values entered" in {
-      beginJourney()
-
-      yourMonthlyIncomePage.assertInitialPageIsDisplayed
-
-      yourMonthlyIncomePage.enterMonthlyIncome("-0.01")
-      yourMonthlyIncomePage.enterBenefits("-0.01")
-      yourMonthlyIncomePage.enterOtherIncome("0.01")
-      yourMonthlyIncomePage.clickContinue()
-
-      yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("-0.01")
-      yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("-0.01")
-      yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0.01")
+      callUsAboutAPaymentPlanPage.assertPagePathCorrect
     }
   }
 
