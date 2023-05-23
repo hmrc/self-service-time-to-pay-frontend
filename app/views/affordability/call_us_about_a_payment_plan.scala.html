@@ -14,6 +14,9 @@
  * limitations under the License.
  *@
 
+@import partials.extra_support
+
+
 @this(
 main: views.html.main,
 viewsHelpers: views.ViewsHelpers
@@ -28,29 +31,24 @@ appConfig: config.AppConfig
 )
 
 @main(
-title = messages("ssttp.affordability.we-cannot-agree-your-pp.h1"),
-backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getHowMuchYouCouldAfford())
+title = messages("ssttp.affordability.call-us-about-a-payment-plan.h1"),
+backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getYourMonthlyIncome())
 ){
-<h1 class="govuk-heading-xl">@messages("ssttp.affordability.we-cannot-agree-your-pp.h1")</h1>
+<h1 class="govuk-heading-xl">@messages("ssttp.affordability.call-us-about-a-payment-plan.h1")</h1>
 <p class="govuk-body">
- @messages("ssttp.affordability.we-cannot-agree-your-pp.p1")
+ @messages("ssttp.affordability.call-us-about-a-payment-plan.p1")
 </p>
 <p class="govuk-body">
- @messages("ssttp.affordability.we-cannot-agree-your-pp.p2")
- <a href="how-much-you-could-afford">
-  @messages("ssttp.affordability.we-cannot-agree-your-pp.p2-link")
- </a>
+ @messages("ssttp.affordability.call-us-about-a-payment-plan.p2")
+</p>
+<p class="govuk-body">
+ @messages("ssttp.affordability.call-us-about-a-payment-plan.p3")
+</p>
+<p class="govuk-body">
+ @messages("ssttp.affordability.call-us-about-a-payment-plan.p4")
 </p>
 
-<p class="govuk-body">
- @{Html(messages("ssttp.affordability.we-cannot-agree-your-pp.p3"))}
-</p>
-<p class="govuk-body">@messages("ssttp.affordability.we-cannot-agree-your-pp.p4")</p>
-
-<h2 class="govuk-heading-m">@messages("ssttp.affordability.we-cannot-agree-your-pp.h2")</h2>
-<p class="govuk-body">@messages("ssttp.affordability.we-cannot-agree-your-pp.p5") <a href="https://www.gov.uk/get-help-hmrc-extra-support">@messages("ssttp.affordability.we-cannot-agree-your-pp.p5-link")</a></p>
-<p class="govuk-body">@messages("ssttp.affordability.we-cannot-agree-your-pp.p6a") <a href="https://www.relayuk.bt.com/">@messages("ssttp.affordability.we-cannot-agree-your-pp.p6-link")</a> @{Html(messages("ssttp.affordability.we-cannot-agree-your-pp.p6b"))}</p>
-<p class="govuk-body">@{Html(messages("ssttp.affordability.we-cannot-agree-your-pp.p7"))}</p>
+@extra_support()
 
 <p class="govuk-body">
  <a class="govuk-button" href=@{s"${appConfig.backToTaxAccountUrl}"} role="button">

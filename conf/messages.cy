@@ -130,6 +130,13 @@ ssttp.affordability.your-monthly-income.continue = Yn eich blaen
 ssttp.affordability.your-monthly-income.total = Cyfanswm eich incwm
 ssttp.affordability.your-monthly-income.hidden = Incwm
 
+ssttp.affordability.call-us-about-a-payment-plan.h1 = Ffoniwch ni ynghylch cynllun talu
+ssttp.affordability.call-us-about-a-payment-plan.p1 = Rhoesoch wybod i ni nad oes gennych unrhyw incwm. Ni allwch drefnu cynllun talu Hunanasesiad ar-lein os nad oes gennych unrhyw incwm.
+ssttp.affordability.call-us-about-a-payment-plan.p2 = Ffoniwch ni ar 0300 200 1900 oherwydd mae’n bosibl y gallwch drefnu cynllun dros y ffôn.
+ssttp.affordability.call-us-about-a-payment-plan.p3 = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
+ssttp.affordability.call-us-about-a-payment-plan.p4 = Os ydych wedi gwneud camgymeriad, ewch yn ôl i ychwanegu’ch incwm.
+
+
 ssttp.affordability.your-monthly-spending.h1 = Eich gwariant misol
 ssttp.affordability.your-monthly-spending.instruction = Ychwanegwch wybodaeth amdanoch chi’ch hun yn unig. Os ydych yn byw gyda phobl eraill, nodwch eich cyfran chi o’r gwariant. Gallwch adael blwch yn wag os nad yw’n berthnasol i chi.
 ssttp.affordability.your-monthly-spending.form.housing = Tai

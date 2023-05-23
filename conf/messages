@@ -132,6 +132,13 @@ ssttp.affordability.your-monthly-income.continue = Continue
 ssttp.affordability.your-monthly-income.total = Total income
 ssttp.affordability.your-monthly-income.hidden = Income
 
+ssttp.affordability.call-us-about-a-payment-plan.h1 = Call us about a payment plan
+ssttp.affordability.call-us-about-a-payment-plan.p1 = You told us that you have no income. You cannot set up a Self Assessment payment plan online if you do not have any income.
+ssttp.affordability.call-us-about-a-payment-plan.p2 = Call us on 0300 123 1813 as you may be able to set up a plan over the phone.
+ssttp.affordability.call-us-about-a-payment-plan.p3 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
+ssttp.affordability.call-us-about-a-payment-plan.p4 = Go back to add your income if you made a mistake.
+
+
 ssttp.affordability.your-monthly-spending.h1 = Your monthly spending
 ssttp.affordability.your-monthly-spending.instruction = Add information about yourself only. If you live with other people, input your share of the spending. You can leave a box empty if it does not apply to you.
 ssttp.affordability.your-monthly-spending.form.housing = Housing

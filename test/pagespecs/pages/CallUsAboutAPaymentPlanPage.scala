@@ -62,8 +62,6 @@ class CallUsAboutAPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
            |You can also use Relay UK if you cannot hear or speak on the phone: dial 18001 then 0345 300 3900.
            |If you are outside the UK: +44 2890 538 192.
            |Go to tax account
-           |Is this page not working properly? (opens in new tab)
-           |Back
       """.stripMargin
 
       private val mainTextWelsh =
@@ -77,8 +75,6 @@ class CallUsAboutAPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
            |Gallwch hefyd ddefnyddio Relay UK os na allwch glywed na siarad dros y ffôn: deialwch 18001 ac yna 0345 300 3900.
            |Os ydych y tu allan i’r DU: +44 300 200 1900.
            |Ewch i’r cyfrif treth
-           |A yw’r dudalen hon yn gweithio’n iawn? (yn agor tab newydd)
-           |Yn ôl
       """.stripMargin
     }
   }

@@ -1,6 +1,7 @@
 
 package pagespecs
 
+import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
@@ -35,7 +36,21 @@ class CallUsAboutAPaymentPlanPageSpec extends ItSpec {
 
     yourMonthlyIncomePage.clickContinue()
 
-//    callUsAboutAPaymentPlanPage.assertInitialPageIsDisplayed
+  }
+  "language" in {
+    beginJourney()
+
+    callUsAboutAPaymentPlanPage.assertInitialPageIsDisplayed
+
+    callUsAboutAPaymentPlanPage.clickOnWelshLink()
+    callUsAboutAPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
+
+    callUsAboutAPaymentPlanPage.clickOnEnglishLink()
+    callUsAboutAPaymentPlanPage.assertInitialPageIsDisplayed(English)
+  }
+  "back button" in {
+    beginJourney()
+    yourMonthlyIncomePage.backButtonHref shouldBe Some(s"${baseUrl.value}${yourMonthlyIncomePage.path}")
   }
 
 
