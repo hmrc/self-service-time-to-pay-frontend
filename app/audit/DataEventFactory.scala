@@ -24,6 +24,8 @@ import play.api.mvc.Request
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import req.RequestSupport._
 import ssttparrangement.SubmissionError
+import ssttpcalculator.legacy.CalculatorService
+import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 
@@ -81,13 +83,14 @@ object DataEventFactory {
     else "Plan duration would exceed maximum"
   }
 
-  def planSetUpEvent(journey:  Journey,
-                     schedule: PaymentSchedule
+  def planSetUpEvent(journey:           Journey,
+                     schedule:          PaymentSchedule,
+                     calculatorService: CalculatorService
   )(implicit request: Request[_]): ExtendedDataEvent = {
     val detail = Json.obj(
       "bankDetails" -> bankDetails(journey),
       "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
-      "selectionType" -> typeOfPlan(journey),
+      "selectionType" -> typeOfPlan(journey, calculatorService),
       "lessThanOrMoreThanTwelveMonths" -> lessThanOrMoreThanTwelveMonths(schedule),
       "schedule" -> Json.toJson(AuditPaymentSchedule(schedule)),
       "status" -> journey.status,
@@ -104,15 +107,21 @@ object DataEventFactory {
     )
   }
 
-  private def typeOfPlan(journey: Journey): String = {
+  private def typeOfPlan(journey:           Journey,
+                         calculatorService: CalculatorService
+  )(implicit request: Request[_]): String = {
     val maybeSelectedPlanAmount = journey.maybeSelectedPlanAmount
-    val remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
+
+    val sa = journey.taxpayer.selfAssessment
+    val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
+    val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
+    val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
 
     maybeSelectedPlanAmount.fold("None")(amount => {
-      if (amount == remainingIncomeAfterSpending * 0.5) "fiftyPercent"
-      else if (amount == remainingIncomeAfterSpending * 0.6) "sixtyPercent"
-      else if (amount == remainingIncomeAfterSpending * 0.8) "eightyPercent"
-      else "customAmount"
+      if (amount == defaultPlanOptions(Basic).instalmentAmount) "basic"
+      else if (amount == defaultPlanOptions(Higher).instalmentAmount) "higher"
+      else if (amount == defaultPlanOptions(Additional).instalmentAmount) "additional"
+      else "payMorePerMonth"
     })
   }
 

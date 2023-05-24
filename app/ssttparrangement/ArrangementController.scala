@@ -260,7 +260,7 @@ class ArrangementController @Inject() (
             throw new RuntimeException(s"arrangementDirectDebit not found for journey [$journey]"))
 
         val schedule = selectedSchedule(journey)
-        auditService.sendPlanSetUpSuccessEvent(journey, schedule)
+        auditService.sendPlanSetUpSuccessEvent(journey, schedule, calculatorService)
         Ok(views.application_complete(
           debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
           transactionId = journey.taxpayer.selfAssessment.utr + clockProvider.now.toString,
