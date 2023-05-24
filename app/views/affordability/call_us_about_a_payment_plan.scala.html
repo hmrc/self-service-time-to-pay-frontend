@@ -45,7 +45,7 @@ backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getYourMo
  @messages("ssttp.affordability.call-us-about-a-payment-plan.p3")
 </p>
 <p class="govuk-body">
- @messages("ssttp.affordability.call-us-about-a-payment-plan.p4")
+ @{Html(messages("ssttp.affordability.call-us-about-a-payment-plan.p4", ssttpaffordability.routes.AffordabilityController.getYourMonthlyIncome()))}
 </p>
 
 @extra_support()

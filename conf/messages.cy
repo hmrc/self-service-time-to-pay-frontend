@@ -134,7 +134,7 @@ ssttp.affordability.call-us-about-a-payment-plan.h1 = Ffoniwch ni ynghylch cynll
 ssttp.affordability.call-us-about-a-payment-plan.p1 = Rhoesoch wybod i ni nad oes gennych unrhyw incwm. Ni allwch drefnu cynllun talu Hunanasesiad ar-lein os nad oes gennych unrhyw incwm.
 ssttp.affordability.call-us-about-a-payment-plan.p2 = Ffoniwch ni ar 0300 200 1900 oherwydd mae’n bosibl y gallwch drefnu cynllun dros y ffôn.
 ssttp.affordability.call-us-about-a-payment-plan.p3 = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
-ssttp.affordability.call-us-about-a-payment-plan.p4 = Os ydych wedi gwneud camgymeriad, ewch yn ôl i ychwanegu’ch incwm.
+ssttp.affordability.call-us-about-a-payment-plan.p4 = Os ydych wedi gwneud camgymeriad, <a class="govuk-link" id="back-to-income" href={0}>ewch yn ôl i ychwanegu’ch incwm</a>.
 
 
 ssttp.affordability.your-monthly-spending.h1 = Eich gwariant misol
@@ -358,8 +358,8 @@ ssttp.call-us-on = 	Ffoniwch ni ar <strong>0300 200 1900</strong> oherwydd mae�
 
 ssttp.opening-hours = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
 ssttp.extra-support.h2 = Os oes angen cymorth ychwanegol arnoch chi
-ssttp.extra-support.p1 = Dysgwch am y ffyrdd gwahanol o <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEF os oes angen help arnoch chi</a>.
-ssttp.extra-support.p2 = Gallwch hefyd ddefnyddio <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> os na allwch glywed na siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>. Sylwer – dim ond galwadau ffôn Saesneg eu hiaith y mae Relay UK yn gallu ymdrin â nhw.
+ssttp.extra-support.p1 = Dysgwch am y ffyrdd gwahanol o <a class="govuk-link" id="extra-support" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEF os oes angen help arnoch chi</a>.
+ssttp.extra-support.p2 = Gallwch hefyd ddefnyddio <a class="govuk-link" id="relay-uk" href="https://www.relayuk.bt.com/">Relay UK</a> os na allwch glywed na siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>. Sylwer – dim ond galwadau ffôn Saesneg eu hiaith y mae Relay UK yn gallu ymdrin â nhw.
 ssttp.extra-support.p3= Os ydych y tu allan i’r DU: <strong>+44 300 200 1900</strong>.
 
 ssttp.arrangement.type_of_account.title = Ynglŷn â’ch cyfrif banc
