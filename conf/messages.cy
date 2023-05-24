@@ -217,13 +217,6 @@ ssttp.affordability.we-cannot-agree-your-pp.p2 = A ydych wedi nodi’r wybodaeth
 ssttp.affordability.we-cannot-agree-your-pp.p2-link = newid eich incwm a’ch gwariant.
 ssttp.affordability.we-cannot-agree-your-pp.p3 = Mae’n bosibl y byddwch yn gallu sefydlu cynllun talu dros y ffôn. Ffoniwch y Gwasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong> i drafod eich opsiynau.
 ssttp.affordability.we-cannot-agree-your-pp.p4 = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
-ssttp.affordability.we-cannot-agree-your-pp.h2 = Os oes angen cymorth ychwanegol arnoch chi
-ssttp.affordability.we-cannot-agree-your-pp.p5 = Dysgwch am y ffyrdd gwahanol o
-ssttp.affordability.we-cannot-agree-your-pp.p5-link = ddelio â CThEF os oes angen help arnoch chi.
-ssttp.affordability.we-cannot-agree-your-pp.p6a = Gallwch hefyd ddefnyddio
-ssttp.affordability.we-cannot-agree-your-pp.p6-link = Relay UK
-ssttp.affordability.we-cannot-agree-your-pp.p6b = os na allwch glywed na siarad dros y ffôn: deialwch <strong>18001</strong> ac yna <strong>0345 300 3900</strong>.
-ssttp.affordability.we-cannot-agree-your-pp.p7 = Os ydych y tu allan i’r DU: <strong>+44 300 200 1900</strong>.
 ssttp.affordability.we-cannot-agree-your-pp.go-to-tax-account = Ewch i’r cyfrif treth
 
 
