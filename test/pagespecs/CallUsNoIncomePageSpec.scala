@@ -21,7 +21,7 @@ import testsupport.ItSpec
 import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
 
-class CallUsAboutAPaymentPlanPageSpec extends ItSpec {
+class CallUsNoIncomePageSpec extends ItSpec {
   def beginJourney(): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayer()
@@ -54,30 +54,30 @@ class CallUsAboutAPaymentPlanPageSpec extends ItSpec {
   }
   "'Go back to add your income' link returns to 'your monthly income' page" in {
     beginJourney()
-    callUsAboutAPaymentPlanPage.backToIncomeLink shouldBe callUsAboutAPaymentPlanPage.backButtonHref
+    callUsNoIncomePage.backToIncomeLink shouldBe callUsNoIncomePage.backButtonHref
   }
   "'deal with HMRC if you need some help' link goes to 'Get help from HMRC if you need extra support' page" in {
     beginJourney()
-    callUsAboutAPaymentPlanPage.extraSupportLink shouldBe Some("https://www.gov.uk/get-help-hmrc-extra-support")
+    callUsNoIncomePage.extraSupportLink shouldBe Some("https://www.gov.uk/get-help-hmrc-extra-support")
   }
   "'Relay UK' link goes to Relay UK homepage" in {
     beginJourney()
-    callUsAboutAPaymentPlanPage.relayUKLink shouldBe Some("https://www.relayuk.bt.com/")
+    callUsNoIncomePage.relayUKLink shouldBe Some("https://www.relayuk.bt.com/")
   }
   "language" in {
     beginJourney()
 
-    callUsAboutAPaymentPlanPage.assertInitialPageIsDisplayed
+    callUsNoIncomePage.assertInitialPageIsDisplayed
 
-    callUsAboutAPaymentPlanPage.clickOnWelshLink()
-    callUsAboutAPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
+    callUsNoIncomePage.clickOnWelshLink()
+    callUsNoIncomePage.assertInitialPageIsDisplayed(Welsh)
 
-    callUsAboutAPaymentPlanPage.clickOnEnglishLink()
-    callUsAboutAPaymentPlanPage.assertInitialPageIsDisplayed(English)
+    callUsNoIncomePage.clickOnEnglishLink()
+    callUsNoIncomePage.assertInitialPageIsDisplayed(English)
   }
   "back button" in {
     beginJourney()
-    callUsAboutAPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${yourMonthlyIncomePage.path}")
+    callUsNoIncomePage.backButtonHref shouldBe Some(s"${baseUrl.value}${yourMonthlyIncomePage.path}")
   }
 
 }

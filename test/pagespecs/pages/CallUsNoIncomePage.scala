@@ -23,10 +23,10 @@ import org.scalatest.Assertion
 import org.scalatestplus.selenium.WebBrowser
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class CallUsAboutAPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class CallUsNoIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
   import WebBrowser._
 
-  override def path: String = "/pay-what-you-owe-in-instalments/call-us-about-a-payment-plan"
+  override def path: String = "/pay-what-you-owe-in-instalments/call-us-no-income"
 
   def assertPagePathCorrect: Assertion = probing {
     readPath() shouldBe path
@@ -51,6 +51,10 @@ class CallUsAboutAPaymentPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
   def extraSupportLink: Option[String] = href("extra-support")
 
   def relayUKLink: Option[String] = href("relay-uk")
+
+  def clickOnBackButton(): Unit = click on id("back-link")
+
+  def clickOnBackToIncomeLink(): Unit = click on id("back-to-income")
 
   object Expected {
 

@@ -79,7 +79,7 @@ GET         /start-affordability                                          ssttpa
 GET         /add-income-spending                                          ssttpaffordability.AffordabilityController.getAddIncomeAndSpending()
 GET         /monthly-income                                               ssttpaffordability.AffordabilityController.getYourMonthlyIncome()
 POST        /monthly-income                                               ssttpaffordability.AffordabilityController.submitMonthlyIncome()
-GET         /call-us-about-a-payment-plan                                 ssttpaffordability.AffordabilityController.getCallUsAboutAPaymentPlan()
+GET         /call-us-no-income                                            ssttpaffordability.AffordabilityController.getCallUsNoIncome()
 GET         /monthly-spending                                             ssttpaffordability.AffordabilityController.getYourMonthlySpending()
 POST        /monthly-spending                                             ssttpaffordability.AffordabilityController.submitMonthlySpending()
 GET         /how-much-you-could-afford                                    ssttpaffordability.AffordabilityController.getHowMuchYouCouldAfford()

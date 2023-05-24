@@ -107,10 +107,11 @@ class AffordabilityController @Inject() (
         { (input: IncomeInput) =>
           val formValidatedForPositiveTotal = validateIncomeInputTotal(incomeForm.fill(input))
           if (formValidatedForPositiveTotal.hasErrors) {
-            Redirect(ssttpaffordability.routes.AffordabilityController.getCallUsAboutAPaymentPlan())
-
-          } else {
             storeIncomeInputToJourney(input, journey).map { _ =>
+              Redirect(ssttpaffordability.routes.AffordabilityController.getCallUsNoIncome())
+            }
+          } else {
+            storeIncomeInputToJourney(IncomeInput(0, 0, 0), journey).map { _ =>
               Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
             }
           }
@@ -119,9 +120,9 @@ class AffordabilityController @Inject() (
     }
   }
 
-  def getCallUsAboutAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"getCallUsAboutAPaymentPlan: $request")
-    Ok(views.call_us_about_a_payment_plan(isSignedIn, isWelsh))
+  def getCallUsNoIncome: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"getCallUsNoIncome: $request")
+    Ok(views.call_us_no_income(isSignedIn, isWelsh))
   }
 
   private def storeIncomeInputToJourney(

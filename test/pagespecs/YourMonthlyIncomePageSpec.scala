@@ -398,7 +398,7 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       yourMonthlyIncomePage.assertInitialPageIsDisplayed
       yourMonthlyIncomePage.clickContinue()
 
-      callUsAboutAPaymentPlanPage.assertPagePathCorrect
+      callUsNoIncomePage.assertPagePathCorrect
     }
     "zero inputs" in {
       beginJourney()
@@ -411,7 +411,33 @@ class YourMonthlyIncomePageSpec extends ItSpec {
 
       yourMonthlyIncomePage.clickContinue()
 
-      callUsAboutAPaymentPlanPage.assertPagePathCorrect
+      callUsNoIncomePage.assertPagePathCorrect
+    }
+    "writes zero values which display when returning to page" - {
+      "via back button" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
+        yourMonthlyIncomePage.clickContinue()
+
+        callUsNoIncomePage.clickOnBackButton()
+        yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("0")
+        yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0")
+        yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0")
+
+      }
+      "via back hyperlink" in {
+        beginJourney()
+
+        yourMonthlyIncomePage.assertInitialPageIsDisplayed
+        yourMonthlyIncomePage.clickContinue()
+
+        callUsNoIncomePage.clickOnBackToIncomeLink()
+        yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("0")
+        yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0")
+        yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0")
+
+      }
     }
   }
 
