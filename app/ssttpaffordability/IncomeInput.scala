@@ -54,4 +54,6 @@ object IncomeInput {
       incomeInput.otherIncome.toString()
     ))
   }
+
+  def empty: IncomeInput = IncomeInput(0, 0, 0)
 }

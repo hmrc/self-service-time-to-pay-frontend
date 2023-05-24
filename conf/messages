@@ -132,6 +132,13 @@ ssttp.affordability.your-monthly-income.continue = Continue
 ssttp.affordability.your-monthly-income.total = Total income
 ssttp.affordability.your-monthly-income.hidden = Income
 
+ssttp.affordability.call-us-about-a-payment-plan.h1 = Call us about a payment plan
+ssttp.affordability.call-us-about-a-payment-plan.p1 = You told us that you have no income. You cannot set up a Self Assessment payment plan online if you do not have any income.
+ssttp.affordability.call-us-about-a-payment-plan.p2 = Call us on 0300 123 1813 as you may be able to set up a plan over the phone.
+ssttp.affordability.call-us-about-a-payment-plan.p3 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
+ssttp.affordability.call-us-about-a-payment-plan.p4 = <a class="govuk-link" id="back-to-income" href={0}>Go back to add your income</a> if you made a mistake.
+
+
 ssttp.affordability.your-monthly-spending.h1 = Your monthly spending
 ssttp.affordability.your-monthly-spending.instruction = Add information about yourself only. If you live with other people, input your share of the spending. You can leave a box empty if it does not apply to you.
 ssttp.affordability.your-monthly-spending.form.housing = Housing
@@ -211,13 +218,6 @@ ssttp.affordability.we-cannot-agree-your-pp.p2 = Have you entered the informatio
 ssttp.affordability.we-cannot-agree-your-pp.p2-link = change your income and spending.
 ssttp.affordability.we-cannot-agree-your-pp.p3 = You may be able to set up a payment plan over the phone. Call us on <strong>0300 123 1813</strong> to discuss your options.
 ssttp.affordability.we-cannot-agree-your-pp.p4 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
-ssttp.affordability.we-cannot-agree-your-pp.h2 = If you need extra support
-ssttp.affordability.we-cannot-agree-your-pp.p5 = Find out the different ways to
-ssttp.affordability.we-cannot-agree-your-pp.p5-link = deal with HMRC if you need some help.
-ssttp.affordability.we-cannot-agree-your-pp.p6a = You can also use
-ssttp.affordability.we-cannot-agree-your-pp.p6-link = Relay UK
-ssttp.affordability.we-cannot-agree-your-pp.p6b = if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
-ssttp.affordability.we-cannot-agree-your-pp.p7 = If you are outside the UK: <strong>+44 2890 538 192</strong>
 ssttp.affordability.we-cannot-agree-your-pp.go-to-tax-account = Go to tax account
 
 
@@ -373,8 +373,8 @@ ssttp.call-us-on = Call us on <strong>0300 123 1813</strong> as you may be able 
 
 ssttp.opening-hours = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
 ssttp.extra-support.h2 = If you need extra support
-ssttp.extra-support.p1 = Find out the different ways to <a class="govuk-link" href="https://www.gov.uk/get-help-hmrc-extra-support">deal with HMRC if you need some help</a>.
-ssttp.extra-support.p2 = You can also use <a class="govuk-link" href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
+ssttp.extra-support.p1 = Find out the different ways to <a class="govuk-link" id="extra-support" href="https://www.gov.uk/get-help-hmrc-extra-support">deal with HMRC if you need some help</a>.
+ssttp.extra-support.p2 = You can also use <a class="govuk-link" id="relay-uk" href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
 ssttp.extra-support.p3= If you are outside the UK: <strong>+44 2890 538 192</strong>.
 
 ssttp.calculator.form.amount-due.required = Enter the amount you owe the HMRC

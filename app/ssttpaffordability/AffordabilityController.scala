@@ -21,9 +21,9 @@ import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpaffordability.AffordabilityForm.{incomeForm, incomeInputTotalNotPositiveOverride, spendingForm, validateIncomeInputTotal}
+import ssttpaffordability.AffordabilityForm.{incomeForm, spendingForm}
 import ssttpaffordability.model.Expense._
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
@@ -103,24 +103,24 @@ class AffordabilityController @Inject() (
         formWithErrors => {
           Future.successful(BadRequest(views.your_monthly_income(formWithErrors, isSignedIn)))
         },
-
         { (input: IncomeInput) =>
-          val formValidatedForPositiveTotal = validateIncomeInputTotal(incomeForm.fill(input))
-          if (formValidatedForPositiveTotal.hasErrors) {
-            Future.successful(BadRequest(views.your_monthly_income(
-              dataForm              = formValidatedForPositiveTotal,
-              loggedIn              = isSignedIn,
-              errorMessageOverrides = incomeInputTotalNotPositiveOverride.fieldMessageOverrides
-            )))
-
-          } else {
+          if (input.hasPositiveTotal) {
             storeIncomeInputToJourney(input, journey).map { _ =>
               Redirect(ssttpaffordability.routes.AffordabilityController.getAddIncomeAndSpending())
+            }
+          } else {
+            storeIncomeInputToJourney(IncomeInput.empty, journey).map { _ =>
+              Redirect(ssttpaffordability.routes.AffordabilityController.getCallUsNoIncome())
             }
           }
         }
       )
     }
+  }
+
+  def getCallUsNoIncome: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"getCallUsNoIncome: $request")
+    Ok(views.call_us_no_income(isSignedIn, isWelsh))
   }
 
   private def storeIncomeInputToJourney(

@@ -55,42 +55,26 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
     addIncomeSpendingPage.assertInitialPageIsDisplayed()
   }
 
-  "when income is higher than spending" - {
-    "language" in {
-      beginJourney()
+  "displays 'how much can you pay each month' page when income is higher than spending" in {
+    beginJourney()
 
-      addIncomeSpendingPage.assertInitialPageIsDisplayed
+    addIncomeSpendingPage.assertInitialPageIsDisplayed
 
-      addIncomeSpendingPage.clickOnWelshLink()
-      addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
-      addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
+    addIncomeSpendingPage.enterIncome("2000")
+    addIncomeSpendingPage.enterSpending("1000")
 
-      addIncomeSpendingPage.clickOnEnglishLink()
-      addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
+    howMuchYouCouldAffordPage.assertInitialPageIsDisplayed()
 
-      addIncomeSpendingPage.enterIncome("2000")
-      addIncomeSpendingPage.enterSpending("1000")
+    howMuchYouCouldAffordPage.clickContinue()
 
-      howMuchYouCouldAffordPage.assertInitialPageIsDisplayed()
-
-      howMuchYouCouldAffordPage.clickContinue()
-
-      howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed()
-    }
+    howMuchCanYouPayEachMonthPage.assertInitialPageIsDisplayed()
   }
 
-  "when income is equal to spending" - {
-    "language" in {
+  "displays kick-out page when income is equal to spending" - {
+    "with working language toggle" in {
       beginJourney()
 
       addIncomeSpendingPage.assertInitialPageIsDisplayed
-
-      addIncomeSpendingPage.clickOnWelshLink()
-      addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
-      addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
-
-      addIncomeSpendingPage.clickOnEnglishLink()
-      addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("2000")
       addIncomeSpendingPage.enterSpending("2000")
@@ -98,21 +82,16 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
       howMuchYouCouldAffordPage.clickContinue()
 
       weCannotAgreeYourPaymentPlanPage.assertInitialPageIsDisplayed()
+      weCannotAgreeYourPaymentPlanPage.clickOnWelshLink()
+      weCannotAgreeYourPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
     }
   }
 
-  "when income is lower than spending" - {
-    "language" in {
+  "displays kick-out page when income is lower than spending" - {
+    "with working language toggle" in {
       beginJourney()
 
       addIncomeSpendingPage.assertInitialPageIsDisplayed
-
-      addIncomeSpendingPage.clickOnWelshLink()
-      addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
-      addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
-
-      addIncomeSpendingPage.clickOnEnglishLink()
-      addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
 
       addIncomeSpendingPage.enterIncome("10")
       addIncomeSpendingPage.enterSpending("2")
@@ -120,11 +99,13 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
       howMuchYouCouldAffordPage.clickContinue()
 
       weCannotAgreeYourPaymentPlanPage.assertInitialPageIsDisplayed()
+      weCannotAgreeYourPaymentPlanPage.clickOnWelshLink()
+      weCannotAgreeYourPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
     }
   }
 
-  "when the payment plan is longer than 24 months" - {
-    "language" in {
+  "displays kick-out page when the payment plan is longer than 24 months" - {
+    "with working language toggle" in {
       beginJourney()
 
       addIncomeSpendingPage.assertInitialPageIsDisplayed
@@ -141,6 +122,7 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
 
       howMuchYouCouldAffordPage.clickContinue()
 
+      weCannotAgreeYourPaymentPlanPage.assertInitialPageIsDisplayed
       weCannotAgreeYourPaymentPlanPage.clickOnWelshLink()
       weCannotAgreeYourPaymentPlanPage.assertInitialPageIsDisplayed(Welsh)
     }

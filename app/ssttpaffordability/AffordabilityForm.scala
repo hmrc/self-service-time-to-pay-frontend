@@ -35,13 +35,6 @@ object AffordabilityForm {
     )(IncomeInput.apply)(IncomeInput.unapply)
   )
 
-  def validateIncomeInputTotal(form: Form[IncomeInput]): Form[IncomeInput] = {
-    if (!form.get.hasPositiveTotal) {
-      val formErrorsWithTotalError = form.errors :+ incomeInputTotalNotPositiveSeed
-      form.copy(errors = formErrorsWithTotalError)
-    } else form
-  }
-
   private val incomeInputTotalNotPositiveSeed: FormError = FormError(
     key      = "monthlyIncome",
     messages = Seq("ssttp.affordability.your-monthly-income.error.required")

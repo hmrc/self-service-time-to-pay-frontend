@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import partials.extra_support
+
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers
@@ -37,7 +39,7 @@
             </p>
             <p class="govuk-body">
                 @messages("ssttp.affordability.we-cannot-agree-your-pp.p2")
-                <a href="how-much-you-could-afford">
+                <a class="govuk-link" href="how-much-you-could-afford">
                     @messages("ssttp.affordability.we-cannot-agree-your-pp.p2-link")
                 </a>
             </p>
@@ -47,12 +49,9 @@
             </p>
             <p class="govuk-body">@messages("ssttp.affordability.we-cannot-agree-your-pp.p4")</p>
 
-            <h2 class="govuk-heading-m">@messages("ssttp.affordability.we-cannot-agree-your-pp.h2")</h2>
-                <p class="govuk-body">@messages("ssttp.affordability.we-cannot-agree-your-pp.p5") <a href="https://www.gov.uk/get-help-hmrc-extra-support">@messages("ssttp.affordability.we-cannot-agree-your-pp.p5-link")</a></p>
-                <p class="govuk-body">@messages("ssttp.affordability.we-cannot-agree-your-pp.p6a") <a href="https://www.relayuk.bt.com/">@messages("ssttp.affordability.we-cannot-agree-your-pp.p6-link")</a> @{Html(messages("ssttp.affordability.we-cannot-agree-your-pp.p6b"))}</p>
-                <p class="govuk-body">@{Html(messages("ssttp.affordability.we-cannot-agree-your-pp.p7"))}</p>
+            @extra_support()
 
-        <p class="govuk-body">
+<p class="govuk-body">
             <a class="govuk-button" href=@{s"${appConfig.backToTaxAccountUrl}"} role="button">
                 @messages("ssttp.affordability.we-cannot-agree-your-pp.go-to-tax-account")
             </a>
