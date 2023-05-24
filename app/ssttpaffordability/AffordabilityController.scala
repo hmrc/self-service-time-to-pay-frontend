@@ -21,9 +21,9 @@ import config.AppConfig
 import controllers.FrontendBaseController
 import controllers.action.{Actions, AuthorisedSaUserRequest}
 import journey.{Journey, JourneyService}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import req.RequestSupport
-import ssttpaffordability.AffordabilityForm.{incomeForm, incomeInputTotalNotPositiveOverride, spendingForm}
+import ssttpaffordability.AffordabilityForm.{incomeForm, spendingForm}
 import ssttpaffordability.model.Expense._
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
