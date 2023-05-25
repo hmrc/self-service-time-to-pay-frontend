@@ -534,7 +534,6 @@ ssttp.direct-debit.final-payment = (final payment)
 ssttp.arrangement.direct-debit.form.error.summary.title = There is a problem
 ssttp.arrangement.direct-debit.confirmation.title = Check your Direct Debit details
 ssttp.arrangement.direct-debit.confirmation.total-payment = Total payment will be:
-ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary = You are covered by the Direct Debit Guarantee
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.title = Instruction to your Bank or Building Society to pay by Direct Debit
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.1 = HM Revenue and Customs (HMRC)
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.2 = Direct Debit Section

@@ -45,22 +45,16 @@
 
     @direct_debit_details(directDebit)
 
-    <section class="margin-top-30">
-        <details class="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">@Messages("ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary")</span>
-            </summary>
-            <div>
-                <p style="text-align: right;">
+            <div class="govuk-body__text govuk-!-margin-top-9">
+                <div style="text-align: right;">
                     <img src="@routes.Assets.versioned("./images/dd-logo.jpg")" alt="Direct Debit logo" width="100" height="120">
-                </p>
+                </div>
                 <h2 class="govuk-heading-m">@Messages("ssttp.direct-debit.guarantee.title")</h2>
                     <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.1")</p>
                     <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.2")</p>
                     <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.3")</p>
                     <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.4")</p>
             </div>
-        </details>
 
         @viewsHelpers.form(ssttparrangement.routes.ArrangementController.getTermsAndConditions(), 'method -> "GET", 'class -> "group") {
             @submit('id -> "continue") {
@@ -68,5 +62,4 @@
             }
         }
 
-    </section>
 }
