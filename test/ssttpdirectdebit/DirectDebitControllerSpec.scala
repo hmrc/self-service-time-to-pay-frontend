@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package ssttpdirectdebit
 
@@ -33,26 +48,25 @@ class DirectDebitControllerSpec extends ItSpec {
   val requestTimeOut = 5
   implicit val timeout: Timeout = Timeout(requestTimeOut.seconds)
 
-
   "DirectDebitController.submitDirectDebit" - {
     "when receiving valid form data" - {
       "when receiving valid bank details response from Bars" - {
         "when account DOES NOT support direct debit " +
           "remains on 'Set Up Direct Debit' page" in {
-          eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
-            val res = testSubmitDirectDebit(BarsStub.validateBankDDNotSupported)
+            eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
+              val res = testSubmitDirectDebit(BarsStub.validateBankDDNotSupported)
               status(res) shouldBe Status.BAD_REQUEST
+            }
           }
-        }
         "when account DOES support direct debit " +
           "displays 'Check your Direct Debit details' page" in {
-          eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
-            val res = testSubmitDirectDebit(BarsStub.validateBank)
-            status(res) shouldBe Status.SEE_OTHER
-            redirectLocation(res) shouldBe Some("/pay-what-you-owe-in-instalments/arrangement/direct-debit-confirmation")
-          }
+            eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
+              val res = testSubmitDirectDebit(BarsStub.validateBank)
+              status(res) shouldBe Status.SEE_OTHER
+              redirectLocation(res) shouldBe Some("/pay-what-you-owe-in-instalments/arrangement/direct-debit-confirmation")
+            }
 
-        }
+          }
       }
     }
   }
@@ -89,19 +103,19 @@ class DirectDebitControllerSpec extends ItSpec {
 
   private def createJourney(journeyId: JourneyId): Journey = {
     Journey(
-      _id = journeyId,
-      status = InProgress,
-      createdOn = LocalDateTime.now(),
+      _id                       = journeyId,
+      status                    = InProgress,
+      createdOn                 = LocalDateTime.now(),
       maybeTypeOfAccountDetails = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
-      maybeBankDetails = None,
-      existingDDBanks = None,
-      maybeTaxpayer = Some(TdAll.taxpayer),
-      maybePaymentToday = Some(PaymentToday(false)),
-      maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
-      maybeSpending = Some(Spending(Expenses(HousingExp, 1000))),
-      maybePlanSelection = Some(PlanSelection(SelectedPlan(490))),
-      maybePaymentDayOfMonth = Some(PaymentDayOfMonth(28)),
-      maybeEligibilityStatus = Some(EligibilityStatus(Seq.empty))
+      maybeBankDetails          = None,
+      existingDDBanks           = None,
+      maybeTaxpayer             = Some(TdAll.taxpayer),
+      maybePaymentToday         = Some(PaymentToday(false)),
+      maybeIncome               = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
+      maybeSpending             = Some(Spending(Expenses(HousingExp, 1000))),
+      maybePlanSelection        = Some(PlanSelection(SelectedPlan(490))),
+      maybePaymentDayOfMonth    = Some(PaymentDayOfMonth(28)),
+      maybeEligibilityStatus    = Some(EligibilityStatus(Seq.empty))
     )
   }
 

@@ -62,7 +62,7 @@ object DirectDebitForm {
     messages = Seq("ssttp.direct-debit.form.invalid.combo")
   )
 
-  private val sortCodeAndAccountNumberOverrides: Seq[FormError] = Seq(
+  val sortCodeAndAccountNumberOverrides: Seq[FormError] = Seq(
     FormError("sortCode", ""),
     FormError("accountNumber", ""),
     FormError("sortCode", "ssttp.direct-debit.form.invalid.combo")
@@ -73,7 +73,23 @@ object DirectDebitForm {
       fieldMessageOverrides = sortCodeAndAccountNumberOverrides
     )
 
+  private val sortCodeDesNotSupportDirectDebit: FormError = FormError(
+    key      = "sortCode",
+    messages = Seq("ssttp.direct-debit.form.direct-debit-not-supported")
+  )
+
+  val sortCodeOverrides: Seq[FormError] = Seq(
+    FormError("sortCode", "ssttp.direct-debit.form.direct-debit-not-supported")
+  )
+
+  val sortCodeDoesNotSupportDirectDebitsOverride: FormErrorWithFieldMessageOverrides =
+    FormErrorWithFieldMessageOverrides(
+      formError             = sortCodeDesNotSupportDirectDebit,
+      fieldMessageOverrides = sortCodeOverrides
+    )
+
   val directDebitForm = Form(directDebitMapping)
   val directDebitFormWithBankAccountError = directDebitForm.copy(errors = sortCodeAndAccountNumberOverrides)
+  val directDebitFormWithSortCodeError: Form[ArrangementDirectDebit] = directDebitForm.copy(errors = sortCodeOverrides)
 
 }

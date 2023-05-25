@@ -39,6 +39,9 @@ final case class ValidateBankDetailsResponse(
       sortCodeIsPresentOnEISCD == Yes &&
       sortCodeSupportsDirectDebit.contains(Yes)
 
+  def supportsDirectDebit: Boolean =
+    sortCodeSupportsDirectDebit.contains(Yes)
+
 }
 
 object ValidateBankDetailsResponse {

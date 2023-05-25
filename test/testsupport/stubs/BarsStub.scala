@@ -122,7 +122,7 @@ object BarsStub extends Matchers with Status {
       """.stripMargin
 
   val validResponseDDNotSupported: String =
-  // language=JSON
+    // language=JSON
     """
       {
         "accountNumberIsWellFormatted": "Yes",

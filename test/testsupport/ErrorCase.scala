@@ -23,3 +23,4 @@ final case class SortCode() extends ErrorCase
 final case class AccountNumber() extends ErrorCase
 final case class InvalidBankDetails() extends ErrorCase
 final case class SortCodeOnDenyList() extends ErrorCase
+final case class DirectDebitNotSupported() extends ErrorCase
