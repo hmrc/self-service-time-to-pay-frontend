@@ -486,7 +486,6 @@ ssttp.monthly.amount.pound.sign.description=Faint y gallwch ei dalu ymlaen llaw 
 ssttp.arrangement.direct-debit.form.error.summary.title = Mae problem wedi codi
 ssttp.arrangement.direct-debit.confirmation.title = Gwiriwch fanylion eich Debyd Uniongyrchol
 ssttp.arrangement.direct-debit.confirmation.total-payment = Cyfanswm y taliad fydd:
-ssttp.arrangement.direct-debit.confirmation.bank-instruction.summary = Rydych wedi’ch gwarchod gan y Warant Debyd Uniongyrchol
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.title = Cyfarwyddyd i’ch banc neu gymdeithas adeiladu i dalu drwy Ddebyd Uniongyrchol
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.1 = Cyllid a Thollau EM (CThEF) / HM Revenue & Customs (HMRC)
 ssttp.arrangement.direct-debit.confirmation.bank-instruction.address.2 = Adran Debydau Uniongyrchol / Direct Debit Section

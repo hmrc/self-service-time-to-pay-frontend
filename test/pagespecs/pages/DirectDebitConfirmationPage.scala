@@ -79,7 +79,6 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |12 - 34 - 56
           |Account number
           |12345678
-          |You are covered by the Direct Debit Guarantee
           |The Direct Debit Guarantee
           |This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.
           |If there are any changes to the amount, date or frequency of your Direct Debit HMRC NDDS will notify you 10 working days in advance of your account being debited or as otherwise agreed. If you request HMRC NDDS to collect a payment, confirmation of the amount and date will be given to you at the time of the request.
@@ -96,7 +95,6 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
           |12 - 34 - 56
           |Rhif y cyfrif
           |12345678
-          |Rydych wedi’ch gwarchod gan y Warant Debyd Uniongyrchol
           |Y Warant Debyd Uniongyrchol
           |Cynigir y Warant hon gan bob banc a chymdeithas adeiladu sy’n derbyn cyfarwyddiadau i dalu Debydau Uniongyrchol.
           |Os oes unrhyw newidiadau i swm, dyddiad neu amlder eich Debyd Uniongyrchol, bydd NDDS CThEF yn rhoi gwybod i chi 10 diwrnod gwaith cyn i’ch cyfrif gael ei ddebydu, neu fel y cytunwyd fel arall. Os byddwch yn gwneud cais i NDDS CThEF gasglu taliad, rhoddir cadarnhad o’r swm a’r dyddiad i chi ar adeg y cais.
