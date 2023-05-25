@@ -41,6 +41,7 @@ class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: Executio
         case barsResponse @ BarsResponseOk(validateBankDetailsResponse) =>
           logger.debug(s"BARs response: $barsResponse")
           val obfuscatedBarsResponse = barsResponse.copy(validateBankDetailsResponse.obfuscate)
+          logger.info(s"BARS SERVICE DEBUG: ${validateBankDetailsResponse.isValid}")
           if (validateBankDetailsResponse.isValid) ValidBankDetails(obfuscatedBarsResponse) else InvalidBankDetails(obfuscatedBarsResponse)
         case barsResponse: BarsResponseSortCodeOnDenyList =>
           logger.debug(s"BARs response: $barsResponse")

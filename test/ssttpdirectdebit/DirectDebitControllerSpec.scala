@@ -41,8 +41,7 @@ class DirectDebitControllerSpec extends ItSpec {
           "remains on 'Set Up Direct Debit' page" in {
           eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
             val res = testSubmitDirectDebit(BarsStub.validateBankDDNotSupported)
-              status(res) shouldBe Status.SEE_OTHER
-              redirectLocation(res) shouldBe Some("/pay-what-you-owe-in-instalments/arrangement/direct-debit")
+              status(res) shouldBe Status.BAD_REQUEST
           }
         }
         "when account DOES support direct debit " +
