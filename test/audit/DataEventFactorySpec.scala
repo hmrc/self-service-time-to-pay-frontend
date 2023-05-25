@@ -16,6 +16,8 @@
 
 package audit
 
+import config.AppConfig
+
 import java.time.ZoneOffset.UTC
 import journey.Journey
 import journey.Statuses.ApplicationComplete
@@ -26,7 +28,7 @@ import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttparrangement.ArrangementSubmissionStatus
-import ssttparrangement.ArrangementSubmissionStatus.{QueuedForRetry, PermanentFailure}
+import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry}
 import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.legacy.CalculatorService
 import testsupport.ItSpec
@@ -37,7 +39,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, PaymentDayOfMonth, 
 import java.time.ZoneId.systemDefault
 import java.time.{Clock, LocalDateTime}
 
-class DataEventFactorySpec(calculatorService: CalculatorService) extends ItSpec {
+class DataEventFactorySpec(calculatorService: CalculatorService)(implicit appConfig: AppConfig) extends ItSpec {
   private val td = TdAll
   private val tdRequest = TdRequest
   private val directDebitTd = DirectDebitTd
@@ -442,16 +444,16 @@ class DataEventFactorySpec(calculatorService: CalculatorService) extends ItSpec 
         computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
           expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
-      "payMorePerMonth plan (twelve months or less)" in {
+      "customAmount plan (twelve months or less)" in {
         val customAmount = 500
 
-        val journeyPayMorePerMonth = journeyPlanSetUp.copy(
+        val journeyCustomAmount = journeyPlanSetUp.copy(
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(customAmount)))),
         )
 
-        val schedule = paymentPlansService.selectedSchedule(journeyPayMorePerMonth)(request).get
+        val schedule = paymentPlansService.selectedSchedule(journeyCustomAmount)(request).get
 
-        val computedDataEvent = DataEventFactory.planSetUpEvent(journeyPayMorePerMonth, schedule, calculatorService)
+        val computedDataEvent = DataEventFactory.planSetUpEvent(journeyCustomAmount, schedule, calculatorService)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -467,7 +469,7 @@ class DataEventFactorySpec(calculatorService: CalculatorService) extends ItSpec 
                 "sortCode": "12-34-56"
               },
               "halfDisposableIncome": "250",
-              "selectionType": "payMorePerMonth",
+              "selectionType": "customAmount",
               "lessThanOrMoreThanTwelveMonths": "twelveMonthsOrLess",
               "schedule": {
                 "totalPayable": 4973.08,
