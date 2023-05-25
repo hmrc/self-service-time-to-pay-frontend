@@ -42,6 +42,25 @@ object BarsStub extends Matchers with Status {
         )
     )
 
+  def validateBankDDNotSupported(sortCode: String, accountNumber: String): StubMapping =
+    stubFor(
+      post(urlPathEqualTo(s"/validate/bank-details"))
+        .withRequestBody(equalToJson(
+          s"""
+            {
+            "account" : {
+              "sortCode" : "${sortCode.replace("-", "")}",
+              "accountNumber" : "$accountNumber"
+              }
+            }
+            """))
+        .willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(validResponseDDNotSupported)
+        )
+    )
+
   def validateBankFail(sortCode: String, accountNumber: String): StubMapping =
     stubFor(
       post(urlPathEqualTo(s"/validate/bank-details"))
@@ -96,6 +115,20 @@ object BarsStub extends Matchers with Status {
         "nonStandardAccountDetailsRequiredForBacs": "No",
         "sortCodeIsPresentOnEISCD":"Yes",
         "sortCodeSupportsDirectDebit": "Yes",
+        "sortCodeSupportsDirectCredit": "Yes",
+        "iban": "GB59 HBUK 1234 5678",
+        "sortCodeBankName": "Lloyds"
+      }
+      """.stripMargin
+
+  val validResponseDDNotSupported: String =
+  // language=JSON
+    """
+      {
+        "accountNumberIsWellFormatted": "Yes",
+        "nonStandardAccountDetailsRequiredForBacs": "No",
+        "sortCodeIsPresentOnEISCD":"Yes",
+        "sortCodeSupportsDirectDebit": "No",
         "sortCodeSupportsDirectCredit": "Yes",
         "iban": "GB59 HBUK 1234 5678",
         "sortCodeBankName": "Lloyds"
