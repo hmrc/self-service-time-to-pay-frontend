@@ -238,6 +238,6 @@ class DirectDebitController @Inject() (
         "accountNumber" -> validFormData.accountNumber,
         "sortCode" -> validFormData.sortCode)
       ),
-      errorMessageOverrides = errorMessageOverrides.,
+      errorMessageOverrides = errorMessageOverrides,
       isBankError           = true)))
 }
