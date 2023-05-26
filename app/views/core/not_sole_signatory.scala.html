@@ -14,10 +14,13 @@
  * limitations under the License.
  *@
 
+@import views.html.partials.extra_support
+
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers,
 )
+
 
 @(
     isWelsh: Boolean,
@@ -31,17 +34,17 @@
     title = messages("ssttp.not-sole-signatory.title"),
     backButtonUrl = Some(ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount())
 ){
-        <h1 class="govuk-heading-xl">@messages("ssttp.not-sole-signatory.title")</h1>
+    <h1 class="govuk-heading-xl">@messages("ssttp.not-sole-signatory.title")</h1>
 
-        <p class="govuk-body">@messages("ssttp.not-sole-signatory.p1")
-        </p>
-        <p class="govuk-body">@{Html(messages("ssttp.not-sole-signatory.p2"))}
-        </p>
+    <p class="govuk-body">@messages("ssttp.not-sole-signatory.p1")</p>
+    <p class="govuk-body">@{Html(messages("ssttp.not-sole-signatory.p2"))}</p>
+    <p class="govuk-body">@messages("ssttp.opening-hours")</p>
 
-        <br>
-        <p class="govuk-body">
-            <a class="govuk-button" href=@{s"${appConfig.backToTaxAccountUrl}"} role="button">
-                @messages("ssttp.not-sole-signatory.go-to-account")
-            </a>
-        </p>
+    @extra_support()
+    
+    <p class="govuk-body govuk-!-margin-top-9">
+        <a class="govuk-button" href=@{s"${appConfig.backToTaxAccountUrl}"} role="button">
+            @messages("ssttp.not-sole-signatory.go-to-account")
+        </a>
+    </p>
 }
