@@ -57,40 +57,23 @@ object DirectDebitForm {
     number.replaceAll("[^0-9]", "").length == length
   }
 
-  private val invalidSortCodeAndAccountNumberCombo: FormError = FormError(
-    key      = "sortCode",
-    messages = Seq("ssttp.direct-debit.form.invalid.combo")
-  )
-
-  val sortCodeAndAccountNumberOverrides: Seq[FormError] = Seq(
+  val sortCodeAndAccountNumComboOverrides: Seq[FormError] = Seq(
     FormError("sortCode", ""),
     FormError("accountNumber", ""),
     FormError("sortCode", "ssttp.direct-debit.form.invalid.combo"),
     FormError("combo", "")
   )
-  val invalidSortCodeAndAccountNumberComboOverride: FormErrorWithFieldMessageOverrides =
-    FormErrorWithFieldMessageOverrides(
-      formError             = invalidSortCodeAndAccountNumberCombo,
-      fieldMessageOverrides = sortCodeAndAccountNumberOverrides
-    )
 
-  private val sortCodeDesNotSupportDirectDebit: FormError = FormError(
-    key      = "sortCode",
-    messages = Seq("ssttp.direct-debit.form.direct-debit-not-supported")
-  )
-
-  val sortCodeOverrides: Seq[FormError] = Seq(
+  val sortCodeOnlyOverrides: Seq[FormError] = Seq(
     FormError("sortCode", "ssttp.direct-debit.form.direct-debit-not-supported")
   )
 
-  val sortCodeDoesNotSupportDirectDebitsOverride: FormErrorWithFieldMessageOverrides =
-    FormErrorWithFieldMessageOverrides(
-      formError             = sortCodeDesNotSupportDirectDebit,
-      fieldMessageOverrides = sortCodeOverrides
-    )
+  val directDebitForm: Form[ArrangementDirectDebit] = Form(directDebitMapping)
 
-  val directDebitForm = Form(directDebitMapping)
-  val directDebitFormWithBankAccountError = directDebitForm.copy(errors = sortCodeAndAccountNumberOverrides)
-  val directDebitFormWithSortCodeError: Form[ArrangementDirectDebit] = directDebitForm.copy(errors = sortCodeOverrides)
+  val directDebitFormWithAccountComboError: Form[ArrangementDirectDebit] = directDebitForm
+    .copy(errors = sortCodeAndAccountNumComboOverrides)
+
+  val directDebitFormWithSortCodeError: Form[ArrangementDirectDebit] = directDebitForm
+    .copy(errors = sortCodeOnlyOverrides)
 
 }

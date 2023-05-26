@@ -192,7 +192,7 @@ class DirectDebitController @Inject() (
                 JourneyLogger.info(s"Bank details are invalid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
                 obfuscatedBarsResponse match {
                   case BarsResponseOk(validateBankDetailsResponse) if !validateBankDetailsResponse.supportsDirectDebit =>
-                    futureSuccessfulBadRequest(validFormData, directDebitFormWithSortCodeError, sortCodeOverrides)
+                    futureSuccessfulBadRequest(validFormData, directDebitFormWithSortCodeError)
                   //                    Future.successful(BadRequest(views.direct_debit_form(
                   //                      journey.taxpayer.selfAssessment.debits,
                   //                      schedule,
@@ -204,7 +204,7 @@ class DirectDebitController @Inject() (
                   //                      errorMessageOverrides = sortCodeDoesNotSupportDirectDebitsOverride.fieldMessageOverrides,
                   //                      isBankError = true)))
                   case _ =>
-                    futureSuccessfulBadRequest(validFormData, directDebitFormWithBankAccountError, sortCodeAndAccountNumberOverrides)
+                    futureSuccessfulBadRequest(validFormData, directDebitFormWithAccountComboError)
                   //                    Future.successful(BadRequest(views.direct_debit_form(
                   //                      journey.taxpayer.selfAssessment.debits,
                   //                      schedule,
@@ -223,9 +223,8 @@ class DirectDebitController @Inject() (
   }
 
   private def futureSuccessfulBadRequest(
-      validFormData:         ArrangementDirectDebit,
-      formWithError:         Form[ArrangementDirectDebit],
-      errorMessageOverrides: Seq[FormError]
+      validFormData: ArrangementDirectDebit,
+      formWithError: Form[ArrangementDirectDebit]
   )(implicit journey: Journey,
     schedule: PaymentSchedule,
     request:  Request[_]
@@ -238,6 +237,5 @@ class DirectDebitController @Inject() (
         "accountNumber" -> validFormData.accountNumber,
         "sortCode" -> validFormData.sortCode)
       ),
-      errorMessageOverrides = errorMessageOverrides,
-      isBankError           = true)))
+      isBankError = true)))
 }
