@@ -42,13 +42,8 @@
         appConfig: config.AppConfig
 )
 
-@optComboError = @{
-    ddForm.error("combo-invalid")
-}
-
 @comboError= @{
-    ddForm.errors.find(_.key == "combo")
-            .orElse(optComboError)
+    ddForm.errors.find(_.key == "combo-error")
 }
 
 @main(

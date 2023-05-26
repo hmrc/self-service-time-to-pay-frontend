@@ -193,28 +193,8 @@ class DirectDebitController @Inject() (
                 obfuscatedBarsResponse match {
                   case BarsResponseOk(validateBankDetailsResponse) if !validateBankDetailsResponse.supportsDirectDebit =>
                     futureSuccessfulBadRequest(validFormData, directDebitFormWithSortCodeError)
-                  //                    Future.successful(BadRequest(views.direct_debit_form(
-                  //                      journey.taxpayer.selfAssessment.debits,
-                  //                      schedule,
-                  //                      directDebitFormWithSortCodeError.copy(data = Map(
-                  //                        "accountName" -> validFormData.accountName,
-                  //                        "accountNumber" -> validFormData.accountNumber,
-                  //                        "sortCode" -> validFormData.sortCode)
-                  //                      ),
-                  //                      errorMessageOverrides = sortCodeDoesNotSupportDirectDebitsOverride.fieldMessageOverrides,
-                  //                      isBankError = true)))
                   case _ =>
                     futureSuccessfulBadRequest(validFormData, directDebitFormWithAccountComboError)
-                  //                    Future.successful(BadRequest(views.direct_debit_form(
-                  //                      journey.taxpayer.selfAssessment.debits,
-                  //                      schedule,
-                  //                      directDebitFormWithBankAccountError.copy(data = Map(
-                  //                        "accountName" -> validFormData.accountName,
-                  //                        "accountNumber" -> validFormData.accountNumber,
-                  //                        "sortCode" -> validFormData.sortCode)
-                  //                      ),
-                  //                      errorMessageOverrides = invalidSortCodeAndAccountNumberComboOverride.fieldMessageOverrides,
-                  //                      isBankError = true)))
                 }
             }
           }
