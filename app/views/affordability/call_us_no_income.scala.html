@@ -34,12 +34,12 @@
  title = messages("ssttp.affordability.call-us-about-a-payment-plan.h1"),
  backButtonUrl = Some(ssttpaffordability.routes.AffordabilityController.getYourMonthlyIncome())
 ){
- <h1 class="govuk-heading-xl">@messages("ssttp.affordability.call-us-about-a-payment-plan.h1")</h1>
+ <h1 class="govuk-heading-xl">@messages("ssttp.affordability.call-us-no-income.h1")</h1>
 
- <p class="govuk-body">@messages("ssttp.affordability.call-us-about-a-payment-plan.p1")</p>
- <p class="govuk-body">@messages("ssttp.affordability.call-us-about-a-payment-plan.p2")</p>
- <p class="govuk-body">@messages("ssttp.affordability.call-us-about-a-payment-plan.p3")</p>
- <p class="govuk-body">@{Html(messages("ssttp.affordability.call-us-about-a-payment-plan.p4", ssttpaffordability.routes.AffordabilityController.getYourMonthlyIncome()))}</p>
+ <p class="govuk-body">@messages("ssttp.affordability.call-us-no-income.p1")</p>
+ <p class="govuk-body">@Html(messages("ssttp.affordability.call-us-no-income.p2"))</p>
+ <p class="govuk-body">@messages("ssttp.affordability.call-us-no-income.p3")</p>
+ <p class="govuk-body">@{Html(messages("ssttp.affordability.call-us-no-income.p4", ssttpaffordability.routes.AffordabilityController.getYourMonthlyIncome()))}</p>
 
  @extra_support()
 
