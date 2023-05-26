@@ -514,6 +514,7 @@ ssttp.direct-debit.form.error.sortCode.required = Enter a sort code
 ssttp.direct-debit.form.error.sortCode.not-valid = Sort code must be a 6 digit number
 ssttp.direct-debit.form.error.accountNumber.not-number = Bank account number must not include letters or symbols
 ssttp.direct-debit.form.error.accountNumber.not-valid = Account number must be between 6 and 8 digits
+ssttp.direct-debit.form.direct-debit-not-supported = You have entered a sort code which does not accept this type of payment. Check you have entered a valid sort code or enter details for a different account
 ssttp.direct-debit.form.single-account-holder.required = Please select an option
 
 ssttp.direct-debit.guarantee.title = The Direct Debit Guarantee

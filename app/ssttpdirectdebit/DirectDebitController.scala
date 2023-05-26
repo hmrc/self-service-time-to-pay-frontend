@@ -17,7 +17,8 @@
 package ssttpdirectdebit
 
 import bars.BarsService
-import bars.model.{InvalidBankDetails, ValidBankDetails}
+import bars.model.BarsAssessmentType.Yes
+import bars.model.{BarsResponseOk, InvalidBankDetails, ValidBankDetails}
 import config.{AppConfig, ViewConfig}
 import controllers.FrontendBaseController
 import controllers.action.Actions
@@ -26,6 +27,7 @@ import model.enumsforforms.IsSoleSignatory
 import model.enumsforforms.IsSoleSignatory.booleanToIsSoleSignatory
 import model.enumsforforms.TypesOfBankAccount.typeOfBankAccountAsFormValue
 import model.forms.TypeOfAccountForm
+import play.api.data.{Form, FormError}
 import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
@@ -162,10 +164,10 @@ class DirectDebitController @Inject() (
   def submitDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
     JourneyLogger.info(s"DirectDebitController.submitDirectDebit: $request")
 
-    submissionService.authorizedForSsttp { journey =>
+    submissionService.authorizedForSsttp { implicit journey =>
       journey.requireScheduleIsDefined()
       journey.requireIsAccountHolder()
-      val schedule: PaymentSchedule = selectedSchedule(journey)
+      implicit val schedule: PaymentSchedule = selectedSchedule(journey)
       directDebitForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(
           views.direct_debit_form(
@@ -188,19 +190,32 @@ class DirectDebitController @Inject() (
                   }
               case InvalidBankDetails(obfuscatedBarsResponse) =>
                 JourneyLogger.info(s"Bank details are invalid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
-                Future.successful(BadRequest(views.direct_debit_form(
-                  journey.taxpayer.selfAssessment.debits,
-                  schedule,
-                  directDebitFormWithBankAccountError.copy(data = Map(
-                    "accountName" -> validFormData.accountName,
-                    "accountNumber" -> validFormData.accountNumber,
-                    "sortCode" -> validFormData.sortCode)
-                  ),
-                  errorMessageOverrides = invalidSortCodeAndAccountNumberComboOverride.fieldMessageOverrides,
-                  isBankError           = true)))
+                obfuscatedBarsResponse match {
+                  case BarsResponseOk(validateBankDetailsResponse) if !validateBankDetailsResponse.supportsDirectDebit =>
+                    futureSuccessfulBadRequest(validFormData, directDebitFormWithSortCodeError)
+                  case _ =>
+                    futureSuccessfulBadRequest(validFormData, directDebitFormWithAccountComboError)
+                }
             }
           }
       )
     }
   }
+
+  private def futureSuccessfulBadRequest(
+      validFormData: ArrangementDirectDebit,
+      formWithError: Form[ArrangementDirectDebit]
+  )(implicit journey: Journey,
+    schedule: PaymentSchedule,
+    request:  Request[_]
+  ): Future[Result] =
+    Future.successful(BadRequest(views.direct_debit_form(
+      journey.taxpayer.selfAssessment.debits,
+      schedule,
+      formWithError.copy(data = Map(
+        "accountName" -> validFormData.accountName,
+        "accountNumber" -> validFormData.accountNumber,
+        "sortCode" -> validFormData.sortCode)
+      ),
+      isBankError = true)))
 }

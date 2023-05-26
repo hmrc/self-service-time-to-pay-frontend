@@ -36,7 +36,11 @@ final case class ValidateBankDetailsResponse(
   def isValid: Boolean =
     (accountNumberIsWellFormatted == Yes
       || accountNumberIsWellFormatted == Indeterminate) &&
-      sortCodeIsPresentOnEISCD == Yes
+      sortCodeIsPresentOnEISCD == Yes &&
+      supportsDirectDebit
+
+  def supportsDirectDebit: Boolean =
+    !sortCodeSupportsDirectDebit.contains(No)
 
 }
 

@@ -36,20 +36,14 @@
         schedule: PaymentSchedule,
         ddForm: Form[ArrangementDirectDebit],
         isBankError: Boolean = false,
-        errorMessageOverrides: Seq[FormError] = Seq.empty,
         loggedIn: Boolean = true)(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
 )
 
-@optComboError = @{
-    ddForm.error("combo-invalid")
-}
-
 @comboError= @{
-    errorMessageOverrides.find(_.key == "sortCode")
-            .orElse(optComboError)
+    ddForm.errors.find(_.key == "combo-error")
 }
 
 @main(

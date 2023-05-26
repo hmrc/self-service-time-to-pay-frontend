@@ -103,11 +103,12 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
     object ErrorText {
       def apply()(implicit field: ErrorCase): String = field match {
-        case AccountName()        => accountNameErrorText
-        case SortCode()           => sortCodeErrorText
-        case AccountNumber()      => accountNumberErrorText
-        case InvalidBankDetails() => invalidBankDetailsErrorText
-        case SortCodeOnDenyList() => sortCodeOnDenyListErrorText
+        case AccountName()             => accountNameErrorText
+        case SortCode()                => sortCodeErrorText
+        case AccountNumber()           => accountNumberErrorText
+        case InvalidBankDetails()      => invalidBankDetailsErrorText
+        case SortCodeOnDenyList()      => sortCodeOnDenyListErrorText
+        case DirectDebitNotSupported() => directDebitNotSupportedErrorText
       }
 
       private val accountNameErrorText =
@@ -156,6 +157,17 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Must be 6 digits long
           |Account number
           |Must be between 6 and 8 digits long
+          |Continue
+        """.stripMargin
+
+      private val directDebitNotSupportedErrorText =
+        """There is a problem
+          |You have entered a sort code which does not accept this type of payment. Check you have entered a valid sort code or enter details for a different account
+          |Set up Direct Debit
+          |Name on the account
+          |Sort code
+          |You have entered a sort code which does not accept this type of payment. Check you have entered a valid sort code or enter details for a different account
+          |Account number
           |Continue
         """.stripMargin
 
