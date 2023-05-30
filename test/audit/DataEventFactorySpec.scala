@@ -17,8 +17,6 @@
 package audit
 
 import config.AppConfig
-
-import java.time.ZoneOffset.UTC
 import journey.Journey
 import journey.Statuses.ApplicationComplete
 import play.api.libs.json.{JsValue, Json}
@@ -29,6 +27,7 @@ import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttparrangement.ArrangementSubmissionStatus
 import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry}
+import ssttpcalculator.CalculatorType.PaymentOptimised
 import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.legacy.CalculatorService
 import testsupport.ItSpec
@@ -37,13 +36,21 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, PaymentDayOfMonth, PlanSelection, SelectedPlan}
 
 import java.time.ZoneId.systemDefault
+import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime}
 
-class DataEventFactorySpec(calculatorService: CalculatorService)(implicit appConfig: AppConfig) extends ItSpec {
+class DataEventFactorySpec extends ItSpec {
+
+  override val overrideConfig: Map[String, Any] = Map(
+    "calculatorType" -> PaymentOptimised.value
+  )
+
   private val td = TdAll
   private val tdRequest = TdRequest
   private val directDebitTd = DirectDebitTd
   private implicit val request: FakeRequest[AnyContentAsEmpty.type] = tdRequest.request
+  private implicit val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
+  private val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
   private val paymentPlansService: PaymentPlansService = fakeApplication().injector.instanceOf[PaymentPlansService]
 

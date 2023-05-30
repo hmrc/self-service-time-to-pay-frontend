@@ -113,11 +113,11 @@ object DataEventFactory {
                          calculatorService: CalculatorService
   )(implicit request: Request[_], appConfig: AppConfig): String = {
     val maybeSelectedPlanAmount = journey.maybeSelectedPlanAmount
+    val sa = journey.taxpayer.selfAssessment
 
     appConfig.calculatorType match {
 
       case CalculatorType.Legacy =>
-        val sa = journey.taxpayer.selfAssessment
         val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
         val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
         val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
