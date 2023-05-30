@@ -75,9 +75,9 @@ class SelfServiceTimeToPayController @Inject() (
     Ok(views.debt_too_large(isSignedIn, isWelsh))
   }
 
-  def getYouNeedToFile: Action[AnyContent] = as.action { implicit request =>
+  def getFileYourTaxReturn: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
-    Ok(views.you_need_to_file(isSignedIn))
+    Ok(views.file_your_tax_return(isSignedIn))
   }
 
   def getNotSaEnrolled: Action[AnyContent] = as.action { implicit request =>

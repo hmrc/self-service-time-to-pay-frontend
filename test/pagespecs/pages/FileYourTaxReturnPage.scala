@@ -22,9 +22,9 @@ import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
 
-class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class FileYourTaxReturnPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
-  override def path: String = "/pay-what-you-owe-in-instalments/eligibility/you-need-to-file"
+  override def path: String = "/pay-what-you-owe-in-instalments/file-your-tax-return"
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path

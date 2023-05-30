@@ -222,7 +222,7 @@ class ArrangementController @Inject() (
     else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()
     else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant))
-      ssttpeligibility.routes.SelfServiceTimeToPayController.getYouNeedToFile()
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getFileYourTaxReturn()
     else {
       JourneyLogger.info(
         s"ArrangementController.eligibilityCheck ERROR - [eligible=${eligibilityStatus.eligible}]. " +

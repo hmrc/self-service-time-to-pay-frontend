@@ -402,12 +402,10 @@ ssttp.direct-debit.unauthorized.intro.p1.link = complete a paper version of the 
 ssttp.direct-debit.unauthorized.intro.p2 = You will need to return the form to HM Revenue and Customs.
 ssttp.direct-debit.unauthorized.button = Back to bank details
 
-ssttp.you-need-to-file.title = File your Self Assessment tax return to use this service
-ssttp.you-need-to-file.p1 = You must  <a class="govuk-link" href="https://www.gov.uk/log-in-file-self-assessment-tax-return">file your tax return</a> before you can set up a Self Assessment payment plan online.
-ssttp.you-need-to-file.p2 = Call us on <strong>0300 123 1813</strong> if you need to speak to an adviser.
-ssttp.you-need-to-file.p3 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
-
-ssttp.you-need-to-file..phone-number = For further support, you can contact us on <strong>0300 123 1813</strong> to speak to an adviser.
+ssttp.file-your-tax-return.title = File your Self Assessment tax return to use this service
+ssttp.file-your-tax-return.p1 = You must  <a class="govuk-link" href="https://www.gov.uk/log-in-file-self-assessment-tax-return">file your tax return</a> before you can set up a Self Assessment payment plan online.
+ssttp.file-your-tax-return.p2 = Call us on <strong>0300 123 1813</strong> if you need to speak to an adviser.
+ssttp.file-your-tax-return.p3 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
 
 ssttp.arrangement.type_of_account.title = About your bank account
 ssttp.arrangement.type_of_account.details = What type of account details are you providing?
