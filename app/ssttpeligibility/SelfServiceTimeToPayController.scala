@@ -58,17 +58,15 @@ class SelfServiceTimeToPayController @Inject() (
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
-  def actionCallUsInEligibility: Action[AnyContent] = as.action { implicit request =>
+  def getCallUsAboutAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
-    Ok(views.call_us(isWelsh, loggedIn = isSignedIn))
+    Ok(views.call_us_about_a_payment_plan(isWelsh, loggedIn = isSignedIn))
   }
 
-  def getTtpCallUs: Action[AnyContent] = actionCallUsInEligibility
-  def getTtpCallUsTypeOfTax: Action[AnyContent] = actionCallUsInEligibility
-  def getTtpCallUsExistingTTP: Action[AnyContent] = actionCallUsInEligibility
-  def getTtpCallUsCalculatorInstalments: Action[AnyContent] = actionCallUsInEligibility
-  def getTtpCallUsSignInQuestion: Action[AnyContent] = actionCallUsInEligibility
-  def getIaCallUse: Action[AnyContent] = actionCallUsInEligibility
+  def getDebtTooOld: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
+    Ok(views.call_us_debt_too_old(isWelsh, loggedIn = isSignedIn))
+  }
 
   def getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")

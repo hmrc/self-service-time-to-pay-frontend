@@ -20,11 +20,11 @@ import langswitch.{Language, Languages}
 import langswitch.Languages.{English, Welsh}
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser.pageTitle
-import testsupport.RichMatchers._
+import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class CallUsDebtTooOldPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
-  override def path: String = "/pay-what-you-owe-in-instalments/call-us"
+  override def path: String = "/pay-what-you-owe-in-instalments/call-us-debt-too-old"
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
@@ -62,7 +62,7 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
 
       private val mainTextEnglish =
         """Call us about a payment plan
-          |You are not eligible to set up a Self Assessment payment plan online.
+          |You cannot set up a Self Assessment payment plan online because your payment deadline was over 60 days ago.
           |Call us on 0300 123 1813 as you may be able to set up a plan over the phone.
           |Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
           |If you need extra support
@@ -81,7 +81,7 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
 
       private val mainTextWelsh =
         """Ffoniwch ni ynghylch cynllun talu
-          |Nid ydych yn gymwys i drefnu cynllun talu Hunanasesiad ar-lein.
+          |Ni allwch drefnu cynllun talu Hunanasesiad ar-lein oherwydd roedd y dyddiad cau ar gyfer talu dros 60 diwrnod yn ôl.
           |Ffoniwch ni ar 0300 200 1900 oherwydd mae’n bosibl y gallwch drefnu cynllun dros y ffôn.
           |Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
           |Os oes angen cymorth ychwanegol arnoch chi

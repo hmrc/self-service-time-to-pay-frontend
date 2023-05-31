@@ -209,20 +209,25 @@ class ArrangementController @Inject() (
 
   //TODO improve this under OPS-4941
   private def ineligibleStatusRedirect(eligibilityStatus: EligibilityStatus, newJourney: Journey)(implicit hc: HeaderCarrier) =
+
     if (eligibilityStatus.reasons.contains(DebtTooOld) ||
-      eligibilityStatus.reasons.contains(OldDebtIsTooHigh) ||
-      eligibilityStatus.reasons.contains(NoDebt) ||
+      eligibilityStatus.reasons.contains(OldDebtIsTooHigh)) {
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooOld()
+
+    } else if (eligibilityStatus.reasons.contains(NoDebt) ||
       eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
       eligibilityStatus.reasons.contains(DirectDebitCreatedWithinTheLastYear) ||
-      eligibilityStatus.reasons.contains(NoDueDate)) {
+      eligibilityStatus.reasons.contains(NoDueDate) ||
+      eligibilityStatus.reasons.contains(IsNotOnIa)) {
       JourneyLogger.info(s"Sent user to call us page [ineligibility reasons: ${eligibilityStatus.reasons}]")
-      ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()
-    } else if (eligibilityStatus.reasons.contains(IsNotOnIa))
-      ssttpeligibility.routes.SelfServiceTimeToPayController.getIaCallUse()
-    else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getCallUsAboutAPaymentPlan()
+
+    } else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()
+
     else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getFileYourTaxReturn()
+
     else {
       JourneyLogger.info(
         s"ArrangementController.eligibilityCheck ERROR - [eligible=${eligibilityStatus.eligible}]. " +

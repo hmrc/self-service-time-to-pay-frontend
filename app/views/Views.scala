@@ -48,7 +48,8 @@ class Views @Inject() (
     val you_need_to_request_access_to_self_assessment: views.html.core.you_need_to_request_access_to_self_assessment,
     val debt_too_large:                                views.html.core.debt_too_large,
     val service_start:                                 views.html.core.service_start,
-    val call_us:                                       views.html.core.call_us,
+    val call_us_debt_too_old:                          views.html.core.call_us_debt_too_old,
+    val call_us_about_a_payment_plan:                  views.html.core.call_us_about_a_payment_plan,
     val file_your_tax_return:                          views.html.core.file_your_tax_return,
 
     //    val print_payment_schedule:       views.html.partials.print_payment_schedule,
