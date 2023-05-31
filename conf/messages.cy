@@ -554,8 +554,8 @@ ssttp.not-sole-signatory.p1 = Mae angen rhywun sydd wedi’i enwi’n ddeiliad y
 ssttp.not-sole-signatory.p2 = Os nad chi yw deiliad y cyfrif, neu os ydych yn dymuno trefnu Debyd Uniongyrchol gyda chyfrif aml-lofnod, rydym yn argymell eich bod yn siarad ag ymgynghorydd ar <strong>0300 200 1900</strong> yn y Gwasanaeth Cwsmeriaid Cymraeg. Rhaid i chi sicrhau bod holl ddeiliaid y cyfrif yn bresennol wrth ffonio.
 ssttp.not-sole-signatory.go-to-account = Ewch i’r cyfrif treth
 
-ssttp.debt-too-large.h1 = Ffoniwch ni
-ssttp.debt-too-large.p1 = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i’r dreth sydd arnoch fod yn £{0} neu’n llai.
+ssttp.debt-too-large.h1 = Ffoniwch ni ynghylch cynllun talu
+ssttp.debt-too-large.p1 = Ni allwch drefnu cynllun talu Hunanasesiad ar-lein oherwydd mae arnoch dros £{0}.
 ssttp.debt-too-large.p2 = I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong> i siarad ag ymgynghorydd.
 ssttp.debt-too-large.before.you.call.h1 = Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
 ssttp.debt-too-large.before.you.call.l1 = gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych

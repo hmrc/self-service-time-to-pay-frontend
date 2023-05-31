@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import views.html.partials.extra_support
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers,
@@ -34,30 +35,11 @@
 ) {
     <h1 class="govuk-heading-xl">@messages("ssttp.debt-too-large.h1")</h1>
 
-    <section class="govuk-body">
-    <p>@messages("ssttp.debt-too-large.p1", eligibilityConfig.maximumDebtForSelfServe )</p>
-    <p>@{Html(messages("ssttp.debt-too-large.p2"))}</p>
-        <details class="govuk-details">
-            <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@messages("ssttp.calculator.please-call-us.cant-afford.summary")</span></summary>
-            <div class="govuk-details__text">
-                <p>@{Html(messages("ssttp.calculator.please-call-us.cant-afford.p1"))}</p>
-                <p>@{Html(messages("ssttp.calculator.please-call-us.cant-afford.p2"))}</p>
-                <p>@{Html(messages("ssttp.calculator.please-call-us.cant-afford.p3"))}</p>
-            </div>
-        </details>
-    <p>@messages("ssttp.debt-too-large.before.you.call.h1")</p>
-    <ul class="govuk-list--bullet">
-        <li>@messages("ssttp.debt-too-large.before.you.call.l1")</li>
-        <li>@messages("ssttp.debt-too-large.before.you.call.l2")</li>
-    </ul>
-    <p>@messages("ssttp.debt-too-large.likely.to.ask.h1")</p>
-    <ul class="govuk-list--bullet">
-        <li>@messages("ssttp.debt-too-large.likely.to.ask.l1")</li>
-        <li>@messages("ssttp.debt-too-large.likely.to.ask.l2")</li>
-    </ul>
-    <p>@messages("ssttp.debt-too-large.opening.hours.h1")</p>
-    <ul class="govuk-list--bullet">
-        <li>@messages("ssttp.debt-too-large.opening.hours.l1")</li>
-    </ul>
-    </section>
+    <p class="govuk-body">@messages("ssttp.debt-too-large.p1", eligibilityConfig.maximumDebtForSelfServe )</p>
+    <p class="govuk-body">@Html(messages("ssttp.call-us-on"))</p>
+    <p class="govuk-body">@messages("ssttp.opening-hours")</p>
+
+    @extra_support()
+
+
 }
