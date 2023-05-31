@@ -68,13 +68,6 @@ class SelfServiceTimeToPayController @Inject() (
     Ok(views.call_us_debt_too_old(isWelsh, loggedIn = isSignedIn))
   }
 
-  def getTtpCallUs: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getTtpCallUsTypeOfTax: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getTtpCallUsExistingTTP: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getTtpCallUsCalculatorInstalments: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getTtpCallUsSignInQuestion: Action[AnyContent] = getCallUsAboutAPaymentPlan
-  def getIaCallUse: Action[AnyContent] = getCallUsAboutAPaymentPlan
-
   def getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
     Ok(views.debt_too_large(isSignedIn, isWelsh))

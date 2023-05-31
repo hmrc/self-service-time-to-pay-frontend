@@ -217,14 +217,12 @@ class ArrangementController @Inject() (
     } else if (eligibilityStatus.reasons.contains(NoDebt) ||
       eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
       eligibilityStatus.reasons.contains(DirectDebitCreatedWithinTheLastYear) ||
-      eligibilityStatus.reasons.contains(NoDueDate)) {
+      eligibilityStatus.reasons.contains(NoDueDate) ||
+      eligibilityStatus.reasons.contains(IsNotOnIa)) {
       JourneyLogger.info(s"Sent user to call us page [ineligibility reasons: ${eligibilityStatus.reasons}]")
-      ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getCallUsAboutAPaymentPlan()
 
-    } else if (eligibilityStatus.reasons.contains(IsNotOnIa))
-      ssttpeligibility.routes.SelfServiceTimeToPayController.getIaCallUse()
-
-    else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
+    } else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()
 
     else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant))
