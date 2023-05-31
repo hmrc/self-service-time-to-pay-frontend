@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import partials.extra_support
+@import partials.{call_us_generic, extra_support, before_you_call, we_are_likely_to_ask}
 
 @this(
   main: views.html.main,
@@ -32,30 +32,19 @@
 @main(
     title = messages("ssttp.call-us.generic.h1")
 ){
-    <h1 class="govuk-heading-xl">@messages("ssttp.call-us.generic.h1")</h1>
+    <section class="govuk-body govuk-!-margin-bottom-6">
+        <h1 class="govuk-heading-xl">@messages("ssttp.call-us.generic.h1")</h1>
 
-    <section class="govuk-body">
+        <p class="govuk-body">@messages("ssttp.call-us.standard.p1")</p>
 
-        <p>@Html(messages("ssttp.call-us.generic.p1"))</p>
-        <p>@Html(messages("ssttp.call-us.generic.p2"))</p>
+        @call_us_generic()
 
         @extra_support()
 
-        <h3 class=govuk-heading-m">@messages("ssttp.call-us.before-call-have.h2")</h3>
+        @before_you_call()
 
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("ssttp.call-us.before-call-have.li1")</li>
-            <li>@messages("ssttp.call-us.before-call-have.li2")</li>
-            <li>@messages("ssttp.call-us.before-call-have.li3")</li>
-            <li>@messages("ssttp.call-us.before-call-have.li4")</li>
-        </ul>
+        @we_are_likely_to_ask()
 
-        <h3 class=govuk-heading-m">@messages("ssttp.call-us.ask.h2")</h3>
-
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("ssttp.call-us.ask.li1")</li>
-            <li>@messages("ssttp.call-us.ask.li2")</li>
-        </ul>
 
     </section>
 }

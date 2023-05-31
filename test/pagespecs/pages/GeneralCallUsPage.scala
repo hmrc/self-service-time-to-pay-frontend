@@ -62,6 +62,7 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
 
       private val mainTextEnglish =
         """Call us about a payment plan
+          |You are not eligible to set up a Self Assessment payment plan online.
           |Call us on 0300 123 1813 as you may be able to set up a plan over the phone.
           |Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
           |If you need extra support
@@ -74,12 +75,13 @@ class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends
           |your bank details
           |details of your income and spending
           |We're likely to ask:
-          |what you’ve done to try to pay the bill
+          |what you've done to try to pay the bill
           |if you can pay some of the bill now
         """.stripMargin
 
       private val mainTextWelsh =
         """Ffoniwch ni ynghylch cynllun talu
+          |Nid ydych yn gymwys i drefnu cynllun talu Hunanasesiad ar-lein.
           |Ffoniwch ni ar 0300 200 1900 oherwydd mae’n bosibl y gallwch drefnu cynllun dros y ffôn.
           |Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
           |Os oes angen cymorth ychwanegol arnoch chi

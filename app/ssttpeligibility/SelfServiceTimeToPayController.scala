@@ -58,17 +58,17 @@ class SelfServiceTimeToPayController @Inject() (
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
-  def actionCallUsInEligibility: Action[AnyContent] = as.action { implicit request =>
+  def actionCallUsIneligibility: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
-    Ok(views.call_us(isWelsh, loggedIn = isSignedIn))
+    Ok(views.call_us_about_a_payment_plan(isWelsh, loggedIn = isSignedIn))
   }
 
-  def getTtpCallUs: Action[AnyContent] = actionCallUsInEligibility
-  def getTtpCallUsTypeOfTax: Action[AnyContent] = actionCallUsInEligibility
-  def getTtpCallUsExistingTTP: Action[AnyContent] = actionCallUsInEligibility
-  def getTtpCallUsCalculatorInstalments: Action[AnyContent] = actionCallUsInEligibility
-  def getTtpCallUsSignInQuestion: Action[AnyContent] = actionCallUsInEligibility
-  def getIaCallUse: Action[AnyContent] = actionCallUsInEligibility
+  def getTtpCallUs: Action[AnyContent] = actionCallUsIneligibility
+  def getTtpCallUsTypeOfTax: Action[AnyContent] = actionCallUsIneligibility
+  def getTtpCallUsExistingTTP: Action[AnyContent] = actionCallUsIneligibility
+  def getTtpCallUsCalculatorInstalments: Action[AnyContent] = actionCallUsIneligibility
+  def getTtpCallUsSignInQuestion: Action[AnyContent] = actionCallUsIneligibility
+  def getIaCallUse: Action[AnyContent] = actionCallUsIneligibility
 
   def getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")

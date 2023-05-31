@@ -382,6 +382,8 @@ ssttp.calculator.form.amount-due.required.min = The amount must be more than £3
 ssttp.calculator.form.amount-due.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less than £100,000
 
+ssttp.call-us.standard.p1 = You are not eligible to set up a Self Assessment payment plan online.
+
 ssttp.call-us.generic.h1 = Call us about a payment plan
 ssttp.call-us.generic.p1 = Call us on <strong>0300 123 1813</strong> as you may be able to set up a plan over the phone.
 ssttp.call-us.generic.p2 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
@@ -392,8 +394,8 @@ ssttp.call-us.before-call-have.li2 = information on any savings or investments y
 ssttp.call-us.before-call-have.li3 = your bank details
 ssttp.call-us.before-call-have.li4 = details of your income and spending
 
-ssttp.call-us.ask.h2 = We’re likely to ask:
-ssttp.call-us.ask.li1 = what you’ve done to try to pay the bill
+ssttp.call-us.ask.h2 = We''re likely to ask:
+ssttp.call-us.ask.li1 = what you''ve done to try to pay the bill
 ssttp.call-us.ask.li2 = if you can pay some of the bill now
 
 ssttp.call-us.title = Please call us

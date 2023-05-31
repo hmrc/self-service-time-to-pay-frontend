@@ -319,6 +319,8 @@ ssttp.calculator.results.amount.required = Dewiswch gynllun talu
 ssttp.calculator.results.month.greater-then-six.header = A oes angen cynllun talu hirach arnoch?
 ssttp.calculator.results.month.greater-then-six.intro = Bydd y gyfradd llog a’r ad-daliad cyffredinol yn uwch pan fyddwch yn dewis cynllun talu hirach.
 
+ssttp.call-us.standard.p1 = Nid ydych yn gymwys i drefnu cynllun talu Hunanasesiad ar-lein.
+
 ssttp.call-us.generic.h1 = Ffoniwch ni ynghylch cynllun talu
 ssttp.call-us.generic.p1 = Ffoniwch ni ar <strong>0300 200 1900</strong> oherwydd mae’n bosibl y gallwch drefnu cynllun dros y ffôn.
 ssttp.call-us.generic.p2 = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
