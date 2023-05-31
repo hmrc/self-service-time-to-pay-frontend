@@ -14,7 +14,8 @@
  * limitations under the License.
  *@
 
-@import views.html.partials.extra_support
+@import views.html.partials.{extra_support, before_you_call, we_are_likely_to_ask, call_us_generic}
+
 @this(
   main: views.html.main,
   viewsHelpers: views.ViewsHelpers,
@@ -33,13 +34,19 @@
 @main(
     title = messages("ssttp.debt-too-large.h1")
 ) {
-    <h1 class="govuk-heading-xl">@messages("ssttp.debt-too-large.h1")</h1>
+    <section class="govuk-body govuk-!-margin-bottom-6">
 
-    <p class="govuk-body">@messages("ssttp.debt-too-large.p1", eligibilityConfig.maximumDebtForSelfServe )</p>
-    <p class="govuk-body">@Html(messages("ssttp.call-us-on"))</p>
-    <p class="govuk-body">@messages("ssttp.opening-hours")</p>
+        <h1 class="govuk-heading-xl">@messages("ssttp.debt-too-large.h1")</h1>
 
-    @extra_support()
+        <p class="govuk-body">@messages("ssttp.debt-too-large.p1", eligibilityConfig.maximumDebtForSelfServe )</p>
 
+        @call_us_generic()
 
+        @extra_support()
+
+        @before_you_call()
+
+        @we_are_likely_to_ask()
+
+    </section>
 }
