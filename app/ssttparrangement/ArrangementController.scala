@@ -211,8 +211,10 @@ class ArrangementController @Inject() (
   private def ineligibleStatusRedirect(eligibilityStatus: EligibilityStatus, newJourney: Journey)(implicit hc: HeaderCarrier) =
 
     if (eligibilityStatus.reasons.contains(DebtTooOld) ||
-      eligibilityStatus.reasons.contains(OldDebtIsTooHigh) ||
-      eligibilityStatus.reasons.contains(NoDebt) ||
+      eligibilityStatus.reasons.contains(OldDebtIsTooHigh)) {
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooOld()
+
+    } else if (eligibilityStatus.reasons.contains(NoDebt) ||
       eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
       eligibilityStatus.reasons.contains(DirectDebitCreatedWithinTheLastYear) ||
       eligibilityStatus.reasons.contains(NoDueDate)) {

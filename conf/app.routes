@@ -14,10 +14,12 @@ GET         /govuk/start                                                  ssttpe
 # eligibility
 GET         /arrangement/determine-eligibility                            ssttparrangement.ArrangementController.determineEligibility()
 
+GET         /call-us                                                      ssttpeligibility.SelfServiceTimeToPayController.getCallUsAboutAPaymentPlan()
 GET         /eligibility/type-of-tax/call-us                              ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsTypeOfTax()
 GET         /eligibility/existing-ttp/call-us                             ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsExistingTTP()
 GET         /eligibility/ia/call-us                                       ssttpeligibility.SelfServiceTimeToPayController.getIaCallUse()
 GET         /eligibility/sign-in-question/call-us                         ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsSignInQuestion()
+GET         /call-us-debt-too-old                                         ssttpeligibility.SelfServiceTimeToPayController.getDebtTooOld()
 GET         /eligibility/debt-large/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getDebtTooLarge()
 GET         /calculator/instalments/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()
 GET         /file-your-tax-return                                         ssttpeligibility.SelfServiceTimeToPayController.getFileYourTaxReturn()

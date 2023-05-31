@@ -383,6 +383,7 @@ ssttp.calculator.form.amount-due.decimal-places = Amount must not contain more t
 ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less than £100,000
 
 ssttp.call-us.standard.p1 = You are not eligible to set up a Self Assessment payment plan online.
+ssttp.call-us.debt-too-old.p1 = You cannot set up a Self Assessment payment plan online because your payment deadline was over 60 days ago.
 
 ssttp.call-us.generic.h1 = Call us about a payment plan
 ssttp.call-us.generic.p1 = Call us on <strong>0300 123 1813</strong> as you may be able to set up a plan over the phone.

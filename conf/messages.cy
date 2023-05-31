@@ -320,6 +320,7 @@ ssttp.calculator.results.month.greater-then-six.header = A oes angen cynllun tal
 ssttp.calculator.results.month.greater-then-six.intro = Bydd y gyfradd llog a’r ad-daliad cyffredinol yn uwch pan fyddwch yn dewis cynllun talu hirach.
 
 ssttp.call-us.standard.p1 = Nid ydych yn gymwys i drefnu cynllun talu Hunanasesiad ar-lein.
+ssttp.call-us.debt-too-old.p1 = Ni allwch drefnu cynllun talu Hunanasesiad ar-lein oherwydd roedd y dyddiad cau ar gyfer talu dros 60 diwrnod yn ôl.
 
 ssttp.call-us.generic.h1 = Ffoniwch ni ynghylch cynllun talu
 ssttp.call-us.generic.p1 = Ffoniwch ni ar <strong>0300 200 1900</strong> oherwydd mae’n bosibl y gallwch drefnu cynllun dros y ffôn.
