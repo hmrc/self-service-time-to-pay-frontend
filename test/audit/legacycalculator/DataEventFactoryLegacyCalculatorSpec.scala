@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package audit
+package audit.legacycalculator
 
+import audit.DataEventFactory
 import config.AppConfig
 import journey.Journey
 import journey.Statuses.ApplicationComplete
