@@ -338,12 +338,10 @@ ssttp.direct-debit.unauthorized.intro.p1.link = lenwi fersiwn bapur o’r ffurfl
 ssttp.direct-debit.unauthorized.intro.p2 = Bydd angen i chi ddychwelyd y ffurflen i Gyllid a Thollau EM.
 ssttp.direct-debit.unauthorized.button = Yn ôl i’r manylion banc
 
-ssttp.you-need-to-file.title = Cyflwynwch eich Ffurflen Dreth er mwyn defnyddio’r gwasanaeth hwn
-ssttp.you-need-to-file.intro = I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i chi fod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
-ssttp.you-need-to-file.check-account.link = Ewch i’ch cyfrif treth
-ssttp.you-need-to-file.check-account = er mwyn cyflwyno’ch Ffurflen Dreth Hunanasesiad.
-
-ssttp.you-need-to-file..phone-number = I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong> i siarad ag ymgynghorydd.
+ssttp.file-your-tax-return.title = Cyflwynwch eich Ffurflen Dreth Hunanasesiad er mwyn defnyddio’r gwasanaeth hwn
+ssttp.file-your-tax-return.p1 = Mae’n rhaid i chi <a class="govuk-link" href="https://www.gov.uk/log-in-file-self-assessment-tax-return">gyflwyno’ch Ffurflen Dreth</a> cyn i chi allu trefnu cynllun talu ar gyfer Hunanasesiad ar-lein.
+ssttp.file-your-tax-return.p2 = Ffoniwch ni ar <strong>0300 200 1900</strong> os oes angen i chi siarad ag ymgynghorydd.
+ssttp.file-your-tax-return.p3 = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
 
 ssttp.direct-debit-assistance.h1 = Ffoniwch ni ynghylch cynllun talu
 ssttp.direct-debit-assistance.p1 = Rydym yn cael anawsterau wrth gyflwyno’ch cyfarwyddyd Debyd Uniongyrchol.

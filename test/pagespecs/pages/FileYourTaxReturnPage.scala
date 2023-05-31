@@ -22,9 +22,9 @@ import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers._
 
-class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class FileYourTaxReturnPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
-  override def path: String = "/pay-what-you-owe-in-instalments/eligibility/you-need-to-file"
+  override def path: String = "/pay-what-you-owe-in-instalments/file-your-tax-return"
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
@@ -35,8 +35,8 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
   }
 
   def expectedHeadingContent(language: Language): String = language match {
-    case Languages.English => "File your return to use this service"
-    case Languages.Welsh   => "Cyflwynwch eich Ffurflen Dreth er mwyn defnyddio’r gwasanaeth hwn"
+    case Languages.English => "File your Self Assessment tax return to use this service"
+    case Languages.Welsh   => "Cyflwynwch eich Ffurflen Dreth Hunanasesiad er mwyn defnyddio’r gwasanaeth hwn"
   }
 
   object Expected {
@@ -61,30 +61,26 @@ class NeedToFilePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends Ba
       }
 
       private val mainTextEnglish =
-        """File your return to use this service
-          |To be eligible to set up a payment plan online you need to have filed your Self Assessment tax return. Once you have done this, you can return to the service.
-          |
-          |Go to your tax account to file your Self Assessment tax return.
-          |
-          |For further support, you can contact us on 0300 123 1813 to speak to an adviser.
-          |
-          |If you cannot use speech recognition software
-          |Our opening times are:
-          |Monday to Friday: 8am to 6pm
+        """File your Self Assessment tax return to use this service
+          |You must file your tax return before you can set up a Self Assessment payment plan online.
+          |Call us on 0300 123 1813 if you need to speak to an adviser.
+          |Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
+          |If you need extra support
+          |Find out the different ways to deal with HMRC if you need some help.
+          |You can also use Relay UK if you cannot hear or speak on the phone: dial 18001 then 0345 300 3900.
+          |If you are outside the UK: +44 2890 538 192.
         """
           .stripMargin
 
       private val mainTextWelsh =
-        """Cyflwynwch eich Ffurflen Dreth er mwyn defnyddio’r gwasanaeth hwn
-          |I fod yn gymwys i drefnu cynllun talu ar-lein, mae’n rhaid i chi fod wedi cyflwyno’ch Ffurflen Dreth Hunanasesiad. Pan fyddwch wedi gwneud hyn, gallwch ddychwelyd i’r gwasanaeth.
-          |
-          |Ewch i’ch cyfrif treth er mwyn cyflwyno’ch Ffurflen Dreth Hunanasesiad.
-          |
-          |I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar 0300 200 1900 i siarad ag ymgynghorydd.
-          |
-          |Os na allwch ddefnyddio meddalwedd adnabod lleferydd
-          |Ein horiau agor yw:
-          |Dydd Llun i ddydd Gwener: 08:30 i 17:00 (rydym ar gau ar benwythnosau a gwyliau banc)
+        """Cyflwynwch eich Ffurflen Dreth Hunanasesiad er mwyn defnyddio’r gwasanaeth hwn
+          |Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth cyn i chi allu trefnu cynllun talu ar gyfer Hunanasesiad ar-lein.
+          |Ffoniwch ni ar 0300 200 1900 os oes angen i chi siarad ag ymgynghorydd.
+          |Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
+          |Os oes angen cymorth ychwanegol arnoch chi
+          |Dysgwch am y ffyrdd gwahanol o ddelio â CThEF os oes angen help arnoch chi.
+          |Gallwch hefyd ddefnyddio Relay UK os na allwch glywed na siarad dros y ffôn: deialwch 18001 ac yna 0345 300 3900. Sylwer – dim ond galwadau ffôn Saesneg eu hiaith y mae Relay UK yn gallu ymdrin â nhw.
+          |Os ydych y tu allan i’r DU: +44 300 200 1900.
         """.stripMargin
     }
 

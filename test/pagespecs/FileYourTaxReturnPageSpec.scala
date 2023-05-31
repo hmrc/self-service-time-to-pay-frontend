@@ -19,7 +19,7 @@ package pagespecs
 import langswitch.Languages.{English, Welsh}
 import testsupport.ItSpec
 
-class NeedToFilePageSpec extends ItSpec {
+class FileYourTaxReturnPageSpec extends ItSpec {
 
   "language" in {
 
