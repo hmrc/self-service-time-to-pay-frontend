@@ -18,12 +18,14 @@ package audit
 
 import java.time.temporal.ChronoUnit
 import audit.model.AuditPaymentSchedule
+import config.AppConfig
 import journey.Journey
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import req.RequestSupport._
 import ssttparrangement.SubmissionError
+import ssttpcalculator.CalculatorType
 import ssttpcalculator.legacy.CalculatorService
 import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import ssttpcalculator.model.PaymentSchedule
@@ -86,7 +88,7 @@ object DataEventFactory {
   def planSetUpEvent(journey:           Journey,
                      schedule:          PaymentSchedule,
                      calculatorService: CalculatorService
-  )(implicit request: Request[_]): ExtendedDataEvent = {
+  )(implicit request: Request[_], appConfig: AppConfig): ExtendedDataEvent = {
     val detail = Json.obj(
       "bankDetails" -> bankDetails(journey),
       "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
@@ -109,20 +111,35 @@ object DataEventFactory {
 
   private def typeOfPlan(journey:           Journey,
                          calculatorService: CalculatorService
-  )(implicit request: Request[_]): String = {
+  )(implicit request: Request[_], appConfig: AppConfig): String = {
     val maybeSelectedPlanAmount = journey.maybeSelectedPlanAmount
-
     val sa = journey.taxpayer.selfAssessment
-    val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
-    val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
-    val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
 
-    maybeSelectedPlanAmount.fold("None")(amount => {
-      if (amount == defaultPlanOptions(Basic).instalmentAmount) "basic"
-      else if (amount == defaultPlanOptions(Higher).instalmentAmount) "higher"
-      else if (amount == defaultPlanOptions(Additional).instalmentAmount) "additional"
-      else "payMorePerMonth"
-    })
+    appConfig.calculatorType match {
+
+      case CalculatorType.Legacy =>
+        val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
+        val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
+        val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
+
+        maybeSelectedPlanAmount.fold("None")(amount => {
+          if (amount == defaultPlanOptions(Basic).instalmentAmount) "basic"
+          else if (amount == defaultPlanOptions(Higher).instalmentAmount) "higher"
+          else if (amount == defaultPlanOptions(Additional).instalmentAmount) "additional"
+          else "customAmount"
+        })
+
+      case CalculatorType.PaymentOptimised =>
+        val remainingIncomeAfterSpending = journey.remainingIncomeAfterSpending
+
+        maybeSelectedPlanAmount.fold("None")(amount => {
+          if (amount == remainingIncomeAfterSpending * 0.5) "basic"
+          else if (amount == remainingIncomeAfterSpending * 0.6) "higher"
+          else if (amount == remainingIncomeAfterSpending * 0.8) "additional"
+          else "customAmount"
+        })
+    }
+
   }
 
   private def lessThanOrMoreThanTwelveMonths(selectedSchedule: PaymentSchedule): String = {

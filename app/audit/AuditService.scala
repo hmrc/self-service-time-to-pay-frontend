@@ -16,6 +16,8 @@
 
 package audit
 
+import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import journey.Journey
 import play.api.mvc.Request
@@ -52,7 +54,7 @@ class AuditService @Inject() (
     sendEvent(event)
   }
 
-  def sendPlanSetUpSuccessEvent(journey: Journey, schedule: PaymentSchedule, calculatorService: CalculatorService)(implicit request: Request[_]): Unit = {
+  def sendPlanSetUpSuccessEvent(journey: Journey, schedule: PaymentSchedule, calculatorService: CalculatorService)(implicit request: Request[_], appConfig: AppConfig): Unit = {
     val event = DataEventFactory.planSetUpEvent(journey, schedule, calculatorService)
     sendEvent(event)
   }

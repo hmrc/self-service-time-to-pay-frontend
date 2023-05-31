@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package audit
+package audit.legacycalculator
 
+import audit.DataEventFactory
 import config.AppConfig
 import journey.Journey
 import journey.Statuses.ApplicationComplete
@@ -27,7 +28,7 @@ import ssttpaffordability.model.IncomeCategory.MonthlyIncome
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttparrangement.ArrangementSubmissionStatus
 import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry}
-import ssttpcalculator.CalculatorType.PaymentOptimised
+import ssttpcalculator.CalculatorType.Legacy
 import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.legacy.CalculatorService
 import testsupport.ItSpec
@@ -39,10 +40,10 @@ import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
 import java.time.{Clock, LocalDateTime}
 
-class DataEventFactorySpec extends ItSpec {
+class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
 
   override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
+    "calculatorType" -> Legacy.value
   )
 
   private val td = TdAll
@@ -173,9 +174,10 @@ class DataEventFactorySpec extends ItSpec {
     "manualAffordabilityPlanSetUp" - {
       val _1000Amount = 1000
       val _500Amount = 500
-      val _250Amount = 250
-      val _300Amount = 300
-      val _400Amount = 400
+      val _245Amount = 245
+      val _257_89Amount = 257.89
+      val _272_22Amount = 272.22
+      val _490Amount = 490
       val _28DayOfMonth = 28
 
       val journeyPlanSetUp = journey.copy(
@@ -194,10 +196,10 @@ class DataEventFactorySpec extends ItSpec {
 
       "basic plan (more than 12 months)" in {
         val journeyBasicPlan = journeyPlanSetUp.copy(
-          maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
+          maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_245Amount)))),
         )
 
-        val schedule = paymentPlansService.selectedSchedule(journeyBasicPlan)(request).get
+        val schedule = calculatorService.selectedSchedule(journeyBasicPlan)(request)
 
         val computedDataEvent = DataEventFactory.planSetUpEvent(journeyBasicPlan, schedule, calculatorService)
 
@@ -213,10 +215,10 @@ class DataEventFactorySpec extends ItSpec {
       }
       "higher plan (more than twelve months)" in {
         val journeyHigherPlan = journeyPlanSetUp.copy(
-          maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_300Amount)))),
+          maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_257_89Amount)))),
         )
 
-        val schedule = paymentPlansService.selectedSchedule(journeyHigherPlan)(request).get
+        val schedule = calculatorService.selectedSchedule(journeyHigherPlan)(request)
 
         val computedDataEvent = DataEventFactory.planSetUpEvent(journeyHigherPlan, schedule, calculatorService)
 
@@ -237,98 +239,108 @@ class DataEventFactorySpec extends ItSpec {
               "selectionType": "higher",
               "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
               "schedule": {
-                "totalPayable": 5016.53,
+                "totalPayable": 5034.1,
                 "instalmentDate": 28,
                 "instalments": [
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":1,
                     "paymentDate":"2019-12-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":2,
                     "paymentDate":"2020-01-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":3,
                     "paymentDate":"2020-02-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":4,
                     "paymentDate":"2020-03-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":5,
                     "paymentDate":"2020-04-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":6,
                     "paymentDate":"2020-05-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":7,
                     "paymentDate":"2020-06-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":8,
                     "paymentDate":"2020-07-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":9,
                     "paymentDate":"2020-08-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":10,
                     "paymentDate":"2020-09-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":11,
                     "paymentDate":"2020-10-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":12,
                     "paymentDate":"2020-11-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":13,
                     "paymentDate":"2020-12-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":14,
                     "paymentDate":"2021-01-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":15,
                     "paymentDate":"2021-02-28"
                   },
                   {
-                    "amount":300,
+                    "amount":257.89,
                     "instalmentNumber":16,
                     "paymentDate":"2021-03-28"
                   },
                   {
-                    "amount":216.53,
+                    "amount":257.89,
                     "instalmentNumber":17,
                     "paymentDate":"2021-04-28"
+                  },
+                  {
+                    "amount":257.89,
+                    "instalmentNumber":18,
+                    "paymentDate":"2021-05-28"
+                  },
+                  {
+                    "amount":391.99,
+                    "instalmentNumber":19,
+                    "paymentDate":"2021-06-28"
                   }
                 ],
                 "initialPaymentAmount": 0,
-                "totalNoPayments": 17,
-                "totalInterestCharged": 116.53,
+                "totalNoPayments": 19,
+                "totalInterestCharged": 134.1,
                 "totalPaymentWithoutInterest": 4900
               },
               "status": "ApplicationComplete",
@@ -343,10 +355,10 @@ class DataEventFactorySpec extends ItSpec {
       }
       "additional plan (more than twelve months)" in {
         val journeyAdditionalPlan = journeyPlanSetUp.copy(
-          maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_400Amount)))),
+          maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(_272_22Amount)))),
         )
 
-        val schedule = paymentPlansService.selectedSchedule(journeyAdditionalPlan)(request).get
+        val schedule = calculatorService.selectedSchedule(journeyAdditionalPlan)(request)
 
         val computedDataEvent = DataEventFactory.planSetUpEvent(journeyAdditionalPlan, schedule, calculatorService)
 
@@ -367,78 +379,103 @@ class DataEventFactorySpec extends ItSpec {
               "selectionType": "additional",
               "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
               "schedule": {
-                "totalPayable": 4989.39,
+                "totalPayable": 5027.47,
                 "instalmentDate": 28,
                 "instalments": [
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":1,
                     "paymentDate":"2019-12-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":2,
                     "paymentDate":"2020-01-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":3,
                     "paymentDate":"2020-02-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":4,
                     "paymentDate":"2020-03-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":5,
                     "paymentDate":"2020-04-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":6,
                     "paymentDate":"2020-05-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":7,
                     "paymentDate":"2020-06-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":8,
                     "paymentDate":"2020-07-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":9,
                     "paymentDate":"2020-08-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":10,
                     "paymentDate":"2020-09-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":11,
                     "paymentDate":"2020-10-28"
                   },
                   {
-                    "amount":400,
+                    "amount":272.22,
                     "instalmentNumber":12,
                     "paymentDate":"2020-11-28"
                   },
                   {
-                    "amount":189.39,
+                    "amount":272.22,
                     "instalmentNumber":13,
                     "paymentDate":"2020-12-28"
+                  },
+                  {
+                    "amount":272.22,
+                    "instalmentNumber":14,
+                    "paymentDate":"2021-01-28"
+                  },
+                  {
+                    "amount":272.22,
+                    "instalmentNumber":15,
+                    "paymentDate":"2021-02-28"
+                  },
+                  {
+                    "amount":272.22,
+                    "instalmentNumber":16,
+                    "paymentDate":"2021-03-28"
+                  },
+                  {
+                    "amount":272.22,
+                    "instalmentNumber":17,
+                    "paymentDate":"2021-04-28"
+                  },
+                  {
+                    "amount":399.69,
+                    "instalmentNumber":18,
+                    "paymentDate":"2021-05-28"
                   }
                 ],
                 "initialPaymentAmount": 0,
-                "totalNoPayments": 13,
-                "totalInterestCharged": 89.39,
+                "totalNoPayments": 18,
+                "totalInterestCharged": 127.47,
                 "totalPaymentWithoutInterest": 4900
               },
               "status": "ApplicationComplete",
@@ -452,13 +489,13 @@ class DataEventFactorySpec extends ItSpec {
           expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
       }
       "customAmount plan (twelve months or less)" in {
-        val customAmount = 500
+        val customAmount = _490Amount
 
         val journeyCustomAmount = journeyPlanSetUp.copy(
           maybePlanSelection = Some(PlanSelection(Left(SelectedPlan(customAmount)))),
         )
 
-        val schedule = paymentPlansService.selectedSchedule(journeyCustomAmount)(request).get
+        val schedule = calculatorService.selectedSchedule(journeyCustomAmount)(request)
 
         val computedDataEvent = DataEventFactory.planSetUpEvent(journeyCustomAmount, schedule, calculatorService)
 
@@ -479,63 +516,63 @@ class DataEventFactorySpec extends ItSpec {
               "selectionType": "customAmount",
               "lessThanOrMoreThanTwelveMonths": "twelveMonthsOrLess",
               "schedule": {
-                "totalPayable": 4973.08,
+                "totalPayable": 4974.3,
                 "instalmentDate": 28,
                 "instalments": [
                   {
-                    "amount":500,
+                    "amount":490,
                     "instalmentNumber":1,
                     "paymentDate":"2019-12-28"
                   },
                   {
-                    "amount":500,
+                    "amount":490,
                     "instalmentNumber":2,
                     "paymentDate":"2020-01-28"
                   },
                   {
-                    "amount":500,
+                    "amount":490,
                     "instalmentNumber":3,
                     "paymentDate":"2020-02-28"
                   },
                   {
-                    "amount":500,
+                    "amount":490,
                     "instalmentNumber":4,
                     "paymentDate":"2020-03-28"
                   },
                   {
-                    "amount":500,
+                    "amount":490,
                     "instalmentNumber":5,
                     "paymentDate":"2020-04-28"
                   },
                   {
-                    "amount":500,
+                    "amount":490,
                     "instalmentNumber":6,
                     "paymentDate":"2020-05-28"
                   },
                   {
-                    "amount":500,
+                    "amount":490,
                     "instalmentNumber":7,
                     "paymentDate":"2020-06-28"
                   },
                   {
-                    "amount":500,
+                    "amount":490,
                     "instalmentNumber":8,
                     "paymentDate":"2020-07-28"
                   },
                   {
-                    "amount":500,
+                    "amount":490,
                     "instalmentNumber":9,
                     "paymentDate":"2020-08-28"
                   },
                   {
-                    "amount":473.08,
+                    "amount":564.3,
                     "instalmentNumber":10,
                     "paymentDate":"2020-09-28"
                   }
                 ],
                 "initialPaymentAmount": 0,
                 "totalNoPayments": 10,
-                "totalInterestCharged": 73.08,
+                "totalInterestCharged": 74.3,
                 "totalPaymentWithoutInterest": 4900
               },
               "status": "ApplicationComplete",
@@ -551,11 +588,11 @@ class DataEventFactorySpec extends ItSpec {
       "Arrangement submission status" - {
         "Not successful - queued for retry" in {
           val journeyArrangementNotSuccessfulQueued = journeyPlanSetUp.copy(
-            maybePlanSelection               = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
+            maybePlanSelection               = Some(PlanSelection(Left(SelectedPlan(_245Amount)))),
             maybeArrangementSubmissionStatus = Some(QueuedForRetry)
           )
 
-          val schedule = paymentPlansService.selectedSchedule(journeyArrangementNotSuccessfulQueued)(request).get
+          val schedule = calculatorService.selectedSchedule(journeyArrangementNotSuccessfulQueued)(request)
 
           val computedDataEvent = DataEventFactory.planSetUpEvent(journeyArrangementNotSuccessfulQueued, schedule, calculatorService)
 
@@ -571,11 +608,11 @@ class DataEventFactorySpec extends ItSpec {
         }
         "Permanent failure" in {
           val journeyArrangementNotSuccessfulQueued = journeyPlanSetUp.copy(
-            maybePlanSelection               = Some(PlanSelection(Left(SelectedPlan(_250Amount)))),
+            maybePlanSelection               = Some(PlanSelection(Left(SelectedPlan(_245Amount)))),
             maybeArrangementSubmissionStatus = Some(PermanentFailure)
           )
 
-          val schedule = paymentPlansService.selectedSchedule(journeyArrangementNotSuccessfulQueued)(request).get
+          val schedule = calculatorService.selectedSchedule(journeyArrangementNotSuccessfulQueued)(request)
 
           val computedDataEvent = DataEventFactory.planSetUpEvent(journeyArrangementNotSuccessfulQueued, schedule, calculatorService)
 
@@ -606,118 +643,113 @@ class DataEventFactorySpec extends ItSpec {
                 "selectionType": "basic",
                 "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
                 "schedule": {
-                  "totalPayable": 5038.16,
+                  "totalPayable": 5040.73,
                   "instalmentDate": 28,
                   "instalments": [
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":1,
                       "paymentDate":"2019-12-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":2,
                       "paymentDate":"2020-01-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":3,
                       "paymentDate":"2020-02-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":4,
                       "paymentDate":"2020-03-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":5,
                       "paymentDate":"2020-04-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":6,
                       "paymentDate":"2020-05-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":7,
                       "paymentDate":"2020-06-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":8,
                       "paymentDate":"2020-07-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":9,
                       "paymentDate":"2020-08-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":10,
                       "paymentDate":"2020-09-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":11,
                       "paymentDate":"2020-10-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":12,
                       "paymentDate":"2020-11-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":13,
                       "paymentDate":"2020-12-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":14,
                       "paymentDate":"2021-01-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":15,
                       "paymentDate":"2021-02-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":16,
                       "paymentDate":"2021-03-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":17,
                       "paymentDate":"2021-04-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":18,
                       "paymentDate":"2021-05-28"
                     },
                     {
-                      "amount":250,
+                      "amount":245,
                       "instalmentNumber":19,
                       "paymentDate":"2021-06-28"
                     },
                     {
-                      "amount":250,
+                      "amount":385.73,
                       "instalmentNumber":20,
                       "paymentDate":"2021-07-28"
-                    },
-                    {
-                      "amount":38.16,
-                      "instalmentNumber":21,
-                      "paymentDate":"2021-08-28"
                     }
                   ],
                   "initialPaymentAmount": 0,
-                  "totalNoPayments": 21,
-                  "totalInterestCharged": 138.16,
+                  "totalNoPayments": 20,
+                  "totalInterestCharged": 140.73,
                   "totalPaymentWithoutInterest": 4900
                 },
                 "status": "ApplicationComplete",
