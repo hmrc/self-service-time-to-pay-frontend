@@ -375,12 +375,26 @@ ssttp.opening-hours = Our opening times are Monday to Friday, 8am to 6pm. We are
 ssttp.extra-support.h2 = If you need extra support
 ssttp.extra-support.p1 = Find out the different ways to <a class="govuk-link" id="extra-support" href="https://www.gov.uk/get-help-hmrc-extra-support">deal with HMRC if you need some help</a>.
 ssttp.extra-support.p2 = You can also use <a class="govuk-link" id="relay-uk" href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial <strong>18001</strong> then <strong>0345 300 3900</strong>.
-ssttp.extra-support.p3= If you are outside the UK: <strong>+44 2890 538 192</strong>.
+ssttp.extra-support.p3 = If you are outside the UK: <strong>+44 2890 538 192</strong>.
 
 ssttp.calculator.form.amount-due.required = Enter the amount you owe the HMRC
 ssttp.calculator.form.amount-due.required.min = The amount must be more than £32
 ssttp.calculator.form.amount-due.decimal-places = Amount must not contain more than 2 decimal places
 ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less than £100,000
+
+ssttp.call-us.generic.h1 = Call us about a payment plan
+ssttp.call-us.generic.p1 = Call us on <strong>0300 123 1813</strong> as you may be able to set up a plan over the phone.
+ssttp.call-us.generic.p2 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
+
+ssttp.call-us.before-call-have.h2 = Before you call, make sure you have:
+ssttp.call-us.before-call-have.li1 = your 10-digit Unique Taxpayer Reference (UTR) number
+ssttp.call-us.before-call-have.li2 = information on any savings or investments you have
+ssttp.call-us.before-call-have.li3 = your bank details
+ssttp.call-us.before-call-have.li4 = details of your income and spending
+
+ssttp.call-us.ask.h2 = We’re likely to ask:
+ssttp.call-us.ask.li1 = what you’ve done to try to pay the bill
+ssttp.call-us.ask.li2 = if you can pay some of the bill now
 
 ssttp.call-us.title = Please call us
 ssttp.call-us.p1 = You are not eligible to set up a payment plan online.

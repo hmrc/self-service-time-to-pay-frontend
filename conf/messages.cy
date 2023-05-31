@@ -319,6 +319,20 @@ ssttp.calculator.results.amount.required = Dewiswch gynllun talu
 ssttp.calculator.results.month.greater-then-six.header = A oes angen cynllun talu hirach arnoch?
 ssttp.calculator.results.month.greater-then-six.intro = Bydd y gyfradd llog a’r ad-daliad cyffredinol yn uwch pan fyddwch yn dewis cynllun talu hirach.
 
+ssttp.call-us.generic.h1 = Ffoniwch ni ynghylch cynllun talu
+ssttp.call-us.generic.p1 = Ffoniwch ni ar <strong>0300 200 1900</strong> oherwydd mae’n bosibl y gallwch drefnu cynllun dros y ffôn.
+ssttp.call-us.generic.p2 = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
+
+ssttp.call-us.before-call-have.h2 = Cyn i chi ffonio, sicrhewch fod gennych y canlynol:
+ssttp.call-us.before-call-have.li1 = eich Cyfeirnod Unigryw y Trethdalwr (UTR) 10 digid
+ssttp.call-us.before-call-have.li2 = gwybodaeth am unrhyw gynilion neu fuddsoddiadau sydd gennych
+ssttp.call-us.before-call-have.li3 = eich manylion banc
+ssttp.call-us.before-call-have.li4 = manylion eich incwm a’ch gwariant
+
+ssttp.call-us.ask.h2 = Rydym yn debygol o ofyn y canlynol:
+ssttp.call-us.ask.li1 = beth rydych wedi’i wneud i geisio talu’r bil
+ssttp.call-us.ask.li2 = a allwch dalu rhywfaint o’r bil nawr
+
 ssttp.call-us.title = Ffoniwch ni
 ssttp.call-us.p1 = Nid ydych yn gymwys i drefnu cynllun talu ar-lein.
 ssttp.call-us.p2 = I gael cymorth pellach, gallwch gysylltu â Gwasanaeth Cwsmeriaid Cymraeg CThEF ar <strong>0300 200 1900</strong> i siarad ag ymgynghorydd.
