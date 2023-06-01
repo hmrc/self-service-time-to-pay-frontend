@@ -602,18 +602,14 @@ ssttp.not-sole-signatory.p1 = You need a named account holder or someone with au
 ssttp.not-sole-signatory.p2 = If you are not the account holder or you wish to set up a Direct Debit with a multi-signature account, speak to an adviser on <strong>0300 123 1813</strong>. You must ensure all account holders are present when calling.
 ssttp.not-sole-signatory.go-to-account = Go to tax account
 
-ssttp.debt-too-large.h1 = Please call us
-ssttp.debt-too-large.p1 = To be eligible to set up a payment plan online the tax you owe must be £{0} or less.
-ssttp.debt-too-large.p2 = For further support, you can contact us on <strong>0300 123 1813</strong> to speak to an adviser.
+ssttp.debt-too-large.h1 = Call us about a payment plan
+ssttp.debt-too-large.p1 = You cannot set up a Self Assessment payment plan online because you owe more than £{0}.
 ssttp.debt-too-large.before.you.call.h1 = Before you call, make sure you have:
 ssttp.debt-too-large.before.you.call.l1 = information on any savings or investments you have
 ssttp.debt-too-large.before.you.call.l2 = your bank details
 ssttp.debt-too-large.likely.to.ask.h1 = We’re likely to ask:
 ssttp.debt-too-large.likely.to.ask.l1 = what you’ve done to try to pay the bill
 ssttp.debt-too-large.likely.to.ask.l2 = if you can pay some of the bill now
-ssttp.debt-too-large.opening.hours.h1 = Our opening times are:
-ssttp.debt-too-large.opening.hours.l1 = Monday to Friday: 8am to 6pm
-ssttp.debt-too-large.opening.hours.l2 = Saturday: 8am to 4pm
 
 ssttp.upfront.amount.pound.sign.description=How much can you pay upfront in Pound Sterling
 
