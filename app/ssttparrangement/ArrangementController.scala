@@ -220,7 +220,7 @@ class ArrangementController @Inject() (
       eligibilityStatus.reasons.contains(NoDueDate) ||
       eligibilityStatus.reasons.contains(IsNotOnIa)) {
       JourneyLogger.info(s"Sent user to call us page [ineligibility reasons: ${eligibilityStatus.reasons}]")
-      ssttpeligibility.routes.SelfServiceTimeToPayController.getCallUsAboutAPaymentPlan()
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()
 
     } else if (eligibilityStatus.reasons.contains(TotalDebtIsTooHigh))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()
