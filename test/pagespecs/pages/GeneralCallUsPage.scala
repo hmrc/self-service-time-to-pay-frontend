@@ -24,7 +24,7 @@ import testsupport.RichMatchers._
 
 class GeneralCallUsPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
-  override def path: String = "/pay-what-you-owe-in-instalments/call-us"
+  override def path: String = "/pay-what-you-owe-in-instalments/eligibility/call-us"
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
