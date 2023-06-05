@@ -51,6 +51,7 @@ class Views @Inject() (
     val call_us_debt_too_old:                          views.html.core.call_us_debt_too_old,
     val call_us_about_a_payment_plan:                  views.html.core.call_us_about_a_payment_plan,
     val file_your_tax_return:                          views.html.core.file_your_tax_return,
+    val you_already_have_a_payment_plan:               views.html.core.you_already_have_a_payment_plan,
 
     //    val print_payment_schedule:       views.html.partials.print_payment_schedule,
 

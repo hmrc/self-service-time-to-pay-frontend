@@ -85,6 +85,11 @@ class SelfServiceTimeToPayController @Inject() (
     Ok(views.file_your_tax_return(isSignedIn))
   }
 
+  def getYouAlreadyHaveAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
+    JourneyLogger.info(s"$request")
+    Ok(views.you_already_have_a_payment_plan(isSignedIn, isWelsh))
+  }
+
   def getNotSaEnrolled: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
     Ok(views.not_enrolled(isWelsh, isSignedIn))

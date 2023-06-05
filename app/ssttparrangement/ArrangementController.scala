@@ -208,15 +208,13 @@ class ArrangementController @Inject() (
   }
 
   //TODO improve this under OPS-4941
-  private def ineligibleStatusRedirect(eligibilityStatus: EligibilityStatus, newJourney: Journey)(implicit hc: HeaderCarrier) =
-
+  private def ineligibleStatusRedirect(eligibilityStatus: EligibilityStatus, newJourney: Journey)(implicit hc: HeaderCarrier) = {
     if (eligibilityStatus.reasons.contains(DebtTooOld) ||
       eligibilityStatus.reasons.contains(OldDebtIsTooHigh)) {
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooOld()
 
     } else if (eligibilityStatus.reasons.contains(NoDebt) ||
       eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
-      eligibilityStatus.reasons.contains(DirectDebitCreatedWithinTheLastYear) ||
       eligibilityStatus.reasons.contains(NoDueDate)) {
       JourneyLogger.info(s"Sent user to call us page [ineligibility reasons: ${eligibilityStatus.reasons}]")
       ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()
@@ -230,6 +228,9 @@ class ArrangementController @Inject() (
     else if (eligibilityStatus.reasons.contains(ReturnNeedsSubmitting) || eligibilityStatus.reasons.contains(DebtIsInsignificant))
       ssttpeligibility.routes.SelfServiceTimeToPayController.getFileYourTaxReturn()
 
+    else if (eligibilityStatus.reasons.contains(DirectDebitCreatedWithinTheLastYear))
+      ssttpeligibility.routes.SelfServiceTimeToPayController.getYouAlreadyHaveAPaymentPlan()
+
     else {
       JourneyLogger.info(
         s"ArrangementController.eligibilityCheck ERROR - [eligible=${eligibilityStatus.eligible}]. " +
@@ -237,6 +238,7 @@ class ArrangementController @Inject() (
       throw new RuntimeException(
         s"Case not implemented. It's a bug in the eligibility reasons. [${newJourney.maybeEligibilityStatus}]. [$newJourney]")
     }
+  }
 
   def submit(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     tryLock(request.request.session.get(SessionKeys.sessionId).getOrElse("unknown-session")) {
