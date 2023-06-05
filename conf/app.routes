@@ -22,6 +22,7 @@ GET         /call-us-debt-too-old                                         ssttpe
 GET         /eligibility/debt-large/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getDebtTooLarge()
 GET         /calculator/instalments/call-us                               ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUsCalculatorInstalments()
 GET         /file-your-tax-return                                         ssttpeligibility.SelfServiceTimeToPayController.getFileYourTaxReturn()
+GET         /already-have-a-plan                                          ssttpeligibility.SelfServiceTimeToPayController.getYouAlreadyHaveAPaymentPlan()
 GET         /eligibility/call-us                                          ssttpeligibility.SelfServiceTimeToPayController.getTtpCallUs()
 GET         /eligibility/not-enrolled                                     ssttpeligibility.SelfServiceTimeToPayController.getNotSaEnrolled()
 GET         /eligibility/not-sole-signatory                               ssttpeligibility.SelfServiceTimeToPayController.getNotSoleSignatory()

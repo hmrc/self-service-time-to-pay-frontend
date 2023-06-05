@@ -22,7 +22,7 @@ import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser.pageTitle
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class CallUsAlreadyHaveAPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
+class AlreadyHaveAPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePage(baseUrl) {
 
   override def path: String = "/pay-what-you-owe-in-instalments/already-have-a-plan"
 
@@ -74,8 +74,8 @@ class CallUsAlreadyHaveAPlanPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
           |information on any savings or investments you have
           |your bank details
           |details of your income and spending
-          |We’re likely to ask:
-          |what you’ve done to try to pay the bill
+          |We're likely to ask:
+          |what you've done to try to pay the bill
           |if you can pay some of the bill now
         """.stripMargin
 

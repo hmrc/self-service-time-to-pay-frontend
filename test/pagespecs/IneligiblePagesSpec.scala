@@ -47,7 +47,7 @@ class IneligiblePagesSpec extends ItSpec with TableDrivenPropertyChecks {
     ("debt less than £32", DebtIsInsignificant, "debt too small", needToFilePage),
     ("old debt is more than £32", OldDebtIsTooHigh, "old debt too large", callUsDebtTooOld),
     ("debt older than 60 days", DebtTooOld, "debt too old", callUsDebtTooOld),
-    ("direct debit(s) created within the last 12 months", DirectDebitCreatedWithinTheLastYear, "general call us page", generalCallUsPage)
+    ("direct debit(s) created within the last 12 months", DirectDebitCreatedWithinTheLastYear, "already have a plan", alreadyHaveAPlanPage)
   )
 
   def beginJourney(ineligibleReason: Reason): Unit = {

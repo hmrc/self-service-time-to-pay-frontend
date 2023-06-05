@@ -385,6 +385,9 @@ ssttp.calculator.form.amount-due.less-than-maxval = Total amounts must be less t
 ssttp.call-us.standard.p1 = You are not eligible to set up a Self Assessment payment plan online.
 ssttp.call-us.debt-too-old.p1 = You cannot set up a Self Assessment payment plan online because your payment deadline was over 60 days ago.
 
+ssttp.call-us.already-have-a-plan.h1 = You already have a payment plan with HMRC
+ssttp.call-us.already-have-a-plan.p1 = You cannot set up a Self Assessment payment plan online.
+
 ssttp.call-us.generic.h1 = Call us about a payment plan
 ssttp.call-us.generic.p1 = Call us on <strong>0300 123 1813</strong> as you may be able to set up a plan over the phone.
 ssttp.call-us.generic.p2 = Our opening times are Monday to Friday, 8am to 6pm. We are closed on weekends and bank holidays.
