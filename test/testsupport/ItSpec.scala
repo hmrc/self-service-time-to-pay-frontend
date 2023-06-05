@@ -155,7 +155,7 @@ class ItSpec
   lazy val debtTooLargePage: DebtTooLargePage = wire[DebtTooLargePage]
   lazy val notOnIaPage: NotOnIaPage = wire[NotOnIaPage]
   lazy val generalCallUsPage: GeneralCallUsPage = wire[GeneralCallUsPage]
-  lazy val callUsDebtTooOld: CallUsDebtTooOldPage = wire[CallUsDebtTooOldPage]
+  lazy val callUsDebtTooOld: CallUsAlreadyHaveAPlanPage = wire[CallUsAlreadyHaveAPlanPage]
   lazy val needToFilePage: FileYourTaxReturnPage = wire[FileYourTaxReturnPage]
   lazy val notEnrolledPage: NotEnrolledPage = wire[NotEnrolledPage]
   lazy val youNeedToRequestAccessToSelfAssessment: YouNeedToRequestAccessToSelfAssessmentPage = wire[YouNeedToRequestAccessToSelfAssessmentPage]
