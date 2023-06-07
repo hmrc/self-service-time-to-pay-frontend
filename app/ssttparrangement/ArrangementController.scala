@@ -357,7 +357,7 @@ class ArrangementController @Inject() (
 
     PaymentPlanRequest(
       "SSTTP",
-      ZonedDateTime.now.format(ISO_INSTANT),
+      ZonedDateTime.now.truncatedTo(java.time.temporal.ChronoUnit.MILLIS).format(ISO_INSTANT),
       knownFact,
       ddInstruction,
       pp,

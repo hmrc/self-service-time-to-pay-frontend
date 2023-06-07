@@ -91,7 +91,9 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
     ".paymentPlan returns payment plan request with submission date to nearest millisecond (not micro-second)" in {
       val journeyId = JourneyId("62ce7631b7602426d74f83b0")
       val sessionId = UUID.randomUUID().toString
-      val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
+      val fakeRequest = FakeRequest()
+        .withAuthToken()
+        .withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
 
       val journey = createJourney(journeyId)
       val ddInstruction = DirectDebitInstruction(None, None, None)
@@ -100,9 +102,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
       val result = controller.paymentPlan(journey, ddInstruction)(fakeRequest)
 
-      println(s"DEBUG: ${result.submissionDateTime.toString}")
-
-      result.submissionDateTime matches("\\.\\d{3}Z$")
+      result.submissionDateTime must endWith regex "\\.\\d{3}Z$"
     }
   }
 
