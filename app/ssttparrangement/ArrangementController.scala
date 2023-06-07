@@ -328,7 +328,7 @@ class ArrangementController @Inject() (
   /**
    * Builds and returns a payment plan
    */
-  private def paymentPlan(journey: Journey, ddInstruction: DirectDebitInstruction)(implicit request: Request[_]): PaymentPlanRequest = {
+  def paymentPlan(journey: Journey, ddInstruction: DirectDebitInstruction)(implicit request: Request[_]): PaymentPlanRequest = {
     val knownFact = List(KnownFact(cesa, journey.taxpayer.selfAssessment.utr.value))
 
     val schedule = calculatorService.computeSchedule(journey)
@@ -357,7 +357,7 @@ class ArrangementController @Inject() (
 
     PaymentPlanRequest(
       "SSTTP",
-      ZonedDateTime.now.truncatedTo(java.time.temporal.ChronoUnit.MILLIS).format(ISO_INSTANT),
+      ZonedDateTime.now.format(ISO_INSTANT),
       knownFact,
       ddInstruction,
       pp,

@@ -33,7 +33,7 @@ import testsupport.WireMockSupport
 import testsupport.stubs.{ArrangementStub, AuthStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.{TdAll, TdRequest}
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, CalculatorDuration, EligibilityStatus, TypeOfAccountDetails}
+import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDayOfMonth, BankDetails, CalculatorDuration, DirectDebitInstruction, EligibilityStatus, TypeOfAccountDetails}
 
 import java.time.LocalDateTime
 import java.util.UUID
@@ -87,6 +87,22 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       val res = controller.submit()(fakeRequest)
       status(res) mustBe Status.SEE_OTHER
       res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/arrangement/summary"
+    }
+    ".paymentPlan returns payment plan request with submission date to nearest millisecond (not micro-second)" in {
+      val journeyId = JourneyId("62ce7631b7602426d74f83b0")
+      val sessionId = UUID.randomUUID().toString
+      val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
+
+      val journey = createJourney(journeyId)
+      val ddInstruction = DirectDebitInstruction(None, None, None)
+
+      val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
+
+      val result = controller.paymentPlan(journey, ddInstruction)(fakeRequest)
+
+      println(s"DEBUG: ${result.submissionDateTime.toString}")
+
+      result.submissionDateTime matches("\\.\\d{3}Z$")
     }
   }
 
