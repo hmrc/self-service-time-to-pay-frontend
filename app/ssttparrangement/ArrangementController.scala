@@ -355,7 +355,14 @@ class ArrangementController @Inject() (
                          balancingPaymentDate      = lastInstalment.paymentDate,
                          totalLiability            = totalLiability.toString())
 
-    PaymentPlanRequest("SSTTP", ZonedDateTime.now.format(ISO_INSTANT), knownFact, ddInstruction, pp, printFlag = true)
+    PaymentPlanRequest(
+      "SSTTP",
+      ZonedDateTime.now.truncatedTo(java.time.temporal.ChronoUnit.MILLIS).format(ISO_INSTANT),
+      knownFact,
+      ddInstruction,
+      pp,
+      printFlag = true
+    )
   }
 
   /**
