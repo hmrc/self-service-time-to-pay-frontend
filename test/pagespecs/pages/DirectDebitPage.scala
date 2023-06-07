@@ -162,7 +162,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
       private def directDebitNotSupportedErrorText(language: Language = English) = language match {
         case English => directDebitNotSupportedErrorEnglishText
-        case Welsh => directDebitNotSupportedErrorWelshText
+        case Welsh   => directDebitNotSupportedErrorWelshText
       }
 
       private val directDebitNotSupportedErrorEnglishText =
@@ -186,8 +186,6 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Rhif y cyfrif
           |Yn eich blaen
         """.stripMargin
-
-
 
       private val sortCodeOnDenyListErrorText =
         """Sorry, we’re experiencing technical difficulties
