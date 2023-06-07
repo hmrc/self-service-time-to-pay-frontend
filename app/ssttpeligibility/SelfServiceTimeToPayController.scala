@@ -90,10 +90,7 @@ class SelfServiceTimeToPayController @Inject() (
     Ok(views.you_already_have_a_payment_plan(isSignedIn, isWelsh))
   }
 
-  def getNotSaEnrolled: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
-    Ok(views.not_enrolled(isWelsh, isSignedIn))
-  }
+  def getNotSaEnrolled: Action[AnyContent] = getCallUsAboutAPaymentPlan
 
   def getAccessYouSelfAssessmentOnline: Action[AnyContent] = as.action { implicit request =>
     JourneyLogger.info(s"$request")
