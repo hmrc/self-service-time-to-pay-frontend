@@ -41,9 +41,9 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     case Languages.Welsh   => "Trefnu Debyd Uniongyrchol"
   }
 
-  def assertErrorPageIsDisplayed(implicit field: ErrorCase): Unit = probing {
+  def assertErrorPageIsDisplayed(field: ErrorCase, language: Language = English): Unit = probing {
     readPath() shouldBe path
-    val expectedLines = Expected.ErrorText().stripSpaces().split("\n")
+    val expectedLines = Expected.ErrorText(field, language).stripSpaces().split("\n")
     assertContentMatchesExpectedLines(expectedLines)
   }
 
@@ -102,13 +102,13 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
     }
 
     object ErrorText {
-      def apply()(implicit field: ErrorCase): String = field match {
+      def apply(field: ErrorCase, language: Language = English): String = field match {
         case AccountName()             => accountNameErrorText
         case SortCode()                => sortCodeErrorText
         case AccountNumber()           => accountNumberErrorText
         case InvalidBankDetails()      => invalidBankDetailsErrorText
         case SortCodeOnDenyList()      => sortCodeOnDenyListErrorText
-        case DirectDebitNotSupported() => directDebitNotSupportedErrorText
+        case DirectDebitNotSupported() => directDebitNotSupportedErrorText(language)
       }
 
       private val accountNameErrorText =
@@ -160,7 +160,12 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Continue
         """.stripMargin
 
-      private val directDebitNotSupportedErrorText =
+      private def directDebitNotSupportedErrorText(language: Language = English) = language match {
+        case English => directDebitNotSupportedErrorEnglishText
+        case Welsh => directDebitNotSupportedErrorWelshText
+      }
+
+      private val directDebitNotSupportedErrorEnglishText =
         """There is a problem
           |You have entered a sort code which does not accept this type of payment. Check you have entered a valid sort code or enter details for a different account
           |Set up Direct Debit
@@ -170,6 +175,19 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
           |Account number
           |Continue
         """.stripMargin
+
+      private val directDebitNotSupportedErrorWelshText =
+        """Mae problem wedi codi
+          |Rydych wedi nodi cod didoli nad yw’n derbyn y math hwn o daliad. Gwiriwch eich bod wedi nodi cod didoli dilys, neu nodwch fanylion ar gyfer cyfrif gwahanol
+          |Trefnu Debyd Uniongyrchol
+          |Yr enw sydd ar y cyfrif
+          |Cod didoli
+          |Rydych wedi nodi cod didoli nad yw’n derbyn y math hwn o daliad. Gwiriwch eich bod wedi nodi cod didoli dilys, neu nodwch fanylion ar gyfer cyfrif gwahanol
+          |Rhif y cyfrif
+          |Yn eich blaen
+        """.stripMargin
+
+
 
       private val sortCodeOnDenyListErrorText =
         """Sorry, we’re experiencing technical difficulties
