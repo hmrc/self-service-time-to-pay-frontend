@@ -139,12 +139,23 @@ class DirectDebitPageSpec extends ItSpec {
     directDebitPage.assertErrorPageIsDisplayed(SortCodeOnDenyList())
   }
 
-  "enter account not supporting direct debits " in {
-    beginJourney()
-    directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
-    BarsStub.validateBankDDNotSupported(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
-    directDebitPage.clickContinue()
-    directDebitPage.assertErrorPageIsDisplayed(DirectDebitNotSupported())
+  "enter account not supporting direct debits " - {
+    "in English" in {
+      beginJourney()
+      directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
+      BarsStub.validateBankDDNotSupported(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+      directDebitPage.clickContinue()
+      directDebitPage.assertErrorPageIsDisplayed(DirectDebitNotSupported())
+    }
+    "in Welsh" in {
+      beginJourney()
+      directDebitPage.clickOnWelshLink()
+      directDebitPage.fillOutForm("Mr John Campbell", "12-34-56", "12345678")
+      BarsStub.validateBankDDNotSupported(DirectDebitTd.sortCode, DirectDebitTd.accountNumber)
+      directDebitPage.clickContinue()
+      directDebitPage.assertErrorPageIsDisplayed(DirectDebitNotSupported(), Welsh)
+    }
+
 
   }
 
