@@ -14,11 +14,8 @@
  * limitations under the License.
  *@
 
-@import helpers.forms.submit
-@import timetopaytaxpayer.cor.model.Debit
 @import partials._
-@import java.time.format.DateTimeFormatter
-@import java.util.Locale
+@import timetopaytaxpayer.cor.model.Debit
 
 @this(
   main: views.html.main,
@@ -34,8 +31,7 @@
 )
 
 @main(
-    title = messages("ssttp.calculator.self-assessment-account-summary-page.title", currency(debits.map(_.amount).sum)),
-    backButtonUrl = Some(ssttpeligibility.routes.SelfServiceTimeToPayController.start())
+    title = messages("ssttp.calculator.self-assessment-account-summary-page.title", currency(debits.map(_.amount).sum))
 ) {
     <h1 class="govuk-heading-xl">@messages("ssttp.calculator.self-assessment-account-summary-page.title", currency(debits.map(_.amount).sum))</h1>
 

@@ -25,7 +25,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.Meta
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.Footer
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
-
+@import uk.gov.hmrc.govukfrontend.views.Aliases.BackLink
 @this(
         govukLayout: uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout,
         twoThirdsMainContent: uk.gov.hmrc.govukfrontend.views.html.components.TwoThirdsMainContent,
@@ -89,9 +89,7 @@
         @hmrcLanguageSelectHelper()
     </div>
 
-    @backButtonUrl.map{ call =>
-        @partials.back_button(call)
-    }
+    @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
 
 
 }

@@ -14,20 +14,12 @@
  * limitations under the License.
  *@
 
-@import helpers.forms.submit
-
-@import uk.gov.hmrc.selfservicetimetopay.models.PayTodayQuestion
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Fieldset
-@import uk.gov.hmrc.govukfrontend.views.Implicits._
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Legend
 @import uk.gov.hmrc.govukfrontend.views.Aliases.ErrorMessage.errorMessageWithDefaultStringsTranslated
-@import views.html.helper.CSPNonce
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{Fieldset, Legend, Text}
+@import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.{RadioItem, Radios}
+@import uk.gov.hmrc.selfservicetimetopay.models.PayTodayQuestion
 
 @this(
   main: views.html.main,
@@ -49,8 +41,7 @@
 
 @main(
     title = messages("ssttp.calculator.form.payment_today_question.title"),
-    hasErrors = dataForm.hasErrors,
-    backButtonUrl = Some(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())
+    hasErrors = dataForm.hasErrors
 ) {
 
     @if(dataForm.hasErrors){
