@@ -197,7 +197,10 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
         private val mainTextEnglish =
           s"""How much can you pay each month?
              |Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
+             |How we calculate interest
+             |We charge interest on all overdue amounts.
              |We charge the Bank of England base rate plus 2.5% per year.
+             |If the interest rate changes during your payment plan, you may need to settle any difference at the end. We will contact you if this is the case.
              |If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
              |£500 per month over 10 months
              |Includes total interest estimated at £73.08
@@ -213,7 +216,10 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
         private val mainTextWelsh =
           s"""Faint y gallwch ei dalu bob mis?
              |Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
+             |Sut rydym yn cyfrifo llog
+             |Rydym yn codi llog ar bob swm sy’n hwyr.
              |Rydym yn codi cyfradd sylfaenol Banc Lloegr ynghyd â 2.5% y flwyddyn.
+             |Os bydd y gyfradd llog yn newid yn ystod eich cynllun talu, efallai bydd yn rhaid i chi setlo unrhyw wahaniaeth ar y diwedd. Byddwn yn cysylltu â chi os yw hyn yn wir.
              |Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
              |£500 y mis, am 10 mis
              |Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef £73.08

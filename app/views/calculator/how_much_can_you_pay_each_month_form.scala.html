@@ -141,7 +141,16 @@
                 case _ => Html(messages(s"ssttp.calculator.results.p1.${calculatorType.messagesKeySuffix}"))
             })}
         </p>
-        <p class="govuk-body">@{Html(messages("ssttp.calculator.results.p2"))}</p>
+
+        <details class="govuk-details">
+            <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@messages("ssttp.calculator.how-we-calculate-interest.detail.title")</span></summary>
+            <div class="govuk-details__text">
+                <p class="govuk-body">@messages("ssttp.calculator.how-we-calculate-interest.p1")</p>
+                <p class="govuk-body">@{Html(messages("ssttp.calculator.how-we-calculate-interest.p2"))}</p>
+                <p class="govuk-body">@messages("ssttp.calculator.how-we-calculate-interest.p3")</p>
+            </div>
+        </details>
+
         <p class="govuk-body">@messages("ssttp.calculator.results.p3")</p>
 
         @radios(Radios(
