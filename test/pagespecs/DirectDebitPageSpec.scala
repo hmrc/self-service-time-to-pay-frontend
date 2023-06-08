@@ -151,7 +151,6 @@ class DirectDebitPageSpec extends ItSpec {
       directDebitPage.assertErrorPageIsDisplayed(DirectDebitNotSupported(), Welsh)
     }
 
-
   }
 
   "enter valid bank account " in {
