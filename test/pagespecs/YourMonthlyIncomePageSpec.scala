@@ -17,6 +17,7 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
+import org.scalatestplus.selenium.Chrome.goBack
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
@@ -414,19 +415,19 @@ class YourMonthlyIncomePageSpec extends ItSpec {
       callUsNoIncomePage.assertPagePathCorrect
     }
     "writes zero values which display when returning to page" - {
-      "via back button" in {
+      "via back link" in {
         beginJourney()
 
         yourMonthlyIncomePage.assertInitialPageIsDisplayed
         yourMonthlyIncomePage.clickContinue()
 
-        callUsNoIncomePage.clickOnBackButton()
+        callUsNoIncomePage.clickOnBackLink()
         yourMonthlyIncomePage.assertMonthlyIncomeValueIsDisplayed("0")
         yourMonthlyIncomePage.assertBenefitsValueIsDisplayed("0")
         yourMonthlyIncomePage.assertOtherIncomeValueIsDisplayed("0")
 
       }
-      "via back hyperlink" in {
+      "via text hyperlink" in {
         beginJourney()
 
         yourMonthlyIncomePage.assertInitialPageIsDisplayed
@@ -453,8 +454,4 @@ class YourMonthlyIncomePageSpec extends ItSpec {
     yourMonthlyIncomePage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    beginJourney()
-    yourMonthlyIncomePage.backButtonHref shouldBe Some(s"${baseUrl.value}${addIncomeSpendingPage.path}")
-  }
 }

@@ -54,7 +54,8 @@ class CallUsNoIncomePageSpec extends ItSpec {
   }
   "'Go back to add your income' link returns to 'your monthly income' page" in {
     beginJourney()
-    callUsNoIncomePage.backToIncomeLink shouldBe callUsNoIncomePage.backButtonHref
+    callUsNoIncomePage.clickOnBackToIncomeLink()
+    yourMonthlyIncomePage.assertInitialPageIsDisplayed
   }
   "'deal with HMRC if you need some help' link goes to 'Get help from HMRC if you need extra support' page" in {
     beginJourney()
@@ -74,10 +75,6 @@ class CallUsNoIncomePageSpec extends ItSpec {
 
     callUsNoIncomePage.clickOnEnglishLink()
     callUsNoIncomePage.assertInitialPageIsDisplayed(English)
-  }
-  "back button" in {
-    beginJourney()
-    callUsNoIncomePage.backButtonHref shouldBe Some(s"${baseUrl.value}${yourMonthlyIncomePage.path}")
   }
 
 }

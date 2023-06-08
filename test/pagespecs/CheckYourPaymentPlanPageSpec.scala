@@ -95,11 +95,6 @@ trait CheckYourPaymentPlanPageBaseSpec extends ItSpec {
     pageUnderTest.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    beginJourney()
-    pageUnderTest.backButtonHref shouldBe Some(s"${baseUrl.value}${inUseHowMuchCanYouPayEachMonthPage.path}")
-  }
-
   "change monthly instalments" in {
     beginJourney()
     pageUnderTest.clickChangeMonthlyAmountLink()

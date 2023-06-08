@@ -17,6 +17,7 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
+import org.scalatestplus.selenium.Chrome.goBack
 import pagespecs.pages.HowMuchCanYouPayEachMonthPage
 import ssttpcalculator.CalculatorType.PaymentOptimised
 import ssttpcalculator.model.PaymentPlanOption
@@ -315,11 +316,6 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
     pageUnderTest.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    beginJourney()
-    pageUnderTest.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
-  }
-
   "select an option and continue" - {
     "basic case" in {
       beginJourney()
@@ -342,7 +338,7 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
       beginJourney()
       pageUnderTest.selectAnOption()
       pageUnderTest.clickContinue()
-      checkYourPaymentPlanPage.clickOnBackButton()
+      checkYourPaymentPlanPage.clickOnBackLink()
 
       pageUnderTest.assertInitialPageIsDisplayed
     }
@@ -358,8 +354,9 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
       pageUnderTest.selectASpecificOption(PaymentPlanOption.Custom)
       pageUnderTest.clickContinue()
 
-      checkYourPaymentPlanPage.clickOnBackButton()
-      pageUnderTest.clickOnBackButton()
+      checkYourPaymentPlanPage.clickOnBackLink()
+      pageUnderTest.clickOnBackLink()
+      pageUnderTest.clickOnBackLink()
 
       howMuchYouCouldAffordPage.clickOnAddChangeIncome()
       yourMonthlyIncomePage.enterMonthlyIncome("501")

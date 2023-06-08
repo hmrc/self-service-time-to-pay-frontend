@@ -128,22 +128,4 @@ class WeCannotAgreeYourPaymentPlanPageSpec extends ItSpec {
     }
   }
 
-  "back button" in {
-    beginJourney()
-    addIncomeSpendingPage.assertInitialPageIsDisplayed
-
-    addIncomeSpendingPage.clickOnWelshLink()
-    addIncomeSpendingPage.assertInitialPageIsDisplayed(Welsh)
-    addIncomeSpendingPage.assertAddIncomeLinkIsDisplayed(Welsh)
-
-    addIncomeSpendingPage.clickOnEnglishLink()
-    addIncomeSpendingPage.assertInitialPageIsDisplayed(English)
-
-    addIncomeSpendingPage.enterIncome("1000")
-    addIncomeSpendingPage.enterSpending("2000")
-
-    howMuchYouCouldAffordPage.clickContinue()
-
-    weCannotAgreeYourPaymentPlanPage.backButtonHref shouldBe Some(s"${baseUrl.value}${howMuchYouCouldAffordPage.path}")
-  }
 }

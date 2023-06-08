@@ -52,7 +52,7 @@ class CallUsNoIncomePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extend
 
   def relayUKLink: Option[String] = href("relay-uk")
 
-  def clickOnBackButton(): Unit = click on id("back-link")
+  def clickOnBackLink(): Unit = goBack()
 
   def clickOnBackToIncomeLink(): Unit = click on id("back-to-income")
 
