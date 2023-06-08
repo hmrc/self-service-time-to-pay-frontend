@@ -52,6 +52,8 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     clickOnContinue()
   }
 
+  def clickOnBackLink(): Unit = goBack()
+
   def selectCustomAmountOption(): Unit = probing {
     val customAmountOptionRadioButton = xpath("//*[@id=\"customAmountOption\"]")
     click on customAmountOptionRadioButton
@@ -62,8 +64,6 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
     click on customAmountInputField
     enter(value)
   }
-
-  def clickOnBackButton(): Unit = click on id("back-link")
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path

@@ -49,11 +49,6 @@ class PaymentSummaryPageSpec extends ItSpec {
     paymentSummaryPage.assertInitialPageIsDisplayed(English)
   }
 
-  "back button" in {
-    beginJourney()
-    paymentSummaryPage.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpcalculator.routes.CalculatorController.getPaymentToday()}")
-  }
-
   "continue to monthly payment amount" in {
     beginJourney()
     paymentSummaryPage.assertInitialPageIsDisplayed

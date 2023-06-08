@@ -38,10 +38,11 @@
 @hasUpfrontPayment = @{schedule.initialPayment > 0}
 
 @main(
-  title = messages("ssttp.arrangement.complete.title"),
-  maybeSidebarLinks = None,
-  welshToggleEnabled = false,
-  hasUserPanel = true
+      title = messages("ssttp.arrangement.complete.title"),
+      maybeSidebarLinks = None,
+      welshToggleEnabled = false,
+      hasUserPanel = true,
+      hasBackLink = false
 ) {
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">@messages("ssttp.arrangement.complete.title")</h1>

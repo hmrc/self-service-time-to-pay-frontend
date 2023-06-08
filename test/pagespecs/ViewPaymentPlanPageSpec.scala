@@ -121,8 +121,4 @@ trait ViewPaymentPlanPageBaseSpec extends ItSpec {
     pageUnderTest.assertInitialPageIsDisplayed(Welsh)
   }
 
-  "back button" in {
-    beginJourney()
-    pageUnderTest.backButtonHref shouldBe Some(s"${baseUrl.value}${ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()}")
-  }
 }
