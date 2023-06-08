@@ -43,7 +43,6 @@ class Views @Inject() (
     val terms_and_conditions:                          views.html.arrangement.terms_and_conditions,
     val view_payment_plan:                             views.html.arrangement.view_payment_plan,
     val inspector:                                     views.html.testonly.inspector,
-    val not_enrolled:                                  views.html.core.not_enrolled,
     val not_sole_signatory:                            views.html.core.not_sole_signatory,
     val you_need_to_request_access_to_self_assessment: views.html.core.you_need_to_request_access_to_self_assessment,
     val debt_too_large:                                views.html.core.debt_too_large,
