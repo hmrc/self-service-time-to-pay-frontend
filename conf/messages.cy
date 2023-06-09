@@ -233,12 +233,12 @@ ssttp.calculator.form.payment_summary.up-front-payment.change = Newid
 ssttp.calculator.form.payment_summary.up-front-payment.change.hidden =  swm y taliad ymlaen llaw
 ssttp.calculator.form.payment_summary.amount.remaining = Swm sy’n weddill i’w dalu
 ssttp.calculator.form.payment_summary.amount.remaining.hint = Bydd llog yn cael ei ychwanegu at y swm hwn
-ssttp.calculator.form.payment_summary.detail.title = Sut rydym yn cyfrifo llog
-ssttp.calculator.form.payment_summary.detail.p1 = Rydym yn codi llog ar bob swm sy’n hwyr.
-ssttp.calculator.form.payment_summary.detail.p2 = Rydym yn codi <strong>cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%</strong> y flwyddyn.
-ssttp.calculator.form.payment_summary.detail.p3 = Os bydd y gyfradd llog yn newid yn ystod eich cynllun talu, efallai bydd yn rhaid i chi setlo unrhyw wahaniaeth ar y diwedd. Byddwn yn cysylltu â chi os yw hyn yn wir.
 ssttp.calculator.form.payment_summary.continue = Yn eich blaen
 
+ssttp.calculator.how-we-calculate-interest.detail.title = Sut rydym yn cyfrifo llog
+ssttp.calculator.how-we-calculate-interest.p1 = Rydym yn codi llog ar bob swm sy’n hwyr.
+ssttp.calculator.how-we-calculate-interest.p2 = Rydym yn codi <strong>cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%</strong> y flwyddyn.
+ssttp.calculator.how-we-calculate-interest.p3 = Os bydd y gyfradd llog yn newid yn ystod eich cynllun talu, efallai bydd yn rhaid i chi setlo unrhyw wahaniaeth ar y diwedd. Byddwn yn cysylltu â chi os yw hyn yn wir.
 
 ssttp.calculator.self-assessment-account-summary-page.title = Mae’ch bil treth Hunanasesiad yn dod i gyfanswm o {0}
 ssttp.calculator.self-assessment-account-summary-page.amount = Swm
@@ -283,7 +283,6 @@ ssttp.calculator.form.continue = Yn eich blaen
 ssttp.calculator.results.title = Faint y gallwch ei dalu bob mis?
 ssttp.calculator.results.p1.paymentoptimised = Yn seiliedig ar eich incwm sydd dros ben, rydym o’r farn y byddech yn gallu talu’r swm hwn bob mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
 ssttp.calculator.results.p1.legacy = Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn <strong>fwy</strong> oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
-ssttp.calculator.results.p2 = Rydym yn codi <strong>cyfradd sylfaenol Banc Lloegr ynghyd â 2.5%</strong> y flwyddyn.
 ssttp.calculator.results.p3 = Os bydd y cynllun yr ydych yn ei ddewis yn rhedeg i mewn i’r flwyddyn dreth nesaf, bydd dal angen i chi dalu’ch biliau treth yn y dyfodol mewn pryd.
 ssttp.calculator.results.amount.option =  <strong>{0} y mis</strong>, am {1} mis
 ssttp.calculator.results.amount.option.interest-hint = Mae hyn yn cynnwys cyfanswm y llog wedi’i amcangyfrif, sef  {0}

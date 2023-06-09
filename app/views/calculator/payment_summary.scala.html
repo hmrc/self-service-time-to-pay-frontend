@@ -85,15 +85,6 @@
         </div>
     </dl>
 
-    <details class="govuk-details">
-        <summary class="govuk-details__summary"><span class="govuk-details__summary-text">@messages("ssttp.calculator.form.payment_summary.detail.title")</span></summary>
-        <div class="govuk-details__text">
-            <p class="govuk-body">@messages("ssttp.calculator.form.payment_summary.detail.p1")</p>
-            <p class="govuk-body">@{Html(messages("ssttp.calculator.form.payment_summary.detail.p2"))}</p>
-            <p class="govuk-body">@messages("ssttp.calculator.form.payment_summary.detail.p3")</p>
-        </div>
-    </details>
-
     @viewsHelpers.form(ssttparrangement.routes.ArrangementController.getChangeSchedulePaymentDay()) {
         @continue(messages("ssttp.calculator.form.payment_summary.continue"))
     }

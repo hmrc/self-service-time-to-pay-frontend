@@ -234,12 +234,12 @@ ssttp.calculator.form.payment_summary.up-front-payment.change = Change
 ssttp.calculator.form.payment_summary.up-front-payment.change.hidden =  upfront payment amount
 ssttp.calculator.form.payment_summary.amount.remaining = Remaining amount to pay
 ssttp.calculator.form.payment_summary.amount.remaining.hint = Interest will be added to this amount
-ssttp.calculator.form.payment_summary.detail.title = How we calculate interest
-ssttp.calculator.form.payment_summary.detail.p1 = We charge interest on all overdue amounts.
-ssttp.calculator.form.payment_summary.detail.p2 = We charge the <strong>Bank of England base rate plus 2.5%</strong> per year.
-ssttp.calculator.form.payment_summary.detail.p3 = If the interest rate changes during your payment plan, you may need to settle any difference at the end. We will contact you if this is the case.
 ssttp.calculator.form.payment_summary.continue = Continue
 
+ssttp.calculator.how-we-calculate-interest.detail.title = How we calculate interest
+ssttp.calculator.how-we-calculate-interest.p1 = We charge interest on all overdue amounts.
+ssttp.calculator.how-we-calculate-interest.p2 = We charge the <strong>Bank of England base rate plus 2.5%</strong> per year.
+ssttp.calculator.how-we-calculate-interest.p3 = If the interest rate changes during your payment plan, you may need to settle any difference at the end. We will contact you if this is the case.
 
 ssttp.calculator.self-assessment-account-summary-page.title = Your Self Assessment tax bill is {0}
 ssttp.calculator.self-assessment-account-summary-page.amount = Amount
@@ -282,7 +282,6 @@ ssttp.calculator.form.continue = Continue
 ssttp.calculator.results.title = How much can you pay each month?
 ssttp.calculator.results.p1.paymentoptimised = Based on your left over income, this is how much we think you could pay each month. Your final monthly payment may be more or less if the interest rate changes.
 ssttp.calculator.results.p1.legacy = Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be <strong>more</strong> as it will include interest and any remaining tax you owe.
-ssttp.calculator.results.p2 = We charge the <strong>Bank of England base rate plus 2.5%</strong> per year.
 ssttp.calculator.results.p3 = If the plan you choose runs into the next tax year, you still need to pay future tax bills on time.
 ssttp.calculator.results.amount.option =  <strong>{0} per month</strong> over {1} months
 ssttp.calculator.results.amount.option.interest-hint = Includes total interest estimated at {0}
