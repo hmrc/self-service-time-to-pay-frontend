@@ -42,7 +42,8 @@ import java.time.{Clock, LocalDateTime}
 class DataEventFactorySpec extends ItSpec {
 
   override val overrideConfig: Map[String, Any] = Map(
-    "calculatorType" -> PaymentOptimised.value
+    "calculatorType" -> PaymentOptimised.value,
+    "legacyCalculatorConfig.maximumLengthOfPaymentPlan" -> 24
   )
 
   private val td = TdAll
