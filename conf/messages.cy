@@ -8,6 +8,7 @@ ssttp.common.title-prefix = Gwall:
 
 
 ssttp.common.continue = Yn eich blaen
+ssttp.common.warning = Rhybudd
 
 ssttp.common.charge-code.ASST = Asesiad refeniw
 ssttp.common.charge-code.BCC = Credyd cost mantoli
@@ -449,8 +450,6 @@ ssttp.arrangement.declaration.contact.address.ln5 = BX9 1ST
 ssttp.arrangement.declaration.title = Datganiad
 ssttp.arrangement.declaration.p1 = Cytunaf â thelerau ac amodau’r cynllun talu hwn. Cadarnhaf mai dyma’r cynharaf y gallaf setlo’r ddyled hon.
 ssttp.arrangement.declaration.agreement.confirm = Cytuno ac yn eich blaen
-ssttp.arrangement.declaration.agreement.warning = Rhybudd
-
 
 
 ssttp.direct-debit-assistance.initial-payment-of = Taliad cychwynnol o:
