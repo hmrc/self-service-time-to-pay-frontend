@@ -16,10 +16,12 @@
 
 @import ssttpcalculator.model.PaymentSchedule
 @import language.Dates._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
         main: views.html.main,
-        viewsHelpers: views.ViewsHelpers
+        viewsHelpers: views.ViewsHelpers,
+        govukWarningText: GovukWarningText
 )
 
 @(
@@ -151,15 +153,10 @@
 
 @* Warning *@
     @if((leftOverIncome / 2)  < selectedPlanAmount) {
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                <strong class="govuk-warning-text__text">
-                <span class="govuk-warning-text__assistive">Warning</span>
-                @messages("ssttp.arrangement.check-payment-plan.warning")
-            </strong>
-        </div>
-        }
-
+        @govukWarningText(WarningText(
+            iconFallbackText = messages("ssttp.common.warning"),
+            content = Text(messages("ssttp.arrangement.check-payment-plan.warning"))))
+    }
 
     @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount()) {
         @viewsHelpers.continue(Messages("ssttp.arrangement.check-payment-plan.agree"))

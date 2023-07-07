@@ -15,10 +15,13 @@
  *@
 
 @import helpers.forms.submit
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
   main: views.html.main,
-  viewsHelpers: views.ViewsHelpers
+  viewsHelpers: views.ViewsHelpers,
+  govukWarningText: GovukWarningText
+
 )
 
 @(
@@ -43,13 +46,11 @@
         <li>@messages("ssttp.arrangement.declaration.cancel-if.3")</li>
     </ul>
     </div>
-<div class="govuk-warning-text">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-        <span class="govuk-warning-text__assistive">@messages("ssttp.arrangement.declaration.agreement.warning")</span>
-        @messages("ssttp.arrangement.declaration.warning.p1")
-    </strong>
-</div>
+
+    @govukWarningText(WarningText(
+        iconFallbackText = messages("ssttp.common.warning"),
+        content = Text(messages("ssttp.arrangement.declaration.warning.p1"))
+    ))
 
 <div class="govuk-body">
     <p>@messages("ssttp.arrangement.declaration.warning.p2")</p>
