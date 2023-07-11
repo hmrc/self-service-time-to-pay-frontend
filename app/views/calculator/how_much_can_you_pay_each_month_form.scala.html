@@ -92,7 +92,7 @@
 
 @enterCustomAmountPanel = {
 <div id="custom-amount-field" class="govuk-form-group @if(customAmountHasErrors){govuk-form-group--error}">
-    <div class="govuk-hint">@Html(messages(s"ssttp.calculator.results.option.other.enter.amount.${calculatorType.messagesKeySuffix}", currency(minCustomAmount), currency(maxCustomAmount)))</div>
+    <label class="govuk-label" for="custom-amount-input">@Html(messages(s"ssttp.calculator.results.option.other.enter.amount.${calculatorType.messagesKeySuffix}", currency(minCustomAmount), currency(maxCustomAmount)))</label>
     @if(customAmountHasErrors) {
         <span id="custom-amount-error" class="govuk-error-message">
             <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
