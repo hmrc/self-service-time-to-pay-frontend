@@ -19,7 +19,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     scalaVersion := scalaV,
     majorVersion := 0,
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test )
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test)
   .settings(ScalariformSettings())
   .settings(WartRemoverSettings.wartRemoverError)
   .settings(WartRemoverSettings.wartRemoverWarning)
