@@ -317,6 +317,7 @@ a.link-back{
 h1.govuk-panel__title {
     margin-top: 0;
     font-size: 48px;
+    font-size: 3rem;
     font-weight: bold;
     padding: 0 15px;
 }
@@ -325,6 +326,7 @@ h1.govuk-panel__title {
 .govuk-panel__body{
     font-weight: 400;
     font-size: 36px;
+    font-size: 2.25rem;
     line-height: 1.04167;
     margin-bottom: 6px;
 }
