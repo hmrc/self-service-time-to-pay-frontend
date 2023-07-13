@@ -33,3 +33,10 @@ $hmrc-assets-path: "/pay-what-you-owe-in-instalments/assets/lib/hmrc-frontend/hm
 .panel-border-narrow {
   border-left-width: 5px;
 }
+
+
+.app-task-list__task-amount {
+    float: right;
+    margin-top: 0;
+    margin-bottom: 0;
+  }

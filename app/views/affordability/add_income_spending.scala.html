@@ -38,61 +38,65 @@
 ){
 
     <h1 class="govuk-heading-xl">@messages("ssttp.affordability.income-spending.h1")</h1>
+<ol class="app-task-list">
+    <li>
+        <div class="govuk-grid-row govuk-!-static-margin-bottom-5  @if(income.isEmpty){govuk-!-static-margin-bottom-9 govuk-!-static-padding-bottom-3 govuk-section-break--visible}">
+            <div class="govuk-grid-column-one-half">
+            <h2 class="app-task-list__section govuk-!-margin-0">
+                <span class="app-task-list__section-number">1. </span> @messages("ssttp.affordability.income-spending.income")
+            </h2>
+            </div>
+            <div class="govuk-grid-column-one-half govuk-!-text-align-right">
+                <a class="govuk-link govuk-body-m" id="monthly-income" href="monthly-income">
+                    @(if(income.isEmpty) {
+                    messages("ssttp.affordability.income-spending.add-income")
+                    } else {
+                    messages("ssttp.affordability.income-spending.change-income")
+                    })
+                </a>
+            </div>
+        </div>
 
-    <div class="govuk-!-padding-left-5">
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row @if(income.nonEmpty){no_bottom_line}">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">
-                    <div class="app-task-list__section">
-                        <span class="app-task-list__section-number">1.</span>@messages("ssttp.affordability.income-spending.income")
-                    </div>
-                </dt>
-                <dd class="govuk-summary-list__value govuk-!-text-align-right">
-                    <a class="govuk-link govuk-body-m" id="monthly-income" href="monthly-income">
-                        @(if(income.isEmpty) {
-                            messages("ssttp.affordability.income-spending.add-income")
-                        } else {
-                            messages("ssttp.affordability.income-spending.change-income")
-                        })
-                    </a>
-                </dd>
-            </div>
-        </dl>
-    </div>
-    <div class="govuk-!-padding-left-5">
-        @if(income.nonEmpty) {
-            <div class="govuk-!-padding-left-1">
-                @income_list(income)
-            </div>
-            }
-    </div>
+            @if(income.nonEmpty) {
+    <li>
+        <ul class="app-task-list__items">
+                    @income_list(income)
+        </ul>
+    </li>
+                }
 
-    <div class="govuk-!-padding-left-5">
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row @if(spending.nonEmpty){no_bottom_line}">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">
-                    <div class="app-task-list__section">
-                        <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
-                    </div>
-                </dt>
-                <dd class="govuk-summary-list__value govuk-!-text-align-right">
-                    <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
-                        @(if(spending.isEmpty) {
-                            messages("ssttp.affordability.income-spending.add-spending")
-                        } else {
-                            messages("ssttp.affordability.income-spending.change-spending")
-                        })
-                    </a>
-                </dd>
+    </li>
+
+    <li>
+        <div class="govuk-grid-row govuk-!-static-margin-bottom-5  @if(spending.isEmpty){govuk-!-static-margin-bottom-9 govuk-!-static-padding-bottom-3 govuk-section-break--visible}">
+            <div class="govuk-grid-column-one-half">
+                <h2 class="app-task-list__section govuk-!-margin-0">
+                    <span class="app-task-list__section-number">2. </span>@messages("ssttp.affordability.income-spending.spending")
+                </h2>
             </div>
-        </dl>
-    </div>
-    <div class="govuk-!-padding-left-5">
+            <div class="govuk-grid-column-one-half govuk-!-text-align-right">
+                <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
+                    @(if(spending.isEmpty) {
+                    messages("ssttp.affordability.income-spending.add-spending")
+                    } else {
+                    messages("ssttp.affordability.income-spending.change-spending")
+                    })
+                </a>
+            </div>
+        </div>
+
+
+
         @if(spending.nonEmpty) {
-            <div class="govuk-!-padding-left-1">
-                @spending_list(spending)
-            </div>
-            }
-    </div>
+    <li>
+        <ul class="app-task-list__items">
+            @spending_list(spending)
+        </ul>
+    </li>
+    }
+
+    </li>
+
+</ol>
 
 }
