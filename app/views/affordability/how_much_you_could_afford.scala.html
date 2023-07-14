@@ -60,57 +60,47 @@
     </li>
 
 
-<li>
-    <div class="govuk-grid-row govuk-!-static-margin-bottom-5 ">
-        <div class="govuk-grid-column-one-half">
-            <h2 class="app-task-list__section govuk-!-margin-0">
-                <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
-            </h2>
+    <li>
+        <div class="govuk-grid-row govuk-!-static-margin-bottom-5 ">
+            <div class="govuk-grid-column-one-half">
+                <h2 class="app-task-list__section govuk-!-margin-0">
+                    <span class="app-task-list__section-number">2.</span>@messages("ssttp.affordability.income-spending.spending")
+                </h2>
+            </div>
+            <div class="govuk-grid-column-one-half govuk-!-text-align-right">
+                <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
+                    @messages("ssttp.affordability.income-spending.change-spending")
+                </a>
+            </div>
         </div>
-        <div class="govuk-grid-column-one-half govuk-!-text-align-right">
-            <a class="govuk-link govuk-body-m" id="monthly-spending" href="monthly-spending">
-                @messages("ssttp.affordability.income-spending.change-spending")
-            </a>
-        </div>
-    </div>
         <ul class="app-task-list__items">
             @spending_list(spending)
         </ul>
-</li>
+    </li>
 
-
-
-<li>
-    <div class="govuk-grid-row govuk-!-static-margin-bottom-5 ">
-        <div class="govuk-grid-column-one-half">
-            <h2 class="app-task-list__section govuk-!-margin-0">
-                <span class="app-task-list__section-number">3.</span>@messages("ssttp.affordability.how-much-you-could-afford.left-over-income")
-            </h2>
+    <li>
+        <div class="govuk-grid-row govuk-!-static-margin-bottom-5 ">
+            <div class="govuk-grid-column-one-half">
+                <h2 class="app-task-list__section govuk-!-margin-0">
+                    <span class="app-task-list__section-number">3.</span>@messages("ssttp.affordability.how-much-you-could-afford.left-over-income")
+                </h2>
+            </div>
         </div>
-    </div>
-
-
-
-    <ul class="app-task-list__items">
-        <li class="app-task-list__item">
-                      <span class="app-task-list__task-name">
-                          @messages("ssttp.affordability.how-much-you-could-afford.total")
-                      </span>
-            <span class="app-task-list__task-amount" >@partials.currency(total)</span>
-        </li>
-        <li class="app-task-list__item">
-                      <strong class="app-task-list__task-name">
-                          @messages("ssttp.affordability.how-much-you-could-afford.half-of-total")
-                      </strong>
-            <strong class="app-task-list__task-amount" >@partials.currency(total / 2)</strong>
-        </li>
-    </ul>
-
-
-</li>
-
-
-
+        <ul class="app-task-list__items">
+            <li class="app-task-list__item">
+                          <span class="app-task-list__task-name">
+                              @messages("ssttp.affordability.how-much-you-could-afford.total")
+                          </span>
+                <span class="app-task-list__task-amount" >@partials.currency(total)</span>
+            </li>
+            <li class="app-task-list__item">
+                          <strong class="app-task-list__task-name">
+                              @messages("ssttp.affordability.how-much-you-could-afford.half-of-total")
+                          </strong>
+                <strong class="app-task-list__task-amount" >@partials.currency(total / 2)</strong>
+            </li>
+        </ul>
+    </li>
 
 </ol>
 
