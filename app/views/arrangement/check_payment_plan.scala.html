@@ -103,7 +103,9 @@
 @* Payments schedule *@
         <div class="govuk-summary-list__row no_bottom_line ">
 
-       <dt class="govuk-summary-list__key govuk-!-width-one-third govuk-!-padding-top-7"><strong>@Messages("ssttp.arrangement.check-payment-plan.payment-plan")</strong></dt>
+       <dt class="govuk-summary-list__key govuk-!-width-one-third govuk-!-padding-top-7">
+           @Messages("ssttp.arrangement.check-payment-plan.payment-plan")
+       </dt>
        <dd class="govuk-summary-list__value "></dd>
            <dd class="govuk-summary-list__actions">
                <a id="monthly-payment" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">
@@ -113,27 +115,29 @@
            </dd>
         </div>
 
-           @paymentSchedule.instalments.map {instalment =>
+@* Payments plan *@
+        @paymentSchedule.instalments.init.map { instalment =>
+            <div class="govuk-summary-list__row no_bottom_line">
+                <dt class="govuk-summary-list__key govuk-!-width-one-third">
+                    @monthYear(instalment.paymentDate)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @partials.currency(instalment.amount)
+                </dd>
+            </div>
+        }
 
-        <div class="govuk-summary-list__row  no_bottom_line">
-                       <dt class="govuk-summary-list__key govuk-!-width-one-third">
-                           <strong>@monthYear(instalment.paymentDate)</strong>
-                       </dt>
-                       <dd class="govuk-summary-list__value">
-                       @partials.currency(instalment.amount)
-                       </dd>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third govuk-!-padding-bottom-7">
+                @monthYear(paymentSchedule.instalments.last.paymentDate)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @partials.currency(paymentSchedule.instalments.last.amount)
+            </dd>
         </div>
 
-
-           }
-
-
-        @* This is where we need the gap, or last time above with a margin-bottom on.*@
-        <br><br>
-
-
+@* Estimated interest *@
         <div class="govuk-summary-list__row add_top_line">
-
             <dt class="govuk-summary-list__key govuk-!-width-one-third govuk-!-padding-top-6">
                 @messages("ssttp.arrangement.check-payment-plan.estimated-interest")
                 <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.check-payment-plan.estimated-interest.hint")</p>
@@ -143,10 +147,11 @@
             </dd>
         </div>
 
+
 @* Total pay *@
         <div class="govuk-summary-list__row ">
             <dt class="govuk-summary-list__key govuk-!-width-one-third  govuk-!-margin-bottom-9">
-                <strong>@messages("ssttp.arrangement.check-payment-plan.total-to-pay")</strong>
+                @messages("ssttp.arrangement.check-payment-plan.total-to-pay")
             </dt>
             <dd class="govuk-summary-list__value">
                 @partials.currency(paymentSchedule.totalPayable)
