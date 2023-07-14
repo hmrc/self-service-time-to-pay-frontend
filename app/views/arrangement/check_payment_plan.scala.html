@@ -40,7 +40,7 @@
     <h1 class="govuk-heading-xl">@messages("ssttp.arrangement.check-payment-plan.h1")</h1>
 
 @* Can you make an upfront payment? *@
-    <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-third">
                 @messages("ssttp.arrangement.check-payment-plan.upfront-payment.question")
@@ -57,10 +57,10 @@
                 </a>
             </dd>
         </div>
-    </dl>
+
 
 @* Upfront payment *@
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-third">
                 @messages("ssttp.arrangement.check-payment-plan.upfront-payment.amount")
@@ -82,7 +82,7 @@
     <h2 class="govuk-heading-m">@messages("ssttp.arrangement.check-payment-plan.monthly-payments.h2")</h2>
 
 @* Payments collected on *@
-    <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-third">
                 @messages("ssttp.arrangement.check-payment-plan.payments-collected-on")
@@ -98,40 +98,43 @@
                 </a>
             </dd>
         </div>
-    </dl>
+
 
 @* Payments schedule *@
-   <dl class="govuk-summary-list govuk-!-margin-top-6 govuk-!-margin-bottom-0">
-       <dt class="govuk-summary-list__key govuk-!-width-one-third"><strong>@Messages("ssttp.arrangement.check-payment-plan.payment-plan")</strong></dt>
-       <dd class="govuk-summary-list__value"></dd>
+        <div class="govuk-summary-list__row no_bottom_line ">
+
+       <dt class="govuk-summary-list__key govuk-!-width-one-third govuk-!-padding-top-7"><strong>@Messages("ssttp.arrangement.check-payment-plan.payment-plan")</strong></dt>
+       <dd class="govuk-summary-list__value "></dd>
            <dd class="govuk-summary-list__actions">
                <a id="monthly-payment" href="@ssttpcalculator.routes.CalculatorController.getCalculateInstalments()">
                    @messages("ssttp.arrangement.check-payment-plan.change")
                <span class="govuk-visually-hidden"> @messages("ssttp.arrangement.check-payment-plan.payments-collected-on.change-hidden")</span>
                </a>
            </dd>
-   </dl>
-       <div class="govuk-!-margin-bottom-6">
+        </div>
+
            @paymentSchedule.instalments.map {instalment =>
-               <dl class="govuk-summary-list govuk-!-margin-0">
-                   <div class="govuk-summary-list__row grouped-row no_bottom_line">
+
+        <div class="govuk-summary-list__row  no_bottom_line">
                        <dt class="govuk-summary-list__key govuk-!-width-one-third">
                            <strong>@monthYear(instalment.paymentDate)</strong>
                        </dt>
                        <dd class="govuk-summary-list__value">
                        @partials.currency(instalment.amount)
                        </dd>
-                   </div>
-               </dl>
+        </div>
+
+
            }
-       </div>
 
-    <hr aria-hidden="true">
 
-@* Estimated total interest *@
-    <dl class="govuk-summary-list govuk-!-margin-top-6">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">
+        @* This is where we need the gap, or last time above with a margin-bottom on.*@
+        <br><br>
+
+
+        <div class="govuk-summary-list__row add_top_line">
+
+            <dt class="govuk-summary-list__key govuk-!-width-one-third govuk-!-padding-top-6">
                 @messages("ssttp.arrangement.check-payment-plan.estimated-interest")
                 <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.check-payment-plan.estimated-interest.hint")</p>
             </dt>
@@ -141,8 +144,8 @@
         </div>
 
 @* Total pay *@
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">
+        <div class="govuk-summary-list__row ">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third  govuk-!-margin-bottom-9">
                 <strong>@messages("ssttp.arrangement.check-payment-plan.total-to-pay")</strong>
             </dt>
             <dd class="govuk-summary-list__value">
