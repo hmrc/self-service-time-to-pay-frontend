@@ -74,10 +74,10 @@
 
 
 
-        @schedule.instalments.map {instalment =>
+        @schedule.instalments.init.map {instalment =>
         <div class="govuk-summary-list__row no_bottom_line ">
                 <dt class="govuk-summary-list__key govuk-!-width-one-half">
-                    <strong>@monthYear(instalment.paymentDate)</strong>
+                   @monthYear(instalment.paymentDate)
                 </dt>
                 <dd class="govuk-summary-list__value">
                     @partials.currency(instalment.amount)
@@ -85,10 +85,19 @@
             </div>
         }
 
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third govuk-!-padding-bottom-7">
+            @monthYear(schedule.instalments.last.paymentDate)
+            </dt>
+            <dd class="govuk-summary-list__value">
+            @partials.currency(schedule.instalments.last.amount)
+            </dd>
+        </div>
+
 
         <div class="govuk-summary-list__row add_top_line">
             <dt class="govuk-summary-list__key govuk-!-width-one-half">
-                <strong>@messages("ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest")</strong>
+                @messages("ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest")
                 <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.check-payment-plan.estimated-interest.hint")</p>
             </dt>
             <dd class="govuk-summary-list__value">
@@ -98,7 +107,7 @@
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-half">
-                <strong>@messages("ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay")</strong>
+                @messages("ssttp.arrangement.print-summary.schedule.payment-plan.total-to-pay")
             </dt>
             <dd class="govuk-summary-list__value">
                 @partials.currency(schedule.totalPayable)
