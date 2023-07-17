@@ -33,3 +33,31 @@ $hmrc-assets-path: "/pay-what-you-owe-in-instalments/assets/lib/hmrc-frontend/hm
 .panel-border-narrow {
   border-left-width: 5px;
 }
+
+@media (min-width: 40.0625em) {
+
+    .app-task-list__task-amount {
+        float: right;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+   .app-task-list__items {
+      font-size: 19px;
+      font-size: 1.1875rem;
+      line-height: 1.3157894737;
+    }
+
+  }
+
+@media (max-width: 40.0525em) {
+
+  .app-task-list__task-name {
+      display: block;
+  }
+  .app-task-list__task-amount {
+    float:left;
+    width: 100%;
+    padding: 5px 0
+  }
+
+  }

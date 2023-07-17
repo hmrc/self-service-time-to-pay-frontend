@@ -18,21 +18,23 @@
 
 @(spending: Seq[Expenses])(implicit messages: play.api.i18n.Messages)
 
-<div class="govuk-!-padding-left-6 govuk-!-margin-bottom-9">
-    <dl class="govuk-summary-list">
 
         @{spending.map( expense =>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-!-width-one-half">{messages(expense.category.messageKey)}</dt>
-                <dd class="govuk-summary-list__value govuk-!-text-align-right">{partials.currency(expense.amount)}</dd>
-            </div>
+
+<li class="app-task-list__item">
+                      <span class="app-task-list__task-name">
+                          {messages(expense.category.messageKey)}
+                      </span>
+    <span class="app-task-list__task-amount" >{partials.currency(expense.amount)}</span>
+</li>
             )
         }
 
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-half">@{messages("ssttp.affordability.your-monthly-spending.total")}</dt>
-            <dd class="govuk-summary-list__value govuk-!-font-weight-bold govuk-!-text-align-right">@{partials.currency(spending.map(_.amount).sum)}</dd>
-        </div>
+<li class="app-task-list__item">
+    <strong class="app-task-list__task-name">
+        @{messages("ssttp.affordability.your-monthly-spending.total")}
+    </strong>
+    <strong class="app-task-list__task-amount">@{partials.currency(spending.map(_.amount).sum)}</strong>
+</li>
 
-    </dl>
-</div>
+
