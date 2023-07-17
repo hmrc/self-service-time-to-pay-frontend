@@ -201,6 +201,10 @@ input.accountName{
     border-bottom: 1px solid #bfc1c3 !important;
 }
 
+.add_top_line{
+    border-top: 1px solid #bfc1c3 !important;
+}
+
 .no_bottom_line{
     border-bottom: 0 !important;
 }
