@@ -39,7 +39,7 @@
 
 <section class="govuk-body divider--bottom govuk-!-display-none-print">
     <h1 class="govuk-heading-xl">@messages("ssttp.arrangement.print-summary.schedule.payment-plan.h1")</h1>
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    <dl class="govuk-summary-list govuk-!-margin-bottom-7">
         <div class="govuk-summary-list__row  ">
             <dt class="govuk-summary-list__key govuk-!-width-one-half govuk-!-margin-bottom-6">
                 @messages("ssttp.arrangement.print-summary.ddref")
@@ -50,7 +50,7 @@
         </div>
 
         <div class="govuk-summary-list__row ">
-            <dt class="govuk-summary-list__key govuk-!-width-one-half">
+            <dt class="govuk-summary-list__key govuk-!-width-one-half govuk-!-padding-top-7">
                 @messages("ssttp.arrangement.print-summary.schedule.up-front-payment")
             </dt>
             <dd class="govuk-summary-list__value">
@@ -64,7 +64,7 @@
     <dl class="govuk-summary-list govuk-!-margin-bottom-6">
 
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-half">
+            <dt class="govuk-summary-list__key govuk-!-width-one-half govuk-!-margin-bottom-9">
                 @messages("ssttp.arrangement.print-summary.payment-date.title")
             </dt>
             <dd class="govuk-summary-list__value">
@@ -72,11 +72,18 @@
             </dd>
         </div>
 
+        <div class="govuk-summary-list__row no_bottom_line ">
 
+            <dt class="govuk-summary-list__key govuk-!-width-one-third govuk-!-padding-top-7">
+                @Messages("ssttp.arrangement.check-payment-plan.payment-plan")
+            </dt>
+            <dd class="govuk-summary-list__value "></dd>
+
+        </div>
 
         @schedule.instalments.init.map {instalment =>
         <div class="govuk-summary-list__row no_bottom_line ">
-                <dt class="govuk-summary-list__key govuk-!-width-one-half">
+                <dt class="govuk-summary-list__key govuk-!-width-one-half ">
                    @monthYear(instalment.paymentDate)
                 </dt>
                 <dd class="govuk-summary-list__value">
@@ -95,8 +102,9 @@
         </div>
 
 
+
         <div class="govuk-summary-list__row add_top_line">
-            <dt class="govuk-summary-list__key govuk-!-width-one-half">
+            <dt class="govuk-summary-list__key govuk-!-width-one-half govuk-!-padding-top-7">
                 @messages("ssttp.arrangement.print-summary.schedule.payment-plan.estimated-interest")
                 <p class="govuk-body-s govuk-!-margin-bottom-0">@messages("ssttp.arrangement.check-payment-plan.estimated-interest.hint")</p>
             </dt>
