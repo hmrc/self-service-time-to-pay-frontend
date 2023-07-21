@@ -54,7 +54,7 @@
 
     <p>@Messages("ssttp.landing.p4")</p>
 
-    @viewsHelpers.form(ssttpeligibility.routes.SelfServiceTimeToPayController.submit(), 'class -> "group",'id -> "start") {
+    @viewsHelpers.form(ssttpeligibility.routes.SelfServiceTimeToPayController.doStart(), 'class -> "group",'id -> "start") {
         @viewsHelpers.startNow()
     }
 
