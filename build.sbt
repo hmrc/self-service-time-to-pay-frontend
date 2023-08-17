@@ -31,7 +31,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     Test / unmanagedSourceDirectories := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common")
   )
-  .settings(publishingSettings: _*)
   .settings(resolvers ++= Seq(
     sbt.Resolver.jcenterRepo
   ))
