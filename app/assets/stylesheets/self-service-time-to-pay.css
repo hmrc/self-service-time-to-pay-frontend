@@ -7,6 +7,13 @@
     font-size: 48px;
 }
 
+.govuk-back-link, .print-summary-link {
+    display: none;
+}
+.js-enabled .govuk-back-link, .js-enabled .print-summary-link {
+    display: inline-block
+}
+
 .ssttp-grid-layout-payment-today {
     width: 39%;
 }
