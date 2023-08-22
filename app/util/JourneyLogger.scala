@@ -26,7 +26,7 @@ import play.api.libs.json.Json
  * like journeyId origin, path method, etc.
  * Use it everywhere
  */
-class JourneyLogger(inClass: Class[_ <: Logging])
+class JourneyLogger(inClass: Class[_])
   extends BaseLogger(inClass)
   with ArrangementLogging {
 

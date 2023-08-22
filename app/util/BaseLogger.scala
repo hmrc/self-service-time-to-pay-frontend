@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.CookieNames
 import uk.gov.hmrc.selfservicetimetopay.models.{PaymentPlanRequest, TTPArrangement}
 import util.RequestSupport.hc
 
-abstract class BaseLogger(inClass: Class[_ <: Logging]) {
+abstract class BaseLogger(inClass: Class[_]) {
 
   val log: Logger
 

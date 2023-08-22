@@ -18,7 +18,7 @@ package util
 
 import play.api.Logger
 
-class ConnectionsLogger(inClass: Class[_ <: Logging])
+class ConnectionsLogger(inClass: Class[_])
   extends BaseLogger(inClass)
   with ArrangementLogging
   with SubmissionErrorLogging

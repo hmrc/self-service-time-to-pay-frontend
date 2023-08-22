@@ -18,16 +18,14 @@ package journey
 
 import journey.Statuses.{ApplicationComplete, InProgress}
 import play.api.mvc.{Request, Result, Results}
-import req.RequestSupport
 import uk.gov.hmrc.play.http.logging.Mdc
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
+import util.Logging
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) {
+class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) extends Logging {
 
-  import RequestSupport._
   import playsession.PlaySessionSupport._
 
   def saveJourney(journey: Journey)(implicit request: Request[_]): Future[Unit] = Mdc.preservingMdc {
@@ -47,18 +45,18 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
    */
   def authorizedForSsttp(block: Journey => Future[Result])(implicit request: Request[_]): Future[Result] = {
-    JourneyLogger.info(s"${this.getClass.getSimpleName}: $request")
+    journeyLogger.info("Checking authorization and retrieving journey")
 
     for {
       journey <- getJourney()
       result <- journey match {
         case journey if journey.status == InProgress =>
-          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", journey)
+          journeyLogger.info("Authorized with journey", journey)
           journey.requireIsEligible()
           block(journey)
 
         case journey if journey.status == ApplicationComplete =>
-          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission (no eligible journey in progress)", journey)
+          journeyLogger.info("No eligible journey in progress", journey)
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
       }

@@ -28,7 +28,6 @@ import ssttpaffordability.model.Expense._
 import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIncome}
 import ssttpaffordability.model._
 import ssttpdirectdebit.DirectDebitConnector
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import util.Logging
 import views.Views
 
