@@ -20,15 +20,13 @@ import java.io.FileNotFoundException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Singleton
-import play.api.Logger
 import ssttpcalculator.model.InterestRate
+import util.Logging
 
 import scala.io.Source
 
 @Singleton
-class InterestRateService {
-
-  private val logger = Logger(getClass)
+class InterestRateService extends Logging {
 
   lazy val rates: Seq[InterestRate] = streamInterestRates()
   val filename: String = "/interestRates.csv"
@@ -83,7 +81,7 @@ class InterestRateService {
             ).min,
           rate      = rate.rate
         )
-        logger.info(s"Rate: $ir")
+        contextlessLogger("interest rates").warn(s"Rate: $ir")
         ir
       }
     }

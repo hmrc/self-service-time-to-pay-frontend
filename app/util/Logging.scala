@@ -21,4 +21,9 @@ trait Logging {
 
   val journeyLogger = new JourneyLogger(inClass)
   val connectionsLogger = new ConnectionsLogger(inClass)
+  val stubsConnectionsLogger = new Logger("stubs connections", inClass)
+
+  def logger(reference: String) = new Logger(reference, inClass)
+
+  def contextlessLogger(reference: String) = play.api.Logger(reference)
 }

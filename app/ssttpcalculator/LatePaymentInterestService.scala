@@ -17,7 +17,6 @@
 package ssttpcalculator
 
 import config.AppConfig
-import play.api.Logger
 import ssttpcalculator.model.{FixedInterestPeriod, InterestRate, LatePaymentInterest, Payable, Payables, PaymentsCalendar, TaxLiability}
 
 import java.time.{LocalDate, Year}
@@ -27,7 +26,6 @@ class LatePaymentInterestService @Inject() (durationService: DurationService, in
     implicit
     appConfig: AppConfig) {
 
-  val logger: Logger = Logger(getClass)
   val _100 = 100
 
   def totalHistoricInterest(
@@ -120,7 +118,6 @@ class LatePaymentInterestService @Inject() (durationService: DurationService, in
         }
 
       val initPaymentInterest = processDebits(upfrontPayment, sortedDebits)
-      logger.info(s"InitialPayment Interest: $initPaymentInterest")
       initPaymentInterest
     }
   }
@@ -180,9 +177,6 @@ class LatePaymentInterestService @Inject() (durationService: DurationService, in
       val historicRate = debit.historicDailyRate
       val total = historicRate * debit.amountAccruingInterest * numberOfDays
 
-      logger.info(s"Historic interest: rate $historicRate days $numberOfDays amount ${debit.amountAccruingInterest} total = $total")
-      logger.info(s"Debit due date: ${debit.dueDate} and end date: $endDate is inclusive: $inclusive")
-      logger.info(s"Debit Rate date: $debitRateEndDate and calculation start date: $planStartDate")
       total
     }.sum
   }

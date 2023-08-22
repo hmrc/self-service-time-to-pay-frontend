@@ -26,15 +26,14 @@ import timetopaytaxpayer.cor.model.SaUtr
 
 import scala.concurrent.{ExecutionContext, Future}
 import req.RequestSupport._
+import util.Logging
 
 final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val utr: SaUtr)
   extends WrappedRequest[A](request)
 
 class AuthorisedSaUserAction @Inject() (
     cc: MessagesControllerComponents)
-  extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
-
-  private val logger = Logger(getClass)
+  extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] with Logging {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
 
@@ -52,8 +51,8 @@ class AuthorisedSaUserAction @Inject() (
 
     val maybeObfuscatedUtr = maybeUtr.map(_ => "***")
 
-      def logFail(reason: String) = {
-        logger.info(
+      def logFail(reason: String)(implicit rh: RequestHeader) = {
+        journeyLogger.info(
           s"""
            |Authorisation failed, reason: $reason:
            |  [hasActiveSaEnrolment: $hasActiveSaEnrolment]
@@ -66,10 +65,10 @@ class AuthorisedSaUserAction @Inject() (
     val result: Either[Result, AuthorisedSaUserRequest[A]] =
       (hasActiveSaEnrolment, maybeUtr) match {
         case (false, _) =>
-          logFail("no active IR-SA enrolment")
+          logFail("no active IR-SA enrolment")(request)
           Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
         case (_, None) =>
-          logFail("no present UTR")
+          logFail("no present UTR")(request)
           Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
         case (true, Some(utr)) =>
           Right(new AuthorisedSaUserRequest[A](request, utr))

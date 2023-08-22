@@ -27,9 +27,13 @@ import uk.gov.hmrc.http.CookieNames
 import uk.gov.hmrc.selfservicetimetopay.models.{PaymentPlanRequest, TTPArrangement}
 import util.RequestSupport.hc
 
+class Logger(reference: String, inClass: Class[_]) extends BaseLogger(inClass) {
+  val log: play.api.Logger = Logger(reference)
+}
+
 abstract class BaseLogger(inClass: Class[_]) {
 
-  val log: Logger
+  val log: play.api.Logger
 
   def debug(message: => String)(implicit request: RequestHeader): Unit = logMessage(message, Debug)
 

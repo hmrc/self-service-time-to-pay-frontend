@@ -18,7 +18,6 @@ package ssttpcalculator
 
 import config.AppConfig
 import journey.Journey
-import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import ssttpcalculator.model.{Payable, PaymentPlanOption, PaymentSchedule, PaymentsCalendar, TaxLiability}
@@ -38,7 +37,6 @@ class PaymentPlansService @Inject() (
     instalmentsService:         InstalmentsService
 )(implicit ec: ExecutionContext, appConfig: AppConfig) {
 
-  val logger: Logger = Logger(getClass)
   val proportionsOfNetMonthlyIncome: Seq[Double] = List(0.5, 0.6, 0.8)
 
   def defaultSchedules(

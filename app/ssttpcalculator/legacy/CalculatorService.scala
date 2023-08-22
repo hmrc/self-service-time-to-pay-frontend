@@ -18,7 +18,6 @@ package ssttpcalculator.legacy
 
 import bankholidays.WorkingDaysService.addWorkingDays
 import journey.Journey
-import play.api.Logger
 import play.api.mvc.Request
 import ssttpcalculator.{DurationService, InterestRateService}
 import ssttpcalculator.legacy.CalculatorService.asTaxLiability
@@ -49,8 +48,6 @@ class CalculatorService @Inject() (
   (implicit ec: ExecutionContext, appConfig: AppConfig) {
 
   import clockProvider._
-
-  val logger = Logger(getClass)
 
   val minimumMonthsAllowedTTP: Int = 2
   val DebitDueAndCalculationDatesWithinRate: (Boolean, Boolean) = Tuple2(true, true)
@@ -258,7 +255,6 @@ class CalculatorService @Inject() (
       }
 
     val initPaymentInterest = processDebits(calculation.initialPayment, sortedDebits)
-    logger.info(s"InitialPayment Interest: $initPaymentInterest")
     initPaymentInterest
   }
 
@@ -316,9 +312,6 @@ class CalculatorService @Inject() (
       val historicRate = debit.historicDailyRate
       val total = historicRate * debit.amount * numberOfDays
 
-      logger.info(s"Historic interest: rate $historicRate days $numberOfDays amount ${debit.amount} total = $total")
-      logger.info(s"Debit due date: ${debit.dueDate} and end date: $endDate is inclusive: $inclusive")
-      logger.info(s"Debit Rate date: $debitRateEndDate and calculation start date: ${calculation.startDate}")
       total
     }.sum
   }

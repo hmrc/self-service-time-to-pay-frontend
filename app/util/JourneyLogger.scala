@@ -30,7 +30,7 @@ class JourneyLogger(inClass: Class[_])
   extends BaseLogger(inClass)
   with ArrangementLogging {
 
-  override val log: Logger = Logger("journey")
+  override val log: play.api.Logger = Logger("journey")
 
   def debug(message: => String, journey: Journey)(implicit request: RequestHeader): Unit = logMessage(message, journey, Debug)
 

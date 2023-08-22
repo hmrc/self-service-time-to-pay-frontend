@@ -24,6 +24,6 @@ class ConnectionsLogger(inClass: Class[_])
   with SubmissionErrorLogging
   with PaymentPlanRequestLogging {
 
-  override val log: Logger = Logger("connections")
+  override val log: play.api.Logger = Logger("connections")
 
 }
