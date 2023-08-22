@@ -18,9 +18,8 @@ package util
 
 import cats.implicits.catsSyntaxEq
 import controllers.action.JourneyRequest
-import play.api.Logger
-import play.api.http.Writeable
-import play.api.libs.json.{JsValue, Json, OFormat, Writes}
+import play.api.{Logger => PlayLogger}
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.RequestHeader
 import ssttparrangement.SubmissionError
 import uk.gov.hmrc.http.CookieNames
@@ -28,7 +27,7 @@ import uk.gov.hmrc.selfservicetimetopay.models.{PaymentPlanRequest, TTPArrangeme
 import util.RequestSupport.hc
 
 class Logger(reference: String, inClass: Class[_]) extends BaseLogger(inClass) {
-  val log: play.api.Logger = Logger(reference)
+  val log: play.api.Logger = PlayLogger(reference)
 }
 
 abstract class BaseLogger(inClass: Class[_]) {

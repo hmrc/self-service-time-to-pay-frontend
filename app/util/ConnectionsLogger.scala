@@ -16,7 +16,7 @@
 
 package util
 
-import play.api.Logger
+import play.api.{Logger => PlayLogger}
 
 class ConnectionsLogger(inClass: Class[_])
   extends BaseLogger(inClass)
@@ -24,6 +24,6 @@ class ConnectionsLogger(inClass: Class[_])
   with SubmissionErrorLogging
   with PaymentPlanRequestLogging {
 
-  override val log: play.api.Logger = Logger("connections")
+  override val log: play.api.Logger = PlayLogger("connections")
 
 }

@@ -16,7 +16,7 @@
 
 package util
 
-import play.api.Logger
+import play.api.{Logger => PlayLogger}
 import play.api.mvc.RequestHeader
 import journey.Journey
 import play.api.libs.json.Json
@@ -30,7 +30,7 @@ class JourneyLogger(inClass: Class[_])
   extends BaseLogger(inClass)
   with ArrangementLogging {
 
-  override val log: play.api.Logger = Logger("journey")
+  override val log: play.api.Logger = PlayLogger("journey")
 
   def debug(message: => String, journey: Journey)(implicit request: RequestHeader): Unit = logMessage(message, journey, Debug)
 
@@ -42,8 +42,12 @@ class JourneyLogger(inClass: Class[_])
 
   private def appendedJourney(journey: Journey): String = s" [journey: ${appendedData(Json.toJson(journey.obfuscate))}]"
 
+  private def journeyId(journey: Journey): String = s"[journeyId: ${journey.id.value}]"
+
+  private def journeyStatus(journey: Journey): String = s"[journeyStatus: ${journey.status}]"
+
   private def logMessage(message: => String, journey: Journey, level: LogLevel)(implicit request: RequestHeader): Unit = {
-    lazy val richMessageWithJourney = makeRichMessage(message) + appendedJourney(journey)
+    lazy val richMessageWithJourney = makeRichMessage(message) + " " + journeyId(journey) + " " + journeyStatus(journey)
     level match {
       case Debug => log.debug(richMessageWithJourney)
       case Info  => log.info(richMessageWithJourney)

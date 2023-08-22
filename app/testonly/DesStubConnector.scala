@@ -70,7 +70,7 @@ class DesStubConnector @Inject() (
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's debit in DES-STUB: $tu")
-          logger.debug(s"Set up a predefined debit in DES-STUB for $tu")
+          stubsConnectionsLogger.debug(s"Set up a predefined debit in DES-STUB for $tu")
       }
   }
 

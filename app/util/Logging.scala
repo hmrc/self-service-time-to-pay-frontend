@@ -17,7 +17,7 @@
 package util
 
 trait Logging {
-  val inClass: Class[_ <: Logging] = getClass
+  val inClass: Class[_] = getClass
 
   val journeyLogger = new JourneyLogger(inClass)
   val connectionsLogger = new ConnectionsLogger(inClass)
