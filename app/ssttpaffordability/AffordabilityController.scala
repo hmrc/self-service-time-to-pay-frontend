@@ -29,6 +29,7 @@ import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome, OtherIn
 import ssttpaffordability.model._
 import ssttpdirectdebit.DirectDebitConnector
 import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
+import util.Logging
 import views.Views
 
 import javax.inject.Inject
@@ -44,12 +45,12 @@ class AffordabilityController @Inject() (
     directDebitConnector: DirectDebitConnector)(
     implicit
     appConfig: AppConfig,
-    ec:        ExecutionContext) extends FrontendBaseController(mcc) {
+    ec:        ExecutionContext) extends FrontendBaseController(mcc) with Logging {
 
   import requestSupport._
 
   def getCheckYouCanAfford: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"AffordabilityController.getCheckYouCanAfford: $request")
+    journeyLogger.info(s"Get 'Check you can afford': $request")
     journeyService.authorizedForSsttp { journey =>
       val totalLiability = journey.debits.map(_.amount).sum
       val initialPayment = journey.maybePaymentTodayAmount.fold(BigDecimal(0))(_.value)
@@ -58,7 +59,7 @@ class AffordabilityController @Inject() (
   }
 
   def getAddIncomeAndSpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"AffordabilityController.getAddIncomeAndSpending: $request")
+    journeyLogger.info(s"Get 'Add income and spending': $request")
     journeyService.authorizedForSsttp { journey =>
       val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
       val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
@@ -71,7 +72,7 @@ class AffordabilityController @Inject() (
   }
 
   def getHowMuchYouCouldAfford: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"AffordabilityController.getHowMuchYouCouldAfford: $request")
+    journeyLogger.info(s"Get 'How much you could afford': $request")
     journeyService.authorizedForSsttp { journey =>
       val spending = journey.maybeSpending.fold(Seq.empty[Expenses])(_.expenses)
       val income = journey.maybeIncome.fold(Seq.empty[IncomeBudgetLine])(_.budgetLines)
@@ -81,7 +82,7 @@ class AffordabilityController @Inject() (
   }
 
   def getYourMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"AffordabilityController.getYourMonthlyIncome: $request")
+    journeyLogger.info(s"Get 'your monthly income': $request")
     journeyService.authorizedForSsttp{ journey: Journey =>
       val emptyForm = incomeForm
       val formWithData = journey.maybeIncome.map(income =>
@@ -96,7 +97,7 @@ class AffordabilityController @Inject() (
   }
 
   def submitMonthlyIncome: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"AffordabilityController.submitMonthlyIncome: $request")
+    journeyLogger.info(s"Submit 'Your monthly income': $request")
 
     journeyService.authorizedForSsttp { journey: Journey =>
       incomeForm.bindFromRequest().fold(
@@ -119,7 +120,7 @@ class AffordabilityController @Inject() (
   }
 
   def getCallUsNoIncome: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"getCallUsNoIncome: $request")
+    journeyLogger.info(s"Get 'Call us no income': $request")
     Ok(views.call_us_no_income(isSignedIn, isWelsh))
   }
 
@@ -139,7 +140,7 @@ class AffordabilityController @Inject() (
   }
 
   def getYourMonthlySpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"AffordabilityController.getYourMonthlySpending: $request")
+    journeyLogger.info(s"Get 'Your monthly spending': $request")
     journeyService.authorizedForSsttp { journey: Journey =>
       val formWithData = journey.maybeSpending.map(expense =>
         spendingForm.fill(SpendingInput(
@@ -160,7 +161,7 @@ class AffordabilityController @Inject() (
   }
 
   def submitMonthlySpending: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"AffordabilityController.submitMonthlySpending: $request")
+    journeyLogger.info(s"Submit 'Your monthly spending': $request")
     journeyService.authorizedForSsttp { journey: Journey =>
       spendingForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(views.your_monthly_spending(formWithErrors, isSignedIn))),
@@ -187,7 +188,7 @@ class AffordabilityController @Inject() (
     }
   }
   def getWeCannotAgreeYourPP: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"getWeCannotAgreeYourPP: $request")
+    journeyLogger.info(s"Get 'We cannot agree your payment plan': $request")
     journeyService.getJourney().map(auditService.sendPlanNotAffordableEvent)
     Ok(views.we_cannot_agree_your_pp(isSignedIn, isWelsh))
   }

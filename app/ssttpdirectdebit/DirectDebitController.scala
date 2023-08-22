@@ -17,7 +17,6 @@
 package ssttpdirectdebit
 
 import bars.BarsService
-import bars.model.BarsAssessmentType.Yes
 import bars.model.{BarsResponseOk, InvalidBankDetails, ValidBankDetails}
 import config.{AppConfig, ViewConfig}
 import controllers.FrontendBaseController
@@ -27,7 +26,7 @@ import model.enumsforforms.IsSoleSignatory
 import model.enumsforforms.IsSoleSignatory.booleanToIsSoleSignatory
 import model.enumsforforms.TypesOfBankAccount.typeOfBankAccountAsFormValue
 import model.forms.TypeOfAccountForm
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc._
 import req.RequestSupport
@@ -37,8 +36,8 @@ import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.model.PaymentSchedule
 import ssttpdirectdebit.DirectDebitForm._
 import times.ClockProvider
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.{ArrangementDirectDebit, BankDetails, TypeOfAccountDetails}
+import util.Logging
 import views.Views
 
 import javax.inject._
@@ -59,15 +58,16 @@ class DirectDebitController @Inject() (
     implicit
     val appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendBaseController(mcc)
-  with CalculatorSwitchSelectedScheduleHelper {
+  with CalculatorSwitchSelectedScheduleHelper
+  with Logging {
 
   import clockProvider._
   import requestSupport._
 
   implicit val config: ViewConfig = viewConfig
 
-  def aboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"$request")
+  def getAboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+    journeyLogger.info("Get 'About bank account'")
     submissionService.authorizedForSsttp { journey: Journey =>
       journey.requireScheduleIsDefined()
       val form = journey.maybeTypeOfAccountDetails match {
@@ -82,6 +82,7 @@ class DirectDebitController @Inject() (
   }
 
   def submitAboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+    journeyLogger.info("Submit 'About bank account'")
     submissionService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
       TypeOfAccountForm.form
@@ -109,7 +110,7 @@ class DirectDebitController @Inject() (
   }
 
   def getDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"DirectDebitController.getDirectDebit: $request")
+    journeyLogger.info("Get 'Direct debit'")
     submissionService.authorizedForSsttp { journey =>
       journey.requireScheduleIsDefined()
       val typeOfAccInJourney = journey.maybeTypeOfAccountDetails.map(_.typeOfAccount)
@@ -127,7 +128,7 @@ class DirectDebitController @Inject() (
   }
 
   def getDirectDebitAssistance: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"DirectDebitController.getDirectDebitAssistance: $request")
+    journeyLogger.info("Get 'Direct debit assistance'")
 
     submissionService.authorizedForSsttp { journey: Journey =>
       journey.requireScheduleIsDefined()
@@ -138,6 +139,8 @@ class DirectDebitController @Inject() (
   }
 
   def getDirectDebitError: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
+    journeyLogger.info("Get 'Direct debit error'")
+
     submissionService.authorizedForSsttp { journey: Journey =>
       journey.requireScheduleIsDefined()
       journey.requireDdIsDefined()
@@ -148,7 +151,7 @@ class DirectDebitController @Inject() (
   }
 
   def getDirectDebitConfirmation: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"DirectDebitController.getDirectDebitConfirmation: $request")
+    journeyLogger.info("Get 'Direct debit confirmation'")
 
     submissionService.authorizedForSsttp { journey: Journey =>
       journey.requireScheduleIsDefined()
@@ -162,7 +165,7 @@ class DirectDebitController @Inject() (
   }
 
   def submitDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    JourneyLogger.info(s"DirectDebitController.submitDirectDebit: $request")
+    journeyLogger.info("Submit 'Direct debit'")
 
     submissionService.authorizedForSsttp { implicit journey =>
       journey.requireScheduleIsDefined()
@@ -181,7 +184,7 @@ class DirectDebitController @Inject() (
             barsService.validateBankDetails(validFormData.sortCode, validFormData.accountNumber).flatMap {
 
               case ValidBankDetails(obfuscatedBarsResponse) =>
-                JourneyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
+                journeyLogger.info(s"Bank details are valid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
                 submissionService.saveJourney(
                   journey.copy(maybeBankDetails = Some(BankDetails(journey.maybeTypeOfAccountDetails.map(_.typeOfAccount),
                                                                    validFormData.sortCode, validFormData.accountNumber, validFormData.accountName)))
@@ -189,7 +192,7 @@ class DirectDebitController @Inject() (
                     Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())
                   }
               case InvalidBankDetails(obfuscatedBarsResponse) =>
-                JourneyLogger.info(s"Bank details are invalid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
+                journeyLogger.info(s"Bank details are invalid, response from BARS: ${Json.prettyPrint(Json.toJson(obfuscatedBarsResponse))}", journey)
                 obfuscatedBarsResponse match {
                   case BarsResponseOk(validateBankDetailsResponse) if !validateBankDetailsResponse.supportsDirectDebit =>
                     futureSuccessfulBadRequest(validFormData, directDebitFormWithSortCodeError)

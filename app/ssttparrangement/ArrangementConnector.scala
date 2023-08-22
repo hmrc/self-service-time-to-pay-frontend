@@ -17,15 +17,14 @@
 package ssttparrangement
 
 import com.google.inject.Inject
-import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.CREATED
-import play.api.mvc.Request
+import play.api.mvc.{Request, RequestHeader}
 import uk.gov.hmrc.http.{HttpClient, HttpException, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models.TTPArrangement
+import util.Logging
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,8 +35,7 @@ class ArrangementConnector @Inject() (
     views:          Views)(
     implicit
     ec: ExecutionContext
-) {
-  private val logger = Logger(getClass)
+) extends Logging {
 
   import req.RequestSupport._
 
@@ -46,21 +44,26 @@ class ArrangementConnector @Inject() (
   val arrangementURL: String = servicesConfig.baseUrl("time-to-pay-arrangement")
 
   def submitArrangement(ttpArrangement: TTPArrangement)(implicit request: Request[_]): Future[SubmissionResult] = {
-    JourneyLogger.info(s"ArrangementConnector.submitArrangements")
+    connectionsLogger.info(s"Submit arrangement")
 
     httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/ttparrangements", ttpArrangement).map { response =>
       response.status match {
-        case CREATED        => Right(SubmissionSuccess())
-        case otherCode: Int => Left(SubmissionError(otherCode, response.body))
+        case CREATED =>
+          connectionsLogger.info("Submit arrangement outcome: Success")
+          Right(SubmissionSuccess())
+        case otherCode: Int =>
+          val submissionError = SubmissionError(otherCode, response.body)
+          connectionsLogger.warn(s"Submission arrangement outcome: Error", submissionError)
+          Left(submissionError)
       }
     }.recover {
       case e: Throwable =>
-        JourneyLogger.info(s"ArrangementConnector.submitArrangements: Error, $e", ttpArrangement)
+        connectionsLogger.warn(s"Submit arrangement outcome: Error, $e", ttpArrangement)
         onError(e)
     }
   }
 
-  private def onError(ex: Throwable) = {
+  private def onError(ex: Throwable)(implicit rh: RequestHeader) = {
     val (code, message) = ex match {
       case e: HttpException         => (e.responseCode, e.getMessage)
 
@@ -69,7 +72,8 @@ class ArrangementConnector @Inject() (
       case e: Throwable             => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
     }
 
-    logger.error(s"Failure from DES, code $code and body $message")
-    Left(SubmissionError(code, message))
+    val submissionError = SubmissionError(code, message)
+    connectionsLogger.warn("Failure from DES", submissionError)
+    Left(submissionError)
   }
 }

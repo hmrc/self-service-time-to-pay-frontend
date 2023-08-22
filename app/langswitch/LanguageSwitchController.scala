@@ -20,6 +20,7 @@ import javax.inject.Inject
 import play.api.mvc._
 import play.mvc.Http.HeaderNames
 import req.RequestSupport
+import util.Logging
 import views.DefaultViews
 
 import scala.concurrent.ExecutionContext
@@ -30,11 +31,13 @@ class LanguageSwitchController @Inject() (
     cc:             ControllerComponents)(
     implicit
     ec: ExecutionContext)
-  extends AbstractController(cc) {
+  extends AbstractController(cc) with Logging {
 
   import requestSupport._
 
   def switchToLanguage(language: Language): Action[AnyContent] = cc.actionBuilder { implicit request =>
+    journeyLogger.info("Switch language")
+
     val maybeReferrer: Option[String] =
       request
         .headers

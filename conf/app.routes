@@ -55,7 +55,7 @@ POST        /arrangement/instalment-summary/select-date                   ssttpa
 POST        /arrangement                                                  ssttparrangement.ArrangementController.start()
 GET         /arrangement/check-your-payment-plan                          ssttparrangement.ArrangementController.getCheckPaymentPlan()
 POST        /arrangement/check-your-payment-plan                          ssttparrangement.ArrangementController.submitCheckPaymentPlan()
-GET         /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.aboutBankAccount()
+GET         /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.getAboutBankAccount()
 POST        /arrangement/about-your-bank-account                          ssttpdirectdebit.DirectDebitController.submitAboutBankAccount()
 GET         /arrangement/terms-and-conditions                             ssttparrangement.ArrangementController.getTermsAndConditions()
 GET         /arrangement/direct-debit                                     ssttpdirectdebit.DirectDebitController.getDirectDebit()
