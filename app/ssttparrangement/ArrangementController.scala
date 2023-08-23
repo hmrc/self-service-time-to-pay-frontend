@@ -94,7 +94,7 @@ class ArrangementController @Inject() (
       case j =>
         val msg = "Illegal state, journey must be in progress with defined payment amount"
         val ex = new RuntimeException(msg)
-        journeyLogger.error(msg, j)
+        journeyLogger.warn(msg, j)
         throw ex
     }
   }
@@ -124,8 +124,9 @@ class ArrangementController @Inject() (
   }
 
   def getCheckPaymentPlan: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Get 'Check payment plan'")
     journeyService.authorizedForSsttp { journey =>
+      journeyLogger.info("Get 'Check payment plan'", journey)
+
       journey.requireScheduleIsDefined()
 
       val schedule = selectedSchedule(journey)
@@ -140,13 +141,17 @@ class ArrangementController @Inject() (
   }
 
   def submitCheckPaymentPlan: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Submit 'Check payment plan'")
-    journeyService.authorizedForSsttp(_ => Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())))
+    journeyService.authorizedForSsttp { journey =>
+      journeyLogger.info("Submit 'Check payment plan'", journey)
+
+      Future.successful(Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()))
+    }
   }
 
   def getChangeSchedulePaymentDay: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Get 'Change schedule payment day'")
     journeyService.authorizedForSsttp { journey =>
+      journeyLogger.info("Get 'Change schedule payment day'", journey)
+
       val form = dayOfMonthForm
       val formWithData: Form[ArrangementForm] = journey.maybePaymentDayOfMonth match {
         case _: Option[PaymentDayOfMonth] =>
@@ -158,26 +163,29 @@ class ArrangementController @Inject() (
   }
 
   def getTermsAndConditions: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Get 'Terms and conditions'")
-    journeyService.authorizedForSsttp(_ => Future.successful(Ok(views.terms_and_conditions())))
+    journeyService.authorizedForSsttp{ journey =>
+      journeyLogger.info("Get 'Terms and conditions'", journey)
+
+      Future.successful(Ok(views.terms_and_conditions()))
+    }
   }
 
   def submitChangeSchedulePaymentDay(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Submit 'Change schedule payment day'")
-    journeyService.authorizedForSsttp {
-      journey =>
-        dayOfMonthForm.bindFromRequest().fold(
-          formWithErrors => {
-            Future.successful(BadRequest(views.change_day(formWithErrors)))
-          },
-          (validFormData: ArrangementForm) => {
-            journeyLogger.info(s"Changing schedule payment day to [${validFormData.dayOfMonth}]")
-            val updatedJourney = journey.copy(maybePaymentDayOfMonth = Some(PaymentDayOfMonth(validFormData.dayOfMonth)))
-            journeyService.saveJourney(updatedJourney).map {
-              _ => Redirect(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())
-            }
+    journeyService.authorizedForSsttp { journey =>
+      journeyLogger.info("Submit 'Change schedule payment day'", journey)
+
+      dayOfMonthForm.bindFromRequest().fold(
+        formWithErrors => {
+          Future.successful(BadRequest(views.change_day(formWithErrors)))
+        },
+        (validFormData: ArrangementForm) => {
+          journeyLogger.info(s"Changing schedule payment day to [${validFormData.dayOfMonth}]")
+          val updatedJourney = journey.copy(maybePaymentDayOfMonth = Some(PaymentDayOfMonth(validFormData.dayOfMonth)))
+          journeyService.saveJourney(updatedJourney).map {
+            _ => Redirect(ssttpaffordability.routes.AffordabilityController.getCheckYouCanAfford())
           }
-        )
+        }
+      )
     }
   }
 
@@ -186,7 +194,7 @@ class ArrangementController @Inject() (
    * and display the appropriate page based on the result
    */
   private def eligibilityCheck(journey: Journey)(implicit request: Request[_]): Future[Result] = {
-    journeyLogger.info("Eligibility check")
+    journeyLogger.info("Eligibility check", journey)
 
     val taxpayer = journey.taxpayer
     val utr = taxpayer.selfAssessment.utr
@@ -206,7 +214,7 @@ class ArrangementController @Inject() (
   }
 
   //TODO improve this under OPS-4941
-  private def ineligibleStatusRedirect(eligibilityStatus: EligibilityStatus, newJourney: Journey)(implicit rh: RequestHeader) = {
+  private def ineligibleStatusRedirect(eligibilityStatus: EligibilityStatus, journey: Journey)(implicit rh: RequestHeader) = {
     if (eligibilityStatus.reasons.contains(DebtTooOld) ||
       eligibilityStatus.reasons.contains(OldDebtIsTooHigh)) {
       ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooOld()
@@ -214,7 +222,7 @@ class ArrangementController @Inject() (
     } else if (eligibilityStatus.reasons.contains(NoDebt) ||
       eligibilityStatus.reasons.contains(TTPIsLessThenTwoMonths) ||
       eligibilityStatus.reasons.contains(NoDueDate)) {
-      journeyLogger.info(s"Sending user to call us page [ineligibility reasons: ${eligibilityStatus.reasons}]")
+      journeyLogger.info(s"Sending user to call us page [ineligibility reasons: ${eligibilityStatus.reasons}]", journey)
       ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()
 
     } else if (eligibilityStatus.reasons.contains(IsNotOnIa)) {
@@ -232,16 +240,17 @@ class ArrangementController @Inject() (
     else {
       journeyLogger.warn(
         s"Eligibility check ERROR - [eligible: ${eligibilityStatus.eligible}]. " +
-          s"Case not implemented. It's a bug.", newJourney)
+          s"Case not implemented. It's a bug.", journey)
       throw new RuntimeException(
-        s"Case not implemented. It's a bug in the eligibility reasons. [${newJourney.maybeEligibilityStatus}]. [$newJourney]")
+        s"Case not implemented. It's a bug in the eligibility reasons. [${journey.maybeEligibilityStatus}]. [$journey]")
     }
   }
 
   def submit(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
     tryLock(request.request.session.get(SessionKeys.sessionId).getOrElse("unknown-session")) {
-      journeyLogger.info("Submit arrangement")
       journeyService.authorizedForSsttp { journey =>
+        journeyLogger.info("Submit arrangement", journey)
+
         journey.requireScheduleIsDefined()
         journey.requireDdIsDefined()
         val paymentSchedule = selectedSchedule(journey)
@@ -257,10 +266,11 @@ class ArrangementController @Inject() (
   }
 
   def applicationComplete(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Application complete")
 
     journeyService.getJourney().map { journey =>
       if (journey.status == ApplicationComplete) {
+        journeyLogger.info("Application complete", journey)
+
         // to do a FinishedJourney class without Options would be nice
         val directDebit =
           journey.arrangementDirectDebit.getOrElse(
@@ -280,8 +290,8 @@ class ArrangementController @Inject() (
   }
 
   def viewPaymentPlan(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("View payment plan")
     journeyService.getJourney.flatMap { journey =>
+      journeyLogger.info("View payment plan", journey)
 
       val schedule = selectedSchedule(journey)
       Future.successful(Ok(views.view_payment_plan(schedule, journey.ddRef)))
@@ -298,18 +308,18 @@ class ArrangementController @Inject() (
    * complete page if we get an error response from DES passed back by the arrangement service.
    */
   private def arrangementSetUp(journey: Journey, paymentSchedule: PaymentSchedule)(implicit request: Request[_]): Future[Result] = {
-    journeyLogger.info("Arrangement set up: (create a DD and make an Arrangement)")
+    journeyLogger.info("Arrangement set up: (create a DD and make an Arrangement)", journey)
     val paymentPlanRequest: PaymentPlanRequest = makePaymentPlanRequest(journey)
     val utr = journey.taxpayer.selfAssessment.utr
 
     ddConnector.submitPaymentPlan(paymentPlanRequest, utr).flatMap[Result] {
       _.fold(submissionError => {
-        journeyLogger.info(s"Arrangement set up: dd setup failed, redirecting to error [$submissionError]")
+        journeyLogger.info(s"Arrangement set up: dd setup failed, redirecting to error [$submissionError]", journey)
         auditService.sendDirectDebitSubmissionFailedEvent(journey, paymentSchedule, submissionError)
         Redirect(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError())
       },
         directDebitInstructionPaymentPlan => {
-          journeyLogger.info("Arrangement set up: dd setup succeeded, now creating arrangement")
+          journeyLogger.info("Arrangement set up: dd setup succeeded, now creating arrangement", journey)
           val arrangement: TTPArrangement = makeArrangement(directDebitInstructionPaymentPlan, journey)
           val submitArrangementResult: Future[arrangementConnector.SubmissionResult] = for {
             submissionResult <- arrangementConnector.submitArrangement(arrangement)
@@ -330,11 +340,11 @@ class ArrangementController @Inject() (
 
           submitArrangementResult.flatMap {
             _.fold(submissionError => {
-              journeyLogger.error(s"Exception: ${submissionError.code} + ${submissionError.message}")
-              journeyLogger.info(s"Arrangement set up: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to application successful", arrangement)
+              journeyLogger.warn(s"Arrangement set up outcome: Exception: ${submissionError.code} + ${submissionError.message}", journey)
+              journeyLogger.warn(s"Arrangement set up outcome: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to application successful", arrangement)
               applicationSuccessful(journey, paymentSchedule)
             }, _ => {
-              journeyLogger.info(s"Arrangement set up: Arrangement submission Succeeded!", arrangement)
+              journeyLogger.info(s"Arrangement set up outcome: Arrangement submission Succeeded!", arrangement)
               applicationSuccessful(journey, paymentSchedule)
             }
             )

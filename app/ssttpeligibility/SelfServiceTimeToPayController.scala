@@ -112,10 +112,11 @@ class SelfServiceTimeToPayController @Inject() (
         } yield Redirect(redirectUrl)
       case None =>
         //Use kibana to monitor how often this happens. We were told that majority of users should have credentials.
-        journeyLogger.error(
-          logMessagePrefix + "Rotten credentials error. " +
+        journeyLogger.warn(
+          logMessagePrefix + "[Failed] Rotten credentials error. " +
             "The auth microservice returned empty credentials which are required to be passed " +
-            "to add-taxes-frontend in order to enrol-for-sa. Please investigate."
+            "to add-taxes-frontend in order to enrol-for-sa. Please investigate. " +
+            "Redirecting user to 'Not enrolled in SA' kick-out page"
         )
         Future.successful(Redirect(
           ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()
@@ -124,7 +125,7 @@ class SelfServiceTimeToPayController @Inject() (
 
     resultF.recover {
       case NonFatal(ex) =>
-        journeyLogger.error(logMessagePrefix + s"[Failed] $logMessage", ex)
+        journeyLogger.warn(logMessagePrefix + s"[Failed] $logMessage", ex)
         throw ex
     }
   }

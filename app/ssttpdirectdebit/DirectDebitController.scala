@@ -67,8 +67,9 @@ class DirectDebitController @Inject() (
   implicit val config: ViewConfig = viewConfig
 
   def getAboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Get 'About bank account'")
     submissionService.authorizedForSsttp { journey: Journey =>
+      journeyLogger.info("Get 'About bank account'", journey)
+
       journey.requireScheduleIsDefined()
       val form = journey.maybeTypeOfAccountDetails match {
         case Some(value) =>
@@ -82,8 +83,9 @@ class DirectDebitController @Inject() (
   }
 
   def submitAboutBankAccount: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Submit 'About bank account'")
     submissionService.authorizedForSsttp { journey =>
+      journeyLogger.info("Submit 'About bank account'", journey)
+
       journey.requireScheduleIsDefined()
       TypeOfAccountForm.form
         .bindFromRequest()
@@ -110,8 +112,9 @@ class DirectDebitController @Inject() (
   }
 
   def getDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Get 'Direct debit'")
     submissionService.authorizedForSsttp { journey =>
+      journeyLogger.info("Get 'Direct debit'", journey)
+
       journey.requireScheduleIsDefined()
       val typeOfAccInJourney = journey.maybeTypeOfAccountDetails.map(_.typeOfAccount)
       val typeOfAccInBankDetails = journey.maybeBankDetails.flatMap(_.typeOfAccount)
@@ -128,9 +131,9 @@ class DirectDebitController @Inject() (
   }
 
   def getDirectDebitAssistance: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Get 'Direct debit assistance'")
-
     submissionService.authorizedForSsttp { journey: Journey =>
+      journeyLogger.info("Get 'Direct debit assistance'", journey)
+
       journey.requireScheduleIsDefined()
       journey.requireDdIsDefined()
       val schedule: PaymentSchedule = selectedSchedule(journey)
@@ -139,9 +142,9 @@ class DirectDebitController @Inject() (
   }
 
   def getDirectDebitError: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Get 'Direct debit error'")
-
     submissionService.authorizedForSsttp { journey: Journey =>
+      journeyLogger.info("Get 'Direct debit error'", journey)
+
       journey.requireScheduleIsDefined()
       journey.requireDdIsDefined()
       val schedule: PaymentSchedule = selectedSchedule(journey)
@@ -151,9 +154,9 @@ class DirectDebitController @Inject() (
   }
 
   def getDirectDebitConfirmation: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Get 'Direct debit confirmation'")
-
     submissionService.authorizedForSsttp { journey: Journey =>
+      journeyLogger.info("Get 'Direct debit confirmation'", journey)
+
       journey.requireScheduleIsDefined()
       journey.requireDdIsDefined()
       val schedule: PaymentSchedule = selectedSchedule(journey)
@@ -165,9 +168,9 @@ class DirectDebitController @Inject() (
   }
 
   def submitDirectDebit: Action[AnyContent] = actions.authorisedSaUser.async { implicit request =>
-    journeyLogger.info("Submit 'Direct debit'")
-
     submissionService.authorizedForSsttp { implicit journey =>
+      journeyLogger.info("Submit 'Direct debit'", journey)
+
       journey.requireScheduleIsDefined()
       journey.requireIsAccountHolder()
       implicit val schedule: PaymentSchedule = selectedSchedule(journey)

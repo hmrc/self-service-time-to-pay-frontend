@@ -19,7 +19,6 @@ package util
 import play.api.{Logger => PlayLogger}
 import play.api.mvc.RequestHeader
 import journey.Journey
-import play.api.libs.json.Json
 
 /**
  * Journey Logger is a contextual logger. It will append to the message some extra bits of information
@@ -40,14 +39,14 @@ class JourneyLogger(inClass: Class[_])
 
   def error(message: => String, journey: Journey)(implicit request: RequestHeader): Unit = logMessage(message, journey, Error)
 
-  private def appendedJourney(journey: Journey): String = s" [journey: ${appendedData(Json.toJson(journey.obfuscate))}]"
-
   private def journeyId(journey: Journey): String = s"[journeyId: ${journey.id.value}]"
 
   private def journeyStatus(journey: Journey): String = s"[journeyStatus: ${journey.status}]"
 
+  private def appendedJourneyReference(journey: Journey): String = journeyId(journey) + " " + journeyStatus(journey)
+
   private def logMessage(message: => String, journey: Journey, level: LogLevel)(implicit request: RequestHeader): Unit = {
-    lazy val richMessageWithJourney = makeRichMessage(message) + " " + journeyId(journey) + " " + journeyStatus(journey)
+    lazy val richMessageWithJourney = makeRichMessage(message) + appendedJourneyReference(journey)
     level match {
       case Debug => log.debug(richMessageWithJourney)
       case Info  => log.info(richMessageWithJourney)

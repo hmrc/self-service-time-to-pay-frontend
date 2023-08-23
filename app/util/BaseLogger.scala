@@ -17,14 +17,15 @@
 package util
 
 import cats.implicits.catsSyntaxEq
-import controllers.action.JourneyRequest
 import play.api.{Logger => PlayLogger}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsValue, Json, OFormat, Writes}
 import play.api.mvc.RequestHeader
 import ssttparrangement.SubmissionError
 import uk.gov.hmrc.http.CookieNames
 import uk.gov.hmrc.selfservicetimetopay.models.{PaymentPlanRequest, TTPArrangement}
 import util.RequestSupport.hc
+
+import scala.reflect.classTag
 
 class Logger(reference: String, inClass: Class[_]) extends BaseLogger(inClass) {
   val log: play.api.Logger = PlayLogger(reference)
@@ -64,20 +65,7 @@ abstract class BaseLogger(inClass: Class[_]) {
 
   protected def deviceId(implicit r: RequestHeader) = s"[deviceId: ${r.cookies.find(_.name === CookieNames.deviceID).map(_.value).getOrElse("")}]"
 
-  protected def journeyId(implicit r: JourneyRequest[_]) = s"[${r.journey.id.toString}]"
-
-  protected def status(implicit r: JourneyRequest[_]) = s"[${r.journey.status.toString}]"
-
-  protected def makeRichMessage(message: String)(implicit request: RequestHeader): String = {
-    request match {
-      case r: JourneyRequest[_] =>
-        implicit val req: JourneyRequest[_] = r
-        //Warn, don't log whole journey as it might contain sensitive data (PII)
-        s"$message $source $status $journeyId $context"
-      case _ =>
-        s"$message $source $context "
-    }
-  }
+  protected def makeRichMessage(message: String)(implicit request: RequestHeader): String = s"$message $source $context "
 
   protected def appendedData(data: JsValue): String = s"\n${Json.prettyPrint(data)}"
 
