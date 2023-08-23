@@ -52,7 +52,7 @@ class AuthorisedSaUserAction @Inject() (
     val maybeObfuscatedUtr = maybeUtr.map(_ => "***")
 
       def logFail(reason: String)(implicit rh: RequestHeader) = {
-        journeyLogger.info(
+        appLogger.info(
           s"""
            |Authorisation failed, reason: $reason:
            |  [hasActiveSaEnrolment: $hasActiveSaEnrolment]

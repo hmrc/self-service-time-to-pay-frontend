@@ -34,7 +34,8 @@ class TimeoutController @Inject() (actions: Actions,
   def keepAliveSession(): Action[AnyContent] = Action(NoContent)
 
   def killSession(): Action[AnyContent] = Action { implicit request =>
-    journeyLogger.info("Kill session")
+    appLogger.info("Kill session")
+
     Ok(views.delete_answers()).withNewSession
   }
 }

@@ -46,17 +46,17 @@ class SelfServiceTimeToPayController @Inject() (
   import requestSupport._
 
   def start: Action[AnyContent] = as.action { implicit request =>
-    journeyLogger.info("Get 'Start'")
+    appLogger.info("Get 'Start'")
     Ok(views.service_start(isSignedIn, mcc.messagesApi))
   }
 
   def submit: Action[AnyContent] = as.action { implicit request =>
-    journeyLogger.info("Submit 'Start'")
+    appLogger.info("Submit 'Start'")
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
   def getCallUsAboutAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
-    journeyLogger.info("Get 'Call us about a payment plan'")
+    appLogger.info("Get 'Call us about a payment plan'")
     Ok(views.call_us_about_a_payment_plan(isWelsh, loggedIn = isSignedIn))
   }
 
@@ -69,32 +69,32 @@ class SelfServiceTimeToPayController @Inject() (
   def getNotSaEnrolled: Action[AnyContent] = getCallUsAboutAPaymentPlan
 
   def getDebtTooOld: Action[AnyContent] = as.action { implicit request =>
-    journeyLogger.info("Get 'Debt too old'")
+    appLogger.info("Get 'Debt too old'")
     Ok(views.call_us_debt_too_old(isWelsh, loggedIn = isSignedIn))
   }
 
   def getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
-    journeyLogger.info("Get 'Debt too large'")
+    appLogger.info("Get 'Debt too large'")
     Ok(views.debt_too_large(isSignedIn, isWelsh))
   }
 
   def getFileYourTaxReturn: Action[AnyContent] = as.action { implicit request =>
-    journeyLogger.info("Get 'File your tax return'")
+    appLogger.info("Get 'File your tax return'")
     Ok(views.file_your_tax_return(isSignedIn))
   }
 
   def getYouAlreadyHaveAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
-    journeyLogger.info("Get 'You already have a payment plan'")
+    appLogger.info("Get 'You already have a payment plan'")
     Ok(views.you_already_have_a_payment_plan(isSignedIn, isWelsh))
   }
 
   def getAccessYouSelfAssessmentOnline: Action[AnyContent] = as.action { implicit request =>
-    journeyLogger.info("Get 'Access your self assessment online'")
+    appLogger.info("Get 'Access your self assessment online'")
     Ok(views.you_need_to_request_access_to_self_assessment(isWelsh, isSignedIn))
   }
 
   def getNotSoleSignatory: Action[AnyContent] = as.action { implicit request =>
-    journeyLogger.info("Get 'Not sole signatory'")
+    appLogger.info("Get 'Not sole signatory'")
     Ok(views.not_sole_signatory(isWelsh, isSignedIn))
   }
 
@@ -102,7 +102,7 @@ class SelfServiceTimeToPayController @Inject() (
     val logMessagePrefix = "Submit 'Access your self assessment online': "
     val logMessage = logMessagePrefix + "Sending user to PTA (add-taxes-frontend) to enroll for SA" +
       s"[utr=${request.maybeUtr.map(_.obfuscate)}]"
-    journeyLogger.info(logMessage)
+    appLogger.info(logMessage)
 
     val resultF = request.credentials match {
       case Some(credentials) =>
@@ -112,7 +112,7 @@ class SelfServiceTimeToPayController @Inject() (
         } yield Redirect(redirectUrl)
       case None =>
         //Use kibana to monitor how often this happens. We were told that majority of users should have credentials.
-        journeyLogger.warn(
+        appLogger.warn(
           logMessagePrefix + "[Failed] Rotten credentials error. " +
             "The auth microservice returned empty credentials which are required to be passed " +
             "to add-taxes-frontend in order to enrol-for-sa. Please investigate. " +
@@ -125,13 +125,13 @@ class SelfServiceTimeToPayController @Inject() (
 
     resultF.recover {
       case NonFatal(ex) =>
-        journeyLogger.warn(logMessagePrefix + s"[Failed] $logMessage", ex)
+        appLogger.warn(logMessagePrefix + s"[Failed] $logMessage", ex)
         throw ex
     }
   }
 
   def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action { implicit request =>
-    journeyLogger.info("Sign out")
+    appLogger.info("Sign out")
     Redirect(appConfig.logoutUrl).withNewSession
   }
 }

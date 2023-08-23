@@ -66,7 +66,7 @@ class AuthenticatedAction @Inject() (
           //TODO: what is a proper value to origin
           Left(Redirect(viewConfig.loginUrl, Map("continue" -> Seq(viewConfig.frontendBaseUrl + request.uri), "origin" -> Seq("pay-online"))))
         case e: AuthorisationException =>
-          journeyLogger.info(s"Unauthorised because of ${e.reason}, $e")
+          appLogger.info(s"Unauthorised because of ${e.reason}, $e")
           Left(badResponses.unauthorised)
       }
   }

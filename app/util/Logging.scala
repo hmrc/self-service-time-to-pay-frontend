@@ -21,6 +21,7 @@ trait Logging {
 
   val journeyLogger = new JourneyLogger(inClass)
   val connectionsLogger = new ConnectionsLogger(inClass)
+  val appLogger = logger("application")
   val stubsConnectionsLogger = logger("stubs connections")
   val interestRateLogger = contextlessLogger("interest rate")
   val auditLogger = logger("audit")

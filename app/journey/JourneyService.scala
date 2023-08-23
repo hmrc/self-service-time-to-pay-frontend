@@ -45,18 +45,18 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
    */
   def authorizedForSsttp(block: Journey => Future[Result])(implicit request: Request[_]): Future[Result] = {
-    journeyLogger.info("Checking authorization and retrieving journey")
+    appLogger.info("Checking authorization and retrieving journey")
 
     for {
       journey <- getJourney()
       result <- journey match {
         case journey if journey.status == InProgress =>
-          journeyLogger.info("Authorized with journey", journey)
+          journeyLogger.info("Authorized with journey")(request, journey)
           journey.requireIsEligible()
           block(journey)
 
         case journey if journey.status == ApplicationComplete =>
-          journeyLogger.info("No eligible journey in progress", journey)
+          journeyLogger.info("No eligible journey in progress")(request, journey)
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
       }
