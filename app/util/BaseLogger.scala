@@ -18,7 +18,7 @@ package util
 
 import cats.implicits.catsSyntaxEq
 import play.api.{Logger => PlayLogger}
-import play.api.libs.json.{JsValue, Json, OFormat, Writes}
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.RequestHeader
 import ssttparrangement.SubmissionError
 import uk.gov.hmrc.http.CookieNames

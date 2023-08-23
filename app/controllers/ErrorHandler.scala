@@ -47,7 +47,7 @@ object ErrorHandler {
   val journeyLogger = new JourneyLogger(getClass)
 
   def technicalDifficulties(journey: Journey)(implicit request: Request[_]): Result = {
-    journeyLogger.info("Technical difficulties: redirecting on error")(request, journey)
+    journeyLogger.info("Redirecting to 'Technical difficulties' on error")(request, journey)
     throw new RuntimeException("Something went wrong. Inspect stack trace and fix bad code")
   }
 

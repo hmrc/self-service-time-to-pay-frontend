@@ -19,14 +19,36 @@ package util
 trait Logging {
   val inClass: Class[_] = getClass
 
-  val journeyLogger = new JourneyLogger(inClass)
-  val connectionsLogger = new ConnectionsLogger(inClass)
+  /**
+   * Logger with tag "application". Uses implicit request to report request context.
+   */
   val appLogger = logger("application")
-  val stubsConnectionsLogger = logger("stubs connections")
-  val interestRateLogger = contextlessLogger("interest rate")
+
+  /**
+   * Logger with tag "journey". Uses implicit request and journey to report request and journey context.
+   */
+  val journeyLogger = new JourneyLogger(inClass)
+
+  /**
+   * Logger with tag "connections". Uses implicit request to report request context.
+   */
+  val connectionsLogger = new ConnectionsLogger(inClass)
+
+  /**
+   * Logger with tag "audit". Uses implicit request to report request context.
+   */
   val auditLogger = logger("audit")
 
-  def logger(reference: String) = new Logger(reference, inClass)
+  /**
+   * Logger with tag "stubs connections". Uses implicit request to report request context.
+   */
+  val stubsConnectionsLogger = logger("stubs connections")
 
+  /**
+   * Contextless logger with tag "interest rate". Does NOT report context.
+   */
+  val interestRateLogger = contextlessLogger("interest rate")
+
+  def logger(reference: String) = new Logger(reference, inClass)
   def contextlessLogger(reference: String) = play.api.Logger(reference)
 }
