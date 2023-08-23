@@ -25,8 +25,6 @@ import uk.gov.hmrc.http.CookieNames
 import uk.gov.hmrc.selfservicetimetopay.models.{PaymentPlanRequest, TTPArrangement}
 import util.RequestSupport.hc
 
-import scala.reflect.classTag
-
 class Logger(reference: String, inClass: Class[_]) extends BaseLogger(inClass) {
   val log: play.api.Logger = PlayLogger(reference)
 }

@@ -66,13 +66,13 @@ class BarsConnector @Inject() (
               if (barsError.code == BarsError.sortCodeOnDenyList) {
                 BarsResponseSortCodeOnDenyList(barsError)
               } else {
-                val msg = new RuntimeException(s"Unhandled error code for 400 HttpResponse: [$barsError]")
-                connectionsLogger.info("Validating bank details outcome: could not validate", msg)
-                throw new RuntimeException(msg)
+                val ex = new RuntimeException(s"Unhandled error code for 400 HttpResponse: [$barsError]")
+                connectionsLogger.info("Validating bank details outcome: could not validate", ex)
+                throw new RuntimeException(ex)
               }
-            case Left(value) =>
-              connectionsLogger.info("Validating bank details outcome: could not validate", value)
-              throw value
+            case Left(upstreamErrorResponse) =>
+              connectionsLogger.info("Validating bank details outcome: could not validate", upstreamErrorResponse)
+              throw upstreamErrorResponse
           }
 
       }
