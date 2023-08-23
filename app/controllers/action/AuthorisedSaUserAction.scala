@@ -54,7 +54,7 @@ class AuthorisedSaUserAction @Inject() (
       def logFail(reason: String)(implicit rh: RequestHeader) = {
         appLogger.info(
           s"""
-           |Authorisation failed, reason: $reason:
+           |Authorisation outcome: Failed. Reason: $reason:
            |  [hasActiveSaEnrolment: $hasActiveSaEnrolment]
            |  [enrolments: ${Json.prettyPrint(Json.toJson(obfuscatedEnrolments))}]
            |  [utr: $maybeObfuscatedUtr]

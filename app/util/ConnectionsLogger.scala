@@ -20,9 +20,9 @@ import play.api.{Logger => PlayLogger}
 
 class ConnectionsLogger(inClass: Class[_])
   extends BaseLogger(inClass)
-  with ArrangementLogging
-  with SubmissionErrorLogging
-  with PaymentPlanRequestLogging {
+  with DataLogging.ArrangementLogging
+  with DataLogging.SubmissionErrorLogging
+  with DataLogging.PaymentPlanRequestLogging {
 
   override val log: play.api.Logger = PlayLogger("connections")
 
