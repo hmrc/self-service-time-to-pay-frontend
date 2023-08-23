@@ -80,7 +80,7 @@
 @beforeContentBlock = {
     @hmrcLanguageSelectHelper()
 
-    @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
+    <div class="js-visible">@govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)</div>
 }
 
 @contentBlock = {
