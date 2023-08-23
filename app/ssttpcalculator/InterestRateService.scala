@@ -81,7 +81,7 @@ class InterestRateService extends Logging {
             ).min,
           rate      = rate.rate
         )
-        contextlessLogger("interest rates").warn(s"Rate: $ir")
+        interestRateLogger.warn(s"Rate: $ir")
         ir
       }
     }
