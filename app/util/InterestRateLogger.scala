@@ -26,13 +26,20 @@ trait InterestRateLogger { self: JourneyLogger =>
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 
   def logApplicableInterestRates(interestRates: Seq[InterestRate])(implicit request: Request[_], journey: Journey): Unit = {
-    val interestRatesSorted = interestRates.sortBy(_.endDate)
-    if (interestRatesSorted.length > 1) {
-      interestRatesSorted.init.foreach { rate =>
-        info(s"Applicable interest rate: [from ${rate.startDate} to ${rate.endDate} => ${rate.rate}]")
-      }
-    }
-    info(s" Applicable interest rate: [from ${interestRatesSorted.last.startDate} onwards => ${interestRatesSorted.last.rate}]")
+    applicableInterestRateLogMessages(interestRates).foreach(info(_))
   }
 
+  def applicableInterestRateLogMessages(interestRates: Seq[InterestRate]): Seq[String] = {
+    val interestRatesSorted = interestRates.sortBy(_.endDate)
+
+    interestRatesSorted.length match {
+      case 0 => Seq()
+      case 1 =>
+        Seq(s"Applicable interest rate: [from ${interestRatesSorted.last.startDate} onwards => ${interestRatesSorted.last.rate}%]")
+      case _ =>
+        interestRatesSorted.init.map { rate =>
+          s"Applicable interest rate: [from ${rate.startDate} to ${rate.endDate} => ${rate.rate}%]"
+        } :+ s"Applicable interest rate: [from ${interestRatesSorted.last.startDate} onwards => ${interestRatesSorted.last.rate}%]"
+    }
+  }
 }
