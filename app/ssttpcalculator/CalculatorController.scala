@@ -34,6 +34,7 @@ import CalculatorType._
 import play.api.data.Form
 import util.Logging
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
@@ -46,7 +47,9 @@ class CalculatorController @Inject() (
     journeyService:      JourneyService,
     requestSupport:      RequestSupport,
     views:               Views,
-    clockProvider:       ClockProvider)(implicit appConfig: AppConfig, ec: ExecutionContext)
+    clockProvider:       ClockProvider,
+  interestRateService: InterestRateService
+  )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendBaseController(mcc) with Logging {
 
   import requestSupport._
@@ -157,6 +160,16 @@ class CalculatorController @Inject() (
       journeyLogger.info("Get 'Calculate instalments'")
 
       val sa = journey.taxpayer.selfAssessment
+
+      val applicableInterestRates = interestRateService.applicableInterestRates(sa)
+      if (applicableInterestRates.length == 1) {
+        journeyLogger.info(s" Applicable interest rate: [from ${applicableInterestRates.head.startDate} onwards => ${applicableInterestRates.head.rate}]")
+      } else {
+        applicableInterestRates.init.foreach { rate =>
+          journeyLogger.info(s"Applicable interest rate: [from ${rate.startDate} to ${rate.endDate} => ${rate.rate}]")
+        }
+        journeyLogger.info(s" Applicable interest rate: [from ${applicableInterestRates.last.startDate} onwards => ${applicableInterestRates.last.rate}]")
+      }
 
       appConfig.calculatorType match {
 
