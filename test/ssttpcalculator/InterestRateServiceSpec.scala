@@ -18,20 +18,22 @@ package ssttpcalculator
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import times.ClockProvider
 
 import java.time.{LocalDate, Month}
 
 class InterestRateServiceSpec extends AnyWordSpec with Matchers {
+  val clock = new ClockProvider
 
   "the interest rate calculator" when {
     "the interest rates are up to date" should {
       "provide the latest rate" in {
-        val irc = new InterestRateService()
+        val irc = new InterestRateService(clock)
         val ir = irc.rateOn(LocalDate.of(2022, Month.APRIL, 6))
         ir.rate shouldBe BigDecimal("3.25")
       }
       "provide the previous rate" in {
-        val irc = new InterestRateService()
+        val irc = new InterestRateService(clock)
         val ir = irc.rateOn(LocalDate.of(2022, Month.FEBRUARY, 21))
         ir.rate shouldBe BigDecimal("3.00")
       }

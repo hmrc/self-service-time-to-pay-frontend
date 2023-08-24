@@ -23,7 +23,6 @@ import javax.inject.Singleton
 import ssttpcalculator.model.InterestRate
 import util.Logging
 import javax.inject.Inject
-import play.api.Logger
 import play.api.mvc.Request
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.SelfAssessmentDetails
