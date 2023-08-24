@@ -19,14 +19,17 @@ package ssttpcalculator
 import java.io.FileNotFoundException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 import play.api.Logger
+import play.api.mvc.Request
 import ssttpcalculator.model.InterestRate
+import times.ClockProvider
+import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 
 import scala.io.Source
 
 @Singleton
-class InterestRateService {
+class InterestRateService @Inject() (clockProvider: ClockProvider) {
 
   private val logger = Logger(getClass)
 
@@ -35,7 +38,7 @@ class InterestRateService {
   val source: Source = Source.fromInputStream(getClass.getResourceAsStream(filename))
   val DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
-  def interestRateConsumer(rates: Seq[InterestRate], line: String): Seq[InterestRate] = {
+  private def interestRateConsumer(rates: Seq[InterestRate], line: String): Seq[InterestRate] = {
     line.split(",").toSeq match {
       case Seq(date, rate) =>
         val endDate: LocalDate = rates.lastOption.map(ir => ir.startDate.minusDays(1)).getOrElse(LocalDate.MAX)
@@ -87,6 +90,12 @@ class InterestRateService {
         ir
       }
     }
+  }
+
+  def applicableInterestRates(sa: SelfAssessmentDetails)(implicit request: Request[_]): Seq[InterestRate] = {
+    val firstDueDate = sa.debits.map(_.dueDate).min
+    val today: LocalDate = clockProvider.nowDate()
+    getRatesForPeriod(firstDueDate, today)
   }
 
 }
