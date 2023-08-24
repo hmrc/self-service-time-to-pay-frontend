@@ -36,7 +36,6 @@ class LanguageSwitchController @Inject() (
   import requestSupport._
 
   def switchToLanguage(language: Language): Action[AnyContent] = cc.actionBuilder { implicit request =>
-    appLogger.info("Switch language")
 
     val maybeReferrer: Option[String] =
       request

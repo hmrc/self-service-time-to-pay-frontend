@@ -17,15 +17,12 @@
 package controllers.action
 
 import com.google.inject.Inject
-import config.AppConfig
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import timetopaytaxpayer.cor.model.SaUtr
 
 import scala.concurrent.{ExecutionContext, Future}
-import req.RequestSupport._
 import util.Logging
 
 final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val utr: SaUtr)

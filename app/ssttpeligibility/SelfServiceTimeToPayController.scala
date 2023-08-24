@@ -46,17 +46,14 @@ class SelfServiceTimeToPayController @Inject() (
   import requestSupport._
 
   def start: Action[AnyContent] = as.action { implicit request =>
-    appLogger.info("Get 'Start'")
     Ok(views.service_start(isSignedIn, mcc.messagesApi))
   }
 
   def submit: Action[AnyContent] = as.action { implicit request =>
-    appLogger.info("Submit 'Start'")
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
   def getCallUsAboutAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
-    appLogger.info("Get 'Call us about a payment plan'")
     Ok(views.call_us_about_a_payment_plan(isWelsh, loggedIn = isSignedIn))
   }
 
@@ -69,32 +66,26 @@ class SelfServiceTimeToPayController @Inject() (
   def getNotSaEnrolled: Action[AnyContent] = getCallUsAboutAPaymentPlan
 
   def getDebtTooOld: Action[AnyContent] = as.action { implicit request =>
-    appLogger.info("Get 'Debt too old'")
     Ok(views.call_us_debt_too_old(isWelsh, loggedIn = isSignedIn))
   }
 
   def getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
-    appLogger.info("Get 'Debt too large'")
     Ok(views.debt_too_large(isSignedIn, isWelsh))
   }
 
   def getFileYourTaxReturn: Action[AnyContent] = as.action { implicit request =>
-    appLogger.info("Get 'File your tax return'")
     Ok(views.file_your_tax_return(isSignedIn))
   }
 
   def getYouAlreadyHaveAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
-    appLogger.info("Get 'You already have a payment plan'")
     Ok(views.you_already_have_a_payment_plan(isSignedIn, isWelsh))
   }
 
   def getAccessYouSelfAssessmentOnline: Action[AnyContent] = as.action { implicit request =>
-    appLogger.info("Get 'Access your self assessment online'")
     Ok(views.you_need_to_request_access_to_self_assessment(isWelsh, isSignedIn))
   }
 
   def getNotSoleSignatory: Action[AnyContent] = as.action { implicit request =>
-    appLogger.info("Get 'Not sole signatory'")
     Ok(views.not_sole_signatory(isWelsh, isSignedIn))
   }
 
@@ -131,7 +122,6 @@ class SelfServiceTimeToPayController @Inject() (
   }
 
   def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action { implicit request =>
-    appLogger.info("Sign out")
     Redirect(appConfig.logoutUrl).withNewSession
   }
 }

@@ -86,8 +86,6 @@ class ArrangementController @Inject() (
   val paymentCurrency = "GBP"
 
   def start: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    appLogger.info("Start")
-
     journeyService.getJourney.flatMap {
       case journey if journey.inProgress && journey.maybeSelectedPlanAmount.isDefined =>
         eligibilityCheck(journey)
@@ -111,8 +109,6 @@ class ArrangementController @Inject() (
    * debits. If not, display misalignment page otherwise perform an eligibility check.
    */
   def determineEligibility: Action[AnyContent] = as.authorisedSaUser.async { implicit request: AuthorisedSaUserRequest[AnyContent] =>
-    appLogger.info("Determine eligibility")
-
     for {
       tp: model.Taxpayer <- taxPayerConnector.getTaxPayer(request.utr)
       maybeJourney <- journeyService.getMaybeJourney()
@@ -344,7 +340,7 @@ class ArrangementController @Inject() (
               journeyLogger.warn(s"Arrangement set up outcome: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to application successful", arrangement)
               applicationSuccessful(journey, paymentSchedule)
             }, _ => {
-              journeyLogger.info(s"Arrangement set up outcome: Arrangement submission Succeeded!", arrangement)
+              journeyLogger.info(s"Arrangement set up outcome: Arrangement submission Succeeded!")(request, journey)
               applicationSuccessful(journey, paymentSchedule)
             }
             )
