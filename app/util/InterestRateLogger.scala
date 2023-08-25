@@ -25,8 +25,20 @@ import java.time.LocalDate
 trait InterestRateLogger { self: JourneyLogger =>
   implicit def orderingLocalDate: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 
-  def logApplicableInterestRates(interestRates: Seq[InterestRate])(implicit request: Request[_], journey: Journey): Unit = {
-    applicableInterestRateLogMessages(interestRates).foreach(info(_))
+  def debug(message: => String, interestRates: Seq[InterestRate])(implicit request: Request[_], journey: Journey): Unit = {
+    applicableInterestRateLogMessages(interestRates).foreach(rateMessage => debug(message + rateMessage))
+  }
+
+  def info(message: => String, interestRates: Seq[InterestRate])(implicit request: Request[_], journey: Journey): Unit = {
+    applicableInterestRateLogMessages(interestRates).foreach(rateMessage => info(message + rateMessage))
+  }
+
+  def warn(message: => String, interestRates: Seq[InterestRate])(implicit request: Request[_], journey: Journey): Unit = {
+    applicableInterestRateLogMessages(interestRates).foreach(rateMessage => warn(message + rateMessage))
+  }
+
+  def error(message: => String, interestRates: Seq[InterestRate])(implicit request: Request[_], journey: Journey): Unit = {
+    applicableInterestRateLogMessages(interestRates).foreach(rateMessage => error(message + rateMessage))
   }
 
   def applicableInterestRateLogMessages(interestRates: Seq[InterestRate]): Seq[String] = {
@@ -35,11 +47,11 @@ trait InterestRateLogger { self: JourneyLogger =>
     interestRatesSorted.length match {
       case 0 => Seq()
       case 1 =>
-        Seq(s"Applicable interest rate: [from ${interestRatesSorted.last.startDate} onwards => ${interestRatesSorted.last.rate}%]")
+        Seq(s"[from ${interestRatesSorted.last.startDate} onwards => ${interestRatesSorted.last.rate}%]")
       case _ =>
         interestRatesSorted.init.map { rate =>
-          s"Applicable interest rate: [from ${rate.startDate} to ${rate.endDate} => ${rate.rate}%]"
-        } :+ s"Applicable interest rate: [from ${interestRatesSorted.last.startDate} onwards => ${interestRatesSorted.last.rate}%]"
+          s"[from ${rate.startDate} to ${rate.endDate} => ${rate.rate}%]"
+        } :+ s"[from ${interestRatesSorted.last.startDate} onwards => ${interestRatesSorted.last.rate}%]"
     }
   }
 }

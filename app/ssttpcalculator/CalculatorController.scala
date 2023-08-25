@@ -160,7 +160,7 @@ class CalculatorController @Inject() (
 
       val sa = journey.taxpayer.selfAssessment
 
-      journeyLogger.logApplicableInterestRates(interestRateService.applicableInterestRates(sa))
+      journeyLogger.warn("Applicable interest rates: ", interestRateService.applicableInterestRates(sa))
 
       appConfig.calculatorType match {
 

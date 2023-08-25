@@ -16,7 +16,7 @@ class InterestRateLoggerSpec extends AnyWordSpec with Matchers {
         val rates = Seq(InterestRate(LocalDate.parse("2020-02-05"), LocalDate.parse("2020-07-31"), 2.50))
 
         logger.applicableInterestRateLogMessages(rates) shouldBe Seq(
-          "Applicable interest rate: [from 2020-02-05 onwards => 2.5%]"
+          "[from 2020-02-05 onwards => 2.5%]"
         )
       }
     }
@@ -30,9 +30,9 @@ class InterestRateLoggerSpec extends AnyWordSpec with Matchers {
         )
 
         logger.applicableInterestRateLogMessages(rates) shouldBe Seq(
-          "Applicable interest rate: [from 2020-02-05 to 2020-07-31 => 2.5%]",
-          "Applicable interest rate: [from 2020-08-01 to 2020-08-31 => 2.75%]",
-          "Applicable interest rate: [from 2020-09-01 onwards => 3.0%]"
+          "[from 2020-02-05 to 2020-07-31 => 2.5%]",
+          "[from 2020-08-01 to 2020-08-31 => 2.75%]",
+          "[from 2020-09-01 onwards => 3.0%]"
         )
       }
       "order each period from oldest to most recent even if the rates passed are not in order" in {
@@ -43,9 +43,9 @@ class InterestRateLoggerSpec extends AnyWordSpec with Matchers {
         )
 
         logger.applicableInterestRateLogMessages(rates) shouldBe Seq(
-          "Applicable interest rate: [from 2020-02-05 to 2020-07-31 => 2.5%]",
-          "Applicable interest rate: [from 2020-08-01 to 2020-08-31 => 2.75%]",
-          "Applicable interest rate: [from 2020-09-01 onwards => 3.0%]"
+          "[from 2020-02-05 to 2020-07-31 => 2.5%]",
+          "[from 2020-08-01 to 2020-08-31 => 2.75%]",
+          "[from 2020-09-01 onwards => 3.0%]"
         )
       }
     }
