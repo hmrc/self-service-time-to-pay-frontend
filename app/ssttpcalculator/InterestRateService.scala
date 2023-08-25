@@ -93,7 +93,8 @@ class InterestRateService @Inject() (clockProvider: ClockProvider) extends Loggi
   def applicableInterestRates(sa: SelfAssessmentDetails)(implicit request: Request[_]): Seq[InterestRate] = {
     val firstDueDate = sa.debits.map(_.dueDate).min
     val today: LocalDate = clockProvider.nowDate()
-    getRatesForPeriod(firstDueDate, today)
+    if (today isBefore firstDueDate) getRatesForPeriod(today, today)
+    else getRatesForPeriod(firstDueDate, today)
   }
 
 }

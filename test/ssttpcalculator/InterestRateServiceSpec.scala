@@ -18,17 +18,15 @@ package ssttpcalculator
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import ssttpcalculator.model.InterestRate
 import times.ClockProvider
-import uk.gov.hmrc.http.SessionKeys
 
 import java.time.format.DateTimeFormatter
-import java.time.{Clock, Instant, LocalDate, LocalDateTime, LocalTime, Month, ZoneId, ZoneOffset}
+import java.time.{LocalDate, Month}
+
 
 class InterestRateServiceSpec extends AnyWordSpec with Matchers {
-  val clock = new ClockProvider
-//  val clock = Clock.fixed(LocalDate.parse("2020-02-05").atStartOfDay(ZoneId.of("Europe/London")).toInstant, ZoneId.of("Europe/London"))
-  val irc = new InterestRateService(clock)
-
+  val irc = new InterestRateService(new ClockProvider)
 
   "the interest rate calculator" when {
     "the interest rates are up to date" should {
@@ -44,18 +42,29 @@ class InterestRateServiceSpec extends AnyWordSpec with Matchers {
   }
 
   "applicableInterestRates" when {
+    import testsupport.testdata.TdAll
+    import play.api.test.FakeRequest
+
     "passed SA details and an implicit request" should {
-      " lists all interest rates for the period" +
+      "lists all interest rates for the period" +
         " from the due date of the oldest debit in the SA details" +
         " to today" in {
-        import testsupport.testdata.TdAll
-        import play.api.test.FakeRequest
-
-        val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-
         irc.applicableInterestRates(TdAll.taxpayer.selfAssessment)(
-          FakeRequest().withSession("ssttp.frozenDateTime" ->  LocalDateTime.parse("2020-11-16T02:27:39", formatter).toInstant(ZoneOffset.UTC).toString)
-        ) shouldBe Seq()
+          FakeRequest().withSession("ssttp.frozenDateTime" ->  "2020-02-05T00:00:00.880")
+        ) shouldBe Seq(
+          InterestRate(LocalDate.parse("2019-11-25"), LocalDate.parse("2019-12-31"), 3.25),
+          InterestRate(LocalDate.parse("2020-01-01"), LocalDate.parse("2020-02-05"), 3.25)
+        )
+
+      }
+    }
+    "passed SA details with all charges not yet due (today's date is before earliest due date)" should {
+      "list a single interest rate for the period only covering today (from today, to today)" in {
+        irc.applicableInterestRates(TdAll.taxpayer.selfAssessment)(
+          FakeRequest().withSession("ssttp.frozenDateTime" -> "2019-11-24T00:00:00.880")
+        ) shouldBe Seq(
+          InterestRate(LocalDate.parse("2019-11-24"), LocalDate.parse("2019-11-24"), 3.25),
+        )
 
       }
     }
