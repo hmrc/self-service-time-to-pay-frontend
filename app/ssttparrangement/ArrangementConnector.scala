@@ -44,7 +44,7 @@ class ArrangementConnector @Inject() (
   val arrangementURL: String = servicesConfig.baseUrl("time-to-pay-arrangement")
 
   def submitArrangement(ttpArrangement: TTPArrangement)(implicit request: Request[_]): Future[SubmissionResult] = {
-    connectionsLogger.info(s"Submit arrangement")
+    connectionsLogger.info(s"Submit arrangement to time-to-pay-arrangement service")
 
     httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/ttparrangements", ttpArrangement).map { response =>
       response.status match {
@@ -58,7 +58,11 @@ class ArrangementConnector @Inject() (
       }
     }.recover {
       case e: Throwable =>
-        connectionsLogger.warn(s"Submit arrangement outcome: Error, $e", ttpArrangement)
+        connectionsLogger.warn(
+          s"Submit arrangement to time-to-pay-arrangement - outcome: Error" + "" +
+          s"[Payment plan reference: ${ttpArrangement.paymentPlanReference}] [Direct debit reference: ${ttpArrangement.directDebitReference}]",
+          e
+        )
         onError(e)
     }
   }

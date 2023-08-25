@@ -22,29 +22,6 @@ import ssttparrangement.SubmissionError
 import uk.gov.hmrc.selfservicetimetopay.models.{PaymentPlanRequest, TTPArrangement}
 
 object DataLogging {
-  trait ArrangementLogging {
-    self: BaseLogger =>
-
-    def debug(message: => String, arrangement: TTPArrangement)(implicit request: RequestHeader): Unit = logMessage(message, arrangement, Debug)
-
-    def info(message: => String, arrangement: TTPArrangement)(implicit request: RequestHeader): Unit = logMessage(message, arrangement, Info)
-
-    def warn(message: => String, arrangement: TTPArrangement)(implicit request: RequestHeader): Unit = logMessage(message, arrangement, Warn)
-
-    def error(message: => String, arrangement: TTPArrangement)(implicit request: RequestHeader): Unit = logMessage(message, arrangement, Error)
-
-    private def appendedArrangement(arrangement: TTPArrangement): String = s" [arrangement: ${appendedData(Json.toJson(arrangement.obfuscate))}]"
-
-    private def logMessage(message: => String, arrangement: TTPArrangement, level: LogLevel)(implicit request: RequestHeader): Unit = {
-      lazy val richMessageWithArrangement = makeRichMessage(message) + appendedArrangement(arrangement)
-      level match {
-        case Debug => log.debug(richMessageWithArrangement)
-        case Info  => log.info(richMessageWithArrangement)
-        case Warn  => log.warn(richMessageWithArrangement)
-        case Error => log.error(richMessageWithArrangement)
-      }
-    }
-  }
 
   trait SubmissionErrorLogging {
     self: BaseLogger =>

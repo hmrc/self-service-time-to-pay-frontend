@@ -337,7 +337,8 @@ class ArrangementController @Inject() (
           submitArrangementResult.flatMap {
             _.fold(submissionError => {
               journeyLogger.warn(s"Arrangement set up outcome: Exception: ${submissionError.code} + ${submissionError.message}")(request, journey)
-              journeyLogger.warn(s"Arrangement set up outcome: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to application successful", arrangement)
+              journeyLogger.warn(s"Arrangement set up outcome: ZONK ERROR! Arrangement submission failed, $submissionError but redirecting to application successful " +
+                s"[Payment plan reference: ${arrangement.paymentPlanReference}] [Direct debit reference: ${arrangement.directDebitReference}")
               applicationSuccessful(journey, paymentSchedule)
             }, _ => {
               journeyLogger.info(s"Arrangement set up outcome: Arrangement submission Succeeded!")(request, journey)

@@ -27,7 +27,6 @@ import journey.Journey
  */
 class JourneyLogger(inClass: Class[_])
   extends BaseLogger(inClass)
-  with DataLogging.ArrangementLogging
   with InterestRateLogger {
 
   override val log: play.api.Logger = PlayLogger("journey")

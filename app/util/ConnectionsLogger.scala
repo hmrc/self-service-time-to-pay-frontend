@@ -20,7 +20,6 @@ import play.api.{Logger => PlayLogger}
 
 class ConnectionsLogger(inClass: Class[_])
   extends BaseLogger(inClass)
-  with DataLogging.ArrangementLogging
   with DataLogging.SubmissionErrorLogging
   with DataLogging.PaymentPlanRequestLogging {
 

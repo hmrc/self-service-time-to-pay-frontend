@@ -44,13 +44,13 @@ class DirectDebitConnector @Inject() (
   val baseUrl: String = servicesConfig.baseUrl("direct-debit")
 
   def submitPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit request: Request[_]): Future[DDSubmissionResult] = {
-    connectionsLogger.info("Submit payment plan", paymentPlan)
+    connectionsLogger.info("Submit payment plan to direct-debit service", paymentPlan)
 
     httpClient.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$baseUrl/direct-debit/${saUtr.value}/instructions/payment-plan", paymentPlan).map {
       Result => Right(Result)
     }.recover {
       case e: Throwable =>
-        connectionsLogger.warn("Submit payment plan outcome: Error", e)
+        connectionsLogger.warn("Submit payment plan to direct-debit service - outcome: Error", e)
         onError(e)
     }
   }
@@ -59,13 +59,13 @@ class DirectDebitConnector @Inject() (
    * Retrieves stored bank details associated with a given saUtr
    */
   def getBanks(saUtr: SaUtr)(implicit request: Request[_]): Future[DirectDebitInstructions] = {
-    connectionsLogger.info("Get bank details")
+    connectionsLogger.info("Get bank details from direct-debit service")
 
     httpClient.GET[DirectDebitInstructions](s"$baseUrl/direct-debit/${saUtr.value}/banks").map {
       response => response
     }.recover {
       case e: RuntimeException =>
-        connectionsLogger.warn("Get bank details outcome: Error", e)
+        connectionsLogger.warn("Get bank details from direct-debit service - outcome: Error", e)
         throw new RuntimeException("GETBANKS threw unexpected error")
     }
   }
