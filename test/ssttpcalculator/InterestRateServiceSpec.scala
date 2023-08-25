@@ -44,7 +44,7 @@ class InterestRateServiceSpec extends AnyWordSpec with Matchers {
     import testsupport.testdata.TdAll
     import play.api.test.FakeRequest
 
-    "passed SA details and an implicit request" should {
+    "passed SA details and an implicit request with one or more charges past due" should {
       "lists all interest rates for the period" +
         " from the due date of the oldest debit in the SA details" +
         " to today" in {

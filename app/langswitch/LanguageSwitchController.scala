@@ -20,7 +20,6 @@ import javax.inject.Inject
 import play.api.mvc._
 import play.mvc.Http.HeaderNames
 import req.RequestSupport
-import util.Logging
 import views.DefaultViews
 
 import scala.concurrent.ExecutionContext
@@ -31,7 +30,7 @@ class LanguageSwitchController @Inject() (
     cc:             ControllerComponents)(
     implicit
     ec: ExecutionContext)
-  extends AbstractController(cc) with Logging {
+  extends AbstractController(cc) {
 
   import requestSupport._
 
@@ -46,7 +45,7 @@ class LanguageSwitchController @Inject() (
     result.withLang(language.toPlayLang)
   }
 
-  def noReferrerContent(language: Language)(implicit request: Request[_]) = Ok(
+  def noReferrerContent(language: Language)(implicit request: Request[_]): Result = Ok(
     defaultViews.ForceBrowsing.error4xx(
       s"Missing referer header - language changed to $language",
       s"Missing referer header - language changed to $language",

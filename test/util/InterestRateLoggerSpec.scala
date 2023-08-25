@@ -37,7 +37,7 @@ class InterestRateLoggerSpec extends AnyWordSpec with Matchers {
     }
 
     "multiple applicable interest rates are passed (in the sequence)" should {
-      "each rate is logged separately, starting with the the oldest end date, showing bounded periods except the last" in {
+      "each rate is logged separately, starting with the the oldest end date, showing bounded periods except the last shown as start date 'onwards'" in {
         val rates = Seq(
           InterestRate(LocalDate.parse("2020-02-05"), LocalDate.parse("2020-07-31"), 2.50),
           InterestRate(LocalDate.parse("2020-08-01"), LocalDate.parse("2020-08-31"), 2.75),

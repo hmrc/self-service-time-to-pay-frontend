@@ -20,10 +20,6 @@ import cats.implicits.catsSyntaxEq
 import play.api.{Logger => PlayLogger}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.RequestHeader
-import ssttparrangement.SubmissionError
-import uk.gov.hmrc.http.CookieNames
-import uk.gov.hmrc.selfservicetimetopay.models.{PaymentPlanRequest, TTPArrangement}
-import util.RequestSupport.hc
 
 class Logger(reference: String, inClass: Class[_]) extends BaseLogger(inClass) {
   val log: play.api.Logger = PlayLogger(reference)

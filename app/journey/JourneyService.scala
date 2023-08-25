@@ -19,12 +19,11 @@ package journey
 import journey.Statuses.{ApplicationComplete, InProgress}
 import play.api.mvc.{Request, Result, Results}
 import uk.gov.hmrc.play.http.logging.Mdc
-import util.Logging
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) extends Logging {
+class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) {
 
   import playsession.PlaySessionSupport._
 
@@ -34,7 +33,7 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
   }
 
   def getMaybeJourney()(implicit request: Request[_]): Future[Option[Journey]] = Mdc.preservingMdc {
-    request.readJourneyId.fold[Future[Option[Journey]]](Future.successful(None))(journeyRepo.findById(_))
+    request.readJourneyId.fold[Future[Option[Journey]]](Future.successful(None))(journeyRepo.findById)
   }
 
   def getJourney()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {

@@ -44,11 +44,6 @@ trait Logging {
    */
   val stubsConnectionsLogger = logger("stubs connections")
 
-  /**
-   * Contextless logger with tag "interest rate". Does NOT report context.
-   */
-  val interestRateLogger = contextlessLogger("interest rate")
-
   def logger(reference: String) = new Logger(reference, inClass)
   def contextlessLogger(reference: String) = play.api.Logger(reference)
 }

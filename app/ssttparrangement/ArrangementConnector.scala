@@ -49,20 +49,26 @@ class ArrangementConnector @Inject() (
     httpClient.POST[TTPArrangement, HttpResponse](s"$arrangementURL/ttparrangements", ttpArrangement).map { response =>
       response.status match {
         case CREATED =>
-          connectionsLogger.info("Submit arrangement outcome: Success")
+          connectionsLogger.info("Submit arrangement to time-to-pay-arrangement service - outcome: Success")
           Right(SubmissionSuccess())
         case otherCode: Int =>
           val submissionError = SubmissionError(otherCode, response.body)
-          connectionsLogger.warn(s"Submission arrangement outcome: Error", submissionError)
+          connectionsLogger.warn(
+            s"Submit arrangement to time-to-pay-arrangement service - outcome: Error" +
+            s"[Payment plan reference: ${ttpArrangement.paymentPlanReference}] [Direct debit reference: ${ttpArrangement.directDebitReference}]",
+            submissionError
+          )
+
           Left(submissionError)
       }
     }.recover {
       case e: Throwable =>
         connectionsLogger.warn(
-          s"Submit arrangement to time-to-pay-arrangement - outcome: Error" + "" +
+          s"Submit arrangement to time-to-pay-arrangement - outcome: Error" +
             s"[Payment plan reference: ${ttpArrangement.paymentPlanReference}] [Direct debit reference: ${ttpArrangement.directDebitReference}]",
           e
         )
+
         onError(e)
     }
   }
