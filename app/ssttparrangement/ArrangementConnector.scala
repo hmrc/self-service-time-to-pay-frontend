@@ -60,7 +60,7 @@ class ArrangementConnector @Inject() (
       case e: Throwable =>
         connectionsLogger.warn(
           s"Submit arrangement to time-to-pay-arrangement - outcome: Error" + "" +
-          s"[Payment plan reference: ${ttpArrangement.paymentPlanReference}] [Direct debit reference: ${ttpArrangement.directDebitReference}]",
+            s"[Payment plan reference: ${ttpArrangement.paymentPlanReference}] [Direct debit reference: ${ttpArrangement.directDebitReference}]",
           e
         )
         onError(e)

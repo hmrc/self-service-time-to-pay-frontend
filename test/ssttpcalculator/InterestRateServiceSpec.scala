@@ -24,7 +24,6 @@ import times.ClockProvider
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, Month}
 
-
 class InterestRateServiceSpec extends AnyWordSpec with Matchers {
   val irc = new InterestRateService(new ClockProvider)
 
@@ -49,22 +48,22 @@ class InterestRateServiceSpec extends AnyWordSpec with Matchers {
       "lists all interest rates for the period" +
         " from the due date of the oldest debit in the SA details" +
         " to today" in {
-        irc.applicableInterestRates(TdAll.taxpayer.selfAssessment)(
-          FakeRequest().withSession("ssttp.frozenDateTime" ->  "2020-02-05T00:00:00.880")
-        ) shouldBe Seq(
-          InterestRate(LocalDate.parse("2019-11-25"), LocalDate.parse("2019-12-31"), 3.25),
-          InterestRate(LocalDate.parse("2020-01-01"), LocalDate.parse("2020-02-05"), 3.25)
-        )
+          irc.applicableInterestRates(TdAll.taxpayer.selfAssessment)(
+            FakeRequest().withSession("ssttp.frozenDateTime" -> "2020-02-05T00:00:00.880")
+          ) shouldBe Seq(
+              InterestRate(LocalDate.parse("2019-11-25"), LocalDate.parse("2019-12-31"), 3.25),
+              InterestRate(LocalDate.parse("2020-01-01"), LocalDate.parse("2020-02-05"), 3.25)
+            )
 
-      }
+        }
     }
     "passed SA details with all charges not yet due (today's date is before earliest due date)" should {
       "list a single interest rate for the period only covering today (from today, to today)" in {
         irc.applicableInterestRates(TdAll.taxpayer.selfAssessment)(
           FakeRequest().withSession("ssttp.frozenDateTime" -> "2019-11-24T00:00:00.880")
         ) shouldBe Seq(
-          InterestRate(LocalDate.parse("2019-11-24"), LocalDate.parse("2019-11-24"), 3.25),
-        )
+            InterestRate(LocalDate.parse("2019-11-24"), LocalDate.parse("2019-11-24"), 3.25),
+          )
 
       }
     }
