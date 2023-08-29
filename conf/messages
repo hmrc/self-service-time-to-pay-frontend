@@ -228,6 +228,11 @@ ssttp.affordability.set-up-plan-with-adviser-section.p1 = <a class="govuk-link" 
 ssttp.affordability.set-up-plan-with-adviser-section.p2 = You can also call us on 0300 123 1813 to set up a payment plan over the phone.
 ssttp.affordability.set-up-plan-with-adviser-section.p3 = Keep this page open when you connect to an adviser.
 
+ssttp.extra-support.section.h2 = If you need extra support
+ssttp.extra-support.section.p1 = Find out the different ways to <a class="govuk-link" id="extra-support" href="https://www.gov.uk/get-help-hmrc-extra-support">deal with HMRC if you need some help</a>.
+ssttp.extra-support.section.p2 = You can also use <a class="govuk-link" id="relay-uk" href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial 18001 then 0345 300 3900.
+ssttp.extra-support.section.p3 = If you are outside the UK: +44 2890 538 192.
+
 
 #calculator
 
