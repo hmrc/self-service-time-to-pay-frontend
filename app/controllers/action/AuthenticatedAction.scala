@@ -26,6 +26,7 @@ import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.{Enrolments, _}
+import util.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,9 +46,7 @@ class AuthenticatedAction @Inject() (
     cc:           MessagesControllerComponents)(
     implicit
     ec: ExecutionContext
-) extends ActionRefiner[Request, AuthenticatedRequest] {
-
-  private val logger = Logger(getClass)
+) extends ActionRefiner[Request, AuthenticatedRequest] with Logging {
 
   import req.RequestSupport._
 
@@ -67,7 +66,7 @@ class AuthenticatedAction @Inject() (
           //TODO: what is a proper value to origin
           Left(Redirect(viewConfig.loginUrl, Map("continue" -> Seq(viewConfig.frontendBaseUrl + request.uri), "origin" -> Seq("pay-online"))))
         case e: AuthorisationException =>
-          logger.debug(s"Unauthorised because of ${e.reason}, $e")
+          appLogger.info(s"Authentication outcome: Failed. Unauthorised because of ${e.reason}, $e")
           Left(badResponses.unauthorised)
       }
   }

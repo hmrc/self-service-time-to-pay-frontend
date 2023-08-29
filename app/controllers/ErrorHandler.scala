@@ -16,14 +16,13 @@
 
 package controllers
 
-import config.{AppConfig, ViewConfig}
 import javax.inject.{Inject, Singleton}
 import journey.Journey
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Request, Result, Results}
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Request, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
+import util.JourneyLogger
 
 @Singleton
 class ErrorHandler @Inject() (
@@ -45,10 +44,10 @@ class ErrorHandler @Inject() (
 }
 
 object ErrorHandler {
-  import req.RequestSupport._
+  val journeyLogger = new JourneyLogger(getClass)
 
   def technicalDifficulties(journey: Journey)(implicit request: Request[_]): Result = {
-    JourneyLogger.info(s"${this.getClass.getSimpleName}: redirecting on error", journey)
+    journeyLogger.info("Redirecting to 'Technical difficulties' on error")(request, journey)
     throw new RuntimeException("Something went wrong. Inspect stack trace and fix bad code")
   }
 

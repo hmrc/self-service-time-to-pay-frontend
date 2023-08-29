@@ -18,7 +18,6 @@ package controllers
 
 import journey.Journey
 import play.api.mvc._
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import scala.concurrent.Future
 

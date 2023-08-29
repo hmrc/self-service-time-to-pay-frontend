@@ -35,6 +35,7 @@ class LanguageSwitchController @Inject() (
   import requestSupport._
 
   def switchToLanguage(language: Language): Action[AnyContent] = cc.actionBuilder { implicit request =>
+
     val maybeReferrer: Option[String] =
       request
         .headers
@@ -44,7 +45,7 @@ class LanguageSwitchController @Inject() (
     result.withLang(language.toPlayLang)
   }
 
-  def noReferrerContent(language: Language)(implicit request: Request[_]) = Ok(
+  def noReferrerContent(language: Language)(implicit request: Request[_]): Result = Ok(
     defaultViews.ForceBrowsing.error4xx(
       s"Missing referer header - language changed to $language",
       s"Missing referer header - language changed to $language",

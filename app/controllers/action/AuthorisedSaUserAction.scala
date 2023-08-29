@@ -17,24 +17,20 @@
 package controllers.action
 
 import com.google.inject.Inject
-import config.AppConfig
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import timetopaytaxpayer.cor.model.SaUtr
 
 import scala.concurrent.{ExecutionContext, Future}
-import req.RequestSupport._
+import util.Logging
 
 final class AuthorisedSaUserRequest[A](val request: AuthenticatedRequest[A], val utr: SaUtr)
   extends WrappedRequest[A](request)
 
 class AuthorisedSaUserAction @Inject() (
     cc: MessagesControllerComponents)
-  extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] {
-
-  private val logger = Logger(getClass)
+  extends ActionRefiner[AuthenticatedRequest, AuthorisedSaUserRequest] with Logging {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthorisedSaUserRequest[A]]] = {
 
@@ -52,10 +48,10 @@ class AuthorisedSaUserAction @Inject() (
 
     val maybeObfuscatedUtr = maybeUtr.map(_ => "***")
 
-      def logFail(reason: String) = {
-        logger.info(
+      def logFail(reason: String)(implicit rh: RequestHeader) = {
+        appLogger.info(
           s"""
-           |Authorisation failed, reason: $reason:
+           |Authorisation outcome: Failed. Reason: $reason:
            |  [hasActiveSaEnrolment: $hasActiveSaEnrolment]
            |  [enrolments: ${Json.prettyPrint(Json.toJson(obfuscatedEnrolments))}]
            |  [utr: $maybeObfuscatedUtr]
@@ -66,10 +62,10 @@ class AuthorisedSaUserAction @Inject() (
     val result: Either[Result, AuthorisedSaUserRequest[A]] =
       (hasActiveSaEnrolment, maybeUtr) match {
         case (false, _) =>
-          logFail("no active IR-SA enrolment")
+          logFail("no active IR-SA enrolment")(request)
           Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
         case (_, None) =>
-          logFail("no present UTR")
+          logFail("no present UTR")(request)
           Left(Redirect(ssttpeligibility.routes.SelfServiceTimeToPayController.getAccessYouSelfAssessmentOnline()))
         case (true, Some(utr)) =>
           Right(new AuthorisedSaUserRequest[A](request, utr))

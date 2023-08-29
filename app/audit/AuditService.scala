@@ -30,14 +30,14 @@ import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
 import req.RequestSupport._
 import ssttpcalculator.legacy.CalculatorService
-import util.ApplicationLogging
+import util.Logging
 
 import scala.util.{Failure, Success}
 
 @Singleton()
 class AuditService @Inject() (
     auditConnector: AuditConnector
-)(implicit ec: ExecutionContext) extends ApplicationLogging {
+)(implicit ec: ExecutionContext) extends Logging {
 
   def sendDirectDebitSubmissionFailedEvent(
       journey:         Journey,
@@ -62,9 +62,9 @@ class AuditService @Inject() (
   private def sendEvent(event: ExtendedDataEvent)(implicit request: Request[_]): Unit = {
     val checkEventResult = auditConnector.sendExtendedEvent(event)
     checkEventResult.onComplete {
-      case Success(value)       => logger.info(s"Audit event ${event.auditType} successfully posted - ${value.toString}")
-      case Failure(NonFatal(e)) ⇒ logger.error(s"Unable to post audit event of type ${event.auditType} to audit connector - ${e.getMessage}", e)
-      case _                    ⇒ logger.info(s"Event audited ${event.auditType}")
+      case Success(value)       => auditLogger.info(s"Send audit event outcome: audit event ${event.auditType} successfully posted - ${value.toString}")
+      case Failure(NonFatal(e)) => auditLogger.warn(s"Send audit event outcome: unable to post audit event of type ${event.auditType} to audit connector", e)
+      case _                    => auditLogger.info(s"Send audit event outcome: Event audited ${event.auditType}")
     }
   }
 }

@@ -18,16 +18,13 @@ package journey
 
 import journey.Statuses.{ApplicationComplete, InProgress}
 import play.api.mvc.{Request, Result, Results}
-import req.RequestSupport
 import uk.gov.hmrc.play.http.logging.Mdc
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) {
 
-  import RequestSupport._
   import playsession.PlaySessionSupport._
 
   def saveJourney(journey: Journey)(implicit request: Request[_]): Future[Unit] = Mdc.preservingMdc {
@@ -36,7 +33,7 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
   }
 
   def getMaybeJourney()(implicit request: Request[_]): Future[Option[Journey]] = Mdc.preservingMdc {
-    request.readJourneyId.fold[Future[Option[Journey]]](Future.successful(None))(journeyRepo.findById(_))
+    request.readJourneyId.fold[Future[Option[Journey]]](Future.successful(None))(journeyRepo.findById)
   }
 
   def getJourney()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {
@@ -47,18 +44,15 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
    * Manages code blocks where the user should be logged in and meet certain eligibility criteria
    */
   def authorizedForSsttp(block: Journey => Future[Result])(implicit request: Request[_]): Future[Result] = {
-    JourneyLogger.info(s"${this.getClass.getSimpleName}: $request")
 
     for {
       journey <- getJourney()
       result <- journey match {
         case journey if journey.status == InProgress =>
-          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission", journey)
           journey.requireIsEligible()
           block(journey)
 
         case journey if journey.status == ApplicationComplete =>
-          JourneyLogger.info(s"${this.getClass.getSimpleName}.authorizedForSsttp: currentSubmission (no eligible journey in progress)", journey)
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
       }

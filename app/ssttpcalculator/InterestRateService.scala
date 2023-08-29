@@ -20,22 +20,24 @@ import java.io.FileNotFoundException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Singleton
-import play.api.Logger
 import ssttpcalculator.model.InterestRate
+import util.Logging
+import javax.inject.Inject
+import play.api.mvc.Request
+import times.ClockProvider
+import timetopaytaxpayer.cor.model.SelfAssessmentDetails
 
 import scala.io.Source
 
 @Singleton
-class InterestRateService {
-
-  private val logger = Logger(getClass)
+class InterestRateService @Inject() (clockProvider: ClockProvider) extends Logging {
 
   lazy val rates: Seq[InterestRate] = streamInterestRates()
   val filename: String = "/interestRates.csv"
   val source: Source = Source.fromInputStream(getClass.getResourceAsStream(filename))
   val DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
-  def interestRateConsumer(rates: Seq[InterestRate], line: String): Seq[InterestRate] = {
+  private def interestRateConsumer(rates: Seq[InterestRate], line: String): Seq[InterestRate] = {
     line.split(",").toSeq match {
       case Seq(date, rate) =>
         val endDate: LocalDate = rates.lastOption.map(ir => ir.startDate.minusDays(1)).getOrElse(LocalDate.MAX)
@@ -83,10 +85,17 @@ class InterestRateService {
             ).min,
           rate      = rate.rate
         )
-        logger.info(s"Rate: $ir")
+        contextlessLogger("interest rates").info(s"Rate: $ir")
         ir
       }
     }
+  }
+
+  def applicableInterestRates(sa: SelfAssessmentDetails)(implicit request: Request[_]): Seq[InterestRate] = {
+    val firstDueDate = sa.debits.map(_.dueDate).min
+    val today: LocalDate = clockProvider.nowDate()
+    if (today isBefore firstDueDate) getRatesForPeriod(today, today)
+    else getRatesForPeriod(firstDueDate, today)
   }
 
 }

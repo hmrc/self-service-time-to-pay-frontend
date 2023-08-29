@@ -24,6 +24,7 @@ import req.RequestSupport
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import util.Logging
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,9 +35,7 @@ class SaStubConnector @Inject() (
     servicesConfig: ServicesConfig,
     requestSupport: RequestSupport)(
     implicit
-    ec: ExecutionContext) {
-
-  private val logger = Logger(getClass)
+    ec: ExecutionContext) extends Logging {
 
   import requestSupport._
 
@@ -53,7 +52,7 @@ class SaStubConnector @Inject() (
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer in PAYMENT-STUBS-PROTECTED: ${tu.utr}")
-          logger.debug(s"Set up a predefined response in PAYMENT-STUBS-PROTECTED for ${tu.utr}")
+          stubsConnectionsLogger.debug(s"Set up a predefined response in PAYMENT-STUBS-PROTECTED for ${tu.utr}")
       }
   }
 

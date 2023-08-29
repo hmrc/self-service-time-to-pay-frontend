@@ -166,7 +166,7 @@
             content = Text(messages("ssttp.arrangement.check-payment-plan.warning"))))
     }
 
-    @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.aboutBankAccount()) {
+    @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.getAboutBankAccount()) {
         @viewsHelpers.continue(Messages("ssttp.arrangement.check-payment-plan.agree"))
     }
 

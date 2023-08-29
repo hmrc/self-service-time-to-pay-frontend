@@ -23,11 +23,10 @@ import enrolforsa.AddTaxesConnector
 
 import javax.inject._
 import journey.JourneyService
-import play.api.Logger
 import play.api.mvc._
 import req.RequestSupport
 import times.ClockProvider
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
+import util.Logging
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,24 +41,19 @@ class SelfServiceTimeToPayController @Inject() (
     clockProvider:     ClockProvider,
     addTaxConnector:   AddTaxesConnector)(implicit appConfig: AppConfig,
                                           ec: ExecutionContext
-) extends FrontendBaseController(mcc) {
-
-  private val logger = Logger(getClass)
+) extends FrontendBaseController(mcc) with Logging {
 
   import requestSupport._
 
   def start: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
     Ok(views.service_start(isSignedIn, mcc.messagesApi))
   }
 
   def submit: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
   def getCallUsAboutAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
     Ok(views.call_us_about_a_payment_plan(isWelsh, loggedIn = isSignedIn))
   }
 
@@ -69,43 +63,37 @@ class SelfServiceTimeToPayController @Inject() (
   def getTtpCallUsCalculatorInstalments: Action[AnyContent] = getCallUsAboutAPaymentPlan
   def getTtpCallUsSignInQuestion: Action[AnyContent] = getCallUsAboutAPaymentPlan
   def getIaCallUse: Action[AnyContent] = getCallUsAboutAPaymentPlan
+  def getNotSaEnrolled: Action[AnyContent] = getCallUsAboutAPaymentPlan
 
   def getDebtTooOld: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
     Ok(views.call_us_debt_too_old(isWelsh, loggedIn = isSignedIn))
   }
 
   def getDebtTooLarge: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
     Ok(views.debt_too_large(isSignedIn, isWelsh))
   }
 
   def getFileYourTaxReturn: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
     Ok(views.file_your_tax_return(isSignedIn))
   }
 
   def getYouAlreadyHaveAPaymentPlan: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
     Ok(views.you_already_have_a_payment_plan(isSignedIn, isWelsh))
   }
 
-  def getNotSaEnrolled: Action[AnyContent] = getCallUsAboutAPaymentPlan
-
   def getAccessYouSelfAssessmentOnline: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
     Ok(views.you_need_to_request_access_to_self_assessment(isWelsh, isSignedIn))
   }
 
   def getNotSoleSignatory: Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
     Ok(views.not_sole_signatory(isWelsh, isSignedIn))
   }
 
   def submitAccessYouSelfAssessmentOnline: Action[AnyContent] = as.authenticatedSaUser.async { implicit request =>
-    val logMessage = s"Sending user to PTA (add-taxes-frontend) to enroll for SA" +
+    val logMessagePrefix = "Submit 'Access your self assessment online': "
+    val logMessage = logMessagePrefix + "Sending user to PTA (add-taxes-frontend) to enroll for SA" +
       s"[utr=${request.maybeUtr.map(_.obfuscate)}]"
-    JourneyLogger.info(logMessage)
+    appLogger.info(logMessage)
 
     val resultF = request.credentials match {
       case Some(credentials) =>
@@ -115,10 +103,11 @@ class SelfServiceTimeToPayController @Inject() (
         } yield Redirect(redirectUrl)
       case None =>
         //Use kibana to monitor how often this happens. We were told that majority of users should have credentials.
-        logger.error(
-          "Rotten credentials error. " +
+        appLogger.warn(
+          logMessagePrefix + "[Failed] Rotten credentials error. " +
             "The auth microservice returned empty credentials which are required to be passed " +
-            "to add-taxes-frontend in order to enrol-for-sa. Please investigate."
+            "to add-taxes-frontend in order to enrol-for-sa. Please investigate. " +
+            "Redirecting user to 'Not enrolled in SA' kick-out page"
         )
         Future.successful(Redirect(
           ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()
@@ -127,13 +116,12 @@ class SelfServiceTimeToPayController @Inject() (
 
     resultF.recover {
       case NonFatal(ex) =>
-        JourneyLogger.error(s"[Failed] $logMessage", ex)
+        appLogger.warn(logMessagePrefix + s"[Failed] $logMessage", ex)
         throw ex
     }
   }
 
   def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action { implicit request =>
-    JourneyLogger.info(s"$request")
     Redirect(appConfig.logoutUrl).withNewSession
   }
 }

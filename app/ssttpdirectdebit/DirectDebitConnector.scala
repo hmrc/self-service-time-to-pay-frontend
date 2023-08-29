@@ -17,17 +17,16 @@
 package ssttpdirectdebit
 
 import com.google.inject._
-import play.api.Logger
 import play.api.http.Status
 import play.api.libs.json.Json
-import play.api.mvc.Request
+import play.api.mvc.{Request, RequestHeader}
 import ssttparrangement.SubmissionError
 import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.{HttpClient, HttpException, UpstreamErrorResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.selfservicetimetopay.jlogger.JourneyLogger
 import uk.gov.hmrc.selfservicetimetopay.models._
+import _root_.util.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,8 +35,7 @@ class DirectDebitConnector @Inject() (
     httpClient:     HttpClient)(
     implicit
     ec: ExecutionContext
-) {
-  private val logger = Logger(getClass)
+) extends Logging {
 
   type DDSubmissionResult = Either[SubmissionError, DirectDebitInstructionPaymentPlan]
 
@@ -46,14 +44,13 @@ class DirectDebitConnector @Inject() (
   val baseUrl: String = servicesConfig.baseUrl("direct-debit")
 
   def submitPaymentPlan(paymentPlan: PaymentPlanRequest, saUtr: SaUtr)(implicit request: Request[_]): Future[DDSubmissionResult] = {
-    val obfuscatedPaymentPlan = paymentPlan.obfuscate
-    JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan:\n ${Json.prettyPrint(Json.toJson(obfuscatedPaymentPlan))}")
+    connectionsLogger.info("Submit payment plan to direct-debit service")
 
     httpClient.POST[PaymentPlanRequest, DirectDebitInstructionPaymentPlan](s"$baseUrl/direct-debit/${saUtr.value}/instructions/payment-plan", paymentPlan).map {
       Result => Right(Result)
     }.recover {
       case e: Throwable =>
-        JourneyLogger.info(s"DirectDebitConnector.createPaymentPlan: Error, $e")
+        connectionsLogger.warn("Submit payment plan to direct-debit service - outcome: Error", e)
         onError(e)
     }
   }
@@ -62,18 +59,18 @@ class DirectDebitConnector @Inject() (
    * Retrieves stored bank details associated with a given saUtr
    */
   def getBanks(saUtr: SaUtr)(implicit request: Request[_]): Future[DirectDebitInstructions] = {
-    JourneyLogger.info(s"DirectDebitConnector.getBanks")
+    connectionsLogger.info("Get bank details from direct-debit service")
 
-    httpClient.GET[DirectDebitInstructions](s"$baseUrl/direct-debit/${saUtr.value}/banks").map { response => response }
-      .recover {
-        case e: RuntimeException =>
-          JourneyLogger.info(s"DirectDebitConnector.getBanks: Error, $e")
-          logger.error(e.getMessage)
-          throw new RuntimeException("GETBANKS threw unexpected error")
-      }
+    httpClient.GET[DirectDebitInstructions](s"$baseUrl/direct-debit/${saUtr.value}/banks").map {
+      response => response
+    }.recover {
+      case e: RuntimeException =>
+        connectionsLogger.warn("Get bank details from direct-debit service - outcome: Error", e)
+        throw new RuntimeException("GETBANKS threw unexpected error")
+    }
   }
 
-  private def onError(ex: Throwable) = {
+  private def onError(ex: Throwable)(implicit rh: RequestHeader) = {
     val (code, message) = ex match {
       case e: HttpException         => (e.responseCode, e.getMessage)
 
@@ -82,8 +79,9 @@ class DirectDebitConnector @Inject() (
       case e: Throwable             => (Status.INTERNAL_SERVER_ERROR, e.getMessage)
     }
 
-    logger.error(s"Failure from DES, code $code and body $message")
-    Left(SubmissionError(code, message))
+    val submissionError = SubmissionError(code, message)
+    connectionsLogger.warn("Failure from DES", submissionError)
+    Left(submissionError)
   }
 }
 

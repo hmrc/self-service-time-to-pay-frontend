@@ -24,6 +24,7 @@ import req.RequestSupport
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import util.Logging
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,9 +34,7 @@ class DesStubConnector @Inject() (
     httpClient:     HttpClient,
     servicesConfig: ServicesConfig,
     requestSupport: RequestSupport
-)(implicit ec: ExecutionContext) {
-
-  private val logger = Logger(getClass)
+)(implicit ec: ExecutionContext) extends Logging {
 
   import requestSupport._
 
@@ -53,7 +52,7 @@ class DesStubConnector @Inject() (
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's return in DES-STUB: $tu")
-          logger.debug(s"Set up a predefined return in DES-STUB for $tu")
+          stubsConnectionsLogger.debug(s"Set up a predefined return in DES-STUB for $tu")
       }
   }
 
@@ -71,7 +70,7 @@ class DesStubConnector @Inject() (
       .map{
         r =>
           if (r.status != 200) throw new RuntimeException(s"Could not set up taxpayer's debit in DES-STUB: $tu")
-          logger.debug(s"Set up a predefined debit in DES-STUB for $tu")
+          stubsConnectionsLogger.debug(s"Set up a predefined debit in DES-STUB for $tu")
       }
   }
 

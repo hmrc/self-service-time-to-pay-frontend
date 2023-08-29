@@ -18,7 +18,6 @@ package bars
 
 import bars.model._
 import com.google.inject._
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import ssttparrangement.SubmissionError
@@ -26,6 +25,8 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.selfservicetimetopay.models._
+import _root_.util.Logging
+
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
@@ -36,8 +37,7 @@ class BarsConnector @Inject() (
     httpClient:     HttpClient)(
     implicit
     ec: ExecutionContext
-) {
-  private val logger = Logger(getClass)
+) extends Logging {
 
   type DDSubmissionResult = Either[SubmissionError, DirectDebitInstructionPaymentPlan]
 
@@ -66,11 +66,10 @@ class BarsConnector @Inject() (
               if (barsError.code == BarsError.sortCodeOnDenyList) {
                 BarsResponseSortCodeOnDenyList(barsError)
               } else {
-                val msg = new RuntimeException(s"Unhandled error code for 400 HttpResponse: [$barsError]")
-                logger.error("couldn't validateBank", msg)
-                throw new RuntimeException(msg)
+                throw new RuntimeException(s"Unhandled error code for 400 HttpResponse: [$barsError]")
               }
-            case Left(value) => throw value
+            case Left(upstreamErrorResponse) =>
+              throw upstreamErrorResponse
           }
 
       }

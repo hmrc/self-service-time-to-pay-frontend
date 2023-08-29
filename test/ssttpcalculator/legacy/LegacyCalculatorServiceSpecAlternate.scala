@@ -22,11 +22,11 @@ import ssttpcalculator.model.{PaymentSchedule, TaxLiability}
 import ssttpcalculator.legacy.model.TaxPaymentPlan
 import ssttpcalculator.{DurationService, InterestRateService}
 import testsupport.ItSpec
+import _root_.util.Logging
 
 import java.time.LocalDate
 
-class LegacyCalculatorServiceSpecAlternate extends ItSpec {
-  private val logger = Logger(getClass)
+class LegacyCalculatorServiceSpecAlternate extends ItSpec with Logging {
 
   val interestRateService = fakeApplication().injector.instanceOf[InterestRateService]
   val durationService = fakeApplication().injector.instanceOf[DurationService]
@@ -61,7 +61,7 @@ class LegacyCalculatorServiceSpecAlternate extends ItSpec {
 
       val totalPaid = amountPaid + schedule.initialPayment
 
-      logger.info(s"Payment Schedule: Initial: ${schedule.initialPayment}, Over ${schedule.instalments.size}, Regular: ${schedule.instalments.head.amount}, Final: ${schedule.instalments.last.amount}, Total: $totalPaid")
+      contextlessLogger("test").info(s"Payment Schedule: Initial: ${schedule.initialPayment}, Over ${schedule.instalments.size}, Regular: ${schedule.instalments.head.amount}, Final: ${schedule.instalments.last.amount}, Total: $totalPaid")
 
       totalPaid.doubleValue() shouldBe totalPayable.doubleValue()
       schedule.totalInterestCharged.doubleValue() shouldBe totalInterestCharged.doubleValue()
@@ -104,7 +104,7 @@ class LegacyCalculatorServiceSpecAlternate extends ItSpec {
 
       val totalPaid = amountPaid + schedule.initialPayment
 
-      logger.info(s"Payment Schedule: Initial: ${schedule.initialPayment}, Over ${schedule.instalments.size}, Regular: ${schedule.instalments.head.amount}, Final: ${schedule.instalments.last.amount}, Total: $totalPaid")
+      contextlessLogger("test").info(s"Payment Schedule: Initial: ${schedule.initialPayment}, Over ${schedule.instalments.size}, Regular: ${schedule.instalments.head.amount}, Final: ${schedule.instalments.last.amount}, Total: $totalPaid")
 
       schedule.instalments.size shouldBe duration
     }

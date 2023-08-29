@@ -19,6 +19,7 @@ package controllers
 import controllers.action.Actions
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Logging
 import views.Views
 
 import javax.inject.Inject
@@ -27,12 +28,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class TimeoutController @Inject() (actions: Actions,
                                    views:   Views,
                                    mcc:     MessagesControllerComponents)
-  (implicit ec: ExecutionContext) extends FrontendController(mcc) {
+  (implicit ec: ExecutionContext) extends FrontendController(mcc) with Logging {
   implicit def toFuture(r: Result): Future[Result] = Future.successful(r)
 
   def keepAliveSession(): Action[AnyContent] = Action(NoContent)
 
   def killSession(): Action[AnyContent] = Action { implicit request =>
+    appLogger.info("Kill session")
+
     Ok(views.delete_answers()).withNewSession
   }
 }

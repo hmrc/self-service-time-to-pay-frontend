@@ -16,19 +16,12 @@
 
 package util
 
-import play.api.Logger
+import play.api.{Logger => PlayLogger}
 
-/***
- * This logger is useful for repos which are not properly packaged under uk.gov.hmrc... etc
- * It allows easier logback configuration using the 'application' logger, eg:
- *
- *  <logger name="application" level="INFO"/>
- *
- *  <root level="WARN">
- *      <appender-ref ref="FILE"/>
- *      <appender-ref ref="STDOUT"/>
- *  </root>
- */
-trait ApplicationLogging {
-  val logger: Logger = Logger(s"application.${this.getClass.getName}")
+class ConnectionsLogger(inClass: Class[_])
+  extends BaseLogger(inClass)
+  with SubmissionErrorLogging {
+
+  override val log: play.api.Logger = PlayLogger("connections")
+
 }

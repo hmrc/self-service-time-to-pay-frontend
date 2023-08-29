@@ -26,7 +26,7 @@ final case class TTPArrangement(paymentPlanReference: String,
                                 bankDetails:          BankDetails,
                                 schedule:             PaymentSchedule) {
 
-  def obfuscate = TTPArrangement(
+  def obfuscate: TTPArrangement = TTPArrangement(
     paymentPlanReference = paymentPlanReference,
     directDebitReference = directDebitReference,
     taxpayer             = taxpayer.obfuscate,
