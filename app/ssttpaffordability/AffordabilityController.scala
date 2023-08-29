@@ -203,4 +203,13 @@ class AffordabilityController @Inject() (
       Ok(views.we_cannot_agree_your_pp(isSignedIn, isWelsh))
     }
   }
+
+  def getSetUpPlanWithAdviser: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
+    journeyService.authorizedForSsttp { implicit journey: Journey =>
+      journeyLogger.info("Get 'Set up a payment plan with an adviser'")
+
+      //journeyService.getJourney().map(auditService.sendPlanNotAffordableEvent)
+      Ok(views.set_up_a_payment_plan_with_an_adviser(isSignedIn, isWelsh))
+    }
+  }
 }
