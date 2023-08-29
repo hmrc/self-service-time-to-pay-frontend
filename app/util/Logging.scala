@@ -16,6 +16,8 @@
 
 package util
 
+import play.api
+
 trait Logging {
   val inClass: Class[_] = getClass
 
@@ -44,6 +46,15 @@ trait Logging {
    */
   val stubsConnectionsLogger = logger("stubs connections")
 
+  /**
+   * Logger with parameterized tag. Uses implicit request to report request context.
+   * @param reference Logger name/tag to display
+   */
   def logger(reference: String) = new Logger(reference, inClass)
-  def contextlessLogger(reference: String) = play.api.Logger(reference)
+
+  /**
+   * Logger without context. Parameterized tag. Only use when not wanting to pass implicit request. If request is available use appLogger or other logger with context
+   * @param reference Logger name/tag to display
+   */
+  def contextlessLogger(reference: String): api.Logger = play.api.Logger(reference)
 }

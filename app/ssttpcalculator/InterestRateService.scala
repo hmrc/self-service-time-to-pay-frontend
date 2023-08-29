@@ -85,6 +85,7 @@ class InterestRateService @Inject() (clockProvider: ClockProvider) extends Loggi
             ).min,
           rate      = rate.rate
         )
+        contextlessLogger("interest rates").info(s"Rate: $ir")
         ir
       }
     }
