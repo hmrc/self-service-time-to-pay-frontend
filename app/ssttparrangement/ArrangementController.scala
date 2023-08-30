@@ -29,9 +29,9 @@ import playsession.PlaySessionSupport._
 import req.RequestSupport
 import ssttparrangement.ArrangementForm.dayOfMonthForm
 import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry, Success}
+import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.legacy.CalculatorService
 import ssttpcalculator.legacy.util.CalculatorSwitchSelectedScheduleHelper
-import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.model.{Instalment, PaymentSchedule}
 import ssttpdirectdebit.DirectDebitConnector
 import ssttpeligibility.{EligibilityService, IaService}
@@ -131,9 +131,45 @@ class ArrangementController @Inject() (
       val monthlyPaymentAmountChosen = journey.maybeSelectedPlanAmount.getOrElse(
         throw new IllegalArgumentException("a selection should have been made of monthly payment")
       )
-      Future.successful(Ok(views.check_payment_plan(schedule, leftOverIncome, monthlyPaymentAmountChosen))
-      )
+
+      if (satisfiesNddsValidation(schedule, monthlyPaymentAmountChosen))
+      {Future.successful(Ok(views.check_payment_plan(schedule, leftOverIncome, monthlyPaymentAmountChosen)))}
+      else Future.successful(Redirect(ssttpaffordability.routes.AffordabilityController.getSetUpPlanWithAdviser()))
     }
+  }
+
+  /**
+   *The following method replicates a validation check NDDS does on payment plans:
+   * From the payload we send, NDDS infers the number of monthly payments required by dividing the total payable amount
+   * (includes estimated interest) by the chosen monthly payment amount, selected by the user. With that number and the
+   * initialPaymentScheduleDate we send, NDDS calculates the balancing payment date and compares the result with the
+   * lastPaymentDate we also send in the payload, expecting them to match.
+   *
+   * e.g.
+   * totalPaybale = £1200 and monthlyPaymentAmountChosen = £250
+   *
+   * totalPayable / monthlyPaymentAmountChosen = 4.8
+   *
+   * If the division is not perfect (most likely), it ignores any decimal points, as any remainder payable amount,
+   * whether interest only or capital (NDDS does not know what is is) is expected to be added to the final balancing payment.
+   *
+   * e.g.
+   * expected number of payments = 4
+   *
+   * 3 @ £250 and a 4th and final balancingPayment = £250 + 250 x 0.8 = £450
+   *
+   * Therefore, the balancing payment must always be less than twice the regular monthly payment.
+   * If for any reason the balancing payment is equal to or greater than twice the regular monthly payment because of
+   * the way we have calculated the payment plan (e.g. because the interest accrued that is added to the balancing
+   * payment equals or exceeds the regular monthly payment), NDDS's calculation of the balancing payment date will not
+   * match the lastPaymentDate we send and as a result the plan will be rejected.
+   */
+
+  private def satisfiesNddsValidation(paymentSchedule: PaymentSchedule, monthlyPaymentAmountChosen: BigDecimal): Boolean = {
+    val nddsCalculatedNumberOfMonthlyPayments = (paymentSchedule.totalPayable / monthlyPaymentAmountChosen).setScale(0, BigDecimal.RoundingMode.DOWN).toInt
+    val nddsExpectedBalancingPaymentDate = paymentSchedule.initialPaymentScheduleDate.plusMonths(nddsCalculatedNumberOfMonthlyPayments - 1)
+
+    paymentSchedule.lastPaymentDate == nddsExpectedBalancingPaymentDate
   }
 
   def submitCheckPaymentPlan: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
