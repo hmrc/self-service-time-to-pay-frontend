@@ -41,27 +41,36 @@ class SetUpPlanWithAdviserPageSpec extends ItSpec {
     startPage.open()
     startPage.clickOnStartNowButton()
 
+    taxLiabilitiesPage.path shouldBe "/pay-what-you-owe-in-instalments/calculator/tax-liabilities"
     taxLiabilitiesPage.clickOnStartNowButton()
 
+    paymentTodayQuestionPage.path shouldBe "/pay-what-you-owe-in-instalments/calculator/payment-today-question"
     paymentTodayQuestionPage.selectRadioButton(false)
     paymentTodayQuestionPage.clickContinue()
 
+    selectDatePage.path shouldBe "/pay-what-you-owe-in-instalments/arrangement/instalment-summary/select-date"
     selectDatePage.selectFirstOption28thDay()
     selectDatePage.clickContinue()
 
+    startAffordabilityPage.path shouldBe "/pay-what-you-owe-in-instalments/start-affordability"
     startAffordabilityPage.clickContinue()
 
+    addIncomeSpendingPage.path shouldBe "/pay-what-you-owe-in-instalments/add-income-spending"
     addIncomeSpendingPage.clickOnAddChangeIncome()
 
+    yourMonthlyIncomePage.path shouldBe "/pay-what-you-owe-in-instalments/monthly-income"
     yourMonthlyIncomePage.enterMonthlyIncome("2000")
     yourMonthlyIncomePage.clickContinue()
 
+    addIncomeSpendingPage.path shouldBe "/pay-what-you-owe-in-instalments/add-income-spending"
     addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
     addIncomeSpendingPage.clickOnAddChangeSpending()
 
+    yourMonthlySpendingPage.path shouldBe "/pay-what-you-owe-in-instalments/monthly-spending"
     yourMonthlySpendingPage.enterHousing("1700")
     yourMonthlySpendingPage.clickContinue()
 
+    howMuchYouCouldAffordPage.path shouldBe "/pay-what-you-owe-in-instalments/how-much-you-could-afford"
     howMuchYouCouldAffordPage.clickContinue()
     inUseHowMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
     inUseHowMuchCanYouPayEachMonthPage.clickContinue()
