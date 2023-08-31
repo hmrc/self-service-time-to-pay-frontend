@@ -72,8 +72,8 @@ GET         /sign-out                                                     ssttpe
 GET         /language/:language                                           langswitch.LanguageSwitchController.switchToLanguage(language: Language)
 
 
-GET         /session/keep-alive                                       controllers.TimeoutController.keepAliveSession()
-GET         /delete-answers                                           controllers.TimeoutController.killSession()
+GET         /session/keep-alive                                           controllers.TimeoutController.keepAliveSession()
+GET         /delete-answers                                               controllers.TimeoutController.killSession()
 
 
 # Affordability
@@ -86,3 +86,4 @@ GET         /monthly-spending                                             ssttpa
 POST        /monthly-spending                                             ssttpaffordability.AffordabilityController.submitMonthlySpending()
 GET         /how-much-you-could-afford                                    ssttpaffordability.AffordabilityController.getHowMuchYouCouldAfford()
 GET         /we-cannot-agree-your-payment-plan                            ssttpaffordability.AffordabilityController.getWeCannotAgreeYourPP()
+GET         /set-up-payment-plan-adviser                                  ssttpaffordability.AffordabilityController.getSetUpPlanWithAdviser()

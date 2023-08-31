@@ -23,7 +23,7 @@ import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.libs.json.Json.{prettyPrint, toJson}
 import testsupport.testdata.EligibilityTaxpayerVariationsTd._
-import testsupport.testdata.TdAll.{taxpayer, utr}
+import testsupport.testdata.TdAll.{taxpayer, taxpayerNddsRejects, utr}
 import timetopaytaxpayer.cor.model.Taxpayer
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -35,6 +35,9 @@ object TaxpayerStub extends Matchers with Status {
 
   def getTaxpayer(): StubMapping =
     getTaxpayer(taxpayer)
+
+  def getTaxpayerNddsRejects(): StubMapping =
+    getTaxpayer(taxpayerNddsRejects)
 
   def getTaxpayer(reason: Reason): StubMapping =
     stubFor(get(url).willReturn(aResponse()
