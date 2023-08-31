@@ -17,12 +17,64 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
+import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage, SetUpPlanWithAdviserPage}
+import ssttpcalculator.CalculatorType.PaymentOptimised
+import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
+import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
+import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
+import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
 class SetUpPlanWithAdviserPageSpec extends ItSpec {
 
-  "language" in {
+  val pageUnderTest: SetUpPlanWithAdviserPage = setUpPlanWithAdviserPage
+  val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
+  override val frozenTimeString: String = "2023-06-09T00:00:00.880"
 
+  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
+    AuthStub.authorise()
+    TaxpayerStub.getTaxpayerNddsRejects()
+    IaStub.successfulIaCheck
+    GgStub.signInPage(port)
+    getBanksIsSuccessful()
+
+    startPage.open()
+    startPage.clickOnStartNowButton()
+
+    taxLiabilitiesPage.clickOnStartNowButton()
+
+    paymentTodayQuestionPage.selectRadioButton(false)
+    paymentTodayQuestionPage.clickContinue()
+
+    selectDatePage.selectFirstOption28thDay()
+    selectDatePage.clickContinue()
+
+    startAffordabilityPage.clickContinue()
+
+    addIncomeSpendingPage.clickOnAddChangeIncome()
+
+    yourMonthlyIncomePage.enterMonthlyIncome("2000")
+    yourMonthlyIncomePage.clickContinue()
+
+    addIncomeSpendingPage.assertPathHeaderTitleCorrect(English)
+    addIncomeSpendingPage.clickOnAddChangeSpending()
+
+    yourMonthlySpendingPage.enterHousing("1700")
+    yourMonthlySpendingPage.clickContinue()
+
+    howMuchYouCouldAffordPage.clickContinue()
+    inUseHowMuchCanYouPayEachMonthPage.selectASpecificOption(PaymentPlanOption.Basic)
+    inUseHowMuchCanYouPayEachMonthPage.clickContinue()
   }
 
+  "language" in {
+    beginJourney()
+
+    //      pageUnderTest.clickOnWelshLink()
+    //      pageUnderTest.assertInitialPageIsDisplayed(Welsh)
+    //
+    //      pageUnderTest.clickOnEnglishLink()
+
+    pageUnderTest.assertInitialPageIsDisplayed(English)
+  }
 }

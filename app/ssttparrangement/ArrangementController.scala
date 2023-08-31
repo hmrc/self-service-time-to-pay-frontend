@@ -136,13 +136,13 @@ class ArrangementController @Inject() (
         case CalculatorType.Legacy =>
           if (satisfiesNddsValidation(schedule, monthlyPaymentAmountChosen)) {
             Future.successful(Ok(views.check_payment_plan(schedule, leftOverIncome, monthlyPaymentAmountChosen)))
-        } else Future.successful(Redirect(ssttpaffordability.routes.AffordabilityController.getSetUpPlanWithAdviser()))
+          } else Future.successful(Redirect(ssttpaffordability.routes.AffordabilityController.getSetUpPlanWithAdviser()))
 
-  /**
-   * Using the PaymentOptimised calculator, will pretty much always
-   * result in plans that will be rejected by NDDS based on this validation.
-   * The case match here only serves testing purposes, whilst the feature flag is maintained.
-   */
+        /**
+         * Using the PaymentOptimised calculator, will pretty much always
+         * result in plans that will be rejected by NDDS based on this validation.
+         * The case match here only serves testing purposes, whilst the feature flag is maintained.
+         */
         case CalculatorType.PaymentOptimised =>
           Future.successful(Ok(views.check_payment_plan(schedule, leftOverIncome, monthlyPaymentAmountChosen)))
       }

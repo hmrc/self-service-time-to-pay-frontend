@@ -43,6 +43,8 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
   val testPort: Int = 19001
 
+  val requestTimeOut = 10
+
   protected lazy val configMap: Map[String, Any] = Map(
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
@@ -81,7 +83,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
       val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
 
-      eventually(RichMatchers.timeout(Span(10, Seconds))) {
+      eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
         val res = controller.submit()(fakeRequest)
         status(res) mustBe Status.SEE_OTHER
         res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/arrangement/summary"
@@ -102,6 +104,47 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       val result = controller.paymentPlan(journey, ddInstruction)(fakeRequest)
 
       result.submissionDateTime must endWith regex "\\.\\d{3}Z$"
+    }
+
+    ".getCheckPaymentPlan displays 'Set up a payment plan with an adviser' page if selected plan fails NDDS validation" in {
+      AuthStub.authorise()
+      val journeyId = JourneyId("62ce7631b7602426d74f83b0")
+      val sessionId = UUID.randomUUID().toString
+      val fakeRequest = FakeRequest().withSession("ssttp.frozenDateTime" -> "2023-06-09T00:00:00.880")
+        .withAuthToken()
+        .withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
+
+      val journey = TestJourney.createJourney(journeyId)
+      val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
+      journeyService.saveJourney(journey)(fakeRequest)
+
+      val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
+
+      eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
+        val res = controller.getCheckPaymentPlan()(fakeRequest)
+        status(res) mustBe Status.SEE_OTHER
+        res.value.get.get.header.headers("Location") mustBe "/pay-what-you-owe-in-instalments/set-up-payment-plan-adviser"
+      }
+    }
+
+    ".getCheckPaymentPlan displays 'Check your payment plan' page if selected plan passes NDDS validation" in {
+      AuthStub.authorise()
+      val journeyId = JourneyId("62ce7631b7602426d74f83b0")
+      val sessionId = UUID.randomUUID().toString
+      val fakeRequest = FakeRequest().withSession("ssttp.frozenDateTime" -> "2020-06-09T00:00:00.880")
+        .withAuthToken()
+        .withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
+
+      val journey = TestJourney.createJourney(journeyId)
+      val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
+      journeyService.saveJourney(journey)(fakeRequest)
+
+      val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
+
+      eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
+        val res = controller.getCheckPaymentPlan()(fakeRequest)
+        status(res) mustBe Status.OK
+      }
     }
   }
 

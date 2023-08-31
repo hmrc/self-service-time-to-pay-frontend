@@ -16,13 +16,12 @@
 
 package testsupport.testdata
 
-import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import play.api.libs.json.JsObject
-import ssttpaffordability.model.IncomeCategory.{Benefits, MonthlyIncome}
-import ssttpaffordability.model.{Income, IncomeBudgetLine}
+import testsupport.JsonSyntax._
 import timetopaytaxpayer.cor.model._
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
-import testsupport.JsonSyntax._
+
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 
 /**
  * Test Data All
@@ -52,6 +51,16 @@ object TdAll {
           "amount": $debit1Amount,
           "dueDate": "$dueDate",
           "taxYearEnd": "$taxYearEnd"
+        }""".asJson
+
+  val debit1NddsRejects: Debit = Debit("IN2", 3000, "2023-05-31", interest = None, "2023-04-01")
+
+  val debit1NddsRejectsJson: JsObject =
+    s"""{
+          "originCode": "IN2",
+          "amount": 3000,
+          "dueDate": "2023-05-31",
+          "taxYearEnd": "2023-04-01"
         }""".asJson
 
   //TODO: consult with analytics if this data is correct
@@ -120,6 +129,17 @@ todays date: 2019-11-25
         List(
           Return(taxYearEnd, issuedDate = "2019-11-10", dueDate = "2019-08-15", receivedDate = "2019-03-09"),
           Return(taxYearEnd   = "2018-04-05", issuedDate = "2017-02-15", dueDate = "2018-01-31", receivedDate = "2018-03-09"))))
+
+  val taxpayerNddsRejects: Taxpayer =
+    Taxpayer(
+      "Mr John Campbell",
+      List(address),
+      SelfAssessmentDetails(
+        saUtr,
+        communicationPreferences,
+        List(debit1NddsRejects),
+        List(
+          Return("2023-04-05", issuedDate   = "2023-04-20", dueDate = "2023-05-31", receivedDate = "2023-04-10"))))
 
   val saEnrolment: Enrolment =
     Enrolment(key               = "IR-SA", identifiers = List(EnrolmentIdentifier("UTR", utr)), state = "Activated", delegatedAuthRule = None)
