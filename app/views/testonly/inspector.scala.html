@@ -29,6 +29,10 @@
         appConfig: config.AppConfig
 )
 
+@pageLinkListItem(call: Call) = {
+  <li><a class="govuk-link" href="@{call.url}">@{call.path()}</a></li>
+}
+
 @main(
     title = "User's related and session data",
     allowTimeoutDialog = false
@@ -50,32 +54,32 @@
     <p class="govuk-body">
         <h2 class="govuk-heading-m">Pages</h2>
         <ul class="govuk-list govuk-list--bulletß">
-
-            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.start()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.start().path()}</a></li>
-
-            <li><a class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPaymentSummary()">@{ssttpcalculator.routes.CalculatorController.getPaymentSummary().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">@{ssttpcalculator.routes.CalculatorController.getPayTodayQuestion().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">@{ssttpcalculator.routes.CalculatorController.getPaymentToday().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getTaxLiabilities()">@{ssttpcalculator.routes.CalculatorController.getTaxLiabilities().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttparrangement.routes.ArrangementController.determineEligibility()>@{ssttparrangement.routes.ArrangementController.determineEligibility().path()}</a></li>
-
-            <li><a class="govuk-link" href="@ssttparrangement.routes.ArrangementController.getCheckPaymentPlan()">@{ssttparrangement.routes.ArrangementController.getCheckPaymentPlan().path()} </a></li>
-            <li><a class="govuk-link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebit()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebit().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError()">@{ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttparrangement.routes.ArrangementController.applicationComplete()">@{ssttparrangement.routes.ArrangementController.applicationComplete().path()}</a></li>
-
-            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None)">@{ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getFileYourTaxReturn()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getFileYourTaxReturn().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooOld()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooOld().path()}</a></li>
-            <li><a class="govuk-link" href="@ssttpeligibility.routes.SelfServiceTimeToPayController.getYouAlreadyHaveAPaymentPlan()">@{ssttpeligibility.routes.SelfServiceTimeToPayController.getYouAlreadyHaveAPaymentPlan().path()}</a></li>
-
-        </ul>
-    </p>
+            @{pageLinkListItem(ssttpeligibility.routes.SelfServiceTimeToPayController.start())}
+            <br>
+            @{pageLinkListItem(ssttpcalculator.routes.CalculatorController.getPaymentSummary())}
+            @{pageLinkListItem(ssttpcalculator.routes.CalculatorController.getPayTodayQuestion())}
+            @{pageLinkListItem(ssttpcalculator.routes.CalculatorController.getPaymentToday())}
+            @{pageLinkListItem(ssttpcalculator.routes.CalculatorController.getTaxLiabilities())}
+            @{pageLinkListItem(ssttparrangement.routes.ArrangementController.determineEligibility())}
+            <br>
+            @{pageLinkListItem(ssttparrangement.routes.ArrangementController.getCheckPaymentPlan())}
+            @{pageLinkListItem(ssttpdirectdebit.routes.DirectDebitController.getDirectDebit())}
+            @{pageLinkListItem(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitConfirmation())}
+            @{pageLinkListItem(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitAssistance())}
+            @{pageLinkListItem(ssttpdirectdebit.routes.DirectDebitController.getDirectDebitError())}
+            @{pageLinkListItem(ssttparrangement.routes.ArrangementController.applicationComplete())}
+            <br>
+            @{pageLinkListItem(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None))}
+            @{pageLinkListItem(ssttpeligibility.routes.SelfServiceTimeToPayController.getFileYourTaxReturn())}
+            @{pageLinkListItem(ssttpeligibility.routes.SelfServiceTimeToPayController.getTtpCallUs())}
+            @{pageLinkListItem(ssttpeligibility.routes.SelfServiceTimeToPayController.getNotSaEnrolled())}
+            @{pageLinkListItem(ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooLarge())}
+            @{pageLinkListItem(ssttpeligibility.routes.SelfServiceTimeToPayController.getDebtTooOld())}
+            @{pageLinkListItem(ssttpeligibility.routes.SelfServiceTimeToPayController.getYouAlreadyHaveAPaymentPlan())}
+            <br>
+            @{pageLinkListItem(ssttpaffordability.routes.AffordabilityController.getSetUpPlanWithAdviser())}
+       </ul>
+    <p>
 
     <p class="govuk-body">
         <h2 class="govuk-heading-m">Cache from Key Store</h2>
