@@ -50,11 +50,20 @@ class AuditService @Inject() (
   }
 
   def sendPlanNotAffordableEvent(journey: Journey)(implicit request: Request[_]): Unit = {
-    val event = DataEventFactory.planNotAffordableEvent(journey)
+    val event = DataEventFactory.planNotAvailableEvent(journey)
     sendEvent(event)
   }
 
-  def sendPlanSetUpSuccessEvent(journey: Journey, schedule: PaymentSchedule, calculatorService: CalculatorService)(implicit request: Request[_], appConfig: AppConfig): Unit = {
+  def sendPlanFailsNDDSValidationEvent(journey: Journey)(implicit request: Request[_]): Unit = {
+    val event = DataEventFactory.planNotAvailableEvent(journey, maybeFailsNDDSValidation = Some(true))
+    sendEvent(event)
+  }
+
+  def sendPlanSetUpSuccessEvent(
+                                 journey: Journey,
+                                 schedule: PaymentSchedule,
+                                 calculatorService: CalculatorService
+                               )(implicit request: Request[_], appConfig: AppConfig): Unit = {
     val event = DataEventFactory.planSetUpEvent(journey, schedule, calculatorService)
     sendEvent(event)
   }

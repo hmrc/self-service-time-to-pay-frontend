@@ -88,7 +88,7 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _600Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAffordableEvent(journeyNegativeRemainingIncome)
+        val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyNegativeRemainingIncome)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -117,7 +117,7 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAffordableEvent(journeyZeroRemainingIncome)
+        val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyZeroRemainingIncome)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
@@ -146,7 +146,7 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAffordableEvent(journeyNoPlanWithin24Months)
+        val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyNoPlanWithin24Months)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
