@@ -31,7 +31,7 @@ class SetUpPlanWithAdviserPageSpec extends ItSpec {
   val inUseHowMuchCanYouPayEachMonthPage: HowMuchCanYouPayEachMonthPage = howMuchCanYouPayEachMonthPage
   override val frozenTimeString: String = "2023-06-09T00:00:00.880"
 
-  def beginJourney(remainingIncomeAfterSpending: BigDecimal = defaultRemainingIncomeAfterSpending): Unit = {
+  def beginJourney(): Unit = {
     AuthStub.authorise()
     TaxpayerStub.getTaxpayerNddsRejects()
     IaStub.successfulIaCheck
@@ -79,11 +79,9 @@ class SetUpPlanWithAdviserPageSpec extends ItSpec {
   "language" in {
     beginJourney()
 
-    //      pageUnderTest.clickOnWelshLink()
-    //      pageUnderTest.assertInitialPageIsDisplayed(Welsh)
-    //
-    //      pageUnderTest.clickOnEnglishLink()
-
+    pageUnderTest.clickOnWelshLink()
+    pageUnderTest.assertInitialPageIsDisplayed(Welsh)
+    pageUnderTest.clickOnEnglishLink()
     pageUnderTest.assertInitialPageIsDisplayed(English)
   }
 }
