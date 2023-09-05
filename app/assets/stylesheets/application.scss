@@ -9,7 +9,7 @@ $hmrc-assets-path: "/pay-what-you-owe-in-instalments/assets/lib/hmrc-frontend/hm
 }
 
 @media print {
-  .no-print {
+  .no-print, .govuk-back-link {
     display: none;
   }
 
