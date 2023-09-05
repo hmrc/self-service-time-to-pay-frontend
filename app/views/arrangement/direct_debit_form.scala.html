@@ -57,19 +57,28 @@
             title = Text(messages("ssttp.arrangement.direct-debit.form.error.summary.title"))
         ))
     }
-        <h1 class="govuk-heading-xl">@Messages("ssttp.arrangement.direct-debit.form.title")</h1>
-       @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.submitDirectDebit, 'autoComplete -> "off") {
 
-            @textinput(ddForm("accountName"),
+
+            <fieldset class="govuk-fieldset long-word-wrap">
+
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__legend--xl govuk-!-margin-bottom-8">
+                        @messages("ssttp.arrangement.direct-debit.form.title")
+                    </h1>
+                </legend>
+
+
+                @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.submitDirectDebit, 'autoComplete -> "off") {
+
+                @textinput(ddForm("accountName"),
                 'label -> messages("ssttp.direct-debit.form.accountName"),
                 '_labelClass -> "govuk-label--m",
                 'autoComplete -> "name",
                 '_maxlength -> "39",
                 '_inputClass -> "govuk-!-width-two-thirds"
-            )
+                )
 
-        @defining(comboError) { comboSortCodeAccountNumber =>
-            <fieldset class="govuk-fieldset long-word-wrap">
+                @defining(comboError) { comboSortCodeAccountNumber =>
                 <div id="combo-invalid" class="form-field @comboSortCodeAccountNumber.map { error => govuk-form-group--error }">
                     @comboSortCodeAccountNumber.map { error =>
                         <span class="govuk-error-message" id="combo-invalid">
