@@ -18,10 +18,10 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
-  main: views.html.main,
-  viewsHelpers: views.ViewsHelpers,
-  govukWarningText: GovukWarningText
-
+    main: views.html.main,
+    viewsHelpers: views.ViewsHelpers,
+    govukWarningText: GovukWarningText,
+    govukButton : GovukButton
 )
 
 @(
@@ -76,10 +76,13 @@
         <p>@messages("ssttp.arrangement.declaration.p1")</p>
 
 </div>
-    @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submit(), 'class -> "group") {
-      @submit('id -> "continue") {
-        @messages("ssttp.arrangement.declaration.agreement.confirm")
-      }
-    }
 
+        @viewsHelpers.form(ssttparrangement.routes.ArrangementController.submit(), 'class -> "group") {
+            @govukButton(Button(
+                classes = "form-group margin-top-30 form-field--submit",
+                content = Text(Messages("ssttp.arrangement.declaration.agreement.confirm")),
+                attributes = Map("id" -> "continue")
+
+            ))
+        }
 }

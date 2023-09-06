@@ -19,10 +19,12 @@
 @import partials.direct_debit_details
 @import timetopaytaxpayer.cor.model._
 @import ssttpcalculator.model.PaymentSchedule
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
   viewsHelpers: views.ViewsHelpers,
-  main: views.html.main
+  main: views.html.main,
+  govukButton : GovukButton
 )
 
 @(
@@ -55,10 +57,13 @@
                     <p class="govuk-body-m">@Messages("ssttp.direct-debit.guarantee.list.4")</p>
             </div>
 
-        @viewsHelpers.form(ssttparrangement.routes.ArrangementController.getTermsAndConditions(), 'method -> "GET", 'class -> "group") {
-            @submit('id -> "continue") {
-                @Messages("ssttp.arrangement.direct-debit.form.submit")
-            }
+
+        @viewsHelpers.form(ssttparrangement.routes.ArrangementController.getTermsAndConditions(), 'class -> "group") {
+                @govukButton(Button(
+                classes = "form-group margin-top-30 form-field--submit",
+                content = Text(Messages("ssttp.arrangement.direct-debit.form.submit")),
+                attributes = Map("id" -> "continue")
+                ))
         }
 
 }
