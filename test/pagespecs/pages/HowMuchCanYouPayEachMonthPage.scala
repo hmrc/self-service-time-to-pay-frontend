@@ -311,7 +311,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
         private val noOptionSelectedTextEnglish =
           s"""There is a problem
-             |Select an option
+             |Select how much you can pay each month
       """.stripMargin
 
         private val noOptionSelectedTextWelsh =
