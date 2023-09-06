@@ -21,9 +21,7 @@
   viewsHelpers: views.ViewsHelpers
 )
 
-@(
-        isWelsh: Boolean,
-        loggedIn: Boolean = false)(implicit
+@(isWelsh: Boolean)(implicit
         messages: play.api.i18n.Messages,
         request: Request[_],
         appConfig: config.AppConfig
@@ -43,13 +41,25 @@
 
         <h2 class="govuk-heading-m">@messages("ssttp.affordability.set-up-plan-with-adviser-section.h2")</h2>
 
-        <p class="govuk-body">@{Html(messages("ssttp.affordability.set-up-plan-with-adviser-section.p1"))}</p>
+        @if(isWelsh){
+            <p class="govuk-body">@messages("ssttp.affordability.set-up-plan-with-adviser-section.cy.p1")</p>
 
-        <p class="govuk-body">@messages("ssttp.affordability.set-up-plan-with-adviser-section.p2")</p>
+            <p class="govuk-body">@messages("ssttp.affordability.set-up-plan-with-adviser-section.cy.p2")</p>
 
-        <p class="govuk-body">@messages("ssttp.affordability.set-up-plan-with-adviser-section.p3")</p>
+            <p class="govuk-body">@{Html(messages("ssttp.affordability.set-up-plan-with-adviser-section.cy.p3", appConfig.webchatUrl))}</p>
 
-        <p class="govuk-body">@messages("ssttp.call-us.generic.p2")</p>
+            <p class="govuk-body">@messages("ssttp.affordability.set-up-plan-with-adviser-section.cy.p4")</p>
+
+            <p class="govuk-body">@messages("ssttp.affordability.set-up-plan-with-adviser-section.cy.p5")</p>
+        } else {
+            <p class="govuk-body">@{Html(messages("ssttp.affordability.set-up-plan-with-adviser-section.p1", appConfig.webchatUrl))}</p>
+
+            <p class="govuk-body">@messages("ssttp.affordability.set-up-plan-with-adviser-section.p2")</p>
+
+            <p class="govuk-body">@messages("ssttp.affordability.set-up-plan-with-adviser-section.p3")</p>
+
+            <p class="govuk-body">@messages("ssttp.call-us.generic.p2")</p>
+        }
 
         <h2 class="govuk-heading-m">@messages("ssttp.extra-support.section.h2")</h2>
         <p class="govuk-body">@{Html(messages("ssttp.extra-support.section.p1"))}</p>

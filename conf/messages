@@ -222,9 +222,9 @@ ssttp.affordability.we-cannot-agree-your-pp.go-to-tax-account = Go to tax accoun
 
 ssttp.affordability.set-up-plan-with-adviser.h1 = Set up a payment plan with an adviser
 ssttp.affordability.set-up-plan-with-adviser.p1 = The payment plan you have selected needs to be set up with an adviser.
-ssttp.affordability.set-up-plan-with-adviser.p2 = You can go back to  <a class="govuk-link" id="back-to-income-and-spending" href={0}>check your income and spending</a>.
+ssttp.affordability.set-up-plan-with-adviser.p2 = You can go back to  <a class="govuk-link" id="back-to-income-and-spending" href="{0}">check your income and spending</a>.
 ssttp.affordability.set-up-plan-with-adviser-section.h2 = Connect to an adviser
-ssttp.affordability.set-up-plan-with-adviser-section.p1 = <a class="govuk-link" href="">Use our webchat</a> to set up a payment plan with an adviser online.
+ssttp.affordability.set-up-plan-with-adviser-section.p1 = <a class="govuk-link" href="{0}">Use our webchat</a> to set up a payment plan with an adviser online.
 ssttp.affordability.set-up-plan-with-adviser-section.p2 = You can also call us on 0300 123 1813 to set up a payment plan over the phone.
 ssttp.affordability.set-up-plan-with-adviser-section.p3 = Keep this page open when you connect to an adviser.
 
