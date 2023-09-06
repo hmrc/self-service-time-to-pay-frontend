@@ -162,7 +162,7 @@
 @* Warning *@
     @if((leftOverIncome / 2)  < selectedPlanAmount) {
         @govukWarningText(WarningText(
-            iconFallbackText = messages("ssttp.common.warning"),
+            iconFallbackText = Some(messages("ssttp.common.warning")),
             content = Text(messages("ssttp.arrangement.check-payment-plan.warning"))))
     }
 
