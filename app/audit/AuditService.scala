@@ -55,7 +55,7 @@ class AuditService @Inject() (
   }
 
   def sendPlanFailsNDDSValidationEvent(journey: Journey)(implicit request: Request[_]): Unit = {
-    val event = DataEventFactory.planNotAvailableEvent(journey, maybeFailsNDDSValidation = Some(true))
+    val event = DataEventFactory.planNotAvailableEvent(journey, failsNDDSValidation = true)
     sendEvent(event)
   }
 

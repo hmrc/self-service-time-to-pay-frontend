@@ -175,7 +175,7 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _50Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAvailableEvent(testJourney, maybeFailsNDDSValidation = Some(true))
+        val computedDataEvent = DataEventFactory.planNotAvailableEvent(testJourney, failsNDDSValidation = true)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",

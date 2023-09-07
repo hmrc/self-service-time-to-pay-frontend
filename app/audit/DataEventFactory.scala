@@ -65,12 +65,11 @@ object DataEventFactory {
   }
 
   def planNotAvailableEvent(
-      journey:                  Journey,
-      maybeFailsNDDSValidation: Option[Boolean] = None
+      journey:             Journey,
+      failsNDDSValidation: Boolean = false
   )(implicit request: Request[_]): ExtendedDataEvent = {
-    val status = maybeFailsNDDSValidation match {
-      case Some(failsNDDSValidation) if failsNDDSValidation => nDDSValidationCheckFailMessage
-      case _                  => notAffordableStatus(journey.remainingIncomeAfterSpending)
+    val status = if (failsNDDSValidation) nDDSValidationCheckFailMessage else {
+      notAffordableStatus(journey.remainingIncomeAfterSpending)
     }
 
     val detail = Json.obj(
