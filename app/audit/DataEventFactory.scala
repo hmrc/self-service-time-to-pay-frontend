@@ -32,6 +32,9 @@ import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 
 object DataEventFactory {
+
+  val nDDSValidationCheckFailMessage = "Interest greater than or equal to regular payment"
+
   def directDebitSubmissionFailedEvent(
       journey:         Journey,
       schedule:        PaymentSchedule,
@@ -61,19 +64,26 @@ object DataEventFactory {
 
   }
 
-  def planNotAffordableEvent(journey: Journey)(implicit request: Request[_]): ExtendedDataEvent = {
+  def planNotAvailableEvent(
+      journey:             Journey,
+      failsNDDSValidation: Boolean = false
+  )(implicit request: Request[_]): ExtendedDataEvent = {
+    val status = if (failsNDDSValidation) nDDSValidationCheckFailMessage else {
+      notAffordableStatus(journey.remainingIncomeAfterSpending)
+    }
+
     val detail = Json.obj(
       "totalDebt" -> journey.debits.map(_.amount).sum.toString,
       "spending" -> journey.maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(0)).toString,
       "income" -> journey.maybeIncome.map(_.totalIncome).getOrElse(BigDecimal(0)).toString,
       "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
-      "status" -> notAffordableStatus(journey.remainingIncomeAfterSpending),
+      "status" -> status,
       "utr" -> journey.taxpayer.selfAssessment.utr
     )
 
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
-      auditType   = "ManualAffordabilityCheck",
+      auditType   = "ManualAffordabilityCheckFailed",
       tags        = hcTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
       detail      = detail
     )

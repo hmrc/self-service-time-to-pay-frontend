@@ -208,6 +208,7 @@ class AffordabilityController @Inject() (
     journeyService.authorizedForSsttp { implicit journey: Journey =>
       journeyLogger.info("Get 'Set up a payment plan with an adviser'")
 
+      journeyService.getJourney().map(auditService.sendPlanFailsNDDSValidationEvent)
       Ok(views.set_up_a_payment_plan_with_an_adviser(isWelsh))
     }
   }

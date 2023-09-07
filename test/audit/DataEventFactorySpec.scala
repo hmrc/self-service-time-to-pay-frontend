@@ -76,9 +76,11 @@ class DataEventFactorySpec extends ItSpec {
     "transactionName" -> transName
   )
 
+  private val auditTypePlanNotAvailable = "ManualAffordabilityCheckFailed"
+
   "Splunk audit events" - {
 
-    "manualAffordabilityCheck" - {
+    "planNotAvailableEvent" - {
       val _500Amount = 500
       val _600Amount = 600
 
@@ -88,11 +90,11 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _600Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAffordableEvent(journeyNegativeRemainingIncome)
+        val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyNegativeRemainingIncome)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = "ManualAffordabilityCheck",
+          auditType   = auditTypePlanNotAvailable,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -117,11 +119,11 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAffordableEvent(journeyZeroRemainingIncome)
+        val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyZeroRemainingIncome)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = "ManualAffordabilityCheck",
+          auditType   = auditTypePlanNotAvailable,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -146,11 +148,11 @@ class DataEventFactorySpec extends ItSpec {
           maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
         )
 
-        val computedDataEvent = DataEventFactory.planNotAffordableEvent(journeyNoPlanWithin24Months)
+        val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyNoPlanWithin24Months)
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = "ManualAffordabilityCheck",
+          auditType   = auditTypePlanNotAvailable,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -171,7 +173,7 @@ class DataEventFactorySpec extends ItSpec {
       }
     }
 
-    "manualAffordabilityPlanSetUp" - {
+    "planSetUpEvent" - {
       val _1000Amount = 1000
       val _500Amount = 500
       val _250Amount = 250
