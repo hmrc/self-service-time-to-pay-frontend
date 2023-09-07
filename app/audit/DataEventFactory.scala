@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 
 object DataEventFactory {
 
-  val NDDSValidationCheckFailMessage = "Interest greater than or equal to regular payment"
+  val nDDSValidationCheckFailMessage = "Interest greater than or equal to regular payment"
 
   def directDebitSubmissionFailedEvent(
       journey:         Journey,
@@ -69,7 +69,7 @@ object DataEventFactory {
       maybeFailsNDDSValidation: Option[Boolean] = None
   )(implicit request: Request[_]): ExtendedDataEvent = {
     val status = maybeFailsNDDSValidation match {
-      case Some(bool) if bool => NDDSValidationCheckFailMessage
+      case Some(failsNDDSValidation) if failsNDDSValidation => nDDSValidationCheckFailMessage
       case _                  => notAffordableStatus(journey.remainingIncomeAfterSpending)
     }
 

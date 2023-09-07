@@ -28,7 +28,6 @@ import testsupport.{ItSpec, RichMatchers, WireMockSupport}
 import uk.gov.hmrc.http.SessionKeys
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import play.api.libs.json.{JsObject, Json}
-import ssttpcalculator.CalculatorType.{Legacy, PaymentOptimised}
 
 import java.util.UUID
 

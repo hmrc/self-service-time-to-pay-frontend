@@ -76,7 +76,7 @@ class DataEventFactorySpec extends ItSpec {
     "transactionName" -> transName
   )
 
-  private val auditTypeNotSuccessful = "ManualAffordabilityCheckFailed"
+  private val auditTypePlanNotAvailable = "ManualAffordabilityCheckFailed"
 
   "Splunk audit events" - {
 
@@ -94,7 +94,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = auditTypeNotSuccessful,
+          auditType   = auditTypePlanNotAvailable,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -123,7 +123,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = auditTypeNotSuccessful,
+          auditType   = auditTypePlanNotAvailable,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -152,7 +152,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = auditTypeNotSuccessful,
+          auditType   = auditTypePlanNotAvailable,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
