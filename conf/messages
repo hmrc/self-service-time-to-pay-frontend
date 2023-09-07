@@ -222,9 +222,9 @@ ssttp.affordability.we-cannot-agree-your-pp.go-to-tax-account = Go to tax accoun
 
 ssttp.affordability.set-up-plan-with-adviser.h1 = Set up a payment plan with an adviser
 ssttp.affordability.set-up-plan-with-adviser.p1 = The payment plan you have selected needs to be set up with an adviser.
-ssttp.affordability.set-up-plan-with-adviser.p2 = You can go back to  <a class="govuk-link" id="back-to-income-and-spending" href={0}>check your income and spending</a>.
+ssttp.affordability.set-up-plan-with-adviser.p2 = You can go back to  <a class="govuk-link" id="back-to-income-and-spending" href="{0}">check your income and spending</a>.
 ssttp.affordability.set-up-plan-with-adviser-section.h2 = Connect to an adviser
-ssttp.affordability.set-up-plan-with-adviser-section.p1 = <a class="govuk-link" href="">Use our webchat</a> to set up a payment plan with an adviser online.
+ssttp.affordability.set-up-plan-with-adviser-section.p1 = <a class="govuk-link" href="{0}">Use our webchat</a> to set up a payment plan with an adviser online.
 ssttp.affordability.set-up-plan-with-adviser-section.p2 = You can also call us on 0300 123 1813 to set up a payment plan over the phone.
 ssttp.affordability.set-up-plan-with-adviser-section.p3 = Keep this page open when you connect to an adviser.
 
@@ -309,10 +309,9 @@ ssttp.calculator.results.section.cannot-afford.p.2 = 0300 123 1813
 ssttp.calculator.results.section.cannot-afford.p.3 =  to discuss your debt.
 ssttp.calculator.results.p1.custom-amount.paymentoptimised = You have chosen to pay {0} per month. Your final monthly payment may be more or less if the interest rate changes.
 ssttp.calculator.results.p1.custom-amount.legacy = Based on your left over income, you can now select a payment plan. The final monthly payment in your plan will be more as it will include interest and any remaining tax you owe.
-ssttp.calculator.results.option.other.error.incorrect.amount = Enter an amount that is at least £{0} but no more than £{1}
-ssttp.calculator.results.option.other.error.no-input = Enter an amount
+ssttp.calculator.results.option.other.error.invalid.amount = Enter an amount that is at least £{0} but no more than £{1}
 ssttp.calculator.results.option.other.error.decimal-places = Amount must not contain more than 2 decimal places
-ssttp.calculator.results.option.error.no-selection = Select an option
+ssttp.calculator.results.option.error.no-selection = Select how much you can pay each month
 
 
 ssttp.calculator.results.month.instalments = Instalments

@@ -220,18 +220,21 @@ ssttp.affordability.we-cannot-agree-your-pp.p3 = Mae’n bosibl y byddwch yn gal
 ssttp.affordability.we-cannot-agree-your-pp.p4 = Ein horiau agor yw Dydd Llun i Ddydd Gwener, 08:30 i 17:00. Rydym ar gau ar benwythnosau a gwyliau banc.
 ssttp.affordability.we-cannot-agree-your-pp.go-to-tax-account = Ewch i’r cyfrif treth
 
-ssttp.affordability.set-up-plan-with-adviser.h1 = Set up a payment plan with an adviser
-ssttp.affordability.set-up-plan-with-adviser.p1 = The payment plan you have selected needs to be set up with an adviser.
-ssttp.affordability.set-up-plan-with-adviser.p2 = You can go back to  <a class="govuk-link" id="back-to-income-and-spending" href={0}>check your income and spending</a>.
-ssttp.affordability.set-up-plan-with-adviser-section.h2 = Connect to an adviser
-ssttp.affordability.set-up-plan-with-adviser-section.p1 = <a class="govuk-link" href="">Use our webchat</a> to set up a payment plan with an adviser online.
-ssttp.affordability.set-up-plan-with-adviser-section.p2 = You can also call us on 0300 123 1813 to set up a payment plan over the phone.
-ssttp.affordability.set-up-plan-with-adviser-section.p3 = Keep this page open when you connect to an adviser.
+ssttp.affordability.set-up-plan-with-adviser.h1 = Trefnu cynllun talu ag ymgynghorydd
+ssttp.affordability.set-up-plan-with-adviser.p1 = Mae’n angen i’r cynllun talu rydych wedi’i ddewis gael ei drefnu ag ymgynghorydd.
+ssttp.affordability.set-up-plan-with-adviser.p2 = Gallwch fynd yn ôl i <a class="govuk-link" id="back-to-income-and-spending" href={0}>wirio’ch incwm a’ch gwariant</a>.
 
-ssttp.extra-support.section.h2 = If you need extra support
-ssttp.extra-support.section.p1 = Find out the different ways to <a class="govuk-link" id="extra-support" href="https://www.gov.uk/get-help-hmrc-extra-support">deal with HMRC if you need some help</a>.
-ssttp.extra-support.section.p2 = You can also use <a class="govuk-link" id="relay-uk" href="https://www.relayuk.bt.com/">Relay UK</a> if you cannot hear or speak on the phone: dial 18001 then 0345 300 3900.
-ssttp.extra-support.section.p3 = If you are outside the UK: +44 2890 538 192.
+ssttp.affordability.set-up-plan-with-adviser-section.h2 = Cysylltu ag ymgynghorydd
+ssttp.affordability.set-up-plan-with-adviser-section.cy.p1 = Ffoniwch ni ar 0300 200 1900 i sefydlu cynllun talu dros y ffôn.
+ssttp.affordability.set-up-plan-with-adviser-section.cy.p2 = Mae ein llinellau ffôn ar agor o 08:30 tan 17:00, ddydd Llun i ddydd Gwener. Rydym yn ar gau ar benwythnosau a gwyliau banc.
+ssttp.affordability.set-up-plan-with-adviser-section.cy.p3 = Gallwch hefyd <a class="govuk-link" href="{0}">ddefnyddio ein gwasanaeth sgwrsio dros y we</a> i drefnu cynllun talu ar-lein ag ymgynghorydd. Mae’r gwasanaeth i sgwrsio dros y we ar gael yn Saesneg yn unig.
+ssttp.affordability.set-up-plan-with-adviser-section.cy.p4 = Mae’r gwasanaeth i sgwrsio dros y we ar gael o ddydd Llun i ddydd Gwener, o 08:00 i 18:00. Mae ar gau ar benwythnosau a gwyliau banc.
+ssttp.affordability.set-up-plan-with-adviser-section.cy.p5 = Cadwch y dudalen hon ar agor pan fyddwch wedi cysylltu ag ymgynghorydd.
+
+ssttp.extra-support.section.h2 = Os oes angen cymorth ychwanegol arnoch chi
+ssttp.extra-support.section.p1 = Dysgwch am y ffyrdd gwahanol o <a class="govuk-link" id="extra-support" href="https://www.gov.uk/get-help-hmrc-extra-support">ddelio â CThEF os oes angen help arnoch chi</a>.
+ssttp.extra-support.section.p2 = Gallwch hefyd defnyddio <a class="govuk-link" id="relay-uk" href="https://www.relayuk.bt.com/">Relay UK</a> os na allwch glywed na siarad dros y ffôn: deialwch 18001 ac yna 0345 300 3900. Sylwer – dim ond galwadau ffôn Saesneg eu hiaith y mae Relay UK yn gallu ymdrin â nhw.
+ssttp.extra-support.section.p3 = Os ydych y tu allan i’r DU: +44 2890 538 192.
 
 
 #calculator
@@ -311,8 +314,7 @@ ssttp.calculator.results.section.cannot-afford.p.2 = 0300 200 1900
 ssttp.calculator.results.section.cannot-afford.p.3 =  i drafod eich dyled.
 ssttp.calculator.results.p1.custom-amount.paymentoptimised = Rydych wedi dewis talu {0} y mis. Os bydd y gyfradd llog yn newid, mae’n bosibl y bydd eich taliad misol olaf yn fwy neu’n llai na’r swm hwn.
 ssttp.calculator.results.p1.custom-amount.legacy = Yn seiliedig ar yr incwm sydd gennych dros ben, gallwch nawr ddewis gynllun talu. Bydd y taliad misol olaf yn eich cynllun yn fwy oherwydd y bydd yn cynnwys llog ac unrhyw dreth sy’n weddill sydd arnoch.
-ssttp.calculator.results.option.other.error.incorrect.amount = Nodwch swm sydd o leiaf £{0} ond sydd ddim mwy na £{1}
-ssttp.calculator.results.option.other.error.no-input = Nodwch swm
+ssttp.calculator.results.option.other.error.invalid.amount = Nodwch swm sydd o leiaf £{0} ond sydd ddim mwy na £{1}
 ssttp.calculator.results.option.other.error.decimal-places = Rhaid i’r swm beidio â chynnwys mwy na 2 le degol
 ssttp.calculator.results.option.error.no-selection = Dewiswch opsiwn
 

@@ -120,12 +120,12 @@ object CalculatorForm {
       maxCustomAmount: BigDecimal
   ): Mapping[String] = {
     mappingStr
-      .verifying("ssttp.calculator.results.option.other.error.no-input", { i: String => i.nonEmpty })
+
       .verifying(Constraint((i: String) => if ({
-        i.isEmpty | i.matches(CurrencyUtil.regex) && isWithinRange(i, minCustomAmount, maxCustomAmount)
+        i.nonEmpty && i.matches(CurrencyUtil.regex) && isWithinRange(i, minCustomAmount, maxCustomAmount)
       }) Valid else {
         Invalid(Seq(ValidationError(
-          "ssttp.calculator.results.option.other.error.incorrect.amount",
+          "ssttp.calculator.results.option.other.error.invalid.amount",
           "%,1.2f".format(minCustomAmount).stripSuffix(".00"),
           "%,1.2f".format(maxCustomAmount).stripSuffix(".00")
         )))
