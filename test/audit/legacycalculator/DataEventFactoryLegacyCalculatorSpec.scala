@@ -29,7 +29,6 @@ import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttparrangement.ArrangementSubmissionStatus
 import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry}
 import ssttpcalculator.CalculatorType.Legacy
-import ssttpcalculator.PaymentPlansService
 import ssttpcalculator.legacy.CalculatorService
 import testsupport.ItSpec
 import testsupport.testdata.{DirectDebitTd, TdAll, TdRequest}
@@ -53,8 +52,6 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
   private implicit val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
   private val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
-  private val paymentPlansService: PaymentPlansService = fakeApplication().injector.instanceOf[PaymentPlansService]
-
   private def fixedClock: Clock = {
     val currentDateTime = LocalDateTime.parse("2020-05-02T00:00:00.880").toInstant(UTC)
     Clock.fixed(currentDateTime, systemDefault)
@@ -76,11 +73,14 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
     "transactionName" -> transName
   )
 
+  private val auditTypeNotSuccessful = "ManualAffordabilityCheckFailed"
+
   "Splunk audit events" - {
 
     "manualAffordabilityCheck" - {
       val _500Amount = 500
       val _600Amount = 600
+      val _50Amount = 50
 
       "negative disposable income case" in {
         val journeyNegativeRemainingIncome = journey.copy(
@@ -92,7 +92,7 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = "ManualAffordabilityCheck",
+          auditType   = auditTypeNotSuccessful,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -121,7 +121,7 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = "ManualAffordabilityCheck",
+          auditType   = auditTypeNotSuccessful,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -150,7 +150,7 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = "ManualAffordabilityCheck",
+          auditType   = auditTypeNotSuccessful,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -168,6 +168,36 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
 
         computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
           expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
+      }
+      "fails NDDS validation check" in {
+        val testJourney = journey.copy(
+          maybeIncome   = Some(Income(IncomeBudgetLine(MonthlyIncome, _600Amount))),
+          maybeSpending = Some(Spending(Expenses(HousingExp, _50Amount)))
+        )
+
+        val computedDataEvent = DataEventFactory.planNotAvailableEvent(testJourney, maybeFailsNDDSValidation = Some(true))
+
+        val expectedDataEvent = ExtendedDataEvent(
+          auditSource = "pay-what-you-owe",
+          auditType   = auditTypeNotSuccessful,
+          eventId     = "event-id",
+          tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
+          detail      = Json.parse(
+            s"""
+              {
+                "totalDebt": "4900",
+                "spending": "50",
+                "income": "600",
+                "halfDisposableIncome": "275",
+                "status": "Interest greater than or equal to regular payment",
+                "utr": "6573196998"
+              }
+              """)
+        )
+
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
+
       }
     }
 

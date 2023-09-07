@@ -65,12 +65,12 @@ object DataEventFactory {
   }
 
   def planNotAvailableEvent(
-                             journey: Journey,
-                             maybeFailsNDDSValidation: Option[Boolean] = None
-                           )(implicit request: Request[_]): ExtendedDataEvent = {
+      journey:                  Journey,
+      maybeFailsNDDSValidation: Option[Boolean] = None
+  )(implicit request: Request[_]): ExtendedDataEvent = {
     val status = maybeFailsNDDSValidation match {
       case Some(bool) if bool => NDDSValidationCheckFailMessage
-      case _ => notAffordableStatus(journey.remainingIncomeAfterSpending)
+      case _                  => notAffordableStatus(journey.remainingIncomeAfterSpending)
     }
 
     val detail = Json.obj(
@@ -84,7 +84,7 @@ object DataEventFactory {
 
     ExtendedDataEvent(
       auditSource = "pay-what-you-owe",
-      auditType   = "ManualAffordabilityCheck",
+      auditType   = "ManualAffordabilityCheckFailed",
       tags        = hcTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
       detail      = detail
     )

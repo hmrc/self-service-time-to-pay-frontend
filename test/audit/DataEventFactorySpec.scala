@@ -76,12 +76,13 @@ class DataEventFactorySpec extends ItSpec {
     "transactionName" -> transName
   )
 
+  private val auditTypeNotSuccessful = "ManualAffordabilityCheckFailed"
+
   "Splunk audit events" - {
 
     "planNotAvailableEvent" - {
       val _500Amount = 500
       val _600Amount = 600
-      val _50Amount = 50
 
       "negative disposable income case" in {
         val journeyNegativeRemainingIncome = journey.copy(
@@ -93,7 +94,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = "ManualAffordabilityCheck",
+          auditType   = auditTypeNotSuccessful,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -122,7 +123,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = "ManualAffordabilityCheck",
+          auditType   = auditTypeNotSuccessful,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -151,7 +152,7 @@ class DataEventFactorySpec extends ItSpec {
 
         val expectedDataEvent = ExtendedDataEvent(
           auditSource = "pay-what-you-owe",
-          auditType   = "ManualAffordabilityCheck",
+          auditType   = auditTypeNotSuccessful,
           eventId     = "event-id",
           tags        = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
           detail      = Json.parse(
@@ -169,36 +170,6 @@ class DataEventFactorySpec extends ItSpec {
 
         computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
           expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
-      }
-      "fails NDDS validation check" in {
-        val testJourney = journey.copy(
-          maybeIncome = Some(Income(IncomeBudgetLine(MonthlyIncome, _600Amount))),
-          maybeSpending = Some(Spending(Expenses(HousingExp, _50Amount)))
-        )
-
-        val computedDataEvent = DataEventFactory.planNotAvailableEvent(testJourney, maybeFailsNDDSValidation = Some(true))
-
-        val expectedDataEvent = ExtendedDataEvent(
-          auditSource = "pay-what-you-owe",
-          auditType = "ManualAffordabilityCheck",
-          eventId = "event-id",
-          tags = splunkEventTags("cannot-agree-self-assessment-time-to-pay-plan-online"),
-          detail = Json.parse(
-            s"""
-              {
-                "totalDebt": "4900",
-                "spending": "50",
-                "income": "600",
-                "halfDisposableIncome": "275",
-                "status": "Interest greater than or equal to regular payment",
-                "utr": "6573196998"
-              }
-              """)
-        )
-
-        computedDataEvent.copy(eventId = "event-id", generatedAt = td.instant) shouldBe
-          expectedDataEvent.copy(eventId = "event-id", generatedAt = td.instant)
-
       }
     }
 

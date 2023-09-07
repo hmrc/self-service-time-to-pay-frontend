@@ -60,10 +60,10 @@ class AuditService @Inject() (
   }
 
   def sendPlanSetUpSuccessEvent(
-                                 journey: Journey,
-                                 schedule: PaymentSchedule,
-                                 calculatorService: CalculatorService
-                               )(implicit request: Request[_], appConfig: AppConfig): Unit = {
+      journey:           Journey,
+      schedule:          PaymentSchedule,
+      calculatorService: CalculatorService
+  )(implicit request: Request[_], appConfig: AppConfig): Unit = {
     val event = DataEventFactory.planSetUpEvent(journey, schedule, calculatorService)
     sendEvent(event)
   }
