@@ -49,7 +49,7 @@ class SelfServiceTimeToPayController @Inject() (
     Ok(views.service_start(isSignedIn, mcc.messagesApi))
   }
 
-  def submit: Action[AnyContent] = as.action { implicit request =>
+  def doStart(): Action[AnyContent] = as.action { implicit request =>
     Redirect(ssttparrangement.routes.ArrangementController.determineEligibility())
   }
 
