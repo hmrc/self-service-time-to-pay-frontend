@@ -288,6 +288,8 @@ class CalculatorController @Inject() (
   )(implicit request: Request[_]): Form[PlanSelection] => Future[Result] = {
     formWithErrors =>
       {
+        journeyLogger.info(s"formWithErrors: $formWithErrors")(request, journey)
+        journeyLogger.info(s"current plan selection: ${journey.maybePlanSelection}")(request, journey)
         Future.successful(
           BadRequest(
             views.how_much_can_you_pay_each_month_form(

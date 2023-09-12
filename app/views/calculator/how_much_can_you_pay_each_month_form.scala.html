@@ -60,10 +60,12 @@
             "ssttp.calculator.results.amount.option.interest-hint",
             currency(schedule._2.totalInterestCharged)
         )))),
-        checked = previousFormSubmission.fold(false)(_.selection match {
-            case Left(SelectedPlan(amount)) => amount == schedule._2.getMonthlyInstalment
-            case Right(CustomPlanRequest(_)) => false
-        })
+        checked = if (selectPlanForm("plan-selection").value.contains("customAmountOption")) false else {
+            previousFormSubmission.fold(false)(_.selection match {
+                case Left(SelectedPlan(amount)) => amount == schedule._2.getMonthlyInstalment
+                case Right(CustomPlanRequest(_)) => false
+            })
+        }
     )
 })}
 

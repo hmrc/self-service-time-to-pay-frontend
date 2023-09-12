@@ -261,15 +261,55 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
         pageUnderTest.assertAboveMaximumErrorIsDisplayed(Welsh)
       }
     }
-    "not filled in displays error message" in {
-      beginJourney()
+    "not filled in displays error message" - {
+      "on first run-through page" in {
+        beginJourney()
 
-      pageUnderTest.selectCustomAmountOption()
-      pageUnderTest.enterCustomAmount()
-      pageUnderTest.clickContinue()
+        pageUnderTest.selectCustomAmountOption()
+        pageUnderTest.enterCustomAmount()
+        pageUnderTest.clickContinue()
 
-      pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
-      pageUnderTest.assertNoInputErrorIsDisplayed
+        pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
+        pageUnderTest.assertNoInputErrorIsDisplayed
+      }
+      "if a plan is selected and progressed to next page, then return and not filled second time" - {
+        "with default plan initially" in {
+          beginJourney()
+
+          pageUnderTest.selectASpecificOption(PaymentPlanOption.Basic)
+          pageUnderTest.clickContinue()
+
+          checkYourPaymentPlanPage.clickOnBackLink()
+
+          pageUnderTest.selectCustomAmountOption()
+          pageUnderTest.enterCustomAmount()
+          pageUnderTest.clickContinue()
+
+          pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
+          pageUnderTest.assertNoInputErrorIsDisplayed
+        }
+        "with custom plan initially" in {
+          beginJourney()
+
+          pageUnderTest.selectCustomAmountOption()
+          pageUnderTest.enterCustomAmount(customAmountInput.toString)
+          pageUnderTest.clickContinue()
+
+          pageUnderTest.selectASpecificOption(PaymentPlanOption.Custom)
+          pageUnderTest.clickContinue()
+
+          checkYourPaymentPlanPage.clickOnBackLink()
+
+          pageUnderTest.selectCustomAmountOption()
+          pageUnderTest.enterCustomAmount()
+          pageUnderTest.clickContinue()
+
+          pageUnderTest.assertExpectedHeadingContentWithErrorPrefix
+          pageUnderTest.assertNoInputErrorIsDisplayed
+        }
+
+      }
+
     }
     "filled with non-numeric displays error message" in {
       beginJourney()
