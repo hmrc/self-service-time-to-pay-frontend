@@ -66,7 +66,7 @@ class SetUpPlanWithAdviserPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
           |You can go back to check your income and spending.
           |
           |Connect to an adviser
-          |Use our webchat to set up a payment plan with an adviser online.
+          |Use our webchat (opens in new tab) to set up a payment plan with an adviser online.
           |
           |You can also call us on 0300 123 1813 to set up a payment plan over the phone.
           |
@@ -92,7 +92,7 @@ class SetUpPlanWithAdviserPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) 
            |
            |Mae ein llinellau ffôn ar agor o 08:30 tan 17:00, ddydd Llun i ddydd Gwener. Rydym yn ar gau ar benwythnosau a gwyliau banc.
            |
-           |Gallwch hefyd ddefnyddio ein gwasanaeth sgwrsio dros y we i drefnu cynllun talu ar-lein ag ymgynghorydd. Mae’r gwasanaeth i sgwrsio dros y we ar gael yn Saesneg yn unig.
+           |Gallwch hefyd ddefnyddio ein gwasanaeth sgwrsio dros y we (yn agor tab newydd) i drefnu cynllun talu ar-lein ag ymgynghorydd. Mae’r gwasanaeth i sgwrsio dros y we ar gael yn Saesneg yn unig.
            |
            |Mae’r gwasanaeth i sgwrsio dros y we ar gael o ddydd Llun i ddydd Gwener, o 08:00 i 18:00. Mae ar gau ar benwythnosau a gwyliau banc.
            |
