@@ -20,7 +20,10 @@ The following diagram shows the overview of the SSTTP architecture.
 #### Running
 From source use ```sbt runTestOnly```
 
-From service manager profile use ```sm --start SSTTP -r```
+From service manager profile use ```sm2 --start SSTTP```
+
+If the dependent services for the webchat link on "Set up a payment plan with an adviser" page are required
+run ```sm2 --start DIGITAL_ENGAGEMENT_PLATFORM_ALL```
 
 #### For session debug purposes and test journey helpers
 http://localhost:9063/pay-what-you-owe-in-instalments/test-only/inspector 

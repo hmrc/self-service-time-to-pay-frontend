@@ -227,7 +227,7 @@ ssttp.affordability.set-up-plan-with-adviser.p2 = Gallwch fynd yn ôl i <a class
 ssttp.affordability.set-up-plan-with-adviser-section.h2 = Cysylltu ag ymgynghorydd
 ssttp.affordability.set-up-plan-with-adviser-section.cy.p1 = Ffoniwch ni ar 0300 200 1900 i sefydlu cynllun talu dros y ffôn.
 ssttp.affordability.set-up-plan-with-adviser-section.cy.p2 = Mae ein llinellau ffôn ar agor o 08:30 tan 17:00, ddydd Llun i ddydd Gwener. Rydym yn ar gau ar benwythnosau a gwyliau banc.
-ssttp.affordability.set-up-plan-with-adviser-section.cy.p3 = Gallwch hefyd <a class="govuk-link" href="{0}">ddefnyddio ein gwasanaeth sgwrsio dros y we</a> i drefnu cynllun talu ar-lein ag ymgynghorydd. Mae’r gwasanaeth i sgwrsio dros y we ar gael yn Saesneg yn unig.
+ssttp.affordability.set-up-plan-with-adviser-section.cy.p3 = Gallwch hefyd <a class="govuk-link" href="{0}" rel="noreferrer noopener" target="_blank">ddefnyddio ein gwasanaeth sgwrsio dros y we (yn agor tab newydd)</a> i drefnu cynllun talu ar-lein ag ymgynghorydd. Mae’r gwasanaeth i sgwrsio dros y we ar gael yn Saesneg yn unig.
 ssttp.affordability.set-up-plan-with-adviser-section.cy.p4 = Mae’r gwasanaeth i sgwrsio dros y we ar gael o ddydd Llun i ddydd Gwener, o 08:00 i 18:00. Mae ar gau ar benwythnosau a gwyliau banc.
 ssttp.affordability.set-up-plan-with-adviser-section.cy.p5 = Cadwch y dudalen hon ar agor pan fyddwch wedi cysylltu ag ymgynghorydd.
 
