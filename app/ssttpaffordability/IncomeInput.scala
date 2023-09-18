@@ -48,10 +48,12 @@ object IncomeInput {
   }
 
   def unapply(incomeInput: IncomeInput): Option[(String, String, String)] = {
+    import util.CurrencyUtil.formatToCurrencyString
+
     Some((
-      incomeInput.monthlyIncome.toString(),
-      incomeInput.benefits.toString(),
-      incomeInput.otherIncome.toString()
+      formatToCurrencyString(incomeInput.monthlyIncome),
+      formatToCurrencyString(incomeInput.benefits),
+      formatToCurrencyString(incomeInput.otherIncome)
     ))
   }
 

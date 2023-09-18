@@ -50,4 +50,8 @@ object CurrencyUtil {
     .replaceAll(",", "")
     .trim
 
+  def formatToCurrencyString(value: BigDecimal): String = {
+    "%,1.2f".format(value).stripSuffix(".00")
+  }
+
 }

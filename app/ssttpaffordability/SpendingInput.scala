@@ -59,17 +59,19 @@ object SpendingInput {
   }
 
   def unapply(spendingInput: SpendingInput): Option[(String, String, String, String, String, String, String, String, String, String)] = {
+    import util.CurrencyUtil.formatToCurrencyString
+
     Some((
-      spendingInput.housing.toString(),
-      spendingInput.pensionContributions.toString(),
-      spendingInput.councilTax.toString(),
-      spendingInput.utilities.toString(),
-      spendingInput.debtRepayments.toString(),
-      spendingInput.travel.toString(),
-      spendingInput.childcare.toString(),
-      spendingInput.insurance.toString(),
-      spendingInput.groceries.toString(),
-      spendingInput.health.toString()
+      formatToCurrencyString(spendingInput.housing),
+      formatToCurrencyString(spendingInput.pensionContributions),
+      formatToCurrencyString(spendingInput.councilTax),
+      formatToCurrencyString(spendingInput.utilities),
+      formatToCurrencyString(spendingInput.debtRepayments),
+      formatToCurrencyString(spendingInput.travel),
+      formatToCurrencyString(spendingInput.childcare),
+      formatToCurrencyString(spendingInput.insurance),
+      formatToCurrencyString(spendingInput.groceries),
+      formatToCurrencyString(spendingInput.health)
     ))
   }
 
