@@ -139,6 +139,11 @@ class ArrangementController @Inject() (
     }
   }
 
+  /**
+   * The following method checks if the chosen plan has total accrued interest that is less than the monthly payment.
+   * If the total accrued interest is equal or higher than the monthly payment, it will cause NDDS to reject the plan,
+   * because of the validation that is performed on the balancingDate.
+   */
   private def isAccruedInterestValid(paymentSchedule: PaymentSchedule, monthlyPaymentAmountChosen: BigDecimal): Boolean = {
     paymentSchedule.totalInterestCharged < monthlyPaymentAmountChosen
   }
