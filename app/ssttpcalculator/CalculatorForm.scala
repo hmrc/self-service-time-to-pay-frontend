@@ -36,7 +36,7 @@ object CalculatorForm {
         .verifying("ssttp.calculator.form.payment_today.amount.required", { i: String => i.nonEmpty })
         .verifying("ssttp.calculator.form.payment_today.amount.non-numerals",
           { i: String => i.isEmpty | i.matches(CurrencyUtil.regex) })
-        .transform[BigDecimal](s => BigDecimal(CurrencyUtil.cleanAmount(s)), _.toString)
+        .transform[BigDecimal](s => BigDecimal(CurrencyUtil.cleanAmount(s)), CurrencyUtil.formatToCurrencyString)
         .verifying("ssttp.calculator.form.payment_today.amount.decimal-places", { i =>
           i.scale <= 2
         })
