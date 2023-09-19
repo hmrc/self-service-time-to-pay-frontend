@@ -33,6 +33,7 @@ import ssttpcalculator.legacy.CalculatorService
 import util.Logging
 
 import scala.util.{Failure, Success}
+import play.api.libs.json._
 
 @Singleton()
 class AuditService @Inject() (
@@ -65,6 +66,7 @@ class AuditService @Inject() (
       calculatorService: CalculatorService
   )(implicit request: Request[_], appConfig: AppConfig): Unit = {
     val event = DataEventFactory.planSetUpEvent(journey, schedule, calculatorService)
+    println(Json.prettyPrint(event.detail))
     sendEvent(event)
   }
 

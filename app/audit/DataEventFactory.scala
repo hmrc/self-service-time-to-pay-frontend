@@ -17,7 +17,7 @@
 package audit
 
 import java.time.temporal.ChronoUnit
-import audit.model.AuditPaymentSchedule
+import audit.model.{AuditIncome, AuditPaymentSchedule, AuditSpending}
 import config.AppConfig
 import journey.Journey
 import play.api.libs.json.{JsObject, Json}
@@ -74,9 +74,9 @@ object DataEventFactory {
 
     val detail = Json.obj(
       "totalDebt" -> journey.debits.map(_.amount).sum.toString,
-      "spending" -> journey.maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(0)).toString,
-      "income" -> journey.maybeIncome.map(_.totalIncome).getOrElse(BigDecimal(0)).toString,
       "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
+      "income" -> Json.toJson(AuditIncome.fromIncome(journey.maybeIncome)),
+      "outgoings" -> Json.toJson(AuditSpending.fromSpending(journey.maybeSpending)),
       "status" -> status,
       "utr" -> journey.taxpayer.selfAssessment.utr
     )
@@ -102,6 +102,8 @@ object DataEventFactory {
     val detail = Json.obj(
       "bankDetails" -> bankDetails(journey),
       "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
+      "income" -> Json.toJson(AuditIncome.fromIncome(journey.maybeIncome)),
+      "outgoings" -> Json.toJson(AuditSpending.fromSpending(journey.maybeSpending)),
       "selectionType" -> typeOfPlan(journey, calculatorService),
       "lessThanOrMoreThanTwelveMonths" -> lessThanOrMoreThanTwelveMonths(schedule),
       "schedule" -> Json.toJson(AuditPaymentSchedule(schedule)),
