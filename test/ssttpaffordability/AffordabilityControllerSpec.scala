@@ -70,23 +70,23 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
                  |  "totalDebt" : "4900",
                  |  "halfDisposableIncome" : "750",
                  |  "income" : {
-                 |   "monthlyIncomeAfterTax" : 2000,
-                 |   "benefits" : 0,
-                 |   "otherMonthlyIncome" : 0,
-                 |   "totalIncome" : 2000
+                 |   "monthlyIncomeAfterTax" : "2,000",
+                 |   "benefits" : "0",
+                 |   "otherMonthlyIncome" : "0",
+                 |   "totalIncome" : "2,000"
                  |  },
                  |  "outgoings" : {
-                 |   "housing" : 500,
-                 |   "pensionContributions" : 0,
-                 |   "councilTax" : 0,
-                 |   "utilities" : 0,
-                 |   "debtRepayments" : 0,
-                 |   "travel" : 0,
-                 |   "childcareCosts" : 0,
-                 |   "insurance" : 0,
-                 |   "groceries" : 0,
-                 |   "health" : 0,
-                 |   "totalOutgoings" : 500
+                 |   "housing" : "500",
+                 |   "pensionContributions" : "0",
+                 |   "councilTax" : "0",
+                 |   "utilities" : "0",
+                 |   "debtRepayments" : "0",
+                 |   "travel" : "0",
+                 |   "childcareCosts" : "0",
+                 |   "insurance" : "0",
+                 |   "groceries" : "0",
+                 |   "health" : "0",
+                 |   "totalOutgoings" : "500"
                  |  },
                  |  "status" : "Interest greater than or equal to regular payment",
                  |  "utr" : "6573196998"

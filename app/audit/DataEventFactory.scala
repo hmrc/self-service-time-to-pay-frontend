@@ -19,7 +19,7 @@ package audit
 import audit.model.AuditPaymentSchedule
 import config.AppConfig
 import journey.Journey
-import play.api.libs.json.{JsNumber, JsObject, Json}
+import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import play.api.mvc.Request
 import req.RequestSupport._
 import ssttpaffordability.model.{Income, Spending}
@@ -30,6 +30,7 @@ import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import util.CurrencyUtil.formatToCurrencyString
 
 import java.time.temporal.ChronoUnit
 
@@ -182,9 +183,9 @@ object DataEventFactory {
           }
 
         val map = income.budgetLines.map { budgetLine =>
-          mapKeyName(budgetLine.category.entryName) -> JsNumber(budgetLine.amount)
+          mapKeyName(budgetLine.category.entryName) -> JsString(formatToCurrencyString(budgetLine.amount))
         }.toMap
-        JsObject(map) + ("totalIncome" -> JsNumber(income.totalIncome))
+        JsObject(map) + ("totalIncome" -> JsString(formatToCurrencyString(income.totalIncome)))
 
       case None => throw new Exception("Income must be in the Journey at this point")
     }
@@ -200,9 +201,9 @@ object DataEventFactory {
           }
 
         val map = spending.expenses.map { expense =>
-          mapKeyName(expense.category.entryName.stripSuffix("Exp")) -> JsNumber(expense.amount)
+          mapKeyName(expense.category.entryName.stripSuffix("Exp")) -> JsString(formatToCurrencyString(expense.amount))
         }.toMap
-        JsObject(map) + ("totalOutgoings" -> JsNumber(spending.totalSpending))
+        JsObject(map) + ("totalOutgoings" -> JsString(formatToCurrencyString(spending.totalSpending)))
 
       case None => throw new Exception("Spending must be in the Journey at this point")
     }
