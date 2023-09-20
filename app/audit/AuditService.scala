@@ -20,7 +20,6 @@ import config.AppConfig
 
 import javax.inject.{Inject, Singleton}
 import journey.Journey
-import play.api.libs.json.Json
 import play.api.mvc.Request
 import ssttparrangement.SubmissionError
 import ssttpcalculator.model.PaymentSchedule
@@ -66,7 +65,6 @@ class AuditService @Inject() (
       calculatorService: CalculatorService
   )(implicit request: Request[_], appConfig: AppConfig): Unit = {
     val event = DataEventFactory.planSetUpEvent(journey, schedule, calculatorService)
-    println(Json.prettyPrint(event.detail))
     sendEvent(event)
   }
 
