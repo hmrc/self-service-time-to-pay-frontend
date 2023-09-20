@@ -16,20 +16,22 @@
 
 package audit
 
-import java.time.temporal.ChronoUnit
-import audit.model.{AuditIncome, AuditPaymentSchedule, AuditSpending}
+import audit.model.AuditPaymentSchedule
 import config.AppConfig
 import journey.Journey
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsNumber, JsObject, Json}
 import play.api.mvc.Request
-import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import req.RequestSupport._
+import ssttpaffordability.model.{Income, Spending}
 import ssttparrangement.SubmissionError
 import ssttpcalculator.CalculatorType
 import ssttpcalculator.legacy.CalculatorService
 import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+
+import java.time.temporal.ChronoUnit
 
 object DataEventFactory {
 
@@ -75,8 +77,8 @@ object DataEventFactory {
     val detail = Json.obj(
       "totalDebt" -> journey.debits.map(_.amount).sum.toString,
       "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
-      "income" -> Json.toJson(AuditIncome.fromIncome(journey.maybeIncome)),
-      "outgoings" -> Json.toJson(AuditSpending.fromSpending(journey.maybeSpending)),
+      "income" -> incomeToJson(journey.maybeIncome),
+      "outgoings" -> spendingToJson(journey.maybeSpending),
       "status" -> status,
       "utr" -> journey.taxpayer.selfAssessment.utr
     )
@@ -102,8 +104,8 @@ object DataEventFactory {
     val detail = Json.obj(
       "bankDetails" -> bankDetails(journey),
       "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
-      "income" -> Json.toJson(AuditIncome.fromIncome(journey.maybeIncome)),
-      "outgoings" -> Json.toJson(AuditSpending.fromSpending(journey.maybeSpending)),
+      "income" -> incomeToJson(journey.maybeIncome),
+      "outgoings" -> spendingToJson(journey.maybeSpending),
       "selectionType" -> typeOfPlan(journey, calculatorService),
       "lessThanOrMoreThanTwelveMonths" -> lessThanOrMoreThanTwelveMonths(schedule),
       "schedule" -> Json.toJson(AuditPaymentSchedule(schedule)),
@@ -167,5 +169,42 @@ object DataEventFactory {
   private def hcTags(transactionName: String)(implicit request: Request[_]): Map[String, String] = {
     hc.toAuditTags(transactionName, request.path) ++
       Map(hc.names.deviceID -> hc.deviceID.getOrElse("-"))
+  }
+
+  private def incomeToJson(income: Option[Income]): JsObject = {
+    income match {
+      case Some(income) =>
+
+        def mapKeyName(key: String) = key match {
+            case "monthlyIncome" => "monthlyIncomeAfterTax"
+            case "otherIncome"   => "otherMonthlyIncome"
+            case other           => other
+          }
+
+        val map = income.budgetLines.map { budgetLine =>
+          mapKeyName(budgetLine.category.entryName) -> JsNumber(budgetLine.amount)
+        }.toMap
+        JsObject(map) + ("totalIncome" -> JsNumber(income.totalIncome))
+
+      case None => throw new Exception("Income must be in the Journey at this point")
+    }
+  }
+
+  private def spendingToJson(spending: Option[Spending]): JsObject = {
+    spending match {
+      case Some(spending) =>
+
+        def mapKeyName(key: String) = key match {
+            case "childcare" => "childcareCosts"
+            case other       => other
+          }
+
+        val map = spending.expenses.map { expense =>
+          mapKeyName(expense.category.entryName.stripSuffix("Exp")) -> JsNumber(expense.amount)
+        }.toMap
+        JsObject(map) + ("totalOutgoings" -> JsNumber(spending.totalSpending))
+
+      case None => throw new Exception("Spending must be in the Journey at this point")
+    }
   }
 }

@@ -20,8 +20,8 @@ import journey.{Journey, JourneyId, PaymentToday, PaymentTodayAmount}
 import journey.Statuses.InProgress
 import model.enumsforforms.TypesOfBankAccount.Personal
 import model.enumsforforms.TypesOfBankAccount
-import ssttpaffordability.model.Expense.HousingExp
-import ssttpaffordability.model.IncomeCategory.MonthlyIncome
+import ssttpaffordability.model.Expense._
+import ssttpaffordability.model.IncomeCategory._
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, EligibilityStatus, PaymentDayOfMonth, PlanSelection, SelectedPlan, TypeOfAccountDetails}
 
@@ -39,30 +39,25 @@ object TestJourney {
       maybeTaxpayer             = Some(TdAll.taxpayer),
       maybePaymentToday         = Some(PaymentToday(true)),
       maybePaymentTodayAmount   = Some(PaymentTodayAmount(200)),
-      maybeIncome               = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
-      maybeSpending             = Some(Spending(Expenses(HousingExp, 500))),
+      maybeIncome               = Some(Income(
+        IncomeBudgetLine(MonthlyIncome, 2000),
+        IncomeBudgetLine(Benefits, BigDecimal(0)),
+        IncomeBudgetLine(OtherIncome, BigDecimal(0)))),
+      maybeSpending             = Some(Spending(
+        Expenses(HousingExp, 500),
+        Expenses(PensionContributionsExp, BigDecimal(0)),
+        Expenses(CouncilTaxExp, BigDecimal(0)),
+        Expenses(UtilitiesExp, BigDecimal(0)),
+        Expenses(DebtRepaymentsExp, BigDecimal(0)),
+        Expenses(TravelExp, BigDecimal(0)),
+        Expenses(ChildcareExp, BigDecimal(0)),
+        Expenses(InsuranceExp, BigDecimal(0)),
+        Expenses(GroceriesExp, BigDecimal(0)),
+        Expenses(HealthExp, BigDecimal(0)))),
       maybePlanSelection        = Some(PlanSelection(Left(SelectedPlan(470)))),
       maybePaymentDayOfMonth    = Some(PaymentDayOfMonth(3)),
       maybeEligibilityStatus    = Some(EligibilityStatus(Seq.empty))
     )
   }
 
-  def createJourneyNddsRejects(journeyId: JourneyId): Journey = {
-    Journey(
-      _id                       = journeyId,
-      status                    = InProgress,
-      createdOn                 = LocalDateTime.now(),
-      maybeTypeOfAccountDetails = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
-      maybeBankDetails          = Some(BankDetails(Some(Personal), "111111", "12345678", "Darth Vader", None)),
-      existingDDBanks           = None,
-      maybeTaxpayer             = Some(TdAll.taxpayerNddsRejects),
-      maybePaymentToday         = Some(PaymentToday(false)),
-      maybePaymentTodayAmount   = None,
-      maybeIncome               = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),
-      maybeSpending             = Some(Spending(Expenses(HousingExp, 1700))),
-      maybePlanSelection        = Some(PlanSelection(Left(SelectedPlan(150)))),
-      maybePaymentDayOfMonth    = Some(PaymentDayOfMonth(20)),
-      maybeEligibilityStatus    = Some(EligibilityStatus(Seq.empty))
-    )
-  }
 }

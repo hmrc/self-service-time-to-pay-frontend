@@ -22,8 +22,8 @@ import journey.Statuses.ApplicationComplete
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import ssttpaffordability.model.Expense.HousingExp
-import ssttpaffordability.model.IncomeCategory.MonthlyIncome
+import ssttpaffordability.model.Expense._
+import ssttpaffordability.model.IncomeCategory._
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttparrangement.ArrangementSubmissionStatus
 import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry}
@@ -62,7 +62,7 @@ class DataEventFactorySpec extends ItSpec {
 
   val journey: Journey = Journey.newJourney(fixedClock)
     .copy(
-      maybeTaxpayer = Some(td.taxpayer),
+      maybeTaxpayer = Some(td.taxpayer)
     )
 
   private def splunkEventTags(transName: String) = Map(
@@ -86,8 +86,24 @@ class DataEventFactorySpec extends ItSpec {
 
       "negative disposable income case" in {
         val journeyNegativeRemainingIncome = journey.copy(
-          maybeIncome   = Some(Income(IncomeBudgetLine(MonthlyIncome, _500Amount))),
-          maybeSpending = Some(Spending(Expenses(HousingExp, _600Amount)))
+          maybeIncome   = Some(Income(
+            IncomeBudgetLine(MonthlyIncome, _500Amount),
+            IncomeBudgetLine(Benefits, BigDecimal(0)),
+            IncomeBudgetLine(OtherIncome, BigDecimal(0)))
+          ),
+          maybeSpending = Some(Spending(
+            Expenses(HousingExp, _600Amount),
+            Expenses(PensionContributionsExp, BigDecimal(0)),
+            Expenses(CouncilTaxExp, BigDecimal(0)),
+            Expenses(UtilitiesExp, BigDecimal(0)),
+            Expenses(DebtRepaymentsExp, BigDecimal(0)),
+            Expenses(TravelExp, BigDecimal(0)),
+            Expenses(ChildcareExp, BigDecimal(0)),
+            Expenses(InsuranceExp, BigDecimal(0)),
+            Expenses(GroceriesExp, BigDecimal(0)),
+            Expenses(HealthExp, BigDecimal(0))
+          )
+          )
         )
 
         val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyNegativeRemainingIncome)
@@ -132,8 +148,24 @@ class DataEventFactorySpec extends ItSpec {
       }
       "zero disposable income case" in {
         val journeyZeroRemainingIncome = journey.copy(
-          maybeIncome   = Some(Income(IncomeBudgetLine(MonthlyIncome, _500Amount))),
-          maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
+          maybeIncome   = Some(Income(
+            IncomeBudgetLine(MonthlyIncome, _500Amount),
+            IncomeBudgetLine(Benefits, BigDecimal(0)),
+            IncomeBudgetLine(OtherIncome, BigDecimal(0)))
+          ),
+          maybeSpending = Some(Spending(
+            Expenses(HousingExp, _500Amount),
+            Expenses(PensionContributionsExp, BigDecimal(0)),
+            Expenses(CouncilTaxExp, BigDecimal(0)),
+            Expenses(UtilitiesExp, BigDecimal(0)),
+            Expenses(DebtRepaymentsExp, BigDecimal(0)),
+            Expenses(TravelExp, BigDecimal(0)),
+            Expenses(ChildcareExp, BigDecimal(0)),
+            Expenses(InsuranceExp, BigDecimal(0)),
+            Expenses(GroceriesExp, BigDecimal(0)),
+            Expenses(HealthExp, BigDecimal(0))
+          )
+          )
         )
 
         val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyZeroRemainingIncome)
@@ -178,8 +210,24 @@ class DataEventFactorySpec extends ItSpec {
       }
       "no plan no longer than 24 months" in {
         val journeyNoPlanWithin24Months = journey.copy(
-          maybeIncome   = Some(Income(IncomeBudgetLine(MonthlyIncome, _600Amount))),
-          maybeSpending = Some(Spending(Expenses(HousingExp, _500Amount)))
+          maybeIncome   = Some(Income(
+            IncomeBudgetLine(MonthlyIncome, _600Amount),
+            IncomeBudgetLine(Benefits, BigDecimal(0)),
+            IncomeBudgetLine(OtherIncome, BigDecimal(0)))
+          ),
+          maybeSpending = Some(Spending(
+            Expenses(HousingExp, _500Amount),
+            Expenses(PensionContributionsExp, BigDecimal(0)),
+            Expenses(CouncilTaxExp, BigDecimal(0)),
+            Expenses(UtilitiesExp, BigDecimal(0)),
+            Expenses(DebtRepaymentsExp, BigDecimal(0)),
+            Expenses(TravelExp, BigDecimal(0)),
+            Expenses(ChildcareExp, BigDecimal(0)),
+            Expenses(InsuranceExp, BigDecimal(0)),
+            Expenses(GroceriesExp, BigDecimal(0)),
+            Expenses(HealthExp, BigDecimal(0))
+          )
+          )
         )
 
         val computedDataEvent = DataEventFactory.planNotAvailableEvent(journeyNoPlanWithin24Months)
@@ -239,8 +287,24 @@ class DataEventFactorySpec extends ItSpec {
           accountNumber     = directDebitTd.accountNumber,
           accountName       = directDebitTd.accountName,
           maybeDDIRefNumber = Some(directDebitTd.dDIRefNumber))),
-        maybeIncome                      = Some(Income(IncomeBudgetLine(MonthlyIncome, _1000Amount))),
-        maybeSpending                    = Some(Spending(Expenses(HousingExp, _500Amount))),
+        maybeIncome                      = Some(Income(
+          IncomeBudgetLine(MonthlyIncome, _1000Amount),
+          IncomeBudgetLine(Benefits, BigDecimal(0)),
+          IncomeBudgetLine(OtherIncome, BigDecimal(0)))
+        ),
+        maybeSpending                    = Some(Spending(
+          Expenses(HousingExp, _500Amount),
+          Expenses(PensionContributionsExp, BigDecimal(0)),
+          Expenses(CouncilTaxExp, BigDecimal(0)),
+          Expenses(UtilitiesExp, BigDecimal(0)),
+          Expenses(DebtRepaymentsExp, BigDecimal(0)),
+          Expenses(TravelExp, BigDecimal(0)),
+          Expenses(ChildcareExp, BigDecimal(0)),
+          Expenses(InsuranceExp, BigDecimal(0)),
+          Expenses(GroceriesExp, BigDecimal(0)),
+          Expenses(HealthExp, BigDecimal(0))
+        )
+        ),
         maybePaymentDayOfMonth           = Some(PaymentDayOfMonth(_28DayOfMonth)),
         ddRef                            = Some(directDebitTd.dDIRefNumber),
         maybeArrangementSubmissionStatus = Some(ArrangementSubmissionStatus.Success)

@@ -17,7 +17,7 @@
 package ssttpaffordability
 
 import akka.util.Timeout
-import journey.JourneyId
+import journey.{JourneyId, JourneyService}
 import org.scalatest.time.{Seconds, Span}
 import play.api.http.Status
 import play.api.test.FakeRequest
@@ -28,6 +28,7 @@ import testsupport.{ItSpec, RichMatchers, WireMockSupport}
 import uk.gov.hmrc.http.SessionKeys
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import play.api.libs.json.{JsObject, Json}
+import testsupport.testdata.TestJourney
 
 import java.util.UUID
 
@@ -50,6 +51,10 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
         val sessionId = UUID.randomUUID().toString
         val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
 
+        val journey = TestJourney.createJourney(journeyId)
+        val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
+        journeyService.saveJourney(journey)(fakeRequest)
+
         val controller: AffordabilityController = app.injector.instanceOf[AffordabilityController]
 
         eventually(RichMatchers.timeout(Span(requestTimeOut, Seconds))) {
@@ -63,15 +68,15 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
               s"""
                  |{
                  |  "totalDebt" : "4900",
-                 |  "halfDisposableIncome" : "400",
+                 |  "halfDisposableIncome" : "750",
                  |  "income" : {
-                 |   "monthlyIncomeAfterTax" : 1000,
+                 |   "monthlyIncomeAfterTax" : 2000,
                  |   "benefits" : 0,
                  |   "otherMonthlyIncome" : 0,
-                 |   "totalIncome" : 1000
+                 |   "totalIncome" : 2000
                  |  },
                  |  "outgoings" : {
-                 |   "housing" : 200,
+                 |   "housing" : 500,
                  |   "pensionContributions" : 0,
                  |   "councilTax" : 0,
                  |   "utilities" : 0,
@@ -81,7 +86,7 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
                  |   "insurance" : 0,
                  |   "groceries" : 0,
                  |   "health" : 0,
-                 |   "totalOutgoings" : 200
+                 |   "totalOutgoings" : 500
                  |  },
                  |  "status" : "Interest greater than or equal to regular payment",
                  |  "utr" : "6573196998"
