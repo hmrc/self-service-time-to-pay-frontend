@@ -101,9 +101,26 @@ class DataEventFactorySpec extends ItSpec {
             s"""
               {
                 "totalDebt": "4900",
-                "spending": "600",
-                "income": "500",
                 "halfDisposableIncome": "-50",
+                "income" : {
+                  "monthlyIncomeAfterTax" : 500,
+                  "benefits" : 0,
+                  "otherMonthlyIncome" : 0,
+                  "totalIncome" : 500
+                },
+                "outgoings" : {
+                  "housing" : 600,
+                  "pensionContributions" : 0,
+                  "councilTax" : 0,
+                  "utilities" : 0,
+                  "debtRepayments" : 0,
+                  "travel" : 0,
+                  "childcareCosts" : 0,
+                  "insurance" : 0,
+                  "groceries" : 0,
+                  "health" : 0,
+                  "totalOutgoings" : 600
+                },
                 "status": "Negative Disposable Income",
                 "utr": "6573196998"
               }
@@ -130,9 +147,26 @@ class DataEventFactorySpec extends ItSpec {
             s"""
               {
                 "totalDebt": "4900",
-                "spending": "500",
-                "income": "500",
                 "halfDisposableIncome": "0",
+                "income" : {
+                  "monthlyIncomeAfterTax" : 500,
+                  "benefits" : 0,
+                  "otherMonthlyIncome" : 0,
+                  "totalIncome" : 500
+                },
+                "outgoings" : {
+                  "housing" : 500,
+                  "pensionContributions" : 0,
+                  "councilTax" : 0,
+                  "utilities" : 0,
+                  "debtRepayments" : 0,
+                  "travel" : 0,
+                  "childcareCosts" : 0,
+                  "insurance" : 0,
+                  "groceries" : 0,
+                  "health" : 0,
+                  "totalOutgoings" : 500
+                },
                 "status": "Zero Disposable Income",
                 "utr": "6573196998"
               }
@@ -159,9 +193,26 @@ class DataEventFactorySpec extends ItSpec {
             s"""
               {
                 "totalDebt": "4900",
-                "spending": "500",
-                "income": "600",
                 "halfDisposableIncome": "50",
+                "income" : {
+                  "monthlyIncomeAfterTax" : 600,
+                  "benefits" : 0,
+                  "otherMonthlyIncome" : 0,
+                  "totalIncome" : 600
+                },
+                "outgoings" : {
+                  "housing" : 500,
+                  "pensionContributions" : 0,
+                  "councilTax" : 0,
+                  "utilities" : 0,
+                  "debtRepayments" : 0,
+                  "travel" : 0,
+                  "childcareCosts" : 0,
+                  "insurance" : 0,
+                  "groceries" : 0,
+                  "health" : 0,
+                  "totalOutgoings" : 500
+                },
                 "status": "Plan duration would exceed maximum",
                 "utr": "6573196998"
               }
@@ -237,6 +288,25 @@ class DataEventFactorySpec extends ItSpec {
                 "sortCode": "12-34-56"
               },
               "halfDisposableIncome": "250",
+              "income" : {
+                "monthlyIncomeAfterTax" : 1000,
+                "benefits" : 0,
+                "otherMonthlyIncome" : 0,
+                "totalIncome" : 1000
+              },
+              "outgoings" : {
+                "housing" : 500,
+                "pensionContributions" : 0,
+                "councilTax" : 0,
+                "utilities" : 0,
+                "debtRepayments" : 0,
+                "travel" : 0,
+                "childcareCosts" : 0,
+                "insurance" : 0,
+                "groceries" : 0,
+                "health" : 0,
+                "totalOutgoings" : 500
+              },
               "selectionType": "higher",
               "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
               "schedule": {
@@ -367,6 +437,25 @@ class DataEventFactorySpec extends ItSpec {
                 "sortCode": "12-34-56"
               },
               "halfDisposableIncome": "250",
+              "income" : {
+                "monthlyIncomeAfterTax" : 1000,
+                "benefits" : 0,
+                "otherMonthlyIncome" : 0,
+                "totalIncome" : 1000
+              },
+              "outgoings" : {
+                "housing" : 500,
+                "pensionContributions" : 0,
+                "councilTax" : 0,
+                "utilities" : 0,
+                "debtRepayments" : 0,
+                "travel" : 0,
+                "childcareCosts" : 0,
+                "insurance" : 0,
+                "groceries" : 0,
+                "health" : 0,
+                "totalOutgoings" : 500
+              },
               "selectionType": "additional",
               "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
               "schedule": {
@@ -479,6 +568,25 @@ class DataEventFactorySpec extends ItSpec {
                 "sortCode": "12-34-56"
               },
               "halfDisposableIncome": "250",
+              "income" : {
+                "monthlyIncomeAfterTax" : 1000,
+                "benefits" : 0,
+                "otherMonthlyIncome" : 0,
+                "totalIncome" : 1000
+              },
+              "outgoings" : {
+                "housing" : 500,
+                "pensionContributions" : 0,
+                "councilTax" : 0,
+                "utilities" : 0,
+                "debtRepayments" : 0,
+                "travel" : 0,
+                "childcareCosts" : 0,
+                "insurance" : 0,
+                "groceries" : 0,
+                "health" : 0,
+                "totalOutgoings" : 500
+              },
               "selectionType": "customAmount",
               "lessThanOrMoreThanTwelveMonths": "twelveMonthsOrLess",
               "schedule": {
@@ -606,6 +714,25 @@ class DataEventFactorySpec extends ItSpec {
                   "sortCode": "12-34-56"
                 },
                 "halfDisposableIncome": "250",
+                "income" : {
+                  "monthlyIncomeAfterTax" : 1000,
+                  "benefits" : 0,
+                  "otherMonthlyIncome" : 0,
+                  "totalIncome" : 1000
+                },
+                "outgoings" : {
+                  "housing" : 500,
+                  "pensionContributions" : 0,
+                  "councilTax" : 0,
+                  "utilities" : 0,
+                  "debtRepayments" : 0,
+                  "travel" : 0,
+                  "childcareCosts" : 0,
+                  "insurance" : 0,
+                  "groceries" : 0,
+                  "health" : 0,
+                  "totalOutgoings" : 500
+                },
                 "selectionType": "basic",
                 "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
                 "schedule": {
