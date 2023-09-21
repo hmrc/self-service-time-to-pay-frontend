@@ -100,10 +100,27 @@ class DataEventFactorySpec extends ItSpec {
           detail      = Json.parse(
             s"""
               {
-                "totalDebt": "4900",
-                "spending": "600",
-                "income": "500",
-                "halfDisposableIncome": "-50",
+                "totalDebt": "4900.00",
+                "halfDisposableIncome": "-50.00",
+                "income" : {
+                  "monthlyIncomeAfterTax" : "500.00",
+                  "benefits" : "0.00",
+                  "otherMonthlyIncome" : "0.00",
+                  "totalIncome" : "500.00"
+                },
+                "outgoings" : {
+                  "housing" : "600.00",
+                  "pensionContributions" : "0.00",
+                  "councilTax" : "0.00",
+                  "utilities" : "0.00",
+                  "debtRepayments" : "0.00",
+                  "travel" : "0.00",
+                  "childcareCosts" : "0.00",
+                  "insurance" : "0.00",
+                  "groceries" : "0.00",
+                  "health" : "0.00",
+                  "totalOutgoings" : "600.00"
+                },
                 "status": "Negative Disposable Income",
                 "utr": "6573196998"
               }
@@ -129,10 +146,27 @@ class DataEventFactorySpec extends ItSpec {
           detail      = Json.parse(
             s"""
               {
-                "totalDebt": "4900",
-                "spending": "500",
-                "income": "500",
-                "halfDisposableIncome": "0",
+                "totalDebt": "4900.00",
+                "halfDisposableIncome": "0.00",
+                "income" : {
+                  "monthlyIncomeAfterTax" : "500.00",
+                  "benefits" : "0.00",
+                  "otherMonthlyIncome" : "0.00",
+                  "totalIncome" : "500.00"
+                },
+                "outgoings" : {
+                  "housing" : "500.00",
+                  "pensionContributions" : "0.00",
+                  "councilTax" : "0.00",
+                  "utilities" : "0.00",
+                  "debtRepayments" : "0.00",
+                  "travel" : "0.00",
+                  "childcareCosts" : "0.00",
+                  "insurance" : "0.00",
+                  "groceries" : "0.00",
+                  "health" : "0.00",
+                  "totalOutgoings" : "500.00"
+                },
                 "status": "Zero Disposable Income",
                 "utr": "6573196998"
               }
@@ -158,10 +192,27 @@ class DataEventFactorySpec extends ItSpec {
           detail      = Json.parse(
             s"""
               {
-                "totalDebt": "4900",
-                "spending": "500",
-                "income": "600",
-                "halfDisposableIncome": "50",
+                "totalDebt": "4900.00",
+                "halfDisposableIncome": "50.00",
+                "income" : {
+                  "monthlyIncomeAfterTax" : "600.00",
+                  "benefits" : "0.00",
+                  "otherMonthlyIncome" : "0.00",
+                  "totalIncome" : "600.00"
+                },
+                "outgoings" : {
+                  "housing" : "500.00",
+                  "pensionContributions" : "0.00",
+                  "councilTax" : "0.00",
+                  "utilities" : "0.00",
+                  "debtRepayments" : "0.00",
+                  "travel" : "0.00",
+                  "childcareCosts" : "0.00",
+                  "insurance" : "0.00",
+                  "groceries" : "0.00",
+                  "health" : "0.00",
+                  "totalOutgoings" : "500.00"
+                },
                 "status": "Plan duration would exceed maximum",
                 "utr": "6573196998"
               }
@@ -236,103 +287,122 @@ class DataEventFactorySpec extends ItSpec {
                 "name": "Mr John Campbell",
                 "sortCode": "12-34-56"
               },
-              "halfDisposableIncome": "250",
+              "halfDisposableIncome": "250.00",
+              "income" : {
+                "monthlyIncomeAfterTax" : "1000.00",
+                "benefits" : "0.00",
+                "otherMonthlyIncome" : "0.00",
+                "totalIncome" : "1000.00"
+              },
+              "outgoings" : {
+                "housing" : "500.00",
+                "pensionContributions" : "0.00",
+                "councilTax" : "0.00",
+                "utilities" : "0.00",
+                "debtRepayments" : "0.00",
+                "travel" : "0.00",
+                "childcareCosts" : "0.00",
+                "insurance" : "0.00",
+                "groceries" : "0.00",
+                "health" : "0.00",
+                "totalOutgoings" : "500.00"
+              },
               "selectionType": "higher",
               "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
               "schedule": {
-                "totalPayable": 5016.53,
+                "totalPayable": "5016.53",
                 "instalmentDate": 28,
                 "instalments": [
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":1,
                     "paymentDate":"2019-12-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":2,
                     "paymentDate":"2020-01-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":3,
                     "paymentDate":"2020-02-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":4,
                     "paymentDate":"2020-03-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":5,
                     "paymentDate":"2020-04-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":6,
                     "paymentDate":"2020-05-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":7,
                     "paymentDate":"2020-06-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":8,
                     "paymentDate":"2020-07-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":9,
                     "paymentDate":"2020-08-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":10,
                     "paymentDate":"2020-09-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":11,
                     "paymentDate":"2020-10-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":12,
                     "paymentDate":"2020-11-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":13,
                     "paymentDate":"2020-12-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":14,
                     "paymentDate":"2021-01-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":15,
                     "paymentDate":"2021-02-28"
                   },
                   {
-                    "amount":300,
+                    "amount":"300.00",
                     "instalmentNumber":16,
                     "paymentDate":"2021-03-28"
                   },
                   {
-                    "amount":216.53,
+                    "amount":"216.53",
                     "instalmentNumber":17,
                     "paymentDate":"2021-04-28"
                   }
                 ],
-                "initialPaymentAmount": 0,
+                "initialPaymentAmount": "0.00",
                 "totalNoPayments": 17,
-                "totalInterestCharged": 116.53,
-                "totalPaymentWithoutInterest": 4900
+                "totalInterestCharged": "116.53",
+                "totalPaymentWithoutInterest": "4900.00"
               },
               "status": "ApplicationComplete",
               "arrangementSubmissionStatus": "Success",
@@ -366,83 +436,102 @@ class DataEventFactorySpec extends ItSpec {
                 "name": "Mr John Campbell",
                 "sortCode": "12-34-56"
               },
-              "halfDisposableIncome": "250",
+              "halfDisposableIncome": "250.00",
+              "income" : {
+                "monthlyIncomeAfterTax" : "1000.00",
+                "benefits" : "0.00",
+                "otherMonthlyIncome" : "0.00",
+                "totalIncome" : "1000.00"
+              },
+              "outgoings" : {
+                "housing" : "500.00",
+                "pensionContributions" : "0.00",
+                "councilTax" : "0.00",
+                "utilities" : "0.00",
+                "debtRepayments" : "0.00",
+                "travel" : "0.00",
+                "childcareCosts" : "0.00",
+                "insurance" : "0.00",
+                "groceries" : "0.00",
+                "health" : "0.00",
+                "totalOutgoings" : "500.00"
+              },
               "selectionType": "additional",
               "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
               "schedule": {
-                "totalPayable": 4989.39,
+                "totalPayable": "4989.39",
                 "instalmentDate": 28,
                 "instalments": [
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":1,
                     "paymentDate":"2019-12-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":2,
                     "paymentDate":"2020-01-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":3,
                     "paymentDate":"2020-02-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":4,
                     "paymentDate":"2020-03-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":5,
                     "paymentDate":"2020-04-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":6,
                     "paymentDate":"2020-05-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":7,
                     "paymentDate":"2020-06-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":8,
                     "paymentDate":"2020-07-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":9,
                     "paymentDate":"2020-08-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":10,
                     "paymentDate":"2020-09-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":11,
                     "paymentDate":"2020-10-28"
                   },
                   {
-                    "amount":400,
+                    "amount":"400.00",
                     "instalmentNumber":12,
                     "paymentDate":"2020-11-28"
                   },
                   {
-                    "amount":189.39,
+                    "amount":"189.39",
                     "instalmentNumber":13,
                     "paymentDate":"2020-12-28"
                   }
                 ],
-                "initialPaymentAmount": 0,
+                "initialPaymentAmount": "0.00",
                 "totalNoPayments": 13,
-                "totalInterestCharged": 89.39,
-                "totalPaymentWithoutInterest": 4900
+                "totalInterestCharged": "89.39",
+                "totalPaymentWithoutInterest": "4900.00"
               },
               "status": "ApplicationComplete",
               "arrangementSubmissionStatus": "Success",
@@ -478,68 +567,87 @@ class DataEventFactorySpec extends ItSpec {
                 "name": "Mr John Campbell",
                 "sortCode": "12-34-56"
               },
-              "halfDisposableIncome": "250",
+              "halfDisposableIncome": "250.00",
+              "income" : {
+                "monthlyIncomeAfterTax" : "1000.00",
+                "benefits" : "0.00",
+                "otherMonthlyIncome" : "0.00",
+                "totalIncome" : "1000.00"
+              },
+              "outgoings" : {
+                "housing" : "500.00",
+                "pensionContributions" : "0.00",
+                "councilTax" : "0.00",
+                "utilities" : "0.00",
+                "debtRepayments" : "0.00",
+                "travel" : "0.00",
+                "childcareCosts" : "0.00",
+                "insurance" : "0.00",
+                "groceries" : "0.00",
+                "health" : "0.00",
+                "totalOutgoings" : "500.00"
+              },
               "selectionType": "customAmount",
               "lessThanOrMoreThanTwelveMonths": "twelveMonthsOrLess",
               "schedule": {
-                "totalPayable": 4973.08,
+                "totalPayable": "4973.08",
                 "instalmentDate": 28,
                 "instalments": [
                   {
-                    "amount":500,
+                    "amount":"500.00",
                     "instalmentNumber":1,
                     "paymentDate":"2019-12-28"
                   },
                   {
-                    "amount":500,
+                    "amount":"500.00",
                     "instalmentNumber":2,
                     "paymentDate":"2020-01-28"
                   },
                   {
-                    "amount":500,
+                    "amount":"500.00",
                     "instalmentNumber":3,
                     "paymentDate":"2020-02-28"
                   },
                   {
-                    "amount":500,
+                    "amount":"500.00",
                     "instalmentNumber":4,
                     "paymentDate":"2020-03-28"
                   },
                   {
-                    "amount":500,
+                    "amount":"500.00",
                     "instalmentNumber":5,
                     "paymentDate":"2020-04-28"
                   },
                   {
-                    "amount":500,
+                    "amount":"500.00",
                     "instalmentNumber":6,
                     "paymentDate":"2020-05-28"
                   },
                   {
-                    "amount":500,
+                    "amount":"500.00",
                     "instalmentNumber":7,
                     "paymentDate":"2020-06-28"
                   },
                   {
-                    "amount":500,
+                    "amount":"500.00",
                     "instalmentNumber":8,
                     "paymentDate":"2020-07-28"
                   },
                   {
-                    "amount":500,
+                    "amount":"500.00",
                     "instalmentNumber":9,
                     "paymentDate":"2020-08-28"
                   },
                   {
-                    "amount":473.08,
+                    "amount":"473.08",
                     "instalmentNumber":10,
                     "paymentDate":"2020-09-28"
                   }
                 ],
-                "initialPaymentAmount": 0,
+                "initialPaymentAmount": "0.00",
                 "totalNoPayments": 10,
-                "totalInterestCharged": 73.08,
-                "totalPaymentWithoutInterest": 4900
+                "totalInterestCharged": "73.08",
+                "totalPaymentWithoutInterest": "4900.00"
               },
               "status": "ApplicationComplete",
               "arrangementSubmissionStatus": "Success",
@@ -605,123 +713,142 @@ class DataEventFactorySpec extends ItSpec {
                   "name": "Mr John Campbell",
                   "sortCode": "12-34-56"
                 },
-                "halfDisposableIncome": "250",
+                "halfDisposableIncome": "250.00",
+                "income" : {
+                  "monthlyIncomeAfterTax" : "1000.00",
+                  "benefits" : "0.00",
+                  "otherMonthlyIncome" : "0.00",
+                  "totalIncome" : "1000.00"
+                },
+                "outgoings" : {
+                  "housing" : "500.00",
+                  "pensionContributions" : "0.00",
+                  "councilTax" : "0.00",
+                  "utilities" : "0.00",
+                  "debtRepayments" : "0.00",
+                  "travel" : "0.00",
+                  "childcareCosts" : "0.00",
+                  "insurance" : "0.00",
+                  "groceries" : "0.00",
+                  "health" : "0.00",
+                  "totalOutgoings" : "500.00"
+                },
                 "selectionType": "basic",
                 "lessThanOrMoreThanTwelveMonths": "moreThanTwelveMonths",
                 "schedule": {
-                  "totalPayable": 5038.16,
+                  "totalPayable": "5038.16",
                   "instalmentDate": 28,
                   "instalments": [
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":1,
                       "paymentDate":"2019-12-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":2,
                       "paymentDate":"2020-01-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":3,
                       "paymentDate":"2020-02-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":4,
                       "paymentDate":"2020-03-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":5,
                       "paymentDate":"2020-04-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":6,
                       "paymentDate":"2020-05-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":7,
                       "paymentDate":"2020-06-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":8,
                       "paymentDate":"2020-07-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":9,
                       "paymentDate":"2020-08-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":10,
                       "paymentDate":"2020-09-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":11,
                       "paymentDate":"2020-10-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":12,
                       "paymentDate":"2020-11-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":13,
                       "paymentDate":"2020-12-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":14,
                       "paymentDate":"2021-01-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":15,
                       "paymentDate":"2021-02-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":16,
                       "paymentDate":"2021-03-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":17,
                       "paymentDate":"2021-04-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":18,
                       "paymentDate":"2021-05-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":19,
                       "paymentDate":"2021-06-28"
                     },
                     {
-                      "amount":250,
+                      "amount":"250.00",
                       "instalmentNumber":20,
                       "paymentDate":"2021-07-28"
                     },
                     {
-                      "amount":38.16,
+                      "amount":"38.16",
                       "instalmentNumber":21,
                       "paymentDate":"2021-08-28"
                     }
                   ],
-                  "initialPaymentAmount": 0,
+                  "initialPaymentAmount": "0.00",
                   "totalNoPayments": 21,
-                  "totalInterestCharged": 138.16,
-                  "totalPaymentWithoutInterest": 4900
+                  "totalInterestCharged": "138.16",
+                  "totalPaymentWithoutInterest": "4900.00"
                 },
                 "status": "ApplicationComplete",
                 "arrangementSubmissionStatus": "$arrangementSubmissionStatus",
