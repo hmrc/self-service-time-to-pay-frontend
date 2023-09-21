@@ -75,7 +75,7 @@ final case class Journey(
     ddRef:                            Option[String]                      = None,
     maybeSaUtr:                       Option[String]                      = None,
     maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None
-) extends HasId[JourneyId] {
+) extends HasId[JourneyId] with Encryptable[Journey] {
 
   def maybeSelectedPlanAmount: Option[BigDecimal] = maybePlanSelection.fold(None: Option[BigDecimal])(_.selection match {
     case Right(CustomPlanRequest(_)) => None
@@ -163,6 +163,27 @@ final case class Journey(
   override def toString: String = {
     obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
   }
+
+  override def encrypt: EncryptedJourney = EncryptedJourney(
+    _id,
+    status,
+    createdOn,
+    maybeTypeOfAccountDetails,
+    maybeBankDetails,
+    existingDDBanks,
+    maybeTaxpayer,
+    maybePaymentToday,
+    maybePaymentTodayAmount,
+    maybeIncome,
+    maybeSpending,
+    maybePlanSelection,
+    maybePaymentDayOfMonth,
+    maybeEligibilityStatus,
+    debitDate,
+    ddRef,
+    maybeSaUtr,
+    maybeArrangementSubmissionStatus
+  )
 }
 
 object Journey {
@@ -179,4 +200,5 @@ object Journey {
   implicit val format: OFormat[Journey] = Json.format[Journey]
 
   def newJourney(implicit clock: Clock): Journey = Journey(_id       = JourneyId.newJourneyId(), createdOn = LocalDateTime.now(clock))
+
 }
