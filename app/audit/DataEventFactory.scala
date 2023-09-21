@@ -30,6 +30,9 @@ import ssttpcalculator.legacy.CalculatorService
 import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
+import util.CurrencyUtil.{formatToCurrencyString, formatToCurrencyStringWithTrailingZeros}
+
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 object DataEventFactory {
 
@@ -46,13 +49,13 @@ object DataEventFactory {
       "utr" -> journey.taxpayer.selfAssessment.utr.value,
       "bankDetails" -> bankDetails(journey),
       "schedule" -> Json.obj(
-        "initialPaymentAmount" -> schedule.initialPayment,
+        "initialPaymentAmount" -> formatToCurrencyStringWithTrailingZeros(schedule.initialPayment),
         "installments" -> Json.toJson(schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
         "numberOfInstallments" -> schedule.instalments.length,
         "installmentLengthCalendarMonths" -> ChronoUnit.MONTHS.between(schedule.startDate, schedule.endDate),
-        "totalPaymentWithoutInterest" -> schedule.amountToPay,
-        "totalInterestCharged" -> schedule.totalInterestCharged,
-        "totalPayable" -> schedule.totalPayable)
+        "totalPaymentWithoutInterest" -> formatToCurrencyStringWithTrailingZeros(schedule.amountToPay),
+        "totalInterestCharged" -> formatToCurrencyString(schedule.totalInterestCharged),
+        "totalPayable" -> formatToCurrencyStringWithTrailingZeros(schedule.totalPayable))
     )
 
     ExtendedDataEvent(
@@ -73,8 +76,8 @@ object DataEventFactory {
     }
 
     val detail = Json.obj(
-      "totalDebt" -> journey.debits.map(_.amount).sum.toString,
-      "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
+      "totalDebt" -> formatToCurrencyStringWithTrailingZeros(journey.debits.map(_.amount).sum),
+      "halfDisposableIncome" -> formatToCurrencyStringWithTrailingZeros((journey.remainingIncomeAfterSpending / 2).setScale(2, HALF_UP)),
       "income" -> Json.toJson(AuditIncome.fromIncome(journey.maybeIncome)),
       "outgoings" -> Json.toJson(AuditSpending.fromSpending(journey.maybeSpending)),
       "status" -> status,
@@ -101,7 +104,7 @@ object DataEventFactory {
   )(implicit request: Request[_], appConfig: AppConfig): ExtendedDataEvent = {
     val detail = Json.obj(
       "bankDetails" -> bankDetails(journey),
-      "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
+      "halfDisposableIncome" -> formatToCurrencyStringWithTrailingZeros((journey.remainingIncomeAfterSpending / 2).setScale(2, HALF_UP)),
       "income" -> Json.toJson(AuditIncome.fromIncome(journey.maybeIncome)),
       "outgoings" -> Json.toJson(AuditSpending.fromSpending(journey.maybeSpending)),
       "selectionType" -> typeOfPlan(journey, calculatorService),

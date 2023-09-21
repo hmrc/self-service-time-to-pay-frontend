@@ -54,4 +54,8 @@ object CurrencyUtil {
     "%,1.2f".format(value).stripSuffix(".00")
   }
 
+  def formatToCurrencyStringWithTrailingZeros(value: BigDecimal): String = {
+    "%.2f".format(value)
+  }
+
 }

@@ -18,19 +18,20 @@ package audit.model
 
 import play.api.libs.json.{Json, OFormat}
 import ssttpaffordability.model.{Expense, Spending}
+import util.CurrencyUtil.formatToCurrencyStringWithTrailingZeros
 
 case class AuditSpending(
-    housing:              BigDecimal,
-    pensionContributions: BigDecimal,
-    councilTax:           BigDecimal,
-    utilities:            BigDecimal,
-    debtRepayments:       BigDecimal,
-    travel:               BigDecimal,
-    childcareCosts:       BigDecimal,
-    insurance:            BigDecimal,
-    groceries:            BigDecimal,
-    health:               BigDecimal,
-    totalOutgoings:       BigDecimal
+    housing:              String,
+    pensionContributions: String,
+    councilTax:           String,
+    utilities:            String,
+    debtRepayments:       String,
+    travel:               String,
+    childcareCosts:       String,
+    insurance:            String,
+    groceries:            String,
+    health:               String,
+    totalOutgoings:       String
 )
 
 object AuditSpending {
@@ -39,17 +40,17 @@ object AuditSpending {
   def fromSpending(spending: Option[Spending]): AuditSpending = {
     spending match {
       case Some(spending) =>
-        val housing = spending.amount(Expense.HousingExp)
-        val pensionContributions = spending.amount(Expense.PensionContributionsExp)
-        val councilTax = spending.amount(Expense.CouncilTaxExp)
-        val utilities = spending.amount(Expense.UtilitiesExp)
-        val debtRepayments = spending.amount(Expense.DebtRepaymentsExp)
-        val travel = spending.amount(Expense.TravelExp)
-        val childcareCosts = spending.amount(Expense.ChildcareExp)
-        val insurance = spending.amount(Expense.InsuranceExp)
-        val groceries = spending.amount(Expense.GroceriesExp)
-        val health = spending.amount(Expense.HealthExp)
-        val totalOutgoings = spending.totalSpending
+        val housing = formatToCurrencyStringWithTrailingZeros(spending.amount(Expense.HousingExp))
+        val pensionContributions = formatToCurrencyStringWithTrailingZeros(spending.amount(Expense.PensionContributionsExp))
+        val councilTax = formatToCurrencyStringWithTrailingZeros(spending.amount(Expense.CouncilTaxExp))
+        val utilities = formatToCurrencyStringWithTrailingZeros(spending.amount(Expense.UtilitiesExp))
+        val debtRepayments = formatToCurrencyStringWithTrailingZeros(spending.amount(Expense.DebtRepaymentsExp))
+        val travel = formatToCurrencyStringWithTrailingZeros(spending.amount(Expense.TravelExp))
+        val childcareCosts = formatToCurrencyStringWithTrailingZeros(spending.amount(Expense.ChildcareExp))
+        val insurance = formatToCurrencyStringWithTrailingZeros(spending.amount(Expense.InsuranceExp))
+        val groceries = formatToCurrencyStringWithTrailingZeros(spending.amount(Expense.GroceriesExp))
+        val health = formatToCurrencyStringWithTrailingZeros(spending.amount(Expense.HealthExp))
+        val totalOutgoings = formatToCurrencyStringWithTrailingZeros(spending.totalSpending)
         AuditSpending(
           housing,
           pensionContributions,

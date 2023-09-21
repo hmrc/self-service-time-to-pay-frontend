@@ -62,26 +62,26 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
             Json.parse(
               s"""
                  |{
-                 |  "totalDebt" : "4900",
-                 |  "halfDisposableIncome" : "400",
+                 |  "totalDebt" : "4900.00",
+                 |  "halfDisposableIncome" : "400.00",
                  |  "income" : {
-                 |   "monthlyIncomeAfterTax" : 1000,
-                 |   "benefits" : 0,
-                 |   "otherMonthlyIncome" : 0,
-                 |   "totalIncome" : 1000
+                 |   "monthlyIncomeAfterTax" : "1000.00",
+                 |   "benefits" : "0.00",
+                 |   "otherMonthlyIncome" : "0.00",
+                 |   "totalIncome" : "1000.00"
                  |  },
                  |  "outgoings" : {
-                 |   "housing" : 200,
-                 |   "pensionContributions" : 0,
-                 |   "councilTax" : 0,
-                 |   "utilities" : 0,
-                 |   "debtRepayments" : 0,
-                 |   "travel" : 0,
-                 |   "childcareCosts" : 0,
-                 |   "insurance" : 0,
-                 |   "groceries" : 0,
-                 |   "health" : 0,
-                 |   "totalOutgoings" : 200
+                 |   "housing" : "200.00",
+                 |   "pensionContributions" : "0.00",
+                 |   "councilTax" : "0.00",
+                 |   "utilities" : "0.00",
+                 |   "debtRepayments" : "0.00",
+                 |   "travel" : "0.00",
+                 |   "childcareCosts" : "0.00",
+                 |   "insurance" : "0.00",
+                 |   "groceries" : "0.00",
+                 |   "health" : "0.00",
+                 |   "totalOutgoings" : "200.00"
                  |  },
                  |  "status" : "Interest greater than or equal to regular payment",
                  |  "utr" : "6573196998"
