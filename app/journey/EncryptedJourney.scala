@@ -16,33 +16,25 @@
 
 package journey
 
+import crypto.Encrypted
+import crypto.model.Encrypted
 import journey.Statuses.InProgress
 import play.api.libs.json.{Json, OFormat}
 import repo.HasId
 import ssttpaffordability.model.{Income, Spending}
 import ssttparrangement.ArrangementSubmissionStatus
-import timetopaytaxpayer.cor.model.Taxpayer
-import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitInstructions, EligibilityStatus, PaymentDayOfMonth, PlanSelection, TypeOfAccountDetails}
+import uk.gov.hmrc.selfservicetimetopay.models.{EligibilityStatus, EncryptedBankDetails, EncryptedDirectDebitInstructions, PaymentDayOfMonth, PlanSelection, TypeOfAccountDetails}
 
 import java.time.{LocalDate, LocalDateTime}
-import javax.inject.Singleton
-
-trait Encrypted[A] {
-  def decrypt: A
-}
-
-trait Encryptable[A] {
-  def encrypt: Encrypted[A]
-}
 
 final case class EncryptedJourney(
     _id:                              JourneyId,
     status:                           Status                              = InProgress,
     createdOn:                        LocalDateTime,
     maybeTypeOfAccountDetails:        Option[TypeOfAccountDetails]        = None,
-    maybeBankDetails:                 Option[BankDetails]                 = None,
-    existingDDBanks:                  Option[DirectDebitInstructions]     = None,
-    maybeTaxpayer:                    Option[Taxpayer]                    = None,
+    maybeBankDetails:                 Option[EncryptedBankDetails]        = None,
+    existingDDBanks:                  Option[EncryptedDirectDebitInstructions]     = None,
+    maybeTaxpayer:                    Option[EncryptedTaxpayer]                    = None,
     maybePaymentToday:                Option[PaymentToday]                = None,
     maybePaymentTodayAmount:          Option[PaymentTodayAmount]          = None,
     maybeIncome:                      Option[Income]                      = None,
@@ -56,28 +48,27 @@ final case class EncryptedJourney(
     maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None
 ) extends HasId[JourneyId] with Encrypted[Journey] {
 
-  override def decrypt: Journey = {
-    Journey(
-      _id,
-      status,
-      createdOn,
-      maybeTypeOfAccountDetails,
-      maybeBankDetails,
-      existingDDBanks,
-      maybeTaxpayer,
-      maybePaymentToday,
-      maybePaymentTodayAmount,
-      maybeIncome,
-      maybeSpending,
-      maybePlanSelection,
-      maybePaymentDayOfMonth,
-      maybeEligibilityStatus,
-      debitDate,
-      ddRef,
-      maybeSaUtr,
-      maybeArrangementSubmissionStatus
-    )
-  }
+  override def decrypt: Journey = Journey(
+    _id,
+    status,
+    createdOn,
+    maybeTypeOfAccountDetails,
+    maybeBankDetails.map(bd => bd.decrypt),
+    existingDDBanks.map(ddi => ddi.decrypt),
+    maybeTaxpayer.map(tp => tp.decrypt),
+    maybePaymentToday,
+    maybePaymentTodayAmount,
+    maybeIncome,
+    maybeSpending,
+    maybePlanSelection,
+    maybePaymentDayOfMonth,
+    maybeEligibilityStatus,
+    debitDate,
+    ddRef,
+    maybeSaUtr,
+    maybeArrangementSubmissionStatus
+  )
+
 }
 
 object EncryptedJourney {

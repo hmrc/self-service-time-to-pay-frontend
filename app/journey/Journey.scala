@@ -16,6 +16,7 @@
 
 package journey
 
+import crypto.model.Encryptable
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import journey.Statuses.{ApplicationComplete, InProgress}
@@ -169,9 +170,9 @@ final case class Journey(
     status,
     createdOn,
     maybeTypeOfAccountDetails,
-    maybeBankDetails,
-    existingDDBanks,
-    maybeTaxpayer,
+    maybeBankDetails.map(_.encrypt),
+    existingDDBanks.map(_.encrypt),
+    maybeTaxpayer.map(_.encrypt),
     maybePaymentToday,
     maybePaymentTodayAmount,
     maybeIncome,

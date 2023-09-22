@@ -13,6 +13,8 @@ object AppDependencies {
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "1.1.0",
 
     "uk.gov.hmrc" %% "time-to-pay-taxpayer-cor" % "0.48.0",
+    "uk.gov.hmrc" %% "crypto-json-play-28"      % "7.3.0",
+
 
     "uk.gov.hmrc" %% "domain" %  "8.1.0-play-28",
     "com.typesafe.play" %% "play-json-joda" % "2.9.4",

@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import java.time.LocalDate
+import crypto.model.{Encryptable, Encrypted}
 
+import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
 
 //Direct-debit - getBanks response
@@ -31,7 +32,7 @@ final case class DirectDebitInstruction(
     paperAuddisFlag: Option[Boolean]   = Some(true),
     ddiRefNumber:    Option[String]    = None,
     ddiReferenceNo:  Option[String]    = None
-) {
+) extends Encryptable[DirectDebitInstruction] {
 
   def obfuscate: DirectDebitInstruction = DirectDebitInstruction(
     sortCode        = Some("***"),
@@ -47,8 +48,32 @@ final case class DirectDebitInstruction(
   override def toString: String = {
     obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
   }
+
+  override def encrypt: EncryptedDirectDebitInstruction = EncryptedDirectDebitInstruction(
+    sortCode,
+    accountNumber,
+    accountName,
+    referenceNumber,
+    creationDate,
+    paperAuddisFlag,
+    ddiRefNumber,
+    ddiReferenceNo
+  )
 }
 
 object DirectDebitInstruction {
   implicit val format: Format[DirectDebitInstruction] = Json.format[DirectDebitInstruction]
+}
+
+case class EncryptedDirectDebitInstruction(
+                                            sortCode: Option[String],
+                                            accountNumber: Option[String],
+                                            accountName: Option[String],
+                                            referenceNumber: Option[String] = None,
+                                            creationDate: Option[LocalDate] = None,
+                                            paperAuddisFlag: Option[Boolean] = Some(true),
+                                            ddiRefNumber: Option[String] = None,
+                                            ddiReferenceNo: Option[String] = None
+                                          ) extends Encrypted[DirectDebitInstruction] {
+  override def decrypt: DirectDebitInstruction = ???
 }
