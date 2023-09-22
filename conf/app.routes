@@ -67,7 +67,7 @@ GET         /arrangement/direct-debit-error                               ssttpd
 POST        /arrangement/submit                                           ssttparrangement.ArrangementController.submit()
 GET         /arrangement/summary                                          ssttparrangement.ArrangementController.applicationComplete()
 
-GET         /sign-out                                                     ssttpeligibility.SelfServiceTimeToPayController.signOut(continueUrl: Option[String])
+GET         /sign-out                                                     ssttpeligibility.SelfServiceTimeToPayController.signOut()
 
 GET         /language/:language                                           langswitch.LanguageSwitchController.switchToLanguage(language: Language)
 

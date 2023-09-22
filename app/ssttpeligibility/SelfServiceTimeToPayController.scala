@@ -121,7 +121,7 @@ class SelfServiceTimeToPayController @Inject() (
     }
   }
 
-  def signOut(continueUrl: Option[String]): Action[AnyContent] = as.action { implicit request =>
+  def signOut(): Action[AnyContent] = as.action { implicit request =>
     Redirect(appConfig.logoutUrl).withNewSession
   }
 }
