@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package crypto.model
+package module
 
-trait Encryptable[A] {
-  def encrypt: Encrypted[A]
+import crypto.Crypto
+import play.api.{Configuration, Environment}
+import play.api.inject.{Binding, Module}
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
+
+import scala.collection.immutable.Seq
+
+class CryptoModule extends Module {
+  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] =
+    Seq(
+      bind[Encrypter with Decrypter].to[Crypto]
+    )
 }

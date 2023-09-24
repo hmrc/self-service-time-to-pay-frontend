@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import crypto.CryptoFormat
 import crypto.model.{Encryptable, Encrypted}
 import play.api.libs.json.{Format, Json, OFormat}
 
@@ -28,8 +29,8 @@ final case class DirectDebitInstructions(directDebitInstruction: Seq[DirectDebit
     obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
   }
 
-  override def encrypt: Encrypted[DirectDebitInstructions] = EncryptedDirectDebitInstructions(
-    directDebitInstruction
+  override def encrypt: EncryptedDirectDebitInstructions = EncryptedDirectDebitInstructions(
+    directDebitInstruction.map(_.encrypt)
   )
 }
 
@@ -38,14 +39,14 @@ object DirectDebitInstructions {
 }
 
 case class EncryptedDirectDebitInstructions(
-                                             directDebitInstruction: Seq[DirectDebitInstruction]
-                                           ) extends Encrypted[DirectDebitInstructions] {
+    directDebitInstruction: Seq[EncryptedDirectDebitInstruction]
+) extends Encrypted[DirectDebitInstructions] {
   override def decrypt: DirectDebitInstructions = DirectDebitInstructions(
-    directDebitInstruction
+    directDebitInstruction.map(_.decrypt)
   )
 }
 
 object EncryptedDirectDebitInstructions {
-  implicit val format: OFormat[EncryptedDirectDebitInstructions] = Json.format[EncryptedDirectDebitInstructions]
+  implicit def format(implicit cryptoFormat: CryptoFormat): OFormat[EncryptedDirectDebitInstructions] = Json.format[EncryptedDirectDebitInstructions]
 
 }

@@ -16,10 +16,12 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import crypto.CryptoFormat
 import crypto.model.{Encryptable, Encrypted}
 
 import java.time.LocalDate
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, Json, OFormat}
+import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 
 //Direct-debit - getBanks response
 //Direct-debit - part of input to createPaymentPlan
@@ -50,9 +52,9 @@ final case class DirectDebitInstruction(
   }
 
   override def encrypt: EncryptedDirectDebitInstruction = EncryptedDirectDebitInstruction(
-    sortCode,
-    accountNumber,
-    accountName,
+    sortCode.map(SensitiveString),
+    accountNumber.map(SensitiveString),
+    accountName.map(SensitiveString),
     referenceNumber,
     creationDate,
     paperAuddisFlag,
@@ -66,14 +68,30 @@ object DirectDebitInstruction {
 }
 
 case class EncryptedDirectDebitInstruction(
-                                            sortCode: Option[String],
-                                            accountNumber: Option[String],
-                                            accountName: Option[String],
-                                            referenceNumber: Option[String] = None,
-                                            creationDate: Option[LocalDate] = None,
-                                            paperAuddisFlag: Option[Boolean] = Some(true),
-                                            ddiRefNumber: Option[String] = None,
-                                            ddiReferenceNo: Option[String] = None
-                                          ) extends Encrypted[DirectDebitInstruction] {
-  override def decrypt: DirectDebitInstruction = ???
+    sortCode:        Option[SensitiveString],
+    accountNumber:   Option[SensitiveString],
+    accountName:     Option[SensitiveString],
+    referenceNumber: Option[String]          = None,
+    creationDate:    Option[LocalDate]       = None,
+    paperAuddisFlag: Option[Boolean]         = Some(true),
+    ddiRefNumber:    Option[String]          = None,
+    ddiReferenceNo:  Option[String]          = None
+) extends Encrypted[DirectDebitInstruction] {
+  override def decrypt: DirectDebitInstruction = DirectDebitInstruction(
+    sortCode.map(_.decryptedValue),
+    accountNumber.map(_.decryptedValue),
+    accountName.map(_.decryptedValue),
+    referenceNumber,
+    creationDate,
+    paperAuddisFlag,
+    ddiRefNumber,
+    ddiReferenceNo
+  )
+}
+
+object EncryptedDirectDebitInstruction {
+  implicit def format(implicit cryptoFormat: CryptoFormat): OFormat[EncryptedDirectDebitInstruction] = {
+    implicit val sensitiveFormat: Format[SensitiveString] = crypto.sensitiveStringFormat(cryptoFormat)
+    Json.format[EncryptedDirectDebitInstruction]
+  }
 }

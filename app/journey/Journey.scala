@@ -16,7 +16,8 @@
 
 package journey
 
-import crypto.model.Encryptable
+import crypto.CryptoFormat
+import crypto.model.{Encryptable, Encrypted}
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import journey.Statuses.{ApplicationComplete, InProgress}
@@ -172,7 +173,7 @@ final case class Journey(
     maybeTypeOfAccountDetails,
     maybeBankDetails.map(_.encrypt),
     existingDDBanks.map(_.encrypt),
-    maybeTaxpayer.map(_.encrypt),
+    maybeTaxpayer, // TODO [OPS-11032] .map(_.encrypt) once EncryptedTaxpayer is loaded with uk.gov.hmrc.time-to-pay-taxpayer-cor 0.55.0
     maybePaymentToday,
     maybePaymentTodayAmount,
     maybeIncome,
@@ -202,4 +203,52 @@ object Journey {
 
   def newJourney(implicit clock: Clock): Journey = Journey(_id       = JourneyId.newJourneyId(), createdOn = LocalDateTime.now(clock))
 
+}
+
+final case class EncryptedJourney(
+    _id:                              JourneyId,
+    status:                           Status                                   = InProgress,
+    createdOn:                        LocalDateTime,
+    maybeTypeOfAccountDetails:        Option[TypeOfAccountDetails]             = None,
+    maybeBankDetails:                 Option[EncryptedBankDetails]             = None,
+    existingDDBanks:                  Option[EncryptedDirectDebitInstructions] = None,
+    maybeTaxpayer:                    Option[Taxpayer]                         = None,
+    maybePaymentToday:                Option[PaymentToday]                     = None,
+    maybePaymentTodayAmount:          Option[PaymentTodayAmount]               = None,
+    maybeIncome:                      Option[Income]                           = None,
+    maybeSpending:                    Option[Spending]                         = None,
+    maybePlanSelection:               Option[PlanSelection]                    = None,
+    maybePaymentDayOfMonth:           Option[PaymentDayOfMonth]                = None,
+    maybeEligibilityStatus:           Option[EligibilityStatus]                = None,
+    debitDate:                        Option[LocalDate]                        = None,
+    ddRef:                            Option[String]                           = None,
+    maybeSaUtr:                       Option[String]                           = None,
+    maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus]      = None
+) extends HasId[JourneyId] with Encrypted[Journey] {
+
+  override def decrypt: Journey = Journey(
+    _id,
+    status,
+    createdOn,
+    maybeTypeOfAccountDetails,
+    maybeBankDetails.map(bd => bd.decrypt),
+    existingDDBanks.map(ddi => ddi.decrypt),
+    maybeTaxpayer, // TODO [OPS-11032] .map(_.decrypt) once EncryptedTaxpayer is loaded with uk.gov.hmrc.time-to-pay-taxpayer-cor 0.55.0
+    maybePaymentToday,
+    maybePaymentTodayAmount,
+    maybeIncome,
+    maybeSpending,
+    maybePlanSelection,
+    maybePaymentDayOfMonth,
+    maybeEligibilityStatus,
+    debitDate,
+    ddRef,
+    maybeSaUtr,
+    maybeArrangementSubmissionStatus
+  )
+
+}
+
+object EncryptedJourney {
+  implicit def format(implicit cryptoFormat: CryptoFormat): OFormat[EncryptedJourney] = Json.format[EncryptedJourney]
 }

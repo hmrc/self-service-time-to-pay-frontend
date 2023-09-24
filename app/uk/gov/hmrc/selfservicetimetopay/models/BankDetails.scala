@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import crypto.CryptoFormat
 import crypto.model.{Encryptable, Encrypted}
 import model.enumsforforms.TypeOfBankAccount
 import play.api.libs.json.{Format, Json, OFormat}
@@ -55,11 +56,11 @@ object BankDetails {
 }
 
 case class EncryptedBankDetails(
-                                 typeOfAccount:     Option[TypeOfBankAccount] = None,
-                                 sortCode:          SensitiveString,
-                                 accountNumber:     SensitiveString,
-                                 accountName:       SensitiveString,
-                                 maybeDDIRefNumber: Option[String]            = None) extends Encrypted[BankDetails] {
+    typeOfAccount:     Option[TypeOfBankAccount] = None,
+    sortCode:          SensitiveString,
+    accountNumber:     SensitiveString,
+    accountName:       SensitiveString,
+    maybeDDIRefNumber: Option[String]            = None) extends Encrypted[BankDetails] {
   override def decrypt: BankDetails = BankDetails(
     typeOfAccount,
     sortCode.decryptedValue,
@@ -70,5 +71,8 @@ case class EncryptedBankDetails(
 }
 
 object EncryptedBankDetails {
-  implicit val format: OFormat[EncryptedBankDetails] = Json.format[EncryptedBankDetails]
+  implicit def format(implicit cryptoFormat: CryptoFormat): OFormat[EncryptedBankDetails] = {
+    implicit val sensitiveFormat: Format[SensitiveString] = crypto.sensitiveStringFormat(cryptoFormat)
+    Json.format[EncryptedBankDetails]
+  }
 }
