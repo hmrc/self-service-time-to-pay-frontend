@@ -70,7 +70,9 @@ class ItSpec
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
-    "auditing.enabled" -> false) ++ overrideConfig
+    "auditing.enabled" -> false,
+    "logger.root" -> "WARN"
+  ) ++ overrideConfig
 
   val fakeAuthConnector = new AuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
