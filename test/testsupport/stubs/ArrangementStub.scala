@@ -41,7 +41,7 @@ object ArrangementStub extends Matchers {
         post(urlPathEqualTo("/ttparrangements"))
           .willReturn(
             aResponse()
-              .withStatus(200)
+              .withStatus(201)
               .withBody(Json.prettyPrint(ArrangementTd.tTPArrangementJson))
           )
       )
