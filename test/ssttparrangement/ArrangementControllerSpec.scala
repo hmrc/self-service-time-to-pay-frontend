@@ -19,18 +19,16 @@ package ssttparrangement
 import akka.util.Timeout
 import journey.Statuses.ApplicationComplete
 import journey.{Journey, JourneyId, JourneyService}
-import org.scalatest.time.{Seconds, Span}
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.Application
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.status
-import testsupport.RichMatchers.eventually
-import testsupport.{RichMatchers, WireMockSupport}
+import play.api.test.Helpers.{await, status}
+import testsupport.WireMockSupport
 import testsupport.stubs.{ArrangementStub, AuditStub, AuthStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.{TdRequest, TestJourney}
 import uk.gov.hmrc.http.SessionKeys
@@ -81,7 +79,7 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
     val journey = journeyOverride.map(_(journeyId)).getOrElse(TestJourney.createJourney(journeyId))
     val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
-    journeyService.saveJourney(journey)(fakeRequest)
+    await(journeyService.saveJourney(journey)(fakeRequest)) mustBe(())
 
     val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
   }
