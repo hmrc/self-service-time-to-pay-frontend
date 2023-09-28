@@ -16,22 +16,25 @@
 
 package audit
 
-import java.time.temporal.ChronoUnit
 import audit.model.{AuditIncome, AuditPaymentSchedule, AuditSpending}
+import bars.model.ValidateBankDetailsResponse
 import config.AppConfig
 import journey.Journey
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Request
-import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import req.RequestSupport._
 import ssttparrangement.SubmissionError
 import ssttpcalculator.CalculatorType
 import ssttpcalculator.legacy.CalculatorService
 import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import ssttpcalculator.model.PaymentSchedule
+import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import uk.gov.hmrc.selfservicetimetopay.models.TypeOfAccountDetails
 import util.CurrencyUtil.{formatToCurrencyString, formatToCurrencyStringWithTrailingZeros}
 
+import java.time.temporal.ChronoUnit
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 object DataEventFactory {
@@ -124,6 +127,28 @@ object DataEventFactory {
     )
   }
 
+  def barsValidateEvent(sortCode:                  String,
+                        accountNumber:             String,
+                        accountName:               String,
+                        maybeTypeOfAccountDetails: Option[TypeOfAccountDetails],
+                        saUtr:                     SaUtr,
+                        barsResp:                  ValidateBankDetailsResponse
+  )(implicit request: Request[_]): ExtendedDataEvent = {
+
+    val detail = Json.obj(
+      "utr" -> saUtr.value,
+      "request" -> barsRequest(sortCode, accountNumber, accountName, maybeTypeOfAccountDetails),
+      "response" -> barsResponse(barsResp)
+    )
+
+    ExtendedDataEvent(
+      auditSource = "pay-what-you-owe",
+      auditType   = "BARSCheck",
+      tags        = hcTags("BARSCheck"),
+      detail      = detail
+    )
+  }
+
   private def typeOfPlan(journey:           Journey,
                          calculatorService: CalculatorService
   )(implicit request: Request[_], appConfig: AppConfig): String = {
@@ -165,6 +190,32 @@ object DataEventFactory {
     "name" -> journey.bankDetails.accountName,
     "accountNumber" -> journey.bankDetails.accountNumber,
     "sortCode" -> journey.bankDetails.sortCode
+  )
+
+  private def barsRequest(sortCode:             String,
+                          accountNumber:        String,
+                          accountName:          String,
+                          TypeOfAccountDetails: Option[TypeOfAccountDetails]): JsObject =
+    Json.obj(
+      "account" -> Json.obj(
+        "accountType" -> TypeOfAccountDetails.map(_.typeOfAccount),
+        "accountHolderName" -> accountName,
+        "sortCode" -> sortCode,
+        "accountNumber" -> accountNumber
+      )
+    )
+
+  private def barsResponse(barsResp: ValidateBankDetailsResponse): JsObject = Json.obj(
+    "isBankAccountValid" -> barsResp.isValid,
+    "barsResponse" -> Json.obj(
+      "accountNumberIsWellFormatted" -> barsResp.accountNumberIsWellFormatted.toString,
+      "nonStandardAccountDetailsRequiredForBacs" -> barsResp.nonStandardAccountDetailsRequiredForBacs.toString,
+      "sortCodeIsPresentOnEISCD" -> barsResp.sortCodeIsPresentOnEISCD.toString,
+      "sortCodeBankName" -> barsResp.sortCodeBankName,
+      "sortCodeSupportsDirectDebit" -> barsResp.sortCodeSupportsDirectDebit.map(_.toString),
+      "sortCodeSupportsDirectCredit" -> barsResp.sortCodeSupportsDirectCredit.map(_.toString),
+      "iban" -> barsResp.iban
+    )
   )
 
   private def hcTags(transactionName: String)(implicit request: Request[_]): Map[String, String] = {

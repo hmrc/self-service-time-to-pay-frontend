@@ -16,21 +16,26 @@
 
 package audit
 
+import bars.model.{BarsResponse, ValidateBankDetailsResponse}
+import com.sun.tools.javac.tree.Pretty
 import config.AppConfig
 
 import javax.inject.{Inject, Singleton}
 import journey.Journey
 import play.api.libs.json.Json
+import play.api.libs.json.Json.prettyPrint
 import play.api.mvc.Request
 import ssttparrangement.SubmissionError
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 
 import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
 import req.RequestSupport._
 import ssttpcalculator.legacy.CalculatorService
+import timetopaytaxpayer.cor.model.SaUtr
+import uk.gov.hmrc.selfservicetimetopay.models.TypeOfAccountDetails
 import util.Logging
 
 import scala.util.{Failure, Success}
@@ -66,6 +71,26 @@ class AuditService @Inject() (
       calculatorService: CalculatorService
   )(implicit request: Request[_], appConfig: AppConfig): Unit = {
     val event = DataEventFactory.planSetUpEvent(journey, schedule, calculatorService)
+    sendEvent(event)
+  }
+
+  def sendBarsValidateEvent(
+      sortCode:                  String,
+      accountNumber:             String,
+      accountName:               String,
+      maybeTypeOfAccountDetails: Option[TypeOfAccountDetails],
+      saUtr:                     SaUtr,
+      barsResp:                  ValidateBankDetailsResponse
+  )(implicit request: Request[_]): Unit = {
+
+    val event: ExtendedDataEvent = DataEventFactory.barsValidateEvent(
+      sortCode                  = sortCode,
+      accountNumber             = accountNumber,
+      accountName               = accountName,
+      maybeTypeOfAccountDetails = maybeTypeOfAccountDetails,
+      saUtr                     = saUtr,
+      barsResp                  = barsResp
+    )
     sendEvent(event)
   }
 
