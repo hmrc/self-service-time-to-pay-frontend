@@ -75,11 +75,18 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
 
     val journeyId = JourneyId("62ce7631b7602426d74f83b0")
     val sessionId = UUID.randomUUID().toString
-    val fakeRequest = FakeRequest().withAuthToken().withSession(SessionKeys.sessionId -> sessionId, "ssttp.journeyId" -> journeyId.toHexString)
+    val fakeRequest =
+      FakeRequest()
+        .withAuthToken()
+        .withSession(
+          SessionKeys.sessionId -> sessionId,
+          "ssttp.journeyId" -> journeyId.toHexString,
+          "ssttp.frozenDateTime" -> "2023-09-27T09:00:00.000"
+        )
 
     val journey = journeyOverride.map(_(journeyId)).getOrElse(TestJourney.createJourney(journeyId))
     val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
-    await(journeyService.saveJourney(journey)(fakeRequest)) mustBe(())
+    await(journeyService.saveJourney(journey)(fakeRequest)) mustBe (())
 
     val controller: ArrangementController = app.injector.instanceOf[ArrangementController]
   }

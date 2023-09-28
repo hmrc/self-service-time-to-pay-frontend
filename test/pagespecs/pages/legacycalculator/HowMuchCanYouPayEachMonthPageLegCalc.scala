@@ -24,7 +24,7 @@ import org.scalatestplus.selenium.WebBrowser
 import pagespecs.pages.{BaseUrl, HowMuchCanYouPayEachMonthPage}
 import testsupport.RichMatchers._
 
-class HowMuchCanYouPayEachMonthPageLegacyCalculator(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
+class HowMuchCanYouPayEachMonthPageLegCalc(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
   extends HowMuchCanYouPayEachMonthPage(baseUrl)(webDriver) {
 
   import WebBrowser._
