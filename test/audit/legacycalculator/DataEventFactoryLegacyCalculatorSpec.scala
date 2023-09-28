@@ -16,7 +16,9 @@
 
 package audit.legacycalculator
 
-import audit.DataEventFactory
+import audit.{AuditService, DataEventFactory}
+import bars.model.BarsAssessmentType.{No, Yes}
+import bars.model.{BarsResponseOk, ValidateBankDetailsResponse}
 import config.AppConfig
 import journey.Journey
 import journey.Statuses.ApplicationComplete
@@ -31,6 +33,7 @@ import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedFor
 import ssttpcalculator.CalculatorType.Legacy
 import ssttpcalculator.legacy.CalculatorService
 import testsupport.ItSpec
+import testsupport.stubs.BarsStub
 import testsupport.testdata.{DirectDebitTd, TdAll, TdRequest}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, PaymentDayOfMonth, PlanSelection, SelectedPlan}
@@ -76,6 +79,107 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
   private val auditTypePlanNotAvailable = "ManualAffordabilityCheckFailed"
 
   "Splunk audit events" - {
+
+    "BARSCheck" - {
+      "audit BARS Validate passes" in {
+
+        val barsResp = new ValidateBankDetailsResponse(Yes, No, Yes, Some(Yes), Some(Yes), Some("GB59 HBUK 1234 5678"), Some("Lloyds"))
+
+        val computedDataEvent = DataEventFactory.barsValidateEvent(
+          DirectDebitTd.sortCode,
+          DirectDebitTd.accountNumber,
+          DirectDebitTd.accountName,
+          DirectDebitTd.typeOfAccountDetails,
+          TdAll.saUtr,
+          barsResp
+        )
+
+        val expectedDataEvent = ExtendedDataEvent(
+          auditSource = "pay-what-you-owe",
+          auditType   = "BARSCheck",
+          eventId     = "event-id",
+          tags        = splunkEventTags("BARSCheck"),
+          detail      = Json.parse(
+            s"""{
+              "utr": "6573196998",
+              "request": {
+                   "account": {
+                     "accountType": "Personal",
+                     "accountHolderName": "Mr John Campbell",
+                     "sortCode": "12-34-56",
+                     "accountNumber": "12345678"
+                   }
+                 },
+              "response": {
+                "isBankAccountValid": true,
+                "barsResponse": {
+                 "accountNumberIsWellFormatted": "Yes",
+                 "nonStandardAccountDetailsRequiredForBacs": "No",
+                 "sortCodeIsPresentOnEISCD":"Yes",
+                 "sortCodeBankName": "Lloyds",
+                 "sortCodeSupportsDirectDebit": "Yes",
+                 "sortCodeSupportsDirectCredit": "Yes",
+                 "iban": "GB59 HBUK 1234 5678"
+                 }
+               }
+              }
+             """)
+        )
+
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
+      }
+
+      "audit BARS Validate fails" in {
+
+        val barsResp = new ValidateBankDetailsResponse(No, No, Yes, Some(Yes), Some(Yes), Some("GB59 HBUK 1234 5678"), Some("Lloyds"))
+
+        val computedDataEvent = DataEventFactory.barsValidateEvent(
+          DirectDebitTd.sortCode,
+          DirectDebitTd.accountNumber,
+          DirectDebitTd.accountName,
+          DirectDebitTd.typeOfAccountDetails,
+          TdAll.saUtr,
+          barsResp
+        )
+
+        val expectedDataEvent = ExtendedDataEvent(
+          auditSource = "pay-what-you-owe",
+          auditType   = "BARSCheck",
+          eventId     = "event-id",
+          tags        = splunkEventTags("BARSCheck"),
+          detail      = Json.parse(
+            s"""{
+              "utr": "6573196998",
+              "request": {
+                   "account": {
+                     "accountType": "Personal",
+                     "accountHolderName": "Mr John Campbell",
+                     "sortCode": "12-34-56",
+                     "accountNumber": "12345678"
+                   }
+                 },
+              "response": {
+                "isBankAccountValid": false,
+                "barsResponse": {
+                 "accountNumberIsWellFormatted": "No",
+                 "nonStandardAccountDetailsRequiredForBacs": "No",
+                 "sortCodeIsPresentOnEISCD":"Yes",
+                 "sortCodeBankName": "Lloyds",
+                 "sortCodeSupportsDirectDebit": "Yes",
+                 "sortCodeSupportsDirectCredit": "Yes",
+                 "iban": "GB59 HBUK 1234 5678"
+                 }
+               }
+              }
+             """)
+        )
+
+        computedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant) shouldBe
+          expectedDataEvent.copy(eventId     = "event-id", generatedAt = td.instant)
+
+      }
+    }
 
     "manualAffordabilityCheck" - {
       val _500Amount = 500
