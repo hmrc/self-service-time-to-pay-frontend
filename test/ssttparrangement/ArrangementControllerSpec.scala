@@ -19,6 +19,7 @@ package ssttparrangement
 import akka.util.Timeout
 import journey.Statuses.ApplicationComplete
 import journey.{Journey, JourneyId, JourneyService}
+import model.enumsforforms.TypesOfBankAccount.Personal
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
@@ -32,7 +33,7 @@ import testsupport.WireMockSupport
 import testsupport.stubs.{ArrangementStub, AuditStub, AuthStub, DirectDebitStub, TaxpayerStub}
 import testsupport.testdata.{TdRequest, TestJourney}
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.selfservicetimetopay.models.DirectDebitInstruction
+import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, DirectDebitInstruction}
 
 import java.util.UUID
 
@@ -207,6 +208,32 @@ class ArrangementControllerSpec extends PlaySpec with GuiceOneAppPerTest with Wi
       val result = controller.paymentPlan(journey, ddInstruction)(fakeRequest)
 
       result.submissionDateTime must endWith regex "\\.\\d{3}Z$"
+    }
+
+    ".paymentPlan returns payment plan request with account number left padded from 6 to 8 digits with zeros" in new Context(journeyOverride = Some {
+      TestJourney.createJourney(_).copy(
+        maybeBankDetails = Some(BankDetails(Some(Personal), "111111", "123456", "Darth Vader", None))
+      )
+    }) {
+      val result = controller.makePaymentPlanRequest(journey)(fakeRequest)
+
+      result.directDebitInstruction.accountNumber.exists(_.matches("^00\\d{6}$")) mustBe true
+    }
+
+    ".paymentPlan returns payment plan request with account number left padded from 7 to 8 digits with zeros" in new Context(journeyOverride = Some {
+      TestJourney.createJourney(_).copy(
+        maybeBankDetails = Some(BankDetails(Some(Personal), "111111", "1234567", "Darth Vader", None))
+      )
+    }) {
+      val result = controller.makePaymentPlanRequest(journey)(fakeRequest)
+
+      result.directDebitInstruction.accountNumber.exists(_.matches("^0\\d{7}$")) mustBe true
+    }
+
+    ".paymentPlan returns payment plan request with account number with 8 digits" in new Context() {
+      val result = controller.makePaymentPlanRequest(journey)(fakeRequest)
+
+      result.directDebitInstruction.accountNumber.map(_.length) mustBe Some(8)
     }
 
     ".getCheckPaymentPlan displays 'Set up a payment plan with an adviser' page if selected plan fails NDDS validation" in new Context() {
