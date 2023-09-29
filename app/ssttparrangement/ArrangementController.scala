@@ -371,13 +371,13 @@ class ArrangementController @Inject() (
    * Checks if the TTPSubmission data contains an existing direct debit reference number and either
    * passes this information to a payment plan constructor function or builds a new Direct Debit Instruction
    */
-  private def makePaymentPlanRequest(journey: Journey)(implicit request: Request[_]): PaymentPlanRequest = {
+  def makePaymentPlanRequest(journey: Journey)(implicit request: Request[_]): PaymentPlanRequest = {
 
     paymentPlan(
       journey,
       DirectDebitInstruction(
         sortCode      = Some(journey.bankDetails.sortCode),
-        accountNumber = Some(journey.bankDetails.accountNumber),
+        accountNumber = Some(journey.bankDetails.accountNumber.reverse.padTo(8, '0').reverse),
         accountName   = Some(journey.bankDetails.accountName),
         ddiRefNumber  = journey.bankDetails.maybeDDIRefNumber))
   }
