@@ -1,5 +1,4 @@
 
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.defaultSettings
 
@@ -16,7 +15,7 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(defaultSettings(): _*)
-//  .settings(SbtUpdatesSettings.sbtUpdatesSettings: _*)
+  .settings(SbtUpdatesSettings.sbtUpdatesSettings: _*)
   .settings(
     scalaVersion := scalaV,
     majorVersion := 0,
