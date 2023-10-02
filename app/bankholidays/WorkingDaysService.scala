@@ -19,7 +19,7 @@ package bankholidays
 import java.time.{Clock, LocalDate}
 
 import org.joda.time
-import uk.gov.hmrc.time.workingdays._
+import _root_.time.workingdays._
 
 import scala.language.postfixOps
 

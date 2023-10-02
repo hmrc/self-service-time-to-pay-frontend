@@ -18,6 +18,7 @@ package bankholidays
 
 import play.api.libs.json.{Json, OFormat}
 import util.ResourceReader
+import time.workingdays._
 
 object BankHolidays {
   lazy implicit val bankHolidayFmt: OFormat[BankHolidaySet] = Json.format[BankHolidaySet]
