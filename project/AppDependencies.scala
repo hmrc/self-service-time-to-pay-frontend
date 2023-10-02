@@ -6,7 +6,7 @@ object AppDependencies {
   val boostrapVersion = "7.22.0"
   val compile = Seq(
     ws,
-    "uk.gov.hmrc"         %% "time-to-pay-taxpayer-cor"           % "0.48.0",
+    "uk.gov.hmrc"         %% "time-to-pay-taxpayer-cor"           % "0.52.0",
     "uk.gov.hmrc"         %% "play-frontend-hmrc"                 % "7.21.0-play-28",
     "uk.gov.hmrc"         %% "bootstrap-frontend-play-28"         % boostrapVersion,
     "uk.gov.hmrc.mongo"   %% "hmrc-mongo-play-28"                 % "1.3.0",
