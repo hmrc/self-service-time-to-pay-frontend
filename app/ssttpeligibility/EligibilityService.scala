@@ -17,12 +17,13 @@
 package ssttpeligibility
 
 import java.time.{LocalDate, MonthDay}
-
 import javax.inject.Inject
 import play.api.Configuration
 import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models._
+
+import scala.math.Numeric.BigIntIsIntegral
 
 /**
  * Determines if a tax payer is eligible for self service.
@@ -88,8 +89,8 @@ class EligibilityService @Inject() (config: EligibilityServiceConfig) {
     val (liabilities, chargesAndDebts) = debits.partition(_.dueDate.isAfter(chargeStartDay))
     val debt = chargesAndDebts.filterNot(_.dueDate.isAfter(dateBeforeWhichDebtIsConsideredOld))
 
-    val totalLiabilities = liabilities.map(l => getTotalForDebit(l)).sum
-    val totalChargesAndDebt = chargesAndDebts.map(cd => getTotalForDebit(cd)).sum
+    val totalLiabilities: Double = liabilities.map(l => getTotalForDebit(l)).sum
+    val totalChargesAndDebt: Double = chargesAndDebts.map(cd => getTotalForDebit(cd)).sum
     val totalDebt = debt.map(d => getTotalForDebit(d)).sum
     val totalOwed = totalChargesAndDebt + totalLiabilities
 
@@ -109,7 +110,7 @@ class EligibilityService @Inject() (config: EligibilityServiceConfig) {
     if (totalOwed > config.maximumDebtForSelfServe) List(TotalDebtIsTooHigh) else Nil
 
   private def getTotalForDebit(debit: Debit) =
-    (debit.interest.map(i => i.amount).getOrElse(BigDecimal(0)) + debit.amount).doubleValue()
+    (debit.interest.map(i => i.amount).getOrElse(BigDecimal(0)) + debit.amount).doubleValue
 
   private def taxYearEndDateForCalendarYear(today: LocalDate) = {
     val currentCalendarYearsReturnDate = returnDateForCalendarYear(today.getYear)

@@ -86,7 +86,7 @@ class ArrangementController @Inject() (
   val paymentCurrency = "GBP"
 
   def start: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyService.getJourney.flatMap {
+    journeyService.getJourney().flatMap {
       case journey if journey.inProgress && journey.maybeSelectedPlanAmount.isDefined =>
         eligibilityCheck(journey)
       case j =>
@@ -210,7 +210,7 @@ class ArrangementController @Inject() (
     for {
       onIa <- iaService.checkIaUtr(utr.value)
       directDebits <- directDebitConnector.getBanks(utr)
-      eligibilityStatus = eligibilityService.checkEligibility(clockProvider.nowDate, taxpayer, directDebits, onIa)
+      eligibilityStatus = eligibilityService.checkEligibility(clockProvider.nowDate(), taxpayer, directDebits, onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
     } yield {
@@ -287,7 +287,7 @@ class ArrangementController @Inject() (
         val schedule = selectedSchedule(journey)
         Ok(views.application_complete(
           debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
-          transactionId = journey.taxpayer.selfAssessment.utr + clockProvider.now.toString,
+          transactionId = journey.taxpayer.selfAssessment.utr + clockProvider.now().toString,
           directDebit,
           schedule,
           journey.ddRef
@@ -297,7 +297,7 @@ class ArrangementController @Inject() (
   }
 
   def viewPaymentPlan(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyService.getJourney.flatMap { implicit journey =>
+    journeyService.getJourney().flatMap { implicit journey =>
       journeyLogger.info("View payment plan")
 
       val schedule = selectedSchedule(journey)

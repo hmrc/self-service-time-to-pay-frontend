@@ -85,7 +85,7 @@
 
     @formWithCsrf(
         action = ssttpaffordability.routes.AffordabilityController.submitMonthlyIncome(),
-        'id -> "monthlyincome-form"
+        Symbol("id") -> "monthlyincome-form"
     ){
 
         @defining(incomeInputTotalFormError) { incomeInputTotalError =>

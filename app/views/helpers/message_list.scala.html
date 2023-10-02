@@ -27,7 +27,7 @@
 <ul @maybeModifierClass.map{ modifierClass => class="@modifierClass"}>
 
   @for(message <- messagesApi.messages("default").filterKeys(_.startsWith(messagePrefix)).keys.toSeq.sorted) {
-      <li@argsMap.get('_itemClass).map{itemClass => class="@itemClass"}>@Messages(message)</li>
+      <li@argsMap.get(Symbol("_itemClass")).map{itemClass => class="@itemClass"}>@Messages(message)</li>
   }
 
 </ul>

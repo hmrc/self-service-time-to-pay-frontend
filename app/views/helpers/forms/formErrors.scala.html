@@ -18,8 +18,8 @@
 @import helpers.forms.errorList
 @{
     val argsMap = args.toMap
-    val theField = argsMap.getOrElse('_field, "")
-    val id = if(theField.isEmpty) argsMap.getOrElse('_id, theForm.toString) else theField
+    val theField = argsMap.getOrElse(Symbol("_field"), "")
+    val id = if(theField.isEmpty) argsMap.getOrElse(Symbol("_id"), theForm.toString) else theField
 
     val errors:Seq[(String, String)] =
         if (theField.isEmpty && theForm.hasGlobalErrors) theForm.globalErrors.map { e:FormError => (id, e.message) }
@@ -27,6 +27,6 @@
         else Seq.empty
 
     if (errors.nonEmpty) {
-        errorList(errors.map { case (k,m) => (k, Messages(m) )}, '_formId -> id)
+        errorList(errors.map { case (k,m) => (k, Messages(m) )}, Symbol("_formId") -> id)
     }
 }

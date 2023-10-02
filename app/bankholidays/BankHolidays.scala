@@ -17,7 +17,6 @@
 package bankholidays
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.time.workingdays.{BankHoliday, BankHolidaySet}
 import util.ResourceReader
 
 object BankHolidays {
