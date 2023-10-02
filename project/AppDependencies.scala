@@ -20,12 +20,12 @@ object AppDependencies {
   )
 
   val test = Seq(
-    "com.github.tomakehurst"      % "wiremock-standalone"         % "2.27.2",
-    "org.scalatest"               %% "scalatest"                  % "3.2.15",
+    "org.scalatest"               %% "scalatest"                  % "3.2.17",
+    "org.wiremock"                % "wiremock-standalone"         % "3.0.4",
     "com.vladsch.flexmark"        %  "flexmark-all"               % "0.62.2",
     "org.scalatestplus.play"      %% "scalatestplus-play"         % "5.1.0",
     "org.scalatestplus"           %% "scalacheck-1-15"            % "3.2.11.0",
-    "com.softwaremill.macwire"    %% "macros"                     % "2.5.8",
+    "com.softwaremill.macwire"    %% "macros"                     % "2.5.9",
     "uk.gov.hmrc"                 %% "bootstrap-test-play-28"     % boostrapVersion
   ).map(_ % Test)
 }
