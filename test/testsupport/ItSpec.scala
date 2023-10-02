@@ -72,7 +72,7 @@ class ItSpec
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
     "auditing.enabled" -> false,
     "logger.root" -> "WARN",
-    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
+    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes"
   ) ++ overrideConfig
 
   val fakeAuthConnector = new AuthConnector {
