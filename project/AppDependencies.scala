@@ -16,12 +16,12 @@ object AppDependencies {
     "com.typesafe.play"   %% "play-json-joda"                     % "2.9.4",
     "com.beachape"        %% "enumeratum-play"                    % "1.7.0",  // upgrade to 1.7.2 is not binary compatable
     "org.julienrf"        %% "play-json-derived-codecs"           % "10.1.0",
-    "org.typelevel"       %% "cats-core"                          % "2.9.0",
+    "org.typelevel"       %% "cats-core"                          % "2.10.0",
   )
 
   val test = Seq(
     "org.scalatest"               %% "scalatest"                  % "3.2.17",
-    "org.wiremock"                % "wiremock-standalone"         % "3.0.4",
+    "org.wiremock"                % "wiremock-standalone"         % "3.2.0",
     "com.vladsch.flexmark"        %  "flexmark-all"               % "0.62.2",
     "org.scalatestplus.play"      %% "scalatestplus-play"         % "5.1.0",
     "org.scalatestplus"           %% "scalacheck-1-15"            % "3.2.11.0",
