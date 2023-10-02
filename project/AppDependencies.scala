@@ -3,14 +3,14 @@ import sbt._
 
 object AppDependencies {
 
-  val boostrapVersion = "7.15.0"
+  val boostrapVersion = "7.22.0"
   val compile = Seq(
     ws,
     "uk.gov.hmrc"         %% "time-to-pay-taxpayer-cor"           % "0.48.0",
     "uk.gov.hmrc"         %% "play-frontend-hmrc"                 % "7.19.0-play-28",
     "uk.gov.hmrc"         %% "bootstrap-frontend-play-28"         % "7.15.0",
     "uk.gov.hmrc.mongo"   %% "hmrc-mongo-play-28"                 % "1.3.0",
-    "uk.gov.hmrc"         %% "play-conditional-form-mapping"     % "1.12.0-play-28",
+    "uk.gov.hmrc"         %% "play-conditional-form-mapping"      % "1.12.0-play-28",
     "uk.gov.hmrc"         %% "time"                               % "3.25.0",   // brakes on newer versions
     "uk.gov.hmrc"         %% "domain"                             % "8.1.0-play-28",
     "com.typesafe.play"   %% "play-json-joda"                     % "2.9.4",
