@@ -71,7 +71,8 @@ class ItSpec
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
     "auditing.enabled" -> false,
-    "logger.root" -> "WARN"
+    "logger.root" -> "WARN",
+    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes"
   ) ++ overrideConfig
 
   val fakeAuthConnector = new AuthConnector {
