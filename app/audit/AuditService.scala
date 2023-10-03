@@ -16,19 +16,16 @@
 
 package audit
 
-import bars.model.{BarsResponse, ValidateBankDetailsResponse}
-import com.sun.tools.javac.tree.Pretty
+import bars.model.ValidateBankDetailsResponse
 import config.AppConfig
 
 import javax.inject.{Inject, Singleton}
 import journey.Journey
-import play.api.libs.json.Json
-import play.api.libs.json.Json.prettyPrint
 import play.api.mvc.Request
 import ssttparrangement.SubmissionError
 import ssttpcalculator.model.PaymentSchedule
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
 import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal

@@ -55,7 +55,7 @@ class ItSpec
 
   protected val overrideConfig: Map[String, Any] = Map.empty
 
-  protected lazy val configMap: Map[String, Any] = Map(
+  protected lazy val configMap: Map[String, Any] = Map[String, Any](
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,

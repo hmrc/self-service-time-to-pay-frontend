@@ -118,10 +118,10 @@
             }
 
     @(if (total <= 0) {
-        viewsHelpers.form(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP(), 'id -> "we-cannot-agree-your-pp") {
+        viewsHelpers.form(ssttpaffordability.routes.AffordabilityController.getWeCannotAgreeYourPP(), Symbol("id") -> "we-cannot-agree-your-pp") {
             viewsHelpers.continue()
         }
-            } else { viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getCalculateInstalments(), 'id -> "how-much-you-could-afford") {
+            } else { viewsHelpers.form(ssttpcalculator.routes.CalculatorController.getCalculateInstalments(), Symbol("id") -> "how-much-you-could-afford") {
             viewsHelpers.continue()
         }
         })

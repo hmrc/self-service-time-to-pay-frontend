@@ -26,7 +26,7 @@ import controllers.ValueClassBinder._
 
 import scala.collection.immutable
 
-sealed trait Language extends EnumEntry {
+sealed trait Language extends EnumEntry with Product with Serializable {
   def code: String
   def label: String
   def hiddenText: String

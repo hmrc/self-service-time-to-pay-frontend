@@ -22,7 +22,7 @@ import play.api.libs.json._
 object EnumFormat {
   def apply[T <: EnumEntry](e: Enum[T]): Format[T] = Format(
     Reads {
-      case JsString(value) => e.withNameOption(value).map(JsSuccess(_)).getOrElse(JsError(s"Unknown ${e.getClass.getSimpleName} value: $value"))
+      case JsString(value) => e.withNameOption(value).map(JsSuccess(_)).getOrElse[JsResult[T]](JsError(s"Unknown ${e.getClass.getSimpleName} value: $value"))
       case _               => JsError("Can only parse String")
     },
     Writes(v => JsString(v.entryName)))

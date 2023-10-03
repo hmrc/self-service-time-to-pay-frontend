@@ -30,9 +30,9 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }
 
@@ -43,13 +43,13 @@ class InstalmentSummarySelectDatePage(baseUrl: BaseUrl)(implicit webDriver: WebD
 
   def assertErrorPageInvalidNumberIsDisplayed(): Unit = probing {
     readPath() shouldBe path
-    val expectedLines = Expected.ErrorTextInvalidDay().stripSpaces.split("\n")
+    val expectedLines = Expected.ErrorTextInvalidDay().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }
 
   def assertErrorPageNoDayIsDisplayed(): Unit = probing {
     readPath() shouldBe path
-    val expectedLines = Expected.ErrorTextNoDay().stripSpaces.split("\n")
+    val expectedLines = Expected.ErrorTextNoDay().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }
 

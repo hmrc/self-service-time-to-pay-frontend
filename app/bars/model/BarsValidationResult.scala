@@ -16,9 +16,7 @@
 
 package bars.model
 
-import play.api.libs.json.{Json, OFormat}
-
-sealed trait BarsValidationResult
+sealed trait BarsValidationResult extends Product with Serializable
 final case class ValidBankDetails(obfuscatedBarsResponse: BarsResponseOk) extends BarsValidationResult
 final case class InvalidBankDetails(obfuscatedBarsResponse: BarsResponse) extends BarsValidationResult
 

@@ -30,22 +30,22 @@ class HowMuchCanYouPayEachMonthPageLegCalc(baseUrl: BaseUrl)(implicit webDriver:
   import WebBrowser._
   override def assertInitialPageIsDisplayed(implicit lang: Language = English): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
-    val expectedLines = ExpectedLegacyCalculator.MainText.DefaultCalculations().stripSpaces().split("\n")
+    val expectedLines = ExpectedLegacyCalculator.MainText.DefaultCalculations().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }
 
   override def assertInitialPageContentIsDisplayed(implicit lang: Language = English): Unit = probing {
-    val expectedLines = ExpectedLegacyCalculator.MainText.DefaultCalculations().stripSpaces().split("\n")
+    val expectedLines = ExpectedLegacyCalculator.MainText.DefaultCalculations().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }
 
   override def customAmountOptionIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
-    val expectedLines = ExpectedLegacyCalculator.MainText.CustomOption().stripSpaces().split("\n")
+    val expectedLines = ExpectedLegacyCalculator.MainText.CustomOption().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }
@@ -69,7 +69,7 @@ class HowMuchCanYouPayEachMonthPageLegCalc(baseUrl: BaseUrl)(implicit webDriver:
                                                             months:   Option[String] = None,
                                                             interest: Option[String] = None
   )(implicit lang: Language = English): Unit = probing {
-    val expectedLines = ExpectedLegacyCalculator.MainText.CustomAmountDisplayed(amount).stripSpaces().split("\n")
+    val expectedLines = ExpectedLegacyCalculator.MainText.CustomAmountDisplayed(amount).splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     optionIsDisplayed(amount, months, interest)
     ()

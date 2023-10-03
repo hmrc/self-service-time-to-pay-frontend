@@ -38,7 +38,7 @@ trait WireMockSupport extends BeforeAndAfterAll with BeforeAndAfterEach with Log
     contextlessLogger("wiremock").info("Stopping wire mock server - done")
   }
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     contextlessLogger("wiremock").info("Resetting wire mock server ...")
     WireMock.reset()
     contextlessLogger("wiremock").info("Resetting wire mock server - done")
