@@ -16,14 +16,12 @@
 
 package time.workingdays
 
-package uk.gov.hmrc.time.workingdays
-
 import org.joda.time.LocalDate
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class WorkingDaysPackageLocalDateWithHolidaysSpec extends AnyWordSpecLike with Matchers {
-  implicit val bankHolidays = BankHolidays.eventSet
+class WorkingDaysPackageLocateDateWithHolidaysSpec extends AnyWordSpecLike with Matchers {
+  implicit val bankHolidays: BankHolidaySet = BankHolidays.eventSet
 
   "LocalDateWithHoliday - isBankHoliday" should {
     "say that Christmas Day 2012 is a bank holiday" in {

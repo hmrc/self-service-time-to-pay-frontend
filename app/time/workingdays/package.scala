@@ -16,7 +16,7 @@
 
 package time
 
-import scala.annotation.implicitNotFound
+import scala.annotation.{implicitNotFound, tailrec}
 import org.joda.time.{DateTimeConstants, LocalDate}
 
 package object workingdays {
@@ -86,6 +86,7 @@ package object workingdays {
       }
     }
 
+    @tailrec
     private def workingDaysHelper(dayCount: Int, nextDate: LocalDate)(implicit nextDateFunction: (LocalDate, Int) => LocalDate): LocalDate = {
       dayCount match {
         case 0 if nextDate.isWorkingDay => nextDate
@@ -96,6 +97,7 @@ package object workingdays {
     }
 
     private def rollToWorkingDay(date: LocalDate)(implicit rollingFunction: (LocalDate, Int) => LocalDate): LocalDate = {
+        @tailrec
         def helper(date: LocalDate): LocalDate = {
           val previousDate = rollingFunction(date, 1)
           if (previousDate.isWorkingDay) previousDate

@@ -42,7 +42,8 @@
             <datalist id="@{elements.field.name}_datalist">
             @{
                 elements.args(Symbol("datalist")) match {
-                    case t:Traversable[_] => t.foreach( v => <option value="@v"/> )
+                    case t:Iterable[_] => t.foreach( v => <option value="@v"/> )
+                    case _ => ""
                 }
             }
             </datalist>

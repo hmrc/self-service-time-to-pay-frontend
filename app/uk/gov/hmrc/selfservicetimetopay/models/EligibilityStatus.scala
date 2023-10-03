@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfservicetimetopay.models
 import play.api.libs.json._
 import uk.gov.hmrc.selfservicetimetopay.modelsFormat.parseFromString
 
-sealed abstract class Reason(val name: String)
+sealed abstract class Reason(val name: String) extends Product with Serializable
 
 case object NoDebt extends Reason("NoDebt")
 case object DebtIsInsignificant extends Reason("DebtIsInsignificant")

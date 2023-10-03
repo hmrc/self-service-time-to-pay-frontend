@@ -57,7 +57,7 @@ class BarsConnector @Inject() (
     httpClient.POST[ValidateBankDetailsRequest, HttpResponse](url, validateBankAccountRequest)
       .map {
         case r: HttpResponse if r.status == 200 => BarsResponseOk(Json.parse(r.body).as[ValidateBankDetailsResponse])
-        case r: HttpResponse if r.status == 400 =>
+        case r: HttpResponse =>
 
           HttpReads.handleResponseEither("POST", url)(r) match {
             case Right(_) =>
@@ -66,7 +66,7 @@ class BarsConnector @Inject() (
               if (barsError.code == BarsError.sortCodeOnDenyList) {
                 BarsResponseSortCodeOnDenyList(barsError)
               } else {
-                throw new RuntimeException(s"Unhandled error code for 400 HttpResponse: [$barsError]")
+                throw new RuntimeException(s"Unhandled error code for ${r.status}400 HttpResponse: [$barsError]")
               }
             case Left(upstreamErrorResponse) =>
               throw upstreamErrorResponse

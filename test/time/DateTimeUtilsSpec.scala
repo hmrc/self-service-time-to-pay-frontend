@@ -16,7 +16,7 @@
 
 package time
 
-import uk.gov.hmrc.time.DateTimeUtils._
+import time.DateTimeUtils._
 import org.joda.time.LocalDate
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike

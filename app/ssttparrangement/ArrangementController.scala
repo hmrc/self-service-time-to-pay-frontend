@@ -287,7 +287,7 @@ class ArrangementController @Inject() (
         val schedule = selectedSchedule(journey)
         Ok(views.application_complete(
           debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
-          transactionId = journey.taxpayer.selfAssessment.utr + clockProvider.now().toString,
+          transactionId = journey.taxpayer.selfAssessment.utr.value + clockProvider.now().toString,
           directDebit,
           schedule,
           journey.ddRef

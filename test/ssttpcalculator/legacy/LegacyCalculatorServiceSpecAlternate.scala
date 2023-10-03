@@ -63,14 +63,14 @@ class LegacyCalculatorServiceSpecAlternate extends ItSpec with Logging {
 
       contextlessLogger("test").info(s"Payment Schedule: Initial: ${schedule.initialPayment}, Over ${schedule.instalments.size}, Regular: ${schedule.instalments.head.amount}, Final: ${schedule.instalments.last.amount}, Total: $totalPaid")
 
-      totalPaid.doubleValue() shouldBe totalPayable.doubleValue()
-      schedule.totalInterestCharged.doubleValue() shouldBe totalInterestCharged.doubleValue()
+      totalPaid.doubleValue shouldBe totalPayable.doubleValue()
+      schedule.totalInterestCharged.doubleValue shouldBe totalInterestCharged.doubleValue()
 
       val instalments = schedule.instalments
 
       instalments.size shouldBe duration
       instalments.head.amount shouldBe regularInstalmentAmount
-      instalments.last.amount.doubleValue() shouldBe finalInstalmentAmount.doubleValue()
+      instalments.last.amount.doubleValue shouldBe finalInstalmentAmount.doubleValue()
     }
   }
 

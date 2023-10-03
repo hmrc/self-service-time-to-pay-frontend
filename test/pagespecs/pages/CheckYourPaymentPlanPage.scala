@@ -31,9 +31,9 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }
@@ -186,7 +186,7 @@ class CheckYourPaymentPlanPage(baseUrl: BaseUrl, paymentDayOfMonthEnglish: Strin
   }
 
   def assertWarningIsDisplayed(implicit lang: Language): Unit = probing {
-    val expectedLines = Expected.WarningText().stripSpaces().split("\n")
+    val expectedLines = Expected.WarningText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }
