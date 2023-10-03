@@ -134,7 +134,7 @@ class CalculatorTaxLiabilitiesPageSpec extends ItSpec {
     startPage.clickOnStartNowButton()
 
     import taxLiabilitiesPage._
-    val expectedLines = LateDebitCase.Expected.MainText()(English).stripSpaces().split("\n")
+    val expectedLines = LateDebitCase.Expected.MainText()(English).splitIntoLines()
     taxLiabilitiesPage.assertContentMatchesExpectedLines(expectedLines)
   }
 }

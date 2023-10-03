@@ -164,5 +164,10 @@ abstract class BasePage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) {
       .split("\n").map(_.trim) //trim each line
       .filterNot(_ == "") //remove any empty lines
       .mkString("\n")
+
+    def splitIntoLines(): Seq[String] = s
+      .stripSpaces()
+      .split("\n")
+      .toIndexedSeq
   }
 }

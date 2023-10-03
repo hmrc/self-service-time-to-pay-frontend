@@ -50,4 +50,6 @@ object AuditStub extends Eventually {
     )
   }
 
+  def verifyNothingAudited(): Unit = verify(0, postRequestedFor(urlPathEqualTo(auditUrl)))
+
 }

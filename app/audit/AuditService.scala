@@ -16,6 +16,7 @@
 
 package audit
 
+import bars.model.ValidateBankDetailsResponse
 import config.AppConfig
 
 import javax.inject.{Inject, Singleton}
@@ -30,6 +31,8 @@ import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
 import req.RequestSupport._
 import ssttpcalculator.legacy.CalculatorService
+import timetopaytaxpayer.cor.model.SaUtr
+import uk.gov.hmrc.selfservicetimetopay.models.TypeOfAccountDetails
 import util.Logging
 
 import scala.util.{Failure, Success}
@@ -65,6 +68,26 @@ class AuditService @Inject() (
       calculatorService: CalculatorService
   )(implicit request: Request[_], appConfig: AppConfig): Unit = {
     val event = DataEventFactory.planSetUpEvent(journey, schedule, calculatorService)
+    sendEvent(event)
+  }
+
+  def sendBarsValidateEvent(
+      sortCode:                  String,
+      accountNumber:             String,
+      accountName:               String,
+      maybeTypeOfAccountDetails: Option[TypeOfAccountDetails],
+      saUtr:                     SaUtr,
+      barsResp:                  ValidateBankDetailsResponse
+  )(implicit request: Request[_]): Unit = {
+
+    val event: ExtendedDataEvent = DataEventFactory.barsValidateEvent(
+      sortCode                  = sortCode,
+      accountNumber             = accountNumber,
+      accountName               = accountName,
+      maybeTypeOfAccountDetails = maybeTypeOfAccountDetails,
+      saUtr                     = saUtr,
+      barsResp                  = barsResp
+    )
     sendEvent(event)
   }
 

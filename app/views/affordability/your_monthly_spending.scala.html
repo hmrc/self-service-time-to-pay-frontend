@@ -60,7 +60,7 @@
 
         @formWithCsrf(
             action = ssttpaffordability.routes.AffordabilityController.submitMonthlySpending(),
-            'id -> "monthlyspending-form"
+            Symbol("id") -> "monthlyspending-form"
         ){
             @input(Input(
                 id = "housing",

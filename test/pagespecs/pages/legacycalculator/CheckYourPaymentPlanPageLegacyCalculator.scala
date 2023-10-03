@@ -34,9 +34,9 @@ class CheckYourPaymentPlanPageLegacyCalculator(
 
   override def assertInitialPageIsDisplayed(implicit lang: Language = English): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val expectedLines = ExpectedLegacyCalculator.MainText().stripSpaces().split("\n")
+    val expectedLines = ExpectedLegacyCalculator.MainText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }

@@ -38,10 +38,10 @@
 
     @viewsHelpers.form(
       ssttpeligibility.routes.SelfServiceTimeToPayController.submitAccessYouSelfAssessmentOnline(),
-      'class -> "group",
-      'id -> "start"
+      Symbol("class") -> "group",
+      Symbol("id") -> "start"
     ) {
-      @submit('_buttonClass -> "button--get-started"){@messages("ssttp.you-need-to-request-access-to-self-assessment.button-label")}
+      @submit(Symbol("_buttonClass") -> "button--get-started"){@messages("ssttp.you-need-to-request-access-to-self-assessment.button-label")}
     }
 
 }

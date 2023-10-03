@@ -53,7 +53,7 @@ class AuthenticatedAction @Inject() (
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
     implicit val r: Request[A] = request
 
-    af.authorised.retrieve(
+    af.authorised().retrieve(
       Retrievals.allEnrolments and Retrievals.saUtr and Retrievals.credentials
     ).apply {
         case enrolments ~ utr ~ credentials =>

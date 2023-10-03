@@ -19,11 +19,11 @@ package ssttpcalculator
 object BigDecimalUtil {
 
   def roundDownToNearestTen(value: BigDecimal): BigDecimal = {
-    BigDecimal((value.longValue() / 10) * 10)
+    BigDecimal((value.longValue / 10) * 10)
   }
 
   def roundUpToNearestTen(value: BigDecimal): BigDecimal = {
-    val roundedLong = (value.longValue() / 10) * 10
+    val roundedLong = (value.longValue / 10) * 10
     if (roundedLong == value) value //when no rounding is needed (value is exact multiplication of 10)
     else BigDecimal(roundedLong + 10)
   }

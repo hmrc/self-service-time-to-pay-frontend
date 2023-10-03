@@ -31,9 +31,9 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
 
   override def assertInitialPageIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }
 
@@ -44,12 +44,12 @@ class PaymentTodayCalculatorPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver
 
   def assertErrorIsDisplayed: Assertion = probing {
     readPath() shouldBe path
-    readMain().stripSpaces shouldBe Expected.TextError().stripSpaces()
+    readMain().stripSpaces() shouldBe Expected.TextError().stripSpaces()
   }
 
   def assertFormatErrorIsDisplayed: Assertion = probing {
     readPath() shouldBe path
-    readMain().stripSpaces shouldBe Expected.FormatTextError().stripSpaces()
+    readMain().stripSpaces() shouldBe Expected.FormatTextError().stripSpaces()
   }
 
   def enterAmount(value: String): Unit = {

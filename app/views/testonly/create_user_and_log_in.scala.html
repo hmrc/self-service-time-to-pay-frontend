@@ -49,11 +49,11 @@
     <h1 class="govuk-heading-l">Define your test user</h1>
     <p class="govuk-body">This is `test-only` endpoint for testing purposes.</p>
 
-    @viewsHelpers.form(_root_.testonly.routes.TestUsersController.logIn(), 'class -> "group") {
+    @viewsHelpers.form(_root_.testonly.routes.TestUsersController.logIn(), Symbol("class") -> "group") {
         @if(dataForm.hasErrors) {
             @viewsHelpers.errorSummary("Fix errors", dataForm)
         }
-        @button('type -> "submit") {
+        @button(Symbol("type") -> "submit") {
             create user and log in
         }
 
@@ -62,8 +62,8 @@
         <h2 class="govuk-heading-m">Frozen Date</h2>
             <span class="flush--ends govuk-hint">YYYY-MM-DD</span>
             @textinput(field = dataForm("todays-date"),
-                'label -> "todays-date",
-                '_inputClass -> "input--cleared"
+                Symbol("label") -> "todays-date",
+                Symbol("_inputClass") -> "input--cleared"
             )
             </p>
 
@@ -71,8 +71,8 @@
         <h2 class="govuk-heading-m">Continue URL</h2>
             <span class="flush--ends form-field--hint"></span>
             @textinput(field = dataForm("continue-url"),
-                'label -> "continue-url",
-                '_inputClass -> "input--cleared"
+                Symbol("label") -> "continue-url",
+                Symbol("_inputClass") -> "input--cleared"
             )
             </p>
 
@@ -82,8 +82,8 @@
             <span class="flush--ends govuk-hint">This is known as well as <em>AuthoriyId</em>
                 . Put here any random string or leave empty for random value.</span>
             @textinput(field = dataForm("authority-id"),
-                'label -> "authority-id",
-                '_inputClass -> "input--cleared"
+                Symbol("label") -> "authority-id",
+                Symbol("_inputClass") -> "input--cleared"
             )
             </p>
 
@@ -115,9 +115,9 @@
         <h2 class="govuk-heading-m">NINO</h2>
             <span class="flush--ends govuk-hint">legal NINO or leave blank for none</span>
             @textinput(field = dataForm("nino"),
-                'label -> "NINO",
-                '_maxlength -> "9",
-                '_inputClass -> "input--cleared"
+                Symbol("label") -> "NINO",
+                Symbol("_maxlength") -> "9",
+                Symbol("_inputClass") -> "input--cleared"
             )
             </p>
 
@@ -169,8 +169,8 @@
         <h2 class="govuk-heading-m">UTR</h2>
             <span class="flush--ends govuk-hint">10 digits or leave blank for random UTR</span>
             @textinput(field = dataForm("utr"),
-                '_maxlength -> "10",
-                '_inputClass -> "input--cleared"
+                Symbol("_maxlength") -> "10",
+                Symbol("_inputClass") -> "input--cleared"
             )
             </p>
 
@@ -179,9 +179,9 @@
             <span class="flush--ends govuk-hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/returns</em>
                 . Read DES API Tracker for more details.</span>
             @textinput(field = dataForm("returns-status-code"),
-                'label -> "returns http status code",
-                '_maxlength -> "3",
-                '_inputClass -> "input--cleared"
+                Symbol("label") -> "returns http status code",
+                Symbol("_maxlength") -> "3",
+                Symbol("_inputClass") -> "input--cleared"
             )
             <label class="govuk-label" for="returns-response-body">returns json response</label>
             <textarea
@@ -199,9 +199,9 @@
             <span class="flush--ends govuk-hint">Define response in DES-STUB for <em>/sa/taxpayer/:utr/debits</em>
                 . Read DES API Tracker for more details.</span>
             @textinput(field = dataForm("debits-status-code"),
-                'label -> "debits http status code",
-                '_maxlength -> "3",
-                '_inputClass -> "input--cleared"
+                Symbol("label") -> "debits http status code",
+                Symbol("_maxlength") -> "3",
+                Symbol("_inputClass") -> "input--cleared"
             )
             <label class="govuk-label" for="debits-response-body">debits json response</label>
             <textarea
@@ -220,9 +220,9 @@
             <span class="flush--ends govuk-hint">Define response in SA-STUB for <em>
                 GET /sa/individual/:saUtr/designatory-details/taxpayer</em>. Read SA docs for more details.</span>
             @textinput(field = dataForm("sa-taxpayer-status-code"),
-                'label -> "sa taxpayer http status code",
-                '_maxlength -> "3",
-                '_inputClass -> "input--cleared"
+                Symbol("label") -> "sa taxpayer http status code",
+                Symbol("_maxlength") -> "3",
+                Symbol("_inputClass") -> "input--cleared"
             )
             <label class="govuk-label" for="sa-taxpayer-response-body">Taxpayer definition in SA json response</label>
             <textarea
@@ -236,7 +236,7 @@
             id=sa-taxpayer-response-body>@dataForm("sa-taxpayer-response-body").value.getOrElse("")</textarea>
             </p>
 
-            @button('type -> "submit") {
+            @button(Symbol("type") -> "submit") {
                 create user and log in
             }
         </div>

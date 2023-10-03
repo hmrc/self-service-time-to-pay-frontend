@@ -320,7 +320,7 @@ class CalculatorController @Inject() (
   )(implicit request: Request[_]): Map[PaymentPlanOption, PaymentSchedule] = {
     maybePreviousCustomAmount(journey, defaultPlanOptions) match {
       case None                 => defaultPlanOptions
-      case Some(customSchedule) => Map((PaymentPlanOption.Custom, customSchedule)) ++ defaultPlanOptions
+      case Some(customSchedule) => (Map((PaymentPlanOption.Custom, customSchedule)) ++ defaultPlanOptions).toMap
     }
   }
 
