@@ -21,7 +21,6 @@ import javax.inject.Inject
 import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
 import uk.gov.hmrc.selfservicetimetopay.models._
 
-
 /**
  * Determines if a tax payer is eligible for self service.
  *
