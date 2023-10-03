@@ -66,7 +66,7 @@ class BarsConnector @Inject() (
               if (barsError.code == BarsError.sortCodeOnDenyList) {
                 BarsResponseSortCodeOnDenyList(barsError)
               } else {
-                throw new RuntimeException(s"Unhandled error code for ${r.status}400 HttpResponse: [$barsError]")
+                throw new RuntimeException(s"Unhandled error code for ${r.status} HttpResponse: [$barsError]")
               }
             case Left(upstreamErrorResponse) =>
               throw upstreamErrorResponse

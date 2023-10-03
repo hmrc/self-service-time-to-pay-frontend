@@ -48,7 +48,7 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: Execution
     for {
       journey <- getJourney()
       result <- journey match {
-        case journey if journey.status == ApplicationComplete =>
+        case journey if journey.isFinished =>
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
         case _ =>

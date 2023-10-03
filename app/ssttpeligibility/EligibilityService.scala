@@ -18,12 +18,9 @@ package ssttpeligibility
 
 import java.time.{LocalDate, MonthDay}
 import javax.inject.Inject
-import play.api.Configuration
 import timetopaytaxpayer.cor.model.{Debit, Return, SelfAssessmentDetails, Taxpayer}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.selfservicetimetopay.models._
 
-import scala.math.Numeric.BigIntIsIntegral
 
 /**
  * Determines if a tax payer is eligible for self service.
