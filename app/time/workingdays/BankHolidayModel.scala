@@ -16,7 +16,7 @@
 
 package time.workingdays
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
 
 case class BankHolidaySet(division: String, events: List[BankHoliday])
 

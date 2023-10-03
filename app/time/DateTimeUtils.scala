@@ -16,13 +16,14 @@
 
 package time
 
-import org.joda.time._
+import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, LocalDateTime, ZoneId}
 
 trait DateTimeUtils {
-  def now: DateTime = DateTime.now.withZone(DateTimeZone.UTC)
+  def now: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
 
   def daysBetween(start: LocalDate, end: LocalDate): Int =
-    Days.daysBetween(start.toDateTimeAtStartOfDay(DateTimeZone.UTC), end.toDateTimeAtStartOfDay(DateTimeZone.UTC)).getDays
+    ChronoUnit.DAYS.between(start.atStartOfDay(), end.atStartOfDay()).toInt
 
   def isEqualOrAfter(date: LocalDate, laterDate: LocalDate): Boolean = date.isEqual(laterDate) || date.isBefore(laterDate)
 }

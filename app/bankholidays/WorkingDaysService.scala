@@ -18,7 +18,6 @@ package bankholidays
 
 import java.time.{Clock, LocalDate}
 
-import org.joda.time
 import _root_.time.workingdays._
 
 import scala.language.postfixOps
@@ -27,14 +26,13 @@ object WorkingDaysService {
   private implicit lazy val bankHolidays: BankHolidaySet = BankHolidays()
 
   def addWorkingDays(date: LocalDate, days: Int)(implicit clock: Clock): LocalDate = {
-    val joda = turnJavaTimeToJoda(date)
-    val jodaLocalDate: time.LocalDate = joda.plusWorkingDays(days)
+    val newDate = date.plusWorkingDays(days)
 
     LocalDate
       .now(clock)
-      .withYear(jodaLocalDate.getYear)
-      .withDayOfMonth(jodaLocalDate.getDayOfMonth)
-      .withMonth(jodaLocalDate.getMonthOfYear)
+      .withYear(newDate.getYear)
+      .withDayOfMonth(newDate.getDayOfMonth)
+      .withMonth(newDate.getMonthValue)
   }
 
   private def turnJavaTimeToJoda(date: LocalDate) = {

@@ -16,8 +16,8 @@
 
 package time
 
+import java.time.{DayOfWeek, LocalDate}
 import scala.annotation.{implicitNotFound, tailrec}
-import org.joda.time.{DateTimeConstants, LocalDate}
 
 package object workingdays {
 
@@ -72,7 +72,7 @@ package object workingdays {
       rollToWorkingDay(wrapped)
     }
 
-    def isWeekendDay: Boolean = wrapped.getDayOfWeek == DateTimeConstants.SUNDAY || wrapped.getDayOfWeek == DateTimeConstants.SATURDAY
+    def isWeekendDay: Boolean = wrapped.getDayOfWeek == DayOfWeek.SUNDAY || wrapped.getDayOfWeek == DayOfWeek.SATURDAY
 
     def isBankHoliday: Boolean = !bankHolidays.events.filter(_.date == wrapped).isEmpty
 

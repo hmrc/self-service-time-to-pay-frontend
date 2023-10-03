@@ -17,27 +17,28 @@
 package time
 
 import time.DateTimeUtils._
-import org.joda.time.LocalDate
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
+
+import java.time.LocalDate
 
 class DateTimeUtilsSpec extends AnyWordSpecLike with Matchers {
 
   "isEqualOrAfter" should {
     "return true if first date is after second date" in {
-      val firstDate = new LocalDate()
+      val firstDate = LocalDate.now()
       val secondDate = firstDate.plusDays(2)
       isEqualOrAfter(firstDate, secondDate) shouldBe true
     }
 
     "return true if first date is equal to second date" in {
-      val firstDate = new LocalDate()
+      val firstDate = LocalDate.now()
       val secondDate = firstDate
       isEqualOrAfter(firstDate, secondDate) shouldBe true
     }
 
     "return false if first date is before second date" in {
-      val firstDate = new LocalDate()
+      val firstDate = LocalDate.now()
       val secondDate = firstDate.minusDays(2)
       isEqualOrAfter(firstDate, secondDate) shouldBe false
     }
