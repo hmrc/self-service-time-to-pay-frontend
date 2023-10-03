@@ -27,8 +27,8 @@ class NotEnrolledPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
+    val expectedLines = Expected.MainText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }
 

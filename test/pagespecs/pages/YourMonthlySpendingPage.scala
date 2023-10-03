@@ -37,10 +37,10 @@ class YourMonthlySpendingPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) e
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }
 

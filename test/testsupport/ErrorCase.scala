@@ -16,7 +16,7 @@
 
 package testsupport
 
-abstract class ErrorCase
+sealed trait ErrorCase
 
 final case class AccountName() extends ErrorCase
 final case class SortCode() extends ErrorCase

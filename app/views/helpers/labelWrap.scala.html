@@ -16,7 +16,7 @@
 
 @(args:(Symbol, Any)*)(content: => Html = Html(""))(implicit messages: play.api.i18n.Messages)
 @argsMap = @{ args.toMap }
-<label@if(argsMap.get('_modifierClass)){ class="govuk-label @argsMap.get('_modifierClass)"}@if(argsMap.get('for)){ for="@argsMap.get('for)"}>
-    @argsMap.getOrElse('labelText, "")
+<label@if(argsMap.get(Symbol("_modifierClass"))){ class="govuk-label @argsMap.get(Symbol("_modifierClass"))"}@if(argsMap.get(Symbol("for"))){ for="@argsMap.get(Symbol("for"))"}>
+    @argsMap.getOrElse(Symbol("labelText"), "")
     @content
 </label>

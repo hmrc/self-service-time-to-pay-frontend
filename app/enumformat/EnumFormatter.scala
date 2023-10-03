@@ -24,7 +24,7 @@ import play.api.data.format.Formatter
 object EnumFormatter {
 
   def format[A <: EnumEntry](
-      enum:                    Enum[A],
+      `enum`:                  Enum[A],
       errorMessageIfMissing:   String  = "missing input",
       errorMessageIfEnumError: String  = "invalid input",
       insensitive:             Boolean = false

@@ -16,20 +16,26 @@
 
 package audit
 
-import java.time.temporal.ChronoUnit
-import audit.model.AuditPaymentSchedule
+import audit.model.{AuditIncome, AuditPaymentSchedule, AuditSpending}
+import bars.model.ValidateBankDetailsResponse
 import config.AppConfig
 import journey.Journey
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Request
-import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import req.RequestSupport._
 import ssttparrangement.SubmissionError
 import ssttpcalculator.CalculatorType
 import ssttpcalculator.legacy.CalculatorService
 import ssttpcalculator.model.PaymentPlanOption.{Additional, Basic, Higher}
 import ssttpcalculator.model.PaymentSchedule
+import timetopaytaxpayer.cor.model.SaUtr
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import uk.gov.hmrc.selfservicetimetopay.models.TypeOfAccountDetails
+import util.CurrencyUtil.{formatToCurrencyString, formatToCurrencyStringWithTrailingZeros}
+
+import java.time.temporal.ChronoUnit
+import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 object DataEventFactory {
 
@@ -46,13 +52,13 @@ object DataEventFactory {
       "utr" -> journey.taxpayer.selfAssessment.utr.value,
       "bankDetails" -> bankDetails(journey),
       "schedule" -> Json.obj(
-        "initialPaymentAmount" -> schedule.initialPayment,
+        "initialPaymentAmount" -> formatToCurrencyStringWithTrailingZeros(schedule.initialPayment),
         "installments" -> Json.toJson(schedule.instalments.sortBy(_.paymentDate.toEpochDay)),
         "numberOfInstallments" -> schedule.instalments.length,
         "installmentLengthCalendarMonths" -> ChronoUnit.MONTHS.between(schedule.startDate, schedule.endDate),
-        "totalPaymentWithoutInterest" -> schedule.amountToPay,
-        "totalInterestCharged" -> schedule.totalInterestCharged,
-        "totalPayable" -> schedule.totalPayable)
+        "totalPaymentWithoutInterest" -> formatToCurrencyStringWithTrailingZeros(schedule.amountToPay),
+        "totalInterestCharged" -> formatToCurrencyString(schedule.totalInterestCharged),
+        "totalPayable" -> formatToCurrencyStringWithTrailingZeros(schedule.totalPayable))
     )
 
     ExtendedDataEvent(
@@ -73,10 +79,10 @@ object DataEventFactory {
     }
 
     val detail = Json.obj(
-      "totalDebt" -> journey.debits.map(_.amount).sum.toString,
-      "spending" -> journey.maybeSpending.map(_.totalSpending).getOrElse(BigDecimal(0)).toString,
-      "income" -> journey.maybeIncome.map(_.totalIncome).getOrElse(BigDecimal(0)).toString,
-      "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
+      "totalDebt" -> formatToCurrencyStringWithTrailingZeros(journey.debits.map(_.amount).sum),
+      "halfDisposableIncome" -> formatToCurrencyStringWithTrailingZeros((journey.remainingIncomeAfterSpending / 2).setScale(2, HALF_UP)),
+      "income" -> Json.toJson(AuditIncome.fromIncome(journey.maybeIncome)),
+      "outgoings" -> Json.toJson(AuditSpending.fromSpending(journey.maybeSpending)),
       "status" -> status,
       "utr" -> journey.taxpayer.selfAssessment.utr
     )
@@ -101,7 +107,9 @@ object DataEventFactory {
   )(implicit request: Request[_], appConfig: AppConfig): ExtendedDataEvent = {
     val detail = Json.obj(
       "bankDetails" -> bankDetails(journey),
-      "halfDisposableIncome" -> (journey.remainingIncomeAfterSpending / 2).toString,
+      "halfDisposableIncome" -> formatToCurrencyStringWithTrailingZeros((journey.remainingIncomeAfterSpending / 2).setScale(2, HALF_UP)),
+      "income" -> Json.toJson(AuditIncome.fromIncome(journey.maybeIncome)),
+      "outgoings" -> Json.toJson(AuditSpending.fromSpending(journey.maybeSpending)),
       "selectionType" -> typeOfPlan(journey, calculatorService),
       "lessThanOrMoreThanTwelveMonths" -> lessThanOrMoreThanTwelveMonths(schedule),
       "schedule" -> Json.toJson(AuditPaymentSchedule(schedule)),
@@ -115,6 +123,28 @@ object DataEventFactory {
       auditSource = "pay-what-you-owe",
       auditType   = "ManualAffordabilityPlanSetUp",
       tags        = hcTags("setup-new-self-assessment-time-to-pay-plan"),
+      detail      = detail
+    )
+  }
+
+  def barsValidateEvent(sortCode:                  String,
+                        accountNumber:             String,
+                        accountName:               String,
+                        maybeTypeOfAccountDetails: Option[TypeOfAccountDetails],
+                        saUtr:                     SaUtr,
+                        barsResp:                  ValidateBankDetailsResponse
+  )(implicit request: Request[_]): ExtendedDataEvent = {
+
+    val detail = Json.obj(
+      "utr" -> saUtr.value,
+      "request" -> barsRequest(sortCode, accountNumber, accountName, maybeTypeOfAccountDetails),
+      "response" -> barsResponse(barsResp)
+    )
+
+    ExtendedDataEvent(
+      auditSource = "pay-what-you-owe",
+      auditType   = "BARSCheck",
+      tags        = hcTags("BARSCheck"),
       detail      = detail
     )
   }
@@ -160,6 +190,32 @@ object DataEventFactory {
     "name" -> journey.bankDetails.accountName,
     "accountNumber" -> journey.bankDetails.accountNumber,
     "sortCode" -> journey.bankDetails.sortCode
+  )
+
+  private def barsRequest(sortCode:             String,
+                          accountNumber:        String,
+                          accountName:          String,
+                          TypeOfAccountDetails: Option[TypeOfAccountDetails]): JsObject =
+    Json.obj(
+      "account" -> Json.obj(
+        "accountType" -> TypeOfAccountDetails.map(_.typeOfAccount),
+        "accountHolderName" -> accountName,
+        "sortCode" -> sortCode,
+        "accountNumber" -> accountNumber
+      )
+    )
+
+  private def barsResponse(barsResp: ValidateBankDetailsResponse): JsObject = Json.obj(
+    "isBankAccountValid" -> barsResp.isValid,
+    "barsResponse" -> Json.obj(
+      "accountNumberIsWellFormatted" -> barsResp.accountNumberIsWellFormatted.toString,
+      "nonStandardAccountDetailsRequiredForBacs" -> barsResp.nonStandardAccountDetailsRequiredForBacs.toString,
+      "sortCodeIsPresentOnEISCD" -> barsResp.sortCodeIsPresentOnEISCD.toString,
+      "sortCodeBankName" -> barsResp.sortCodeBankName,
+      "sortCodeSupportsDirectDebit" -> barsResp.sortCodeSupportsDirectDebit.map(_.toString),
+      "sortCodeSupportsDirectCredit" -> barsResp.sortCodeSupportsDirectCredit.map(_.toString),
+      "iban" -> barsResp.iban
+    )
   )
 
   private def hcTags(transactionName: String)(implicit request: Request[_]): Map[String, String] = {

@@ -22,10 +22,14 @@ object JsonSyntax extends JsonSyntax
 
 trait JsonSyntax {
 
-  implicit def toJsonOps(s: String) = new {
+  implicit def toJsonOps(s: String): toJsonOps = new toJsonOps {
     def asJson: JsObject = Json.parse(s) match {
       case d: JsObject => d
       case v           => throw new RuntimeException(s"Cant parse as JsObject: $s ")
     }
   }
+}
+
+abstract class toJsonOps {
+  def asJson: JsObject
 }

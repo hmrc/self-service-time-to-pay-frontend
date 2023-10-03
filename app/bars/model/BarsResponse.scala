@@ -17,12 +17,11 @@
 package bars.model
 
 import play.api.libs.json.{Json, OFormat}
-import julienrf.json.derived
 
-sealed trait BarsResponse
+sealed trait BarsResponse extends Serializable with Product
 
 object BarsResponse {
-  implicit val format: OFormat[BarsResponse] = derived.oformat()
+  implicit val format: OFormat[BarsResponse] = Json.format[BarsResponse]
 }
 
 final case class BarsResponseOk(validateBankDetailsResponse: ValidateBankDetailsResponse) extends BarsResponse

@@ -67,14 +67,14 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
     assertInitialPageContentIsDisplayed(lang)
   }
 
   def assertInitialPageContentIsDisplayed(implicit lang: Language = English): Unit = probing {
-    val expectedLines = Expected.MainText.DefaultCalculations().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText.DefaultCalculations().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }
@@ -85,10 +85,10 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
       interest: Option[String] = None
   )(implicit language: Language = Languages.English): Unit = (months, interest) match {
     case (Some(months), Some(interest)) =>
-      val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).stripSpaces().split("\n")
+      val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).splitIntoLines()
       assertContentMatchesExpectedLines(expectedLines)
     case _ =>
-      val expectedLines = Expected.MainText.DefaultOptionsText(amount).stripSpaces().split("\n")
+      val expectedLines = Expected.MainText.DefaultOptionsText(amount).splitIntoLines()
       assertContentMatchesExpectedLines(expectedLines)
   }
 
@@ -98,21 +98,21 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
       interest: Option[String] = None
   )(implicit language: Language = Languages.English): Unit = (months, interest) match {
     case (Some(months), Some(interest)) =>
-      val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).stripSpaces().split("\n")
+      val expectedLines = Expected.MainText.DefaultOptionsText(amount, months, interest).splitIntoLines()
       assertContentDoesNotContainLines(expectedLines)
     case _ =>
-      val expectedLines = Expected.MainText.DefaultOptionsText(amount).stripSpaces().split("\n")
+      val expectedLines = Expected.MainText.DefaultOptionsText(amount).splitIntoLines()
       assertContentDoesNotContainLines(expectedLines)
   }
 
   def customAmountOptionIsDisplayed(implicit lang: Language = Languages.English): Unit = probing {
-    val expectedLines = Expected.MainText.CustomOption().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText.CustomOption().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     ()
   }
 
   def customAmountOptionNotDisplayed(implicit lang: Language = Languages.English): Unit = probing {
-    val expectedLines = Expected.MainText.CustomOption().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText.CustomOption().splitIntoLines()
     assertContentDoesNotContainLines(expectedLines)
     ()
   }
@@ -122,7 +122,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
                                             interest: Option[String] = None
   )(implicit lang: Language = English): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
     assertPageWithCustomAmountContentIsDisplayed(amount, months, interest)(lang)
@@ -133,7 +133,7 @@ class HowMuchCanYouPayEachMonthPage(baseUrl: BaseUrl)(implicit webDriver: WebDri
                                                    months:   Option[String] = None,
                                                    interest: Option[String] = None
   )(implicit lang: Language = English): Unit = probing {
-    val expectedLines = Expected.MainText.CustomAmountDisplayed(amount).stripSpaces().split("\n")
+    val expectedLines = Expected.MainText.CustomAmountDisplayed(amount).splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
     optionIsDisplayed(amount, months, interest)
     ()

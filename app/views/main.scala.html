@@ -111,8 +111,8 @@
     headerBlock = Some(hmrcHeader(Header(
         homepageUrl = "https://www.gov.uk",
         serviceName = Some(messages(navTitle)),
+        signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut().url) else None,
         serviceUrl = ssttpeligibility.routes.SelfServiceTimeToPayController.start().url,
-        signOutHref = if (isLoggedIn) Some(ssttpeligibility.routes.SelfServiceTimeToPayController.signOut(None).url) else None,
         language = if (messages.lang.code == "cy") Cy else En,
         classes = "govuk-!-display-none-print"
     ))),

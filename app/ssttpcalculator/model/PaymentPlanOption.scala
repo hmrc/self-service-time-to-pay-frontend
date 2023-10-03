@@ -20,7 +20,7 @@ import enumeratum._
 
 import scala.collection.immutable
 
-sealed trait PaymentPlanOption extends EnumEntry with EnumEntry.Uncapitalised {
+sealed trait PaymentPlanOption extends EnumEntry with EnumEntry.Uncapitalised with Product with Serializable {
 }
 
 object PaymentPlanOption extends Enum[PaymentPlanOption] with PlayInsensitiveJsonEnum[PaymentPlanOption] {

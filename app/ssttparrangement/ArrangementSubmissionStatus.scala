@@ -20,7 +20,7 @@ import enumeratum._
 
 import scala.collection.immutable
 
-sealed trait ArrangementSubmissionStatus extends EnumEntry
+sealed trait ArrangementSubmissionStatus extends EnumEntry with Product with Serializable
 
 object ArrangementSubmissionStatus extends Enum[ArrangementSubmissionStatus]
   with PlayInsensitiveJsonEnum[ArrangementSubmissionStatus] {

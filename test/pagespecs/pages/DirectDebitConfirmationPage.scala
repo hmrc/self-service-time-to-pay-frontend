@@ -30,9 +30,9 @@ class DirectDebitConfirmationPage(baseUrl: BaseUrl)(implicit webDriver: WebDrive
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() should include(path)
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }
 

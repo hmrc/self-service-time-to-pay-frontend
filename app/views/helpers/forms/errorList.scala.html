@@ -18,9 +18,9 @@
 @import helpers.forms.errorInline
 @argsMap = @{args.toMap}
 @Html(errors.map { e => {
-  val id = argsMap.getOrElse('_fieldId, "").toString
+  val id = argsMap.getOrElse(Symbol("_fieldId"), "").toString
   val key = e._1 + (if(errors.length>1) "-" + errors.indexOf(e) else "")
   val classes:Seq[String] =
-      if(argsMap.contains('_modifierClass)) argsMap.getOrElse('_modifierClass, "").toString.split(" ") else Seq.empty
+      if(argsMap.contains(Symbol("_modifierClass"))) argsMap.getOrElse(Symbol("_modifierClass"), "").toString.split(" ").toIndexedSeq else Seq.empty
   errorInline(id, key, e._2, classes)
 }}.mkString(""))

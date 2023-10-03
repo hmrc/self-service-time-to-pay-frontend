@@ -55,7 +55,7 @@ class InspectorController @Inject() (
 
   def inspect(): Action[AnyContent] = Action.async { implicit request =>
     for {
-      maybeJourney <- journeyService.getMaybeJourney
+      maybeJourney <- journeyService.getMaybeJourney()
     } yield Ok(views.inspector(
       request.session.data,
       List(

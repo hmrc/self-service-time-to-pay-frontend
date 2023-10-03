@@ -16,14 +16,17 @@
 
 package testsupport.testdata
 
+import model.enumsforforms.TypesOfBankAccount
 import play.api.libs.json.JsObject
 import testsupport.JsonSyntax._
 import testsupport.testdata.TdAll.aYearAgo
+import uk.gov.hmrc.selfservicetimetopay.models.TypeOfAccountDetails
 
 object DirectDebitTd {
   val sortCode = "12-34-56"
   val accountNumber = "12345678"
   val accountName = "Mr John Campbell"
+  val typeOfAccountDetails = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true))
 
   val dDIRefNumber = "123ABC123"
 

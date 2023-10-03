@@ -62,10 +62,27 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
             Json.parse(
               s"""
                  |{
-                 |  "totalDebt" : "4900",
-                 |  "spending" : "200",
-                 |  "income" : "1000",
-                 |  "halfDisposableIncome" : "400",
+                 |  "totalDebt" : "4900.00",
+                 |  "halfDisposableIncome" : "400.00",
+                 |  "income" : {
+                 |   "monthlyIncomeAfterTax" : "1000.00",
+                 |   "benefits" : "0.00",
+                 |   "otherMonthlyIncome" : "0.00",
+                 |   "totalIncome" : "1000.00"
+                 |  },
+                 |  "outgoings" : {
+                 |   "housing" : "200.00",
+                 |   "pensionContributions" : "0.00",
+                 |   "councilTax" : "0.00",
+                 |   "utilities" : "0.00",
+                 |   "debtRepayments" : "0.00",
+                 |   "travel" : "0.00",
+                 |   "childcareCosts" : "0.00",
+                 |   "insurance" : "0.00",
+                 |   "groceries" : "0.00",
+                 |   "health" : "0.00",
+                 |   "totalOutgoings" : "200.00"
+                 |  },
                  |  "status" : "Interest greater than or equal to regular payment",
                  |  "utr" : "6573196998"
                  |}""".stripMargin

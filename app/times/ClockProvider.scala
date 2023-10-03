@@ -27,7 +27,7 @@ class ClockProvider {
    * Get's the clock instance, which can be overriden in session (for testing purposes)
    */
   implicit def getClock(implicit request: Request[_]): Clock = {
-    request.readFrozenClock.getOrElse(defaultClock)
+    request.readFrozenClock().getOrElse(defaultClock)
   }
 
   def now()(implicit request: Request[_]): LocalDateTime = LocalDateTime.now(getClock)

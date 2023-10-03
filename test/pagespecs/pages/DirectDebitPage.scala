@@ -30,9 +30,9 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }
 
@@ -43,7 +43,7 @@ class DirectDebitPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends B
 
   def assertErrorPageIsDisplayed(field: ErrorCase, language: Language = English): Unit = probing {
     readPath() shouldBe path
-    val expectedLines = Expected.ErrorText(field, language).stripSpaces().split("\n")
+    val expectedLines = Expected.ErrorText(field, language).splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }
 

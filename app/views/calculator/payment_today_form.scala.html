@@ -62,7 +62,7 @@
     <section class="govuk-body">
     @formWithCsrf(
         action = ssttpcalculator.routes.CalculatorController.submitPaymentToday(),
-       'id -> "paytoday-form"
+       Symbol("id") -> "paytoday-form"
     ){
         @input(Input(
             id = "amount",

@@ -16,18 +16,23 @@
 
 package bars
 
+import audit.AuditService
 import bars.model._
 import play.api.Logging
+import play.api.mvc.Request
+import timetopaytaxpayer.cor.model.SaUtr
+import uk.gov.hmrc.selfservicetimetopay.models.TypeOfAccountDetails
 
 import javax.inject.Inject
-import play.api.mvc.Request
-
 import scala.concurrent.{ExecutionContext, Future}
 
-class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: ExecutionContext) extends Logging {
+class BarsService @Inject() (barsConnector: BarsConnector, auditService: AuditService)(implicit ec: ExecutionContext) extends Logging {
 
-  def validateBankDetails(sortCode:      String,
-                          accountNumber: String
+  def validateBankDetails(sortCode:                  String,
+                          accountNumber:             String,
+                          accountName:               String,
+                          maybeTypeOfAccountDetails: Option[TypeOfAccountDetails],
+                          saUtr:                     SaUtr
   )(implicit request: Request[_]): Future[BarsValidationResult] = {
 
     val validateBankDetailsRequest = ValidateBankDetailsRequest(account = Account.padded(
@@ -39,6 +44,7 @@ class BarsService @Inject() (barsConnector: BarsConnector)(implicit ec: Executio
       barsResponse <- barsConnector.validateBank(validateBankDetailsRequest)
       barsValidationResult = barsResponse match {
         case barsResponse @ BarsResponseOk(validateBankDetailsResponse) =>
+          auditService.sendBarsValidateEvent(sortCode, accountNumber, accountName, maybeTypeOfAccountDetails, saUtr, validateBankDetailsResponse)
           logger.debug(s"BARs response: $barsResponse")
           val obfuscatedBarsResponse = barsResponse.copy(validateBankDetailsResponse.obfuscate)
           if (validateBankDetailsResponse.isValid) ValidBankDetails(obfuscatedBarsResponse) else InvalidBankDetails(obfuscatedBarsResponse)

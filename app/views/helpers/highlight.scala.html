@@ -16,6 +16,6 @@
 
 @(args:(Symbol, String)*)(content:Html)(implicit messages: play.api.i18n.Messages)
 @argsMap = @{ args.toMap }
-<div class="highlight-message@if(argsMap.get('_modifierClass).isDefined){ @argsMap.get('_modifierClass)}">
+<div class="highlight-message@if(argsMap.get(Symbol("_modifierClass")).isDefined){ @argsMap.get(Symbol("_modifierClass"))}">
     @content
 </div>

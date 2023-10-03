@@ -29,20 +29,20 @@ class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
   override def assertInitialPageIsDisplayed(implicit lang: Language): Unit = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
 
-    val expectedLines = Expected.MainText().stripSpaces().split("\n")
+    val expectedLines = Expected.MainText().splitIntoLines()
     assertContentMatchesExpectedLines(expectedLines)
   }
 
   def assertZeroIncomeParagraphIsDisplayed(implicit lang: Language): Unit = probing {
-    val zeroIncomeParagraph = Expected.ZeroIncomeParagraph().stripSpaces().split("\n")
+    val zeroIncomeParagraph = Expected.ZeroIncomeParagraph().splitIntoLines()
     assertContentMatchesExpectedLines(zeroIncomeParagraph)
   }
 
   def assertNegativeIncomeParagraphIsDisplayed(implicit lang: Language): Unit = probing {
-    val negativeIncomeParagraph = Expected.NegativeIncomeParagraph().stripSpaces().split("\n")
+    val negativeIncomeParagraph = Expected.NegativeIncomeParagraph().splitIntoLines()
     assertContentMatchesExpectedLines(negativeIncomeParagraph)
   }
 
@@ -52,7 +52,7 @@ class HowMuchYouCouldAffordPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver)
 
   def assertPathHeaderTitleCorrect(implicit lang: Language): Assertion = probing {
     readPath() shouldBe path
-    readGlobalHeaderText().stripSpaces shouldBe Expected.GlobalHeaderText().stripSpaces
+    readGlobalHeaderText().stripSpaces() shouldBe Expected.GlobalHeaderText().stripSpaces()
     pageTitle shouldBe expectedTitle(expectedHeadingContent(lang), lang)
   }
 

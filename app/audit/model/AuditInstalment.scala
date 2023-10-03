@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, OFormat, Writes}
 import java.time.LocalDate
 
 case class AuditInstalment(
-    amount:           BigDecimal,
+    amount:           String,
     instalmentNumber: Int,
     paymentDate:      LocalDate
 )

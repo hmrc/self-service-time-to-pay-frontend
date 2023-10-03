@@ -34,17 +34,17 @@
     id = field.id,
     name = field.name,
     value = field.value,
-    autocomplete = Some(argsMap.getOrElse('autoComplete, "off").toString),
-    classes = argsMap.getOrElse('_inputClass, "").toString,
+    autocomplete = Some(argsMap.getOrElse(Symbol("autoComplete"), "off").toString),
+    classes = argsMap.getOrElse(Symbol("_inputClass"), "").toString,
     errorMessage = field.errors.headOption.map(error => errorMessageWithDefaultStringsTranslated(content = Text(Messages(error.message)))),
     label = Label(
-        content = Text(argsMap.getOrElse('label, "").toString),
-        classes = argsMap.getOrElse('_labelClass, "").toString
+        content = Text(argsMap.getOrElse(Symbol("label"), "").toString),
+        classes = argsMap.getOrElse(Symbol("_labelClass"), "").toString
     ),
-    hint = argsMap.get('hint).map { hintLabel =>
+    hint = argsMap.get(Symbol("hint")).map { hintLabel =>
         Hint(
-            content = Text(argsMap.getOrElse('hintContent, "").toString),
-            classes = argsMap.getOrElse('hintClass, "").toString
+            content = Text(argsMap.getOrElse(Symbol("hintContent"), "").toString),
+            classes = argsMap.getOrElse(Symbol("hintClass"), "").toString
         )
     })
 )

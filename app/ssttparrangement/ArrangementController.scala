@@ -86,7 +86,7 @@ class ArrangementController @Inject() (
   val paymentCurrency = "GBP"
 
   def start: Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyService.getJourney.flatMap {
+    journeyService.getJourney().flatMap {
       case journey if journey.inProgress && journey.maybeSelectedPlanAmount.isDefined =>
         eligibilityCheck(journey)
       case j =>
@@ -210,7 +210,7 @@ class ArrangementController @Inject() (
     for {
       onIa <- iaService.checkIaUtr(utr.value)
       directDebits <- directDebitConnector.getBanks(utr)
-      eligibilityStatus = eligibilityService.checkEligibility(clockProvider.nowDate, taxpayer, directDebits, onIa)
+      eligibilityStatus = eligibilityService.checkEligibility(clockProvider.nowDate(), taxpayer, directDebits, onIa)
       newJourney: Journey = journey.copy(maybeEligibilityStatus = Option(eligibilityStatus))
       _ <- journeyService.saveJourney(newJourney)
     } yield {
@@ -285,10 +285,9 @@ class ArrangementController @Inject() (
             throw new RuntimeException(s"arrangementDirectDebit not found for journey [$journey]"))
 
         val schedule = selectedSchedule(journey)
-        auditService.sendPlanSetUpSuccessEvent(journey, schedule, calculatorService)
         Ok(views.application_complete(
           debits        = journey.taxpayer.selfAssessment.debits.sortBy(_.dueDate.toEpochDay()),
-          transactionId = journey.taxpayer.selfAssessment.utr + clockProvider.now.toString,
+          transactionId = journey.taxpayer.selfAssessment.utr.value + clockProvider.now().toString,
           directDebit,
           schedule,
           journey.ddRef
@@ -298,7 +297,7 @@ class ArrangementController @Inject() (
   }
 
   def viewPaymentPlan(): Action[AnyContent] = as.authorisedSaUser.async { implicit request =>
-    journeyService.getJourney.flatMap { implicit journey =>
+    journeyService.getJourney().flatMap { implicit journey =>
       journeyLogger.info("View payment plan")
 
       val schedule = selectedSchedule(journey)
@@ -344,6 +343,7 @@ class ArrangementController @Inject() (
               )
             //we finish the journey regardless of the result ...
             _ <- journeyService.saveJourney(newJourney)
+            _ = auditService.sendPlanSetUpSuccessEvent(newJourney, selectedSchedule(newJourney), calculatorService)
           } yield submissionResult
 
           submitArrangementResult.flatMap {
@@ -371,13 +371,13 @@ class ArrangementController @Inject() (
    * Checks if the TTPSubmission data contains an existing direct debit reference number and either
    * passes this information to a payment plan constructor function or builds a new Direct Debit Instruction
    */
-  private def makePaymentPlanRequest(journey: Journey)(implicit request: Request[_]): PaymentPlanRequest = {
+  def makePaymentPlanRequest(journey: Journey)(implicit request: Request[_]): PaymentPlanRequest = {
 
     paymentPlan(
       journey,
       DirectDebitInstruction(
         sortCode      = Some(journey.bankDetails.sortCode),
-        accountNumber = Some(journey.bankDetails.accountNumber),
+        accountNumber = Some(journey.bankDetails.accountNumber.reverse.padTo(8, '0').reverse),
         accountName   = Some(journey.bankDetails.accountName),
         ddiRefNumber  = journey.bankDetails.maybeDDIRefNumber))
   }

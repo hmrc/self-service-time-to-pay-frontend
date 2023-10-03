@@ -18,29 +18,30 @@ package audit.model
 
 import play.api.libs.json.{Json, OFormat, Writes}
 import ssttpcalculator.model.PaymentSchedule
+import util.CurrencyUtil.formatToCurrencyStringWithTrailingZeros
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 
 case class AuditPaymentSchedule(
-    totalPayable:                BigDecimal,
+    totalPayable:                String,
     instalmentDate:              Int,
     instalments:                 Seq[AuditInstalment],
-    initialPaymentAmount:        BigDecimal,
+    initialPaymentAmount:        String,
     totalNoPayments:             Int,
-    totalInterestCharged:        BigDecimal,
-    totalPaymentWithoutInterest: BigDecimal
+    totalInterestCharged:        String,
+    totalPaymentWithoutInterest: String
 )
 
 object AuditPaymentSchedule {
 
   def apply(paymentSchedule: PaymentSchedule): AuditPaymentSchedule = AuditPaymentSchedule(
-    totalPayable                = paymentSchedule.totalPayable.setScale(2, HALF_UP),
+    totalPayable                = formatToCurrencyStringWithTrailingZeros(paymentSchedule.totalPayable.setScale(2, HALF_UP)),
     instalmentDate              = instalmentDate(paymentSchedule),
     instalments                 = instalments(paymentSchedule),
-    initialPaymentAmount        = paymentSchedule.initialPayment,
+    initialPaymentAmount        = formatToCurrencyStringWithTrailingZeros(paymentSchedule.initialPayment),
     totalNoPayments             = totalNoPayments(paymentSchedule),
-    totalInterestCharged        = paymentSchedule.totalInterestCharged.setScale(2, HALF_UP),
-    totalPaymentWithoutInterest = paymentSchedule.amountToPay
+    totalInterestCharged        = formatToCurrencyStringWithTrailingZeros(paymentSchedule.totalInterestCharged.setScale(2, HALF_UP)),
+    totalPaymentWithoutInterest = formatToCurrencyStringWithTrailingZeros(paymentSchedule.amountToPay)
   )
 
   val writes: Writes[AuditPaymentSchedule] = (o: AuditPaymentSchedule) => Json.obj(
@@ -63,7 +64,7 @@ object AuditPaymentSchedule {
 
   private def instalments(paymentSchedule: PaymentSchedule): Seq[AuditInstalment] = {
     (1 to paymentSchedule.instalments.length).zip(paymentSchedule.instalments)
-      .map(i => AuditInstalment(i._2.amount.setScale(2, HALF_UP), i._1, i._2.paymentDate))
+      .map(i => AuditInstalment(i._2.amount.setScale(2, HALF_UP).toString(), i._1, i._2.paymentDate))
   }
 
   private def totalNoPayments(paymentSchedule: PaymentSchedule): Int = {

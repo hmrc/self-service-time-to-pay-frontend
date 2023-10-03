@@ -52,13 +52,12 @@ class JourneyService @Inject() (
     for {
       journey <- getJourney()
       result <- journey match {
-        case journey if journey.status == InProgress =>
-          journey.requireIsEligible()
-          block(journey)
-
-        case journey if journey.status == ApplicationComplete =>
+        case journey if journey.isFinished =>
           Future.successful(Results.Redirect(ssttparrangement.routes.ArrangementController.applicationComplete()))
 
+        case _ =>
+          journey.requireIsEligible()
+          block(journey)
       }
     } yield result
   }

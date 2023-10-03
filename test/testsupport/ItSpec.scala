@@ -55,7 +55,7 @@ class ItSpec
 
   protected val overrideConfig: Map[String, Any] = Map.empty
 
-  protected lazy val configMap: Map[String, Any] = Map(
+  protected lazy val configMap: Map[String, Any] = Map[String, Any](
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-taxpayer.port" -> WireMockSupport.port,
@@ -70,7 +70,10 @@ class ItSpec
     "microservice.services.identity-verification-frontend.callback.complete-path" -> "/pay-what-you-owe-in-instalments/arrangement/determine-eligibility",
     "microservice.services.identity-verification-frontend.callback.reject-path" -> "/pay-what-you-owe-in-instalments/eligibility/not-enrolled",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
-    "auditing.enabled" -> false) ++ overrideConfig
+    "auditing.enabled" -> false,
+    "logger.root" -> "WARN",
+    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes"
+  ) ++ overrideConfig
 
   val fakeAuthConnector = new AuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
