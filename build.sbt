@@ -3,9 +3,7 @@ import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.defaultSettings
 
 val appName = "self-service-time-to-pay-frontend"
-val appScalaVersion = "2.13.8"
-scalaVersion := appScalaVersion
-
+val appScalaVersion = "2.13.10"
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests map { test =>
