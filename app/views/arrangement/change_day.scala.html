@@ -58,14 +58,14 @@
 
 @enterCustomDayPanel = {
     <div id="customDate" class="govuk-form-group @if(customDateHasErrors){govuk-form-group--error}">
-        <label class="govuk-label" for="dayOfMonth">@messages("ssttp.arrangement.changeday.enter.date")</label>
+        <label class="govuk-label" id="dayOfMonthHint" for="dayOfMonth">@messages("ssttp.arrangement.changeday.enter.date")</label>
         @if(customDateHasErrors) {
             <span id="other-error" class="govuk-error-message">
                 <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
                 @dayForm.error("dayOfMonth").map(formError => messages(formError.message))
             </span>
         }
-        <input type="text" class="govuk-input govuk-input--width-2 @if(customDateHasErrors){govuk-input--error}" id="dayOfMonth" name="dayOfMonth" value="@{dayForm.data.get("dayOfMonth")}">
+        <input aria-describedby="dayOfMonthHint @if(customDateHasErrors) {other-error}" type="text" class="govuk-input govuk-input--width-2 @if(customDateHasErrors){govuk-input--error}" id="dayOfMonth" name="dayOfMonth" value="@{dayForm.data.get("dayOfMonth")}">
     </div>
 }
 
