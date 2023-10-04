@@ -87,7 +87,7 @@
 
 @enterCustomAmountPanel = {
 <div id="custom-amount-field" class="govuk-form-group @if(customAmountHasErrors){govuk-form-group--error}">
-    <label class="govuk-label" for="custom-amount-input">@Html(messages(s"ssttp.calculator.results.option.other.enter.amount.${calculatorType.messagesKeySuffix}", currency(minCustomAmount), currency(maxCustomAmount)))</label>
+    <label class="govuk-label" id="custom-amount-hint" for="custom-amount-input">@Html(messages(s"ssttp.calculator.results.option.other.enter.amount.${calculatorType.messagesKeySuffix}", currency(minCustomAmount), currency(maxCustomAmount)))</label>
     @if(customAmountHasErrors) {
         <span id="custom-amount-error" class="govuk-error-message">
             <span class="govuk-visually-hidden">@messages("ssttp.common.title-prefix")</span>
@@ -96,7 +96,7 @@
     }
     <div class="govuk-input__wrapper">
         <div class="govuk-input__prefix" aria-hidden="true">£</div>
-        <input class="govuk-input govuk-input--width-5 @if(customAmountHasErrors){govuk-input--error}" id="custom-amount-input" name="custom-amount-input" type="text" spellcheck="false" value="@{selectPlanForm.data.get("custom-amount-input")}">
+        <input aria-describedby="custom-amount-hint @if(customAmountHasErrors) {custom-amount-error}" class="govuk-input govuk-input--width-5 @if(customAmountHasErrors){govuk-input--error}" id="custom-amount-input" name="custom-amount-input" type="text" spellcheck="false" value="@{selectPlanForm.data.get("custom-amount-input")}">
     </div>
 </div>
 }
