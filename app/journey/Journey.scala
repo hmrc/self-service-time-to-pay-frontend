@@ -229,22 +229,22 @@ object Journey {
 
 final case class EncryptedJourney(
     _id:                              JourneyId,
-    status:                           Status                                   = InProgress,
+    status:                           Status                              = InProgress,
     createdOn:                        LocalDateTime,
-    maybeTypeOfAccountDetails:        Option[TypeOfAccountDetails]             = None,
-    maybeBankDetails:                 Option[EncryptedBankDetails]             = None,
-    maybeTaxpayer:                    Option[EncryptedTaxpayer]                = None,
-    maybePaymentToday:                Option[PaymentToday]                     = None,
-    maybePaymentTodayAmount:          Option[PaymentTodayAmount]               = None,
-    maybeIncome:                      Option[Income]                           = None,
-    maybeSpending:                    Option[Spending]                         = None,
-    maybePlanSelection:               Option[PlanSelection]                    = None,
-    maybePaymentDayOfMonth:           Option[PaymentDayOfMonth]                = None,
-    maybeEligibilityStatus:           Option[EligibilityStatus]                = None,
-    debitDate:                        Option[LocalDate]                        = None,
-    ddRef:                            Option[String]                           = None,
-    maybeSaUtr:                       Option[String]                           = None,
-    maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus]      = None
+    maybeTypeOfAccountDetails:        Option[TypeOfAccountDetails]        = None,
+    maybeBankDetails:                 Option[EncryptedBankDetails]        = None,
+    maybeTaxpayer:                    Option[EncryptedTaxpayer]           = None,
+    maybePaymentToday:                Option[PaymentToday]                = None,
+    maybePaymentTodayAmount:          Option[PaymentTodayAmount]          = None,
+    maybeIncome:                      Option[Income]                      = None,
+    maybeSpending:                    Option[Spending]                    = None,
+    maybePlanSelection:               Option[PlanSelection]               = None,
+    maybePaymentDayOfMonth:           Option[PaymentDayOfMonth]           = None,
+    maybeEligibilityStatus:           Option[EligibilityStatus]           = None,
+    debitDate:                        Option[LocalDate]                   = None,
+    ddRef:                            Option[String]                      = None,
+    maybeSaUtr:                       Option[String]                      = None,
+    maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None
 ) extends HasId[JourneyId] with Encrypted[Journey] {
 
   override def decrypt: Journey = Journey(

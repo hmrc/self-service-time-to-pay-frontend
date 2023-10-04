@@ -63,7 +63,6 @@ class InspectorController @Inject() (
         "taxpayer" -> maybeJourney.flatMap(_.maybeTaxpayer).json,
         "schedule" -> Try(maybeJourney.map(maybeSelectedSchedule(_))).toOption.json,
         "bankDetails" -> maybeJourney.flatMap(_.maybeBankDetails).json,
-        "existingDDBanks" -> maybeJourney.flatMap(_.existingDDBanks).json,
         "eligibilityStatus" -> maybeJourney.map(_.maybeEligibilityStatus).json
       ),
       "not supported - todo remove it",
