@@ -21,12 +21,14 @@ import crypto.model.{Encryptable, Encrypted}
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import journey.Statuses.{ApplicationComplete, InProgress}
+import journey.encryptedmodel.{EncryptedAddress, EncryptedTaxpayer}
 import play.api.libs.json.{Format, Json, OFormat, Reads, Writes, __}
 import repo.HasId
 import ssttpaffordability.model.Income
 import ssttpaffordability.model.Spending
 import ssttparrangement.ArrangementSubmissionStatus
-import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
+import timetopaytaxpayer.cor.model.{Address, Debit, Taxpayer}
+import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import java.time.{Clock, Instant, LocalDate, LocalDateTime, ZoneOffset}
@@ -166,26 +168,30 @@ final case class Journey(
     obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
   }
 
-  override def encrypt: EncryptedJourney = EncryptedJourney(
-    _id,
-    status,
-    createdOn,
-    maybeTypeOfAccountDetails,
-    maybeBankDetails.map(_.encrypt),
-    existingDDBanks.map(_.encrypt),
-    maybeTaxpayer, // TODO [OPS-11032] .map(_.encrypt) once EncryptedTaxpayer is loaded with uk.gov.hmrc.time-to-pay-taxpayer-cor 0.55.0
-    maybePaymentToday,
-    maybePaymentTodayAmount,
-    maybeIncome,
-    maybeSpending,
-    maybePlanSelection,
-    maybePaymentDayOfMonth,
-    maybeEligibilityStatus,
-    debitDate,
-    ddRef,
-    maybeSaUtr,
-    maybeArrangementSubmissionStatus
-  )
+  override def encrypt: EncryptedJourney = {
+    import Journey.TaxpayerEncryptOps
+
+    EncryptedJourney(
+      _id,
+      status,
+      createdOn,
+      maybeTypeOfAccountDetails,
+      maybeBankDetails.map(_.encrypt),
+      existingDDBanks.map(_.encrypt),
+      maybeTaxpayer.map(_.encrypt),
+      maybePaymentToday,
+      maybePaymentTodayAmount,
+      maybeIncome,
+      maybeSpending,
+      maybePlanSelection,
+      maybePaymentDayOfMonth,
+      maybeEligibilityStatus,
+      debitDate,
+      ddRef,
+      maybeSaUtr,
+      maybeArrangementSubmissionStatus
+    )
+  }
 }
 
 object Journey {
@@ -203,6 +209,25 @@ object Journey {
 
   def newJourney(implicit clock: Clock): Journey = Journey(_id       = JourneyId.newJourneyId(), createdOn = LocalDateTime.now(clock))
 
+  implicit class TaxpayerEncryptOps(taxpayer: Taxpayer) {
+    def encrypt: EncryptedTaxpayer = EncryptedTaxpayer(
+      SensitiveString(taxpayer.customerName),
+      taxpayer.addresses.map(_.encrypt),
+      taxpayer.selfAssessment
+    )
+  }
+
+  implicit class AddressEncryptOps(address: Address) {
+    def encrypt: EncryptedAddress = EncryptedAddress(
+      address.addressLine1.map(SensitiveString),
+      address.addressLine2.map(SensitiveString),
+      address.addressLine3.map(SensitiveString),
+      address.addressLine4.map(SensitiveString),
+      address.addressLine5.map(SensitiveString),
+      address.postcode.map(SensitiveString)
+    )
+  }
+
 }
 
 final case class EncryptedJourney(
@@ -212,7 +237,7 @@ final case class EncryptedJourney(
     maybeTypeOfAccountDetails:        Option[TypeOfAccountDetails]             = None,
     maybeBankDetails:                 Option[EncryptedBankDetails]             = None,
     existingDDBanks:                  Option[EncryptedDirectDebitInstructions] = None,
-    maybeTaxpayer:                    Option[Taxpayer]                         = None,
+    maybeTaxpayer:                    Option[EncryptedTaxpayer]                = None,
     maybePaymentToday:                Option[PaymentToday]                     = None,
     maybePaymentTodayAmount:          Option[PaymentTodayAmount]               = None,
     maybeIncome:                      Option[Income]                           = None,
@@ -231,9 +256,9 @@ final case class EncryptedJourney(
     status,
     createdOn,
     maybeTypeOfAccountDetails,
-    maybeBankDetails.map(bd => bd.decrypt),
-    existingDDBanks.map(ddi => ddi.decrypt),
-    maybeTaxpayer, // TODO [OPS-11032] .map(_.decrypt) once EncryptedTaxpayer is loaded with uk.gov.hmrc.time-to-pay-taxpayer-cor 0.55.0
+    maybeBankDetails.map(_.decrypt),
+    existingDDBanks.map(_.decrypt),
+    maybeTaxpayer.map(_.decrypt),
     maybePaymentToday,
     maybePaymentTodayAmount,
     maybeIncome,
