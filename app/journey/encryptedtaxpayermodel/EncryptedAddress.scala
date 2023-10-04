@@ -14,29 +14,37 @@
  * limitations under the License.
  */
 
-package journey.encryptedmodel
+package journey.encryptedtaxpayermodel
 
 import crypto.CryptoFormat
 import crypto.model.Encrypted
 import play.api.libs.json.{Format, Json, OFormat}
-import timetopaytaxpayer.cor.model.{SelfAssessmentDetails, Taxpayer}
+import timetopaytaxpayer.cor.model.Address
 import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 
-case class EncryptedTaxpayer(
-    customerName:   SensitiveString,
-    addresses:      Seq[EncryptedAddress],
-    selfAssessment: SelfAssessmentDetails
-) extends Encrypted[Taxpayer] {
-  override def decrypt: Taxpayer = Taxpayer(
-    customerName.decryptedValue,
-    addresses.map(_.decrypt),
-    selfAssessment
+case class EncryptedAddress(
+    addressLine1: Option[SensitiveString] = None,
+    addressLine2: Option[SensitiveString] = None,
+    addressLine3: Option[SensitiveString] = None,
+    addressLine4: Option[SensitiveString] = None,
+    addressLine5: Option[SensitiveString] = None,
+    postcode:     Option[SensitiveString] = None
+) extends Encrypted[Address] {
+
+  override def decrypt: Address = Address(
+    addressLine1.map(_.decryptedValue),
+    addressLine2.map(_.decryptedValue),
+    addressLine3.map(_.decryptedValue),
+    addressLine4.map(_.decryptedValue),
+    addressLine5.map(_.decryptedValue),
+    postcode.map(_.decryptedValue)
   )
+
 }
 
-object EncryptedTaxpayer {
-  implicit def format(implicit cryptoFormat: CryptoFormat): OFormat[EncryptedTaxpayer] = {
+object EncryptedAddress {
+  implicit def format(implicit cryptoFormat: CryptoFormat): OFormat[EncryptedAddress] = {
     implicit val sensitiveFormat: Format[SensitiveString] = crypto.sensitiveStringFormat(cryptoFormat)
-    Json.format[EncryptedTaxpayer]
+    Json.format[EncryptedAddress]
   }
 }

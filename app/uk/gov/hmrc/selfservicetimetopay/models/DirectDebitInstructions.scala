@@ -20,7 +20,7 @@ import crypto.CryptoFormat
 import crypto.model.{Encryptable, Encrypted}
 import play.api.libs.json.{Format, Json, OFormat}
 
-final case class DirectDebitInstructions(directDebitInstruction: Seq[DirectDebitInstruction]) extends Encryptable[DirectDebitInstructions] {
+final case class DirectDebitInstructions(directDebitInstruction: Seq[DirectDebitInstruction]) {
   def obfuscate: DirectDebitInstructions = DirectDebitInstructions(
     directDebitInstruction = directDebitInstruction.map(_.obfuscate)
   )
@@ -28,25 +28,8 @@ final case class DirectDebitInstructions(directDebitInstruction: Seq[DirectDebit
   override def toString: String = {
     obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
   }
-
-  override def encrypt: EncryptedDirectDebitInstructions = EncryptedDirectDebitInstructions(
-    directDebitInstruction.map(_.encrypt)
-  )
 }
 
 object DirectDebitInstructions {
   implicit val format: Format[DirectDebitInstructions] = Json.format[DirectDebitInstructions]
-}
-
-case class EncryptedDirectDebitInstructions(
-    directDebitInstruction: Seq[EncryptedDirectDebitInstruction]
-) extends Encrypted[DirectDebitInstructions] {
-  override def decrypt: DirectDebitInstructions = DirectDebitInstructions(
-    directDebitInstruction.map(_.decrypt)
-  )
-}
-
-object EncryptedDirectDebitInstructions {
-  implicit def format(implicit cryptoFormat: CryptoFormat): OFormat[EncryptedDirectDebitInstructions] = Json.format[EncryptedDirectDebitInstructions]
-
 }

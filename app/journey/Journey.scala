@@ -21,7 +21,7 @@ import crypto.model.{Encryptable, Encrypted}
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import journey.Statuses.{ApplicationComplete, InProgress}
-import journey.encryptedmodel.{EncryptedAddress, EncryptedTaxpayer}
+import journey.encryptedtaxpayermodel.{EncryptedAddress, EncryptedTaxpayer}
 import play.api.libs.json.{Format, Json, OFormat, Reads, Writes, __}
 import repo.HasId
 import ssttpaffordability.model.Income
@@ -66,7 +66,6 @@ final case class Journey(
     createdOn:                        LocalDateTime,
     maybeTypeOfAccountDetails:        Option[TypeOfAccountDetails]        = None,
     maybeBankDetails:                 Option[BankDetails]                 = None,
-    existingDDBanks:                  Option[DirectDebitInstructions]     = None,
     maybeTaxpayer:                    Option[Taxpayer]                    = None,
     maybePaymentToday:                Option[PaymentToday]                = None,
     maybePaymentTodayAmount:          Option[PaymentTodayAmount]          = None,
@@ -149,7 +148,6 @@ final case class Journey(
     createdOn                        = createdOn,
     maybeTypeOfAccountDetails        = maybeTypeOfAccountDetails,
     maybeBankDetails                 = maybeBankDetails.map(_.obfuscate),
-    existingDDBanks                  = existingDDBanks.map(_.obfuscate),
     maybeTaxpayer                    = maybeTaxpayer.map(_.obfuscate),
     maybePaymentToday                = maybePaymentToday,
     maybePaymentTodayAmount          = maybePaymentTodayAmount,
@@ -177,7 +175,6 @@ final case class Journey(
       createdOn,
       maybeTypeOfAccountDetails,
       maybeBankDetails.map(_.encrypt),
-      existingDDBanks.map(_.encrypt),
       maybeTaxpayer.map(_.encrypt),
       maybePaymentToday,
       maybePaymentTodayAmount,
@@ -236,7 +233,6 @@ final case class EncryptedJourney(
     createdOn:                        LocalDateTime,
     maybeTypeOfAccountDetails:        Option[TypeOfAccountDetails]             = None,
     maybeBankDetails:                 Option[EncryptedBankDetails]             = None,
-    existingDDBanks:                  Option[EncryptedDirectDebitInstructions] = None,
     maybeTaxpayer:                    Option[EncryptedTaxpayer]                = None,
     maybePaymentToday:                Option[PaymentToday]                     = None,
     maybePaymentTodayAmount:          Option[PaymentTodayAmount]               = None,
@@ -257,7 +253,6 @@ final case class EncryptedJourney(
     createdOn,
     maybeTypeOfAccountDetails,
     maybeBankDetails.map(_.decrypt),
-    existingDDBanks.map(_.decrypt),
     maybeTaxpayer.map(_.decrypt),
     maybePaymentToday,
     maybePaymentTodayAmount,
