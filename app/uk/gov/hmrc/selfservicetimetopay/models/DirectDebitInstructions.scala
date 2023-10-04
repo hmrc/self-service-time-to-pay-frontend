@@ -16,9 +16,7 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
-import crypto.CryptoFormat
-import crypto.model.{Encryptable, Encrypted}
-import play.api.libs.json.{Format, Json, OFormat}
+import play.api.libs.json.{Format, Json}
 
 final case class DirectDebitInstructions(directDebitInstruction: Seq[DirectDebitInstruction]) {
   def obfuscate: DirectDebitInstructions = DirectDebitInstructions(
