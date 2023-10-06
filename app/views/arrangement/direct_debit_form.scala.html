@@ -58,24 +58,20 @@
         ))
     }
 
-
-            <fieldset class="govuk-fieldset long-word-wrap">
-
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__legend--xl govuk-!-margin-bottom-8">
                         @messages("ssttp.arrangement.direct-debit.form.title")
                     </h1>
                 </legend>
 
-
                 @viewsHelpers.form(ssttpdirectdebit.routes.DirectDebitController.submitDirectDebit, Symbol("autoComplete") -> "off") {
 
                 @textinput(ddForm("accountName"),
-                Symbol("label") -> messages("ssttp.direct-debit.form.accountName"),
-                Symbol("_labelClass") -> "govuk-label--m",
-                Symbol("autoComplete") -> "name",
-                Symbol("_maxlength") -> "39",
-                Symbol("_inputClass") -> "govuk-!-width-two-thirds"
+                    Symbol("label") -> messages("ssttp.direct-debit.form.accountName"),
+                    Symbol("_labelClass") -> "govuk-label--m",
+                    Symbol("autoComplete") -> "name",
+                    Symbol("_maxlength") -> "39",
+                    Symbol("_inputClass") -> "govuk-!-width-two-thirds"
                 )
 
                 @defining(comboError) { comboSortCodeAccountNumber =>
@@ -105,7 +101,7 @@
                             Symbol("_inputClass") ->  "govuk-!-width-two-thirds"
                         )
                     </div>
-                </fieldset>
+
             }
 
         @viewsHelpers.continue(Messages("ssttp.arrangement.direct-debit.form.submit"))
