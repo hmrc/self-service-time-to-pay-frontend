@@ -111,22 +111,5 @@
     ))),
     scriptsBlock = Some(scripts),
     beforeContentBlock = Some(beforeContentBlock),
-    footerBlock = Some(hmrcFooter(Footer(
-        meta = Some(Meta(
-            items = Some(
-                Seq(
-                    FooterItem(text = Some(messages("footer_cookies.link")), href = Some(viewConfig.cookiesUrl)),
-                    FooterItem(
-                        text = Some(messages("accessibility-statement.title")),
-                        href = Some(viewConfig.accessibilityStatementUrl(request.uri)),
-                        attributes = Map("id" -> "accessibility-statement-link", "data-sso" -> "false", "data-journey-click" -> "footer:Click:Accessibility")
-                    ),
-                    FooterItem(text = Some(messages("footer_privacyNotice.link")), href = Some(viewConfig.privacyNoticeUrl)),
-                    FooterItem(text = Some(messages("footer_termsAndConditions.link")), href = Some(viewConfig.termsAndConditionsUrl)),
-                    FooterItem(text = Some(messages("footer_helpUsingGovUk.link")), href = Some(viewConfig.helpUsingGovUkUrl))
-                )
-            )
-        )),
-        classes = "govuk-!-display-none-print"
-    )))
+    footerBlock = Some(hmrcStandardFooter())
 )(contentBlock)
