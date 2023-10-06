@@ -16,15 +16,19 @@
 
 package journey
 
+import crypto.CryptoFormat
+import crypto.model.{Encryptable, Encrypted}
 import enumeratum.{Enum, EnumEntry}
 import enumformat.EnumFormat
 import journey.Statuses.{ApplicationComplete, InProgress}
+import journey.encryptedtaxpayermodel.{EncryptedAddress, EncryptedTaxpayer}
 import play.api.libs.json.{Format, Json, OFormat, Reads, Writes, __}
 import repo.HasId
 import ssttpaffordability.model.Income
 import ssttpaffordability.model.Spending
 import ssttparrangement.ArrangementSubmissionStatus
-import timetopaytaxpayer.cor.model.{Debit, Taxpayer}
+import timetopaytaxpayer.cor.model.{Address, Debit, Taxpayer}
+import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 import uk.gov.hmrc.selfservicetimetopay.models._
 
 import java.time.{Clock, Instant, LocalDate, LocalDateTime, ZoneOffset}
@@ -62,7 +66,6 @@ final case class Journey(
     createdOn:                        LocalDateTime,
     maybeTypeOfAccountDetails:        Option[TypeOfAccountDetails]        = None,
     maybeBankDetails:                 Option[BankDetails]                 = None,
-    existingDDBanks:                  Option[DirectDebitInstructions]     = None,
     maybeTaxpayer:                    Option[Taxpayer]                    = None,
     maybePaymentToday:                Option[PaymentToday]                = None,
     maybePaymentTodayAmount:          Option[PaymentTodayAmount]          = None,
@@ -75,7 +78,7 @@ final case class Journey(
     ddRef:                            Option[String]                      = None,
     maybeSaUtr:                       Option[String]                      = None,
     maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None
-) extends HasId[JourneyId] {
+) extends HasId[JourneyId] with Encryptable[Journey] {
 
   def maybeSelectedPlanAmount: Option[BigDecimal] = maybePlanSelection.fold(None: Option[BigDecimal])(_.selection match {
     case Right(CustomPlanRequest(_)) => None
@@ -145,7 +148,6 @@ final case class Journey(
     createdOn                        = createdOn,
     maybeTypeOfAccountDetails        = maybeTypeOfAccountDetails,
     maybeBankDetails                 = maybeBankDetails.map(_.obfuscate),
-    existingDDBanks                  = existingDDBanks.map(_.obfuscate),
     maybeTaxpayer                    = maybeTaxpayer.map(_.obfuscate),
     maybePaymentToday                = maybePaymentToday,
     maybePaymentTodayAmount          = maybePaymentTodayAmount,
@@ -163,6 +165,30 @@ final case class Journey(
   override def toString: String = {
     obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
   }
+
+  override def encrypt: EncryptedJourney = {
+    import Journey.TaxpayerEncryptOps
+
+    EncryptedJourney(
+      _id,
+      status,
+      createdOn,
+      maybeTypeOfAccountDetails,
+      maybeBankDetails.map(_.encrypt),
+      maybeTaxpayer.map(_.encrypt),
+      maybePaymentToday,
+      maybePaymentTodayAmount,
+      maybeIncome,
+      maybeSpending,
+      maybePlanSelection,
+      maybePaymentDayOfMonth,
+      maybeEligibilityStatus,
+      debitDate,
+      ddRef,
+      maybeSaUtr,
+      maybeArrangementSubmissionStatus
+    )
+  }
 }
 
 object Journey {
@@ -179,4 +205,70 @@ object Journey {
   implicit val format: OFormat[Journey] = Json.format[Journey]
 
   def newJourney(implicit clock: Clock): Journey = Journey(_id       = JourneyId.newJourneyId(), createdOn = LocalDateTime.now(clock))
+
+  implicit class TaxpayerEncryptOps(taxpayer: Taxpayer) {
+    def encrypt: EncryptedTaxpayer = EncryptedTaxpayer(
+      SensitiveString(taxpayer.customerName),
+      taxpayer.addresses.map(_.encrypt),
+      taxpayer.selfAssessment
+    )
+  }
+
+  implicit class AddressEncryptOps(address: Address) {
+    def encrypt: EncryptedAddress = EncryptedAddress(
+      address.addressLine1.map(SensitiveString),
+      address.addressLine2.map(SensitiveString),
+      address.addressLine3.map(SensitiveString),
+      address.addressLine4.map(SensitiveString),
+      address.addressLine5.map(SensitiveString),
+      address.postcode.map(SensitiveString)
+    )
+  }
+
+}
+
+final case class EncryptedJourney(
+    _id:                              JourneyId,
+    status:                           Status                              = InProgress,
+    createdOn:                        LocalDateTime,
+    maybeTypeOfAccountDetails:        Option[TypeOfAccountDetails]        = None,
+    maybeBankDetails:                 Option[EncryptedBankDetails]        = None,
+    maybeTaxpayer:                    Option[EncryptedTaxpayer]           = None,
+    maybePaymentToday:                Option[PaymentToday]                = None,
+    maybePaymentTodayAmount:          Option[PaymentTodayAmount]          = None,
+    maybeIncome:                      Option[Income]                      = None,
+    maybeSpending:                    Option[Spending]                    = None,
+    maybePlanSelection:               Option[PlanSelection]               = None,
+    maybePaymentDayOfMonth:           Option[PaymentDayOfMonth]           = None,
+    maybeEligibilityStatus:           Option[EligibilityStatus]           = None,
+    debitDate:                        Option[LocalDate]                   = None,
+    ddRef:                            Option[String]                      = None,
+    maybeSaUtr:                       Option[String]                      = None,
+    maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None
+) extends HasId[JourneyId] with Encrypted[Journey] {
+
+  override def decrypt: Journey = Journey(
+    _id,
+    status,
+    createdOn,
+    maybeTypeOfAccountDetails,
+    maybeBankDetails.map(_.decrypt),
+    maybeTaxpayer.map(_.decrypt),
+    maybePaymentToday,
+    maybePaymentTodayAmount,
+    maybeIncome,
+    maybeSpending,
+    maybePlanSelection,
+    maybePaymentDayOfMonth,
+    maybeEligibilityStatus,
+    debitDate,
+    ddRef,
+    maybeSaUtr,
+    maybeArrangementSubmissionStatus
+  )
+
+}
+
+object EncryptedJourney {
+  implicit def format(implicit cryptoFormat: CryptoFormat): OFormat[EncryptedJourney] = Json.format[EncryptedJourney]
 }

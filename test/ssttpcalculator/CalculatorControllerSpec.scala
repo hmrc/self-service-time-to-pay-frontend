@@ -132,7 +132,6 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
       createdOn                 = LocalDateTime.now(),
       maybeTypeOfAccountDetails = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
       maybeBankDetails          = Some(BankDetails(Some(Personal), "111111", "12345678", "Darth Vader", None)),
-      existingDDBanks           = None,
       maybeTaxpayer             = Some(TdAll.taxpayer),
       maybePaymentDayOfMonth    = Some(PaymentDayOfMonth(28)),
       maybeEligibilityStatus    = Some(EligibilityStatus(Seq.empty))

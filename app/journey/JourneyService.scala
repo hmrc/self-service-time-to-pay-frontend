@@ -23,17 +23,21 @@ import uk.gov.hmrc.play.http.logging.Mdc
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyService @Inject() (journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) {
+class JourneyService @Inject() (
+    journeyRepo: JourneyRepo
+)(implicit ec: ExecutionContext) {
 
   import playsession.PlaySessionSupport._
 
   def saveJourney(journey: Journey)(implicit request: Request[_]): Future[Unit] = Mdc.preservingMdc {
     journeyRepo
-      .upsert(journey)
+      .upsert(journey.encrypt)
   }
 
   def getMaybeJourney()(implicit request: Request[_]): Future[Option[Journey]] = Mdc.preservingMdc {
-    request.readJourneyId.fold[Future[Option[Journey]]](Future.successful(None))(journeyRepo.findById)
+    request.readJourneyId.fold[Future[Option[Journey]]](Future.successful(None))(id =>
+      journeyRepo.findById(id).map(maybeEncryptedJourney => maybeEncryptedJourney.map(encryptedJourney => encryptedJourney.decrypt))
+    )
   }
 
   def getJourney()(implicit request: Request[_]): Future[Journey] = Mdc.preservingMdc {

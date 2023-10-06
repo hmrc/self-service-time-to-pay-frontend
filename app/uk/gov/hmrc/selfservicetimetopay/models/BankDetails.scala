@@ -16,15 +16,18 @@
 
 package uk.gov.hmrc.selfservicetimetopay.models
 
+import crypto.CryptoFormat
+import crypto.model.{Encryptable, Encrypted}
 import model.enumsforforms.TypeOfBankAccount
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, Json, OFormat}
+import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 
 final case class BankDetails(
     typeOfAccount:     Option[TypeOfBankAccount] = None,
     sortCode:          String,
     accountNumber:     String,
     accountName:       String,
-    maybeDDIRefNumber: Option[String]            = None) {
+    maybeDDIRefNumber: Option[String]            = None) extends Encryptable[BankDetails] {
 
   def obfuscate: BankDetails = BankDetails(
     typeOfAccount     = typeOfAccount,
@@ -37,9 +40,39 @@ final case class BankDetails(
   override def toString: String = {
     obfuscate.productIterator.mkString(productPrefix + "(", ",", ")")
   }
+
+  override def encrypt: EncryptedBankDetails = EncryptedBankDetails(
+    typeOfAccount,
+    SensitiveString(sortCode),
+    SensitiveString(accountNumber),
+    SensitiveString(accountName),
+    maybeDDIRefNumber
+  )
 }
 
 object BankDetails {
   implicit val format: Format[BankDetails] = Json.format[BankDetails]
 
+}
+
+case class EncryptedBankDetails(
+    typeOfAccount:     Option[TypeOfBankAccount] = None,
+    sortCode:          SensitiveString,
+    accountNumber:     SensitiveString,
+    accountName:       SensitiveString,
+    maybeDDIRefNumber: Option[String]            = None) extends Encrypted[BankDetails] {
+  override def decrypt: BankDetails = BankDetails(
+    typeOfAccount,
+    sortCode.decryptedValue,
+    accountNumber.decryptedValue,
+    accountName.decryptedValue,
+    maybeDDIRefNumber
+  )
+}
+
+object EncryptedBankDetails {
+  implicit def format(implicit cryptoFormat: CryptoFormat): OFormat[EncryptedBankDetails] = {
+    implicit val sensitiveFormat: Format[SensitiveString] = crypto.sensitiveStringFormat(cryptoFormat)
+    Json.format[EncryptedBankDetails]
+  }
 }

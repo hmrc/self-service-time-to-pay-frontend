@@ -16,6 +16,7 @@
 
 package journey
 
+import crypto.CryptoFormat.OperationalCryptoFormat
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import repo.Repo
 import uk.gov.hmrc.mongo.MongoComponent
@@ -37,8 +38,8 @@ object JourneyRepo {
 @Singleton
 final class JourneyRepo @Inject() (
     mongoComponent: MongoComponent,
-    config:         ServicesConfig)(implicit ec: ExecutionContext)
-  extends Repo[JourneyId, Journey](
+    config:         ServicesConfig)(implicit ec: ExecutionContext, cryptoFormat: OperationalCryptoFormat)
+  extends Repo[JourneyId, EncryptedJourney](
     collectionName = "journey-new-mongo",
     mongoComponent = mongoComponent,
     indexes        = JourneyRepo.indexes(config.getDuration("journey.ttl").toSeconds),
