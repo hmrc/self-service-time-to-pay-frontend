@@ -24,28 +24,22 @@ final case class ViewConfig(
     authUrl:        String,
     companyAuthUrl: String,
     signInPath:     String,
-    //    signOut:              String,
-    //    frontendBaseUrl:      String,
-    frontendBaseUrl:               String,
-    accessibilityStatementBaseUrl: String,
-    accessibilityStatementPath:    String,
-    timeoutDialogTimeout:          Int,
-    timeoutDialogCountdown:        Int
+    frontendBaseUrl: String,
+    timeoutDialogTimeout:   Int,
+    timeoutDialogCountdown: Int
 ) {
 
   val loginUrl = companyAuthUrl + signInPath
 
   @Inject
   def this(servicesConfig: ServicesConfig) = this(
-    appName                       = servicesConfig.getString("appName"),
-    authUrl                       = servicesConfig.baseUrl("auth"),
-    companyAuthUrl                = servicesConfig.getString("microservice.services.company-auth.url"),
-    signInPath                    = servicesConfig.getString("microservice.services.company-auth.sign-in-path"),
-    frontendBaseUrl               = servicesConfig.getString("microservice.services.auth.login-callback.base-url"), //TODO: migrate this config,
-    timeoutDialogTimeout          = servicesConfig.getInt("timeout-dialog.timeout"),
-    timeoutDialogCountdown        = servicesConfig.getInt("timeout-dialog.countdown"),
-    accessibilityStatementBaseUrl = servicesConfig.getString("accessibility-statement-frontend.url"),
-    accessibilityStatementPath    = servicesConfig.getString("accessibility-statement-frontend.path")
+    appName                = servicesConfig.getString("appName"),
+    authUrl                = servicesConfig.baseUrl("auth"),
+    companyAuthUrl         = servicesConfig.getString("microservice.services.company-auth.url"),
+    signInPath             = servicesConfig.getString("microservice.services.company-auth.sign-in-path"),
+    frontendBaseUrl        = servicesConfig.getString("microservice.services.auth.login-callback.base-url"), //TODO: migrate this config,
+    timeoutDialogTimeout   = servicesConfig.getInt("timeout-dialog.timeout"),
+    timeoutDialogCountdown = servicesConfig.getInt("timeout-dialog.countdown")
   )
 
   // footer links
@@ -54,5 +48,4 @@ final case class ViewConfig(
   val termsAndConditionsUrl: String = "https://www.tax.service.gov.uk/help/terms-and-conditions"
   val helpUsingGovUkUrl: String = "https://www.gov.uk/help"
 
-  def accessibilityStatementUrl(relativeUrl: String): String = s"$accessibilityStatementBaseUrl/accessibility-statement${accessibilityStatementPath}?referrerUrl=$frontendBaseUrl$relativeUrl"
 }
