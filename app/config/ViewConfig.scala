@@ -20,11 +20,11 @@ import com.google.inject.Inject
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 final case class ViewConfig(
-    appName:        String,
-    authUrl:        String,
-    companyAuthUrl: String,
-    signInPath:     String,
-    frontendBaseUrl: String,
+    appName:                String,
+    authUrl:                String,
+    companyAuthUrl:         String,
+    signInPath:             String,
+    frontendBaseUrl:        String,
     timeoutDialogTimeout:   Int,
     timeoutDialogCountdown: Int
 ) {
