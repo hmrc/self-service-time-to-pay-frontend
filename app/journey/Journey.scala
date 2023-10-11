@@ -28,6 +28,7 @@ import ssttpaffordability.model.Income
 import ssttpaffordability.model.Spending
 import ssttparrangement.ArrangementSubmissionStatus
 import timetopaytaxpayer.cor.model.{Address, Debit, Taxpayer}
+import ssttpcalculator.model.AddWorkingDaysResult
 import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 import uk.gov.hmrc.selfservicetimetopay.models._
 
@@ -77,7 +78,8 @@ final case class Journey(
     debitDate:                        Option[LocalDate]                   = None,
     ddRef:                            Option[String]                      = None,
     maybeSaUtr:                       Option[String]                      = None,
-    maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None
+    maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None,
+    dateFirstPaymentCanBeTaken:       Option[AddWorkingDaysResult]        = None
 ) extends HasId[JourneyId] with Encryptable[Journey] {
 
   def maybeSelectedPlanAmount: Option[BigDecimal] = maybePlanSelection.fold(None: Option[BigDecimal])(_.selection match {

@@ -17,13 +17,13 @@
 package pagespecs
 
 import langswitch.Languages.{English, Welsh}
-import pagespecs.pages.{CheckYourPaymentPlanPage, HowMuchCanYouPayEachMonthPage, SetUpPlanWithAdviserPage}
-import ssttpcalculator.CalculatorType.PaymentOptimised
+import pagespecs.pages.{HowMuchCanYouPayEachMonthPage, SetUpPlanWithAdviserPage}
 import ssttpcalculator.model.PaymentPlanOption
 import testsupport.ItSpec
 import testsupport.stubs.DirectDebitStub.getBanksIsSuccessful
-import testsupport.stubs.{AuthStub, GgStub, IaStub, TaxpayerStub}
-import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
+import testsupport.stubs.{AuthStub, DateCalculatorStub, GgStub, IaStub, TaxpayerStub}
+
+import java.time.LocalDate
 
 class SetUpPlanWithAdviserPageSpec extends ItSpec {
 
@@ -36,6 +36,7 @@ class SetUpPlanWithAdviserPageSpec extends ItSpec {
     TaxpayerStub.getTaxpayerNddsRejects()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
+    DateCalculatorStub.stubAddWorkingDays(LocalDate.now().plusDays(10))
     getBanksIsSuccessful()
 
     startPage.open()

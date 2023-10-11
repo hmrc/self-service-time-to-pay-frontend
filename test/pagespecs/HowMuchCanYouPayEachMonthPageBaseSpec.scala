@@ -27,6 +27,8 @@ import testsupport.stubs._
 import testsupport.testdata.DisplayDefaultPlanOptionsTd
 import testsupport.testdata.TdAll.{defaultRemainingIncomeAfterSpending, netIncomeLargeEnoughForSingleDefaultPlan, netIncomeLargeEnoughForTwoDefaultPlans, netIncomeTooSmallForPlan}
 
+import java.time.LocalDate
+
 class HowMuchCanYouPayEachMonthPageSpec extends HowMuchCanYouPayEachMonthPageBaseSpec {
 
   override val overrideConfig: Map[String, Any] = Map(
@@ -73,6 +75,8 @@ trait HowMuchCanYouPayEachMonthPageBaseSpec extends ItSpec {
     TaxpayerStub.getTaxpayer()
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
+    DateCalculatorStub.stubAddWorkingDays(LocalDate.now().plusDays(10))
+
     getBanksIsSuccessful()
     startPage.open()
     startPage.assertInitialPageIsDisplayed()

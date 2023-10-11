@@ -27,6 +27,8 @@ import testsupport.stubs._
 import testsupport.testdata.DirectDebitTd
 import testsupport.testdata.TdAll.defaultRemainingIncomeAfterSpending
 
+import java.time.LocalDate
+
 class ViewPaymentPlanPageSpec extends ViewPaymentPlanPageBaseSpec {
   override val overrideConfig: Map[String, Any] = Map(
     "calculatorType" -> PaymentOptimised.value
@@ -49,6 +51,7 @@ trait ViewPaymentPlanPageBaseSpec extends ItSpec {
     IaStub.successfulIaCheck
     GgStub.signInPage(port)
     getBanksIsSuccessful()
+    DateCalculatorStub.stubAddWorkingDays(LocalDate.now().plusDays(10))
     DirectDebitStub.postPaymentPlan
     ArrangementStub.postTtpArrangement
 
