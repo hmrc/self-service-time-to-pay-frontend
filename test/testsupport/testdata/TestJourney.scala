@@ -35,7 +35,7 @@ object TestJourney {
       createdOn                       = LocalDateTime.now(),
       maybeTypeOfAccountDetails       = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
       maybeBankDetails                = Some(BankDetails(Some(Personal), "111111", "12345678", "Darth Vader", None)),
-     maybeTaxpayer                   = Some(TdAll.taxpayer),
+      maybeTaxpayer                   = Some(TdAll.taxpayer),
       maybePaymentToday               = Some(PaymentToday(true)),
       maybePaymentTodayAmount         = Some(PaymentTodayAmount(200)),
       maybeIncome                     = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),

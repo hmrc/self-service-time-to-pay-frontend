@@ -16,6 +16,7 @@
 
 package testsupport
 
+import com.gargoylesoftware.htmlunit.WebClient
 import com.google.inject.{AbstractModule, Provides}
 import com.softwaremill.macwire._
 import org.openqa.selenium.htmlunit.HtmlUnitDriver

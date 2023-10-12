@@ -70,7 +70,7 @@ class CalculatorControllerDateCalculatorDisabledSpec extends ItSpec with WireMoc
     val res = controller.getCalculateInstalments()(fakeRequest)
     status(res) shouldBe Status.OK
 
-    DateCalculatorStub.verifyAddWorkingDaysNotCalled
+    DateCalculatorStub.verifyAddWorkingDaysNotCalled()
 
     // journey should be updated
     journey.maybeDateFirstPaymentCanBeTaken shouldBe None
@@ -91,7 +91,6 @@ class CalculatorControllerDateCalculatorDisabledSpec extends ItSpec with WireMoc
       createdOn                 = LocalDateTime.now(),
       maybeTypeOfAccountDetails = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
       maybeBankDetails          = Some(BankDetails(Some(TypesOfBankAccount.Personal), "111111", "12345678", "Darth Vader", None)),
-      existingDDBanks           = None,
       maybeTaxpayer             = Some(TdAll.taxpayer),
       maybePaymentDayOfMonth    = Some(PaymentDayOfMonth(28)),
       maybeEligibilityStatus    = Some(EligibilityStatus(Seq.empty))

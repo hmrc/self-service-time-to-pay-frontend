@@ -26,8 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DateCalculatorService @Inject() (connector: DateCalculatorConnector)(implicit ec: ExecutionContext) {
 
-  def addWorkingDays(date: LocalDate, numberOfWorkingDays: Int): Future[LocalDate] = {
-    println(s"ading to ${date.toString}")
+  def addWorkingDays(date: LocalDate, numberOfWorkingDays: Int): Future[LocalDate] =
     connector
       .addWorkingDays(AddWorkingDaysRequest(date, numberOfWorkingDays, Set(Region.EnglandAndWales)))
       .map{ response =>
@@ -40,6 +39,5 @@ class DateCalculatorService @Inject() (connector: DateCalculatorConnector)(impli
           throw new Exception(s"Call to date-calculator came back with unexpected http status ${response.status}")
         }
       }
-  }
 
 }

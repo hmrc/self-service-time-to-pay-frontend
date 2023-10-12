@@ -61,7 +61,6 @@ class AffordabilityControllerSpec extends ItSpec with WireMockSupport {
           createdOn                 = LocalDateTime.now(),
           maybeTypeOfAccountDetails = Some(TypeOfAccountDetails(TypesOfBankAccount.Personal, isAccountHolder = true)),
           maybeBankDetails          = None,
-          existingDDBanks           = None,
           maybeTaxpayer             = Some(TdAll.taxpayer),
           maybePaymentToday         = Some(PaymentToday(false)),
           maybeIncome               = Some(Income(IncomeBudgetLine(MonthlyIncome, 2000))),

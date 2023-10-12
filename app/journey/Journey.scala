@@ -79,7 +79,7 @@ final case class Journey(
     ddRef:                            Option[String]                      = None,
     maybeSaUtr:                       Option[String]                      = None,
     maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None,
-    maybeDateFirstPaymentCanBeTaken:       Option[AddWorkingDaysResult]        = None
+    maybeDateFirstPaymentCanBeTaken:  Option[AddWorkingDaysResult]        = None
 ) extends HasId[JourneyId] with Encryptable[Journey] {
 
   def maybeSelectedPlanAmount: Option[BigDecimal] = maybePlanSelection.fold(None: Option[BigDecimal])(_.selection match {
@@ -191,7 +191,8 @@ final case class Journey(
       debitDate,
       ddRef,
       maybeSaUtr,
-      maybeArrangementSubmissionStatus
+      maybeArrangementSubmissionStatus,
+      maybeDateFirstPaymentCanBeTaken
     )
   }
 }
@@ -249,7 +250,8 @@ final case class EncryptedJourney(
     debitDate:                        Option[LocalDate]                   = None,
     ddRef:                            Option[String]                      = None,
     maybeSaUtr:                       Option[String]                      = None,
-    maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None
+    maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None,
+    maybeDateFirstPaymentCanBeTaken:  Option[AddWorkingDaysResult]        = None
 ) extends HasId[JourneyId] with Encrypted[Journey] {
 
   override def decrypt: Journey = Journey(
@@ -269,7 +271,8 @@ final case class EncryptedJourney(
     debitDate,
     ddRef,
     maybeSaUtr,
-    maybeArrangementSubmissionStatus
+    maybeArrangementSubmissionStatus,
+    maybeDateFirstPaymentCanBeTaken
   )
 
 }
