@@ -79,7 +79,7 @@ final case class Journey(
     ddRef:                            Option[String]                      = None,
     maybeSaUtr:                       Option[String]                      = None,
     maybeArrangementSubmissionStatus: Option[ArrangementSubmissionStatus] = None,
-    dateFirstPaymentCanBeTaken:       Option[AddWorkingDaysResult]        = None
+    maybeDateFirstPaymentCanBeTaken:       Option[AddWorkingDaysResult]        = None
 ) extends HasId[JourneyId] with Encryptable[Journey] {
 
   def maybeSelectedPlanAmount: Option[BigDecimal] = maybePlanSelection.fold(None: Option[BigDecimal])(_.selection match {
@@ -140,6 +140,9 @@ final case class Journey(
     maybeBankDetails.getOrElse(throw new RuntimeException(s"bank details missing on submission [${_id}]"))
 
   def saUtr: String = maybeSaUtr.getOrElse(throw new RuntimeException(s"saUtr missing on submission [${_id}]"))
+
+  def dateFirstPaymentCanBeTaken: AddWorkingDaysResult =
+    maybeDateFirstPaymentCanBeTaken.getOrElse(throw new RuntimeException(s"could not find 'DateFirstPaymentCanBeTaken' in journey [${_id}]"))
 
   def inProgress: Boolean = status == InProgress
   def isFinished: Boolean = status == ApplicationComplete

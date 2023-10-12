@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, OFormat}
 import java.time.LocalDate
 
 final case class AddWorkingDaysResult(
-    date:                     LocalDate,
+    referenceDate:            LocalDate,
     numberOfWorkingDaysAdded: Int,
     result:                   LocalDate
 )

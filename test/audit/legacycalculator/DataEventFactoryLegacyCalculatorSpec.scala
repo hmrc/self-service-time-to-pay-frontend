@@ -32,6 +32,7 @@ import ssttparrangement.ArrangementSubmissionStatus
 import ssttparrangement.ArrangementSubmissionStatus.{PermanentFailure, QueuedForRetry}
 import ssttpcalculator.CalculatorType.Legacy
 import ssttpcalculator.legacy.CalculatorService
+import ssttpcalculator.model.AddWorkingDaysResult
 import testsupport.ItSpec
 import testsupport.stubs.BarsStub
 import testsupport.testdata.{DirectDebitTd, TdAll, TdRequest}
@@ -55,15 +56,16 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
   private implicit val appConfig: AppConfig = fakeApplication().injector.instanceOf[AppConfig]
   private val calculatorService: CalculatorService = fakeApplication().injector.instanceOf[CalculatorService]
 
-  private def fixedClock: Clock = {
-    val currentDateTime = LocalDateTime.parse("2020-05-02T00:00:00.880").toInstant(UTC)
-    Clock.fixed(currentDateTime, systemDefault)
+  val journey: Journey = {
+    val fixedClock: Clock = {
+      val currentDateTime = LocalDateTime.parse("2020-05-02T00:00:00.880").toInstant(UTC)
+      Clock.fixed(currentDateTime, systemDefault)
+    }
+    Journey.newJourney(fixedClock)
+      .copy(
+        maybeTaxpayer = Some(td.taxpayer),
+      )
   }
-
-  val journey: Journey = Journey.newJourney(fixedClock)
-    .copy(
-      maybeTaxpayer = Some(td.taxpayer),
-    )
 
   private def splunkEventTags(transName: String) = Map(
     "clientIP" -> tdRequest.trueClientIp,
@@ -393,7 +395,8 @@ class DataEventFactoryLegacyCalculatorSpec extends ItSpec {
         maybeSpending                    = Some(Spending(Expenses(HousingExp, _500Amount))),
         maybePaymentDayOfMonth           = Some(PaymentDayOfMonth(_28DayOfMonth)),
         ddRef                            = Some(directDebitTd.dDIRefNumber),
-        maybeArrangementSubmissionStatus = Some(ArrangementSubmissionStatus.Success)
+        maybeArrangementSubmissionStatus = Some(ArrangementSubmissionStatus.Success),
+        maybeDateFirstPaymentCanBeTaken  = Some(TdAll.dateFirstPaymentCanBeTaken)
       )
 
       "basic plan (more than 12 months)" in {

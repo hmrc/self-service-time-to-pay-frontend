@@ -168,10 +168,13 @@ class CalculatorController @Inject() (
         case Legacy =>
           journeyLogger.info(s"Using legacy calculator")
 
-          getDateFirstPaymentCanBeTaken(journey).map { _ =>
-            val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
-            val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
-            val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
+          getDateFirstPaymentCanBeTaken(journey).map { dateFirstPaymentCanBeTaken =>
+            val availablePaymentSchedules =
+              calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth, dateFirstPaymentCanBeTaken)
+            val closestSchedule =
+              calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
+            val defaultPlanOptions =
+              calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
 
             defaultPlanOptions.values.toSeq.sortBy(_.instalmentAmount).headOption match {
               case None =>
@@ -219,11 +222,11 @@ class CalculatorController @Inject() (
     val today = clockProvider.nowDate()
     val numberOfWorkingDaysToAdd = 5
 
-    journey.dateFirstPaymentCanBeTaken.map(Future.successful).getOrElse(
+    journey.maybeDateFirstPaymentCanBeTaken.map(Future.successful).getOrElse(
       for {
         fiveWorkingDaysFromNow <- dateCalculatorService.addWorkingDays(today, numberOfWorkingDaysToAdd)
         addWorkingDaysResult = AddWorkingDaysResult(today, numberOfWorkingDaysToAdd, fiveWorkingDaysFromNow)
-        _ <- journeyService.saveJourney(journey.copy(dateFirstPaymentCanBeTaken = Some(addWorkingDaysResult)))
+        _ <- journeyService.saveJourney(journey.copy(maybeDateFirstPaymentCanBeTaken = Some(addWorkingDaysResult)))
       } yield addWorkingDaysResult
     )
   }
@@ -239,7 +242,7 @@ class CalculatorController @Inject() (
         case CalculatorType.Legacy =>
           journeyLogger.info(s"Using legacy calculator")
 
-          val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth)
+          val availablePaymentSchedules = calculatorService.allAvailableSchedules(sa, journey.safeUpfrontPayment, journey.maybePaymentDayOfMonth, journey.dateFirstPaymentCanBeTaken)
           val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(journey.remainingIncomeAfterSpending * 0.50, availablePaymentSchedules)
           val defaultPlanOptions = calculatorService.defaultSchedules(closestSchedule, availablePaymentSchedules)
 
@@ -366,7 +369,8 @@ class CalculatorController @Inject() (
           calculatorService.allAvailableSchedules(
             journey.taxpayer.selfAssessment,
             journey.safeUpfrontPayment,
-            journey.maybePaymentDayOfMonth
+            journey.maybePaymentDayOfMonth,
+            journey.dateFirstPaymentCanBeTaken
           )
         )
       case PaymentOptimised =>

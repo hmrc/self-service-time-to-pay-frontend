@@ -39,6 +39,7 @@ import java.time.{Clock, LocalDateTime, ZoneId}
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.inject.bind
+import uk.gov.hmrc.mongo.MongoComponent
 
 class ItSpec
   extends AnyFreeSpec
@@ -48,6 +49,7 @@ class ItSpec
   with HttpReadsInstances {
 
   val testPort: Int = 19001
+
   val baseUrl: BaseUrl = BaseUrl(s"http://localhost:$testPort")
 
   implicit override val patienceConfig: PatienceConfig =
@@ -56,6 +58,7 @@ class ItSpec
   protected val overrideConfig: Map[String, Any] = Map.empty
 
   protected lazy val configMap: Map[String, Any] = Map[String, Any](
+    "mongodb.uri" -> "mongodb://localhost:27017/self-service-time-to-pay-frontend-tests",
     "microservice.services.direct-debit.port" -> WireMockSupport.port,
     "microservice.services.date-calculator.port" -> WireMockSupport.port,
     "microservice.services.time-to-pay-arrangement.port" -> WireMockSupport.port,
@@ -115,9 +118,23 @@ class ItSpec
     wd
   }
 
+  lazy val mongo = app.injector.instanceOf[MongoComponent]
+
+  def dropMongo(): Unit = {
+    implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+    mongo.database.drop().toFuture().map(_ => ()).futureValue
+
+  }
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     webDriver.manage().deleteAllCookies()
+    dropMongo()
+  }
+
+  override def afterEach(): Unit = {
+    super.afterEach()
+    dropMongo()
   }
 
   override implicit protected lazy val runningServer: RunningServer =

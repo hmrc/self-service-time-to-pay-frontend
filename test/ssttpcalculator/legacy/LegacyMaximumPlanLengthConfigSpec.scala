@@ -18,6 +18,7 @@ package ssttpcalculator.legacy
 
 import org.scalatest.Assertion
 import play.api.test.FakeRequest
+import ssttpcalculator.model.AddWorkingDaysResult
 import testsupport.ConfigSpec
 import times.ClockProvider
 import timetopaytaxpayer.cor.model.{CommunicationPreferences, SaUtr, SelfAssessmentDetails, Debit => corDebit}
@@ -66,7 +67,8 @@ class LegacyMaximumPlanLengthConfigSpec extends ConfigSpec {
       Seq()
     )
 
-    val allSchedules = calculatorService.allAvailableSchedules(sa, initialPayment, preferredPaymentDay)(request)
+    val dateFirstPaymentCanBeTaken = AddWorkingDaysResult(nowDate, 5, nowDate.plusDays(10))
+    val allSchedules = calculatorService.allAvailableSchedules(sa, initialPayment, preferredPaymentDay, dateFirstPaymentCanBeTaken)(request)
     val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(remainingIncomeAfterSpending / 2, allSchedules)
 
     val result = calculatorService.defaultSchedules(closestSchedule, allSchedules)
@@ -100,7 +102,8 @@ class LegacyMaximumPlanLengthConfigSpec extends ConfigSpec {
       Seq()
     )
 
-    val allSchedules = calculatorService.allAvailableSchedules(sa, initialPayment, preferredPaymentDay)(request)
+    val dateFirstPaymentCanBeTaken = AddWorkingDaysResult(nowDate, 5, nowDate.plusDays(10))
+    val allSchedules = calculatorService.allAvailableSchedules(sa, initialPayment, preferredPaymentDay, dateFirstPaymentCanBeTaken)(request)
 
     val closestSchedule = calculatorService.closestScheduleEqualOrLessThan(remainingIncomeAfterSpending / 2, allSchedules)
 

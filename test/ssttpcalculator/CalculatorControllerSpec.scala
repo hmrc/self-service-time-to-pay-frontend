@@ -102,8 +102,8 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
       DateCalculatorStub.verifyAddWorkingDaysCalled(today, expectedNumberOfWorkingDaysToAdd)
 
       // journey should be updated
-      journey.dateFirstPaymentCanBeTaken shouldBe None
-      journeyService.getJourney()(fakeRequest).futureValue.dateFirstPaymentCanBeTaken shouldBe Some(addWorkingDaysResult)
+      journey.maybeDateFirstPaymentCanBeTaken shouldBe None
+      journeyService.getJourney()(fakeRequest).futureValue.maybeDateFirstPaymentCanBeTaken shouldBe Some(addWorkingDaysResult)
     }
 
     "display 'we cannot agree your payment plan' page if no plan is within the configurable maximum length" in {
@@ -118,8 +118,8 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
       DateCalculatorStub.verifyAddWorkingDaysCalled(today, expectedNumberOfWorkingDaysToAdd)
 
       // journey should be updated
-      journey.dateFirstPaymentCanBeTaken shouldBe None
-      journeyService.getJourney()(fakeRequest).futureValue.dateFirstPaymentCanBeTaken shouldBe Some(addWorkingDaysResult)
+      journey.maybeDateFirstPaymentCanBeTaken shouldBe None
+      journeyService.getJourney()(fakeRequest).futureValue.maybeDateFirstPaymentCanBeTaken shouldBe Some(addWorkingDaysResult)
     }
 
     "return an error if the request to add working days is not successful" in {
@@ -133,8 +133,8 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
 
       DateCalculatorStub.verifyAddWorkingDaysCalled(today, expectedNumberOfWorkingDaysToAdd)
       // journey should not be updated
-      journey.dateFirstPaymentCanBeTaken shouldBe None
-      journeyService.getJourney()(fakeRequest).futureValue.dateFirstPaymentCanBeTaken shouldBe None
+      journey.maybeDateFirstPaymentCanBeTaken shouldBe None
+      journeyService.getJourney()(fakeRequest).futureValue.maybeDateFirstPaymentCanBeTaken shouldBe None
     }
 
     "return an error if the response to add working days cannot be parsed" in {
@@ -148,14 +148,14 @@ class CalculatorControllerSpec extends ItSpec with WireMockSupport {
 
       DateCalculatorStub.verifyAddWorkingDaysCalled(today, expectedNumberOfWorkingDaysToAdd)
       // journey should not be updated
-      journey.dateFirstPaymentCanBeTaken shouldBe None
-      journeyService.getJourney()(fakeRequest).futureValue.dateFirstPaymentCanBeTaken shouldBe None
+      journey.maybeDateFirstPaymentCanBeTaken shouldBe None
+      journeyService.getJourney()(fakeRequest).futureValue.maybeDateFirstPaymentCanBeTaken shouldBe None
     }
 
     "should not call the date calculator service if a calculation has already been stored in the journey" in {
       AuthStub.authorise()
 
-      val (_, fakeRequest) = saveJourney(createJourneyWithMaxLengthPlan(_).copy(dateFirstPaymentCanBeTaken = Some(addWorkingDaysResult)))
+      val (_, fakeRequest) = saveJourney(createJourneyWithMaxLengthPlan(_).copy(maybeDateFirstPaymentCanBeTaken = Some(addWorkingDaysResult)))
       val res = controller.getCalculateInstalments()(fakeRequest)
       status(res) shouldBe Status.OK
 
