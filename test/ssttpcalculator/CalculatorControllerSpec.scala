@@ -19,7 +19,6 @@ package ssttpcalculator
 import akka.util.Timeout
 import journey.Statuses.InProgress
 import journey.{Journey, JourneyId, JourneyService}
-import org.scalatest.time.{Seconds, Span}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.http.Status
@@ -28,22 +27,20 @@ import play.api.test.Helpers.{redirectLocation, status}
 import ssttpaffordability.model.Expense.HousingExp
 import ssttpaffordability.model.{Expenses, Income, IncomeBudgetLine, Spending}
 import ssttpaffordability.model.IncomeCategory.MonthlyIncome
-import testsupport.stubs.{ArrangementStub, AuthStub, DateCalculatorStub, DirectDebitStub, TaxpayerStub}
+import testsupport.stubs.{AuthStub, DateCalculatorStub}
 import testsupport.testdata.{TdAll, TdRequest}
-import testsupport.{ItSpec, RichMatchers, WireMockSupport}
+import testsupport.{ItSpec, WireMockSupport}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.selfservicetimetopay.models.{BankDetails, EligibilityStatus, PaymentDayOfMonth, TypeOfAccountDetails}
 import _root_.model.enumsforforms.TypesOfBankAccount.Personal
 import _root_.model.enumsforforms.TypesOfBankAccount
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import play.api.libs.json.{JsString, Json}
-import play.api.mvc.{AnyContentAsEmpty, Result}
+import play.api.mvc.AnyContentAsEmpty
 import ssttpcalculator.model.AddWorkingDaysResult
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime}
-import java.util.UUID
-import scala.concurrent.Future
 
 class CalculatorControllerMaxLengthPlan12 extends CalculatorControllerSpec {
   override def configuredMaxLengthOfPaymentPlan: Int = 12
