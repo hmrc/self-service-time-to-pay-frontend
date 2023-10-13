@@ -30,7 +30,7 @@ class StartPage(baseUrl: BaseUrl)(implicit webDriver: WebDriver) extends BasePag
 
   def expectedHeadingContent(language: Language): String = language match {
     case Languages.English => "Set up a Self Assessment payment plan"
-    case Languages.Welsh   => "Sefydlu cynllun talu ar gyfer Hunanasesiad"
+    case Languages.Welsh   => "Trefnu cynllun talu"
   }
 
   def expectedTitleStartPageOnly(heading: String, lang: Language): String = lang match {

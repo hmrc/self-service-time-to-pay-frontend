@@ -70,7 +70,7 @@ ssttp.sidebar.having_problems.intro = Os oes problem, neu os oes angen rhagor o 
 
 #landing
 
-ssttp.landing.title = Sefydlu cynllun talu ar gyfer Hunanasesiad
+ssttp.landing.title = Trefnu cynllun talu
 
 ssttp.landing.p1 = Mae cynllun talu yn eich galluogi i dalu’ch taliadau treth fesul rhandaliad dros gyfnod o amser.
 ssttp.landing.p2 = Mae eich cynllun yn cwmpasu’r dreth sydd arnoch ac, os yw’n berthnasol, y ddau daliad ymlaen llaw tuag at eich bil treth. Mae’r cynllun hefyd yn cwmpasu unrhyw gosbau neu daliadau yn erbyn eich cyfrif. Bydd yn rhaid i chi dalu llog ar y swm a dalwch yn hwyr.
