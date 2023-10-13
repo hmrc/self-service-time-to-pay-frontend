@@ -49,7 +49,7 @@
                 @{if(payToday) messages("ssttp.calculator.form.payment_summary.today_question.yes") else messages("ssttp.calculator.form.payment_summary.today_question.no")}
             </dd>
             <dd class="govuk-summary-list__actions">
-                <a href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">
+                <a class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPayTodayQuestion()">
                     @messages("ssttp.calculator.form.payment_summary.up-front-payment.change")
                     <span class="govuk-visually-hidden"> @messages("ssttp.calculator.form.payment_summary.today_question.change.hidden")
                     </span>
@@ -66,7 +66,7 @@
             @currency(initialPayment)
           </dd>
           <dd class="govuk-summary-list__actions">
-              <a href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">
+              <a class="govuk-link" href="@ssttpcalculator.routes.CalculatorController.getPaymentToday()">
                 @messages("ssttp.calculator.form.payment_summary.up-front-payment.change")
                 <span class="govuk-visually-hidden"> @messages("ssttp.calculator.form.payment_summary.up-front-payment.change.hidden")
                 </span>
